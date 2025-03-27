@@ -141,12 +141,18 @@ describe('Workflow Visualizer', () => {
             awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/workflow_nodes/`
           ).as('saved');
           cy.clickButton('Save');
-          cy.wait('@saved');
-          cy.getByDataCy('alert-toaster').should('be.visible');
-          cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).should(
-            'have.text',
-            'Run on success'
-          );
+          cy.wait('@saved').then((interception) => {
+            const node = interception?.response?.body as WorkflowNode;
+            cy.getByDataCy('alert-toaster').should('be.visible');
+            cy.get(`g[data-id="${node.id}"]`).should('be.visible');
+            cy.get(`g[data-id="${node.id}"]`)
+              .should('include.text', 'ALL')
+              .and('include.text', 'Test Node');
+            cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).should(
+              'have.text',
+              'Run on success'
+            );
+          });
           cy.reload();
           cy.getBy('button[id="fit-to-screen"]').click();
           cy.getByDataCy('workflow-visualizer-toolbar-close').click();

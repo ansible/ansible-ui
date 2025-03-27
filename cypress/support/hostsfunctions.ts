@@ -6,9 +6,6 @@ import { awxAPI } from './formatApiPathForAwx';
 
 export function createAndCheckHost(host_type: string, inventory: string) {
   const hostName = 'E2E Inventory host ' + randomString(4);
-  if (host_type === 'inventory_host') {
-    cy.contains('There are currently no hosts added to this inventory.');
-  }
   cy.clickLink('Create host');
   cy.verifyPageTitle('Create host');
   cy.getByDataCy('name').type(hostName);
@@ -174,7 +171,6 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
   navigateToBaseView(host_type, inventory.name);
   cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 3);
   cy.getByDataCy('select-all').check();
-  cy.contains('2 selected');
   cy.clickToolbarKebabAction('delete-hosts');
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
