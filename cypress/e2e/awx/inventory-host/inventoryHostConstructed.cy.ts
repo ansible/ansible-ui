@@ -61,7 +61,6 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     cy.getByDataCy('sync-inventory').click();
     cy.contains(`[data-cy="last-job-status"]`, 'Success');
     cy.contains(`a[role="tab"]`, 'Groups').click();
-    cy.reload();
     cy.contains('a', group.name).click();
     cy.contains(`a[role="tab"]`, 'Hosts').click();
     cy.getByDataCy('run-command').click();

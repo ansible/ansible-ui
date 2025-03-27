@@ -599,9 +599,9 @@ cyLabel(['upstream'], () => {
 
     afterEach(() => {
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
       cy.deleteAwxUser(createdAwxUser, { failOnStatusCode: false });
       cy.deleteAwxTeam(awxTeam, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
     });
 
     function removeRoleFromListRow(roleName: string, assignmentType: string) {
