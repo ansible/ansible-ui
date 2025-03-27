@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ES2020",
+    "module": "ESNext",
     "jsx": "react-jsx",
     "lib": ["ES2021", "DOM"],
     "types": ["cypress", "cypress-react-selector", "@4tw/cypress-drag-drop"],
@@ -27,15 +27,16 @@
     // "strictNullChecks": true
   },
   "include": [
-    "platform",
-    "frontend",
-    "framework",
-    "playwright",
-    "cypress",
     "*.config.ts",
+    "*.workspace.ts",
+    "cypress",
     "cypress.d.ts",
-    "webpack/environment.d.ts",
+    "framework",
+    "frontend",
     "i18next-parser.config.cjs",
-    "*.workspace.ts"
+    "packages",
+    "platform",
+    "playwright",
+    "webpack/environment.d.ts"
   ]
 }

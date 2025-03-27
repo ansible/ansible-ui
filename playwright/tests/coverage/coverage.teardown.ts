@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { test } from '@playwright/test';
 import { existsSync } from 'fs';
 import MCR from 'monocart-coverage-reports';

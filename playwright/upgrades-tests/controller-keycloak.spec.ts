@@ -1,10 +1,9 @@
+import { handleRoute, Router } from '@ansible/aap-mock';
 import { expect, test } from '@playwright/test';
 import { login, platformUI } from '../commands/login';
 import { logout } from '../commands/logout';
 import { setupAfter } from '../commands/setup';
-import { handleRoute } from '../mock/handlers/handleRoute';
 import { mock } from '../mock/mock';
-import { Router } from '../mock/router/Router';
 import { UpgradeUserType } from './utils/constants';
 import { getUserForMigration } from './utils/getUserForMigration';
 import { randomString } from './utils/random-string';
@@ -38,7 +37,7 @@ test.beforeEach(async ({ page }) => {
   } else {
     // Mock out legacy_controller server
     const mockData = page.mock.data;
-    mockData.api.gateway.v1.ui_auth = {
+    (mockData.api.gateway.v1.ui_auth as object) = {
       show_login_form: true,
       passwords: [
         {
@@ -56,7 +55,7 @@ test.beforeEach(async ({ page }) => {
       legacy_auth_enabled: true,
     };
 
-    mockData.api.controller.v2.auth = {
+    (mockData.api.controller.v2 as unknown as { auth: object }).auth = {
       oidc: {
         login_url: '/sso/login/oidc/',
         complete_url: `https://localhost:4100/sso/complete/oidc/`,
@@ -72,7 +71,7 @@ test.beforeEach(async ({ page }) => {
 
     const legacyControllerRouter = new Router();
     legacyControllerRouter.GET('/sso/login/oidc/', () => {
-      mockData.api.gateway.v1.legacy_auth = {
+      (mockData.api.gateway.v1.legacy_auth as object) = {
         id: 84,
         username: 'ctlr_oidc_ui_user_1',
         is_authenticated: false,
@@ -113,8 +112,8 @@ test.beforeEach(async ({ page }) => {
         is_superuser: true,
         summary_fields: { resource: { ansible_id: '1' } },
       };
-      mockData.api.gateway.v1.me = [user];
-      mockData.api.gateway.v1.legacy_auth = {
+      (mockData.api.gateway.v1.me as object) = [user];
+      (mockData.api.gateway.v1.legacy_auth as object) = {
         id: user?.id,
         username: user?.username,
         is_authenticated: true,
@@ -122,7 +121,7 @@ test.beforeEach(async ({ page }) => {
         is_migrated: true,
         linked_accounts: [],
       };
-      mockData.api.gateway.v1.legacy_auth = {
+      (mockData.api.gateway.v1.legacy_auth as object) = {
         id: 84,
         username: 'mock',
         is_authenticated: false,
@@ -188,7 +187,7 @@ test(
 
 test(
   'awx keycloak - Link additional accounts from User Details page',
-  { tag: ['@upgrade', '@not_e2e'] },
+  { tag: ['@upgrade', '@not_e2e', '@not_mock'] },
   async ({ page }) => {
     await page.goto(platformUI);
     await page.getByRole('link', { name: 'I have an Automation Controller account' }).click();
