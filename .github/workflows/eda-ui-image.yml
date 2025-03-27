@@ -13,7 +13,8 @@ jobs:
     name: EDA UI Image
     uses: ./.github/workflows/image.yml
     with:
-      build-script: build:eda
+      build-script: build
+      build-directory: frontend/eda-ui
       docker-target: eda-ui
       docker-image: quay.io/ansible/eda-ui
       docker-publish: true
