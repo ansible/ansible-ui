@@ -27,17 +27,17 @@ CMD ["nginx", "-g", "daemon off;"]
 # awx-ui
 FROM base AS awx-ui
 COPY /nginx/awx.conf /etc/nginx/templates/default.conf.template
-COPY /build/awx /usr/share/nginx/html
+COPY /frontend/awx/dist /usr/share/nginx/html
 
 # hub-ui
 FROM base AS hub-ui
 COPY /nginx/hub.conf /etc/nginx/templates/default.conf.template
-COPY /build/hub /usr/share/nginx/html
+COPY /frontend/hub/dist /usr/share/nginx/html
 
 # eda-ui
 FROM base AS eda-ui
 COPY /nginx/eda.conf /etc/nginx/templates/default.conf.template
-COPY /build/eda /usr/share/nginx/html
+COPY /frontend/eda/dist /usr/share/nginx/html
 
 # ui-e2e
 FROM cypress/base AS ui-e2e
