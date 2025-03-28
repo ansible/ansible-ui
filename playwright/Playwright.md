@@ -181,6 +181,19 @@ Follow the best practices suggested [here](https://docs.cypress.io/guides/refere
 Avoid relying on technical aspects such as element IDs or class names for interactions.
 Prioritize tests that reflect the user’s journey and behavior.
 
+## Feature Flags
+
+The behavior of certain UI elements depends on whether a feature flag is enabled on the server.
+Take care that Playwright tests don't rely on an environment that has a feature flag with a specific value.
+Take the following steps when testing feature-flag-dependent UI:
+
+- When possible, test feature flag behavior in lower level tests (unit tests or component tests) that use a mocked API.
+- In playwright, it may make sense to isolate feature-flag specific assertions in their own tests.
+  Check the server response to see if the feature flag is set, and skip/pass the test if it is off.
+- Don't mock feature flag API responses when a test is being run against a live server.
+
+Tests should be stable when run against a mock server, a live server with the flag enabled, and a live server with the flag disabled.
+
 ## Troubleshooting
 
 1. **Check Playwright version**
