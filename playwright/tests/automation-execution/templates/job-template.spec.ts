@@ -5,7 +5,7 @@ import { filterTable } from '../../../commands/filterTable';
 import { navigateTo } from '../../../commands/navigateTo';
 import { selectTableFilter } from '../../../commands/selectTableFilter';
 import { setupAfter, setupBefore } from '../../../commands/setup';
-import { mockFeatureFlags } from '../../util/featureFlags';
+import { hasFeatureFlag } from '../../util/featureFlags';
 import {
   createAwxCredential,
   deleteAwxCredential,
@@ -285,18 +285,17 @@ test(
   }
 );
 
-// The lines commented out in this test are causing failures on current deployments.
-// Re-enable these lines when we have a build with OPA policy enabled.
 test(
   'can create a job template and assert the OPA is showing on the details page',
   { tag: ['@compare', '@mock'] },
   async ({ page }) => {
+    const hasPolicyAsCode = await hasFeatureFlag(page, 'FEATURE_POLICY_AS_CODE_ENABLED');
+    if (!hasPolicyAsCode) {
+      return;
+    }
     const jobTemplateName = createE2EName('job-template');
     const jobTemplateDescription = 'This is a JT description';
     const inventoryName = 'Demo Inventory';
-    await mockFeatureFlags(page, {
-      FEATURE_POLICY_AS_CODE_ENABLED: true,
-    });
     await navigateTo(page, 'Automation Execution', 'Templates');
     await expect(
       page.getByRole('heading', { name: 'Automation Templates', exact: true })
@@ -305,8 +304,8 @@ test(
     await page.getByRole('menuitem', { name: 'Create job template' }).click();
     await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
     await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
-    // await expect(page.getByLabel('OPA query path')).toBeVisible();
-    // await page.getByLabel('OPA query path').fill('testpkg/testrule');
+    await expect(page.getByLabel('OPA query path')).toBeVisible();
+    await page.getByLabel('OPA query path').fill('testpkg/testrule');
     await page.getByLabel('Inventory').click();
     await page.getByRole('option', { name: inventoryName }).click();
     const projectName = 'Demo Project';
@@ -323,7 +322,7 @@ test(
     await expect(page.locator('#organization')).toContainText('Default');
     await expect(page.locator('#project')).toContainText(projectName);
     await expect(page.locator('#playbook')).toContainText('hello_world.yml');
-    // await expect(page.locator('#opa-policy')).toContainText('testpkg/testrule');
+    await expect(page.locator('#opa-query-path')).toContainText('testpkg/testrule');
     await deleteJobTemplate(jobTemplateName, page);
   }
 );
