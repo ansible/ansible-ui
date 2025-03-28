@@ -13,18 +13,19 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { FormSection } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useFeatureFlag } from '../../common/useFeatureFlags';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
+import { Project } from '../../interfaces/Project';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
+import { PageFormPlaybookSelect } from './components/PageFormPlaybookSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
-import { Project } from '../../interfaces/Project';
-import { useFeatureFlag } from '../../common/useFeatureFlags';
 
 // This list below comes from the previous AWX code
 //https//github.com / ansible / awx / blob / c760577855bf2afacc58579e743111552dae38ef / awx / ui / src / api / models / CredentialTypes.js#L10
@@ -42,7 +43,6 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   const { jobtemplate } = props;
   const { t } = useTranslation();
   const { setValue, getValues, reset } = useFormContext<JobTemplateForm>();
-  const [playbookOptions, setPlaybookOptions] = useState<string[]>();
   const [allowOverride, setAllowOverride] = useState<boolean>();
   const [organization, setOrganization] = useState<number | undefined>();
   const projectId = useWatch<JobTemplateForm, 'project'>({ name: 'project' });
@@ -66,13 +66,9 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   useEffect(() => {
     async function handleFetchPlaybooks() {
       if (projectId) {
-        const playbooks = await requestGet<string[]>(
-          awxAPI`/projects/${projectId.toString()}/playbooks/`
-        );
         const project = await requestGet<Project>(awxAPI`/projects/${projectId.toString()}`);
         setOrganization(project.organization ?? undefined);
         setAllowOverride(project.allow_override ?? false);
-        return setPlaybookOptions(playbooks);
       }
     }
     void handleFetchPlaybooks();
@@ -115,17 +111,15 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         isRequired={!isInventoryPrompted}
       />
       <PageFormProjectSelect<JobTemplateForm> name="project" isRequired />
-
-      <PageFormSelect<JobTemplateForm>
+      <PageFormPlaybookSelect
+        watch="project"
         name="playbook"
         id="playbook"
+        label={t('Playbook')}
         labelHelpTitle={t('Playbook')}
         labelHelp={t('Select the playbook to be executed by this job.')}
         placeholderText={t('Add a project, then select a playbook')}
-        label={t('Playbook')}
-        isRequired
-        isDisabled={!playbookOptions?.length}
-        options={playbookOptions?.map((playbook) => ({ label: playbook, value: playbook })) ?? []}
+        noOptionsFoundMsg={(filter) => t(`No playbook was found for "${filter}"`)}
       />
 
       {allowOverride ? (

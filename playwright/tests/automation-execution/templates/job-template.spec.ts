@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
 import { filterTable } from '../../../commands/filterTable';
 import { navigateTo } from '../../../commands/navigateTo';
@@ -12,7 +13,6 @@ import {
 } from '../infrastructure/credentials/credential-utils';
 import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
 import { createJobTemplate, deleteJobTemplate, runJobTemplate } from './job-template-utils';
-import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -307,13 +307,16 @@ test(
     await expect(page.getByLabel('OPA query path')).toBeVisible();
     await page.getByLabel('OPA query path').fill('testpkg/testrule');
     await page.getByLabel('Inventory').click();
-    await page.getByRole('option', { name: inventoryName }).click();
+    await page.getByRole('option', { name: inventoryName, exact: true }).click();
     const projectName = 'Demo Project';
     await page.locator('#project-select').click();
     await page.getByRole('option', { name: projectName }).click();
-    await expect(page.getByRole('button', { name: 'hello_world.yml' })).toBeVisible({
-      timeout: 2 * 60 * 1000,
-    });
+    await page.getByPlaceholder('Add a project, then select a').click();
+    await page.getByPlaceholder('Add a project, then select a').fill('hello');
+    await page.getByRole('option', { name: 'hello_world.yml' }).click();
+    await expect(page.getByPlaceholder('Add a project, then select a')).toHaveValue(
+      'hello_world.yml'
+    );
     await page.getByRole('button', { name: 'Create job template' }).click();
     await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
     await expect(page.locator('#name')).toContainText(jobTemplateName);

@@ -36,11 +36,14 @@ export async function createJobTemplate(
     await page.locator('#ask_instance_groups_on_launch').check();
   } else {
     await page.getByRole('button', { name: 'Inventory' }).click();
-    await page.getByRole('option', { name: inventoryName }).click();
+    await page.getByRole('option', { name: inventoryName, exact: true }).click();
   }
   const projectName = options.projectName ?? 'Demo Project';
   await page.locator('#project-select').click();
   await page.getByRole('option', { name: projectName }).click();
+  await page.getByPlaceholder('Add a project, then select a').click();
+  await page.getByPlaceholder('Add a project, then select a').fill('hello');
+  await page.getByRole('option', { name: 'hello_world.yml' }).click();
   if (options.labels) {
     for (const label of options.labels) {
       await page.getByPlaceholder('Select or create labels').fill(label);
@@ -53,9 +56,9 @@ export async function createJobTemplate(
   if (options.skipTagsPrompt) {
     await page.locator('#ask_skip_tags_on_launch').check();
   }
-  await expect(page.getByRole('button', { name: 'hello_world.yml' })).toBeVisible({
-    timeout: 2 * 60 * 1000,
-  });
+  await expect(page.getByPlaceholder('Add a project, then select a')).toHaveValue(
+    'hello_world.yml'
+  );
   await page.getByRole('button', { name: 'Create job template' }).click();
   await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(jobTemplateName);
@@ -99,7 +102,7 @@ export async function runJobTemplate(
       timeout: 30000,
     });
     await page.getByRole('button', { name: 'Inventory' }).click();
-    await page.getByRole('option', { name: inventoryName }).click();
+    await page.getByRole('option', { name: inventoryName, exact: true }).click();
     await page.getByLabel('Execution environment').click();
     await page.getByRole('option', { name: 'Control Plane Execution' }).click();
     await page.getByLabel('Instance groups').click();
