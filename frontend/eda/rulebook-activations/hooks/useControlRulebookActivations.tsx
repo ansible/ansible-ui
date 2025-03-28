@@ -2,12 +2,14 @@ import { compareStrings, usePageAlertToaster } from '@ansible/ansible-ui-framewo
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { AlertProps } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { edaAPI } from '../../common/eda-utils';
+import { Trans, useTranslation } from 'react-i18next';
+import { edaAPI, hasCopyNamePattern } from '../../common/eda-utils';
 import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
+import { TFunction } from 'i18next';
+import { useEdaWarningDialog } from '../components/EdaWarningDialog';
 
 export function useEnableRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
@@ -59,6 +61,8 @@ export function useDisableRulebookActivations(
   const postRequest = usePostRequest<undefined, undefined>();
   return useCallback(
     (rulebookActivations: EdaRulebookActivation[]) => {
+      const sortedActivations = rulebookActivations;
+      sortedActivations.sort((l, r) => compareStrings(l.name, r.name));
       bulkAction({
         title: t('Disable rulebook activations', { count: rulebookActivations.length }),
         confirmText: t(
@@ -68,7 +72,7 @@ export function useDisableRulebookActivations(
           }
         ),
         actionButtonText: t('Disable rulebook activations', { count: rulebookActivations.length }),
-        items: rulebookActivations.sort((l, r) => compareStrings(l.name, r.name)),
+        items: sortedActivations,
         keyFn: (item) => item?.id,
         isDanger: true,
         confirmationColumns,
@@ -92,6 +96,8 @@ export function useRestartRulebookActivations(
   const postRequest = usePostRequest<undefined, undefined>();
   return useCallback(
     (rulebookActivations: EdaRulebookActivation[]) => {
+      const sortedActivations = rulebookActivations;
+      sortedActivations.sort((l, r) => compareStrings(l.name, r.name));
       bulkAction({
         title: t('Restart rulebook activations', { count: rulebookActivations.length }),
         confirmText: t(
@@ -101,7 +107,7 @@ export function useRestartRulebookActivations(
           }
         ),
         actionButtonText: t('Restart rulebook activations', { count: rulebookActivations.length }),
-        items: rulebookActivations.sort((l, r) => compareStrings(l.name, r.name)),
+        items: sortedActivations,
         keyFn: (item) => item?.id,
         confirmationColumns,
         actionColumns,
@@ -111,5 +117,113 @@ export function useRestartRulebookActivations(
       });
     },
     [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
+  );
+}
+
+function enableMessage(activation: EdaRulebookActivation) {
+  const originalName = activation?.name.substring(0, activation?.name.length - 10);
+
+  return (
+    <Trans>
+      {<strong>{activation.name}</strong>} was copied from {<strong>{originalName}</strong>}{' '}
+      rulebook activation. If the rulebook activations are identical, enabling{' '}
+      {<b>{activation.name}</b>} may fail or result in duplicate jobs and other complications.
+    </Trans>
+  );
+}
+
+function enableMessages(rulebookActivations: EdaRulebookActivation[], t: TFunction): string {
+  const nameList = rulebookActivations
+    .filter((activation) => hasCopyNamePattern(activation.name))
+    .map((activation) => activation.name)
+    .join(', ');
+  const originalNameList = rulebookActivations
+    .filter((activation) => hasCopyNamePattern(activation.name))
+    .map((activation) => activation?.name.substring(0, activation?.name.length - 10))
+    .join(', ');
+  const copyCount = rulebookActivations.filter((activation) =>
+    hasCopyNamePattern(activation.name)
+  )?.length;
+
+  const oneMessage: string =
+    t(`${nameList} was copied from ${originalNameList} rulebook activation. If the rulebook activations
+      are identical, enabling
+      ${nameList} may fail or result in duplicate jobs and other complications.`);
+  const multiMessage: string =
+    t(`${nameList} were copied from ${originalNameList} rulebook activations. If the rulebook activations
+      are identical, enabling ${nameList} may fail or result in duplicate jobs and other complications.`);
+  return copyCount > 1 ? multiMessage : oneMessage;
+}
+
+export function useEnableRulebookActivationsWithWarning(
+  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
+) {
+  const { t } = useTranslation();
+  const confirmationColumns = useRulebookActivationColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useEdaBulkConfirmation<EdaRulebookActivation>();
+  const postRequest = usePostRequest<undefined, undefined>();
+
+  return useCallback(
+    (rulebookActivations: EdaRulebookActivation[]) => {
+      const sortedActivations = rulebookActivations;
+      sortedActivations.sort((l, r) => compareStrings(l.name, r.name));
+      bulkAction({
+        title: t('Enable rulebook activations', { count: rulebookActivations.length }),
+        alertPrompts: [
+          enableMessages(rulebookActivations, t) +
+            '\n' +
+            t(
+              `Note: This warning is triggered if a copied rulebook activation's default name was not edited. If this rulebook activation is no longer identical to the original, update its name to clear this warning.`
+            ),
+        ],
+        confirmText: t(
+          'Yes, I confirm that I want to enable these {{count}} rulebook activations.',
+          {
+            count: rulebookActivations.length,
+          }
+        ),
+        actionButtonText: t('Enable rulebook activations', { count: rulebookActivations.length }),
+        items: sortedActivations,
+        keyFn: (item) => item?.id,
+        confirmationColumns,
+        actionColumns,
+        onComplete,
+        actionFn: (rulebookActivation: EdaRulebookActivation) =>
+          postRequest(edaAPI`/activations/${rulebookActivation.id.toString()}/enable/`, undefined),
+      });
+    },
+    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
+  );
+}
+
+export function useEnableRulebookActivationWithWarning(
+  onConfirm: (item: EdaRulebookActivation) => Promise<unknown>,
+  onComplete?: (items: EdaRulebookActivation[]) => void
+) {
+  const { t } = useTranslation();
+  const edaWarningDialog = useEdaWarningDialog<EdaRulebookActivation>();
+  const postRequest = usePostRequest<undefined, undefined>();
+
+  return useCallback(
+    (rulebookActivation: EdaRulebookActivation) => {
+      edaWarningDialog({
+        title: t('Enable rulebook activation'),
+        messages: [
+          enableMessage(rulebookActivation),
+          <Trans key={'note'}>
+            <strong>Note:</strong> This warning is triggered if the copied rulebook activation&#39;s
+            default name is not edited. If this rulebook activation is no longer identical to the
+            original, update its name to clear this warning.
+          </Trans>,
+        ],
+        actionButtonText: t('Enable rulebook activation'),
+        items: [rulebookActivation],
+        onComplete,
+        onConfirm: (rulebookActivation: EdaRulebookActivation) =>
+          postRequest(edaAPI`/activations/${rulebookActivation.id.toString()}/enable/`, undefined),
+      });
+    },
+    [edaWarningDialog, t, onComplete, postRequest]
   );
 }

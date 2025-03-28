@@ -11,7 +11,7 @@ import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { edaAPI } from '../../common/eda-utils';
+import { edaAPI, hasCopyNamePattern } from '../../common/eda-utils';
 import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
@@ -19,6 +19,7 @@ import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsRespon
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
+  useEnableRulebookActivationsWithWarning,
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
@@ -33,7 +34,9 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
   const canCreateActivations = Boolean(data && data.actions && data.actions['POST']);
   const alertToaster = usePageAlertToaster();
-
+  const enableActivationsWithWarning = useEnableRulebookActivationsWithWarning(
+    view.unselectItemsAndRefresh
+  );
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
     useCallback(
       async (activation) => {
@@ -58,11 +61,17 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     );
   const enableRulebookActivations = useCallback(
     (activations: EdaRulebookActivation[]) => {
-      for (const activation of activations) {
-        void enableRulebookActivation(activation);
+      if (activations.filter((activation) => hasCopyNamePattern(activation?.name)).length > 0) {
+        enableActivationsWithWarning(activations);
+      } else {
+        for (const activation of activations) {
+          if (!activation.is_enabled) {
+            void enableRulebookActivation(activation);
+          }
+        }
       }
     },
-    [enableRulebookActivation]
+    [enableActivationsWithWarning, enableRulebookActivation]
   );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {

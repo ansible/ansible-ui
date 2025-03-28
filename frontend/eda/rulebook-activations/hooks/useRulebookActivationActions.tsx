@@ -10,7 +10,7 @@ import { AlertProps } from '@patternfly/react-core';
 import { CopyIcon, PencilAltIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { edaAPI } from '../../common/eda-utils';
+import { edaAPI, hasCopyNamePattern } from '../../common/eda-utils';
 import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
@@ -18,6 +18,7 @@ import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
+  useEnableRulebookActivationWithWarning,
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useCopyRulebookActivation } from './useCopyRulebookactivation';
@@ -32,6 +33,29 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
   const copyRulebookActivation = useCopyRulebookActivation(view.refresh as () => void);
   const alertToaster = usePageAlertToaster();
   const parseError = useEdaErrorMessageParser();
+  const enableActivationWithWarning = useEnableRulebookActivationWithWarning(
+    enableRulebookActivation,
+    view.unselectItemsAndRefresh
+  );
+
+  function enableRulebookActivation(activation: EdaRulebookActivation) {
+    const alert: AlertProps = {
+      variant: 'success',
+      title: `${activation.name} ${t('enabled')}.`,
+      timeout: 5000,
+    };
+    return postRequest(edaAPI`/activations/${activation.id.toString()}/${'enable/'}`, undefined)
+      .then(() => alertToaster.addAlert(alert))
+      .catch((err: Error) => {
+        const errorResults = parseError(err);
+        alertToaster.addAlert({
+          variant: 'danger',
+          title: `${t('Failed to enable')} ${activation.name}`,
+          children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+          timeout: 5000,
+        });
+      });
+  }
   const enableActivation: (activation: EdaRulebookActivation) => Promise<void> = useCallback(
     async (activation) => {
       const alert: AlertProps = {
@@ -39,20 +63,24 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         title: `${activation.name} ${t('enabled')}.`,
         timeout: 5000,
       };
-      await postRequest(edaAPI`/activations/${activation.id.toString()}/${'enable/'}`, undefined)
-        .then(() => alertToaster.addAlert(alert))
-        .catch((err: Error) => {
-          const errorResults = parseError(err);
-          alertToaster.addAlert({
-            variant: 'danger',
-            title: `${t('Failed to enable')} ${activation.name}`,
-            children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
-            timeout: 5000,
+      if (!activation.is_enabled && hasCopyNamePattern(activation?.name)) {
+        enableActivationWithWarning(activation);
+      } else {
+        await postRequest(edaAPI`/activations/${activation.id.toString()}/${'enable/'}`, undefined)
+          .then(() => alertToaster.addAlert(alert))
+          .catch((err: Error) => {
+            const errorResults = parseError(err);
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: `${t('Failed to enable')} ${activation.name}`,
+              children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+              timeout: 5000,
+            });
           });
-        });
-      view.unselectItemsAndRefresh([activation]);
+        view.unselectItemsAndRefresh([activation]);
+      }
     },
-    [view, alertToaster, parseError, t]
+    [t, enableActivationWithWarning, view, alertToaster, parseError]
   );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
