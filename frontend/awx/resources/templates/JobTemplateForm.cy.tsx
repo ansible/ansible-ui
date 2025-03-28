@@ -3,91 +3,6 @@ import type { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { CreateJobTemplate } from './TemplateForm';
 
 describe('Create job template ', () => {
-  const instanceGroups: Pick<InstanceGroup, 'id' | 'name'>[] = [{ id: 123, name: 'default_group' }];
-  beforeEach(() => {
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/labels/*`,
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'labels.json',
-      }
-    ).as('labelsFetched');
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/projects/*`,
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'projects.json',
-      }
-    );
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/credential_types/*`,
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'credential_types.json',
-      }
-    );
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/credentials/*`,
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'credentials.json',
-      }
-    );
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/instance_groups/*`,
-      },
-      { count: 1, results: instanceGroups }
-    ).as('getInstanceGroups');
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/projects/6/playbooks/`,
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'playbooks.json',
-      }
-    );
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/inventories/*`,
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'inventories.json',
-      }
-    );
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/execution_environments/*`,
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'execution_environments.json',
-      }
-    );
-    cy.intercept(
-      { method: 'POST', url: awxAPI`/projects/*`, hostname: 'localhost' },
-      { fixture: 'project.json' }
-    ).as('selectedProject');
-  });
-
   it('Component renders', () => {
     cy.mount(<CreateJobTemplate />);
     cy.verifyPageTitle('Create job template');
@@ -103,6 +18,36 @@ describe('Create job template ', () => {
   });
 
   it('Should send expected form data to API on save', () => {
+    const instanceGroups: Pick<InstanceGroup, 'id' | 'name'>[] = [
+      { id: 123, name: 'default_group' },
+    ];
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/inventories/*`,
+        hostname: 'localhost',
+      },
+      {
+        fixture: 'inventories.json',
+      }
+    );
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/projects/?page_size=10&order_by=name*`,
+        hostname: 'localhost',
+      },
+      {
+        fixture: 'projects.json',
+      }
+    );
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/instance_groups/*`,
+      },
+      { count: 1, results: instanceGroups }
+    ).as('getInstanceGroups');
     cy.intercept('POST', awxAPI`/job_templates/`, (req) => {
       expect(req.body).to.contain({
         inventory: 1,
@@ -123,13 +68,24 @@ describe('Create job template ', () => {
       });
       return req.reply({ statusCode: 204 });
     });
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/projects/6/playbooks/`,
+        hostname: 'localhost',
+      },
+      {
+        fixture: 'playbooks.json',
+      }
+    );
     cy.mount(<CreateJobTemplate />);
     cy.get('[data-cy="name"]').type('Test');
     cy.get('[data-cy="job_type-form-group"] button').last().click();
     cy.contains('Check').click();
     cy.singleSelectBy('[data-cy="inventory"]', 'Demo Inventory');
     cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
-    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+    cy.get('[data-cy="playbook-form-group"] input').clear().type('hello_world.yml');
+    cy.get('#playbook-typeahead-select button').contains('hello_world.yml').click();
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroups[0].name]);
     cy.clickButton('Create job template');
   });
