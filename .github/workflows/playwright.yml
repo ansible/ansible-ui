@@ -183,7 +183,6 @@ jobs:
     - uses: geekyeggo/delete-artifact@v5
       with:
           name: |
-            platform-ui.tar
             ${{ inputs.BROWSER }}-blob-report-*
 
     - name: Generate Markdown Test Results
