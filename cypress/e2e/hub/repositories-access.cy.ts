@@ -87,8 +87,11 @@ describe('Repositories user and team access tests', () => {
       cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.getTableRowByText(hubTeam.name, false).within(() => {
-          cy.get('input[type=checkbox]').click();
+        cy.filterTableByTextFilter('name', hubTeam.name, {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', hubTeam.name, {
+          disableFilter: true,
         });
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');

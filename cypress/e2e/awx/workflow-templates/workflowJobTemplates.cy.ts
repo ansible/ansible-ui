@@ -225,7 +225,9 @@ describe('Workflow Job Templates Tests', () => {
           disableFilter: true,
         });
         cy.get('[data-cy="isWebhookEnabled"]').click();
+        cy.intercept('GET', awxAPI`/credential_types/?page=1&page_size=200`).as('credentialsList');
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitLab');
+        cy.wait('@credentialsList');
         cy.singleSelectByDataCy('webhook_credential', tokenCredential.name);
         cy.intercept(
           'PATCH',
