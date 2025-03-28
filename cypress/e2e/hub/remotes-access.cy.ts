@@ -108,8 +108,11 @@ describe('Remotes User Access tab', () => {
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.getTableRowByText(hubTeam.name, false).within(() => {
-          cy.get('input[type=checkbox]').click();
+        cy.filterTableByTextFilter('name', hubTeam.name, {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', hubTeam.name, {
+          disableFilter: true,
         });
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);

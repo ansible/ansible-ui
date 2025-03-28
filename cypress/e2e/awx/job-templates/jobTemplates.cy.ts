@@ -677,8 +677,7 @@ describe('Job Templates Tests', function () {
       });
       cy.verifyPageTitle(jobTemplate.name);
       cy.clickTab('Notifications', true);
-      cy.selectTableFilter('name');
-      cy.get('[data-cy="text-input"]').clear().type(notification.name);
+      cy.filterTableByTextFilter('name', notification.name);
       cy.getByDataCy('name-column-cell').contains(notification.name).click();
       cy.url().should('contain', `/administration/notifiers/${notification.id}/details`);
       cy.getByDataCy('name').contains(notification.name);
