@@ -1,11 +1,11 @@
-import { AZURE_URL, SAAS_URL } from '../../support/constants';
+import { AZURE_URL, OCP_A_URL, SAAS_URL } from '../../support/constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { SignatureKeys } from './constants';
 
 describe('If SaaS Build', () => {
   before(function () {
     cy.checkBuildType().then((buildType) => {
-      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+      if (buildType === SAAS_URL || buildType === AZURE_URL || buildType === OCP_A_URL) {
         cy.log('Test/tests should not run on this deployment.');
         this.skip();
       } else {

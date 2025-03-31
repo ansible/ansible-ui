@@ -53,7 +53,10 @@ export function runCommand(params: {
         cy.contains('button', 'Browse').click();
         cy.getModal().within(() => {
           cy.filterTableBySearch(credential.name);
-          cy.contains(credential.name).should('be.visible').click();
+          cy.get('[data-ouia-component-id="simple-table"]').within(() => {
+            cy.get('tbody tr').should('have.length', 1);
+            cy.get('[data-cy="checkbox-column-cell"] input').click();
+          });
           cy.contains('button', 'Confirm').click();
         });
         cy.getByDataCy('Submit').click();

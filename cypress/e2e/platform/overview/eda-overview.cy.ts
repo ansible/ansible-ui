@@ -113,7 +113,7 @@ describe('Check if the build includes EDA', () => {
                   'div.pf-v5-c-empty-state__body',
                   'Create a decision environment by clicking the button below.'
                 );
-                cy.clickButton(/^Create decision environment$/);
+                cy.getByDataCy('create-decision-environment-card').click();
               });
             cy.verifyPageTitle('Create decision environment');
           } else if (results.length >= 1) {

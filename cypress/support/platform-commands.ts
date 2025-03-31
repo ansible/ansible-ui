@@ -18,7 +18,7 @@ import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformI
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { AZURE_URL, SAAS_URL, UpgradeUserType, usersForMigration } from './constants';
+import { AZURE_URL, OCP_A_URL, SAAS_URL, UpgradeUserType, usersForMigration } from './constants';
 import { awxAPI } from './formatApiPathForAwx';
 import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
@@ -618,8 +618,13 @@ Cypress.Commands.add('checkBuildType', () => {
     const baseUrl = data.TOWER_URL_BASE;
     const parseAzure = baseUrl.includes(AZURE_URL);
     const parseSaas = baseUrl.includes(SAAS_URL);
+    const parseOcpA = baseUrl.includes(OCP_A_URL);
+
     if (parseSaas) {
       return SAAS_URL;
+    }
+    if (parseOcpA) {
+      return OCP_A_URL;
     }
     if (parseAzure) {
       return AZURE_URL;

@@ -29,7 +29,7 @@ describe('Check if the build includes EDA', () => {
       const de_name = 'E2E Decision Environment ' + randomString(4);
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
-      cy.clickButton(/^Create decision environment$/);
+      cy.getByDataCy('create-decision-environment').click();
       cy.get('[data-cy="name"]').type(de_name);
       cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
       cy.get('[data-cy="image-url"]').type('quay.io/ansible/ansible-rulebook:main');

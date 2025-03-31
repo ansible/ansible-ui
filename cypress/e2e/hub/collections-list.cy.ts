@@ -4,7 +4,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
-import { SAAS_URL, AZURE_URL } from '../../support/constants';
+import { SAAS_URL, AZURE_URL, OCP_A_URL } from '../../support/constants';
 
 describe('GalaxyKit Installation Check for Collections List', () => {
   before(function () {
@@ -38,7 +38,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
 
     it('can sign a collection', function () {
       cy.checkBuildType().then((buildType) => {
-        if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        if (buildType === SAAS_URL || buildType === AZURE_URL || buildType === OCP_A_URL) {
           this.skip();
         } else {
           cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
@@ -68,7 +68,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
 
     it('can sign and approve a collection version', function () {
       cy.checkBuildType().then((buildType) => {
-        if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        if (buildType === SAAS_URL || buildType === AZURE_URL || buildType === OCP_A_URL) {
           this.skip();
         } else {
           cy.uploadCollection(collectionName, namespace.name, '3.0.0').then(() => {
@@ -165,26 +165,32 @@ describe('GalaxyKit Installation Check for Collections List', () => {
     });
 
     it('can copy a version to repository and then delete it from repository', () => {
-      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-      cy.navigateTo('hub', Collections.url);
-      cy.filterTableBySingleText(collectionName);
-      cy.get('[data-cy="data-list-name"]').should('have.text', collectionName);
-      cy.get('[data-cy="data-list-action"]').within(() => {
-        cy.get('[data-cy="actions-dropdown"]').first().click();
+      cy.checkBuildType().then((buildType) => {
+        if (buildType !== OCP_A_URL) {
+          cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+          cy.navigateTo('hub', Collections.url);
+          cy.filterTableBySingleText(collectionName);
+          cy.get('[data-cy="data-list-name"]').should('have.text', collectionName);
+          cy.get('[data-cy="data-list-action"]').within(() => {
+            cy.get('[data-cy="actions-dropdown"]').first().click();
+          });
+          cy.get('[data-cy="copy-version-to-repositories"] button').click();
+          cy.collectionCopyVersionToRepositories(collectionName, 2);
+          cy.navigateTo('hub', Collections.url);
+          cy.getByDataCy('table-view').click();
+          cy.filterTableBySingleText(collectionName);
+          cy.contains('tr', 'community').within(() => {
+            cy.getByDataCy('actions-dropdown').click();
+          });
+          cy.contains('button', 'Delete entire collection from repository').click();
+          cy.get('#confirm').click();
+          cy.clickButton(/^Delete collections/);
+          cy.contains(/^Success$/);
+          cy.contains('tr', 'community').should('not.exist');
+        } else {
+          cy.log('Test/tests should not run on this deployment.');
+        }
       });
-      cy.get('[data-cy="copy-version-to-repositories"] button').click();
-      cy.collectionCopyVersionToRepositories(collectionName, 2);
-      cy.navigateTo('hub', Collections.url);
-      cy.getByDataCy('table-view').click();
-      cy.filterTableBySingleText(collectionName);
-      cy.contains('tr', 'community').within(() => {
-        cy.getByDataCy('actions-dropdown').click();
-      });
-      cy.contains('button', 'Delete entire collection from repository').click();
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete collections/);
-      cy.contains(/^Success$/);
-      cy.contains('tr', 'community').should('not.exist');
     });
   });
 

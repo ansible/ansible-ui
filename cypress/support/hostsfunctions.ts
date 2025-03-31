@@ -251,7 +251,7 @@ export function launchHostJob(
     cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
     cy.get('[data-cy="launch-template"]').click();
     cy.wait('@launch').should('exist');
-    cy.contains('span', 'Failed', { timeout: 60000 });
+    cy.get('[data-cy="failed-status"]', { timeout: 60000 }).should('exist');
     if (type === 'InventoryHost') {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySearch(inventory.name);
