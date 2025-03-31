@@ -31,7 +31,7 @@ describe('Check if the build includes EDA', () => {
         const name = 'E2E Credential ' + randomString(4);
         cy.navigateTo('eda', 'credentials');
         cy.get('h1').should('contain', 'Credentials');
-        cy.clickButton(/^Create credential$/);
+        cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a container registry credential.');
         cy.getBy('[data-cy="organization_id"]').click();
@@ -63,7 +63,7 @@ describe('Check if the build includes EDA', () => {
         const name = 'E2E Credential ' + randomString(4);
         cy.navigateTo('eda', 'credentials');
         cy.get('h1').should('contain', 'Credentials');
-        cy.clickButton(/^Create credential$/);
+        cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a GitHub Credential.');
         cy.getBy('[data-cy="organization_id"]').click();

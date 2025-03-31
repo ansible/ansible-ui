@@ -66,6 +66,7 @@ export function Credentials() {
                 icon={<PlusCircleIcon />}
                 variant={ButtonVariant.primary}
                 href={getPageUrl(EdaRoute.CreateCredential)}
+                data-cy="create-credential"
               >
                 {t('Create credential')}
               </ButtonLink>

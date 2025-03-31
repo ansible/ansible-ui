@@ -236,7 +236,7 @@ describe('Check if the build includes EDA', () => {
         cy.hasDetail('Name', name);
         cy.navigateTo('eda', 'credentials');
         cy.get('h1').should('contain', 'Credentials');
-        cy.clickButton(/^Create credential$/);
+        cy.getByDataCy('create-credential').click();
         cy.selectDropdownOptionByResourceName('credential-type-id', name);
         cy.get('[data-cy="inputs-checkbox"]').invoke('attr', 'type').should('eq', 'checkbox');
         cy.getEdaCredentialTypeByName(name).then((credentialtype) => {
@@ -265,7 +265,7 @@ describe('Check if the build includes EDA', () => {
         cy.hasDetail('Name', name);
         cy.navigateTo('eda', 'credentials');
         cy.get('h1').should('contain', 'Credentials');
-        cy.clickButton(/^Create credential$/);
+        cy.getByDataCy('create-credential').click();
         cy.selectDropdownOptionByResourceName('credential-type-id', name);
         cy.get('input[data-cy="inputs-username"]').should('have.value', 'default_value');
         cy.getEdaCredentialTypeByName(name).then((credentialtype) => {
@@ -294,7 +294,7 @@ describe('Check if the build includes EDA', () => {
         cy.hasDetail('Name', name);
         cy.navigateTo('eda', 'credentials');
         cy.get('h1').should('contain', 'Credentials');
-        cy.clickButton(/^Create credential$/);
+        cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type(name);
         cy.selectDropdownOptionByResourceName('credential-type-id', name);
         cy.clickButton(/^Create credential$/);

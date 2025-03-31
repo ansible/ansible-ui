@@ -58,6 +58,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     cy.navigateTo('awx', 'inventories');
     cy.filterTableBySearch(inventory.name);
     cy.contains('a', inventory.name).click();
+    cy.get('[data-cy="sync-inventory"]', { timeout: 60000 }).should('exist');
     cy.getByDataCy('sync-inventory').click();
     cy.contains(`[data-cy="last-job-status"]`, 'Success');
     cy.contains(`a[role="tab"]`, 'Groups').click();

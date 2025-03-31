@@ -3,7 +3,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
-import { AZURE_URL, SAAS_URL } from '../../support/constants';
+import { AZURE_URL, OCP_A_URL, SAAS_URL } from '../../support/constants';
 
 function visitCollection(collection: string, namespace: string) {
   cy.navigateTo('hub', Collections.url);
@@ -159,12 +159,18 @@ describe('GalaxykKit Installation for Collections Details', () => {
       });
 
       it('can copy a version to repository', () => {
-        cy.navigateTo('hub', Collections.url);
-        cy.filterTableByTextFilter('name', collectionName, { disableFilterSelection: true });
-        cy.clickLink(collectionName);
-        cy.getBy(`[data-cy="actions-dropdown"]`).click();
-        cy.getBy('[data-cy="copy-version-to-repositories"]').click();
-        cy.collectionCopyVersionToRepositories(collectionName, 3);
+        cy.checkBuildType().then((buildType) => {
+          if (buildType !== OCP_A_URL) {
+            cy.navigateTo('hub', Collections.url);
+            cy.filterTableByTextFilter('name', collectionName, { disableFilterSelection: true });
+            cy.clickLink(collectionName);
+            cy.getBy(`[data-cy="actions-dropdown"]`).click();
+            cy.getBy('[data-cy="copy-version-to-repositories"]').click();
+            cy.collectionCopyVersionToRepositories(collectionName, 3);
+          } else {
+            cy.log('Test/tests should not run on this deployment.');
+          }
+        });
       });
 
       it('user can delete version from system', () => {
@@ -203,7 +209,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
     describe('If SaaS Build', () => {
       before(function () {
         cy.checkBuildType().then((buildType) => {
-          if (buildType === SAAS_URL || buildType === AZURE_URL) {
+          if (buildType === SAAS_URL || buildType === AZURE_URL || buildType === OCP_A_URL) {
             cy.log('Test/tests should not run on this deployment.');
             this.skip();
           } else {

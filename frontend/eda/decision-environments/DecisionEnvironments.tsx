@@ -62,6 +62,7 @@ export function DecisionEnvironments() {
                 icon={<PlusCircleIcon />}
                 variant={ButtonVariant.primary}
                 href={getPageUr(EdaRoute.CreateDecisionEnvironment)}
+                data-cy="create-decision-environment"
               >
                 {t('Create decision environment')}
               </ButtonLink>
