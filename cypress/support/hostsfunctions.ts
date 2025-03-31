@@ -6,7 +6,7 @@ import { awxAPI } from './formatApiPathForAwx';
 
 export function createAndCheckHost(host_type: string, inventory: string) {
   const hostName = 'E2E Inventory host ' + randomString(4);
-  cy.clickLink('Create host');
+  cy.contains('Create host').click();
   cy.verifyPageTitle('Create host');
   cy.getByDataCy('name').type(hostName);
   cy.getByDataCy('description').type('This is the description');
@@ -53,7 +53,9 @@ function editHost(inventoryName: string, host_type: string, hostName: string, vi
 function deleteHostListView(invenotryName: string, host_type: string, hostName: string) {
   navigateToBaseView(host_type, invenotryName);
   cy.filterTableBySearch(hostName);
-  cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
+  cy.get('td[data-cy="actions-column-cell"]').within(() => {
+    cy.get('button[data-cy="actions-dropdown"]').click();
+  });
   cy.getByDataCy('delete-host').click();
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Delete hosts');
