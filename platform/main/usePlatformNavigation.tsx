@@ -5,10 +5,16 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
+import { AwxPolicySettingsDetailsPage } from '@ansible/awx-ui/administration/settings/AwxPolicySettingsDetails';
 import { AwxSettingsCategoryDetailsPage } from '@ansible/awx-ui/administration/settings/AwxSettingsCategoryDetails';
 import { AwxSettingsCategoryForm } from '@ansible/awx-ui/administration/settings/AwxSettingsCategoryForm';
+import { PolicySettingsCategoryForm } from '@ansible/awx-ui/administration/settings/PolicySettingsEdit';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useAwxNavigation } from '@ansible/awx-ui/main/useAwxNavigation';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
 import { useEdaNavigation } from '@ansible/eda-ui/main/useEdaNavigation';
 import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
@@ -32,19 +38,13 @@ import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { UIFlagsPage } from '../settings/ui-flags/UIFlagsPage';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useHasAwxService, useHasEdaService, useHasHubService } from './GatewayServices';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
-import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
-import { PolicySettingsCategoryForm } from '@ansible/awx-ui/administration/settings/PolicySettingsEdit';
-import { AwxPolicySettingsDetailsPage } from '@ansible/awx-ui/administration/settings/AwxPolicySettingsDetails';
-import { useGet } from '@ansible/common-ui/crud/useGet';
-import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
-import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { gatewayAPI } from '../utils/gateway-api-utils';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -175,8 +175,11 @@ export function usePlatformNavigation() {
           path: '',
           element: <Navigate to="jobs" />,
         });
-        navigationItems.push(removeNavigationItemById(navigationItems, PlatformRoute.QuickStarts)!);
 
+        const quickstarts = removeNavigationItemById(navigationItems, PlatformRoute.QuickStarts);
+        if (quickstarts) {
+          navigationItems.push(quickstarts);
+        }
         break;
       }
       case 'developer': {
