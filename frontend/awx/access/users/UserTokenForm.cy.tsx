@@ -22,9 +22,9 @@ describe('CreateUserToken', () => {
       initialEntries: ['/users/20/tokens/create'],
     });
     cy.contains('Create Token');
+    cy.contains('Application').should('exist');
+    cy.contains('Select application').should('exist');
     cy.get('[data-cy="application-form-group"]').click();
-    cy.contains('Application');
-    cy.contains('Select application');
     cy.get('[data-cy="description-form-group"]').click();
     cy.contains('Description');
     // for some reason cypress can't find the placeholder text directly so checking the attribute
