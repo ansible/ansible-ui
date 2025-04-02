@@ -1,0 +1,79 @@
+{
+  "count": 10,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 1,
+      "log": "Pulling image quay.io/ansible/ansible-rulebook:main",
+      "log_timestamp": 1743599903,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 2,
+      "log": "Log tracking id: 69f7363a-2331-4ad8-8021-19ca731993c5",
+      "log_timestamp": 1743599903,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 3,
+      "log": "Starting Container",
+      "log_timestamp": 1743599923,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 4,
+      "log": "Container args ['ansible-rulebook', '--worker', '--websocket-ssl-verify', 'no', '--websocket-url', 'wss://localhost:443/api/eda/ws/ansible-rulebook', '--websocket-access-token', '******', '--websocket-refresh-token', '******', '--websocket-token-url', 'https://localhost:443/api/eda/v1/auth/token/refresh/', '--id', '1', '--heartbeat', '300']",
+      "log_timestamp": 1743599923,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 5,
+      "log": "Container 02b18eadee688268319fa54bb816999a27858a02d936150cca99beb32a4c7cab is running.",
+      "log_timestamp": 1743599923,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 6,
+      "log": "[debug] ******************************************",
+      "log_timestamp": 1743599925,
+      "log_created_at": "2025-04-02T13:18:45.299132Z",
+      "activation_instance": 1
+    },
+    {
+      "id": 7,
+      "log": "Hello from EDA",
+      "log_timestamp": 1743599925,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 8,
+      "log": "********************************************************************************",
+      "log_timestamp": 1743599925,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 9,
+      "log": "********************************************************************************",
+      "log_timestamp": 1743599925,
+      "log_created_at": null,
+      "activation_instance": 1
+    },
+    {
+      "id": 10,
+      "log": "Container 02b18eadee688268319fa54bb816999a27858a02d936150cca99beb32a4c7cab is cleaned up.",
+      "log_timestamp": 1743599929,
+      "log_created_at": null,
+      "activation_instance": 1
+    }
+  ]
+}

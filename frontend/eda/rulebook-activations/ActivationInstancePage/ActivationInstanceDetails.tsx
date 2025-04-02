@@ -1,14 +1,12 @@
-import { LoadingPage, PageDetail, PageDetails, Scrollable } from '@ansible/ansible-ui-framework';
-import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { LoadingPage, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
-import { StatusCell } from '@ansible/common-ui/Status';
-import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
-import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
+import { StatusCell } from '../../../common/Status';
+import { ActivationInstanceEvents } from './ActivationInstanceEvents';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -17,19 +15,11 @@ export function ActivationInstanceDetails() {
     edaAPI`/activation-instances/`,
     params.instanceId
   );
-  const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`
-  );
-  const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=${
-      activationInstanceLogInfo?.count.toString() || '10'
-    }`
-  );
   if (!activationInstance) {
     return <LoadingPage />;
   }
   return (
-    <Scrollable>
+    <>
       <PageDetails disableScroll={true}>
         <PageDetail label={t('Name')}>
           {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
@@ -44,17 +34,7 @@ export function ActivationInstanceDetails() {
           {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
         </PageDetail>
       </PageDetails>
-
-      <PageDetails disableScroll={true} numberOfColumns={'single'}>
-        {activationInstanceLog?.results?.length ? (
-          <PageDetailCodeEditor
-            label={t('Output')}
-            toggleLanguage={false}
-            value={activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
-            showCopyToClipboard={true}
-          />
-        ) : null}
-      </PageDetails>
-    </Scrollable>
+      <ActivationInstanceEvents />
+    </>
   );
 }

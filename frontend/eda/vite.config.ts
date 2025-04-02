@@ -72,4 +72,20 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    environment: 'happy-dom',
+    setupFiles: ['vitest.setup.ts'],
+    server: {
+      deps: {
+        inline: ['@patternfly/react-styles'],
+      },
+    },
+    // found at: https://github.com/vitest-dev/vitest/discussions/1806
+    alias: [
+      {
+        find: /^monaco-editor$/,
+        replacement: __dirname + '/../../node_modules/monaco-editor/esm/vs/editor/editor.api',
+      },
+    ],
+  },
 });
