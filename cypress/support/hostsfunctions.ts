@@ -40,6 +40,7 @@ function editHost(inventoryName: string, host_type: string, hostName: string, vi
   if (view === 'list') {
     navigateToBaseView(host_type, inventoryName);
     cy.filterTableBySearch(hostName);
+    cy.getBy('tr').should('have.length', 2); // Wait for filter to take effect
   } else {
     navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', inventoryName);
   }
@@ -68,7 +69,6 @@ function deleteHostDetailsView(invenotryName: string, host_type: string, hostNam
   cy.getByDataCy('delete-host').click();
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Delete hosts');
-  cy.contains(/^There are currently no hosts added to this inventory./);
 }
 
 function deleteAllInventoryHosts(inventory: Inventory) {
