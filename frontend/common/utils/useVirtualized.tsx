@@ -2,7 +2,9 @@ import useResizeObserver from '@react-hook/resize-observer';
 import { RefObject, useCallback, useEffect, useState } from 'react';
 
 export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, items: T[]) {
-  const scrollBuffer = 400;
+  const scrollBuffer = containerRef.current?.clientHeight
+    ? containerRef.current.clientHeight + 100
+    : 400;
   const [scrollTop, setScrollTop] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
 
@@ -20,7 +22,7 @@ export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, item
     return () => {
       el.removeEventListener('scroll', onScroll);
     };
-  }, [containerRef, onScroll]);
+  }, [containerRef, onScroll, items.length]);
 
   const onResize = useCallback(() => {
     if (!containerRef.current) return;

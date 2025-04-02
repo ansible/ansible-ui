@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "name": "prat-rba",
+  "status": "completed",
+  "git_hash": "e76eea16fdafdd875e0d51d190b1ff6470ca5618",
+  "status_message": "Pod 106280c295bbb08f3e5817e8c0e8525665cee8dee6190195245f110f315dd779 has successfully exited. Activation completed successfully. No restart policy is applied.",
+  "activation_id": 1,
+  "organization_id": 1,
+  "started_at": "2025-04-02T03:53:46.115022Z",
+  "ended_at": "2025-04-02T03:57:50.103688Z",
+  "queue_name": "eda-ip-10-0-13-11-ec25d46d-140c-82f5-e859-832630547783"
+}

@@ -35,8 +35,8 @@ interface IPageControlsProps {
   onScrollLast: () => void;
   onScrollNext: () => void;
   onScrollPrevious: () => void;
-  toggleExpandCollapseAll: () => void;
-  isAllCollapsed: boolean;
+  toggleExpandCollapseAll?: () => void;
+  isAllCollapsed?: boolean;
   isFlatMode: boolean;
   isTemplateJob: boolean;
 }

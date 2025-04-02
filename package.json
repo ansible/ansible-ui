@@ -120,6 +120,7 @@
     "monaco-editor": "0.52.2",
     "monaco-editor-webpack-plugin": "7.1.0",
     "monaco-yaml": "5.2.3",
+    "msw": "^2.7.3",
     "nx": "^20.4.0",
     "p-debounce": "4.0.0",
     "p-limit": "6.2.0",

@@ -6,14 +6,14 @@ import { HostEventModal } from './HostEventModal';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
 import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
-import { PageControls } from './PageControls';
+import { PageControls } from '../../../../common/PageControls';
 import { useJobOutput } from './useJobOutput';
 import {
   IJobOutputChildrenSummary,
   useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useScrollControls } from './useScrollControls';
-import { useVirtualizedList } from './useVirtualized';
+import { useVirtualizedList } from '../../../../common/utils/useVirtualized';
 import { isHostEvent, isJobRunning } from './util';
 
 export interface ICollapsed {
