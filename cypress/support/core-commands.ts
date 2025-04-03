@@ -1,4 +1,5 @@
 Cypress.Commands.add('getBy', (selector: string, options?: { scrollIntoView?: boolean }) => {
+  cy.get(selector).should('exist');
   const chainable = cy.get(selector);
   if (options?.scrollIntoView) {
     chainable.scrollIntoView();

@@ -15,7 +15,8 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createInventoryHost(organization, 'constructed').then((result) => {
-        const { inventory: inv } = result;
+        const { inventory: inv, host } = result;
+        cy.log('inventoryHost', JSON.stringify(host));
         inventory = inv;
         cy.createInventoryHostGroup(organization).then((result2) => {
           const normalInventory = result2.inventory;
