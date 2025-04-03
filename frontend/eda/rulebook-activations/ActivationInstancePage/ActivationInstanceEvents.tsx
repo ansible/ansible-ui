@@ -10,7 +10,9 @@ import { useParams } from 'react-router-dom';
 import { PageSection } from '@patternfly/react-core';
 import styled from 'styled-components';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { getFiltersQueryString } from '../../../awx/views/jobs/JobOutput/useJobOutput';
 
 const ScrollContainer = styled.div`
   overflow: auto;
@@ -23,15 +25,25 @@ const Section = styled(PageSection)`
   display: flex;
   flex-direction: column;
   height: calc(100vh - 550px);
-  padding: 24px;
+  padding: 0px 24px 24px 24px;
   background-color: var(--pf-v5-global--BackgroundColor--100);
 `;
 
-export function ActivationInstanceEvents() {
+interface IActivationInstanceEventsProps {
+  toolbarFilters: IToolbarFilter[];
+  filterState: IFilterState;
+  isFollowModeEnabled: boolean;
+  setIsFollowModeEnabled: (isFollowModeEnabled: boolean) => void;
+  isRunning: boolean;
+}
+
+export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) {
   const [activationInstanceLog, setActivationInstanceLog] =
     useState<AwxItemsResponse<EdaActivationInstanceLog>>();
 
   const params = useParams<{ instanceId: string }>();
+  const { toolbarFilters, filterState, isFollowModeEnabled, setIsFollowModeEnabled, isRunning } =
+    props;
 
   const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`
@@ -39,19 +51,24 @@ export function ActivationInstanceEvents() {
 
   useEffect(() => {
     async function fetchData() {
+      const filterString = getFiltersQueryString(toolbarFilters, filterState);
+      const qsParts = [`page_size=${activationInstanceLogInfo?.count.toString() ?? '10'}`];
+      if (filterString) {
+        qsParts.push(filterString);
+      }
       const activationInstanceLogOutput = await requestGet<
         AwxItemsResponse<EdaActivationInstanceLog>
       >(
-        edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=${
-          activationInstanceLogInfo?.count.toString() ?? '10'
-        }`
+        edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
+          `?${qsParts.join('&')}`
+        )
       );
 
       setActivationInstanceLog(activationInstanceLogOutput);
     }
 
     void fetchData();
-  }, [params.instanceId, activationInstanceLogInfo?.count]);
+  }, [params.instanceId, activationInstanceLogInfo?.count, toolbarFilters, filterState]);
 
   const estimatedMaxLines = (activationInstanceLog?.results.length ?? 0) * 10;
   const outputLineChars = String(estimatedMaxLines).length;
@@ -64,15 +81,12 @@ export function ActivationInstanceEvents() {
 
   const { scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } = useScrollControls(
     containerRef,
-    false,
-    () => {},
+    isFollowModeEnabled,
+    setIsFollowModeEnabled,
     activationInstanceLog?.results.length ?? 0,
-    false
+    isRunning
   );
 
-  if (!activationInstanceLog?.results?.length) {
-    return null;
-  }
   return (
     <Section>
       <PageControls
