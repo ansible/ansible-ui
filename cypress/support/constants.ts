@@ -129,7 +129,7 @@ export const upgrade_users_list = [
 export enum passwords {
   local_user_password = '12345678pw',
   sso_user_password = 'unpriv123',
-  ldap_user_password = 'Th1sP4ssd',
+  ldap_user_password = 'password',
 }
 
 export enum UpgradeUserType {
