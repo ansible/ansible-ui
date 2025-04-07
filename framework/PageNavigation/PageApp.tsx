@@ -6,6 +6,7 @@ import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsP
 import { PageNavigation } from './PageNavigation';
 import { PageNavigationItem } from './PageNavigationItem';
 import { usePageNavigationRoutesContext } from './PageNavigationRoutesProvider';
+import { ChatbotSideBar } from '@ansible/chatbot/ChatbotSideBar';
 
 export function PageApp(props: {
   /** Component for the masthead of the page. */
@@ -45,20 +46,22 @@ export function PageApp(props: {
             }
           >
             <PageNotificationsDrawer>
-              <div
-                style={{
-                  maxHeight: '100%',
-                  overflow: 'hidden',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {props.banner}
-                <div style={{ flexGrow: 1, overflow: 'hidden' }}>
-                  <Outlet />
+              <ChatbotSideBar>
+                <div
+                  style={{
+                    maxHeight: '100%',
+                    overflow: 'hidden',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  {props.banner}
+                  <div style={{ flexGrow: 1, overflow: 'hidden' }}>
+                    <Outlet />
+                  </div>
                 </div>
-              </div>
+              </ChatbotSideBar>
             </PageNotificationsDrawer>
           </Page>
         ),

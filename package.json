@@ -43,10 +43,12 @@
     "e2e:awx": "cypress open --browser chrome --e2e --config-file=cypress.awx.config.ts",
     "e2e:hub": "cypress open --browser chrome --e2e --config-file=cypress.hub.config.ts",
     "e2e:eda": "cypress open --browser chrome --e2e --config-file=cypress.eda.config.ts",
-    "e2e:run": "concurrently npm:e2e:run:awx npm:e2e:run:hub npm:e2e:run:eda -c cyan,green,blue",
+    "e2e:chatbot": "cypress open --browser chrome --e2e --config-file=cypress.chatbot.config.ts",
+    "e2e:run": "concurrently npm:e2e:run:awx npm:e2e:run:hub npm:e2e:run:eda npm:e2e:run:chatbot -c cyan,green,blue",
     "e2e:run:awx": "LABELS='!flaky' cypress run --e2e --config-file=cypress.awx.config.ts",
     "e2e:run:hub": "LABELS='!flaky' cypress run --e2e --config-file=cypress.hub.config.ts",
     "e2e:run:eda": "LABELS='!flaky' cypress run --e2e --config-file=cypress.eda.config.ts",
+    "e2e:run:chatbot": "LABELS='!flaky' cypress run --e2e --config-file=cypress.chatbot.config.ts",
     "component": "CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT=600000 concurrently --kill-others-on-fail npm:component:* -c auto",
     "component:awx:access": "cypress run --component -q -p 3801 --spec frontend/awx/access/**/*.cy.ts,frontend/awx/access/**/*.cy.tsx",
     "component:awx:administration": "cypress run --component -q -p 3802 --spec frontend/awx/administration/**/*.cy.ts,frontend/awx/administration/**/*.cy.tsx",
@@ -61,6 +63,7 @@
     "component:junit-results": "cypress run --component --reporter junit --reporter-options mochaFile=cypress/junit-results/component-junit-result-[hash].xml"
   },
   "dependencies": {
+    "@ansible/ansible-ai-connect-chatbot": "^0.1.0",
     "@ansible/react-json-chart-builder": "2.0.1",
     "@babel/core": "7.26.7",
     "@babel/plugin-proposal-object-rest-spread": "7.20.7",

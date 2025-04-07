@@ -17,6 +17,7 @@
     "@ansible/common-ui": "*",
     "@ansible/eda-ui": "*",
     "@ansible/hub-ui": "*",
-    "@ansible/platform-ui": "*"
+    "@ansible/platform-ui": "*",
+    "@ansible/chatbot": "*"
   }
 }

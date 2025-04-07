@@ -10,6 +10,7 @@ export enum SERVER_NAME {
   EDA_SERVER = 'Event Driven Automation Server',
   HUB_SERVER = 'Automation Hub',
   GALAXY_SERVER = 'Galaxy Server',
+  LIGHTSPEED_SERVER = 'Lightspeed Server',
 }
 
 export const SAAS_URL: string = 'aws.ansiblecloud.com';

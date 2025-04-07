@@ -7,4 +7,5 @@ export default defineWorkspace([
   './frontend/eda/vite.config.ts',
   './frontend/awx/vite.config.ts',
   './frontend/hub/vite.config.ts',
+  './frontend/chatbot/vite.config.ts',
 ]);
