@@ -34,6 +34,7 @@ import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformSubscription } from './PlatformSubscription';
+import { ChatbotProvider } from '@ansible/chatbot/ChatbotProvider';
 
 // eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {
@@ -90,9 +91,11 @@ export function PlatformMainInternal() {
           <WebSocketProvider>
             <AwxConfigProvider disabled={!hasAwx}>
               <HubContextProvider disabled={!hasHub}>
-                <PlatformSubscription>
-                  <PlatformApp />
-                </PlatformSubscription>
+                <ChatbotProvider>
+                  <PlatformSubscription>
+                    <PlatformApp />
+                  </PlatformSubscription>
+                </ChatbotProvider>
               </HubContextProvider>
             </AwxConfigProvider>
           </WebSocketProvider>

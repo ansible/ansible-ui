@@ -27,6 +27,7 @@ import { PlatformAbout } from './PlatformAbout';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
+import { ChatbotToolbarItem } from '@ansible/chatbot/ChatbotToolbarItem';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ export function PlatformMasthead() {
   const logout = useCallback(async () => {
     try {
       await postRequest(gatewayAPI`/logout/`, {});
-    } catch (e) {
+    } catch {
       // do nothing
     }
     void refreshActiveAwxUser?.();
@@ -87,6 +88,7 @@ export function PlatformMasthead() {
         <ToolbarItem>
           <PageNotificationsIcon />
         </ToolbarItem>
+        <ChatbotToolbarItem />
         <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
             <DropdownItem

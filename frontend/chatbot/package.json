@@ -1,0 +1,22 @@
+{
+  "name": "@ansible/chatbot",
+  "type": "module",
+  "version": "0.0.0",
+  "dependencies": {
+    "@ansible/common-ui": "^0.0.0"
+  },
+  "localDependencies": {
+    "ansible-ai-connect-chatbot": "../../../back/chat-package/package"
+  },
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
+  }
+}

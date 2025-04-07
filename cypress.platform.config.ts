@@ -9,6 +9,7 @@ if (PLATFORM_SERVER && PLATFORM_SERVER.endsWith('/')) {
 }
 
 baseConfig.e2e!.specPattern = [
+  'cypress/e2e/chatbot/**/*.cy.ts',
   'cypress/e2e/platform/**/*.cy.ts',
   'cypress/e2e/awx/**/*.cy.ts',
   'cypress/e2e/eda/**/*.cy.ts',
