@@ -47,6 +47,8 @@ export function DataEditor(props: {
   useEffect(() => {
     if (innerDivEl.current) {
       const editor = monaco.editor.create(innerDivEl.current, {
+        wordWrap: 'on',
+        autoIndent: 'full',
         lineNumbers: props.lineNumbers ? 'on' : 'off',
         lineDecorationsWidth: props.lineNumbers ? undefined : 0,
         theme: 'data-editor-dark',
@@ -55,12 +57,31 @@ export function DataEditor(props: {
         fontFamily: 'RedHatMono',
         scrollBeyondLastLine: false,
         minimap: { enabled: false },
-        // renderLineHighlight: 'none',
         renderLineHighlightOnlyWhenFocus: true,
         scrollbar: {
           alwaysConsumeMouseWheel: false,
         },
       });
+
+      editor.addAction({
+        id: 'new-line-action',
+        label: 'new line',
+        keybindings: [monaco.KeyCode.Enter],
+        run: (editor: monaco.editor.ICodeEditor): void => {
+          const position = editor.getPosition();
+          const lineNumber = position?.lineNumber ?? 0;
+          const column = position?.column ?? 0;
+          const range = new monaco.Range(lineNumber, column, lineNumber, column);
+          editor.executeEdits('', [
+            {
+              range: range,
+              text: '\n',
+              forceMoveMarkers: true,
+            },
+          ]);
+        },
+      });
+
       editorRef.current.editor = editor;
       return () => {
         setTimeout(() => {
@@ -171,6 +192,7 @@ export function DataEditor(props: {
 const OuterDiv = styled.div`
   position: relative;
   min-height: 33px;
+  max-height: 600px;
 `;
 
 // The inner div is used to contain the editor and is absolutely positioned to fill the outer div

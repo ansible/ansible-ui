@@ -46,6 +46,7 @@ describe('Inventory Groups', () => {
       cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
         const newGroupName = 'E2E Group ' + randomString(4);
+        const variablesText = 'test: true\ntest2: false';
         cy.navigateTo('awx', 'inventories');
         cy.filterTableBySingleSelect('name', inventory.name);
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
@@ -55,7 +56,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
-        cy.dataEditorTypeByDataCy('variables', 'test: true');
+        cy.dataEditorTypeByDataCy('variables', variablesText);
         cy.intercept('POST', awxAPI`/groups/`).as('created');
         cy.clickButton(/^Create group/);
         cy.wait('@created')
@@ -65,7 +66,7 @@ describe('Inventory Groups', () => {
           });
         cy.hasDetail(/^Name$/, newGroupName);
         cy.hasDetail(/^Description$/, 'This is a description');
-        cy.hasDetail(/^Variables$/, 'test: true');
+        cy.hasDetail(/^Variables$/, variablesText);
         cy.contains('span', 'Back to Groups').click();
         cy.filterTableBySingleSelect('name', newGroupName);
         cy.get('[data-ouia-component-id="simple-table"]').within(() => {
