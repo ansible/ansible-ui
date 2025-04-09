@@ -26,6 +26,7 @@ export function EdaLogin(props: { children: React.ReactNode }) {
         }}
         brandImg="/assets/eda-logo.svg"
         brandImgAlt={process.env.PRODUCT as unknown as string}
+        showLoginForm={true}
       />
     );
   }

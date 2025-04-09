@@ -56,6 +56,7 @@ export function HubLogin(props: {
         brandImg={props.brandImg ? props.brandImg : '/assets/galaxy-logo.svg'}
         brandImgAlt={process.env.PRODUCT as unknown as string}
         otherOptions={props.otherOptions}
+        showLoginForm={true}
       />
     );
   }
