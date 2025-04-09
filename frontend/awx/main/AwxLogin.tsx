@@ -61,6 +61,7 @@ export function AwxLogin(props: {
         brandImg={props.brandImg ? props.brandImg : '/assets/awx-logo.svg'}
         brandImgAlt={process.env.PRODUCT as unknown as string}
         otherOptions={props.otherOptions}
+        showLoginForm={true}
       />
     );
   }

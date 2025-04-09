@@ -16,10 +16,11 @@ export type AuthOption = {
 
 type SocialAuthLoginProps = {
   options?: AuthOption[];
+  helperText?: React.ReactNode;
 };
 
 export function SocialAuthLogin(props: SocialAuthLoginProps) {
-  const { options } = props;
+  const { options, helperText } = props;
   const { t } = useTranslation();
 
   if (!options || !Object.keys(options).length) {
@@ -30,6 +31,7 @@ export function SocialAuthLogin(props: SocialAuthLoginProps) {
     <>
       <Stack style={{ width: '100%' }} hasGutter>
         {t('Log in with:')}
+        {helperText && <div data-cy={'social-error'}>{helperText}</div>}
         {options.map((option) => (
           <SocialAuthLink key={option.login_url} option={option} />
         ))}

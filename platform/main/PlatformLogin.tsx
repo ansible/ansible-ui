@@ -17,7 +17,6 @@ export function PlatformLogin(props: { children: ReactNode }) {
   const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
   const { t } = useTranslation();
 
-  const hideAuthOptions = options ? !options.show_login_form : false;
   const hideLegacyAuthOptions = options ? !options?.legacy_auth_enabled : false;
 
   const brandImg = options?.custom_logo ? (
@@ -96,7 +95,8 @@ export function PlatformLogin(props: { children: ReactNode }) {
                   },
                 ]
           }
-          authOptions={hideAuthOptions ? undefined : options?.ssos}
+          authOptions={options && options?.ssos.length > 0 ? options?.ssos : undefined}
+          showLoginForm={options?.show_login_form ?? true}
           brandImg={brandImg}
           brandImgAlt={process.env.PRODUCT as unknown as string}
           textContent={options?.custom_login_info}

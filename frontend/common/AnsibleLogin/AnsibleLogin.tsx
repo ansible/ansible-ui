@@ -41,6 +41,9 @@ export function AnsibleLogin(props: {
   /** Content rendered inside of social media login footer section */
   authOptions?: AuthOption[];
 
+  /** Attribute that specifies the URL of the login page */
+  showLoginForm: boolean;
+
   /** Attribute that specifies the URL of the background image for the login page */
   backgroundImgSrc?: string;
 
@@ -57,6 +60,7 @@ export function AnsibleLogin(props: {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [helperText, setHelperText] = useState<ReactNode>('');
+  const [socialAuthErrorText, setSocialAuthErrorText] = useState<ReactNode>('');
   const location = useLocation();
 
   const { loginApiUrl } = props;
@@ -125,7 +129,12 @@ export function AnsibleLogin(props: {
   const hasAuthFailedFlag = location.search.includes('auth_failed');
   useEffect(() => {
     if (hasAuthFailedFlag) {
-      setHelperText(<ErrorSpanStyled>{t('Unable to complete social auth login')}</ErrorSpanStyled>);
+      setSocialAuthErrorText(
+        <>
+          <ErrorExclamationCircleIconStyled style={{ marginRight: '5px' }} />
+          <ErrorSpanStyled>{t('Unable to complete social auth login')}</ErrorSpanStyled>
+        </>
+      );
     }
   }, [hasAuthFailedFlag, t]);
 
@@ -157,49 +166,53 @@ export function AnsibleLogin(props: {
       >
         <LoginMainHeader
           title={props.loginTitle ?? t('Log in to your account')}
-          subtitle={props.loginSubtitle}
+          subtitle={props.showLoginForm ? props.loginSubtitle : undefined}
         />
-        <LoginMainBody>
-          <LoginForm
-            showHelperText={!!helperText}
-            helperText={helperText}
-            helperTextIcon={<ErrorExclamationCircleIconStyled />}
-            usernameLabel={t('Username')}
-            usernameValue={username}
-            onChangeUsername={(_, username) => {
-              setHelperText('');
-              setUsername(username);
-            }}
-            isValidUsername={!helperText || !!username}
-            passwordLabel={t('Password')}
-            passwordValue={password}
-            onChangePassword={(_, password) => {
-              setHelperText('');
-              setPassword(password);
-            }}
-            isValidPassword={!helperText || !!password}
-            isShowPasswordEnabled
-            showPasswordAriaLabel={t('Show password')}
-            hidePasswordAriaLabel={t('Hide password')}
-            loginButtonLabel={t('Log in')}
-            onLoginButtonClick={(event) => {
-              event.preventDefault();
-              if (!username) {
-                setHelperText(t('Username is required'));
-                return;
-              }
-              if (!password) {
-                setHelperText(t('Password is required'));
-                return;
-              }
-              void onSubmit();
-            }}
-          />
-        </LoginMainBody>
+        {props.showLoginForm && (
+          <LoginMainBody>
+            <LoginForm
+              showHelperText={!!helperText}
+              helperText={helperText}
+              helperTextIcon={<ErrorExclamationCircleIconStyled />}
+              usernameLabel={t('Username')}
+              usernameValue={username}
+              onChangeUsername={(_, username) => {
+                setHelperText('');
+                setUsername(username);
+              }}
+              isValidUsername={!helperText || !!username}
+              passwordLabel={t('Password')}
+              passwordValue={password}
+              onChangePassword={(_, password) => {
+                setHelperText('');
+                setPassword(password);
+              }}
+              isValidPassword={!helperText || !!password}
+              isShowPasswordEnabled
+              showPasswordAriaLabel={t('Show password')}
+              hidePasswordAriaLabel={t('Hide password')}
+              loginButtonLabel={t('Log in')}
+              onLoginButtonClick={(event) => {
+                event.preventDefault();
+                if (!username) {
+                  setHelperText(t('Username is required'));
+                  return;
+                }
+                if (!password) {
+                  setHelperText(t('Password is required'));
+                  return;
+                }
+                void onSubmit();
+              }}
+            />
+          </LoginMainBody>
+        )}
         {props.authOptions && (
           <LoginMainFooter
             socialMediaLoginContent={
-              props.authOptions ? <SocialAuthLogin options={props.authOptions} /> : undefined
+              props.authOptions ? (
+                <SocialAuthLogin helperText={socialAuthErrorText} options={props.authOptions} />
+              ) : undefined
             }
             socialMediaLoginAriaLabel={t('Log in with authentication provider')}
           />
