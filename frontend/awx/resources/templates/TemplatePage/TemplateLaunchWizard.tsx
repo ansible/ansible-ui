@@ -279,6 +279,11 @@ export function LaunchWizard({
       inputs: <TemplateLaunchPromptStep defaultValues={initialValues} />,
       hidden: () => shouldHideOtherStep(config),
       validate: async (formData) => {
+        if (jobType === 'workflow_job_templates') {
+          // Skip validation for workflows — they don't have credentials
+          return;
+        }
+
         const missingCredentialTypes: string[] = [];
         await requestGet<AwxItemsResponse<Credential>>(
           awxAPI`/job_templates/${template.id?.toString()}/credentials/`
