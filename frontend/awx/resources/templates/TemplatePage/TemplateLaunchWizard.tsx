@@ -100,8 +100,8 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
     error: getLaunchError,
     refresh: getLaunchRefresh,
   } = useGet<LaunchConfiguration>(awxAPI`/${jobType}/${resourceId}/launch/`);
-  const error = getTemplateError || getLaunchError;
-  const refresh = getTemplateRefresh || getLaunchRefresh;
+  const error = getTemplateError ?? getLaunchError;
+  const refresh = getTemplateRefresh ?? getLaunchRefresh;
   const getJobOutputUrl = useGetJobOutputUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
