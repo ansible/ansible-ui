@@ -171,6 +171,7 @@ describe('Credential form', () => {
   it('Create credential using Insights', () => {
     cy.selectSingleSelectOption('[data-cy="credential_type"]', 'Insights');
     assertOnSubFormFields('Insights');
+    cy.get('[data-cy="credential-form-insights-alert"]').should('exist');
   });
 
   it('Create credential using Machine', () => {

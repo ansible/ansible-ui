@@ -15,12 +15,12 @@ import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { Button, ButtonVariant, Icon, Tooltip } from '@patternfly/react-core';
+import { Alert, Button, ButtonVariant, Icon, Tooltip } from '@patternfly/react-core';
 import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
@@ -51,7 +51,7 @@ interface CredentialSelectProps extends CredentialInputField {
   name: string;
 }
 
-export interface initialValues {
+export interface InitialValues {
   name: string;
   description: string;
   credential_type: number;
@@ -328,7 +328,7 @@ export function EditCredential() {
     return promptPasswordObj;
   }, [credential]);
 
-  const initialValues: initialValues = useMemo(
+  const initialValues: InitialValues = useMemo(
     () => ({
       name: credential?.name ?? '',
       description: credential?.description ?? '',
@@ -535,7 +535,7 @@ function CredentialInputs({
   setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
   setWatchedSubFormFields: (fields: unknown[]) => void;
   setFieldEncryptedID?: React.Dispatch<React.SetStateAction<string[]>>;
-  initialValues?: initialValues;
+  initialValues?: InitialValues;
 }) {
   const { t } = useTranslation();
 
@@ -570,7 +570,7 @@ function CredentialInputs({
       }
     });
 
-    setIsTestButtonEnabled(verify.length >= requiredFields.length ? true : false);
+    setIsTestButtonEnabled(verify.length >= requiredFields.length);
   }, [watchedRequiredFields, setIsTestButtonEnabled]);
 
   return (
@@ -603,11 +603,11 @@ function CredentialInputs({
       credentialTypes &&
       credentialTypes[credentialTypeID] ? (
         <CredentialSubForm
-          credentialType={credentialTypes[credentialTypeID]}
+          credentialType={credentialTypes?.[credentialTypeID]}
           setCredentialPluginValues={setCredentialPluginValues}
           isEditMode={isEditMode}
           initialValues={initialValues}
-          accumulatedPluginValues={accumulatedPluginValues ? accumulatedPluginValues : []}
+          accumulatedPluginValues={accumulatedPluginValues || []}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
           setPluginsToDelete={setPluginsToDelete}
           setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
@@ -639,7 +639,7 @@ function CredentialSubForm({
   setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
   setWatchedSubFormFields: (fields: unknown[]) => void;
   setFieldEncryptedID?: React.Dispatch<React.SetStateAction<string[]>>;
-  initialValues?: initialValues;
+  initialValues?: InitialValues;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
@@ -664,7 +664,7 @@ function CredentialSubForm({
       }
     });
 
-    setIsTestButtonEnabledSubForm(verify.length >= requiredFieldsInSubForm?.length ? true : false);
+    setIsTestButtonEnabledSubForm(verify.length >= requiredFieldsInSubForm?.length);
   }, [watchedRequiredFields, setIsTestButtonEnabledSubForm, requiredFieldsInSubForm]);
 
   if (!credentialType || !credentialType?.inputs?.fields) {
@@ -686,6 +686,24 @@ function CredentialSubForm({
 
   return hasFields ? (
     <PageFormSection title={t('Type Details')}>
+      <PageFormSection singleColumn>
+        {credentialType?.kind === 'insights' && (
+          <Alert
+            variant="info"
+            isInline
+            title={t('Input username and password or client ID and client secret.')}
+            data-cy="credential-form-insights-alert"
+          >
+            <Trans>
+              Enter your client ID and client secret to create your Insights credential. See this{' '}
+              <Link to="https://access.redhat.com/articles/7108804" target="_">
+                <strong>Knowledgebase article</strong>
+              </Link>{' '}
+              for more detail.
+            </Trans>
+          </Alert>
+        )}
+      </PageFormSection>
       {credentialType?.namespace === 'gce' && <GCEUploadField />}
       {stringFields.length > 0 &&
         stringFields.map((field) => {
