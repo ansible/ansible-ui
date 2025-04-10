@@ -102,3 +102,19 @@ jobs:
         with:
           name: junit-results-${{ env.TEST_DIR }}
           path: cypress/junit-results/*
+
+      - name: Sanitize directory name
+        run: |
+          echo "INPUT_DIR=${{ inputs.directory }}" | sed 's|/|_|g' >> $GITHUB_ENV
+          echo "MATRIX_DIR=${{ matrix.directory }}" | sed 's|/|_|g' >> $GITHUB_ENV
+  
+      - name: Upload Cypress Screenshots
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: cypress-${{ env.INPUT_DIR }}-${{ env.MATRIX_DIR }}
+          path: cypress/screenshots
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: ignore
+    
