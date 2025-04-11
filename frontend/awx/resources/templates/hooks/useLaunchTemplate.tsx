@@ -77,7 +77,8 @@ export function canLaunchWithoutPrompt(launchData: TemplateLaunch) {
     launchData.can_start_without_user_input &&
     !launchData.survey_enabled &&
     (!launchData.passwords_needed_to_start || launchData.passwords_needed_to_start.length === 0) &&
-    (!launchData.variables_needed_to_start || launchData.variables_needed_to_start.length === 0)
+    (!launchData.variables_needed_to_start || launchData.variables_needed_to_start.length === 0) &&
+    !launchData.ask_nodes_job_type_on_launch
   );
 }
 

@@ -4,6 +4,7 @@ export interface LaunchConfiguration {
   can_start_without_user_input: boolean;
   passwords_needed_to_start: string[];
   ask_scm_branch_on_launch: boolean;
+  ask_nodes_job_type_on_launch: boolean;
   ask_variables_on_launch: boolean;
   ask_tags_on_launch: boolean;
   ask_diff_mode_on_launch: boolean;
@@ -39,6 +40,7 @@ export interface LaunchConfiguration {
     limit: string;
     labels: { id: number; name: string }[];
     scm_branch: string;
+    nodes_job_type: 'run' | 'check';
     job_tags: string;
     skip_tags: string;
     extra_vars: string;

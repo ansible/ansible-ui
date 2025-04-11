@@ -66,6 +66,7 @@ export function NodePromptsStep() {
       limit: prompt?.limit ?? defaults.limit,
       organization: prompt?.organization ?? organizationId,
       scm_branch: prompt?.scm_branch ?? defaults.scm_branch,
+      nodes_job_type: prompt?.nodes_job_type ?? defaults.nodes_job_type,
       skip_tags: prompt?.skip_tags ?? parseStringToTagArray(defaults.skip_tags),
       timeout: prompt?.timeout ?? defaults.timeout,
       verbosity: prompt?.verbosity ?? defaults.verbosity,
@@ -261,6 +262,23 @@ export function NodePromptsStep() {
           label={t('Variables')}
           name="prompt.extra_vars"
           format="yaml"
+        />
+      </ConditionalField>
+      <ConditionalField isHidden={!config.ask_nodes_job_type_on_launch}>
+        <PageFormSelect<WizardFormValues>
+          isRequired
+          id="nodes_job_type"
+          label={t('Nodes job type')}
+          labelHelpTitle={t('Nodes job type')}
+          labelHelp={t(
+            'Set the job type for each node. This feature prevents the creation of identical workflows with only different job types.'
+          )}
+          name="prompt.nodes_job_type"
+          options={[
+            { label: t('Check'), value: 'check' },
+            { label: t('Run'), value: 'run' },
+          ]}
+          placeholderText={t('Select nodes job type')}
         />
       </ConditionalField>
     </PageFormGrid>

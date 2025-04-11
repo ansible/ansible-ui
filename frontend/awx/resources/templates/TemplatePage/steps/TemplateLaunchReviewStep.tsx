@@ -197,6 +197,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
           {prompt?.skip_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}
         </LabelGroup>
       </PageDetail>
+      <PageDetail label={t('Nodes job type')}>{prompt?.nodes_job_type}</PageDetail>
       <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />
     </PageDetails>
   );

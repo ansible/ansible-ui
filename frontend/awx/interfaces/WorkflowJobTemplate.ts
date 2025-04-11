@@ -27,6 +27,7 @@ export interface WorkflowJobTemplate
   type: 'workflow_job_template';
   created: string;
   allow_simultaneous: boolean;
+  ask_nodes_job_type_on_launch: boolean;
   modified: string;
   webhook_service: string;
   skip_tags: string;
@@ -120,6 +121,7 @@ export interface WorkflowJobTemplateForm
     | 'webhook_credential'
     | 'skip_tags'
     | 'job_tags'
+    | 'nodes_job_type'
     | 'type'
     | 'execution_environment'
     | 'id'
@@ -159,6 +161,7 @@ export interface WorkflowJobTemplateCreate
     | 'summary_fields'
     | 'related'
     | 'job_type'
+    | 'nodes_job_type'
     | 'type'
     | 'created'
     | 'modified'
@@ -183,4 +186,5 @@ export interface WorkflowJobTemplateCreate
   webhook_credential: number | null;
   extra_vars: string;
   organization?: number;
+  ask_nodes_job_type_on_launch: boolean;
 }

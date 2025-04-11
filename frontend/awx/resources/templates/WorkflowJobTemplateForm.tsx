@@ -74,6 +74,7 @@ export function EditWorkflowJobTemplate() {
       ask_skip_tags_on_launch: workflowJobTemplate.ask_skip_tags_on_launch || false,
       ask_tags_on_launch: workflowJobTemplate.ask_tags_on_launch || false,
       ask_variables_on_launch: workflowJobTemplate.ask_variables_on_launch || false,
+      ask_nodes_job_type_on_launch: workflowJobTemplate.ask_nodes_job_type_on_launch || false,
       description: workflowJobTemplate.description || '',
       extra_vars: workflowJobTemplate.extra_vars || '---',
       inventory: workflowJobTemplate.summary_fields.inventory || null,

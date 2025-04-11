@@ -39,7 +39,10 @@ export function WorkflowJobTemplateDetails(props: {
 
   const { summary_fields: summaryFields } = template;
 
-  const showOptionsField = template.allow_simultaneous || template.webhook_service;
+  const showOptionsField =
+    template.allow_simultaneous ||
+    template.webhook_service ||
+    template.ask_nodes_job_type_on_launch;
 
   const inventoryUrlPaths: { [key: string]: string } = {
     '': 'inventory',
@@ -136,6 +139,11 @@ export function WorkflowJobTemplateDetails(props: {
           )}
           {template.webhook_service && (
             <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>
+          )}
+          {template.ask_nodes_job_type_on_launch && (
+            <TextListItem component={TextListItemVariants.li}>
+              {t`Prompt on launch for nodes job type`}
+            </TextListItem>
           )}
         </TextList>
       </PageDetail>

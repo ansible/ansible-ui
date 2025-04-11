@@ -125,6 +125,14 @@ export function WorkflowJobTemplateInputs(props: {
           label={t('Enable concurrent jobs')}
           name="allow_simultaneous"
         />
+        <PageFormCheckbox<WorkflowJobTemplateForm>
+          labelHelpTitle={t('Nodes job type')}
+          labelHelp={t(
+            'If enabled, a prompt will appear during workflow launch, allowing you to set the job type for each node. This feature prevents the creation of identical workflows with only different job types. NOTE: If your workflow contains nodes with mixed job_type values, enabling this feature will override all of them with a single job_type at execution time.'
+          )}
+          label={t('Enable prompt on launch for nodes job type')}
+          name="ask_nodes_job_type_on_launch"
+        />
       </PageFormSection>
 
       {isWebhookEnabled ? <WebhookSubForm templateType="workflow_job_templates" /> : null}

@@ -59,6 +59,7 @@ export function shouldHideOtherStep(launchData: LaunchConfiguration) {
     launchData.ask_tags_on_launch ||
     launchData.ask_timeout_on_launch ||
     launchData.ask_variables_on_launch ||
-    launchData.ask_verbosity_on_launch
+    launchData.ask_verbosity_on_launch ||
+    launchData.ask_nodes_job_type_on_launch
   );
 }

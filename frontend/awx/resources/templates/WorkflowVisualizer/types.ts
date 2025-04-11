@@ -136,6 +136,7 @@ export interface PromptFormValues {
   labels: { name: string; id: number }[];
   limit: string;
   scm_branch: string;
+  nodes_job_type: string;
   skip_tags: { name: string }[];
   timeout: number;
   verbosity: 0 | 1 | 2 | 3 | 4 | 5;

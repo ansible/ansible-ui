@@ -49,6 +49,7 @@ export const formFieldToLaunchConfig = {
   timeout: 'ask_timeout_on_launch',
   extra_vars: 'ask_variables_on_launch',
   verbosity: 'ask_verbosity_on_launch',
+  nodes_job_type: 'ask_nodes_job_type_on_launch',
 };
 
 export interface TemplateLaunch {
@@ -77,6 +78,7 @@ interface LaunchPayload {
   skip_tags: string;
   timeout: number;
   verbosity: number;
+  nodes_job_type: string;
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
 
@@ -156,6 +158,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           setValue('skip_tags', prompt.skip_tags?.map((tag) => tag.name).join(','));
           setValue('timeout', prompt.timeout);
           setValue('verbosity', prompt.verbosity);
+          setValue('nodes_job_type', prompt.nodes_job_type);
         }
         if (labelPayload.length > 0) {
           setValue('labels', labelPayload);
@@ -244,6 +247,7 @@ export function LaunchWizard({
       skip_tags: parseStringToTagArray(defaults.skip_tags),
       timeout: defaults.timeout,
       verbosity: defaults.verbosity,
+      nodes_job_type: defaults.nodes_job_type,
     },
     launch_config: config,
     survey: {},

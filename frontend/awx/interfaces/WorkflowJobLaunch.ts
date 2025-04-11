@@ -9,6 +9,7 @@ export interface WorkflowJobLaunch {
   ask_limit_on_launch: boolean;
   ask_scm_branch_on_launch: boolean;
   ask_skip_tags_on_launch: boolean;
+  ask_nodes_job_type_on_launch: boolean;
   ask_tags_on_launch: boolean;
   ask_variables_on_launch: boolean;
   ask_verbosity_on_launch: boolean;
@@ -41,6 +42,7 @@ export interface WorkflowJobLaunch {
     }[];
     limit: string;
     scm_branch: string;
+    nodes_job_type: string;
     skip_tags: string;
     job_type: string;
     verbosity: number;
