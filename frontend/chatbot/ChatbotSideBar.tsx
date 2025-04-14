@@ -8,12 +8,14 @@ import {
   DrawerHead,
   DrawerPanelBody,
   DrawerPanelContent,
+  Flex,
+  FlexItem,
 } from '@patternfly/react-core';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { LazyChatbot } from './LazyChatbot';
 import { ChatbotStateEnum, useAppChatbotContext } from './ChatbotProvider';
-import { useTranslation } from 'react-i18next';
+import { LazyChatbotSideBarHeader } from './LazyChatbotSideBarHeader';
 
 const DrawerContentBodyStyled = styled(DrawerContentBody)`
   max-height: 100%;
@@ -21,7 +23,6 @@ const DrawerContentBodyStyled = styled(DrawerContentBody)`
 
 export const ChatbotSideBar = (props: { children?: ReactNode }) => {
   const { chatbotState, setChatbotState } = useAppChatbotContext();
-  const { t } = useTranslation();
 
   const drawerRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -36,9 +37,13 @@ export const ChatbotSideBar = (props: { children?: ReactNode }) => {
   const panelContent = (
     <DrawerPanelContent isResizable>
       <DrawerHead>
-        <span tabIndex={chatbotState === ChatbotStateEnum.Open ? 0 : -1} ref={drawerRef}>
-          {t('Ansible Virtual Assistant')}
-        </span>
+        <Flex>
+          <FlexItem style={{ display: 'flex', alignItems: 'center' }}>
+            <span tabIndex={chatbotState === ChatbotStateEnum.Open ? 0 : -1} ref={drawerRef}>
+              <LazyChatbotSideBarHeader />
+            </span>
+          </FlexItem>
+        </Flex>
         <DrawerActions>
           <DrawerCloseButton onClick={onCloseClick} />
         </DrawerActions>

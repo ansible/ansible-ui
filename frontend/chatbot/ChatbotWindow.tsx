@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChatbotMessage } from './ChatbotPortal';
 import { ChatbotContext } from '@ansible/ansible-ai-connect-chatbot/dist/AnsibleChatbot/AnsibleChatbot';
 import { App as Chatbot } from '@ansible/ansible-ai-connect-chatbot';
-import { PageSettingsContext } from '@ansible/ansible-ui-framework';
+import { usePageSettings } from '@ansible/ansible-ui-framework';
 
 const THEME_CLASS_LIGHT = 'pf-v6-theme-light';
 const THEME_CLASS_DARK = 'pf-v6-theme-dark';
 
 export const ChatbotWindow = () => {
   const [context, setContext] = useState<ChatbotContext | null>(null); // string | undefined
-  const [settings] = useContext(PageSettingsContext);
+  const { activeTheme } = usePageSettings();
 
   const getFrameWindow = () => window[0];
 
@@ -36,12 +36,12 @@ export const ChatbotWindow = () => {
 
   useEffect(
     function () {
-      if (settings.theme) {
+      if (activeTheme) {
         const classList = getFrameWindow().document.getElementsByTagName('html')[0].classList;
-        if (settings.theme === 'dark') {
+        if (activeTheme === 'dark') {
           classList.remove(THEME_CLASS_LIGHT);
           classList.add(THEME_CLASS_DARK);
-        } else if (settings.theme === 'light') {
+        } else if (activeTheme === 'light') {
           classList.remove(THEME_CLASS_DARK);
           classList.add(THEME_CLASS_LIGHT);
         } else {
@@ -50,7 +50,7 @@ export const ChatbotWindow = () => {
         }
       }
     },
-    [settings.theme]
+    [activeTheme]
   );
 
   return <Chatbot username={context?.username} />;
