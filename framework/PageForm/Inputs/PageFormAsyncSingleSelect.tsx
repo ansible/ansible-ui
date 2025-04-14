@@ -26,6 +26,7 @@ export type PageFormAsyncSingleSelectProps<
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
   isReadOnly?: boolean;
+  onChange?: (value: string) => void;
 } & Pick<
   PageAsyncSingleSelectProps<ValueT>,
   | 'id'
@@ -95,7 +96,12 @@ export function PageFormAsyncSingleSelect<
               queryErrorText={props.queryErrorText}
               aria-describedby={id ? `${id}-form-group` : undefined}
               value={value}
-              onSelect={onChange}
+              onSelect={(newValue) => {
+                onChange(newValue);
+                if (props.onChange) {
+                  props.onChange(newValue as string);
+                }
+              }}
               isDisabled={isDisabled}
               footer={props.footer}
               onBrowse={props.onBrowse}

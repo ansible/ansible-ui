@@ -1,14 +1,14 @@
+import { useState } from 'react';
 import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Button, FormFieldGroup, FormFieldGroupHeader } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
-import { PlatformRole } from '../../../../interfaces/PlatformRole';
 import { PageFormPlatformOrganizationNameSelect } from '../../../organizations/components/PageFormPlatformOrganizationNameSelect';
 import { PageFormPlatformTeamNameSelect } from '../../../organizations/components/PageFormPlatformTeamNameSelect';
 import { PageFormPlatformRoleNameSelect } from '../../../roles/components/PageFormPlatformRoleNameSelect';
@@ -39,36 +39,18 @@ export function MapFields(props: {
   index: number;
   map: AuthenticatorMapValues;
   onDelete: (id: number) => void;
-  roles?: PlatformRole[];
+  groupOptions: { label: string; value: string }[];
+  roleTypes: { [k: string]: string };
 }) {
-  const { index, map, onDelete, roles } = props;
+  const { index, map, onDelete, groupOptions, roleTypes } = props;
   const { register, getValues } = useFormContext();
   const { t } = useTranslation();
+  const formValues = getValues() as AuthenticatorFormValues;
+  const roleName = formValues?.mappings[index]?.role ?? '';
+  const [roleType, setRoleType] = useState(roleTypes[roleName] ?? '');
+  const isOrgRoleSelected = roleType === 'shared.organization';
+  const isTeamRoleSelected = roleType === 'shared.team';
   const mapType = map.map_type;
-
-  const options = new Set<string>();
-  const { mappings = [] } = getValues() as AuthenticatorFormValues;
-
-  mappings?.forEach((mapping) => {
-    if (mapping.trigger !== 'groups') {
-      return;
-    }
-    mapping.groups_value?.forEach(({ name }) => options.add(name));
-  });
-
-  const selectedRoleName = useWatch({ name: `mappings.${index}.role` }) as string;
-  let isOrgRoleSelected = false;
-  let isTeamRoleSelected = false;
-  if (selectedRoleName && roles) {
-    const selectedRole = roles.find((r) => r.name === selectedRoleName);
-    isOrgRoleSelected = selectedRole?.content_type === 'shared.organization';
-    isTeamRoleSelected = selectedRole?.content_type === 'shared.team';
-  }
-
-  const groupOptions = Array.from(options).map((name) => ({
-    value: name,
-    label: name,
-  }));
 
   const label = {
     allow: t('Allow'),
@@ -229,6 +211,11 @@ export function MapFields(props: {
               <PageFormPlatformRoleNameSelect
                 name={`mappings.${index}.role`}
                 contentType={roleContentType}
+                onChange={(value: string) => {
+                  if (value && roleTypes) {
+                    setRoleType(roleTypes[value] || '');
+                  }
+                }}
                 isRequired
               />
             </PageFormHidden>
