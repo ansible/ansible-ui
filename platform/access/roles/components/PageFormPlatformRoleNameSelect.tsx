@@ -18,7 +18,12 @@ export function PageFormPlatformRoleNameSelect<
     TFieldValues,
     number
   >,
->(props: { name: TFieldName; contentType?: string | null; isRequired?: boolean }) {
+>(props: {
+  name: TFieldName;
+  contentType?: string | null;
+  isRequired?: boolean;
+  onChange?: (value: string) => void;
+}) {
   const { t } = useTranslation();
   const queryOptions = useQueryRoleOptions(props.contentType);
 
@@ -34,6 +39,7 @@ export function PageFormPlatformRoleNameSelect<
       queryErrorText={t('Error loading roles')}
       queryLabel={(name: string) => name}
       isRequired={props.isRequired}
+      onChange={props.onChange}
     />
   );
 }

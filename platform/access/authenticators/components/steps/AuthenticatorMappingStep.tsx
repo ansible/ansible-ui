@@ -48,6 +48,25 @@ export function AuthenticatorMappingStep() {
     addMap(map);
   };
 
+  const options = new Set<string>();
+  (mappings as unknown as AuthenticatorMapValues[])?.forEach((mapping) => {
+    if (mapping.trigger !== 'groups') {
+      return;
+    }
+    mapping.groups_value?.forEach(({ name }) => options.add(name));
+  });
+  const groupOptions = Array.from(options).map((name) => ({
+    value: name,
+    label: name,
+  }));
+
+  const roleTypes: { [k: string]: string } = {};
+  if (!isRolesLoading && roles?.results) {
+    for (const r of roles.results) {
+      roleTypes[r.name] = r.content_type;
+    }
+  }
+
   return (
     <>
       <TextContent>
@@ -60,7 +79,8 @@ export function AuthenticatorMappingStep() {
             index={i}
             map={map as unknown as AuthenticatorMapValues}
             onDelete={removeMap}
-            roles={!roles || isRolesLoading ? undefined : roles.results}
+            groupOptions={groupOptions}
+            roleTypes={roleTypes}
           />
         ))}
       </PageFormSection>
