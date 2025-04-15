@@ -36,34 +36,36 @@ export function GitSubForm() {
     </Trans>
   );
   const sourceControlRefspecHelp = (
-    <Trans i18nKey="sourceControlRefspecHelp">
-      <span>
-        A refspec to fetch (passed to the Ansible git module). This parameter allows access to
-        references via the branch field not otherwise available.
-        <br />
-        <br />
-        Note: This field assumes the remote name is &quot;origin&quot;.
-        <br />
-        <br />
-        Examples include:
-        <ul style={{ margin: '10px 0 10px 20px' }}>
+    <span>
+      {t`A refspec to fetch (passed to the Ansible git
+                module). This parameter allows access to references via
+                the branch field not otherwise available.`}
+      <br />
+      <br />
+      {t`Note: This field assumes the remote name is "origin".`}
+      <br />
+      <br />
+      {t`Examples include:`}
+      <ul style={{ margin: '10px 0 10px 20px' }}>
+        <Trans>
           <li>
             <code>refs/*:refs/remotes/origin/*</code>
           </li>
           <li>
             <code>refs/pull/62/head:refs/remotes/origin/pull/62/head</code>
           </li>
-        </ul>
-        The first fetches all references. The second fetches the Github pull request number 62, in
-        this example the branch needs to be &quot;pull/62/head&quot;.
-        <br />
-        <br />
-        {t`For more information, refer to the`}{' '}
-        <ExternalLink href={useGetDocsUrl(config, 'managePlaybooksSC')}>
-          {t`Documentation.`}
-        </ExternalLink>
-      </span>
-    </Trans>
+        </Trans>
+      </ul>
+      {t`The first fetches all references. The second
+                fetches the Github pull request number 62, in this example
+                the branch needs to be "pull/62/head".`}
+      <br />
+      <br />
+      {t`For more information, refer to the`}{' '}
+      <ExternalLink href={useGetDocsUrl(config, 'managePlaybooksSC')}>
+        {t`Documentation.`}
+      </ExternalLink>
+    </span>
   );
 
   return (

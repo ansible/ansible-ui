@@ -57,7 +57,7 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
         name="executionEnvironment"
         label={t('Execution environment')}
         labelHelp={t`The execution environment that will be used for jobs
-          inside of this organization. This will be used a fallback when
+          inside of this organization. This will be used as a fallback when
           an execution environment has not been explicitly assigned at the
           project, job template or workflow level.`}
       />
