@@ -3,8 +3,13 @@ import { Page, expect } from '@playwright/test';
 /**
  * Logs out of Platform UI
  */
-export async function logout(page: Page) {
-  await page.getByRole('button', { name: `${process.env.PLATFORM_USERNAME!}` }).click();
+export async function logout(page: Page, options?: { username?: string }) {
+  await page
+    .getByRole('button', {
+      name: `${options?.username ?? process.env.PLATFORM_USERNAME!}`,
+      exact: true,
+    })
+    .click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
 
   // Verify we are on the AAP page

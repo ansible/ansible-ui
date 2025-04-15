@@ -45,6 +45,7 @@ import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
+import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -60,6 +61,8 @@ export function usePlatformNavigation() {
   const { data: oauthApplications } = useGet<AwxItemsResponse<Application>>(gatewayAPI`/app_urls/`);
 
   const { activePersonaViewId } = usePersonaView();
+
+  const { activeAwxUser } = useAwxActiveUser();
 
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
 
@@ -158,7 +161,9 @@ export function usePlatformNavigation() {
         findNavigationItemById(navigationItems, PlatformRoute.AWX)!.hidden = true;
         findNavigationItemById(navigationItems, PlatformRoute.EDA)!.hidden = true;
         findNavigationItemById(navigationItems, PlatformRoute.HUB)!.hidden = true;
-        findNavigationItemById(navigationItems, AwxRoute.Analytics)!.hidden = true;
+        if (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) {
+          removeNavigationItemById(navigationItems, AwxRoute.Analytics);
+        }
         findNavigationItemById(navigationItems, PlatformRoute.Lightspeed)!.hidden = true;
         findNavigationItemById(navigationItems, PlatformRoute.Access)!.hidden = true;
         findNavigationItemById(navigationItems, AwxRoute.Settings)!.hidden = true;
@@ -185,8 +190,12 @@ export function usePlatformNavigation() {
       case 'developer': {
         findNavigationItemById(navigationItems, AwxRoute.Instances)!.hidden = true;
         findNavigationItemById(navigationItems, AwxRoute.InstanceGroups)!.hidden = true;
-        findNavigationItemById(navigationItems, AwxRoute.ManagementJobs)!.hidden = true;
-        findNavigationItemById(navigationItems, AwxRoute.Analytics)!.hidden = true;
+        if (activeAwxUser?.is_superuser) {
+          removeNavigationItemById(navigationItems, AwxRoute.ManagementJobs);
+        }
+        if (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) {
+          removeNavigationItemById(navigationItems, AwxRoute.Analytics);
+        }
         findNavigationItemById(navigationItems, PlatformRoute.Access)!.hidden = true;
         break;
       }
@@ -199,12 +208,14 @@ export function usePlatformNavigation() {
     automationDecisionsNavigation,
     automationAnalytics,
     automationContentNavigation,
+    oauthApplications,
     platformAccessNavigation,
     platformSettingsNavigation,
-    platformResourcesNavigation,
     managedCloudInstall,
+    platformResourcesNavigation,
     activePersonaViewId,
-    oauthApplications,
+    activeAwxUser?.is_superuser,
+    activeAwxUser?.is_system_auditor,
   ]);
 
   return pageNavigationItems;

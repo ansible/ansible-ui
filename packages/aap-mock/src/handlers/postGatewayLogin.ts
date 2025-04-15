@@ -1,12 +1,12 @@
 import { MockRequest, MockResponse } from '../mock-router';
 
 export function postGatewayLogin(request: MockRequest): MockResponse {
-  const user = {
-    id: 1,
-    username: 'mock',
-    is_superuser: true,
-    summary_fields: { resource: { ansible_id: '1' } },
-  };
+  const { username } = request.body as { username: string };
+  const users = request.context.data.api.gateway.v1.users;
+  const user = users.find((user) => user.username === username);
+  if (!user) {
+    return { status: 401, body: { error: 'Unauthorized' } };
+  }
   request.context.data.api.gateway.v1.me = [
     user as unknown as (typeof request.context.data.api.gateway.v1.me)[0],
   ];
