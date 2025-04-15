@@ -76,7 +76,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
   considered current, and a new project update will be
   performed.`;
   const defaultEnvironmentHelpText = t`The execution environment that will be used for jobs
-  inside of this organization. This will be used a fallback when
+  inside of this organization. This will be used as a fallback when
   an execution environment has not been explicitly assigned at the
   project, job template or workflow level.`;
   const sourceControlRefspecHelpBlock = (

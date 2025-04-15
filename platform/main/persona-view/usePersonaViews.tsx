@@ -22,7 +22,7 @@ export function usePersonaViews(): IPersonaView[] {
       id: 'operator',
       name: t('Operator View'),
       description: t(
-        "The operator view is for users who's primary focus is on executing automation."
+        'The operator view is for users whose primary focus is on executing automation.'
       ),
     },
   ];

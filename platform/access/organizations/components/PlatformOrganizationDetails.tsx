@@ -80,7 +80,7 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
             verifyMissingVirtualEnv
             isDefaultEnvironment
             helpText={t`The execution environment that will be used for jobs
-            inside of this organization. This will be used a fallback when
+            inside of this organization. This will be used as a fallback when
             an execution environment has not been explicitly assigned at the
             project, job template or workflow level.`}
           />
