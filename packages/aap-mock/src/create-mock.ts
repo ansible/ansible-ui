@@ -24,6 +24,7 @@ import { getItems } from './handlers/getItems';
 import { getOptions } from './handlers/getOptions';
 import { patchData } from './handlers/patchData';
 import { postGatewayLogin } from './handlers/postGatewayLogin';
+import { postGatewayLogout } from './handlers/postGatewayLogout';
 import { postItem } from './handlers/postItem';
 import { Router } from './mock-router';
 
@@ -36,6 +37,7 @@ export function createMock() {
 
     .GET('/api/gateway/v1/login', () => ({ status: 200 }))
     .POST('/api/gateway/v1/login', postGatewayLogin)
+    .POST('/api/gateway/v1/logout', postGatewayLogout)
     .GET('/api/gateway/v1/ui_auth', getData())
     .GET('/api/gateway/v1/legacy_auth', getData())
     .GET('/api/gateway/v1/ping', () => ({ status: 200 }))

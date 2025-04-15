@@ -13,7 +13,11 @@ export const platformURL = new URL(platformUI);
 /**
  * Logs into the Ansible Automation Platform UI.
  */
-export async function login(page: Page, url: string = platformUI) {
+export async function login(
+  page: Page,
+  url: string = platformUI,
+  options?: { username?: string; password?: string }
+) {
   // Go to the login page
   await page.goto(url);
 
@@ -21,10 +25,10 @@ export async function login(page: Page, url: string = platformUI) {
   await expect(page).toHaveTitle(/Ansible Automation Platform/);
 
   // Enter the username
-  await page.fill('#pf-login-username-id', process.env.PLATFORM_USERNAME!);
+  await page.fill('#pf-login-username-id', options?.username ?? process.env.PLATFORM_USERNAME!);
 
   // Enter the password
-  await page.fill('#pf-login-password-id', process.env.PLATFORM_PASSWORD!);
+  await page.fill('#pf-login-password-id', options?.password ?? process.env.PLATFORM_PASSWORD!);
 
   // Click the login button
   await page.click('button[type="submit"]');

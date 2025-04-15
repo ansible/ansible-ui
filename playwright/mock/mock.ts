@@ -23,7 +23,10 @@ export async function mock(page: Page) {
     if (typeof route.request().postData() === 'string') {
       try {
         request.body = JSON.parse(route.request().postData()!) as Record<string, unknown>;
-      } catch (e) {}
+      } catch (e) {
+        const formData = new URLSearchParams(route.request().postData()!);
+        request.body = Object.fromEntries(formData.entries());
+      }
     }
     const response = router.handle(request);
     return route.fulfill({
