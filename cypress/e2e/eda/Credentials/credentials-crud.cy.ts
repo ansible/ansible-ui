@@ -43,7 +43,15 @@ describe('Check if the build includes EDA', () => {
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
-        cy.selectDropdownOptionByResourceName('credential-type-id', 'Container Registry');
+        cy.getBy('[data-cy="credential_type_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('table').should('exist');
+          cy.getBy('[data-cy="text-input"] input').type('Container Registry');
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
         cy.get('[data-cy="inputs-username"]').type('admin');
         cy.get('[data-cy="inputs-password"]').type('testtoken');
         cy.clickButton(/^Create credential$/);
@@ -75,7 +83,15 @@ describe('Check if the build includes EDA', () => {
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
-        cy.selectDropdownOptionByResourceName('credential-type-id', 'Source Control');
+        cy.getBy('[data-cy="credential_type_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('table').should('exist');
+          cy.getBy('[data-cy="text-input"] input').type('Source Control');
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
         cy.get('[data-cy="inputs-password"]').type('testtoken');
         cy.get('[data-cy="inputs-username"]').type('admin');
         cy.clickButton(/^Create credential$/);

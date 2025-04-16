@@ -15,6 +15,18 @@ describe('Create credential ', () => {
         fixture: 'edaCredentialTypes.json',
       }
     );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/credential-types/?name=Sample+Base+64+Binary*` },
+      {
+        fixture: 'edaCredentialBinaryType.json',
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/credential-types/?name=Source+Control*` },
+      {
+        fixture: 'edaCredentialType.json',
+      }
+    );
   });
 
   it('Create Credential - Displays error message on internal server error', () => {
@@ -38,7 +50,15 @@ describe('Create credential ', () => {
   it('Should update fields properly', () => {
     cy.mount(<CreateCredential />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.selectDropdownOptionByResourceName('credential-type-id', 'Source Control');
+    cy.getBy('[data-cy="credential_type_id"]').click();
+    cy.clickButton('Browse');
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('table').should('exist');
+      cy.getBy('[data-cy="text-input"] input').type('Source Control');
+      cy.getBy('button[data-cy="apply-filter"]').click();
+      cy.get('tbody tr input').click();
+      cy.clickButton('Confirm');
+    });
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.get('[id="inputs-ssh-key-data-browse-button"]').should('be.visible');
@@ -52,10 +72,19 @@ describe('Create credential ', () => {
       });
     });
   });
+
   it('Should create the binary file field', () => {
     cy.mount(<CreateCredential />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.selectDropdownOptionByResourceName('credential-type-id', 'Sample Base 64 Binary');
+    cy.getBy('[data-cy="credential_type_id"]').click();
+    cy.clickButton('Browse');
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('table').should('exist');
+      cy.getBy('[data-cy="text-input"] input').type('Sample Base 64 Binary');
+      cy.getBy('button[data-cy="apply-filter"]').click();
+      cy.get('tbody tr input').click();
+      cy.clickButton('Confirm');
+    });
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.get('#inputs-binary-file-filename').should('be.visible');
@@ -79,7 +108,7 @@ describe('Edit Credential', () => {
       id: 5,
       name: 'Organization 5',
     },
-    credential_type: { id: 1, name: 'Source control' },
+    credential_type: { id: 1, name: 'Source Control' },
   };
 
   beforeEach(() => {
@@ -95,6 +124,12 @@ describe('Edit Credential', () => {
       { method: 'GET', url: edaAPI`/credential-types/*` },
       {
         fixture: 'edaCredentialTypes.json',
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/credential-types/?name=*` },
+      {
+        fixture: 'edaCredentialType.json',
       }
     );
   });

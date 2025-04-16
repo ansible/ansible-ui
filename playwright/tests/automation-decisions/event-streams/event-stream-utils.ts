@@ -11,7 +11,8 @@ export async function createEdaEventStream(options: { credentialName?: string },
   await page.getByPlaceholder('Enter credential name').fill(credentialName);
   await page.getByRole('button', { name: 'Organization' }).click();
   await page.getByRole('option', { name: 'Default The default' }).click();
-  await page.getByRole('button', { name: 'Select credential type' }).click();
+  await page.getByRole('button', { name: 'Credential type' }).click();
+  await page.getByRole('textbox', { name: 'Search input' }).fill('Basic Event Stream');
   await page.getByRole('option', { name: 'Basic Event Stream' }).click();
   await page.getByRole('textbox', { name: 'Username' }).click();
   await page.getByRole('textbox', { name: 'Username' }).fill('uname');
@@ -21,7 +22,7 @@ export async function createEdaEventStream(options: { credentialName?: string },
   await expect(page.getByRole('heading', { name: credentialName, exact: true })).toBeVisible();
 
   await navigateTo(page, 'Automation Decisions', 'Event Streams');
-  await page.getByRole('button', { name: 'Create event stream' }).click();
+  await page.getByText('Create event stream').click();
   await page.getByRole('textbox', { name: 'Name' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill(credentialName);
   await page.getByRole('button', { name: 'Organization' }).click();
