@@ -181,6 +181,7 @@ describe('Check if the build includes EDA', () => {
         const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
         cy.get('h1').should('contain', name);
         cy.get('.pf-v5-c-breadcrumb a').should('contain', 'Rulebook Activations').click();
+
         cy.filterTableByText(rbaToBeDeleted.name);
         cy.contains('[data-label="Status"]', 'Failed', { timeout: 120000 });
         cy.getEdaDecisionEnvironmentByName(de_name).then((de) => {

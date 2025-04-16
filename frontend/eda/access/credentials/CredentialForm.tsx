@@ -1,5 +1,4 @@
 import {
-  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextArea,
   PageFormTextInput,
@@ -17,7 +16,7 @@ import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert } from '@patternfly/react-core';
 import { useCallback, useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { FieldPath, FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
@@ -32,6 +31,34 @@ import { EdaRoute } from '../../main/EdaRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialFormInputs } from './CredentialFormTypes';
 import { CredentialDetails } from './CredentialPage/CredentialDetails';
+import { PageFormSingleSelectEdaResource } from '../../common/PageFormSingleSelectEdaResource';
+import { useCredentialTypesColumns } from '../credential-types/hooks/useCredentialTypesColumns';
+import { useCredentialTypeCredentialsFilters } from '../credential-types/hooks/useCredentialTypeCredentialsFilters';
+
+export function PageFormSelectEdaCredentialType<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
+  const { t } = useTranslation();
+  const credentialTypeColumns = useCredentialTypesColumns();
+  const credentialTypeFilters = useCredentialTypeCredentialsFilters();
+  return (
+    <PageFormSingleSelectEdaResource<EdaCredentialType, TFieldValues, TFieldName>
+      name={props.name}
+      id="credential_type_id"
+      label={t('Credential type')}
+      placeholder={t('Select credential type')}
+      queryPlaceholder={t('Loading credential type...')}
+      queryErrorText={t('Error loading credentials')}
+      isRequired={props.isRequired}
+      isDisabled={props.isDisabled}
+      helperText={props.helperText}
+      url={edaAPI`/credential-types/`}
+      tableColumns={credentialTypeColumns}
+      toolbarFilters={credentialTypeFilters}
+    />
+  );
+}
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
@@ -91,22 +118,16 @@ function CredentialInputs(props: { editMode: boolean }) {
         maxLength={150}
       />
       <PageFormSelectOrganization<EdaCredentialCreate> name="organization_id" isRequired />
-      <PageFormSelect<EdaCredentialCreate>
+      <PageFormSelectEdaCredentialType<EdaCredentialCreate>
         name="credential_type_id"
-        data-cy="credential-type-form-field"
-        label={t('Credential type')}
         isRequired
-        isReadOnly={props.editMode}
-        placeholderText={t('Select credential type')}
-        options={
-          credentialTypes?.results
-            ? credentialTypes.results.map((item: { name: string; id: number }) => ({
-                label: item.name,
-                value: item.id,
-              }))
-            : []
+        isDisabled={
+          props?.editMode
+            ? t(
+                'You cannot change the credential type of a credential, as it may break the functionality of the resources using it.'
+              )
+            : undefined
         }
-        labelHelpTitle={t('Credential type')}
       />
       {credentialType !== undefined && (
         <PageFormSection title={t('Type Details')}>

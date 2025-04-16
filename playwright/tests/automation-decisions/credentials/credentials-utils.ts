@@ -12,9 +12,9 @@ export async function createEdaCredential(options: { credentialName?: string }, 
   await page.getByPlaceholder('Enter credential name').fill(credentialName);
   await page.getByRole('button', { name: 'Organization' }).click();
   await page.getByRole('option', { name: 'Default' }).click();
-  await page.getByRole('button', { name: 'Select credential type' }).click();
+  await page.getByRole('button', { name: 'Credential type' }).click();
+  await page.getByRole('textbox', { name: 'Search input' }).fill('Red Hat Ansible Automation');
   await page.getByRole('option', { name: 'Red Hat Ansible Automation' }).click();
-  await page.getByRole('textbox', { name: 'Red Hat Ansible Automation' }).click();
   await page.getByRole('textbox', { name: 'Red Hat Ansible Automation' }).fill('https://1.1.1.1/');
   await page.getByRole('textbox', { name: 'Username' }).click();
   await page.getByRole('textbox', { name: 'Username' }).fill('test');
@@ -35,7 +35,8 @@ export async function createEdaEventStreamCredential(
   await page.getByPlaceholder('Enter credential name').fill(credentialName);
   await page.getByRole('button', { name: 'Organization' }).click();
   await page.getByRole('option', { name: 'Default' }).click();
-  await page.getByRole('button', { name: 'Select credential type' }).click();
+  await page.getByRole('button', { name: 'Credential type' }).click();
+  await page.getByRole('textbox', { name: 'Search input' }).fill('Basic Event Stream');
   await page.getByRole('option', { name: 'Basic Event Stream' }).click();
   await page.getByRole('textbox', { name: 'Username' }).click();
   await page.getByRole('textbox', { name: 'Username' }).fill('test');

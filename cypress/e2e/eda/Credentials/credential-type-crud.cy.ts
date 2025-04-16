@@ -237,7 +237,15 @@ describe('Check if the build includes EDA', () => {
         cy.navigateTo('eda', 'credentials');
         cy.get('h1').should('contain', 'Credentials');
         cy.getByDataCy('create-credential').click();
-        cy.selectDropdownOptionByResourceName('credential-type-id', name);
+        cy.getBy('[data-cy="credential_type_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('table').should('exist');
+          cy.getBy('[data-cy="text-input"] input').type(name);
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
         cy.get('[data-cy="inputs-checkbox"]').invoke('attr', 'type').should('eq', 'checkbox');
         cy.getEdaCredentialTypeByName(name).then((credentialtype) => {
           cy.wrap(credentialtype).should('not.be.undefined');
@@ -266,7 +274,15 @@ describe('Check if the build includes EDA', () => {
         cy.navigateTo('eda', 'credentials');
         cy.get('h1').should('contain', 'Credentials');
         cy.getByDataCy('create-credential').click();
-        cy.selectDropdownOptionByResourceName('credential-type-id', name);
+        cy.getBy('[data-cy="credential_type_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('table').should('exist');
+          cy.getBy('[data-cy="text-input"] input').type(name);
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
         cy.get('input[data-cy="inputs-username"]').should('have.value', 'default_value');
         cy.getEdaCredentialTypeByName(name).then((credentialtype) => {
           cy.wrap(credentialtype).should('not.be.undefined');
@@ -296,7 +312,15 @@ describe('Check if the build includes EDA', () => {
         cy.get('h1').should('contain', 'Credentials');
         cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type(name);
-        cy.selectDropdownOptionByResourceName('credential-type-id', name);
+        cy.getBy('[data-cy="credential_type_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('table').should('exist');
+          cy.getBy('[data-cy="text-input"] input').type(name);
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
         cy.clickButton(/^Create credential$/);
         cy.contains('Username is required.');
         cy.getEdaCredentialTypeByName(name).then((credentialtype) => {
