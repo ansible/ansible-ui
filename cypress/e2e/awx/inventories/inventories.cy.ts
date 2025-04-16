@@ -58,6 +58,8 @@ describe('Inventories Tests', () => {
           cy.get('#create-inventory').click();
           cy.get('[data-cy="name"]').type(inventoryName);
           cy.singleSelectByDataCy('organization', organization.name);
+          cy.get('[data-cy="labels-typeahead-input"]').click().type(label.name.toString());
+          cy.contains(label.name.toString()).click();
           cy.get('[data-cy="prevent_instance_group_fallback"]').click();
           cy.clickButton(/^Create inventory$/);
           cy.verifyPageTitle(inventoryName);
