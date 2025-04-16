@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
   MenuToggle,
@@ -12,8 +11,9 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
-import { PageFormGroup } from './PageFormGroup';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageFormGroup } from './PageFormGroup';
 
 export interface SelectOptionObject {
   toString(): string;
@@ -330,6 +330,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
       <Select
         id={`${id}-typeahead-select`}
         isOpen={isOpen}
+        isScrollable
         selected={selected ?? undefined}
         onSelect={(_event, selection) => onSelect(selection as string)}
         onOpenChange={(open) => {

@@ -1,23 +1,24 @@
 /* eslint-disable i18next/no-literal-string */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  Button,
   Chip,
   ChipGroup,
   MenuToggle,
   MenuToggleElement,
   Select,
+  SelectList,
   SelectOption,
   SelectOptionProps,
-  SelectList,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  Button,
 } from '@patternfly/react-core';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useID } from '../../hooks/useID';
 import { PageFormGroup } from './PageFormGroup';
-import { useTranslation } from 'react-i18next';
 
 export interface SelectOptionObject {
   toString(): string;
@@ -299,12 +300,13 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         id={id}
         toggle={Toggle}
         onSelect={onSelectHandler}
+        isScrollable
         onOpenChange={(open) => setIsOpen(open)}
         shouldFocusFirstItemOnOpen={false}
         aria-label={label}
         data-cy={`${id}-typeahead-select`}
       >
-        <SelectList id={`${id}-listbox`}>
+        <SelectList id={`${id}-listbox`} data-cy="select-list">
           {selectOptions.map((option, index) => (
             <SelectOption
               key={String(option.value) || String(option.children)}
