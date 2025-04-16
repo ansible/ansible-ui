@@ -180,6 +180,13 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           };
         }
 
+        if (config?.passwords_needed_to_start?.length > 0) {
+          payload = {
+            ...payload,
+            credential_passwords: { ...credential_passwords },
+          };
+        }
+
         const job = await postRequest(awxAPI`/${jobType}/${resourceId}/launch/`, payload);
         if (job) {
           navigate(getJobOutputUrl(job));

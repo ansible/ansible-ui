@@ -80,6 +80,7 @@ describe('Job Templates Tests', function () {
         {
           kind: 'machine',
           organization: awxOrganization.id,
+          inputs: { password: 'ASK' },
         },
         'Machine'
       ).then((cred) => {
@@ -123,6 +124,10 @@ describe('Job Templates Tests', function () {
             );
             cy.multiSelectByDataCy('instance-group-select-form-group', ['default']);
             cy.clickButton(/^Next/);
+            cy.get('[data-cy="wizard-nav-item-credential_passwords"]').should('exist');
+            cy.get('[data-cy="launch-ssh-password"]').type('password');
+            cy.clickButton(/^Next/);
+
             cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`).as(
               'postLaunch'
             );

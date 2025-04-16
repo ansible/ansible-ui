@@ -1,9 +1,10 @@
 import { PageFormGrid, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useTranslation } from 'react-i18next';
+import { Credential } from '../../../../interfaces/Credential';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { RelaunchConfig } from '../RelaunchTemplateWithPasswords';
-import type { TemplateLaunch } from '../TemplateLaunchWizard';
+import { TemplateLaunch } from '../TemplateLaunchWizard';
 import { ConditionalField } from './ConditionalField';
 
 export function CredentialPasswordsStep<T extends LaunchConfiguration | RelaunchConfig>(props: {
@@ -12,14 +13,20 @@ export function CredentialPasswordsStep<T extends LaunchConfiguration | Relaunch
   const { config } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
-  const {
-    prompt: { credentials },
-  } = wizardData as TemplateLaunch;
   const vaultsThatPrompt: string[] = [];
   let showCredentialPasswordSsh = false;
   let showCredentialPasswordPrivilegeEscalation = false;
   let showCredentialPasswordPrivateKeyPassphrase = false;
 
+  const credentialsVar: Partial<Credential>[] = (() => {
+    if (Object.keys(wizardData).length > 0) {
+      const { prompt } = wizardData as TemplateLaunch;
+      return prompt.credentials as Partial<Credential>[];
+    } else if ('defaults' in config) {
+      return config.defaults.credentials as Partial<Credential>[];
+    }
+    return [];
+  })();
   if (
     !('ask_credential_on_launch' in config && config.ask_credential_on_launch) &&
     'passwords_needed_to_start' in config &&
@@ -37,8 +44,8 @@ export function CredentialPasswordsStep<T extends LaunchConfiguration | Relaunch
         vaultsThatPrompt.push(vaultId);
       }
     });
-  } else if (credentials) {
-    credentials.forEach((credential) => {
+  } else if (credentialsVar) {
+    credentialsVar.forEach((credential: Partial<Credential>) => {
       if (!('inputs' in credential) && 'defaults' in config) {
         const { id } = credential;
         const launchConfigCredential = config.defaults.credentials.find(
