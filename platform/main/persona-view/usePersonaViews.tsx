@@ -12,13 +12,6 @@ export function usePersonaViews(): IPersonaView[] {
       ),
     },
     {
-      id: 'developer',
-      name: t('Developer View'),
-      description: t(
-        'The developer view is for users who are creating and maintaining automation.'
-      ),
-    },
-    {
       id: 'operator',
       name: t('Operator View'),
       description: t(

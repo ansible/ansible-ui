@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { PersonalViewType } from './PersonaView';
+import { PersonaViewType } from './PersonaView';
 
 interface PersonaViewState {
-  activePersonaViewId: PersonalViewType;
-  setActivePersonaView: (personaViewId: PersonalViewType) => void;
+  activePersonaViewId: PersonaViewType;
+  setActivePersonaView: (personaViewId: PersonaViewType) => void;
 }
 
 export const usePersonaView = create<PersonaViewState>()(

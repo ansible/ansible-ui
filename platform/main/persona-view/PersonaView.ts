@@ -1,7 +1,7 @@
-export type PersonalViewType = 'administration' | 'developer' | 'operator';
+export type PersonaViewType = 'administration' | 'operator';
 
 export interface IPersonaView {
-  id: PersonalViewType;
+  id: PersonaViewType;
   name: string;
   description?: string;
 }

@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { IUIFlag } from './IUIFlag';
+import { IUIFlag, UIFlag } from './IUIFlag';
 
 export interface UIFlagsState {
   flags: IUIFlag[];
@@ -12,25 +12,13 @@ export const getTranslatedUIFlags = (): IUIFlag[] => {
   const t = i18next.t.bind(i18next);
   return [
     {
-      id: 'example-1',
-      name: t('Example 1'),
-      description: t('This is an example of an Alpha flag.'),
-      enabled: true,
-      status: 'alpha',
-    },
-    {
-      id: 'example-2',
-      name: t('Example 2'),
-      description: t('This is an example of a Beta flag.'),
+      id: UIFlag.PersonaViewSwitcher,
+      name: t('View Switcher'),
+      description: t(
+        'Navigation view switcher that enabled the left hand navigation to have an "administration" view and an "operator" view.'
+      ),
       enabled: false,
       status: 'beta',
-    },
-    {
-      id: 'example-3',
-      name: t('Example 3'),
-      description: t('This is an example of a Production flag.'),
-      enabled: true,
-      status: 'production',
     },
   ];
 };
