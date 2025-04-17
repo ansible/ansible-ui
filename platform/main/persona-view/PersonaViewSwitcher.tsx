@@ -2,7 +2,7 @@ import { Dropdown, DropdownItem, DropdownList, MenuToggle } from '@patternfly/re
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { PersonalViewType } from './PersonaView';
+import { PersonaViewType } from './PersonaView';
 import { usePersonaView } from './usePersonaView';
 import { usePersonaViews } from './usePersonaViews';
 
@@ -16,7 +16,7 @@ export function PersonaViewSwitcher() {
     <DivStyled>
       <Dropdown
         onSelect={(_event, id) => {
-          id && setActivePersonaView(id as PersonalViewType);
+          id && setActivePersonaView(id as PersonaViewType);
           navigation('/');
           setOpen(false);
         }}

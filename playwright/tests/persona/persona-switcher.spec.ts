@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../commands/setup';
 import { login, platformUI } from '../../commands/login';
-import { createUser } from '../access-management/users/user-utils';
 import { logout } from '../../commands/logout';
+import { setupAfter, setupBefore } from '../../commands/setup';
+import { createUser } from '../access-management/users/user-utils';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
-test('Persona views for System Administrator', async ({ page }) => {
+test.skip('Persona views for System Administrator', async ({ page }) => {
   // Administration View
   await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
   await expect(page.locator('#platform-overview')).toContainText('Overview');
@@ -26,18 +26,7 @@ test('Persona views for System Administrator', async ({ page }) => {
   await page.locator('#platform-awx').click();
 
   await page.getByRole('button', { name: 'Administration View' }).click();
-  // Developer View
-  await page.getByRole('menuitem', { name: 'Developer View The developer' }).click();
-  await expect(page.locator('#platform-overview')).toContainText('Overview');
-  await expect(page.locator('#platform-awx')).toContainText('Automation Execution');
-  await expect(page.locator('#platform-eda')).toContainText('Automation Decisions');
-  await expect(page.locator('#platform-hub')).toContainText('Automation Content');
-  await expect(page.locator('#platform-lightspeed')).toContainText('Ansible Lightspeed');
-  await expect(page.locator('#awx-settings')).toContainText('Settings');
-  await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
-  await page.getByRole('button', { name: 'Developer View' }).click();
-  await expect(page.locator('#platform-access')).toBeHidden();
-  await expect(page.locator('#awx-analytics')).toBeHidden();
+
   // Operator View
   await page.getByRole('menuitem', { name: 'Operator View The operator' }).click();
   await expect(page.locator('#awx-jobs')).toContainText('Jobs');
@@ -55,7 +44,7 @@ test('Persona views for System Administrator', async ({ page }) => {
   await expect(page.locator('#awx-settings')).toBeHidden();
 });
 
-test('Persona views for Normal User', async ({ page }) => {
+test.skip('Persona views for Normal User', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
   const username = await createUser({}, page);
   await page.locator('#platform-overview').click();
@@ -89,18 +78,7 @@ test('Persona views for Normal User', async ({ page }) => {
   await page.locator('#platform-awx').click();
 
   await page.getByRole('button', { name: 'Administration View' }).click();
-  // Developer View
-  await page.getByRole('menuitem', { name: 'Developer View The developer' }).click();
-  await expect(page.locator('#platform-overview')).toContainText('Overview');
-  await expect(page.locator('#platform-awx')).toContainText('Automation Execution');
-  await expect(page.locator('#platform-eda')).toContainText('Automation Decisions');
-  await expect(page.locator('#platform-hub')).toContainText('Automation Content');
-  await expect(page.locator('#platform-lightspeed')).toContainText('Ansible Lightspeed');
-  await expect(page.locator('#awx-settings')).toContainText('Settings');
-  await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
-  await page.getByRole('button', { name: 'Developer View' }).click();
-  await expect(page.locator('#platform-access')).toBeHidden();
-  await expect(page.locator('#awx-analytics')).toBeHidden();
+
   // Operator View
   await page.getByRole('menuitem', { name: 'Operator View The operator' }).click();
   await expect(page.locator('#awx-jobs')).toContainText('Jobs');

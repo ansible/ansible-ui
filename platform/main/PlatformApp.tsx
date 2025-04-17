@@ -7,6 +7,8 @@ import { t } from 'i18next';
 import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
+import { UIFlag } from '../settings/ui-flags/IUIFlag';
+import { useUIFlag } from '../settings/ui-flags/useUIFlag';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { PersonaViewSwitcher } from './persona-view/PersonaViewSwitcher';
@@ -118,6 +120,8 @@ export function PlatformApp() {
     return null;
   }, [serviceDown]);
 
+  const personaViewSwitcherFlag = useUIFlag(UIFlag.PersonaViewSwitcher);
+
   return (
     <PageApp
       masthead={<PlatformMasthead />}
@@ -131,7 +135,7 @@ export function PlatformApp() {
           {sessionBanner}
         </>
       }
-      contextSwitcher={<PersonaViewSwitcher />}
+      contextSwitcher={personaViewSwitcherFlag?.enabled ? <PersonaViewSwitcher /> : undefined}
     />
   );
 }

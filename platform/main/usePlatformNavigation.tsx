@@ -10,6 +10,7 @@ import { AwxSettingsCategoryDetailsPage } from '@ansible/awx-ui/administration/s
 import { AwxSettingsCategoryForm } from '@ansible/awx-ui/administration/settings/AwxSettingsCategoryForm';
 import { PolicySettingsCategoryForm } from '@ansible/awx-ui/administration/settings/PolicySettingsEdit';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
@@ -37,7 +38,9 @@ import { GatewaySettingsDetails } from '../settings/GatewaySettingsDetails';
 import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
+import { UIFlag } from '../settings/ui-flags/IUIFlag';
 import { UIFlagsPage } from '../settings/ui-flags/UIFlagsPage';
+import { useUIFlag } from '../settings/ui-flags/useUIFlag';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useHasAwxService, useHasEdaService, useHasHubService } from './GatewayServices';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
@@ -45,7 +48,6 @@ import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
-import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -60,7 +62,11 @@ export function usePlatformNavigation() {
 
   const { data: oauthApplications } = useGet<AwxItemsResponse<Application>>(gatewayAPI`/app_urls/`);
 
-  const { activePersonaViewId } = usePersonaView();
+  let { activePersonaViewId } = usePersonaView();
+  const personaViewSwitcherFlag = useUIFlag(UIFlag.PersonaViewSwitcher);
+  if (!personaViewSwitcherFlag?.enabled) {
+    activePersonaViewId = 'administration';
+  }
 
   const { activeAwxUser } = useAwxActiveUser();
 
@@ -185,18 +191,6 @@ export function usePlatformNavigation() {
         if (quickstarts) {
           navigationItems.push(quickstarts);
         }
-        break;
-      }
-      case 'developer': {
-        findNavigationItemById(navigationItems, AwxRoute.Instances)!.hidden = true;
-        findNavigationItemById(navigationItems, AwxRoute.InstanceGroups)!.hidden = true;
-        if (activeAwxUser?.is_superuser) {
-          removeNavigationItemById(navigationItems, AwxRoute.ManagementJobs);
-        }
-        if (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) {
-          removeNavigationItemById(navigationItems, AwxRoute.Analytics);
-        }
-        findNavigationItemById(navigationItems, PlatformRoute.Access)!.hidden = true;
         break;
       }
     }
@@ -518,9 +512,18 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
   });
 
   settingsNav.push({
-    id: PlatformRoute.UIFlags,
-    path: 'flags',
-    element: <UIFlagsPage />,
+    id: PlatformRoute.DeveloperSettings,
+    label: t('Development'),
+    path: 'dev',
+    hidden: process.env.NODE_ENV !== 'development',
+    children: [
+      {
+        id: PlatformRoute.UIFlags,
+        label: t('UI Flags'),
+        path: 'flags',
+        element: <UIFlagsPage />,
+      },
+    ],
   });
 
   settingsNav.push({
