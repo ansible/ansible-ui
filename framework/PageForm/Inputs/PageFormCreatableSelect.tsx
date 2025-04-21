@@ -103,8 +103,12 @@ export function PageFormCreatableSelect<
             placeholderText={placeholderText}
             value={value}
             onHandleClear={(chip?: string) => {
-              const values: { name: string }[] = getValues(name);
-              onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
+              const values: { name: string; isReadOnly?: boolean }[] = getValues(name);
+              if (!chip) {
+                onChange(values.filter((v) => v.isReadOnly));
+              } else {
+                onChange(values.filter((v) => v.name !== chip));
+              }
             }}
             onHandleSelection={(item) => {
               const newValue = getSelectedValues(item);

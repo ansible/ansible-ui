@@ -31,8 +31,11 @@ test(
   { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     test.setTimeout(5 * 30 * 1000);
-    const jobTemplateName = await createJobTemplate({ PromptOnLaunch: true }, page);
-    await runJobTemplate(jobTemplateName, { PromptOnLaunch: true }, page);
+    const jobTemplateName = await createJobTemplate(
+      { PromptOnLaunch: true, labels: ['Label 1'] },
+      page
+    );
+    await runJobTemplate(jobTemplateName, { PromptOnLaunch: true, labels: ['Label 1'] }, page);
     await deleteJobTemplate(jobTemplateName, page);
   }
 );
