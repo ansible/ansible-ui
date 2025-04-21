@@ -38,7 +38,7 @@ export type FormGroupTypeAheadMultiSelectProps = {
   options: { value: string | { name: string }; label: string }[];
   onHandleSelection: (value: { name: string }) => void;
   isSubmitting: boolean;
-  value: Partial<{ name: string }>[];
+  value: Partial<{ name: string; isReadOnly?: boolean }>[];
   onHandleClear: (chip?: string) => void;
   isRequired?: boolean;
 };
@@ -239,6 +239,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
                   v?.name && (
                     <Chip
                       key={v?.name}
+                      isReadOnly={!!v?.isReadOnly}
                       onClick={(ev) => {
                         ev.stopPropagation();
                         onHandleClear(v?.name);
@@ -309,6 +310,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         <SelectList id={`${id}-listbox`} data-cy="select-list">
           {selectOptions.map((option, index) => (
             <SelectOption
+              isDisabled={Boolean(value.find((val) => val.name === option.value && val.isReadOnly))}
               key={String(option.value) || String(option.children)}
               isFocused={focusedItemIndex === index}
               id={`option-${index}`}

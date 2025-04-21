@@ -134,4 +134,46 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
       cy.get('[data-cy="select-option-Option 1"]').contains('Option 1').should('not.be.visible');
     });
   });
+
+  describe('Read-only Values', () => {
+    const value = [{ name: 'Label 1' }, { name: 'Label 2', isReadOnly: true }];
+
+    const options = [
+      { value: 'Label 1', label: 'Label 1' },
+      { value: 'Label 2', label: 'Label 2' },
+      { value: 'Label 3', label: 'Label 3' },
+    ];
+
+    const defaultProps: FormGroupTypeAheadMultiSelectProps = {
+      label: 'Select labels',
+      options: options,
+      isSubmitting: false,
+      value: value,
+      placeholderText: 'Type to search...',
+      onHandleSelection: () => {},
+      onHandleClear: () => {},
+    };
+
+    it('disables chips and dropdown option when value is read-only', () => {
+      cy.mount(<FormGroupTypeAheadMultiSelect {...defaultProps} />);
+
+      cy.get('[data-cy="selected-chip"]')
+        .contains('Label 1')
+        .parents('[data-cy="selected-chip"]')
+        .within(() => {
+          cy.get('button').should('be.visible');
+        });
+      cy.get('[data-cy="selected-chip"]')
+        .contains('Label 2')
+        .parents('[data-cy="selected-chip"]')
+        .within(() => {
+          cy.get('button').should('not.exist');
+        });
+
+      cy.get('input').click();
+      cy.get('[data-cy="select-option-Label 1"]').find('button').should('not.be.disabled');
+      cy.get('[data-cy="select-option-Label 2"]').find('button').should('be.disabled');
+      cy.get('[data-cy="select-option-Label 3"]').find('button').should('not.be.disabled');
+    });
+  });
 });

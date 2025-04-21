@@ -34,6 +34,7 @@ export async function createJobTemplate(
     await page.locator('#ask_execution_environment_on_launch').check();
     await page.locator('#ask_credential_on_launch').check();
     await page.locator('#ask_instance_groups_on_launch').check();
+    await page.locator('#ask_labels_on_launch').check();
   } else {
     await page.getByRole('button', { name: 'Inventory' }).click();
     await page.getByRole('option', { name: inventoryName, exact: true }).click();
@@ -78,6 +79,7 @@ export async function runJobTemplate(
   options: {
     doNotWait?: boolean;
     inventoryName?: string;
+    labels?: string[];
     view?: 'list' | 'details';
     PromptOnLaunch?: boolean;
   },
@@ -111,6 +113,10 @@ export async function runJobTemplate(
     await expect(page.locator('#inventory')).toContainText(inventoryName);
     await expect(page.locator('#execution-environment')).toContainText('Control Plane Execution');
     await expect(page.locator('#instance-groups')).toContainText('default');
+    for (const label of options.labels ?? []) {
+      await page.locator('#labels').scrollIntoViewIfNeeded();
+      await expect(page.locator('#labels')).toContainText(label);
+    }
     await page.getByRole('button', { name: 'Finish' }).click();
   }
   await expect(page.getByRole('main')).toContainText('Output');
