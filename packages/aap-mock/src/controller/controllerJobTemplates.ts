@@ -9,7 +9,7 @@ export function processJobTemplate(jobTemplate: JobTemplate) {
 }
 
 export function getJobTemplateLaunch(request: MockRequest): MockResponse {
-  const jobTemplateId = Number(request.url.searchParams.get('id'));
+  const jobTemplateId = Number(request.params.id);
   const jobTemplate: JobTemplate | undefined = (
     request.context.data.api.controller.v2.job_templates as unknown[] as JobTemplate[]
   ).find((jt) => jt.id === jobTemplateId) as JobTemplate;
@@ -84,7 +84,7 @@ export function postJobTemplateLaunch(request: MockRequest): MockResponse {
   if (!request.body) {
     return { status: 400, body: { error: 'Missing request data' } };
   }
-  const jobTemplateId = Number(request.url.searchParams.get('id'));
+  const jobTemplateId = Number(request.params.id);
   const jobTemplate = request.context.data.api.controller.v2.job_templates.find(
     (jt) => jt.id === jobTemplateId
   );

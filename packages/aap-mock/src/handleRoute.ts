@@ -14,6 +14,7 @@ export function handleRoute(
     url: new URL(route.request().url()),
     headers: route.request().headers(),
     context: { data, options },
+    params: {},
   };
   if (typeof route.request().postData() === 'string') {
     try {
