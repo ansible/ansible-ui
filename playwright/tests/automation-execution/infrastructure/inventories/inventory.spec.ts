@@ -19,7 +19,7 @@ test.afterEach(setupAfter);
 
 test(
   'inventory - can create an inventory, assert info on details page, and delete inventory',
-  { tag: ['@not_mock', '@compare'] },
+  { tag: ['@compare'] },
   async ({ page }) => {
     const inventoryName = await createInventory({}, page);
     await expect(page.locator('#name')).toContainText(inventoryName);

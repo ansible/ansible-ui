@@ -19,6 +19,7 @@ export async function mock(page: Page) {
       url: new URL(route.request().url()),
       headers: route.request().headers(),
       context,
+      params: {},
     };
     if (typeof route.request().postData() === 'string') {
       try {

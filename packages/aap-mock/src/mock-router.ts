@@ -7,6 +7,7 @@ export interface MockRequest {
   headers: Record<string, string>;
   body?: Record<string, unknown>;
   context: MockContext;
+  params: Partial<Record<string, string | string[]>>;
 }
 
 export interface MockResponse {
@@ -72,6 +73,7 @@ export class Router {
       for (const { matchFn, handler } of routes) {
         const matched = matchFn(url.pathname);
         if (matched) {
+          request.params = matched.params;
           const response = handler(request);
           if (response) {
             return response;

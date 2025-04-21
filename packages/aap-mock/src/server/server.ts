@@ -19,6 +19,7 @@ http
       url: new URL('http:///localhost:5050' + req.url),
       headers: req.headers as Record<string, string>,
       context,
+      params: {},
     };
 
     if (req.headers['content-type'] === 'application/json') {
