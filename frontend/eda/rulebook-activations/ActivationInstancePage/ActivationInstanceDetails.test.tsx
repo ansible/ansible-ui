@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access*/
 /* eslint-disable @typescript-eslint/no-unsafe-return*/
 /* eslint-disable @typescript-eslint/no-unsafe-assignment*/
-import { render, waitFor, within } from '@testing-library/react';
+import { getAllByText, render, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, beforeAll, afterAll, afterEach } from 'vitest';
 import { ActivationInstanceDetails } from './ActivationInstanceDetails';
@@ -68,6 +68,9 @@ describe('ActivationInstanceDetails', () => {
       const rows = grid?.querySelectorAll('.output-grid-row');
       expect(rows?.length).toBe(10);
       expect(getByText('Pulling image quay.io/ansible/ansible-rulebook:main')).toBeInTheDocument();
+      expect(
+        getAllByText(container, new Date(1743599903 * 1000).toLocaleString())[0]
+      ).toBeInTheDocument();
     });
   });
 

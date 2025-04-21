@@ -55,7 +55,7 @@ export function ActivationInstanceOutputRow(props: {
       </StdOutColumn>
       <TimestampColumn>
         <Label isCompact>
-          {new Date(row.log_timestamp ? row.log_timestamp * 1000 : '').toLocaleTimeString()}
+          {new Date(row.log_timestamp ? row.log_timestamp * 1000 : '').toLocaleString()}
         </Label>
       </TimestampColumn>
     </div>
