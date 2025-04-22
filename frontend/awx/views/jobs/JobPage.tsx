@@ -54,5 +54,6 @@ export function useGetJob(id?: string, type?: string) {
     isLoading,
     error,
   } = useGet<Job>(id ? awxAPI`/${path}/${id}/` : '');
+
   return { job, refreshJob, isLoading, error };
 }

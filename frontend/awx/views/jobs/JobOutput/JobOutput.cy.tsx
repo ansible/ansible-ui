@@ -73,4 +73,12 @@ describe('JobOutput.cy.tsx', () => {
     cy.get('button[data-ouia-component-id="data-tab"]').click();
     cy.get('[data-cy="code-block-value"]').should('contain.text', 'Hello World!');
   });
+  it('Ensure notification shows up when no websocket', () => {
+    const modifiedJob = { ...job, status: 'running' };
+    cy.mount(<JobOutput job={modifiedJob as unknown as Job} reloadJob={() => null} />);
+    cy.getByDataCy('alert-toaster').should(
+      'contain.text',
+      'Websocket unavailable. You may experience degraded logging performance.'
+    );
+  });
 });

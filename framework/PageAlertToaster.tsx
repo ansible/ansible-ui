@@ -45,7 +45,9 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     }
     function replaceAlert(oldAlert: AlertProps, alert: AlertProps) {
       setToasterAlerts((alerts) => {
-        const oldAlertIndex = alerts.findIndex((a) => a === oldAlert);
+        const oldAlertIndex = alerts.findIndex(
+          (a) => JSON.stringify(a) === JSON.stringify(oldAlert)
+        );
         if (oldAlertIndex !== -1) {
           if (Number.isInteger(alert.timeout)) {
             setTimeout(() => removeAlert(alert), alert.timeout as number);

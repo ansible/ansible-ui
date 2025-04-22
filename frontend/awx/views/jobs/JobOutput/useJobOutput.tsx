@@ -167,13 +167,32 @@ export function useJobOutput(
     },
     [addBatchedEvents, eventGroup, reloadJob, job.id]
   );
+
+  const fallback = useCallback(() => {
+    const timeout = setInterval(() => {
+      const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
+      requestGet<AwxItemsResponse<JobEvent>>(
+        awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/?order_by=-counter&page_size=1`
+      )
+        .then((itemsResponse: AwxItemsResponse<JobEvent>) => {
+          setJobEventCount(itemsResponse.results[0].counter);
+        })
+        .catch(() => {});
+    }, 5000);
+    return () => {
+      clearInterval(timeout);
+    };
+  }, [job.id, job.type]);
+
   useAwxWebSocketSubscription(
     {
       control: ['limit_reached_1'],
       jobs: ['summary', 'status_changed'],
       [eventGroup]: [job.id],
     },
-    handleWebSocketMessage as (message: unknown) => void
+    handleWebSocketMessage as (message: unknown) => void,
+    // fallback handler in case webscoket fails
+    isJobRunning ? fallback : undefined
   );
 
   useEffect(() => {
