@@ -232,7 +232,11 @@ export function PageMultiSelect<
                       style={{ marginTop: -2, marginBottom: -2 }}
                       onClick={() =>
                         onSelect((previousValues) =>
-                          previousValues?.filter((v) => v !== option.value)
+                          previousValues?.filter((v) =>
+                            compareOptionValues
+                              ? !compareOptionValues(option.value, v)
+                              : option.value !== v
+                          )
                         )
                       }
                     >
