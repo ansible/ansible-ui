@@ -40,6 +40,8 @@ export function PageFormMultiSelectAwxResource<
   compareOptionValues?: (a: Value, b: Value) => boolean;
   validate?: (items: Value[]) => Promise<string | undefined>;
   formatLabel?: (item: Resource) => string;
+  disableClearChips?: boolean;
+  disableClearSelection?: boolean;
 }) {
   const { formatLabel = undefined } = props;
   const id = useID(props);
@@ -161,6 +163,8 @@ export function PageFormMultiSelectAwxResource<
       additionalControls={props.additionalControls}
       compareOptionValues={props.compareOptionValues}
       validate={props.validate}
+      disableClearChips={props.disableClearChips}
+      disableClearSelection={props.disableClearSelection}
     />
   );
 }

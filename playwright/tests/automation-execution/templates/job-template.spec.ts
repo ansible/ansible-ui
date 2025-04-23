@@ -332,3 +332,54 @@ test(
     await deleteJobTemplate(jobTemplateName, page);
   }
 );
+
+test(
+  'can create a job template, select multiple credentials and deselct one from the selected credential chip close button',
+  { tag: ['@not_mock'] },
+  async ({ page }) => {
+    const jobTemplateName = createE2EName('job-template');
+    const jobTemplateDescription = 'This is a JT description';
+    const inventoryName = 'Demo Inventory';
+    const credentialOne = await createAwxCredential({ credentialType: 'Vault' }, page);
+    const credentialTwo = await createAwxCredential({ credentialType: 'Machine' }, page);
+    await navigateTo(page, 'Automation Execution', 'Templates');
+    await expect(
+      page.getByRole('heading', { name: 'Automation Templates', exact: true })
+    ).toBeVisible();
+    await page.getByLabel('dropdown toggle', { exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Create job template' }).click();
+    await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
+    await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
+    await page.getByLabel('Inventory').click();
+    await page.getByRole('textbox', { name: 'Search input' }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
+    await page.getByRole('option', { name: inventoryName, exact: true }).click();
+    const projectName = 'Demo Project';
+    await page.locator('#project-select').click();
+    await page.getByRole('option', { name: projectName }).click();
+    await page.getByPlaceholder('Add a project, then select a').click();
+    await page.getByPlaceholder('Add a project, then select a').fill('hello');
+    await page.getByRole('option', { name: 'hello_world.yml' }).click();
+    await expect(page.getByPlaceholder('Add a project, then select a')).toHaveValue(
+      'hello_world.yml'
+    );
+    await page.getByRole('button', { name: 'Credentials' }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).fill(credentialOne);
+    await page.getByRole('checkbox', { name: `${credentialOne} | Vault` }).check();
+    await page.getByRole('textbox', { name: 'Search input' }).fill(credentialTwo);
+    await page.getByRole('checkbox', { name: `${credentialTwo} | Machine` }).check();
+    await page.getByRole('button', { name: `close ${credentialOne}` }).click();
+    await expect(page.getByRole('button', { name: `close ${credentialOne}` })).not.toBeVisible();
+    await page.getByRole('button', { name: 'Create job template' }).click();
+    await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
+    await expect(page.locator('#name')).toContainText(jobTemplateName);
+    await expect(page.locator('#description')).toContainText(jobTemplateDescription);
+    await expect(page.locator('#job-type')).toContainText('run');
+    await expect(page.locator('#organization')).toContainText('Default');
+    await expect(page.locator('#project')).toContainText(projectName);
+    await expect(page.locator('#playbook')).toContainText('hello_world.yml');
+    await expect(page.locator('#credentials')).toContainText(`SSH: ${credentialTwo}`);
+    await deleteJobTemplate(jobTemplateName, page);
+  }
+);

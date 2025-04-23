@@ -59,6 +59,8 @@ export function PageFormCredentialSelect<
       formatLabel={(credential: Credential) => {
         return `${credential.name} | ${credential.summary_fields.credential_type.name}`;
       }}
+      disableClearChips={false}
+      disableClearSelection={false}
     />
   ) : (
     <PageFormSingleSelectAwxResource<Credential, TFieldValues, TFieldName>
