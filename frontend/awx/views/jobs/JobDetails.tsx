@@ -148,15 +148,25 @@ export function JobDetails() {
           })
         }
       />
-      <PageDetailCodeEditor
-        label={t`Extra variables`}
-        helpText={t(
-          'Extra variables used on this job.  This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
-        )}
-        showCopyToClipboard
-        data-cy="inventory-source-detail-variables"
-        value={job.extra_vars ?? ''}
-      />
+      {job.extra_vars && (
+        <PageDetailCodeEditor
+          label={t`Extra variables`}
+          helpText={t(
+            'Extra variables used on this job.  This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+          )}
+          showCopyToClipboard
+          data-cy="inventory-source-detail-variables"
+          value={job.extra_vars}
+        />
+      )}
+      {job.artifacts && (
+        <PageDetailCodeEditor
+          label={t`Artifacts`}
+          showCopyToClipboard
+          data-cy="inventory-source-detail-variables"
+          value={JSON.stringify(job.artifacts)}
+        />
+      )}
     </PageDetails>
   );
 }
