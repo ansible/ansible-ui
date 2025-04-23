@@ -40,8 +40,9 @@ export function Domains() {
               <Help
                 title={t('Domains')}
                 help={[
-                  t('Domains allow you to select your specific areas of interest.'),
-                  t('This then filters the current view based on the labels for that domain.'),
+                  t(
+                    'Specify a domain to make relevant resources easily accessible. Select a label to customize your domain.'
+                  ),
                 ]}
               />
             </div>
