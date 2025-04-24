@@ -1,4 +1,4 @@
-import { Help, PageForm, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { Help, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { ExpandIcon } from '@ansible/ansible-ui-framework/components/icons/ExpandIcon';
 import {
   Button,
@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormLabelSelect } from '../PageFormLabelSelect';
 import { IDomain, useDomainsStore } from './useDomains';
 
@@ -101,11 +102,20 @@ function ConfigureDomainsModal(props: { isOpen: boolean; setOpen: (open: boolean
         <div style={{ paddingBottom: 24 }}>{t('Configure domains for filtering the views.')}</div>
       }
     >
-      <PageForm
+      <AwxPageForm
         singleColumn
         submitText={t('Submit')}
-        onSubmit={(data) => {
-          setDomains(data.fields.filter((fa) => !!fa.name));
+        onSubmit={(data, setError) => {
+          const names = data.fields
+            .map((fa) => fa.name.toLocaleLowerCase())
+            .filter((name) => name !== '');
+          const uniqueNames = new Set(names);
+          if (uniqueNames.size !== names.length) {
+            setError(t('Each domain name must be unique.'));
+            return Promise.resolve();
+          }
+          const savedDomains = data.fields.filter((fa) => !!fa.name);
+          setDomains(savedDomains);
           setOpen(false);
           return Promise.resolve();
         }}
@@ -115,7 +125,7 @@ function ConfigureDomainsModal(props: { isOpen: boolean; setOpen: (open: boolean
         disablePadding
       >
         <ConfigureDomains />
-      </PageForm>
+      </AwxPageForm>
     </Modal>
   );
 }
