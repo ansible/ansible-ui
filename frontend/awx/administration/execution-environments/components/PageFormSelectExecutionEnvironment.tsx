@@ -1,6 +1,6 @@
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode, useMemo } from 'react';
 import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -35,6 +35,15 @@ export function PageFormSelectExecutionEnvironment<
   const { t } = useTranslation();
   const executionEnvironmentColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
   const executionEnvironmentFilters = useExecutionEnvironmentsFilters();
+  const queryParams = useMemo(() => {
+    return props.organizationId
+      ? {
+          or__organization__id: props.organizationId.toString(),
+          or__organization__isnull: 'True',
+        }
+      : undefined;
+  }, [props.organizationId]);
+
   return (
     <PageFormSingleSelectAwxResource<ExecutionEnvironment, TFieldValues, TFieldName>
       name={props.name}
@@ -48,14 +57,7 @@ export function PageFormSelectExecutionEnvironment<
       isDisabled={props.isDisabled}
       helperText={props.helperText}
       url={awxAPI`/execution_environments/`}
-      queryParams={
-        props.organizationId
-          ? {
-              or__organization__id: props.organizationId.toString(),
-              or__organization__isnull: 'True',
-            }
-          : undefined
-      }
+      queryParams={queryParams}
       tableColumns={executionEnvironmentColumns}
       toolbarFilters={executionEnvironmentFilters}
       additionalControls={props.additionalControls}
