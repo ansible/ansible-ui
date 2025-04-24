@@ -8,7 +8,7 @@ export async function navigateTo(page: Page, ...labels: string[]) {
   for (const label of labels) {
     const labelRegEx = new RegExp(`^${label}`, 'i');
     if (!listItem) {
-      listItem = nav.locator('li').filter({ hasText: labelRegEx });
+      listItem = nav.locator('li').filter({ hasText: labelRegEx }).first();
     } else {
       listItem = listItem.locator('li').filter({ hasText: labelRegEx });
     }

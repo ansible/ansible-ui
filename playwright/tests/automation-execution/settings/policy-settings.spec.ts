@@ -13,33 +13,35 @@ test.describe('Policy setting details', () => {
     if (!hasPolicyAsCode) {
       return;
     }
-    await navigateTo(page, 'Settings', 'Policy');
+    await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
 
-    let settings: Record<string, string | number | boolean>;
+    let settings: Record<string, string | number | boolean | object>;
     if (page.mock.enabled) {
       settings = (
         page.mock.data.api.controller.v2.settings as {
-          policyascode: Record<string, string | number | boolean>;
+          policyascode: Record<string, string | number | boolean | object>;
         }
       ).policyascode;
-      await navigateTo(page, 'Settings', 'Policy');
+      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
     } else {
       const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
-      await navigateTo(page, 'Settings', 'Policy');
+      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
       settings = (await settingsRequest) as Record<string, string | number | boolean>;
     }
     if (settings.OPA_HOST) {
       await expect(page.locator('#opa-server-hostname')).toContainText(settings.OPA_HOST as string);
     }
-    await expect(page.locator('#opa-server-port')).toContainText(settings.OPA_PORT.toString());
+    await expect(page.locator('#opa-server-port')).toContainText(
+      (settings.OPA_PORT as number).toString()
+    );
     await expect(page.locator('#use-ssl-for-opa-connection')).toContainText(
       settings.OPA_SSL ? 'Enabled' : 'Disabled'
     );
     await expect(page.locator('#opa-request-timeout')).toContainText(
-      settings.OPA_REQUEST_TIMEOUT.toString()
+      (settings.OPA_REQUEST_TIMEOUT as number).toString()
     );
     await expect(page.locator('#opa-request-retry-count')).toContainText(
-      settings.OPA_REQUEST_RETRIES.toString()
+      (settings.OPA_REQUEST_RETRIES as number).toString()
     );
   });
 });
@@ -50,30 +52,30 @@ test.describe('Policy settings form', () => {
     if (!hasPolicyAsCode) {
       return;
     }
-    let settings: Record<string, string | number | boolean>;
+    let settings: Record<string, string | number | boolean | object>;
     if (page.mock.enabled) {
       settings = (
         page.mock.data.api.controller.v2.settings as {
-          policyascode: Record<string, string | number | boolean>;
+          policyascode: Record<string, string | number | boolean | object>;
         }
       ).policyascode;
-      await navigateTo(page, 'Settings', 'Policy');
+      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
     } else {
       const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
-      await navigateTo(page, 'Settings', 'Policy');
+      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
       settings = (await settingsRequest) as Record<string, string | number | boolean>;
     }
     await page.getByRole('button', { name: 'Edit' }).click();
     if (settings.OPA_HOST) {
       await expect(page.getByRole('textbox', { name: 'OPA Server Hostname' })).toHaveValue(
-        settings.OPA_HOST.toString()
+        settings.OPA_HOST as string
       );
     }
     await expect(page.locator('#opa-request-timeout')).toHaveValue(
-      settings.OPA_REQUEST_TIMEOUT.toString()
+      (settings.OPA_REQUEST_TIMEOUT as number).toString()
     );
     await expect(page.getByRole('spinbutton', { name: 'OPA Request Retry Count' })).toHaveValue(
-      settings.OPA_REQUEST_RETRIES.toString()
+      (settings.OPA_REQUEST_RETRIES as number).toString()
     );
   });
 
@@ -82,30 +84,30 @@ test.describe('Policy settings form', () => {
     if (!hasPolicyAsCode) {
       return;
     }
-    let settings: Record<string, string | number | boolean>;
+    let settings: Record<string, string | number | boolean | object>;
     if (page.mock.enabled) {
       settings = (
         page.mock.data.api.controller.v2.settings as {
-          policyascode: Record<string, string | number | boolean>;
+          policyascode: Record<string, string | number | boolean | object>;
         }
       ).policyascode;
-      await navigateTo(page, 'Settings', 'Policy');
+      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
     } else {
       const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
-      await navigateTo(page, 'Settings', 'Policy');
+      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
       settings = (await settingsRequest) as Record<string, string | number | boolean>;
     }
     await page.getByRole('button', { name: 'Edit' }).click();
     if (settings.OPA_HOST) {
       await expect(page.getByRole('textbox', { name: 'OPA Server Hostname' })).toHaveValue(
-        settings.OPA_HOST.toString()
+        settings.OPA_HOST as string
       );
     }
     await expect(page.locator('#opa-request-timeout')).toHaveValue(
-      settings.OPA_REQUEST_TIMEOUT.toString()
+      (settings.OPA_REQUEST_TIMEOUT as number).toString()
     );
     await expect(page.getByRole('spinbutton', { name: 'OPA Request Retry Count' })).toHaveValue(
-      settings.OPA_REQUEST_RETRIES.toString()
+      (settings.OPA_REQUEST_RETRIES as number).toString()
     );
     // edit values
 
