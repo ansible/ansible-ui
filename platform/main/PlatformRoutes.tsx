@@ -87,4 +87,5 @@ export enum PlatformRoute {
   MigrateRenameUser = 'platform-migrate-rename-user',
   UIFlags = 'platform-ui-flags',
   DeveloperSettings = 'platform-developer-settings',
+  PlatformControllerSettings = 'platform-controller-settings',
 }

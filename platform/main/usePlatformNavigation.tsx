@@ -418,97 +418,102 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
   settingsNav.push(userPreferences);
 
   settingsNav.push({
-    id: AwxRoute.SettingsSystem,
-    label: t('System'),
-    path: 'system',
+    id: PlatformRoute.PlatformControllerSettings,
+    label: t('Automation Execution'),
+    path: 'automation-execution',
     children: [
       {
-        path: 'edit',
-        element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
+        id: AwxRoute.SettingsSystem,
+        label: t('System'),
+        path: 'system',
+        children: [
+          {
+            path: 'edit',
+            element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
+          },
+          {
+            path: '',
+            element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
+          },
+        ],
+        hidden:
+          !awxService ||
+          (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
       },
       {
-        path: '',
-        element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
+        id: AwxRoute.SettingsJobs,
+        label: t('Job'),
+        path: 'job-settings',
+        children: [
+          {
+            path: 'edit',
+            element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
+          },
+          {
+            path: '',
+            element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
+          },
+        ],
+        hidden:
+          !awxService ||
+          (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+      },
+      {
+        id: AwxRoute.SettingsLogging,
+        label: t('Logging'),
+        path: 'logging',
+        children: [
+          {
+            path: 'edit',
+            element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
+          },
+          {
+            path: '',
+            element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
+          },
+        ],
+        hidden:
+          !awxService ||
+          (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+      },
+      ...(hasPolicyAsCode
+        ? [
+            {
+              id: AwxRoute.SettingsPolicy,
+              label: t('Policy'),
+              path: 'policy-settings',
+              children: [
+                {
+                  path: 'edit',
+                  element: <PolicySettingsCategoryForm />,
+                },
+                {
+                  path: '',
+                  element: <AwxPolicySettingsDetailsPage />,
+                },
+              ],
+            },
+          ]
+        : []),
+      {
+        id: AwxRoute.SettingsTroubleshooting,
+        label: t('Troubleshooting'),
+        path: 'troubleshooting',
+        children: [
+          {
+            path: 'edit',
+            element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
+          },
+          {
+            path: '',
+            element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
+          },
+        ],
+        hidden:
+          !awxService ||
+          (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
       },
     ],
-    hidden:
-      !awxService ||
-      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
-  });
-
-  if (hasPolicyAsCode) {
-    settingsNav.push({
-      id: AwxRoute.SettingsPolicy,
-      label: t('Policy'),
-      path: 'policy-settings',
-      children: [
-        {
-          path: 'edit',
-          element: <PolicySettingsCategoryForm />,
-        },
-        {
-          path: '',
-          element: <AwxPolicySettingsDetailsPage />,
-        },
-      ],
-    });
-  }
-
-  settingsNav.push({
-    id: AwxRoute.SettingsJobs,
-    label: t('Job'),
-    path: 'job-settings',
-    children: [
-      {
-        path: 'edit',
-        element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
-      },
-      {
-        path: '',
-        element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
-      },
-    ],
-    hidden:
-      !awxService ||
-      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
-  });
-
-  settingsNav.push({
-    id: AwxRoute.SettingsLogging,
-    label: t('Logging'),
-    path: 'logging',
-    children: [
-      {
-        path: 'edit',
-        element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
-      },
-      {
-        path: '',
-        element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
-      },
-    ],
-    hidden:
-      !awxService ||
-      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
-  });
-
-  settingsNav.push({
-    id: AwxRoute.SettingsTroubleshooting,
-    label: t('Troubleshooting'),
-    path: 'troubleshooting',
-    children: [
-      {
-        path: 'edit',
-        element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
-      },
-      {
-        path: '',
-        element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
-      },
-    ],
-    hidden:
-      !awxService ||
-      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
   });
 
   settingsNav.push({
