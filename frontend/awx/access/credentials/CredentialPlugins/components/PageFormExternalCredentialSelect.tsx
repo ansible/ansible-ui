@@ -5,6 +5,7 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { useCredentialsFilters } from '../../hooks/useCredentialsFilters';
 import { useCredentialsColumns } from '../../hooks/useCredentialsColumns';
 import { Credential } from '../../../../interfaces/Credential';
+import { useMemo } from 'react';
 /**
  * A form input for selecting an external credential.
  *
@@ -26,6 +27,10 @@ export function PageFormExternalCredentialSelect<
   const { t } = useTranslation();
   const credentialColumns = useCredentialsColumns({ disableLinks: true });
   const credentialFilters = useCredentialsFilters();
+  const queryParams = useMemo(() => {
+    return { credential_type__kind: 'external' };
+  }, []);
+
   return (
     <PageFormSingleSelectAwxResource<Credential, TFieldValues, TFieldName>
       name={props.name}
@@ -38,7 +43,7 @@ export function PageFormExternalCredentialSelect<
       isDisabled={props.isDisabled}
       helperText={props.helperText}
       url={awxAPI`/credentials/`}
-      queryParams={{ credential_type__kind: 'external' }}
+      queryParams={queryParams}
       tableColumns={credentialColumns}
       toolbarFilters={credentialFilters}
       defaultSelection={[]}
