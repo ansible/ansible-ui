@@ -22,7 +22,7 @@ export function useDisableEventStreams(onComplete?: (eventStreams: EdaEventStrea
         title: t('Disable forwarding of events?', { count: eventStreams.length }),
         prompt: t(
           'Are you sure you want to disable the forwarding of events? ' +
-            'The evens from this event stream will no longer get forwarded to the rulebook activation this event stream is currently configured in.'
+            'The events from this event stream will no longer get forwarded to the rulebook activation this event stream is currently configured in.'
         ),
         confirmText: t('Yes, I confirm I want to disable the forwarding of events.', {
           count: eventStreams.length,
