@@ -2,11 +2,10 @@ import { PageApp } from '@ansible/ansible-ui-framework';
 import { useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { postRequest, requestGet } from '@ansible/common-ui/crud/Data';
 import { Banner, Button, Flex, FlexItem } from '@patternfly/react-core';
-import debounce from 'debounce';
 import { t } from 'i18next';
-import { useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 import useSWR from 'swr';
+import { useUserInteraction } from '../hooks/useUserInteraction';
 import { UIFlag } from '../settings/ui-flags/IUIFlag';
 import { useUIFlag } from '../settings/ui-flags/useUIFlag';
 import { gatewayAPI } from '../utils/gateway-api-utils';
@@ -17,8 +16,6 @@ import { usePlatformNavigation } from './usePlatformNavigation';
 
 export function PlatformApp() {
   const navigation = usePlatformNavigation();
-  const location = useLocation();
-
   const sessionResponse = useSWR<{ expires_in_seconds: number }>(
     gatewayAPI`/session/`,
     requestGet,
@@ -59,19 +56,12 @@ export function PlatformApp() {
     return null;
   }, [refreshSession, session]);
 
-  const debouceRefreshSession = useMemo(
-    () =>
-      debounce(() => {
-        void refreshSession().catch(() => {
-          // Ignore errors as the user may have logged out
-          // and this is just a passive attempt to refresh the session
-        });
-      }, 60 * 1000),
-    [refreshSession]
-  );
-  useEffect(() => {
-    void debouceRefreshSession();
-  }, [location.pathname, debouceRefreshSession]);
+  useUserInteraction(60000, () => {
+    refreshSession().catch(() => {
+      // Ignore errors as the user may have logged out
+      // and this is just a passive attempt to refresh the session
+    });
+  });
 
   const { awxConfig, serviceDown } = useAwxConfigState();
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
