@@ -1,7 +1,9 @@
-import job from '@ansible/cypress/fixtures/job.json';
-import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import job from '../../../../../cypress/fixtures/job.json';
 import type { Job } from '../../../interfaces/Job';
 import { JobOutputInner as JobOutput } from './JobOutput';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { JobEvent } from '../../../interfaces/JobEvent';
 
 describe('JobOutput.cy.tsx', () => {
   beforeEach(() => {
@@ -79,6 +81,43 @@ describe('JobOutput.cy.tsx', () => {
     cy.getByDataCy('alert-toaster').should(
       'contain.text',
       'Websocket unavailable. You may experience degraded logging performance.'
+    );
+  });
+  it('Ensure no notification shows up when waiting on playbook execution', () => {
+    const modifiedJob = { ...job, status: 'running' };
+    cy.fixture('jobEvents.json').then((jobEvents: AwxItemsResponse<JobEvent>) => {
+      jobEvents.results[0].event = 'playbook_on_start';
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/jobs/26/job_events/?page_size=1&counter=1`,
+          hostname: 'localhost',
+        },
+        jobEvents
+      );
+    });
+    cy.mount(<JobOutput job={modifiedJob as unknown as Job} reloadJob={() => null} />);
+    cy.getByDataCy('waiting-label').should('not.exist');
+  });
+  it('Ensure notification shows up when waiting on playbook execution', () => {
+    const modifiedJob = { ...job, status: 'running' };
+    cy.fixture('jobEvents.json').then((jobEvents: AwxItemsResponse<JobEvent>) => {
+      jobEvents.results[0].event = 'playbook_on_setup';
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/jobs/26/job_events/?page_size=1&counter=1`,
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'jobEvents.json',
+        }
+      );
+    });
+    cy.mount(<JobOutput job={modifiedJob as unknown as Job} reloadJob={() => null} />);
+    cy.getByDataCy('waiting-label').should(
+      'contain.text',
+      'Running initial setup. Waiting to execute playbook'
     );
   });
 });

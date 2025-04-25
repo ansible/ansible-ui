@@ -6,14 +6,27 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageActionButton } from '@ansible/ansible-ui-framework/PageActions/PageActionButton';
 import { StatusCell } from '@ansible/common-ui/Status';
-import { Badge, ButtonVariant, Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
-import { ProjectDiagramIcon } from '@patternfly/react-icons';
+import {
+  Badge,
+  ButtonVariant,
+  Flex,
+  FlexItem,
+  Label,
+  Split,
+  SplitItem,
+  Tooltip,
+} from '@patternfly/react-core';
+import { ExclamationCircleIcon, ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Job } from '../../../interfaces/Job';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { JobEvent } from '../../../interfaces/JobEvent';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 
 const HeaderTitle = styled.div`
   display: inline-flex;
@@ -30,6 +43,36 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const [activeJobElapsedTime, setActiveJobElapsedTime] = useState('00:00:00');
+  const [playbookStarted, setPlaybookStarted] = useState(false);
+
+  const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
+
+  const { data: jobEvents } = useGet<AwxItemsResponse<JobEvent>>(
+    awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/`,
+    {
+      page_size: 1,
+      counter: 1,
+    },
+    {
+      refreshInterval: (latestData: AwxItemsResponse<JobEvent>) => {
+        if (latestData?.results.length) {
+          const latestEvent = latestData.results[0];
+          if (latestEvent.event === 'playbook_on_start') {
+            return 0;
+          }
+        }
+        return 5000;
+      },
+    }
+  );
+
+  const event = jobEvents?.results[0]?.event;
+
+  useEffect(() => {
+    if (event === 'playbook_on_start') {
+      setPlaybookStarted(true);
+    }
+  }, [event]);
 
   useEffect(() => {
     let secTimer: ReturnType<typeof setInterval>; // eslint-disable-line prefer-const
@@ -78,10 +121,29 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
   return (
     <Split hasGutter>
       <SplitItem isFilled>
-        <HeaderTitle>
-          <h1>{job.name}</h1>
-          <StatusCell status={job.status} />
-        </HeaderTitle>
+        <Flex>
+          <HeaderTitle>
+            <h1>{job.name}</h1>
+            <StatusCell status={job.status} />
+          </HeaderTitle>
+          {!playbookStarted && job?.status === 'running' && (
+            <Tooltip
+              content={t(
+                "The Job is currently running it's initial setup. Doing things like pulling the Execution Environment" +
+                  ' image and processing the playbook before execution. You will see playbook output shortly.'
+              )}
+            >
+              <Label
+                data-cy="waiting-label"
+                variant="outline"
+                color={'orange'}
+                icon={<ExclamationCircleIcon />}
+              >
+                {t('Running initial setup. Waiting to execute playbook')}
+              </Label>
+            </Tooltip>
+          )}
+        </Flex>
       </SplitItem>
       <SplitItem>
         <Flex>
