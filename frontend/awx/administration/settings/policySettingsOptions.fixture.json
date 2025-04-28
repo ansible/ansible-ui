@@ -1,0 +1,233 @@
+{
+  "name": "Setting Detail",
+  "description": "# Retrieve a Setting:\n\nMake GET request to this resource to retrieve a single setting\nrecord containing the following fields:\n\n* `OPA_HOST`: The hostname used to connect to the OPA server. If empty, policy enforcement will be disabled. (string)\n* `OPA_PORT`: The port used to connect to the OPA server. Defaults to 8181. (integer)\n* `OPA_SSL`: Enable or disable the use of SSL to connect to the OPA server. Defaults to false. (boolean)\n* `OPA_AUTH_TYPE`: The authentication type that will be used to connect to the OPA server: &quot;None&quot;, &quot;Token&quot;, or &quot;Certificate&quot;. (choice)\n    - `None`\n    - `Token`\n    - `Certificate`\n* `OPA_AUTH_TOKEN`: The token for authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Token&quot;. If an authorization header is defined in OPA_AUTH_CUSTOM_HEADERS, it will be overridden by OPA_AUTH_TOKEN. (string)\n* `OPA_AUTH_CLIENT_CERT`: The content of the client certificate file for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Certificate&quot;. (string)\n* `OPA_AUTH_CLIENT_KEY`: The content of the client key for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Certificate&quot;. (string)\n* `OPA_AUTH_CA_CERT`: The content of the CA certificate for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Certificate&quot;. (string)\n* `OPA_AUTH_CUSTOM_HEADERS`: Optional custom headers included in requests to the OPA server. Defaults to empty dictionary ({}). (nested object)\n* `OPA_REQUEST_TIMEOUT`: The number of seconds after which the connection to the OPA server will time out. Defaults to 1.5 seconds. (float)\n* `OPA_REQUEST_RETRIES`: The number of retry attempts for connecting to the OPA server. Default is 2. (integer)\n\n\n\n\n\n# Update a Setting:\n\nMake a PUT or PATCH request to this resource to update this\nsetting.  The following fields may be modified:\n\n\n* `OPA_HOST`: The hostname used to connect to the OPA server. If empty, policy enforcement will be disabled. (string, default=`\"\"`)\n* `OPA_PORT`: The port used to connect to the OPA server. Defaults to 8181. (integer, default=`8181`)\n* `OPA_SSL`: Enable or disable the use of SSL to connect to the OPA server. Defaults to false. (boolean, default=`False`)\n* `OPA_AUTH_TYPE`: The authentication type that will be used to connect to the OPA server: &quot;None&quot;, &quot;Token&quot;, or &quot;Certificate&quot;. (choice)\n    - `None` (default)\n    - `Token`\n    - `Certificate`\n* `OPA_AUTH_TOKEN`: The token for authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Token&quot;. If an authorization header is defined in OPA_AUTH_CUSTOM_HEADERS, it will be overridden by OPA_AUTH_TOKEN. (string, default=`\"\"`)\n* `OPA_AUTH_CLIENT_CERT`: The content of the client certificate file for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Certificate&quot;. (string, default=`\"\"`)\n* `OPA_AUTH_CLIENT_KEY`: The content of the client key for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Certificate&quot;. (string, default=`\"\"`)\n* `OPA_AUTH_CA_CERT`: The content of the CA certificate for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is &quot;Certificate&quot;. (string, default=`\"\"`)\n* `OPA_AUTH_CUSTOM_HEADERS`: Optional custom headers included in requests to the OPA server. Defaults to empty dictionary ({}). (nested object, default=`{}`)\n* `OPA_REQUEST_TIMEOUT`: The number of seconds after which the connection to the OPA server will time out. Defaults to 1.5 seconds. (float, default=`1.5`)\n* `OPA_REQUEST_RETRIES`: The number of retry attempts for connecting to the OPA server. Default is 2. (integer, default=`2`)\n\n\n\n\n\n\nFor a PUT request, include **all** fields in the request.\n\n\n\nFor a PATCH request, include only the fields that are being modified.\n\n\n\n# Delete a Setting:\n\nMake a DELETE request to this resource to delete this setting.",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json"],
+  "actions": {
+    "PUT": {
+      "OPA_HOST": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "OPA server hostname",
+        "help_text": "The hostname used to connect to the OPA server. If empty, policy enforcement will be disabled.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": ""
+      },
+      "OPA_PORT": {
+        "type": "integer",
+        "required": false,
+        "hidden": false,
+        "label": "OPA server port",
+        "help_text": "The port used to connect to the OPA server. Defaults to 8181.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": 8181
+      },
+      "OPA_SSL": {
+        "type": "boolean",
+        "required": false,
+        "hidden": false,
+        "label": "Use SSL for OPA connection",
+        "help_text": "Enable or disable the use of SSL to connect to the OPA server. Defaults to false.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": false
+      },
+      "OPA_AUTH_TYPE": {
+        "type": "choice",
+        "required": false,
+        "hidden": false,
+        "label": "OPA authentication type",
+        "help_text": "The authentication type that will be used to connect to the OPA server: \"None\", \"Token\", or \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": "None",
+        "choices": [
+          ["None", "None"],
+          ["Token", "Token"],
+          ["Certificate", "Certificate"]
+        ]
+      },
+      "OPA_AUTH_TOKEN": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "OPA authentication token",
+        "help_text": "The token for authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Token\". If an authorization header is defined in OPA_AUTH_CUSTOM_HEADERS, it will be overridden by OPA_AUTH_TOKEN.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": ""
+      },
+      "OPA_AUTH_CLIENT_CERT": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "OPA client certificate content",
+        "help_text": "The content of the client certificate file for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": ""
+      },
+      "OPA_AUTH_CLIENT_KEY": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "OPA client key content",
+        "help_text": "The content of the client key for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": ""
+      },
+      "OPA_AUTH_CA_CERT": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "OPA CA certificate content",
+        "help_text": "The content of the CA certificate for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": ""
+      },
+      "OPA_AUTH_CUSTOM_HEADERS": {
+        "type": "nested object",
+        "required": false,
+        "hidden": false,
+        "label": "OPA custom authentication headers",
+        "help_text": "Optional custom headers included in requests to the OPA server. Defaults to empty dictionary ({}).",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": {},
+        "child": { "type": "field", "required": true, "hidden": false, "read_only": false }
+      },
+      "OPA_REQUEST_TIMEOUT": {
+        "type": "float",
+        "required": false,
+        "hidden": false,
+        "label": "OPA request timeout",
+        "help_text": "The number of seconds after which the connection to the OPA server will time out. Defaults to 1.5 seconds.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": 1.5
+      },
+      "OPA_REQUEST_RETRIES": {
+        "type": "integer",
+        "required": false,
+        "hidden": false,
+        "label": "OPA request retry count",
+        "help_text": "The number of retry attempts for connecting to the OPA server. Default is 2.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "default": 2
+      }
+    },
+    "GET": {
+      "OPA_HOST": {
+        "type": "string",
+        "hidden": false,
+        "label": "OPA server hostname",
+        "help_text": "The hostname used to connect to the OPA server. If empty, policy enforcement will be disabled.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_PORT": {
+        "type": "integer",
+        "hidden": false,
+        "label": "OPA server port",
+        "help_text": "The port used to connect to the OPA server. Defaults to 8181.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_SSL": {
+        "type": "boolean",
+        "hidden": false,
+        "label": "Use SSL for OPA connection",
+        "help_text": "Enable or disable the use of SSL to connect to the OPA server. Defaults to false.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_AUTH_TYPE": {
+        "type": "choice",
+        "hidden": false,
+        "label": "OPA authentication type",
+        "help_text": "The authentication type that will be used to connect to the OPA server: \"None\", \"Token\", or \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false,
+        "choices": [
+          ["None", "None"],
+          ["Token", "Token"],
+          ["Certificate", "Certificate"]
+        ]
+      },
+      "OPA_AUTH_TOKEN": {
+        "type": "string",
+        "hidden": false,
+        "label": "OPA authentication token",
+        "help_text": "The token for authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Token\". If an authorization header is defined in OPA_AUTH_CUSTOM_HEADERS, it will be overridden by OPA_AUTH_TOKEN.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_AUTH_CLIENT_CERT": {
+        "type": "string",
+        "hidden": false,
+        "label": "OPA client certificate content",
+        "help_text": "The content of the client certificate file for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_AUTH_CLIENT_KEY": {
+        "type": "string",
+        "hidden": false,
+        "label": "OPA client key content",
+        "help_text": "The content of the client key for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_AUTH_CA_CERT": {
+        "type": "string",
+        "hidden": false,
+        "label": "OPA CA certificate content",
+        "help_text": "The content of the CA certificate for mTLS authentication to the OPA server. Required when OPA_AUTH_TYPE is \"Certificate\".",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_AUTH_CUSTOM_HEADERS": {
+        "type": "nested object",
+        "hidden": false,
+        "label": "OPA custom authentication headers",
+        "help_text": "Optional custom headers included in requests to the OPA server. Defaults to empty dictionary ({}).",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false,
+        "child": { "type": "field", "hidden": false }
+      },
+      "OPA_REQUEST_TIMEOUT": {
+        "type": "float",
+        "hidden": false,
+        "label": "OPA request timeout",
+        "help_text": "The number of seconds after which the connection to the OPA server will time out. Defaults to 1.5 seconds.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      },
+      "OPA_REQUEST_RETRIES": {
+        "type": "integer",
+        "hidden": false,
+        "label": "OPA request retry count",
+        "help_text": "The number of retry attempts for connecting to the OPA server. Default is 2.",
+        "category": "PolicyAsCode",
+        "category_slug": "policyascode",
+        "defined_in_file": false
+      }
+    }
+  }
+}
