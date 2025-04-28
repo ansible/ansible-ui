@@ -24,7 +24,7 @@ export const PlatformAbout: React.FunctionComponent = () => {
         setPageDialog(undefined)
       }
       productName={t('Ansible Automation Platform 2.5')}
-      trademark="Copyright 2024 Red Hat, Inc."
+      trademark="Copyright 2025 Red Hat, Inc."
       brandImageAlt={t('Brand Logo')}
       brandImageSrc={'/assets/aap-logo.svg?react'}
     >
