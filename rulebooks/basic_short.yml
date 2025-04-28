@@ -1,7 +1,7 @@
 ---
 # Basic rulebook with job template,
 # to be used with https://github.com/Alex-Izquierdo/eda-awx-project-sample
-- name: Basic short
+- name: Basic short new
   hosts: all
   sources:
     - ansible.eda.range:
