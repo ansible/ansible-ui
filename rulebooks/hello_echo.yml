@@ -9,4 +9,4 @@
       condition: event.i == 1
       action:
         debug:
-          msg: 'Hello World!'
+          msg: 'Hello World Updated!'
