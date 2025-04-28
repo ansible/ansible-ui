@@ -26,7 +26,8 @@ const DYNAMIC_FIELDS: Record<string, string> = {
   OPA_AUTH_CLIENT_KEY: 'Certificate',
   OPA_AUTH_CA_CERT: 'Certificate',
 };
-const DATA_FIELDS = ['OPA_AUTH_CLIENT_CERT', 'OPA_AUTH_CLIENT_KEY', 'OPA_AUTH_CA_CERT'];
+const DATA_FIELDS = ['OPA_AUTH_CLIENT_KEY'];
+const HIDDEN_FIELDS = ['OPA_AUTH_CLIENT_CERT', 'OPA_AUTH_CA_CERT'];
 
 export function AwxPolicySettingsDetailsPage() {
   const { isLoading, error, groups, options } = useAwxSettingsGroups(CATEGORY_ID);
@@ -45,6 +46,9 @@ export function AwxPolicySettingsDetailsPage() {
     const dynamicOptions: Record<string, AwxSettingsOptionsAction> = {};
     if (category && options) {
       for (const [key, value] of Object.entries(options)) {
+        if (HIDDEN_FIELDS.includes(key)) {
+          continue;
+        }
         if (!Object.keys(DYNAMIC_FIELDS).includes(key)) {
           categoryOptions[key] = value;
         } else if (response.data?.OPA_AUTH_TYPE === DYNAMIC_FIELDS[key]) {

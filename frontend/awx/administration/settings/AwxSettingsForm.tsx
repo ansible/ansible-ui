@@ -10,6 +10,7 @@ import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { Button, FormGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -243,6 +244,7 @@ export function AwxSettingsForm(props: {
 export function OptionActionsFormInput(props: { name: string; option: AwxSettingsOptionsAction }) {
   const option = props.option;
   const isReadOnly = props.option.defined_in_file;
+  const { setValue, clearErrors } = useFormContext();
 
   if (props.name.endsWith('SECRET') || props.name.endsWith('PASSWORD')) {
     return (
@@ -257,11 +259,27 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
     );
   }
 
-  if (
-    props.name.includes('OPA_AUTH_CLIENT_CERT') ||
-    props.name.includes('OPA_AUTH_CLIENT_KEY') ||
-    props.name.includes('OPA_AUTH_CA_CERT')
-  ) {
+  if (props.name === 'OPA_AUTH_CLIENT_CERT' || props.name === 'OPA_AUTH_CA_CERT') {
+    return (
+      <PageFormSection singleColumn>
+        <PageFormFileUpload
+          type="text"
+          label={option.label}
+          name={props.name}
+          labelHelpTitle={option.label}
+          labelHelp={option.help_text}
+          isRequired={option.required}
+          allowEditingUploadedText={true}
+          onClearClick={() => {
+            setValue(props.name, '', { shouldDirty: false });
+            clearErrors(props.name);
+          }}
+        />
+      </PageFormSection>
+    );
+  }
+
+  if (props.name === 'OPA_AUTH_CLIENT_KEY') {
     return (
       <PageFormSection singleColumn>
         <PageFormDataEditor
