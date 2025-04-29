@@ -58,7 +58,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     reloadJob,
     toolbarFilters,
     filterState,
-    50
+    200
   );
 
   const jobOutputRows = useMemo(() => {
@@ -69,7 +69,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
       }
     }
     for (let counter = 1; counter <= jobEventCount; counter++) {
-      const jobEvent = getJobOutputEvent(counter);
+      const jobEvent = jobEvents[counter];
       if (!jobEvent) jobOutputRows.push(counter);
       else
         for (const row of jobEventToRows(jobEvent)) {
@@ -77,7 +77,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
         }
     }
     return jobOutputRows;
-  }, [getJobOutputEvent, jobEventCount, job.result_traceback]);
+  }, [jobEventCount, job.result_traceback, jobEvents]);
 
   const [collapsed, setCollapsedState] = useState<ICollapsed>({});
   const setCollapsed = (uuid: string, counter: number, collapsed: boolean) => {
