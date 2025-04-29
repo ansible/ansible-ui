@@ -106,12 +106,32 @@ export function useJobOutput(
               return !jobEvents[Number(counter)];
             });
             if (eventCounters.length > 0) {
-              const qsParts = ['order_by=counter', `counter__in=${eventCounters.join(',')}`];
-              fetchEvents(qsParts);
+              let minCounter = Math.min(...eventCounters.map(Number));
+              const maxCounter = Math.max(...eventCounters.map(Number));
+
+              const bigGapIndexes = [];
+
+              // account for big gaps in missing events, usually caused by fast scrolling
+              // do not want to fetch all events in between large gaps
+              for (let i = 0; i < eventCounters.length; i++) {
+                const currentCounter = Number(eventCounters[i]);
+                const nextCounter = Number(eventCounters[i + 1]);
+                if (nextCounter - currentCounter > 200) {
+                  bigGapIndexes.push(i);
+                }
+              }
+
+              for (const gapIndex of bigGapIndexes) {
+                const currentCounter = Number(eventCounters[gapIndex]);
+                paginateFetch(currentCounter, minCounter, pageSize, fetchEvents);
+                minCounter = Number(eventCounters[gapIndex + 1]);
+              }
+
+              paginateFetch(maxCounter, minCounter, pageSize, fetchEvents);
             }
             missingEvents.current = {};
             queryTimeout.current = undefined;
-          }, 2500);
+          }, 100);
         }
         return jobEvent;
       }
@@ -253,4 +273,24 @@ function getQueryParamsForDateRangeFilters(toolbarFilter: IToolbarFilter, value:
     }
   }
   return [queryParamName, queryParamValue];
+}
+
+function paginateFetch(
+  maxCounter: number,
+  minCounter: number,
+  pageSize: number,
+  fetchEvents: (qsParts: string[]) => void
+) {
+  const pages = Math.ceil((maxCounter - minCounter + 1) / pageSize);
+
+  for (let i = 0; i < pages; i++) {
+    const qsParts = [
+      'order_by=counter',
+      `counter__gte=${minCounter}`,
+      `counter__lte=${maxCounter}`,
+      `page_size=${pageSize}`,
+      `page=${i + 1}`,
+    ];
+    fetchEvents(qsParts);
+  }
 }

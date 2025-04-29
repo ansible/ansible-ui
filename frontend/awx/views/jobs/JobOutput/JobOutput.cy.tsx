@@ -10,7 +10,7 @@ describe('JobOutput.cy.tsx', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: awxAPI`/jobs/26/job_events/?order_by=counter&page=1&page_size=50`,
+        url: awxAPI`/jobs/26/job_events/?order_by=counter&page=1&page_size=200`,
         hostname: 'localhost',
       },
       {
@@ -20,7 +20,7 @@ describe('JobOutput.cy.tsx', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: awxAPI`/jobs/26/job_events/?order_by=counter&page=1&page_size=50&search=World`,
+        url: awxAPI`/jobs/26/job_events/?order_by=counter&page=1&page_size=200&search=World`,
         hostname: 'localhost',
       },
       {
