@@ -1,9 +1,8 @@
 /* eslint-disable no-empty */
 /* eslint-disable no-console */
-import { createMock, MockRequest } from '@ansible/aap-mock';
+import { createMock, logResponse, MockRequest } from '@ansible/aap-mock';
 import { Page, test } from '@playwright/test';
 import { platformUI } from '../commands/login';
-import { logApiCallResponse } from './logger';
 
 /** Mock API calls for Playwright tests */
 export async function mock(page: Page) {
@@ -30,6 +29,7 @@ export async function mock(page: Page) {
       }
     }
     const response = router.handle(request);
+    logResponse(request, response);
     return route.fulfill({
       status: response.status ? response.status : response.body ? 200 : 501,
       headers: response.headers,
@@ -37,5 +37,4 @@ export async function mock(page: Page) {
     });
   });
   page.mock = { enabled: true, data: context.data, options: context.options, router: router };
-  page.on('response', logApiCallResponse);
 }
