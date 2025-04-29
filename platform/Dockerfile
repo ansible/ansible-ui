@@ -25,5 +25,6 @@ EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"]
 
 FROM base AS platform-ui
+COPY /nginx/snippets/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY /nginx/templates/default.conf.template /etc/nginx/templates/default.conf.template
 COPY /dist /usr/share/nginx/html
