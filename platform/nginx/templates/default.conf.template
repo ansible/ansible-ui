@@ -1,7 +1,7 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name _
+    server_name _;
     server_tokens off;
     return 301 https://$host$request_uri;
 }
@@ -16,6 +16,10 @@ server {
     ssl_certificate_key /certs/cert.key;
     ssl_client_certificate /certs/CA.pem;
     ssl_verify_client optional;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
+    ssl_prefer_server_ciphers on;
 
     access_log off;
     # error_log off;
@@ -39,6 +43,7 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
     }
+
     location /api {
         proxy_pass $PLATFORM_SERVER;
         proxy_set_header Origin $PLATFORM_SERVER;
@@ -47,6 +52,7 @@ server {
 
     # Cache files in the 'locales' and 'assets' directories for a long time
     location ~* ^/(locales|assets)/.*\.(json|woff|woff2|jpe?g|png|gif|ico|svg|css|js)$ {
+        include /etc/nginx/snippets/security-headers.conf;
         add_header Cache-Control "public, max-age=31536000, s-maxage=31536000, immutable";
         try_files $uri =404;
         gzip_static on;
@@ -54,12 +60,14 @@ server {
 
     # Cache files at the root (except index.html) for 5 minutes
     location ~* ^/[^/]+$ {
+        include /etc/nginx/snippets/security-headers.conf;
         add_header Cache-Control "public, max-age=300, s-maxage=300, must-revalidate" always;
         try_files $uri /index.html =404;
         gzip_static on;
     }
 
     location / {
+        include /etc/nginx/snippets/security-headers.conf;
         autoindex off;
         expires off;
         add_header Cache-Control "public, max-age=0, s-maxage=0, must-revalidate" always;
