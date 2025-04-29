@@ -26,7 +26,7 @@ test('application - create and delete', { tag: [] }, async ({ page }) => {
   await expect(
     page.getByLabel('Global', { exact: true }).getByRole('link', { name: 'OAuth Applications' })
   ).toBeVisible();
-  await page.locator('#application-links').click();
+  await page.locator('#platform-application-links').click();
   await expect(
     page.getByRole('navigation').getByRole('link', { name: applicationName, exact: true })
   ).toBeVisible();

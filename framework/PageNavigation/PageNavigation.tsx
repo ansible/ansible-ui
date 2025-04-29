@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useState, type CSSProperties } from 'react';
+import { useMatch } from 'react-router-dom';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
@@ -87,6 +88,9 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const onClickNavItem = usePageNavBarClick();
   let route = props.baseRoute + '/' + item.path;
   route = route.replace('//', '/');
+
+  const isActive = !!useMatch(route + '/*');
+
   if (item.path === '/' && 'children' in item) {
     return <PageNavigationItems items={item.children} baseRoute={''} />;
   }
@@ -95,10 +99,6 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const subtitleStyle: CSSProperties = { fontSize: 'small', opacity: 0.5, textAlign: 'left' };
 
   if (!hasChildNavItems && 'label' in item) {
-    let path = (process.env.ROUTE_PREFIX ?? '') + route;
-    path = path.replace('//', '/');
-
-    const isActive = item.href ? false : location.pathname.startsWith(path);
     return (
       <NavItem
         id={id}
@@ -110,7 +110,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         data-cy={id}
         style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column' }}
       >
-        <Flex>
+        <Flex flexWrap={{ default: 'nowrap' }}>
           <FlexItem grow={{ default: 'grow' }}>{item.label}</FlexItem>
           {'badge' in item && item.badge && (
             <FlexItem>
@@ -120,11 +120,13 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
             </FlexItem>
           )}
           {'href' in item && item.href && (
-            <span className="pf-v5-c-nav__toggle">
-              <span className="pf-v5-c-nav__toggle-icon">
-                <ExternalLinkAltIcon />
+            <FlexItem>
+              <span className="pf-v5-c-nav__toggle">
+                <span className="pf-v5-c-nav__toggle-icon">
+                  <ExternalLinkAltIcon />
+                </span>
               </span>
-            </span>
+            </FlexItem>
           )}
         </Flex>
         {item.subtitle && <div style={subtitleStyle}>{item.subtitle}</div>}
@@ -143,6 +145,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   return (
     <NavExpandable
       buttonProps={{ id }}
+      isActive={isActive}
       title={
         (
           <div>
