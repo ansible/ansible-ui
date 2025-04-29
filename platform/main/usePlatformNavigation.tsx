@@ -105,6 +105,7 @@ export function usePlatformNavigation() {
         .sort((a, b) => a.name.localeCompare(b.name));
       if (appsWithLinks.length > 0) {
         navigationItems.push({
+          id: PlatformRoute.ApplicationLinks,
           label: t('Application Links'),
           path: 'links',
           children: oauthApplications.results.map((app) => ({
@@ -186,6 +187,11 @@ export function usePlatformNavigation() {
           path: '',
           element: <Navigate to="jobs" />,
         });
+
+        const links = removeNavigationItemById(navigationItems, PlatformRoute.ApplicationLinks);
+        if (links) {
+          navigationItems.push(links);
+        }
 
         const quickstarts = removeNavigationItemById(navigationItems, PlatformRoute.QuickStarts);
         if (quickstarts) {
