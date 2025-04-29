@@ -3,6 +3,7 @@
 import http from 'http';
 import { createMock } from '../create-mock';
 import { MockRequest } from '../mock-router';
+import { logResponse } from './log-response';
 
 const { router, context } = createMock();
 
@@ -22,8 +23,8 @@ http
       params: {},
     };
 
-    if (req.headers['content-type'] === 'application/json') {
-      request.body = await new Promise((resolve) => {
+    if (req.headers['content-type']) {
+      const bodyText = await new Promise<string>((resolve) => {
         let body = '';
         req.on('data', (chunk) => {
           if (chunk instanceof Buffer) {
@@ -31,13 +32,26 @@ http
           }
         });
         req.on('end', () => {
-          try {
-            resolve(JSON.parse(body) as Record<string, unknown>);
-          } catch (e) {
-            resolve(undefined);
-          }
+          resolve(body);
         });
       });
+
+      if (bodyText) {
+        switch (req.headers['content-type'].split(';')[0]) {
+          case 'application/json':
+            try {
+              request.body = JSON.parse(bodyText) as Record<string, unknown>;
+            } catch (e) {
+              // Ignore JSON parse error
+            }
+            break;
+          case 'application/x-www-form-urlencoded':
+            request.body = Object.fromEntries(new URLSearchParams(bodyText));
+            break;
+          default:
+            break;
+        }
+      }
     }
 
     const response = router.handle(request);
@@ -51,6 +65,8 @@ http
       res.write(JSON.stringify(response.body));
     }
     res.end();
+
+    logResponse(request, response);
   })
   .listen(5050, () => {
     process.on('SIGINT', () => {

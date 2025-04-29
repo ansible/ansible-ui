@@ -97,7 +97,15 @@ export function createMock() {
     .POST('/api/controller/v2/:resource', postItem({ relations: controllerRelations }))
     .OPTIONS('/api/controller/v2/:resource/:id', getItemOptions())
     .GET('/api/controller/v2/:resource/:id', getItem(controllerRelations))
-    .DELETE('/api/controller/v2/:resource/:id', deleteItem());
+    .DELETE('/api/controller/v2/:resource/:id', deleteItem())
+
+    // EDA Resource API
+    .OPTIONS('/api/eda/v1/:resource', getOptions())
+    .GET('/api/eda/v1/:resource', getItems())
+    .POST('/api/eda/v1/:resource', postItem())
+    .OPTIONS('/api/eda/v1/:resource/:id', getItemOptions())
+    .GET('/api/eda/v1/:resource/:id', getItem())
+    .DELETE('/api/eda/v1/:resource/:id', deleteItem());
 
   return { router, context };
 }
