@@ -16,16 +16,16 @@ import { TagIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
+import { PageFormSingleSelectHubResource } from '../common/PageFormSingleSelectHubResource';
 import { hubErrorAdapter } from '../common/adapters/hubErrorAdapter';
 import { hubAPI, pulpAPI } from '../common/api/formatPath';
 import { hubAPIPatch, hubAPIPost, hubAPIPut } from '../common/api/hub-api-utils';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
-import { PageFormSingleSelectHubResource } from '../common/PageFormSingleSelectHubResource';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
 
@@ -126,7 +126,7 @@ function ExecutionEnvironmentForm(props: Readonly<{ mode: 'add' | 'edit' }>) {
       }
     }
 
-    navigate(HubRoute.ExecutionEnvironments);
+    void navigate(HubRoute.ExecutionEnvironments);
   };
 
   const defaultFormValue = {
@@ -186,7 +186,7 @@ function ExecutionEnvironmentForm(props: Readonly<{ mode: 'add' | 'edit' }>) {
               ? t('Save execution environment')
               : t('Create execution environment')
           }
-          onCancel={() => navigate(HubRoute.ExecutionEnvironments)}
+          onCancel={() => void navigate(HubRoute.ExecutionEnvironments)}
           onSubmit={onSubmit}
           defaultValue={defaultFormValue}
           singleColumn={true}

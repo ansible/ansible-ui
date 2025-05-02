@@ -12,7 +12,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCurrentUserUpdate, EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
@@ -52,7 +52,7 @@ export function CreateUser() {
     pageNavigate(EdaRoute.UserPage, { params: { id: newUser.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -100,7 +100,7 @@ export function EditCurrentUser() {
     pageNavigate(EdaRoute.MyPage, { params: { id: updatedUser.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   if (!user) {
     return (
       <PageLayout>
@@ -154,7 +154,7 @@ export function EditUser() {
     pageNavigate(EdaRoute.UserPage, { params: { id: updatedUser.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (!user) {

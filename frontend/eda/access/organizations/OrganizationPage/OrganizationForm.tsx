@@ -11,7 +11,7 @@ import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Da
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import useSWR from 'swr';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaPageForm } from '../../../common/EdaPageForm';
@@ -31,7 +31,7 @@ export function CreateOrganization() {
     const newOrganization = await postRequest(edaAPI`/organizations/`, organization);
     pageNavigate(EdaRoute.OrganizationDetails, { params: { id: newOrganization.id } });
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
@@ -72,7 +72,7 @@ export function EditOrganization() {
     );
     pageNavigate(EdaRoute.OrganizationDetails, { params: { id: newOrganization.id } });
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>

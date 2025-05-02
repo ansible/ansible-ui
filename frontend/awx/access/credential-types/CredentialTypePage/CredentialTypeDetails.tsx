@@ -10,7 +10,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -26,7 +26,7 @@ export function CredentialTypeDetails() {
 
 export function CredentialTypeDetailInner(props: { credentialType: CredentialType }) {
   const { t } = useTranslation();
-  const history = useNavigate();
+  const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
   function renderCredentialTypeName(credentialType: CredentialType) {
     if (credentialType.managed) {
@@ -64,7 +64,7 @@ export function CredentialTypeDetailInner(props: { credentialType: CredentialTyp
           value={props.credentialType.created}
           author={props.credentialType.summary_fields?.created_by?.username}
           onClick={() =>
-            history(
+            void navigate(
               getPageUrl(AwxRoute.UserDetails, {
                 params: {
                   id: (props.credentialType.summary_fields?.created_by?.id ?? 0).toString(),
@@ -78,7 +78,7 @@ export function CredentialTypeDetailInner(props: { credentialType: CredentialTyp
         value={props.credentialType.modified}
         author={props.credentialType.summary_fields?.modified_by?.username}
         onClick={() =>
-          history(
+          void navigate(
             getPageUrl(AwxRoute.UserDetails, {
               params: {
                 id: (props.credentialType.summary_fields?.modified_by?.id ?? 0).toString(),

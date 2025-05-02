@@ -1,7 +1,7 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { CreateUser, EditUser } from '../../access/users/UserForm';
 import { AwxUserDetails } from '../../access/users/UserPage/AwxUserDetails';
 import { UserOrganizations } from '../../access/users/UserPage/UserOrganizations';

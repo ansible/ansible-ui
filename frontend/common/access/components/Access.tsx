@@ -17,7 +17,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { requestDelete } from '../../crud/Data';
 import { idKeyFn } from '../../utils/nameKeyFn';
 import { useMapContentTypeToDisplayName } from '../hooks/useMapContentTypeToDisplayName';

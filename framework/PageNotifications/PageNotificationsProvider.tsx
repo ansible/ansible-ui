@@ -28,7 +28,7 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
 interface IPageNotifications {
@@ -168,7 +168,7 @@ function PageNotification(props: { notification: IPageNotification }) {
     <NotificationDrawerListItem
       variant={props.notification.variant}
       onClick={() => {
-        navigate(props.notification.to);
+        void navigate(props.notification.to);
         setNotificationsDrawerOpen(false);
       }}
     >

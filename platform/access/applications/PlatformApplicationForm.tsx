@@ -20,7 +20,7 @@ import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalida
 import { Alert, TextContent } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import useSWR from 'swr';
 import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
@@ -51,7 +51,7 @@ export function CreatePlatformApplication(props: {
     pageNavigate(PlatformRoute.ApplicationDetails, { params: { id: newApplication.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -116,7 +116,7 @@ export function EditPlatformApplication() {
 
   const getPageUrl = useGetPageUrl();
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
 
   if (!application) {
     return (

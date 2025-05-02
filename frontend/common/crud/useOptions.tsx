@@ -50,7 +50,7 @@ function useOptionsRequest<ResponseBody>() {
     });
     if (!response.ok) {
       // if (response.status === 401) {
-      //   navigate('/login?navigate-back=true');
+      //   void navigate('/login?navigate-back=true');
       // }
       throw await createRequestError(response);
     }

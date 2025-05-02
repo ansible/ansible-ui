@@ -1,6 +1,6 @@
 import { ITableColumn } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { Instance } from '../../../interfaces/Instance';
 import { InstancesList } from '../../instances/components/InstancesList';
 import { useInstancesColumns } from '../../instances/hooks/useInstancesColumns';

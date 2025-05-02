@@ -16,7 +16,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
@@ -36,7 +36,7 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
     const newRole = await postRequest(edaAPI`/role_definitions/`, Role);
     pageNavigate(EdaRoute.RolePage, { params: { id: newRole.id } });
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -79,13 +79,13 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const onSubmit: PageFormSubmitHandler<EdaRbacRole> = async (Role) => {
     if (Number.isInteger(id)) {
       Role = await patchRequest(edaAPI`/role_definitions/${id.toString()}/`, Role);
-      navigate(-1);
+      void navigate(-1);
     } else {
       const newRole = await postRequest(edaAPI`/role_definitions/`, Role);
       pageNavigate(EdaRoute.RolePage, { params: { id: newRole.id } });
     }
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (Number.isInteger(id)) {

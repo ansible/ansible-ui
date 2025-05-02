@@ -16,13 +16,13 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../../main/EdaRoutes';
-import { useDeleteCredentials } from '../hooks/useDeleteCredentials';
 import { useCopyCredential } from '../hooks/useCopyCredential';
+import { useDeleteCredentials } from '../hooks/useDeleteCredentials';
 
 export function CredentialPage() {
   const { t } = useTranslation();

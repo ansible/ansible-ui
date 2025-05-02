@@ -5,7 +5,7 @@ import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';

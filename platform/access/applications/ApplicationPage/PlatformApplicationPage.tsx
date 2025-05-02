@@ -11,7 +11,7 @@ import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useApplicationActions } from '../hooks/useApplicationActions';

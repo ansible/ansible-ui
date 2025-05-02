@@ -2,7 +2,7 @@ import { PageHeader, PageLayout, PageWizard, usePageNavigate } from '@ansible/an
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
 
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
@@ -62,7 +62,7 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
     }
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const steps = useScheduleSteps();
 
   if (!schedule) return;

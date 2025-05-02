@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router';
 import { HubRoute } from '../../../main/HubRoutes';
 import { IContents } from '../../Collection';
 
@@ -54,7 +54,7 @@ export function CollectionDocumentationTabPanel(props: {
                   <NavItem
                     key={docName}
                     onClick={() =>
-                      navigate(HubRoute.CollectionDocumentation, {
+                      void navigate(HubRoute.CollectionDocumentation, {
                         query,
                         params: {
                           repository,
@@ -84,7 +84,7 @@ export function CollectionDocumentationTabPanel(props: {
                   <NavItem
                     key={c.content_name}
                     onClick={() => {
-                      navigate(HubRoute.CollectionDocumentationContent, {
+                      void navigate(HubRoute.CollectionDocumentationContent, {
                         query,
                         params: {
                           repository,

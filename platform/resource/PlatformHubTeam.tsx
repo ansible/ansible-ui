@@ -6,7 +6,7 @@ import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { HubTeam } from '@ansible/hub-ui/interfaces/expanded/HubTeam';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformHubTeam(props: { route?: string }) {

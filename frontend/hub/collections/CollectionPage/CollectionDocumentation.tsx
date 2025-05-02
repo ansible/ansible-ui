@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext, useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router';
 import { pulpAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { CollectionVersionSearch, IContents } from '../Collection';

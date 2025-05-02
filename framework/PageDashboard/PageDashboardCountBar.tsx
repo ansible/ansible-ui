@@ -1,7 +1,7 @@
 import { ChartPie } from '@patternfly/react-charts';
 import { CardBody, Title } from '@patternfly/react-core';
 import { t } from 'i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { PageChartLegend } from './PageChartLegend';
 import { PageDashboardCard } from './PageDashboardCard';
 

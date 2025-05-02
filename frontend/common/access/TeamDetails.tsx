@@ -1,6 +1,6 @@
 import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { LastModifiedPageDetail } from '../LastModifiedPageDetail';
 
 export type TeamDetailsType = {
@@ -74,7 +74,7 @@ export function TeamDetails<T extends TeamDetailsType>(props: {
             onClick={
               createdByUserDetailsUrl
                 ? () => {
-                    navigate(createdByUserDetailsUrl);
+                    void navigate(createdByUserDetailsUrl);
                   }
                 : undefined
             }
@@ -88,7 +88,7 @@ export function TeamDetails<T extends TeamDetailsType>(props: {
           onClick={
             modifiedByUserDetailsUrl
               ? () => {
-                  navigate(modifiedByUserDetailsUrl);
+                  void navigate(modifiedByUserDetailsUrl);
                 }
               : undefined
           }

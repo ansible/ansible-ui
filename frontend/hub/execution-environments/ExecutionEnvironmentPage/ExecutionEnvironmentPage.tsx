@@ -11,7 +11,7 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Flex, FlexItem, Stack } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { HelperText } from '../../common/HelperText';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';

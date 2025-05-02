@@ -15,7 +15,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
@@ -76,7 +76,7 @@ export function CreateProject() {
       <AwxPageForm
         submitText={t('Create project')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={defaultValues as Project}
       >
         <ProjectInputs />
@@ -144,7 +144,7 @@ export function EditProject() {
       <AwxPageForm<Project>
         submitText={t('Save project')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={project}
       >
         <ProjectInputs project={project} />

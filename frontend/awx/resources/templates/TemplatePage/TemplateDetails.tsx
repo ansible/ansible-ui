@@ -16,19 +16,19 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { useTranslation, Trans } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useFeatureFlag } from '../../../common/useFeatureFlags';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { WebhookService } from '../components/WebhookService';
-import { useFeatureFlag } from '../../../common/useFeatureFlags';
 
 const DangerText = styled.span`
   color: ${getPatternflyColor('danger')};
@@ -54,7 +54,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
   const { error, data: template, refresh } = useGetItem<JobTemplate>(awxAPI`/job_templates`, urlId);
   const instanceGroups = useInstanceGroups(urlId || '0');
   const getPageUrl = useGetPageUrl();
-  const history = useNavigate();
+  const navigate = useNavigate();
   const verbosity: string = useVerbosityString(template?.verbosity);
   const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
@@ -277,7 +277,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         value={template.modified}
         author={template.summary_fields.modified_by?.username}
         onClick={() =>
-          history(
+          void navigate(
             getPageUrl(AwxRoute.UserDetails, {
               params: { id: (template.summary_fields?.modified_by?.id ?? 0).toString() },
             })

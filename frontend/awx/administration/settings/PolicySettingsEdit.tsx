@@ -1,25 +1,25 @@
 import { LoadingPage, PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
-import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
-import { Button, FormGroup } from '@patternfly/react-core';
-import { t } from 'i18next';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
-import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import {
   AwxSettingsOptionsAction,
   OptionActionsFormInput,
 } from '@ansible/awx-ui/administration/settings/AwxSettingsForm';
 import {
-  useAwxSettingsGroups,
   awxSettingsExcludeKeys,
+  useAwxSettingsGroups,
   useAwxSettingsGroupsBase,
 } from '@ansible/awx-ui/administration/settings/useAwxSettingsGroups';
-import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { useGet } from '@ansible/common-ui/crud/useGet';
-import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
 import { useRevertAllSettingsModal } from '@ansible/awx-ui/administration/settings/useRevertAllSettingsModal';
-import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { t } from 'i18next';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 
 const CATEGORY_ID = 'policyascode';
 
@@ -81,7 +81,7 @@ export function PolicySettingsForm(props: {
         }
       }
       await patch(awxAPI`/settings/policyascode/`, patchData);
-      navigate('..');
+      void navigate('..');
     },
     [navigate, patch, props.options]
   );
@@ -149,7 +149,7 @@ export function PolicySettingsForm(props: {
     <AwxPageForm
       defaultValue={props.data}
       submitText={t('Save')}
-      onCancel={() => navigate('..')}
+      onCancel={() => void navigate('..')}
       onSubmit={onSubmit}
       additionalActions={
         <Button
@@ -158,7 +158,7 @@ export function PolicySettingsForm(props: {
             e.preventDefault();
             openRevertAllSettingsModal({
               categorySlugs: getCategorySlugs(props.options),
-              onComplete: () => navigate('..'),
+              onComplete: () => void navigate('..'),
             });
           }}
         >
