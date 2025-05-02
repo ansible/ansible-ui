@@ -14,6 +14,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { ScmType } from '@ansible/common-ui/scm';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
   LabelGroup,
@@ -24,14 +25,13 @@ import {
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

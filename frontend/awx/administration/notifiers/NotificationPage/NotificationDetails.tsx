@@ -10,7 +10,7 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import { TextArea } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { getLabelHelp } from '../NotifierFormInner';

@@ -2,7 +2,7 @@ import { compareStrings } from '@ansible/ansible-ui-framework';
 import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
 import { Instance } from '../../../../interfaces/Instance';

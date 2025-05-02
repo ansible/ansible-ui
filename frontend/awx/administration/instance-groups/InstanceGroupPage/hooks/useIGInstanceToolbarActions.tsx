@@ -5,7 +5,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { t } from 'i18next';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { IAwxView } from '../../../../common/useAwxView';
 import { Instance } from '../../../../interfaces/Instance';

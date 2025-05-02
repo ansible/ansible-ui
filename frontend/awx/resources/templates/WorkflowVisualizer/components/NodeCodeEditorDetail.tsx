@@ -1,6 +1,6 @@
 import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { PromptDetail } from './PromptDetail';
 
 export function NodeCodeEditorDetail({

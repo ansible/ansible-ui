@@ -13,7 +13,7 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';

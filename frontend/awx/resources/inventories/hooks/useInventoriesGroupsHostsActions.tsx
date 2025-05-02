@@ -9,7 +9,7 @@ import { cannotEditResource } from '@ansible/common-ui/utils/RBAChelpers';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';

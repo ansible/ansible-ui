@@ -10,7 +10,7 @@ import {
 import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { stringIsUUID } from '../../common/util/strings';
 import type { WorkflowJobNode } from '../../interfaces/WorkflowNode';
 import { AwxRoute } from '../../main/AwxRoutes';

@@ -18,9 +18,10 @@ import { Alert } from '@patternfly/react-core';
 import { useCallback, useEffect } from 'react';
 import { FieldPath, FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import useSWR, { useSWRConfig } from 'swr';
 import { EdaPageForm } from '../../common/EdaPageForm';
+import { PageFormSingleSelectEdaResource } from '../../common/PageFormSingleSelectEdaResource';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
 import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
@@ -28,12 +29,11 @@ import { EdaOrganization } from '../../interfaces/EdaOrganization';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { useCredentialTypeCredentialsFilters } from '../credential-types/hooks/useCredentialTypeCredentialsFilters';
+import { useCredentialTypesColumns } from '../credential-types/hooks/useCredentialTypesColumns';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialFormInputs } from './CredentialFormTypes';
 import { CredentialDetails } from './CredentialPage/CredentialDetails';
-import { PageFormSingleSelectEdaResource } from '../../common/PageFormSingleSelectEdaResource';
-import { useCredentialTypesColumns } from '../credential-types/hooks/useCredentialTypesColumns';
-import { useCredentialTypeCredentialsFilters } from '../credential-types/hooks/useCredentialTypeCredentialsFilters';
 
 export function PageFormSelectEdaCredentialType<
   TFieldValues extends FieldValues = FieldValues,
@@ -162,7 +162,7 @@ export function CreateCredential() {
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.CredentialPage, { params: { id: newCredential.id } });
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -204,9 +204,9 @@ export function EditCredential() {
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
     await patchRequest(edaAPI`/eda-credentials/${id.toString()}/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
-    navigate(-1);
+    void navigate(-1);
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (!credential) {

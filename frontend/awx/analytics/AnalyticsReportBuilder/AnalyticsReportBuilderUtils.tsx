@@ -6,9 +6,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { specificReportDefaultParams } from './constants';
-import { Tooltip, Button } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 import { AnalyticsReportBuilderBodyProps, AnyType } from './AnalyticsReportBuilder';
+import { specificReportDefaultParams } from './constants';
 import { TableExpandedRow } from './MostUsedModules';
 
 // another function for chart
@@ -69,7 +69,7 @@ export const getClickableText = (
     return (
       <Tooltip content={`View ${item.name} usage`}>
         <Button
-          onClick={() => navigateToModuleBy(countMapper[key], item.id, params)}
+          onClick={() => void navigateToModuleBy(countMapper[key], item.id, params)}
           variant="link"
         >{`${item[key]}`}</Button>
       </Tooltip>
@@ -79,7 +79,7 @@ export const getClickableText = (
     return (
       <Tooltip content={`View ${item.org_name} usage`}>
         <Button
-          onClick={() => navigateToTemplatesExplorer(countMapper[key], item.org_id, params)}
+          onClick={() => void navigateToTemplatesExplorer(countMapper[key], item.org_id, params)}
           variant="link"
         >{`${item[key]}`}</Button>
       </Tooltip>

@@ -1,6 +1,7 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { useID } from '../hooks/useID';
 import {
   IPageActionButton,
@@ -12,7 +13,6 @@ import {
   PageActionType,
 } from './PageAction';
 import { usePageActionDisabled } from './PageActionUtils';
-import { useTranslation } from 'react-i18next';
 
 export function PageActionButton<T extends object>(props: {
   action:

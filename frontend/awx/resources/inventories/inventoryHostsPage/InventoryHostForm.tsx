@@ -17,7 +17,7 @@ import { useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
@@ -78,7 +78,7 @@ export function CreateHost() {
     }
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
 
   const inventoryResponse = useGetInventory(params.id, params.inventory_type);
 
@@ -222,7 +222,7 @@ export function EditHost() {
     }
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
 
   if (!host) {
     return (

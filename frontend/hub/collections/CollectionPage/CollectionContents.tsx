@@ -10,7 +10,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { PageSection, SearchInput, ToolbarItem } from '@patternfly/react-core';
 import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
+import { Link, useOutletContext, useSearchParams } from 'react-router';
 import styled from 'styled-components';
 import { pulpAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';

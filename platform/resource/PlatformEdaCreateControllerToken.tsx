@@ -1,5 +1,5 @@
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformEdaCreateControllerToken() {

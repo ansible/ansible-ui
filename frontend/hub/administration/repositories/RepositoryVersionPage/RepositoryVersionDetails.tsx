@@ -2,7 +2,7 @@ import { DateTimeCell, LoadingPage, PageDetail, PageDetails } from '@ansible/ans
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext, useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router';
 import { CollectionVersion } from '../../../collections/Collection';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';

@@ -1,6 +1,6 @@
 import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function TeamAccess() {

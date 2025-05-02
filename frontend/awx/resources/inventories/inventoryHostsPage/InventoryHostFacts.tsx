@@ -2,7 +2,7 @@ import { PageDetails } from '@ansible/ansible-ui-framework';
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { awxAPI } from '../../../common/api/awx-utils';
 
 export function InventoryHostFacts(props: { page: string }) {

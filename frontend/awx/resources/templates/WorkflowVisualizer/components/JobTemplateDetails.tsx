@@ -10,14 +10,16 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
+import { useFeatureFlag } from '../../../../common/useFeatureFlags';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import { Credential } from '../../../../interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
+import { Inventory } from '../../../../interfaces/Inventory';
 import { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { Label as ILabel } from '../../../../interfaces/Label';
 import { AwxRoute } from '../../../../main/AwxRoutes';
@@ -28,8 +30,6 @@ import { GraphNodeData, PromptFormValues } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
-import { useFeatureFlag } from '../../../../common/useFeatureFlags';
-import { Inventory } from '../../../../interfaces/Inventory';
 
 function useAggregateJobTemplateDetails({
   template,

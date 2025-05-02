@@ -1,6 +1,6 @@
 import { PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';

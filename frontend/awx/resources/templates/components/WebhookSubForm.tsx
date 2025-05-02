@@ -6,7 +6,7 @@ import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';

@@ -3,7 +3,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { Divider } from '@patternfly/react-core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';

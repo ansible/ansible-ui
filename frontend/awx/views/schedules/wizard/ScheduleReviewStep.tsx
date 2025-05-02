@@ -5,7 +5,7 @@ import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWiza
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { AwxError } from '../../../common/AwxError';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { getResourceURL } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';

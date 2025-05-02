@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import React, { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
 export function PageDetailCodeBlock(props: {
   label?: string;

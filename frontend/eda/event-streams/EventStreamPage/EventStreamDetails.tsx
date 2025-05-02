@@ -12,7 +12,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';

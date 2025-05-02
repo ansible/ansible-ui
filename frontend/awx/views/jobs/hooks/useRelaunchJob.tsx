@@ -2,7 +2,7 @@ import { usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framew
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import {
   AdHocCommandRelaunch,
@@ -89,7 +89,7 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
             relaunchJob = await postRequest(relaunchEndpoint(job), {} as ProjectUpdateView);
             break;
         }
-        navigate(getJobOutputUrl(relaunchJob as UnifiedJob));
+        void navigate(getJobOutputUrl(relaunchJob as UnifiedJob));
       }
     } catch (error) {
       alertToaster.addAlert({

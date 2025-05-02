@@ -1,7 +1,7 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { CreateOrganization, EditOrganization } from '../../access/organizations/OrganizationForm';
 import { OrganizationDetails } from '../../access/organizations/OrganizationPage/OrganizationDetails';
 import { OrganizationExecutionEnvironments } from '../../access/organizations/OrganizationPage/OrganizationExecutionEnvironments';

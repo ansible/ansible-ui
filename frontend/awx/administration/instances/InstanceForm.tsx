@@ -14,7 +14,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { useSWRConfig } from 'swr';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -32,7 +32,7 @@ export function AddInstance() {
     pageNavigate(AwxRoute.InstanceDetails, { params: { id: newInstance.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -81,7 +81,7 @@ export function EditInstance() {
     pageNavigate(AwxRoute.InstanceDetails, { params: { id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (instance) {
