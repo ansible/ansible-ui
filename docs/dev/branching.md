@@ -1,38 +1,36 @@
 # Branching
 
-Release branches will be named `release/2.x`.
-When a release is cut, the branch will be created and tagged.
-The tag will be in format `v2.5.x`.
-This needs to be in the `package.json` so that semantic versioning can be used in the actions.
-Changed that go into the branch will be merged back into the `main` development branch.
+[Release Dicipline](https://spaces.redhat.com/pages/viewpage.action?spaceKey=AAP&title=Enforcing+Release+Discipline+-+Restricting+Bi-Weekly+Async+Releases+and+Maintaining+Branch+Seperation)
 
-```mermaid
-gitGraph
-  commit id: "v0.0.0-0"
-  commit id: "v0.0.0-1"
-  branch release/2.5
-  checkout release/2.5
-  commit id: "v2.5.0" tag: "v2.5.0"
-  checkout release/2.5
-  commit id: "v2.5.0-0"
-  checkout main
-  merge release/2.5
-  commit id: "v0.0.0-2"
-  checkout release/2.5
-  commit id: "v2.5.0-1"
-  checkout main
-  merge release/2.5
-  checkout release/2.5
-  commit id: "v2.5.1" tag: "v2.5.1"
-  checkout main
-  commit id: "v0.0.0-3"
-  merge release/2.5
-  commit id: "v0.0.0-4"
-```
+> As outlined in previous decision records, we have adopted a structured 8-week release cycle with a hardening sprint and hackathon process at the end of each cycle to ensure that all new feature/function code is properly tested and validated before being included in a release.
 
-To branch
+> To accommodate urgent fixes, we reinstated the bi-weekly async release model, but only for CVEs and defects. However, to ensure this process does not introduce instability, it is essential that component teams follow strict branch management practices.
 
-1. Create the branch locally `release/2.x`.
-2. Update the `package.json` to have the version `2.x.x`.
-3. Commit and push the branch.
-4. Manually add the `v2.x.x` tag to the pushed branch.
+## 8 Week Release Schedule
+
+### Sprint 1
+
+- Features go into `main`
+- Defects go into `main`
+- Critical defects cherry-picked to `release`
+- At the end of sprint - `release` is tagged for an async release
+  
+### Sprint 2
+
+- Features go into `main`
+- Defects go into `main`
+- Critical defects cherry-picked to `release`
+- At the end of sprint - `release` is tagged for an async release
+  
+### Sprint 3
+
+- Features go into `main`
+- Defects go into `main`
+- At the end of sprint - `main` merged into `release` (Contains all feature and fixes from main)
+  
+### Hardening Sprint
+
+- Hackathon of `release` (Contains all feature and fixes from main)
+- Hackathon defects go into `main`
+- Hackathon defects cherry-picked to `release`
+- At the end of sprint - `release` is tagged and released with new features
