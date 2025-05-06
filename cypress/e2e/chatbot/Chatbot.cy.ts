@@ -8,13 +8,11 @@ describe('The Chatbot is enabled', () => {
       (response) => {
         if (response.status === 404) {
           // lightspeed integration not detected, mock by intercepting the /health/status/ endpoint request
-          cy.intercept('GET', lightspeedAPI`/health/status/`, {
+          cy.intercept('GET', lightspeedAPI`/health/status/chatbot/`, {
             statusCode: 200,
             body: {
-              status: 'ok',
-              dependencies: [
-                { name: 'chatbot-service', status: { provider: 'http', models: 'ok' } },
-              ],
+              'chatbot-service': 'ok',
+              'streaming-chatbot-service': 'ok',
             },
           }).as('getLightspeedHealthStatus');
           lightspeedHeathStatusMocked = true;
@@ -50,11 +48,11 @@ describe('The Chatbot is enabled', () => {
 
 describe('The Chatbot is disabled', () => {
   it('should not display the Chatbot badge', () => {
-    cy.intercept('GET', lightspeedAPI`/health/status/`, {
+    cy.intercept('GET', lightspeedAPI`/health/status/chatbot/`, {
       statusCode: 200,
       body: {
-        status: 'ok',
-        dependencies: [{ name: 'chatbot-service', status: 'disabled' }],
+        'chatbot-service': 'disabled',
+        'streaming-chatbot-service': 'disabled',
       },
     }).as('getLightspeedHealthStatus');
     cy.navigateTo('platform', 'overview');
@@ -65,7 +63,7 @@ describe('The Chatbot is disabled', () => {
 
 describe('Lightspeed is not accessible', () => {
   it('should not display the Chatbot badge', () => {
-    cy.intercept('GET', lightspeedAPI`/health/status/`, {
+    cy.intercept('GET', lightspeedAPI`/health/status/chatbot/`, {
       statusCode: 404,
       body: 'path not found',
     }).as('getLightspeedHealthStatus');
