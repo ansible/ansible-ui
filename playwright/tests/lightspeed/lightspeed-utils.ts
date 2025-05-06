@@ -15,7 +15,7 @@ export async function mockLightspeedHealthStatus(
   responseData: LightspeedStatusResponse | string
 ) {
   await page.route(
-    platformUI + lightspeedAPI('/health/status/'),
+    platformUI + lightspeedAPI('/health/status/chatbot/'),
     async (route) =>
       await route.fulfill({
         status: status,
