@@ -91,7 +91,6 @@ export interface ILicenseInfo {
   usage: '';
   trial: boolean;
   satellite: null;
-  pool_id: string;
   subscription_id: string;
   account_number: string;
   deleted_instances: number;

@@ -8,13 +8,49 @@ describe('Subscription Wizard', () => {
     cy.contains('p', 'If you do not have a subscription, you can visit Red Hat to obtain a').should(
       'be.visible'
     );
-    const URLS = [
+
+    const subscriptionManifestURLS = [
       'https://www.ansible.com/license',
       'https://access.redhat.com/management/subscription_allocations',
     ];
-    URLS.forEach((url, index) => {
+    subscriptionManifestURLS.forEach((url, index) => {
       cy.get('a[target="_blank"]')
         .eq(index)
+        .invoke('attr', 'href')
+        .then((href) => {
+          expect(href).to.include(url);
+
+          // Make a GET request to both links and check if the links are successfully reachable
+          cy.request({
+            method: 'GET',
+            url: href as string,
+          })
+            .its('status')
+            .should('eq', 200);
+        });
+    });
+
+    cy.get('.pf-v5-c-toggle-group__button')
+      .eq(1)
+      .contains('Service Account / Red Hat Satellite')
+      .click();
+    cy.contains(
+      'p',
+      'If you use any services on the Hybrid Cloud Console, service account credentials will be required to log in as of May 2025. You must '
+    ).should('be.visible');
+    cy.contains(
+      'p',
+      ' and use the client ID and client secret to replace your username and password when logging in. For Red Hat Satellite, input your username and password in the fields below. Please see this '
+    ).should('be.visible');
+    cy.contains('p', ' for more information.').should('be.visible');
+
+    const usernamePasswordURLS = [
+      'https://console.redhat.com/iam/service-accounts',
+      'https://access.redhat.com/articles/7112649',
+    ];
+    usernamePasswordURLS.forEach((url, index) => {
+      cy.get('a[target="_blank"]')
+        .eq(index + 1)
         .invoke('attr', 'href')
         .then((href) => {
           expect(href).to.include(url);
@@ -54,22 +90,25 @@ describe('Subscription Wizard', () => {
     cy.get('.pf-v5-c-toggle-group__button')
       .eq(1)
       .should('have.attr', 'aria-pressed', 'false')
-      .contains('Username / password');
+      .contains('Service Account / Red Hat Satellite');
 
-    // Click on Username / password
-    cy.get('.pf-v5-c-toggle-group__button').eq(1).contains('Username / password').click();
+    // Click on Service Account / Red Hat Satellite
+    cy.get('.pf-v5-c-toggle-group__button')
+      .eq(1)
+      .contains('Service Account / Red Hat Satellite')
+      .click();
     cy.contains(
       'p',
       'Provide your Red Hat or Red Hat Satellite credentials below and you can choose from a list of your available subscriptions. The credentials you use will be stored for future use in retrieving renewal or expanded subscriptions.'
     ).should('be.visible');
 
-    //When Username / password is selected
+    //When Service Account / Red Hat Satellite is selected
     cy.get('.pf-v5-c-toggle-group__button').eq(0).should('not.have.class', 'pf-m-selected');
-    cy.get('[data-cy="username-form-group"]').within(() => {
-      cy.contains('Red Hat Username').should('be.visible');
+    cy.get('[data-cy="client-id-form-group"]').within(() => {
+      cy.contains('Client ID / Satellite username').should('be.visible');
     });
-    cy.get('[data-cy="password-form-group"]').within(() => {
-      cy.contains('Red Hat Password').should('be.visible');
+    cy.get('[data-cy="client-secret-form-group"]').within(() => {
+      cy.contains('Client secret / Satellite password').should('be.visible');
     });
     cy.get('.pf-v5-c-toggle-group__button').eq(1).should('have.class', 'pf-m-selected');
     cy.get('[data-cy="wizard-footer"]').within(() => {
@@ -95,15 +134,18 @@ describe('Subscription Wizard', () => {
 
   it('verify the error messages when proceeding without credentials', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
-    cy.get('.pf-v5-c-toggle-group__button').eq(1).contains('Username / password').click();
+    cy.get('.pf-v5-c-toggle-group__button')
+      .eq(1)
+      .contains('Service Account / Red Hat Satellite')
+      .click();
     cy.contains('Next').click();
-    cy.get('[data-cy="username-form-group"]').within(() => {
-      cy.contains('Red Hat username is required').should('be.visible');
+    cy.get('[data-cy="client-id-form-group"]').within(() => {
+      cy.contains('Client id / satellite username is required').should('be.visible');
     });
-    cy.get('[data-cy="password-form-group"]').within(() => {
-      cy.contains('Red Hat password is required').should('be.visible');
+    cy.get('[data-cy="client-secret-form-group"]').within(() => {
+      cy.contains('Client secret / satellite password is required').should('be.visible');
     });
-    cy.get('[data-cy="pool-id-form-group"]').within(() => {
+    cy.get('[data-cy="subscription-id-form-group"]').within(() => {
       cy.contains('Subscription is required').should('be.visible');
     });
   });

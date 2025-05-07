@@ -16,13 +16,13 @@ export interface Settings {
     support_level: null;
     product_name: string;
     valid_key: boolean;
-    pool_id: string;
+    subscription_id: string;
     satellite: boolean;
   };
   REDHAT_USERNAME: string;
   REDHAT_PASSWORD: string;
-  SUBSCRIPTIONS_USERNAME: string;
-  SUBSCRIPTIONS_PASSWORD: string;
+  SUBSCRIPTIONS_CLIENT_ID: string;
+  SUBSCRIPTIONS_CLIENT_SECRET: string;
   AUTOMATION_ANALYTICS_URL: string;
   INSTALL_UUID: string;
   DEFAULT_CONTROL_PLANE_QUEUE_NAME: string;
