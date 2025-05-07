@@ -66,6 +66,7 @@ export function createMock() {
 
     .OPTIONS('/api/controller/v2/settings/all', getOptions())
     .GET('/api/controller/v2/settings/all', getData())
+    .PATCH('/api/controller/v2/settings/all', patchData())
     .OPTIONS('/api/controller/v2/settings/policyascode/', getOptions())
     .GET('/api/controller/v2/settings/policyascode/', getData())
     .PATCH('/api/controller/v2/settings/policyascode/', patchData())

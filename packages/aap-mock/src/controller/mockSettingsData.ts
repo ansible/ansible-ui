@@ -11,7 +11,6 @@ const awxSettings = {
     sku: 'MCT3696',
     trial: false,
     usage: '',
-    pool_id: '2c947a9e8fbe697a018fdf6e59fb659c',
     satellite: false,
     valid_key: true,
     license_date: '1748923199',
@@ -25,8 +24,8 @@ const awxSettings = {
   },
   REDHAT_USERNAME: '',
   REDHAT_PASSWORD: '',
-  SUBSCRIPTIONS_USERNAME: '',
-  SUBSCRIPTIONS_PASSWORD: '',
+  SUBSCRIPTIONS_CLIENT_ID: '',
+  SUBSCRIPTIONS_CLIENT_SECRET: '',
   AUTOMATION_ANALYTICS_URL: 'https://cloud.redhat.com/api/ingress/v1/upload',
   INSTALL_UUID: 'c1341285-f093-4c4c-9f33-25bf983950f4',
   DEFAULT_CONTROL_PLANE_QUEUE_NAME: 'controlplane',
@@ -225,4 +224,4 @@ const awxPolicySettings = {
   OPA_REQUEST_RETRIES: 2,
 };
 
-export { awxSettings, awxPolicySettings };
+export { awxPolicySettings, awxSettings };

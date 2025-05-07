@@ -11,10 +11,11 @@ import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/Pag
 import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
-import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
 import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
+import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
 import { ExternalLink } from '@ansible/hub-ui//common/ExternalLink';
 import {
+  Alert,
   Divider,
   ProgressStep,
   ProgressStepper,
@@ -30,9 +31,9 @@ import { useFormContext } from 'react-hook-form';
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'username';
   subscriptionFile: File;
-  username: string;
-  password: string;
-  pool_id?: string;
+  client_id: string;
+  client_secret: string;
+  subscription_id?: string;
   agree: boolean;
 }
 
@@ -77,7 +78,9 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
           }
           break;
         case 'username':
-          await postRequest(awxAPI`/config/attach/`, { pool_id: data.pool_id });
+          await postRequest(awxAPI`/config/attach/`, {
+            subscription_id: data.subscription_id,
+          });
           break;
       }
       refreshAwxConfig?.();
@@ -101,13 +104,13 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
 
 function SubscriptionStep() {
   const { setValue, watch } = useFormContext<SubscriptionWizardData>();
-  const username = watch('username');
-  const password = watch('password');
-  useEffect(() => setValue('pool_id', undefined), [username, password, setValue]);
+  const clientId = watch('client_id');
+  const clientSecret = watch('client_secret');
+  useEffect(() => setValue('subscription_id', undefined), [clientId, clientSecret, setValue]);
   const querySubscriptions = useCallback(async () => {
     const subscriptions = await postRequest<ILicenseInfo[]>(awxAPI`/config/subscriptions/`, {
-      subscriptions_username: username,
-      subscriptions_password: password,
+      subscriptions_client_id: clientId,
+      subscriptions_client_secret: clientSecret,
     });
     return {
       remaining: 0,
@@ -116,7 +119,7 @@ function SubscriptionStep() {
           const expires = new Date(subscription.license_date * 1000);
           return {
             label: subscription.subscription_name,
-            value: subscription.pool_id,
+            value: subscription.subscription_id,
             description: (
               <Stack>
                 <div>
@@ -133,7 +136,7 @@ function SubscriptionStep() {
         }) ?? [],
       next: 1,
     };
-  }, [password, username]);
+  }, [clientSecret, clientId]);
 
   return (
     <>
@@ -159,7 +162,7 @@ function SubscriptionStep() {
         name="subscriptionSelection"
         options={[
           { value: 'manifest', label: 'Subscription manifest' },
-          { value: 'username', label: 'Username / password' },
+          { value: 'username', label: 'Service Account / Red Hat Satellite' },
         ]}
       />
       <PageFormHidden
@@ -197,30 +200,53 @@ function SubscriptionStep() {
             )}
           </Text>
         </TextContent>
+        <Alert
+          variant="info"
+          isInline
+          title={t('Input client ID and client secret or username and password')}
+        >
+          <p>
+            {t(
+              'If you use any services on the Hybrid Cloud Console, service account credentials will be required to log in as of May 2025. You must '
+            )}
+            <a
+              href="https://console.redhat.com/iam/service-accounts"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t('create a service account here')}
+            </a>
+            {t(
+              ' and use the client ID and client secret to replace your username and password when logging in. For Red Hat Satellite, input your username and password in the fields below. Please see this '
+            )}
+            <a href="https://access.redhat.com/articles/7112649" target="_blank" rel="noreferrer">
+              {t('Knowledgebase article')}
+            </a>
+            {t(' for more information.')}
+          </p>
+        </Alert>
         <PageFormTextInput<SubscriptionWizardData>
-          name="username"
-          label={t`Red Hat Username`}
+          name="client_id"
+          label={t`Client ID / Satellite username`}
           isRequired
-          placeholder={t`Enter your Red Hat username`}
         />
         <PageFormTextInput<SubscriptionWizardData>
-          name="password"
-          label={t`Red Hat Password`}
+          name="client_secret"
+          label={t`Client secret / Satellite password`}
           type="password"
           isRequired
-          placeholder={t`Enter your Red Hat password`}
         />
         <PageFormAsyncSingleSelect<SubscriptionWizardData>
-          name="pool_id"
+          name="subscription_id"
           label={t('Subscription')}
           queryOptions={querySubscriptions}
           queryErrorText={t('Failed to load subscriptions. Check your credentials.')}
           placeholder={t('Select your subscription')}
-          queryLabel={(pool_id) => pool_id?.toString()}
+          queryLabel={(subscription_id) => subscription_id?.toString()}
           isRequired
           isDisabled={
-            !username || !password
-              ? t('Enter your Red Hat credentials to load subscriptions.')
+            !clientId || !clientSecret
+              ? t('Enter your credentials to load subscriptions.')
               : undefined
           }
         />
