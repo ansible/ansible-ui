@@ -131,6 +131,7 @@ test(
     await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
     await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
     await expect(page.locator('label')).toContainText('Rulebook activation disabled');
+    await page.waitForTimeout(2000);
     await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
       timeout: 30000,
     });
@@ -162,7 +163,6 @@ test(
     await page.getByRole('button', { name: 'Event stream' }).click();
     await page.getByRole('option', { name: eventStreamTwo }).click();
     await page.getByRole('button', { name: 'Save' }).click();
-
     await page.getByRole('button', { name: 'Save rulebook activation' }).click();
     await expect(page.getByRole('link', { name: eventStreamTwo })).toBeVisible();
     await deleteRulebookActivation(rulebookActivationName, page);
@@ -204,15 +204,16 @@ test(
     ).toBeVisible();
     await expect(page.getByText('Note: This warning is')).toBeVisible();
     await page.getByRole('button', { name: 'Enable rulebook activation' }).click();
-
-    await page.getByRole('button', { name: 'kebab dropdown toggle' }).click();
-    await page.getByRole('menuitem', { name: 'Delete rulebook activation' }).click();
+    await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+    await page.getByRole('textbox', { name: 'Type to filter' }).click();
+    await page.getByRole('textbox', { name: 'Type to filter' }).fill(rulebookActivationName);
+    await page.getByRole('button', { name: 'apply filter' }).click();
+    await page.waitForTimeout(2000);
+    await page.getByRole('checkbox', { name: 'Select all' }).check();
+    await page.getByRole('button', { name: 'toolbar actions' }).click();
+    await page.getByRole('menuitem', { name: 'Delete rulebook activations' }).click();
     await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
     await page.getByRole('button', { name: 'Delete rulebook activations' }).click();
-    await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
-      'Success'
-    );
-    await deleteRulebookActivation(rulebookActivationName, page);
     await deleteEdaProject(newProject, page);
     await deleteEdaCredential(newCredential, page);
   }

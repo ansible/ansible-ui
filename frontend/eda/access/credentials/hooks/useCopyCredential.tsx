@@ -4,11 +4,13 @@ import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { useEdaErrorMessageParser } from '../../../common/edaErrorAdapter';
 
 export function useCopyCredential(onComplete?: () => void) {
   const { t } = useTranslation();
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
+  const parseError = useEdaErrorMessageParser();
 
   return (credential: EdaCredential) => {
     const alert: AlertProps = {
@@ -22,16 +24,13 @@ export function useCopyCredential(onComplete?: () => void) {
       .then(() => {
         alertToaster.addAlert(alert);
       })
-      .catch((error) => {
+      .catch((error: Error) => {
+        const errorResults = parseError(error);
         alertToaster.addAlert({
           variant: 'danger',
           title: t('Failed to duplicate credential'),
-          timeout: 2000,
-          children:
-            error instanceof Error &&
-            (error.message === 'Forbidden'
-              ? t('You do not have permission to duplicate this credential')
-              : error.message),
+          timeout: 5000,
+          children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
         });
       })
       .finally(onComplete);
