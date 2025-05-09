@@ -23,27 +23,27 @@ test('organization - create/edit', { tag: ['@not_mock'] }, async ({ page }) => {
 
   await page.getByRole('textbox', { name: 'Name' }).fill(organizationName);
   if (hasPolicyAsCode) {
-    await expect(page.getByRole('textbox', { name: 'OPA query path' })).toBeVisible();
-    await page.getByRole('textbox', { name: 'OPA query path' }).click();
-    await page.getByRole('textbox', { name: 'OPA query path' }).fill(opaPolicyPath);
+    await expect(page.getByRole('textbox', { name: 'Policy enforcement' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Policy enforcement' }).click();
+    await page.getByRole('textbox', { name: 'Policy enforcement' }).fill(opaPolicyPath);
   }
   await page.getByRole('button', { name: 'Next' }).click();
   if (hasPolicyAsCode) {
-    await expect(page.locator('dl')).toContainText('OPA query path');
+    await expect(page.locator('dl')).toContainText('Policy enforcement');
     await expect(page.locator('#opa-query-path')).toContainText(opaPolicyPath);
   }
   await page.getByRole('button', { name: 'Finish' }).click();
 
   await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
   if (hasPolicyAsCode) {
-    await expect(page.locator('dl')).toContainText('OPA query path');
+    await expect(page.locator('dl')).toContainText('Policy enforcement');
     await expect(page.locator('#opa-query-path')).toContainText(opaPolicyPath);
   }
   await page.getByRole('button', { name: 'Edit organization' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill(`${organizationName}-edited`);
   if (hasPolicyAsCode) {
-    await page.getByRole('textbox', { name: 'OPA query path' }).click();
-    await page.getByRole('textbox', { name: 'OPA query path' }).fill(`${opaPolicyPath}-edit`);
+    await page.getByRole('textbox', { name: 'Policy enforcement' }).click();
+    await page.getByRole('textbox', { name: 'Policy enforcement' }).fill(`${opaPolicyPath}-edit`);
   }
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(page.locator('dl')).toContainText(`${organizationName}-edited`);

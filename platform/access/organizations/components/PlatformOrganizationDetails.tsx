@@ -126,14 +126,15 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
       )}
       {hasPolicyAsCodeFlag && (
         <PageDetail
-          label={t('OPA query path')}
+          label={t('Policy enforcement')}
           isEmpty={controllerOrganization?.opa_query_path === null}
           helpText={
             <Trans>
-              <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+              <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
               <br />
               <p>
-                The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}`.
+                If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}
+                .
               </p>
             </Trans>
           }

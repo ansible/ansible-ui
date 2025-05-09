@@ -102,8 +102,8 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
         />
       </PageDetail>
       <PageDetail
-        label={t('OPA query path')}
-        helpText={inventoryFormDetailLables.opa_query_path}
+        label={t('Policy enforcement')}
+        helpText={inventoryFormDetailLables.policy_enforcement}
         isEmpty={!hasPolicyAsCodeFlag || !inventory.opa_query_path}
       >
         {inventory.opa_query_path}

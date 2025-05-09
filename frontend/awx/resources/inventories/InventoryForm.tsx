@@ -329,12 +329,12 @@ export function useInventoryFormDetailLabels() {
     input_inventories: t(
       `Input inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution.`
     ),
-    opa_query_path: (
+    policy_enforcement: (
       <Trans>
-        <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+        <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
         <br />
         <p>
-          The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+          If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
         </p>
       </Trans>
     ),
@@ -442,11 +442,10 @@ function InventoryInputs(props: { inventoryKind: string }) {
       {hasPolicyAsCodeFlag && (
         <PageFormTextInput<InventoryCreate>
           name="opa_query_path"
-          label={t('OPA query path')}
-          labelHelpTitle={t('OPA query path')}
-          labelHelp={inventoryFormDetailLabels.opa_query_path}
-          helperText={t('Format must be {package}/{rule}')}
-          placeholder={t('Enter OPA query path')}
+          label={t('Policy enforcement')}
+          labelHelpTitle={t('Policy enforcement')}
+          labelHelp={inventoryFormDetailLabels.policy_enforcement}
+          placeholder={t('Enter policy enforcement')}
         />
       )}
       <PageFormSection singleColumn>

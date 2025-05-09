@@ -94,7 +94,7 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
             {maxHosts}
           </PageDetail>
         )}
-        {policy && <PageDetail label={t('OPA query path')}>{policy}</PageDetail>}
+        {policy && <PageDetail label={t('Policy enforcement')}>{policy}</PageDetail>}
       </PageDetails>
     </>
   );
