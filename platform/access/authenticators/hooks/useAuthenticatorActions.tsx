@@ -11,7 +11,7 @@ import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/Opt
 import { requestPatch } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CogIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -51,7 +51,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: false,
-        icon: PlusCircleIcon,
+        icon: CogIcon,
         label: t('Manage authentications'),
         isDisabled: canCreateAuthenticator
           ? undefined
