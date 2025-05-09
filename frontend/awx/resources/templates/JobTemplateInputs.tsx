@@ -162,19 +162,19 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       {hasPolicyAsCodeFlag && (
         <PageFormTextInput<JobTemplateForm>
           name="opa_query_path"
-          label={t('OPA query path')}
-          labelHelpTitle={t('OPA query path')}
+          label={t('Policy enforcement')}
+          labelHelpTitle={t('Policy enforcement')}
           labelHelp={
             <Trans>
-              <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+              <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
               <br />
               <p>
-                The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+                If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}
+                .
               </p>
             </Trans>
           }
-          helperText={t('Format must be {package}/{rule}')}
-          placeholder={t('Enter OPA query path')}
+          placeholder={t('Enter policy enforcement')}
         />
       )}
       <PageFormLabelSelect

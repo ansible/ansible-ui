@@ -307,8 +307,8 @@ test(
     await page.getByRole('menuitem', { name: 'Create job template' }).click();
     await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
     await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
-    await expect(page.getByLabel('OPA query path')).toBeVisible();
-    await page.getByLabel('OPA query path').fill('testpkg/testrule');
+    await expect(page.getByLabel('Policy enforcement')).toBeVisible();
+    await page.getByLabel('Policy enforcement').fill('testpkg/testrule');
     await page.getByLabel('Inventory').click();
     await page.getByRole('option', { name: inventoryName, exact: true }).click();
     const projectName = 'Demo Project';
@@ -328,7 +328,7 @@ test(
     await expect(page.locator('#organization')).toContainText('Default');
     await expect(page.locator('#project')).toContainText(projectName);
     await expect(page.locator('#playbook')).toContainText('hello_world.yml');
-    await expect(page.locator('#opa-query-path')).toContainText('testpkg/testrule');
+    await expect(page.locator('#policy-enforcement')).toContainText('testpkg/testrule');
     await deleteJobTemplate(jobTemplateName, page);
   }
 );

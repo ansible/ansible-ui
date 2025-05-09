@@ -93,20 +93,20 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
       )}
       {hasPolicyAsCodeFlag && (
         <PageFormTextInput
-          label={t('OPA query path')}
+          label={t('Policy enforcement')}
           name="policy"
-          placeholder={t('Enter OPA query path')}
+          placeholder={t('Enter policy enforcement')}
           labelHelp={
             <Trans>
-              <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+              <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
               <br />
               <p>
-                The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+                If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}
+                .
               </p>
             </Trans>
           }
-          labelHelpTitle={t('OPA query path')}
-          helperText={t('Format must be {package}/{rule}')}
+          labelHelpTitle={t('Policy enforcement')}
         />
       )}
     </>
