@@ -148,7 +148,6 @@ function ExecutionEnvironmentInputs(props: {
         placeholder={t('Enter execution environment name')}
         isRequired
         isDisabled={props?.executionEnv?.managed || false}
-        maxLength={150}
       />
       <PageFormTextInput<ExecutionEnvironment>
         name="image"
@@ -178,7 +177,6 @@ function ExecutionEnvironmentInputs(props: {
         isDisabled={props?.executionEnv?.managed || false}
         placeholder={t('Enter image')}
         isRequired
-        maxLength={150}
       />
       <PageFormSelect<ExecutionEnvironment>
         name="pull"
