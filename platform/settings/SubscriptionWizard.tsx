@@ -206,9 +206,7 @@ function SubscriptionStep() {
           title={t('Input client ID and client secret or username and password')}
         >
           <p>
-            {t(
-              'If you use any services on the Hybrid Cloud Console, service account credentials will be required to log in as of May 2025. You must '
-            )}
+            {t('Ansible subscriptions now require a service account from HCC. You must ')}
             <a
               href="https://console.redhat.com/iam/service-accounts"
               target="_blank"

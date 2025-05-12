@@ -36,7 +36,7 @@ describe('Subscription Wizard', () => {
       .click();
     cy.contains(
       'p',
-      'If you use any services on the Hybrid Cloud Console, service account credentials will be required to log in as of May 2025. You must '
+      'Ansible subscriptions now require a service account from HCC. You must '
     ).should('be.visible');
     cy.contains(
       'p',
