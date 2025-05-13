@@ -1,28 +1,28 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { useMemo } from 'react';
 import { useHasHubService } from '../../main/GatewayServices';
-import { useFindingContentQuickStart } from './useFindingContentQuickStart';
-import { useGettingStartedWithAAPQSDeveloper } from './hooks/Automation developer/useGetttingStartedWithAAPQSDev';
-import { useGettingStartedWithAAPQSOperator } from './hooks/Automation operator/useGetttingStartedWithAAPQSOperator';
-import { useGettingStartedWithAAPQSAdmin } from './hooks/Platform Admin/useGettingStartedWithAAPQSAdmin';
-import { useAnsibleLightspeedQS } from './hooks/useAnsibleLightspeedQS';
-import { useCreateProjectQS } from './hooks/useCreateProjectQS';
+import { useGettingStartedWithAAPQSDeveloper } from './hooks/Automation developer/useGettingStartedWithAAPQSDev';
 import { useEnvironmentsQS } from './hooks/Automation operator/useEnvironmentsQS';
+import { useGettingStartedWithAAPQSOperator } from './hooks/Automation operator/useGetttingStartedWithAAPQSOperator';
 import { useInventoriesQS } from './hooks/Automation operator/useInventoriesQS';
 import { useProjectsQS } from './hooks/Automation operator/useProjectsQS';
-import { useTemplatesQS } from './hooks/Automation operator/useTemplatesQS';
 import { useRulebookActivationQS } from './hooks/Automation operator/useRulebookActivationQS';
+import { useTemplatesQS } from './hooks/Automation operator/useTemplatesQS';
 import { useCreateDynamicInventoryQS } from './hooks/Platform Admin/useCreateDynamicInventoryQS';
 import { useCreateOrganizationQS } from './hooks/Platform Admin/useCreateOrganizationQS';
 import { useCreateTeamsQS } from './hooks/Platform Admin/useCreateTeamsQS';
 import { useCreateUsersQS } from './hooks/Platform Admin/useCreateUsersQS';
+import { useGettingStartedWithAAPQSAdmin } from './hooks/Platform Admin/useGettingStartedWithAAPQSAdmin';
 import { useReviewRolesQS } from './hooks/Platform Admin/useReviewRolesQS';
+import { useAnsibleLightspeedQS } from './hooks/useAnsibleLightspeedQS';
 import { useAutomationMeshQS } from './hooks/useAutomationMeshQS';
 import { useBuildDecisionEnvironmentsQS } from './hooks/useBuildDecisionEnvironmentsQS';
 import { useBuildExecutionEnvironmentsQS } from './hooks/useBuildExecutionEnvironmentQS';
 import { useCreateInventoryQS } from './hooks/useCreateInventoryQS';
 import { useCreateJobTemplateQS } from './hooks/useCreateJobTemplateQS';
+import { useCreateProjectQS } from './hooks/useCreateProjectQS';
 import { useCreateRulebookActivationQS } from './hooks/useCreateRulebookActivationQS';
+import { useFindingContentQuickStart } from './useFindingContentQuickStart';
 
 export function useQuickStarts() {
   const hubService = useHasHubService();
