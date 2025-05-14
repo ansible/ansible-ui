@@ -42,7 +42,8 @@ Cypress.Commands.add('selectTableFilter', (dataCy: string) => {
   cy.document().its('body').find('#filter-search').type(dataCy.replaceAll('-', ' '));
   cy.document()
     .its('body')
-    .find('#filter-select')
+    .find('#filter-select', { timeout: 10000 })
+    .should('be.visible')
     .within(() => {
       cy.getByDataCy(dataCy).click();
     });
@@ -93,7 +94,12 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('filterTableBySearch', (searchString: string) => {
   cy.selectTableFilter('search');
-  cy.get('[data-cy="text-input"]').clear().type(searchString);
+
+  cy.get('[data-cy="text-input"]', { timeout: 10000 })
+    .should('be.visible')
+    .then(($input) => {
+      cy.wrap($input).clear().type(searchString);
+    });
 });
 
 Cypress.Commands.add('filterTableById', (idString: string) => {
