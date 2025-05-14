@@ -203,6 +203,14 @@ export function RulebookActivationInputs() {
     }
   }, [getFieldState, rulebook, setSourceMappings]);
 
+  useEffect(() => {
+    const { isDirty } = getFieldState('project_id');
+    if (isDirty) {
+      setValue('rulebook_id', null);
+      setSourceMappings(undefined);
+    }
+  }, [getFieldState, projectId, setValue]);
+
   return (
     <>
       <PageFormTextInput<IEdaRulebookActivationInputs>
