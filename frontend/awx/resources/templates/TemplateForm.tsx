@@ -39,15 +39,13 @@ export function EditJobTemplate() {
     error: jobTemplateError,
     refresh: jobTemplateRefresh,
     isLoading: isJobTemplateLoading,
-  } = useGet<JobTemplate>(awxAPI`/job_templates/${id.toString()}/`);
+  } = useGet<JobTemplate>(awxAPI`/job_templates/${id}/`);
   const {
     data: instanceGroups,
     error: instanceGroupsError,
     isLoading: isInstanceGroupsLoading,
     refresh: instanceGroupRefresh,
-  } = useGet<AwxItemsResponse<InstanceGroup>>(
-    awxAPI`/job_templates/${id.toString()}/instance_groups/`
-  );
+  } = useGet<AwxItemsResponse<InstanceGroup>>(awxAPI`/job_templates/${id}/instance_groups/`);
   const { clearCacheByKey } = useClearCache();
 
   const defaultValues = useMemo(
@@ -77,7 +75,7 @@ export function EditJobTemplate() {
       webhook_service: isWebhookEnabled ? values.webhook_service : null,
       host_config_key: isProvisioningCallbackEnabled ? host_config_key : null,
     };
-    await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id.toString()}/`, formValues);
+    await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id}/`, formValues);
     (cache as unknown as { clear: () => void }).clear?.();
     const promises = [];
 
@@ -200,14 +198,14 @@ async function submitCredentials(
   );
 
   const disassociateCredentials = removed.map((cred) =>
-    postRequest(awxAPI`/job_templates/${template?.id?.toString()}/credentials/`, {
+    postRequest(awxAPI`/job_templates/${template?.id}/credentials/`, {
       id: cred.id,
       disassociate: true,
     })
   );
   const disassociatePromise = await Promise.all(disassociateCredentials);
   const associateCredentials = added.map((cred: { id: number }) =>
-    postRequest(awxAPI`/job_templates/${template?.id?.toString()}/credentials/`, {
+    postRequest(awxAPI`/job_templates/${template?.id}/credentials/`, {
       id: cred.id,
     })
   );
@@ -233,13 +231,13 @@ async function submitLabels(template: JobTemplate, labels: Label[]) {
     }
   }
   const disassociationPromises = removed.map((label: { id: number }) =>
-    postRequest(awxAPI`/job_templates/${template.id.toString()}/labels/`, {
+    postRequest(awxAPI`/job_templates/${template.id}/labels/`, {
       id: label.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((label: { name: string }) =>
-    postRequest(awxAPI`/job_templates/${template.id.toString()}/labels/`, {
+    postRequest(awxAPI`/job_templates/${template.id}/labels/`, {
       name: label.name,
       organization: orgId,
     })
@@ -250,17 +248,17 @@ async function submitLabels(template: JobTemplate, labels: Label[]) {
 }
 async function submitInstanceGroups(templateId: number, newInstanceGroups: InstanceGroup[]) {
   const originalInstanceGroups = await requestGet<AwxItemsResponse<InstanceGroup>>(
-    awxAPI`/job_templates/${templateId.toString()}/instance_groups/`
+    awxAPI`/job_templates/${templateId}/instance_groups/`
   );
   if (!isEqual(newInstanceGroups, originalInstanceGroups.results)) {
     for (const group of originalInstanceGroups.results) {
-      await postRequest(awxAPI`/job_templates/${templateId.toString()}/instance_groups/`, {
+      await postRequest(awxAPI`/job_templates/${templateId}/instance_groups/`, {
         id: group.id,
         disassociate: true,
       });
     }
     for (const group of newInstanceGroups) {
-      await await postRequest(awxAPI`/job_templates/${templateId.toString()}/instance_groups/`, {
+      await await postRequest(awxAPI`/job_templates/${templateId}/instance_groups/`, {
         id: group.id,
       });
     }

@@ -16,12 +16,12 @@ function getBaseAPIPath() {
   return base;
 }
 
-export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
+export function hubAPI(strings: TemplateStringsArray, ...values: (string | number)[]) {
   const base = getBaseAPIPath();
   return base + apiTag(strings, ...values);
 }
 
-export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
+export function pulpAPI(strings: TemplateStringsArray, ...values: (string | number)[]) {
   const base = getBaseAPIPath();
   return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
