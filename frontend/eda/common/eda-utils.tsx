@@ -7,7 +7,7 @@ export function setEdaApiPath(path: string) {
   edaApiPath = path;
 }
 
-export function edaAPI(strings: TemplateStringsArray, ...values: string[]) {
+export function edaAPI(strings: TemplateStringsArray, ...values: (string | number)[]) {
   return edaApiPath + apiTag(strings, ...values);
 }
 export function hasCopyNamePattern(name: string) {

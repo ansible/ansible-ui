@@ -1,7 +1,7 @@
 import { hubQueryString, url2keys } from './query-string';
 
 // used in awx, eda & cypress
-export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
+export function apiTag(strings: TemplateStringsArray, ...values: (string | number)[]) {
   if (strings[0]?.[0] !== '/') {
     throw new Error(`Invalid URL - must start with a slash`);
   }

@@ -6,6 +6,6 @@ export function setAwxApiPath(path: string) {
   awxApiPath = path;
 }
 
-export function awxAPI(strings: TemplateStringsArray, ...values: string[]) {
+export function awxAPI(strings: TemplateStringsArray, ...values: (string | number)[]) {
   return awxApiPath + apiTag(strings, ...values);
 }
