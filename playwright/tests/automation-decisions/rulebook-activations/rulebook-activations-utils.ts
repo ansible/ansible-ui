@@ -10,6 +10,7 @@ export async function createRulebookActivation(
     name?: string;
     projectName?: string;
     credentialName?: string;
+    disabled?: boolean;
   },
   page: Page
 ) {
@@ -38,6 +39,9 @@ export async function createRulebookActivation(
   await page.getByRole('button', { name: 'Confirm' }).click();
   await page.getByRole('button', { name: 'Select decision environment' }).click();
   await page.getByRole('option', { name: 'Default Decision Environment', exact: true }).click();
+  if (options?.disabled) {
+    await page.locator('#rulebook-activation-form-group path').nth(1).click();
+  }
   await page.getByRole('button', { name: 'Create rulebook activation' }).click();
   await expect(page.locator('#name')).toContainText(rulebookActivationName);
   return rulebookActivationName;

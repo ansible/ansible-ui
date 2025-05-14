@@ -3,7 +3,7 @@ import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { Button, Chip, ChipGroup, InputGroup, TextInput, Tooltip } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
-import { FieldPath, FieldValues } from 'react-hook-form';
+import { Controller, FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useSelectEventStreams } from '../event-streams/hooks/useSelectEventStreams';
@@ -40,6 +40,10 @@ export function PageFormEventSourceSelect<
   const { t } = useTranslation();
   const value: EdaSourceEventMapping[] = props?.sourceMappings;
   const id = useID(props);
+  const {
+    control,
+    formState: { isValidating },
+  } = useFormContext<TFieldValues>();
   const removeMapping = (event_stream_name: string) => {
     if (value) {
       const map = value.filter((ev) => ev.event_stream_name !== event_stream_name);
@@ -53,52 +57,65 @@ export function PageFormEventSourceSelect<
     props?.setSourceMappings
   );
   return (
-    <PageFormGroup
-      label={label}
-      labelHelp={labelHelp}
-      labelHelpTitle={labelHelpTitle}
-      fieldId={id}
-      data-cy={'event-stream-form-group'}
-    >
-      <InputGroup data-cy={'event-stream-input-group'}>
-        {value?.length ? (
-          <ChipHolder $isDisabled={isDisabled ?? false} className="pf-v5-c-form-control">
-            <ChipGroup
-              numChips={5}
-              expandedText={translations.showLess}
-              collapsedText={translations.countMore.replace('{count}', `${value?.length - 5}`)}
-            >
-              {value?.map((item) => (
-                <Tooltip
-                  key={item.event_stream_id}
-                  content={`${item?.event_stream_name} ${t(' was swapped with ')} ${item?.source_name}`}
-                >
-                  <Chip
-                    key={item.event_stream_id}
-                    data-cy={`event-chip-${item?.event_stream_id}`}
-                    onClick={() => removeMapping(item?.event_stream_name)}
-                  >
-                    {item.event_stream_name}
-                  </Chip>
-                </Tooltip>
-              ))}
-            </ChipGroup>
-          </ChipHolder>
-        ) : (
-          <TextInput aria-label={placeholder} isDisabled placeholder={placeholder} />
-        )}
-        {selectTitle && (
-          <Button
-            variant="control"
-            onClick={selectEventStreams}
-            aria-label="Options menu"
-            isDisabled={isDisabled}
-            data-cy={`select-event-stream-button`}
+    <Controller<TFieldValues, TFieldName>
+      name={props?.name}
+      control={control}
+      shouldUnregister
+      render={({ fieldState: { error } }) => {
+        return (
+          <PageFormGroup
+            label={label}
+            labelHelp={labelHelp}
+            labelHelpTitle={labelHelpTitle}
+            fieldId={id}
+            data-cy={'event-stream-form-group'}
+            helperTextInvalid={!isValidating && error?.message}
           >
-            <CogIcon />
-          </Button>
-        )}
-      </InputGroup>
-    </PageFormGroup>
+            <InputGroup data-cy={'event-stream-input-group'}>
+              {value?.length ? (
+                <ChipHolder $isDisabled={isDisabled ?? false} className="pf-v5-c-form-control">
+                  <ChipGroup
+                    numChips={5}
+                    expandedText={translations.showLess}
+                    collapsedText={translations.countMore.replace(
+                      '{count}',
+                      `${value?.length - 5}`
+                    )}
+                  >
+                    {value?.map((item) => (
+                      <Tooltip
+                        key={item.event_stream_id}
+                        content={`${item?.event_stream_name} ${t(' was swapped with ')} ${item?.source_name}`}
+                      >
+                        <Chip
+                          key={item.event_stream_id}
+                          data-cy={`event-chip-${item?.event_stream_id}`}
+                          onClick={() => removeMapping(item?.event_stream_name)}
+                        >
+                          {item.event_stream_name}
+                        </Chip>
+                      </Tooltip>
+                    ))}
+                  </ChipGroup>
+                </ChipHolder>
+              ) : (
+                <TextInput aria-label={placeholder} isDisabled placeholder={placeholder} />
+              )}
+              {selectTitle && (
+                <Button
+                  variant="control"
+                  onClick={selectEventStreams}
+                  aria-label="Options menu"
+                  isDisabled={isDisabled}
+                  data-cy={`select-event-stream-button`}
+                >
+                  <CogIcon />
+                </Button>
+              )}
+            </InputGroup>
+          </PageFormGroup>
+        );
+      }}
+    />
   );
 }
