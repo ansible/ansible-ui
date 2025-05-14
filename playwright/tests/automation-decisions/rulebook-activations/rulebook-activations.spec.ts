@@ -7,6 +7,7 @@ import { createEdaEventStream, deleteEdaEventStream } from '../event-streams/eve
 import { createEdaProject, deleteEdaProject } from '../projects/projects-utils';
 import { createRulebookActivation, deleteRulebookActivation } from './rulebook-activations-utils';
 import { navigateTo } from '../../../commands/navigateTo';
+import { clickPageAction } from '../../../commands/clickPageAction';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
@@ -99,7 +100,7 @@ test(
     await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
       timeout: 15000,
     });
-    await expect(page.getByRole('heading', { name: 'E2E rulebookActivation' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
     await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
     await page.getByRole('textbox', { name: 'Description' }).click();
     await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
@@ -124,17 +125,9 @@ test(
     const eventStreamOne = await createEdaEventStream({}, page);
     const eventStreamTwo = await createEdaEventStream({}, page);
     const rulebookActivationName = await createRulebookActivation(
-      { projectName: newProject, credentialName: newCredential },
+      { projectName: newProject, credentialName: newCredential, disabled: true },
       page
     );
-    await page.getByText('Rulebook activation enabled').click();
-    await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
-    await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
-    await expect(page.locator('label')).toContainText('Rulebook activation disabled');
-    await page.waitForTimeout(2000);
-    await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
-      timeout: 30000,
-    });
     await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
     await page.getByRole('textbox', { name: 'Description' }).click();
     await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
@@ -170,6 +163,74 @@ test(
     await deleteEdaCredential(newCredential, page);
     await deleteEdaEventStream(eventStreamOne, page);
     await deleteEdaEventStream(eventStreamTwo, page);
+  }
+);
+
+test(
+  'rulebook activations - can edit a rulebook activation with event source mapping, change the rulebook and get the error on save',
+  { tag: ['@not_mock'] },
+  async ({ page }) => {
+    test.setTimeout(300000);
+    const newProject = await createEdaProject({}, page);
+    const newCredential = await createEdaCredential({}, page);
+    const eventStreamOne = await createEdaEventStream({}, page);
+    const rulebookActivationName = await createRulebookActivation(
+      { projectName: newProject, credentialName: newCredential, disabled: true },
+      page
+    );
+    await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
+    await page
+      .locator('#source-mappings-form-group')
+      .getByRole('button', { name: 'Options menu' })
+      .click();
+    await page.getByRole('button', { name: 'Rulebook source' }).click();
+    await page.getByRole('option', { name: '__SOURCE_1' }).click();
+    await page.getByRole('button', { name: 'Event stream' }).click();
+    await page.getByRole('option', { name: eventStreamOne }).click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(
+      page.getByRole('heading', { name: `Edit ${rulebookActivationName}` })
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Save rulebook activation' })).toBeVisible();
+    await page.getByRole('button', { name: 'Save rulebook activation' }).click();
+
+    // update the branch for the project
+    await navigateTo(page, 'Automation Decisions', 'Projects');
+    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Type to filter' }).fill(newProject);
+    await page.getByRole('button', { name: 'apply filter' }).click();
+    await page.getByRole('link', { name: newProject }).click();
+    await expect(page.getByRole('heading', { name: newProject })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Edit project' })).toBeVisible();
+    await page.getByRole('button', { name: 'Edit project' }).click();
+    await expect(page.getByRole('heading', { name: `Edit ${newProject}` })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Source control branch/tag/' }).click();
+    await page.getByRole('textbox', { name: 'Source control branch/tag/' }).fill('basic-short-new');
+    await page.getByRole('button', { name: 'Save project' }).click();
+    await page.getByRole('button', { name: 'Sync project' }).click();
+    await expect(page.getByText('Completed', { exact: true })).toContainText('Completed', {
+      timeout: 15000,
+    });
+    await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+
+    await clickTableRow(
+      {
+        text: rulebookActivationName,
+        pageTitle: 'Rulebook Activations',
+        filterLabel: 'Name',
+        filterValue: rulebookActivationName,
+        clearFilters: true,
+      },
+      page
+    );
+    await clickPageAction('Edit rulebook activation', page);
+    await page.getByRole('textbox', { name: 'Description' }).click();
+    await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
+    await page.getByRole('button', { name: 'Save rulebook activation' }).click();
+    await expect(page.getByText('Rulebook has changed since')).toBeVisible();
+    await deleteRulebookActivation(rulebookActivationName, page);
+    await deleteEdaProject(newProject, page);
+    await deleteEdaEventStream(eventStreamOne, page);
   }
 );
 
