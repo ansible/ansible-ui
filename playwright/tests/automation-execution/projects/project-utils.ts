@@ -15,7 +15,8 @@ export async function createAwxProject(
   await navigateTo(page, 'Automation Execution', 'Projects');
   await page.getByText('Create project', { exact: true }).click();
   const projectName = options.projectName ?? createE2EName();
-  await page.getByLabel('Name').fill(projectName);
+  await expect(page.getByRole('heading')).toContainText('Create project');
+  await page.getByRole('textbox', { name: 'Name' }).fill(projectName);
   const organizationName = options.organizationName;
   await singleSelectByLabel('Organization', organizationName ?? 'Default', page);
   await page.getByRole('button', { name: 'Select source control type' }).click();
