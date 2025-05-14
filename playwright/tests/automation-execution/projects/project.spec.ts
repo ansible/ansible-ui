@@ -5,7 +5,7 @@ import { createAwxProject, deleteAwxProject, syncAwxProject } from './project-ut
 test.beforeEach(setupBefore({ path: '/execution/projects' }));
 test.afterEach(setupAfter);
 
-test('project - create, sync, and delete', async ({ page }) => {
+test('project - Create, sync, and delete', async ({ page }) => {
   test.setTimeout(5 * 60 * 1000);
   const projectName = await createAwxProject({}, page);
   await syncAwxProject(projectName, page);
