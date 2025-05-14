@@ -254,11 +254,13 @@ export function launchHostJob(
     cy.get('[data-cy="failed-status"]', { timeout: 60000 }).should('exist');
     if (type === 'InventoryHost') {
       cy.navigateTo('awx', 'inventories');
+      cy.verifyPageTitle('Inventories');
       cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
       cy.contains(`[role='tab']`, 'Jobs').click();
     } else {
       cy.navigateTo('awx', 'hosts');
+      cy.verifyPageTitle('Hosts');
       cy.filterTableBySearch(host.name);
       cy.get('[data-cy="name-column-cell"]').contains(host.name).click();
       cy.contains(`[role='tab']`, 'Jobs').click();
