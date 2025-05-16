@@ -129,8 +129,8 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
           {!playbookStarted && job?.status === 'running' && (
             <Tooltip
               content={t(
-                "The Job is currently running it's initial setup. Doing things like pulling the Execution Environment" +
-                  ' image and processing the playbook before execution. You will see playbook output shortly.'
+                'Setting up the job now. This involves retrieving the execution environment image' +
+                  ' and preparing the playbook. Playbook output will be displayed shortly.'
               )}
             >
               <Label
