@@ -20,10 +20,35 @@ describe('If SaaS Build', () => {
     it('checks the browse content titles user can see in the hands on quick starts on Automation Hub ', () => {
       cy.navigateTo('platform', 'quickstarts');
       cy.contains('h3 p', 'Finding content in Ansible Automation Platform');
-      cy.get('.pfext-markdown-view.pfext-quick-start-tile-description').should(
-        'have.text',
-        'Build a decision environment.\nPersona: Platform administrator, Automation developerBuild, view, and sync an environment.\nPersona: Platform administrator, Automation developerCreate an organization.\nPersona: Platform AdministratorCreate a team and associate organizations and roles to that team.\nPersona: Platform AdministratorCreate a user and associate organizations, teams, and roles. \nPersona: Platform AdministratorCreate or view a dynamic inventory\nPersona: Platform administratorCreate a project.\nPersona: Platform administrator, Automation developerCreate a rulebook activation.\nPersona: Platform administrator, Automation developerCreate or view an inventory.\nPersona: Platform administrator, Automation developerCreate and run a job or workflow template.\nPersona: Platform administrator, Automation developerViewing execution and decision environments. \nPersona: Anisble OperatorBrowse automation hub collections to find the content that you need.\nPersona: AllLearn how to get started with Ansible Automation Platform.Learn how to get started with Ansible Automation Platform.Learn how to get started with Ansible Automation PlatformExecuting inventories. \nPersona: Ansible operatorExecuting projects.\nPersona: Ansible OperatorReview roles and create new roles as needed by your organization.\nPersona: Platform AdministratorExecuting rulebook activations.\nPersona: Ansible OperatorSet up Ansible Lightspeed with IBM watsonx Code Assistant\nPersona: AllAutomate at scale in a cloud-native way\nPersona: AllLaunching a job template.\nPersona: Ansible Operator'
-      );
+      const quickstartDescriptions = [
+        `Build a decision environment.\nPersona: Platform administrator, Automation developer`,
+        `Build, view, and sync an environment.\nPersona: Platform administrator, Automation developer`,
+        `Create an organization.`,
+        `Create a team and associate organizations and roles to that team.`,
+        `Create a user and associate organizations, teams, and roles. \nPersona: Platform Administrator`,
+        `Create or view a dynamic inventory\nPersona: Platform administrator`,
+        `Create a project.\nPersona: Platform administrator, Automation developer`,
+        `Create a rulebook activation.\nPersona: Platform administrator, Automation developer`,
+        `Create or view an inventory.\nPersona: Platform administrator, Automation developer`,
+        `Create and run a job or workflow template.\nPersona: Platform administrator, Automation developer`,
+        `Viewing execution and decision environments. \nPersona: Ansible Operator`,
+        `Browse automation hub collections to find the content that you need.\nPersona: All`,
+        `Learn how to get started with Ansible Automation Platform.`,
+        `Learn how to get started with Ansible Automation Platform.`,
+        `Learn how to get started with Ansible Automation Platform`,
+        `Executing inventories. \nPersona: Ansible operator`,
+        `Executing projects.\nPersona: Ansible Operator`,
+        `Review roles and create new roles as needed by your organization.\nPersona: Platform Administrator`,
+        `Executing rulebook activations.\nPersona: Ansible Operator`,
+        `Set up Ansible Lightspeed with IBM watsonx Code Assistant\nPersona: All`,
+        `Automate at scale in a cloud-native way\nPersona: All`,
+        `Launching a job template.\nPersona: Ansible Operator`,
+      ];
+      cy.get('.pfext-markdown-view.pfext-quick-start-tile-description')
+        .should('have.length', quickstartDescriptions.length)
+        .each(($el, index) => {
+          expect($el.text().trim()).to.eq(quickstartDescriptions[index]);
+        });
       cy.get('#finding-content-in-ansible-automation-platform-catalog-tile')
         .click()
         .then(() => {
