@@ -20,21 +20,20 @@ describe('If SaaS Build', () => {
       cy.intercept({ method: 'GET', url: pulpAPI`/signing-services/*` }).as('signatureKeys');
       cy.navigateTo('hub', SignatureKeys.url);
       cy.wait('@signatureKeys')
-        .its(`response.body.results[0].public_key`)
-        .then((public_key) => {
+        .its(`response.body.results[0]`)
+        .then((result: { public_key: string; name: string }) => {
+          const { public_key, name } = result;
+
           cy.get(`[data-cy="${resourceValues[1]}-column-cell"]`)
             .first()
             .within(() => {
-              cy.get('.pf-v5-c-truncate__start').should('contain', public_key as string);
+              cy.get('.pf-v5-c-truncate__start').should('contain', public_key);
             });
-        });
-      cy.wait('@signatureKeys')
-        .its(`response.body.results[0].name`)
-        .then((name) => {
+
           cy.get(`[data-cy="${resourceValues[0]}-column-cell"]`)
             .first()
             .within(() => {
-              cy.contains(name as string).should('be.visible');
+              cy.contains(name).should('be.visible');
             });
         });
     });
