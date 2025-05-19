@@ -10,9 +10,6 @@ import {
 } from 'react';
 import useReactWebSocket, { ReadyState } from 'react-use-websocket';
 import { WebSocketHook } from 'react-use-websocket/dist/lib/types';
-import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
-import { useTranslation } from 'react-i18next';
-import { AlertProps } from '@patternfly/react-core';
 
 interface Subscriptions {
   [group: string]: { [event: string]: number };
@@ -83,8 +80,6 @@ export function useAwxWebSocketSubscription(
   // returns a function to call to stop the fallback
   fallback?: () => () => void
 ) {
-  const alertToaster = usePageAlertToaster();
-  const { t } = useTranslation();
   const [evts] = useState(() => events);
   const { sendMessage, lastJsonMessage, lastMessage, readyState, setSubscriptions } =
     useWebSocket();
@@ -140,29 +135,16 @@ export function useAwxWebSocketSubscription(
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     let resetFallback: () => void | undefined;
-    const alertNoWS: AlertProps = {
-      variant: 'warning',
-      title: t(`Websocket unavailable. You may experience degraded logging performance.`),
-    };
-    const alertWS: AlertProps = {
-      variant: 'success',
-      title: t(`Websocket Reconnected`),
-      timeout: 5000,
-    };
     if (!connected && fallback) {
       timeout = setTimeout(() => {
         resetFallback = fallback();
-        alertToaster.addAlert(alertNoWS);
       }, 5000);
-    }
-    if (connected) {
-      alertToaster.replaceAlert(alertNoWS, alertWS);
     }
     return () => {
       clearTimeout(timeout);
       resetFallback?.();
     };
-  }, [alertToaster, connected, fallback, t]);
+  }, [connected, fallback]);
 
   return { sendMessage, lastMessage, readyState };
 }
