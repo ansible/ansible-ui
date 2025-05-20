@@ -39,7 +39,6 @@ describe.skip('Automation Calculator', () => {
             ).then((jt) => {
               job_template = jt;
               cy.navigateTo('awx', 'templates');
-              cy.setTableView('table');
               cy.verifyPageTitle('Templates');
               cy.filterTableBySingleSelect('name', job_template.name);
               cy.intercept('POST', awxAPI`/job_templates/${job_template.id.toString()}/launch/`).as(

@@ -79,7 +79,6 @@ describe('Workflow Approvals Tests', () => {
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
               ).as('thisWfjt');
               cy.navigateTo('awx', 'templates');
-              cy.setTableView('table');
               cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
@@ -160,7 +159,6 @@ describe('Workflow Approvals Tests', () => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
               cy.navigateTo('awx', 'templates');
-              cy.setTableView('table');
               cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
@@ -233,7 +231,6 @@ describe('Workflow Approvals Tests', () => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
               cy.navigateTo('awx', 'templates');
-              cy.setTableView('table');
               cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
@@ -342,7 +339,6 @@ describe('Workflow Approvals Tests', () => {
   **/
   function editWorkflowJobTemplate() {
     cy.navigateTo('awx', 'templates');
-    cy.setTableView('table');
     cy.filterTableBySearch(workflowJobTemplate.name);
     cy.getTableRow('name', workflowJobTemplate.name, { disableFilter: true }).should('be.visible');
     cy.selectTableRow(workflowJobTemplate.name);
@@ -464,7 +460,6 @@ describe('Workflow Approvals Tests', () => {
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
               ).as('launched');
               cy.navigateTo('awx', 'templates');
-              cy.setTableView('table');
               cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
@@ -477,7 +472,6 @@ describe('Workflow Approvals Tests', () => {
                       workflowApproval = wfApprovalA;
                       cy.url().should('contain', '/output');
                       cy.navigateTo('awx', 'templates');
-                      cy.setTableView('table');
                       cy.filterTableBySearch(workflowJobTemplate.name);
                       cy.clickTableRowLink('name', workflowJobTemplate.name, {
                         disableFilter: true,

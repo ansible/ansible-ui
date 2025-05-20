@@ -283,7 +283,6 @@ describe('Jobs', () => {
 
     it('can launch a Playbook Run job, let it finish, and assert expected results on the output screen', () => {
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.verifyPageTitle('Templates');
       cy.filterTableBySingleSelect('name', jobTemplate.name);
       cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`).as(
