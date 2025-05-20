@@ -82,7 +82,6 @@ describe('Workflow Visualizer', () => {
     it('Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel', () => {
       const jtName = 'E2E ' + randomString(4);
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.clickButton(/^Create template$/);
       cy.clickLink(/^Create workflow job template$/);
       cy.get('[data-cy="name"]').type(jtName);
@@ -117,7 +116,6 @@ describe('Workflow Visualizer', () => {
           approvalNode = appNode;
           cy.createWorkflowJTSuccessNodeLink(projectNode, appNode);
           cy.navigateTo('awx', 'templates');
-          cy.setTableView('table');
           cy.filterTableBySearch(workflowJobTemplate.name);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
@@ -177,7 +175,6 @@ describe('Workflow Visualizer', () => {
               })
               .then(() => {
                 cy.navigateTo('awx', 'templates');
-                cy.setTableView('table');
                 cy.filterTableBySearch(workflowJobTemplate.name);
                 cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
                 cy.get('a[href*="/visualizer"]').click();
@@ -221,7 +218,6 @@ describe('Workflow Visualizer', () => {
         })
         .then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.setTableView('table');
           cy.filterTableBySearch(workflowJobTemplate.name);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
@@ -243,7 +239,6 @@ describe('Workflow Visualizer', () => {
 
     it('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.filterTableBySearch(workflowJobTemplate.name);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
       cy.get('a[href*="/visualizer"]').click();
@@ -286,7 +281,6 @@ describe('Workflow Visualizer', () => {
         })
         .then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.setTableView('table');
           cy.filterTableBySearch(workflowJobTemplate.name);
           cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
@@ -346,7 +340,6 @@ describe('Workflow Visualizer', () => {
               })
               .then(() => {
                 cy.navigateTo('awx', 'templates');
-                cy.setTableView('table');
                 cy.filterTableBySearch(workflowJobTemplate.name);
                 cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
                 cy.get('a[href*="/visualizer"]').click();
@@ -391,7 +384,6 @@ describe('Workflow Visualizer', () => {
         projectNode = projNode;
         cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.setTableView('table');
           cy.filterTableBySearch(workflowJobTemplate.name);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
@@ -438,7 +430,6 @@ describe('Workflow Visualizer', () => {
         })
         .then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.setTableView('table');
           cy.filterTableBySearch(workflowJobTemplate.name);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
@@ -519,7 +510,6 @@ describe('Workflow Visualizer Prompt Step', () => {
   });
   it('Should update skip tags', () => {
     cy.navigateTo('awx', 'templates');
-    cy.setTableView('table');
     cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
     cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
     cy.get('a[href*="/visualizer"]').click();

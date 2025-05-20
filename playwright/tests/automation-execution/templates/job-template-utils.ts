@@ -87,7 +87,6 @@ export async function runJobTemplate(
 ) {
   const inventoryName = options?.inventoryName ?? 'Demo Inventory';
   await navigateTo(page, 'Automation Execution', 'Templates');
-  await page.getByLabel('table view', { exact: true }).click();
   if (options?.view === 'details') {
     await clickTableRow({ text: jobTemplateName }, page);
     await expect(page.getByRole('main')).toContainText(jobTemplateName);

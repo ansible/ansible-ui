@@ -83,7 +83,6 @@ describe('Workflow Visualizer', () => {
         awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&order_by=name&page=1&page_size=10`
       ).as('getWorkflowJobTemplates');
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.verifyPageTitle('Templates');
       cy.wait('@getWorkflowJobTemplates').then(() => {
         cy.filterTableBySearch(`${workflowJobTemplate?.name}`);
@@ -106,7 +105,6 @@ describe('Workflow Visualizer', () => {
 
     it('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(`${jobTemplate?.name}`);
       cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
@@ -120,7 +118,6 @@ describe('Workflow Visualizer', () => {
       cy.url().should('contain', '/details');
       cy.verifyPageTitle(`${jobTemplate?.name}`);
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.verifyPageTitle('Templates');
       cy.get('[data-cy="app-description"]').should(
         'contain',
@@ -186,7 +183,6 @@ describe('Workflow Visualizer', () => {
 
     it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.filterTableBySearch(workflowJobTemplate.name);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
       cy.get('a[href*="/visualizer"]').click();

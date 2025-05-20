@@ -1,4 +1,4 @@
-import { awxAPI } from '../../common/api/awx-utils';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Templates } from './Templates';
 
 describe('Templates', () => {
@@ -32,6 +32,12 @@ describe('Templates', () => {
       );
     });
 
+    it('Component renders', () => {
+      cy.mount(<Templates />);
+      cy.verifyPageTitle('Templates');
+      cy.get('tbody').find('tr').should('have.length', 2);
+    });
+
     it('Launch action item should call API /launch endpoint', () => {
       cy.intercept(
         { method: 'GET', url: awxAPI`/job_templates/7/launch/` },
@@ -40,13 +46,6 @@ describe('Templates', () => {
       cy.mount(<Templates />);
       cy.get('[data-cy="launch-template"]').first().click();
       cy.wait('@launchRequest');
-    });
-
-    it('sets card view as the default view', () => {
-      cy.mount(<Templates />);
-      cy.get('[data-cy="card-view"]').within(() => {
-        cy.get('button').should('have.attr', 'aria-pressed', 'true');
-      });
     });
   });
 });

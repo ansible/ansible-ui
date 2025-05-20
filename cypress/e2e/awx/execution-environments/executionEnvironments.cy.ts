@@ -336,7 +336,6 @@ describe('Execution Environments', () => {
           });
         });
       cy.navigateTo('awx', 'templates');
-      cy.setTableView('table');
       cy.verifyPageTitle('Templates');
       cy.getByDataCy('create-template').click();
       cy.clickLink(/^Create job template$/);
