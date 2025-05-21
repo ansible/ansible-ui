@@ -130,7 +130,7 @@ export function postJobTemplateLabels(request: MockRequest): MockResponse {
     return { status: 400, body: { error: 'Missing request data' } };
   }
 
-  const jobTemplateId = Number(request.url.searchParams.get('id'));
+  const jobTemplateId = Number(request.params?.id);
   const jobTemplate = request.context.data.api.controller.v2.job_templates.find(
     (jt) => jt.id === jobTemplateId
   );

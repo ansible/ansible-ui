@@ -13,7 +13,7 @@ test.afterEach(setupAfter);
 
 // This test is taking a long time because of SWR caching and the fact that the dropdown,
 // uses SWR infinite loading which seems to be caching old values
-test.skip('domains of interest', { tag: [] }, async ({ page }) => {
+test('domains of interest', { tag: [] }, async ({ page }) => {
   test.setTimeout(2 * 60 * 1000);
 
   // Create Job Template A with label A
@@ -26,7 +26,7 @@ test.skip('domains of interest', { tag: [] }, async ({ page }) => {
 
   // Create Domains
   await navigateTo(page, 'Automation Execution', 'Templates');
-  await page.getByText('Configure Domains', { exact: true }).click();
+  await page.getByRole('button', { name: 'Configure Domains' }).click();
 
   // Add Domain A for Label A
   const domainA = randomString(12);
@@ -38,7 +38,7 @@ test.skip('domains of interest', { tag: [] }, async ({ page }) => {
 
   // Add Domain B for label B
   const domainB = randomString(12);
-  await page.getByText('Configure Domains', { exact: true }).click();
+  await page.getByRole('button', { name: 'Add Domain' }).click();
   await page.getByLabel('Name *').fill(domainB);
   await page.getByPlaceholder('Select labels').click();
   await page.getByRole('option', { name: labelB }).click();
