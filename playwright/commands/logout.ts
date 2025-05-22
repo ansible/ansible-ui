@@ -5,6 +5,7 @@ import { Page, expect } from '@playwright/test';
  */
 export async function logout(page: Page, options?: { username?: string }) {
   await page
+    .locator('header')
     .getByRole('button', {
       name: `${options?.username ?? process.env.PLATFORM_USERNAME!}`,
       exact: true,
