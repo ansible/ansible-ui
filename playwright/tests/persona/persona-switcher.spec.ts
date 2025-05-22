@@ -4,10 +4,22 @@ import { logout } from '../../commands/logout';
 import { setupAfter, setupBefore } from '../../commands/setup';
 import { createUser } from '../access-management/users/user-utils';
 
-test.beforeEach(setupBefore({ path: '/overview' }));
+const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
+test.beforeEach(async ({ page }) => {
+  // The feature flag for Persona View Switcher is off by default and needs to be turned on for the tests
+  await setupBefore({ path: '/settings/dev/flags' })({ page });
+  await page
+    .getByRole('row')
+    .filter({ hasText: 'View Switcher' })
+    .getByRole('gridcell', { name: 'Disabled' })
+    .locator('span')
+    .click();
+  await expect(page.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Enabled');
+});
+
 test.afterEach(setupAfter);
 
-test.skip('Persona views for System Administrator', async ({ page }) => {
+test('Persona views for System Administrator', async ({ page }) => {
   // Administration View
   await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
   await expect(page.locator('#platform-overview')).toContainText('Overview');
@@ -42,9 +54,18 @@ test.skip('Persona views for System Administrator', async ({ page }) => {
   await expect(page.locator('#awx-analytics')).toBeHidden();
   await expect(page.locator('#platform-lightspeed')).toBeHidden();
   await expect(page.locator('#awx-settings')).toBeHidden();
+  // Turn off the feature flag for Persona View Switcher
+  await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
+  await page
+    .getByRole('row')
+    .filter({ hasText: 'View Switcher' })
+    .getByRole('gridcell', { name: 'Enabled' })
+    .locator('span')
+    .click();
+  await expect(page.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Disabled');
 });
 
-test.skip('Persona views for Normal User', async ({ page }) => {
+test('Persona views for Normal User', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
   const username = await createUser({}, page);
   await page.locator('#platform-overview').click();
@@ -94,5 +115,15 @@ test.skip('Persona views for Normal User', async ({ page }) => {
   await expect(page.locator('#awx-analytics')).toBeHidden();
   await expect(page.locator('#platform-lightspeed')).toBeHidden();
   await expect(page.locator('#awx-settings')).toBeHidden();
+  // Turn off the feature flag for Persona View Switcher
+  await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
+  await page
+    .getByRole('row')
+    .filter({ hasText: 'View Switcher' })
+    .getByRole('gridcell', { name: 'Enabled' })
+    .locator('span')
+    .click();
+  await expect(page.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Disabled');
+  // Logout as normal user
   await logout(page, { username });
 });
