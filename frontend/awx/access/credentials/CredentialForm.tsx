@@ -83,6 +83,7 @@ export function CreateCredential() {
   const [accumulatedPluginValues, setAccumulatedPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
+
   useEffect(() => {
     setAccumulatedPluginValues((prev) => {
       // Filter out any previous plugins that have been updated
@@ -165,6 +166,7 @@ export function CreateCredential() {
       ...credentialInputSource,
       target_credential: newCredential.id,
     }));
+
     await Promise.all(
       credentialInputSourcePayload.map(async (credentialInputSource) => {
         await postRequest(
@@ -173,6 +175,7 @@ export function CreateCredential() {
         );
       })
     );
+
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
 
@@ -654,7 +657,9 @@ function CredentialSubForm({
   });
 
   const watchedAllFields = useWatch({ name: subFormFields });
-  setWatchedSubFormFields(watchedAllFields);
+  useEffect(() => {
+    setWatchedSubFormFields(watchedAllFields);
+  }, [watchedAllFields, setWatchedSubFormFields]);
 
   useEffect(() => {
     const verify: string[] = [];
@@ -865,39 +870,36 @@ function CredentialTextInput({
     setPluginsToDelete,
   ]);
 
+  // useEffect to handle prompt on launch changes
   useEffect(() => {
-    if (isPromptOnLaunchChecked) {
-      // mark any credential plugins previously set for deletion
+    const currentValue = getValues(field.id) as string;
+    // If "Prompt on launch" is checked AND the current value is not "ASK"
+    if (isPromptOnLaunchChecked && currentValue !== ASK_VALUE) {
+      setValue(field.id, ASK_VALUE, { shouldDirty: true });
+      clearErrors(field.id);
+      // If there's a credential plugin, mark it for deletion
       if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
         setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
         setAccumulatedPluginValues?.(
           accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
         );
       }
-      setValue(field.id, ASK_VALUE, { shouldDirty: true });
-      clearErrors(field.id);
-    } else if (!isPromptOnLaunchChecked && getValues(field.id) === ASK_VALUE) {
+    } // If "Prompt on launch" is unchecked AND the current value is "ASK"
+    else if (!isPromptOnLaunchChecked && currentValue === ASK_VALUE) {
       setValue(field.id, '', { shouldDirty: true });
     }
   }, [
-    getValues,
     isPromptOnLaunchChecked,
-    field,
+    field.id,
+    getValues,
     setValue,
-    setPluginsToDelete,
-    accumulatedPluginValues,
-    setAccumulatedPluginValues,
     clearErrors,
+    accumulatedPluginValues,
+    setPluginsToDelete,
+    setAccumulatedPluginValues,
   ]);
 
-  useEffect(() => {
-    if (isPromptOnLaunchChecked) {
-      clearFieldValue();
-      setIsRevert(true);
-      setShouldHideField(false);
-    }
-  }, [isPromptOnLaunchChecked, clearFieldValue]);
-
+  // useEffect to handle plugin values
   useEffect(() => {
     if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
       setValue(field.id, renderFieldValue(field), { shouldDirty: true });
