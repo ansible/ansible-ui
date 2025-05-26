@@ -237,6 +237,7 @@ export function PageFormSelect<
                 ouiaId="menu-select"
                 shouldFocusToggleOnSelect
                 toggle={(ref) => toggle(ref, selected?.label)}
+                isScrollable
               >
                 <>
                   <SelectList>
