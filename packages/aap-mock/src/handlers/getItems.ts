@@ -13,7 +13,13 @@ export function getItems(
     switch (typeof result) {
       case 'object': {
         if (result === null) break;
-        if (!Array.isArray(result)) break;
+        if (!Array.isArray(result)) {
+          return {
+            status: 200,
+            body: result,
+          };
+        }
+
         let results = result;
         results = filterItems(results, request.url.searchParams);
         results = sortItems(results, request.url.searchParams);

@@ -1,0 +1,37 @@
+{
+  "id": 1,
+  "url": "/api/gateway/v1/authenticators/1/",
+  "related": {
+    "authenticator_maps": "/api/gateway/v1/authenticators/11/authenticator_maps/",
+    "created_by": "/api/gateway/v1/users/2/",
+    "modified_by": "/api/gateway/v1/users/2/",
+    "users": "/api/gateway/v1/authenticators/1/users/"
+  },
+  "summary_fields": {
+    "modified_by": {
+      "id": 2,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "created_by": {
+      "id": 2,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    }
+  },
+  "created": "2025-05-21T20:19:50.576875Z",
+  "created_by": 2,
+  "modified": "2025-05-21T20:19:50.576852Z",
+  "modified_by": 2,
+  "name": "Authenticator One",
+  "enabled": false,
+  "create_objects": false,
+  "remove_users": false,
+  "configuration": {},
+  "type": "ansible_base.authentication.authenticator_plugins.local",
+  "order": 2,
+  "slug": "8fea0489-0f94-4122-8b83-d0c7d75f5225",
+  "auto_migrate_users_to": null
+}

@@ -1,0 +1,187 @@
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 4,
+      "url": "/api/gateway/v1/role_definitions/4/",
+      "related": {
+        "created_by": "/api/gateway/v1/users/1/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "team_assignments": "/api/gateway/v1/role_definitions/4/team_assignments/",
+        "user_assignments": "/api/gateway/v1/role_definitions/4/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "permissions": [
+        "shared.change_organization",
+        "shared.delete_organization",
+        "shared.member_organization",
+        "shared.view_organization",
+        "shared.add_team",
+        "shared.change_team",
+        "shared.delete_team",
+        "shared.member_team",
+        "shared.view_team"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2025-05-21T15:09:28.526905Z",
+      "created": "2025-05-21T15:09:28.526919Z",
+      "name": "Organization Admin",
+      "description": "Has all permissions to a single organization and all objects inside of it",
+      "managed": true,
+      "modified_by": 1,
+      "created_by": 1
+    },
+    {
+      "id": 5,
+      "url": "/api/gateway/v1/role_definitions/5/",
+      "related": {
+        "created_by": "/api/gateway/v1/users/1/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "team_assignments": "/api/gateway/v1/role_definitions/5/team_assignments/",
+        "user_assignments": "/api/gateway/v1/role_definitions/5/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "permissions": ["shared.member_organization", "shared.view_organization"],
+      "content_type": "shared.organization",
+      "modified": "2025-05-21T15:09:28.540186Z",
+      "created": "2025-05-21T15:09:28.540201Z",
+      "name": "Organization Member",
+      "description": "Has member permission to a single organization",
+      "managed": true,
+      "modified_by": 1,
+      "created_by": 1
+    },
+    {
+      "id": 1,
+      "url": "/api/gateway/v1/role_definitions/1/",
+      "related": {
+        "created_by": "/api/gateway/v1/users/1/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "team_assignments": "/api/gateway/v1/role_definitions/1/team_assignments/",
+        "user_assignments": "/api/gateway/v1/role_definitions/1/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "permissions": ["shared.view_organization", "shared.view_team"],
+      "content_type": null,
+      "modified": "2025-05-21T15:09:28.495855Z",
+      "created": "2025-05-21T15:09:28.495867Z",
+      "name": "Platform Auditor",
+      "description": "Has view permissions to all objects",
+      "managed": true,
+      "modified_by": 1,
+      "created_by": 1
+    },
+    {
+      "id": 3,
+      "url": "/api/gateway/v1/role_definitions/3/",
+      "related": {
+        "created_by": "/api/gateway/v1/users/1/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "team_assignments": "/api/gateway/v1/role_definitions/3/team_assignments/",
+        "user_assignments": "/api/gateway/v1/role_definitions/3/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "permissions": [
+        "shared.change_team",
+        "shared.delete_team",
+        "shared.member_team",
+        "shared.view_team"
+      ],
+      "content_type": "shared.team",
+      "modified": "2025-05-21T15:09:28.516435Z",
+      "created": "2025-05-21T15:09:28.516449Z",
+      "name": "Team Admin",
+      "description": "Can manage a single team and inherits all role assignments to the team",
+      "managed": true,
+      "modified_by": 1,
+      "created_by": 1
+    },
+    {
+      "id": 2,
+      "url": "/api/gateway/v1/role_definitions/2/",
+      "related": {
+        "created_by": "/api/gateway/v1/users/1/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "team_assignments": "/api/gateway/v1/role_definitions/2/team_assignments/",
+        "user_assignments": "/api/gateway/v1/role_definitions/2/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "permissions": ["shared.member_team", "shared.view_team"],
+      "content_type": "shared.team",
+      "modified": "2025-05-21T15:09:28.507052Z",
+      "created": "2025-05-21T15:09:28.507066Z",
+      "name": "Team Member",
+      "description": "Inherits all role assignments to a single team",
+      "managed": true,
+      "modified_by": 1,
+      "created_by": 1
+    }
+  ]
+}

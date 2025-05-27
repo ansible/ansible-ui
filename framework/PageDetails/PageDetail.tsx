@@ -27,12 +27,12 @@ export function PageDetail(props: {
   return (
     <DescriptionListGroupStyled fullWidth={props.fullWidth}>
       {label && (
-        <DescriptionListTerm data-cy={`label-${id}`}>
+        <DescriptionListTerm data-cy={`label-${id}`} data-testid={`label-${id}`}>
           {label}
           {helpText ? <StandardPopover header={label} content={helpText} /> : null}
         </DescriptionListTerm>
       )}
-      <DescriptionListDescriptionStyled id={id} data-cy={id}>
+      <DescriptionListDescriptionStyled id={id} data-cy={id} data-testid={id}>
         {children}
       </DescriptionListDescriptionStyled>
     </DescriptionListGroupStyled>

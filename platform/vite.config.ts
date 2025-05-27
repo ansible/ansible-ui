@@ -4,6 +4,7 @@
 import react from '@vitejs/plugin-react-swc';
 import selfsigned from 'selfsigned';
 import { defineConfig, PluginOption, UserConfig } from 'vite';
+import type { InlineConfig } from 'vitest/node';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -30,8 +31,11 @@ const proxyUrl = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
 const wsURL = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
 if (wsURL) wsURL.protocol = 'wss:';
 
+interface VitestUserConfig extends UserConfig {
+  test: InlineConfig;
+}
 // https://vitejs.dev/config/
-const config: UserConfig = {
+const config: VitestUserConfig = {
   plugins: [
     react(),
     svgr(),
@@ -85,6 +89,21 @@ const config: UserConfig = {
         },
       },
     },
+  },
+  test: {
+    environment: 'happy-dom',
+    setupFiles: ['vitest.setup.ts'],
+    server: {
+      deps: {
+        inline: ['@patternfly/react-styles'],
+      },
+    },
+    alias: [
+      {
+        find: /^monaco-editor$/,
+        replacement: __dirname + '/../node_modules/monaco-editor/esm/vs/editor/editor.api',
+      },
+    ],
   },
 };
 

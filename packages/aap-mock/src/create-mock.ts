@@ -14,6 +14,7 @@ import { getUnifiedJobs } from './controller/controllerUnifiedJobs';
 import { getUnifiedTemplates } from './controller/controllerUnifiedTemplates';
 import { getGatewayAppUrls } from './gateway/gatewayAppUrls';
 import { gatewayRelations } from './gateway/gatewayRelations';
+import { getAuthenticatorMaps, patchAuthenticatorMap } from './gateway/gatewayAuthenticatorMaps';
 import { authenticatedGuard } from './handlers/authenticatedGuard';
 import { deleteItem } from './handlers/deleteItem';
 import { gatewayApiRoute } from './handlers/gatewayApiRoute';
@@ -58,6 +59,8 @@ export function createMock() {
     .OPTIONS('/api/gateway/v1/:resource/:id', getItemOptions())
     .GET('/api/gateway/v1/:resource/:id', getItem(gatewayRelations))
     .DELETE('/api/gateway/v1/:resource/:id', deleteItem())
+    .GET('/api/gateway/v1/authenticators/:id/authenticator_maps', getAuthenticatorMaps)
+    .PATCH('/api/gateway/v1/authenticator_maps/:id', patchAuthenticatorMap)
 
     // Controller API
     .GET('/api/controller/v2/config', getData())
