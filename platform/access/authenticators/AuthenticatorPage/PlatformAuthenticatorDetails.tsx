@@ -1,14 +1,10 @@
 import { LoadingPage, PageDetail, PageDetails, Scrollable } from '@ansible/ansible-ui-framework';
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
-import { Divider, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import type { Authenticator } from '../../../interfaces/Authenticator';
-import type { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
-import type { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
@@ -24,14 +20,6 @@ type ObjField = {
   value: { [k: string]: string } | string[] | null;
 };
 
-const Section = styled(TextContent)`
-  padding-inline: 24px;
-`;
-
-const SubHeading = styled(Text)`
-  margin-block: 24px;
-`;
-
 export function PlatformAuthenticatorDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
@@ -44,10 +32,6 @@ export function PlatformAuthenticatorDetails() {
   );
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
-  const mapsResponse = useGet<PlatformItemsResponse<AuthenticatorMap>>(
-    gatewayAPI`/authenticator_maps/?authenticator=${params.id?.toString() ?? ''}`
-  );
-  const maps = mapsResponse?.data?.results || [];
 
   if (!authenticator || !plugins) {
     return <LoadingPage />;
@@ -120,21 +104,6 @@ export function PlatformAuthenticatorDetails() {
             );
           })}
         </PageDetails>
-      ) : null}
-      {maps && maps.length ? (
-        <>
-          <Section>
-            <Divider />
-            <SubHeading component={TextVariants.h3}>{t('Mapping')}</SubHeading>
-          </Section>
-          <PageDetails numberOfColumns="single" disableScroll>
-            {maps.map((map) => (
-              <PageDetail label={map.name} key={map.name}>
-                {map.ui_summary || t('{{mapType}} map', { mapType: map.map_type })}
-              </PageDetail>
-            ))}
-          </PageDetails>
-        </>
       ) : null}
     </Scrollable>
   );

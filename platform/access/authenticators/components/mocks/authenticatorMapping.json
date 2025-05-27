@@ -1,0 +1,50 @@
+{
+  "id": 3,
+  "url": "/api/gateway/v1/authenticator_maps/3/",
+  "related": {
+    "authenticator": "/api/gateway/v1/authenticators/1/",
+    "created_by": "/api/gateway/v1/users/2/",
+    "modified_by": "/api/gateway/v1/users/2/"
+  },
+  "summary_fields": {
+    "modified_by": {
+      "id": 2,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "created_by": {
+      "id": 2,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "authenticator": {
+      "id": 11,
+      "name": "lg"
+    }
+  },
+  "created": "2025-05-21T21:35:45.240117Z",
+  "created_by": 2,
+  "modified": "2025-05-21T21:35:45.240094Z",
+  "modified_by": 2,
+  "name": "mapping one",
+  "authenticator": 1,
+  "map_type": "allow",
+  "role": null,
+  "organization": null,
+  "team": null,
+  "revoke": false,
+  "triggers": {
+    "attributes": {
+      "attribute one": {
+        "contains": "value one"
+      },
+      "attribute two": {
+        "contains": "value 2"
+      },
+      "join_condition": "or"
+    }
+  },
+  "order": 1
+}

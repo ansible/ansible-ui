@@ -61,6 +61,11 @@ export function AuthenticatorPage() {
             dataCy: 'authenticator-detail-tab',
             page: PlatformRoute.AuthenticatorDetails,
           },
+          {
+            label: t('Mapping'),
+            dataCy: 'authenticator-mappings-tab',
+            page: PlatformRoute.AuthenticatorMappings,
+          },
         ]}
         params={{
           id: authenticator?.id,

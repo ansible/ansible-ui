@@ -1,20 +1,17 @@
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { postRequest, requestDelete, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Authenticator } from '../../interfaces/Authenticator';
-import { AuthenticatorMap } from '../../interfaces/AuthenticatorMap';
 import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
-import { PlatformItemsResponse } from '../../interfaces/PlatformItemsResponse';
 import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import {
   AuthenticatorForm,
   AuthenticatorFormValues,
-  buildTriggers,
   formatConfiguration,
 } from './components/AuthenticatorForm';
 import { useProcessAutoMigrationUsersRequest } from './hooks/useProcessAutoMigrationUsersRequest';
@@ -29,20 +26,15 @@ export function EditAuthenticator() {
   const processAutoMigrationUsersRequest = useProcessAutoMigrationUsersRequest();
 
   const id = Number(params.id);
-  const [mappings, setMappings] = useState<AuthenticatorMap[]>();
   const [authenticator, setAuthenticator] = useState<Authenticator>();
   const [error, setError] = useState<Error>();
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const mappingsResponse = await requestGet<PlatformItemsResponse<AuthenticatorMap>>(
-          gatewayAPI`/authenticators/${id.toString()}/authenticator_maps/`
-        );
         const authenticator = await requestGet<Authenticator>(
           gatewayAPI`/authenticators/${id.toString()}/`
         );
-        setMappings(mappingsResponse?.results);
         setAuthenticator(authenticator);
       } catch (error) {
         const errorObj = new Error(String(error));
@@ -60,20 +52,13 @@ export function EditAuthenticator() {
     return <AwxError error={error} />;
   }
 
-  if (!plugins || !authenticator || !mappings) {
+  if (!plugins || !authenticator) {
     return <LoadingPage />;
   }
 
   const handleSubmit = async (values: AuthenticatorFormValues) => {
-    const {
-      auto_migrate_users_to,
-      name,
-      enabled,
-      create_objects,
-      remove_users,
-      configuration,
-      mappings: newMappings,
-    } = values;
+    const { auto_migrate_users_to, name, enabled, create_objects, remove_users, configuration } =
+      values;
     const plugin = plugins?.authenticators.find((a) => a.type === authenticator.type);
     if (!plugins || !plugin) {
       return;
@@ -87,41 +72,10 @@ export function EditAuthenticator() {
         name,
         create_objects,
         remove_users,
-        enabled: false,
+        enabled,
         configuration: formatConfiguration(configuration, plugin),
       });
       const updatedAuthenticator = await request;
-
-      const controller = new AbortController();
-      const deleteRequests = mappings.map((map) => {
-        return requestDelete(
-          gatewayAPI`/authenticator_maps/${map.id.toString()}/`,
-          controller.signal
-        );
-      });
-      await Promise.all(deleteRequests);
-      const mapRequests = newMappings.map((map, index) => {
-        const data = {
-          name: map.name,
-          map_type: map.map_type,
-          revoke: map.revoke,
-          order: index + 1,
-          authenticator: updatedAuthenticator.id,
-          triggers: buildTriggers(map),
-          organization: ['organization', 'team', 'role'].includes(map.map_type)
-            ? map.organization
-            : null,
-          team: ['team', 'role'].includes(map.map_type) ? map.team : null,
-          role: ['organization', 'team', 'role'].includes(map.map_type) ? map.role : null,
-        };
-        return postRequest(gatewayAPI`/authenticator_maps/`, data);
-      });
-      await Promise.all(mapRequests);
-      if (enabled) {
-        await requestPatch(gatewayAPI`/authenticators/${id.toString()}/`, {
-          enabled,
-        });
-      }
 
       await processAutoMigrationUsersRequest(updatedAuthenticator, auto_migrate_users_to);
 
@@ -153,7 +107,6 @@ export function EditAuthenticator() {
       handleSubmit={handleSubmit}
       plugins={plugins}
       authenticator={authenticator}
-      mappings={mappings}
     />
   );
 }

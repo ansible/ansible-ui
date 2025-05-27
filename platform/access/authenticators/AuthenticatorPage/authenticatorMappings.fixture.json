@@ -1,0 +1,142 @@
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "url": "/api/gateway/v1/authenticator_maps/2/",
+      "related": {
+        "authenticator": "/api/gateway/v1/authenticators/66/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/"
+      },
+      "summary_fields": {
+        "modified_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "created_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "authenticator": { "id": 66, "name": "test" }
+      },
+      "created": "2025-05-02T16:56:32.935086Z",
+      "created_by": 2,
+      "modified": "2025-05-02T16:56:32.935058Z",
+      "modified_by": 2,
+      "name": "Sample superuser map",
+      "authenticator": 66,
+      "map_type": "is_superuser",
+      "role": null,
+      "organization": null,
+      "team": null,
+      "revoke": false,
+      "triggers": { "always": {} },
+      "order": 1
+    },
+    {
+      "id": 6,
+      "url": "/api/gateway/v1/authenticator_maps/6/",
+      "related": {
+        "authenticator": "/api/gateway/v1/authenticators/66/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/"
+      },
+      "summary_fields": {
+        "modified_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "created_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "authenticator": { "id": 66, "name": "test" }
+      },
+      "created": "2025-05-02T16:56:32.952488Z",
+      "created_by": 2,
+      "modified": "2025-05-02T16:56:32.952460Z",
+      "modified_by": 2,
+      "name": "Sample allow map",
+      "authenticator": 66,
+      "map_type": "allow",
+      "role": null,
+      "organization": null,
+      "team": null,
+      "revoke": false,
+      "triggers": { "always": {} },
+      "order": 5
+    },
+    {
+      "id": 3,
+      "url": "/api/gateway/v1/authenticator_maps/3/",
+      "related": {
+        "authenticator": "/api/gateway/v1/authenticators/66/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/"
+      },
+      "summary_fields": {
+        "modified_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "created_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "authenticator": { "id": 66, "name": "test" }
+      },
+      "created": "2025-05-02T16:56:32.940767Z",
+      "created_by": 2,
+      "modified": "2025-05-02T16:56:32.940737Z",
+      "modified_by": 2,
+      "name": "Sample org map",
+      "authenticator": 66,
+      "map_type": "organization",
+      "role": "Organization Admin",
+      "organization": "Default",
+      "team": null,
+      "revoke": false,
+      "triggers": { "always": {} },
+      "order": 2
+    },
+    {
+      "id": 4,
+      "url": "/api/gateway/v1/authenticator_maps/4/",
+      "related": {
+        "authenticator": "/api/gateway/v1/authenticators/66/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/"
+      },
+      "summary_fields": {
+        "modified_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "created_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "authenticator": { "id": 66, "name": "test" }
+      },
+      "created": "2025-05-02T16:56:32.943895Z",
+      "created_by": 2,
+      "modified": "2025-05-02T16:56:32.943875Z",
+      "modified_by": 2,
+      "name": "Sample role map",
+      "authenticator": 66,
+      "map_type": "role",
+      "role": "Team Member",
+      "organization": "Default",
+      "team": "Platform E2E Team-sss",
+      "revoke": false,
+      "triggers": { "always": {} },
+      "order": 4
+    },
+    {
+      "id": 5,
+      "url": "/api/gateway/v1/authenticator_maps/5/",
+      "related": {
+        "authenticator": "/api/gateway/v1/authenticators/66/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/"
+      },
+      "summary_fields": {
+        "modified_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "created_by": { "id": 2, "username": "admin", "first_name": "", "last_name": "" },
+        "authenticator": { "id": 66, "name": "test" }
+      },
+      "created": "2025-05-02T16:56:32.950756Z",
+      "created_by": 2,
+      "modified": "2025-05-02T16:56:32.950734Z",
+      "modified_by": 2,
+      "name": "Sample team map",
+      "authenticator": 66,
+      "map_type": "team",
+      "role": "Team Member",
+      "organization": "Default",
+      "team": "Platform E2E Team-sss",
+      "revoke": false,
+      "triggers": { "always": {} },
+      "order": 3
+    }
+  ]
+}

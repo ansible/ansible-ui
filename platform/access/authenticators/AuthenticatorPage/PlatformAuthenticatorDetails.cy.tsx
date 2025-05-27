@@ -46,6 +46,5 @@ describe('PlatformAuthenticatorDetails', () => {
       'have.text',
       mockAuthenticator.configuration.GROUP_TYPE
     );
-    cy.get('[data-cy="rule-#1"]').should('have.text', mockMaps.results[0].ui_summary);
   });
 });

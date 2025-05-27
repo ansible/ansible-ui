@@ -5,10 +5,9 @@ import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { MapFieldsGrid } from './MapFields';
+import { MappingFieldsGrid } from './MappingFields';
 
-export function MapAttributesSubform(props: Readonly<{ mappingIndex: number }>) {
-  const { mappingIndex } = props;
+export function MappingAttributesSubform() {
   const { control } = useFormContext();
   const {
     fields: attributes,
@@ -16,7 +15,7 @@ export function MapAttributesSubform(props: Readonly<{ mappingIndex: number }>) 
     remove: deleteAttribute,
   } = useFieldArray({
     control,
-    name: `mappings.${mappingIndex}.attributes`,
+    name: `attributes`,
   });
 
   const addAttribute = useCallback(() => {
@@ -36,7 +35,6 @@ export function MapAttributesSubform(props: Readonly<{ mappingIndex: number }>) 
   return attributes.map((attribute, index) => (
     <AttributeFields
       key={attribute.id}
-      mapIndex={mappingIndex}
       index={index}
       addAttribute={index + 1 === attributes.length ? addAttribute : undefined}
       deleteAttribute={attributes.length > 1 ? () => deleteAttribute(index) : undefined}
@@ -45,27 +43,26 @@ export function MapAttributesSubform(props: Readonly<{ mappingIndex: number }>) 
 }
 
 interface AttributeFieldsProps {
-  mapIndex: number;
   index: number;
   addAttribute?: () => void;
   deleteAttribute?: () => void;
 }
 export function AttributeFields(props: Readonly<AttributeFieldsProps>) {
-  const { mapIndex, index, deleteAttribute, addAttribute } = props;
+  const { index, deleteAttribute, addAttribute } = props;
   const { t } = useTranslation();
   return (
     <PageFormSection singleColumn>
-      <MapFieldsGrid>
+      <MappingFieldsGrid>
         <PageFormTextInput
-          id={`mappings-${mapIndex}-attributes-${index}-attribute`}
-          name={`mappings.${mapIndex}.attributes.${index}.attribute`}
+          id={`attributes-${index}-attribute`}
+          name={`attributes.${index}.attribute`}
           label={t('Attribute')}
           isRequired
           placeholder={t('Enter attribute')}
         />
         <PageFormSelect
-          id={`mappings-${mapIndex}-attributes-${index}-comparison`}
-          name={`mappings.${mapIndex}.attributes.${index}.comparison`}
+          id={`attributes-${index}-comparison`}
+          name={`attributes.${index}.comparison`}
           label={t('Comparison')}
           placeholderText={t('Select comparison')}
           options={[
@@ -78,8 +75,8 @@ export function AttributeFields(props: Readonly<AttributeFieldsProps>) {
           isRequired
         />
         <PageFormTextInput
-          id={`mappings-${mapIndex}-attributes-${index}-value`}
-          name={`mappings.${mapIndex}.attributes.${index}.value`}
+          id={`attributes-${index}-value`}
+          name={`attributes.${index}.value`}
           label={t('Value')}
           placeholder={t('Enter value')}
           isRequired
@@ -102,7 +99,7 @@ export function AttributeFields(props: Readonly<AttributeFieldsProps>) {
             variant="plain"
           />
         ) : null}
-      </MapFieldsGrid>
+      </MappingFieldsGrid>
     </PageFormSection>
   );
 }

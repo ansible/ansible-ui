@@ -1,0 +1,50 @@
+{
+  "id": 1,
+  "url": "/api/gateway/v1/authenticator_maps/1/",
+  "related": {
+    "authenticator": "/api/gateway/v1/authenticators/24/",
+    "created_by": "/api/gateway/v1/users/3/",
+    "modified_by": "/api/gateway/v1/users/3/"
+  },
+  "summary_fields": {
+    "modified_by": {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": ""
+    },
+    "created_by": {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": ""
+    },
+    "authenticator": {
+      "id": 24,
+      "name": "test-auth"
+    }
+  },
+  "created": "2025-05-12T19:03:02.603737Z",
+  "created_by": 3,
+  "modified": "2025-05-12T19:03:02.603708Z",
+  "modified_by": 3,
+  "name": "role-mapping",
+  "authenticator": 24,
+  "map_type": "role",
+  "role": "Organization Member",
+  "organization": "Default",
+  "team": "test-team",
+  "revoke": false,
+  "triggers": {
+    "attributes": {
+      "attr1": {
+        "contains": "value1"
+      },
+      "attr2": {
+        "contains": "value2"
+      },
+      "join_condition": "and"
+    }
+  },
+  "order": 1
+}

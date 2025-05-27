@@ -1,8 +1,7 @@
 import {
+  PageFormTextInput,
   PageHeader,
   PageLayout,
-  PageWizard,
-  PageWizardStep,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
@@ -20,16 +19,16 @@ import type {
 } from '../../../interfaces/AuthenticatorPlugin';
 import type { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { authenticatorErrorAdapter } from './authenticatorErrorAdapter';
-import { AuthenticatorDetailsStep, validateDetailsStep } from './steps/AuthenticatorDetailsStep';
-import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
-import { AuthenticatorMappingStep, validateMappingStep } from './steps/AuthenticatorMappingStep';
-import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
+import { AuthenticatorSubForm } from './steps/AuthenticatorSubForm';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useCallback } from 'react';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
+import { t } from 'i18next';
+import { PageFormAutoMigrateUsersSelect } from './PageFormAutoMigrateUsersSelect';
+import { useNavigate } from 'react-router';
 
 export interface Configuration {
   [key: string]: boolean | string | string[] | { [k: string]: string | boolean | object };
@@ -75,8 +74,6 @@ export interface AuthenticatorFormValues {
   remove_users: boolean;
   configuration: Configuration;
   type: AuthenticatorTypeEnum;
-  order: number;
-  mappings: AuthenticatorMapValues[];
   auto_migrate_users_to: number | Authenticator[] | null;
 }
 
@@ -84,78 +81,28 @@ interface AuthenticatorFormProps {
   handleSubmit: (values: AuthenticatorFormValues) => Promise<void>;
   plugins: AuthenticatorPlugins;
   authenticator?: Authenticator;
-  mappings?: AuthenticatorMap[];
 }
 
 export function AuthenticatorForm(props: AuthenticatorFormProps) {
-  const { plugins, authenticator, mappings = [] } = props;
+  const { plugins, authenticator } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const steps: PageWizardStep[] = [
-    {
-      id: 'type',
-      label: t('Authentication type'),
-      inputs: <AuthenticatorTypeStep plugins={plugins} />,
-      hidden: () => !!authenticator,
-    },
-    {
-      id: 'details',
-      label: t('Authentication details'),
-      inputs: <AuthenticatorDetailsStep plugins={plugins} authenticator={authenticator} />,
-      validate: async (formData, wizardData) => {
-        return validateDetailsStep(
-          formData as { name: string; configuration: Configuration },
-          wizardData as AuthenticatorFormValues,
-          plugins,
-          authenticator
-        );
-      },
-    },
-    {
-      id: 'mapping',
-      label: t('Mapping'),
-      inputs: <AuthenticatorMappingStep />,
-      validate: (formData, _) => {
-        return validateMappingStep(formData, t);
-      },
-    },
-    {
-      id: 'order',
-      label: t('Mapping order'),
-      inputs: <AuthenticatorMappingOrderStep />,
-      hidden: (wizardData) =>
-        !mappings.length && !(wizardData as { mappings?: object[] }).mappings?.length,
-    },
-    {
-      id: 'review',
-      label: t('Review'),
-      element: <AuthenticatorReviewStep plugins={plugins} authenticator={authenticator} />,
-    },
-  ];
-
-  const initialValues = {
-    type: {
-      type: AuthenticatorTypeEnum.Local,
-    },
-    details: {
-      name: '',
-      configuration: {},
-      enabled: false,
-      create_objects: false,
-      remove_users: false,
-      auto_migrate_users_to: null,
-    },
-    mapping: {},
-    order: {},
+  let initialValues = {
+    type: AuthenticatorTypeEnum.Local,
+    name: '',
+    configuration: {},
+    enabled: false,
+    create_objects: false,
+    remove_users: false,
+    auto_migrate_users_to: null,
   };
 
   if (authenticator) {
     const plugin = plugins.authenticators.find((plugin) => plugin.type === authenticator.type);
-    initialValues.type = {
+
+    initialValues = {
       type: authenticator.type,
-    };
-    initialValues.details = {
       name: authenticator.name,
       configuration: {},
       auto_migrate_users_to: null,
@@ -178,24 +125,9 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
       configuration[field.name] = val;
     });
 
-    initialValues.details.configuration = configuration;
-
-    initialValues.mapping = {
-      mappings: mappings
-        .sort((a, b) => a.order - b.order)
-        .map((mapping) => {
-          return {
-            map_type: mapping.map_type,
-            name: mapping.name,
-            revoke: mapping.revoke,
-            ...parseTrigger(mapping),
-            organization: mapping.organization,
-            role: mapping.role,
-            team: mapping.team,
-          };
-        }),
-    };
+    initialValues.configuration = configuration;
   }
+  const navigate = useNavigate();
   return (
     <PageLayout>
       <PageHeader
@@ -213,13 +145,41 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
           },
         ]}
       />
-      <PageWizard<AuthenticatorFormValues>
-        steps={steps}
-        stepDefaults={initialValues}
+      <AwxPageForm
+        submitText={
+          !authenticator ? t('Create Authentication Method') : t('Save Authentication Method')
+        }
         onSubmit={props.handleSubmit}
-        errorAdapter={authenticatorErrorAdapter}
-      />
+        onCancel={() => navigate(-1)}
+        defaultValue={initialValues}
+      >
+        <AuthenticatorFormInputs plugins={plugins} authenticator={authenticator} />
+      </AwxPageForm>
     </PageLayout>
+  );
+}
+
+function AuthenticatorFormInputs(props: {
+  plugins: AuthenticatorPlugins;
+  authenticator?: Authenticator;
+}) {
+  return (
+    <>
+      <PageFormTextInput
+        name="name"
+        label={t('Name')}
+        isRequired
+        placeholder={t('Enter authentication name')}
+      />
+      <PageFormAutoMigrateUsersSelect
+        isLegacy={Boolean(props.authenticator?.type.includes('legacy'))}
+      />
+      <AuthenticatorTypeStep plugins={props.plugins} isDisabled={!!props.authenticator} />
+      <AuthenticatorSubForm
+        plugins={props.plugins}
+        authenticator={props.authenticator}
+      ></AuthenticatorSubForm>
+    </>
   );
 }
 

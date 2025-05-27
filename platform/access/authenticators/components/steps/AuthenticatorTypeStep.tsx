@@ -1,11 +1,13 @@
 import { PageFormSelect } from '@ansible/ansible-ui-framework';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
 import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
 
-export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) {
+export function AuthenticatorTypeStep(props: {
+  plugins: AuthenticatorPlugins;
+  isDisabled?: boolean;
+}) {
   const { t } = useTranslation();
 
   // Users cannot create new authenticators using legacy plugins, but can modify those created by the system.
@@ -23,19 +25,15 @@ export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) 
     }));
 
   return (
-    <>
-      <TextContent>
-        <Text component={TextVariants.h2}>{t('Authentication type')}</Text>
-      </TextContent>
-      <PageFormSection>
-        <PageFormSelect
-          id="authentication-type-select"
-          name="type"
-          label={t('Authentication type')}
-          options={options}
-          isRequired
-        />
-      </PageFormSection>
-    </>
+    <PageFormSection>
+      <PageFormSelect
+        id="authentication-type-select"
+        name="type"
+        label={t('Authentication type')}
+        options={options}
+        isRequired
+        isDisabled={props.isDisabled}
+      />
+    </PageFormSection>
   );
 }
