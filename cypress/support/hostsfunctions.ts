@@ -54,9 +54,10 @@ function editHost(inventoryName: string, host_type: string, hostName: string, vi
 function deleteHostListView(invenotryName: string, host_type: string, hostName: string) {
   navigateToBaseView(host_type, invenotryName);
   cy.filterTableBySearch(hostName);
-  cy.get('td[data-cy="actions-column-cell"]').within(() => {
-    cy.get('button[data-cy="actions-dropdown"]').click();
-  });
+  cy.intercept(awxAPI`/inventories/*/hosts/?search=*`).as('filteredHosts');
+  cy.wait('@filteredHosts');
+  cy.getBy('tr').should('have.length', 2); // Wait for filter to take effect
+  cy.get('td[data-cy="actions-column-cell"] button[data-cy="actions-dropdown"]').click();
   cy.getByDataCy('delete-host').click();
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Delete hosts');
