@@ -1,7 +1,7 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework';
 import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { HubError } from '../../../common/HubError';

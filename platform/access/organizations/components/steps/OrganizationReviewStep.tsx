@@ -10,7 +10,7 @@ import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
 
 export function OrganizationReviewStep(props: { controllerOrganization?: ControllerOrganization }) {

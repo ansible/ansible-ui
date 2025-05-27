@@ -2,7 +2,7 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { UserDetails, UserDetailsType } from '@ansible/common-ui/access/UserDetails';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaUser } from '../../../interfaces/EdaUser';
 

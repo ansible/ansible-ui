@@ -11,7 +11,7 @@ import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
 import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';

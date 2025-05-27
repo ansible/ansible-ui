@@ -11,7 +11,7 @@ import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { AwxPageForm } from '../../common/AwxPageForm';

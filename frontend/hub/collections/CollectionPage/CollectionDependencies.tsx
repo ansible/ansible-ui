@@ -13,7 +13,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { Button, PageSection, Title } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router';
+import { useOutletContext } from 'react-router-dom';
 import styled from 'styled-components';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
@@ -52,7 +52,7 @@ export function CollectionDependencies() {
         // select the first repo
         const repository = result.data[0].repository?.name;
         setIsLoading('');
-        void navigate(HubRoute.CollectionDetails, { params: { repository, namespace, name } });
+        navigate(HubRoute.CollectionDetails, { params: { repository, namespace, name } });
       } catch (ex) {
         setIsLoading('');
         setMissingCollection(dependency);

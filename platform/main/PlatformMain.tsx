@@ -10,16 +10,15 @@ import { PageFramework } from '@ansible/ansible-ui-framework';
 import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
 import { WebSocketProvider } from '@ansible/awx-ui/common/useAwxWebSocket';
-import { ChatbotProvider } from '@ansible/chatbot/ChatbotProvider';
+import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import '@ansible/common-ui/i18n';
-import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
 import { EdaActiveUserProvider } from '@ansible/eda-ui/common/useEdaActiveUser';
 import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
 import { HubContextProvider } from '@ansible/hub-ui/common/useHubContext';
 import { Bullseye, Page, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
-import { BrowserRouter } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import {
@@ -35,6 +34,7 @@ import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformSubscription } from './PlatformSubscription';
+import { ChatbotProvider } from '@ansible/chatbot/ChatbotProvider';
 
 // eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {

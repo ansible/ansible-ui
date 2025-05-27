@@ -1,12 +1,10 @@
 import { IFilterState } from '@ansible/ansible-ui-framework';
 import { PageSection, Skeleton } from '@patternfly/react-core';
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useSearchToolbarFilter } from '../../../common/awx-toolbar-filters';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
-import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 import { Job } from '../../../interfaces/Job';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { useGetJob } from '../JobPage';
@@ -17,6 +15,8 @@ import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
 import { HostStatusBar, WorkflowNodesStatusBar } from './StatusBar';
 import { isJobRunning } from './util';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
+import { useSearchToolbarFilter } from '../../../common/awx-toolbar-filters';
 
 const Section = styled(PageSection)`
   display: flex;

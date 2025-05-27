@@ -19,7 +19,7 @@ import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { LabelGroup } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { awxAPI } from '../../../common/api/awx-utils';

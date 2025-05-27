@@ -9,7 +9,7 @@ import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { awxAPI } from '../../../common/api/awx-utils';

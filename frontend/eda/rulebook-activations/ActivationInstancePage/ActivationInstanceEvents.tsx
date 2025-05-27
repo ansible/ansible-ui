@@ -1,18 +1,18 @@
-import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
-import { useScrollControls } from '@ansible/awx-ui/views/jobs/JobOutput/useScrollControls';
-import { requestGet } from '@ansible/common-ui/crud/Data';
-import { useGet } from '@ansible/common-ui/crud/useGet';
-import { PageSection } from '@patternfly/react-core';
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router';
-import styled from 'styled-components';
-import { useVirtualizedList } from '../../..//common/utils/useVirtualized';
-import { getFiltersQueryString } from '../../../awx/views/jobs/JobOutput/useJobOutput';
 import { PageControls } from '../../../common/PageControls';
+import { useScrollControls } from '@ansible/awx-ui/views/jobs/JobOutput/useScrollControls';
+import { useVirtualizedList } from '../../..//common/utils/useVirtualized';
+import { useEffect, useRef, useState } from 'react';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
 import { ActivationInstanceOutputRow } from './ActivationInstanceOutputRow';
+import { useParams } from 'react-router-dom';
+import { PageSection } from '@patternfly/react-core';
+import styled from 'styled-components';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { getFiltersQueryString } from '../../../awx/views/jobs/JobOutput/useJobOutput';
 
 const ScrollContainer = styled.div`
   overflow: auto;

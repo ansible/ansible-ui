@@ -16,10 +16,10 @@ import { Label } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
-import { PageFormSingleSelectHubResource } from '../../common/PageFormSingleSelectHubResource';
 import { pulpAPI } from '../../common/api/formatPath';
 import {
   parsePulpIDFromURL,
@@ -31,6 +31,7 @@ import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubRemote } from './../remotes/Remotes';
 import { Repository } from './Repository';
+import { PageFormSingleSelectHubResource } from '../../common/PageFormSingleSelectHubResource';
 import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
 
@@ -209,7 +210,7 @@ export function RepositoryForm() {
       <HubPageForm<RepositoryFormProps>
         submitText={isEdit ? t('Save repository') : t('Create repository')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={repositoryFormValues}
       >
         <PageFormTextInput<RepositoryFormProps>

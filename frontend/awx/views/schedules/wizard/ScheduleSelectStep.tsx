@@ -2,7 +2,7 @@ import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWiza
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { mergeArraysByCredentialType } from '../../../access/credentials/hooks/mergeArraysByCredentialType';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';

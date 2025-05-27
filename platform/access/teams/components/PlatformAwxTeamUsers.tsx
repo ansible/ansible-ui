@@ -15,7 +15,7 @@ import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { CubesIcon, MinusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 
 export function PlatformAwxTeamUsers(props: { id?: string }) {

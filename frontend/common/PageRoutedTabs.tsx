@@ -3,7 +3,7 @@ import { usePageBreadcrumbs } from '@ansible/ansible-ui-framework/PageTabs/PageB
 import { Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router';
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { getPersistentFilters } from './PersistentFilters';
 
 export function PageRoutedTabs(props: {
@@ -57,7 +57,7 @@ export function PageRoutedTabs(props: {
   ) => {
     event.preventDefault();
     if (eventKey === props.backTab?.page) {
-      void navigate(getPageUrl(eventKey.toString(), { params: props.params, query }));
+      navigate(getPageUrl(eventKey.toString(), { params: props.params, query }));
     } else {
       pageNavigate(eventKey.toString(), { params: props.params, query: sharedQueryKeysObj });
     }

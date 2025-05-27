@@ -2,7 +2,7 @@ import { usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framew
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
@@ -34,7 +34,7 @@ export function useLaunchTemplate() {
 
       if (canLaunchWithoutPrompt(launchConfig)) {
         const launchJob = await postRequest(launchEndpoint, {});
-        void navigate(getJobOutputUrl(launchJob));
+        navigate(getJobOutputUrl(launchJob));
       } else {
         const awxRoute =
           template.type === 'workflow_job_template'

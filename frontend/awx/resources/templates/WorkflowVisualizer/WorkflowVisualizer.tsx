@@ -3,7 +3,7 @@ import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Bullseye, EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
 import { ShareAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';

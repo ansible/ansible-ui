@@ -1,7 +1,7 @@
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { Button } from '@patternfly/react-core';
 import { HistoryIcon } from '@patternfly/react-icons';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { AwxRoute } from '../main/AwxRoutes';
 
 interface ActivityStreamIconProps {
@@ -13,7 +13,7 @@ export const ActivityStreamIcon: React.FC<ActivityStreamIconProps> = ({
   type: string;
 }) => {
   const getPageUrl = useGetPageUrl();
-  const navigate = useNavigate();
+  const history = useNavigate();
   return (
     <Button
       variant="link"
@@ -24,7 +24,7 @@ export const ActivityStreamIcon: React.FC<ActivityStreamIconProps> = ({
         verticalAlign: 'top',
       }}
       onClick={() =>
-        void navigate(
+        history(
           getPageUrl(AwxRoute.ActivityStream, {
             query: {
               type: type,

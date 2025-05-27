@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
 import { usePageBreadcrumbs } from './PageTabs/PageBreadcrumbs';
 import { useBreakpoint } from './components/useBreakPoint';
@@ -51,7 +51,7 @@ function Breadcrumbs(props: { breadcrumbs?: ICatalogBreadcrumb[]; style?: CSSPro
                 onClick={(e) => {
                   e.preventDefault();
                   if (!breadcrumb.to) return;
-                  void navigate(breadcrumb.to);
+                  navigate(breadcrumb.to);
                 }}
               >
                 {breadcrumb.label}

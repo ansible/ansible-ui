@@ -19,7 +19,7 @@ import { HubRolePage } from '@ansible/hub-ui/access/roles/RolePage/HubRolePage';
 import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
 import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
 import { PlatformHubRoles } from '../access/roles/PlatformHubRoles';

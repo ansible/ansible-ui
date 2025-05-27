@@ -19,7 +19,7 @@ import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRole } from '../../../interfaces/PlatformRole';

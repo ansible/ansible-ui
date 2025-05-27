@@ -1,5 +1,5 @@
 import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function CredentialTeamAccess() {

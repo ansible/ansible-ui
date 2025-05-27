@@ -15,7 +15,7 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { getCookie } from '../crud/cookie';
 import { createRequestError, RequestError } from '../crud/RequestError';

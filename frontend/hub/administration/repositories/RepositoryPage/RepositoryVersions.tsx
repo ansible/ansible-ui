@@ -11,7 +11,7 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { PlusCircleIcon, RedoIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext, useParams } from 'react-router';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL, waitForTask } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';

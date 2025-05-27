@@ -12,7 +12,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useOutletContext } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 
@@ -31,7 +31,7 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
         variant: ButtonVariant.primary,
         icon: PencilAltIcon,
         label: t('Edit platform gateway settings'),
-        onClick: () => void navigate('./edit'),
+        onClick: () => navigate('./edit'),
         isPinned: true,
       },
     ],

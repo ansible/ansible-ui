@@ -8,7 +8,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { Link, useOutletContext, useParams } from 'react-router';
+import { Link, useOutletContext, useParams } from 'react-router-dom';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { HubRoute } from '../../../main/HubRoutes';

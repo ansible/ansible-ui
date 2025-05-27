@@ -13,7 +13,7 @@ import { Token } from '@ansible/awx-ui/interfaces/Token';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -52,7 +52,7 @@ function CreateAAPUserTokenInternal(props: {
   const postRequest = usePostRequest<Token, Token>();
   const pageNavigate = usePageNavigate();
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const onSubmit: PageFormSubmitHandler<Token> = async (tokenInput) => {
     const newToken = await postRequest(gatewayAPI`/tokens/`, tokenInput);
     props.onCreate(newToken);

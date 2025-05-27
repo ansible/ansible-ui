@@ -1,5 +1,4 @@
 import { usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framework';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import {
   Badge,
   Button,
@@ -28,9 +27,10 @@ import {
 import { observer, useVisualizationController } from '@patternfly/react-topology';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { useLaunchTemplate } from '../../hooks/useLaunchTemplate';
 import { START_NODE_ID } from '../constants';

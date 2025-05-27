@@ -11,7 +11,7 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
@@ -33,7 +33,7 @@ export function WorkflowJobTemplateDetails(props: {
     refresh,
   } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, urlId);
   const getPageUrl = useGetPageUrl();
-  const navigate = useNavigate();
+  const history = useNavigate();
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
@@ -104,7 +104,7 @@ export function WorkflowJobTemplateDetails(props: {
         value={template.modified}
         author={template.summary_fields.modified_by?.username}
         onClick={() =>
-          void navigate(
+          history(
             getPageUrl(AwxRoute.UserDetails, {
               params: { id: (template.summary_fields?.modified_by?.id ?? 0).toString() },
             })

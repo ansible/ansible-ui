@@ -1,7 +1,7 @@
 import { CardBody, ProgressStep, ProgressStepper, Stack } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { PageDashboardCard } from './PageDashboardCard';
 
 export interface PageDashboardGettingStartedStep {

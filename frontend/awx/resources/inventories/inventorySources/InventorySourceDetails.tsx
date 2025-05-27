@@ -23,7 +23,7 @@ import {
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';

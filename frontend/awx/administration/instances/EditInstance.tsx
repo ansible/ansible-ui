@@ -8,7 +8,7 @@ import { PageFormSlider } from '@ansible/ansible-ui-framework/PageForm/Inputs/Pa
 import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -35,9 +35,9 @@ export function EditInstance() {
     ) / 100) as unknown as string;
     await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, editedInstance);
     (cache as unknown as { clear: () => void }).clear?.();
-    void navigate(-1);
+    navigate(-1);
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
 
   const getPageUrl = useGetPageUrl();
 

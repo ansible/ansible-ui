@@ -1,5 +1,5 @@
 import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EventStreamUserAccess() {

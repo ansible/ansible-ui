@@ -12,9 +12,9 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useFormContext } from 'react-hook-form';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { pulpAPI } from '../../common/api/formatPath';
@@ -86,7 +86,7 @@ export function CreateRemote() {
       <HubPageForm<HubRemote>
         submitText={t('Create remote')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={{
           name: '',
           url: '',
@@ -191,7 +191,7 @@ export function EditRemote() {
   const handleRefresh = () => {
     // Navigate back when remote is not found
     if (!error && !remote) {
-      void navigate(-1);
+      navigate(-1);
     }
   };
 
@@ -249,7 +249,7 @@ export function EditRemote() {
       <HubPageForm<RemoteFormProps>
         submitText={t('Save remote')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={remoteDefaultValues}
       >
         <HelperWrapper />

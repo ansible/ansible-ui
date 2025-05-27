@@ -4,7 +4,7 @@ import { postRequest, requestDelete, requestGet, requestPatch } from '@ansible/c
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { Authenticator } from '../../interfaces/Authenticator';
 import { AuthenticatorMap } from '../../interfaces/AuthenticatorMap';
 import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';

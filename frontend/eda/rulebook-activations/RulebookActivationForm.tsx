@@ -23,7 +23,7 @@ import jsyaml from 'js-yaml';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
@@ -78,7 +78,7 @@ export function CreateRulebookActivation() {
     pageNavigate(EdaRoute.RulebookActivationPage, { params: { id: newRulebookActivation.id } });
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -358,9 +358,9 @@ export function EditRulebookActivation() {
       eda_credentials: credential_refs,
     });
     (cache as unknown as { clear: () => void }).clear?.();
-    void navigate(-1);
+    navigate(-1);
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (!rulebookActivation) {

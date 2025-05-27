@@ -15,7 +15,7 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';

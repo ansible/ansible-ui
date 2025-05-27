@@ -2,7 +2,7 @@ import { PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-frame
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { Button, PageSection } from '@patternfly/react-core';
 import { t } from 'i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useLegacyAuth } from './LegacyAuthProvider';
 import { LegacyMigrationForm } from './LegacyMigrationForm';
 import { PlatformRoute } from './PlatformRoutes';
@@ -32,7 +32,7 @@ export function LinkUserAccounts() {
           legacyAuth={legacyAuth}
           footer={
             <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
-              <Button onClick={() => void navigate(-1)}>{t('Close')}</Button>
+              <Button onClick={() => navigate(-1)}>{t('Close')}</Button>
             </PageSection>
           }
         />

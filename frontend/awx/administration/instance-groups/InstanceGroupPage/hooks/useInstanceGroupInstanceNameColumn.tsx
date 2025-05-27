@@ -1,7 +1,7 @@
 import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { t } from 'i18next';
 import { useMemo } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { Instance } from '../../../../interfaces/Instance';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 

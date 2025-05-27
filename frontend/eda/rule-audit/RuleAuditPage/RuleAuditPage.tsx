@@ -2,7 +2,7 @@ import { PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-frame
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { EdaRoute } from '../../main/EdaRoutes';
