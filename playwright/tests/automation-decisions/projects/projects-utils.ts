@@ -13,7 +13,7 @@ export async function createEdaProject(
   await navigateTo(page, 'Automation Decisions', 'Projects');
   await page.getByText('Create project').click();
   const projectName = options.projectName ?? createE2EName('project');
-  await page.getByLabel('Name').fill(projectName);
+  await page.getByRole('textbox', { name: 'Name' }).fill(projectName);
   const organizationName = options.organizationName;
   await singleSelectByLabel('Organization', organizationName ?? 'Default', page);
   await page.getByLabel('Source Control URL').fill('https://github.com/ansible/ansible-ui');
