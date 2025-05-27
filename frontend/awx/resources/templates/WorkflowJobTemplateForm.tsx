@@ -12,7 +12,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';

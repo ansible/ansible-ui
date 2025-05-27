@@ -1,12 +1,12 @@
-import { ChatbotSideBar } from '@ansible/chatbot/ChatbotSideBar';
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useEffect, useMemo } from 'react';
-import { Outlet, Route, RouteObject, Routes } from 'react-router';
+import { Outlet, Route, RouteObject, Routes } from 'react-router-dom';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
 import { PageNavigation } from './PageNavigation';
 import { PageNavigationItem } from './PageNavigationItem';
 import { usePageNavigationRoutesContext } from './PageNavigationRoutesProvider';
+import { ChatbotSideBar } from '@ansible/chatbot/ChatbotSideBar';
 
 export function PageApp(props: {
   /** Component for the masthead of the page. */

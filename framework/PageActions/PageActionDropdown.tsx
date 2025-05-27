@@ -14,7 +14,7 @@ import {
 import { CaretDownIcon, CircleIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { PFColorE, getPatternflyColor } from '../components/pfcolors';
 import { getID } from '../hooks/useID';

@@ -1,7 +1,7 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { ProjectDetails } from '../../resources/projects/ProjectPage/ProjectDetails';

@@ -6,7 +6,7 @@ import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router-dom';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';
 

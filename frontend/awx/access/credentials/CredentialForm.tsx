@@ -20,7 +20,7 @@ import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
@@ -191,7 +191,7 @@ export function CreateCredential() {
       <AwxPageForm
         submitText={t('Create credential')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         additionalActions={
           isExternalCredential ? (
             <Button
@@ -433,7 +433,7 @@ export function EditCredential() {
       );
     }
     (cache as unknown as { clear: () => void }).clear?.();
-    void navigate(-1);
+    navigate(-1);
   };
   if (!credential) {
     return (
@@ -467,7 +467,7 @@ export function EditCredential() {
       <AwxPageForm
         submitText={t('Save credential')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={initialValues}
         additionalActions={
           isExternalCredential ? (

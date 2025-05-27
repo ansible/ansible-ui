@@ -72,7 +72,7 @@ export function useDeleteCollections(
           return deleteCollection(collection, version, signal).then(() => {
             clearCacheByKey(hubAPI`/v3/plugin/ansible/content/`);
             if (detail) {
-              void navigate(HubRoute.Collections);
+              navigate(HubRoute.Collections);
             }
           });
         },

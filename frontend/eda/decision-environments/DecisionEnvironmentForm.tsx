@@ -15,7 +15,7 @@ import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
@@ -123,7 +123,7 @@ export function CreateDecisionEnvironment() {
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.DecisionEnvironmentPage, { params: { id: newDecisionEnvironment.id } });
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
@@ -166,9 +166,9 @@ export function EditDecisionEnvironment() {
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
     await patchRequest(edaAPI`/decision-environments/${id.toString()}/`, decisionEnvironment);
     (cache as unknown as { clear: () => void }).clear?.();
-    void navigate(-1);
+    navigate(-1);
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (!decisionEnvironment) {

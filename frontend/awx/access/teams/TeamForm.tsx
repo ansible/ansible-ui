@@ -11,7 +11,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Team } from '../../interfaces/Team';
@@ -37,11 +37,7 @@ export function CreateTeam() {
           { label: t('Create team') },
         ]}
       />
-      <AwxPageForm
-        submitText={t('Create team')}
-        onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
-      >
+      <AwxPageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />
       </AwxPageForm>
     </PageLayout>
@@ -57,7 +53,7 @@ export function EditTeam() {
   const patchRequest = usePatchRequest<Team, Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     await patchRequest(awxAPI`/teams/${id.toString()}/`, team);
-    void navigate(-1);
+    navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
   if (!team) {
@@ -84,7 +80,7 @@ export function EditTeam() {
       <AwxPageForm
         submitText={t('Save team')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={team}
       >
         <TeamInputs />

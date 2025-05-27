@@ -10,7 +10,7 @@ import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/use
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
@@ -39,7 +39,7 @@ export function InventoryRunCommand() {
 
   const navigate = useNavigate();
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
 
   const handleSubmit = async (data: RunCommandWizard) => {
     const eeId = data.execution_environment;

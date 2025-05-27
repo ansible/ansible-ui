@@ -12,7 +12,7 @@ import { ButtonVariant, Switch } from '@patternfly/react-core';
 import { CubesIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 
 import type { JobTemplate } from '../../../interfaces/JobTemplate';

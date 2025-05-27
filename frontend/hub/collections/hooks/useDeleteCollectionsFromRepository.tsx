@@ -84,7 +84,7 @@ export function useDeleteCollectionsFromRepository(
           return deleteCollectionFromRepository(newRepository, [collection], version, t).then(
             () => {
               if (detail) {
-                void navigate(HubRoute.Collections);
+                navigate(HubRoute.Collections);
               }
             }
           );

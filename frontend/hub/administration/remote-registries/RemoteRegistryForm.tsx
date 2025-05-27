@@ -19,7 +19,7 @@ import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { hubAPI } from '../../common/api/formatPath';
@@ -92,7 +92,7 @@ export function CreateRemoteRegistry() {
       <HubPageForm<RemoteRegistryProps>
         submitText={t('Create remote registry')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={{ name: '', url: '' }}
       >
         <FormWrapper isNew />
@@ -166,7 +166,7 @@ export function EditRemoteRegistry() {
 
   const handleRefresh = () => {
     if (!error && !remoteRegistry) {
-      void navigate(-1);
+      navigate(-1);
     }
   };
 
@@ -223,7 +223,7 @@ export function EditRemoteRegistry() {
       <HubPageForm<RemoteRegistryProps>
         submitText={t('Save remote registry')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={remoteRegistryDefaultValues}
       >
         <FormWrapper />

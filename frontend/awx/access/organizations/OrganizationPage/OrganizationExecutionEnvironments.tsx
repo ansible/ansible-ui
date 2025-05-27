@@ -1,5 +1,5 @@
-import { useParams } from 'react-router';
 import { ExecutionEnvironmentsList } from '../../../administration/execution-environments/ExecutionEnvironmentsList';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 
 export function OrganizationExecutionEnvironments() {

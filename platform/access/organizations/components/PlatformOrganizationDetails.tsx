@@ -9,7 +9,6 @@ import { CredentialLabel } from '@ansible/awx-ui/common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '@ansible/awx-ui/common/ExecutionEnvironmentDetail';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
-import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 import { Credential } from '@ansible/awx-ui/interfaces/Credential';
 import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { Organization as AwxOrganization } from '@ansible/awx-ui/interfaces/Organization';
@@ -17,13 +16,14 @@ import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { useTranslation, Trans } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
+import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 
 export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();

@@ -16,7 +16,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { CogIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
 import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';

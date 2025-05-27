@@ -4,7 +4,7 @@ import { SummaryFieldsExecutionEnvironment } from '@ansible/awx-ui/interfaces/su
 import { Popover, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ExternalLink } from '../hub/common/ExternalLink';
 import { useGetDocsUrl } from './utils/useGetDocsUrl';

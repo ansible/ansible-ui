@@ -1,6 +1,6 @@
 import { Flex, FlexItem, Tooltip } from '@patternfly/react-core';
 import { ReactElement, ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { IconWrapper } from '../components/IconWrapper';
 import { PFColor, getPatternflyColor } from '../components/pfcolors';
 
@@ -69,7 +69,7 @@ export function TextCell(props: Readonly<TextCellProps>) {
                       props.onClick();
                     } else {
                       if (!props.to) return;
-                      void navigate(props.to);
+                      navigate(props.to);
                     }
                   }}
                 >

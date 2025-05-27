@@ -3,7 +3,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { ImportIcon, ThumbsDownIcon, ThumbsUpIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
 import { Repository } from '../../repositories/Repository';

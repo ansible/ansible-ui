@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../components/useBreakPoint';
 
 interface PageNavSideBarState {
@@ -38,7 +38,7 @@ export function usePageNavBarClick() {
   const navBar = usePageNavSideBar();
   const onClick = useCallback(
     (path: string) => {
-      void navigate(path);
+      navigate(path);
       if (!isXl) navBar.setState({ isOpen: !navBar.isOpen });
     },
     [navigate, isXl, navBar]

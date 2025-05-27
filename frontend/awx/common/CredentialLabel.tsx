@@ -1,7 +1,7 @@
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Credential } from '../interfaces/Credential';
 import { SummaryFieldCredential } from '../interfaces/summary-fields/summary-fields';
 import { AwxRoute } from '../main/AwxRoutes';

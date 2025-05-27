@@ -3,7 +3,7 @@ import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPag
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaTeam } from '../../../interfaces/EdaTeam';
 

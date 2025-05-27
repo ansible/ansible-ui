@@ -18,7 +18,7 @@ import { nameKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { Radio } from '@patternfly/react-core';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useRepositories } from '../administration/repositories/hooks/useRepositories';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
@@ -74,7 +74,7 @@ export function UploadCollectionByFile() {
   const repositories = useRepositories();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const toolbarFilters = useRepoFilters();
   const tableColumns = useRepositoriesColumns();
   const [onlyStaging, setOnlyStaging] = useState(true);

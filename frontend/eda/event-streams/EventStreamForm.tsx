@@ -17,7 +17,7 @@ import { Alert } from '@patternfly/react-core';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
@@ -192,7 +192,7 @@ export function CreateEventStream() {
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.EventStreamPage, { params: { id: newEventStream?.id } });
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -237,9 +237,9 @@ export function EditEventStream() {
       test_mode: !eventStream?.enabled,
     });
     (cache as unknown as { clear: () => void }).clear?.();
-    void navigate(-1);
+    navigate(-1);
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (!eventStream) {

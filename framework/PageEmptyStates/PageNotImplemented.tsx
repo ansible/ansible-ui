@@ -1,15 +1,15 @@
 import {
   Button,
   EmptyState,
-  EmptyStateActions,
-  EmptyStateFooter,
-  EmptyStateHeader,
   EmptyStateIcon,
   Stack,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { WrenchIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function PageNotImplemented() {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export function PageNotImplemented() {
       <EmptyStateFooter>
         <EmptyStateActions>
           <Stack hasGutter>
-            <Button onClick={() => void navigate(-1)}>{t('Return to previous page')}</Button>
+            <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
             <Button component={(props) => <Link to={'/'} {...props} />}>
               {t('Return to dashboard')}
             </Button>

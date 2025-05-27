@@ -2,7 +2,7 @@ import { PageFormSubmitHandler, PageFormTextInput } from '@ansible/ansible-ui-fr
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Modal } from '@patternfly/react-core';
 import { t } from 'i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
@@ -34,7 +34,7 @@ export function ManagementJobsRetainDataModal(
       retainInput
     );
     props.popDialog();
-    void navigate(getJobOutputUrl(newJob as unknown as UnifiedJob));
+    navigate(getJobOutputUrl(newJob as unknown as UnifiedJob));
   };
 
   const onCancel = () => props.popDialog();

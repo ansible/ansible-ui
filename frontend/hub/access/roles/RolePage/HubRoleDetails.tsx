@@ -9,7 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { hubAPI } from '../../../common/api/formatPath';
 import { HubError } from '../../../common/HubError';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
@@ -19,7 +19,7 @@ import { useManagedRolesWithDescription } from '../hooks/useManagedRolesWithDesc
 
 export function HubRoleDetails() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const history = useNavigate();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const {
@@ -45,7 +45,7 @@ export function HubRoleDetails() {
               value={role?.created}
               author={role?.summary_fields?.created_by?.username}
               onClick={() =>
-                void navigate(
+                history(
                   getPageUrl(HubRoute.UserDetails, {
                     params: {
                       id: (role.summary_fields?.created_by?.username ?? 0).toString(),

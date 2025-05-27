@@ -6,7 +6,7 @@ import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils'
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxError } from '../../../../common/AwxError';
 import { Survey } from '../../../../interfaces/Survey';

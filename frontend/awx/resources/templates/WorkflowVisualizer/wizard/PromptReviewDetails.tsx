@@ -4,19 +4,19 @@ import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWiza
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
-import { Inventory } from '../../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { Survey } from '../../../../interfaces/Survey';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
-import { CredentialDetail } from '../../TemplatePage/steps/TemplateLaunchReviewStep';
 import type { WizardFormValues } from '../types';
 import { processSurvey } from './helpers';
+import { CredentialDetail } from '../../TemplatePage/steps/TemplateLaunchReviewStep';
+import { Inventory } from '../../../../interfaces/Inventory';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;

@@ -15,7 +15,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -45,7 +45,7 @@ export function CreatePlatformTeam() {
         submitText={t('Create team')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
       >
         <PlatformTeamInputs />
       </PageForm>
@@ -66,7 +66,7 @@ export function EditPlatformTeam() {
   const patchRequest = usePatchRequest<PlatformTeam, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
     await patchRequest(gatewayAPI`/teams/${id.toString()}/`, team);
-    void navigate(-1);
+    navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
   if (isLoading) return <LoadingPage breadcrumbs />;
@@ -84,7 +84,7 @@ export function EditPlatformTeam() {
       <PageForm
         submitText={t('Save team')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={team}
       >
         <PlatformTeamInputs isEditMode />

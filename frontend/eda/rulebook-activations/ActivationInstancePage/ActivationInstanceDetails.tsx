@@ -1,16 +1,16 @@
 import { IFilterState, LoadingPage, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { StatusCell } from '../../../common/Status';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
-import { StatusEnum } from '../../interfaces/generated/eda-api';
-import { useActivationHistoryLogsFilters } from '../hooks/useActivationHistoryLogsFilters';
+import { StatusCell } from '../../../common/Status';
 import { ActivationInstanceEvents } from './ActivationInstanceEvents';
+import { useMemo, useState } from 'react';
+import { useActivationHistoryLogsFilters } from '../hooks/useActivationHistoryLogsFilters';
 import { RulebookActivationToolbar } from './ActivationsToolbar';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 
 export function ActivationInstanceDetails() {
   const params = useParams<{ instanceId: string }>();

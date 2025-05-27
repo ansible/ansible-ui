@@ -55,7 +55,7 @@ export function useController(detailEE?: ExecutionEnvironment, isImage = false) 
             })
           : imageURL({ image: executionEnvironment.name });
 
-        void navigate(AwxRoute.CreateExecutionEnvironment, {
+        navigate(AwxRoute.CreateExecutionEnvironment, {
           query: {
             image,
           },

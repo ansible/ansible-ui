@@ -4,7 +4,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
@@ -31,7 +31,7 @@ export function useManagementJobRowActions() {
           awxAPI`/system_job_templates/${String(managementJob.id)}/launch/`,
           {}
         );
-        void navigate(getJobOutputUrl(newJob as UnifiedJob));
+        navigate(getJobOutputUrl(newJob as UnifiedJob));
       }
     },
     [openManagementJobsModal, getJobOutputUrl, navigate, postRequest]

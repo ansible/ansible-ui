@@ -11,7 +11,7 @@ import { Button, CodeBlock, CodeBlockCode, Label, Title } from '@patternfly/reac
 import { DownloadIcon } from '@patternfly/react-icons';
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useOutletContext } from 'react-router';
+import { Link, useOutletContext } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { useRepositoryBasePath } from '../../common/api/hub-api-utils';

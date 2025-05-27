@@ -8,7 +8,7 @@ import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../main/AwxRoutes';

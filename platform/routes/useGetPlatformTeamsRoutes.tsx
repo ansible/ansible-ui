@@ -7,7 +7,7 @@ import { HubTeamRoles } from '@ansible/hub-ui/access/teams/TeamPage/TeamUserRole
 import { HubAddTeamRoles } from '@ansible/hub-ui/access/teams/components/HubAddTeamRoles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { PlatformAAPTeamUsers } from '../access/teams/components/PlatformAAPTeamUsers';
 import { PlatformAwxTeamIdLookup } from '../access/teams/components/PlatformAwxTeamIdLookup';
 import { PlatformAwxTeamUsers } from '../access/teams/components/PlatformAwxTeamUsers';

@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function PageNotFound() {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ export function PageNotFound() {
       <EmptyStateFooter>
         <EmptyStateActions>
           <Stack hasGutter>
-            <Button onClick={() => void navigate(-1)}>{t('Return to previous page')}</Button>
+            <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
             <Button component={(props) => <Link to="/" {...props} />}>
               {t('Return to dashboard')}
             </Button>

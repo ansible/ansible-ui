@@ -66,7 +66,7 @@ import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-bu
 import { PerPageOptions, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { AnalyticsErrorState } from '../Reports/ErrorStates';
 import { Chart } from '../components/Chart';
 import { hydrateSchema } from '../components/Chart/hydrateSchema';

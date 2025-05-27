@@ -16,7 +16,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { hubAPI } from '../../../common/api/formatPath';
 import { HubPageForm } from '../../../common/HubPageForm';
 import { ContentTypeEnum } from '../../../interfaces/expanded/ContentType';
@@ -42,7 +42,7 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
     const newRole = await postRequest(hubAPI`/_ui/v2/role_definitions/`, createdRole);
     pageNavigate(HubRoute.RolePage, { params: { id: newRole.id } });
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -85,13 +85,13 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const onSubmit: PageFormSubmitHandler<HubRbacRole> = async (Role) => {
     if (Number.isInteger(id)) {
       Role = await patchRequest(hubAPI`/_ui/v2/role_definitions/${id.toString()}/`, Role);
-      void navigate(-1);
+      navigate(-1);
     } else {
       const newRole = await postRequest(hubAPI`/_ui/v2/role_definitions/`, Role);
       pageNavigate(HubRoute.RolePage, { params: { id: newRole.id } });
     }
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (Number.isInteger(id)) {

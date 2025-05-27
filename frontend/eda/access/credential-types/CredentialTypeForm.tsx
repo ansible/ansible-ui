@@ -17,7 +17,7 @@ import { Alert, Button } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import {
@@ -86,7 +86,7 @@ export function EditCredentialType() {
   };
 
   const hasCredentialType = !!credentialType;
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => navigate(-1);
   return (
     <PageLayout>
       <PageHeader

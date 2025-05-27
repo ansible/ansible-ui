@@ -4,7 +4,7 @@ import React from 'react';
 
 import { IContents, IContentsOption } from '../../Collection';
 
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { HubRoute } from '../../../main/HubRoutes';
 

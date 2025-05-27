@@ -18,7 +18,7 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CopyIcon, PencilAltIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { edaAPI, hasCopyNamePattern } from '../../common/eda-utils';
 import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';

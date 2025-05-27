@@ -3,7 +3,7 @@ import { t } from 'i18next';
 import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { PageForm } from '../PageForm/PageForm';
 import { PageLayout } from '../PageLayout';
 import { PageWizardFooter } from './PageWizardFooter';
@@ -24,7 +24,7 @@ export function PageWizardBody({
     if (onCancel) {
       onCancel();
     } else {
-      void navigate(-1);
+      navigate(-1);
     }
   }, [navigate, onCancel]);
 

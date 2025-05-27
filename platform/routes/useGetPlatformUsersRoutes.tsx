@@ -13,7 +13,7 @@ import { HubUserRoles } from '@ansible/hub-ui/access/users/UserPage/HubUserRoles
 import { HubAddUserRoles } from '@ansible/hub-ui/access/users/components/HubAddUserRoles';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { PlatformAAPUserTokenDetails } from '../access/users/components/PlatformAAPUserTokenDetails';
 import { CreateAAPUserToken } from '../access/users/components/PlatformAAPUserTokenForm';
 import { PlatformAAPUserTokenPage } from '../access/users/components/PlatformAAPUserTokenPage';
