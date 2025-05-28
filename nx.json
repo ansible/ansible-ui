@@ -7,6 +7,9 @@
     "tsc": {
       "cache": true
     },
+    "vitest": {
+      "cache": true
+    },
     "prettier": {
       "cache": true
     }
