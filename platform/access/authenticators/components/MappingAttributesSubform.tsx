@@ -1,5 +1,6 @@
-import { PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
@@ -60,11 +61,11 @@ export function AttributeFields(props: Readonly<AttributeFieldsProps>) {
           isRequired
           placeholder={t('Enter attribute')}
         />
-        <PageFormSelect
+        <PageFormSingleSelect
           id={`attributes-${index}-comparison`}
           name={`attributes.${index}.comparison`}
           label={t('Comparison')}
-          placeholderText={t('Select comparison')}
+          placeholder={t('Select comparison')}
           options={[
             { value: 'contains', label: t('contains') },
             { value: 'matches', label: t('matches') },

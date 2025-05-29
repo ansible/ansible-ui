@@ -48,6 +48,19 @@ test.describe('Authenticator mappings', () => {
 
     await deleteAuthenticationMethod(authenticatorName, page);
   });
+
+  test('can create attribute trigger mappings', async ({ page }) => {
+    const authenticatorName = await createAuthenticationMethod({}, page);
+    const mapName = await createAuthenticationMap(
+      {
+        authenticatorName,
+        name: 'triggerOne',
+        trigger: 'Attributes',
+      },
+      page
+    );
+    await expect(page.getByRole('link', { name: mapName })).toBeVisible();
+  });
 });
 
 function getId(name: string) {

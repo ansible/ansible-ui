@@ -90,6 +90,24 @@ export async function createAuthenticationMap(
   await page.getByRole('textbox', { name: 'name' }).fill(mapName);
   await page.getByRole('button', { name: 'Select trigger' }).click();
   await page.getByRole('option', { name: options.trigger ?? 'Always' }).click();
+  if (options.trigger === 'Attributes') {
+    await page.getByRole('button', { name: 'Select operation' }).click();
+    await page.getByRole('option', { name: 'or' }).click();
+    await page.getByRole('textbox', { name: 'Attribute' }).click();
+    await page.getByRole('textbox', { name: 'Attribute' }).fill('Attribute one');
+    await page.getByRole('button', { name: 'Comparison' }).click();
+    await page.getByRole('option', { name: 'equals' }).click();
+    await page.getByRole('textbox', { name: 'Value' }).click();
+    await page.getByRole('textbox', { name: 'Value' }).fill('value one');
+    await page.getByRole('button', { name: 'Add attribute' }).click();
+    await page.locator('#attributes-1-attribute').click();
+    await page.locator('#attributes-1-attribute').fill('Attribute two');
+    await page.locator('#attributes-1-comparison').click();
+    await page.getByRole('option', { name: 'matches' }).click();
+    await page.locator('#attributes-1-value').click();
+    await page.locator('#attributes-1-value').fill('value two');
+  }
+
   await page.getByRole('button', { name: 'Create mapping' }).click();
 
   await expect(page.getByRole('heading', { name: mapName })).toBeVisible();
