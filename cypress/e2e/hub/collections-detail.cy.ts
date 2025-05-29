@@ -1,6 +1,6 @@
 import { QueryParamsType } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
-import { pulpAPI } from '../../support/formatApiPathForHub';
+import { hubAPI, pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 import { AZURE_URL, OCP_A_URL, SAAS_URL } from '../../support/constants';
@@ -74,6 +74,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
         cy.get(`[data-cy="browse-collection-version"] button`).as('versionButton');
         cy.get('@versionButton').first().click();
         cy.get('.pf-v5-c-menu__item-text').contains(firstVersion).click();
+        cy.clickTab(/^Details$/, true);
         cy.url().should(
           'contain',
           `/collections/validated/${namespace.name}/${collectionName}/details?version=${firstVersion}`
@@ -299,7 +300,13 @@ describe('GalaxykKit Installation for Collections Details', () => {
           cy.contains('a', namespace.name).click();
           cy.contains(`[role="tab"]`, 'Collections').click();
           cy.getByDataCy('table-view').click();
+          cy.intercept(
+            'GET',
+            hubAPI`/v3/plugin/ansible/search/collection-versions/*keywords=${collectionName}*`
+          ).as('search');
           cy.filterTableByTextFilter('name', collectionName);
+          // Ensure that the filter has taken effect
+          cy.wait('@search');
           cy.get(`[aria-label="Simple table"]`).within(() => {
             cy.getByDataCy('actions-dropdown').click();
           });
