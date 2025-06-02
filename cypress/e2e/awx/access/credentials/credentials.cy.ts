@@ -244,7 +244,7 @@ describe('Credentials', () => {
     });
 
     it('can display success toast message when running a test from the create credential form', () => {
-      cy.intercept('POST', awxAPI`/credential_types/25/test`, {}).as('runTest');
+      cy.intercept('POST', awxAPI`/credential_types/*/test`, {}).as('runTest');
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential/);
       cy.getByDataCy('name').type('foo');
