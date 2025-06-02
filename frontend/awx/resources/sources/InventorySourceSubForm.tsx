@@ -21,7 +21,6 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
   }) as string;
 
   const sourceTypesWithOptionalCredentials = ['ec2', 'scm', 'terraform'];
-
   const handleQueryParams = (source: string): QueryParams => {
     switch (source) {
       case 'scm':
@@ -35,6 +34,10 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
       case 'openshift_virtualization':
         return {
           credential_type__namespace: 'kubernetes_bearer_token',
+        };
+      case 'vmware_esxi':
+        return {
+          credential_type__namespace: 'vmware',
         };
       default:
         return {
