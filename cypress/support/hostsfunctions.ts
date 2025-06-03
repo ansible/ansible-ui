@@ -143,13 +143,13 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       // https://issues.redhat.com/browse/AAP-22914 change will applyed
       // multi select will be changed in the future
       cy.filterTableBySearch(group.name);
-      cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
+      cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).first().click();
       disassociate();
       navigateToHost(host_type, host.name, '[data-cy="name-column-cell"] a', inventory.name);
       cy.clickLink(/^Groups$/);
       cy.contains(group.name).should('not.exist');
       cy.getByDataCy('associate-group').click();
-      cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
+      cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).first().click();
       cy.clickModalButton('Confirm');
       cy.contains(group.name);
       deleteAllInventoryHosts(inventory);
