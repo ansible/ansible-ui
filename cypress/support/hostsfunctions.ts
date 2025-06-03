@@ -90,7 +90,12 @@ function navigateToHost(host_type: string, name: string, data: string, inventory
 
 export function navigateToBaseView(host_type: string, inventoryName: string) {
   if (host_type === 'inventory_host') {
+    cy.intercept('OPTIONS', awxAPI`/inventories/`).as('inventoriesOptions');
     cy.navigateTo('awx', 'inventories');
+    // Wait for navigation to reach the Inventories page and for the OPTIONS request to complete
+    cy.verifyPageTitle('Inventories');
+    cy.wait('@inventoriesOptions');
+
     cy.filterTableBySingleSelect('name', inventoryName);
     cy.clickTableRowLink('name', inventoryName, { disableFilter: true });
     cy.verifyPageTitle(inventoryName);
