@@ -193,24 +193,17 @@ collections:
       } else {
         cy.navigateTo('hub', 'remotes');
         const remoteName = generateRemoteName();
-
-        // Create a remote
         cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
         cy.url().should('include', Remotes.urlCreate);
         cy.getBy('[data-cy="name"]').type(remoteName);
         cy.getBy('[data-cy="url"]').type(Remotes.remoteURL);
         cy.getBy('[data-cy="signed_only"]').check();
         cy.getBy('[data-cy="sync_dependencies"]').check();
-        // Handle the requirements file field
         cy.getBy('[data-cy="requirements-file"]').click().focused().invoke('select').clear();
         cy.getBy('[data-cy="Submit"]').click();
-
-        // Verify URL and requirements file
         cy.url().should('include', `remotes/${remoteName}/details`);
         cy.get('[data-cy="label-yaml-requirements"]').should('contain', 'YAML requirements');
         cy.get('.pf-v5-c-code-block__content').should('not.exist');
-
-        // Delete the remote
         cy.get('[data-cy="actions-dropdown"]').click();
         cy.getBy('[data-cy="delete-remote"]').click();
         cy.getBy('#confirm').click();
@@ -231,8 +224,6 @@ collections:
       cy.getBy('[data-cy="username"]').type('abc');
       cy.getBy('[data-cy="username"]').type('{backspace}{backspace}{backspace}');
       cy.clickButton(/^Save remote$/);
-
-      // Delete the edited remote
       cy.getBy('[data-cy="actions-dropdown"]').click();
       cy.getBy('[data-cy="delete-remote"]').click();
       cy.getBy('#confirm').click();
@@ -241,12 +232,73 @@ collections:
   });
 
   it('has all download buttons working', () => {
-    const ca_cert = 'ca_cert';
-    const client_cert = 'client_cert';
-    const requirements_file =
-      'collections:\n' +
-      '  - name: my_namespace.my_collection_name\n' +
-      '  - name: my_namespace.my_collection_name2';
+    const ca_cert = `-----BEGIN CERTIFICATE-----
+MIIFnzCCA4egAwIBAgIUWlomUBb9ad0KVgZDX05ynPyZfGYwDQYJKoZIhvcNAQEL
+BQAweDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAk5DMRAwDgYDVQQHDAdSYWxlaWdo
+MQswCQYDVQQKDAJSSDEMMAoGA1UECwwDQUFQMQ4wDAYDVQQDDAVTYXJhaDEfMB0G
+CSqGSIb3DQEJARYQc2FrdXNAcmVkaGF0LmNvbTAeFw0yNTA2MDIxOTEwMDFaFw0y
+NjA2MDIxOTEwMDFaMHgxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOQzEQMA4GA1UE
+BwwHUmFsZWlnaDELMAkGA1UECgwCUkgxDDAKBgNVBAsMA0FBUDEOMAwGA1UEAwwF
+U2FyYWgxHzAdBgkqhkiG9w0BCQEWEHNha3VzQHJlZGhhdC5jb20wggIiMA0GCSqG
+SIb3DQEBAQUAA4ICDwAwggIKAoICAQCecCBMHukZydr0oL4PTQntM5klLpkI03eF
+9AI9ws3zzRWhatFS0UYFs9CGA+O5yjK5neNJ8sHYmMxdhfFXOkJC1fWITgIerhhl
+vHxXzVFu7IzJiOytfF01yYhUIFEIfjPpl4P0hld2UF/RfZeuLitsr5tpmv5S9YQg
+t8uOr9fiMNnZltaKOmoYst1OZqF0LF5jKu8WyqyBBu/uh3UwW0kwQs7lPjYGUHy9
+vFvcgrai9KPJlmQmxOGyPGmrcCJIKAjKMXOlEpYxSnWNb5aVCQFsxfwr1EKeD0Bk
+ENIJU26MqMLmL6kMxtBIzSlX3xbkIV+nvAkonOJKoA1SWw5GAtbm8ai/ESsyJL6/
+A4na9Ls7+Ckkfh+DuoGmwnw+XLHZcORCc6KojkKpgUlOlhYkJWAaFyxXzGZAHApA
+WkX9k+7z1gPcmww6fRP9Ya23Usyq2qVnQnkhGkq6SJLO6CaifQ7geLFC6YjFeZwD
+inNcHnGHHYpgYbNNuyHijUWcGlNkAEXMVvP61rF++spcDLp7zTgVxqSGh1XApphs
+7SNyNddorBgPVTAmo52gpK92v/6YHECUDYNUV2Qlj8Pq3tt2LN1SZfXNiB53y3CB
+NBh4n4z73JXrAyRbBsbBSGxoanW1l1tnT0ZGXK6yb2vNOjIeLuSZOEmEbHBdRWvH
+icYr9hbWUQIDAQABoyEwHzAdBgNVHQ4EFgQUEw2Trbq6Kq/jw3CiFr3VDpzjAZQw
+DQYJKoZIhvcNAQELBQADggIBAHEPppPMDSbNWQyrf8jmM2LhFgW/P0IQ0NYdkiLy
+eoxYWCcDD8ijzIXKRjxjD4dD1z2dOvYxBLKp3P7NieNY26mS7qtre0D7aZQf0Mme
+KLfwfl3hw7Mj7VybkVEMb2bydsBFK/HdAgFZqcbdWp6GP+1PvIydRUxXT+LiXuAo
+MuWT13kDZGDqBb7YTWMM1GUSMxWhUQ4oWzW4T+fVl+2zWchx4VihKJFlmMBL6BCV
+R17TS5aRHW+PAHcyNg71hauiySHhZaRmO/D93HQ3ack2aXU/wV+kk/8HOkykRWIB
+bSwzmuSBHyc5wzBUrp3DBNO/7cx7CY6+ag2GnLKIXOxf1YymRVMG4o1b2fyLZ+1+
+QVjjkaIYvaKChcmBWyVUzSIVd+BFnlG4uQNGoLzxS8uCDXBYazFzLSqUP2dqmRDw
+uASL/4W4JlKHTvusoR9H8lEgHUb1wRQW+ISwM6rql5bzhgiJQRuQm4rYqFvDh0Tn
+pKz7Fnz1TatALJPnHnM8UacjdGaykV1X3HiWLRcMHskkmNlYgI4EoLiRnh5K2WX+
+cI3I9fHNSyiL1iGw4EicfTwhJIiEPbR0K/NFm/M4fCit4pWVWh/QBIusUQ8XtXGT
+ZctsPsQiuHJzMv/25snuVzBaBTmEN5OxAQc1JS7uYakyvJ6T108Vb4K+7dnQ6GZm
+oVRa
+-----END CERTIFICATE-----`;
+    const client_cert = `-----BEGIN CERTIFICATE-----
+MIIFnzCCA4egAwIBAgIUWlomUBb9ad0KVgZDX05ynPyZfGYwDQYJKoZIhvcNAQEL
+BQAweDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAk5DMRAwDgYDVQQHDAdSYWxlaWdo
+MQswCQYDVQQKDAJSSDEMMAoGA1UECwwDQUFQMQ4wDAYDVQQDDAVTYXJhaDEfMB0G
+CSqGSIb3DQEJARYQc2FrdXNAcmVkaGF0LmNvbTAeFw0yNTA2MDIxOTEwMDFaFw0y
+NjA2MDIxOTEwMDFaMHgxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOQzEQMA4GA1UE
+BwwHUmFsZWlnaDELMAkGA1UECgwCUkgxDDAKBgNVBAsMA0FBUDEOMAwGA1UEAwwF
+U2FyYWgxHzAdBgkqhkiG9w0BCQEWEHNha3VzQHJlZGhhdC5jb20wggIiMA0GCSqG
+SIb3DQEBAQUAA4ICDwAwggIKAoICAQCecCBMHukZydr0oL4PTQntM5klLpkI03eF
+9AI9ws3zzRWhatFS0UYFs9CGA+O5yjK5neNJ8sHYmMxdhfFXOkJC1fWITgIerhhl
+vHxXzVFu7IzJiOytfF01yYhUIFEIfjPpl4P0hld2UF/RfZeuLitsr5tpmv5S9YQg
+t8uOr9fiMNnZltaKOmoYst1OZqF0LF5jKu8WyqyBBu/uh3UwW0kwQs7lPjYGUHy9
+vFvcgrai9KPJlmQmxOGyPGmrcCJIKAjKMXOlEpYxSnWNb5aVCQFsxfwr1EKeD0Bk
+ENIJU26MqMLmL6kMxtBIzSlX3xbkIV+nvAkonOJKoA1SWw5GAtbm8ai/ESsyJL6/
+A4na9Ls7+Ckkfh+DuoGmwnw+XLHZcORCc6KojkKpgUlOlhYkJWAaFyxXzGZAHApA
+WkX9k+7z1gPcmww6fRP9Ya23Usyq2qVnQnkhGkq6SJLO6CaifQ7geLFC6YjFeZwD
+inNcHnGHHYpgYbNNuyHijUWcGlNkAEXMVvP61rF++spcDLp7zTgVxqSGh1XApphs
+7SNyNddorBgPVTAmo52gpK92v/6YHECUDYNUV2Qlj8Pq3tt2LN1SZfXNiB53y3CB
+NBh4n4z73JXrAyRbBsbBSGxoanW1l1tnT0ZGXK6yb2vNOjIeLuSZOEmEbHBdRWvH
+icYr9hbWUQIDAQABoyEwHzAdBgNVHQ4EFgQUEw2Trbq6Kq/jw3CiFr3VDpzjAZQw
+DQYJKoZIhvcNAQELBQADggIBAHEPppPMDSbNWQyrf8jmM2LhFgW/P0IQ0NYdkiLy
+eoxYWCcDD8ijzIXKRjxjD4dD1z2dOvYxBLKp3P7NieNY26mS7qtre0D7aZQf0Mme
+KLfwfl3hw7Mj7VybkVEMb2bydsBFK/HdAgFZqcbdWp6GP+1PvIydRUxXT+LiXuAo
+MuWT13kDZGDqBb7YTWMM1GUSMxWhUQ4oWzW4T+fVl+2zWchx4VihKJFlmMBL6BCV
+R17TS5aRHW+PAHcyNg71hauiySHhZaRmO/D93HQ3ack2aXU/wV+kk/8HOkykRWIB
+bSwzmuSBHyc5wzBUrp3DBNO/7cx7CY6+ag2GnLKIXOxf1YymRVMG4o1b2fyLZ+1+
+QVjjkaIYvaKChcmBWyVUzSIVd+BFnlG4uQNGoLzxS8uCDXBYazFzLSqUP2dqmRDw
+uASL/4W4JlKHTvusoR9H8lEgHUb1wRQW+ISwM6rql5bzhgiJQRuQm4rYqFvDh0Tn
+pKz7Fnz1TatALJPnHnM8UacjdGaykV1X3HiWLRcMHskkmNlYgI4EoLiRnh5K2WX+
+cI3I9fHNSyiL1iGw4EicfTwhJIiEPbR0K/NFm/M4fCit4pWVWh/QBIusUQ8XtXGT
+ZctsPsQiuHJzMv/25snuVzBaBTmEN5OxAQc1JS7uYakyvJ6T108Vb4K+7dnQ6GZm
+oVRa
+-----END CERTIFICATE-----`;
+    const requirements_file = 'collections:\n  - testing.ansible_testing_content';
     const remoteName = generateRemoteName();
     cy.createRemote(
       remoteName,
@@ -270,7 +322,13 @@ collections:
       disableFilter: true,
     });
     cy.readFile('cypress/downloads/requirement.yaml').should('eq', requirements_file);
-    cy.readFile('cypress/downloads/client_cert.txt').should('eq', client_cert);
-    cy.readFile('cypress/downloads/ca_cert.txt').should('eq', ca_cert);
+    cy.readFile('cypress/downloads/client_cert.txt').should(
+      'eq',
+      `-----BEGIN CERTIFICATE-----\nMIIFnzCCA4egAwIBAgIUWlomUBb9ad0KVgZDX05ynPyZfGYwDQYJKoZIhvcNAQEL\nBQAweDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAk5DMRAwDgYDVQQHDAdSYWxlaWdo\nMQswCQYDVQQKDAJSSDEMMAoGA1UECwwDQUFQMQ4wDAYDVQQDDAVTYXJhaDEfMB0G\nCSqGSIb3DQEJARYQc2FrdXNAcmVkaGF0LmNvbTAeFw0yNTA2MDIxOTEwMDFaFw0y\nNjA2MDIxOTEwMDFaMHgxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOQzEQMA4GA1UE\nBwwHUmFsZWlnaDELMAkGA1UECgwCUkgxDDAKBgNVBAsMA0FBUDEOMAwGA1UEAwwF\nU2FyYWgxHzAdBgkqhkiG9w0BCQEWEHNha3VzQHJlZGhhdC5jb20wggIiMA0GCSqG\nSIb3DQEBAQUAA4ICDwAwggIKAoICAQCecCBMHukZydr0oL4PTQntM5klLpkI03eF\n9AI9ws3zzRWhatFS0UYFs9CGA+O5yjK5neNJ8sHYmMxdhfFXOkJC1fWITgIerhhl\nvHxXzVFu7IzJiOytfF01yYhUIFEIfjPpl4P0hld2UF/RfZeuLitsr5tpmv5S9YQg\nt8uOr9fiMNnZltaKOmoYst1OZqF0LF5jKu8WyqyBBu/uh3UwW0kwQs7lPjYGUHy9\nvFvcgrai9KPJlmQmxOGyPGmrcCJIKAjKMXOlEpYxSnWNb5aVCQFsxfwr1EKeD0Bk\nENIJU26MqMLmL6kMxtBIzSlX3xbkIV+nvAkonOJKoA1SWw5GAtbm8ai/ESsyJL6/\nA4na9Ls7+Ckkfh+DuoGmwnw+XLHZcORCc6KojkKpgUlOlhYkJWAaFyxXzGZAHApA\nWkX9k+7z1gPcmww6fRP9Ya23Usyq2qVnQnkhGkq6SJLO6CaifQ7geLFC6YjFeZwD\ninNcHnGHHYpgYbNNuyHijUWcGlNkAEXMVvP61rF++spcDLp7zTgVxqSGh1XApphs\n7SNyNddorBgPVTAmo52gpK92v/6YHECUDYNUV2Qlj8Pq3tt2LN1SZfXNiB53y3CB\nNBh4n4z73JXrAyRbBsbBSGxoanW1l1tnT0ZGXK6yb2vNOjIeLuSZOEmEbHBdRWvH\nicYr9hbWUQIDAQABoyEwHzAdBgNVHQ4EFgQUEw2Trbq6Kq/jw3CiFr3VDpzjAZQw\nDQYJKoZIhvcNAQELBQADggIBAHEPppPMDSbNWQyrf8jmM2LhFgW/P0IQ0NYdkiLy\neoxYWCcDD8ijzIXKRjxjD4dD1z2dOvYxBLKp3P7NieNY26mS7qtre0D7aZQf0Mme\nKLfwfl3hw7Mj7VybkVEMb2bydsBFK/HdAgFZqcbdWp6GP+1PvIydRUxXT+LiXuAo\nMuWT13kDZGDqBb7YTWMM1GUSMxWhUQ4oWzW4T+fVl+2zWchx4VihKJFlmMBL6BCV\nR17TS5aRHW+PAHcyNg71hauiySHhZaRmO/D93HQ3ack2aXU/wV+kk/8HOkykRWIB\nbSwzmuSBHyc5wzBUrp3DBNO/7cx7CY6+ag2GnLKIXOxf1YymRVMG4o1b2fyLZ+1+\nQVjjkaIYvaKChcmBWyVUzSIVd+BFnlG4uQNGoLzxS8uCDXBYazFzLSqUP2dqmRDw\nuASL/4W4JlKHTvusoR9H8lEgHUb1wRQW+ISwM6rql5bzhgiJQRuQm4rYqFvDh0Tn\npKz7Fnz1TatALJPnHnM8UacjdGaykV1X3HiWLRcMHskkmNlYgI4EoLiRnh5K2WX+\ncI3I9fHNSyiL1iGw4EicfTwhJIiEPbR0K/NFm/M4fCit4pWVWh/QBIusUQ8XtXGT\nZctsPsQiuHJzMv/25snuVzBaBTmEN5OxAQc1JS7uYakyvJ6T108Vb4K+7dnQ6GZm\noVRa\n-----END CERTIFICATE-----\n`
+    );
+    cy.readFile('cypress/downloads/ca_cert.txt').should(
+      'eq',
+      `-----BEGIN CERTIFICATE-----\nMIIFnzCCA4egAwIBAgIUWlomUBb9ad0KVgZDX05ynPyZfGYwDQYJKoZIhvcNAQEL\nBQAweDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAk5DMRAwDgYDVQQHDAdSYWxlaWdo\nMQswCQYDVQQKDAJSSDEMMAoGA1UECwwDQUFQMQ4wDAYDVQQDDAVTYXJhaDEfMB0G\nCSqGSIb3DQEJARYQc2FrdXNAcmVkaGF0LmNvbTAeFw0yNTA2MDIxOTEwMDFaFw0y\nNjA2MDIxOTEwMDFaMHgxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOQzEQMA4GA1UE\nBwwHUmFsZWlnaDELMAkGA1UECgwCUkgxDDAKBgNVBAsMA0FBUDEOMAwGA1UEAwwF\nU2FyYWgxHzAdBgkqhkiG9w0BCQEWEHNha3VzQHJlZGhhdC5jb20wggIiMA0GCSqG\nSIb3DQEBAQUAA4ICDwAwggIKAoICAQCecCBMHukZydr0oL4PTQntM5klLpkI03eF\n9AI9ws3zzRWhatFS0UYFs9CGA+O5yjK5neNJ8sHYmMxdhfFXOkJC1fWITgIerhhl\nvHxXzVFu7IzJiOytfF01yYhUIFEIfjPpl4P0hld2UF/RfZeuLitsr5tpmv5S9YQg\nt8uOr9fiMNnZltaKOmoYst1OZqF0LF5jKu8WyqyBBu/uh3UwW0kwQs7lPjYGUHy9\nvFvcgrai9KPJlmQmxOGyPGmrcCJIKAjKMXOlEpYxSnWNb5aVCQFsxfwr1EKeD0Bk\nENIJU26MqMLmL6kMxtBIzSlX3xbkIV+nvAkonOJKoA1SWw5GAtbm8ai/ESsyJL6/\nA4na9Ls7+Ckkfh+DuoGmwnw+XLHZcORCc6KojkKpgUlOlhYkJWAaFyxXzGZAHApA\nWkX9k+7z1gPcmww6fRP9Ya23Usyq2qVnQnkhGkq6SJLO6CaifQ7geLFC6YjFeZwD\ninNcHnGHHYpgYbNNuyHijUWcGlNkAEXMVvP61rF++spcDLp7zTgVxqSGh1XApphs\n7SNyNddorBgPVTAmo52gpK92v/6YHECUDYNUV2Qlj8Pq3tt2LN1SZfXNiB53y3CB\nNBh4n4z73JXrAyRbBsbBSGxoanW1l1tnT0ZGXK6yb2vNOjIeLuSZOEmEbHBdRWvH\nicYr9hbWUQIDAQABoyEwHzAdBgNVHQ4EFgQUEw2Trbq6Kq/jw3CiFr3VDpzjAZQw\nDQYJKoZIhvcNAQELBQADggIBAHEPppPMDSbNWQyrf8jmM2LhFgW/P0IQ0NYdkiLy\neoxYWCcDD8ijzIXKRjxjD4dD1z2dOvYxBLKp3P7NieNY26mS7qtre0D7aZQf0Mme\nKLfwfl3hw7Mj7VybkVEMb2bydsBFK/HdAgFZqcbdWp6GP+1PvIydRUxXT+LiXuAo\nMuWT13kDZGDqBb7YTWMM1GUSMxWhUQ4oWzW4T+fVl+2zWchx4VihKJFlmMBL6BCV\nR17TS5aRHW+PAHcyNg71hauiySHhZaRmO/D93HQ3ack2aXU/wV+kk/8HOkykRWIB\nbSwzmuSBHyc5wzBUrp3DBNO/7cx7CY6+ag2GnLKIXOxf1YymRVMG4o1b2fyLZ+1+\nQVjjkaIYvaKChcmBWyVUzSIVd+BFnlG4uQNGoLzxS8uCDXBYazFzLSqUP2dqmRDw\nuASL/4W4JlKHTvusoR9H8lEgHUb1wRQW+ISwM6rql5bzhgiJQRuQm4rYqFvDh0Tn\npKz7Fnz1TatALJPnHnM8UacjdGaykV1X3HiWLRcMHskkmNlYgI4EoLiRnh5K2WX+\ncI3I9fHNSyiL1iGw4EicfTwhJIiEPbR0K/NFm/M4fCit4pWVWh/QBIusUQ8XtXGT\nZctsPsQiuHJzMv/25snuVzBaBTmEN5OxAQc1JS7uYakyvJ6T108Vb4K+7dnQ6GZm\noVRa\n-----END CERTIFICATE-----\n`
+    );
   });
 });
