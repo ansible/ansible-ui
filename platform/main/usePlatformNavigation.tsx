@@ -11,7 +11,6 @@ import { AwxSettingsCategoryForm } from '@ansible/awx-ui/administration/settings
 import { PolicySettingsCategoryForm } from '@ansible/awx-ui/administration/settings/PolicySettingsEdit';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
-import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useAwxNavigation } from '@ansible/awx-ui/main/useAwxNavigation';
@@ -372,7 +371,6 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
   const { activePlatformUser } = usePlatformActiveUser();
   const awxService = useHasAwxService();
   const navigate = useNavigate();
-  const hasPolicyAsCode = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
   settingsNav.push({
     label: t('Subscription'),
@@ -482,25 +480,21 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
           !awxService ||
           (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
       },
-      ...(hasPolicyAsCode
-        ? [
-            {
-              id: AwxRoute.SettingsPolicy,
-              label: t('Policy'),
-              path: 'policy-settings',
-              children: [
-                {
-                  path: 'edit',
-                  element: <PolicySettingsCategoryForm />,
-                },
-                {
-                  path: '',
-                  element: <AwxPolicySettingsDetailsPage />,
-                },
-              ],
-            },
-          ]
-        : []),
+      {
+        id: AwxRoute.SettingsPolicy,
+        label: t('Policy'),
+        path: 'policy-settings',
+        children: [
+          {
+            path: 'edit',
+            element: <PolicySettingsCategoryForm />,
+          },
+          {
+            path: '',
+            element: <AwxPolicySettingsDetailsPage />,
+          },
+        ],
+      },
       {
         id: AwxRoute.SettingsTroubleshooting,
         label: t('Troubleshooting'),

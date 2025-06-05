@@ -2,7 +2,8 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { awxAPI } from './api/awx-utils';
 
 export interface FeatureFlags {
-  FEATURE_POLICY_AS_CODE_ENABLED: boolean;
+  // this is a fake feature flag to be used for testing purposes only
+  TEST_FEATURE_ENABLED: boolean;
 }
 
 export function useFeatureFlags() {

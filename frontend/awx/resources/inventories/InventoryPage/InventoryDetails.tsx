@@ -23,7 +23,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useOutletContext, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useFeatureFlag } from '../../../common/useFeatureFlags';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { ConstructedInventory, Inventory } from '../../../interfaces/Inventory';
@@ -63,7 +62,6 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
   const instanceGroups = useInstanceGroups(params.id ?? '0');
   const verbosityString = useVerbosityString(inventory.verbosity);
   const getPageUrl = useGetPageUrl();
-  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
   const { data: inputInventories, error: inputInventoriesError } = useGet<{ results: Inventory[] }>(
     inventory.kind === 'constructed'
@@ -104,7 +102,7 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
       <PageDetail
         label={t('Policy enforcement')}
         helpText={inventoryFormDetailLables.policy_enforcement}
-        isEmpty={!hasPolicyAsCodeFlag || !inventory.opa_query_path}
+        isEmpty={!inventory.opa_query_path}
       >
         {inventory.opa_query_path}
       </PageDetail>

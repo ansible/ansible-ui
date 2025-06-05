@@ -16,14 +16,13 @@ import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
-import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 
 export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
@@ -58,7 +57,6 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
   const { platformOrganization } = props;
   const getPageUrl = useGetPageUrl();
   const config = useAwxConfig();
-  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
   const { resource: controllerOrganization, isLoading } = useAwxResource<AwxOrganization>(
     'organizations/',
@@ -124,24 +122,21 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
           {controllerOrganization?.max_hosts}
         </PageDetail>
       )}
-      {hasPolicyAsCodeFlag && (
-        <PageDetail
-          label={t('Policy enforcement')}
-          isEmpty={controllerOrganization?.opa_query_path === null}
-          helpText={
-            <Trans>
-              <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
-              <br />
-              <p>
-                If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}
-                .
-              </p>
-            </Trans>
-          }
-        >
-          {controllerOrganization?.opa_query_path}
-        </PageDetail>
-      )}
+      <PageDetail
+        label={t('Policy enforcement')}
+        isEmpty={controllerOrganization?.opa_query_path === null}
+        helpText={
+          <Trans>
+            <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
+            <br />
+            <p>
+              If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+            </p>
+          </Trans>
+        }
+      >
+        {controllerOrganization?.opa_query_path}
+      </PageDetail>
     </>
   );
 }

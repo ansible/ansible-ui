@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../../commands/setup';
 import { navigateTo } from '../../../commands/navigateTo';
-import { hasFeatureFlag } from '../../util/featureFlags';
+import { setupAfter, setupBefore } from '../../../commands/setup';
 import { interceptRequest } from '../../util/interceptRequest';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
@@ -9,10 +8,6 @@ test.afterEach(setupAfter);
 
 test.describe('Policy setting details', () => {
   test('should display details', { tag: [] }, async ({ page }) => {
-    const hasPolicyAsCode = await hasFeatureFlag(page, 'FEATURE_POLICY_AS_CODE_ENABLED');
-    if (!hasPolicyAsCode) {
-      return;
-    }
     await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
 
     let settings: Record<string, string | number | boolean | object>;
@@ -48,10 +43,6 @@ test.describe('Policy setting details', () => {
 
 test.describe('Policy settings form', () => {
   test('should render correct information', { tag: [] }, async ({ page }) => {
-    const hasPolicyAsCode = await hasFeatureFlag(page, 'FEATURE_POLICY_AS_CODE_ENABLED');
-    if (!hasPolicyAsCode) {
-      return;
-    }
     let settings: Record<string, string | number | boolean | object>;
     if (page.mock.enabled) {
       settings = (
@@ -80,10 +71,6 @@ test.describe('Policy settings form', () => {
   });
 
   test('should save edited values when submitted', { tag: [] }, async ({ page }) => {
-    const hasPolicyAsCode = await hasFeatureFlag(page, 'FEATURE_POLICY_AS_CODE_ENABLED');
-    if (!hasPolicyAsCode) {
-      return;
-    }
     let settings: Record<string, string | number | boolean | object>;
     if (page.mock.enabled) {
       settings = (
