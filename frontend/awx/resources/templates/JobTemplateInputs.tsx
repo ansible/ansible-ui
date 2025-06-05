@@ -19,7 +19,6 @@ import { PageFormSelectExecutionEnvironment } from '../../administration/executi
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useFeatureFlag } from '../../common/useFeatureFlags';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Project } from '../../interfaces/Project';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
@@ -58,7 +57,6 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   const askJobTypeOnLaunch = useWatch<JobTemplateForm, 'ask_job_type_on_launch'>({
     name: 'ask_job_type_on_launch',
   });
-  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
   useEffect(() => {
     reset(getValues());
   }, [isProvisioningCallbackEnabled, reset, getValues]);
@@ -159,24 +157,21 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         isMultiple
         queryParams={{ credential_type__kind__in: acceptableCredentialKinds.join(',') }}
       />
-      {hasPolicyAsCodeFlag && (
-        <PageFormTextInput<JobTemplateForm>
-          name="opa_query_path"
-          label={t('Policy enforcement')}
-          labelHelpTitle={t('Policy enforcement')}
-          labelHelp={
-            <Trans>
-              <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
-              <br />
-              <p>
-                If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}
-                .
-              </p>
-            </Trans>
-          }
-          placeholder={t('Enter policy enforcement')}
-        />
-      )}
+      <PageFormTextInput<JobTemplateForm>
+        name="opa_query_path"
+        label={t('Policy enforcement')}
+        labelHelpTitle={t('Policy enforcement')}
+        labelHelp={
+          <Trans>
+            <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
+            <br />
+            <p>
+              If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+            </p>
+          </Trans>
+        }
+        placeholder={t('Enter policy enforcement')}
+      />
       <PageFormLabelSelect
         labelHelpTitle={t('Labels')}
         labelHelp={t(

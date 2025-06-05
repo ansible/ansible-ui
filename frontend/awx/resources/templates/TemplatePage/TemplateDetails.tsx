@@ -16,7 +16,7 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AwxError } from '../../../common/AwxError';
@@ -28,7 +28,6 @@ import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { WebhookService } from '../components/WebhookService';
-import { useFeatureFlag } from '../../../common/useFeatureFlags';
 
 const DangerText = styled.span`
   color: ${getPatternflyColor('danger')};
@@ -56,7 +55,6 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
   const getPageUrl = useGetPageUrl();
   const history = useNavigate();
   const verbosity: string = useVerbosityString(template?.verbosity);
-  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
@@ -221,7 +219,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
             </p>
           </Trans>
         }
-        isEmpty={!hasPolicyAsCodeFlag || !template.opa_query_path}
+        isEmpty={!template.opa_query_path}
       >
         {template.opa_query_path}
       </PageDetail>

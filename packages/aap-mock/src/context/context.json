@@ -2414,7 +2414,7 @@
             "custom_virtualenvs": []
           },
           "feature_flags_state": {
-            "FEATURE_POLICY_AS_CODE_ENABLED": true,
+            "FEATURE_ENABLED": true,
             "FEATURE_INDIRECT_NODE_COUNTING_ENABLED": false
           },
           "settings": {

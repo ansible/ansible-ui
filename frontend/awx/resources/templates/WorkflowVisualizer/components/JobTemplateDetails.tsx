@@ -18,6 +18,7 @@ import { useVerbosityString } from '../../../../common/useVerbosityString';
 import { Credential } from '../../../../interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
+import { Inventory } from '../../../../interfaces/Inventory';
 import { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { Label as ILabel } from '../../../../interfaces/Label';
 import { AwxRoute } from '../../../../main/AwxRoutes';
@@ -28,8 +29,6 @@ import { GraphNodeData, PromptFormValues } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
-import { useFeatureFlag } from '../../../../common/useFeatureFlags';
-import { Inventory } from '../../../../interfaces/Inventory';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -188,7 +187,6 @@ export function JobTemplateDetails({
     inventory?.id?.toString()
   );
 
-  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
   return (
     <>
       <PromptDetail
@@ -271,10 +269,7 @@ export function JobTemplateDetails({
       >
         {forks}
       </PromptDetail>
-      <PageDetail
-        label={t('Policy enforcement')}
-        isEmpty={!hasPolicyAsCodeFlag || !template.opa_query_path}
-      >
+      <PageDetail label={t('Policy enforcement')} isEmpty={!template.opa_query_path}>
         {template.opa_query_path}
       </PageDetail>
       <PromptDetail

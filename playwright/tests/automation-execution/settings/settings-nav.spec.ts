@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../../commands/setup';
 import { navigateTo } from '../../../commands/navigateTo';
-import { hasFeatureFlag } from '../../util/featureFlags';
+import { setupAfter, setupBefore } from '../../../commands/setup';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
@@ -13,10 +12,6 @@ test.describe('Automation Execution settings nav', () => {
     await navigateTo(page, 'Settings', 'Automation Execution', 'Job');
     await navigateTo(page, 'Settings', 'Automation Execution', 'Logging');
     await navigateTo(page, 'Settings', 'Automation Execution', 'Troubleshooting');
-    const hasPolicyAsCode = await hasFeatureFlag(page, 'FEATURE_POLICY_AS_CODE_ENABLED');
-    if (!hasPolicyAsCode) {
-      return;
-    }
     await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
   });
 });

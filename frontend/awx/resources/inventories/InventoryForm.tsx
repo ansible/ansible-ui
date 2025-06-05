@@ -28,7 +28,6 @@ import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelectAwxResource';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useFeatureFlag } from '../../common/useFeatureFlags';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
@@ -345,7 +344,6 @@ function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
   const inventoryFormDetailLabels = useInventoryFormDetailLabels();
-  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -439,15 +437,13 @@ function InventoryInputs(props: { inventoryKind: string }) {
           name="labels"
         />
       )}
-      {hasPolicyAsCodeFlag && (
-        <PageFormTextInput<InventoryCreate>
-          name="opa_query_path"
-          label={t('Policy enforcement')}
-          labelHelpTitle={t('Policy enforcement')}
-          labelHelp={inventoryFormDetailLabels.policy_enforcement}
-          placeholder={t('Enter policy enforcement')}
-        />
-      )}
+      <PageFormTextInput<InventoryCreate>
+        name="opa_query_path"
+        label={t('Policy enforcement')}
+        labelHelpTitle={t('Policy enforcement')}
+        labelHelp={inventoryFormDetailLabels.policy_enforcement}
+        placeholder={t('Enter policy enforcement')}
+      />
       <PageFormSection singleColumn>
         <PageFormDataEditor<InventoryCreate>
           name={inventoryKind === 'constructed' ? 'source_vars' : 'variables'}

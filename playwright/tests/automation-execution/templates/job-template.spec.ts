@@ -6,7 +6,6 @@ import { filterTable } from '../../../commands/filterTable';
 import { navigateTo } from '../../../commands/navigateTo';
 import { selectTableFilter } from '../../../commands/selectTableFilter';
 import { setupAfter, setupBefore } from '../../../commands/setup';
-import { hasFeatureFlag } from '../../util/featureFlags';
 import {
   createAwxCredential,
   deleteAwxCredential,
@@ -292,10 +291,6 @@ test(
   'can create a job template and assert the OPA is showing on the details page',
   { tag: ['@compare', '@mock'] },
   async ({ page }) => {
-    const hasPolicyAsCode = await hasFeatureFlag(page, 'FEATURE_POLICY_AS_CODE_ENABLED');
-    if (!hasPolicyAsCode) {
-      return;
-    }
     const jobTemplateName = createE2EName('job-template');
     const jobTemplateDescription = 'This is a JT description';
     const inventoryName = 'Demo Inventory';

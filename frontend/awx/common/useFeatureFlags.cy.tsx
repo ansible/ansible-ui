@@ -1,5 +1,5 @@
-import { useFeatureFlags, useFeatureFlag, FeatureFlags } from './useFeatureFlags';
 import { awxAPI } from './api/awx-utils';
+import { FeatureFlags, useFeatureFlag, useFeatureFlags } from './useFeatureFlags';
 
 function FeatureFlagsTest() {
   const { data: flags } = useFeatureFlags();
@@ -30,61 +30,61 @@ function FeatureFlagTest(props: { flag: keyof FeatureFlags }) {
 }
 
 describe('useFeatureFlags', () => {
-  it('should should return flags object with flags set', () => {
+  it('should return flags object with flags set', () => {
     cy.intercept('GET', awxAPI`/feature_flags_state/`, {
       statusCode: 200,
       body: {
-        FEATURE_POLICY_AS_CODE_ENABLED: true,
+        TEST_FEATURE_ENABLED: true,
       },
     });
 
     cy.mount(<FeatureFlagsTest />);
 
-    cy.get('[data-cy="FEATURE_POLICY_AS_CODE_ENABLED"]').contains('true');
+    cy.get('[data-cy="TEST_FEATURE_ENABLED"]').contains('true');
   });
 
-  it('should should return flags object with flags off', () => {
+  it('should return flags object with flags off', () => {
     cy.intercept('GET', awxAPI`/feature_flags_state/`, {
       statusCode: 200,
       body: {
-        FEATURE_POLICY_AS_CODE_ENABLED: false,
+        TEST_FEATURE_ENABLED: false,
       },
     });
 
     cy.mount(<FeatureFlagsTest />);
 
-    cy.get('[data-cy="FEATURE_POLICY_AS_CODE_ENABLED"]').contains('false');
+    cy.get('[data-cy="TEST_FEATURE_ENABLED"]').contains('false');
   });
 });
 
 describe('useFeatureFlag', () => {
-  it('should should return false', () => {
+  it('should return true', () => {
     cy.intercept('GET', awxAPI`/feature_flags_state/`, {
       statusCode: 200,
       body: {
-        FEATURE_POLICY_AS_CODE_ENABLED: true,
+        TEST_FEATURE_ENABLED: true,
       },
     });
 
-    cy.mount(<FeatureFlagTest flag="FEATURE_POLICY_AS_CODE_ENABLED" />);
+    cy.mount(<FeatureFlagTest flag="TEST_FEATURE_ENABLED" />);
 
     cy.contains('true');
   });
 
-  it('should should return true', () => {
+  it('should return false', () => {
     cy.intercept('GET', awxAPI`/feature_flags_state/`, {
       statusCode: 200,
       body: {
-        FEATURE_POLICY_AS_CODE_ENABLED: false,
+        TEST_FEATURE_ENABLED: false,
       },
     });
 
-    cy.mount(<FeatureFlagTest flag="FEATURE_POLICY_AS_CODE_ENABLED" />);
+    cy.mount(<FeatureFlagTest flag="TEST_FEATURE_ENABLED" />);
 
     cy.contains('false');
   });
 
-  it('should should return false for missing flags', () => {
+  it('should return false for missing flags', () => {
     cy.intercept('GET', awxAPI`/feature_flags_state/`, {
       statusCode: 200,
       body: {
@@ -92,18 +92,18 @@ describe('useFeatureFlag', () => {
       },
     });
 
-    cy.mount(<FeatureFlagTest flag="FEATURE_POLICY_AS_CODE_ENABLED" />);
+    cy.mount(<FeatureFlagTest flag="TEST_FEATURE_ENABLED" />);
 
     cy.contains('false');
   });
 
-  it('should should return false for bad API response', () => {
+  it('should return false for bad API response', () => {
     cy.intercept('GET', awxAPI`/feature_flags_state/`, {
       statusCode: 500,
       body: {},
     });
 
-    cy.mount(<FeatureFlagTest flag="FEATURE_POLICY_AS_CODE_ENABLED" />);
+    cy.mount(<FeatureFlagTest flag="TEST_FEATURE_ENABLED" />);
 
     cy.contains('false');
   });
