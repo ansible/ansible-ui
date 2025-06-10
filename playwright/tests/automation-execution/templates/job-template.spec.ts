@@ -161,7 +161,7 @@ test(
     await expect(page.getByLabel('Provisioning callback')).not.toBeChecked();
     // enable webhook
     await page.getByLabel('Enable webhook').check();
-    await page.locator('button#webhook-service-form-group').click();
+    await page.getByRole('button', { name: 'Select webhook service' }).click();
     await page.getByRole('option', { name: 'GitHub' }).click();
     await page.locator('button#webhook_credential').click();
     await page.getByRole('option', { name: credentialName }).click();
@@ -170,7 +170,7 @@ test(
     await page.getByRole('link', { name: 'Edit template' }).click();
     await expect(page.getByLabel('Enable webhook')).toBeChecked();
     await expect(page.getByLabel('Webhook credential')).toContainText(credentialName);
-    await expect(page.locator('button#webhook-service-form-group')).toContainText('GitHub');
+    await expect(page.getByRole('button', { name: 'GitHub' })).toBeVisible();
     // disable webhook and enable provisioning callback
     await page.getByLabel('Enable webhook').uncheck();
     await page.getByLabel('Provisioning callback').check();
