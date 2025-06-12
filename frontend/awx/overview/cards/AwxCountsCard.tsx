@@ -23,7 +23,7 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   count: data.hosts.total - data.hosts.failed,
                   color: successfulColor,
                   link: getPageUrl(AwxRoute.Hosts, {
-                    query: { status: ['successful'] },
+                    query: { ready_status: ['True'] },
                   }),
                 },
                 {
@@ -31,7 +31,7 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   count: data.hosts.failed,
                   color: failedColor,
                   link: getPageUrl(AwxRoute.Hosts, {
-                    query: { status: ['failed', 'error', 'canceled', 'missing'] },
+                    query: { failed_status: ['True'] },
                   }),
                 },
               ]
