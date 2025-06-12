@@ -370,6 +370,7 @@ function ToolbarFilterComponent(props: {
           isRequired={filter.isRequired || !filter.isPinned}
           disableSortOptions={filter.disableSortOptions}
           disableMaxDropdownWidth
+          disableAutoSelect
         />
       );
 
