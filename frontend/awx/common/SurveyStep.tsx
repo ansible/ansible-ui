@@ -43,7 +43,11 @@ export function SurveyStep({
   const { t } = useTranslation();
   const { wizardData, stepData } = usePageWizard();
   const { reset } = useFormContext();
-  const { resource } = wizardData as WizardFormValues;
+
+  let { resource } = wizardData as WizardFormValues;
+  if (!resource && stepData?.nodePromptsStep) {
+    resource = (stepData?.nodePromptsStep as WizardFormValues).resource;
+  }
   const id = resource ? resource?.id?.toString() : templateId ? templateId : '';
 
   jobType = jobType ?? getJobType(resource);

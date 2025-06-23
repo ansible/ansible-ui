@@ -109,7 +109,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       if (shouldShowPromptStep || shouldShowSurveyStep) {
         setWizardData((prev) => ({
           ...prev,
-          launch_config: shouldShowPromptStep ? launchConfigResults : null,
+          launch_config: shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null,
           resourceId,
           resource: nodeResource,
         }));

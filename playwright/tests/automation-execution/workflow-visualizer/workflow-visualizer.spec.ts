@@ -760,3 +760,38 @@ test.skip(
     await deleteInventory(inventoryOne, page);
   }
 );
+
+test(
+  'Create a job template node using a JT with a survey enabled',
+  { tag: ['@not_mock', '@compare'] },
+  async ({ page }) => {
+    test.setTimeout(5 * 60 * 1000);
+    const jobTemplateName = createE2EName();
+    const jobTemplate = await createJobTemplate({ survey: true, name: jobTemplateName }, page);
+    const wfJobTemplate = await createWorkflowJobTemplate(page);
+    //Add step
+    await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
+    await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+    await page.getByRole('option', { name: 'Job Template', exact: true }).click();
+    await page.getByRole('button', { name: 'Job template', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).fill(jobTemplate);
+    await page.getByRole('option', { name: jobTemplate }).click();
+    await expect(page.getByRole('listitem').filter({ hasText: 'Survey' })).toBeVisible();
+    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByRole('textbox', { name: 'Question' }).click();
+    await page.getByRole('textbox', { name: 'Question' }).fill('Answer1');
+    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByRole('button', { name: 'Finish' }).click();
+    await page.waitForTimeout(2000);
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(page.getByText('Success alert:Successfully')).toBeVisible();
+    await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+    //cleanup
+    await removeAllWorkflowVizNodes(page);
+    await deleteJobTemplate(jobTemplate, page);
+    await deleteWorkflowJobTemplate(wfJobTemplate, page);
+  }
+);

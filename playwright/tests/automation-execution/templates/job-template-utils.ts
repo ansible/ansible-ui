@@ -14,6 +14,7 @@ export async function createJobTemplate(
     PromptOnLaunch?: boolean;
     skipTagsPrompt?: boolean;
     extraVarsPrompt?: boolean;
+    survey?: boolean;
   },
   page: Page
 ) {
@@ -71,6 +72,21 @@ export async function createJobTemplate(
   }
   await expect(page.locator('#project')).toContainText(projectName);
   await expect(page.locator('#playbook')).toContainText('hello_world.yml');
+  if (options.survey) {
+    await page.getByRole('tab', { name: 'Survey' }).click();
+    await page.getByRole('link', { name: 'Create survey question' }).click();
+    await page.getByRole('textbox', { name: 'Question' }).click();
+    await page.getByRole('textbox', { name: 'Question' }).fill('Question 1');
+    await page.getByRole('textbox', { name: 'Answer variable name' }).click();
+    await page.getByRole('textbox', { name: 'Answer variable name' }).fill('Variable1');
+    await page.getByRole('button', { name: 'Create survey question' }).click();
+    await page
+      .locator('label')
+      .filter({ hasText: 'Survey enabledSurvey disabled' })
+      .locator('span')
+      .first()
+      .click();
+  }
   return jobTemplateName;
 }
 
