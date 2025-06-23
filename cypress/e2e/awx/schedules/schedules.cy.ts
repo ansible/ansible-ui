@@ -343,6 +343,7 @@ describe('Schedules - Create and Delete', () => {
               survey_enabled: true,
               ask_skip_tags_on_launch: true,
               ask_tags_on_launch: true,
+              ask_variables_on_launch: true,
             }).then((jt) => {
               const surveySpec = {
                 name: '',
@@ -409,6 +410,7 @@ describe('Schedules - Create and Delete', () => {
           cy.get('button').click();
         });
       });
+      cy.getBy('[data-cy="prompt-extra-vars"]').type('foo: bar');
       cy.clickButton(/^Next$/);
 
       //Survey step
@@ -470,7 +472,9 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('local-time-zone').contains('America/Mexico_City');
       cy.getByDataCy('inventory').contains(inventory.name);
       cy.getByDataCy('project').contains(project.name);
+      cy.getByDataCy('code-block-value').contains(`foo: bar`);
       cy.getByDataCy('code-block-value').contains(`test: ${surveyAnswer}`);
+
       cy.intercept('POST', awxAPI`/job_templates/*/schedules/`).as('scheduleCreated');
 
       cy.clickButton(/^Finish$/);
@@ -500,7 +504,8 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('rruleset').contains('DTSTART;TZID=America/Mexico_City');
       cy.getByDataCy('rruleset').contains('RRULE:FREQ=HOURLY;INTERVAL=100');
       cy.getByDataCy('rruleset').contains('EXRULE:FREQ=YEARLY;INTERVAL=200');
-      cy.getByDataCy('code-block-value').should('have.text', `test: ${surveyAnswer}`);
+      cy.getByDataCy('code-block-value').contains(`foo: bar`);
+      cy.getByDataCy('code-block-value').contains(`test: ${surveyAnswer}`);
       cy.get('[data-ouia-component-id="simple-table"]')
         .first()
         .scrollIntoView()
