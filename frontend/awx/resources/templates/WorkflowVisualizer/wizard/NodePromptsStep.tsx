@@ -6,6 +6,7 @@ import {
   PageFormTextInput,
 } from '@ansible/ansible-ui-framework';
 import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
+import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
@@ -222,6 +223,14 @@ export function NodePromptsStep({
           label={t('Variables')}
           name="prompt.extra_vars"
           format="yaml"
+          validate={(value) => {
+            try {
+              yamlToJson(value);
+              return true;
+            } catch (e) {
+              return e instanceof Error ? e.message : 'Invalid YAML';
+            }
+          }}
         />
       </ConditionalField>
     </PageFormGrid>

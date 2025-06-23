@@ -100,6 +100,29 @@ describe('ScheduleAddWizard', () => {
       });
     });
 
+    it('should show error if typo is found in variables field', () => {
+      cy.intercept(awxAPI`/job_templates/266/`, mockTemplate);
+      cy.intercept(awxAPI`/job_templates/*/launch/`, {
+        ...launchConfig,
+        ask_variables_on_launch: true,
+        survey_enabled: false,
+      });
+      cy.intercept(awxAPI`/job_templates/*/credentials/`, {
+        count: 1,
+        results: [mockTemplateCredential],
+      });
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
+        initialEntries: ['/templates/job-templates/266/schedules/create'],
+        path: '/templates/job-templates/:id/schedules/create',
+      });
+
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
+      cy.getBy('[data-cy="prompt-extra-vars"]').type('foo:bar');
+      cy.clickButton(/^Next$/);
+      cy.get('.pf-v5-c-helper-text__item-text').contains('yaml is not in object format');
+    });
+
     it('workflow job template should render the correct steps initially', () => {
       cy.intercept(awxAPI`/workflow_job_templates/*/credentials/`, {
         count: 1,
