@@ -98,6 +98,10 @@ export async function runJobTemplate(
     labels?: string[];
     view?: 'list' | 'details';
     PromptOnLaunch?: boolean;
+    survey?: {
+      question: string;
+      answerVar: string;
+    };
   },
   page: Page
 ) {
@@ -125,6 +129,12 @@ export async function runJobTemplate(
     await page.getByLabel('Instance groups').click();
     await page.getByLabel('default').check();
     await page.getByRole('button', { name: 'Next' }).click();
+    if (options?.survey) {
+      await expect(page.getByLabel('Steps').getByRole('list')).toContainText('Survey');
+      await page.getByRole('textbox', { name: options.survey.question }).fill('a1');
+      await page.getByRole('button', { name: 'Next' }).click();
+      await expect(page.getByRole('code')).toContainText(options.survey.answerVar + ': a1');
+    }
     await expect(page.locator('#inventory')).toContainText(inventoryName);
     await expect(page.locator('#execution-environment')).toContainText('Control Plane Execution');
     await expect(page.locator('#instance-groups')).toContainText('default');
