@@ -120,8 +120,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
 
           if (jobType === 'workflow_job_templates') {
             if (
-              config[formFieldToLaunchConfig[key as keyof unknown] as keyof LaunchConfiguration] ||
-              config.survey_enabled
+              config[formFieldToLaunchConfig[key as keyof unknown] as keyof LaunchConfiguration]
             ) {
               payload[key] = value;
             }
