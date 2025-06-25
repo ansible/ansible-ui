@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router';
 import { CollectionImport, CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
 import { HubItemsResponse } from '../common/useHubView';

@@ -77,7 +77,7 @@ describe('Inventories Tests', () => {
           cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
             cy.get('[data-cy="edit-inventory"]').click();
           });
-          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
+          cy.multiSelectByDataCy('instance-group-select', [instanceGroup.name]);
           cy.contains('button', 'Save inventory').click();
           cy.verifyPageTitle(inventory.name);
           cy.hasDetail(/^Instance groups$/, instanceGroup.name);

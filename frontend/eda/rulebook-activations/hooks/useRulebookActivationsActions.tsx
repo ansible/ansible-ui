@@ -2,8 +2,8 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  useGetPageUrl,
   usePageAlertToaster,
-  usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
@@ -26,7 +26,6 @@ import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartRulebookActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
@@ -37,6 +36,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   const enableActivationsWithWarning = useEnableRulebookActivationsWithWarning(
     view.unselectItemsAndRefresh
   );
+  const getPageUrl = useGetPageUrl();
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
     useCallback(
       async (activation) => {
@@ -77,7 +77,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
@@ -88,7 +88,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
           : t(
               'You do not have permission to create a rulebook activation. Please contact your organization administrator if there is an issue with your access.'
             ),
-        onClick: () => pageNavigate(EdaRoute.CreateRulebookActivation),
+        href: getPageUrl(EdaRoute.CreateRulebookActivation),
       },
       {
         type: PageActionType.Button,
@@ -131,10 +131,10 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   }, [
     t,
     canCreateActivations,
-    pageNavigate,
     enableRulebookActivations,
     disableRulebookActivations,
     restartRulebookActivations,
     deleteRulebookActivations,
+    getPageUrl,
   ]);
 }

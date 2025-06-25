@@ -18,7 +18,7 @@ import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
 import { HubContextProvider } from '@ansible/hub-ui/common/useHubContext';
 import { Bullseye, Page, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import {

@@ -116,7 +116,7 @@ describe('Workflow Visualizer', () => {
           approvalNode = appNode;
           cy.createWorkflowJTSuccessNodeLink(projectNode, appNode);
           cy.navigateTo('awx', 'templates');
-          cy.filterTableBySearch(workflowJobTemplate.name);
+          cy.filterTableBySearch(workflowJobTemplate.name, 1);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
           cy.contains('Workflow Visualizer').should('be.visible');
@@ -175,7 +175,7 @@ describe('Workflow Visualizer', () => {
               })
               .then(() => {
                 cy.navigateTo('awx', 'templates');
-                cy.filterTableBySearch(workflowJobTemplate.name);
+                cy.filterTableBySearch(workflowJobTemplate.name, 1);
                 cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
                 cy.get('a[href*="/visualizer"]').click();
                 cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
@@ -218,7 +218,7 @@ describe('Workflow Visualizer', () => {
         })
         .then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.filterTableBySearch(workflowJobTemplate.name);
+          cy.filterTableBySearch(workflowJobTemplate.name, 1);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
           cy.contains('Workflow Visualizer').should('be.visible');
@@ -239,7 +239,7 @@ describe('Workflow Visualizer', () => {
 
     it('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
       cy.navigateTo('awx', 'templates');
-      cy.filterTableBySearch(workflowJobTemplate.name);
+      cy.filterTableBySearch(workflowJobTemplate.name, 1);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
       cy.get('a[href*="/visualizer"]').click();
       cy.contains('Workflow Visualizer').should('be.visible');
@@ -281,7 +281,7 @@ describe('Workflow Visualizer', () => {
         })
         .then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.filterTableBySearch(workflowJobTemplate.name);
+          cy.filterTableBySearch(workflowJobTemplate.name, 1);
           cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
@@ -340,7 +340,7 @@ describe('Workflow Visualizer', () => {
               })
               .then(() => {
                 cy.navigateTo('awx', 'templates');
-                cy.filterTableBySearch(workflowJobTemplate.name);
+                cy.filterTableBySearch(workflowJobTemplate.name, 1);
                 cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
                 cy.get('a[href*="/visualizer"]').click();
                 cy.get('[data-cy="wf-vzr-name"]')
@@ -384,7 +384,7 @@ describe('Workflow Visualizer', () => {
         projectNode = projNode;
         cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.filterTableBySearch(workflowJobTemplate.name);
+          cy.filterTableBySearch(workflowJobTemplate.name, 1);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
           cy.contains('Workflow Visualizer').should('be.visible');
@@ -430,7 +430,7 @@ describe('Workflow Visualizer', () => {
         })
         .then(() => {
           cy.navigateTo('awx', 'templates');
-          cy.filterTableBySearch(workflowJobTemplate.name);
+          cy.filterTableBySearch(workflowJobTemplate.name, 1);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
           cy.contains('Workflow Visualizer').should('be.visible');

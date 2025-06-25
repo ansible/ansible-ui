@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/dom';
 import { render } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router';
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import options from './policySettingsOptions.fixture.json';

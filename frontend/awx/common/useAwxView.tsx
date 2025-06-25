@@ -46,6 +46,7 @@ export function useAwxView<T extends { id: number }>(options: {
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
   defaultFilters?: { [key: string]: string[] };
+  ignoreQueryStringKeys?: string[];
 }): IAwxView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString, queryParams } = options;
@@ -67,6 +68,7 @@ export function useAwxView<T extends { id: number }>(options: {
       filterState: options.defaultFilters,
     },
     disableQueryString,
+    ignoreQueryStringKeys: options.ignoreQueryStringKeys,
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 

@@ -19,7 +19,7 @@ describe('Users - Create, Edit and Delete', () => {
       cy.get('[data-cy="username"]').clear().type(`edited-${createdPlatformUser.username}`);
       cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle(createdPlatformUser.username);
-      cy.clickTab(/^Back to Users$/, true);
+      cy.clickTab(/^Back to Users$/, true, false);
       cy.selectTableRowByCheckbox('username', `edited-${createdPlatformUser.username}`);
       cy.clickToolbarKebabAction('delete-users');
       cy.get('#confirm').click();

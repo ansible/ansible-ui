@@ -18,7 +18,7 @@ import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaResult } from '../../interfaces/EdaResult';

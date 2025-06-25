@@ -15,7 +15,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { usePutRequest } from '@ansible/common-ui/crud/usePutRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI } from '../common/api/formatPath';
@@ -54,7 +54,7 @@ export function CreateHubNamespace() {
       <HubPageForm<HubNamespace>
         submitText={t('Create namespace')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={{ groups: [], links: [{ name: '', url: '' }] }}
         errorAdapter={HubNamespaceErrorAdapter}
       >
@@ -86,7 +86,7 @@ export function EditHubNamespace() {
 
     await putRequest(hubAPI`/_ui/v1/my-namespaces/${name}/`, namespace);
     clearCacheByKey(hubAPI`/_ui/v1/my-namespaces/${name}/`);
-    navigate(-1);
+    void navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
 
@@ -138,7 +138,7 @@ export function EditHubNamespace() {
       <HubPageForm<HubNamespace>
         submitText={t('Save namespace')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={namespace}
         errorAdapter={HubNamespaceErrorAdapter}
       >

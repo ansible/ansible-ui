@@ -2,7 +2,7 @@ import { LoadingPage, PageDetail, PageDetails, Scrollable } from '@ansible/ansib
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import type { Authenticator } from '../../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';

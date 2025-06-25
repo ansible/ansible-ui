@@ -7,7 +7,7 @@ import {
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Job } from '../../interfaces/Job';

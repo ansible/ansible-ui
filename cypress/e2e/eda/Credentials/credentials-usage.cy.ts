@@ -48,8 +48,8 @@ describe('Check if the build includes EDA', () => {
     it('can create RBA without credentials', () => {
       const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.navigateTo('eda', 'rulebook-activations');
-      cy.contains(`Create rulebook activation`).click();
-      cy.get('h1').should('contain', 'Create rulebook activation');
+      cy.clickLink('Create rulebook activation');
+      cy.contains('h1', 'Create rulebook activation').should('be.visible');
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
       cy.getBy('[data-cy="organization_id"]').click();
@@ -141,7 +141,7 @@ describe('Check if the build includes EDA', () => {
       cy.clickButton(/^Create decision environment$/);
       cy.verifyPageTitle(de_name);
       cy.navigateTo('eda', 'rulebook-activations');
-      cy.contains('Create rulebook activation').click();
+      cy.clickLink('Create rulebook activation');
       cy.get('h1').should('contain', 'Create rulebook activation');
       const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.get('[data-cy="name"]').type(name);

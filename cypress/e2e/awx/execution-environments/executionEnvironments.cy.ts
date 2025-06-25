@@ -82,7 +82,7 @@ describe('Execution Environments', () => {
             ).to.be.true;
           });
         });
-      cy.clickTab(/^Back to Execution Environments$/, true);
+      cy.clickTab(/^Back to Execution Environments$/, true, false);
       cy.verifyPageTitle('Execution Environments');
       cy.filterTableBySingleSelect('name', execEnvName);
       cy.clickTableRowAction('name', execEnvName, 'delete-execution-environment', {

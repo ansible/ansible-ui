@@ -210,7 +210,9 @@ export function useView(options: ViewOptions): IView {
       newSearchParams.set(filter, filterState[filter]!.join(','));
     }
 
-    setSearchParams(newSearchParams);
+    if (mountedRef.current) {
+      setSearchParams(newSearchParams);
+    }
   }, [
     sort,
     sortDirection,

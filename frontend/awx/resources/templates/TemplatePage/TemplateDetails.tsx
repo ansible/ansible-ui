@@ -17,7 +17,7 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
@@ -53,7 +53,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
   const { error, data: template, refresh } = useGetItem<JobTemplate>(awxAPI`/job_templates`, urlId);
   const instanceGroups = useInstanceGroups(urlId || '0');
   const getPageUrl = useGetPageUrl();
-  const history = useNavigate();
+  const navigate = useNavigate();
   const verbosity: string = useVerbosityString(template?.verbosity);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -275,7 +275,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         value={template.modified}
         author={template.summary_fields.modified_by?.username}
         onClick={() =>
-          history(
+          void navigate(
             getPageUrl(AwxRoute.UserDetails, {
               params: { id: (template.summary_fields?.modified_by?.id ?? 0).toString() },
             })

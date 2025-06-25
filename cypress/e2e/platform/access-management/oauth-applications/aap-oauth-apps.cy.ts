@@ -256,7 +256,7 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
           cy.contains(/^Success$/);
         });
       });
-      cy.clickTab('Back to Applications', true);
+      cy.clickTab('Back to Applications', true, false);
       cy.verifyPageTitle('Applications');
       cy.getTableRowByText(platformApplication.name, false).within(() => {
         cy.get('input[type=checkbox]').click();

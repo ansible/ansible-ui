@@ -1,7 +1,7 @@
 import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

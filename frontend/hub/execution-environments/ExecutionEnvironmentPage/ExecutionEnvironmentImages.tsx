@@ -3,7 +3,7 @@ import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { PageSection, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router';
 import { hubAPI } from '../../common/api/formatPath';
 import { useHubView } from '../../common/useHubView';
 import { isManifestList } from '../../common/utils/isManifestList';

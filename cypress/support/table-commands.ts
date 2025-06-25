@@ -57,7 +57,11 @@ Cypress.Commands.add('selectToolbarFilterByLabel', (text: string | RegExp) => {
 
 Cypress.Commands.add(
   'filterTableByTextFilter',
-  (filterDataCy: string, text: string, options?: { disableFilterSelection?: boolean }) => {
+  (
+    filterDataCy: string,
+    text: string,
+    options?: { disableFilterSelection?: boolean; expectedLength?: number }
+  ) => {
     if (!options?.disableFilterSelection) {
       cy.selectTableFilter(filterDataCy);
     }
@@ -80,6 +84,9 @@ Cypress.Commands.add(
     // Wait for the chip to show up
     // This handles the debounce of the single text filter
     cy.contains('.pf-v5-c-chip__text', text);
+    if (options?.expectedLength) {
+      cy.get('tbody').find('tr', { timeout: 10000 }).should('have.length', options.expectedLength);
+    }
   }
 );
 
@@ -92,7 +99,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('filterTableBySearch', (searchString: string) => {
+Cypress.Commands.add('filterTableBySearch', (searchString: string, expectedLength?: number) => {
   cy.selectTableFilter('search');
 
   cy.get('[data-cy="text-input"]', { timeout: 10000 })
@@ -100,9 +107,12 @@ Cypress.Commands.add('filterTableBySearch', (searchString: string) => {
     .then(($input) => {
       cy.wrap($input).clear().type(searchString);
     });
+  if (expectedLength) {
+    cy.get('tbody').find('tr', { timeout: 10000 }).should('have.length', expectedLength);
+  }
 });
 
-Cypress.Commands.add('filterTableById', (idString: string) => {
+Cypress.Commands.add('filterTableById', (idString: string, expectOneResult = true) => {
   cy.selectTableFilter('id');
   cy.get('#filters').within(() => {
     cy.contains('button', 'Select id').click();
@@ -111,6 +121,9 @@ Cypress.Commands.add('filterTableById', (idString: string) => {
     cy.get('input').clear().type(idString);
   });
   cy.get(`li[data-cy="${idString}"]`).find('input').click();
+  if (expectOneResult) {
+    cy.get('tbody').find('tr', { timeout: 10000 }).should('have.length', 1);
+  }
 });
 
 Cypress.Commands.add(

@@ -11,7 +11,7 @@ import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
 import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
 import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';

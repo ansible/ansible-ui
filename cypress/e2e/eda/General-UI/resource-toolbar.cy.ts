@@ -33,7 +33,7 @@ describe('Check if the build includes EDA', () => {
         'have.text',
         'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
       );
-      cy.contains('button', 'Create rulebook activation').should('exist');
+      cy.contains('link', 'Create rulebook activation').should('exist');
     });
 
     it('can visit the projects page and assert the data there', () => {

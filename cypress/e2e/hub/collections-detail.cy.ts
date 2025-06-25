@@ -75,10 +75,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
         cy.get('@versionButton').first().click();
         cy.get('.pf-v5-c-menu__item-text').contains(firstVersion).click();
         cy.clickTab(/^Details$/, true);
-        cy.url().should(
-          'contain',
-          `/collections/validated/${namespace.name}/${collectionName}/details?version=${firstVersion}`
-        );
+        cy.contains('#version', firstVersion);
         cy.get('@versionButton').should('not.have.class', 'pf-m-expanded');
         cy.get(`[data-cy="browse-collection-version"] button .pf-v5-c-menu-toggle__text`).should(
           'contain',

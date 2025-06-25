@@ -72,7 +72,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
           this.skip();
         } else {
           cy.uploadCollection(collectionName, namespace.name, '3.0.0').then(() => {
-            cy.navigateTo('hub', Collections.url);
+            cy.navigateTo('hub', Collections.url, Collections.title);
             cy.getBy('[data-cy="list-view"]').click();
             cy.filterTableBySingleText(collectionName);
             cy.getBy('[data-cy="data-list-action"]').within(() => {
@@ -168,7 +168,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
       cy.checkBuildType().then((buildType) => {
         if (buildType !== OCP_A_URL) {
           cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-          cy.navigateTo('hub', Collections.url);
+          cy.navigateTo('hub', Collections.url, Collections.title);
           cy.filterTableBySingleText(collectionName);
           cy.get('[data-cy="data-list-name"]').should('have.text', collectionName);
           cy.get('[data-cy="data-list-action"]').within(() => {
@@ -176,7 +176,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
           });
           cy.get('[data-cy="copy-version-to-repositories"] button').click();
           cy.collectionCopyVersionToRepositories(collectionName, 2);
-          cy.navigateTo('hub', Collections.url);
+          cy.navigateTo('hub', Collections.url, Collections.title);
           cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName);
           cy.contains('tr', 'community').within(() => {

@@ -1,5 +1,5 @@
 import { PageDetails, PageDetailsFromColumns } from '@ansible/ansible-ui-framework';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from '../hooks/useCollectionColumns';
 

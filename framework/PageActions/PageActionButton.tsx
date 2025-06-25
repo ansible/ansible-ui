@@ -1,6 +1,6 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useID } from '../hooks/useID';
 import {
   IPageActionButton,

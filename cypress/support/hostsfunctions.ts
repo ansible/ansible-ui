@@ -64,8 +64,8 @@ function deleteHostListView(invenotryName: string, host_type: string, hostName: 
   cy.contains(/^No results found./);
 }
 
-function deleteHostDetailsView(invenotryName: string, host_type: string, hostName: string) {
-  navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', invenotryName);
+function deleteHostDetailsView(inventoryName: string, host_type: string, hostName: string) {
+  navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', inventoryName);
   cy.getByDataCy('actions-dropdown').click();
   cy.getByDataCy('delete-host').click();
   cy.clickModalConfirmCheckbox();
@@ -86,6 +86,7 @@ function navigateToHost(host_type: string, name: string, data: string, inventory
   navigateToBaseView(host_type, inventoryName);
   cy.filterTableBySingleSelect('name', name || '');
   cy.get(data).click();
+  cy.verifyPageTitle(name);
 }
 
 export function navigateToBaseView(host_type: string, inventoryName: string) {
@@ -209,6 +210,7 @@ export function createHostAndCancelJob(
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
     // run  a template and wait for redirect to Job output
+    cy.filterTableBySearch(jobTemplate.name, 1);
     cy.get('[data-cy="launch-template"]').first().click();
     cy.getBy('[data-cy="Output"]').should('be.visible');
     cy.url().should('contain', '/output');
@@ -220,6 +222,7 @@ export function createHostAndCancelJob(
       cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
     } else {
       cy.navigateTo('awx', 'hosts');
+      cy.verifyPageTitle('Hosts');
     }
     cy.filterTableBySearch(hostName);
     cy.get('[data-cy="name-column-cell"]').contains(hostName).click();

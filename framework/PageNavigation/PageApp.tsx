@@ -1,6 +1,6 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useEffect, useMemo } from 'react';
-import { Outlet, Route, RouteObject, Routes } from 'react-router-dom';
+import { Outlet, Route, RouteObject, Routes } from 'react-router';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
 import { PageNavigation } from './PageNavigation';

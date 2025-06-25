@@ -1,7 +1,9 @@
 Cypress.Commands.add(
   'singleSelectBy',
   (selector: string, value: string, exactMatch = false, notFound?: boolean) => {
-    cy.getBy(selector).click();
+    // details pages and edit forms often share data-cy values -- ensure the
+    // selector matches a button before clicking it
+    cy.get('button').filter(selector).click();
     // PF Selects open the menu at the body level
     // We need to use document() to get the body of the page
     // and then find the .pf-v5-c-menu__content within that body
@@ -31,7 +33,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
-  cy.getBy(selector).click();
+  cy.get('button').filter(selector).click();
   // PF Selects open the menu at the body level
   // We need to use document() to get the body of the page
   // and then find the .pf-v5-c-menu__content within that body

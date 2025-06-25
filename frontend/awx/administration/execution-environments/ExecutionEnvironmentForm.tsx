@@ -12,7 +12,7 @@ import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/use
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import useSWR from 'swr';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
@@ -34,7 +34,7 @@ export function CreateExecutionEnvironment() {
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: newExecutionEnv.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   const defaultValue: Partial<ExecutionEnvironment> = {
@@ -83,7 +83,7 @@ export function EditExecutionEnvironment() {
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: editedExecutionEnv.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (!execution_env) {

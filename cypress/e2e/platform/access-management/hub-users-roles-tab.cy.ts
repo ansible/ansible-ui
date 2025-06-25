@@ -36,7 +36,10 @@ hub_resources_roles_tab.forEach((resource) => {
       if (resource.name === 'Remote') {
         cy.navigateTo('hub', 'remotes');
         cy.setTablePageSize('50');
-        cy.filterTableByTextFilter('name', resource_object.name, { disableFilterSelection: true });
+        cy.filterTableByTextFilter('name', resource_object.name, {
+          disableFilterSelection: true,
+          expectedLength: 1,
+        });
         cy.get('[data-cy="card-view"]').click();
         cy.contains(resource_object.name).should('be.visible');
         cy.getByDataCy('select-all').check();
@@ -181,6 +184,7 @@ describe(`Roles Tab for Users - actions`, () => {
     cy.navigateTo('platform', 'users');
     cy.verifyPageTitle('Users');
     cy.clickTableRowLink('username', user.username);
+    cy.getByDataCy('username').should('contain', user.username);
     cy.clickTab('Roles', true);
     cy.clickTab('Automation Content', true);
     cy.getTableRow('role', role1.name, { disableFilterSelection: true }).within(() => {

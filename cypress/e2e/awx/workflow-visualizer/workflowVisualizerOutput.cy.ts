@@ -148,6 +148,7 @@ describe('Workflow Visualizer', () => {
         cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
         cy.get(`button#${templateID}`).click();
       });
+      cy.contains('Prompts').should('be.visible');
       cy.getByDataCy('Submit').click();
       cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();
@@ -183,7 +184,8 @@ describe('Workflow Visualizer', () => {
 
     it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.navigateTo('awx', 'templates');
-      cy.filterTableBySearch(workflowJobTemplate.name);
+      cy.verifyPageTitle('Templates');
+      cy.filterTableBySearch(workflowJobTemplate.name, 1);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
       cy.get('a[href*="/visualizer"]').click();
       cy.contains('Workflow Visualizer').should('be.visible');
@@ -200,6 +202,7 @@ describe('Workflow Visualizer', () => {
             'firstJob'
           );
           cy.url().should('contain', `/jobs/workflow/${job.id}/output`);
+          cy.verifyPageTitle(job.name);
           cy.wait('@firstJob');
           cy.contains(project.name).click({ force: true });
           cy.intercept('GET', awxAPI`/workflow_jobs/${job.id.toString()}/**`).as('job');
@@ -209,6 +212,7 @@ describe('Workflow Visualizer', () => {
             'relaunchWJT-WithNodes'
           );
           cy.navigateTo('awx', 'jobs');
+          cy.verifyPageTitle('Jobs');
           const jobId = job.id ? job.id.toString() : '';
           const jobName = job.name ? job.name : '';
           cy.filterTableById(jobId);

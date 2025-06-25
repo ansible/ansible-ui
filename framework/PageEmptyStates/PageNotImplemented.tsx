@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { WrenchIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 
 export function PageNotImplemented() {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export function PageNotImplemented() {
       <EmptyStateFooter>
         <EmptyStateActions>
           <Stack hasGutter>
-            <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
+            <Button onClick={() => void navigate(-1)}>{t('Return to previous page')}</Button>
             <Button component={(props) => <Link to={'/'} {...props} />}>
               {t('Return to dashboard')}
             </Button>

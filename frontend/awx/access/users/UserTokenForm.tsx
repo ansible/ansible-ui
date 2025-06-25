@@ -11,7 +11,7 @@ import {
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { PageFormApplicationSelect } from '../../administration/applications/components/PageFormApplicationSelect';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -49,7 +49,7 @@ function CreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken: To
   const postRequest = usePostRequest<Token, Token>();
   const pageNavigate = usePageNavigate();
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const onSubmit: PageFormSubmitHandler<Token> = async (tokenInput) => {
     const newToken = await postRequest(awxAPI`/tokens/`, tokenInput);
     props.onCreate(newToken);

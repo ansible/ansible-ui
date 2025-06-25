@@ -8,7 +8,7 @@ import {
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon, CogIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

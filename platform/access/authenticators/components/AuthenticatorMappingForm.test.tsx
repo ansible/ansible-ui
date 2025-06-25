@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

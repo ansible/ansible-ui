@@ -59,8 +59,8 @@ describe('Check if the build includes EDA', () => {
       it('can restart a Rulebook Activation from list view', () => {
         const name = 'E2E Rulebook Activation ' + randomString(4);
         cy.navigateTo('eda', 'rulebook-activations');
-        cy.contains(/^Create rulebook activation$/).click();
-        cy.get('h1').should('contain', 'Create rulebook activation');
+        cy.clickLink(/^Create rulebook activation$/);
+        cy.verifyPageTitle('Create rulebook activation');
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
         cy.getBy('[data-cy="organization_id"]').click();

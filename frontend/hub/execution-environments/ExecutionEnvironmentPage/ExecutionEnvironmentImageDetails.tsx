@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useOutletContext, useParams } from 'react-router-dom';
+import { Link, useOutletContext, useParams } from 'react-router';
 import styled from 'styled-components';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironmentImage } from './ExecutionEnvironmentImage';

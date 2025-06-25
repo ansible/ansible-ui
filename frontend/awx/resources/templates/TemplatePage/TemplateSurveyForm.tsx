@@ -15,7 +15,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { AwxError } from '../../../common/AwxError';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import {

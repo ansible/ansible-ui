@@ -21,7 +21,7 @@ import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { useHubNavigation } from '@ansible/hub-ui/main/useHubNavigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router';
 import { Lightspeed } from '../lightspeed/Lightspeed';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
@@ -379,7 +379,7 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
       {
         id: PlatformRoute.SubscriptionWizard,
         path: 'wizard',
-        element: <SubscriptionWizard onSuccess={() => navigate('/settings/subscription')} />,
+        element: <SubscriptionWizard onSuccess={() => void navigate('/settings/subscription')} />,
       },
       {
         id: PlatformRoute.SubscriptionDetails,

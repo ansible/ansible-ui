@@ -10,7 +10,7 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { CredentialLabel } from '../../../../common/CredentialLabel';

@@ -33,7 +33,7 @@ import { Page } from '@patternfly/react-core';
 import 'cypress-react-selector';
 import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router';
 import './auth';
 import './awx-access-commands';
 import './awx-commands';

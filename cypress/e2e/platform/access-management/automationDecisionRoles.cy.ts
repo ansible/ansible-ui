@@ -18,8 +18,8 @@ describe('Check if the build includes EDA', () => {
     it(`can verify that a managed Automation Decisions role displays the proper permissions`, () => {
       cy.getEdaRoles({ managed: true }).then((roles) => {
         const testRole = roles[1];
-        cy.navigateTo('platform', 'roles');
-        cy.get('a[href*="/access/roles/eda?"]').click();
+        cy.navigateTo('platform', 'roles', 'Roles');
+        cy.clickTab('Automation Decisions', true);
         cy.setTablePageSize('50');
         if (testRole.managed === true) {
           cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -72,8 +72,8 @@ describe('Check if the build includes EDA', () => {
     roleTypes.forEach((roleType) => {
       it(`can create ${roleType.role} role with 2 permissions and then delete the role from the details page`, () => {
         cy.intercept('GET', edaAPI`/role_definitions/*`).as('roleDefinitions');
-        cy.navigateTo('platform', 'roles');
-        cy.get('a[href*="/access/roles/eda?"]').click();
+        cy.navigateTo('platform', 'roles', 'Roles');
+        cy.clickTab('Automation Decisions', true);
         cy.wait('@roleDefinitions');
         cy.setTablePageSize('50');
         cy.verifyPageTitle('Roles');
@@ -133,8 +133,8 @@ describe('Check if the build includes EDA', () => {
       cy.intercept('GET', edaAPI`/role_definitions/${editableRole.id.toString()}/`).as(
         'roleDetails'
       );
-      cy.navigateTo('platform', 'roles');
-      cy.get('a[href*="/access/roles/eda?"]').click();
+      cy.navigateTo('platform', 'roles', 'Roles');
+      cy.clickTab('Automation Decisions', true);
       cy.filterTableByTextFilter('name', editableRole.name);
       cy.clickTableRowLink('name', editableRole.name, { disableFilter: true });
       cy.wait('@roleDetails', { timeout: 40000 }).then(() => {
@@ -154,8 +154,8 @@ describe('Check if the build includes EDA', () => {
     });
 
     it('can edit the permissions of an editable role from the list row', () => {
-      cy.navigateTo('platform', 'roles');
-      cy.get('a[href*="/access/roles/eda?"]').click();
+      cy.navigateTo('platform', 'roles', 'Roles');
+      cy.clickTab('Automation Decisions', true);
       cy.setTablePageSize('50');
       cy.intercept(
         'GET',
@@ -223,8 +223,8 @@ describe('Check if the build includes EDA', () => {
       cy.intercept('GET', edaAPI`/role_definitions/${editableRole.id.toString()}/`).as(
         'roleDetails'
       );
-      cy.navigateTo('platform', 'roles');
-      cy.get('a[href*="/access/roles/eda?"]').click();
+      cy.navigateTo('platform', 'roles', 'Roles');
+      cy.clickTab('Automation Decisions', true);
       cy.filterTableByTextFilter('name', editableRole.name);
       cy.clickTableRowLink('name', editableRole.name, { disableFilter: true });
       cy.wait('@roleDetails', { timeout: 40000 }).then(() => {
@@ -306,11 +306,14 @@ describe('Check if the build includes EDA', () => {
     });
 
     it('can delete an editable role from the list view', () => {
-      cy.navigateTo('platform', 'roles');
-      cy.get('a[href*="/access/roles/eda?"]').click();
+      cy.navigateTo('platform', 'roles', 'Roles');
+      cy.clickTab('Automation Decisions', true);
       cy.setTablePageSize('50');
-      cy.filterTableByTextFilter('name', editableRole.name);
-      cy.clickTableRowAction('name', editableRole.name, 'delete-role', { inKebab: true });
+      cy.filterTableByTextFilter('name', editableRole.name, { expectedLength: 1 });
+      cy.clickTableRowAction('name', editableRole.name, 'delete-role', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.intercept('DELETE', edaAPI`/role_definitions/${editableRole.id.toString()}/`).as(
         'deletedRole'
       );
@@ -324,8 +327,8 @@ describe('Check if the build includes EDA', () => {
     });
 
     it('can bulk delete editable roles from the list view', () => {
-      cy.navigateTo('platform', 'roles');
-      cy.get('a[href*="/access/roles/eda?"]').click();
+      cy.navigateTo('platform', 'roles', 'Roles');
+      cy.clickTab('Automation Decisions', true);
       cy.setTablePageSize('50');
       cy.intercept(
         'GET',

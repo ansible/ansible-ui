@@ -77,7 +77,7 @@ export async function deleteInventorySource(
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
   await clickTableRow({ text: inventoryName }, page);
   await page.getByRole('tab', { name: 'Sources' }).click();
-  await page.getByRole('link', { name: inventorySourceName }).click();
+  await clickTableRow({ text: inventorySourceName }, page);
   await page.getByLabel('kebab dropdown toggle').click();
   await page.getByRole('menuitem', { name: 'Delete inventory source' }).click();
   await confirmAndAssertDeletion(page);

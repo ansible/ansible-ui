@@ -11,7 +11,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { StatusCell } from '@ansible/common-ui/Status';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router';
 import { useVerbosityString } from '../../common/useVerbosityString';
 import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';

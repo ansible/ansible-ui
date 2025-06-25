@@ -9,7 +9,7 @@ import {
 import { BanIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { useHubContext } from '../../common/useHubContext';
 import { CollectionLogo } from '../../common/Logo';
 import { HubRoute } from '../../main/HubRoutes';

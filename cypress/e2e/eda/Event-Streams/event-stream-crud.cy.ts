@@ -38,6 +38,7 @@ describe('Check if the build includes EDA', () => {
       cy.navigateTo('eda', 'event-streams');
       cy.verifyPageTitle('Event Streams');
       cy.contains('Create event stream').click();
+      cy.verifyPageTitle('Create event stream');
       cy.getByDataCy('name').type(name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');
@@ -70,6 +71,7 @@ describe('Check if the build includes EDA', () => {
       cy.navigateTo('eda', 'event-streams');
       cy.verifyPageTitle('Event Streams');
       cy.contains('Create event stream').click();
+      cy.verifyPageTitle('Create event stream');
       cy.getByDataCy('name').type(name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');

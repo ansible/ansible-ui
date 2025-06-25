@@ -139,7 +139,11 @@ declare global {
        * Navigates to a page of the UI using using the links on the page sidebar.
        * Intended as an alternative to cy.visit().
        */
-      navigateTo(component: 'platform' | 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
+      navigateTo(
+        component: 'platform' | 'awx' | 'eda' | 'hub',
+        label: string,
+        expectedPageTitle?: string
+      ): Chainable<void>;
 
       /** Locates a title using its label. No assertion is made. */
       verifyPageTitle(label: string): Chainable<void>;
@@ -370,7 +374,7 @@ declare global {
       filterTableByTextFilter(
         filterDataCy: string,
         text: string,
-        options?: { disableFilterSelection?: boolean }
+        options?: { disableFilterSelection?: boolean; expectedLength?: number }
       ): Chainable<void>;
 
       /** @deprecated use cy.filterTableByTextFilter instead */
@@ -399,9 +403,9 @@ declare global {
        * cy.filterTableBySearch("Success");
        * ```
        */
-      filterTableBySearch(searchString: string): Chainable<void>;
+      filterTableBySearch(searchString: string, expectedLength?: number): Chainable<void>;
 
-      filterTableById(idString: string): Chainable<void>;
+      filterTableById(idString: string, expectOneResult?: boolean): Chainable<void>;
 
       /**
        * Gets a table row containing the specified text for the specified column.
@@ -606,7 +610,7 @@ declare global {
       selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
 
       /**Finds a button with a particular label and clicks it. */
-      clickTab(label: string | RegExp, isLink?: boolean): Chainable<void>;
+      clickTab(label: string | RegExp, isLink?: boolean, assertSelected?: boolean): Chainable<void>;
 
       /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
       hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;

@@ -11,7 +11,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { requestPut } from '@ansible/common-ui/crud/Data';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewaySettingsOption, UrlOption } from './GatewaySettingOptions';

@@ -11,7 +11,7 @@ import { http, HttpResponse } from 'msw';
 import { edaAPI } from '../../common/eda-utils';
 import activationInstanceResp from './mocks/ActivationInstance.json';
 import activationInstanceLogs from './mocks/ActivationInstanceLogs.json';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router';
 
 function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

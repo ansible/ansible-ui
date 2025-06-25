@@ -1,6 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { PageFormSingleSelect } from '../PageForm/Inputs/PageFormSingleSelect';
 import { PageForm } from '../PageForm/PageForm';
 import { PageHeader } from '../PageHeader';
@@ -15,12 +15,12 @@ export function PageSettingsForm() {
   const onSubmit = useCallback(
     (settings: IPageSettings) => {
       setSettings(settings);
-      navigate('..');
+      void navigate('..');
       return Promise.resolve();
     },
     [navigate, setSettings]
   );
-  const onCancel = useCallback(() => navigate('..'), [navigate]);
+  const onCancel = useCallback(() => void navigate('..'), [navigate]);
   const options = usePageSettingsOptions();
   return (
     <PageLayout>

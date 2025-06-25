@@ -422,11 +422,13 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
       cy.get('[data-cy="name-column-cell"]').click();
+      cy.verifyPageTitle(instanceGroup.name);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.getByDataCy(`edit-instance-group`).click();
+      cy.verifyPageTitle(`Edit ${instanceGroup.name}`);
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type(`${instanceGroup.name}- edited`);
       cy.get('[data-cy="policy-instance-minimum"]').clear();
@@ -465,10 +467,7 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
       cy.get('[data-cy="name-column-cell"]').click();
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
-      });
+      cy.contains('h1', instanceGroup.name).should('be.visible');
       cy.clickPageAction(`delete-instance-group`);
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('#confirm').click();
@@ -486,10 +485,7 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', containerGroup.name);
       cy.get('[data-cy="name-column-cell"]').click();
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
-      });
+      cy.contains('h1', containerGroup.name).should('be.visible');
       cy.getByDataCy(`edit-container-group`).click();
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type(`${containerGroup.name}- edited`);
@@ -521,10 +517,7 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', containerGroup.name);
       cy.get('[data-cy="name-column-cell"]').click();
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
-      });
+      cy.contains('h1', containerGroup.name).should('be.visible');
       cy.clickPageAction(`delete-container-group`);
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('#confirm').click();
@@ -582,6 +575,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="name-column-cell"]').within(() => {
         cy.get('a').click();
       });
+      cy.verifyPageTitle(instanceGroup.name);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
@@ -632,6 +626,8 @@ describe(`Instance Groups`, () => {
           expect(response?.statusCode).to.eql(201);
         });
       cy.verifyPageTitle(instanceGroup.name);
+      // await roles loading before navigating away (prevents query param flake)
+      cy.get('tbody').should('be.visible');
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
@@ -667,6 +663,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="name-column-cell"]').within(() => {
         cy.get('a').click();
       });
+      cy.verifyPageTitle(containerGroup.name);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
@@ -717,6 +714,8 @@ describe(`Instance Groups`, () => {
           expect(response?.statusCode).to.eql(201);
         });
       cy.verifyPageTitle(containerGroup.name);
+      // await roles loading before navigating away (prevents query param flake)
+      cy.get('tbody').should('be.visible');
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', containerGroup.name);
@@ -787,6 +786,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="name-column-cell"]').within(() => {
         cy.get('a').click();
       });
+      cy.verifyPageTitle(instanceGroup.name);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
@@ -836,6 +836,8 @@ describe(`Instance Groups`, () => {
           expect(response?.statusCode).to.eql(201);
           cy.verifyPageTitle(instanceGroup.name);
         });
+      // await roles loading before navigating away (prevents query param flake)
+      cy.get('tbody').should('be.visible');
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
@@ -869,6 +871,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="name-column-cell"]').within(() => {
         cy.get('a').click();
       });
+      cy.verifyPageTitle(containerGroup.name);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
@@ -997,6 +1000,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="name-column-cell"]').within(() => {
         cy.get('a').click();
       });
+      cy.verifyPageTitle(instanceGroupDefault.name);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;

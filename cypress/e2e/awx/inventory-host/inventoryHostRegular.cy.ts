@@ -82,9 +82,10 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
       }
     );
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.filterTableBySearch(inventory.name);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    cy.clickTab('Hosts', true);
     cy.filterTableBySearch(hostName);
     cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
     cy.containsBy('a', 'Facts').click();
@@ -108,31 +109,36 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
       project: project.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'inventories');
+      cy.verifyPageTitle('Inventories');
       cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+      cy.clickTab('Hosts', true);
       const hostName = createHost('inventory_host', inventory.id);
       cy.navigateTo('awx', 'inventories');
+      cy.verifyPageTitle('Inventories');
       cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
       cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
       cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launch');
+      cy.filterTableBySearch(jobTemplate.name, 1);
       cy.get('[data-cy="launch-template"]').first().click();
       cy.wait('@launch');
       cy.getBy('[data-cy="Output"]').should('be.visible');
       cy.url().should('contain', '/output');
       cy.verifyPageTitle(jobTemplate.name);
       cy.navigateTo('awx', 'inventories');
+      cy.verifyPageTitle('Inventories');
       cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+      cy.clickTab('Hosts', true);
+      cy.contains('nav[aria-label="Breadcrumb"]', 'Hosts').should('exist');
       cy.filterTableBySearch(hostName);
       cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
       cy.intercept(
         { method: 'GET', url: awxAPI`/unified_jobs/*` },
         { fixture: 'awxRunningJobs.json' }
       );
-      cy.get('.pf-v5-c-tabs__item > a').contains('Jobs').click();
+      cy.clickTab('Jobs', true);
       cy.get('[data-cy="cancel-job"]').should('be.enabled');
       cy.get('[data-cy="cancel-job"]').click();
       cy.clickModalConfirmCheckbox();
@@ -144,13 +150,16 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
     createHost('inventory_host', inventory.id);
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.intercept('GET', awxAPI`/inventories/?search=${encodeParam(inventory.name)}*`).as(
       'getInventories'
     );
     cy.filterTableBySearch(inventory.name);
     cy.wait('@getInventories');
     cy.contains('a', inventory.name).click();
+    cy.verifyPageTitle(inventory.name);
     cy.contains(`a[role="tab"]`, 'Hosts').click();
+    cy.clickTab('Hosts', true);
     cy.getByDataCy('run-command').click();
     runCommand({
       selections: 'all',
@@ -168,16 +177,19 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     const groupName = 'E2E group ' + randomString(4);
     cy.createInventoryGroup(inventory, groupName);
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.intercept('GET', awxAPI`/inventories/?search=${encodeParam(inventory.name)}*`).as(
       'getInventories'
     );
     cy.filterTableBySearch(inventory.name);
     cy.wait('@getInventories');
     cy.contains('a', inventory.name).click();
-    cy.contains(`a[role="tab"]`, 'Groups').click();
+    cy.verifyPageTitle(inventory.name);
+    cy.clickTab('Groups', true);
     cy.reload();
     cy.contains('a', groupName).click();
-    cy.contains(`a[role="tab"]`, 'Hosts').click();
+    cy.verifyPageTitle(groupName);
+    cy.clickTab('Hosts', true);
     cy.getByDataCy('add-existing-host').click();
     cy.getByDataCy('select-all').check();
     cy.clickModalButton('Add hosts');

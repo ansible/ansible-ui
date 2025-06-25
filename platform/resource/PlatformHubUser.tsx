@@ -6,7 +6,7 @@ import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { HubUser } from '@ansible/hub-ui/interfaces/expanded/HubUser';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';
 

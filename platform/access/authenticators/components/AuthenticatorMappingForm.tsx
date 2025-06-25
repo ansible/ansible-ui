@@ -13,7 +13,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import {
   AttributeDefinition,
   AttributesTriggers,
@@ -107,7 +107,7 @@ export function CreateAuthenticatorMapping() {
         submitText={t('Create mapping')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={{ map_type: AuthenticatorMapType.allow }}
       >
         <MappingInputs />
@@ -144,7 +144,7 @@ export function EditAuthenticatorMapping() {
       gatewayAPI`/authenticator_maps/${params?.map_id ?? ''}/`,
       data as unknown as AuthenticatorMapValues
     );
-    navigate(-1);
+    void navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
   if (isLoading) return <LoadingPage breadcrumbs />;
@@ -182,7 +182,7 @@ export function EditAuthenticatorMapping() {
       <PageForm
         submitText={t('Save mapping')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={initialValues as AuthenticatorMapValues}
       >
         <MappingInputs />
