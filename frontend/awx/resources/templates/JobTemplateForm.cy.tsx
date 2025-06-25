@@ -86,7 +86,7 @@ describe('Create job template ', () => {
     cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
     cy.get('[data-cy="playbook-form-group"] input').clear().type('hello_world.yml');
     cy.get('#playbook-typeahead-select button').contains('hello_world.yml').click();
-    cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroups[0].name]);
+    cy.multiSelectByDataCy('instance-group-select', [instanceGroups[0].name]);
     cy.clickButton('Create job template');
   });
 });

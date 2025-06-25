@@ -150,7 +150,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
           !authenticator ? t('Create Authentication Method') : t('Save Authentication Method')
         }
         onSubmit={props.handleSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={initialValues}
       >
         <AuthenticatorFormInputs plugins={plugins} authenticator={authenticator} />

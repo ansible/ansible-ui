@@ -22,7 +22,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxError } from '../../common/AwxError';
@@ -212,7 +212,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         submitText={t('Save notifier')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={defaultValue}
       >
         <PageFormSection>

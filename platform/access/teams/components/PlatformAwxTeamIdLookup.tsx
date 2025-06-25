@@ -8,7 +8,7 @@ import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Page } from '@patternfly/react-core';
 import { ReactElement, ReactNode, cloneElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 

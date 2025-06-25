@@ -3,7 +3,7 @@ import { PageNavigationItem } from '@ansible/ansible-ui-framework/PageNavigation
 import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { HubRoles } from '../access/roles/HubRoles';
 import { HubRoleDetails } from '../access/roles/RolePage/HubRoleDetails';
 import { CreateRole, EditRole } from '../access/roles/RolePage/HubRoleForm';

@@ -1,5 +1,5 @@
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { ActivityStream } from '../../../interfaces/ActivityStream';
 import { INVENTORYURLPATHS } from '../../../resources/inventories/constants';
 import { useGetActivityStreamRoute } from '../hooks/useGetActivityStreamRoute';

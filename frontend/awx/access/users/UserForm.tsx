@@ -12,7 +12,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import useSWR from 'swr';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -50,7 +50,7 @@ export function CreateUser() {
     pageNavigate(AwxRoute.UserDetails, { params: { id: newUser.id } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -103,7 +103,7 @@ export function EditUser() {
 
   const getPageUrl = useGetPageUrl();
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
 
   if (!user) {
     return (

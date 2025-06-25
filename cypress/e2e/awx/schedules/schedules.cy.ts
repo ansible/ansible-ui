@@ -894,6 +894,7 @@ describe('Schedules - Edit', () => {
     cy.intercept('PATCH', awxAPI`/schedules/*`).as('toggleSchedule');
     cy.filterTableBySingleSelect('name', schedule.name);
     cy.getByDataCy('name-column-cell').click();
+    cy.verifyPageTitle(schedule.name);
 
     cy.get('input[aria-label="Click to disable schedule"]').should('exist');
     cy.getByDataCy('toggle-switch').should('be.visible').click();

@@ -1,6 +1,6 @@
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 export function Redirect() {
   const [searchParams] = useURLSearchParams();
@@ -9,7 +9,7 @@ export function Redirect() {
     if (searchParams.has('next')) {
       location.href = searchParams.get('next') as string;
     } else {
-      navigate('/');
+      void navigate('/');
     }
   }, [navigate, searchParams]);
   return null;

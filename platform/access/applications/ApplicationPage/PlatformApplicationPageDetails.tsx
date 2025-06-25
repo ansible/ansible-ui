@@ -2,7 +2,7 @@ import { CopyCell, DateTimeCell, PageDetail, PageDetails } from '@ansible/ansibl
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PlatformApplicationPageDetails() {

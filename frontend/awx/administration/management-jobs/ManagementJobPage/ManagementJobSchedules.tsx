@@ -5,7 +5,7 @@ import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink'
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';

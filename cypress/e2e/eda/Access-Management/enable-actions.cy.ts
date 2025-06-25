@@ -105,12 +105,13 @@ describe('Check if the build includes EDA', () => {
       // verify that the user can read but not create a project
       cy.filterTableByText(RBA.name);
       cy.contains('tr', RBA.name);
-      cy.get('button')
+      cy.get('a')
         .contains(`Create rulebook activation`)
         .should('have.attr', 'aria-disabled', 'true')
         .click();
       // verify the action buttons are disabled in details view
       cy.clickTableRow(RBA.name);
+      cy.contains('h1', RBA.name).should('be.visible');
       cy.intercept('DELETE', edaAPI`/activations/${RBA.id.toString()}/`).as('deleteRBA');
       cy.clickPageAction('delete-rulebook-activation');
       cy.clickModalConfirmCheckbox();

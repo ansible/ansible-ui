@@ -2,7 +2,7 @@ import { CopyCell, ITableColumn, PageTable } from '@ansible/ansible-ui-framework
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router';
 import { Distribution } from '../../../collections/UploadCollection';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubView } from '../../../common/useHubView';

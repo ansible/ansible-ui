@@ -113,9 +113,7 @@ describe('Create Edit Inventory Form', () => {
           cy.selectSingleSelectOption('[data-cy="organization"]', orgResponse.results[0].name);
         });
         cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
-          cy.multiSelectByDataCy('instance-group-select-form-group', [
-            ig_response?.results[0]?.name,
-          ])
+          cy.multiSelectByDataCy('instance-group-select', [ig_response?.results[0]?.name])
         );
         if (kind === '') {
           cy.get('[data-cy="labels-typeahead-input"]').type(
@@ -283,7 +281,7 @@ describe('Create Edit Inventory Form', () => {
         cy.fixture('organizations').then((orgResponse: AwxItemsResponse<Organization>) => {
           cy.singleSelectByDataCy('organization', orgResponse.results[1].name);
         });
-        cy.multiSelectByDataCy('instance-group-select-form-group', [
+        cy.multiSelectByDataCy('instance-group-select', [
           instanceGroupsResponse.results[2].name,
           instanceGroupsResponse.results[1].name,
         ]);

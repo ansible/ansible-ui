@@ -1,7 +1,7 @@
 import { IFilterState } from '@ansible/ansible-ui-framework';
 import { PageSection, Skeleton } from '@patternfly/react-core';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import styled from 'styled-components';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';

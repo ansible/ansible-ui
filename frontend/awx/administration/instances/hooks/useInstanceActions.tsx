@@ -11,7 +11,7 @@ import { TFunction } from 'i18next';
 import pDebounce from 'p-debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';

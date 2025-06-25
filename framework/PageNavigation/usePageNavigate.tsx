@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useGetPageUrl } from './useGetPageUrl';
 
 /** Hook to get the function to navigate to a page given the page id. */
@@ -16,7 +16,7 @@ export function usePageNavigate() {
     ) => {
       const url = getPageUrl(pageId, options);
       if (url) {
-        navigate(url);
+        void navigate(url);
       }
     },
     [navigate, getPageUrl]

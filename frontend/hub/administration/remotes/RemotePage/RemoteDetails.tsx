@@ -10,7 +10,7 @@ import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPag
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';

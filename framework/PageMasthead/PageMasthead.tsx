@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { usePageNavSideBar } from '../PageNavigation/PageNavSidebar';
 import { useBreakpoint } from '../components/useBreakPoint';
 

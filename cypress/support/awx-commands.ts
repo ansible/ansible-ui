@@ -389,33 +389,44 @@ Cypress.Commands.add('clickLink', (label: string | RegExp) => {
   cy.containsBy('a', label).click();
 });
 
-Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
+Cypress.Commands.add('clickTab', (label: string | RegExp, isLink, assertSelected = true) => {
   if (isLink) {
     cy.contains('a[role="tab"]', label).click();
+    if (assertSelected) {
+      cy.contains('a[role="tab"]', label).should('have.attr', 'aria-selected', 'true');
+    }
   } else {
     cy.contains('button[role="tab"]', label).click();
+    if (assertSelected) {
+      cy.contains('button[role="tab"]', label).should('have.attr', 'aria-selected', 'true');
+    }
   }
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.containsBy('button', label).click();
+  cy.containsBy('button:enabled', label).click();
 });
 
-Cypress.Commands.add('navigateTo', (component: string, label: string) => {
-  cy.get('[data-cy="page-navigation"]').then((nav) => {
-    if (nav.is(':visible')) {
-      cy.get(`[data-cy="${component}-${label}"]`).click({ force: true });
-    } else {
-      cy.get('[data-cy="nav-toggle"]').click();
-      cy.get(`[data-cy="${component}-${label}"]`).click({ force: true });
+Cypress.Commands.add(
+  'navigateTo',
+  (component: string, label: string, expectedPageTitle?: string) => {
+    cy.get('[data-cy="page-navigation"]').then((nav) => {
+      if (nav.is(':visible')) {
+        cy.get(`[data-cy="${component}-${label}"]`).click({ force: true });
+      } else {
+        cy.get('[data-cy="nav-toggle"]').click();
+        cy.get(`[data-cy="${component}-${label}"]`).click({ force: true });
+      }
+    });
+    cy.clearAllFilters();
+    if (expectedPageTitle) {
+      cy.verifyPageTitle(expectedPageTitle);
     }
-  });
-  cy.clearAllFilters();
-  cy.get('[data-cy="refresh"]').click();
-});
+  }
+);
 
 Cypress.Commands.add('verifyPageTitle', (label: string) => {
-  cy.get(`[data-cy="page-title"]`).should('contain', label);
+  cy.contains('[data-cy="page-title"]', label, { timeout: 60000 }).should('be.visible');
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
@@ -1074,8 +1085,9 @@ Cypress.Commands.add(
           .as('newVisualizerView')
           .then(() => {
             cy.navigateTo('awx', 'templates');
-            cy.filterTableBySearch(results.name);
+            cy.filterTableBySearch(results.name, 1);
             cy.clickTableRowLink('name', results.name, { disableFilter: true });
+            cy.verifyPageTitle(results.name);
             cy.get('a[href*="/visualizer"]').click();
           });
       });
@@ -1500,7 +1512,7 @@ Cypress.Commands.add(
   'editCustomAWXApplicationFromListView',
   (customAppName: string, customGrantType: string, newCustomClientType: string) => {
     //Go back to list view
-    cy.clickTab(/^Back to Applications$/, true);
+    cy.clickTab(/^Back to Applications$/, true, false);
     cy.verifyPageTitle('OAuth Applications');
     //Filter by app name
     cy.searchAndDisplayResource(customAppName);
@@ -1556,7 +1568,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: string) => {
-  cy.clickTab(/^Back to Applications$/, true);
+  cy.clickTab(/^Back to Applications$/, true, false);
   cy.verifyPageTitle('OAuth Applications');
   cy.clickTableRowKebabAction(customAppName, 'delete-application');
   cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');

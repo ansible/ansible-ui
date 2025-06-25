@@ -28,7 +28,7 @@ import { Checkbox, Tooltip } from '@patternfly/react-core';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
@@ -138,7 +138,7 @@ export function CreatePlatformUser() {
         submitText={t('Create user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={defaultValue}
       >
         <PlatformUserInputs
@@ -361,7 +361,7 @@ export function EditPlatformUser() {
       <PageForm<IUserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={defaultValue}
       >
         <PlatformUserInputs

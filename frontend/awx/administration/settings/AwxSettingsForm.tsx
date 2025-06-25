@@ -11,7 +11,7 @@ import { Button, FormGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useRevertAllSettingsModal } from './useRevertAllSettingsModal';
@@ -125,7 +125,7 @@ export function AwxSettingsForm(props: {
         }
       }
       await patch(awxAPI`/settings/all/`, patchData);
-      navigate('..');
+      void navigate('..');
     },
     [navigate, patch, props.options]
   );
@@ -195,7 +195,7 @@ export function AwxSettingsForm(props: {
     <AwxPageForm
       defaultValue={props.data}
       submitText={t('Save')}
-      onCancel={() => navigate('..')}
+      onCancel={() => void navigate('..')}
       onSubmit={onSubmit}
       additionalActions={
         <Button
@@ -204,7 +204,7 @@ export function AwxSettingsForm(props: {
             e.preventDefault();
             openRevertAllSettingsModal({
               categorySlugs: getCategorySlugs(options),
-              onComplete: () => navigate('..'),
+              onComplete: () => void navigate('..'),
             });
           }}
         >

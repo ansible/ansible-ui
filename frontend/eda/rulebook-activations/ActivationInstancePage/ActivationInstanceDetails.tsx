@@ -2,7 +2,7 @@ import { IFilterState, LoadingPage, PageDetail, PageDetails } from '@ansible/ans
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { StatusCell } from '../../../common/Status';

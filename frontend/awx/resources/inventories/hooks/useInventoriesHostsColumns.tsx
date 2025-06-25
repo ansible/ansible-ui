@@ -8,7 +8,7 @@ import {
 import { Chip, ChipGroup } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { Sparkline } from '../../templates/components/Sparkline';

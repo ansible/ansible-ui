@@ -39,6 +39,7 @@ describe('Project Edit, Copy, Sync', () => {
             expect(edited.name).to.eql(`${project.name} - edited`);
             cy.verifyPageTitle(`${edited.name}`);
             cy.clickButton(/^Edit project$/);
+            cy.verifyPageTitle(`Edit ${edited.name}`);
             cy.get('[data-cy="name"]').clear().type(`${project.name}`);
             cy.clickButton(/^Save project$/);
             cy.verifyPageTitle(project.name);
@@ -61,7 +62,7 @@ describe('Project Edit, Copy, Sync', () => {
         cy.verifyPageTitle(project.name);
         cy.clickButton(/^Edit project$/);
         cy.verifyPageTitle(`Edit ${project.name}`);
-        cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
+        cy.get('input[data-cy="name"]').clear().type(`${project.name} - edited`);
         cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
         cy.clickButton(/^Save project$/);
         cy.wait('@edited')
@@ -70,7 +71,8 @@ describe('Project Edit, Copy, Sync', () => {
             expect(edited.name).of.eql(`${project.name} - edited`);
             cy.verifyPageTitle(`${project.name} - edited`);
             cy.clickButton(/^Edit project$/);
-            cy.get('[data-cy="name"]').clear().type(`${project.name}`);
+            cy.verifyPageTitle(`Edit ${edited.name}`);
+            cy.get('input[data-cy="name"]').clear().type(`${project.name}`);
             cy.clickButton(/^Save project$/);
             cy.verifyPageTitle(project.name);
           });

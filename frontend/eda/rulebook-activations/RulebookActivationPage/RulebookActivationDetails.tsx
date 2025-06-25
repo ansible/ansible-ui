@@ -26,7 +26,7 @@ import {
 } from '@patternfly/react-core';
 import jsyaml from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { EdaSourceEventMapping } from '../../interfaces/EdaSource';

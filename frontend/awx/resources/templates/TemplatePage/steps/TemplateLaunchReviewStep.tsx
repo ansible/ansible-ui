@@ -5,7 +5,7 @@ import { jsonToYaml, yamlToJson } from '@ansible/ansible-ui-framework/utils/code
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';

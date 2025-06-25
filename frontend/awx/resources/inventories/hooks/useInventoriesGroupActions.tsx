@@ -9,7 +9,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteGroups } from '../../groups/hooks/useDeleteGroups';

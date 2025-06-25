@@ -70,7 +70,7 @@ describe('Workflow Approvals List', () => {
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
-      cy.filterTableById('130');
+      cy.filterTableById('130', false);
       cy.getByDataCy('filter-input').click();
       cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);

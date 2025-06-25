@@ -27,7 +27,7 @@ import {
 import { observer, useVisualizationController } from '@patternfly/react-topology';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';

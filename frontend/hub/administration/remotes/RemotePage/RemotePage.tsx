@@ -3,7 +3,7 @@ import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPag
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';

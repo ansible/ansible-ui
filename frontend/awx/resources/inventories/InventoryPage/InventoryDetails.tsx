@@ -20,7 +20,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useOutletContext, useParams } from 'react-router-dom';
+import { Link, useOutletContext, useParams } from 'react-router';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';

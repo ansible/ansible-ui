@@ -2,7 +2,7 @@ import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '@ansible/ans
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';

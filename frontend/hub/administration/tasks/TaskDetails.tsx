@@ -15,7 +15,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { CodeBlock, DescriptionList, Divider, capitalize } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { HubError } from '../../common/HubError';
 import { pulpAPI } from '../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../common/api/hub-api-utils';

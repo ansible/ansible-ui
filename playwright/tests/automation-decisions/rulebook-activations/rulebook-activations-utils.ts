@@ -42,7 +42,7 @@ export async function createRulebookActivation(
   if (options?.disabled) {
     await page.locator('#rulebook-activation-form-group path').nth(1).click();
   }
-  await page.getByRole('button', { name: 'Create rulebook activation' }).click();
+  await page.getByRole('link', { name: 'Create rulebook activation' }).click();
   await expect(page.locator('#name')).toContainText(rulebookActivationName);
   return rulebookActivationName;
 }

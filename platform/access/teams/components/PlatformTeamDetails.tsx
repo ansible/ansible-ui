@@ -6,7 +6,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamColumns } from '../hooks/useTeamColumns';

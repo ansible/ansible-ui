@@ -9,7 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';

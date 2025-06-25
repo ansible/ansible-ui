@@ -1,7 +1,7 @@
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { Label, Tooltip } from '@patternfly/react-core';
 import TagIcon from '@patternfly/react-icons/dist/esm/icons/tag-icon';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { truncateSha } from '../../../common/utils/truncateSha';
 import { HubRoute } from '../../../main/HubRoutes';
 

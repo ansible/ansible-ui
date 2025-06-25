@@ -2,7 +2,7 @@ import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { ApplicationClientSecretModal } from '../access/applications/ApplicationPage/ApplicationClientSecretModal';
 import { PlatformApplicationPage } from '../access/applications/ApplicationPage/PlatformApplicationPage';
 import { PlatformApplicationPageDetails } from '../access/applications/ApplicationPage/PlatformApplicationPageDetails';

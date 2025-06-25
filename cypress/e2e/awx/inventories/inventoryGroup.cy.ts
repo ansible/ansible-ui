@@ -292,7 +292,7 @@ describe('Inventory Groups', () => {
         cy.clickButton(/^Create group/);
         cy.get('[data-cy="name-form-group"]').type(newGroup);
         cy.get('[data-cy="Submit"]').click();
-        cy.clickTab(/^Back to Groups$/, true);
+        cy.clickTab(/^Back to Groups$/, true, false);
         cy.filterTableBySearch(group.name);
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
@@ -316,7 +316,7 @@ describe('Inventory Groups', () => {
             expect(statusCode).to.eql(200);
           });
         cy.verifyPageTitle(newGroup + '-changed');
-        cy.clickTab(/^Back to Groups$/, true);
+        cy.clickTab(/^Back to Groups$/, true, false);
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.clickTab(/^Related Groups$/, true);
         cy.selectTableRow(newGroup);
@@ -440,7 +440,7 @@ describe('Inventory Groups', () => {
           expect(response?.statusCode).to.eql(201);
         });
       cy.verifyPageTitle(newHostName);
-      cy.clickTab(/^Back to Hosts$/, true);
+      cy.clickTab(/^Back to Hosts$/, true, false);
       cy.filterTableBySingleSelect('name', newHostName);
     });
 
@@ -464,7 +464,7 @@ describe('Inventory Groups', () => {
           expect(response?.statusCode).to.eql(200);
         });
       cy.verifyPageTitle(`${thisHost.name}-edited`);
-      cy.clickTab(/^Back to Hosts$/, true);
+      cy.clickTab(/^Back to Hosts$/, true, false);
       cy.filterTableBySingleSelect('name', thisHost.name + '-edited');
     });
 

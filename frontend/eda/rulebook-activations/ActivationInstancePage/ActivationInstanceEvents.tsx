@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
 import { ActivationInstanceOutputRow } from './ActivationInstanceOutputRow';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { PageSection } from '@patternfly/react-core';
 import styled from 'styled-components';
 import { requestGet } from '@ansible/common-ui/crud/Data';

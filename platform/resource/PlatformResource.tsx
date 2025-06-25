@@ -5,7 +5,7 @@ import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Page } from '@patternfly/react-core';
 import { t } from 'i18next';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 

@@ -1,5 +1,5 @@
 import { Label, LabelGroup } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 type LabelWithLink = { name: string; link: string };
 

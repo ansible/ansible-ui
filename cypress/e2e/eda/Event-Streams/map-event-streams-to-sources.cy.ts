@@ -101,7 +101,7 @@ describe('Check if the build includes EDA', () => {
     it('Basic Flow -  can create a Rulebook Activation  and map event streams to sources', () => {
       const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.navigateTo('eda', 'rulebook-activations');
-      cy.contains('Create rulebook activation').click();
+      cy.clickLink('Create rulebook activation');
       cy.verifyPageTitle('Create rulebook activation');
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');

@@ -6,7 +6,7 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

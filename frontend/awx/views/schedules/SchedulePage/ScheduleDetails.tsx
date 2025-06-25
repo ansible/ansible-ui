@@ -12,7 +12,7 @@ import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Divider, Label, LabelGroup } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';

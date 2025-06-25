@@ -16,7 +16,7 @@ import { Label } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { PageFormSingleSelectHubResource } from '../../common/PageFormSingleSelectHubResource';
@@ -209,7 +209,7 @@ export function RepositoryForm() {
       <HubPageForm<RepositoryFormProps>
         submitText={isEdit ? t('Save repository') : t('Create repository')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => void navigate(-1)}
         defaultValue={repositoryFormValues}
       >
         <PageFormTextInput<RepositoryFormProps>

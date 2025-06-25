@@ -100,7 +100,7 @@ describe('Automation Content: Roles', () => {
     it('can edit the permissions of an editable role from the list row', () => {
       cy.clickTableRowPinnedAction(editableRole.name, 'edit-role');
       cy.verifyPageTitle(`Edit ${editableRole.name}`);
-      cy.multiSelectByDataCy('permissions-form-group', ['Change namespace']);
+      cy.multiSelectByDataCy('permissions', ['Change namespace']);
       cy.getByDataCy('Submit').click();
       cy.verifyPageTitle('Roles');
       cy.clickLink(editableRole.name);
@@ -119,7 +119,7 @@ describe('Automation Content: Roles', () => {
       cy.verifyPageTitle(editableRole.name);
       cy.clickButton('Edit role');
       cy.verifyPageTitle(`Edit ${editableRole.name}`);
-      cy.multiSelectByDataCy('permissions-form-group', ['Delete namespace', 'Change namespace']);
+      cy.multiSelectByDataCy('permissions', ['Delete namespace', 'Change namespace']);
       cy.getByDataCy('Submit').click();
       cy.getByDataCy('permissions').within(() => {
         cy.get('.pf-v5-c-description-list__description').within(() => {

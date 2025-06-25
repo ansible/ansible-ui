@@ -51,7 +51,7 @@ describe('Job Templates Tests', function () {
       cy.navigateTo('awx', 'templates');
       cy.getBy('[data-cy="create-template"]').click();
       cy.clickLink(/^Create job template$/);
-      cy.getBy('[data-cy="name"]').type(jtName);
+      cy.getBy('input[data-cy="name"]').type(jtName);
       cy.getBy('[data-cy="description"]').type(jtDescription);
       const endOfInvName = awxInventory.name.split(' ').slice(-1).toString();
       cy.singleSelectBy('[data-cy="inventory"]', endOfInvName);
@@ -106,6 +106,7 @@ describe('Job Templates Tests', function () {
             jobTemplate = jt;
             cy.verifyPageTitle(jtName);
             cy.navigateTo('awx', 'templates');
+            cy.verifyPageTitle('Templates');
             cy.filterTableBySearch(jtName);
             cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
             cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
@@ -119,7 +120,7 @@ describe('Job Templates Tests', function () {
               '[data-cy="executionEnvironment"]',
               'Control Plane Execution Environment'
             );
-            cy.multiSelectByDataCy('instance-group-select-form-group', ['default']);
+            cy.multiSelectByDataCy('instance-group-select', ['default']);
             cy.clickButton(/^Next/);
             cy.get('[data-cy="wizard-nav-item-credential_passwords"]').should('exist');
             cy.get('[data-cy="launch-ssh-password"]').type('password');
@@ -178,7 +179,7 @@ describe('Job Templates Tests', function () {
               '[data-cy="executionEnvironment"]',
               'Control Plane Execution Environment'
             );
-            cy.multiSelectByDataCy('instance-group-select-form-group', ['default']);
+            cy.multiSelectByDataCy('instance-group-select', ['default']);
             cy.clickButton(/^Next/);
             cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`).as(
               'postLaunch'
@@ -223,6 +224,7 @@ describe('Job Templates Tests', function () {
       const newDescription = 'this is a new description after editing';
 
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.selectTableRow(jobTemplate.name);
       cy.getBy('[data-cy="edit-template"]').click();
       cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
@@ -245,6 +247,7 @@ describe('Job Templates Tests', function () {
       const newDescription = 'this is a new description after editing';
 
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
@@ -276,6 +279,7 @@ describe('Job Templates Tests', function () {
           }).then((jt) => {
             jobTemplateToEdit = jt;
             cy.navigateTo('awx', 'templates');
+            cy.verifyPageTitle('Templates');
             cy.filterTableBySearch(jobTemplateToEdit.name);
             cy.clickTableRowLink('name', jobTemplateToEdit.name, {
               disableFilter: true,
@@ -284,6 +288,7 @@ describe('Job Templates Tests', function () {
             cy.getByDataCy('inventory')
               .contains(jobTemplateToEdit.summary_fields.inventory.name)
               .click();
+            cy.verifyPageTitle(jobTemplateToEdit.summary_fields.inventory.name);
             cy.getBy(`[data-cy="actions-dropdown"]`).click();
             cy.getBy('[data-cy="delete-inventory"]').click();
             cy.clickModalConfirmCheckbox();
@@ -294,6 +299,7 @@ describe('Job Templates Tests', function () {
             cy.wait('@deleteInventory');
             cy.verifyPageTitle('Inventories');
             cy.navigateTo('awx', 'templates');
+            cy.verifyPageTitle('Templates');
             cy.filterTableBySearch(jobTemplateToEdit.name);
             cy.clickTableRowLink('name', jobTemplateToEdit.name, {
               disableFilter: true,
@@ -319,6 +325,7 @@ describe('Job Templates Tests', function () {
     it('can edit a job template to enable provisioning callback and enable webhook, then edit again to disable those options', function () {
       const jtURL = document.location.origin + awxAPI`/job_templates/${jobTemplate.id.toString()}`;
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.get('[data-cy="enabled-options"]').should('not.exist');
@@ -462,6 +469,7 @@ describe('Job Templates Tests', function () {
 
     it('can copy an existing job template from the list', function () {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.intercept(
         awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
       ).as('getSearchResults');
@@ -489,6 +497,7 @@ describe('Job Templates Tests', function () {
 
     it('can copy an existing job template from the details page', function () {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -505,6 +514,7 @@ describe('Job Templates Tests', function () {
         .then((jt: JobTemplate) => {
           copiedJobTemplate = jt;
           cy.navigateTo('awx', 'templates');
+          cy.verifyPageTitle('Templates');
           cy.filterTableBySearch(copiedJobTemplate.name);
           cy.clickTableRowLink('name', copiedJobTemplate.name, {
             disableFilter: true,
@@ -533,6 +543,7 @@ describe('Job Templates Tests', function () {
 
     it('can delete a job template from the list line item', function () {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.intercept(
         awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
       ).as('getSearchResults');
@@ -558,6 +569,7 @@ describe('Job Templates Tests', function () {
 
     it('can delete a job template from the details page', function () {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
@@ -581,6 +593,7 @@ describe('Job Templates Tests', function () {
       }).then((jt) => {
         jobTemplate2 = jt;
         cy.navigateTo('awx', 'templates');
+        cy.verifyPageTitle('Templates');
         cy.selectTableRow(jobTemplate.name);
         cy.selectTableRow(jobTemplate2.name);
         cy.clickToolbarKebabAction('delete-templates');
@@ -659,6 +672,7 @@ describe('Job Templates Tests', function () {
 
     it('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -673,6 +687,7 @@ describe('Job Templates Tests', function () {
 
     it('can toggle the Job Templates -> Notification on and off for job start', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -684,6 +699,7 @@ describe('Job Templates Tests', function () {
 
     it('can toggle the Job Templates -> Notification on and off for job success', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -695,6 +711,7 @@ describe('Job Templates Tests', function () {
 
     it('can toggle the Job Templates -> Notification on and off for job failure', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,

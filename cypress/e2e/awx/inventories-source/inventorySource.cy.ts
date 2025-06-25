@@ -82,7 +82,7 @@ describe('Inventory Sources', () => {
               cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
             });
           });
-          cy.singleSelectByDataCy('executionEnvironment-form-group', executionEnvironment.name);
+          cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
           cy.singleSelectByDataCy('credential', credentialName);
           cy.getByDataCy('host-filter').type('/^test$/');
           cy.getByDataCy('verbosity').type('1');
@@ -137,7 +137,7 @@ describe('Inventory Sources', () => {
         });
         cy.get('div[id="inventory-typeahead-select"]').within(() => {
           cy.get('ul').within(() => {
-            cy.get('button').contains('changes').click();
+            cy.get('button').contains('inventories/changes').click();
           });
         });
         cy.getByDataCy('overwrite').check();

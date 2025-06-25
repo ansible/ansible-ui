@@ -18,7 +18,7 @@ import { Alert } from '@patternfly/react-core';
 import { useCallback, useEffect } from 'react';
 import { FieldPath, FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import useSWR, { useSWRConfig } from 'swr';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
@@ -162,7 +162,7 @@ export function CreateCredential() {
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.CredentialPage, { params: { id: newCredential.id } });
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -204,9 +204,9 @@ export function EditCredential() {
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
     await patchRequest(edaAPI`/eda-credentials/${id.toString()}/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
-    navigate(-1);
+    void navigate(-1);
   };
-  const onCancel = () => navigate(-1);
+  const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (!credential) {

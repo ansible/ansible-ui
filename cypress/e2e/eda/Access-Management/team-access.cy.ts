@@ -160,6 +160,7 @@ describe('Check if the build includes EDA', () => {
           cy.contains('h1', resource_object.name).should('be.visible');
           cy.clickTab('Team Access', true);
           cy.get('a[data-cy="add-roles"]').click();
+          cy.verifyPageTitle('Add roles');
           cy.getTableRowByText(edaTeam1.name, true).within(() => {
             cy.get('input[type=checkbox]').click();
           });
