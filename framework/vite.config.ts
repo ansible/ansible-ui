@@ -40,6 +40,13 @@ export default defineConfig({
     },
   },
   test: {
+    coverage: {
+      enabled: true,
+      reporter: ['json', 'lcov', 'text'],
+      reportsDirectory: 'coverage/vitest',
+      include: ['**/*.{ts,tsx}'],
+      exclude: ['node_modules/**'],
+    },
     environment: 'happy-dom',
     setupFiles: ['vitest.setup.ts'],
     server: {

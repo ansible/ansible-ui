@@ -23,7 +23,17 @@
     "cypress",
     "playwright"
   ],
+  "nyc": {
+    "temp-directory": ".nyc_output",
+    "report-dir": "coverage/combined",
+    "reporter": [
+      "html",
+      "lcov"
+    ]
+  },
   "scripts": {
+    "coverage:fix-paths": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\"}' npx ts-node ./fix-coverage-paths.ts",
+    "nyc-report": "npm run coverage:fix-paths && npx nyc report --cwd=$(pwd) && open coverage/combined/index.html",
     "reinstall": "nx exec -- rm -rf node_modules && npm ci",
     "clean": "nx exec -- rm -rf dist build coverage test-results && rm -rf dist build coverage test-results && nx run-many --target=clean",
     "build": "nx run-many --target=build",
@@ -168,10 +178,11 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/glob": "^8.1.0",
     "@types/webpack-dev-server": "4.7.1",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
-    "@vitest/coverage-v8": "^3.0.5",
+    "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.0.9",
     "allure": "^3.0.0-beta.9",
     "allure-playwright": "^3.2.0",
@@ -188,12 +199,14 @@
     "eslint-plugin-prettier": "5.2.3",
     "eslint-plugin-react": "7.37.4",
     "eslint-plugin-react-hooks": "4.6.2",
+    "glob": "^11.0.3",
     "happy-dom": "^16.6.0",
     "husky": "9.1.7",
     "klona": "2.0.6",
     "lint-staged": "15.4.3",
     "mochawesome": "7.1.3",
     "monocart-coverage-reports": "2.12.1",
+    "nyc": "^17.1.0",
     "prettier": "3.4.2",
     "sift": "^17.1.3",
     "tsx": "^4.19.3",
