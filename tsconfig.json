@@ -4,7 +4,7 @@
     "module": "ESNext",
     "jsx": "react-jsx",
     "lib": ["ES2021", "DOM"],
-    "types": ["cypress", "cypress-react-selector", "@4tw/cypress-drag-drop"],
+    "types": ["cypress", "cypress-react-selector", "@4tw/cypress-drag-drop", "node"],
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "sourceMap": true,
@@ -37,6 +37,7 @@
     "packages",
     "platform",
     "playwright",
-    "webpack/environment.d.ts"
+    "webpack/environment.d.ts",
+    "fix-coverage-paths.ts"
   ]
 }

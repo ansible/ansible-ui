@@ -4,11 +4,11 @@
 import react from '@vitejs/plugin-react-swc';
 import selfsigned from 'selfsigned';
 import { defineConfig, PluginOption, UserConfig } from 'vite';
-import type { InlineConfig } from 'vitest/node';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
+import type { InlineConfig } from 'vitest/node';
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -91,6 +91,14 @@ const config: VitestUserConfig = {
     },
   },
   test: {
+    coverage: {
+      enabled: true,
+      reporter: ['json', 'lcov', 'text'],
+      reportsDirectory: 'coverage/vitest',
+      include: ['**/*.{ts,tsx}'],
+      exclude: ['node_modules/**'],
+    },
+
     environment: 'happy-dom',
     setupFiles: ['vitest.setup.ts'],
     server: {

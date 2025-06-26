@@ -8,7 +8,8 @@ import { login, platformUI } from './login';
 export function setupBefore(options?: { path?: string }) {
   return async ({ page }: { page: Page }) => {
     if (existsSync('coverage')) {
-      await page.coverage.startJSCoverage({ resetOnNavigation: false });
+      await page.coverage.stopJSCoverage().catch(() => {});
+      await page.coverage.startJSCoverage({ resetOnNavigation: true });
     }
     await mock(page);
     const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
@@ -21,6 +22,7 @@ export async function setupAfter({ page }: { page: Page }) {
     const coverage = await page.coverage.stopJSCoverage();
     const coverageReport = MCR(coverageOptions);
     await coverageReport.add(coverage);
+    await coverageReport.generate();
   } catch (e) {
     // DO NOTHING
   }
