@@ -1,8 +1,8 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExecutionEnvironmentAddTeams } from '../../administration/execution-environments/components/ExecutionEnvironmentAddTeams';
 import { ExecutionEnvironmentAddUsers } from '../../administration/execution-environments/components/ExecutionEnvironmentAddUsers';
+import { ExecutionEnvironmentAssignTeams } from '../../administration/execution-environments/components/ExecutionEnvironmentAssignTeams';
 import {
   CreateExecutionEnvironment,
   EditExecutionEnvironment,
@@ -70,9 +70,9 @@ export function useAwxExecutionEnvironmentRoutes() {
           element: <ExecutionEnvironmentAddUsers />,
         },
         {
-          id: AwxRoute.ExecutionEnvironmentAddTeams,
-          path: ':id/team-access/add',
-          element: <ExecutionEnvironmentAddTeams />,
+          id: AwxRoute.ExecutionEnvironmentAssignTeams,
+          path: ':id/team-access/assign',
+          element: <ExecutionEnvironmentAssignTeams />,
         },
       ],
     }),

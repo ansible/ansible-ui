@@ -33,7 +33,7 @@ export function ExecutionEnvironmentTeamAccess() {
       service="awx"
       id={params.id || ''}
       type={'executionenvironment'}
-      addRolesRoute={AwxRoute.ExecutionEnvironmentAddTeams as string}
+      addRolesRoute={AwxRoute.ExecutionEnvironmentAssignTeams as string}
     />
   );
 }

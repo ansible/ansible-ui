@@ -111,8 +111,8 @@ export function useGetPlatformOrganizationsRoutes() {
           element: <PlatformOrganizationTeamsAddRoles />,
         },
         {
-          id: PlatformRoute.OrganizationAddTeams,
-          path: ':id/teams/add-teams',
+          id: PlatformRoute.OrganizationAssignTeams,
+          path: ':id/teams/assign-teams',
           element: <PlatformOrganizationManageUserRoles />,
         },
         {

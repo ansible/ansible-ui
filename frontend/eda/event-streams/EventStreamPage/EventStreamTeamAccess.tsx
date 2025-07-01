@@ -9,7 +9,7 @@ export function EventStreamTeamAccess() {
       service="eda"
       id={params.id || ''}
       type={'eventstream'}
-      addRolesRoute={EdaRoute.EventStreamAddTeams}
+      addRolesRoute={EdaRoute.EventStreamAssignTeams}
     />
   );
 }

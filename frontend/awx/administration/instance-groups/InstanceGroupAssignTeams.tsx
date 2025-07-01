@@ -12,54 +12,53 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
-import { edaAPI } from '../../common/eda-utils';
-import { edaErrorAdapter } from '../../common/edaErrorAdapter';
-import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
-import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaTeam } from '../../interfaces/EdaTeam';
-import { EdaRoute } from '../../main/EdaRoutes';
+import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectTeamsStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { Role } from '../../interfaces/Role';
+import { Team } from '../../interfaces/Team';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 interface WizardFormValues {
-  teams: EdaTeam[];
-  edaRoles: EdaRbacRole[];
+  teams: Team[];
+  awxRoles: Role[];
 }
 
 interface TeamRolePair {
-  team: EdaTeam;
-  role: EdaRbacRole;
+  team: Team;
+  role: Role;
 }
 
-export function EdaEventStreamAddTeams() {
+export function InstanceGroupAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: eventstream, isLoading } = useGet<EdaEventStream>(
-    edaAPI`/event-streams/${params.id ?? ''}/`
+  const { data: instanceGroup, isLoading } = useGet<InstanceGroup>(
+    awxAPI`/instance_groups/${params.id ?? ''}/`
   );
-  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const teamRoleProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !eventstream) return <LoadingPage />;
+  if (isLoading || !instanceGroup) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <EdaSelectTeamsStep
+        <AwxSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{eventstreamName}}.',
+            'Select the team(s) that you want to give access to {{instanceGroupName}}.',
             {
-              eventstreamName: eventstream?.name,
+              instanceGroupName: instanceGroup?.name,
             }
           )}
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: EdaTeam[] };
+        const { teams } = formData as WizardFormValues;
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
@@ -69,17 +68,17 @@ export function EdaEventStreamAddTeams() {
       id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
-        <EdaSelectRolesStep
-          contentType="eventstream"
+        <AwxSelectRolesStep
+          contentType="instancegroup"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{eventstreamName}}.', {
-            eventstreamName: eventstream?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{instanceGroupName}}.', {
+            instanceGroupName: instanceGroup?.name,
           })}
         />
       ),
       validate: (formData, _) => {
-        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
-        if (!edaRoles?.length) {
+        const { awxRoles } = formData as WizardFormValues;
+        if (!awxRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +91,10 @@ export function EdaEventStreamAddTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, edaRoles } = data;
+    const { teams, awxRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of edaRoles) {
+      for (const role of awxRoles) {
         items.push({ team, role });
       }
     }
@@ -109,18 +108,18 @@ export function EdaEventStreamAddTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(edaAPI`/role_team_assignments/`, {
+          postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'eda.eventstream',
-            object_id: eventstream.id,
+            content_type: 'instancegroup',
+            object_id: instanceGroup.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.EventStreamTeamAccess, {
-            params: { id: eventstream.id.toString() },
+          pageNavigate(AwxRoute.InstanceGroupTeamAccess, {
+            params: { id: instanceGroup.id.toString() },
           });
         },
       });
@@ -132,25 +131,28 @@ export function EdaEventStreamAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('EventStreams'), to: getPageUrl(EdaRoute.EventStreams) },
+          { label: t('Instance groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
           {
-            label: eventstream?.name,
-            to: getPageUrl(EdaRoute.EventStreamDetails, { params: { id: eventstream?.id } }),
+            label: instanceGroup?.name,
+            to: getPageUrl(AwxRoute.InstanceGroupDetails, {
+              params: {
+                id: instanceGroup?.id,
+              },
+            }),
           },
           {
-            label: t('Team Access'),
-            to: getPageUrl(EdaRoute.EventStreamTeamAccess, { params: { id: eventstream?.id } }),
+            label: t('Team access'),
+            to: getPageUrl(AwxRoute.InstanceGroupTeamAccess, { params: { id: instanceGroup?.id } }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
-        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.EventStreamTeamAccess, { params: { id: eventstream?.id } });
+          pageNavigate(AwxRoute.InstanceGroupTeamAccess, { params: { id: instanceGroup?.id } });
         }}
       />
     </PageLayout>

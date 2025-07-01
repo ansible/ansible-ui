@@ -9,7 +9,7 @@ export function InventoryTeamAccess() {
       service="awx"
       id={params.id || ''}
       type={'inventory'}
-      addRolesRoute={AwxRoute.InventoryAddTeams as string}
+      addRolesRoute={AwxRoute.InventoryAssignTeams as string}
     />
   );
 }

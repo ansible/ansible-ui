@@ -12,53 +12,54 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
-import { awxAPI } from '../../common/api/awx-utils';
-import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
-import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { Role } from '../../interfaces/Role';
-import { Team } from '../../interfaces/Team';
-import { AwxRoute } from '../../main/AwxRoutes';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { edaAPI } from '../../common/eda-utils';
+import { edaErrorAdapter } from '../../common/edaErrorAdapter';
+import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { EdaTeam } from '../../interfaces/EdaTeam';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
-  teams: Team[];
-  awxRoles: Role[];
+  teams: EdaTeam[];
+  edaRoles: EdaRbacRole[];
 }
 
 interface TeamRolePair {
-  team: Team;
-  role: Role;
+  team: EdaTeam;
+  role: EdaRbacRole;
 }
 
-export function InstanceGroupAddTeams() {
+export function EdaRulebookActivationAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: instanceGroup, isLoading } = useGet<InstanceGroup>(
-    awxAPI`/instance_groups/${params.id ?? ''}/`
+  const { data: activation, isLoading } = useGet<EdaRulebookActivation>(
+    edaAPI`/activations/${params.id ?? ''}/`
   );
-  const teamRoleProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
+  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !instanceGroup) return <LoadingPage />;
+  if (isLoading || !activation) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <AwxSelectTeamsStep
+        <EdaSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{instanceGroupName}}.',
+            'Select the team(s) that you want to give access to {{activationName}}.',
             {
-              instanceGroupName: instanceGroup?.name,
+              activationName: activation?.name,
             }
           )}
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as WizardFormValues;
+        const { teams } = formData as { teams: EdaTeam[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
@@ -68,17 +69,17 @@ export function InstanceGroupAddTeams() {
       id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="instancegroup"
+        <EdaSelectRolesStep
+          contentType="activation"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{instanceGroupName}}.', {
-            instanceGroupName: instanceGroup?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{activationName}}.', {
+            activationName: activation?.name,
           })}
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as WizardFormValues;
-        if (!awxRoles?.length) {
+        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
+        if (!edaRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -91,10 +92,10 @@ export function InstanceGroupAddTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, awxRoles } = data;
+    const { teams, edaRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of awxRoles) {
+      for (const role of edaRoles) {
         items.push({ team, role });
       }
     }
@@ -108,18 +109,18 @@ export function InstanceGroupAddTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(awxAPI`/role_team_assignments/`, {
+          postRequest(edaAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'instancegroup',
-            object_id: instanceGroup.id,
+            content_type: 'eda.activation',
+            object_id: activation.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.InstanceGroupTeamAccess, {
-            params: { id: instanceGroup.id.toString() },
+          pageNavigate(EdaRoute.RulebookActivationTeamAccess, {
+            params: { id: activation.id.toString() },
           });
         },
       });
@@ -131,28 +132,27 @@ export function InstanceGroupAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Instance groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
+          { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
           {
-            label: instanceGroup?.name,
-            to: getPageUrl(AwxRoute.InstanceGroupDetails, {
-              params: {
-                id: instanceGroup?.id,
-              },
-            }),
+            label: activation?.name,
+            to: getPageUrl(EdaRoute.RulebookActivationDetails, { params: { id: activation?.id } }),
           },
           {
-            label: t('Team access'),
-            to: getPageUrl(AwxRoute.InstanceGroupTeamAccess, { params: { id: instanceGroup?.id } }),
+            label: t('Team Access'),
+            to: getPageUrl(EdaRoute.RulebookActivationTeamAccess, {
+              params: { id: activation?.id },
+            }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.InstanceGroupTeamAccess, { params: { id: instanceGroup?.id } });
+          pageNavigate(EdaRoute.RulebookActivationTeamAccess, { params: { id: activation?.id } });
         }}
       />
     </PageLayout>

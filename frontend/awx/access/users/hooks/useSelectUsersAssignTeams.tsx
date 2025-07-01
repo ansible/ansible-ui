@@ -5,11 +5,11 @@ import { type ResourceType } from '../../common/types';
 import { useAddUsersToResources } from './useAddUsersToResources';
 import { useSelectUsers } from './useSelectUsers';
 
-export function useSelectUsersAddTeams(onClose?: (users: AwxUser[]) => void) {
+export function useSelectUsersAssignTeams(onClose?: (users: AwxUser[]) => void) {
   const { t } = useTranslation();
   const selectUsers = useSelectUsers();
   const addUsersToResources = useAddUsersToResources();
-  const selectUsersAddTeams = useCallback(
+  const selectUsersAssignTeams = useCallback(
     (teams: ResourceType[]) => {
       selectUsers(t('Add users to teams', { count: teams.length }), (users: AwxUser[]) => {
         addUsersToResources(users, teams, onClose);
@@ -17,5 +17,5 @@ export function useSelectUsersAddTeams(onClose?: (users: AwxUser[]) => void) {
     },
     [addUsersToResources, onClose, selectUsers, t]
   );
-  return selectUsersAddTeams;
+  return selectUsersAssignTeams;
 }

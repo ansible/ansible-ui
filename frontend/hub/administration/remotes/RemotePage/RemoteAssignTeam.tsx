@@ -23,7 +23,7 @@ import { PulpItemsResponse } from '../../../common/useHubView';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { HubUserGroup } from '../../../interfaces/expanded/HubUser';
 import { HubRoute } from '../../../main/HubRoutes';
-import { Repository } from '../Repository';
+import { HubRemote } from '../Remotes';
 
 interface WizardFormValues {
   teams: HubUserGroup[]; // Assuming groups will map to team
@@ -35,19 +35,19 @@ interface TeamRolePair {
   role: HubRbacRole;
 }
 
-export function RepositoryAddTeams() {
+export function RemoteAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const teamProgressDialog = useHubBulkActionDialog<TeamRolePair>();
   const params = useParams<{ id: string }>();
-
-  const { data, error, refresh } = useGet<PulpItemsResponse<Repository>>(
-    params.id ? pulpAPI`/repositories/ansible/ansible/?name=${params.id}` : ''
+  const { data, error, refresh } = useGet<PulpItemsResponse<HubRemote>>(
+    pulpAPI`/remotes/ansible/collection/?name=${params.id}`
   );
-  let repository: Repository | undefined = undefined;
-  if (data && data.results && data.results.length > 0) {
-    repository = data.results[0];
+
+  let remote: HubRemote | undefined = undefined;
+  if (data?.results && data.results.length > 0) {
+    remote = data.results[0];
   }
 
   if (!data && !error) {
@@ -65,9 +65,9 @@ export function RepositoryAddTeams() {
       inputs: (
         <HubSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{repository}}.',
+            'Select the team(s) that you want to give access to {{remote}}.',
             {
-              repository: repository?.name,
+              remote: remote?.name,
             }
           )}
         />
@@ -84,10 +84,10 @@ export function RepositoryAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <HubSelectRolesStep
-          contentType="ansiblerepository"
+          contentType="collectionremote"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{repository}}.', {
-            repository: repository?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{remote}}.', {
+            remote: remote?.name,
           })}
         />
       ),
@@ -126,15 +126,15 @@ export function RepositoryAddTeams() {
           postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'galaxy.ansiblerepository',
-            object_id: parsePulpIDFromURL(repository?.pulp_href),
+            content_type: 'galaxy.collectionremote',
+            object_id: parsePulpIDFromURL(remote?.pulp_href),
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(HubRoute.RepositoryTeamAccess, {
-            params: { id: repository?.name },
+          pageNavigate(HubRoute.RemoteTeamAccess, {
+            params: { id: remote?.name },
           });
         },
       });
@@ -146,14 +146,14 @@ export function RepositoryAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
+          { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
           {
-            label: repository?.name,
-            to: getPageUrl(HubRoute.RepositoryDetails, { params: { id: repository?.name } }),
+            label: remote?.name,
+            to: getPageUrl(HubRoute.RemoteDetails, { params: { id: remote?.name } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(HubRoute.RepositoryTeamAccess, { params: { id: repository?.name } }),
+            to: getPageUrl(HubRoute.RemoteTeamAccess, { params: { id: remote?.name } }),
           },
           { label: t('Add roles') },
         ]}
@@ -164,7 +164,7 @@ export function RepositoryAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(HubRoute.RepositoryTeamAccess, { params: { id: repository?.name } });
+          pageNavigate(HubRoute.RemoteTeamAccess, { params: { id: remote?.name } });
         }}
       />
     </PageLayout>

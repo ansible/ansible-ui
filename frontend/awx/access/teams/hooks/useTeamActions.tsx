@@ -12,7 +12,7 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
-import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
+import { useSelectUsersAssignTeams } from '../../users/hooks/useSelectUsersAssignTeams';
 import { useDeleteTeams } from './useDeleteTeams';
 
 export function useTeamActions(options: {
@@ -23,7 +23,7 @@ export function useTeamActions(options: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
-  const selectUsersAddTeams = useSelectUsersAddTeams();
+  const selectUsersAssignTeams = useSelectUsersAssignTeams();
   const selectAndRemoveUsersFromTeam = useSelectAndRemoveUsersFromTeam();
   const { activeAwxUser } = useAwxActiveUser();
 
@@ -67,7 +67,7 @@ export function useTeamActions(options: {
         icon: PlusCircleIcon,
         label: t('Add users to teams'),
         isDisabled: (team: Team) => cannotAddUsers(team),
-        onClick: (team) => selectUsersAddTeams([team]),
+        onClick: (team) => selectUsersAssignTeams([team]),
       },
       {
         type: PageActionType.Button,
@@ -94,7 +94,7 @@ export function useTeamActions(options: {
     deleteTeams,
     pageNavigate,
     selectAndRemoveUsersFromTeam,
-    selectUsersAddTeams,
+    selectUsersAssignTeams,
     t,
   ]);
 }

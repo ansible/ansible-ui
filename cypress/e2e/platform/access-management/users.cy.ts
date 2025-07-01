@@ -211,7 +211,7 @@ describe('Users - Teams and Roles Tab Tests', () => {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.clickTableRowLink('username', createdPlatformUser.username);
       cy.clickTab('Teams', true);
-      cy.get('[data-cy="add-teams"]').click();
+      cy.get('[data-cy="assign-teams"]').click();
       cy.getModal().within(() => {
         cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
         cy.selectTableRowByCheckbox('name', platformTeam.name, { disableFilter: true });

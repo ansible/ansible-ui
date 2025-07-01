@@ -9,7 +9,7 @@ export function DecisionEnvironmentTeamAccess() {
       service="eda"
       id={params.id || ''}
       type={'decisionenvironment'}
-      addRolesRoute={EdaRoute.DecisionEnvironmentAddTeams}
+      addRolesRoute={EdaRoute.DecisionEnvironmentAssignTeams}
     />
   );
 }

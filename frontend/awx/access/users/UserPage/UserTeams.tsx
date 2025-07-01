@@ -61,7 +61,7 @@ function UserTeamsInternal(props: { user: AwxUser }) {
         isDisabled: canAddUserToTeam
           ? undefined
           : t(
-              'You do not have permissions to add this user to a team. Please contact your organization administrator if there is an issue with your access.'
+              'You do not have permissions to assign this user to a team. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: () => selectTeamsAddUsers([user]),
       },
@@ -108,20 +108,20 @@ function UserTeamsInternal(props: { user: AwxUser }) {
           canAddUserToTeam ? (
             <PageTableEmptyState
               title={t('This user currently does not belong to any teams.')}
-              description={t('To get started, add the user to a team.')}
+              description={t('To get started, assign the user to a team.')}
             >
               <Button
                 variant={ButtonVariant.primary}
                 icon={<PlusCircleIcon />}
                 onClick={() => selectTeamsAddUsers([user])}
               >
-                {t('Add team')}
+                {t('Assign team')}
               </Button>
             </PageTableEmptyState>
           ) : (
             <PageTableEmptyState
               icon={CubesIcon}
-              title={t('You do not have permissions to add this user to a team.')}
+              title={t('You do not have permissions to assign this user to a team.')}
               description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
               )}

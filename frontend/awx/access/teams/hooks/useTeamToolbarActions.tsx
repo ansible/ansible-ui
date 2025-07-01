@@ -14,14 +14,14 @@ import { IAwxView } from '../../../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
+import { useSelectUsersAssignTeams } from '../../users/hooks/useSelectUsersAssignTeams';
 import { useDeleteTeams } from './useDeleteTeams';
 
 export function useTeamToolbarActions(view: IAwxView<Team>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
-  const selectUsersAddTeams = useSelectUsersAddTeams();
+  const selectUsersAssignTeams = useSelectUsersAssignTeams();
   // const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
@@ -48,7 +48,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
         label: t('Add users to teams'),
-        onClick: () => selectUsersAddTeams(view.selectedItems),
+        onClick: () => selectUsersAssignTeams(view.selectedItems),
       },
       {
         type: PageActionType.Button,
@@ -67,6 +67,6 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         isDanger: true,
       },
     ],
-    [canCreateTeam, deleteTeams, getPageUrl, selectUsersAddTeams, t, view]
+    [canCreateTeam, deleteTeams, getPageUrl, selectUsersAssignTeams, t, view]
   );
 }

@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
-import { JobTemplateAddTeams } from '../../resources/templates/JobTemplateAddTeams';
 import { JobTemplateAddUsers } from '../../resources/templates/JobTemplateAddUsers';
+import { JobTemplateAssignTeams } from '../../resources/templates/JobTemplateAssignTeams';
 import { CreateJobTemplate, EditJobTemplate } from '../../resources/templates/TemplateForm';
 import { TemplateDetails } from '../../resources/templates/TemplatePage/TemplateDetails';
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
@@ -19,8 +19,8 @@ import {
 import { TemplateTeamAccess } from '../../resources/templates/TemplatePage/TemplateTeamAccess';
 import { TemplateUserAccess } from '../../resources/templates/TemplatePage/TemplateUserAccess';
 import { Templates } from '../../resources/templates/Templates';
-import { WorkflowJobTemplateAddTeams } from '../../resources/templates/WorkflowJobTemplateAddTeams';
 import { WorkflowJobTemplateAddUsers } from '../../resources/templates/WorkflowJobTemplateAddUsers';
+import { WorkflowJobTemplateAssignTeams } from '../../resources/templates/WorkflowJobTemplateAssignTeams';
 import {
   CreateWorkflowJobTemplate,
   EditWorkflowJobTemplate,
@@ -163,9 +163,9 @@ export function useAwxTemplateRoutes() {
               ],
             },
             {
-              id: AwxRoute.JobTemplateAddTeams,
-              path: ':id/team-access/add',
-              element: <JobTemplateAddTeams />,
+              id: AwxRoute.JobTemplateAssignTeams,
+              path: ':id/team-access/assign',
+              element: <JobTemplateAssignTeams />,
             },
             {
               id: AwxRoute.JobTemplateAddUsers,
@@ -306,9 +306,9 @@ export function useAwxTemplateRoutes() {
               ],
             },
             {
-              id: AwxRoute.WorkflowJobTemplateAddTeams,
-              path: ':id/team-access/add',
-              element: <WorkflowJobTemplateAddTeams />,
+              id: AwxRoute.WorkflowJobTemplateAssignTeams,
+              path: ':id/team-access/assign',
+              element: <WorkflowJobTemplateAssignTeams />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateAddUsers,

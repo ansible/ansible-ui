@@ -17,9 +17,9 @@ import { AwxSelectTeamsStep } from '../../access/common/AwxRolesWizardSteps/AwxS
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
-import { JobTemplate } from '../../interfaces/JobTemplate';
 import { Role } from '../../interfaces/Role';
 import { Team } from '../../interfaces/Team';
+import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
 
 interface WizardFormValues {
@@ -32,13 +32,13 @@ interface TeamRolePair {
   role: Role;
 }
 
-export function JobTemplateAddTeams() {
+export function WorkflowJobTemplateAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: template, isLoading } = useGet<JobTemplate>(
-    awxAPI`/job_templates/${params.id ?? ''}/`
+  const { data: template, isLoading } = useGet<WorkflowJobTemplate>(
+    awxAPI`/workflow_job_templates/${params.id ?? ''}/`
   );
   const teamRoleProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
@@ -70,7 +70,7 @@ export function JobTemplateAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <AwxSelectRolesStep
-          contentType="jobtemplate"
+          contentType="workflowjobtemplate"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{templateName}}.', {
             templateName: template?.name,
@@ -112,14 +112,14 @@ export function JobTemplateAddTeams() {
           postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'jobtemplate',
+            content_type: 'workflowjobtemplate',
             object_id: template.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.JobTemplateTeamAccess, {
+          pageNavigate(AwxRoute.WorkflowJobTemplateTeamAccess, {
             params: { id: template.id.toString() },
           });
         },
@@ -135,23 +135,25 @@ export function JobTemplateAddTeams() {
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           {
             label: template?.name,
-            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: template?.id } }),
+            to: getPageUrl(AwxRoute.WorkflowJobTemplateDetails, { params: { id: template?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.JobTemplateTeamAccess, { params: { id: template?.id } }),
+            to: getPageUrl(AwxRoute.WorkflowJobTemplateTeamAccess, {
+              params: { id: template?.id },
+            }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
-        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.JobTemplateTeamAccess, { params: { id: template?.id } });
+          pageNavigate(AwxRoute.WorkflowJobTemplateTeamAccess, { params: { id: template?.id } });
         }}
+        errorAdapter={awxErrorAdapter}
       />
     </PageLayout>
   );

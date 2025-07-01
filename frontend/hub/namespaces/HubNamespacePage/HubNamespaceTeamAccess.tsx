@@ -32,7 +32,7 @@ export function HubNamespaceTeamAccess() {
       service="hub"
       id={namespace?.id.toString() || ''}
       type={'namespace'}
-      addRolesRoute={HubRoute.NamespaceAddTeams}
+      addRolesRoute={HubRoute.NamespaceAssignTeams}
     />
   );
 }

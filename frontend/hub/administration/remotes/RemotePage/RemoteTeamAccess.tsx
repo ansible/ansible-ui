@@ -34,7 +34,7 @@ export function RemoteTeamAccess() {
       service="hub"
       id={parsePulpIDFromURL(remote?.pulp_href) || ''}
       type={'collectionremote'}
-      addRolesRoute={HubRoute.RemoteAddTeams}
+      addRolesRoute={HubRoute.RemoteAssignTeams}
     />
   );
 }

@@ -17,7 +17,7 @@ export function OrganizationTeamsAccess() {
       removeConfirmationText={(count: number) =>
         t('Yes, I confirm that I want to remove these {{count}} teams.', { count })
       }
-      addRolesRoute={AwxRoute.OrganizationAddTeams as string}
+      addRolesRoute={AwxRoute.OrganizationAssignTeams as string}
     />
   );
 }

@@ -18,8 +18,8 @@ import { InventorySources } from '../../resources/inventories/InventoryPage/Inve
 import { InventoryTeamAccess } from '../../resources/inventories/InventoryPage/InventoryTeamAccess';
 import { InventoryUserAccess } from '../../resources/inventories/InventoryPage/InventoryUserAccess';
 import { InventoryRunCommand } from '../../resources/inventories/InventoryRunCommand';
-import { InventoryAddTeams } from '../../resources/inventories/components/InventoryAddTeams';
 import { InventoryAddUsers } from '../../resources/inventories/components/InventoryAddUsers';
+import { InventoryAssignTeams } from '../../resources/inventories/components/InventoryAssignTeams';
 import {
   CreateGroup,
   CreateRelatedGroup,
@@ -289,9 +289,9 @@ export function useAwxInventoryRoutes() {
           element: <InventoryAddUsers />,
         },
         {
-          id: AwxRoute.InventoryAddTeams,
-          path: ':id/team-access/add',
-          element: <InventoryAddTeams />,
+          id: AwxRoute.InventoryAssignTeams,
+          path: ':id/team-access/assign',
+          element: <InventoryAssignTeams />,
         },
         {
           path: '',

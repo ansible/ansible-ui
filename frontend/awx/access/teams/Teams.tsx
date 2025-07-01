@@ -3,6 +3,7 @@ import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/Pag
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,6 @@ import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -65,7 +65,7 @@ export function Teams() {
           canCreateTeam ? (
             <PageTableEmptyState
               title={t('No teams found')}
-              description={t('There are currently no teams added to your organization.')}
+              description={t('There are currently no teams assigned to your organization.')}
             >
               <ButtonLink
                 icon={<PlusCircleIcon />}

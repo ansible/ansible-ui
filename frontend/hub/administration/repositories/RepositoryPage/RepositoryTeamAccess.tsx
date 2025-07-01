@@ -34,7 +34,7 @@ export function RepositoryTeamAccess() {
       service="hub"
       id={parsePulpIDFromURL(repository?.pulp_href) || ''}
       type={'ansiblerepository'}
-      addRolesRoute={HubRoute.RepositoryAddTeams}
+      addRolesRoute={HubRoute.RepositoryAssignTeams}
     />
   );
 }

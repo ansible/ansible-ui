@@ -18,7 +18,7 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { Organization } from '../../../interfaces/Organization';
+import { Inventory } from '../../../interfaces/Inventory';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -32,17 +32,17 @@ interface TeamRolePair {
   role: AwxRbacRole;
 }
 
-export function OrganizationAddTeams() {
+export function InventoryAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: organization, isLoading } = useGet<Organization>(
-    awxAPI`/organizations/${params.id ?? ''}/`
+  const { data: inventory, isLoading } = useGet<Inventory>(
+    awxAPI`/inventories/${params.id ?? ''}/`
   );
   const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !organization) return <LoadingPage />;
+  if (isLoading || !inventory) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -51,9 +51,9 @@ export function OrganizationAddTeams() {
       inputs: (
         <AwxSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{organizationName}}.',
+            'Select the team(s) that you want to give access to {{inventoryName}}.',
             {
-              organizationName: organization?.name,
+              inventoryName: inventory?.name,
             }
           )}
         />
@@ -70,10 +70,10 @@ export function OrganizationAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <AwxSelectRolesStep
-          contentType="organization"
+          contentType="inventory"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{organizationName}}.', {
-            organizationName: organization?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{inventoryName}}.', {
+            inventoryName: inventory?.name,
           })}
         />
       ),
@@ -112,15 +112,15 @@ export function OrganizationAddTeams() {
           postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'awx.organization',
-            object_id: organization.id,
+            content_type: 'awx.inventory',
+            object_id: inventory.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.OrganizationTeamsAccess, {
-            params: { id: organization.id.toString() },
+          pageNavigate(AwxRoute.InventoryTeamAccess, {
+            params: { id: inventory.id.toString() },
           });
         },
       });
@@ -132,14 +132,14 @@ export function OrganizationAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Organizations'), to: getPageUrl(AwxRoute.Organizations) },
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           {
-            label: organization?.name,
-            to: getPageUrl(AwxRoute.OrganizationDetails, { params: { id: organization?.id } }),
+            label: inventory?.name,
+            to: getPageUrl(AwxRoute.InventoryDetails, { params: { id: inventory?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.OrganizationTeamsAccess, { params: { id: organization?.id } }),
+            to: getPageUrl(AwxRoute.InventoryTeamAccess, { params: { id: inventory?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -150,7 +150,7 @@ export function OrganizationAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.OrganizationTeamsAccess, { params: { id: organization?.id } });
+          pageNavigate(AwxRoute.InventoryTeamAccess, { params: { id: inventory?.id } });
         }}
       />
     </PageLayout>
