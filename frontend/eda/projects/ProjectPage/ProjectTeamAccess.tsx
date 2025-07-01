@@ -9,7 +9,7 @@ export function ProjectTeamAccess() {
       service="eda"
       id={params.id || ''}
       type={'project'}
-      addRolesRoute={EdaRoute.ProjectAddTeams}
+      addRolesRoute={EdaRoute.ProjectAssignTeams}
     />
   );
 }

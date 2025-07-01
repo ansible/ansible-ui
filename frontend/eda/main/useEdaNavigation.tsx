@@ -11,8 +11,8 @@ import { CredentialTypeCredentials } from '../access/credential-types/Credential
 import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
 import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
 import { CredentialTypes } from '../access/credential-types/CredentialTypes';
-import { EdaCredentialAddTeams } from '../access/credentials/components/EdaCredentialAddTeams';
 import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
+import { EdaCredentialAssignTeams } from '../access/credentials/components/EdaCredentialAssignTeams';
 import { CreateCredential, EditCredential } from '../access/credentials/CredentialForm';
 import { CredentialDetails } from '../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
@@ -37,8 +37,8 @@ import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
 import { MyPage } from '../access/users/UserPage/MyPage';
 import { UserPage } from '../access/users/UserPage/UserPage';
 import { Users } from '../access/users/Users';
-import { EdaDecisionEnvironmentAddTeams } from '../decision-environments/components/EdaDecisionEnvironmentAddTeams';
 import { EdaDecisionEnvironmentAddUsers } from '../decision-environments/components/EdaDecisionEnvironmentAddUsers';
+import { EdaDecisionEnvironmentAssignTeams } from '../decision-environments/components/EdaDecisionEnvironmentAssignTeams';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -48,8 +48,8 @@ import { DecisionEnvironmentPage } from '../decision-environments/DecisionEnviro
 import { DecisionEnvironmentTeamAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentTeamAccess';
 import { DecisionEnvironmentUserAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentUserAccess';
 import { DecisionEnvironments } from '../decision-environments/DecisionEnvironments';
-import { EdaEventStreamAddTeams } from '../event-streams/components/EdaEventStreamAddTeams';
 import { EdaEventStreamAddUsers } from '../event-streams/components/EdaEventStreamAddUsers';
+import { EdaEventStreamAssignTeams } from '../event-streams/components/EdaEventStreamAssignTeams';
 import { CreateEventStream, EditEventStream } from '../event-streams/EventStreamForm';
 import { EventStreamActivations } from '../event-streams/EventStreamPage/EventStreamActivations';
 import { EventStreamDetails } from '../event-streams/EventStreamPage/EventStreamDetails';
@@ -58,8 +58,8 @@ import { EventStreamTeamAccess } from '../event-streams/EventStreamPage/EventStr
 import { EventStreamUserAccess } from '../event-streams/EventStreamPage/EventStreamUserAccess';
 import { EventStreams } from '../event-streams/EventStreams';
 import { EdaOverview } from '../overview/EdaOverview';
-import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
 import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
+import { EdaProjectAssignTeams } from '../projects/components/EdaProjectAssignTeams';
 import { CreateProject, EditProject } from '../projects/EditProject';
 import { ProjectDetails } from '../projects/ProjectPage/ProjectDetails';
 import { ProjectPage } from '../projects/ProjectPage/ProjectPage';
@@ -73,8 +73,8 @@ import { RuleAuditEvents } from '../rule-audit/RuleAuditPage/RuleAuditEvents';
 import { RuleAuditPage } from '../rule-audit/RuleAuditPage/RuleAuditPage';
 import { ActivationInstanceDetails } from '../rulebook-activations/ActivationInstancePage/ActivationInstanceDetails';
 import { ActivationInstancePage } from '../rulebook-activations/ActivationInstancePage/ActivationInstancePage';
-import { EdaRulebookActivationAddTeams } from '../rulebook-activations/components/EdaRulebookActivationAddTeams';
 import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
+import { EdaRulebookActivationAssignTeams } from '../rulebook-activations/components/EdaRulebookActivationAssignTeams';
 import {
   CreateRulebookActivation,
   EditRulebookActivation,
@@ -203,9 +203,9 @@ export function useEdaNavigation() {
           element: <EdaRulebookActivationAddUsers />,
         },
         {
-          id: EdaRoute.RulebookActivationAddTeams,
-          path: ':id/team-access/add',
-          element: <EdaRulebookActivationAddTeams />,
+          id: EdaRoute.RulebookActivationAssignTeams,
+          path: ':id/team-access/assign',
+          element: <EdaRulebookActivationAssignTeams />,
         },
         {
           path: '',
@@ -260,9 +260,9 @@ export function useEdaNavigation() {
           element: <EdaProjectAddUsers />,
         },
         {
-          id: EdaRoute.ProjectAddTeams,
-          path: ':id/team-access/add',
-          element: <EdaProjectAddTeams />,
+          id: EdaRoute.ProjectAssignTeams,
+          path: ':id/team-access/assign',
+          element: <EdaProjectAssignTeams />,
         },
         {
           path: '',
@@ -317,9 +317,9 @@ export function useEdaNavigation() {
           element: <EdaDecisionEnvironmentAddUsers />,
         },
         {
-          id: EdaRoute.DecisionEnvironmentAddTeams,
-          path: ':id/team-access/add',
-          element: <EdaDecisionEnvironmentAddTeams />,
+          id: EdaRoute.DecisionEnvironmentAssignTeams,
+          path: ':id/team-access/assign',
+          element: <EdaDecisionEnvironmentAssignTeams />,
         },
         {
           path: '',
@@ -379,9 +379,9 @@ export function useEdaNavigation() {
           element: <EdaEventStreamAddUsers />,
         },
         {
-          id: EdaRoute.EventStreamAddTeams,
-          path: ':id/team-access/add',
-          element: <EdaEventStreamAddTeams />,
+          id: EdaRoute.EventStreamAssignTeams,
+          path: ':id/team-access/assign',
+          element: <EdaEventStreamAssignTeams />,
         },
         {
           path: '',
@@ -594,9 +594,9 @@ export function useEdaNavigation() {
               element: <EdaCredentialAddUsers />,
             },
             {
-              id: EdaRoute.CredentialAddTeams,
-              path: ':id/team-access/add',
-              element: <EdaCredentialAddTeams />,
+              id: EdaRoute.CredentialAssignTeams,
+              path: ':id/team-access/assign',
+              element: <EdaCredentialAssignTeams />,
             },
             {
               path: '',

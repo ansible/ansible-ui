@@ -6,14 +6,14 @@ import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Team } from '../../../interfaces/Team';
 import { AwxUser } from '../../../interfaces/User';
 
-export function useAddTeamsToUsers() {
+export function useAssignTeamsToUsers() {
   const { t } = useTranslation();
   const teamProgressDialog = useAwxBulkActionDialog<Team>();
   const postRequest = usePostRequest();
-  const addTeamsToUser = useCallback(
+  const assignTeamsToUser = useCallback(
     (teams: Team[], users: AwxUser[], onComplete?: (teams: Team[]) => void) => {
       teamProgressDialog({
-        title: t('Adding user to teams', { count: teams.length }),
+        title: t('Assinging user to teams', { count: teams.length }),
         keyFn: (team: Team) => team.id,
         items: teams,
         actionColumns: [{ header: t('Team'), cell: (team: Team) => team.name }],
@@ -26,11 +26,11 @@ export function useAddTeamsToUsers() {
             );
           }
         },
-        processingText: t('Adding user to teams...', { count: teams.length }),
+        processingText: t('Assigning user to teams...', { count: teams.length }),
         onComplete,
       });
     },
     [teamProgressDialog, t, postRequest]
   );
-  return addTeamsToUser;
+  return assignTeamsToUser;
 }

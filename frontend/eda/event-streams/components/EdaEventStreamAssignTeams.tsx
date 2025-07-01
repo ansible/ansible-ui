@@ -12,54 +12,54 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
-import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
-import { awxAPI } from '../../common/api/awx-utils';
-import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
-import { Role } from '../../interfaces/Role';
-import { Team } from '../../interfaces/Team';
-import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { AwxRoute } from '../../main/AwxRoutes';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { edaAPI } from '../../common/eda-utils';
+import { edaErrorAdapter } from '../../common/edaErrorAdapter';
+import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaTeam } from '../../interfaces/EdaTeam';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
-  teams: Team[];
-  awxRoles: Role[];
+  teams: EdaTeam[];
+  edaRoles: EdaRbacRole[];
 }
 
 interface TeamRolePair {
-  team: Team;
-  role: Role;
+  team: EdaTeam;
+  role: EdaRbacRole;
 }
 
-export function WorkflowJobTemplateAddTeams() {
+export function EdaEventStreamAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: template, isLoading } = useGet<WorkflowJobTemplate>(
-    awxAPI`/workflow_job_templates/${params.id ?? ''}/`
+  const { data: eventstream, isLoading } = useGet<EdaEventStream>(
+    edaAPI`/event-streams/${params.id ?? ''}/`
   );
-  const teamRoleProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
+  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !template) return <LoadingPage />;
+  if (isLoading || !eventstream) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <AwxSelectTeamsStep
+        <EdaSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{templateName}}.',
+            'Select the team(s) that you want to give access to {{eventstreamName}}.',
             {
-              templateName: template?.name,
+              eventstreamName: eventstream?.name,
             }
           )}
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as WizardFormValues;
+        const { teams } = formData as { teams: EdaTeam[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
@@ -69,17 +69,17 @@ export function WorkflowJobTemplateAddTeams() {
       id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="workflowjobtemplate"
+        <EdaSelectRolesStep
+          contentType="eventstream"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{templateName}}.', {
-            templateName: template?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{eventstreamName}}.', {
+            eventstreamName: eventstream?.name,
           })}
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as WizardFormValues;
-        if (!awxRoles?.length) {
+        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
+        if (!edaRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +92,10 @@ export function WorkflowJobTemplateAddTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, awxRoles } = data;
+    const { teams, edaRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of awxRoles) {
+      for (const role of edaRoles) {
         items.push({ team, role });
       }
     }
@@ -109,18 +109,18 @@ export function WorkflowJobTemplateAddTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(awxAPI`/role_team_assignments/`, {
+          postRequest(edaAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'workflowjobtemplate',
-            object_id: template.id,
+            content_type: 'eda.eventstream',
+            object_id: eventstream.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.WorkflowJobTemplateTeamAccess, {
-            params: { id: template.id.toString() },
+          pageNavigate(EdaRoute.EventStreamTeamAccess, {
+            params: { id: eventstream.id.toString() },
           });
         },
       });
@@ -132,28 +132,26 @@ export function WorkflowJobTemplateAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          { label: t('EventStreams'), to: getPageUrl(EdaRoute.EventStreams) },
           {
-            label: template?.name,
-            to: getPageUrl(AwxRoute.WorkflowJobTemplateDetails, { params: { id: template?.id } }),
+            label: eventstream?.name,
+            to: getPageUrl(EdaRoute.EventStreamDetails, { params: { id: eventstream?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.WorkflowJobTemplateTeamAccess, {
-              params: { id: template?.id },
-            }),
+            to: getPageUrl(EdaRoute.EventStreamTeamAccess, { params: { id: eventstream?.id } }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.WorkflowJobTemplateTeamAccess, { params: { id: template?.id } });
+          pageNavigate(EdaRoute.EventStreamTeamAccess, { params: { id: eventstream?.id } });
         }}
-        errorAdapter={awxErrorAdapter}
       />
     </PageLayout>
   );

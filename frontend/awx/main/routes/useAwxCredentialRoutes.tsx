@@ -1,8 +1,8 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CredentialAddTeams } from '../../access/credentials/components/CredentialAddTeams';
 import { CredentialAddUsers } from '../../access/credentials/components/CredentialAddUsers';
+import { CredentialAssignTeams } from '../../access/credentials/components/CredentialAssignTeams';
 import { CreateCredential, EditCredential } from '../../access/credentials/CredentialForm';
 import { CredentialDetails } from '../../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialJobTemplates } from '../../access/credentials/CredentialPage/CredentialJobTemplates';
@@ -63,9 +63,9 @@ export function useAwxCredentialRoutes() {
           element: <CredentialAddUsers />,
         },
         {
-          id: AwxRoute.CredentialAddTeams,
-          path: ':id/team-access/add',
-          element: <CredentialAddTeams />,
+          id: AwxRoute.CredentialAssignTeams,
+          path: ':id/team-access/assign',
+          element: <CredentialAssignTeams />,
         },
         {
           path: '',

@@ -11,8 +11,8 @@ import { ProjectPage } from '../../resources/projects/ProjectPage/ProjectPage';
 import { ProjectTeams } from '../../resources/projects/ProjectPage/ProjectTeams';
 import { ProjectUsers } from '../../resources/projects/ProjectPage/ProjectUsers';
 import { Projects } from '../../resources/projects/Projects';
-import { AwxProjectAddTeams } from '../../resources/projects/components/AwxProjectAddTeams';
 import { AwxProjectAddUsers } from '../../resources/projects/components/AwxProjectAddUsers';
+import { AwxProjectAssignTeams } from '../../resources/projects/components/AwxProjectAssignTeams';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
@@ -130,9 +130,9 @@ export function useAwxProjectRoutes() {
           element: <AwxProjectAddUsers />,
         },
         {
-          id: AwxRoute.ProjectAddTeams,
-          path: ':id/team-access/add-teams',
-          element: <AwxProjectAddTeams />,
+          id: AwxRoute.ProjectAssignTeams,
+          path: ':id/team-access/assign-teams',
+          element: <AwxProjectAssignTeams />,
         },
         {
           path: '',

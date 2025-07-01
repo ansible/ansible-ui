@@ -10,7 +10,7 @@ export function ProjectTeams() {
       service={'awx'}
       id={params.id || ''}
       type={'project'}
-      addRolesRoute={AwxRoute.ProjectAddTeams}
+      addRolesRoute={AwxRoute.ProjectAssignTeams}
     />
   );
 }

@@ -31,7 +31,7 @@ export function ExecutionEnvironmentTeamAccess() {
       service="hub"
       id={executionEnvironment?.namespace?.id?.toString() || ''}
       type={'containernamespace'}
-      addRolesRoute={HubRoute.ExecutionEnvironmentAddTeams}
+      addRolesRoute={HubRoute.ExecutionEnvironmentAssignTeams}
     />
   );
 }

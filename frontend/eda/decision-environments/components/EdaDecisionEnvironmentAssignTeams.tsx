@@ -12,54 +12,54 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
-import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import { Team } from '../../../interfaces/Team';
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { edaAPI } from '../../common/eda-utils';
+import { edaErrorAdapter } from '../../common/edaErrorAdapter';
+import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaTeam } from '../../interfaces/EdaTeam';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
-  teams: Team[];
-  awxRoles: AwxRbacRole[];
+  teams: EdaTeam[];
+  edaRoles: EdaRbacRole[];
 }
 
 interface TeamRolePair {
-  team: Team;
-  role: AwxRbacRole;
+  team: EdaTeam;
+  role: EdaRbacRole;
 }
 
-export function ExecutionEnvironmentAddTeams() {
+export function EdaDecisionEnvironmentAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: executionenvironment, isLoading } = useGet<ExecutionEnvironment>(
-    awxAPI`/execution_environments/${params.id ?? ''}/`
+  const { data: decisionEnvironment, isLoading } = useGet<EdaDecisionEnvironment>(
+    edaAPI`/decision-environments/${params.id ?? ''}/`
   );
-  const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
+  const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !executionenvironment) return <LoadingPage />;
+  if (isLoading || !decisionEnvironment) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <AwxSelectTeamsStep
+        <EdaSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{executionenvironmentName}}.',
+            'Select the team(s) that you want to give access to {{decisionEnvironmentName}}.',
             {
-              executionenvironmentName: executionenvironment?.name,
+              decisionEnvironmentName: decisionEnvironment.name,
             }
           )}
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: Team[] };
+        const { teams } = formData as { teams: EdaTeam[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
@@ -69,17 +69,17 @@ export function ExecutionEnvironmentAddTeams() {
       id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="executionenvironment"
+        <EdaSelectRolesStep
+          contentType="decisionenvironment"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{executionenvironmentName}}.', {
-            executionenvironmentName: executionenvironment?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{decisionEnvironmentName}}.', {
+            decisionEnvironmentName: decisionEnvironment.name,
           })}
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as { awxRoles: AwxRbacRole[] };
-        if (!awxRoles?.length) {
+        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
+        if (!edaRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +92,10 @@ export function ExecutionEnvironmentAddTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, awxRoles } = data;
+    const { teams, edaRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of awxRoles) {
+      for (const role of edaRoles) {
         items.push({ team, role });
       }
     }
@@ -109,18 +109,18 @@ export function ExecutionEnvironmentAddTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(awxAPI`/role_team_assignments/`, {
+          postRequest(edaAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'awx.executionenvironment',
-            object_id: executionenvironment.id,
+            content_type: 'eda.decision-environment',
+            object_id: decisionEnvironment.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.ExecutionEnvironmentTeamAccess, {
-            params: { id: executionenvironment.id.toString() },
+          pageNavigate(EdaRoute.DecisionEnvironmentTeamAccess, {
+            params: { id: decisionEnvironment.id.toString() },
           });
         },
       });
@@ -132,30 +132,30 @@ export function ExecutionEnvironmentAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
+          { label: t('DecisionEnvironments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
           {
-            label: executionenvironment?.name,
-            to: getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-              params: { id: executionenvironment?.id },
+            label: decisionEnvironment.name,
+            to: getPageUrl(EdaRoute.DecisionEnvironmentDetails, {
+              params: { id: decisionEnvironment.id },
             }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.ExecutionEnvironmentTeamAccess, {
-              params: { id: executionenvironment?.id },
+            to: getPageUrl(EdaRoute.DecisionEnvironmentTeamAccess, {
+              params: { id: decisionEnvironment.id },
             }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
-        errorAdapter={awxErrorAdapter}
+        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.ExecutionEnvironmentTeamAccess, {
-            params: { id: executionenvironment?.id },
+          pageNavigate(EdaRoute.DecisionEnvironmentTeamAccess, {
+            params: { id: decisionEnvironment.id },
           });
         }}
       />

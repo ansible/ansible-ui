@@ -9,7 +9,7 @@ export function TemplateTeamAccess() {
       service="awx"
       id={params.id || ''}
       type={'jobtemplate'}
-      addRolesRoute={AwxRoute.JobTemplateAddTeams}
+      addRolesRoute={AwxRoute.JobTemplateAssignTeams}
     />
   );
 }

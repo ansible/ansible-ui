@@ -588,7 +588,7 @@ describe(`Instance Groups`, () => {
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
-        expect(currentUrl.includes('instance-groups/teams/add-teams')).to.be.true;
+        expect(currentUrl.includes('instance-groups/teams/assign-teams')).to.be.true;
       });
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
@@ -676,7 +676,7 @@ describe(`Instance Groups`, () => {
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
-        expect(currentUrl.includes('instance-groups/teams/add-teams')).to.be.true;
+        expect(currentUrl.includes('instance-groups/teams/assign-teams')).to.be.true;
       });
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');

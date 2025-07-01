@@ -12,18 +12,17 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { HubSelectRolesStep } from '../../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
-import { HubSelectTeamsStep } from '../../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
-import { hubErrorAdapter } from '../../../common/adapters/hubErrorAdapter';
-import { hubAPI, pulpAPI } from '../../../common/api/formatPath';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
-import { HubError } from '../../../common/HubError';
-import { useHubBulkActionDialog } from '../../../common/useHubBulkActionDialog';
-import { PulpItemsResponse } from '../../../common/useHubView';
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import { HubUserGroup } from '../../../interfaces/expanded/HubUser';
-import { HubRoute } from '../../../main/HubRoutes';
-import { HubRemote } from '../Remotes';
+import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
+import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
+import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
+import { hubAPI } from '../../common/api/formatPath';
+import { HubError } from '../../common/HubError';
+import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
+import { HubItemsResponse } from '../../common/useHubView';
+import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
+import { HubUserGroup } from '../../interfaces/expanded/HubUser';
+import { HubRoute } from '../../main/HubRoutes';
+import { HubNamespace } from '../HubNamespace';
 
 interface WizardFormValues {
   teams: HubUserGroup[]; // Assuming groups will map to team
@@ -35,19 +34,20 @@ interface TeamRolePair {
   role: HubRbacRole;
 }
 
-export function RemoteAddTeams() {
+export function HubNamespaceAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const teamProgressDialog = useHubBulkActionDialog<TeamRolePair>();
-  const params = useParams<{ id: string }>();
-  const { data, error, refresh } = useGet<PulpItemsResponse<HubRemote>>(
-    pulpAPI`/remotes/ansible/collection/?name=${params.id}`
+
+  const { data, error, refresh } = useGet<HubItemsResponse<HubNamespace>>(
+    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`
   );
 
-  let remote: HubRemote | undefined = undefined;
-  if (data && data.results && data.results.length > 0) {
-    remote = data.results[0];
+  let namespace: HubNamespace | undefined = undefined;
+  if (data?.data && data.data.length > 0) {
+    namespace = data.data[0];
   }
 
   if (!data && !error) {
@@ -65,9 +65,9 @@ export function RemoteAddTeams() {
       inputs: (
         <HubSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{remote}}.',
+            'Select the team(s) that you want to give access to {{namespaceName}}.',
             {
-              remote: remote?.name,
+              namespaceName: namespace?.name,
             }
           )}
         />
@@ -84,10 +84,10 @@ export function RemoteAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <HubSelectRolesStep
-          contentType="collectionremote"
+          contentType="namespace"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{remote}}.', {
-            remote: remote?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{namespaceName}}.', {
+            namespaceName: namespace?.name,
           })}
         />
       ),
@@ -126,15 +126,15 @@ export function RemoteAddTeams() {
           postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'galaxy.collectionremote',
-            object_id: parsePulpIDFromURL(remote?.pulp_href),
+            content_type: 'galaxy.namespace',
+            object_id: namespace?.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(HubRoute.RemoteTeamAccess, {
-            params: { id: remote?.name },
+          pageNavigate(HubRoute.NamespaceTeamAccess, {
+            params: { id: namespace?.name },
           });
         },
       });
@@ -146,14 +146,14 @@ export function RemoteAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
+          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
           {
-            label: remote?.name,
-            to: getPageUrl(HubRoute.RemoteDetails, { params: { id: remote?.name } }),
+            label: namespace?.name,
+            to: getPageUrl(HubRoute.NamespaceDetails, { params: { id: namespace?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(HubRoute.RemoteTeamAccess, { params: { id: remote?.name } }),
+            to: getPageUrl(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -164,7 +164,7 @@ export function RemoteAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(HubRoute.RemoteTeamAccess, { params: { id: remote?.name } });
+          pageNavigate(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.name } });
         }}
       />
     </PageLayout>

@@ -33,7 +33,7 @@ interface TeamRolePair {
   role: HubRbacRole;
 }
 
-export function ExecutionEnvironmentAddTeams() {
+export function ExecutionEnvironmentAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();

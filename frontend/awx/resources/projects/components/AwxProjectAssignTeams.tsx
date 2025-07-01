@@ -12,33 +12,36 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
-import { edaAPI } from '../../common/eda-utils';
-import { edaErrorAdapter } from '../../common/edaErrorAdapter';
-import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
-import { EdaProject } from '../../interfaces/EdaProject';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaTeam } from '../../interfaces/EdaTeam';
-import { EdaRoute } from '../../main/EdaRoutes';
+import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { Project } from '../../../interfaces/Project';
+import { Team } from '../../../interfaces/Team';
+import { AwxRoute } from '../../../main/AwxRoutes';
+
+interface AwxRole {
+  id: string;
+  name: string;
+}
 
 interface WizardFormValues {
-  teams: EdaTeam[];
-  edaRoles: EdaRbacRole[];
+  teams: Team[];
+  awxRoles: AwxRole[];
 }
 
 interface TeamRolePair {
-  team: EdaTeam;
-  role: EdaRbacRole;
+  team: Team;
+  role: AwxRole;
 }
 
-export function EdaProjectAddTeams() {
+export function AwxProjectAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
-  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const { data: project, isLoading } = useGet<Project>(awxAPI`/projects/${params.id ?? ''}/`);
+  const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
   if (isLoading || !project) return <LoadingPage />;
 
@@ -47,7 +50,7 @@ export function EdaProjectAddTeams() {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <EdaSelectTeamsStep
+        <AwxSelectTeamsStep
           descriptionForTeamsSelection={t(
             'Select the team(s) that you want to give access to {{projectName}}.',
             {
@@ -57,7 +60,7 @@ export function EdaProjectAddTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: EdaTeam[] };
+        const { teams } = formData as { teams: Team[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
@@ -67,7 +70,7 @@ export function EdaProjectAddTeams() {
       id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
-        <EdaSelectRolesStep
+        <AwxSelectRolesStep
           contentType="project"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
@@ -76,8 +79,8 @@ export function EdaProjectAddTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
-        if (!edaRoles?.length) {
+        const { awxRoles } = formData as { awxRoles: AwxRole[] };
+        if (!awxRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -90,15 +93,15 @@ export function EdaProjectAddTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, edaRoles } = data;
+    const { teams, awxRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of edaRoles) {
+      for (const role of awxRoles) {
         items.push({ team, role });
       }
     }
     return new Promise<void>((resolve) => {
-      teamRoleProgressDialog({
+      userProgressDialog({
         title: t('Add roles'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
@@ -107,17 +110,17 @@ export function EdaProjectAddTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(edaAPI`/role_team_assignments/`, {
+          postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'eda.project',
+            content_type: 'project',
             object_id: project.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.ProjectTeamAccess, {
+          pageNavigate(AwxRoute.ProjectTeams, {
             params: { id: project.id.toString() },
           });
         },
@@ -130,25 +133,24 @@ export function EdaProjectAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
           {
             label: project?.name,
-            to: getPageUrl(EdaRoute.ProjectDetails, { params: { id: project?.id } }),
+            to: getPageUrl(AwxRoute.ProjectDetails, { params: { id: project?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } }),
+            to: getPageUrl(AwxRoute.ProjectTeams, { params: { id: project?.id } }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
-        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } });
+          pageNavigate(AwxRoute.ProjectTeams, { params: { id: project?.id } });
         }}
       />
     </PageLayout>

@@ -9,8 +9,8 @@ import { OrganizationPage } from '../../access/organizations/OrganizationPage/Or
 import { OrganizationTeamsAccess } from '../../access/organizations/OrganizationPage/OrganizationTeamsAccess';
 import { OrganizationUserAccess } from '../../access/organizations/OrganizationPage/OrganizationUserAccess';
 import { Organizations } from '../../access/organizations/Organizations';
-import { OrganizationAddTeams } from '../../access/organizations/components/OrganizationAddTeams';
 import { OrganizationAddUsers } from '../../access/organizations/components/OrganizationAddUsers';
+import { OrganizationAssignTeams } from '../../access/organizations/components/OrganizationAssignTeams';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { AwxRoute } from '../AwxRoutes';
 
@@ -74,9 +74,9 @@ export function useAwxOrganizationRoutes() {
           element: <OrganizationAddUsers />,
         },
         {
-          id: AwxRoute.OrganizationAddTeams,
-          path: ':id/team-access/add',
-          element: <OrganizationAddTeams />,
+          id: AwxRoute.OrganizationAssignTeams,
+          path: ':id/team-access/assign',
+          element: <OrganizationAssignTeams />,
         },
         {
           path: '',

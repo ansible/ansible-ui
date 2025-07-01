@@ -18,7 +18,7 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { Credential } from '../../../interfaces/Credential';
+import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -32,17 +32,17 @@ interface TeamRolePair {
   role: AwxRbacRole;
 }
 
-export function CredentialAddTeams() {
+export function ExecutionEnvironmentAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: credential, isLoading } = useGet<Credential>(
-    awxAPI`/credentials/${params.id ?? ''}/`
+  const { data: executionenvironment, isLoading } = useGet<ExecutionEnvironment>(
+    awxAPI`/execution_environments/${params.id ?? ''}/`
   );
   const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !credential) return <LoadingPage />;
+  if (isLoading || !executionenvironment) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -51,9 +51,9 @@ export function CredentialAddTeams() {
       inputs: (
         <AwxSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{credentialName}}.',
+            'Select the team(s) that you want to give access to {{executionenvironmentName}}.',
             {
-              credentialName: credential?.name,
+              executionenvironmentName: executionenvironment?.name,
             }
           )}
         />
@@ -70,10 +70,10 @@ export function CredentialAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <AwxSelectRolesStep
-          contentType="credential"
+          contentType="executionenvironment"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
-            credentialName: credential?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{executionenvironmentName}}.', {
+            executionenvironmentName: executionenvironment?.name,
           })}
         />
       ),
@@ -112,15 +112,15 @@ export function CredentialAddTeams() {
           postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'awx.credential',
-            object_id: credential.id,
+            content_type: 'awx.executionenvironment',
+            object_id: executionenvironment.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.CredentialTeamAccess, {
-            params: { id: credential.id.toString() },
+          pageNavigate(AwxRoute.ExecutionEnvironmentTeamAccess, {
+            params: { id: executionenvironment.id.toString() },
           });
         },
       });
@@ -132,14 +132,18 @@ export function CredentialAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
+          { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
           {
-            label: credential?.name,
-            to: getPageUrl(AwxRoute.CredentialDetails, { params: { id: credential?.id } }),
+            label: executionenvironment?.name,
+            to: getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
+              params: { id: executionenvironment?.id },
+            }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.CredentialTeamAccess, { params: { id: credential?.id } }),
+            to: getPageUrl(AwxRoute.ExecutionEnvironmentTeamAccess, {
+              params: { id: executionenvironment?.id },
+            }),
           },
           { label: t('Add roles') },
         ]}
@@ -150,7 +154,9 @@ export function CredentialAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.CredentialTeamAccess, { params: { id: credential?.id } });
+          pageNavigate(AwxRoute.ExecutionEnvironmentTeamAccess, {
+            params: { id: executionenvironment?.id },
+          });
         }}
       />
     </PageLayout>

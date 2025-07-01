@@ -12,15 +12,15 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { Inventory } from '../../../interfaces/Inventory';
+import { Organization } from '../../../interfaces/Organization';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { AwxSelectRolesStep } from '../../common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectTeamsStep } from '../../common/AwxRolesWizardSteps/AwxSelectTeamsStep';
 
 interface WizardFormValues {
   teams: Team[];
@@ -32,17 +32,17 @@ interface TeamRolePair {
   role: AwxRbacRole;
 }
 
-export function InventoryAddTeams() {
+export function OrganizationAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: inventory, isLoading } = useGet<Inventory>(
-    awxAPI`/inventories/${params.id ?? ''}/`
+  const { data: organization, isLoading } = useGet<Organization>(
+    awxAPI`/organizations/${params.id ?? ''}/`
   );
   const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !inventory) return <LoadingPage />;
+  if (isLoading || !organization) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -51,9 +51,9 @@ export function InventoryAddTeams() {
       inputs: (
         <AwxSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{inventoryName}}.',
+            'Select the team(s) that you want to give access to {{organizationName}}.',
             {
-              inventoryName: inventory?.name,
+              organizationName: organization?.name,
             }
           )}
         />
@@ -70,10 +70,10 @@ export function InventoryAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <AwxSelectRolesStep
-          contentType="inventory"
+          contentType="organization"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{inventoryName}}.', {
-            inventoryName: inventory?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{organizationName}}.', {
+            organizationName: organization?.name,
           })}
         />
       ),
@@ -112,15 +112,15 @@ export function InventoryAddTeams() {
           postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'awx.inventory',
-            object_id: inventory.id,
+            content_type: 'awx.organization',
+            object_id: organization.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.InventoryTeamAccess, {
-            params: { id: inventory.id.toString() },
+          pageNavigate(AwxRoute.OrganizationTeamsAccess, {
+            params: { id: organization.id.toString() },
           });
         },
       });
@@ -132,14 +132,14 @@ export function InventoryAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+          { label: t('Organizations'), to: getPageUrl(AwxRoute.Organizations) },
           {
-            label: inventory?.name,
-            to: getPageUrl(AwxRoute.InventoryDetails, { params: { id: inventory?.id } }),
+            label: organization?.name,
+            to: getPageUrl(AwxRoute.OrganizationDetails, { params: { id: organization?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.InventoryTeamAccess, { params: { id: inventory?.id } }),
+            to: getPageUrl(AwxRoute.OrganizationTeamsAccess, { params: { id: organization?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -150,7 +150,7 @@ export function InventoryAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.InventoryTeamAccess, { params: { id: inventory?.id } });
+          pageNavigate(AwxRoute.OrganizationTeamsAccess, { params: { id: organization?.id } });
         }}
       />
     </PageLayout>

@@ -6,8 +6,8 @@ import {
   CreateContainerGroup,
   EditContainerGroup,
 } from '../../administration/instance-groups/ContainerGroupForm';
-import { InstanceGroupAddTeams } from '../../administration/instance-groups/InstanceGroupAddTeams';
 import { InstanceGroupAddUsers } from '../../administration/instance-groups/InstanceGroupAddUsers';
+import { InstanceGroupAssignTeams } from '../../administration/instance-groups/InstanceGroupAssignTeams';
 import {
   CreateInstanceGroup,
   EditInstanceGroup,
@@ -100,9 +100,9 @@ export function useAwxInstanceGroupsRoutes() {
           ],
         },
         {
-          id: AwxRoute.InstanceGroupAddTeams,
-          path: ':id/instance-groups/teams/add-teams',
-          element: <InstanceGroupAddTeams />,
+          id: AwxRoute.InstanceGroupAssignTeams,
+          path: ':id/instance-groups/teams/assign-teams',
+          element: <InstanceGroupAssignTeams />,
         },
         {
           id: AwxRoute.InstanceGroupAddUsers,

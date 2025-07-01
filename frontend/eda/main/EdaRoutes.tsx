@@ -19,7 +19,7 @@ export enum EdaRoute {
   RulebookActivationInstanceDetails = 'eda-rulebook-activation-instance-details',
   RulebookActivationTeamAccess = 'eda-rulebook-activation-team-access',
   RulebookActivationUserAccess = 'eda-rulebook-activation-user-access',
-  RulebookActivationAddTeams = 'eda-rulebook-activation-add-teams',
+  RulebookActivationAssignTeams = 'eda-rulebook-activation-assign-teams',
   RulebookActivationAddUsers = 'eda-rulebook-activation-add-users',
 
   Projects = 'eda-projects',
@@ -30,7 +30,7 @@ export enum EdaRoute {
   ProjectTeamAccess = 'eda-project-project-team-access',
   ProjectUserAccess = 'eda-project-project-user-access',
   ProjectAddUsers = 'eda-project-add-users',
-  ProjectAddTeams = 'eda-project-add-teams',
+  ProjectAssignTeams = 'eda-project-assign-teams',
 
   DecisionEnvironments = 'eda-decision-environments',
   CreateDecisionEnvironment = 'eda-create-decision-environment',
@@ -39,7 +39,7 @@ export enum EdaRoute {
   DecisionEnvironmentDetails = 'eda-decision-environment-details',
   DecisionEnvironmentTeamAccess = 'eda-decision-environments-team-access',
   DecisionEnvironmentUserAccess = 'eda-decision-environments-user-access',
-  DecisionEnvironmentAddTeams = 'eda-decision-environments-add-teams',
+  DecisionEnvironmentAssignTeams = 'eda-decision-environments-assign-teams',
   DecisionEnvironmentAddUsers = 'eda-decision-environments-add-users',
 
   Credentials = 'eda-credentials',
@@ -49,7 +49,7 @@ export enum EdaRoute {
   CredentialDetails = 'eda-credential-details',
   CredentialTeamAccess = 'eda-credential-team-access',
   CredentialUserAccess = 'eda-credential-user-access',
-  CredentialAddTeams = 'eda-credential-add-teams',
+  CredentialAssignTeams = 'eda-credential-assign-teams',
   CredentialAddUsers = 'eda-credential-add-users',
 
   CredentialTypes = 'eda-credential-types',
@@ -91,7 +91,7 @@ export enum EdaRoute {
   EventStreamActivations = 'eda-event-stream-activations',
   EventStreamTeamAccess = 'eda-event-stream-team-access',
   EventStreamUserAccess = 'eda-event-stream-user-access',
-  EventStreamAddTeams = 'eda-event-stream-add-teams',
+  EventStreamAssignTeams = 'eda-event-stream-assign-teams',
   EventStreamAddUsers = 'eda-event-stream-add-users',
 
   Settings = 'eda-settings',

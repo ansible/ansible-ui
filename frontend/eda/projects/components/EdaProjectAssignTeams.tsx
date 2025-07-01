@@ -12,15 +12,15 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { EdaSelectRolesStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaSelectTeamsStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
-import { edaAPI } from '../../../common/eda-utils';
-import { edaErrorAdapter } from '../../../common/edaErrorAdapter';
-import { useEdaBulkActionDialog } from '../../../common/useEdaBulkActionDialog';
-import { EdaCredential } from '../../../interfaces/EdaCredential';
-import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
-import { EdaTeam } from '../../../interfaces/EdaTeam';
-import { EdaRoute } from '../../../main/EdaRoutes';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { edaAPI } from '../../common/eda-utils';
+import { edaErrorAdapter } from '../../common/edaErrorAdapter';
+import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaProject } from '../../interfaces/EdaProject';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaTeam } from '../../interfaces/EdaTeam';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
   teams: EdaTeam[];
@@ -32,17 +32,15 @@ interface TeamRolePair {
   role: EdaRbacRole;
 }
 
-export function EdaCredentialAddTeams() {
+export function EdaProjectAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: credential, isLoading } = useGet<EdaCredential>(
-    edaAPI`/eda-credentials/${params.id ?? ''}/`
-  );
-  const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
+  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !credential) return <LoadingPage />;
+  if (isLoading || !project) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -51,9 +49,9 @@ export function EdaCredentialAddTeams() {
       inputs: (
         <EdaSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{credentialName}}.',
+            'Select the team(s) that you want to give access to {{projectName}}.',
             {
-              credentialName: credential?.name,
+              projectName: project?.name,
             }
           )}
         />
@@ -70,10 +68,10 @@ export function EdaCredentialAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
-          contentType="edacredential"
+          contentType="project"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
-            credentialName: credential?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
+            projectName: project?.name,
           })}
         />
       ),
@@ -100,7 +98,7 @@ export function EdaCredentialAddTeams() {
       }
     }
     return new Promise<void>((resolve) => {
-      userProgressDialog({
+      teamRoleProgressDialog({
         title: t('Add roles'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
@@ -112,15 +110,15 @@ export function EdaCredentialAddTeams() {
           postRequest(edaAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'eda.edacredential',
-            object_id: credential.id,
+            content_type: 'eda.project',
+            object_id: project.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.CredentialTeamAccess, {
-            params: { id: credential.id.toString() },
+          pageNavigate(EdaRoute.ProjectTeamAccess, {
+            params: { id: project.id.toString() },
           });
         },
       });
@@ -132,14 +130,14 @@ export function EdaCredentialAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
+          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
           {
-            label: credential?.name,
-            to: getPageUrl(EdaRoute.CredentialDetails, { params: { id: credential?.id } }),
+            label: project?.name,
+            to: getPageUrl(EdaRoute.ProjectDetails, { params: { id: project?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } }),
+            to: getPageUrl(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -150,7 +148,7 @@ export function EdaCredentialAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } });
+          pageNavigate(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } });
         }}
       />
     </PageLayout>

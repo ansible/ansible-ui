@@ -11,8 +11,8 @@ import { NotificationDetails } from '../../administration/notifiers/Notification
 import { NotificationPage } from '../../administration/notifiers/NotificationPage/NotificationPage';
 import { NotificationTeamAccess } from '../../administration/notifiers/NotificationPage/NotificationTeamAccess';
 import { NotificationUserAccess } from '../../administration/notifiers/NotificationPage/NotificationUserAccess';
-import { NotifierAddTeams } from '../../administration/notifiers/components/NotifierAddTeams';
 import { NotifierAddUsers } from '../../administration/notifiers/components/NotifierAddUsers';
+import { NotifierAssignTeams } from '../../administration/notifiers/components/NotifierAssignTeams';
 
 export function useAwxNotificationsRoutes() {
   const { t } = useTranslation();
@@ -59,9 +59,9 @@ export function useAwxNotificationsRoutes() {
           element: <NotifierAddUsers />,
         },
         {
-          id: AwxRoute.NotificationAddTeams,
-          path: ':id/team-access/add',
-          element: <NotifierAddTeams />,
+          id: AwxRoute.NotificationAssignTeams,
+          path: ':id/team-access/assign',
+          element: <NotifierAssignTeams />,
         },
         {
           id: AwxRoute.AddNotificationTemplate,

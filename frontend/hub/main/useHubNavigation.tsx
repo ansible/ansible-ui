@@ -22,8 +22,8 @@ import {
 import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails';
 import { RemoteRegistryPage } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPage';
 import { CreateRemote, EditRemote } from '../administration/remotes/RemoteForm';
-import { RemoteAddTeams } from '../administration/remotes/RemotePage/RemoteAddTeam';
 import { RemoteAddUsers } from '../administration/remotes/RemotePage/RemoteAddUser';
+import { RemoteAssignTeams } from '../administration/remotes/RemotePage/RemoteAssignTeam';
 import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
 import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
 import { RemoteTeamAccess } from '../administration/remotes/RemotePage/RemoteTeamAccess';
@@ -31,8 +31,8 @@ import { RemoteUserAccess } from '../administration/remotes/RemotePage/RemoteUse
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
 import { RepositoryForm } from '../administration/repositories/RepositoryForm';
-import { RepositoryAddTeams } from '../administration/repositories/RepositoryPage/RepositoryAddTeam';
 import { RepositoryAddUsers } from '../administration/repositories/RepositoryPage/RepositoryAddUser';
+import { RepositoryAssignTeams } from '../administration/repositories/RepositoryPage/RepositoryAssignTeam';
 import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
 import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
@@ -62,8 +62,8 @@ import {
   EditExecutionEnvironment,
 } from '../execution-environments/ExecutionEnvironmentForm';
 import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
-import { ExecutionEnvironmentAddTeams } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAddTeam';
 import { ExecutionEnvironmentAddUsers } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAddUser';
+import { ExecutionEnvironmentAssignTeams } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAssignTeam';
 import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
 import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
 import { ExecutionEnvironmentImagePage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImagePage';
@@ -81,8 +81,8 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { HubNamespaceTeamAccess } from '../namespaces/HubNamespacePage/HubNamespaceTeamAccess';
 import { HubNamespaceUserAccess } from '../namespaces/HubNamespacePage/HubNamespaceUserAccess';
 import { Namespaces } from '../namespaces/HubNamespaces';
-import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTeams';
 import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
+import { HubNamespaceAssignTeams } from '../namespaces/components/HubNamespaceAssignTeams';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
 
@@ -152,9 +152,9 @@ export function useHubNavigation() {
           element: <HubNamespaceAddUsers />,
         },
         {
-          id: HubRoute.NamespaceAddTeams,
-          path: ':id/team-access/add',
-          element: <HubNamespaceAddTeams />,
+          id: HubRoute.NamespaceAssignTeams,
+          path: ':id/team-access/assign',
+          element: <HubNamespaceAssignTeams />,
         },
         {
           path: '',
@@ -291,9 +291,9 @@ export function useHubNavigation() {
           ],
         },
         {
-          id: HubRoute.ExecutionEnvironmentAddTeams,
-          path: ':id/team-access/add',
-          element: <ExecutionEnvironmentAddTeams />,
+          id: HubRoute.ExecutionEnvironmentAssignTeams,
+          path: ':id/team-access/assign',
+          element: <ExecutionEnvironmentAssignTeams />,
         },
         {
           id: HubRoute.ExecutionEnvironmentAddUsers,
@@ -394,9 +394,9 @@ export function useHubNavigation() {
               ],
             },
             {
-              id: HubRoute.RepositoryAddTeams,
-              path: ':id/team-access/add',
-              element: <RepositoryAddTeams />,
+              id: HubRoute.RepositoryAssignTeams,
+              path: ':id/team-access/assign',
+              element: <RepositoryAssignTeams />,
             },
             {
               id: HubRoute.RepositoryAddUsers,
@@ -537,9 +537,9 @@ export function useHubNavigation() {
               element: <RemoteAddUsers />,
             },
             {
-              id: HubRoute.RemoteAddTeams,
-              path: ':id/team-access/add',
-              element: <RemoteAddTeams />,
+              id: HubRoute.RemoteAssignTeams,
+              path: ':id/team-access/assign',
+              element: <RemoteAssignTeams />,
             },
             {
               path: '',

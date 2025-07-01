@@ -9,7 +9,7 @@ export function CredentialTeamAccess() {
       service="awx"
       id={params.id || ''}
       type={'credential'}
-      addRolesRoute={AwxRoute.CredentialAddTeams as string}
+      addRolesRoute={AwxRoute.CredentialAssignTeams as string}
     />
   );
 }

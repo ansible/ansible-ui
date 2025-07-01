@@ -12,38 +12,37 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { Project } from '../../../interfaces/Project';
-import { Team } from '../../../interfaces/Team';
-import { AwxRoute } from '../../../main/AwxRoutes';
-
-interface AwxRole {
-  id: string;
-  name: string;
-}
+import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectTeamsStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { Role } from '../../interfaces/Role';
+import { Team } from '../../interfaces/Team';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 interface WizardFormValues {
   teams: Team[];
-  awxRoles: AwxRole[];
+  awxRoles: Role[];
 }
 
 interface TeamRolePair {
   team: Team;
-  role: AwxRole;
+  role: Role;
 }
 
-export function AwxProjectAddTeams() {
+export function JobTemplateAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: project, isLoading } = useGet<Project>(awxAPI`/projects/${params.id ?? ''}/`);
-  const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
+  const { data: template, isLoading } = useGet<JobTemplate>(
+    awxAPI`/job_templates/${params.id ?? ''}/`
+  );
+  const teamRoleProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !project) return <LoadingPage />;
+  if (isLoading || !template) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -52,15 +51,15 @@ export function AwxProjectAddTeams() {
       inputs: (
         <AwxSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{projectName}}.',
+            'Select the team(s) that you want to give access to {{templateName}}.',
             {
-              projectName: project?.name,
+              templateName: template?.name,
             }
           )}
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: Team[] };
+        const { teams } = formData as WizardFormValues;
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
@@ -71,15 +70,15 @@ export function AwxProjectAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <AwxSelectRolesStep
-          contentType="project"
+          contentType="jobtemplate"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
-            projectName: project?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{templateName}}.', {
+            templateName: template?.name,
           })}
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as { awxRoles: AwxRole[] };
+        const { awxRoles } = formData as WizardFormValues;
         if (!awxRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
@@ -101,7 +100,7 @@ export function AwxProjectAddTeams() {
       }
     }
     return new Promise<void>((resolve) => {
-      userProgressDialog({
+      teamRoleProgressDialog({
         title: t('Add roles'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
@@ -113,15 +112,15 @@ export function AwxProjectAddTeams() {
           postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'project',
-            object_id: project.id,
+            content_type: 'jobtemplate',
+            object_id: template.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.ProjectTeams, {
-            params: { id: project.id.toString() },
+          pageNavigate(AwxRoute.JobTemplateTeamAccess, {
+            params: { id: template.id.toString() },
           });
         },
       });
@@ -133,24 +132,25 @@ export function AwxProjectAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           {
-            label: project?.name,
-            to: getPageUrl(AwxRoute.ProjectDetails, { params: { id: project?.id } }),
+            label: template?.name,
+            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: template?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.ProjectTeams, { params: { id: project?.id } }),
+            to: getPageUrl(AwxRoute.JobTemplateTeamAccess, { params: { id: template?.id } }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.ProjectTeams, { params: { id: project?.id } });
+          pageNavigate(AwxRoute.JobTemplateTeamAccess, { params: { id: template?.id } });
         }}
       />
     </PageLayout>

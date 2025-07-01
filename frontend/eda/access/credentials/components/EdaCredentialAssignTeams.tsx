@@ -12,15 +12,15 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
-import { edaAPI } from '../../common/eda-utils';
-import { edaErrorAdapter } from '../../common/edaErrorAdapter';
-import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { EdaTeam } from '../../interfaces/EdaTeam';
-import { EdaRoute } from '../../main/EdaRoutes';
+import { EdaSelectRolesStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectTeamsStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { edaAPI } from '../../../common/eda-utils';
+import { edaErrorAdapter } from '../../../common/edaErrorAdapter';
+import { useEdaBulkActionDialog } from '../../../common/useEdaBulkActionDialog';
+import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
+import { EdaTeam } from '../../../interfaces/EdaTeam';
+import { EdaRoute } from '../../../main/EdaRoutes';
 
 interface WizardFormValues {
   teams: EdaTeam[];
@@ -32,17 +32,17 @@ interface TeamRolePair {
   role: EdaRbacRole;
 }
 
-export function EdaRulebookActivationAddTeams() {
+export function EdaCredentialAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: activation, isLoading } = useGet<EdaRulebookActivation>(
-    edaAPI`/activations/${params.id ?? ''}/`
+  const { data: credential, isLoading } = useGet<EdaCredential>(
+    edaAPI`/eda-credentials/${params.id ?? ''}/`
   );
-  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !activation) return <LoadingPage />;
+  if (isLoading || !credential) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -51,9 +51,9 @@ export function EdaRulebookActivationAddTeams() {
       inputs: (
         <EdaSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{activationName}}.',
+            'Select the team(s) that you want to give access to {{credentialName}}.',
             {
-              activationName: activation?.name,
+              credentialName: credential?.name,
             }
           )}
         />
@@ -70,10 +70,10 @@ export function EdaRulebookActivationAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
-          contentType="activation"
+          contentType="edacredential"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{activationName}}.', {
-            activationName: activation?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
+            credentialName: credential?.name,
           })}
         />
       ),
@@ -100,7 +100,7 @@ export function EdaRulebookActivationAddTeams() {
       }
     }
     return new Promise<void>((resolve) => {
-      teamRoleProgressDialog({
+      userProgressDialog({
         title: t('Add roles'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
@@ -112,15 +112,15 @@ export function EdaRulebookActivationAddTeams() {
           postRequest(edaAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'eda.activation',
-            object_id: activation.id,
+            content_type: 'eda.edacredential',
+            object_id: credential.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.RulebookActivationTeamAccess, {
-            params: { id: activation.id.toString() },
+          pageNavigate(EdaRoute.CredentialTeamAccess, {
+            params: { id: credential.id.toString() },
           });
         },
       });
@@ -132,16 +132,14 @@ export function EdaRulebookActivationAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
+          { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
           {
-            label: activation?.name,
-            to: getPageUrl(EdaRoute.RulebookActivationDetails, { params: { id: activation?.id } }),
+            label: credential?.name,
+            to: getPageUrl(EdaRoute.CredentialDetails, { params: { id: credential?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(EdaRoute.RulebookActivationTeamAccess, {
-              params: { id: activation?.id },
-            }),
+            to: getPageUrl(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -152,7 +150,7 @@ export function EdaRulebookActivationAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.RulebookActivationTeamAccess, { params: { id: activation?.id } });
+          pageNavigate(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } });
         }}
       />
     </PageLayout>

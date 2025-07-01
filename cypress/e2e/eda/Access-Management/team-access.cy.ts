@@ -22,7 +22,7 @@ describe('Check if the build includes EDA', () => {
     });
   });
 
-  describe('Team Access Tab - Add Team', () => {
+  describe('Team Access Tab - Assign Team', () => {
     let edaProject: EdaProject;
     let edaRuleBook: EdaRulebook;
     let edaOrg: EdaOrganization;
@@ -144,7 +144,7 @@ describe('Check if the build includes EDA', () => {
           });
         });
 
-        it(`can add teams via team access tab`, () => {
+        it(`can assign teams via team access tab`, () => {
           cy.navigateTo('eda', resource.name);
           if (resource.name === 'decision-environments') {
             cy.get('[data-cy="table-view"]').click();

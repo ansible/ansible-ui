@@ -21,8 +21,10 @@ describe('User teams list', () => {
         initialEntries: ['/access/users/5/teams'],
       });
 
-      cy.contains(/^There are currently no teams added to this user.$/);
-      cy.contains(/^Add teams by clicking the button below.$/);
+      cy.contains(/^No teams$/);
+      cy.contains(
+        /^To get started, assign teams to this user. This user will inherit roles assigned to these teams.$/
+      );
     });
   });
 
@@ -49,8 +51,8 @@ describe('User teams list', () => {
       cy.get('tbody').find('tr').should('have.length', 3);
 
       // Toolbar actions are visible & enabled
-      cy.get(`[data-cy="add-teams"]`).should('be.visible');
-      cy.get('[data-cy="add-teams"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get(`[data-cy="assign-teams"]`).should('be.visible');
+      cy.get('[data-cy="assign-teams"]').should('have.attr', 'aria-disabled', 'false');
 
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab').click();

@@ -9,7 +9,7 @@ export function CredentialTeamAccess() {
       service="eda"
       id={params.id || ''}
       type={'edacredential'}
-      addRolesRoute={EdaRoute.CredentialAddTeams}
+      addRolesRoute={EdaRoute.CredentialAssignTeams}
     />
   );
 }

@@ -111,7 +111,7 @@ export function Teams() {
         emptyState={
           <PageTableEmptyState
             title={t('No teams found')}
-            description={t('There are currently no teams added to your organization')}
+            description={t('There are currently no teams assigned to your organization')}
           >
             <ButtonLink
               icon={<PlusCircleIcon />}

@@ -9,7 +9,7 @@ export function InstanceGroupTeamAccess() {
       service="awx"
       id={params.id || ''}
       type={'instancegroup'}
-      addRolesRoute={AwxRoute.InstanceGroupAddTeams}
+      addRolesRoute={AwxRoute.InstanceGroupAssignTeams}
     />
   );
 }

@@ -41,9 +41,11 @@ export function PlatformUserTeams() {
   return (
     <PageTable
       emptyStateActions={toolbarActions.slice(0, 1)}
-      emptyStateButtonText={t('Add teams')}
-      emptyStateDescription={t('Add teams by clicking the button below.')}
-      emptyStateTitle={t('There are currently no teams added to this user.')}
+      emptyStateButtonText={t('Assign teams')}
+      emptyStateDescription={t(
+        'To get started, assign teams to this user. This user will inherit roles assigned to these teams.'
+      )}
+      emptyStateTitle={t('No teams')}
       errorStateTitle={t('Error loading teams')}
       rowActions={rowActions}
       tableColumns={tableColumns}
@@ -110,9 +112,9 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
 
   const associateTeams = useCallback(() => {
     selectTeams(
-      t('Add teams'),
-      t('Select teams below to be added to this user'),
-      t('Add teams'),
+      t('Assign teams'),
+      t('Select teams below to be assigned to this user'),
+      t('Assign teams'),
       async (teams: PlatformTeam[]) => {
         if (!userId) return;
         try {
@@ -126,7 +128,7 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
         } catch (error) {
           alertToaster.addAlert({
             variant: 'danger',
-            title: t(`Failed to add team(s) to user.`),
+            title: t(`Failed to assign team(s) to user.`),
             children: error instanceof Error && error.message,
           });
         }
@@ -190,7 +192,7 @@ function useUserTeamsToolbarActions(userId: string, view: IPlatformView<Platform
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add teams'),
+        label: t('Assign teams'),
         onClick: associateTeams,
       },
       { type: PageActionType.Seperator },

@@ -9,7 +9,7 @@ export function RulebookActivationTeamAccess() {
       service="eda"
       id={params.id || ''}
       type={'activation'}
-      addRolesRoute={EdaRoute.RulebookActivationAddTeams}
+      addRolesRoute={EdaRoute.RulebookActivationAssignTeams}
     />
   );
 }

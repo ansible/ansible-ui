@@ -9,7 +9,7 @@ export function WorkflowJobTemplateTeamAccess() {
       service="awx"
       id={params.id || ''}
       type={'workflowjobtemplate'}
-      addRolesRoute={AwxRoute.WorkflowJobTemplateAddTeams}
+      addRolesRoute={AwxRoute.WorkflowJobTemplateAssignTeams}
     />
   );
 }

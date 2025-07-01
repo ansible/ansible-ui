@@ -12,17 +12,18 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
-import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
-import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
-import { hubAPI } from '../../common/api/formatPath';
-import { HubError } from '../../common/HubError';
-import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
-import { HubItemsResponse } from '../../common/useHubView';
-import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
-import { HubUserGroup } from '../../interfaces/expanded/HubUser';
-import { HubRoute } from '../../main/HubRoutes';
-import { HubNamespace } from '../HubNamespace';
+import { HubSelectRolesStep } from '../../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
+import { HubSelectTeamsStep } from '../../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
+import { hubErrorAdapter } from '../../../common/adapters/hubErrorAdapter';
+import { hubAPI, pulpAPI } from '../../../common/api/formatPath';
+import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { HubError } from '../../../common/HubError';
+import { useHubBulkActionDialog } from '../../../common/useHubBulkActionDialog';
+import { PulpItemsResponse } from '../../../common/useHubView';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { HubUserGroup } from '../../../interfaces/expanded/HubUser';
+import { HubRoute } from '../../../main/HubRoutes';
+import { Repository } from '../Repository';
 
 interface WizardFormValues {
   teams: HubUserGroup[]; // Assuming groups will map to team
@@ -34,20 +35,19 @@ interface TeamRolePair {
   role: HubRbacRole;
 }
 
-export function HubNamespaceAddTeams() {
+export function RepositoryAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const teamProgressDialog = useHubBulkActionDialog<TeamRolePair>();
+  const params = useParams<{ id: string }>();
 
-  const { data, error, refresh } = useGet<HubItemsResponse<HubNamespace>>(
-    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`
+  const { data, error, refresh } = useGet<PulpItemsResponse<Repository>>(
+    params.id ? pulpAPI`/repositories/ansible/ansible/?name=${params.id}` : ''
   );
-
-  let namespace: HubNamespace | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
-    namespace = data.data[0];
+  let repository: Repository | undefined = undefined;
+  if (data?.results && data.results.length > 0) {
+    repository = data.results[0];
   }
 
   if (!data && !error) {
@@ -65,9 +65,9 @@ export function HubNamespaceAddTeams() {
       inputs: (
         <HubSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{namespaceName}}.',
+            'Select the team(s) that you want to give access to {{repository}}.',
             {
-              namespaceName: namespace?.name,
+              repository: repository?.name,
             }
           )}
         />
@@ -84,10 +84,10 @@ export function HubNamespaceAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <HubSelectRolesStep
-          contentType="namespace"
+          contentType="ansiblerepository"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{namespaceName}}.', {
-            namespaceName: namespace?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{repository}}.', {
+            repository: repository?.name,
           })}
         />
       ),
@@ -126,15 +126,15 @@ export function HubNamespaceAddTeams() {
           postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'galaxy.namespace',
-            object_id: namespace?.id,
+            content_type: 'galaxy.ansiblerepository',
+            object_id: parsePulpIDFromURL(repository?.pulp_href),
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(HubRoute.NamespaceTeamAccess, {
-            params: { id: namespace?.name },
+          pageNavigate(HubRoute.RepositoryTeamAccess, {
+            params: { id: repository?.name },
           });
         },
       });
@@ -146,14 +146,14 @@ export function HubNamespaceAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+          { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
           {
-            label: namespace?.name,
-            to: getPageUrl(HubRoute.NamespaceDetails, { params: { id: namespace?.id } }),
+            label: repository?.name,
+            to: getPageUrl(HubRoute.RepositoryDetails, { params: { id: repository?.name } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.id } }),
+            to: getPageUrl(HubRoute.RepositoryTeamAccess, { params: { id: repository?.name } }),
           },
           { label: t('Add roles') },
         ]}
@@ -164,7 +164,7 @@ export function HubNamespaceAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.name } });
+          pageNavigate(HubRoute.RepositoryTeamAccess, { params: { id: repository?.name } });
         }}
       />
     </PageLayout>

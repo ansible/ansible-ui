@@ -8,10 +8,10 @@ import {
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +75,7 @@ export function PlatformTeamList() {
           canCreateTeam ? (
             <PageTableEmptyState
               title={t('No teams found.')}
-              description={t('There are currently no teams added to your organization.')}
+              description={t('There are currently no teams assigned to your organization.')}
             >
               <ButtonLink
                 icon={<PlusCircleIcon />}

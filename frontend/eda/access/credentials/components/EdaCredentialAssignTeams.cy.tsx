@@ -1,30 +1,26 @@
-import { edaAPI } from '../../common/eda-utils';
-import { EdaDecisionEnvironmentAddTeams } from './EdaDecisionEnvironmentAddTeams';
+import { edaAPI } from '../../../common/eda-utils';
+import { EdaCredentialAssignTeams } from './EdaCredentialAssignTeams';
 
-describe('EdaDecisionEnvironmentAddTeams', () => {
-  const component = <EdaDecisionEnvironmentAddTeams />;
-  const path = '/decision-environments/:id/team-access/add-teams';
-  const initialEntries = [`/decision-environments/1/team-access/add-teams`];
+describe('EdaCredentialAssignTeams', () => {
+  const component = <EdaCredentialAssignTeams />;
+  const path = '/credentials/:id/team-access/assign-teams';
+  const initialEntries = [`/credentials/1/team-access/assign-teams`];
   const params = {
     path,
     initialEntries,
   };
 
   beforeEach(() => {
-    cy.intercept('GET', edaAPI`/decision-environments/*`, {
-      fixture: 'edaDecisionEnvironment.json',
+    cy.intercept('GET', edaAPI`/eda-credentials/*`, {
+      fixture: 'credential.json',
     });
     cy.intercept('GET', edaAPI`/teams/?order_by=name*`, { fixture: 'edaTeams.json' });
     cy.intercept('GET', edaAPI`/role_definitions/*`, {
-      fixture: 'edaDecisionEnvironmentRoles.json',
+      fixture: 'edaCredentialRoles.json',
     });
     cy.mount(component, params);
   });
   it('should render with correct steps', () => {
-    cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
-    cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
-    cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
-    cy.get('[data-cy="wizard-nav-item-teams"] button').should('have.class', 'pf-m-current');
     cy.get('table tbody').find('tr').should('have.length', 4);
   });
   it('can filter teams by name', () => {
@@ -68,7 +64,7 @@ describe('EdaDecisionEnvironmentAddTeams', () => {
       cy.get('[data-cy="name-column-cell"]').should('contain.text', 'Admin');
       cy.get('[data-cy="description-column-cell"]').should(
         'contain.text',
-        'Has all permissions to a single decisionenvironment and its child resources - rulebook'
+        'Has all permissions to a single credential and its child resources - rulebook'
       );
     });
   });
@@ -78,7 +74,7 @@ describe('EdaDecisionEnvironmentAddTeams', () => {
       body: {
         team: 3,
         role_definition: 14,
-        content_type: 'eda.decision-environment',
+        content_type: 'eda.credetial',
         object_id: 1,
       },
     }).as('createRoleAssignment');

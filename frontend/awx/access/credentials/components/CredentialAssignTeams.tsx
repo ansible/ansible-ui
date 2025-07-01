@@ -12,14 +12,15 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { Credential } from '../../../interfaces/Credential';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { AwxSelectRolesStep } from '../../common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectTeamsStep } from '../../common/AwxRolesWizardSteps/AwxSelectTeamsStep';
 
 interface WizardFormValues {
   teams: Team[];
@@ -31,13 +32,13 @@ interface TeamRolePair {
   role: AwxRbacRole;
 }
 
-export function NotifierAddTeams() {
+export function CredentialAssignTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: credential, isLoading } = useGet<NotificationTemplate>(
-    awxAPI`/notification_templates/${params.id ?? ''}/`
+  const { data: credential, isLoading } = useGet<Credential>(
+    awxAPI`/credentials/${params.id ?? ''}/`
   );
   const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
@@ -69,7 +70,7 @@ export function NotifierAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <AwxSelectRolesStep
-          contentType="notificationtemplate"
+          contentType="credential"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
             credentialName: credential?.name,
@@ -111,14 +112,14 @@ export function NotifierAddTeams() {
           postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'awx.notificationtemplate',
+            content_type: 'awx.credential',
             object_id: credential.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.NotificationTemplateTeamAccess, {
+          pageNavigate(AwxRoute.CredentialTeamAccess, {
             params: { id: credential.id.toString() },
           });
         },
@@ -131,28 +132,25 @@ export function NotifierAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
+          { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
           {
             label: credential?.name,
-            to: getPageUrl(AwxRoute.NotificationTemplateDetails, {
-              params: { id: credential?.id },
-            }),
+            to: getPageUrl(AwxRoute.CredentialDetails, { params: { id: credential?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(AwxRoute.NotificationTemplateTeamAccess, {
-              params: { id: credential?.id },
-            }),
+            to: getPageUrl(AwxRoute.CredentialTeamAccess, { params: { id: credential?.id } }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.NotificationTemplateTeamAccess, { params: { id: credential?.id } });
+          pageNavigate(AwxRoute.CredentialTeamAccess, { params: { id: credential?.id } });
         }}
       />
     </PageLayout>

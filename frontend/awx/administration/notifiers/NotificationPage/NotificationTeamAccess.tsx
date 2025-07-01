@@ -9,7 +9,7 @@ export function NotificationTeamAccess() {
       service="awx"
       id={params.id || ''}
       type={'notificationtemplate'}
-      addRolesRoute={AwxRoute.NotificationAddTeams as string}
+      addRolesRoute={AwxRoute.NotificationAssignTeams as string}
     />
   );
 }

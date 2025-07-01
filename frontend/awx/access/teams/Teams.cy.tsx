@@ -93,7 +93,7 @@ describe('Teams.cy.ts', () => {
       cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
       cy.contains(/^No teams found$/);
-      cy.contains(/^There are currently no teams added to your organization.$/);
+      cy.contains(/^There are currently no teams assigned to your organization.$/);
       cy.contains('Create team').should('be.visible');
     });
 
