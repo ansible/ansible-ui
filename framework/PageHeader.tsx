@@ -5,9 +5,7 @@ import {
   Flex,
   FlexItem,
   PageSection,
-  PageSectionVariants,
   Popover,
-  Skeleton,
   Stack,
   StackItem,
   Title,
@@ -122,13 +120,7 @@ export function PageHeader(props: PageHeaderProps) {
   }, [props.breadcrumbs, tabBreadcrumb]);
 
   return (
-    <PageSection
-      variant={PageSectionVariants.light}
-      className="bg-lighten border-bottom"
-      style={{
-        paddingBlock: isXl ? 16 : 12,
-      }}
-    >
+    <PageSection hasBodyWrapper={false} style={{ paddingBlock: isXl ? 16 : 12 }}>
       <Stack hasGutter>
         <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
           <FlexItem grow={{ default: 'grow' }}>
@@ -171,6 +163,7 @@ export function PageHeader(props: PageHeaderProps) {
                   <Title data-testid="page-title" data-cy="page-title" headingLevel="h1">
                     {title}
                     <Button
+                      icon={<OutlinedQuestionCircleIcon />}
                       variant="link"
                       style={{
                         padding: 0,
@@ -178,9 +171,7 @@ export function PageHeader(props: PageHeaderProps) {
                         marginLeft: 8,
                         verticalAlign: 'top',
                       }}
-                    >
-                      <OutlinedQuestionCircleIcon />
-                    </Button>
+                    ></Button>
                   </Title>
                 </Popover>
               ) : (
@@ -188,11 +179,7 @@ export function PageHeader(props: PageHeaderProps) {
                   {title}
                 </Title>
               )
-            ) : (
-              <Title headingLevel="h1">
-                <Skeleton width="160px" />
-              </Title>
-            )}
+            ) : null}
             {isMdOrLarger && description && (
               <div data-cy="app-description" style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}>
                 {description}

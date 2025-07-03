@@ -62,7 +62,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by description', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?description__icontains=bar*').as('descriptionFilterRequest');
+      cy.intercept(awxAPI`/projects/?description__icontains=bar*`).as('descriptionFilterRequest');
       cy.filterTableByTextFilter('description', 'bar');
       cy.wait('@descriptionFilterRequest');
       cy.clearAllFilters();
@@ -70,7 +70,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by created by', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?created_by__username__icontains=baz*').as(
+      cy.intercept(awxAPI`/projects/?created_by__username__icontains=baz*`).as(
         'createdByFilterRequest'
       );
       cy.filterTableByTextFilter('created-by', 'baz');
@@ -80,7 +80,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by modified by', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?modified_by__username__icontains=qux*').as(
+      cy.intercept(awxAPI`/projects/?modified_by__username__icontains=qux*`).as(
         'modifiedByFilterRequest'
       );
       cy.filterTableByTextFilter('modified-by', 'qux');
@@ -90,7 +90,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by Type = Git', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?search=Git*').as('scmGitTypeFilterRequest');
+      cy.intercept(awxAPI`/projects/?search=Git*`).as('scmGitTypeFilterRequest');
       cy.filterTableBySearch('Git');
       cy.wait('@scmGitTypeFilterRequest');
       cy.clearAllFilters();
@@ -98,7 +98,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by Type = Subversion', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?search=Subversion*').as('scmSvnTypeFilterRequest');
+      cy.intercept(awxAPI`/projects/?search=Subversion*`).as('scmSvnTypeFilterRequest');
       cy.filterTableBySearch('Subversion');
       cy.wait('@scmSvnTypeFilterRequest');
       cy.clearAllFilters();
@@ -106,7 +106,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by Type = Insights', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?search=Red*').as('scmInsightsTypeFilterRequest');
+      cy.intercept(awxAPI`/projects/?search=Red*`).as('scmInsightsTypeFilterRequest');
       cy.filterTableBySearch('Red Hat Insights');
       cy.wait('@scmInsightsTypeFilterRequest');
       cy.clearAllFilters();
@@ -114,7 +114,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by Type = Manual', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?search=Manual*').as('scmManualTypeFilterRequest');
+      cy.intercept(awxAPI`/projects/?search=Manual*`).as('scmManualTypeFilterRequest');
       cy.filterTableBySearch('Manual');
       cy.wait('@scmManualTypeFilterRequest');
       cy.clearAllFilters();
@@ -122,7 +122,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by Type = Remote Archive', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?search=Remote*').as('scmArchiveTypeFilterRequest');
+      cy.intercept(awxAPI`/projects/?search=Remote*`).as('scmArchiveTypeFilterRequest');
       cy.filterTableBySearch('Remote Archive');
       cy.wait('@scmArchiveTypeFilterRequest');
       cy.clearAllFilters();
@@ -130,7 +130,7 @@ describe('projects.cy.ts', () => {
 
     it('Sync project calls API /update endpoint', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/6/update/').as('projectUpdateRequest');
+      cy.intercept(awxAPI`/projects/6/update/`).as('projectUpdateRequest');
       cy.contains('td', 'Demo Project')
         .parent()
         .within(() => {
@@ -150,14 +150,14 @@ describe('projects.cy.ts', () => {
       cy.filterTableBySearch(' Project 1 Org 0');
       cy.selectTableRowByCheckbox('name', ' Project 1 Org 0', { disableFilter: true });
       cy.clickToolbarKebabAction('cancel-projects');
-      cy.get('.pf-v5-c-modal-box').within(() => {
+      cy.get('.pf-v6-c-modal-box').within(() => {
         cy.hasAlert(
           '1 of the selected project sync jobs cannot be canceled because they are not running.'
         ).should('exist');
         cy.contains('td', ' Project 1 Org 0')
           .parent()
           .within(() => {
-            cy.get('span.pf-v5-c-icon span.pf-m-warning').should('exist');
+            cy.get('span.pf-v6-c-icon span.pf-m-warning').should('exist');
           });
         cy.clickButton(/^Cancel$/);
       });
@@ -171,14 +171,14 @@ describe('projects.cy.ts', () => {
         disableFilter: true,
       });
       cy.clickToolbarKebabAction('cancel-projects');
-      cy.get('.pf-v5-c-modal-box').within(() => {
+      cy.get('.pf-v6-c-modal-box').within(() => {
         cy.hasAlert(
           '1 of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
         ).should('exist');
         cy.contains('td', ' Project 2 Org 0')
           .parent()
           .within(() => {
-            cy.get('span.pf-v5-c-icon span.pf-m-warning').should('exist');
+            cy.get('span.pf-v6-c-icon span.pf-m-warning').should('exist');
           });
         cy.clickButton(/^Cancel$/);
       });
@@ -246,7 +246,7 @@ describe('projects.cy.ts', () => {
           cy.get('#cancel-project-sync').trigger('mouseenter');
           cy.get('#cancel-project-sync').should('have.attr', 'aria-disabled', 'true');
         });
-      cy.get('.pf-v5-c-tooltip')
+      cy.get('.pf-v6-c-tooltip')
         .contains(/^The project sync cannot be canceled due to insufficient permission$/)
         .should('be.visible');
     });
@@ -269,7 +269,7 @@ describe('projects.cy.ts', () => {
         },
       }));
       cy.mount(<Projects />);
-      cy.contains('a', /^Create project$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('a', /^Create project$/).should('not.have.attr', 'aria-disabled', 'true');
     });
 
     it('Displays error if projects are not successfully loaded', () => {

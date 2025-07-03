@@ -84,7 +84,7 @@ describe('WorflowJobTemplatePage', () => {
     cy.clickButton(/^Launch template$/);
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
-    cy.get('.pf-v5-c-alert__title').contains('Failed to launch template');
+    cy.get('.pf-v6-c-alert__title').contains('Failed to launch template');
   });
 
   it('Should render the proper tabs for a super user', () => {
@@ -107,9 +107,9 @@ describe('WorflowJobTemplatePage', () => {
       'Notifications',
     ];
     cy.mount(<WorkflowJobTemplatePage />);
-    cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
-      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+    cy.get('.pf-v6-c-tabs__list').within(() => {
+      cy.get('.pf-v6-c-tabs__item').should('have.length', tabNames.length);
+      cy.get('.pf-v6-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
     });
@@ -136,9 +136,9 @@ describe('WorflowJobTemplatePage', () => {
       'Notifications',
     ];
     cy.mount(<WorkflowJobTemplatePage />, undefined, 'activeUserSysAuditor');
-    cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 8);
-      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+    cy.get('.pf-v6-c-tabs__list').within(() => {
+      cy.get('.pf-v6-c-tabs__item').should('have.length', 8);
+      cy.get('.pf-v6-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
     });
@@ -165,9 +165,9 @@ describe('WorflowJobTemplatePage', () => {
     ];
     cy.mount(<WorkflowJobTemplatePage />);
     cy.wait('@getOrganizations');
-    cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
-      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+    cy.get('.pf-v6-c-tabs__list').within(() => {
+      cy.get('.pf-v6-c-tabs__item').should('have.length', tabNames.length);
+      cy.get('.pf-v6-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
     });

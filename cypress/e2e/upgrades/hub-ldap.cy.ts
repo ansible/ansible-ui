@@ -67,7 +67,7 @@ describe('Negative paths for hub legacy authentication', () => {
     cy.get('input[id*="login-username-id"]').type(hubLdapUsername);
     cy.get('input[id*="login-password-id"]').type(errorHubPassword);
     cy.clickButton(/^Log in$/);
-    cy.get('.pf-v5-c-helper-text__item-text').contains(
+    cy.get('.pf-v6-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );
   });
@@ -79,7 +79,7 @@ describe('Negative paths for hub legacy authentication', () => {
     cy.get('input[id*="login-username-id"]').type(errorHubUsername);
     cy.get('input[id*="login-password-id"]').type(errorHubPassword);
     cy.clickButton(/^Log in$/);
-    cy.get('.pf-v5-c-helper-text__item-text').contains(
+    cy.get('.pf-v6-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );
   });

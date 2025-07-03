@@ -2,7 +2,7 @@ import { PageMasthead, useGetPageUrl, usePageNavigate } from '@ansible/ansible-u
 import { PageMastheadDropdown } from '@ansible/ansible-ui-framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '@ansible/ansible-ui-framework/PageMasthead/PageNotificationsIcon';
 import { PageThemeSwitcher } from '@ansible/ansible-ui-framework/PageMasthead/PageThemeSwitcher';
-import { usePageNotifications } from '@ansible/ansible-ui-framework/PageNotifications/PageNotificationsProvider';
+import { usePageNotifications } from '@ansible/ansible-ui-framework/PageNotifications/usePageNotifications';
 import { useAnsibleAboutModal } from '@ansible/common-ui/AboutModal';
 import { PageRefreshIcon } from '@ansible/common-ui/PageRefreshIcon';
 import { postRequest } from '@ansible/common-ui/crud/Data';
@@ -32,7 +32,7 @@ export function HubMasthead() {
   }, [pageNavigate, refreshActiveHubUser]);
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
-      <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
+      <ToolbarGroup variant="action-group-plain" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
         </ToolbarItem>

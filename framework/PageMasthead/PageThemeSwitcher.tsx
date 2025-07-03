@@ -8,21 +8,19 @@ export function PageThemeSwitcher() {
   if (settings.activeTheme === 'dark') {
     return (
       <Button
+        icon={<MoonIcon />}
         data-cy="settings-icon"
         variant="plain"
         onClick={() => setSettings({ ...settings, theme: 'light' })}
-      >
-        <MoonIcon />
-      </Button>
+      />
     );
   }
   return (
     <Button
+      icon={<SunIcon />}
       data-cy="theme-icon"
       variant="plain"
       onClick={() => setSettings({ ...settings, theme: 'dark' })}
-    >
-      <SunIcon />
-    </Button>
+    />
   );
 }

@@ -1,7 +1,7 @@
 import { useFrameworkTranslations } from '@ansible/ansible-ui-framework';
 import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
-import { Button, Chip, ChipGroup, InputGroup, TextInput, Tooltip } from '@patternfly/react-core';
+import { Label, LabelGroup, Button, InputGroup, TextInput, Tooltip } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
 import { Controller, FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,11 @@ interface ChipHolderProps {
   readonly $isDisabled: boolean;
 }
 const ChipHolder = styled.div<ChipHolderProps>`
-  --pf-v5-c-form-control--Height: auto;
+  --pf-v6-c-form-control--Height: auto;
+  align-items: center;
+  padding-inline-start: 4px;
   background-color: ${(props) =>
-    props.$isDisabled ? 'var(--pf-v5-global--disabled-color--300)' : null};
+    props.$isDisabled ? 'var(--pf-t--global--background--color--disabled--default)' : null};
 `;
 
 export function PageFormEventSourceSelect<
@@ -73,9 +75,9 @@ export function PageFormEventSourceSelect<
           >
             <InputGroup data-cy={'event-stream-input-group'}>
               {value?.length ? (
-                <ChipHolder $isDisabled={isDisabled ?? false} className="pf-v5-c-form-control">
-                  <ChipGroup
-                    numChips={5}
+                <ChipHolder $isDisabled={isDisabled ?? false} className="pf-v6-c-form-control">
+                  <LabelGroup
+                    numLabels={5}
                     expandedText={translations.showLess}
                     collapsedText={translations.countMore.replace(
                       '{count}',
@@ -87,16 +89,17 @@ export function PageFormEventSourceSelect<
                         key={item.event_stream_id}
                         content={`${item?.event_stream_name} ${t(' was swapped with ')} ${item?.source_name}`}
                       >
-                        <Chip
+                        <Label
+                          variant="outline"
                           key={item.event_stream_id}
                           data-cy={`event-chip-${item?.event_stream_id}`}
-                          onClick={() => removeMapping(item?.event_stream_name)}
+                          onClose={() => removeMapping(item?.event_stream_name)}
                         >
                           {item.event_stream_name}
-                        </Chip>
+                        </Label>
                       </Tooltip>
                     ))}
-                  </ChipGroup>
+                  </LabelGroup>
                 </ChipHolder>
               ) : (
                 <TextInput aria-label={placeholder} isDisabled placeholder={placeholder} />

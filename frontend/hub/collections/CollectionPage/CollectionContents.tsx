@@ -77,7 +77,7 @@ export function CollectionContents() {
 
   return (
     <Scrollable>
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         <SearchInput
           key="content-search-input-key"
           id="content-search-input-id"

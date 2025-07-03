@@ -45,7 +45,7 @@ describe('Platform Subscription and Session Validation Tests', () => {
     it('should not display any subscription banners if license info is compliant', () => {
       mountPlatformApp(<PlatformApp />);
       cy.wait(['@getAwxConfig', '@getSession']);
-      cy.get('.pf-v5-c-banner').should('not.exist');
+      cy.get('.pf-v6-c-banner').should('not.exist');
     });
 
     it('should display a gold banner if the subscription will expire in less than 15 days', () => {
@@ -108,7 +108,7 @@ describe('Platform Subscription and Session Validation Tests', () => {
       }).as('getAwxConfig');
       mountPlatformApp(<PlatformApp />);
       cy.wait(['@getAwxConfig', '@getSession']);
-      cy.get('.pf-v5-c-banner').should('not.exist');
+      cy.get('.pf-v6-c-banner').should('not.exist');
     });
   });
 

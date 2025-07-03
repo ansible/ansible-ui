@@ -25,7 +25,7 @@ export function EdaMasthead() {
   }, [pageNavigate, refreshActiveEdaUser]);
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 48 }} />}>
-      <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
+      <ToolbarGroup variant="action-group-plain" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
         </ToolbarItem>

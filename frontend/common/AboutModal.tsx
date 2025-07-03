@@ -1,5 +1,5 @@
 import { usePageDialog } from '@ansible/ansible-ui-framework';
-import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import { AboutModal, Content } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,12 +23,12 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       brandImageAlt={t('Brand Logo')}
       productName={process.env.PRODUCT ?? t('AWX')}
     >
-      <TextContent>
-        <TextList component="dl">
-          <TextListItem component="dt">{t('Version')}</TextListItem>
-          <TextListItem component="dd">{process.env.VERSION}</TextListItem>
-        </TextList>
-      </TextContent>
+      <Content>
+        <Content component="dl">
+          <Content component="dt">{t('Version')}</Content>
+          <Content component="dd">{process.env.VERSION}</Content>
+        </Content>
+      </Content>
     </AboutModal>
   );
 }

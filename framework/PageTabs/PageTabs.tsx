@@ -32,14 +32,9 @@ export function PageTabs(props: {
 
   if (loading) {
     return (
-      <Tabs
-        style={{
-          flexShrink: 0,
-          backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)',
-        }}
-      >
+      <Tabs>
         <PageTab>
-          <PageSection variant="light">
+          <PageSection hasBodyWrapper={false}>
             <Skeleton />
           </PageSection>
         </PageTab>
@@ -53,11 +48,7 @@ export function PageTabs(props: {
         activeKey={activeKey}
         onSelect={onSelect}
         inset={{ default: 'insetSm' }}
-        isBox
-        style={{
-          flexShrink: 0,
-          backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)',
-        }}
+        className="pf-v6-u-mb-md"
       >
         {tabs as unknown as TabsChild}
       </Tabs>

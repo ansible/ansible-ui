@@ -1,7 +1,15 @@
 import { ITableColumn, PageTable, TextCell, usePageDialog } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
-import { Button, ButtonVariant, Modal, ModalVariant } from '@patternfly/react-core';
+import {
+  Button,
+  ButtonVariant,
+  ModalVariant,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePlatformView } from '../../../hooks/usePlatformView';
@@ -46,11 +54,28 @@ export function ViewAwxOrgUserRoles(props: { item: UserAssignment }) {
 
   return (
     <Modal
-      title={t(`Automation Execution roles for ${user?.username}`)}
       variant={ModalVariant.medium}
       isOpen
       onClose={onClose}
-      actions={[
+      aria-labelledby="automation-execution-rols-for-user-title"
+    >
+      <ModalHeader
+        title={t(`Automation Execution roles for ${user?.username}`)}
+        labelId="automation-execution-rols-for-user-title"
+      />
+      <ModalBody>
+        <PageTable<UserAssignment>
+          {...view}
+          tableColumns={tableColumns}
+          errorStateTitle={t('Error loading roles.')}
+          emptyStateTitle={t('There are currently no roles assigned.')}
+          disablePagination
+          disableLastRowBorder
+          compact
+          borderless
+        />
+      </ModalBody>
+      <ModalFooter>
         <Button
           ouiaId="awx-org-user-roles-modal-close-button"
           key="close"
@@ -61,19 +86,8 @@ export function ViewAwxOrgUserRoles(props: { item: UserAssignment }) {
           aria-label={t`Close`}
         >
           {t(`Close`)}
-        </Button>,
-      ]}
-    >
-      <PageTable<UserAssignment>
-        {...view}
-        tableColumns={tableColumns}
-        errorStateTitle={t('Error loading roles.')}
-        emptyStateTitle={t('There are currently no roles assigned.')}
-        disablePagination
-        disableLastRowBorder
-        compact
-        borderless
-      />
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

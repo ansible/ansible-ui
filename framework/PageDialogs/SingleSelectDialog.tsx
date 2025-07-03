@@ -1,4 +1,4 @@
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant, ModalHeader, ModalFooter } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
@@ -33,34 +33,14 @@ export function SingleSelectDialog<T extends object>(props: SingleSelectDialogPr
   const modalColumns = useVisibleModalColumns(tableColumns);
   return (
     <Modal
-      title={title}
       aria-label={title}
       ouiaId={title}
       isOpen
       onClose={onClose}
       variant={ModalVariant.medium}
       tabIndex={0}
-      actions={[
-        <Button
-          key="submit"
-          variant="primary"
-          id="submit"
-          onClick={() => {
-            onClose();
-            if (view.selectedItems.length > 0) {
-              onSelect(view.selectedItems[0]);
-            }
-          }}
-          isAriaDisabled={view.selectedItems.length === 0}
-        >
-          {confirmText ?? translations.confirmText}
-        </Button>,
-        <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
-          {cancelText ?? translations.cancelText}
-        </Button>,
-      ]}
-      hasNoBodyWrapper
     >
+      <ModalHeader title={title} />
       <div
         style={{
           display: 'flex',
@@ -85,6 +65,25 @@ export function SingleSelectDialog<T extends object>(props: SingleSelectDialogPr
           autoHidePagination
         />
       </div>
+      <ModalFooter>
+        <Button
+          key="submit"
+          variant="primary"
+          id="submit"
+          onClick={() => {
+            onClose();
+            if (view.selectedItems.length > 0) {
+              onSelect(view.selectedItems[0]);
+            }
+          }}
+          isAriaDisabled={view.selectedItems.length === 0}
+        >
+          {confirmText ?? translations.confirmText}
+        </Button>
+        <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
+          {cancelText ?? translations.cancelText}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

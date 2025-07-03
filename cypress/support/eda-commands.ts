@@ -55,7 +55,7 @@ Cypress.Commands.add('edaRuleBookActivationCheckbox', (rbaName: string) => {
 
 Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaName: string) => {
   cy.get('div[role="dialog"]').within(() => {
-    cy.get('.pf-v5-c-check__label').should(
+    cy.get('.pf-v6-c-check__label').should(
       'contain',
       `Yes, I confirm that I want to ${action} these`
     );

@@ -15,13 +15,8 @@ const LineNumberGutter = styled.div`
   gap: 8px;
   padding-block: 2px;
   padding-inline: 8px;
-  border-right: 1px solid var(--pf-v5-global--BorderColor--100);
-  background-color: var(--pf-v5-global--BackgroundColor--200);
+  border-right: 1px solid var(--pf-t--global--border--color--default);
   z-index: 1;
-
-  .pf-v5-theme-dark & {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-  }
 `;
 const LineNumber = styled.div`
   flex: 1;

@@ -69,7 +69,7 @@ describe('Notifiers.cy.tsx', () => {
         { fixture: 'notification_templates.json' }
       );
       cy.mount(<Notifiers />);
-      cy.get('[data-cy="create-notifier"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="create-notifier"]').should('be.enabled');
     });
 
     it('Duplicate notifier button is enabled if the user has the correct permissions', () => {
@@ -98,7 +98,7 @@ describe('Notifiers.cy.tsx', () => {
         { fixture: 'notification_templates.json' }
       );
       cy.mount(<Notifiers />);
-      cy.get('[data-cy="edit-notifier"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="edit-notifier"]').should('be.enabled');
     });
   });
   describe('Empty list', () => {

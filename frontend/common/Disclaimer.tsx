@@ -7,9 +7,8 @@ import {
   Page,
   PageSection,
   Stack,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { Fragment, ReactNode, useCallback, useState } from 'react';
 
@@ -25,7 +24,7 @@ export function Disclaimer(props: { children: ReactNode }) {
   if (!acceptedDisclaimer)
     return (
       <Page>
-        <PageSection isFilled>
+        <PageSection hasBodyWrapper={false} isFilled>
           <Stack hasGutter>
             <Alert
               title="Disclaimer: This product is a work in progress."
@@ -36,12 +35,12 @@ export function Disclaimer(props: { children: ReactNode }) {
                 </>
               }
             >
-              <TextContent>
-                <Text component={TextVariants.p}>
+              <Content>
+                <Content component={ContentVariants.p}>
                   By proceeding you acknowledge that you understand that the functionality is not
                   complete and that the product will be changing over time.
-                </Text>
-              </TextContent>
+                </Content>
+              </Content>
             </Alert>
           </Stack>
         </PageSection>

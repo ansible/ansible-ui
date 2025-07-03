@@ -40,7 +40,7 @@ describe('Create decision environment ', () => {
       'ThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageName'
     );
     cy.get('[data-cy="organization_id"]').click();
-    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#organization-2 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.clickButton('Create decision environment');
 
     cy.intercept('POST', edaAPI`/decision-environments/`, (req) => {

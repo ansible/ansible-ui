@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import { PageForm } from '../PageForm';
 import { PageFormFileUpload } from './PageFormFileUpload';
 
@@ -12,14 +13,11 @@ describe('PageFormFileUpload', () => {
         onSubmit={onSubmit}
         onCancel={() => null}
         submitText="Submit"
-        defaultValue={{
-          file: '',
-        }}
+        defaultValue={{ file: '' }}
       >
         <PageFormFileUpload
           name="file"
           isClearButtonDisabled
-          // eslint-disable-next-line i18next/no-literal-string
           label="File upload"
           labelHelpTitle="Help text label"
           labelHelp="Help text"
@@ -28,10 +26,11 @@ describe('PageFormFileUpload', () => {
         />
       </PageForm>
     );
-    cy.getByDataCy('file-form-group').should('be.visible');
-    cy.get('button#file-browse-button').should('be.visible').should('not.have.attr', 'disabled');
-    cy.get('button[aria-disabled="true"]').should('contain', 'Clear');
+    cy.get('[name="file-filename"]').should('be.visible');
+    cy.get('input[type="file"]').should('exist');
+    cy.contains('button', 'Clear').should('exist').and('be.disabled');
   });
+
   it('Should have enabled clear button', () => {
     const onSubmit = cy.stub().as('onSubmit');
     cy.mount(
@@ -46,7 +45,6 @@ describe('PageFormFileUpload', () => {
         <PageFormFileUpload
           name="file"
           isClearButtonDisabled={false}
-          // eslint-disable-next-line i18next/no-literal-string
           label="File upload"
           labelHelpTitle="Help text label"
           labelHelp="Help text"
@@ -55,10 +53,15 @@ describe('PageFormFileUpload', () => {
         />
       </PageForm>
     );
+
     cy.getByDataCy('file-form-group').should('be.visible');
-    cy.get('button#file-browse-button').should('be.visible').should('not.have.attr', 'disabled');
-    cy.containsBy('button', 'Clear').should('be.visible').should('not.have.attr', 'disabled');
+
+    cy.get('[name="file-filename"]').should('be.visible');
+    cy.get('input[type="file"]').should('exist').and('not.be.disabled');
+
+    cy.contains('button', 'Clear').should('be.visible').and('not.be.disabled');
   });
+
   it('Can update the input', () => {
     const onSubmit = cy.stub().as('onSubmit');
 
@@ -75,7 +78,6 @@ describe('PageFormFileUpload', () => {
           name="file"
           type="text"
           isClearButtonDisabled={false}
-          // eslint-disable-next-line i18next/no-literal-string
           label="File upload"
           labelHelpTitle="Help text label"
           labelHelp="Help text"

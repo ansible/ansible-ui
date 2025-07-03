@@ -3,10 +3,13 @@ import {
   Button,
   Checkbox,
   Icon,
-  Modal,
-  ModalBoxBody,
-  ModalVariant,
   Tooltip,
+  Modal,
+  ModalVariant,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  AlertGroup,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -26,13 +29,6 @@ import {
 import { usePageDialog } from './PageDialog';
 import { useTranslation } from 'react-i18next';
 
-const ModalBodyDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-height: 560px;
-  overflow: hidden;
-  border-top: thin solid var(--pf-v5-global--BorderColor--100);
-`;
 const ConfirmBoxDiv = styled.div`
   margin-left: 32px;
   height: 64px;
@@ -156,15 +152,59 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
 
   return (
     <Modal
-      titleIconVariant={isDanger ? 'warning' : undefined}
-      title={title}
-      aria-label={title}
       ouiaId={title}
-      description={prompt}
       variant={ModalVariant.medium}
       isOpen
       onClose={onCloseClicked}
-      actions={[
+      aria-label={title}
+    >
+      <ModalHeader
+        title={title}
+        titleIconVariant={isDanger ? 'warning' : undefined}
+        description={prompt}
+      />
+      {items.length > 0 && (
+        <ModalBody>
+          <AlertGroup>
+            {alertPrompts &&
+              alertPrompts.length > 0 &&
+              alertPrompts.map((alertPrompt, i) => (
+                <Alert
+                  data-cy="alert-toaster"
+                  isInline
+                  title={alertPrompt}
+                  variant="warning"
+                  key={i}
+                ></Alert>
+              ))}
+          </AlertGroup>
+          <PageTable<T>
+            key="items"
+            pageItems={pagination.paged}
+            itemCount={items.length}
+            tableColumns={modalColumns}
+            keyFn={keyFn}
+            compact
+            errorStateTitle={t('Error')}
+            emptyStateTitle={t('No items')}
+            autoHidePagination={true}
+            disableBodyPadding
+            {...pagination}
+          />
+          {confirmText && actionableItems.length > 0 && (
+            <ConfirmBoxDiv>
+              <Checkbox
+                id="confirm"
+                ouiaId="confirm"
+                label={confirmText}
+                isChecked={confirmed}
+                onChange={(_event, val) => setConfirmed(val)}
+              />
+            </ConfirmBoxDiv>
+          )}
+        </ModalBody>
+      )}
+      <ModalFooter>
         <Button
           id="submit"
           key="submit"
@@ -177,55 +217,11 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
           isAriaDisabled={!confirmed}
         >
           {actionButtonText}
-        </Button>,
+        </Button>
         <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
           {translations.cancelText}
-        </Button>,
-      ]}
-      hasNoBodyWrapper
-    >
-      {items.length > 0 && (
-        <ModalBoxBody style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ModalBodyDiv>
-            {alertPrompts &&
-              alertPrompts.length > 0 &&
-              alertPrompts.map((alertPrompt, i) => (
-                <Alert
-                  data-cy="alert-toaster"
-                  isInline
-                  title={alertPrompt}
-                  variant="warning"
-                  key={i}
-                ></Alert>
-              ))}
-            <PageTable<T>
-              key="items"
-              pageItems={pagination.paged}
-              itemCount={items.length}
-              tableColumns={modalColumns}
-              keyFn={keyFn}
-              // pagination={pagination}
-              compact
-              errorStateTitle={t('Error')}
-              emptyStateTitle={t('No items')}
-              autoHidePagination={true}
-              disableBodyPadding
-              {...pagination}
-            />
-          </ModalBodyDiv>
-          {confirmText && actionableItems.length > 0 && (
-            <ConfirmBoxDiv>
-              <Checkbox
-                id="confirm"
-                ouiaId="confirm"
-                label={confirmText}
-                isChecked={confirmed}
-                onChange={(_event, val) => setConfirmed(val)}
-              />
-            </ConfirmBoxDiv>
-          )}
-        </ModalBoxBody>
-      )}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

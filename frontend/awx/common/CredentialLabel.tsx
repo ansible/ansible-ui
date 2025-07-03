@@ -33,14 +33,23 @@ function CredentialLabel(props: { credential: Credential | SummaryFieldCredentia
       : undefined;
 
   return (
-    <Label color="blue" {...rest}>
-      <Link to={getPageUrl(AwxRoute.CredentialDetails, { params: { id: credential.id } })}>
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        <strong>{type}: </strong>
-        {credential.kind === 'vault' && vault_id
-          ? `${credential.name} | ${vault_id.toString()}`
-          : credential.name}
-      </Link>
+    <Label
+      color="blue"
+      isClickable
+      {...rest}
+      render={({ content, className }) => (
+        <Link
+          className={className}
+          to={getPageUrl(AwxRoute.CredentialDetails, { params: { id: credential.id } })}
+        >
+          {content}
+        </Link>
+      )}
+    >
+      <strong>{type}: </strong>
+      {credential.kind === 'vault' && vault_id
+        ? `${credential.name} | ${vault_id.toString()}`
+        : credential.name}
     </Label>
   );
 }

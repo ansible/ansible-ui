@@ -22,11 +22,11 @@ describe('GroupDetails', () => {
     cy.fixture('groupDetails.json').then((group: InventoryGroup) => {
       cy.hasDetail(/^Name$/, group.name);
       cy.hasDetail(/^Description$/, group.description ?? '');
-      cy.get('[data-cy="created"] > .pf-v5-c-description-list__text').should(
+      cy.get('[data-cy="created"] > .pf-v6-c-description-list__text').should(
         'includes.text',
         formatDateString(group.created)
       );
-      cy.get('[data-cy="last-modified"] > .pf-v5-c-description-list__text').should(
+      cy.get('[data-cy="last-modified"] > .pf-v6-c-description-list__text').should(
         'includes.text',
         formatDateString(group.modified)
       );

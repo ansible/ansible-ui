@@ -50,7 +50,7 @@ describe('Run command wizard', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: `/api/v2/execution_environments/1/`,
+            url: awxAPI`/execution_environments/1/`,
             hostname: 'localhost',
           },
           {
@@ -77,7 +77,7 @@ describe('Run command wizard', () => {
       cy.get('input').clear().type('1');
     });
     cy.getByDataCy('diff-mode-form-group').within(() => {
-      cy.get('.pf-v5-c-form__group-control > label').click();
+      cy.get('.pf-v6-c-form__group-control > label').click();
     });
     cy.getByDataCy('become_enabled').click();
     cy.get('.view-line').type('test: "test"');

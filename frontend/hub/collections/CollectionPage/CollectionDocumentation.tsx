@@ -156,7 +156,7 @@ export function CollectionDocumentation() {
           />
         }
       >
-        <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
+        <DrawerContentBody className="body hub-docs-content pf-v6-c-content hub-content-alert-fix">
           {/* This enables scrolling using keyboard after click into the content*/}
           <div
             style={{ outline: 'none' }}
@@ -170,7 +170,7 @@ export function CollectionDocumentation() {
           >
             {content && (
               <>
-                <PageSection variant="light" id="Title_part">
+                <PageSection hasBodyWrapper={false} id="Title_part">
                   <Title headingLevel="h1">
                     {content?.content_type + ' > ' + content?.content_name}
                   </Title>
@@ -217,7 +217,7 @@ export function CollectionDocumentation() {
             )}
             {/* If html is available, insert it directly */}
             {html && (
-              <PageSection variant="light" id="HTML_doc">
+              <PageSection hasBodyWrapper={false} id="HTML_doc">
                 <div
                   dangerouslySetInnerHTML={{
                     __html: html,

@@ -15,12 +15,7 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
-import {
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
@@ -92,9 +87,9 @@ export function InventorySourceDetails(
   let optionsList = null;
   if (overwrite || overwrite_vars || update_on_launch) {
     optionsList = (
-      <TextList component={TextListVariants.ul}>
+      <Content component={ContentVariants.ul}>
         {overwrite && (
-          <TextListItem component={TextListItemVariants.li}>
+          <Content component={ContentVariants.li}>
             {t`Overwrite`}
             <StandardPopover
               header=""
@@ -102,10 +97,10 @@ export function InventorySourceDetails(
                 'If checked, any hosts and groups that were previously present on the external source but are now removed will be removed from the inventory. Hosts and groups that were not managed by the inventory source will be promoted to the next manually created group or if there is no manually created group to promote them into, they will be left in the "all" default group for the inventory. \n \n When not checked, local child hosts and groups not found on the external source will remain untouched by the inventory update process.'
               )}
             />
-          </TextListItem>
+          </Content>
         )}
         {overwrite_vars && (
-          <TextListItem component={TextListItemVariants.li}>
+          <Content component={ContentVariants.li}>
             {t`Overwrite variables`}
             <StandardPopover
               header=""
@@ -113,10 +108,10 @@ export function InventorySourceDetails(
                 'If checked, all variables for child groups and hosts will be removed and replaced by those found on the external source. \n \n When not checked, a merge will be performed, combining local variables with those found on the external source.'
               }
             />
-          </TextListItem>
+          </Content>
         )}
         {update_on_launch && (
-          <TextListItem component={TextListItemVariants.li}>
+          <Content component={ContentVariants.li}>
             {t`Update on launch`}
             <StandardPopover
               header=""
@@ -124,9 +119,9 @@ export function InventorySourceDetails(
                 'Each time a job runs using this inventory, refresh the inventory from the selected source before executing job tasks. This will ensure the most up-to-date inventory information is used during the job run.'
               )}
             />
-          </TextListItem>
+          </Content>
         )}
-      </TextList>
+      </Content>
     );
   }
 

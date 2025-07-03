@@ -20,9 +20,7 @@ export function SidebarHeader({
       <Title headingLevel="h2" style={{ padding: '16px 24px' }}>
         {title}
       </Title>
-      <Button variant="plain" onClick={onClose} aria-label="Close">
-        <TimesIcon />
-      </Button>
+      <Button icon={<TimesIcon />} variant="plain" onClick={onClose} aria-label="Close" />
     </TopologySideBarHeader>
   );
 }

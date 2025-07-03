@@ -27,7 +27,10 @@ describe('Instances Page', () => {
     cy.getByDataCy('remove-instance').should('be.visible');
     cy.get('#remove-instance').should('not.have.attr', 'aria-disabled', 'true');
     cy.getByDataCy('run-health-check').should('be.visible');
-    cy.getByDataCy('run-health-check').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('run-health-check')
+      .should('be.visible')
+      .and('not.be.disabled')
+      .and('not.have.attr', 'aria-disabled');
   });
 
   it('edit instance button should be hidden for non-k8s deployment', () => {

@@ -4,8 +4,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   Flex,
   PageSection,
   PerPageOptions,
@@ -27,10 +25,10 @@ import useResizeObserver from '@react-hook/resize-observer';
 import {
   Dispatch,
   Fragment,
+  LegacyRef,
   MouseEvent,
   ReactNode,
   SetStateAction,
-  UIEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -38,7 +36,6 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageDetails } from '../PageDetails/PageDetails';
@@ -50,7 +47,7 @@ import { IFilterState, IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { usePageToolbarSortOptionsFromColumns } from '../PageToolbar/PageToolbarSort';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
-import { Scrollable } from '../components/Scrollable';
+import { Scrollable, useScrollableState } from '../components/Scrollable';
 import { useManageColumns } from '../components/useManageColumns';
 import { getID } from '../hooks/useID';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
@@ -65,10 +62,6 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-
-const ScrollDiv = styled.div`
-  flex: 1;
-`;
 
 export type PageTableCommonProps<T extends object> = {
   id?: string;
@@ -139,9 +132,6 @@ export type PageTableCommonProps<T extends object> = {
   // TODO remember user setting so that when they return to this table it uses their last setting
   defaultTableView?: PageTableViewType;
 
-  // hides table - useful for Analytics, where there is preview mode which shows toolbar and chart (as topContent props), but no table
-  hideTable?: boolean;
-
   /**
    * Disables the padding that shows up on large screens around the table.
    * Used in modals and other places.
@@ -176,11 +166,6 @@ export type PageTableCommonProps<T extends object> = {
   topContent?: React.ReactNode;
 
   toolbarContent?: React.ReactNode;
-
-  /**
-   * If topContent is set and this variable is set to true, topContent will be scrolled with table.
-   */
-  scrollTopContent?: boolean;
 
   /**
    * Limits the filters so that only one filter can be set to an OR operation.
@@ -338,13 +323,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   let topContent = props.topContent;
   if (topContent) {
     topContent = (
-      <PageSection
-        variant="light"
-        padding={{ default: 'noPadding' }}
-        style={{
-          borderBottom: 'thin solid var(--pf-v5-global--BorderColor--100)',
-        }}
-      >
+      <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding' }}>
         {props.topContent}
       </PageSection>
     );
@@ -361,74 +340,19 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         sortOptions={sortOptions}
         limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
       />
+      {topContent}
       {viewType === PageTableViewTypeE.Table && (
-        <>
-          {props.scrollTopContent ? (
-            <Scrollable>
-              {topContent}
-              {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
-            </Scrollable>
-          ) : (
-            <>
-              {topContent}
-              {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
-            </>
-          )}
-        </>
+        <PageTableView {...props} tableColumns={managedColumns} />
       )}
       {viewType === PageTableViewTypeE.List && (
-        <>
-          {props.scrollTopContent ? (
-            <Scrollable>
-              {topContent}
-              <PageSection padding={{ default: 'noPadding' }} variant="light">
-                {!props.hideTable && (
-                  <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
-                )}
-              </PageSection>
-            </Scrollable>
-          ) : (
-            <>
-              {topContent}
-              <Scrollable>
-                <PageSection padding={{ default: 'noPadding' }} variant="light">
-                  {!props.hideTable && (
-                    <PageTableList
-                      {...props}
-                      showSelect={showSelect}
-                      tableColumns={managedColumns}
-                    />
-                  )}
-                </PageSection>
-              </Scrollable>
-            </>
-          )}
-        </>
+        <Scrollable marginLeft={20} marginRight={20}>
+          <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
+        </Scrollable>
       )}
       {viewType === PageTableViewTypeE.Cards && (
-        <>
-          {props.scrollTopContent ? (
-            <Scrollable>
-              {topContent}
-              {!props.hideTable && (
-                <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
-              )}
-            </Scrollable>
-          ) : (
-            <>
-              {topContent}
-              <Scrollable>
-                {!props.hideTable && (
-                  <PageTableCards
-                    {...props}
-                    showSelect={showSelect}
-                    tableColumns={managedColumns}
-                  />
-                )}
-              </Scrollable>
-            </>
-          )}
-        </>
+        <Scrollable marginLeft={20} marginRight={20}>
+          <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
+        </Scrollable>
       )}
       {!props.disablePagination &&
         (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
@@ -521,46 +445,21 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     toolbarActions?.find(
       (action) => 'selection' in action && action.selection === PageActionSelection.Multiple
     ) !== undefined;
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scroll, setScroll] = useState<{
-    left: number;
-    right: number;
-    top: number;
-    bottom: number;
-  }>({
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  });
-  const updateScroll = useCallback((div: HTMLDivElement | null) => {
-    if (!div) return;
-    setScroll({
-      top: div.scrollTop,
-      bottom: div.scrollHeight - div.clientHeight - div.scrollTop,
-      left: div.scrollLeft,
-      right: div.scrollWidth - div.clientWidth - div.scrollLeft,
-    });
-  }, []);
-  const onScroll = useCallback(
-    (event: UIEvent<HTMLDivElement>) => updateScroll(event.currentTarget),
-    [updateScroll]
-  );
-  useResizeObserver(containerRef, () => updateScroll(containerRef.current));
-  useEffect(() => updateScroll(containerRef.current), [updateScroll]);
 
   const settings = usePageSettings();
+
+  const [expandColumnWidth, setExpandColumnWidth] = useState(0);
 
   let returnElement: JSX.Element;
   if (itemCount === undefined || pageItems === undefined) {
     returnElement = <PageLoadingTable />;
   } else if (itemCount === 0) {
     returnElement = (
-      <EmptyState isFullHeight>
-        <EmptyStateHeader
-          titleText={<>{translations.noResultsFound}</>}
-          icon={<EmptyStateIcon icon={props.emptyStateIcon ?? SearchIcon} />}
-        />
+      <EmptyState
+        icon={props.emptyStateIcon ?? SearchIcon}
+        titleText={<>{translations.noResultsFound}</>}
+        isFullHeight
+      >
         <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
         <EmptyStateFooter>
           {clearAllFilters && (
@@ -575,68 +474,55 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     );
   } else {
     returnElement = (
-      <Table
-        aria-label="Simple table"
-        ouiaId="simple-table"
-        variant={
-          props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
-        }
-        borders={!props.borderless}
-        gridBreakPoint=""
-        isStickyHeader
-        className="page-table"
-      >
-        <TableHead
-          {...props}
-          showSelect={showSelect}
-          scrollLeft={scroll.left > 0}
-          scrollRight={scroll.right > 1}
-          tableColumns={tableColumns}
-          onSelect={onSelect}
-          expandedRow={expandedRow}
-        />
-        <Tbody>
-          {pageItems.map((item, rowIndex) => (
-            <TableRow<T>
-              key={keyFn ? keyFn(item) : rowIndex}
-              columns={tableColumns}
-              item={item}
-              isItemSelected={isSelected?.(item)}
-              isSelectMultiple={isSelectMultiple}
-              selectItem={selectItem}
-              unselectItem={unselectItem}
-              rowActions={rowActions}
-              rowIndex={rowIndex}
-              showSelect={showSelect}
-              scrollLeft={scroll.left > 0}
-              scrollRight={scroll.right > 1}
-              unselectAll={unselectAll}
-              onSelect={onSelect}
-              expandedRow={expandedRow}
-              isLastRow={rowIndex === pageItems.length - 1}
-              disableLastRowBorder={props.disableLastRowBorder}
-              maxSelections={maxSelections}
-              selectedItems={props.selectedItems}
-              defaultExpandedRows={props.defaultExpandedRows}
-            />
-          ))}
-        </Tbody>
-      </Table>
-    );
-  }
-
-  if (!props.scrollTopContent) {
-    returnElement = (
-      <ScrollDiv
-        className="pf-v5-c-scroll-inner-wrapper"
-        ref={containerRef}
-        onScroll={onScroll}
-        style={{
-          backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
-        }}
-      >
-        {returnElement}
-      </ScrollDiv>
+      <Scrollable marginLeft={20} marginRight={20}>
+        <Table
+          aria-label="Simple table"
+          ouiaId="simple-table"
+          variant={
+            props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
+          }
+          gridBreakPoint=""
+          isStickyHeader
+          style={{
+            borderCollapse: 'separate',
+          }}
+        >
+          <TableHead
+            {...props}
+            showSelect={showSelect}
+            tableColumns={tableColumns}
+            onSelect={onSelect}
+            expandedRow={expandedRow}
+            expandColumnWidth={expandColumnWidth}
+            setExpandColumnWidth={setExpandColumnWidth}
+          />
+          <Tbody>
+            {pageItems.map((item, rowIndex) => (
+              <TableRow<T>
+                key={keyFn ? keyFn(item) : rowIndex}
+                columns={tableColumns}
+                item={item}
+                isItemSelected={isSelected?.(item)}
+                isSelectMultiple={isSelectMultiple}
+                selectItem={selectItem}
+                unselectItem={unselectItem}
+                rowActions={rowActions}
+                rowIndex={rowIndex}
+                showSelect={showSelect}
+                unselectAll={unselectAll}
+                onSelect={onSelect}
+                expandedRow={expandedRow}
+                isLastRow={rowIndex === pageItems.length - 1}
+                disableLastRowBorder={props.disableLastRowBorder}
+                maxSelections={maxSelections}
+                selectedItems={props.selectedItems}
+                defaultExpandedRows={props.defaultExpandedRows}
+                expandColumnWidth={expandColumnWidth}
+              />
+            ))}
+          </Tbody>
+        </Table>
+      </Scrollable>
     );
   }
 
@@ -651,10 +537,10 @@ function TableHead<T extends object>(props: {
   sortDirection?: 'asc' | 'desc';
   setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
   showSelect?: boolean;
-  scrollLeft?: boolean;
-  scrollRight?: boolean;
   onSelect?: (item: T) => void;
   expandedRow?: (item: T) => ReactNode;
+  expandColumnWidth: number;
+  setExpandColumnWidth: Dispatch<SetStateAction<number>>;
 }) {
   const {
     tableColumns: columns,
@@ -667,6 +553,47 @@ function TableHead<T extends object>(props: {
     onSelect,
     expandedRow,
   } = props;
+
+  const [_scrollableState, setScrollableState] = useScrollableState();
+
+  const headerRowRef = useRef<HTMLTableRowElement>(null);
+  const updateHeaderRowHeight = useCallback(() => {
+    if (!headerRowRef.current) return;
+    const stickyTop = headerRowRef.current.clientHeight;
+    setScrollableState((state) => ({ ...state, stickyTop }));
+  }, [setScrollableState]);
+  useResizeObserver(headerRowRef, updateHeaderRowHeight);
+
+  const { expandColumnWidth, setExpandColumnWidth } = props;
+  const expandColumnRef = useRef<Element>(null);
+  const updateExpandColumnWidth = useCallback(() => {
+    if (!expandColumnRef.current) return;
+    setExpandColumnWidth(expandColumnRef.current.clientWidth);
+  }, [setExpandColumnWidth]);
+  useResizeObserver(expandColumnRef, updateExpandColumnWidth);
+
+  const [checkboxColumnWidth, setCheckboxColumnWidth] = useState(0);
+  const checkboxColumnRef = useRef<Element>(null);
+  const updateCheckboxColumnWidth = useCallback(() => {
+    if (!checkboxColumnRef.current) return;
+    setCheckboxColumnWidth(checkboxColumnRef.current.clientWidth);
+  }, []);
+  useResizeObserver(checkboxColumnRef, updateCheckboxColumnWidth);
+
+  useEffect(() => {
+    setScrollableState((state) => ({
+      ...state,
+      stickyLeft: expandColumnWidth + checkboxColumnWidth,
+    }));
+  }, [expandColumnWidth, checkboxColumnWidth, setScrollableState]);
+
+  const actionColumnRef = useRef<Element>(null);
+  const updateActionColumnWidth = useCallback(() => {
+    if (!actionColumnRef.current) return;
+    const stickyRight = actionColumnRef.current.clientWidth;
+    setScrollableState((state) => ({ ...state, stickyRight }));
+  }, [setScrollableState]);
+  useResizeObserver(actionColumnRef, updateActionColumnWidth);
 
   const getColumnSort = useCallback<
     (columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined
@@ -692,17 +619,25 @@ function TableHead<T extends object>(props: {
   );
 
   return (
-    <Thead>
-      <Tr className="bg-lighten">
-        {expandedRow && <Th style={{ padding: 0 }} aria-label="Expand" className="bg-lighten" />}
+    <Thead style={{ background: 'inherit' }}>
+      <Tr style={{ background: 'inherit' }} ref={headerRowRef}>
+        {expandedRow && (
+          <Th
+            style={{ padding: 0 }}
+            aria-label="Expand"
+            isStickyColumn
+            stickyMinWidth="0px"
+            ref={expandColumnRef as LegacyRef<HTMLTableCellElement>}
+          />
+        )}
         {(showSelect || onSelect) && (
           <Th
             aria-label="Select"
             isStickyColumn
-            stickyMinWidth="0px"
-            hasRightBorder={props.scrollLeft}
+            stickyMinWidth="48px"
             data-cy={'selections-column-header'}
-            className={props.scrollLeft ? 'bg-lighten-2' : 'bg-lighten'}
+            style={{ paddingTop: 18, paddingLeft: 18, left: expandColumnWidth }}
+            ref={checkboxColumnRef as LegacyRef<HTMLTableCellElement>}
           >
             &nbsp;
           </Th>
@@ -725,29 +660,19 @@ function TableHead<T extends object>(props: {
                 width: column.fullWidth ? '100%' : undefined,
               }}
               data-cy={getID(column.header + '-column-header')}
-              className="bg-lighten"
             >
               {column.header}
             </Th>
           );
         })}
         {itemActions !== undefined && (
-          <Td
+          <Th
             aria-label="Actions"
-            isActionCell
             isStickyColumn
-            stickyMinWidth="0px"
-            style={{
-              right: 0,
-              padding: 0,
-              paddingRight: 0,
-              zIndex: 302,
-            }}
-            className={props.scrollRight ? 'pf-m-border-left bg-lighten-2' : 'bg-lighten'}
+            stickyMinWidth="48px"
             data-cy={'action-column-header'}
-          >
-            &nbsp;
-          </Td>
+            ref={actionColumnRef as LegacyRef<HTMLTableCellElement>}
+          />
         )}
       </Tr>
     </Thead>
@@ -764,8 +689,6 @@ function TableRow<T extends object>(props: {
   rowActions?: IPageAction<T>[];
   rowIndex: number;
   showSelect: boolean;
-  scrollLeft?: boolean;
-  scrollRight?: boolean;
   onSelect?: (item: T) => void;
   unselectAll?: () => void;
   expandedRow?: (item: T) => ReactNode;
@@ -774,6 +697,7 @@ function TableRow<T extends object>(props: {
   maxSelections?: number;
   selectedItems?: T[];
   defaultExpandedRows?: boolean;
+  expandColumnWidth: number;
 }) {
   const {
     columns,
@@ -793,6 +717,7 @@ function TableRow<T extends object>(props: {
     selectedItems,
   } = props;
   const expandedRowContent = expandedRow?.(item);
+  const { expandColumnWidth } = props;
   const [expanded, setExpanded] = useState(!!props.defaultExpandedRows && !!expandedRowContent);
   const settings = usePageSettings();
   const disableRow = useCallback(
@@ -819,7 +744,6 @@ function TableRow<T extends object>(props: {
             ? `row-id-${item.id.toString()}`
             : `row-${rowIndex}`
         }
-        className={isItemSelected ? 'selected' : undefined}
         onClick={() => {
           if (!onSelect) return;
           if (!isSelectMultiple) {
@@ -844,8 +768,11 @@ function TableRow<T extends object>(props: {
                   }
                 : undefined
             }
-            style={{ paddingLeft: expandedRowContent ? 8 : 4 }}
+            style={{ paddingLeft: 0, paddingRight: 0 }}
             data-cy={'expand-column-cell'}
+            isStickyColumn
+            stickyMinWidth="0px"
+            className={expanded && expandedRowContent ? 'expanded' : undefined}
           />
         )}
         {showSelect && (
@@ -866,11 +793,11 @@ function TableRow<T extends object>(props: {
                   }
                 : undefined
             }
-            isStickyColumn={props.scrollLeft}
-            stickyMinWidth="0px"
-            hasRightBorder={props.scrollLeft}
+            isStickyColumn
+            stickyMinWidth="48px"
             data-cy={'checkbox-column-cell'}
-            className={props.scrollLeft ? 'bg-lighten' : undefined}
+            style={{ paddingTop: 18, paddingLeft: 16, left: expandColumnWidth }}
+            className={expandedRow && expanded && expandedRowContent ? 'expanded' : undefined}
           />
         )}
         {onSelect && (
@@ -882,38 +809,36 @@ function TableRow<T extends object>(props: {
               isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
               props: { 'aria-label': 'Select row' },
             }}
-            isStickyColumn={props.scrollLeft}
-            stickyMinWidth="0px"
-            hasRightBorder={props.scrollLeft}
+            isStickyColumn
+            stickyMinWidth="48px"
             data-cy={'checkbox-column-cell'}
-            className={props.scrollLeft ? 'bg-lighten' : undefined}
           />
         )}
         <TableCells
           columns={columns}
           item={item}
           rowActions={rowActions}
-          scrollLeft={props.scrollLeft}
-          scrollRight={props.scrollRight}
+          expanded={!!expandedRow && !!expanded && !!expandedRowContent}
         />
       </Tr>
       {expandedRow && expanded && expandedRowContent && (
-        <Tr
-          isExpanded={expanded}
-          style={{ boxShadow: 'unset' }}
-          className={isItemSelected ? 'selected' : undefined}
-        >
-          <Td />
+        <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
+          <Td isStickyColumn stickyMinWidth="0px" />
           {showSelect && (
-            <Th
+            <Td
               aria-label="Select"
-              isStickyColumn={props.scrollLeft}
-              stickyMinWidth="0px"
-              hasRightBorder={props.scrollLeft}
-              className={props.scrollLeft ? 'bg-lighten' : undefined}
+              isStickyColumn
+              stickyMinWidth="48px"
+              style={{ paddingTop: 18, paddingLeft: 16, left: expandColumnWidth }}
             />
           )}
-          {onSelect && <Td isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />}
+          {onSelect && (
+            <Td
+              isStickyColumn
+              stickyMinWidth="48px"
+              style={{ paddingTop: 18, paddingLeft: 16, left: expandColumnWidth }}
+            />
+          )}
           <Td
             colSpan={columns.length}
             style={{ paddingBottom: settings.tableLayout === 'compact' ? 12 : 24, paddingTop: 0 }}
@@ -921,13 +846,7 @@ function TableRow<T extends object>(props: {
             <CollapseColumn>{expandedRowContent}</CollapseColumn>
           </Td>
           {rowActions !== undefined && rowActions.length > 0 && (
-            <Td
-              isActionCell
-              isStickyColumn={props.scrollRight}
-              stickyMinWidth="0px"
-              style={{ right: 0, padding: 0, paddingRight: 0 }}
-              className={props.scrollRight ? 'pf-m-border-left bg-lighten' : undefined}
-            >
+            <Td isActionCell isStickyColumn stickyMinWidth="48px">
               &nbsp;
             </Td>
           )}
@@ -941,8 +860,7 @@ function TableCells<T extends object>(props: {
   columns: ITableColumn<T>[];
   item: T;
   rowActions?: IPageAction<T>[];
-  scrollLeft?: boolean;
-  scrollRight?: boolean;
+  expanded?: boolean;
 }) {
   const { columns, item, rowActions } = props;
   const [actionsExpanded, setActionsExpanded] = useState(false);
@@ -957,6 +875,7 @@ function TableCells<T extends object>(props: {
             modifier="nowrap"
             style={{ width: column.minWidth === 0 ? '0%' : undefined }}
             data-cy={getID(column.header + '-column-cell')}
+            className={props.expanded ? 'expanded' : undefined}
           >
             <TableColumnCell item={item} column={column} />
           </Td>
@@ -965,16 +884,14 @@ function TableCells<T extends object>(props: {
       {rowActions !== undefined && rowActions.length > 0 && (
         <Td
           isActionCell
-          isStickyColumn={props.scrollRight}
-          stickyMinWidth="0px"
+          isStickyColumn
+          stickyMinWidth="48px"
           style={{
-            right: 0,
-            padding: 0,
-            paddingRight: 8,
+            padding: 10,
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           data-cy={'actions-column-cell'}
-          className={props.scrollRight ? 'pf-m-border-left bg-lighten' : undefined}
+          className={props.expanded ? 'expanded' : undefined}
         >
           <PageActions
             actions={rowActions}

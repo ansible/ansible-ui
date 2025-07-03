@@ -40,7 +40,7 @@ describe('HubNamespaceAddUsers', () => {
   it('should validate that at least one user is selected for moving to next step', () => {
     cy.get('table tbody').find('tr').should('have.length', 2);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one user.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one user.');
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-users"] button').should('not.have.class', 'pf-m-current');
@@ -52,7 +52,7 @@ describe('HubNamespaceAddUsers', () => {
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one role.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.selectTableRowByCheckbox('name', 'galaxy.collection_publisher', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
@@ -91,12 +91,12 @@ describe('HubNamespaceAddUsers', () => {
     cy.clickButton(/^Finish$/);
     cy.wait('@createRoleAssignment');
     // Bulk action modal is displayed with success
-    cy.get('.pf-v5-c-modal-box').within(() => {
+    cy.get('.pf-v6-c-modal-box').within(() => {
       cy.get('table tbody').find('tr').should('have.length', 1);
       cy.get('table tbody').should('contain.text', 'demo-user');
       cy.get('table tbody').should('contain.text', 'galaxy.collection_publisher');
-      cy.get('div.pf-v5-c-progress__description').should('contain.text', 'Success');
-      cy.get('div.pf-v5-c-progress__status').should('contain.text', '100%');
+      cy.get('div.pf-v6-c-progress__description').should('contain.text', 'Success');
+      cy.get('div.pf-v6-c-progress__status').should('contain.text', '100%');
     });
   });
 });

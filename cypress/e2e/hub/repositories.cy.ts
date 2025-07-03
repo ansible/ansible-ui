@@ -101,7 +101,7 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.get('button').contains('Delete repositories').click();
       cy.verifyPageTitle('Repositories');
       cy.filterTableByTextFilter('name', repositoryName);
-      cy.get('.pf-v5-c-empty-state').should('be.visible');
+      cy.get('.pf-v6-c-empty-state').should('be.visible');
       cy.contains('No results found');
     });
 

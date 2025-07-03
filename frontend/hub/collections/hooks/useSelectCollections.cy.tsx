@@ -89,18 +89,21 @@ describe('CollectionMultiSelectDialog', () => {
             allowZeroSelections
           />
         );
-        cy.contains('Selected')
-          .next('div.pf-v5-c-label-group')
+
+        cy.get('.pf-v6-l-split__item')
+          .contains('Selected')
+          .parent()
+          .find('.pf-v6-c-label-group__main')
           .within(() => {
-            cy.get('li.pf-v5-c-label-group__list-item').should('have.length', 4);
-            cy.get('li.pf-v5-c-label-group__list-item').should('contain', 'test_collection10');
-            cy.get('li.pf-v5-c-label-group__list-item').should('contain', 'test_collection9');
-            cy.get('li.pf-v5-c-label-group__list-item').should('contain', 'test_collection8');
-            cy.get('li.pf-v5-c-label-group__list-item').should('contain', '7 more');
+            cy.get('li.pf-v6-c-label-group__list-item').should('have.length', 4);
+            cy.get('li.pf-v6-c-label-group__list-item').should('contain', 'test_collection10');
+            cy.get('li.pf-v6-c-label-group__list-item').should('contain', 'test_collection9');
+            cy.get('li.pf-v6-c-label-group__list-item').should('contain', 'test_collection8');
+            cy.get('li.pf-v6-c-label-group__list-item').should('contain', '7 more');
             cy.get('button').contains('7 more').click();
-            cy.get('li.pf-v5-c-label-group__list-item').should('have.length', 11);
+            cy.get('li.pf-v6-c-label-group__list-item').should('have.length', 11);
             cy.get('button').contains('Show Less').click();
-            cy.get('li.pf-v5-c-label-group__list-item').should('have.length', 4);
+            cy.get('li.pf-v6-c-label-group__list-item').should('have.length', 4);
           });
       }
     );
@@ -130,7 +133,7 @@ describe('CollectionMultiSelectDialog', () => {
          */
         cy.get('div.pf-m-bulk-select').should('contain', '10 selected');
         cy.get('div.pf-m-bulk-select').within(() => {
-          cy.get('div.pf-v5-c-dropdown__toggle').should('have.class', 'pf-m-disabled');
+          cy.get('div.pf-v6-c-dropdown__toggle').should('have.class', 'pf-m-disabled');
         });
 
         // Select 12 collections

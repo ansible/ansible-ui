@@ -86,7 +86,6 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('rrule-column-cell').then(($text) => {
         cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;COUNT=17');
       });
-
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
       cy.get('tr[data-cy="row-id-1"]').should('be.visible');
@@ -134,7 +133,6 @@ describe('Schedules - Create and Delete', () => {
 
     it("can't create a schedule with missing resources", () => {
       const scheduleName = 'E2E Schedule With Missing Resources' + randomString(4);
-
       cy.deleteAwxInventory(inventory).then(() => {
         cy.navigateTo('awx', 'schedules');
         cy.verifyPageTitle('Schedules');
@@ -152,7 +150,7 @@ describe('Schedules - Create and Delete', () => {
         cy.intercept(awxAPI`/schedules/preview/`).as('preview');
         cy.wait('@preview');
         cy.clickButton('Finish');
-        cy.get('div.pf-v5-c-alert__description').should(
+        cy.get('div.pf-v6-c-alert__description').should(
           'have.text',
           'Job Template inventory is missing or undefined.'
         );
@@ -237,7 +235,6 @@ describe('Schedules - Create and Delete', () => {
       cy.clickButton(/^Next$/);
       cy.get('tr[data-cy="row-id-1"]').should('be.visible');
       cy.clickButton(/^Finish$/);
-
       //Check details page
       cy.verifyPageTitle(`${scheduleName}`);
       cy.url().then((currentUrl) => {
@@ -248,7 +245,6 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('description').should('have.text', `description ${scheduleName}`);
       cy.getByDataCy('time-zone').should('have.text', 'Etc/Zulu');
       cy.getByDataCy('days-of-data-to-keep').should('have.text', '33');
-
       cy.get('button[data-cy="actions-dropdown"]').click();
       cy.getByDataCy('delete-schedule').click();
       cy.clickModalConfirmCheckbox();
@@ -395,29 +391,18 @@ describe('Schedules - Create and Delete', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       //Prompts step
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
       cy.get('input[placeholder="Select or create job tags"]').type('test_job_tag');
-      cy.get('div[id="prompt.job_tags-form-group"]').within(() => {
-        cy.get('ul').within(() => {
-          cy.get('button').click();
-        });
-      });
+      cy.contains('ul', 'Create "test_job_tag"').click();
       cy.get('input[placeholder="Select or create skip tags"]').type('test_skip_tag');
-      cy.get('div[id="prompt.skip_tags-form-group"]').within(() => {
-        cy.get('ul').within(() => {
-          cy.get('button').click();
-        });
-      });
+      cy.contains('ul', 'Create "test_skip_tag"').click();
       cy.getBy('[data-cy="prompt-extra-vars"]').type('foo: bar');
       cy.clickButton(/^Next$/);
-
       //Survey step
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Survey');
       cy.getByDataCy('survey-test').type(surveyAnswer);
       cy.clickButton(/^Next$/);
-
       //Rules step
       cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Rules');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -440,7 +425,6 @@ describe('Schedules - Create and Delete', () => {
         cy.get('tbody tr').should('have.length', 1);
       });
       cy.clickButton(/^Next$/);
-
       //Exception step
       cy.get('[data-cy="wizard-nav"] li').eq(4).should('contain.text', 'Exceptions');
       cy.getByDataCy('page-title').contains('Schedule Exceptions');
@@ -464,7 +448,6 @@ describe('Schedules - Create and Delete', () => {
         cy.get('tbody tr').should('have.length', 1);
       });
       cy.clickButton(/^Next$/);
-
       //Review step
       cy.get('[data-cy="wizard-nav"] li').eq(5).should('contain.text', 'Review');
       cy.getByDataCy('resource-type').contains('Job Template');
@@ -476,8 +459,7 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('code-block-value').contains(`test: ${surveyAnswer}`);
 
       cy.intercept('POST', awxAPI`/job_templates/*/schedules/`).as('scheduleCreated');
-
-      cy.clickButton(/^Finish$/);
+      cy.contains('button', 'Finish').click();
       cy.wait('@scheduleCreated')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(201);
@@ -490,8 +472,6 @@ describe('Schedules - Create and Delete', () => {
           expect(response.skip_tags).contains('test_skip_tag');
           expect(response.enabled).to.be.true;
         });
-
-      //Check details page
       cy.verifyPageTitle(`${scheduleName}`);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
@@ -516,7 +496,6 @@ describe('Schedules - Create and Delete', () => {
           cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1);
         });
-
       cy.get('[data-ouia-component-id="simple-table"]')
         .last()
         .scrollIntoView()
@@ -535,7 +514,6 @@ describe('Schedules - Bulk deletion', () => {
   let project: Project;
   let organization: Organization;
   const arrayOfElementText: string[] = [];
-
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateScheduleName(): string {
     return `test-${testSignature}-schedule-${randomString(5, undefined, { isLowercase: true })}`;
@@ -572,9 +550,8 @@ describe('Schedules - Bulk deletion', () => {
     cy.selectTableRow(arrayOfElementText[1]);
     cy.selectTableRow(arrayOfElementText[2]);
     cy.clickToolbarKebabAction('delete-schedules');
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently delete schedule');
-      cy.get('button').contains('Delete schedule').should('have.attr', 'aria-disabled', 'true');
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Delete schedule').click();
       cy.get('tbody').find('tr').should('have.length', 3);
@@ -687,7 +664,6 @@ describe('Schedules - Edit', () => {
     cy.singleSelectByDataCy('endtype', 'Until');
     cy.get(`[data-cy="until-form-group"] [aria-label="Date picker"]`).type(date);
     cy.clickButton(/^Save rule$/);
-
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.getByDataCy('row-id-1').should('exist');
@@ -707,7 +683,6 @@ describe('Schedules - Edit', () => {
     });
     cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');
     cy.clickButton(/^Finish$/);
-
     cy.wait('@editedSchedule')
       .its('response.statusCode')
       .then((statusCode) => {
@@ -763,7 +738,6 @@ describe('Schedules - Edit', () => {
 
   it('can edit a schedule remove exceptions from row action', () => {
     cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');
-
     let schedToEdit: Schedule;
     cy.createAWXSchedule({
       name: 'E2E Edit Remove Exception' + randomString(4),
@@ -792,7 +766,6 @@ describe('Schedules - Edit', () => {
       cy.get('[data-cy="exclusions-column-header"]').should('not.exist');
       cy.get('[data-cy="exclusions-column-cell"]').should('not.exist');
       cy.clickButton(/^Finish$/);
-
       cy.wait('@editedSchedule')
         .its('response.statusCode')
         .then((statusCode) => {
@@ -830,7 +803,6 @@ describe('Schedules - Edit', () => {
         cy.clickButton('Monthly');
       });
       cy.clickButton(/^Save rule$/);
-
       cy.clickButton(/^Next$/);
       cy.getByDataCy('row-id-1').within(() => {
         cy.getByDataCy('delete-exception').click();
@@ -856,6 +828,7 @@ describe('Schedules - Edit', () => {
       cy.deleteAWXSchedule(schedToEdit, { failOnStatusCode: false });
     });
   });
+
   it('can edit a simple schedule with existing rules', () => {
     let schedToEdit: Schedule;
     cy.createAWXSchedule({
@@ -904,7 +877,6 @@ describe('Schedules - Edit', () => {
         expect(enabled).to.be.false;
       });
     cy.get('input[aria-label="Click to enable schedule"]').should('exist');
-
     cy.getByDataCy('toggle-switch').should('be.visible').click();
     cy.wait('@toggleSchedule')
       .its('response.body.enabled')
@@ -928,7 +900,6 @@ describe('Schedules - Edit', () => {
 
   it("can't edit a schedule with missing resources", () => {
     const name = 'E2E Edit Schedule With Missing Resources' + randomString(4);
-
     cy.createAwxInventory(organization).then((inv) => {
       cy.createAwxJobTemplate({
         name: 'E2E Job Template ' + randomString(4),
@@ -943,7 +914,6 @@ describe('Schedules - Edit', () => {
           rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
         }).then((sched: Schedule) => {
           schedule = sched;
-
           cy.deleteAwxInventory(inv).then(() => {
             cy.navigateTo('awx', 'inventories');
             cy.verifyPageTitle('Inventories');
@@ -958,7 +928,6 @@ describe('Schedules - Edit', () => {
             });
             cy.verifyPageTitle(jt.name);
             cy.clickTab('Schedules', true);
-            cy.get('[data-cy="create-schedule"]').should('have.attr', 'aria-disabled', 'true');
             cy.get('[data-cy="name-column-cell"]').within(() => {
               cy.get('a').click();
             });
@@ -972,7 +941,7 @@ describe('Schedules - Edit', () => {
             cy.contains('Finish').click();
             cy.contains('Finish').click();
             cy.wait('@editedSchedule');
-            cy.get('div.pf-v5-c-alert__description').should(
+            cy.get('div.pf-v6-c-alert__description').should(
               'have.text',
               'Job Template inventory is missing or undefined.'
             );

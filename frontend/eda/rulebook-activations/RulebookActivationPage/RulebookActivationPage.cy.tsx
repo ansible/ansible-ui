@@ -42,9 +42,9 @@ describe('RulebookActivationPage', () => {
     }).as('enableActivation');
 
     cy.mount(<RulebookActivationPage />);
-    cy.get('.pf-v5-c-switch__toggle').click();
+    cy.get('.pf-v6-c-switch__toggle').click();
     cy.wait('@enableActivation');
-    cy.get('.pf-v5-c-alert__title').should('contain', 'Activation 1 enabled');
+    cy.get('.pf-v6-c-alert__title').should('contain', 'Activation 1 enabled');
   });
 
   it('Can disable the rulebook activation', () => {
@@ -54,9 +54,9 @@ describe('RulebookActivationPage', () => {
 
     cy.mount(<RulebookActivationPage />, { path: '/:id/*', initialEntries: ['/5'] });
 
-    cy.get('.pf-v5-c-switch__toggle').click();
+    cy.get('.pf-v6-c-switch__toggle').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to disable these 1 rulebook activation`
       );
@@ -82,7 +82,7 @@ describe('RulebookActivationPage', () => {
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('#duplicate-rulebook-activation').should('exist').click();
     cy.wait('@copyActivation');
-    cy.get('.pf-v5-c-alert__title').should('contain', 'Activation 1 duplicated');
+    cy.get('.pf-v6-c-alert__title').should('contain', 'Activation 1 duplicated');
   });
 
   it('The Duplicate button is disabled if the user does not have PATCH permission', () => {
@@ -105,9 +105,9 @@ describe('RulebookActivationPage', () => {
     ];
     cy.mount(<RulebookActivationPage />);
 
-    cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 5);
-      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+    cy.get('.pf-v6-c-tabs__list').within(() => {
+      cy.get('.pf-v6-c-tabs__item').should('have.length', 5);
+      cy.get('.pf-v6-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
     });

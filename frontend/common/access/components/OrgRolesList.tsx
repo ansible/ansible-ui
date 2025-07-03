@@ -47,11 +47,11 @@ export type OrgRolesListProps =
   | TeamOrgRolesListPropsWithAnsibleId;
 
 const StyledBadge = styled(Badge)`
-  margin-left: var(--pf-v5-global--spacer--sm);
+  margin-left: var(--pf-t--global--spacer--sm);
 `;
 
 const StyledDivider = styled(Divider)`
-  margin: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--md) 0;
+  margin: var(--pf-t--global--spacer--md) 0 var(--pf-t--global--spacer--md) 0;
 `;
 /**
  * Displays a list of the org-level roles associated with a user/team

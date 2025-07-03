@@ -77,7 +77,7 @@ describe('Check if the build includes EDA', () => {
       cy.get('#rulebook-activation').should('contain', edaRBA.name);
       cy.contains('a', 'Events').click();
       cy.get('td[data-label="Name"]').find('a').click();
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('h1').should('contain', 'Event details');
         cy.clickButton('Close');
       });

@@ -27,7 +27,6 @@ export type PageFormSwitchProps<
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
   autoFocus?: boolean;
   labelOn?: string;
-  labelOff?: string;
 };
 
 export function PageFormSwitch<
@@ -43,7 +42,6 @@ export function PageFormSwitch<
     labelHelp,
     labelHelpTitle,
     labelOn,
-    labelOff,
   } = props;
   const {
     control,
@@ -75,7 +73,6 @@ export function PageFormSwitch<
               onChange={(e) => onChange(e)}
               isDisabled={isSubmitting}
               label={labelOn}
-              labelOff={labelOff}
             />
           </PageFormGroup>
         );

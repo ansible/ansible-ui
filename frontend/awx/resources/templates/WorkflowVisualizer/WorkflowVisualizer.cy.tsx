@@ -76,6 +76,8 @@ describe('WorkflowVisualizer', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.get('[data-id="1510"]').click();
     cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
+    cy.getByDataCy('name').should('have.text', 'Cleanup Activity Stream');
+    cy.getByDataCy('type').should('have.text', 'Management job');
   });
 
   it('Node label kebab should open context menu dropdown', () => {
@@ -153,7 +155,7 @@ describe('WorkflowVisualizer', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.get('.toggle-kebab')
       .click()
-      .get('.pf-v5-c-menu__item-text')
+      .get('.pf-v6-c-menu__item-text')
       .contains('Remove all steps')
       .should('be.visible');
     cy.get('.toggle-kebab').click();
@@ -206,12 +208,14 @@ describe('WorkflowVisualizer', () => {
       { method: 'GET', url: awxAPI`/job_templates/*` },
       { fixture: 'jobTemplates.json' }
     );
-    cy.mount(<WorkflowVisualizer />);
+    cy.mount(
+      <div style={{ height: '100vh' }}>
+        <WorkflowVisualizer />
+      </div>
+    );
     cy.get('#zoom-out').click();
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
-    cy.get('li[data-cy="add-node-and-link"]').within(() => {
-      cy.get('button').click({ force: true });
-    });
+    cy.getByDataCy('add-node-and-link').click();
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
     cy.getBy('button[id="job-template-select"]').click();
     cy.get('button#browse').scrollIntoView().click({
@@ -222,10 +226,16 @@ describe('WorkflowVisualizer', () => {
       cy.clickButton('Confirm');
     });
     cy.selectDropdownOptionByResourceName('node-status-type', 'success');
-    cy.selectDropdownOptionByResourceName('node-convergence', 'All');
+    cy.get('button[data-cy="node-convergence-form-group"]').click();
+    cy.getByDataCy('node-convergence').within(() => {
+      cy.getByDataCy('any').should('include.text', 'Any');
+      cy.getByDataCy('all').should('include.text', 'All');
+      cy.getByDataCy('all').click();
+    });
     cy.get('[data-cy="node-alias"]').type('Test Node');
     cy.clickButton('Next');
     cy.clickButton('Finish');
+    cy.get('[data-cy="workflow-topology-sidebar"]').should('not.exist');
     cy.get('[data-id="7-unsavedNode"] .pf-topology__node__action-icon').should('be.visible');
     cy.get('[data-id="1510-7-unsavedNode"]').should('be.visible');
   });
@@ -253,11 +263,11 @@ describe('Empty state', () => {
       path: '/templates/workflow-job-template/:id/visualizer',
       initialEntries: ['/templates/workflow-job-template/123/visualizer'],
     });
-    cy.get('h4.pf-v5-c-empty-state__title-text').should(
+    cy.get('h4.pf-v6-c-empty-state__title-text').should(
       'have.text',
       'There are currently no nodes in this workflow'
     );
-    cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+    cy.get('div.pf-v6-c-empty-state__actions').within(() => {
       cy.get('[data-cy="add-node-button"]').should('be.visible');
     });
   });
@@ -289,7 +299,7 @@ describe('Empty state', () => {
       path: '/templates/workflow-job-template/:id/visualizer',
       initialEntries: ['/templates/workflow-job-template/123/visualizer'],
     });
-    cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+    cy.get('div.pf-v6-c-empty-state__actions').within(() => {
       cy.get('[data-cy="add-node-button"]').click();
     });
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');

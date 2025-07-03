@@ -16,10 +16,10 @@ const PageNavDotButton = styled(Button)<{ isCurrentPage: boolean }>`
     ${(props: { isCurrentPage: boolean }) =>
       props.isCurrentPage
         ? css`
-            background-color: var(--pf-v5-global--primary-color--100);
+            background-color: var(--pf-t--global--background--color--primary--default);
           `
         : css`
-            background-color: var(--pf-v5-global--disabled-color--200);
+            background-color: var(--pf-t--global--background--color--secondary--default);
           `}
   }
 `;

@@ -46,7 +46,7 @@ function AwxOverviewInternal(props: { managedResources: Resource[] }) {
   );
   if (!data || isLoading) {
     return (
-      <PageSection isFilled>
+      <PageSection hasBodyWrapper={false} isFilled>
         <Bullseye>
           <Spinner />
         </Bullseye>

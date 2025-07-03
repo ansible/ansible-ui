@@ -103,7 +103,7 @@ export function WorkflowNodeDetails({ node }: { node: GraphNode }) {
   return (
     <>
       <WorkflowNodeDetailsHeader node={node} />
-      <Scrollable borderTop>
+      <Scrollable>
         <PageDetails numberOfColumns="single">
           <NodeNameDetail nodeData={nodeData?.resource} />
           <PageDetail label={t('Type')}>{nodeTypeDetail}</PageDetail>
@@ -176,7 +176,7 @@ function WorkflowNodeDetailsFooter({ node }: { node: GraphNode }) {
   };
 
   return (
-    <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+    <PageSection hasBodyWrapper={false} isFilled={false}>
       <ActionList data-cy="workflow-topology-sidebar-actions">
         <Button data-cy="edit-node" variant="primary" onClick={handleEdit}>
           {t('Edit')}

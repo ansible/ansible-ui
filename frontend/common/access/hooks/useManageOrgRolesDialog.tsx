@@ -1,5 +1,13 @@
 import { usePageDialog } from '@ansible/ansible-ui-framework';
-import { Button, ButtonVariant, Modal, ModalVariant } from '@patternfly/react-core';
+import {
+  Button,
+  ButtonVariant,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
 import { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -21,12 +29,26 @@ export function ManageOrgRoles(props: ViewOrgRolesProps) {
   );
 
   return (
-    <Modal
-      title={t('Roles for {{userOrTeamName}}', { userOrTeamName: userOrTeamName })}
-      variant={ModalVariant.medium}
-      isOpen
-      onClose={onClose}
-      actions={[
+    <Modal variant={ModalVariant.medium} isOpen onClose={onClose}>
+      <ModalHeader title={t('Roles for {{userOrTeamName}}', { userOrTeamName: userOrTeamName })} />
+      <ModalBody>
+        {orgListsOptions.map((orgListProps, index) => (
+          <OrgRolesList
+            key={index}
+            {...orgListProps}
+            isLastSection={index === orgListsOptions.length - 1}
+            setOrgListIsEmpty={setOrgListIsEmpty}
+            listId={index}
+          />
+        ))}
+        {orgListIsEmpty.every((isEmpty) => isEmpty === true) && (
+          <Trans>
+            <b>{userOrTeamName}</b> has no organization roles. To add roles to{' '}
+            <b>{userOrTeamName}</b> click on the button below.
+          </Trans>
+        )}
+      </ModalBody>
+      <ModalFooter>
         <Button
           ouiaId="manage-roles-modal-manage-roles-button"
           key="manage-roles"
@@ -39,7 +61,7 @@ export function ManageOrgRoles(props: ViewOrgRolesProps) {
           aria-label={t`Close`}
         >
           {t(`Manage roles`)}
-        </Button>,
+        </Button>
         <Button
           ouiaId="manage-roles-modal-close-button"
           key="close"
@@ -50,24 +72,8 @@ export function ManageOrgRoles(props: ViewOrgRolesProps) {
           aria-label={t`Close`}
         >
           {t(`Close`)}
-        </Button>,
-      ]}
-    >
-      {orgListsOptions.map((orgListProps, index) => (
-        <OrgRolesList
-          key={index}
-          {...orgListProps}
-          isLastSection={index === orgListsOptions.length - 1}
-          setOrgListIsEmpty={setOrgListIsEmpty}
-          listId={index}
-        />
-      ))}
-      {orgListIsEmpty.every((isEmpty) => isEmpty === true) && (
-        <Trans>
-          <b>{userOrTeamName}</b> has no organization roles. To add roles to <b>{userOrTeamName}</b>{' '}
-          click on the button below.
-        </Trans>
-      )}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

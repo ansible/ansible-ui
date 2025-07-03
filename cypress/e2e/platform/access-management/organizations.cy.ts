@@ -362,7 +362,7 @@ describe('If SaaS Build', () => {
           });
           cy.clickButton(/^Next/);
           cy.contains('h1', 'Review').should('be.visible');
-          cy.contains('.pf-v5-c-description-list__text', createdPlatformTeam).should('be.visible');
+          cy.contains('.pf-v6-c-description-list__text', createdPlatformTeam).should('be.visible');
           cy.clickButton(/^Finish/);
         });
         cy.verifyPageTitle(organization.name);
@@ -372,7 +372,7 @@ describe('If SaaS Build', () => {
         cy.contains('h4', 'There are currently no roles assigned to this team.').should(
           'be.visible'
         );
-        cy.get('li.pf-v5-c-tabs__item').contains('Automation Decisions').click();
+        cy.get('li.pf-v6-c-tabs__item').contains('Automation Decisions').click();
         cy.contains('h4', 'There are currently no roles assigned to this team.').should(
           'be.visible'
         );

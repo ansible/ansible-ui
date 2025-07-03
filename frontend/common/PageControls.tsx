@@ -59,48 +59,43 @@ export function PageControls(props: IPageControlsProps) {
       <ExpandCollapseWrapper>
         {!isFlatMode && isTemplateJob && (
           <Button
+            icon={isAllCollapsed ? <AngleRightIcon /> : <AngleDownIcon />}
             aria-label={isAllCollapsed ? t`Expand job events` : t`Collapse all job events`}
             variant="plain"
             type="button"
             onClick={toggleExpandCollapseAll}
-          >
-            {isAllCollapsed ? <AngleRightIcon /> : <AngleDownIcon />}
-          </Button>
+          />
         )}
       </ExpandCollapseWrapper>
       <ScrollWrapper>
         <Button
+          icon={<AngleUpIcon />}
           ouiaId="job-output-scroll-previous-button"
           aria-label={t`Scroll previous`}
           onClick={onScrollPrevious}
           variant="plain"
-        >
-          <AngleUpIcon />
-        </Button>
+        />
         <Button
+          icon={<AngleDownIcon />}
           ouiaId="job-output-scroll-next-button"
           aria-label={t`Scroll next`}
           onClick={onScrollNext}
           variant="plain"
-        >
-          <AngleDownIcon />
-        </Button>
+        />
         <Button
+          icon={<AngleDoubleUpIcon />}
           ouiaId="job-output-scroll-first-button"
           aria-label={t`Scroll first`}
           onClick={onScrollFirst}
           variant="plain"
-        >
-          <AngleDoubleUpIcon />
-        </Button>
+        />
         <Button
+          icon={<AngleDoubleDownIcon />}
           ouiaId="job-output-scroll-last-button"
           aria-label={t`Scroll last`}
           onClick={onScrollLast}
           variant="plain"
-        >
-          <AngleDoubleDownIcon />
-        </Button>
+        />
       </ScrollWrapper>
     </ControllsWrapper>
   );

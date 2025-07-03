@@ -74,7 +74,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.getBy('[data-cy="delete-inventory"]').click();
     cy.getModal().within(() => {
       cy.get('header').contains('Permanently delete inventory');
-      cy.get('button').contains('Delete inventory').should('have.attr', 'aria-disabled', 'true');
+      cy.contains('Delete inventory').should('have.attr', 'aria-disabled', 'true');
       cy.get('[data-cy="name-column-cell"]').should('have.text', constInvName);
       cy.get('input[id="confirm"]').click();
       cy.clickButton(/^Delete inventory/);
@@ -195,7 +195,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
       })
       .then(() => {
         cy.getByDataCy('edit-inventory').click();
-        cy.contains(`[aria-label="Chip group category"] li`, expectedOrder[0]).within(() => {
+        cy.contains(`[aria-label="Label group category"] li`, expectedOrder[0]).within(() => {
           cy.get('button').click();
         });
         const deletedItem = expectedOrder[0];

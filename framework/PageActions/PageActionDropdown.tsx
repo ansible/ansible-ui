@@ -32,12 +32,12 @@ import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
 
 const StyledDropdownItem = styled.div<{ $hasSwitches: boolean; $isDanger: boolean }>`
-  --pf-v5-c-dropdown__menu-item-icon--Width: ${({ $hasSwitches }) =>
+  --pf-v6-c-dropdown__menu-item-icon--Width: ${({ $hasSwitches }) =>
     $hasSwitches ? '40px' : undefined};
-  --pf-v5-c-dropdown__menu-item-icon--MarginRight: ${({ $hasSwitches }) =>
+  --pf-v6-c-dropdown__menu-item-icon--MarginRight: ${({ $hasSwitches }) =>
     $hasSwitches ? '16px' : undefined};
-  --pf-v5-c-dropdown__menu-item--Color: ${({ $isDanger }) =>
-    $isDanger ? 'var(--pf-v5-global--danger-color--100)' : undefined};
+  --pf-v6-c-menu__item--Color: ${({ $isDanger }) =>
+    $isDanger ? 'var(--pf-t--global--text--color--status--danger--default)' : undefined};
 `;
 
 const ActionSwitchDiv = styled.div`
@@ -135,29 +135,10 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
   const tooltipContent = getToolTipContent();
 
   const dropdownMenuLabel: string | JSX.Element | undefined =
-    iconOnly && CustomIcon ? (
-      <Icon>
-        <CustomIcon />
-      </Icon>
-    ) : (
-      label
-    );
+    iconOnly && CustomIcon ? <CustomIcon /> : label;
 
   const disabledMenuToggle = (
-    <Button
-      data-cy={id}
-      icon={
-        CustomIcon ? (
-          <Icon>
-            <CustomIcon />
-          </Icon>
-        ) : undefined
-      }
-      style={{
-        backgroundColor: '#f0f0f0',
-      }}
-      isAriaDisabled
-    >
+    <Button data-cy={id} icon={CustomIcon ? <CustomIcon /> : undefined} isAriaDisabled>
       {dropdownMenuLabel}
       <span style={{ paddingLeft: '16px' }}>
         <CaretDownIcon aria-hidden />
@@ -198,14 +179,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
               variant={isSecondary ? 'secondary' : isPrimary ? 'primary' : 'plain'}
               onClick={() => setDropdownOpen(!dropdownOpen)}
               isExpanded={dropdownOpen}
-              style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
-              icon={
-                CustomIcon ? (
-                  <Icon>
-                    <CustomIcon />
-                  </Icon>
-                ) : undefined
-              }
+              icon={CustomIcon ? <CustomIcon /> : undefined}
             >
               {dropdownMenuLabel ?? <EllipsisVIcon />}
             </MenuToggle>
@@ -276,18 +250,25 @@ function PageActionButton<T extends object>(
           style={{
             color: action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
           }}
+          icon={
+            CustomIcon ? (
+              <Icon
+                size="lg"
+                iconSize="md"
+                status={action.isDanger && !isButtonDisabled ? 'danger' : undefined}
+                style={
+                  {
+                    '--pf-v6-c-icon__content--Color': isButtonDisabled
+                      ? '--pf-v6-c-menu--icon--disabled--Color'
+                      : undefined,
+                  } as React.CSSProperties
+                }
+              >
+                <CustomIcon />
+              </Icon>
+            ) : undefined
+          }
         >
-          {CustomIcon ? (
-            <Icon
-              size="lg"
-              iconSize="md"
-              style={{
-                paddingRight: '.5rem',
-              }}
-            >
-              <CustomIcon />
-            </Icon>
-          ) : undefined}
           {action.label}
         </DropdownItem>
       </StyledDropdownItem>
@@ -313,18 +294,14 @@ function PageActionLink<T extends object>(
         style={{
           color: action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
         }}
+        icon={
+          CustomIcon ? (
+            <Icon size="lg" iconSize="md">
+              <CustomIcon />
+            </Icon>
+          ) : undefined
+        }
       >
-        {CustomIcon ? (
-          <Icon
-            size="lg"
-            iconSize="md"
-            style={{
-              paddingRight: '.5rem',
-            }}
-          >
-            <CustomIcon />
-          </Icon>
-        ) : undefined}
         {action.label}
       </DropdownItem>
     </Tooltip>

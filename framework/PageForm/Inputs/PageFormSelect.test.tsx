@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, within } from '@testing-library/react';
+import { render, within, screen } from '@testing-library/react';
 import { PageFormSelect } from './PageFormSelect';
 import { describe, expect, test } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -31,11 +31,11 @@ describe('PageFormSelect', () => {
 
     await user.click(container.querySelector('button') as HTMLButtonElement);
 
-    const list = container.querySelector('ul'); // or the parent element
+    const list = await screen.findByRole('listbox');
     expect(list).not.toBeNull();
 
     for (const option of options) {
-      expect(within(list as HTMLElement).getByText(option.label)).toBeInTheDocument();
+      expect(within(list).getByText(option.label)).toBeInTheDocument();
     }
   });
 
@@ -44,7 +44,7 @@ describe('PageFormSelect', () => {
     const { container } = render(<Wrapper />);
 
     await user.click(container.querySelector('button') as HTMLButtonElement);
-    const menu = container.querySelector(
+    const menu = document.querySelector(
       'div.pf-m-scrollable[data-ouia-component-id="menu-select"]'
     );
     expect(menu).toBeInTheDocument();

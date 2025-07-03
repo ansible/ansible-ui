@@ -152,7 +152,6 @@ describe('Workflow Visualizer', () => {
       cy.getByDataCy('Submit').click();
       cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();
-      cy.getBy('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
       cy.get('[data-cy="extra-vars"]')
         .scrollIntoView({ offset: { top: 150, left: 0 } })
         .should('contain', 'foo: bar');
@@ -160,7 +159,7 @@ describe('Workflow Visualizer', () => {
       cy.getBy('#fit-to-screen').click();
       cy.getBy('#zoom-out').click();
       cy.getByDataCy('workflow-visualizer-toolbar-save').click();
-      cy.getBy('.pf-v5-c-alert__action').click();
+      cy.getBy('.pf-v6-c-alert__action').click();
       cy.getByDataCy('workflow-visualizer-toolbar-kebab').click();
       cy.intercept(
         'POST',

@@ -1,11 +1,12 @@
 import {
   Button,
   Card,
+  CardBody,
   CardFooter,
   CardHeader,
+  Content,
   Flex,
   FlexItem,
-  Text,
   Title,
 } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
@@ -120,8 +121,6 @@ export function PageDashboardCard(props: {
   return (
     <Card
       id={id}
-      isFlat
-      isRounded
       style={{
         transition: 'box-shadow 0.25s',
         gridColumn: `span ${colSpan}`,
@@ -134,6 +133,7 @@ export function PageDashboardCard(props: {
       isCompact={props.isCompact}
       className="page-dashboard-card"
       data-cy={id}
+      // variant="secondary"
     >
       {(props.title || props.linkText) && (
         <CardHeader>
@@ -144,9 +144,9 @@ export function PageDashboardCard(props: {
           >
             <FlexItem grow={{ default: 'grow' }}>
               {props.supertitle && (
-                <Text data-cy="card-main" component="small" style={{ opacity: 0.8 }}>
+                <Content data-cy="card-main" component="small" style={{ opacity: 0.8 }}>
                   {props.supertitle}
-                </Text>
+                </Content>
               )}
               <div>
                 <Title
@@ -160,16 +160,16 @@ export function PageDashboardCard(props: {
                 <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
               </div>
               {props.subtitle && (
-                <Text data-cy="card-subtitle" component="small" style={{ opacity: 0.8 }}>
+                <Content data-cy="card-subtitle" component="small" style={{ opacity: 0.8 }}>
                   {props.subtitle}
-                </Text>
+                </Content>
               )}
             </FlexItem>
             {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
             <FlexItem>
-              <Text data-cy="card-link-text" component="small">
+              <Content data-cy="card-link-text" component="small">
                 {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
-              </Text>
+              </Content>
             </FlexItem>
             {props.canCollapse && (
               <FlexItem>
@@ -188,7 +188,7 @@ export function PageDashboardCard(props: {
           )}
         </CardHeader>
       )}
-      {!isCollapsed && props.children}
+      {!isCollapsed && props.children && <CardBody>{props.children}</CardBody>}
       {!isCollapsed && props.footerActionButton && (
         <CardFooter style={{ textAlign: 'end' }}>
           <Button

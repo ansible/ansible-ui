@@ -50,6 +50,7 @@ import {
   LoadingPage,
   PageHeader,
   PageLayout,
+  PageToolbar,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageTable } from '@ansible/ansible-ui-framework/PageTable/PageTable';
@@ -421,6 +422,59 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
     });
   }
 
+  const topContent = props.view.originalData && (
+    <Chart
+      schema={hydrateSchema(
+        props.mainData?.report?.layoutProps?.schema || ([] as ChartSchemaElement[])
+      )({
+        y: sortOption,
+        tooltip: 'Savings for',
+        field: sortOption,
+        label: props.options?.sort_options?.find((item) => item.key === sortOption)?.value,
+        xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
+        chartType: chartType as AnyType,
+      })}
+      data={props.view.originalData as AnyType}
+      specificFunctions={specificFunctions}
+    />
+  );
+
+  const toolbarContent = availableChartTypes && availableChartTypes.length > 1 && (
+    <ToggleGroup aria-label="Chart type toggle" key="chart-toggle">
+      {availableChartTypes.map((chartTypeItem) => (
+        <ToggleGroupItem
+          key={chartTypeItem}
+          data-cy={'chart_type'}
+          text={`${capitalize(chartTypeItem)} Chart`}
+          buttonId={chartTypeItem}
+          isSelected={chartTypeItem === chartType}
+          onChange={() => {
+            setChartType(chartTypeItem);
+          }}
+        />
+      ))}
+    </ToggleGroup>
+  );
+
+  if (props.previewMode) {
+    return (
+      <>
+        <PageToolbar
+          {...props.view}
+          expandedRow={(item) => renderAllTasksStatus(item, props)}
+          perPageOptions={perPageOptions}
+          errorStateTitle={t('some error title')}
+          emptyStateTitle={t('empty state title')}
+          tableColumns={props.tableColumns || []}
+          toolbarFilters={props.toolbarFilters}
+          topContent={topContent}
+          toolbarContent={toolbarContent}
+        />
+        {topContent}
+      </>
+    );
+  }
+
   // render the table and chart
   return (
     <PageTable<AnyType>
@@ -431,45 +485,8 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
       emptyStateTitle={t('empty state title')}
       tableColumns={props.tableColumns || []}
       toolbarFilters={props.toolbarFilters}
-      scrollTopContent={true}
-      hideTable={props.previewMode}
-      topContent={
-        props.view.originalData && (
-          <Chart
-            schema={hydrateSchema(
-              props.mainData?.report?.layoutProps?.schema || ([] as ChartSchemaElement[])
-            )({
-              y: sortOption,
-              tooltip: 'Savings for',
-              field: sortOption,
-              label: props.options?.sort_options?.find((item) => item.key === sortOption)?.value,
-              xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
-              chartType: chartType as AnyType,
-            })}
-            data={props.view.originalData as AnyType}
-            specificFunctions={specificFunctions}
-          />
-        )
-      }
-      toolbarContent={
-        availableChartTypes &&
-        availableChartTypes.length > 1 && (
-          <ToggleGroup aria-label="Chart type toggle" key="chart-toggle">
-            {availableChartTypes.map((chartTypeItem) => (
-              <ToggleGroupItem
-                key={chartTypeItem}
-                data-cy={'chart_type'}
-                text={`${capitalize(chartTypeItem)} Chart`}
-                buttonId={chartTypeItem}
-                isSelected={chartTypeItem === chartType}
-                onChange={() => {
-                  setChartType(chartTypeItem);
-                }}
-              />
-            ))}
-          </ToggleGroup>
-        )
-      }
+      topContent={topContent}
+      toolbarContent={toolbarContent}
     />
   );
 }

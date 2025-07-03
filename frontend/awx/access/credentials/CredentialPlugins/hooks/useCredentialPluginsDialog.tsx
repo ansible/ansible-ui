@@ -5,7 +5,7 @@ import {
   usePageDialogs,
 } from '@ansible/ansible-ui-framework';
 import { postRequest } from '@ansible/common-ui/crud/Data';
-import { AlertProps, Modal, ModalVariant } from '@patternfly/react-core';
+import { AlertProps, Modal, ModalVariant, ModalBody } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../../common/api/awx-utils';
@@ -106,12 +106,14 @@ function CredentialPluginsModal(
       onClose={onClose}
       variant={ModalVariant.large}
     >
-      <CredentialPlugins
-        onCancel={onClose}
-        handleSubmit={handleSubmit}
-        handleTest={handleTest}
-        defaultValues={getDefaultValues()}
-      />
+      <ModalBody>
+        <CredentialPlugins
+          onCancel={onClose}
+          handleSubmit={handleSubmit}
+          handleTest={handleTest}
+          defaultValues={getDefaultValues()}
+        />
+      </ModalBody>
     </Modal>
   );
 }

@@ -87,21 +87,19 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
       const selectedCount = selectedItems ? selectedItems.length : 0;
       return (
         <MenuToggle
-          splitButtonOptions={{
-            items: [
-              <MenuToggleCheckbox
-                id="select-all"
-                data-cy="select-all"
-                ouiaId={'select-all'}
-                key="select-all"
-                aria-label={t('Select all')}
-                isChecked={allPageItemsSelected ? true : selectedCount > 0 ? null : false}
-                onChange={onToggleCheckbox}
-              >
-                {toggleText}
-              </MenuToggleCheckbox>,
-            ],
-          }}
+          splitButtonItems={[
+            <MenuToggleCheckbox
+              id="select-all"
+              data-cy="select-all"
+              ouiaId={'select-all'}
+              key="select-all"
+              aria-label={t('Select all')}
+              isChecked={allPageItemsSelected ? true : selectedCount > 0 ? null : false}
+              onChange={onToggleCheckbox}
+            >
+              {toggleText}
+            </MenuToggleCheckbox>,
+          ]}
           onClick={() => setIsOpen(!isOpen)}
           isDisabled={disableBulkSelector}
           ref={toggleRef}
@@ -163,7 +161,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
 
   return (
     // Negative margin is needed to align the bulk select with table checkboxes
-    <div style={{ marginLeft: -8 }}>
+    <div>
       <Dropdown
         style={{ zIndex: 400 }}
         toggle={toggle}

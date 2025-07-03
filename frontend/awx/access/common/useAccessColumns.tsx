@@ -1,12 +1,13 @@
 import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
-  Chip,
-  ChipGroup,
+  Label,
+  LabelGroup,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
+
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessRole, AwxUser } from '../../interfaces/User';
@@ -65,19 +66,18 @@ export function useAccessColumns(
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('User roles')}</DescriptionListTerm>
                   <DescriptionListDescription>
-                    <ChipGroup>
+                    <LabelGroup>
                       {user.user_roles.map((role) => (
-                        <Chip
+                        <Label
+                          variant="outline"
                           key={role.id}
-                          onClick={() => deleteRole && deleteRole(role, user)}
-                          isReadOnly={!role.user_capabilities.unattach}
-                          ouiaId={`${role.name}-${role.id}`}
+                          onClose={() => deleteRole && deleteRole(role, user)}
                           closeBtnAriaLabel={t(`Remove {{roleName}} chip`, { roleName: role.name })}
                         >
                           {role.name}
-                        </Chip>
+                        </Label>
                       ))}
-                    </ChipGroup>
+                    </LabelGroup>
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               ) : null}
@@ -85,19 +85,18 @@ export function useAccessColumns(
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Team roles')}</DescriptionListTerm>
                   <DescriptionListDescription>
-                    <ChipGroup>
+                    <LabelGroup>
                       {user.team_roles.map((role) => (
-                        <Chip
+                        <Label
+                          variant="outline"
                           key={role.id}
-                          onClick={() => deleteRole && deleteRole(role, user)}
-                          isReadOnly={!role.user_capabilities.unattach}
-                          ouiaId={`team-role-${role.name}-${role.id}`}
+                          onClose={() => deleteRole && deleteRole(role, user)}
                           closeBtnAriaLabel={t(`Remove {{roleName}} chip`, { roleName: role.name })}
                         >
                           {role.name}
-                        </Chip>
+                        </Label>
                       ))}
-                    </ChipGroup>
+                    </LabelGroup>
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               ) : null}

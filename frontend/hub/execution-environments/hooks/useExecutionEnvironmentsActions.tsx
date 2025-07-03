@@ -12,12 +12,14 @@ import {
   Button,
   ButtonVariant,
   ClipboardCopy,
-  Modal,
-  ModalBoxBody,
-  ModalVariant,
   Stack,
   ToggleGroup,
   ToggleGroupItem,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
 import { CheckIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
@@ -269,21 +271,14 @@ podman push --tls-verify=${tlsVerify.toString()} ${containerURL}
 
   return (
     <Modal
-      title={t(`Push container images`)}
       aria-label={t(`Push container images`)}
       isOpen
       onClose={onClose}
       variant={ModalVariant.medium}
       tabIndex={0}
-      hasNoBodyWrapper
-      actions={[
-        <Button key="confirm" variant="secondary" onClick={onClose}>
-          {t(`Close`)}
-        </Button>,
-        <ExternalLink key="docs" href={AAPDocsURL}>{t`Documentation`}</ExternalLink>,
-      ]}
     >
-      <ModalBoxBody style={{ overflow: 'hidden' }}>
+      <ModalHeader title={t(`Push container images`)} />
+      <ModalBody style={{ overflow: 'hidden' }}>
         <Stack hasGutter>
           <ToggleGroup isCompact aria-label={t(`Toggle between HTTPS and HTTP`)}>
             <ToggleGroupItem
@@ -301,7 +296,13 @@ podman push --tls-verify=${tlsVerify.toString()} ${containerURL}
             {code}
           </ClipboardCopy>
         </Stack>
-      </ModalBoxBody>
+      </ModalBody>
+      <ModalFooter>
+        <Button key="confirm" variant="secondary" onClick={onClose}>
+          {t(`Close`)}
+        </Button>
+        <ExternalLink key="docs" href={AAPDocsURL}>{t`Documentation`}</ExternalLink>
+      </ModalFooter>
     </Modal>
   );
 }

@@ -95,6 +95,7 @@ export function WebhookSubForm(props: {
         isReadOnly
         button={
           <Button
+            icon={<SyncAltIcon />}
             ouiaId="update-webhook-key-button"
             isDisabled={isUpdateKeyDisabled}
             variant="tertiary"
@@ -102,9 +103,7 @@ export function WebhookSubForm(props: {
             onClick={() => {
               void handleGenerateWebhookKey();
             }}
-          >
-            <SyncAltIcon />
-          </Button>
+          ></Button>
         }
       />
       {webhookService ? (

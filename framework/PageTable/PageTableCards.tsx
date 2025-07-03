@@ -1,10 +1,10 @@
-import { Button, PageSection } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { SearchIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { PageGrid } from '../components/PageGrid';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableProps } from './PageTable';
 import { PageTableCard, useColumnsToTableCardFn } from './PageTableCard';
-import { SearchIcon } from '@patternfly/react-icons';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableEmptyState } from './PageTableEmptyState';
 
 export type PageTableCardsProps<T extends object> = PageTableProps<T>;
@@ -70,7 +70,7 @@ export function PageTableCards<T extends object>(props: Readonly<PageTableCardsP
           </Button>
         </PageTableEmptyState>
       ) : (
-        <PageSection style={{ flexGrow: 1 }}>{catalogCards}</PageSection>
+        <>{catalogCards}</>
       )}
     </>
   );

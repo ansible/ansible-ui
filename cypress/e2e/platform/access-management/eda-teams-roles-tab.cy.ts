@@ -59,7 +59,6 @@ describe('Check if the build includes EDA', () => {
                   edaOrg
                 ).then((rba) => {
                   edaRulebookActivation = rba;
-
                   cy.createEdaTeam().then((EdaTeam) => {
                     team = EdaTeam;
                   });
@@ -88,7 +87,7 @@ describe('Check if the build includes EDA', () => {
     });
 
     user_team_access_tab_resources.forEach((resource) => {
-      describe('give permi/teams/ssions to a team from the roles tab', () => {
+      describe('give permissions to a team from the roles tab', () => {
         let resource_object:
           | EdaProject
           | EdaDecisionEnvironment
@@ -117,29 +116,31 @@ describe('Check if the build includes EDA', () => {
           cy.intercept('GET', edaAPI`/teams/*`).as('edaTeam');
           cy.getByDataCy('add-roles').click();
           cy.getWizard().within(() => {
-            cy.selectDropdownOptionByResourceName('resourcetype', resource.roles_tab_name);
-            cy.clickButton(/^Next$/);
-            cy.contains('Choose the resources that will be receiving new roles.');
-            cy.setTablePageSize('100');
-            cy.getTableRowByText(resource_object.name, false).within(() => {
-              cy.get('input[type=checkbox]').click();
-            });
-            cy.intercept('GET', edaAPI`/role_definitions/*`).as('roleDefinitions');
-            cy.clickButton(/^Next$/);
-            cy.wait('@roleDefinitions');
-            cy.filterTableByTextFilter('name', resource.role, {
-              disableFilterSelection: true,
-            });
-            cy.getTableRow('name', resource.role, { disableFilter: true }).within(() => {
-              cy.get('[data-cy="checkbox-column-cell"]').within(() => {
-                cy.getBy('input').click();
-              });
-            });
-            cy.clickButton(/^Next$/);
-            cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
-            cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
-            cy.clickButton(/^Finish$/);
+            cy.get('[data-cy="loading-spinner"]').should('not.exist');
           });
+          cy.get(`[data-cy*="resourcetype-form-group"]`).find('button').click();
+          cy.contains('button', resource.roles_tab_name).click();
+          cy.clickButton(/^Next$/);
+          cy.contains('Choose the resources that will be receiving new roles.');
+          cy.setTablePageSize('100');
+          cy.getTableRowByText(resource_object.name, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
+          cy.intercept('GET', edaAPI`/role_definitions/*`).as('roleDefinitions');
+          cy.clickButton(/^Next$/);
+          cy.wait('@roleDefinitions');
+          cy.filterTableByTextFilter('name', resource.role, {
+            disableFilterSelection: true,
+          });
+          cy.getTableRow('name', resource.role, { disableFilter: true }).within(() => {
+            cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+              cy.getBy('input').click();
+            });
+          });
+          cy.clickButton(/^Next$/);
+          cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
+          cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
+          cy.clickButton(/^Finish$/);
           cy.wait('@assignment').then((assignment) => {
             expect(assignment?.response?.statusCode).to.eql(201);
           });

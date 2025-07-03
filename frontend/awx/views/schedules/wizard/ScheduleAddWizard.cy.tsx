@@ -120,7 +120,7 @@ describe('ScheduleAddWizard', () => {
       cy.clickButton(/^Next$/);
       cy.getBy('[data-cy="prompt-extra-vars"]').type('foo:bar');
       cy.clickButton(/^Next$/);
-      cy.get('.pf-v5-c-helper-text__item-text').contains('yaml is not in object format');
+      cy.get('.pf-v6-c-helper-text__item-text').contains('yaml is not in object format');
     });
 
     it('workflow job template should render the correct steps initially', () => {
@@ -270,23 +270,28 @@ describe('ScheduleAddWizard', () => {
     });
 
     it('job template should not go to next step due to name failed validation', () => {
+      cy.intercept('GET', awxAPI`/schedules/zoneinfo`, zones); // 🔧 add this
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
         initialEntries: ['/templates/job-template/8/schedules/create'],
         path: '/templates/job-template/:id/schedules/create',
       });
+
       cy.clickButton(/^Next$/);
+
       cy.get('[data-cy="name-form-group"]').within(() => {
-        cy.get('span.pf-v5-c-helper-text__item-text').should(
-          'have.text',
-          'Schedule name is required.'
+        cy.get('span.pf-v6-c-helper-text__item-text').should(
+          'contain.text',
+          'Schedule name is required'
         );
       });
+
       cy.get('[data-cy="wizard-nav-item-details"]').within(() => {
-        cy.get('button').should('have.attr', 'class').and('contain', 'pf-m-current');
+        cy.get('button').should('have.class', 'pf-m-current');
       });
     });
 
     it('management job template should not go to next step due to name and days field failed validation', () => {
+      cy.intercept('GET', awxAPI`/schedules/zoneinfo`, zones);
       cy.intercept(
         { method: 'GET', url: awxAPI`/system_job_templates/*/` },
         {
@@ -296,25 +301,30 @@ describe('ScheduleAddWizard', () => {
           job_type: 'cleanup_jobs',
         }
       );
+
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
         initialEntries: ['/administration/management-jobs/5/schedules/create'],
         path: '/administration/management-jobs/:id/schedules/create',
       });
+
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.get('[data-cy="name"]').clear();
       cy.clickButton(/^Next$/);
+
       cy.get('[data-cy="name-form-group"]').within(() => {
-        cy.get('span.pf-v5-c-helper-text__item-text').should(
-          'have.text',
+        cy.get('span.pf-v6-c-helper-text__item-text').should(
+          'contain.text',
           'Schedule name is required.'
         );
       });
+
       cy.get('[data-cy="schedule-days-to-keep-form-group"]').within(() => {
-        cy.get('span.pf-v5-c-helper-text__item-text').should(
-          'have.text',
+        cy.get('span.pf-v6-c-helper-text__item-text').should(
+          'contain.text',
           'Days of data to keep is required.'
         );
       });
+
       cy.get('[data-cy="wizard-nav-item-details"]').within(() => {
         cy.get('button').should('have.attr', 'class').and('contain', 'pf-m-current');
       });
@@ -417,17 +427,29 @@ describe('ScheduleAddWizard', () => {
     });
 
     it('Should be able to remove an existing rule from the list', () => {
+      cy.intercept('POST', awxAPI`/schedules/preview/`, {
+        statusCode: 200,
+        body: { rrule: 'RRULE:FREQ=HOURLY;INTERVAL=100' },
+      }).as('previewRule');
+
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.get('[data-cy="add-rule-button"]').click();
-      cy.getByDataCy('add-rule-toolbar-button').click();
+      cy.get('[data-cy="row-id-1"]').should('exist');
+
+      cy.get('[data-cy="add-rule-toolbar-button"]').click();
+
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.get('[data-cy="add-rule-button"]').click();
-      cy.getByDataCy('row-id-2').within(() => {
-        cy.get('button[data-cy="delete-rule"]').click();
-        cy.get('tr[data-cy="row-id-2"]').should('not.exist');
+
+      cy.get('[data-cy="row-id-2"]').should('exist');
+
+      cy.get('[data-cy="row-id-2"]').within(() => {
+        cy.get('[data-cy="delete-rule"]').click();
       });
+
+      cy.get('[data-cy="row-id-2"]').should('not.exist');
     });
   });
 });

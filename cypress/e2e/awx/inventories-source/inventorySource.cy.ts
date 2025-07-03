@@ -68,7 +68,9 @@ describe('Inventory Sources', () => {
         ).then((cred) => {
           credential = cred;
           goToSourceList(inventory.name);
-          cy.clickButton(/^Create source/);
+          cy.contains('button', /^Create source/)
+            .should('not.have.attr', 'aria-disabled', 'true')
+            .click();
           cy.verifyPageTitle('Create source');
           cy.getByDataCy('name').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
@@ -78,7 +80,7 @@ describe('Inventory Sources', () => {
             cy.get('input[aria-label="Type to filter"]').type(inventoryFile);
           });
           cy.get('div#inventory-typeahead-select').within(() => {
-            cy.get('li.pf-v5-c-menu__list-item').within(() => {
+            cy.get('li.pf-v6-c-menu__list-item').within(() => {
               cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
             });
           });
@@ -366,7 +368,7 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
       cy.get('input[aria-label="Type to filter"]').type(inventoryFile);
     });
     cy.get('div#inventory-typeahead-select').within(() => {
-      cy.get('li.pf-v5-c-menu__list-item').within(() => {
+      cy.get('li.pf-v6-c-menu__list-item').within(() => {
         cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
       });
     });

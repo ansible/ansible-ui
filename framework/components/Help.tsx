@@ -41,7 +41,16 @@ export function Help(props: {
       }
     >
       <IconButtonStyled type="button">
-        <Icon size="sm">
+        <Icon
+          size="sm"
+          status="custom"
+          style={
+            {
+              '--pf-v6-c-icon__content--m-custom--Color':
+                'var(--pf-t--global--text--color--link--default)',
+            } as React.CSSProperties
+          }
+        >
           <OutlinedQuestionCircleIcon />
         </Icon>
       </IconButtonStyled>

@@ -35,13 +35,13 @@ describe('CredentialPage', () => {
 
     cy.mount(<CredentialPage />);
     cy.contains('#duplicate-credential', /^Duplicate credential$/).should(
-      'have.attr',
+      'not.have.attr',
       'aria-disabled',
-      'false'
+      'true'
     );
     cy.get('[data-cy="duplicate-credential"]').click();
     cy.wait('@copyCredential');
-    cy.get('.pf-v5-c-alert__title').should('contain', 'EDA Credential 1 duplicated');
+    cy.get('.pf-v6-c-alert__title').should('contain', 'EDA Credential 1 duplicated');
   });
 
   it('The duplicate button is disabled if the user does not have PATCH permission', () => {
@@ -57,9 +57,9 @@ describe('CredentialPage', () => {
     const tabNames: string[] = ['Back to Credentials', 'Details', 'Team Access', 'User Access'];
     cy.mount(<CredentialPage />);
 
-    cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 4);
-      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+    cy.get('.pf-v6-c-tabs__list').within(() => {
+      cy.get('.pf-v6-c-tabs__item').should('have.length', 4);
+      cy.get('.pf-v6-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
     });

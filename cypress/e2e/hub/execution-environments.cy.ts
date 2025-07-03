@@ -30,8 +30,8 @@ describe('Execution Environments', () => {
       }).then((executionEnvironment) => {
         cy.navigateTo('hub', ExecutionEnvironments.url);
         cy.get('[data-cy="push-container-images"]').click();
-        cy.contains('.pf-v5-c-modal-box__title-text', 'Push container images');
-        cy.contains('.pf-v5-c-modal-box__footer a', 'Documentation').should(
+        cy.contains('.pf-v6-c-modal-box__title-text', 'Push container images');
+        cy.contains('.pf-v6-c-modal-box__footer a', 'Documentation').should(
           'have.attr',
           'href',
           'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
@@ -156,7 +156,7 @@ describe('Execution Environment Details tab', () => {
       .within(() => {
         cy.get('input').clear().type(executionEnvironment.name);
       });
-    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.contains('[class*="label-group__list-item"]', executionEnvironment.name);
     cy.get('a').contains(executionEnvironment.name).click();
     cy.verifyPageTitle(executionEnvironment.name);
     cy.getBy('[data-cy="execution-environment-details-tab"]').should('contain', 'Details');
@@ -175,7 +175,7 @@ describe('Execution Environment Details tab', () => {
       .within(() => {
         cy.get('input').clear().type(executionEnvironment.name);
       });
-    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.contains('[class*="label-group__list-item"]', executionEnvironment.name);
     cy.get('a').contains(executionEnvironment.name).click();
     cy.verifyPageTitle(executionEnvironment.name);
     cy.get('[aria-selected="true"]').contains('Details');
@@ -198,7 +198,7 @@ describe('Execution Environment Details tab', () => {
       .within(() => {
         cy.get('input').clear().type(executionEnvironment.name);
       });
-    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.contains('[class*="label-group__list-item"]', executionEnvironment.name);
     cy.get('a').contains(executionEnvironment.name).click();
     cy.verifyPageTitle(executionEnvironment.name);
     cy.containsBy('button', 'Add').click();
@@ -227,7 +227,7 @@ describe('Execution Environment Details tab', () => {
       .within(() => {
         cy.get('input').clear().type(executionEnvironment.name);
       });
-    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.contains('[class*="label-group__list-item"]', executionEnvironment.name);
     cy.get('a').contains(executionEnvironment.name).click();
     cy.verifyPageTitle(executionEnvironment.name);
     cy.get('[data-cy="readme"]').within(() => {
@@ -254,7 +254,7 @@ describe('Execution Environment Details tab', () => {
       .within(() => {
         cy.get('input').clear().type(executionEnvironment.name);
       });
-    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.contains('[class*="label-group__list-item"]', executionEnvironment.name);
     cy.get('a').contains(executionEnvironment.name).click();
     cy.verifyPageTitle(executionEnvironment.name);
     cy.get('[data-cy="readme"]').within(() => {
@@ -295,7 +295,7 @@ describe('Execution Environment Activity and Image tabs', () => {
           .within(() => {
             cy.get('input').clear().type(executionEnvironment.name);
           });
-        cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+        cy.contains('[class*="label-group__list-item"]', executionEnvironment.name);
         cy.get('a').contains(executionEnvironment.name).click();
         cy.verifyPageTitle(executionEnvironment.name);
         cy.getByDataCy('execution-environment-activity-tab').click();
@@ -330,7 +330,7 @@ describe('Execution Environment Activity and Image tabs', () => {
           .within(() => {
             cy.get('input').clear().type(executionEnvironment.name);
           });
-        cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+        cy.contains('[class*="label-group__list-item"]', executionEnvironment.name);
         cy.get('a').contains(executionEnvironment.name).click();
         cy.verifyPageTitle(executionEnvironment.name);
         cy.getByDataCy('execution-environment-activity-tab').click();
@@ -393,7 +393,7 @@ describe('Execution Environment Activity and Image tabs', () => {
                     `/execution-environments/${executionEnvironment.name}/images/${digest}/`
                   );
               });
-            cy.get('a span.pf-v5-c-label__text')
+            cy.get('a span.pf-v6-c-label__text')
               .invoke('text')
               .then((text) => {
                 const truncatedDigest = digest.substring(0, 12);

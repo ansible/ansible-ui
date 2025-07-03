@@ -36,7 +36,7 @@ describe('Organization admins list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
+          .find('.pf-v6-c-menu__content')
           .within(() => {
             cy.get('button')
               .contains(/^Remove administrators$/)
@@ -72,7 +72,7 @@ describe('Organization admins list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/3/admins'],
       });
-      cy.get('[data-cy="add-administrators"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-administrators"]').should('be.enabled');
     });
   });
   describe('Empty list', () => {

@@ -72,7 +72,7 @@ describe('DecisionEnvironments.cy.ts', () => {
   it('Renders the correct decisionEnvironments columns', () => {
     cy.mount(<DecisionEnvironments />);
     cy.get('h1').should('contain', 'Decision Environments');
-    cy.get('.pf-v5-c-card__header').should('have.length', 10);
+    cy.get('.pf-v6-c-card__header').should('have.length', 10);
     cy.contains(/^Decision environments are a container image to run Ansible rulebooks.$/).should(
       'be.visible'
     );
@@ -91,7 +91,7 @@ describe('DecisionEnvironments.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-decision-environments"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to delete these`
       );
@@ -146,12 +146,12 @@ describe('DecisionEnvironments.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-decision-environments"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to delete these`
       );
       cy.contains('EDA Decision Environment 1');
-      cy.get('.pf-v5-c-alert__title').contains(
+      cy.get('.pf-v6-c-alert__title').contains(
         'The following decision environments are in use: EDA Decision Environment 1'
       );
       cy.get('input[id="confirm"]').click();

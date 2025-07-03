@@ -44,7 +44,7 @@ function PageAsyncSingleSelectTest(
   const { defaultValue, ...rest } = props;
   const [value, setValue] = useState<number | undefined | null>(() => defaultValue);
   return (
-    <PageSection>
+    <PageSection hasBodyWrapper={false}>
       <PageAsyncSingleSelect<number>
         {...rest}
         id="test"

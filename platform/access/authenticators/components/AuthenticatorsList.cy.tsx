@@ -33,7 +33,7 @@ describe('Authenticators list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__list')
+          .find('.pf-v6-c-menu__list')
           .contains('Delete authentications')
           .should('be.visible');
       });
@@ -51,10 +51,14 @@ describe('Authenticators list', () => {
     it('can disable an Authenticator from the line item in list view', () => {
       cy.mount(<AuthenticatorsList />);
       cy.intercept({ method: 'PATCH', url: gatewayAPI`/authenticators/2/` }, { enabled: false });
-      cy.get(
-        '[data-cy="row-id-2"] > [data-cy="actions-column-cell"] > .pf-v5-l-flex > :nth-child(1) > .pf-v5-l-split > [data-cy="toggle-switch"] > div > .pf-v5-c-switch > .pf-v5-c-switch__toggle > .pf-v5-c-switch__toggle-icon'
-      ).click();
-      cy.contains('Dev Keycloak Container disabled');
+
+      cy.get('[data-cy="row-id-2"]').within(() => {
+        cy.get('[data-cy="toggle-switch"] input[type="checkbox"]')
+          .should('have.length', 1)
+          .click({ force: true });
+      });
+
+      cy.contains('Dev Keycloak Container disabled').should('be.visible');
     });
 
     it.skip('can delete an Authenticator from the toolbar button', () => {
@@ -64,7 +68,7 @@ describe('Authenticators list', () => {
       cy.get('[data-cy="actions-dropdown"]').first().click();
       cy.get('[data-cy="delete-authentications"]').click();
       cy.get('div[role="dialog"]').within(() => {
-        cy.get('.pf-v5-c-check__label').should(
+        cy.get('.pf-v6-c-check__label').should(
           'contain',
           `Yes, I confirm that I want to delete these`
         );

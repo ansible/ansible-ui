@@ -89,14 +89,13 @@ export function ToolbarTextMultiFilter(props: {
           {value !== '' && (
             <TextInputGroupUtilities>
               <Button
+                icon={<TimesIcon />}
                 variant="plain"
                 aria-label="clear filter"
                 onClick={() => setValue('')}
                 style={{ opacity: value ? undefined : 0 }}
                 tabIndex={-1}
-              >
-                <TimesIcon />
-              </Button>
+              />
             </TextInputGroupUtilities>
           )}
         </TextInputGroup>
@@ -104,6 +103,7 @@ export function ToolbarTextMultiFilter(props: {
 
       <InputGroupItem>
         <Button
+          icon={<ArrowRightIcon />}
           variant={value ? 'primary' : 'control'}
           data-cy="apply-filter"
           aria-label="apply filter"
@@ -113,9 +113,7 @@ export function ToolbarTextMultiFilter(props: {
           }}
           tabIndex={-1}
           isDisabled={!value}
-        >
-          <ArrowRightIcon />
-        </Button>
+        ></Button>
       </InputGroupItem>
     </InputGroup>
   );
@@ -187,6 +185,7 @@ export function ToolbarSingleTextFilter(props: {
           {value !== '' && (
             <TextInputGroupUtilities>
               <Button
+                icon={<TimesIcon />}
                 variant="plain"
                 aria-label="clear filter"
                 onClick={() => {
@@ -195,9 +194,7 @@ export function ToolbarSingleTextFilter(props: {
                 }}
                 style={{ opacity: value ? undefined : 0 }}
                 tabIndex={-1}
-              >
-                <TimesIcon />
-              </Button>
+              />
             </TextInputGroupUtilities>
           )}
         </TextInputGroup>

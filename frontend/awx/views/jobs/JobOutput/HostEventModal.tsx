@@ -1,6 +1,6 @@
 import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { StatusCell } from '@ansible/common-ui/Status';
-import { Modal, Tab, TabTitleText, Tabs } from '@patternfly/react-core';
+import { Tab, TabTitleText, Tabs, Modal, ModalHeader, ModalBody } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
@@ -59,74 +59,76 @@ export function HostEventModal(props: {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t`Host Details`}
       aria-label={t`Host details modal`}
       width="75%"
       ouiaId="host-event-modal"
     >
-      <Tabs
-        aria-label={t`Tabs`}
-        activeKey={activeTabKey}
-        onSelect={(_e, t) => handleTabClick(t as number)}
-        ouiaId="host-event-tabs"
-      >
-        <Tab
-          aria-label={t`Details tab`}
-          ouiaId="details-tab"
-          eventKey={0}
-          title={<TabTitleText>{t`Details`}</TabTitleText>}
+      <ModalHeader title={t`Host Details`} />
+      <ModalBody>
+        <Tabs
+          aria-label={t`Tabs`}
+          activeKey={activeTabKey}
+          onSelect={(_e, t) => handleTabClick(t as number)}
+          ouiaId="host-event-tabs"
         >
-          <PageDetails>
-            <PageDetail isEmpty={!hostEvent.event_data?.host} label={t('Host')}>
-              {hostEvent?.event_data?.host}
-            </PageDetail>
-            <PageDetail label={t('Status')}>
-              <StatusCell status={processEventStatus(hostEvent)} />
-            </PageDetail>
-            <PageDetail isEmpty={!hostEvent.play} label={t('Play')}>
-              {hostEvent?.play}
-            </PageDetail>
-            <PageDetail isEmpty={!hostEvent.task} label={t('Task')}>
-              {hostEvent?.task}
-            </PageDetail>
-            <PageDetail isEmpty={!hostEvent.event_data?.task_action} label={t('Module')}>
-              {hostEvent?.event_data?.task_action}
-            </PageDetail>
-          </PageDetails>
-        </Tab>
-        <Tab
-          eventKey={1}
-          title={<TabTitleText>{t`Data`}</TabTitleText>}
-          aria-label={t`Data tab`}
-          ouiaId="data-tab"
-        >
-          {activeTabKey === 1 && jsonObj ? (
-            <PageDetailCodeEditor showCopyToClipboard value={JSON.stringify(jsonObj, null, 2)} />
-          ) : (
-            <EmptyStateNoData description={t('There is no data')} title={t`No Data Available`} />
-          )}
-        </Tab>
-        {stdOut?.length ? (
           <Tab
-            eventKey={2}
-            title={<TabTitleText>{t`Output`}</TabTitleText>}
-            aria-label={t`Output tab`}
-            ouiaId="standard-out-tab"
+            aria-label={t`Details tab`}
+            ouiaId="details-tab"
+            eventKey={0}
+            title={<TabTitleText>{t`Details`}</TabTitleText>}
           >
-            <PageDetailCodeEditor value={stdOut} />
+            <PageDetails>
+              <PageDetail isEmpty={!hostEvent.event_data?.host} label={t('Host')}>
+                {hostEvent?.event_data?.host}
+              </PageDetail>
+              <PageDetail label={t('Status')}>
+                <StatusCell status={processEventStatus(hostEvent)} />
+              </PageDetail>
+              <PageDetail isEmpty={!hostEvent.play} label={t('Play')}>
+                {hostEvent?.play}
+              </PageDetail>
+              <PageDetail isEmpty={!hostEvent.task} label={t('Task')}>
+                {hostEvent?.task}
+              </PageDetail>
+              <PageDetail isEmpty={!hostEvent.event_data?.task_action} label={t('Module')}>
+                {hostEvent?.event_data?.task_action}
+              </PageDetail>
+            </PageDetails>
           </Tab>
-        ) : null}
-        {stdErr?.length ? (
           <Tab
-            eventKey={3}
-            title={<TabTitleText>{t`Standard Error`}</TabTitleText>}
-            aria-label={t`Standard error tab`}
-            ouiaId="standard-error-tab"
+            eventKey={1}
+            title={<TabTitleText>{t`Data`}</TabTitleText>}
+            aria-label={t`Data tab`}
+            ouiaId="data-tab"
           >
-            <PageDetailCodeEditor value={stdErr} />
+            {activeTabKey === 1 && jsonObj ? (
+              <PageDetailCodeEditor showCopyToClipboard value={JSON.stringify(jsonObj, null, 2)} />
+            ) : (
+              <EmptyStateNoData description={t('There is no data')} title={t`No Data Available`} />
+            )}
           </Tab>
-        ) : null}
-      </Tabs>
+          {stdOut?.length ? (
+            <Tab
+              eventKey={2}
+              title={<TabTitleText>{t`Output`}</TabTitleText>}
+              aria-label={t`Output tab`}
+              ouiaId="standard-out-tab"
+            >
+              <PageDetailCodeEditor value={stdOut} />
+            </Tab>
+          ) : null}
+          {stdErr?.length ? (
+            <Tab
+              eventKey={3}
+              title={<TabTitleText>{t`Standard Error`}</TabTitleText>}
+              aria-label={t`Standard error tab`}
+              ouiaId="standard-error-tab"
+            >
+              <PageDetailCodeEditor value={stdErr} />
+            </Tab>
+          ) : null}
+        </Tabs>
+      </ModalBody>
     </Modal>
   );
 }

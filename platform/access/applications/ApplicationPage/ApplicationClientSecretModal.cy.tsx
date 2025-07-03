@@ -17,7 +17,7 @@ describe('ApplicationClientSecretModal', () => {
         onClose={() => undefined}
       />
     );
-    cy.get('.pf-v5-c-alert__title').should(
+    cy.get('.pf-v6-c-alert__title').should(
       'contain.text',
       'This is the only time the client secret will be shown.'
     );
@@ -29,7 +29,7 @@ describe('ApplicationClientSecretModal', () => {
         onClose={() => undefined}
       />
     );
-    cy.get('[data-cy="name"] > .pf-v5-c-description-list__text').should('have.text', 'test');
+    cy.get('[data-cy="name"] > .pf-v6-c-description-list__text').should('have.text', 'test');
   });
   it('Displays client id', () => {
     cy.mount(

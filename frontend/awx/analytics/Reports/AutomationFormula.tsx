@@ -5,6 +5,9 @@ import {
   CodeBlockCode,
   Modal,
   ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { FunctionComponent, useState } from 'react';
@@ -123,12 +126,35 @@ export const AutomationFormula: FunctionComponent<Record<string, never>> = () =>
         {t('Automation formula')}
       </Button>
       <Modal
-        title={t('Automation formula')}
         data-cy={'automation_formula_modal'}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         variant={ModalVariant.medium}
-        actions={[
+        aria-labelledby="automation-formula-modal-title"
+      >
+        <ModalHeader title={t('Automation formula')} labelId="automation-formula-modal-title" />
+        <ModalBody>
+          <p>
+            <Trans>
+              We use manual effort versus time spent on automation as factors to create formulas for
+              cost and savings related to automation. While we aim to provide as accurate an account
+              of the cost and savings as possible, actual values may differ in practice. The
+              following information breaks down where we get the data, the factors we use, the
+              assumptions we make, and the formula used to compute the values as displayed in the
+              chart.
+            </Trans>
+          </p>
+          <br />
+
+          <SavingsPerTemplateText />
+          <br />
+
+          <FailedHostPerTemplateText />
+          <br />
+
+          <MonetaryGainPerTemplateText />
+        </ModalBody>
+        <ModalFooter>
           <Button
             key="cancel"
             variant={ButtonVariant.primary}
@@ -136,27 +162,8 @@ export const AutomationFormula: FunctionComponent<Record<string, never>> = () =>
             data-cy={'automation_formula_cancel_button'}
           >
             {t('Close')}
-          </Button>,
-        ]}
-      >
-        <p>
-          <Trans>
-            We use manual effort versus time spent on automation as factors to create formulas for
-            cost and savings related to automation. While we aim to provide as accurate an account
-            of the cost and savings as possible, actual values may differ in practice. The following
-            information breaks down where we get the data, the factors we use, the assumptions we
-            make, and the formula used to compute the values as displayed in the chart.
-          </Trans>
-        </p>
-        <br />
-
-        <SavingsPerTemplateText />
-        <br />
-
-        <FailedHostPerTemplateText />
-        <br />
-
-        <MonetaryGainPerTemplateText />
+          </Button>
+        </ModalFooter>
       </Modal>
     </>
   );

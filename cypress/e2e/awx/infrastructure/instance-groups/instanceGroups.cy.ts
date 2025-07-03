@@ -78,11 +78,8 @@ describe(`Instance Groups`, () => {
       cy.getByDataCy('max-forks').should('have.text', '4');
       cy.clickPageAction(`delete-instance-group`);
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete instance groups`);
-        cy.get('button')
-          .contains(`Delete instance group`)
-          .should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('name-column-cell').should('have.text', name);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains(`Delete instance group`).click();
@@ -155,11 +152,8 @@ describe(`Instance Groups`, () => {
       cy.selectTableRow(arrayOfElementText[4]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete instance groups`);
-        cy.get('button')
-          .contains(`Delete instance group`)
-          .should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains(`Delete instance group`).click();
       });
@@ -187,21 +181,15 @@ describe(`Instance Groups`, () => {
       cy.selectTableRow(arrayOfElementText[1]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.contains(
           'Deleting instance groups could impact other resources that rely on them.'
         ).should('be.visible');
         cy.get('header').contains(`Permanently delete instance groups`);
-        cy.get('button')
-          .contains(`Delete instance group`)
-          .should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
-        cy.get('button')
-          .contains(`Delete instance group`)
-          .should('have.attr', 'aria-disabled', 'false')
-          .click();
+        cy.get('button').contains(`Delete instance group`).click();
       });
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete instance groups`);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[0]);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[1]);
@@ -259,11 +247,8 @@ describe(`Instance Groups`, () => {
       cy.getByDataCy('max-forks').should('have.text', '4');
       cy.clickPageAction(`delete-container-group`);
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete container groups`);
-        cy.get('button')
-          .contains(`Delete container group`)
-          .should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('name-column-cell').should('have.text', name);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains(`Delete container group`).click();
@@ -327,11 +312,8 @@ describe(`Instance Groups`, () => {
       cy.selectTableRow(arrayOfElementText[4]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete container groups`);
-        cy.get('button')
-          .contains(`Delete container group`)
-          .should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains(`Delete container group`).click();
       });
@@ -361,21 +343,15 @@ describe(`Instance Groups`, () => {
       cy.selectTableRow(arrayOfElementText[1]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.contains(
           'Deleting instance groups could impact other resources that rely on them.'
         ).should('be.visible');
         cy.get('header').contains(`Permanently delete container groups`);
-        cy.get('button')
-          .contains(`Delete container group`)
-          .should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
-        cy.get('button')
-          .contains(`Delete container group`)
-          .should('have.attr', 'aria-disabled', 'false')
-          .click();
+        cy.get('button').contains(`Delete container group`).click();
       });
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete container groups`);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[0]);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[1]);
@@ -581,10 +557,10 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^Team Access$/, true);
-      cy.get('.pf-v5-c-empty-state__title-text').contains(
+      cy.get('.pf-v6-c-empty-state__title-text').contains(
         /^There are currently no teams assigned to this instance group./
       );
-      cy.get('.pf-v5-c-empty-state__body').contains(/^Add a role by clicking the button below./);
+      cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
@@ -593,14 +569,14 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Select team(s)');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select team(s)');
       cy.filterTableBySingleSelect('name', igTeam.name);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should(
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should(
         'have.text',
         'Select roles to apply'
       );
@@ -610,7 +586,7 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Review');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Review');
       cy.get('[data-cy="expandable-section-teams"]')
         .should('be.visible')
         .within(() => {
@@ -642,9 +618,8 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="remove-role"]').click();
       });
       cy.intercept('DELETE', awxAPI`/role_team_assignments/*/`).as('teamRemoved');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Remove role');
-        cy.get('button').contains('Remove role').should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('team-name-column-cell').should('have.text', igTeam.name);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Remove role').click();
@@ -669,10 +644,10 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^Team Access$/, true);
-      cy.get('.pf-v5-c-empty-state__title-text').contains(
+      cy.get('.pf-v6-c-empty-state__title-text').contains(
         /^There are currently no teams assigned to this instance group./
       );
-      cy.get('.pf-v5-c-empty-state__body').contains(/^Add a role by clicking the button below./);
+      cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
@@ -681,14 +656,14 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Select team(s)');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select team(s)');
       cy.filterTableBySingleSelect('name', igTeam.name);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should(
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should(
         'have.text',
         'Select roles to apply'
       );
@@ -698,7 +673,7 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Review');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Review');
       cy.get('[data-cy="expandable-section-teams"]')
         .should('be.visible')
         .within(() => {
@@ -730,9 +705,8 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="remove-role"]').click();
       });
       cy.intercept('DELETE', awxAPI`/role_team_assignments/*/`).as('teamRemoved');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Remove role');
-        cy.get('button').contains('Remove role').should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('team-name-column-cell').should('have.text', igTeam.name);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Remove role').click();
@@ -792,10 +766,10 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^User Access$/, true);
-      cy.get('.pf-v5-c-empty-state__title-text').contains(
+      cy.get('.pf-v6-c-empty-state__title-text').contains(
         /^There are currently no users assigned to this instance group./
       );
-      cy.get('.pf-v5-c-empty-state__body').contains(/^Add a role by clicking the button below./);
+      cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
@@ -804,13 +778,13 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select user(s)');
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Select user(s)');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select user(s)');
       cy.selectTableRowByCheckbox('username', user.username, { disableFilter: false });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should(
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should(
         'have.text',
         'Select roles to apply'
       );
@@ -820,7 +794,7 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Review');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Review');
       cy.get('[data-cy="expandable-section-users"]')
         .should('be.visible')
         .within(() => {
@@ -850,9 +824,8 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="remove-role"]').click();
       });
       cy.intercept('DELETE', awxAPI`/role_user_assignments/*/`).as('userRemoved');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Remove role');
-        cy.get('button').contains('Remove role').should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('username-column-cell').should('have.text', user.username);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Remove role').click();
@@ -877,10 +850,10 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^User Access$/, true);
-      cy.get('.pf-v5-c-empty-state__title-text').contains(
+      cy.get('.pf-v6-c-empty-state__title-text').contains(
         /^There are currently no users assigned to this instance group./
       );
-      cy.get('.pf-v5-c-empty-state__body').contains(/^Add a role by clicking the button below./);
+      cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
@@ -889,13 +862,13 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select user(s)');
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Select user(s)');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select user(s)');
       cy.selectTableRowByCheckbox('username', user.username, { disableFilter: false });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should(
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should(
         'have.text',
         'Select roles to apply'
       );
@@ -905,7 +878,7 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
       cy.getByDataCy('Submit').click();
-      cy.get('.pf-v5-c-page__main-body > .pf-v5-c-title').should('have.text', 'Review');
+      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Review');
       cy.get('[data-cy="expandable-section-users"]')
         .should('be.visible')
         .within(() => {
@@ -932,9 +905,8 @@ describe(`Instance Groups`, () => {
         cy.get('[data-cy="remove-role"]').click();
       });
       cy.intercept('DELETE', awxAPI`/role_user_assignments/*/`).as('userRemoved');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Remove role');
-        cy.get('button').contains('Remove role').should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('username-column-cell').should('have.text', user.username);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Remove role').click();

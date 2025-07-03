@@ -31,29 +31,31 @@ export function PageMultiSelectList<T extends object>(props: PageMultiSelectList
   return (
     <>
       <Split hasGutter>
-        <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+        <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap', marginBottom: '1rem' }}>
           {labelForSelectedItems ?? translations.selectedText}
         </SplitItem>
         {view.selectedItems.length > 0 ? (
-          <LabelGroup>
-            {view.selectedItems.map((item, i) => {
-              if (tableColumns && tableColumns.length > 0) {
-                return (
-                  <Label key={i} onClose={() => view.unselectItem(item)}>
-                    <TableColumnCell
-                      item={item}
-                      column={
-                        tableColumns.find(
-                          (column) => column.card === 'name' || column.list === 'name'
-                        ) ?? tableColumns[0]
-                      }
-                    />
-                  </Label>
-                );
-              }
-              return <></>;
-            })}
-          </LabelGroup>
+          <SplitItem>
+            <LabelGroup>
+              {view.selectedItems.map((item, i) => {
+                if (tableColumns && tableColumns.length > 0) {
+                  return (
+                    <Label key={i} onClose={() => view.unselectItem(item)}>
+                      <TableColumnCell
+                        item={item}
+                        column={
+                          tableColumns.find(
+                            (column) => column.card === 'name' || column.list === 'name'
+                          ) ?? tableColumns[0]
+                        }
+                      />
+                    </Label>
+                  );
+                }
+                return <></>;
+              })}
+            </LabelGroup>
+          </SplitItem>
         ) : (
           <SplitItem style={{ fontStyle: 'italic' }}>{translations.noneSelectedText}</SplitItem>
         )}

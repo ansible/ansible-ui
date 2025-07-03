@@ -3,8 +3,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ComponentType, ReactNode } from 'react';
@@ -16,11 +14,7 @@ export function PageTableEmptyState(props: {
   children?: ReactNode;
 }) {
   return (
-    <EmptyState isFullHeight>
-      <EmptyStateHeader
-        titleText={props.title}
-        icon={<EmptyStateIcon icon={props.icon ?? PlusCircleIcon} />}
-      />
+    <EmptyState icon={props.icon ?? PlusCircleIcon} titleText={props.title} isFullHeight>
       {props.description && <EmptyStateBody>{props.description}</EmptyStateBody>}
       {props.children && (
         <EmptyStateFooter>

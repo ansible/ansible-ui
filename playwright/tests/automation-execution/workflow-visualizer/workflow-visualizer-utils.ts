@@ -204,7 +204,7 @@ async function createNode(
 export async function removeAllWorkflowVizNodes(page: Page) {
   await page
     .locator(
-      'div:nth-child(2) > .pf-v5-c-toolbar__content-section > .pf-v5-c-toolbar__group > div:nth-child(4) > .pf-v5-c-menu-toggle'
+      'div:nth-child(2) > .pf-v6-c-toolbar__content-section > .pf-v6-c-toolbar__group > div:nth-child(4) > .pf-v6-c-menu-toggle'
     )
     .click();
   await page.getByRole('menuitem', { name: 'Remove all steps' }).click();

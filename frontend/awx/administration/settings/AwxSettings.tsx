@@ -40,7 +40,7 @@ export function AwxSettings() {
         headerActions={<ActivityStreamIcon type={'setting'} />}
       />
       <Scrollable>
-        <PageSection isWidthLimited>
+        <PageSection hasBodyWrapper isWidthLimited>
           <Split>
             <GroupsCards groups={[authenticationGroup!]} />
           </Split>
@@ -55,7 +55,7 @@ function GroupsCards(props: { groups: IAwxSettingsGroup[] }) {
   return (
     <>
       {props.groups.map((group) => (
-        <Card isRounded isFlat key={group.id}>
+        <Card key={group.id}>
           {group.name && (
             <CardHeader>
               <CardTitle>

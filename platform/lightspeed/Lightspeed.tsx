@@ -4,7 +4,7 @@ import {
   PageHeader,
   PageLayout,
 } from '@ansible/ansible-ui-framework';
-import { Button, CardBody, CardFooter, Text, TextContent } from '@patternfly/react-core';
+import { Button, CardBody, CardFooter, Content } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -16,23 +16,23 @@ export function Lightspeed() {
       <PageDashboard>
         <PageDashboardCard width="xxl">
           <CardBody>
-            <TextContent>
-              <Text component="p">
+            <Content>
+              <Content component="p">
                 {t(
                   'Red Hat Ansible Lightspeed with IBM watsonx Code Assistant is a generative AI service available to Red Hat Ansible Automation Platform users. Tapping into automation-specific foundation models, it uses natural language processing to turn written prompts into code snippets for the creation of Ansible playbooks.'
                 )}
-              </Text>
-              <Text component="p">
+              </Content>
+              <Content component="p">
                 {t(
                   'The best part? It’s all done the Ansible way, ensuring an experience rooted in transparency, accuracy, and trust.'
                 )}
-              </Text>
-              <Text component="p">
+              </Content>
+              <Content component="p">
                 {t(
                   'To learn more about how to get started with using Ansible Lightspeed with IBM watsonx Code Assistance, click the button below.'
                 )}
-              </Text>
-            </TextContent>
+              </Content>
+            </Content>
           </CardBody>
           <CardFooter>
             <Button

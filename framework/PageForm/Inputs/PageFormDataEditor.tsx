@@ -239,8 +239,8 @@ export function PageFormDataEditor<
                     isReadOnly={props.isReadOnly || isSubmitting}
                     className={
                       props.isReadOnly
-                        ? `pf-v5-c-form-control pf-m-disabled`
-                        : `pf-v5-c-form-control`
+                        ? `pf-v6-c-form-control pf-m-disabled`
+                        : `pf-v6-c-form-control`
                     }
                     onFocus={() => setHasFocus(true)}
                     onBlur={() => setHasFocus(false)}
@@ -293,7 +293,7 @@ export function PageFormDataEditor<
                 />
               </div>
             )}
-            {!isExpanded && <div className="pf-v5-c-form-control" />}
+            {!isExpanded && <div className="pf-v6-c-form-control" />}
           </PageFormGroup>
         );
       }}

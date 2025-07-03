@@ -5,8 +5,8 @@ import { PageFormSelectExecutionEnvironment } from '@ansible/awx-ui/administrati
 import { PageFormInstanceGroupSelect } from '@ansible/awx-ui/administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { Trans, useTranslation } from 'react-i18next';
+import { Content, ContentVariants } from '@patternfly/react-core';
+import { useTranslation, Trans } from 'react-i18next';
 import { useHasAwxService } from '../../../../main/GatewayServices';
 
 export function OrganizationDetailsStep(props: {
@@ -19,9 +19,9 @@ export function OrganizationDetailsStep(props: {
 
   return (
     <>
-      <TextContent>
-        <Text component={TextVariants.h2}>{t('Organization details')}</Text>
-      </TextContent>
+      <Content>
+        <Content component={ContentVariants.h2}>{t('Organization details')}</Content>
+      </Content>
       <PageFormSection>
         <PageFormTextInput
           name="organization.name"

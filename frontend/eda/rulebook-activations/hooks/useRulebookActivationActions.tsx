@@ -92,7 +92,6 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         selection: PageActionSelection.Single,
         isPinned: true,
         label: t('Rulebook activation enabled'),
-        labelOff: t('Rulebook activation disabled'),
         onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
           if (activate) void enableActivation(activation);
           else void disableActivations([activation]);

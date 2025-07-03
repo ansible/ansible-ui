@@ -1,8 +1,7 @@
-import React from 'react';
 import { Button, ButtonVariant, ToolbarItem } from '@patternfly/react-core';
+import { CommentIcon } from '@patternfly/react-icons';
 import { ChatbotStateEnum, useAppChatbotContext } from './ChatbotProvider';
 import { useChatbot } from './ChatbotState';
-import { CommentIcon } from '@patternfly/react-icons';
 
 export function ChatbotToolbarItem() {
   const chatbotEnabled = useChatbot();

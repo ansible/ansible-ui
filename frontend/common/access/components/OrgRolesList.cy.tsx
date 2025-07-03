@@ -32,22 +32,23 @@ describe('OrgRolesList', () => {
 
   it('Renders the correct columns', () => {
     cy.mount(<OrgRolesList {...orgListProps} />);
-    cy.get('.pf-v5-c-table__th').should('have.length', 2);
+    cy.get('.pf-v6-c-table__th').should('have.length', 2);
     cy.contains('th', 'Name');
     cy.contains('th', 'Description');
   });
 
   it('Renders expandable list', () => {
     cy.mount(<OrgRolesList {...orgListProps} />);
-    cy.get('button.pf-v5-c-expandable-section__toggle').should('be.visible');
     cy.contains('Organization Project Admin').should('be.visible');
-    cy.get('button.pf-v5-c-expandable-section__toggle').click();
+    cy.contains('button', /Automation controller roles/i)
+      .should('be.visible')
+      .click();
     cy.contains('Organization Project Admin').should('not.be.visible');
   });
 
   it('Renders non-expandable list', () => {
     cy.mount(<OrgRolesList {...{ ...orgListProps, isExpandable: false }} />);
-    cy.get('button.pf-v5-c-expandable-section__toggle').should('not.exist');
+    cy.get('button.pf-v6-c-expandable-section__toggle').should('not.exist');
     cy.contains('Organization Project Admin').should('be.visible');
   });
 });

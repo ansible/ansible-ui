@@ -29,12 +29,20 @@ function PageMultiSelectTest<T>(props: {
   defaultValues?: T[];
   options: PageSelectOption<T>[];
   footer?: ReactNode;
+  variant?: 'chips' | 'count';
   compareOptionValues?: (a: T, b: T) => boolean;
 }) {
-  const { placeholder, defaultValues: defaultValue, options, footer, compareOptionValues } = props;
+  const {
+    placeholder,
+    defaultValues: defaultValue,
+    options,
+    footer,
+    compareOptionValues,
+    variant,
+  } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValue);
   return (
-    <PageSection>
+    <PageSection hasBodyWrapper={false}>
       <PageMultiSelect
         id="test"
         values={values}
@@ -43,6 +51,7 @@ function PageMultiSelectTest<T>(props: {
         onSelect={setValues}
         footer={footer}
         compareOptionValues={compareOptionValues}
+        variant={variant}
       />
     </PageSection>
   );
@@ -135,5 +144,18 @@ describe('PageMultiSelect', () => {
     );
     cy.get('#test').click();
     cy.contains('Footer');
+  });
+
+  it('should show badge count', () => {
+    cy.mount(
+      <PageMultiSelectTest
+        variant="count"
+        placeholder={placeholderText}
+        options={options}
+        defaultValues={testObjects}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
+    cy.get('#test').should('contain', '12 selected');
   });
 });

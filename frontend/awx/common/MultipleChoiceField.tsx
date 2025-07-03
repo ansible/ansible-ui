@@ -25,8 +25,8 @@ import { useAwxConfig } from './useAwxConfig';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 const DividerWithSpace = styled(Divider)`
-  padding-top: var(--pf-v5-global--spacer--md);
-  padding-bottom: var(--pf-v5-global--spacer--md);
+  padding-top: var(--pf-t--global--spacer--md);
+  padding-bottom: var(--pf-t--global--spacer--md);
 `;
 
 export type MultipleChoiceFieldType = 'multiplechoice' | 'multiselect';
@@ -134,15 +134,14 @@ export function MultipleChoiceField(props: IProps) {
         </GridItem>
         <GridItem span={2}>
           <Button
+            icon={<PlusCircleIcon />}
             type="button"
             variant="plain"
             aria-label={t('Add choice')}
             data-cy={'add-choice'}
             onClick={handleAdd}
             isDisabled={plainChoices.includes(addChoice) || addChoice?.length === 0}
-          >
-            <PlusCircleIcon />
-          </Button>
+          />
         </GridItem>
       </Grid>
 
@@ -153,7 +152,7 @@ export function MultipleChoiceField(props: IProps) {
           columnGap={{ default: 'columnGapNone' }}
           alignContent={{ default: 'alignContentSpaceBetween' }}
           key={choice.id}
-          style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}
+          style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}
         >
           <FlexItem flex={{ default: 'flex_1' }}>
             <Stack>
@@ -197,6 +196,7 @@ export function MultipleChoiceField(props: IProps) {
             <Flex style={{ maxWidth: '180px' }} gap={{ default: 'gapNone' }}>
               <FlexItem>
                 <Button
+                  icon={<TrashIcon />}
                   type="button"
                   variant="plain"
                   aria-label={t('Remove choice')}
@@ -204,9 +204,7 @@ export function MultipleChoiceField(props: IProps) {
                   onClick={() => {
                     remove(index);
                   }}
-                >
-                  <TrashIcon />
-                </Button>
+                />
               </FlexItem>
               <FlexItem>
                 <Controller

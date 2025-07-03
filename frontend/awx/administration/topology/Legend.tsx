@@ -22,14 +22,11 @@ import { getNodeIcon } from './components/MeshNode';
 
 const Panel = styled(PFPanel)`
   position: absolute;
-  background: --pf-v5-global--BackgroundColor--100;
   width: 240px;
   min-height: 300px;
   position: absolute;
   left: 255px;
   bottom: 60px;
-  border-radius: var(--pf-v5-global--BorderRadius--sm);
-  box-shadow: var(--pf-v5-global--BoxShadow--sm);
 `;
 
 export const Legend = () => {
@@ -50,7 +47,7 @@ export const Legend = () => {
   };
 
   return (
-    <Panel data-cy="mesh-viz-legend">
+    <Panel data-cy="mesh-viz-legend" variant="raised">
       <PanelMain tabIndex={0}>
         <PanelMainBody>
           <DescriptionList>

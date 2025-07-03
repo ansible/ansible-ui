@@ -1,14 +1,7 @@
 import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
-import {
-  Label,
-  LabelGroup,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { awxAPI } from '../../../../common/api/awx-utils';
@@ -325,14 +318,14 @@ export function JobTemplateDetails({
         label={t('Enabled options')}
         isEmpty={!(template.allow_simultaneous || template.webhook_service)}
       >
-        <TextList component={TextListVariants.ul}>
+        <Content component={ContentVariants.ul}>
           {template.allow_simultaneous && (
-            <TextListItem component={TextListItemVariants.li}>{t`Concurrent jobs`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Concurrent jobs`}</Content>
           )}
           {template.webhook_service && (
-            <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Webhooks`}</Content>
           )}
-        </TextList>
+        </Content>
       </PageDetail>
       <NodeTagDetail
         label={t('Labels')}
@@ -411,16 +404,24 @@ function InstanceGroupsDetail({
     >
       <LabelGroup>
         {instanceGroups?.map((ig) => (
-          <Label color="blue" key={ig.id}>
-            <Link
-              to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                params: {
-                  id: ig.id,
-                },
-              })}
-            >
-              {ig.name}
-            </Link>
+          <Label
+            color="blue"
+            key={ig.id}
+            isClickable
+            render={({ content, className }) => (
+              <Link
+                className={className}
+                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                  params: {
+                    id: ig.id,
+                  },
+                })}
+              >
+                {content}
+              </Link>
+            )}
+          >
+            {ig.name}
           </Label>
         ))}
       </LabelGroup>

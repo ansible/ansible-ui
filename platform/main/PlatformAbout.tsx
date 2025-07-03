@@ -3,7 +3,7 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
-import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import { AboutModal, Content } from '@patternfly/react-core';
 import { t } from 'i18next';
 import React from 'react';
 
@@ -28,28 +28,28 @@ export const PlatformAbout: React.FunctionComponent = () => {
       brandImageAlt={t('Brand Logo')}
       brandImageSrc={'aap-logo.svg?react'}
     >
-      <TextContent>
-        <TextList component="dl">
+      <Content>
+        <Content component="dl">
           {awxVersion && (
             <>
-              <TextListItem component="dt">{t('Automation Controller Version')}</TextListItem>
-              <TextListItem component="dd">{awxVersion}</TextListItem>
+              <Content component="dt">{t('Automation Controller Version')}</Content>
+              <Content component="dd">{awxVersion}</Content>
             </>
           )}
           {edaVersion && (
             <>
-              <TextListItem component="dt">{t('Event-Driven Ansible Version')}</TextListItem>
-              <TextListItem component="dd">{edaVersion}</TextListItem>
+              <Content component="dt">{t('Event-Driven Ansible Version')}</Content>
+              <Content component="dd">{edaVersion}</Content>
             </>
           )}
           {hubVersion && (
             <>
-              <TextListItem component="dt">{t('Automation Hub Version')}</TextListItem>
-              <TextListItem component="dd">{hubVersion}</TextListItem>
+              <Content component="dt">{t('Automation Hub Version')}</Content>
+              <Content component="dd">{hubVersion}</Content>
             </>
           )}
-        </TextList>
-      </TextContent>
+        </Content>
+      </Content>
     </AboutModal>
   );
 };

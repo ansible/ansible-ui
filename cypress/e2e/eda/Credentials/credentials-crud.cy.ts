@@ -36,7 +36,7 @@ describe('Check if the build includes EDA', () => {
         cy.get('[data-cy="description"]').type('This is a container registry credential.');
         cy.getBy('[data-cy="organization_id"]').click();
         cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           cy.get('table').should('exist');
           cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
           cy.getBy('button[data-cy="apply-filter"]').click();
@@ -45,7 +45,7 @@ describe('Check if the build includes EDA', () => {
         });
         cy.getBy('[data-cy="credential_type_id"]').click();
         cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           cy.get('table').should('exist');
           cy.getBy('[data-cy="text-input"] input').type('Container Registry');
           cy.getBy('button[data-cy="apply-filter"]').click();
@@ -76,7 +76,7 @@ describe('Check if the build includes EDA', () => {
         cy.get('[data-cy="description"]').type('This is a GitHub Credential.');
         cy.getBy('[data-cy="organization_id"]').click();
         cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           cy.get('table').should('exist');
           cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
           cy.getBy('button[data-cy="apply-filter"]').click();
@@ -85,7 +85,7 @@ describe('Check if the build includes EDA', () => {
         });
         cy.getBy('[data-cy="credential_type_id"]').click();
         cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           cy.get('table').should('exist');
           cy.getBy('[data-cy="text-input"] input').type('Source Control');
           cy.getBy('button[data-cy="apply-filter"]').click();
@@ -179,7 +179,7 @@ describe('Check if the build includes EDA', () => {
             cy.verifyPageTitle(edaCredentialName);
             cy.clickPageAction('delete-credential');
             cy.clickModalConfirmCheckbox();
-            cy.get('.pf-v5-c-alert__title').contains(
+            cy.get('.pf-v6-c-alert__title').contains(
               `The following credentials are in use: ${edaCredentialName}`
             );
             cy.clickModalButton('Delete credential');

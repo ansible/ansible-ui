@@ -6,7 +6,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant, ModalHeader, ModalBody } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -128,32 +128,35 @@ export function SourceEventStreamMappingModal(options: EventStreamMappingProps) 
 
   return (
     <Modal
-      title={t('Event streams')}
       aria-label={t('Event streams')}
       ouiaId={'Event streams'}
       data-cy={'event-streams-modal'}
-      description={
-        <div style={{ fontSize: 'small' }}>
-          {t(
-            'Event streams are server-side webhooks that enable you to connect various event sources to your rulebook activations. ' +
-              'To add event streams to your rulebooks, replace an ansible.eda.webhook or compatible custom source with the desired event stream. ' +
-              'This modifies the activation only, while leaving your filters intact.'
-          )}
-        </div>
-      }
       variant={ModalVariant.large}
       isOpen
       onClose={onClose}
-      hasNoBodyWrapper
     >
-      <EdaPageForm
-        onSubmit={onSubmit}
-        submitText={t('Save')}
-        cancelText={t('Cancel')}
-        onCancel={onClose}
-      >
-        <SourceEventStreamMapping {...options} />
-      </EdaPageForm>
+      <ModalHeader
+        title={t('Event streams')}
+        description={
+          <div style={{ fontSize: 'small' }}>
+            {t(
+              'Event streams are server-side webhooks that enable you to connect various event sources to your rulebook activations. ' +
+                'To add event streams to your rulebooks, replace an ansible.eda.webhook or compatible custom source with the desired event stream. ' +
+                'This modifies the activation only, while leaving your filters intact.'
+            )}
+          </div>
+        }
+      />
+      <ModalBody style={{ paddingBottom: 0 }}>
+        <EdaPageForm
+          onSubmit={onSubmit}
+          submitText={t('Save')}
+          cancelText={t('Cancel')}
+          onCancel={onClose}
+        >
+          <SourceEventStreamMapping {...options} />
+        </EdaPageForm>
+      </ModalBody>
     </Modal>
   );
 }

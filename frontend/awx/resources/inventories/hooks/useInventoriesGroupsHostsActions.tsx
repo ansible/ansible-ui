@@ -41,7 +41,6 @@ export function useInventoriesGroupsHostsActions(onToggle: (() => Promise<void>)
         onToggle: (host, enabled) => handleToggleHost(host, enabled),
         isSwitchOn: (host: AwxHost) => (host.enabled ? true : false),
         label: t('Enabled'),
-        labelOff: t('Disabled'),
         showPinnedLabel: false,
         isPinned: true,
         isDisabled: (host) => cannotEditResource(host, t),

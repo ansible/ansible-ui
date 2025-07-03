@@ -89,21 +89,23 @@ describe(`Assign Role to a Team `, () => {
     cy.clickTab('Automation Content', true);
     cy.getByDataCy('add-roles').click();
     cy.getWizard().within(() => {
-      cy.selectDropdownOptionByResourceName('resourcetype', 'Repository');
-      cy.clickButton(/^Next$/);
-      cy.getTableRowByText(hubRepository.name, true).within(() => {
-        cy.get('input[type=checkbox]').click();
-      });
-      cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
-      cy.clickButton(/^Next$/);
-      cy.wait('@roleDefinitions');
-      cy.getTableRowByText(repositoryRole.name, true).within(() => {
-        cy.get('input[type=checkbox]').click();
-      });
-      cy.clickButton(/^Next$/);
-      cy.verifyReviewStepWizardDetails('resources', [hubRepository.name], '1');
-      cy.clickButton(/^Finish$/);
+      cy.get('[data-cy="loading-spinner"]').should('not.exist');
     });
+    cy.get(`[data-cy*="resourcetype-form-group"]`).find('button').click();
+    cy.contains('button', 'Repository').click();
+    cy.clickButton(/^Next$/);
+    cy.getTableRowByText(hubRepository.name, true).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
+    cy.clickButton(/^Next$/);
+    cy.wait('@roleDefinitions');
+    cy.getTableRowByText(repositoryRole.name, true).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.clickButton(/^Next$/);
+    cy.verifyReviewStepWizardDetails('resources', [hubRepository.name], '1');
+    cy.clickButton(/^Finish$/);
     cy.assertModalSuccess();
     cy.verifyPageTitle(PlatformTeam.name);
     cy.clickTab(/^Automation Content$/, true);
@@ -120,21 +122,23 @@ describe(`Assign Role to a Team `, () => {
     cy.clickTab('Automation Content', true);
     cy.getByDataCy('add-roles').click();
     cy.getWizard().within(() => {
-      cy.selectDropdownOptionByResourceName('resourcetype', 'Remote');
-      cy.clickButton(/^Next$/);
-      cy.getTableRowByText(hubRemote.name, true).within(() => {
-        cy.get('input[type=checkbox]').click();
-      });
-      cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
-      cy.clickButton(/^Next$/);
-      cy.wait('@roleDefinitions');
-      cy.getTableRowByText(remoteRole.name, true).within(() => {
-        cy.get('input[type=checkbox]').click();
-      });
-      cy.clickButton(/^Next$/);
-      cy.verifyReviewStepWizardDetails('resources', [hubRemote.name], '1');
-      cy.clickButton(/^Finish$/);
+      cy.get('[data-cy="loading-spinner"]').should('not.exist');
     });
+    cy.get(`[data-cy*="resourcetype-form-group"]`).find('button').click();
+    cy.contains('button', 'Remote').click();
+    cy.clickButton(/^Next$/);
+    cy.getTableRowByText(hubRemote.name, true).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
+    cy.clickButton(/^Next$/);
+    cy.wait('@roleDefinitions');
+    cy.getTableRowByText(remoteRole.name, true).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.clickButton(/^Next$/);
+    cy.verifyReviewStepWizardDetails('resources', [hubRemote.name], '1');
+    cy.clickButton(/^Finish$/);
     cy.assertModalSuccess();
     cy.verifyPageTitle(PlatformTeam.name);
     cy.clickTab(/^Automation Content$/, true);
@@ -162,27 +166,29 @@ describe(`Assign Role to a Team `, () => {
     cy.clickTab('Automation Content', true);
     cy.getByDataCy('add-roles').click();
     cy.getWizard().within(() => {
-      cy.selectDropdownOptionByResourceName('resourcetype', 'Namespace');
-      cy.clickButton(/^Next$/);
-      cy.get('[data-cy="text-input"]')
-        .should('be.visible')
-        .within(() => {
-          cy.get('input').clear().type(hubNamespace.name);
-        });
-      cy.contains('.pf-v5-c-chip__text', hubNamespace.name);
-      cy.getTableRowByText(hubNamespace.name, false).within(() => {
-        cy.get('input[type=checkbox]').click();
-      });
-      cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
-      cy.clickButton(/^Next$/);
-      cy.wait('@roleDefinitions');
-      cy.getTableRowByText(namespaceRole.name, true).within(() => {
-        cy.get('input[type=checkbox]').click();
-      });
-      cy.clickButton(/^Next$/);
-      cy.verifyReviewStepWizardDetails('resources', [hubNamespace.name], '1');
-      cy.clickButton(/^Finish$/);
+      cy.get('[data-cy="loading-spinner"]').should('not.exist');
     });
+    cy.get(`[data-cy*="resourcetype-form-group"]`).find('button').click();
+    cy.contains('button', 'Namespace').click();
+    cy.clickButton(/^Next$/);
+    cy.get('[data-cy="text-input"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('input').clear().type(hubNamespace.name);
+      });
+    cy.contains('[class*="label-group__list-item"]', hubNamespace.name);
+    cy.getTableRowByText(hubNamespace.name, false).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
+    cy.clickButton(/^Next$/);
+    cy.wait('@roleDefinitions');
+    cy.getTableRowByText(namespaceRole.name, true).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.clickButton(/^Next$/);
+    cy.verifyReviewStepWizardDetails('resources', [hubNamespace.name], '1');
+    cy.clickButton(/^Finish$/);
     cy.assertModalSuccess();
     cy.verifyPageTitle(PlatformTeam.name);
     cy.contains(hubNamespace.name);
@@ -241,34 +247,36 @@ describe(`Roles Tab for Teams - actions`, () => {
         cy.clickTab('Automation Content', true);
         cy.getByDataCy('add-roles').click();
         cy.getWizard().within(() => {
-          cy.selectDropdownOptionByResourceName('resourcetype', 'Namespace');
-          cy.clickButton(/^Next$/);
-          cy.get('[data-cy="text-input"]')
-            .should('be.visible')
-            .within(() => {
-              cy.get('input').clear().type(namespace.name);
-            });
-          cy.filterTableByTextFilter('name', namespace.name, { disableFilterSelection: true });
-          cy.getTableRowByText(namespace.name, true, 'SingleText').within(() => {
-            cy.get('input[type=checkbox]').click();
-          });
-          cy.clickButton(/^Next$/);
-          cy.filterTableByTextFilter('name', role1.name, { disableFilterSelection: true });
-          cy.getTableRowByText(role1.name, true, 'SingleText').within(() => {
-            cy.get('input[type=checkbox]').click();
-          });
-          cy.filterTableByTextFilter('name', role2.name, { disableFilterSelection: true });
-          cy.getTableRowByText(role2.name, true, 'SingleText').within(() => {
-            cy.get('input[type=checkbox]').click();
-          });
-          cy.filterTableByTextFilter('name', role3.name, { disableFilterSelection: true });
-          cy.getTableRowByText(role3.name, true, 'SingleText').within(() => {
-            cy.get('input[type=checkbox]').click();
-          });
-          cy.clickButton(/^Next$/);
-          cy.verifyReviewStepWizardDetails('resources', [namespace.name], '1');
-          cy.clickButton(/^Finish$/);
+          cy.get('[data-cy="loading-spinner"]').should('not.exist');
         });
+        cy.get(`[data-cy*="resourcetype-form-group"]`).find('button').click();
+        cy.contains('button', 'Namespace').click();
+        cy.clickButton(/^Next$/);
+        cy.get('[data-cy="text-input"]')
+          .should('be.visible')
+          .within(() => {
+            cy.get('input').clear().type(namespace.name);
+          });
+        cy.filterTableByTextFilter('name', namespace.name, { disableFilterSelection: true });
+        cy.getTableRowByText(namespace.name, true, 'SingleText').within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
+        cy.clickButton(/^Next$/);
+        cy.filterTableByTextFilter('name', role1.name, { disableFilterSelection: true });
+        cy.getTableRowByText(role1.name, true, 'SingleText').within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
+        cy.filterTableByTextFilter('name', role2.name, { disableFilterSelection: true });
+        cy.getTableRowByText(role2.name, true, 'SingleText').within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
+        cy.filterTableByTextFilter('name', role3.name, { disableFilterSelection: true });
+        cy.getTableRowByText(role3.name, true, 'SingleText').within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
+        cy.clickButton(/^Next$/);
+        cy.verifyReviewStepWizardDetails('resources', [namespace.name], '1');
+        cy.clickButton(/^Finish$/);
         cy.assertModalSuccess();
         cy.verifyPageTitle(PlatformTeam.name);
       });

@@ -4,10 +4,19 @@ import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxUserDetails } from './AwxUserDetails';
 
 describe('User details', () => {
+  const path = '/users/:id/details';
+  const initialEntries = [`/users/${mockAwxUser.id.toString()}/details`];
+  const params = {
+    path,
+    initialEntries,
+  };
+
   it('Renders first & last name, username, email, orgs, last login, auth type, created & modified timestamps', () => {
-    cy.intercept(awxAPI`/users/*`, { fixture: 'awxUser.json' });
-    cy.intercept(awxAPI`/users/*/organizations/`, { fixture: 'organizations.json' });
-    cy.mount(<AwxUserDetails />);
+    cy.intercept(awxAPI`/users/${mockAwxUser.id.toString()}/`, { fixture: 'awxUser.json' });
+    cy.intercept(`**/users/${mockAwxUser.id.toString()}/organizations/`, {
+      fixture: 'organizations.json',
+    });
+    cy.mount(<AwxUserDetails />, params);
     cy.get('[data-cy="first-name"]').should('have.text', 'Org');
     cy.get('[data-cy="last-name"]').should('have.text', 'Admin');
     cy.get('[data-cy="email"]').should('have.text', 'firstname@lastname.com');

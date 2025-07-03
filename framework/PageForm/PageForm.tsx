@@ -3,7 +3,10 @@ import {
   Form,
   Grid,
   gridItemSpanValueShape,
+  ModalFooter,
+  ModalFooterProps,
   PageSection,
+  PageSectionProps,
 } from '@patternfly/react-core';
 import { ReactNode, useContext, useState } from 'react';
 import {
@@ -24,15 +27,21 @@ import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
 import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
 import { ErrorAdapter } from './typesErrorAdapter';
+import { useIsPageDialog } from '../PageDialogs/PageDialog';
 
 const FormContainer = styled(PageSection)`
-  padding-bottom: var(--pf-v5-global--spacer--xl);
+  padding-bottom: var(--pf-t--global--spacer--xl);
 `;
 
 const FormActionGroup = styled(ActionGroup)`
   && {
     margin-block-start: unset;
   }
+`;
+
+const StyledModalFooter = styled(ModalFooter)`
+  padding-inline-start: 0;
+  padding-block-end: 0;
 `;
 
 export interface PageFormProps<T extends object> {
@@ -114,6 +123,16 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     );
   }
 
+  const isPageDialog = useIsPageDialog();
+
+  const FormFooter = isPageDialog ? StyledModalFooter : PageSection;
+  const FormFooterProps: PageSectionProps | ModalFooterProps = isPageDialog
+    ? {
+        hasBodyWrapper: false,
+        isFilled: false,
+      }
+    : {};
+
   return (
     <FormProvider {...form}>
       <Form
@@ -146,7 +165,6 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
         <Scrollable>
           <FormContainer
-            variant="light"
             isFilled
             isWidthLimited
             padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
@@ -158,7 +176,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         {props.footer ? (
           props.footer
         ) : (
-          <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+          <FormFooter {...FormFooterProps}>
             <FormActionGroup>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.additionalActions}
@@ -168,7 +186,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
                 </PageFormCancelButton>
               )}
             </FormActionGroup>
-          </PageSection>
+          </FormFooter>
         )}
       </Form>
     </FormProvider>

@@ -1,4 +1,12 @@
-import { Button, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalVariant,
+  Divider,
+} from '@patternfly/react-core';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useFrameworkTranslations } from '@ansible/ansible-ui-framework/useFrameworkTranslations';
@@ -12,13 +20,13 @@ const ModalBodyDiv = styled.div`
 `;
 
 export interface EdaWarningDialog<T extends object> {
-  /** The title of the model. */
+  /** The title of the modal. */
   title: string;
 
   /** The prompt/description that shows up under the title. */
   prompt?: string;
 
-  /** Messgaes that appear in the modal's body. */
+  /** Messages that appear in the modal's body. */
   messages?: ReactNode[];
 
   /** The items to confirm. */
@@ -40,6 +48,7 @@ function EdaWarningDialog<T extends object>(props: EdaWarningDialog<T>) {
     props;
   const { popDialog } = usePageDialogs();
   const [translations] = useFrameworkTranslations();
+
   const onCloseClicked = useCallback(() => {
     popDialog();
     onClose?.();
@@ -49,50 +58,48 @@ function EdaWarningDialog<T extends object>(props: EdaWarningDialog<T>) {
     onCloseClicked();
     await onConfirm(items[0]);
     return onComplete?.(items);
-  }, [items, onCloseClicked, onComplete, onConfirm]) as () => void;
+  }, [items, onCloseClicked, onComplete, onConfirm]);
 
   return (
     <Modal
-      titleIconVariant={'warning'}
-      title={title}
-      aria-label={title}
-      ouiaId={title}
-      description={prompt}
       variant={ModalVariant.medium}
       isOpen
       onClose={onCloseClicked}
-      actions={[
+      aria-label={title}
+      ouiaId={title}
+    >
+      <ModalHeader title={title} description={prompt} titleIconVariant="warning" />
+      <Divider />
+      <ModalBody style={{ paddingLeft: 0, paddingRight: 0 }}>
+        {items?.length > 0 && (
+          <ModalBodyDiv>
+            {messages && (
+              <PageDetails numberOfColumns="single">
+                {messages.map((message) => (
+                  <PageDetail data-cy="warning=prompt" key={message?.toString()}>
+                    {message}
+                  </PageDetail>
+                ))}
+              </PageDetails>
+            )}
+          </ModalBodyDiv>
+        )}
+      </ModalBody>
+      <Divider />
+      <ModalFooter>
         <Button
           id="submit"
           key="submit"
           ouiaId="submit"
-          variant={'primary'}
-          onClick={onSubmitClicked}
+          variant="primary"
+          onClick={() => void onSubmitClicked()}
         >
           {actionButtonText}
-        </Button>,
-        <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
+        </Button>
+        <Button id="cancel" key="cancel" variant="link" onClick={onCloseClicked}>
           {translations.cancelText}
-        </Button>,
-      ]}
-      hasNoBodyWrapper
-    >
-      {items?.length > 0 && (
-        <ModalBoxBody style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ModalBodyDiv>
-            {messages && (
-              <PageDetails numberOfColumns={'single'}>
-                {messages?.length > 0 &&
-                  messages.map((message) => (
-                    <PageDetail data-cy="warning=prompt" key={message?.toString()}>
-                      {message}
-                    </PageDetail>
-                  ))}
-              </PageDetails>
-            )}
-          </ModalBodyDiv>
-        </ModalBoxBody>
-      )}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }
@@ -107,7 +114,7 @@ export function useEdaWarningDialog<T extends object>() {
         props.onClose?.();
       };
       pushDialog(
-        <EdaWarningDialog<T> {...props} onClose={onCloseHandler} onConfirm={props?.onConfirm} />
+        <EdaWarningDialog<T> {...props} onClose={onCloseHandler} onConfirm={props.onConfirm} />
       );
     } else {
       popDialog();

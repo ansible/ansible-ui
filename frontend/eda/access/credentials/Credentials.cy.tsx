@@ -119,7 +119,7 @@ describe('Credentials.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-credentials"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to delete these`
       );
@@ -176,12 +176,12 @@ describe('Credentials.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-credentials"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to delete these`
       );
       cy.contains('EDA Credential 1');
-      cy.get('.pf-v5-c-alert__title').contains(
+      cy.get('.pf-v6-c-alert__title').contains(
         'The following credentials are in use: EDA Credential 1'
       );
       cy.get('input[id="confirm"]').click();
@@ -196,13 +196,13 @@ describe('Credentials.cy.ts', () => {
     }).as('copyEdaCredential');
     cy.mount(<Credentials />);
     cy.contains('tr', 'EDA Credential 1').within(() => {
-      cy.get('[data-cy="duplicate-credential"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="duplicate-credential"]').should('not.have.attr', 'aria-disabled', 'true');
     });
     cy.contains('tr', 'EDA Credential 1').within(() => {
       cy.get('[data-cy="duplicate-credential"]').click();
     });
     cy.wait('@copyEdaCredential');
-    cy.get('.pf-v5-c-alert__title').should('contain', 'EDA Credential 1 duplicated');
+    cy.get('.pf-v6-c-alert__title').should('contain', 'EDA Credential 1 duplicated');
   });
 });
 

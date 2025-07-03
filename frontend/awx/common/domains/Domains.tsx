@@ -2,13 +2,14 @@ import { Help, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { ExpandIcon } from '@ansible/ansible-ui-framework/components/icons/ExpandIcon';
 import {
   Button,
-  Divider,
   Flex,
   FlexItem,
   FormFieldGroup,
   FormFieldGroupHeader,
   Label,
   Modal,
+  ModalBody,
+  ModalHeader,
   ModalVariant,
   Split,
   SplitItem,
@@ -37,7 +38,11 @@ export function Domains() {
         <FlexItem>
           <Split>
             <SplitItem>{t('Domains')}</SplitItem>
-            <div style={{ color: 'var(--pf-v5-global--link--Color)', marginTop: -6 }}>
+            <div
+              style={{
+                marginTop: -6,
+              }}
+            >
               <Help
                 title={t('Domains')}
                 help={[
@@ -80,7 +85,6 @@ export function Domains() {
           )}
         </FlexItem>
       </Flex>
-      <Divider />
       <ConfigureDomainsModal isOpen={configureOpen} setOpen={setConfigureOpen} />
     </>
   );
@@ -92,40 +96,45 @@ function ConfigureDomainsModal(props: { isOpen: boolean; setOpen: (open: boolean
   const { t } = useTranslation();
   return (
     <Modal
-      title={t('Domains')}
       isOpen={isOpen}
       onClose={() => setOpen(false)}
       ouiaId="Domains"
       variant={ModalVariant.small}
-      hasNoBodyWrapper
-      description={
-        <div style={{ paddingBottom: 24 }}>{t('Configure domains for filtering the views.')}</div>
-      }
+      aria-labelledby="domain-modal-title"
     >
-      <AwxPageForm
-        singleColumn
-        submitText={t('Submit')}
-        onSubmit={(data, setError) => {
-          const names = data.fields
-            .map((fa) => fa.name.toLocaleLowerCase())
-            .filter((name) => name !== '');
-          const uniqueNames = new Set(names);
-          if (uniqueNames.size !== names.length) {
-            setError(t('Each domain name must be unique.'));
+      <ModalHeader
+        title={t('Domains')}
+        description={
+          <div style={{ paddingBottom: 24 }}>{t('Configure domains for filtering the views.')}</div>
+        }
+        labelId="domain-modal-title"
+      />
+      <ModalBody>
+        <AwxPageForm
+          singleColumn
+          submitText={t('Submit')}
+          onSubmit={(data, setError) => {
+            const names = data.fields
+              .map((fa) => fa.name.toLocaleLowerCase())
+              .filter((name) => name !== '');
+            const uniqueNames = new Set(names);
+            if (uniqueNames.size !== names.length) {
+              setError(t('Each domain name must be unique.'));
+              return Promise.resolve();
+            }
+            const savedDomains = data.fields.filter((fa) => !!fa.name);
+            setDomains(savedDomains);
+            setOpen(false);
             return Promise.resolve();
-          }
-          const savedDomains = data.fields.filter((fa) => !!fa.name);
-          setDomains(savedDomains);
-          setOpen(false);
-          return Promise.resolve();
-        }}
-        cancelText={t('Cancel')}
-        onCancel={() => setOpen(false)}
-        defaultValue={{ fields: domains }}
-        disablePadding
-      >
-        <ConfigureDomains />
-      </AwxPageForm>
+          }}
+          cancelText={t('Cancel')}
+          onCancel={() => setOpen(false)}
+          defaultValue={{ fields: domains }}
+          disablePadding
+        >
+          <ConfigureDomains />
+        </AwxPageForm>
+      </ModalBody>
     </Modal>
   );
 }
@@ -185,9 +194,12 @@ function ConfigureDomain(props: { index: number }) {
           }
           actions={
             isExpanded ? undefined : (
-              <Button variant="plain" aria-label="Remove" onClick={() => remove(props.index)}>
-                <TrashIcon />
-              </Button>
+              <Button
+                icon={<TrashIcon />}
+                variant="plain"
+                aria-label="Remove"
+                onClick={() => remove(props.index)}
+              />
             )
           }
         />
@@ -223,10 +235,10 @@ function ConfigureDomainLabels(props: { name: string }) {
   return <>{domain?.labels?.map((label) => <Label key={label.name}>{label.name}</Label>)}</>;
 }
 
-// hide child .pf-v5-c-form__field-group-body when not expanded
+// hide child .pf-v6-c-form__field-group-body when not expanded
 const ExpandableFormFieldGroup = styled(FormFieldGroup)<{ isExpanded?: boolean }>`
   margin-left: 16px;
-  .pf-v5-c-form__field-group-body {
+  .pf-v6-c-form__field-group-body {
     display: ${(props) => (props.isExpanded ? 'grid' : 'none')};
     margin-top: -54px;
     padding-top: 8px;

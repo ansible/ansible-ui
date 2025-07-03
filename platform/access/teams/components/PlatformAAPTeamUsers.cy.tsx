@@ -36,7 +36,7 @@ describe('Team users list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
+          .find('.pf-v6-c-menu__content')
           .within(() => {
             cy.get('button')
               .contains(/^Remove users$/)
@@ -72,7 +72,7 @@ describe('Team users list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.get('[data-cy="add-users"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-users"]').should('be.enabled');
     });
   });
   describe('Empty list', () => {

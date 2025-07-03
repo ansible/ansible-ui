@@ -17,17 +17,17 @@ describe('RuleAuditDetails', () => {
 
   it('Rule Audit details are displayed correctly', () => {
     cy.mount(<RuleAuditDetails />);
-    cy.get('[data-cy="name"] > .pf-v5-c-description-list__text').should(
+    cy.get('[data-cy="name"] > .pf-v6-c-description-list__text').should(
       'have.text',
       'Say Hello long running'
     );
     cy.get('[style="max-width: 100%;"] > div').should('have.text', 'Success');
     cy.get('a').should('have.text', 'Activation 1');
-    cy.get('[data-cy="rule-set"] > .pf-v5-c-description-list__text').should(
+    cy.get('[data-cy="rule-set"] > .pf-v6-c-description-list__text').should(
       'have.text',
       'Long Running Range'
     );
-    cy.get('[data-cy="created"] > .pf-v5-c-description-list__text').should('exist');
-    cy.get('[data-cy="last-fired-date"] > .pf-v5-c-description-list__text').should('exist');
+    cy.get('[data-cy="created"] > .pf-v6-c-description-list__text').should('exist');
+    cy.get('[data-cy="last-fired-date"] > .pf-v6-c-description-list__text').should('exist');
   });
 });

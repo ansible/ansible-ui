@@ -770,7 +770,7 @@ describe('Job Templates Tests', function () {
           cy.multiSelectByDataCy('credential', [machineCredential1.name, machineCredential2.name]);
           cy.getBy('[data-cy="Submit"]').click();
           cy.get('[data-cy="credential-form-group"]').within(() => {
-            cy.get('span.pf-v5-c-helper-text__item-text').should(
+            cy.get('span.pf-v6-c-helper-text__item-text').should(
               'have.text',
               'Cannot assign multiple credentials of the same type. Duplicated credential types are: Machine'
             );
@@ -837,7 +837,7 @@ describe('Job Templates Tests', function () {
           cy.multiSelectByDataCy('credential', [vaultCredential1.name, vaultCredential2.name]);
           cy.getBy('[data-cy="Submit"]').click();
           cy.get('[data-cy="credential-form-group"]').within(() => {
-            cy.get('span.pf-v5-c-helper-text__item-text').should(
+            cy.get('span.pf-v6-c-helper-text__item-text').should(
               'have.text',
               'Cannot assign multiple vault credentials of the same vault id.'
             );

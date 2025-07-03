@@ -1,12 +1,12 @@
 import {
   OnPerPageSelect,
   OnSetPage,
-  ToolbarContent as PFToolbarContent,
   Pagination,
   PaginationVariant,
   PerPageOptions,
   Skeleton,
   Toolbar,
+  ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
@@ -17,25 +17,10 @@ import { PageActions } from '../PageActions/PageActions';
 import { BulkSelector } from '../components/BulkSelector';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageTableViewType } from './PageTableViewType';
-import './PageToolbar.css';
 import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarToggleGroupContext } from './PageToolbarToggleGroup';
 import { PageToolbarView } from './PageToolbarView';
-
-const FlexGrowDiv = styled.div`
-  display: flex;
-  flex-grow: 1;
-  justify-content: end;
-  flex-wrap: wrap;
-`;
-
-const ToolbarContent = styled(PFToolbarContent)`
-  & > .pf-v5-c-toolbar__content-section {
-    row-gap: 16px;
-    justify-content: end;
-  }
-`;
 
 export type PageToolbarProps<T extends object> = {
   localStorageKey?: string;
@@ -163,7 +148,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   if (itemCount === undefined) {
     return (
       <Toolbar
-        className="page-table-toolbar border-bottom"
+        className="page-table-toolbar"
         style={{
           paddingBottom: isMdOrLarger ? undefined : 8,
           paddingTop: isMdOrLarger ? undefined : 8,
@@ -184,7 +169,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
         ouiaId="page-toolbar"
         data-cy="page-toolbar"
         clearAllFilters={clearAllFilters}
-        className="page-table-toolbar border-bottom"
+        className="page-table-toolbar"
         style={{
           paddingBottom: isMdOrLarger ? undefined : 8,
           paddingTop: isMdOrLarger ? undefined : 8,
@@ -198,11 +183,11 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
           '2xl': 'insetLg',
         }}
       >
-        <ToolbarContent style={{ paddingRight: isXxlOrLarger ? 12 : 4 }}>
+        <ToolbarContent>
           {/* Selection */}
           {showSelect && (
             <ToolbarGroup>
-              <ToolbarItem variant="bulk-select">
+              <ToolbarItem>
                 <BulkSelector {...props} />
               </ToolbarItem>
             </ToolbarGroup>
@@ -221,7 +206,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
           {props.toolbarContent}
 
           {/* Actions */}
-          <ToolbarGroup variant="button-group">
+          <ToolbarGroup variant="action-group">
             <PageActions
               dropDownAriaLabel="toolbar actions"
               actions={toolbarActions}
@@ -257,7 +242,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
             {!props.disablePagination && !props.autoHidePagination && isXxlOrLarger && (
               <ToolbarItem
                 visibility={{ default: 'hidden', '2xl': 'visible' }}
-                style={{ marginLeft: 24, alignSelf: 'center' }}
+                style={{ marginLeft: 18, alignSelf: 'center' }}
               >
                 <Pagination
                   variant={PaginationVariant.top}
@@ -278,3 +263,10 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     </PageToolbarToggleGroupContext.Provider>
   );
 }
+
+const FlexGrowDiv = styled.div`
+  display: flex;
+  flex-grow: 1;
+  justify-content: end;
+  flex-wrap: wrap;
+`;

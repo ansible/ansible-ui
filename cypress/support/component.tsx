@@ -17,8 +17,6 @@
 import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
 
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
-
 import '@4tw/cypress-drag-drop';
 import { PageFramework } from '@ansible/ansible-ui-framework';
 import { AwxActiveUserContext } from '@ansible/awx-ui/common/useAwxActiveUser';

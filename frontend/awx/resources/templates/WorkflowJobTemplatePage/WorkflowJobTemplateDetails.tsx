@@ -2,14 +2,7 @@ import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '@ansible/an
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import {
-  Label,
-  LabelGroup,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { Label, LabelGroup, Content, ContentVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router';
 import { AwxError } from '../../../common/AwxError';
@@ -130,14 +123,14 @@ export function WorkflowJobTemplateDetails(props: {
       </PageDetail>
       <PageDetailCodeEditor label={t('Extra vars')} value={template.extra_vars} />
       <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
-        <TextList component={TextListVariants.ul}>
+        <Content component={ContentVariants.ul}>
           {template.allow_simultaneous && (
-            <TextListItem component={TextListItemVariants.li}>{t`Concurrent jobs`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Concurrent jobs`}</Content>
           )}
           {template.webhook_service && (
-            <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Webhooks`}</Content>
           )}
-        </TextList>
+        </Content>
       </PageDetail>
     </PageDetails>
   );

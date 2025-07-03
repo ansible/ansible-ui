@@ -1,4 +1,4 @@
-import { PageLayout, useGetPageUrl, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { useGetPageUrl, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { usePageBreadcrumbs } from '@ansible/ansible-ui-framework/PageTabs/PageBreadcrumbs';
 import { Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
@@ -15,7 +15,6 @@ export function PageRoutedTabs(props: {
 
   // url query keys that are shared accross tabs, the rest query strings will dissappear when switching tabs
   sharedQueryKeys?: string[];
-  isBox?: boolean;
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
@@ -82,12 +81,7 @@ export function PageRoutedTabs(props: {
       <Tabs
         onSelect={onSelect}
         inset={{ default: 'insetSm' }}
-        isBox={props.isBox !== undefined ? props.isBox : true}
         activeKey={activeTab ? activeTab.page : undefined}
-        style={{
-          backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)',
-          flexShrink: 0,
-        }}
       >
         {props.backTab && (
           <Tab
@@ -105,14 +99,7 @@ export function PageRoutedTabs(props: {
         )}
         {tabs}
       </Tabs>
-
-      {/* This div is needed to flex grow to fill the page space. */}
-      <div style={{ flexGrow: 1, overflow: 'hidden' }}>
-        {/* PageLayout now sets its max height to 100% which is 100% of the div above, which allows it's contents to scroll. */}
-        <PageLayout>
-          <Outlet context={props.componentParams} />
-        </PageLayout>
-      </div>
+      <Outlet context={props.componentParams} />
     </>
   );
 }

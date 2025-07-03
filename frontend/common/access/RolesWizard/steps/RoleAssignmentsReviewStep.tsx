@@ -51,10 +51,10 @@ interface ReviewExpandableListProps<
 }
 
 const StyledBadge = styled(Badge)`
-  margin-left: var(--pf-v5-global--spacer--sm);
+  margin-left: var(--pf-t--global--spacer--sm);
 `;
 const StyledDivider = styled(Divider)`
-  margin: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--md) 0;
+  margin: var(--pf-t--global--spacer--md) 0 var(--pf-t--global--spacer--md) 0;
 `;
 
 export function RoleAssignmentsReviewStep(props: {
@@ -77,7 +77,7 @@ export function RoleAssignmentsReviewStep(props: {
         <>
           <div
             style={{
-              marginTop: 'var(--pf-v5-global--spacer--lg)',
+              marginTop: 'var(--pf-t--global--spacer--lg)',
             }}
           >
             <PageDetails disablePadding>
@@ -86,35 +86,35 @@ export function RoleAssignmentsReviewStep(props: {
               </PageDetail>
             </PageDetails>
           </div>
-          <StyledDivider className="pf-v5-u-mb-xl" />
+          <StyledDivider className="pf-v6-u-mb-xl" />
         </>
       ) : null}
       {props.selectedUser ? (
         <>
           <div
             style={{
-              marginTop: 'var(--pf-v5-global--spacer--lg)',
+              marginTop: 'var(--pf-t--global--spacer--lg)',
             }}
           >
             <PageDetails disablePadding>
               <PageDetail label={t('User')}>{props.selectedUser.username}</PageDetail>
             </PageDetails>
           </div>
-          <StyledDivider className="pf-v5-u-mb-xl" />
+          <StyledDivider className="pf-v6-u-mb-xl" />
         </>
       ) : null}
       {props.selectedTeam ? (
         <>
           <div
             style={{
-              marginTop: 'var(--pf-v5-global--spacer--lg)',
+              marginTop: 'var(--pf-t--global--spacer--lg)',
             }}
           >
             <PageDetails disablePadding>
               <PageDetail label={t('Team')}>{props.selectedTeam.name}</PageDetail>
             </PageDetails>
           </div>
-          <StyledDivider className="pf-v5-u-mb-xl" />
+          <StyledDivider className="pf-v6-u-mb-xl" />
         </>
       ) : null}
       {resources && resources.length ? (

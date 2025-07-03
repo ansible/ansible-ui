@@ -59,12 +59,12 @@ describe('Workflow Job Templates Tests', () => {
           cy.get('[data-cy="labels-typeahead-input"]').type(label.name.toString());
           cy.get('[data-cy="job_tags-form-group"]').within(() => {
             cy.get('input[type="text"]').type('test job tag');
-            cy.contains('Create "test job tag"').click();
           });
+          cy.contains('Create "test job tag"').click();
           cy.get('[data-cy="skip_tags-form-group"]').within(() => {
             cy.get('input[type="text"]').type('test skip tag');
-            cy.contains('Create "test skip tag"').click();
           });
+          cy.contains('Create "test skip tag"').click();
           cy.intercept('PATCH', awxAPI`/workflow_job_templates/${newWfjt.id.toString()}/`).as(
             'editWFJT'
           );
@@ -98,12 +98,12 @@ describe('Workflow Job Templates Tests', () => {
       cy.get('[data-cy="labels-typeahead-input"]').type(label.name.toString());
       cy.get('[data-cy="job_tags-form-group"]').within(() => {
         cy.get('input[type="text"]').type('test job tag');
-        cy.contains('Create "test job tag"').click();
       });
+      cy.contains('Create "test job tag"').click();
       cy.get('[data-cy="skip_tags-form-group"]').within(() => {
         cy.get('input[type="text"]').type('test skip tag');
-        cy.contains('Create "test skip tag"').click();
       });
+      cy.contains('Create "test skip tag"').click();
       cy.intercept('POST', awxAPI`/workflow_job_templates/`).as('newWfjt');
       cy.get('[data-cy="Submit"]').click();
       cy.wait('@newWfjt')
@@ -740,7 +740,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.getBy('#filter-input').click();
       cy.document()
         .its('body')
-        .find('.pf-v5-c-menu__content')
+        .find('.pf-v6-c-menu__content')
         .within(() => {
           cy.getByDataCy('search-input').type(scheduleName);
           cy.contains('No results found');

@@ -22,6 +22,10 @@ describe('HubRoles.cy.ts', () => {
         fixture: 'hubRoleDefinitions.json',
       }
     ).as('rolesList');
+
+    cy.intercept('GET', '/api/galaxy/_ui/v1/me/', {
+      fixture: 'hubSuperUser.json',
+    }).as('getMe');
   });
 
   it('Roles list renders', () => {
@@ -138,8 +142,12 @@ describe('HubRoles.cy.ts', () => {
   });
 
   it('Create Role button is enabled if the user has permission to create roles', () => {
+    cy.intercept('GET', '/api/galaxy/_ui/v1/me/', {
+      fixture: 'hubSuperUser.json',
+    }).as('getMe');
+
     cy.mountHub(<HubRoles />);
-    cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'false');
+    cy.contains('a', /^Create role$/).should('not.have.attr', 'aria-disabled', 'true');
   });
 
   it('Create Role button is disabled if the user does not have permission to create roles', () => {

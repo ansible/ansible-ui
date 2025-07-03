@@ -349,7 +349,7 @@ test(
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByText('Success alert:Successfully')).toBeVisible();
     await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-    await page.locator('g > .pf-v5-svg > path').first().click();
+    await page.locator('g > .pf-v6-svg > path').first().click();
     await page.locator('.pf-topology__node__action-icon > path').click();
     await page.getByRole('menuitem', { name: 'Run on fail' }).click();
     await expect(page.getByText('Run on fail', { exact: true })).toBeVisible();

@@ -23,13 +23,18 @@ describe('Execution Environments List', () => {
         {
           fixture: 'execution_environments.json',
         }
-      );
+      ).as('getExecutionEnvironments');
     });
 
     it('Execution Environments list renders', () => {
       cy.mount(<ExecutionEnvironments />);
       cy.verifyPageTitle('Execution Environments');
-      cy.get('tbody').find('tr').should('have.length', 10);
+      cy.wait('@getExecutionEnvironments')
+        .its('response.body.results')
+        .then((environments: ExecutionEnvironment[]) => {
+          const count = environments.length;
+          cy.get('tbody').find('tr').should('have.length', count);
+        });
     });
 
     it('Filter execution environments by name', () => {
@@ -147,11 +152,7 @@ describe('Execution Environments List', () => {
         },
       }));
       cy.mount(<ExecutionEnvironments />);
-      cy.contains('button', /^Create execution environment$/).should(
-        'have.attr',
-        'aria-disabled',
-        'false'
-      );
+      cy.contains('button', /^Create execution environment$/).should('be.enabled');
     });
 
     it('Delete execution environment row action is enabled if the user has permission to delete execution environment', () => {
@@ -180,9 +181,7 @@ describe('Execution Environments List', () => {
             cy.get('button.toggle-kebab').click();
           });
           cy.contains('#delete-execution-environment', /^Delete execution environment$/).should(
-            'not.have.attr',
-            'aria-disabled',
-            'true'
+            'be.enabled'
           );
         });
     });
@@ -231,11 +230,7 @@ describe('Execution Environments List', () => {
         .then(() => {
           cy.contains('tr', 'test').within(() => {
             cy.get('[data-cy="actions-column-cell"]').within(() => {
-              cy.get(`[data-cy="edit-execution-environment"]`).should(
-                'have.attr',
-                'aria-disabled',
-                'false'
-              );
+              cy.get(`[data-cy="edit-execution-environment"]`).should('be.enabled');
             });
           });
         });
@@ -252,7 +247,7 @@ describe('Execution Environments List', () => {
         }
       );
       cy.mount(<ExecutionEnvironments />);
-      cy.get('.pf-v5-c-empty-state__title-text').should(
+      cy.get('.pf-v6-c-empty-state__title-text').should(
         'have.text',
         'Error loading execution environments'
       );

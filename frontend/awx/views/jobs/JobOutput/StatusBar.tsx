@@ -13,7 +13,7 @@ import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { JobStatus } from './util';
 
 const BarWrapper = styled.div`
-  background-color: var(--pf-v5-global--Color--light-300);
+  background-color: var(--pf-t--global--background--color--secondary--default);
   display: flex;
   min-height: 7px;
   margin-top: 16px;
@@ -31,7 +31,7 @@ const TooltipContent = styled.div`
   align-items: center;
   display: flex;
 
-  span.pf-v5-c-badge {
+  span.pf-v6-c-badge {
     margin-left: 10px;
   }
 `;
@@ -40,7 +40,7 @@ const Legend = styled.div`
   display: flex;
   gap: 16px;
   justify-content: end;
-  font-size: var(--pf-v5-global--FontSize--sm);
+  font-size: var(--pf-t--global--font--size--sm);
 `;
 const LegendBox = styled.span`
   display: inline-block;

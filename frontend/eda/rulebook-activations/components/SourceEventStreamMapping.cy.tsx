@@ -57,7 +57,7 @@ describe('SourceEventStreamMapping.cy.ts', () => {
         setSourceMappings={() => undefined}
       />
     );
-    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Event streams');
+    cy.get('.pf-v6-c-modal-box__title-text').should('contain', 'Event streams');
     cy.contains(
       'Event streams represent server side webhooks which ease the routing issues related to running webhooks individually in a container or a pod. ' +
         'You can swap the sources in your rulebook with a matching event stream. Typically the sources to swap out are of the type ansible.eda.rulebook, ' +
@@ -70,7 +70,7 @@ describe('SourceEventStreamMapping.cy.ts', () => {
     cy.clickButton(/^Add event stream$/);
     cy.get('[data-cy="mapping-header-0"]').should('contain.text', 'Mapping 1');
     cy.get('[data-cy="mappings-0-source-name"]').click();
-    cy.get('#--source-1 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#--source-1 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="0-source-info"]').should(
       'contain.text',
       'ansible.eda.sample1:\n  sample1: 10\n'

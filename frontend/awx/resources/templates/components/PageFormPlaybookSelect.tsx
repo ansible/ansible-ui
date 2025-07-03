@@ -86,7 +86,7 @@ export function PageFormPlaybookSelect<
             isDisabled={options.length <= 0}
             id="playbook-typeahead-select"
             isScrollable
-            selectOptions={options || []}
+            initialOptions={options || []}
             placeholder={placeholderText}
             noOptionsFoundMessage={noOptionsFoundMsg}
             onClearSelection={() => {

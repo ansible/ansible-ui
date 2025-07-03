@@ -53,7 +53,7 @@ describe('JobOutput.cy.tsx', () => {
     );
     cy.mount(<JobOutput job={job as unknown as Job} reloadJob={() => null} />);
     cy.get('button[id="filter"]').click();
-    cy.get('li.pf-v5-c-menu__list-item').should('have.length', 22);
+    cy.get('li.pf-v6-c-menu__list-item').should('have.length', 22);
   });
 
   it('collapses play output', () => {

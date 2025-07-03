@@ -60,7 +60,7 @@ export function PageDetailCodeEditor(props: {
     showCopyToClipboard || toggleLanguage ? (
       <React.Fragment>
         {showCopyToClipboard && (
-          <CodeBlockAction>
+          <CodeBlockAction style={{ alignSelf: 'center' }}>
             <ClipboardCopyButton
               id="basic-copy-button"
               textId="code-content"
@@ -76,7 +76,7 @@ export function PageDetailCodeEditor(props: {
           </CodeBlockAction>
         )}
         {toggleLanguage && (
-          <CodeBlockAction>
+          <CodeBlockAction style={{ alignSelf: 'center' }}>
             <ToggleGroup isCompact>
               <ToggleGroupItem
                 id="toggle-yaml"

@@ -1,18 +1,18 @@
-import xl2Breakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_2xl';
-import lgBreakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_lg';
-import mdBreakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_md';
-import smBreakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_sm';
-import xlBreakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_xl';
-import xsBreakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_xs';
+import t_global_breakpoint_xl from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_xl';
+import t_global_breakpoint_2xl from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_2xl';
+import t_global_breakpoint_lg from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_lg';
+import t_global_breakpoint_md from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_md';
+import t_global_breakpoint_sm from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_sm';
+import t_global_breakpoint_xs from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_xs';
 import { useCallback, useEffect, useState } from 'react';
 
 const breakpoints: Record<string, number> = {
-  xs: Number(xsBreakpoint.value.replace('px', '')),
-  sm: Number(smBreakpoint.value.replace('px', '')),
-  md: Number(mdBreakpoint.value.replace('px', '')),
-  lg: Number(lgBreakpoint.value.replace('px', '')),
-  xl: Number(xlBreakpoint.value.replace('px', '')),
-  xxl: Number(xl2Breakpoint.value.replace('px', '')),
+  xs: Number(t_global_breakpoint_xs.value.replace('px', '')),
+  sm: Number(t_global_breakpoint_sm.value.replace('px', '')),
+  md: Number(t_global_breakpoint_md.value.replace('px', '')),
+  lg: Number(t_global_breakpoint_lg.value.replace('px', '')),
+  xl: Number(t_global_breakpoint_xl.value.replace('px', '')),
+  xxl: Number(t_global_breakpoint_2xl.value.replace('px', '')),
 };
 
 export type WindowSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';

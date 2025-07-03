@@ -29,7 +29,7 @@ describe('Check if the build includes EDA', () => {
             cy.get('#rulebook-activations').scrollIntoView();
             cy.contains('There are currently no rulebook activations');
             cy.contains(
-              'div.pf-v5-c-empty-state__body',
+              'div.pf-v6-c-empty-state__body',
               'Create a rulebook activation by clicking the button below.'
             );
             cy.get('[data-cy="create-rulebook-activation"]').click();
@@ -73,7 +73,7 @@ describe('Check if the build includes EDA', () => {
                 cy.contains('h3', 'Decision Environments');
                 cy.contains('There are currently no decision environments');
                 cy.contains(
-                  'div.pf-v5-c-empty-state__body',
+                  'div.pf-v6-c-empty-state__body',
                   'Create a decision environment by clicking the button below.'
                 );
                 cy.clickButton('Create decision environment');

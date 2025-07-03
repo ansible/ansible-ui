@@ -173,7 +173,7 @@ export function CollectionDocumentationTabContent(props: {
   try {
     return (
       <>
-        <PageSection variant="light" id="Menu_part">
+        <PageSection hasBodyWrapper={false} id="Menu_part">
           <Stack hasGutter>
             {content?.doc_strings?.doc?.short_description && (
               <StackItem>
@@ -230,7 +230,7 @@ export function CollectionDocumentationTabContent(props: {
         </PageSection>
         {content?.doc_strings?.doc?.description &&
           Array.isArray(content?.doc_strings?.doc?.description) && (
-            <PageSection variant="light">
+            <PageSection hasBodyWrapper={false}>
               <Title headingLevel="h2" id="Synopsis_part">
                 {t('Synopsis')}
               </Title>
@@ -246,13 +246,16 @@ export function CollectionDocumentationTabContent(props: {
           )}
         {optionsState && Array.isArray(optionsState) && optionsState.length > 0 && (
           <>
-            <PageSection variant="light" style={{ paddingBottom: 0 }}>
+            <PageSection hasBodyWrapper={false} style={{ paddingBottom: 0 }}>
               <Title headingLevel="h2" id="Parameters_part">
                 {t('Parameters')}
               </Title>
               {backtoMenuLink}
             </PageSection>
-            <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
+            <PageSection
+              hasBodyWrapper={false}
+              style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+            >
               <TextInput
                 onChange={(event, text) => setParamsFilter(text)}
                 value={paramsFilter}
@@ -327,7 +330,7 @@ export function CollectionDocumentationTabContent(props: {
                               <div>
                                 {optionRecord.children && (
                                   <button
-                                    className={css(styles.expandableSectionToggle)}
+                                    className={css(styles.expandableSectionToggleIcon)}
                                     type="button"
                                     aria-expanded={optionRecord.checked}
                                     aria-controls={optionRecord.path_name + '_aria_controls'}
@@ -415,7 +418,7 @@ export function CollectionDocumentationTabContent(props: {
           </>
         )}
         {content?.doc_strings?.doc?.notes && Array.isArray(content?.doc_strings?.doc?.notes) && (
-          <PageSection variant="light">
+          <PageSection hasBodyWrapper={false}>
             <Title headingLevel="h2" id="Notes_part">
               {t('Notes')}
             </Title>
@@ -428,7 +431,7 @@ export function CollectionDocumentationTabContent(props: {
           </PageSection>
         )}
         {content?.doc_strings?.examples && (
-          <PageSection variant="light">
+          <PageSection hasBodyWrapper={false}>
             <Title headingLevel="h2" id="Examples_part">
               {t('Examples')}
             </Title>
@@ -453,13 +456,16 @@ export function CollectionDocumentationTabContent(props: {
         )}
         {content?.doc_strings?.return && (
           <>
-            <PageSection variant="light" style={{ paddingBottom: 0 }}>
+            <PageSection hasBodyWrapper={false} style={{ paddingBottom: 0 }}>
               <Title headingLevel="h2" id="Returns_part">
                 {t('Returns')}
               </Title>
               {backtoMenuLink}
             </PageSection>
-            <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
+            <PageSection
+              hasBodyWrapper={false}
+              style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+            >
               <Table variant="compact">
                 <Thead>
                   <Tr>

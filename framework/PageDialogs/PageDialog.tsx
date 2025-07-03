@@ -7,6 +7,12 @@ const PageDialogContext = createContext({
   popDialog: () => {},
 });
 
+const IsPageDialogContext = createContext(false);
+
+export function useIsPageDialog() {
+  return useContext(IsPageDialogContext);
+}
+
 export function PageDialogProvider(props: { children: ReactNode }) {
   const [dialogs, setDialogs] = useState<ReactNode[]>([]);
   const clearDialogs = useCallback(
@@ -24,7 +30,9 @@ export function PageDialogProvider(props: { children: ReactNode }) {
   );
   return (
     <PageDialogContext.Provider value={value}>
-      {dialogs.length > 0 && dialogs[dialogs.length - 1]}
+      <IsPageDialogContext.Provider value={true}>
+        {dialogs.length > 0 && dialogs[dialogs.length - 1]}
+      </IsPageDialogContext.Provider>
       {props.children}
     </PageDialogContext.Provider>
   );

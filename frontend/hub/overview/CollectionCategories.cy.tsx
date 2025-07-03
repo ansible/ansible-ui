@@ -18,11 +18,22 @@ describe('CollectionCategories.cy.tsx', () => {
             searchValue="application"
           />
         );
-        cy.get('.pf-v5-c-card__header').should('contain', 'Application collections');
-        // Based on the viewport size in the cypress config, the carousel will display 3 of the 4 cards
-        cy.get('div[id="page-carousel-cards-application-collections-0"]').within(() => {
-          cy.get('.pf-v5-c-card').should('have.length', 3);
-        });
+        cy.get('.pf-v6-c-card__header').should('contain', 'Application collections');
+        cy.get('#page-carousel-cards-application-collections-0').as('carousel');
+        cy.get('@carousel')
+          .invoke('attr', 'visiblecardsperpage')
+          .then((visibleCardsPerPage) => {
+            // Based on the viewport size in the cypress config, the carousel will display 2-3 of the 4 cards
+            const expectedCount = parseInt(visibleCardsPerPage ?? '0', 10);
+            cy.get('@carousel')
+              .find('.pf-v6-c-card:visible') // Use :visible to count only displayed cards
+              .should('have.length', expectedCount);
+          });
+        // Total number of cards should still equal 4
+        cy.get('#slide-container-application-collections .pf-v6-c-card').should(
+          'have.length',
+          collections.length
+        );
       }
     );
   });
@@ -39,20 +50,26 @@ describe('CollectionCategories.cy.tsx', () => {
             searchValue="application"
           />
         );
-        // The 4th collection card should not be visible at first
-        cy.contains(
-          'div[id="slide-container-application-collections"] div.pf-v5-c-card__title',
-          collections[3].collection_version?.name || ''
-        ).should('not.be.visible');
-        // Navigate to next page in the carousel to view the 4th card
-        cy.get('button[aria-label="Navigate to the next page"]').click();
 
-        cy.contains(
-          'div[id="slide-container-application-collections"] div.pf-v5-c-card__title',
-          collections[3].collection_version?.name || ''
-        )
-          .scrollIntoView()
-          .should('be.visible');
+        cy.get('#page-carousel-cards-application-collections-0').as('carousel');
+        cy.get('@carousel')
+          .invoke('attr', 'visiblecardsperpage')
+          .then((visibleCardsPerPage) => {
+            // Based on the viewport size in the cypress config, the carousel will display 2-3 of the 4 cards
+            const totalCards = 4;
+            const visibleCardsCount = parseInt(visibleCardsPerPage ?? '0', 10);
+
+            cy.get('@carousel')
+              .find('.pf-v6-c-card:visible') // Use :visible to count only displayed cards
+              .should('have.length', visibleCardsCount);
+
+            // Click to go to page 2
+            cy.get('button[aria-label="Navigate to the next page"]').click();
+
+            cy.get(
+              'div[id="slide-container-application-collections"] .pf-v6-c-card__title:visible'
+            ).should('have.length', totalCards - visibleCardsCount);
+          });
       }
     );
   });
@@ -76,7 +93,7 @@ describe('CollectionCategories.cy.tsx', () => {
               </HubContextProvider>
             </HubActiveUserContext.Provider>
           );
-          cy.get('.pf-v5-c-card__footer button').contains('Manage content').should('be.visible');
+          cy.get('.pf-v6-c-card__footer button').contains('Manage content').should('be.visible');
         }
       );
     });

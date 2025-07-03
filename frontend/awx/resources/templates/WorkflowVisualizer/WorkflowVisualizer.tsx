@@ -1,6 +1,5 @@
-import { getPatternflyColor } from '@ansible/ansible-ui-framework';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { Bullseye, EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
+import { Bullseye, EmptyState, Spinner, EmptyStateVariant } from '@patternfly/react-core';
 import { ShareAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -36,24 +35,13 @@ export function WorkflowVisualizer() {
   if (workflowIsLoading || workflowNodeIsLoading || !workflowJobTemplate || !workflowNodes) {
     return (
       <Bullseye>
-        <EmptyState>
-          <EmptyStateHeader
-            titleText={t('Please wait until the Workflow Visualizer is populated.')}
-            headingLevel="h4"
-            icon={
-              <Icon
-                size="xl"
-                style={{
-                  paddingBottom: '40px',
-                  color: getPatternflyColor('grey'),
-                }}
-              >
-                <ShareAltIcon />
-              </Icon>
-            }
-          >
-            <Spinner />
-          </EmptyStateHeader>
+        <EmptyState
+          titleText={t('Please wait until the Workflow Visualizer is populated.')}
+          variant={EmptyStateVariant.xl}
+          headingLevel="h4"
+          icon={ShareAltIcon}
+        >
+          <Spinner />
         </EmptyState>
       </Bullseye>
     );

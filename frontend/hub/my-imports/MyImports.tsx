@@ -164,7 +164,7 @@ export function MyImports() {
                     version: collection.collection_version?.version,
                   },
                 })}
-                style={{ color: 'var(--pf-v5-global--text--Color)' }}
+                style={{ color: 'var(--pf-t--global--text--color--link--default)' }}
               >
                 <Title headingLevel="h3" size="lg">
                   {collectionImport?.namespace}.{collectionImport?.name}
@@ -220,7 +220,12 @@ export function MyImports() {
         title={t('My imports')}
         description={t('Imported collections')}
       />
-      <PageSection variant="light" hasOverflowScroll hasShadowTop={false} hasShadowBottom={false}>
+      <PageSection
+        hasBodyWrapper={false}
+        hasOverflowScroll
+        hasShadowTop={false}
+        hasShadowBottom={false}
+      >
         <Drawer isExpanded={isDrawerExpanded} isInline>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody>

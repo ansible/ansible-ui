@@ -88,16 +88,23 @@ export function InstanceGroupDetailInner(props: { instanceGroup: InstanceGroup }
         isEmpty={!instanceGroup.is_container_group || !instanceGroup.summary_fields.credential}
       >
         <LabelGroup>
-          <Label color="blue">
-            <Link
-              to={getPageUrl(AwxRoute.CredentialDetails, {
-                params: {
-                  id: instanceGroup?.summary_fields?.credential?.id,
-                },
-              })}
-            >
-              {instanceGroup?.summary_fields?.credential?.name}
-            </Link>
+          <Label
+            color="blue"
+            isClickable
+            render={({ content, className }) => (
+              <Link
+                className={className}
+                to={getPageUrl(AwxRoute.CredentialDetails, {
+                  params: {
+                    id: instanceGroup?.summary_fields?.credential?.id,
+                  },
+                })}
+              >
+                {content}
+              </Link>
+            )}
+          >
+            {instanceGroup?.summary_fields?.credential?.name}
           </Label>
         </LabelGroup>
       </PageDetail>

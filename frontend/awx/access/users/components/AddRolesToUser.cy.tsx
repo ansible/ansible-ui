@@ -15,7 +15,7 @@ describe('AWX user: Add roles', () => {
     cy.intercept('GET', awxAPI`/role_user_assignments/*`, {
       fixture: 'awxUserRoles.json',
     });
-    cy.intercept('OPTIONS', awxAPI`/role_definitions*`, {
+    cy.intercept('OPTIONS', awxAPI`/role_definitions/`, {
       fixture: 'awxRoleDefinitionsOptions.json',
     });
     cy.intercept('GET', awxAPI`/role_definitions/?content_type__model=inventory*`, {
@@ -34,7 +34,7 @@ describe('AWX user: Add roles', () => {
   });
 
   it('should validate that a resource type is selected for moving to next step', () => {
-    cy.contains(/^Select a resource type$/);
+    cy.getByDataCy('resourcetype-form-group').should('contain', 'Select a resource type');
     cy.clickButton(/^Next$/);
     cy.contains('Resource type is required.').should('be.visible');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
@@ -58,7 +58,7 @@ describe('AWX user: Add roles', () => {
       /^Choose the resources that will be receiving new roles. You'll be able to select the roles to apply in the next step. Note that the resources chosen here will receive all roles chosen in the next step.$/
     );
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one resource.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one resource.');
     cy.selectTableRowByCheckbox('name', 'Demo Inventory', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
@@ -74,7 +74,7 @@ describe('AWX user: Add roles', () => {
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected inventories.$/);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one role.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
     cy.selectTableRowByCheckbox('name', 'Inventory use', { disableFilter: true });
     cy.clickButton(/^Next$/);

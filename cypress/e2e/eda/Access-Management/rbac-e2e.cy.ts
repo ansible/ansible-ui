@@ -132,7 +132,7 @@ describe('Check if the build includes EDA', () => {
         cy.contains('button', `${edaUser1.username}`).should('be.visible');
         cy.navigateTo('eda', 'rulebook-activations');
         cy.getTableRowByText(RBA.name).within(() => {
-          cy.get('.pf-v5-c-switch__toggle').click();
+          cy.get('.pf-v6-c-switch__toggle').click();
         });
         cy.edaRuleBookActivationActionsModal('disable', RBA.name);
         cy.get('button').contains('rulebook activations').click();
@@ -141,7 +141,7 @@ describe('Check if the build includes EDA', () => {
         // Also refer to https://issues.redhat.com/browse/AAP-29873
         // cy.getTableRowByText(RBA.name).within(() => {
         //   cy.contains('tr', RBA.name);
-        //   cy.get('.pf-v5-c-switch__toggle').click();
+        //   cy.get('.pf-v6-c-switch__toggle').click();
         // });
         // cy.contains('[data-label="Status"]', 'Completed', { timeout: 120000 });
         // cy.clickButton(/^Clear all filters$/);
@@ -247,7 +247,7 @@ describe('Check if the build includes EDA', () => {
         cy.contains('button', `${edaUser2.username}`).should('be.visible');
         cy.navigateTo('eda', 'projects');
         cy.verifyPageTitle('Projects');
-        cy.get('.pf-v5-c-empty-state').should('be.visible');
+        cy.get('.pf-v6-c-empty-state').should('be.visible');
         // logout as normal user
         cy.platformLogout();
         // log back in as admin to delete newly created user

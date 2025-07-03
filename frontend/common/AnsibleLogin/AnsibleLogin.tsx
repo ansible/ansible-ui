@@ -3,6 +3,7 @@ import { ErrorBoundary } from '@ansible/ansible-ui-framework/components/ErrorBou
 import {
   BackgroundImage,
   Brand,
+  Icon,
   Login,
   LoginFooter,
   LoginForm,
@@ -173,7 +174,11 @@ export function AnsibleLogin(props: {
             <LoginForm
               showHelperText={!!helperText}
               helperText={helperText}
-              helperTextIcon={<ErrorExclamationCircleIconStyled />}
+              helperTextIcon={
+                <Icon status="danger">
+                  <ErrorExclamationCircleIconStyled />
+                </Icon>
+              }
               usernameLabel={t('Username')}
               usernameValue={username}
               onChangeUsername={(_, username) => {
@@ -237,11 +242,11 @@ export function AnsibleLogin(props: {
 }
 
 const ErrorSpanStyled = styled.span`
-  color: var(--pf-v5-global--danger-color--200);
+  color: var(--pf-t--global--text--color--status--danger--default);
 `;
 
 const ErrorExclamationCircleIconStyled = styled(ExclamationCircleIcon)`
-  color: var(--pf-v5-global--danger-color--100);
+  color: var(--pf-t--global--icon--color--status--danger--default);
 `;
 
 const BrandStyled = styled.div`

@@ -92,7 +92,6 @@ export function useNotificationActions({
             : t(`Click to enable ${notificationType}`),
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
-        labelOff: t(label),
         label: t(label),
         onToggle: (notificationTemplate: NotificationTemplate, enable: boolean) =>
           toggleNotification(notificationTemplate.id, enable, status),

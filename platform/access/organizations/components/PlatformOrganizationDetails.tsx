@@ -92,14 +92,28 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
         >
           <LabelGroup>
             {instanceGroups.map((ig) => (
-              <Label color="blue" key={ig.id}>
-                <Link
+              <Label
+                color="blue"
+                key={ig.id}
+                isClickable
+                render={({ content, className }) => (
+                  <Link
+                    className={className}
+                    to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                      params: { id: ig.id },
+                    })}
+                  >
+                    {content}
+                  </Link>
+                )}
+              >
+                {/* <Link
                   to={getPageUrl(AwxRoute.InstanceGroupDetails, {
                     params: { id: ig.id },
                   })}
-                >
-                  {ig.name}
-                </Link>
+                > */}
+                {ig.name}
+                {/* </Link> */}
               </Label>
             ))}
           </LabelGroup>

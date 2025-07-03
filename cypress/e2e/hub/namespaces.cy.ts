@@ -51,7 +51,7 @@ describe('Namespaces', () => {
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.getByDataCy('namespace-cli-tab').should('contain', 'CLI Configuration');
     cy.getByDataCy('namespace-cli-tab').click();
-    cy.get('.pf-v5-c-truncate__start').should('contain', apiPrefix);
+    cy.get('.pf-v6-c-truncate__start').should('contain', apiPrefix);
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('delete-namespace').click();
     cy.get('#confirm').click();

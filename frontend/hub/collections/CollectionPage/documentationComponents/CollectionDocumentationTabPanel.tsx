@@ -41,8 +41,12 @@ export function CollectionDocumentationTabPanel(props: {
           onChange={(event, value) => setSearchText(value)}
         />
       </DrawerHead>
-      <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}>
-        <Nav theme="light">
+      <DrawerPanelBody
+        style={{
+          borderTop: 'var(--pf-t--global--border--color--default)',
+        }}
+      >
+        <Nav>
           <NavList>
             <NavExpandable
               key="documentation"

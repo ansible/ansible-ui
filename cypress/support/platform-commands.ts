@@ -487,13 +487,13 @@ Cypress.Commands.add('getPlatformUserByAnsibleId', (ansibleId: string | undefine
 });
 
 Cypress.Commands.add('searchAndDisplayResourceInModalPlatform', (resourceName: string) => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     cy.get('[data-cy="text-input"]').find('input').type(resourceName);
   });
 });
 
 Cypress.Commands.add('selectItemFromLookupModalPlatform', () => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
       cy.get('[data-cy="checkbox-column-cell"] input').click();
     });
@@ -506,8 +506,8 @@ Cypress.Commands.add('selectAuthenticationType', (authenticationType: string) =>
     .first()
     .within(() => {
       cy.get('button[data-cy="authentication-type-select-form-group"]').last().click();
-      cy.get(`li[data-cy="${authenticationType.toLowerCase().replace(/\s+/g, '-')}"]`).click();
     });
+  cy.contains('button', `${authenticationType.replace(/\s+/g, ' ')}`).click();
 });
 
 Cypress.Commands.add(
@@ -516,7 +516,7 @@ Cypress.Commands.add(
     cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
       cy.get('button[data-cy="filter"]').click();
     });
-    cy.get(`.pf-v5-c-menu [data-cy="${filterOption}"]`).click();
+    cy.get(`.pf-v6-c-menu [data-cy="${filterOption}"]`).click();
     cy.get('[data-cy="text-input"]').find('input').type(resourceName);
     cy.getBy('[data-cy="apply-filter"]').click();
   }
@@ -528,15 +528,9 @@ Cypress.Commands.add(
     cy.get(`div[data-cy="${dropdownDataCy}"]`)
       .first()
       .within(() => {
-        cy.get(`button[data-cy="${dropdownDataCy}"]`)
-          .first()
-          .click()
-          .then(() => {
-            // cy.get('[data-ouia-component-id="menu-select"]').within(() => {
-            cy.get(`li[data-cy="${resourceName}"]`).click();
-            // });
-          });
+        cy.get(`button[data-cy="${dropdownDataCy}"]`).first().click();
       });
+    cy.get(`li[data-cy="${resourceName}"]`).click();
   }
 );
 
@@ -586,13 +580,13 @@ Cypress.Commands.add('getCurrentPlatformUser', () => {
 });
 
 Cypress.Commands.add('checkLinkedButton', (text) => {
-  cy.get('[class="pf-v5-c-form"]').within(() => {
+  cy.get('[class="pf-v6-c-form"]').within(() => {
     cy.contains('div', text).parent().parent().contains('button', 'Linked').should('be.visible');
   });
 });
 
 Cypress.Commands.add('clickOnLinkAccount', (text) => {
-  cy.get('[class="pf-v5-c-form"]').within(() => {
+  cy.get('[class="pf-v6-c-form"]').within(() => {
     cy.contains('div', text)
       .parent()
       .parent()

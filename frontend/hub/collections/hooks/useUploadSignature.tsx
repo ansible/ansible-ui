@@ -1,7 +1,7 @@
 import { LoadingPage, usePageDialog } from '@ansible/ansible-ui-framework';
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { getCookie } from '@ansible/common-ui/crud/cookie';
-import { Modal, ModalVariant } from '@patternfly/react-core';
+import { Modal, ModalVariant, ModalHeader, ModalBody } from '@patternfly/react-core';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HubPageForm } from '../..//common/HubPageForm';
@@ -35,7 +35,6 @@ function UploadSignatureDialog(props: {
 
   return (
     <Modal
-      title={t(`Select repositories`)}
       aria-label={t(`Select repositories`)}
       isOpen
       onClose={() => {
@@ -43,63 +42,64 @@ function UploadSignatureDialog(props: {
       }}
       variant={ModalVariant.large}
       tabIndex={0}
-      actions={[]}
-      hasNoBodyWrapper
     >
-      {
-        <HubPageForm<UploadData>
-          submitText={t('Upload')}
-          cancelText={t('Cancel')}
-          onCancel={() => props.onClose()}
-          onSubmit={(data) => {
-            return (async () => {
-              setIsLoading(true);
-              try {
-                const body = new FormData();
-                body.append('file', data.file as Blob);
-                body.append('repository', props.collection.repository?.pulp_href || '');
-                body.append(
-                  'signed_collection',
-                  props.collection.collection_version?.pulp_href || ''
-                );
+      <ModalHeader title={t(`Select repositories`)} />
+      <ModalBody>
+        {
+          <HubPageForm<UploadData>
+            submitText={t('Upload')}
+            cancelText={t('Cancel')}
+            onCancel={() => props.onClose()}
+            onSubmit={(data) => {
+              return (async () => {
+                setIsLoading(true);
+                try {
+                  const body = new FormData();
+                  body.append('file', data.file as Blob);
+                  body.append('repository', props.collection.repository?.pulp_href || '');
+                  body.append(
+                    'signed_collection',
+                    props.collection.collection_version?.pulp_href || ''
+                  );
 
-                const response = await fetch(pulpAPI`/content/ansible/collection_signatures/`, {
-                  method: 'POST',
-                  body,
-                  credentials: 'include',
-                  headers: {
-                    'X-CSRFToken': getCookie('csrftoken') ?? '',
-                  },
-                });
+                  const response = await fetch(pulpAPI`/content/ansible/collection_signatures/`, {
+                    method: 'POST',
+                    body,
+                    credentials: 'include',
+                    headers: {
+                      'X-CSRFToken': getCookie('csrftoken') ?? '',
+                    },
+                  });
 
-                if (response.status === 202) {
-                  await parseTaskResponse((await response.json()) as TaskResponse);
+                  if (response.status === 202) {
+                    await parseTaskResponse((await response.json()) as TaskResponse);
+                  }
+
+                  props.onClose();
+                  setIsLoading(false);
+                } catch (err) {
+                  setIsLoading(false);
+                  setError(err as string);
                 }
-
-                props.onClose();
-                setIsLoading(false);
-              } catch (err) {
-                setIsLoading(false);
-                setError(err as string);
-              }
-            })();
-          }}
-          singleColumn={true}
-        >
-          {<PageFormFileUpload label={t('Collection file')} name="file" isRequired />}
-          {isLoading && <LoadingPage />}
-          {error ? (
-            <HubError
-              error={{
-                name: '',
-                message: t('Signature can not be uploaded.') + ' ' + error,
-              }}
-            />
-          ) : (
-            <></>
-          )}
-        </HubPageForm>
-      }
+              })();
+            }}
+            singleColumn={true}
+          >
+            {<PageFormFileUpload label={t('Collection file')} name="file" isRequired />}
+            {isLoading && <LoadingPage />}
+            {error ? (
+              <HubError
+                error={{
+                  name: '',
+                  message: t('Signature can not be uploaded.') + ' ' + error,
+                }}
+              />
+            ) : (
+              <></>
+            )}
+          </HubPageForm>
+        }
+      </ModalBody>
     </Modal>
   );
 }

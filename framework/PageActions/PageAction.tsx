@@ -99,7 +99,6 @@ export interface IPageActionSwitch extends IPageActionNoneCommon {
   onToggle: (enable: boolean) => unknown;
   isSwitchOn: () => boolean;
   showPinnedLabel?: boolean;
-  labelOff?: string;
   isReversed?: boolean;
   ariaLabel: (isEnabled: boolean) => string;
 }
@@ -109,7 +108,6 @@ export interface IPageActionSwitchSingle<T extends object> extends IPageActionSi
   onToggle: (item: T, enable: boolean) => unknown;
   isSwitchOn: (item: T) => boolean;
   showPinnedLabel?: boolean;
-  labelOff?: string;
   isReversed?: boolean;
   ariaLabel: (isEnabled: boolean) => string;
 }

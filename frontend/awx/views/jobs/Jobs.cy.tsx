@@ -44,9 +44,6 @@ describe('Jobs bulk actions', () => {
   });
 
   it('bulk deletion confirmation contains message about selected jobs that cannot be deleted', () => {
-    cy.intercept('OPTIONS', awxAPI`/unified_jobs/`, { fixture: 'mock_options.json' }).as(
-      'getOptions'
-    );
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
@@ -124,10 +121,7 @@ describe('Jobs.cy.ts', () => {
       });
   });
 
-  it('row action to cancel job  is disabled if the selected job is not running', () => {
-    cy.intercept('OPTIONS', awxAPI`/unified_jobs/`, { fixture: 'mock_options.json' }).as(
-      'getOptions'
-    );
+  it('row action to cancel job is disabled if the selected job is not running', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')

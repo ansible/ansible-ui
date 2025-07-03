@@ -1,4 +1,4 @@
-import { PageApp } from '@ansible/ansible-ui-framework/PageNavigation/PageApp';
+import { PageApp } from '@ansible/ansible-ui-framework';
 import { EdaMasthead } from './EdaMasthead';
 import { useEdaNavigation } from './useEdaNavigation';
 

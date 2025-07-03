@@ -20,9 +20,9 @@ describe('EdaRolePage', () => {
       cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
     });
     it('Displays tab for Details', () => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 2);
-      cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to Roles');
-      cy.get('.pf-v5-c-tabs__item').eq(1).should('have.text', 'Details');
+      cy.get('.pf-v6-c-tabs__item').should('have.length', 2);
+      cy.get('.pf-v6-c-tabs__item').eq(0).should('have.text', 'Back to Roles');
+      cy.get('.pf-v6-c-tabs__item').eq(1).should('have.text', 'Details');
     });
   });
   describe('Custom role', () => {
@@ -38,7 +38,7 @@ describe('EdaRolePage', () => {
     });
     it('Edit button is visible and enabled for superuser', () => {
       cy.mountEda(<EdaRolePage />);
-      cy.contains('button', 'Edit role').should('have.attr', 'aria-disabled', 'false');
+      cy.contains('button', 'Edit role').should('not.have.attr', 'aria-disabled', 'true');
     });
     it('Delete button is visible and enabled for superuser', () => {
       cy.mountEda(<EdaRolePage />);
@@ -56,9 +56,9 @@ describe('EdaRolePage', () => {
     });
     it('Displays tab for Details', () => {
       cy.mountEda(<EdaRolePage />);
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 2);
-      cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to Roles');
-      cy.get('.pf-v5-c-tabs__item').eq(1).should('have.text', 'Details');
+      cy.get('.pf-v6-c-tabs__item').should('have.length', 2);
+      cy.get('.pf-v6-c-tabs__item').eq(0).should('have.text', 'Back to Roles');
+      cy.get('.pf-v6-c-tabs__item').eq(1).should('have.text', 'Details');
     });
   });
 });

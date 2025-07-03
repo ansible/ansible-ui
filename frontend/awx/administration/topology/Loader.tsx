@@ -2,9 +2,8 @@ import {
   EmptyState as PFEmptyState,
   Progress,
   ProgressMeasureLocation,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import styled from 'styled-components';
 
@@ -33,11 +32,11 @@ export const Loader = ({ className, progress }: { className: string; progress: n
         aria-label={t`content-loading-in-progress`}
         style={{ margin: '20px' }}
       />
-      <TextContent style={{ margin: '20px' }}>
-        <Text component={TextVariants.small} style={{ fontWeight: 'bold', color: 'black' }}>
+      <Content style={{ margin: '20px' }}>
+        <Content component={ContentVariants.small} style={{ fontWeight: 'bold', color: 'black' }}>
           {t`Please wait until the topology view is populated...`}
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
     </EmptyState>
   );
 };

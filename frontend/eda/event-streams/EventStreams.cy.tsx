@@ -230,7 +230,7 @@ describe('EventStreams.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-selected-event-streams"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to delete these`
       );

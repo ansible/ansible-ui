@@ -1,8 +1,9 @@
 import {
+  Badge,
   Bullseye,
-  Chip,
-  ChipGroup,
   Divider,
+  Label,
+  LabelGroup,
   MenuFooter,
   MenuSearch,
   MenuSearchInput,
@@ -16,6 +17,7 @@ import {
   Spinner,
   Tooltip,
 } from '@patternfly/react-core';
+
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -181,6 +183,48 @@ export function PageMultiSelect<
     return selectedOptions;
   }, [options, queryLabel, values, compareOptionValues]);
 
+  const getBadgeCount = (selectedOptions: PageSelectOption<ValueT>[]) => {
+    if (variant === 'count' && selectedOptions.length > 0) {
+      return <Badge>{t('{{count}} selected', { count: selectedOptions.length })}</Badge>;
+    }
+    return null;
+  };
+
+  const getToggleLabels = () => {
+    if (selectedOptions.length === 0) {
+      return <span style={{ opacity: 0.7 }}>{placeholder}</span>;
+    }
+    if (variant === 'count') return null;
+    return (
+      <LabelGroup numLabels={99}>
+        {selectedOptions.map((option) => (
+          <Label
+            variant="outline"
+            key={option.label}
+            textMaxWidth={maxChipSize}
+            onClose={() =>
+              onSelect((previousValues) =>
+                previousValues?.filter((v) =>
+                  compareOptionValues ? !compareOptionValues(option.value, v) : option.value !== v
+                )
+              )
+            }
+          >
+            {option.label}
+          </Label>
+        ))}
+        {!disableClearSelection && (
+          <TimesIcon
+            role="button"
+            aria-hidden
+            onClick={() => onSelect(() => [])}
+            style={{ verticalAlign: 'middle', marginLeft: 8 }}
+          />
+        )}
+      </LabelGroup>
+    );
+  };
+
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
       <Tooltip content={props.isDisabled} trigger={props.isDisabled ? undefined : 'manual'}>
@@ -189,6 +233,7 @@ export function PageMultiSelect<
           ref={toggleRef}
           onClick={() => setOpen(!open)}
           isExpanded={open}
+          badge={getBadgeCount(selectedOptions)}
           onKeyDown={(event) => {
             switch (event.key) {
               case 'Tab':
@@ -212,51 +257,7 @@ export function PageMultiSelect<
           isFullWidth
           style={{ paddingTop: 2, paddingBottom: 4, minHeight: 36 }}
         >
-          {selectedOptions.length > 0 ? (
-            <>
-              {variant === 'count' ? (
-                <Chip
-                  isReadOnly={disableClearSelection}
-                  onClick={() => onSelect(() => [])}
-                  style={{ marginTop: -4, marginBottom: -4 }}
-                >
-                  {selectedOptions.length}
-                </Chip>
-              ) : (
-                <ChipGroup numChips={99}>
-                  {selectedOptions.map((option) => (
-                    <Chip
-                      key={option.label}
-                      isReadOnly={props.disableClearChips}
-                      textMaxWidth={maxChipSize}
-                      style={{ marginTop: -2, marginBottom: -2 }}
-                      onClick={() =>
-                        onSelect((previousValues) =>
-                          previousValues?.filter((v) =>
-                            compareOptionValues
-                              ? !compareOptionValues(option.value, v)
-                              : option.value !== v
-                          )
-                        )
-                      }
-                    >
-                      {option.label}
-                    </Chip>
-                  ))}
-                  {!disableClearSelection && (
-                    <TimesIcon
-                      role="button"
-                      aria-hidden
-                      onClick={() => onSelect(() => [])}
-                      style={{ verticalAlign: 'middle', marginLeft: 8 }}
-                    />
-                  )}
-                </ChipGroup>
-              )}
-            </>
-          ) : (
-            <span style={{ opacity: 0.7 }}>{placeholder}</span>
-          )}
+          {getToggleLabels()}
         </MenuToggle>
       </Tooltip>
     );

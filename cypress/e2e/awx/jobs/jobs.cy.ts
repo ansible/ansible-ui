@@ -72,12 +72,12 @@ describe('Jobs', () => {
       cy.filterTableById(jobId);
       cy.clickTableRowPinnedAction(jobName, 'relaunch-job', false);
       cy.verifyPageTitle(jobName);
-      cy.contains('.pf-v5-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
+      cy.contains('.pf-v6-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
     });
 
     it('can render the toolbar and row actions', () => {
       cy.navigateTo('awx', 'jobs');
-      cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
+      cy.get('.pf-v6-c-toolbar__group button.toggle-kebab').click();
       cy.contains(/^Delete jobs$/).should('exist');
       cy.contains(/^Cancel jobs$/).should('exist');
       cy.filterTableById(job.id ? job.id.toString() : '');
@@ -149,7 +149,7 @@ describe('Jobs', () => {
             cy.get('[data-cy*="actions-dropdown"]').click();
           });
           cy.clickButton('Delete job');
-          cy.get('.pf-v5-c-modal-box__footer')
+          cy.get('.pf-v6-c-modal-box__footer')
             .prev()
             .find('td[data-cy="status-column-cell"]')
             .within(() => {
@@ -178,7 +178,7 @@ describe('Jobs', () => {
           cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
           cy.selectTableRow(jobName);
           cy.clickToolbarKebabAction('delete-jobs');
-          cy.get('.pf-v5-c-modal-box__footer')
+          cy.get('.pf-v6-c-modal-box__footer')
             .prev()
             .find('td[data-cy="status-column-cell"]')
             .within(() => {

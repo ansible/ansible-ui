@@ -1,11 +1,12 @@
 import {
+  Label,
+  LabelGroup,
   Button,
-  Chip,
-  ChipGroup,
-  ChipGroupProps,
+  LabelGroupProps,
   InputGroup,
   TextInput,
 } from '@patternfly/react-core';
+
 import { SearchIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import {
@@ -28,9 +29,11 @@ interface ChipHolderProps {
   readonly $isDisabled: boolean;
 }
 const ChipHolder = styled.div<ChipHolderProps>`
-  --pf-v5-c-form-control--Height: auto;
+  --pf-v6-c-form-control--Height: auto;
+  align-items: center;
+  padding-inline-start: 4px;
   background-color: ${(props) =>
-    props.$isDisabled ? 'var(--pf-v5-global--disabled-color--300)' : null};
+    props.$isDisabled ? 'var(--pf-v6-c-form-control--m-disabled--BackgroundColor)' : null};
 `;
 
 export type PageFormMultiInputProps<
@@ -49,7 +52,7 @@ export type PageFormMultiInputProps<
   selectOpen?: (callback: (selection: T[]) => void, title: string) => void;
   getChipLabel: (item: T) => string;
 } & Omit<PageFormGroupProps, 'onChange' | 'value'> &
-  ChipGroupProps;
+  LabelGroupProps;
 
 export function PageFormMultiInput<
   T extends { id: number | string },
@@ -98,10 +101,10 @@ export function PageFormMultiInput<
               {value?.length ? (
                 <ChipHolder
                   $isDisabled={isSubmitting || (isDisabled ?? false)}
-                  className="pf-v5-c-form-control"
+                  className="pf-v6-c-form-control"
                 >
-                  <ChipGroup
-                    numChips={5}
+                  <LabelGroup
+                    numLabels={5}
                     expandedText={translations.showLess}
                     collapsedText={translations.countMore.replace(
                       '{count}',
@@ -109,24 +112,23 @@ export function PageFormMultiInput<
                     )}
                   >
                     {(value as T[])?.map((item: T) => (
-                      <Chip key={item.id} onClick={() => removeItem(item)}>
+                      <Label variant="outline" key={item.id} onClose={() => removeItem(item)}>
                         {props.getChipLabel(item)}
-                      </Chip>
+                      </Label>
                     ))}
-                  </ChipGroup>
+                  </LabelGroup>
                 </ChipHolder>
               ) : (
                 <TextInput aria-label={placeholder} isDisabled placeholder={placeholder} />
               )}
               {selectTitle && (
                 <Button
+                  icon={<SearchIcon />}
                   variant="control"
                   onClick={() => selectOpen?.(selectOpenCb, props.selectTitle as string)}
                   aria-label="Options menu"
                   isDisabled={isSubmitting || isDisabled}
-                >
-                  <SearchIcon />
-                </Button>
+                ></Button>
               )}
             </InputGroup>
           </PageFormGroup>

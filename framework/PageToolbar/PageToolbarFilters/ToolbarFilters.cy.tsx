@@ -35,7 +35,7 @@ function ToolbarFiltersTest(
         disablePagination
         clearAllFilters={clearAllFilters}
       />
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         Filter State:
         <pre>{JSON.stringify(filterState, undefined, '  ')}</pre>
       </PageSection>

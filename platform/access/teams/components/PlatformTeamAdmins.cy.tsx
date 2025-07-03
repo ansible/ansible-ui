@@ -36,7 +36,7 @@ describe('Team admins list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__item')
+          .find('.pf-v6-c-menu__item')
           .contains('Remove administrators')
           .should('be.visible');
       });
@@ -69,7 +69,7 @@ describe('Team admins list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.get('[data-cy="add-administrators"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-administrators"]').should('be.enabled');
     });
   });
   describe('Empty list', () => {

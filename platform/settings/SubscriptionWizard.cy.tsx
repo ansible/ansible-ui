@@ -30,7 +30,7 @@ describe('Subscription Wizard', () => {
         });
     });
 
-    cy.get('.pf-v5-c-toggle-group__button')
+    cy.get('.pf-v6-c-toggle-group__button')
       .eq(1)
       .contains('Service Account / Red Hat Satellite')
       .click();
@@ -72,7 +72,7 @@ describe('Subscription Wizard', () => {
       'be.visible'
     );
     // Initially, Subscription manifest is selected
-    cy.get('.pf-v5-c-toggle-group__button')
+    cy.get('.pf-v6-c-toggle-group__button')
       .eq(0)
       .should('have.attr', 'aria-pressed', 'true')
       .and('have.text', 'Subscription manifest');
@@ -87,13 +87,13 @@ describe('Subscription Wizard', () => {
       cy.contains('button', 'Browse');
       cy.contains('button', 'Clear');
     });
-    cy.get('.pf-v5-c-toggle-group__button')
+    cy.get('.pf-v6-c-toggle-group__button')
       .eq(1)
       .should('have.attr', 'aria-pressed', 'false')
       .contains('Service Account / Red Hat Satellite');
 
     // Click on Service Account / Red Hat Satellite
-    cy.get('.pf-v5-c-toggle-group__button')
+    cy.get('.pf-v6-c-toggle-group__button')
       .eq(1)
       .contains('Service Account / Red Hat Satellite')
       .click();
@@ -103,16 +103,16 @@ describe('Subscription Wizard', () => {
     ).should('be.visible');
 
     //When Service Account / Red Hat Satellite is selected
-    cy.get('.pf-v5-c-toggle-group__button').eq(0).should('not.have.class', 'pf-m-selected');
+    cy.get('.pf-v6-c-toggle-group__button').eq(0).should('not.have.class', 'pf-m-selected');
     cy.get('[data-cy="client-id-form-group"]').within(() => {
       cy.contains('Client ID / Satellite username').should('be.visible');
     });
     cy.get('[data-cy="client-secret-form-group"]').within(() => {
       cy.contains('Client secret / Satellite password').should('be.visible');
     });
-    cy.get('.pf-v5-c-toggle-group__button').eq(1).should('have.class', 'pf-m-selected');
+    cy.get('.pf-v6-c-toggle-group__button').eq(1).should('have.class', 'pf-m-selected');
     cy.get('[data-cy="wizard-footer"]').within(() => {
-      cy.contains('Next').and('has.attr', 'aria-disabled', 'false');
+      cy.contains('Next').should('be.enabled');
       cy.contains('Back').and('has.class', 'pf-m-disabled');
       cy.contains('Cancel').and('has.class', 'pf-m-link');
     });
@@ -120,7 +120,7 @@ describe('Subscription Wizard', () => {
 
   it('verify that step 1 is current and error messages when proceeding without manifest', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
-    cy.get('[data-cy="wizard-nav-item-subscription"] .pf-v5-c-wizard__nav-link').should(
+    cy.get('[data-cy="wizard-nav-item-subscription"] .pf-v6-c-wizard__nav-link').should(
       'have.class',
       'pf-m-current'
     );
@@ -134,7 +134,7 @@ describe('Subscription Wizard', () => {
 
   it('verify the error messages when proceeding without credentials', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
-    cy.get('.pf-v5-c-toggle-group__button')
+    cy.get('.pf-v6-c-toggle-group__button')
       .eq(1)
       .contains('Service Account / Red Hat Satellite')
       .click();
@@ -181,13 +181,13 @@ describe('Subscription Wizard', () => {
     cy.get('[data-cy="wizard-footer"]').within(() => {
       cy.clickButton('Next');
     });
-    cy.get('[data-cy="wizard-nav-item-license-agreement"] .pf-v5-c-wizard__nav-link').should(
+    cy.get('[data-cy="wizard-nav-item-license-agreement"] .pf-v6-c-wizard__nav-link').should(
       'have.class',
       'pf-m-current'
     );
-    cy.get('.pf-v5-c-check').within(() => {
+    cy.get('.pf-v6-c-check').within(() => {
       cy.get('[data-cy="agree"]').check();
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'have.text',
         'I agree to the terms of the license agreement*'
       );

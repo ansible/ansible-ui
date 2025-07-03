@@ -127,10 +127,9 @@ describe('ScheduleEditWizard', () => {
       cy.get('[data-cy="name"]').clear();
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="name-form-group"]').within(() => {
-        cy.get('span.pf-v5-c-helper-text__item-text').should(
-          'have.text',
-          'Schedule name is required.'
-        );
+        cy.get('span.pf-v6-c-helper-text__item-text')
+          .should('be.visible')
+          .and('contain.text', 'Schedule name is required.');
       });
     });
   });

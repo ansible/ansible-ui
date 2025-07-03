@@ -36,7 +36,7 @@ describe('Organizations list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
+          .find('.pf-v6-c-menu__content')
           .within(() => {
             cy.get('button')
               .contains(/^Delete organizations$/)
@@ -65,9 +65,11 @@ describe('Organizations list', () => {
           },
         },
       }));
+
       cy.mount(<PlatformOrganizationList />);
-      cy.get('a[data-cy="create-organization"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="create-organization"]').should('not.have.attr', 'aria-disabled', 'true');
     });
+
     it('Delete button is disabled for the default organization', () => {
       cy.mount(<PlatformOrganizationList />);
       cy.contains('tr', 'Default').within(() => {

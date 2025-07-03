@@ -147,13 +147,13 @@ export function PageFormMarkdown<
                   }}
                   isReadOnly={props.isReadOnly || isSubmitting}
                   className={
-                    props.isReadOnly ? `pf-v5-c-form-control pf-m-disabled` : `pf-v5-c-form-control`
+                    props.isReadOnly ? `pf-v6-c-form-control pf-m-disabled` : `pf-v6-c-form-control`
                   }
                 />
               </DropZone>
             )}
             {isExpanded && preview && <PageMarkdownDetail value={value} />}
-            {!isExpanded && <div className="pf-v5-c-form-control" />}
+            {!isExpanded && <div className="pf-v6-c-form-control" />}
           </PageFormGroup>
         );
       }}

@@ -73,11 +73,11 @@ describe('GalaxykKit Installation for Collections Details', () => {
         cy.contains('Loading').should('not.exist');
         cy.get(`[data-cy="browse-collection-version"] button`).as('versionButton');
         cy.get('@versionButton').first().click();
-        cy.get('.pf-v5-c-menu__item-text').contains(firstVersion).click();
+        cy.get('.pf-v6-c-menu__item-text').contains(firstVersion).click();
         cy.clickTab(/^Details$/, true);
         cy.contains('#version', firstVersion);
         cy.get('@versionButton').should('not.have.class', 'pf-m-expanded');
-        cy.get(`[data-cy="browse-collection-version"] button .pf-v5-c-menu-toggle__text`).should(
+        cy.get(`[data-cy="browse-collection-version"] button .pf-v6-c-menu-toggle__text`).should(
           'contain',
           firstVersion
         );
@@ -97,7 +97,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
           `/collections/validated/${namespace.name}/${collectionName}/details`
         );
         cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-        cy.get('.pf-v5-c-menu__item-text').should('have.length', '1');
+        cy.get('.pf-v6-c-menu__item-text').should('have.length', '1');
       });
     });
 
@@ -131,7 +131,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
 
         // Verify collection has been deleted from system
         cy.verifyPageTitle(Collections.title);
-        cy.get('.pf-v5-c-empty-state__title-text')
+        cy.get('.pf-v6-c-empty-state__title-text')
           .should((_) => {})
           .then(($el) => {
             if ($el.length) {
@@ -181,13 +181,13 @@ describe('GalaxykKit Installation for Collections Details', () => {
         cy.contains('Loading').should('not.exist');
         cy.get(`[data-cy="browse-collection-version"] button`).as('versionButton');
         cy.get('@versionButton').first().click();
-        cy.get('.pf-v5-c-menu__item-text').contains(firstVersion).click();
+        cy.get('.pf-v6-c-menu__item-text').contains(firstVersion).click();
         cy.url().should(
           'contain',
           `/collections/validated/${namespace.name}/${collectionName}/details?version=${firstVersion}`
         );
         cy.get('@versionButton').should('not.have.class', 'pf-m-expanded');
-        cy.get(`[data-cy="browse-collection-version"] button .pf-v5-c-menu-toggle__text`).should(
+        cy.get(`[data-cy="browse-collection-version"] button .pf-v6-c-menu-toggle__text`).should(
           'contain',
           firstVersion
         );
@@ -200,7 +200,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
         cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
         cy.contains('Loading').should('not.exist');
         cy.get('@versionButton').first().click();
-        cy.get('.pf-v5-c-menu__item-text').should('have.length', '1');
+        cy.get('.pf-v6-c-menu__item-text').should('have.length', '1');
       });
     });
 

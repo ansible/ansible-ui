@@ -1,12 +1,7 @@
 import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import {
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { Label as ILabel } from '../../../../interfaces/Label';
@@ -115,14 +110,14 @@ export function WorkflowJobTemplateDetails({
         {`${window.location.origin}${template.related.webhook_receiver}`}
       </PageDetail>
       <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
-        <TextList component={TextListVariants.ul}>
+        <Content component={ContentVariants.ul}>
           {template.allow_simultaneous && (
-            <TextListItem component={TextListItemVariants.li}>{t`Concurrent jobs`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Concurrent jobs`}</Content>
           )}
           {template.webhook_service && (
-            <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Webhooks`}</Content>
           )}
-        </TextList>
+        </Content>
       </PageDetail>
       <NodeTagDetail
         label={t('Labels')}

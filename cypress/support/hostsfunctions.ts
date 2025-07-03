@@ -51,8 +51,8 @@ function editHost(inventoryName: string, host_type: string, hostName: string, vi
   cy.hasDetail(/^Description$/, 'This is the description edited');
 }
 
-function deleteHostListView(invenotryName: string, host_type: string, hostName: string) {
-  navigateToBaseView(host_type, invenotryName);
+function deleteHostListView(inventoryName: string, host_type: string, hostName: string) {
+  navigateToBaseView(host_type, inventoryName);
   cy.filterTableBySearch(hostName);
   cy.intercept(awxAPI`/inventories/*/hosts/?search=*`).as('filteredHosts');
   cy.wait('@filteredHosts');
@@ -144,18 +144,23 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.clickModalButton('Confirm');
       cy.contains(group.name);
       cy.contains(group2.name);
-      /// single disassociate
-      // TODO: need to change this when
-      // https://issues.redhat.com/browse/AAP-22914 change will applyed
-      // multi select will be changed in the future
       cy.filterTableBySearch(group.name);
-      cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).first().click();
+      cy.get('[data-cy="disassociate-groups"]').should('have.attr', 'aria-disabled', 'true');
+      cy.contains('-changed').should('be.visible');
+      cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"] input`)
+        .first()
+        .click();
       disassociate();
       navigateToHost(host_type, host.name, '[data-cy="name-column-cell"] a', inventory.name);
       cy.clickLink(/^Groups$/);
       cy.contains(group.name).should('not.exist');
       cy.getByDataCy('associate-group').click();
-      cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).first().click();
+      cy.getModal().then(() => {
+        cy.contains('-changed').should('be.visible');
+        cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"] input`)
+          .first()
+          .click();
+      });
       cy.clickModalButton('Confirm');
       cy.contains(group.name);
       deleteAllInventoryHosts(inventory);
@@ -203,12 +208,12 @@ export function createHostAndCancelJob(
     cy.navigateTo('awx', 'inventories');
     cy.filterTableBySearch(inventory.name);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    cy.get('.pf-v6-c-tabs__item > a').contains('Hosts').click();
     const hostName = createHost('inventory_host', inventory.id);
     cy.navigateTo('awx', 'inventories');
     cy.filterTableBySearch(inventory.name);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
+    cy.get('.pf-v6-c-tabs__item > a').contains('Job Templates').click();
     // run  a template and wait for redirect to Job output
     cy.filterTableBySearch(jobTemplate.name, 1);
     cy.get('[data-cy="launch-template"]').first().click();
@@ -219,7 +224,7 @@ export function createHostAndCancelJob(
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+      cy.get('.pf-v6-c-tabs__item > a').contains('Hosts').click();
     } else {
       cy.navigateTo('awx', 'hosts');
       cy.verifyPageTitle('Hosts');
@@ -230,7 +235,7 @@ export function createHostAndCancelJob(
       { method: 'GET', url: awxAPI`/unified_jobs/*` },
       { fixture: 'awxRunningJobs.json' }
     );
-    cy.get('.pf-v5-c-tabs__item > a').contains('Jobs').click();
+    cy.get('.pf-v6-c-tabs__item > a').contains('Jobs').click();
     // there should be cancel job button when jon is running
     cy.get('[data-cy="cancel-job"]').should('be.enabled');
     cy.get('[data-cy="cancel-job"]').click();
@@ -304,7 +309,7 @@ export function checkFactsInHost(inventory: Inventory, host_type: string) {
     cy.navigateTo('awx', 'inventories');
     cy.filterTableBySearch(inventory.name);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    cy.get('.pf-v6-c-tabs__item > a').contains('Hosts').click();
     cy.filterTableBySearch(hostName);
     cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
   }

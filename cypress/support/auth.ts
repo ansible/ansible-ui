@@ -188,7 +188,7 @@ Cypress.Commands.add('edaLogin', (username?: string, password?: string) => {
 });
 
 Cypress.Commands.add('edaLogout', () => {
-  cy.get('.pf-v5-c-dropdown__toggle')
+  cy.get('.pf-v6-c-dropdown__toggle')
     .eq(1)
     .click()
     .then(() => {
@@ -233,7 +233,7 @@ Cypress.Commands.add('hubLogin', () => {
 });
 
 Cypress.Commands.add('hubLogout', () => {
-  cy.get('.pf-v5-c-dropdown__toggle')
+  cy.get('.pf-v6-c-dropdown__toggle')
     .eq(1)
     .click()
     .then(() => {

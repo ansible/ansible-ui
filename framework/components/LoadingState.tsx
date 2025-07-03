@@ -3,7 +3,7 @@ import { Bullseye, PageSection, Spinner } from '@patternfly/react-core';
 
 export function LoadingState() {
   return (
-    <PageSection isFilled variant="light">
+    <PageSection hasBodyWrapper={false} isFilled>
       <Bullseye>
         <Spinner />
       </Bullseye>

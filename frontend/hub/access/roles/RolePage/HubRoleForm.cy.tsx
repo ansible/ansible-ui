@@ -75,7 +75,7 @@ describe('HubRoleForm', () => {
       cy.get('[data-cy="description"]').type('Edited Description');
       cy.get('[data-cy="content-type-form-group"]').contains('Repository').should('be.disabled');
       cy.multiSelectShouldHaveSelectedOption('#permissions', 'View Ansible repository');
-      cy.get('#permissions').click();
+      cy.get('#permissions .pf-v6-c-menu-toggle__controls').click();
       cy.selectMultiSelectOption('#permissions-select', 'Change Ansible repository');
       cy.clickButton(/^Save role$/);
       cy.wait('@editRole')

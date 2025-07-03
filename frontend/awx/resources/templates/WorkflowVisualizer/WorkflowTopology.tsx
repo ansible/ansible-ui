@@ -49,7 +49,7 @@ import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { getNodeLabel } from './wizard/helpers';
 
 const TopologyView = styled(PFTopologyView)`
-  .pf-v5-c-divider {
+  .pf-v6-c-divider {
     display: none;
   }
 `;

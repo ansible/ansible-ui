@@ -4,11 +4,7 @@
   display: grid;
   grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
   overflow-x: auto;
-  background-color: var(--pf-v5-global--BackgroundColor--100);
-}
-
-.pf-v5-theme-dark .output-grid {
-  background-color: var(--pf-v5-global--BackgroundColor--200);
+  background-color: var(--pf-t--global--background--color--secondary--default);
 }
 
 .output-grid-row {
@@ -16,4 +12,6 @@
   display: grid;
   grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
   grid-template-columns: subgrid;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }

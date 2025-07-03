@@ -7,9 +7,9 @@ import {
   CardBody,
   CardHeader,
   CardTitle,
+  Content,
   Page,
   PageSection,
-  Text,
 } from '@patternfly/react-core';
 import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,7 @@ import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 const AAPLogoBlackText = styled(AAPLogo)`
   .aap-logo_svg__st0 {
     height: 64px;
-    fill: var(--pf-v5-global--Color--100);
+    fill: var(--pf-t--global--text--color--regular);
   }
 `;
 const PageSectionWrapper = styled(PageSection)`
@@ -49,7 +49,7 @@ const Footer = (props: {
   };
 
   return (
-    <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+    <PageSection hasBodyWrapper={false} isFilled={false}>
       <Button variant="primary" onClick={() => setShowCreateUserForm(true)}>
         {t('Next')}
       </Button>
@@ -112,8 +112,8 @@ export function LegacyMigration(props: { children: ReactNode }) {
     return (
       <Page>
         <PageLayout>
-          <PageSectionWrapper variant="light">
-            <Card isFlat isCompact style={{ maxWidth: '800px' }}>
+          <PageSectionWrapper variant="default">
+            <Card isCompact style={{ maxWidth: '800px' }}>
               <CardHeader style={{ padding: '16px 32px' }}>
                 <AAPLogoBlackText />
               </CardHeader>
@@ -127,7 +127,7 @@ export function LegacyMigration(props: { children: ReactNode }) {
                     ? t('Complete your AAP migration')
                     : t('Set your AAP credentials')}
                 </CardTitle>
-                <Text style={{ padding: '0 16px' }}>
+                <Content component="p" style={{ padding: '0 16px' }}>
                   {isLDAPAccount || isSSOAccount
                     ? t(
                         'Your accounts have been linked. Complete your migration by clicking on the submit button below. If you have an LDAP account, you can continue using your same LDAP credentials to log in to AAP.'
@@ -135,7 +135,7 @@ export function LegacyMigration(props: { children: ReactNode }) {
                     : t(
                         'Your accounts have been linked. To complete the migration please set a new username and password. These will be your credentials to log in to AAP.'
                       )}
-                </Text>
+                </Content>
 
                 <CreateAAPUserForm
                   legacyAuth={legacyAuth}
@@ -155,8 +155,8 @@ export function LegacyMigration(props: { children: ReactNode }) {
     return (
       <Page>
         <PageLayout>
-          <PageSectionWrapper variant="light">
-            <Card isFlat isCompact style={{ maxWidth: '800px' }}>
+          <PageSectionWrapper variant="default">
+            <Card isCompact style={{ maxWidth: '800px' }}>
               <CardHeader style={{ padding: '16px 32px' }}>
                 <AAPLogoBlackText />
               </CardHeader>
@@ -164,11 +164,11 @@ export function LegacyMigration(props: { children: ReactNode }) {
                 <CardTitle data-cy="link-accounts">
                   {t('Link your Ansible Automation Platform accounts')}
                 </CardTitle>
-                <Text style={{ padding: '0 16px' }}>
+                <Content component="p" style={{ padding: '0 16px' }}>
                   {t(
                     'You have just linked your AAP v2.4 account to AAP v2.5. You can continue linking your AAP services to this same AAP v2.5 account.'
                   )}
-                </Text>
+                </Content>
                 <LegacyMigrationForm
                   legacyAuth={legacyAuth}
                   footer={

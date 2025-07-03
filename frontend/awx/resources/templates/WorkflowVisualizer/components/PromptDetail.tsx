@@ -39,9 +39,12 @@ export function PromptDetail(props: {
     tooltip = (
       <Tooltip position="right" content={tooltipContent}>
         <Icon isInline size="lg" iconSize="sm">
-          <Button aria-label="Clipboard" variant="plain" id="tt-ref">
-            <ClipboardCheckIcon />
-          </Button>
+          <Button
+            icon={<ClipboardCheckIcon />}
+            aria-label="Clipboard"
+            variant="plain"
+            id="tt-ref"
+          />
         </Icon>
       </Tooltip>
     );

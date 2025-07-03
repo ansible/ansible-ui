@@ -39,7 +39,7 @@ describe('Organization users list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
+          .find('.pf-v6-c-menu__content')
           .within(() => {
             cy.get('button')
               .contains(/^Remove users$/)
@@ -54,7 +54,7 @@ describe('Organization users list', () => {
           cy.get('button.toggle-kebab').click();
           cy.document()
             .its('body')
-            .find('.pf-v5-c-menu__content')
+            .find('.pf-v6-c-menu__content')
             .within(() => {
               cy.get('button')
                 .contains(/^Remove user$/)
@@ -90,7 +90,7 @@ describe('Organization users list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/1/users'],
       });
-      cy.get('[data-cy="add-users"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-users"]').should('not.have.attr', 'aria-disabled');
     });
   });
   describe('Empty list', () => {

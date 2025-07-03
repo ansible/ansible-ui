@@ -343,6 +343,7 @@ export function PageFormTextInput<
               )}
               {selectTitle && (
                 <Button
+                  icon={<SearchIcon data-cy="lookup-button" />}
                   ouiaId={`lookup-${name}-button`}
                   variant="control"
                   onClick={() =>
@@ -357,9 +358,7 @@ export function PageFormTextInput<
                   }
                   aria-label="Options menu"
                   isDisabled={isDisabled || isSubmitting}
-                >
-                  <SearchIcon data-cy="lookup-button" />
-                </Button>
+                ></Button>
               )}
               {button}
               <PageActions

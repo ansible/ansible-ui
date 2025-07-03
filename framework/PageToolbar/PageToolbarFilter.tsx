@@ -167,7 +167,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 
   return (
     <PageToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" id="filters">
-      <ToolbarGroup variant="button-group" style={{ flexWrap: 'wrap', gap: 8 }}>
+      <ToolbarGroup variant="action-group" style={{ flexWrap: 'wrap', gap: 8 }}>
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <FiltersToolbarItem
           toolbarFilters={groupedFilters}
@@ -198,7 +198,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
             <ToolbarFilter
               key={filter.label}
               categoryName={filter.label}
-              chips={[
+              labels={[
                 ...values.map((value) => {
                   switch (filter.type) {
                     case ToolbarFilterType.SingleSelect:
@@ -217,7 +217,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                   }
                 }),
               ]}
-              deleteChip={(_group, value) => {
+              deleteLabel={(_group, value) => {
                 setFilterState?.((filters) => {
                   const newState = { ...filters };
                   value = typeof value === 'string' ? value : value.key;
@@ -241,7 +241,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                   return newState;
                 });
               }}
-              deleteChipGroup={() => {
+              deleteLabelGroup={() => {
                 setFilterState?.((filters) => {
                   const newState = { ...filters };
                   delete newState[filter.key];

@@ -26,8 +26,17 @@ export function LabelsCell(props: LabelsProps | LabelsWithLinksProps) {
       {props.labels
         ? props.labels.map((label) => <Label key={label}>{label}</Label>)
         : props.labelsWithLinks.map((labelWithLink) => (
-            <Label color="blue" key={labelWithLink.name}>
-              <Link to={labelWithLink.link}>{labelWithLink.name}</Link>
+            <Label
+              color="blue"
+              isClickable
+              key={labelWithLink.name}
+              render={({ content, className }) => (
+                <Link className={className} to={labelWithLink.link}>
+                  {content}
+                </Link>
+              )}
+            >
+              {labelWithLink.name}
             </Label>
           ))}
     </LabelGroup>

@@ -92,7 +92,7 @@ describe('Create Edit Execution Environment Form', () => {
         cy.intercept({ method: 'GET', url: awxAPI`/organizations/*` }, { body: organizations });
         for (const organization of organizations.results) {
           cy.intercept(
-            { method: 'GET', url: `/api/v2/organizations/${organization.id}` },
+            { method: 'GET', url: awxAPI`/organizations/${organization.id.toString()}` },
             { body: organization }
           );
         }
@@ -142,12 +142,12 @@ describe('Create Edit Execution Environment Form', () => {
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="image"]').clear();
       cy.clickButton(/^Save execution environment$/);
-      cy.get(
-        '[data-cy="name-form-group"] > .pf-v5-c-form__group-control > .pf-v5-c-form__helper-text > .pf-v5-c-helper-text > .pf-v5-c-helper-text__item'
-      ).should('have.text', 'Name is required.');
-      cy.get(
-        '[data-cy="image-form-group"] > .pf-v5-c-form__group-control > .pf-v5-c-form__helper-text > .pf-v5-c-helper-text > .pf-v5-c-helper-text__item'
-      ).should('have.text', 'Image is required.');
+      cy.get('[data-cy="name-form-group"]')
+        .find('.pf-v6-c-helper-text__item-text')
+        .should('contain.text', 'Name is required.');
+      cy.get('[data-cy="image-form-group"]')
+        .find('.pf-v6-c-helper-text__item-text')
+        .should('contain.text', 'Image is required.');
     });
   });
 });

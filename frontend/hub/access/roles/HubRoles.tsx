@@ -25,7 +25,6 @@ export function HubRoles() {
         variant="info"
         title={t('Roles can be assigned to teams and users from the teams and users pages.')}
         isInline
-        className="border-bottom"
       />
       <HubRolesTable />;
     </PageLayout>

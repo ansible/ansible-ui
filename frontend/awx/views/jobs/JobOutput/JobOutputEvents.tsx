@@ -22,9 +22,9 @@ export interface ICollapsed {
 
 const ScrollContainer = styled.div`
   overflow: auto;
-  backgroundcolor: var(--pf-v5-global--BackgroundColor--100);
-  font-size: var(--pf-v5-global--FontSize--sm);
-  border-bottom: 1px solid var(--pf-v5-global--BorderColor--100);
+  background-color: var(--pf-t--global--background--color--100);
+  font-size: var(--pf-t--global--font--size--sm);
+  border-bottom: 1px solid var(--pf-t--global--border--color--100);
 `;
 
 interface IJobOutputEventsProps {

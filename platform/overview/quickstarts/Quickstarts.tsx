@@ -12,7 +12,7 @@ export function QuickStartsPage() {
         description={t('Learn Ansible automation with hands-on quickstarts.')}
       />
       <Scrollable>
-        <PageSection padding={{ default: 'noPadding' }}>
+        <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding' }}>
           <QuickStartCatalogPage showFilter showTitle={false} />
         </PageSection>
       </Scrollable>

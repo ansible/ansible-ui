@@ -82,17 +82,14 @@ describe('Gateway Settings Details', () => {
     );
     cy.clickButton('Save platform gateway settings');
     cy.getByDataCy('confirm-login-redirect-override-form-group').within(() => {
-      cy.get('span.pf-v5-c-helper-text__item-text').should(
-        'have.text',
-        'This field must match login redirect override.'
-      );
+      cy.contains('This field must match login redirect override.').should('be.visible');
     });
     cy.get('input[data-cy="confirm-login-redirect-override"]')
       .clear()
       .type('https://www.ansible.com');
     cy.clickButton('Save platform gateway settings');
     cy.getByDataCy('confirm-login-redirect-override-form-group').within(() => {
-      cy.get('span.pf-v5-c-helper-text__item-text').should('not.exist');
+      cy.get('span.pf-v6-c-helper-text__item-text').should('not.exist');
     });
   });
 });

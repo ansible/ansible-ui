@@ -47,8 +47,8 @@ describe('TeamAccess', () => {
   //     cy.contains('td', 'user-2')
   //       .parent()
   //       .within(() => {
-  //         cy.get('.pf-v5-c-dropdown__toggle').click();
-  //         cy.get('.pf-v5-c-dropdown__menu-item')
+  //         cy.get('.pf-v6-c-dropdown__toggle').click();
+  //         cy.get('.pf-v6-c-dropdown__menu-item')
   //           .contains('Remove user')
   //           .should('have.attr', 'aria-disabled', 'true');
   //       });
@@ -87,14 +87,14 @@ describe('TeamAccess', () => {
       cy.selectTableRow('user-2');
       cy.clickToolbarKebabAction('remove-users-from-teams');
       // Confirmation modal is displayed with a warning
-      cy.get('.pf-v5-c-modal-box').within(() => {
+      cy.get('.pf-v6-c-modal-box').within(() => {
         cy.hasAlert(
           '1 of the selected users cannot be deleted due to insufficient permissions.'
         ).should('exist');
         cy.contains('td', 'admin')
           .parent()
           .within(() => {
-            cy.get('span.pf-v5-c-icon span.pf-m-warning').should('exist');
+            cy.get('span.pf-v6-c-icon span.pf-m-warning').should('exist');
           });
         cy.get('#confirm').click();
         cy.clickButton(/^Remove user/);

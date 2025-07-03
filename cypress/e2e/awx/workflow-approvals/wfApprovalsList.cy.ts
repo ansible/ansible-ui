@@ -482,11 +482,7 @@ describe('Workflow Approvals Tests', () => {
                       cy.getByDataCy('add-roles').click();
                       cy.verifyPageTitle('Add roles');
                       cy.filterTableBySearch(userWFApprove.username);
-                      cy.get('tbody tr')
-                        .should('have.length', 1)
-                        .within(() => {
-                          cy.getByDataCy('checkbox-column-cell').click();
-                        });
+                      cy.get(`[data-cy="row-id-${userWFApprove.id}"] input`).click();
                       cy.getByDataCy('Submit').click();
                       cy.selectTableRowByCheckbox('name', 'WorkflowJobTemplate Approve', {
                         disableFilter: true,
@@ -506,7 +502,7 @@ describe('Workflow Approvals Tests', () => {
                       cy.filterTableBySearch(workflowApproval.name);
                       cy.get('tbody tr').should('have.length', 1);
                       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
-                        cy.getByDataCy('checkbox-column-cell').click();
+                        cy.get('[data-cy="checkbox-column-cell"] input').click();
                       });
                       cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
                         cy.getByDataCy('approve').click();
@@ -518,7 +514,7 @@ describe('Workflow Approvals Tests', () => {
                       cy.waitForWorkflowJobStatus(launched.id.toString());
                       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
                         cy.getByDataCy('status-column-cell').should('contain', 'Approve');
-                        cy.getByDataCy('checkbox-column-cell').click();
+                        cy.get('[data-cy="checkbox-column-cell"] input').click();
                       });
                       cy.clickToolbarKebabAction('delete-workflow-approvals');
                       cy.getModal().within(() => {

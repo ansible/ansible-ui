@@ -12,8 +12,8 @@ describe('ExecutionEnvironmentDetails', () => {
       })
       .then((eeObject) => {
         cy.mount(<ExecutionEnvironmentDetails execution_env={eeObject} />);
-        cy.get('.pf-v5-c-description-list')
-          .find('.pf-v5-c-description-list__group')
+        cy.get('.pf-v6-c-description-list')
+          .find('.pf-v6-c-description-list__group')
           .should('have.length', 7);
       });
   });
@@ -66,7 +66,7 @@ describe('ExecutionEnvironmentDetails', () => {
         cy.get('[data-cy="managed"]').should('have.text', 'false');
         cy.get('[data-cy="organization"]').should('have.text', 'test');
         cy.get('[data-cy="pull"]').should('have.text', 'always');
-        cy.get('[data-cy="registry-credential"] > .pf-v5-c-description-list__text').should(
+        cy.get('[data-cy="registry-credential"] > .pf-v6-c-description-list__text').should(
           'have.text',
           'test'
         );

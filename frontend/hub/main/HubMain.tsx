@@ -1,8 +1,6 @@
 import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
 
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
-
 import { PageFramework } from '@ansible/ansible-ui-framework';
 import '@ansible/common-ui/i18n';
 import { BrowserRouter } from 'react-router';

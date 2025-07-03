@@ -45,7 +45,7 @@ describe('Create Edit Instance Group Form', () => {
 
   describe('Edit Instance Group', () => {
     beforeEach(() => {
-      cy.intercept('GET', `api/v2/instance_groups/*`, {
+      cy.intercept('GET', awxAPI`/instance_groups/*`, {
         fixture: 'instance_group.json',
       });
       cy.intercept('PATCH', awxAPI`/instance_groups/*`, {}).as('editIg');
@@ -98,7 +98,7 @@ describe('Create Edit Instance Group Form', () => {
       });
       cy.get('[data-cy="name"]').clear();
       cy.getByDataCy('Submit').click();
-      cy.contains('.pf-v5-c-helper-text', 'Name is required.');
+      cy.contains('.pf-v6-c-helper-text', 'Name is required.');
     });
   });
 });

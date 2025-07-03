@@ -35,8 +35,8 @@ const StyledNode = styled(DefaultNode)`
       cursor: default;
     }
     .pf-topology__node__background {
-      fill: var(--pf-v5-chart-color-black-300);
-      stroke: var(--pf-v5-global--Color--200);
+      fill: var(--pf-v6-chart-color-black-300);
+      stroke: var(--pf-t--global--border--color--default);
     }
   }
 `;

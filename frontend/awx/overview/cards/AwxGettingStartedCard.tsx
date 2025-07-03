@@ -5,7 +5,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
-import { Text } from '@patternfly/react-core';
+import { Content } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -44,11 +44,11 @@ export function AwxGettingStartedCard(props: {
 
   return (
     <PageDashboardGettingStarted steps={steps}>
-      <Text>
+      <Content component="p">
         To learn how to get started, view the{' '}
         <ExternalLink href="https://docs.ansible.com">documentation</ExternalLink>, or follow the
         steps below.
-      </Text>
+      </Content>
     </PageDashboardGettingStarted>
   );
 }

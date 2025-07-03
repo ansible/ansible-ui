@@ -1,12 +1,13 @@
+import { ChatbotSideBar } from '@ansible/chatbot/ChatbotSideBar';
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { Outlet, Route, RouteObject, Routes } from 'react-router';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
-import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
-import { PageNavigation } from './PageNavigation';
-import { PageNavigationItem } from './PageNavigationItem';
-import { usePageNavigationRoutesContext } from './PageNavigationRoutesProvider';
-import { ChatbotSideBar } from '@ansible/chatbot/ChatbotSideBar';
+import { PageNavigation } from '../PageNavigation/PageNavigation';
+import { PageNavigationItem } from '../PageNavigation/PageNavigationItem';
+import { usePageNavigationRoutesContext } from '../PageNavigation/PageNavigationRoutesProvider';
+import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsDrawer';
+import { usePageNotifications } from '../PageNotifications/usePageNotifications';
 
 export function PageApp(props: {
   /** Component for the masthead of the page. */
@@ -30,46 +31,44 @@ export function PageApp(props: {
   contextSwitcher?: ReactNode;
 }) {
   const { navigation, masthead } = props;
+  const { notificationsDrawerOpen } = usePageNotifications();
+
   const navigationItems = useMemo(
     () => [
       {
         path: props.basename ?? '/',
         element: (
-          <Page
-            header={masthead}
-            sidebar={
-              <PageNavigation
-                navigation={navigation}
-                basename={props.basename}
-                contextSwitcher={props.contextSwitcher}
-              />
-            }
-          >
-            <PageNotificationsDrawer>
-              <ChatbotSideBar>
-                <div
-                  style={{
-                    maxHeight: '100%',
-                    overflow: 'hidden',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  {props.banner}
-                  <div style={{ flexGrow: 1, overflow: 'hidden' }}>
-                    <Outlet />
-                  </div>
-                </div>
-              </ChatbotSideBar>
-            </PageNotificationsDrawer>
-          </Page>
+          <ChatbotSideBar>
+            <Page
+              masthead={masthead}
+              sidebar={
+                <PageNavigation
+                  navigation={navigation}
+                  basename={props.basename}
+                  contextSwitcher={props.contextSwitcher}
+                />
+              }
+              notificationDrawer={<PageNotificationsDrawer />}
+              isNotificationDrawerExpanded={notificationsDrawerOpen}
+              isContentFilled
+            >
+              {props.banner}
+              <Outlet />
+            </Page>
+          </ChatbotSideBar>
         ),
         children: navigation.filter(({ href }) => !href),
       },
       { path: '*', element: <PageNotFound /> },
     ],
-    [masthead, navigation, props.banner, props.basename, props.contextSwitcher]
+    [
+      masthead,
+      navigation,
+      notificationsDrawerOpen,
+      props.banner,
+      props.basename,
+      props.contextSwitcher,
+    ]
   );
   const [_, setNavigation] = usePageNavigationRoutesContext();
   useEffect(() => setNavigation(navigationItems), [navigationItems, setNavigation]);

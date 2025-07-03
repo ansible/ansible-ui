@@ -77,7 +77,7 @@ describe('Check if the build includes EDA', () => {
     });
 
     after(() => {
-      cy.deleteEdaProject(edaProject);
+      cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
       cy.deleteEdaOrganization(edaOrg);
       cy.deleteEdaCredential(edaCredential);
       cy.deleteEdaRulebookActivation(edaRulebookActivation);
@@ -115,25 +115,26 @@ describe('Check if the build includes EDA', () => {
           cy.clickTab('Automation Decisions', true);
           cy.getByDataCy('add-roles').click();
           cy.getWizard().within(() => {
-            cy.selectDropdownOptionByResourceName('resourcetype', resource.roles_tab_name);
-            cy.clickButton(/^Next$/);
-            cy.contains('Choose the resources that will be receiving new roles.');
-            // due to filtering bug
-            cy.setTablePageSize('100');
-            cy.getTableRowByText(resource_object.name, false).within(() => {
-              cy.get('input[type=checkbox]').click();
-            });
-            cy.intercept('GET', edaAPI`/role_definitions/*`).as('roleDefinitions');
-            cy.clickButton(/^Next$/);
-            cy.wait('@roleDefinitions');
-            cy.getTableRowByText(resource.role, true).within(() => {
-              cy.get('input[type=checkbox]').click();
-            });
-            cy.clickButton(/^Next$/);
-            cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
-            cy.intercept('POST', edaAPI`/role_user_assignments/`).as('assignment');
-            cy.clickButton(/^Finish$/);
+            cy.get('[data-cy="loading-spinner"]').should('not.exist');
           });
+          cy.get(`[data-cy*="resourcetype-form-group"]`).find('button').click();
+          cy.contains('button', resource.roles_tab_name).click();
+          cy.clickButton(/^Next$/);
+          cy.contains('Choose the resources that will be receiving new roles.');
+          cy.setTablePageSize('100');
+          cy.getTableRowByText(resource_object.name, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
+          cy.intercept('GET', edaAPI`/role_definitions/*`).as('roleDefinitions');
+          cy.clickButton(/^Next$/);
+          cy.wait('@roleDefinitions');
+          cy.getTableRowByText(resource.role, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
+          cy.clickButton(/^Next$/);
+          cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
+          cy.intercept('POST', edaAPI`/role_user_assignments/`).as('assignment');
+          cy.clickButton(/^Finish$/);
           cy.assertModalSuccess();
           cy.wait('@assignment').then((assignment) => {
             expect(assignment?.response?.statusCode).to.eql(201);

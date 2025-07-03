@@ -79,7 +79,7 @@ describe('schedules .cy.ts', () => {
         cy.contains('td', 'Job Template Schedule 1')
           .parent()
           .within(() => {
-            cy.get('input.pf-v5-c-switch__input').should(
+            cy.get('input.pf-v6-c-switch__input').should(
               'have.attr',
               'aria-label',
               'Click to enable schedule'
@@ -130,7 +130,7 @@ describe('schedules .cy.ts', () => {
         cy.contains('td', 'Cleanup Expired Sessions')
           .parent()
           .within(() => {
-            cy.get('input.pf-v5-c-switch__input').should('have.attr', 'disabled');
+            cy.get('input.pf-v6-c-switch__input').should('have.attr', 'disabled');
             cy.getByDataCy('actions-dropdown').click();
           });
         cy.contains('#delete-schedule', /^Delete schedule$/).should(
@@ -159,7 +159,7 @@ describe('schedules .cy.ts', () => {
         },
       }));
       cy.mount(<Schedules />);
-      cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('a', /^Create schedule$/).should('not.have.attr', 'aria-disabled');
     });
 
     it('Displays error if schedules are not successfully loaded', () => {

@@ -141,7 +141,6 @@ export function RulebookActivationPage() {
               isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
             isPinned: true,
             label: t('Rulebook activation enabled'),
-            labelOff: t('Rulebook activation disabled'),
             onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
               if (activate) void enableRulebookActivation(activation);
               else void disableRulebookActivation([activation]);

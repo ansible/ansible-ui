@@ -26,7 +26,7 @@ describe('UserTokenSecretsModal', () => {
     cy.mount(<UserTokenSecretsModal newToken={patToken} onClose={() => {}} />);
     cy.contains('Token information');
     cy.contains('This is the only time the token will be shown.');
-    cy.get('dl.pf-v5-c-description-list').within(() => {
+    cy.get('dl.pf-v6-c-description-list').within(() => {
       cy.contains('Token');
       cy.contains('Expires');
       cy.get('[data-cy="token"]').within(() => {
@@ -40,7 +40,7 @@ describe('UserTokenSecretsModal', () => {
     cy.mount(<UserTokenSecretsModal newToken={appToken} onClose={() => {}} />);
     cy.contains('Token information');
     cy.contains('This is the only time the token will be shown.');
-    cy.get('dl.pf-v5-c-description-list').within(() => {
+    cy.get('dl.pf-v6-c-description-list').within(() => {
       cy.contains('Token');
       cy.contains('Refresh Token');
       cy.contains('Expires');

@@ -28,7 +28,7 @@ export function PageWizard<DataT extends NonNullable<object>>(props: {
       onSubmit={props.onSubmit}
     >
       <div
-        className="pf-v5-c-wizard"
+        className="pf-v6-c-wizard"
         data-cy="wizard"
         style={{
           display: 'flex',
@@ -41,7 +41,7 @@ export function PageWizard<DataT extends NonNullable<object>>(props: {
         {props.title && <PageWizardHeader title={props.title} onClose={props.onCancel} />}
         <PageWizardToggle />
         <div
-          className="pf-v5-c-wizard__outer-wrap"
+          className="pf-v6-c-wizard__outer-wrap"
           style={{
             display: 'flex',
             flexDirection: 'column',

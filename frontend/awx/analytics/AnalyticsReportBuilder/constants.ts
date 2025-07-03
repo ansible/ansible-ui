@@ -1,9 +1,9 @@
 import {
-  global_palette_black_400,
-  global_palette_blue_300,
-  global_palette_gold_300,
-  global_palette_green_300,
-  global_palette_red_100,
+  t_chart_color_black_400 as chart_color_black_400,
+  t_chart_color_blue_300 as chart_color_blue_300,
+  t_chart_color_yellow_300 as chart_color_yellow_300,
+  t_chart_color_green_300 as chart_color_green_300,
+  t_chart_color_red_orange_100 as chart_color_red_orange_100,
 } from '@patternfly/react-tokens';
 
 export type Params = Record<string, string | number | string[] | number[] | boolean | undefined>;
@@ -129,14 +129,14 @@ export const notAuthorizedParams = {
 };
 
 export const categoryColor = {
-  ok: global_palette_green_300.value,
-  passed: global_palette_green_300.value,
-  unreachable: global_palette_black_400.value,
-  unfinished: global_palette_black_400.value,
-  changed: global_palette_gold_300.value,
-  error: global_palette_black_400.value,
-  failed: global_palette_red_100.value,
-  skipped: global_palette_blue_300.value,
+  ok: chart_color_green_300.value,
+  passed: chart_color_green_300.value,
+  unreachable: chart_color_black_400.value,
+  unfinished: chart_color_black_400.value,
+  changed: chart_color_yellow_300.value,
+  error: chart_color_black_400.value,
+  failed: chart_color_red_orange_100.value,
+  skipped: chart_color_blue_300.value,
 };
 
 const expandedAttributes = [

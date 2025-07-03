@@ -42,7 +42,7 @@ describe('Check if the build includes EDA', () => {
       cy.getByDataCy('name').type(name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('table').should('exist');
         cy.getBy('[data-cy="text-input"] input').type(edaOrganization.name);
         cy.getBy('button[data-cy="apply-filter"]').click();
@@ -52,7 +52,7 @@ describe('Check if the build includes EDA', () => {
       cy.selectSingleSelectOption('[data-cy="event_stream_type_id"]', 'Basic Event Stream');
       cy.getBy('[data-cy="credential_id"]').click();
       cy.clickButton('Browse');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('table').should('exist');
         cy.getBy('[data-cy="text-input"] input').type(edaCredential.name);
         cy.getBy('button[data-cy="apply-filter"]').click();
@@ -75,7 +75,7 @@ describe('Check if the build includes EDA', () => {
       cy.getByDataCy('name').type(name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('table').should('exist');
         cy.getBy('[data-cy="text-input"] input').type(edaOrganization.name);
         cy.getBy('button[data-cy="apply-filter"]').click();

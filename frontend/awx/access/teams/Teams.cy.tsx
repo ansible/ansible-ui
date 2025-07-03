@@ -68,7 +68,7 @@ describe('Teams.cy.ts', () => {
       }));
       cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
-      cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('a', /^Create team$/).should('not.have.attr', 'aria-disabled', 'true');
     });
   });
 

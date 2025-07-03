@@ -9,11 +9,12 @@ import {
   Button,
   InputGroup,
   LabelGroup,
-  Modal,
-  ModalBoxBody,
-  ModalVariant,
   Stack,
   TextInput,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
 } from '@patternfly/react-core';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -155,7 +156,6 @@ function ManageTagsModal(props: {
 
   return (
     <Modal
-      title={t(`Manage tags`)}
       aria-label={t(`Manage tags`)}
       isOpen
       onClose={() => {
@@ -163,9 +163,9 @@ function ManageTagsModal(props: {
       }}
       variant={ModalVariant.medium}
       tabIndex={0}
-      hasNoBodyWrapper
     >
-      <ModalBoxBody style={{ overflow: 'hidden' }}>
+      <ModalHeader title={t(`Manage tags`)} />
+      <ModalBody style={{ overflow: 'hidden' }}>
         {error ? (
           <HubError error={error} handleRefresh={refresh} />
         ) : (
@@ -222,7 +222,7 @@ function ManageTagsModal(props: {
             )}
           </Stack>
         )}
-      </ModalBoxBody>
+      </ModalBody>
     </Modal>
   );
 }

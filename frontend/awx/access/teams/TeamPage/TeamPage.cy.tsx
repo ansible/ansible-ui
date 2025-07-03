@@ -15,7 +15,9 @@ describe('TeamPage', () => {
   });
 
   it('Edit button is visible and enabled', () => {
-    cy.contains('button', 'Edit team').should('have.attr', 'aria-disabled', 'false');
+    cy.contains('button', /^Edit team$/)
+      .should('be.visible')
+      .and('not.be.disabled');
   });
 
   it('Delete button is visible but disabled due to lack of permissions to delete', () => {
@@ -24,10 +26,10 @@ describe('TeamPage', () => {
   });
 
   it('Displays tabs for Details, Access and Roles', () => {
-    cy.get('.pf-v5-c-tabs__item').should('have.length', 4);
-    cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to Teams');
-    cy.get('.pf-v5-c-tabs__item').eq(1).should('have.text', 'Details');
-    cy.get('.pf-v5-c-tabs__item').eq(2).should('have.text', 'Users');
-    cy.get('.pf-v5-c-tabs__item').eq(3).should('have.text', 'Roles');
+    cy.get('.pf-v6-c-tabs__item').should('have.length', 4);
+    cy.get('.pf-v6-c-tabs__item').eq(0).should('have.text', 'Back to Teams');
+    cy.get('.pf-v6-c-tabs__item').eq(1).should('have.text', 'Details');
+    cy.get('.pf-v6-c-tabs__item').eq(2).should('have.text', 'Users');
+    cy.get('.pf-v6-c-tabs__item').eq(3).should('have.text', 'Roles');
   });
 });

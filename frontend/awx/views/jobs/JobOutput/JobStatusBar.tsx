@@ -34,7 +34,7 @@ const HeaderTitle = styled.div`
   gap: 10px;
 
   h1 {
-    font-weight: var(--pf-v5-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
   }
 `;
 

@@ -1,5 +1,4 @@
 /* eslint-disable i18next/no-literal-string */
-import { PageSection } from '@patternfly/react-core';
 import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, createContext, useLayoutEffect, useRef, useState } from 'react';
 import { Scrollable } from '../components/Scrollable';
@@ -23,15 +22,13 @@ export function PageDashboard(props: { children?: ReactNode }) {
 
   return (
     <PageDashboardContext.Provider value={{ columns }}>
-      <Scrollable>
-        <PageSection isWidthLimited>
-          <div
-            ref={ref}
-            style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
-          >
-            {props.children}
-          </div>
-        </PageSection>
+      <Scrollable marginLeft={20} marginRight={20} marginBottom={16} marginTop={16}>
+        <div
+          ref={ref}
+          style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+        >
+          {props.children}
+        </div>
       </Scrollable>
     </PageDashboardContext.Provider>
   );

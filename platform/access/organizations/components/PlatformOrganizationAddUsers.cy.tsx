@@ -86,7 +86,7 @@ describe('PlatformOrganizationAddUsers', () => {
     });
     cy.mount(component, params);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one user.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one user.');
     cy.get('[data-cy="wizard-nav-item-users"] button').should('have.class', 'pf-m-current');
     cy.selectTableRowByCheckbox('username', 'test', { disableFilter: true });
     cy.clickButton(/^Next$/);

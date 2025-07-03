@@ -6,18 +6,18 @@ Cypress.Commands.add(
     cy.get('button').filter(selector).click();
     // PF Selects open the menu at the body level
     // We need to use document() to get the body of the page
-    // and then find the .pf-v5-c-menu__content within that body
+    // and then find the .pf-v6-c-menu__content within that body
     // This fixes the issue where this command would fail inside a within() block
     cy.document()
       .its('body')
-      .find('.pf-v5-c-menu__content')
+      .find('.pf-v6-c-menu__content')
       .within(() => {
         cy.getByDataCy('search-input').type(value);
         const regExp = new RegExp('^' + value + '$');
         if (notFound) {
           cy.contains('No results found');
         } else {
-          cy.contains('.pf-v5-c-menu__item-text', exactMatch ? regExp : value)
+          cy.contains('.pf-v6-c-menu__item-text', exactMatch ? regExp : value)
             .parent()
             .click();
         }
@@ -36,11 +36,11 @@ Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
   cy.get('button').filter(selector).click();
   // PF Selects open the menu at the body level
   // We need to use document() to get the body of the page
-  // and then find the .pf-v5-c-menu__content within that body
+  // and then find the .pf-v6-c-menu__content within that body
   // This fixes the issue where this command would fail inside a within() block
   cy.document()
     .its('body')
-    .find('.pf-v5-c-menu__content')
+    .find('.pf-v6-c-menu__content')
     .should('have.length', 1)
     .within(() => {
       // cy.selectLoadAll();
@@ -48,7 +48,7 @@ Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
         cy.getByDataCy('search-input').within(() => {
           cy.get('input').clear().type(value);
         });
-        cy.contains('.pf-v5-c-menu__item-text', value)
+        cy.contains('.pf-v6-c-menu__item-text', value)
           .parent()
           .within(() => {
             cy.get('input').click();

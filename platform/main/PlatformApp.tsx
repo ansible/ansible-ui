@@ -36,7 +36,7 @@ export function PlatformApp() {
       return (
         <Banner
           data-cy="session-banner"
-          variant={session.expires_in_seconds < 2 * 60 ? 'red' : 'gold'}
+          color={session.expires_in_seconds < 2 * 60 ? 'red' : 'yellow'}
         >
           <Flex spaceItems={{ default: 'spaceItemsMd' }}>
             <FlexItem>
@@ -70,7 +70,7 @@ export function PlatformApp() {
     if (!awxConfig.license_info.compliant) {
       if (awxConfig.license_info.grace_period_remaining) {
         return (
-          <Banner data-cy="subscription-grace-period-banner" variant="red">
+          <Banner data-cy="subscription-grace-period-banner" color="red">
             {t(`Your subscription is out of compliance. {{count}} days grace period remaining.`, {
               count: Math.max(
                 Math.round(awxConfig.license_info.grace_period_remaining / 60 / 60 / 24),
@@ -83,13 +83,13 @@ export function PlatformApp() {
       return (
         <Banner
           data-cy="subscription-out-of-compliance-banner"
-          variant="red"
+          color="red"
         >{t`Your subscription is out of compliance. `}</Banner>
       );
     }
     if (awxConfig.license_info.time_remaining < 15 * 24 * 60 * 60) {
       return (
-        <Banner data-cy="subscription-time-remaining-banner" variant="gold">
+        <Banner data-cy="subscription-time-remaining-banner" color="yellow">
           {t(`Your subscription will expire in {{count}} days.`, {
             count: Math.max(Math.round(awxConfig.license_info.time_remaining / 60 / 60 / 24), 0),
           })}
@@ -102,7 +102,7 @@ export function PlatformApp() {
   const controllerDownBanner = useMemo(() => {
     if (serviceDown) {
       return (
-        <Banner data-cy="controller-down-banner" variant="red">
+        <Banner data-cy="controller-down-banner" color="red">
           {t('Error connecting to Controller API')}
         </Banner>
       );

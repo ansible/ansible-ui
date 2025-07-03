@@ -13,7 +13,7 @@ describe('CredentialTypePage', () => {
   });
 
   it('Displays breadcrumbs back to Credential Types list page', () => {
-    cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to Credential Types');
+    cy.get('.pf-v6-c-tabs__item').eq(0).should('have.text', 'Back to Credential Types');
   });
 
   it('Should show disabled edit button', () => {

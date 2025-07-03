@@ -1,7 +1,7 @@
 import { Locator, Page, expect } from '@playwright/test';
 
 export async function navigateTo(page: Page, ...labels: string[]) {
-  const nav = page.locator('.pf-v5-c-nav');
+  const nav = page.locator('.pf-v6-c-nav');
   await expect(nav).toBeVisible();
 
   let listItem: Locator | undefined = undefined;

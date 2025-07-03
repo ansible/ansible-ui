@@ -1,5 +1,6 @@
 import {
   Button,
+  Content,
   DataList,
   DataListAction,
   DataListCell,
@@ -13,13 +14,14 @@ import {
   DescriptionListTerm,
   Flex,
   Stack,
-  Text,
   Title,
 } from '@patternfly/react-core';
+import { SearchIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { IconWrapper } from '../components/IconWrapper';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableProps } from './PageTable';
 import {
   ITableColumn,
@@ -27,9 +29,7 @@ import {
   ITableColumnTypeLabels,
   TableColumnCell,
 } from './PageTableColumn';
-import { SearchIcon } from '@patternfly/react-icons';
 import { PageTableEmptyState } from './PageTableEmptyState';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export type PageTableListProps<T extends object> = PageTableProps<T>;
 
@@ -73,9 +73,7 @@ export function PageTableList<T extends object>(props: PageTableListProps<T>) {
           </Button>
         </PageTableEmptyState>
       ) : (
-        <DataList aria-label="TODO" style={{ marginTop: -1, maxWidth: '100%', overflow: 'hidden' }}>
-          {pageItems?.map(columnsToDataList)}
-        </DataList>
+        <DataList aria-label="TODO">{pageItems?.map(columnsToDataList)}</DataList>
       )}
     </>
   );
@@ -201,14 +199,14 @@ export function useColumnsToDataList<T extends object>(
                             </span>
                           </Title>
                           {subtitleColumn ? (
-                            <Text component="small" style={{ opacity: 0.7 }}>
+                            <Content component="small" style={{ opacity: 0.7 }}>
                               <TableColumnCell column={subtitleColumn} item={item} />
-                            </Text>
+                            </Content>
                           ) : (
                             defaultCardSubtitle && (
-                              <Text component="small" style={{ opacity: 0.7 }}>
+                              <Content component="small" style={{ opacity: 0.7 }}>
                                 {defaultCardSubtitle}
-                              </Text>
+                              </Content>
                             )
                           )}
                         </Stack>
@@ -304,7 +302,6 @@ export function useColumnsToDataList<T extends object>(
                 aria-labelledby="check-action-item1 check-action-action1"
                 id="check-action-action1"
                 aria-label="Actions"
-                isPlainButtonAction
                 style={{ whiteSpace: 'nowrap' }}
                 data-cy={'data-list-action'}
               >

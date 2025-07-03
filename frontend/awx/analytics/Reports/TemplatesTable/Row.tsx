@@ -8,8 +8,8 @@ import {
 } from '@patternfly/react-core';
 import { Td, Tr } from '@patternfly/react-table';
 import {
-  global_disabled_color_200 as globalDisabledColor200,
-  global_success_color_200 as globalSuccessColor200,
+  t_global_text_color_disabled as globalTextColorDisabled,
+  t_global_text_color_status_success_default as globalTextColorSuccess,
 } from '@patternfly/react-tokens';
 import { FunctionComponent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -89,18 +89,13 @@ export const Row: FunctionComponent<Props> = ({ template, readOnly = true, varia
         <Td
           data-cy={'savings'}
           style={{
-            color: template.enabled ? globalSuccessColor200.value : globalDisabledColor200.value,
+            color: template.enabled ? globalTextColorSuccess.value : globalTextColorDisabled.value,
           }}
         >
           {currencyFormatter(parseInt(template.monetary_gain.toString()) || 0)}
         </Td>
         <Td>
-          <Switch
-            label={t('Show')}
-            labelOff={t('Hide')}
-            isChecked={!!template.enabled}
-            isDisabled={readOnly}
-          />
+          <Switch label={t('Show')} isChecked={!!template.enabled} isDisabled={readOnly} />
         </Td>
       </Tr>
       <Tr isExpanded={isExpanded}>

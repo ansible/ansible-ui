@@ -18,7 +18,7 @@ function getTooltip<T extends object>(
   }
 
   if (iconOnly) {
-    return isChecked ? action.label : (action.labelOff ?? action.label);
+    return isChecked ? action.label : undefined;
   }
 
   return undefined;
@@ -48,11 +48,6 @@ export function PageActionSwitch<T extends object>(props: {
     label = undefined;
   }
 
-  let labelOff: string | undefined = action.labelOff;
-  if (iconOnly && action.showPinnedLabel !== true) {
-    labelOff = undefined;
-  }
-
   return (
     <Wrapper>
       <div
@@ -64,7 +59,6 @@ export function PageActionSwitch<T extends object>(props: {
             id={id}
             aria-label={action.ariaLabel(isChecked)}
             label={label}
-            labelOff={labelOff}
             isChecked={isChecked}
             hasCheckIcon={true}
             isDisabled={isDisabled ? true : false}

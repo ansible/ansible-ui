@@ -33,7 +33,9 @@ describe('EDA team: Add roles', () => {
   it('should validate that a resource type is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.clickButton(/^Next$/);
-    cy.contains('Resource type is required.').should('be.visible');
+    cy.get('.pf-v6-c-helper-text__item-text')
+      .should('be.visible')
+      .and('contain.text', 'Resource type is required.');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
     cy.contains('Project').click();
@@ -54,7 +56,7 @@ describe('EDA team: Add roles', () => {
       /^Choose the resources that will be receiving new roles. You'll be able to select the roles to apply in the next step. Note that the resources chosen here will receive all roles chosen in the next step.$/
     );
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one resource.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one resource.');
     cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
@@ -69,7 +71,7 @@ describe('EDA team: Add roles', () => {
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected projects.$/);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one role.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
     cy.selectTableRowByCheckbox('name', 'Project Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);

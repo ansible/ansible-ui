@@ -17,7 +17,7 @@ describe.skip('Mesh Visualizer', () => {
       { fixture: 'instance_groups.json' }
     ).as('getInstanceGroups');
     cy.intercept(
-      { method: 'PATCH', url: `api/v2/instances/1/` },
+      { method: 'PATCH', url: awxAPI`/instances/1/` },
       { fixture: 'instance_without_install_bundle.json' }
     ).as('editInstance');
   });
@@ -68,8 +68,8 @@ describe.skip('Mesh Visualizer', () => {
           .its('response.body')
           .then((instance: Instance) => {
             if (instance.enabled) {
-              cy.get('.pf-v5-c-slider__thumb').click({ multiple: true, force: true });
-              cy.get('.pf-v5-c-slider__thumb').type('{rightarrow}');
+              cy.get('.pf-v6-c-slider__thumb').click({ multiple: true, force: true });
+              cy.get('.pf-v6-c-slider__thumb').type('{rightarrow}');
               cy.wait('@editInstance')
                 .its('response')
                 .then((res) => {
@@ -98,7 +98,7 @@ describe.skip('Mesh Visualizer', () => {
           .its('response.body')
           .then((instance: Instance) => {
             if (instance.enabled) {
-              cy.get('.pf-v5-c-slider__thumb').should('not.exist');
+              cy.get('.pf-v6-c-slider__thumb').should('not.exist');
             }
           });
         cy.get('button[aria-label="Close"]').click();

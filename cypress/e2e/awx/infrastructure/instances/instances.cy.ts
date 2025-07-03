@@ -87,7 +87,7 @@ describe('Instances K8S', () => {
           expect(body.peers_from_control_nodes).to.eql(true);
           cy.getByDataCy('actions-dropdown').click();
           cy.getByDataCy('remove-instance').click();
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
             cy.get('header').contains('Permanently remove instances');
             cy.get('button')
               .contains('Remove instance')
@@ -168,7 +168,7 @@ describe('Instances K8S', () => {
       cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);
       cy.getByDataCy('actions-dropdown').click();
       cy.getByDataCy('remove-instance').click();
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
         cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
@@ -198,7 +198,7 @@ describe('Instances K8S', () => {
             .should('not.have.attr', 'aria-disabled', 'false')
             .click();
         });
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
         cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
@@ -230,7 +230,7 @@ describe('Instances K8S', () => {
       cy.selectTableRow(arrayOfElementText[4]);
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="remove-instance"] button').click();
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
         cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
@@ -267,7 +267,7 @@ describe('Instances K8S', () => {
         cy.get('[data-cy="run-health-check"] button').should('not.have.attr', 'aria-disabled');
         cy.get('[data-cy="run-health-check"] button').click();
         cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           cy.get('header').contains('Run health checks on these instances');
           cy.get('button')
             .contains('Run health check')
@@ -355,7 +355,7 @@ describe('Instances K8S', () => {
       cy.getByDataCy('instances-peers-tab').click();
       cy.url().should('include', `/infrastructure/instances/${instance.id}/peers`);
       cy.getByDataCy('associate-peers').click();
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Select peer addresses');
         cy.get('button').contains('Associate peers').should('have.attr', 'aria-disabled', 'true');
         cy.filterTableBySingleText(instanceToAssociate.hostname, true);
@@ -388,7 +388,7 @@ describe('Instances K8S', () => {
       });
       cy.clickToolbarKebabAction('disassociate-peers');
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('disassociatePeer');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Disassociate peers');
         cy.get('button')
           .contains('Disassociate peers')

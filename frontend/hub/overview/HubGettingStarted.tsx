@@ -4,7 +4,7 @@ import {
   PageDashboardGettingStartedStep,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
-import { Text } from '@patternfly/react-core';
+import { Content } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink } from '../common/ExternalLink';
@@ -45,11 +45,11 @@ export function HubGettingStartedCard(props: {
 
   return (
     <PageDashboardGettingStarted steps={steps}>
-      <Text>
+      <Content component="p">
         To learn how to get started, view the{' '}
         <ExternalLink href="https://docs.ansible.com">documentation</ExternalLink>, or follow the
         steps below.
-      </Text>
+      </Content>
     </PageDashboardGettingStarted>
   );
 }

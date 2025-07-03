@@ -26,7 +26,7 @@ describe('TemplateSurvey', () => {
 
     it('Survey toggle should be disabled when survey_enabled is false', () => {
       cy.mount(<TemplateSurvey resourceType="job_templates" />);
-      cy.contains('label', 'Survey disabled');
+      cy.get('[data-cy="survey-switch"]').should('not.be.checked');
     });
 
     it('Survey toggle should be enabled when survey_enabled is true', () => {
@@ -79,7 +79,7 @@ describe('TemplateSurvey', () => {
           cy.getByDataCy('actions-dropdown').click();
           cy.document()
             .its('body')
-            .find('.pf-v5-c-menu__content ul[role="menu"]')
+            .find('.pf-v6-c-menu__content ul[role="menu"]')
             .within(() => {
               cy.get(`[data-cy="delete-survey-question"] button`).should(
                 'have.attr',
