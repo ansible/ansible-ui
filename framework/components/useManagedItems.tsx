@@ -1,4 +1,5 @@
-import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
+import { Button, Divider } from '@patternfly/react-core';
+import { Modal, ModalVariant, ModalHeader, ModalBody, ModalFooter } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../PageDialogs/PageDialog';
@@ -181,21 +182,18 @@ export function ManageItemsModal<ItemT extends object>(
 
   return (
     <Modal
-      title={title}
       aria-label={title}
       ouiaId={title}
-      description={<div style={{ marginBottom: 16 }}>{description}</div>}
       variant={props.variant ?? ModalVariant.medium}
       isOpen
       onClose={onClose}
-      actions={[
-        <Button key="apply" variant="primary" onClick={onApply}>{t`Apply`}</Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>{t`Cancel`}</Button>,
-      ]}
-      hasNoBodyWrapper
     >
+      <ModalHeader
+        title={title}
+        description={<div style={{ marginBottom: 16 }}>{description}</div>}
+      />
       <Divider />
-      <ModalBoxBody style={{ padding: 0 }}>
+      <ModalBody style={{ padding: 0 }}>
         <ReorderItems<ItemT>
           keyFn={keyFn}
           items={items}
@@ -210,8 +208,12 @@ export function ManageItemsModal<ItemT extends object>(
           hideColumnHeaders={props.hideColumnHeaders}
           isSelectableWithCheckbox={props.hideSelection !== true}
         />
-      </ModalBoxBody>
+      </ModalBody>
       <Divider />
+      <ModalFooter>
+        <Button key="apply" variant="primary" onClick={onApply}>{t`Apply`}</Button>
+        <Button key="cancel" variant="link" onClick={onClose}>{t`Cancel`}</Button>
+      </ModalFooter>
     </Modal>
   );
 }

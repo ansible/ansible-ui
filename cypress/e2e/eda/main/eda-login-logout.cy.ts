@@ -26,7 +26,7 @@ describe('Check if the build includes EDA', () => {
           cy.get('#pf-login-username-id').type(edaUser.username);
           cy.get('#pf-login-password-id').type(Cypress.env('EDA_PASSWORD') as string);
           cy.clickButton('Log in');
-          cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
+          cy.get('.pf-v6-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
         }
       });
     });
@@ -36,7 +36,7 @@ describe('Check if the build includes EDA', () => {
       cy.createEdaUser({ password }).then((user) => {
         cy.edaLogout();
         cy.edaLogin(user.username, password);
-        cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', user.username);
+        cy.get('.pf-v6-c-dropdown__toggle').eq(1).should('contain', user.username);
         cy.edaLogout();
         cy.edaLogin();
         cy.deleteEdaUser(user);

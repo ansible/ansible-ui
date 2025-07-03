@@ -61,7 +61,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.contains('There are currently no instances added').should('be.visible');
     cy.contains('Please associate an instance by using the button below.').should('be.visible');
     cy.getByDataCy('associate-instance').click();
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Select instances');
       cy.get('button').contains('Confirm').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
@@ -130,7 +130,7 @@ describe('Instance Groups: Instances Tab', () => {
         'POST',
         awxAPI`/instance_groups/${instanceGroupDisassociate.id.toString()}/instances/`
       ).as('disassociateInstance');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Disassociate instance from instance group');
         cy.get('button')
           .contains('Disassociate instances')
@@ -174,7 +174,7 @@ describe('Instance Groups: Instances Tab', () => {
       cy.getByDataCy('run-health-check').click();
     });
     cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Run health checks on these instances');
       cy.get('button').contains('Run health check').should('have.attr', 'aria-disabled', 'true');
       cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);

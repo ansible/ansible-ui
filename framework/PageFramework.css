@@ -1,133 +1,40 @@
-#app {
-  min-block-size: 100dvh;
-  overflow: hidden;
+/* This is used to fix the tables borders disappearing on sticky columns */
+table tbody tr td {
+  border-bottom: thin solid var(--pf-t--global--border--color--default);
 }
 
-.pf-v5-c-page__main {
-  overflow: hidden;
+/* This is used to remove the border on the expanded row */
+table tbody tr td.expanded {
+  border-bottom: unset;
 }
-
-.border-top {
-  border-top: thin solid #00000028;
-}
-:root:where(.pf-v5-theme-dark) .border-top {
-  border-top: thin solid #ffffff28;
-}
-
-.border-bottom {
-  border-bottom: thin solid #00000028;
-}
-:root:where(.pf-v5-theme-dark) .border-bottom {
-  border-bottom: thin solid #ffffff28;
-}
-
-.border-left {
-  border-left: thin solid #00000028;
-}
-:root:where(.pf-v5-theme-dark) .border-left {
-  border-left: thin solid #ffffff28;
-}
-
-.border-right {
-  border-right: thin solid #00000028;
-}
-:root:where(.pf-v5-theme-dark) .border-right {
-  border-right: thin solid #ffffff28;
-}
-
-.border {
-  border: thin solid #00000028;
-}
-:root:where(.pf-v5-theme-dark) .border {
-  border: thin solid #ffffff28;
-}
-
-:root:where(.pf-v5-theme-dark) .bg-lighten {
-  background-image: linear-gradient(#ffffff08, #ffffff08) !important;
-}
-
-:root:where(.pf-v5-theme-dark) .bg-lighten-2 {
-  background-image: linear-gradient(#ffffff0f, #ffffff0f) !important;
-}
-
-tr.selected {
-  background: linear-gradient(#0088ff0a, #0088ff0a) !important;
-}
-
-:root:where(.pf-v5-theme-dark) tr.selected {
-  background: linear-gradient(#0088ff0a, #0088ff0a) !important;
-}
-
-tr:hover {
-  background-image: linear-gradient(#00000004, #00000004) !important;
-}
-
-:root:where(.pf-v5-theme-dark) tr:hover {
-  background-image: linear-gradient(#ffffff04, #ffffff04) !important;
-}
-
-tr.selected:hover {
-  background: linear-gradient(#0044aa0b, #0044aa0b) !important;
-}
-
-:root:where(.pf-v5-theme-dark) tr.selected:hover {
-  background: linear-gradient(#44ccff0b, #44ccff0b) !important;
-}
-
-/* Leaving these here until until we make sure the PF5 upgrade has handled these
-
-.pf-v5-c-toolbar .pf-v5-c-toolbar__content {
-  flex-wrap: wrap;
-  row-gap: 8px;
-}
-
-*/
 
 /* PF labels do not wrap the addition controls cleanly, so we need to override the default behavior */
-.pf-v5-c-form__group-label {
+.pf-v6-c-form__group-label {
   flex-wrap: wrap;
   align-items: center;
 }
-.pf-v5-c-form__group-label.pf-m-info {
+.pf-v6-c-form__group-label.pf-m-info {
   align-items: center !important;
   justify-content: end;
   row-gap: 8px;
 }
-.pf-v5-c-form__group-label-main {
+.pf-v6-c-form__group-label-main {
   flex-grow: 1;
 }
-.pf-v5-c-form__group-label-info {
+.pf-v6-c-form__group-label-info {
   margin-inline-start: 0 !important;
 }
 
 /** PF Button Icons are too close to the button text */
-.pf-v5-c-button__icon.pf-m-start {
+.pf-v6-c-button__icon.pf-m-start {
   margin-inline-end: 8px;
 }
 
 /** PF Button Icons are not spaced correctly in the dropdown text */
-.pf-v5-c-dropdown__toggle-image {
+.pf-v6-c-dropdown__toggle-image {
   margin-inline-start: 8px;
 }
 
-:root:where(.pf-v5-theme-dark) .pf-topology-content {
+:root:where(.pf-v6-theme-dark) .pf-topology-content {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
-}
-
-.pf-v5-c-tabs.pf-m-box .pf-v5-c-tabs__list .pf-v5-c-tabs__item:last-child {
-  /* padding: 10px; */
-  border-right: thin solid var(--pf-v5-global--BorderColor--100);
-}
-
-.pf-v5-c-tabs.pf-m-box .pf-v5-c-tabs__list .pf-v5-c-tabs__item:last-child.pf-m-current {
-  /* padding: 10px; */
-  border-right: unset;
-}
-
-pre {
-  white-space: pre-wrap;
-}
-
-.pf-v5-c-truncate__start {
-  min-width: 32px !important;
 }

@@ -27,7 +27,7 @@ describe('If SaaS Build', () => {
           cy.get(`[data-cy="${resourceValues[1]}-column-cell"]`)
             .first()
             .within(() => {
-              cy.get('.pf-v5-c-truncate__start').should('contain', public_key);
+              cy.get('.pf-v6-c-truncate__start').should('contain', public_key);
             });
 
           cy.get(`[data-cy="${resourceValues[0]}-column-cell"]`)
@@ -48,7 +48,7 @@ describe('If SaaS Build', () => {
           cy.get(`[data-cy="${resourceValue}-column-cell"]`)
             .first()
             .within(() => {
-              cy.get('.pf-v5-c-truncate__start').should('contain', pubkey_fingerprint as string);
+              cy.get('.pf-v6-c-truncate__start').should('contain', pubkey_fingerprint as string);
             });
         });
     });

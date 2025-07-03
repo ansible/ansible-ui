@@ -228,11 +228,11 @@ describe('Credentials', () => {
       cy.getByDataCy('url').type('http://foo.com');
       cy.getByDataCy('client-id').type('foo');
       cy.getByDataCy('client-password').type('foo');
-      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test').click();
       cy.contains('Test external credential').should('be.visible');
       cy.getByDataCy('account-name').type('foo');
       cy.getByDataCy('system-name').type('foo');
-      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Run').click();
       cy.getByDataCy('alert-toaster')
         .should('be.visible')
         .and('contain', 'Something went wrong with the request to test this credential.')
@@ -253,11 +253,11 @@ describe('Credentials', () => {
       cy.getByDataCy('url').type('http://foo.com');
       cy.getByDataCy('client-id').type('foo');
       cy.getByDataCy('client-password').type('foo');
-      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test').click();
       cy.contains('Test external credential').should('be.visible');
       cy.getByDataCy('account-name').type('foo');
       cy.getByDataCy('system-name').type('foo');
-      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Run').click();
       cy.wait('@runTest');
       cy.getByDataCy('alert-toaster')
         .should('be.visible')
@@ -294,11 +294,11 @@ describe('Credentials', () => {
       cy.navigateTo('awx', 'credentials');
       cy.filterTableBySearch(credential.name);
       cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
-      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test').click();
       cy.contains('Test external credential').should('be.visible');
       cy.getByDataCy('account-name').type('foo');
       cy.getByDataCy('system-name').type('foo');
-      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Run').click();
       cy.getByDataCy('alert-toaster')
         .should('be.visible')
         .and('contain', 'Something went wrong with the request to test this credential.')
@@ -314,11 +314,11 @@ describe('Credentials', () => {
       cy.navigateTo('awx', 'credentials');
       cy.filterTableBySearch(credential.name);
       cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
-      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test').click();
       cy.contains('Test external credential').should('be.visible');
       cy.getByDataCy('account-name').type('foo');
       cy.getByDataCy('system-name').type('foo');
-      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Run').click();
       cy.wait('@runTest');
       cy.getByDataCy('alert-toaster')
         .should('be.visible')

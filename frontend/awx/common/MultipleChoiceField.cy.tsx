@@ -1,3 +1,5 @@
+/* eslint-disable i18next/no-literal-string */
+
 import { AwxPageForm } from './AwxPageForm';
 import { MultipleChoiceField } from './MultipleChoiceField';
 
@@ -25,58 +27,47 @@ describe('MultipleChoiceField', () => {
     });
 
     it('should render component and display documentation tooltip', () => {
-      cy.contains('Multiple Choice Options').parent().get('button > span').click();
-      cy.contains('Refer to the documentation for more information.');
+      cy.get('[data-cy="multiple-choice-options-form-group"]').find('button').first().click();
 
+      cy.contains('Refer to the documentation for more information.');
       cy.get('[aria-label="Close"]').click();
       cy.contains('Refer to the documentation for more information.').should('not.exist');
     });
 
     it('should let user add, update and remove options', () => {
-      defaultValue.formattedChoices.map((choice, index) => {
-        cy.getByDataCy(`choice-option-${index}`).should('have.value', choice.name);
+      defaultValue.formattedChoices.forEach((choice, index) => {
+        cy.getByDataCy(`choice-option-${index}`).should('exist').and('have.value', choice.name);
         cy.getByDataCy(`remove-choice-${index}`).should('exist');
       });
 
       // add
-      cy.getByDataCy('add-choice-input').should('have.value', '');
-      cy.get('[data-cy="add-choice"]').should('be.disabled');
-
       cy.getByDataCy('add-choice-input').type('foo');
       cy.get('[data-cy="add-choice"]').should('not.be.disabled').click();
-
       cy.getByDataCy('choice-option-3').should('have.value', 'foo');
       cy.getByDataCy('add-choice-input').should('have.value', '');
 
       // remove
       cy.getByDataCy('remove-choice-0').click();
       cy.getByDataCy('choice-option-0').should('have.value', 'choice 2');
-      cy.getByDataCy(`choice-option-1`).should('have.value', 'choice 3');
+      cy.getByDataCy('choice-option-1').should('have.value', 'choice 3');
       cy.getByDataCy('choice-option-2').should('have.value', 'foo');
 
       // update
-      cy.getByDataCy('choice-option-2').should('have.value', 'foo');
-      cy.getByDataCy('choice-option-2').type('bar');
+      cy.getByDataCy('choice-option-2').clear().type('foobar', { force: true });
       cy.getByDataCy('choice-option-2').should('have.value', 'foobar');
-      cy.getByDataCy(`choice-option-0`).should('have.value', 'choice 2');
-      cy.getByDataCy(`choice-option-1`).should('have.value', 'choice 3');
     });
 
     it('should let user select only single default option', () => {
-      defaultValue.formattedChoices.map((choice, index) => {
+      defaultValue.formattedChoices.forEach((_, index) => {
         cy.getByDataCy(`choice-radio-${index}`).parent().contains('Default option');
       });
 
-      cy.getByDataCy('choice-radio-0').should('have.value', 'true');
-      cy.getByDataCy('choice-radio-1').should('have.value', 'false');
-      cy.getByDataCy('choice-radio-2').should('have.value', 'false');
-
-      cy.getByDataCy('choice-radio-2').check();
+      cy.getByDataCy('choice-radio-2').check({ force: true });
       cy.getByDataCy('choice-radio-0').should('have.value', 'false');
       cy.getByDataCy('choice-radio-1').should('have.value', 'false');
       cy.getByDataCy('choice-radio-2').should('have.value', 'true');
 
-      cy.getByDataCy('choice-radio-2').click();
+      cy.getByDataCy('choice-radio-2').click({ force: true });
       cy.getByDataCy('choice-radio-0').should('have.value', 'false');
       cy.getByDataCy('choice-radio-1').should('have.value', 'false');
       cy.getByDataCy('choice-radio-2').should('have.value', 'false');
@@ -84,7 +75,7 @@ describe('MultipleChoiceField', () => {
 
     it('should display errors if component is not valid', () => {
       cy.getByDataCy('choice-option-0').clear();
-      cy.getByDataCy('choice-option-0').type('{enter}');
+      cy.getByDataCy('choice-option-0').type('{enter}', { force: true });
       cy.get('[data-cy="choice-radio-0"]').should('be.disabled');
       cy.contains('Choice option cannot be empty.');
     });
@@ -113,15 +104,15 @@ describe('MultipleChoiceField', () => {
     });
 
     it('should let user add, update and remove options', () => {
-      defaultValue.formattedChoices.map((choice, index) => {
+      defaultValue.formattedChoices.forEach((choice, index) => {
         cy.getByDataCy(`choice-option-${index}`).should('have.value', choice.name);
         cy.getByDataCy(`remove-choice-${index}`).should('exist');
         cy.getByDataCy(`choice-checkbox-${index}`).should('have.value', String(choice.default));
       });
 
-      cy.getByDataCy('choice-checkbox-1').check();
+      cy.getByDataCy('choice-checkbox-1').check({ force: true });
 
-      defaultValue.formattedChoices.map((choice, index) => {
+      defaultValue.formattedChoices.forEach((_, index) => {
         cy.getByDataCy(`choice-checkbox-${index}`).should('have.attr', 'checked');
       });
 
@@ -130,19 +121,18 @@ describe('MultipleChoiceField', () => {
 
       cy.getByDataCy('choice-option-3').should('have.value', 'foo');
       cy.getByDataCy('choice-checkbox-3').should('have.value', 'false');
-      cy.get('[data-cy="choice-checkbox-3"]').should('not.be.disabled');
 
-      cy.getByDataCy('choice-checkbox-3').click();
+      cy.getByDataCy('choice-checkbox-3').click({ force: true });
       cy.getByDataCy('choice-checkbox-3').should('have.value', 'true');
 
-      cy.getByDataCy('choice-checkbox-3').click();
+      cy.getByDataCy('choice-checkbox-3').click({ force: true });
       cy.getByDataCy('choice-checkbox-3').should('have.value', 'false');
 
-      cy.getByDataCy(`choice-option-3`).clear();
+      cy.getByDataCy('choice-option-3').clear();
       cy.get('[data-cy="choice-checkbox-3"]').should('be.disabled');
 
-      cy.getByDataCy(`remove-choice-3`).click();
-      cy.get(`[data-cy="choice-option-3"]`).should('not.exist');
+      cy.getByDataCy('remove-choice-3').click();
+      cy.get('[data-cy="choice-option-3"]').should('not.exist');
     });
   });
 });

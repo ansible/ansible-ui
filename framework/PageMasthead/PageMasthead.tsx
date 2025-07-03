@@ -2,6 +2,7 @@ import {
   Masthead,
   MastheadBrand,
   MastheadContent,
+  MastheadLogo,
   MastheadMain,
   MastheadToggle,
   PageToggleButton,
@@ -12,26 +13,26 @@ import { BarsIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { usePageNavSideBar } from '../PageNavigation/PageNavSidebar';
-import { useBreakpoint } from '../components/useBreakPoint';
 
 export function PageMasthead(props: { brand: ReactNode; children?: ReactNode }) {
-  const isSmallOrLarger = useBreakpoint('sm');
   return (
-    <Masthead
-      display={{ default: 'inline' }}
-      style={{
-        borderBottom: '1px solid #fff4',
-        paddingRight: 0,
-      }}
-    >
-      <PageMastheadToggle />
-      {isSmallOrLarger && (
-        <MastheadMain>
-          <MastheadBrand component={(props) => <Link {...props} to="/" />}>
+    <Masthead display={{ default: 'inline' }}>
+      <MastheadMain>
+        <PageMastheadToggle />
+        <MastheadBrand>
+          <MastheadLogo
+            component={(props: object) => (
+              <Link
+                {...props}
+                to="/"
+                style={{ textDecoration: 'none', color: 'light-dark(black, white)' }}
+              />
+            )}
+          >
             {props.brand}
-          </MastheadBrand>
-        </MastheadMain>
-      )}
+          </MastheadLogo>
+        </MastheadBrand>
+      </MastheadMain>
       <MastheadContent style={{ marginLeft: 0, minHeight: 0 }}>
         <Toolbar
           id="toolbar"

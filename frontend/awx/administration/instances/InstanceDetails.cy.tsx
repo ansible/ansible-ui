@@ -78,8 +78,8 @@ describe('Instance Details', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled');
-        cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled', 'true');
+        cy.get('.pf-v6-c-slider__thumb').should('have.attr', 'aria-disabled');
+        cy.get('.pf-v6-c-slider__thumb').should('have.attr', 'aria-disabled', 'true');
       });
   });
 
@@ -88,7 +88,7 @@ describe('Instance Details', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('.pf-v5-c-switch__input').should('be.disabled');
+        cy.get('.pf-v6-c-switch__input').should('be.disabled');
       });
   });
 
@@ -97,7 +97,7 @@ describe('Instance Details', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('.pf-v5-c-switch__input').should('not.be.disabled');
+        cy.get('.pf-v6-c-switch__input').should('not.be.disabled');
       });
   });
 });

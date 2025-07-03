@@ -61,10 +61,10 @@ export function PageWizardBody({
             style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}
           >
             <PageSection
+              hasBodyWrapper={false}
               aria-label={t('Wizard step content')}
               hasOverflowScroll
               isFilled
-              variant="light"
             >
               {activeStep?.element}
             </PageSection>

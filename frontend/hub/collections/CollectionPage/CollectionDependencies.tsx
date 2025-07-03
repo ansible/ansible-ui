@@ -62,7 +62,7 @@ export function CollectionDependencies() {
 
   return (
     <Scrollable>
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         <Title headingLevel="h2">{t('Dependencies')}</Title>
         {t`This collection requires the following collections for use`}
         <br></br>

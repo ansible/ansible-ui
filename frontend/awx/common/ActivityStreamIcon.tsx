@@ -16,6 +16,7 @@ export const ActivityStreamIcon: React.FC<ActivityStreamIconProps> = ({
   const navigate = useNavigate();
   return (
     <Button
+      icon={<HistoryIcon />}
       variant="link"
       style={{
         padding: 0,
@@ -32,8 +33,6 @@ export const ActivityStreamIcon: React.FC<ActivityStreamIconProps> = ({
           })
         )
       }
-    >
-      <HistoryIcon />
-    </Button>
+    ></Button>
   );
 };

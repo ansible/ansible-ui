@@ -1,7 +1,7 @@
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { ReorderItems } from '@ansible/ansible-ui-framework/components/ReorderItems';
 import { Credential } from '@ansible/awx-ui/interfaces/Credential';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
 
@@ -12,14 +12,14 @@ export function OrganizationGalaxyCredentialsOrderStep() {
 
   return (
     <div>
-      <TextContent style={{ marginBottom: 25 }}>
-        <Text component={TextVariants.h2}>{t('Manage galaxy credential order')}</Text>
-        <Text>
+      <Content style={{ marginBottom: 25 }}>
+        <Content component={ContentVariants.h2}>{t('Manage galaxy credential order')}</Content>
+        <Content component="p">
           {t(
             'The order of these credentials determines the priority for searching and synchronizing content. Use the draggable icon on the left to re-order your galaxy credentials.'
           )}
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <ReorderItems<Credential>
         items={galaxyCredentials}
         setItems={(items) => {

@@ -1,13 +1,15 @@
 import {
+  Label,
+  LabelGroup,
   Button,
-  Chip,
-  ChipGroup,
-  Modal,
-  ModalBoxBody,
-  ModalVariant,
   Skeleton,
   Split,
   SplitItem,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -118,44 +120,23 @@ export function SelectDialog<
   const { t } = useTranslation();
   return (
     <Modal
-      title={title}
       aria-label={title}
       ouiaId={`${title}-dialog`}
       isOpen={open}
       onClose={onClose}
       variant={ModalVariant.medium}
       tabIndex={0}
-      actions={[
-        <Button
-          key="confirm"
-          variant="primary"
-          onClick={() => {
-            if (!isMultiple && view.selectedItems.length > 0) {
-              onSelect(view.selectedItems[0] as T[] & T);
-            } else if (isMultiple) {
-              onSelect(view.selectedItems as T[] & T);
-            }
-            onClose();
-          }}
-          isAriaDisabled={view.selectedItems.length === 0}
-        >
-          {confirm}
-        </Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>
-          {cancel}
-        </Button>,
-      ]}
-      hasNoBodyWrapper
     >
-      <ModalBoxBody style={{ overflow: 'hidden' }}>
+      <ModalHeader title={title} />
+      <ModalBody style={{ overflow: 'hidden' }}>
         <Split hasGutter>
           <SplitItem style={{ fontWeight: 'bold' }}>{selected}</SplitItem>
           {view.selectedItems.length > 0 ? (
-            <ChipGroup>
+            <LabelGroup>
               {view.selectedItems.map((item, i) => {
                 if (tableColumns && tableColumns.length > 0) {
                   return (
-                    <Chip key={i} onClick={() => view.unselectItem(item)}>
+                    <Label variant="outline" key={i} onClose={() => view.unselectItem(item)}>
                       <TableColumnCell
                         item={item}
                         column={
@@ -164,19 +145,19 @@ export function SelectDialog<
                           ) ?? tableColumns[0]
                         }
                       />
-                    </Chip>
+                    </Label>
                   );
                 }
                 return <></>;
               })}
-            </ChipGroup>
+            </LabelGroup>
           ) : (
             <SplitItem
               style={{ fontStyle: 'italic' }}
             >{t`None - Please make a selection below.`}</SplitItem>
           )}
         </Split>
-      </ModalBoxBody>
+      </ModalBody>
       <Collapse open={view.itemCount === undefined}>
         <Skeleton height="80px" />
       </Collapse>
@@ -204,6 +185,26 @@ export function SelectDialog<
           />
         </div>
       </Collapse>
+      <ModalFooter>
+        <Button
+          key="confirm"
+          variant="primary"
+          onClick={() => {
+            if (!isMultiple && view.selectedItems.length > 0) {
+              onSelect(view.selectedItems[0] as T[] & T);
+            } else if (isMultiple) {
+              onSelect(view.selectedItems as T[] & T);
+            }
+            onClose();
+          }}
+          isAriaDisabled={view.selectedItems.length === 0}
+        >
+          {confirm}
+        </Button>
+        <Button key="cancel" variant="link" onClick={onClose}>
+          {cancel}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

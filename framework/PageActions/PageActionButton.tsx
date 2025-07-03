@@ -1,6 +1,6 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
-import { ComponentClass, Fragment, FunctionComponent } from 'react';
-import { Link } from 'react-router';
+import { ComponentClass, Fragment, FunctionComponent, useCallback } from 'react';
+import { Link, LinkProps } from 'react-router';
 import { useID } from '../hooks/useID';
 import {
   IPageActionButton,
@@ -96,7 +96,8 @@ export function PageActionButton<T extends object>(props: {
   const to = getTo();
 
   const id = useID(action);
-  const content = iconOnly && Icon ? <Icon /> : action.label;
+  const content = iconOnly && Icon ? null : action.label;
+  const LinkComponent = useCallback((p: LinkProps) => <Link {...p} to={to ?? ''} />, [to]);
 
   return (
     <Wrapper>
@@ -125,9 +126,7 @@ export function PageActionButton<T extends object>(props: {
           }}
           aria-label={iconOnly ? action.label : ''}
           ouiaId={id}
-          component={
-            action.type === PageActionType.Link ? (p) => <Link {...p} to={to} /> : undefined
-          }
+          component={action.type === PageActionType.Link ? LinkComponent : undefined}
         >
           {content}
         </Button>

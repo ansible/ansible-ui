@@ -476,9 +476,9 @@ export function AutomationCalculatorInternal(props: {
 
   if (isLoading) {
     return (
-      <Scrollable borderTop borderBottom>
-        <PageSection>
-          <Card style={{ height: '100%' }} isFlat isRounded>
+      <Scrollable>
+        <PageSection hasBodyWrapper={false}>
+          <Card style={{ height: '100%' }}>
             <LoadingState />
           </Card>
         </PageSection>
@@ -490,9 +490,9 @@ export function AutomationCalculatorInternal(props: {
 
   return (
     <>
-      <Scrollable borderTop borderBottom>
-        <PageSection>
-          <Card isFlat isRounded>
+      <Scrollable>
+        <PageSection hasBodyWrapper={false}>
+          <Card>
             <CardBody>
               <Grid hasGutter>
                 <GridItem span={9}>{!isLoading && renderLeft()}</GridItem>

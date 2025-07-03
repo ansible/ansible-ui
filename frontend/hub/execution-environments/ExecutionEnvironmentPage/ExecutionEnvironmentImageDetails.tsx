@@ -79,7 +79,7 @@ export function ExecutionEnvironmentImageDetails() {
 
   return (
     <Scrollable>
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         {imageError || !image ? (
           <Trans>
             Manifest lists are not currently supported on this screen, please use the{' '}

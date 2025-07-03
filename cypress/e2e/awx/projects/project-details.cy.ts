@@ -214,7 +214,7 @@ describe('Projects', () => {
         .first()
         .scrollIntoView()
         .should('be.visible');
-      cy.getBy('[data-cy="edit-schedule"]').click();
+      cy.get('[data-cy="edit-schedule"]').click();
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')

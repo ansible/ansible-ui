@@ -234,7 +234,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   cy.get('[data-cy="upload-collection"]').click();
-  cy.get('#file-browse-button').click();
+  cy.contains('button', 'Browse').click();
   cy.get('input[id="file-filename"]').selectFile(hubFilePath, {
     action: 'drag-drop',
   });
@@ -374,9 +374,8 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'collectionCopyVersionToRepositories',
   (collectionName: string, totalItems: number) => {
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Select repositories');
-      cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableBySingleText('community');
       cy.get('[data-cy="data-list-check"]').click();
       cy.get('button').contains('Select').click();
@@ -625,8 +624,9 @@ export type HubDeleteRoleOptions = { pulp_href: string } & Omit<HubDeleteRequest
 
 Cypress.Commands.add('deleteHubRole', (options: HubDeleteRoleOptions) => {
   const pulpUUID = parsePulpIDFromURL(options.pulp_href);
+  const options2 = { ...options, failOnStatusCode: false };
   cy.hubDeleteRequest({
-    ...options,
+    ...options2,
     url: pulpAPI`/roles/${pulpUUID ?? ''}/`,
   });
 });

@@ -3,8 +3,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   EmptyStateVariant,
 } from '@patternfly/react-core';
 import React, { ComponentClass, ReactElement, ReactNode } from 'react';
@@ -21,9 +19,14 @@ export function EmptyStateCustom(props: {
 }) {
   const { title, description, icon, button, footNote, image, variant, style } = props;
   return (
-    <EmptyState variant={variant || EmptyStateVariant.full} style={style} isFullHeight>
-      {icon && <EmptyStateIcon icon={icon} />}
-      <EmptyStateHeader titleText={<>{title}</>} headingLevel="h4" data-cy="empty-state-title" />
+    <EmptyState
+      icon={icon}
+      headingLevel="h4"
+      titleText={<>{title}</>}
+      variant={variant || EmptyStateVariant.full}
+      style={style}
+      isFullHeight
+    >
       <EmptyStateBody data-cy={props.description}>{description}</EmptyStateBody>
       <EmptyStateFooter>
         {button && <EmptyStateActions>{button}</EmptyStateActions>}

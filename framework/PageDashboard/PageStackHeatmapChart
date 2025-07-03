@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Chart, ChartAxis, ChartBar, ChartLabel, ChartStack } from '@patternfly/react-charts'
+import { Chart, ChartAxis, ChartBar, ChartLabel, ChartStack } from '@patternfly/react-charts/victory'
 import { Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core'
 import { useMemo, useState } from 'react'
 import { ContainerSizeContext, SizeContainer } from './SizeContainer'

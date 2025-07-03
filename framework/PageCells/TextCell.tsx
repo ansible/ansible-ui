@@ -2,7 +2,7 @@ import { Flex, FlexItem, Tooltip } from '@patternfly/react-core';
 import { ReactElement, ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { IconWrapper } from '../components/IconWrapper';
-import { PFColor, getPatternflyColor } from '../components/pfcolors';
+import { PFColor } from '../components/pfcolors';
 
 export interface TextCellProps {
   icon?: ReactNode;
@@ -54,14 +54,10 @@ export function TextCell(props: Readonly<TextCellProps>) {
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
-                color: props.color ? getPatternflyColor(props.color) : undefined,
               }}
             >
               {!props.disableLinks && (props.to || props.onClick) ? (
                 <a
-                  style={{
-                    color: props.color ? getPatternflyColor(props.color) : undefined,
-                  }}
                   href={props.to}
                   onClick={(e) => {
                     e.preventDefault();

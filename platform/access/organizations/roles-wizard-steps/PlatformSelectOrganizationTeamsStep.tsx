@@ -2,7 +2,7 @@ import { ITableColumn, IToolbarFilter, LoadingPage, TextCell } from '@ansible/an
 import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { useNameToolbarFilter } from '@ansible/awx-ui/common/awx-toolbar-filters';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -46,12 +46,12 @@ export function PlatformSelectOrganizationTeamsStep() {
 
   return (
     <>
-      <TextContent>
-        <Text component={TextVariants.h1}>{t('Select team(s)')}</Text>
-        <Text component={TextVariants.p} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+      <Content>
+        <Content component={ContentVariants.h1}>{t('Select team(s)')}</Content>
+        <Content component={ContentVariants.p} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           {t('Select the teams that you want to apply new roles to.')}
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <PageMultiSelectList
         view={view}
         tableColumns={tableColumns}

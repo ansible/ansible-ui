@@ -9,8 +9,6 @@ export function PlatformEdaRoles() {
       <Alert
         title={t('These roles only apply to resources in the context of automation decisions.')}
         variant="info"
-        style={{ borderTop: 0 }}
-        className="border-bottom"
         isInline
       />
       <EdaRolesTable />

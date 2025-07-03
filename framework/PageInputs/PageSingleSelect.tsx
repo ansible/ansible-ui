@@ -225,6 +225,11 @@ export function PageSingleSelect<
         </MenuToggle>
         {!props.isRequired && selectedLabel && (
           <Button
+            icon={
+              <Icon size="md" style={{ opacity: 0.7 }}>
+                <TimesIcon aria-hidden style={{ padding: 0, margin: 0 }} />
+              </Icon>
+            }
             variant="control"
             data-cy="reset"
             onClick={() => {
@@ -234,11 +239,7 @@ export function PageSingleSelect<
                 toggleRef.current?.focus();
               }
             }}
-          >
-            <Icon size="md" style={{ opacity: 0.7 }}>
-              <TimesIcon aria-hidden style={{ padding: 0, margin: 0 }} />
-            </Icon>
-          </Button>
+          ></Button>
         )}
       </Flex>
     </Tooltip>

@@ -265,22 +265,22 @@ describe('CredentialTypes.cy.ts', () => {
   it('Renders all rows', () => {
     cy.mount(<CredentialTypes />);
     cy.get(
-      '[data-cy="row-id-1"] > [data-cy="name-column-cell"] > .pf-v5-l-split > .pf-v5-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
+      '[data-cy="row-id-1"] > [data-cy="name-column-cell"] > .pf-v6-l-split > .pf-v6-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
     ).should('contain', 'Source Control');
     cy.get(
-      '[data-cy="row-id-2"] > [data-cy="name-column-cell"] > .pf-v5-l-split > .pf-v5-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
+      '[data-cy="row-id-2"] > [data-cy="name-column-cell"] > .pf-v6-l-split > .pf-v6-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
     ).should('contain', 'Container Registry');
     cy.get(
-      '[data-cy="row-id-3"] > [data-cy="name-column-cell"] > .pf-v5-l-split > .pf-v5-l-flex > [style="display: contents;"] >[style="max-width: 100%;"] > div'
+      '[data-cy="row-id-3"] > [data-cy="name-column-cell"] > .pf-v6-l-split > .pf-v6-l-flex > [style="display: contents;"] >[style="max-width: 100%;"] > div'
     ).should('contain', 'GPG Public Key');
     cy.get(
-      '[data-cy="row-id-4"] > [data-cy="name-column-cell"] > .pf-v5-l-split > .pf-v5-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
+      '[data-cy="row-id-4"] > [data-cy="name-column-cell"] > .pf-v6-l-split > .pf-v6-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
     ).should('contain', 'Red Hat Ansible Automation Platform');
     cy.get(
-      '[data-cy="row-id-5"] > [data-cy="name-column-cell"] > .pf-v5-l-split > .pf-v5-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
+      '[data-cy="row-id-5"] > [data-cy="name-column-cell"] > .pf-v6-l-split > .pf-v6-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
     ).should('contain', 'Vault');
     cy.get(
-      '[data-cy="row-id-6"] > [data-cy="name-column-cell"] > .pf-v5-l-split > .pf-v5-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
+      '[data-cy="row-id-6"] > [data-cy="name-column-cell"] > .pf-v6-l-split > .pf-v6-l-flex > [style="display: contents;"] > [style="max-width: 100%;"] > div'
     ).should('contain', 'Sample Type');
     cy.get('tbody').find('tr').should('have.length', 6);
     cy.contains(

@@ -29,7 +29,7 @@ describe('UserTokens', () => {
       path: '/users/:id/tokens',
       initialEntries: ['/users/20/tokens'],
     });
-    cy.get('div.pf-v5-c-alert').should('not.exist');
+    cy.get('div.pf-v6-c-alert').should('not.exist');
   });
 
   it('renders user tokens and passed in message when user id in URL matches active user', () => {
@@ -37,14 +37,14 @@ describe('UserTokens', () => {
       path: '/users/:id/tokens',
       initialEntries: ['/users/20/tokens'],
     });
-    cy.get('div.pf-v5-c-alert').within(() => {
+    cy.get('div.pf-v6-c-alert').within(() => {
       cy.contains('Automation Execution tokens');
     });
-    cy.get('div.pf-v5-c-toolbar').within(() => {
+    cy.get('div.pf-v6-c-toolbar').within(() => {
       cy.contains('Create token').should('be.visible');
       cy.contains('Sort').should('be.visible');
     });
-    cy.get('table.page-table').within(() => {
+    cy.get('table').within(() => {
       cy.contains('Application name').should('be.visible');
       cy.contains('Description').should('be.visible');
       cy.contains('Scope').should('be.visible');

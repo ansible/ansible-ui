@@ -20,8 +20,7 @@ import {
   ProgressStep,
   ProgressStepper,
   Stack,
-  Text,
-  TextContent,
+  Content,
   Title,
 } from '@patternfly/react-core';
 import { t } from 'i18next';
@@ -140,24 +139,24 @@ function SubscriptionStep() {
 
   return (
     <>
-      <TextContent>
-        <Text component="h1">{t('Welcome to Red Hat Ansible Automation Platform!')}</Text>
-        <Text component="p">
+      <Content>
+        <Content component="h1">{t('Welcome to Red Hat Ansible Automation Platform!')}</Content>
+        <Content component="p">
           {t('Please complete the steps below to activate your subscription.')}
-        </Text>
-        <Text component="p">
+        </Content>
+        <Content component="p">
           {t('If you do not have a subscription, you can visit Red Hat to obtain a ')}
           <ExternalLink href="https://www.ansible.com/license">
             {t('trial subscription')}
           </ExternalLink>
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <Divider />
-      <TextContent>
-        <Text component="p">
+      <Content>
+        <Content component="p">
           {t('Select your Ansible Automation Platform subscription to use.')}
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <PageFormToggleGroup<SubscriptionWizardData>
         name="subscriptionSelection"
         options={[
@@ -169,8 +168,8 @@ function SubscriptionStep() {
         watch="subscriptionSelection"
         hidden={(subscriptionSelection) => subscriptionSelection !== 'manifest'}
       >
-        <TextContent>
-          <Text component="p">
+        <Content>
+          <Content component="p">
             {t(
               'Upload a Red Hat Subscription Manifest containing your subscription. To generate your subscription manifest, go to '
             )}
@@ -178,8 +177,8 @@ function SubscriptionStep() {
               {t('subscription allocations')}
             </ExternalLink>
             {t(' on the Red Hat Customer Portal.')}
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
         <PageFormFileUpload
           name="subscriptionFile"
           label={t('Red Hat subscription manifest')}
@@ -193,13 +192,13 @@ function SubscriptionStep() {
         watch="subscriptionSelection"
         hidden={(subscriptionSelection) => subscriptionSelection !== 'username'}
       >
-        <TextContent>
-          <Text component="p">
+        <Content>
+          <Content component="p">
             {t(
               'Provide your Red Hat or Red Hat Satellite credentials below and you can choose from a list of your available subscriptions. The credentials you use will be stored for future use in retrieving renewal or expanded subscriptions.'
             )}
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
         <Alert
           variant="info"
           isInline
@@ -257,13 +256,13 @@ function LicenseAgreementStep() {
   const config = useAwxConfig();
   return (
     <>
-      <TextContent>
+      <Content>
         {config?.eula.split('\n').map((line, index) => (
-          <Text key={index} component="p">
+          <Content key={index} component="p">
             {line}
-          </Text>
+          </Content>
         ))}
-      </TextContent>
+      </Content>
       <PageFormCheckbox<SubscriptionWizardData>
         name="agree"
         label={t('I agree to the terms of the license agreement')}
@@ -276,11 +275,11 @@ function LicenseAgreementStep() {
 function LicenseReviewStep() {
   return (
     <Stack hasGutter>
-      <TextContent>
+      <Content>
         <Title headingLevel="h1" size="2xl">
           {t('Review')}
         </Title>
-      </TextContent>
+      </Content>
       <ProgressStepper isVertical>
         <ProgressStep variant="success">{t('Subscription')}</ProgressStep>
         <ProgressStep variant="success">{t('Agreement')}</ProgressStep>

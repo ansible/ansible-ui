@@ -135,7 +135,7 @@ describe('ProjectForm.cy.ts', () => {
         },
       }
     );
-    cy.intercept('PATCH', 'api/v2/projects/*', { statusCode: 201 }).as('editProject');
+    cy.intercept('PATCH', awxAPI`/projects/*`, { statusCode: 201 }).as('editProject');
     cy.mount(<EditProject />);
     cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
     cy.getByDataCy('name').should('have.value', 'Demo Project @ 10:44:51');

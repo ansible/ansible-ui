@@ -33,7 +33,7 @@ describe('Linking accounts - Controller', () => {
     cy.getByDataCy('Link your Automation Hub account').should('be.visible');
     cy.getByDataCy('hub-username').type(hubUsername);
     cy.getByDataCy('hub-password').type(hubPassword);
-    cy.get('[class="pf-v5-c-form"]').within(() => {
+    cy.get('[class="pf-v6-c-form"]').within(() => {
       cy.contains('div', 'Link your Automation Hub account')
         .parent()
         .parent()

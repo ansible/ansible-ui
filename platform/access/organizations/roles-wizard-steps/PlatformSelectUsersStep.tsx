@@ -1,7 +1,7 @@
 import { ITableColumn, LoadingPage, TextCell } from '@ansible/ansible-ui-framework';
 import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -60,12 +60,12 @@ export function PlatformSelectUsersStep() {
 
   return (
     <>
-      <TextContent>
-        <Text component={TextVariants.h1}>{t('Select user(s)')}</Text>
-        <Text component={TextVariants.p} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+      <Content>
+        <Content component={ContentVariants.h1}>{t('Select user(s)')}</Content>
+        <Content component={ContentVariants.p} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           {t('Select the users that you want to apply new roles to.')}
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <PageMultiSelectList
         view={view}
         tableColumns={tableColumns}

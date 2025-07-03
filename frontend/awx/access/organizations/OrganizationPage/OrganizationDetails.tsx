@@ -73,8 +73,9 @@ export function OrganizationDetails() {
         >
           <LabelGroup>
             {instanceGroups.map((ig) => (
-              <Label color="blue" key={ig.id}>
+              <Label color="blue" key={ig.id} isClickable>
                 <Link
+                  className="pf-m-clickable pf-v6-c-label__content"
                   to={getPageUrl(AwxRoute.InstanceGroupDetails, {
                     params: {
                       id: ig.id,

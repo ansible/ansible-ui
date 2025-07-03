@@ -18,9 +18,13 @@ export function HelperText(props: {
       headerContent={props.header}
       hasAutoWidth={props.hasAutoWidth}
     >
-      <Button iconPosition={'left'} variant={'plain'} className={'helper'} style={{ padding: '0' }}>
-        <OutlinedQuestionCircleIcon />
-      </Button>
+      <Button
+        icon={<OutlinedQuestionCircleIcon />}
+        iconPosition={'left'}
+        variant={'plain'}
+        className={'helper'}
+        style={{ padding: '0' }}
+      />
     </Popover>
   );
 }

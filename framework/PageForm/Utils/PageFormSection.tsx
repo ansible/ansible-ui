@@ -27,12 +27,12 @@ export function PageFormSection(props: {
   const sectionClassNames = useMemo(
     () =>
       props.isHorizontal
-        ? ['pf-m-12-col', 'pf-v5-c-form', 'pf-m-horizontal']
-        : ['pf-m-12-col', 'pf-v5-c-form'],
+        ? ['pf-m-12-col', 'pf-v6-c-form', 'pf-m-horizontal']
+        : ['pf-m-12-col', 'pf-v6-c-form'],
     [props.isHorizontal]
   );
   const gridItemClassNames = useMemo(
-    () => (props.isHorizontal ? ['pf-v5-c-form', 'pf-m-horizontal'] : ['pf-v5-c-form']),
+    () => (props.isHorizontal ? ['pf-v6-c-form', 'pf-m-horizontal'] : ['pf-v6-c-form']),
     [props.isHorizontal]
   );
   if (!props.title) {
@@ -63,7 +63,7 @@ export function PageFormSection(props: {
     >
       <PageFormGrid
         singleColumn={props.singleColumn}
-        className={isCollapsed ? 'pf-v5-u-display-none' : undefined}
+        className={isCollapsed ? 'pf-v6-u-display-none' : undefined}
       >
         {props.children}
       </PageFormGrid>

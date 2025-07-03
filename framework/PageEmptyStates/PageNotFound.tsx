@@ -4,8 +4,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   Stack,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
@@ -16,12 +14,12 @@ export function PageNotFound() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return (
-    <EmptyState isFullHeight>
-      <EmptyStateHeader
-        titleText={<>{t('Page not found')}</>}
-        icon={<EmptyStateIcon icon={ExclamationCircleIcon} />}
-        headingLevel="h2"
-      />
+    <EmptyState
+      headingLevel="h2"
+      icon={ExclamationCircleIcon}
+      titleText={<>{t('Page not found')}</>}
+      isFullHeight
+    >
       <EmptyStateBody>{t('We could not find that page.')}</EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>

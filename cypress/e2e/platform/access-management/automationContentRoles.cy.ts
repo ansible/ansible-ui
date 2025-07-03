@@ -106,7 +106,7 @@ describe('Automation Content: Roles', () => {
       cy.clickLink(editableRole.name);
       cy.verifyPageTitle(editableRole.name);
       cy.getByDataCy('permissions').within(() => {
-        cy.get('.pf-v5-c-description-list__description').within(() => {
+        cy.get('.pf-v6-c-description-list__description').within(() => {
           cy.get('[data-cy="galaxy.change_namespace"]').should('contain.text', 'Change namespace');
           cy.get('[data-cy="galaxy.view_namespace"]').should('contain.text', 'View namespace');
         });
@@ -122,7 +122,7 @@ describe('Automation Content: Roles', () => {
       cy.multiSelectByDataCy('permissions', ['Delete namespace', 'Change namespace']);
       cy.getByDataCy('Submit').click();
       cy.getByDataCy('permissions').within(() => {
-        cy.get('.pf-v5-c-description-list__description').within(() => {
+        cy.get('.pf-v6-c-description-list__description').within(() => {
           cy.get('[data-cy="galaxy.view_namespace"]').should('contain.text', 'View namespace');
           cy.get('[data-cy="galaxy.change_namespace"]').should('contain.text', 'Change namespace');
           cy.get('[data-cy="galaxy.delete_namespace"]').should('contain.text', 'Delete namespace');

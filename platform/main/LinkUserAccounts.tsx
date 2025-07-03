@@ -31,7 +31,7 @@ export function LinkUserAccounts() {
         <LegacyMigrationForm
           legacyAuth={legacyAuth}
           footer={
-            <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+            <PageSection hasBodyWrapper={false} isFilled={false}>
               <Button onClick={() => void navigate(-1)}>{t('Close')}</Button>
             </PageSection>
           }

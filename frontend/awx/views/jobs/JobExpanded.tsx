@@ -1,6 +1,7 @@
 import { PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { Chip, ChipGroup, LabelGroup } from '@patternfly/react-core';
+import { LabelGroup, Label } from '@patternfly/react-core';
+
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -145,19 +146,18 @@ export function JobExpanded(job: UnifiedJob) {
       )}
       {job.summary_fields?.labels && job.summary_fields?.labels.count > 0 && (
         <PageDetail label={t`Labels`}>
-          <ChipGroup
-            numChips={5}
+          <LabelGroup
+            numLabels={5}
             collapsedText={t(`{{count}} more`, {
               count: job.summary_fields?.labels.results.length - 5,
             })}
-            ouiaId={`job-${job.id}-label-chips`}
           >
             {job.summary_fields?.labels.results.map((l) => (
-              <Chip key={l.id} isReadOnly ouiaId={`label-${l.id}-chip`}>
+              <Label variant="outline" key={l.id}>
                 {l.name}
-              </Chip>
+              </Label>
             ))}
-          </ChipGroup>
+          </LabelGroup>
         </PageDetail>
       )}
       {job.job_explanation && <PageDetail label={t`Explanation`}>{job.job_explanation}</PageDetail>}

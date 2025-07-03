@@ -1,17 +1,17 @@
 import {
+  ChartCursorContainerProps,
+  ChartVoronoiContainerProps,
   Chart,
   ChartArea,
   ChartAxis,
   ChartBar,
-  ChartCursorContainerProps,
   ChartGroup,
   ChartLegendTooltip,
   ChartLine,
   ChartScatter,
   ChartStack,
-  ChartVoronoiContainerProps,
   createContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import { useMemo } from 'react';
 import { PageChartContainer } from './PageChartContainer';
 import { PageChartLegend } from './PageChartLegend';

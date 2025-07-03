@@ -102,7 +102,6 @@ function EventStreamInputs() {
       <PageFormSwitch<IEdaEventStreamCreate>
         label={t`Forward events to rulebook activation`}
         labelOn={t('Enabled')}
-        labelOff={t('Disabled')}
         labelHelpTitle={t('Forward events to rulebook activation')}
         labelHelp={t(
           'An event stream is an HTTP POST request comprised of a header and body. The HTTP header typically stores the properties of the body. ' +
@@ -155,7 +154,6 @@ function EventStreamEditInputs() {
       <PageFormSwitch<IEdaEventStreamCreate>
         label={t`Forward events to rulebook activation`}
         labelOn={t('Enabled')}
-        labelOff={t('Disabled')}
         labelHelpTitle={t('Forward events to rulebook activation')}
         labelHelp={t(
           'An event stream is an HTTP POST request comprised of a header and body. The HTTP header typically stores the properties of the body. ' +

@@ -161,7 +161,7 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
         cy.get('[data-cy="name"]').should('have.value', payload.name);
         cy.get('[data-cy="name"]').clear();
         cy.clickButton(/^Save host$/);
-        cy.get('.pf-v5-c-helper-text__item-text').contains('Name is required');
+        cy.get('.pf-v6-c-helper-text__item-text').contains('Name is required');
       });
     });
   });

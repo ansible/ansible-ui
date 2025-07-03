@@ -16,9 +16,9 @@ import { getFiltersQueryString } from '../../../awx/views/jobs/JobOutput/useJobO
 
 const ScrollContainer = styled.div`
   overflow: auto;
-  background-color: var(--pf-v5-global--BackgroundColor--100);
-  font-size: var(--pf-v5-global--FontSize--sm);
-  border-bottom: 1px solid var(--pf-v5-global--BorderColor--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
+  font-size: var(--pf-t--global--font--size--body--sm);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
 `;
 
 const Section = styled(PageSection)`
@@ -26,7 +26,7 @@ const Section = styled(PageSection)`
   flex-direction: column;
   height: calc(100vh - 550px);
   padding: 0px 24px 24px 24px;
-  background-color: var(--pf-v5-global--BackgroundColor--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
 `;
 
 interface IActivationInstanceEventsProps {

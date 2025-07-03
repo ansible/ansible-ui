@@ -1,5 +1,5 @@
 import { usePageDialogs } from '@ansible/ansible-ui-framework';
-import { Modal } from '@patternfly/react-core';
+import { Modal, ModalVariant, ModalHeader, ModalBody, ModalFooter } from '@patternfly/react-core';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { hubAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';
@@ -120,9 +120,57 @@ function AddCollectionToRepositoryModal(props: {
       aria-label={t(`Add collections versions to repository`)}
       onClose={props.multiDialogs.popDialog}
       isOpen
-      variant={'large'}
-      title={t('Add collections versions to repository')}
-      actions={[
+      variant={ModalVariant.large}
+    >
+      <ModalHeader title={t('Add collections versions to repository')} />
+      <ModalBody>
+        <PageTable<CollectionVersionSearch>
+          disableListView={true}
+          disableCardView={true}
+          id="hub-collection-versions-search-table"
+          tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
+          errorStateTitle={t('Error loading collection versions')}
+          emptyStateTitle={t('No collection versions yet')}
+          emptyStateDescription={t(
+            'Collection versions will appear once the repository is modified.'
+          )}
+          {...view}
+          defaultTableView="table"
+          defaultSubtitle={t('Collection')}
+          compact={true}
+          showSelect={true}
+          selectedItems={selectedCollections}
+          isSelectMultiple={true}
+          isSelected={(item) =>
+            selectedCollections.find((i) => collectionId(i) === collectionId(item)) ? true : false
+          }
+          selectItem={(item) => {
+            const newItems = [...selectedCollections, item];
+            setSelectedCollections(newItems);
+          }}
+          selectItems={(items) => {
+            const newItems = [...selectedCollections, ...items];
+            setSelectedCollections(newItems);
+          }}
+          unselectItem={(item) => {
+            setSelectedCollections(
+              selectedCollections.filter((item2) => collectionId(item2) !== collectionId(item))
+            );
+          }}
+          unselectAll={() => {
+            setSelectedCollections([]);
+          }}
+        />
+        {error ? (
+          <HubError
+            error={{ name: '', message: t('Can not add collections to repository. ') + error }}
+          />
+        ) : (
+          <></>
+        )}
+      </ModalBody>
+      <ModalFooter>
         <Button
           key="select"
           variant="primary"
@@ -140,7 +188,7 @@ function AddCollectionToRepositoryModal(props: {
           isLoading={isLoading}
         >
           {t('Select')}
-        </Button>,
+        </Button>
         <Button
           key="cancel"
           variant="link"
@@ -149,54 +197,8 @@ function AddCollectionToRepositoryModal(props: {
           }}
         >
           {t('Cancel')}
-        </Button>,
-      ]}
-    >
-      <PageTable<CollectionVersionSearch>
-        disableListView={true}
-        disableCardView={true}
-        id="hub-collection-versions-search-table"
-        tableColumns={tableColumns}
-        toolbarFilters={toolbarFilters}
-        errorStateTitle={t('Error loading collection versions')}
-        emptyStateTitle={t('No collection versions yet')}
-        emptyStateDescription={t(
-          'Collection versions will appear once the repository is modified.'
-        )}
-        {...view}
-        defaultTableView="table"
-        defaultSubtitle={t('Collection')}
-        compact={true}
-        showSelect={true}
-        selectedItems={selectedCollections}
-        isSelectMultiple={true}
-        isSelected={(item) =>
-          selectedCollections.find((i) => collectionId(i) === collectionId(item)) ? true : false
-        }
-        selectItem={(item) => {
-          const newItems = [...selectedCollections, item];
-          setSelectedCollections(newItems);
-        }}
-        selectItems={(items) => {
-          const newItems = [...selectedCollections, ...items];
-          setSelectedCollections(newItems);
-        }}
-        unselectItem={(item) => {
-          setSelectedCollections(
-            selectedCollections.filter((item2) => collectionId(item2) !== collectionId(item))
-          );
-        }}
-        unselectAll={() => {
-          setSelectedCollections([]);
-        }}
-      />
-      {error ? (
-        <HubError
-          error={{ name: '', message: t('Can not add collections to repository. ') + error }}
-        />
-      ) : (
-        <></>
-      )}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

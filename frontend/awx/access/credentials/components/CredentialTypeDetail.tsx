@@ -1,6 +1,6 @@
 import { PageDetail } from '@ansible/ansible-ui-framework';
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
-import { ChipGroup } from '@patternfly/react-core';
+import { LabelGroup } from '@patternfly/react-core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CredentialLabel } from '../../../common/CredentialLabel';
@@ -18,9 +18,9 @@ export function CredentialTypeDetail(props: {
     return (
       <React.Fragment key={id}>
         <PageDetail helpText={help_text} label={label + ' *'}>
-          <ChipGroup numChips={1} ouiaId={`credential-${id}-chips`}>
+          <LabelGroup numLabels={1}>
             <CredentialLabel credential={inputSources[id]?.summary_fields?.source_credential} />
-          </ChipGroup>
+          </LabelGroup>
         </PageDetail>
         {inputSources[id] && inputSources[id].metadata && (
           <PageDetailCodeEditor

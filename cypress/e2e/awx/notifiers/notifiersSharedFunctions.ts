@@ -487,12 +487,8 @@ function fillTwilioForm() {
   cy.get(`[data-cy="notification-configuration-account-sid"]`).type('twilio_sid');
   cy.get(`[data-cy="notification-configuration-account-token-form-group"]`).type('twilio_token');
   cy.get(`[data-cy="notification-configuration-from-number-form-group"]`).type('+1234567890');
-  cy.get(`[data-cy="notification-configuration-to-numbers-form-group"]`).type(
+  cy.get(`[data-cy="notification-configuration-to-numbers"]`).type(
     '+1987654321{shift+enter}+1123456789'
-  );
-  cy.getBy('[data-cy="edit-notifier"]').click();
-  cy.get(`[data-cy="notification-configuration-to-numbers-form-group"]`).type(
-    '{downArrow}+1123456789'
   );
 }
 
@@ -509,7 +505,7 @@ function fillGrafanaForm() {
   );
   cy.get(`[data-cy="notification-configuration-dashboardid"]`).type('dashboard_id');
   cy.get(`[data-cy="notification-configuration-panelid"]`).type('panel_id');
-  cy.get(`[data-cy="notification-configuration-annotation-tags-form-group"]`).type('tag1');
+  cy.get(`[data-cy="notification-configuration-annotation-tags"]`).type('tag1');
   cy.get(`[data-cy="notification_configuration-grafana_no_verify_ssl"]`).click();
   cy.get(`[data-cy='notification-configuration-grafana-key']`).type('key');
 }
@@ -678,9 +674,7 @@ function editGrafanaForm() {
     .type('https://new.grafana.com');
   cy.get(`[data-cy="notification-configuration-dashboardid"]`).clear().type('new_dashboard_id');
   cy.get(`[data-cy="notification-configuration-panelid"]`).clear().type('new_panel_id');
-  cy.get(`[data-cy="notification-configuration-annotation-tags-form-group"]`)
-    .clear()
-    .type('new_tag1');
+  cy.get(`[data-cy="notification-configuration-annotation-tags"]`).clear().type('new_tag1');
   cy.get(`[data-cy="notification-configuration-grafana-key"]`).clear().type('new_key');
 }
 

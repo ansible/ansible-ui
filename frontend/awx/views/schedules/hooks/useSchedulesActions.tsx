@@ -58,7 +58,6 @@ export function useSchedulesActions(options: {
           isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
-        labelOff: t('Schedule disabled'),
         label: t('Schedule enabled'),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         onToggle: (schedule, enabled) => handleToggleSchedule(schedule, enabled),

@@ -54,7 +54,7 @@ export async function deleteEdaEventStream(eventStreamName: string, page: Page) 
   await clickPageAction('Delete event stream', page);
   await page.locator('#confirm').click();
   await page.locator('#submit').click();
-  await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
+  await expect(page.locator('[data-ouia-component-type="PF6/ModalContent"]')).toContainText(
     'Success'
   );
 
@@ -72,7 +72,7 @@ export async function deleteEdaEventStream(eventStreamName: string, page: Page) 
   await clickPageAction('Delete credential', page);
   await page.locator('#confirm').click();
   await page.locator('#submit').click();
-  await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
+  await expect(page.locator('[data-ouia-component-type="PF6/ModalContent"]')).toContainText(
     'Success'
   );
 }

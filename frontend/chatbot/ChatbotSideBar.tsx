@@ -13,8 +13,8 @@ import {
 } from '@patternfly/react-core';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import { LazyChatbot } from './LazyChatbot';
 import { ChatbotStateEnum, useAppChatbotContext } from './ChatbotProvider';
+import { LazyChatbot } from './LazyChatbot';
 import { LazyChatbotSideBarHeader } from './LazyChatbotSideBarHeader';
 
 const DrawerContentBodyStyled = styled(DrawerContentBody)`

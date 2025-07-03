@@ -36,7 +36,7 @@ describe('Teams list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__item')
+          .find('.pf-v6-c-menu__item')
           .contains('Delete teams')
           .should('be.visible');
       });
@@ -63,7 +63,7 @@ describe('Teams list', () => {
         },
       }));
       cy.mount(<PlatformTeamList />);
-      cy.get('a[data-cy="create-team"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('a[data-cy="create-team"]').should('not.enabled');
     });
   });
   describe('Empty list', () => {

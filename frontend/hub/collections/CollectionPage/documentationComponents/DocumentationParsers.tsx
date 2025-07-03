@@ -90,8 +90,8 @@ export function formatPartCodeCommon(text: string, _params: Params): React.React
   return (
     <span
       style={{
-        backgroundColor: 'var(--pf-v5-global--BackgroundColor--200)',
-        fontFamily: 'var(--pf-v5-global--FontFamily--monospace)',
+        backgroundColor: 'var(--pf-t--global--background--color--control--default)',
+        fontFamily: 'var(--pf-t--global--font--family--mono)',
         display: 'inline-block',
         borderRadius: '2px',
         padding: '0 2px',

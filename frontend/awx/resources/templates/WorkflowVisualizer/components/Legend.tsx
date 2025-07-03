@@ -26,14 +26,11 @@ import {
 
 const Panel = styled(PFPanel)`
   position: absolute;
-  background: --pf-v5-global--BackgroundColor--100;
   width: 240px;
   min-height: 300px;
   position: absolute;
   left: 255px;
   bottom: 60px;
-  border-radius: var(--pf-v5-global--BorderRadius--sm);
-  box-shadow: var(--pf-v5-global--BoxShadow--sm);
   z-index: 1;
 `;
 
@@ -51,7 +48,7 @@ export const Legend = () => {
   };
 
   return (
-    <Panel data-cy="workflow-visualizer-legend">
+    <Panel data-cy="workflow-visualizer-legend" variant="raised">
       <PanelMain>
         <PanelMainBody>
           <DescriptionList>

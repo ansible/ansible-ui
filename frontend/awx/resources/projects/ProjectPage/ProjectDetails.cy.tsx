@@ -20,12 +20,12 @@ describe('ProjectDetails', () => {
       'https://github.com/ansible/ansible-tower-samples'
     );
     cy.get('#playbook-directory').should('have.text', '_9__demo_project_104451');
-    cy.get('#created > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button').should(
+    cy.get('#created > .pf-v6-c-description-list__text > .date-time > .pf-v6-c-button').should(
       'have.text',
       'awx'
     );
     cy.get(
-      '#last-modified > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button'
+      '#last-modified > .pf-v6-c-description-list__text > .date-time > .pf-v6-c-button'
     ).should('have.text', 'awx');
   });
   // user can view org details from project details page

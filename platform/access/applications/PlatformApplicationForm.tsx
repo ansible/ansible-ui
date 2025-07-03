@@ -17,7 +17,7 @@ import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
-import { Alert, TextContent } from '@patternfly/react-core';
+import { Alert, Content } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
@@ -176,7 +176,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
     <>
       <PageFormSection singleColumn>
         <Alert variant="info" isInline title={t('Configure OAuth Application')} isExpandable>
-          <TextContent>
+          <Content>
             <p>
               {t(
                 'You are setting up an OAuth application to allow secure authentication and integration with an external service. This will allow the external service to authenticate users using AAP authentication and obtain an access token to access AAP resources on behalf of the user.'
@@ -231,7 +231,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
                 'Make sure to input all the required details accurately to ensure a smooth OAuth authentication process.'
               )}
             </p>
-          </TextContent>
+          </Content>
         </Alert>
       </PageFormSection>
       <PageFormTextInput<Application>

@@ -1,4 +1,8 @@
-import { ChartDonut, ChartDonutProps, ChartDonutUtilization } from '@patternfly/react-charts';
+import {
+  ChartDonutProps,
+  ChartDonut,
+  ChartDonutUtilization,
+} from '@patternfly/react-charts/victory';
 import { CardBody, Flex, FlexItem, Skeleton, Split, SplitItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';

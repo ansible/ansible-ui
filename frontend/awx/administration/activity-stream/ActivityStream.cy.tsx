@@ -87,7 +87,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by jobs', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=job&or__object2__in=job*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=job&or__object2__in=job*`).as(
         'jobFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -100,7 +100,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by schedules', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=schedule&or__object2__in=schedule*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=schedule&or__object2__in=schedule*`).as(
         'scheduleFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -114,7 +114,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by workflow approvals', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=workflow_approval&or__object2__in=workflow_approval*'
+        awxAPI`/activity_stream/?or__object1__in=workflow_approval&or__object2__in=workflow_approval*`
       ).as('workflowApprovalFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -127,7 +127,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by templates', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node&or__object2__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node*'
+        awxAPI`/activity_stream/?or__object1__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node&or__object2__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node*`
       ).as('templateFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -140,7 +140,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by credentials', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=credential&or__object2__in=credential*'
+        awxAPI`/activity_stream/?or__object1__in=credential&or__object2__in=credential*`
       ).as('credentialFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -152,7 +152,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by projects', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=project&or__object2__in=project*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=project&or__object2__in=project*`).as(
         'projectFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -166,7 +166,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by inventories', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=inventory&or__object2__in=inventory*'
+        awxAPI`/activity_stream/?or__object1__in=inventory&or__object2__in=inventory*`
       ).as('inventoryFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -178,7 +178,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by hosts', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=host&or__object2__in=host*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=host&or__object2__in=host*`).as(
         'hostFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -192,7 +192,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by organizations', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=organization&or__object2__in=organization*'
+        awxAPI`/activity_stream/?or__object1__in=organization&or__object2__in=organization*`
       ).as('organizationFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -204,7 +204,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by users', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=user&or__object2__in=user*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=user&or__object2__in=user*`).as(
         'userFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -217,7 +217,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by teams', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=team&or__object2__in=team*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=team&or__object2__in=team*`).as(
         'teamFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -231,7 +231,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by credential types', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=credential_type&or__object2__in=credential_type*'
+        awxAPI`/activity_stream/?or__object1__in=credential_type&or__object2__in=credential_type*`
       ).as('credentialTypeFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -244,7 +244,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by notification templates', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=notification_template&or__object2__in=notification_template*'
+        awxAPI`/activity_stream/?or__object1__in=notification_template&or__object2__in=notification_template*`
       ).as('notificationTemplateTypeFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -256,7 +256,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by instances', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=instance&or__object2__in=instance*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=instance&or__object2__in=instance*`).as(
         'instanceTypeFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -270,7 +270,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by instance groups', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=instance_group&or__object2__in=instance_group*'
+        awxAPI`/activity_stream/?or__object1__in=instance_group&or__object2__in=instance_group*`
       ).as('instanceGroupTypeFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -283,7 +283,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by applications and tokens', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=o_auth2_application&or__object2__in=o_auth2_application*'
+        awxAPI`/activity_stream/?or__object1__in=o_auth2_application&or__object2__in=o_auth2_application*`
       ).as('applicationTypeFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -296,7 +296,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by execution environments', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=execution_environment&or__object2__in=execution_environment*'
+        awxAPI`/activity_stream/?or__object1__in=execution_environment&or__object2__in=execution_environment*`
       ).as('executionEnvironmentTypeFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()
@@ -308,7 +308,7 @@ describe('Activity Stream Tests', () => {
 
     it('visit the Activity Stream list page filtered by settings', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?or__object1__in=setting&or__object2__in=setting*').as(
+      cy.intercept(awxAPI`/activity_stream/?or__object1__in=setting&or__object2__in=setting*`).as(
         'settingTypeFilterRequest'
       );
       cy.get('[data-cy="filter-input"]')
@@ -346,10 +346,10 @@ describe('Activity Stream Tests', () => {
     });
 
     it('Clicking time table header sorts activity stream by id', () => {
-      cy.intercept('api/v2/activity_stream/?order_by=-id*').as('timeDescSortRequest');
+      cy.intercept(awxAPI`/activity_stream/?order_by=-id*`).as('timeDescSortRequest');
       cy.mount(<ActivityStreams />);
       cy.wait('@timeDescSortRequest');
-      cy.intercept('api/v2/activity_stream/?order_by=id*').as('timeAscSortRequest');
+      cy.intercept(awxAPI`/activity_stream/?order_by=id*`).as('timeAscSortRequest');
       cy.clickTableHeader(/^Time$/);
       cy.wait('@timeAscSortRequest');
       cy.clearAllFilters();
@@ -357,7 +357,7 @@ describe('Activity Stream Tests', () => {
 
     it('Clicking initiated by table header sorts activity stream by initiator', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?order_by=actor__username*').as(
+      cy.intercept(awxAPI`/activity_stream/?order_by=actor__username*`).as(
         'initiatorAscSortRequest'
       );
       cy.clickTableHeader(/^Initiated by$/);
@@ -417,7 +417,7 @@ describe('Activity Stream Tests', () => {
 
     it('See a list of events filtered by keyword', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?search=associate*').as('keywordFilterRequest');
+      cy.intercept(awxAPI`/activity_stream/?search=associate*`).as('keywordFilterRequest');
       cy.filterTableByTypeAndSingleText(/^Search$/, 'associate');
       cy.wait('@keywordFilterRequest');
       cy.clearAllFilters();
@@ -425,7 +425,7 @@ describe('Activity Stream Tests', () => {
 
     it('See a list of events filtered by initiator', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?actor__username__icontains=admin*').as(
+      cy.intercept(awxAPI`/activity_stream/?actor__username__icontains=admin*`).as(
         'initiatorFilterRequest'
       );
       cy.filterTableByTypeAndSingleText('Initiated by (username)', 'admin');

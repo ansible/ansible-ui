@@ -76,11 +76,11 @@ describe('Create rulebook activation ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
     cy.get('[data-cy="project_id"]').click();
-    cy.get('#project-4 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#project-4 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="rulebook_id"]').click();
-    cy.get('#hello-echo-yml > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#hello-echo-yml > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="organization_id"]').click();
-    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#organization-2 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="k8s_service_name"]').type('sample');
     cy.get('.view-lines').type('i: 1');
     cy.clickButton('Create rulebook activation');
@@ -105,13 +105,13 @@ describe('Create rulebook activation ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
     cy.get('[data-cy="project_id"]').click();
-    cy.get('#project-4 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#project-4 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="rulebook_id"]').click();
-    cy.get('#hello-echo-yml > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#hello-echo-yml > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="organization_id"]').click();
-    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#organization-2 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get(
-      '[data-cy="credential-select-form-group"] > .pf-v5-c-form__group-control > .pf-v5-c-input-group > .pf-v5-c-button'
+      '[data-cy="credential-select-form-group"] > .pf-v6-c-form__group-control > .pf-v6-c-input-group > .pf-v6-c-button'
     ).click();
 
     cy.intercept('GET', edaAPI`/eda-credentials/`, (req) => {

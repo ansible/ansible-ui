@@ -1,8 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
 import {
+  Label,
+  LabelGroup,
   Button,
-  Chip,
-  ChipGroup,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -13,6 +13,7 @@ import {
   TextInputGroupMain,
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
+
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -229,39 +230,45 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
             aria-expanded={isOpen}
             data-cy={`${id}-typeahead-input`}
           >
-            <ChipGroup
+            <LabelGroup
               isClosable
               onClick={() => onHandleClear()}
               aria-label={t('Current selections')}
             >
-              {value?.map(
-                (v) =>
-                  v?.name && (
-                    <Chip
-                      key={v?.name}
-                      isReadOnly={!!v?.isReadOnly}
-                      onClick={(ev) => {
-                        ev.stopPropagation();
-                        onHandleClear(v?.name);
-                      }}
-                      data-cy="selected-chip"
-                    >
-                      {v?.name}
-                    </Chip>
-                  )
-              )}
-            </ChipGroup>
+              {value?.map((v) => {
+                if (!v?.name) return null;
+
+                const isReadOnly = !!v?.isReadOnly;
+                const handleClose = isReadOnly
+                  ? undefined
+                  : (ev: React.MouseEvent) => {
+                      ev.stopPropagation();
+                      onHandleClear(v.name);
+                    };
+
+                return (
+                  <Label
+                    variant="outline"
+                    key={v.name}
+                    isDisabled={isReadOnly}
+                    onClose={handleClose}
+                    data-cy="selected-chip"
+                  >
+                    {v.name}
+                  </Label>
+                );
+              })}
+            </LabelGroup>
           </TextInputGroupMain>
           {inputValue && (
             <TextInputGroupUtilities>
               <Button
+                icon={<TimesIcon aria-hidden />}
                 variant="plain"
                 onClick={onClearButtonClick}
                 aria-label={t('Clear input value')}
                 data-cy="clear-button"
-              >
-                <TimesIcon aria-hidden />
-              </Button>
+              />
             </TextInputGroupUtilities>
           )}
         </TextInputGroup>

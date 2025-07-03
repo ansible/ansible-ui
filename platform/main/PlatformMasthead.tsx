@@ -9,6 +9,7 @@ import { PageMastheadDropdown } from '@ansible/ansible-ui-framework/PageMasthead
 import { PageThemeSwitcher } from '@ansible/ansible-ui-framework/PageMasthead/PageThemeSwitcher';
 import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { useAwxNotifications } from '@ansible/awx-ui/main/AwxMasthead';
+import { ChatbotToolbarItem } from '@ansible/chatbot/ChatbotToolbarItem';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { PageRefreshIcon } from '@ansible/common-ui/PageRefreshIcon';
 import { useEdaActiveUser } from '@ansible/eda-ui/common/useEdaActiveUser';
@@ -22,12 +23,11 @@ import AAPLogo from '../assets/aap-logo.svg?react';
 import RedHatIcon from '../assets/redhat-icon.svg?react';
 import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';
 import { gatewayAPI } from '../utils/gateway-api-utils';
+import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { useLegacyAuth } from './LegacyAuthProvider';
 import { PlatformAbout } from './PlatformAbout';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
-import { useIsManagedCloudInstall } from './GatewayUIAuth';
-import { ChatbotToolbarItem } from '@ansible/chatbot/ChatbotToolbarItem';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
@@ -68,13 +68,17 @@ export function PlatformMasthead() {
 
   return (
     <PageMasthead
-      brand={<AAPLogo style={{ height: 48, textDecoration: 'none', color: 'white' }} />}
+      brand={
+        <AAPLogo
+          style={{ height: 48, textDecoration: 'none', color: 'var(--pf-v5-global--Color--100)' }}
+        />
+      }
     >
       <ToolbarItem style={{ flexGrow: 1 }}>
         {!isSmOrLarger && <RedHatIcon style={{ height: 38, width: 38 }} />}
       </ToolbarItem>
       <ToolbarGroup
-        variant="icon-button-group"
+        variant="action-group-plain"
         // This fixes displaying the toolbar items on the right side of the masthead
         // on small screens with the AAP logo
         style={{ marginLeft: -24 }}

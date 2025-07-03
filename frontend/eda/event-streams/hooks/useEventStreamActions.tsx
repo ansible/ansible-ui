@@ -58,7 +58,6 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
         selection: PageActionSelection.Single,
         isPinned: true,
         label: t('Events are being forwarded to the rulebook activation.'),
-        labelOff: t('Events are not being forwarded to the rulebook activation.'),
         onToggle: (eventStream: EdaEventStream, mode: boolean) => {
           if (mode) void enableEventStream(eventStream);
           else void disableEventStreams([eventStream]);

@@ -79,7 +79,7 @@ export function CollectionImportLog() {
   return (
     <Scrollable>
       <div ref={ref}>
-        <PageSection variant="light">
+        <PageSection hasBodyWrapper={false}>
           {collectionImportDetail && (
             <Stack hasGutter>
               <PageDetails>
@@ -94,10 +94,12 @@ export function CollectionImportLog() {
               <div>
                 <CodeBlock
                   data-cy="import-log"
-                  style={{
-                    backgroundColor: 'var(--pf-v5-global--palette--black-850)',
-                    position: 'relative',
-                  }}
+                  style={
+                    {
+                      '--pf-v6-c-code-block--BackgroundColor': 'var(--pf-t--color--gray--95)',
+                      position: 'relative',
+                    } as React.CSSProperties
+                  }
                 >
                   <NavigationArrow
                     direction="down"

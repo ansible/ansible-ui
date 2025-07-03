@@ -19,9 +19,7 @@ import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 import { useSearchToolbarFilter } from '../../../common/awx-toolbar-filters';
 
 const Section = styled(PageSection)`
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 204px);
+  row-gap: 0;
 `;
 
 export function JobOutput() {
@@ -49,7 +47,7 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
     return <Skeleton />;
   }
   return (
-    <Section variant="light">
+    <Section variant="default" hasBodyWrapper={false} hasOverflowScroll={true}>
       <JobStatusBar job={job} />
       {job.type === 'workflow_job' ? (
         <WorkflowNodesStatusBar nodes={workflowNodes || []} />

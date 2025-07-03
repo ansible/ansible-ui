@@ -62,7 +62,7 @@ describe('Create Edit Container Group Form', () => {
           fixture: 'instanceGroupOptions.json',
         }
       ).as('options');
-      cy.intercept('GET', `api/v2/instance_groups/*`, {
+      cy.intercept('GET', awxAPI`/instance_groups/*`, {
         fixture: 'container_group.json',
       });
       cy.intercept({ method: 'GET', url: awxAPI`/credentials/*` }, { fixture: 'credentials.json' });

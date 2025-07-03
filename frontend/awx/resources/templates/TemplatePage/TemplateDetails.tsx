@@ -8,14 +8,7 @@ import {
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
-import {
-  Label,
-  LabelGroup,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
@@ -180,16 +173,24 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       >
         <LabelGroup>
           {instanceGroups?.map((ig) => (
-            <Label color="blue" key={ig.id}>
-              <Link
-                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                  params: {
-                    id: ig.id,
-                  },
-                })}
-              >
-                {ig.name}
-              </Link>
+            <Label
+              isClickable
+              color="blue"
+              key={ig.id}
+              render={({ content, className }) => (
+                <Link
+                  className={className}
+                  to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                    params: {
+                      id: ig.id,
+                    },
+                  })}
+                >
+                  {content}
+                </Link>
+              )}
+            >
+              {ig.name}
             </Label>
           ))}
         </LabelGroup>
@@ -320,32 +321,26 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           </>
         }
       >
-        <TextList component={TextListVariants.ul}>
+        <Content component={ContentVariants.ul}>
           {template.become_enabled && (
-            <TextListItem component={TextListItemVariants.li}>
-              {t`Privilege Escalation`}
-            </TextListItem>
+            <Content component={ContentVariants.li}>{t`Privilege Escalation`}</Content>
           )}
           {template.host_config_key && (
-            <TextListItem component={TextListItemVariants.li}>
-              {t`Provisioning Callbacks`}
-            </TextListItem>
+            <Content component={ContentVariants.li}>{t`Provisioning Callbacks`}</Content>
           )}
           {template.allow_simultaneous && (
-            <TextListItem component={TextListItemVariants.li}>{t`Concurrent jobs`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Concurrent jobs`}</Content>
           )}
           {template.use_fact_cache && (
-            <TextListItem component={TextListItemVariants.li}>{t`Fact storage`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Fact storage`}</Content>
           )}
           {template.webhook_service && (
-            <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>
+            <Content component={ContentVariants.li}>{t`Webhooks`}</Content>
           )}
           {template.prevent_instance_group_fallback && (
-            <TextListItem component={TextListItemVariants.li}>
-              {t`Prevent instance group fallback`}
-            </TextListItem>
+            <Content component={ContentVariants.li}>{t`Prevent instance group fallback`}</Content>
           )}
-        </TextList>
+        </Content>
       </PageDetail>
     </PageDetails>
   );

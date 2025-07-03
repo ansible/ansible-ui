@@ -1,6 +1,13 @@
 import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import { ClipboardCopy, ClipboardCopyVariant, Modal } from '@patternfly/react-core';
+import {
+  ClipboardCopy,
+  ClipboardCopyVariant,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { t } from 'i18next';
 import { SetStateAction } from 'react';
 import { Token } from '../../../interfaces/Token';
@@ -14,32 +21,33 @@ export function UserTokenSecretsModal(props: {
     <Modal
       aria-label={t`Token information`}
       isOpen
-      variant="medium"
+      variant={ModalVariant.medium}
       position="top"
-      title={t('Token information')}
       onClose={() => {
         props.onClose(undefined);
       }}
-      hasNoBodyWrapper
     >
-      <PageDetails
-        alertPrompts={[t`This is the only time the token will be shown.`]}
-        numberOfColumns="single"
-      >
-        <PageDetail label={t`Token`}>
-          <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
-            {token}
-          </ClipboardCopy>
-        </PageDetail>
-        {refresh_token && (
-          <PageDetail label={t`Refresh Token`}>
+      <ModalHeader title={t('Token information')} />
+      <ModalBody>
+        <PageDetails
+          alertPrompts={[t`This is the only time the token will be shown.`]}
+          numberOfColumns="single"
+        >
+          <PageDetail label={t`Token`}>
             <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
-              {refresh_token}
+              {String(token ?? '')}
             </ClipboardCopy>
           </PageDetail>
-        )}
-        <PageDetail label={t`Expires`}>{formatDateString(props.newToken.expires)}</PageDetail>
-      </PageDetails>
+          {refresh_token && (
+            <PageDetail label={t`Refresh Token`}>
+              <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
+                {refresh_token}
+              </ClipboardCopy>
+            </PageDetail>
+          )}
+          <PageDetail label={t`Expires`}>{formatDateString(props.newToken.expires)}</PageDetail>
+        </PageDetails>
+      </ModalBody>
     </Modal>
   );
 }

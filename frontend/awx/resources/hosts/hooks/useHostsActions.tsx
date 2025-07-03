@@ -47,7 +47,6 @@ export function useHostsActions(
         onToggle: (host, enabled) => handleToggleHost(host, enabled),
         isSwitchOn: (host: AwxHost) => (host.enabled ? true : false),
         label: t('Host enabled'),
-        labelOff: t('Host disabled'),
         showPinnedLabel: false,
         isPinned: true,
         isDisabled: (host) => cannotEditResource(host, t),

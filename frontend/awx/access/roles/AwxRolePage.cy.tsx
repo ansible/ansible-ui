@@ -31,15 +31,15 @@ describe('AwxRoles', () => {
 
   it('should filter roles by name', () => {
     cy.mount(<AwxRoles />);
-    cy.intercept('api/v2/role_definitions/?name__icontains=admin*').as('nameFilterRequest');
-    cy.filterTableByTypeAndText(/^Name$/, 'admin');
+    cy.intercept(awxAPI`/role_definitions/?name__icontains=admin*`).as('nameFilterRequest');
+    cy.filterTableByTextFilter('name', 'admin');
     cy.wait('@nameFilterRequest');
     cy.clickButton(/^Clear all filters$/);
   });
 
   it('should filter roles by editability', () => {
     cy.mount(<AwxRoles />);
-    cy.intercept('api/v2/role_definitions/?managed=false*').as('editabilityFilterRequest');
+    cy.intercept(awxAPI`/role_definitions/?managed=false*`).as('editabilityFilterRequest');
     cy.filterTableBySingleSelect('editable', 'Editable');
     cy.wait('@editabilityFilterRequest');
     cy.clearAllFilters();
@@ -61,7 +61,7 @@ describe('AwxRoles', () => {
     cy.contains('td', 'Inventory Read')
       .parent()
       .within(() => {
-        cy.get('#edit-role').should('have.attr', 'aria-disabled', 'false');
+        cy.get('#edit-role').should('not.have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('actions-dropdown').click();
       });
     cy.contains('#delete-role', /^Delete role$/).should('not.have.attr', 'aria-disabled', 'true');
@@ -80,7 +80,7 @@ describe('AwxRoles', () => {
 
   it('should enable Create Role button if the user has permission to create roles', () => {
     cy.mount(<AwxRoles />);
-    cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'false');
+    cy.contains('a', /^Create role$/).should('not.have.attr', 'aria-disabled', 'true');
   });
 
   it('should disable Create Role button if the user does not have permission to create roles', () => {

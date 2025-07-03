@@ -69,7 +69,7 @@ describe('EdaOverview.cy.ts', () => {
       .scrollIntoView()
       .should('be.visible');
     cy.contains(
-      'div.pf-v5-c-empty-state__body',
+      'div.pf-v6-c-empty-state__body',
       'Create a rulebook activation by clicking the button below.'
     );
     cy.contains('h3', 'Decision Environments').scrollIntoView();
@@ -77,13 +77,13 @@ describe('EdaOverview.cy.ts', () => {
       .scrollIntoView()
       .should('be.visible');
     cy.contains(
-      'div.pf-v5-c-empty-state__body',
+      'div.pf-v6-c-empty-state__body',
       'Create a decision environment by clicking the button below.'
     );
     cy.contains('h3', 'Rule Audit').scrollIntoView();
     cy.contains('There are currently no rule audit records').scrollIntoView().should('be.visible');
     cy.contains('h3', 'Projects').scrollIntoView();
     cy.contains('There are currently no projects').scrollIntoView().should('be.visible');
-    cy.contains('div.pf-v5-c-empty-state__body', 'Create a project by clicking the button below.');
+    cy.contains('div.pf-v6-c-empty-state__body', 'Create a project by clicking the button below.');
   });
 });

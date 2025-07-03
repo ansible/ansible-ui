@@ -219,11 +219,11 @@ describe('Management Jobs - Schedules Tab', () => {
                 cy.clickButton('Next');
                 cy.clickButton('Finish');
                 cy.verifyPageTitle(scheduleName);
-                cy.get('.pf-v5-c-switch__label.pf-m-on')
+                cy.get('.pf-v6-c-switch__label.pf-m-on')
                   .should('have.text', 'Schedule enabled')
                   .should('be.visible');
                 cy.getByDataCy('toggle-switch').click();
-                cy.get('.pf-v5-c-switch__label.pf-m-off')
+                cy.get('.pf-v6-c-switch__label.pf-m-off')
                   .should('have.text', 'Schedule disabled')
                   .should('be.visible');
                 cy.intercept('DELETE', awxAPI`/schedules/${scheduleId.toString()}/`).as(

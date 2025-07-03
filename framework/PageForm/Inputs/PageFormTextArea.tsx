@@ -116,6 +116,7 @@ export function PageFormTextArea<
               )}
               {selectTitle && (
                 <Button
+                  icon={<SearchIcon />}
                   ouiaId={`lookup-${name}-button`}
                   variant="control"
                   onClick={() =>
@@ -130,9 +131,7 @@ export function PageFormTextArea<
                   }
                   aria-label="Options menu"
                   isDisabled={isDisabled || isSubmitting}
-                >
-                  <SearchIcon />
-                </Button>
+                ></Button>
               )}
               {button}
             </InputGroup>

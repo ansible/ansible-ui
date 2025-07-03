@@ -1,6 +1,6 @@
 import { PageFormSubmitHandler, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { Modal } from '@patternfly/react-core';
+import { Modal, ModalVariant, ModalHeader, ModalBody } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useNavigate } from 'react-router';
 import { AwxPageForm } from '../../../common/AwxPageForm';
@@ -45,33 +45,33 @@ export function ManagementJobsRetainDataModal(
   return (
     <Modal
       aria-label={t`Launch management job`}
-      variant="small"
+      variant={ModalVariant.small}
       position="default"
-      title={t`Launch management job`}
-      titleIconVariant="info"
-      hasNoBodyWrapper
       isOpen
       onClose={() => props.popDialog()}
     >
-      <AwxPageForm
-        submitText={t('Launch')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        singleColumn
-        defaultValue={{ extra_vars: { days: 30 } }}
-      >
-        <span>{t('Set how many days of data should be retained.')}</span>
-        <PageFormTextInput
-          name="extra_vars.days"
-          label={t('Retention Days')}
-          placeholder={t('Enter days')}
-          isRequired
-          type="number"
-          min={MIN_RETENTION}
-          max={MAX_RETENTION}
-        />
-      </AwxPageForm>
+      <ModalHeader title={t`Launch management job`} titleIconVariant="info" />
+      <ModalBody>
+        <AwxPageForm
+          submitText={t('Launch')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          singleColumn
+          defaultValue={{ extra_vars: { days: 30 } }}
+        >
+          <span>{t('Set how many days of data should be retained.')}</span>
+          <PageFormTextInput
+            name="extra_vars.days"
+            label={t('Retention Days')}
+            placeholder={t('Enter days')}
+            isRequired
+            type="number"
+            min={MIN_RETENTION}
+            max={MAX_RETENTION}
+          />
+        </AwxPageForm>
+      </ModalBody>
     </Modal>
   );
 }

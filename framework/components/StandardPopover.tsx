@@ -1,15 +1,13 @@
-import { Popover } from '@patternfly/react-core';
+import { Icon, Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 const PopoverButton = styled.button`
-  padding: var(--pf-v5-global--spacer--xs);
-  margin: -(var(--pf-v5-global--spacer--xs));
-  font-size: var(--pf-v5-global--FontSize--sm);
-  --pf-v5-c-form__group-label-help--Color: var(--pf-v5-global--Color--200);
-  --pf-v5-c-form__group-label-help--hover--Color: var(--pf-v5-global--Color--100);
+  padding: var(--pf-t--global--spacer--xs);
+  font-size: var(--pf-t--global--icon--size--font--body--sm);
+  color: var(--pf-t--global--text--color--link--default);
 `;
 
 function StandardPopover(props: {
@@ -37,11 +35,22 @@ function StandardPopover(props: {
       <PopoverButton
         aria-label={ariaLabel ?? translations.moreInformation}
         aria-haspopup="true"
-        className="pf-v5-c-form__group-label-help"
+        className="pf-v6-c-button pf-m-plain"
         onClick={(e) => e.preventDefault()}
         type="button"
       >
-        <HelpIcon />
+        <Icon
+          size="sm"
+          status="custom"
+          style={
+            {
+              '--pf-v6-c-icon__content--m-custom--Color':
+                'var(--pf-t--global--text--color--link--default)',
+            } as React.CSSProperties
+          }
+        >
+          <HelpIcon />
+        </Icon>
       </PopoverButton>
     </Popover>
   );

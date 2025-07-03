@@ -1,10 +1,8 @@
 import {
   Button,
   EmptyState,
-  EmptyStateIcon,
   Stack,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { WrenchIcon } from '@patternfly/react-icons';
@@ -15,12 +13,12 @@ export function PageNotImplemented() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return (
-    <EmptyState isFullHeight>
-      <EmptyStateHeader
-        titleText={<>{t('Under Development')}</>}
-        icon={<EmptyStateIcon icon={WrenchIcon} />}
-        headingLevel="h2"
-      />
+    <EmptyState
+      headingLevel="h2"
+      icon={WrenchIcon}
+      titleText={<>{t('Under Development')}</>}
+      isFullHeight
+    >
       <EmptyStateFooter>
         <EmptyStateActions>
           <Stack hasGutter>

@@ -21,7 +21,7 @@ function assertOnSubFormFields(credentialType: string | RegExp) {
         .then(() => {
           cy.get('label').should('include.text', label);
           if (isRequired) {
-            cy.get('label').should('have.descendants', 'span.pf-v5-c-form__label-required');
+            cy.get('label').should('have.descendants', 'span.pf-v6-c-form__label-required');
           }
         });
     });
@@ -256,8 +256,8 @@ describe('Credential form', () => {
       cy.contains('Secret Management System').should('exist');
       cy.get('button[id="credential"]').click();
     });
-    cy.get('button.pf-v5-c-menu__item').should('be.visible');
-    cy.get('button.pf-v5-c-menu__item').click();
+    cy.get('button.pf-v6-c-menu__item').should('be.visible');
+    cy.get('button.pf-v6-c-menu__item').click();
     cy.getModal().within(() => {
       cy.contains('button[id="credential"]', 'demo-lookup').should('be.visible');
       cy.getByDataCy('Submit').click();

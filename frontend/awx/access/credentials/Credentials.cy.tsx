@@ -13,6 +13,7 @@ describe('Credentials.cy.ts', () => {
         fixture: 'mock_options.json',
       }
     ).as('getOptions');
+
     cy.intercept(
       {
         method: 'GET',
@@ -23,6 +24,11 @@ describe('Credentials.cy.ts', () => {
         fixture: 'credentials.json',
       }
     ).as('getCredentials');
+
+    cy.intercept('GET', awxAPI`/credential_types/?page=1&page_size=200`, {
+      statusCode: 200,
+      body: { count: 0, results: [] },
+    }).as('getCredentialTypes');
   });
 
   it('renders credentials list', () => {
@@ -65,9 +71,13 @@ describe('Credentials.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: Credential[]) => {
         const credential = results[1]; // credential with summary_fields.user_capabilities.delete: false
-        cy.contains('tr', credential.name).within(() => {
-          cy.get('button.toggle-kebab').click();
-        });
+        cy.get('[data-cy="name-column-cell"]')
+          .contains(credential.name)
+          .closest('tr')
+          .within(() => {
+            cy.get('button.toggle-kebab').click();
+          });
+
         cy.contains('#delete-credential', /^Delete credential$/).should(
           'have.attr',
           'aria-disabled',
@@ -82,10 +92,18 @@ describe('Credentials.cy.ts', () => {
       .its('results')
       .should('be.an', 'array')
       .then((results: Credential[]) => {
-        const credential = results[0]; // credential with summary_fields.user_capabilities.start: true
-        cy.contains('tr', credential.name).within(() => {
-          cy.get('[data-cy="edit-credential"]').should('have.attr', 'aria-disabled', 'false');
-        });
+        const credential = results[0]; // credential with edit = true
+        cy.get('[data-cy="name-column-cell"]')
+          .contains(credential.name)
+          .closest('tr')
+          .should('exist')
+          .and('be.visible')
+          .within(() => {
+            cy.get('[data-cy="edit-credential"]')
+              .should('exist')
+              .and('be.visible')
+              .and('be.enabled');
+          });
       });
   });
 
@@ -96,9 +114,12 @@ describe('Credentials.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: Credential[]) => {
         const credential = results[1]; // credential with summary_fields.user_capabilities.start: false
-        cy.contains('tr', credential.name).within(() => {
-          cy.get('[data-cy="edit-credential"]').should('have.attr', 'aria-disabled', 'true');
-        });
+        cy.get('[data-cy="name-column-cell"]')
+          .contains(credential.name)
+          .closest('tr')
+          .within(() => {
+            cy.get('[data-cy="edit-credential"]').should('have.attr', 'aria-disabled', 'true');
+          });
       });
   });
 
@@ -109,9 +130,15 @@ describe('Credentials.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: Credential[]) => {
         const credential = results[0]; // credential with summary_fields.user_capabilities.copy: true
-        cy.contains('tr', credential.name).within(() => {
-          cy.get('[data-cy="duplicate-credential"]').should('have.attr', 'aria-disabled', 'false');
-        });
+        cy.get('[data-cy="name-column-cell"]')
+          .contains(credential.name)
+          .closest('tr')
+          .within(() => {
+            cy.get('[data-cy="duplicate-credential"]')
+              .should('exist')
+              .and('be.visible')
+              .and('be.enabled');
+          });
       });
   });
 
@@ -122,9 +149,14 @@ describe('Credentials.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: Credential[]) => {
         const credential = results[1]; // credential with summary_fields.user_capabilities.copy: false
-        cy.contains('tr', credential.name).within(() => {
-          cy.get('[data-cy="duplicate-credential"]').should('have.attr', 'aria-disabled', 'true');
-        });
+        cy.get('[data-cy="name-column-cell"]')
+          .contains(credential.name)
+          .closest('tr')
+          .within(() => {
+            cy.get('[data-cy="duplicate-credential"]')
+              .should('exist')
+              .and('have.attr', 'aria-disabled', 'true');
+          });
       });
   });
 });

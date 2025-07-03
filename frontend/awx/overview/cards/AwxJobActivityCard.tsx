@@ -5,14 +5,7 @@ import {
 import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
 import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
-import {
-  CardBody,
-  Flex,
-  FlexItem,
-  ToggleGroup,
-  ToggleGroupItem,
-  Tooltip,
-} from '@patternfly/react-core';
+import { Flex, FlexItem, ToggleGroup, ToggleGroupItem, Tooltip } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -105,9 +98,7 @@ export function AwxJobActivityCard() {
         </Flex>
       }
     >
-      <CardBody>
-        <JobsChart period={period!} jobType={jobType!} variant={variant} />
-      </CardBody>
+      <JobsChart period={period!} jobType={jobType!} variant={variant} />
     </PageDashboardCard>
   );
 }

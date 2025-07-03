@@ -1,3 +1,4 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import jobWorkflowNodesData from '@ansible/cypress/fixtures/workflow_nodes.json';
 import { WorkflowJobNode } from '../../interfaces/WorkflowNode';
 import { WorkflowOutputNavigation } from './WorkflowOutputNavigation';
@@ -7,7 +8,7 @@ describe('WorkflowOutputNavigation', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: `/api/v2/workflow_jobs/*/workflow_nodes/*`,
+        url: awxAPI`/workflow_jobs/*/workflow_nodes/*`,
         hostname: 'localhost',
       },
       {

@@ -17,11 +17,5 @@ import { useFrameworkTranslations } from './useFrameworkTranslations';
  */
 export function PageLayout(props: { children?: ReactNode }) {
   const [translations] = useFrameworkTranslations();
-  return (
-    <ErrorBoundary message={translations.errorText}>
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '100%' }}>
-        {props.children}
-      </div>
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary message={translations.errorText}>{props.children}</ErrorBoundary>;
 }

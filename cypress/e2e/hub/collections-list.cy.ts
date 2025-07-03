@@ -133,7 +133,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
           cy.clickTableRow(collectionName, false);
           cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
           cy.getByDataCy('upload-new-version').click();
-          cy.get('#file-browse-button').click();
+          cy.contains('button', 'Browse').click();
           cy.get('input[id="file-filename"]').selectFile(result.filename, {
             action: 'drag-drop',
           });

@@ -61,11 +61,7 @@ const Help = () => {
 
 const warning = (isRequired: boolean) =>
   (
-    <HelperTextItem
-      variant={isRequired ? 'default' : 'warning'}
-      hasIcon={!isRequired}
-      key="warning"
-    >
+    <HelperTextItem variant={isRequired ? 'default' : 'warning'} key="warning">
       {isRequired ? (
         <Trans>This remote will only sync collections in this file and their dependencies.</Trans>
       ) : (

@@ -57,7 +57,7 @@ describe('Check if the build includes EDA', () => {
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('table').should('exist');
         cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
         cy.getBy('button[data-cy="apply-filter"]').click();
@@ -66,7 +66,7 @@ describe('Check if the build includes EDA', () => {
       });
       cy.get('[data-cy="project_id"]').click();
       cy.clickButton('Browse');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('table').should('exist');
         cy.getBy('[data-cy="text-input"] input').type(edaProject.name);
         cy.getBy('button[data-cy="apply-filter"]').click();
@@ -75,7 +75,7 @@ describe('Check if the build includes EDA', () => {
       });
       cy.get('[data-cy="rulebook_id"]').click();
       cy.clickButton('Browse');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('table').should('exist');
         cy.getBy('[data-cy="text-input"] input').type(edaRuleBook.name);
         cy.getBy('button[data-cy="apply-filter"]').click();

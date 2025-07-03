@@ -119,7 +119,7 @@ describe('Create Edit Inventory Form', () => {
           cy.get('[data-cy="labels-typeahead-input"]').type(
             (payload as RegularPayload).labels[0].name
           );
-          cy.get('.pf-v5-c-menu__item-text').click();
+          cy.get('.pf-v6-c-menu__item-text').click();
         }
         if (kind === 'smart') {
           cy.get('[data-cy="host-filter"]').type((payload as SmartPayload).host_filter);
@@ -183,7 +183,7 @@ describe('Create Edit Inventory Form', () => {
        * This is a request handled by a framework component
        */
       cy.intercept(
-        { method: 'GET', url: `/api/v2/instance_groups/*/` },
+        { method: 'GET', url: awxAPI`/instance_groups/*/` },
 
         { ...instanceGroupsResponse.results[1] }
       );
@@ -292,7 +292,7 @@ describe('Create Edit Inventory Form', () => {
         }
         if (kind === '') {
           cy.get('[data-cy="labels-typeahead-input"]').type('edited test');
-          cy.get('.pf-v5-c-menu__item-text').click();
+          cy.get('.pf-v6-c-menu__item-text').click();
         }
         cy.clickButton(/^Save inventory$/);
         cy.wait('@EditInvReq')

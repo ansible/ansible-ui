@@ -44,7 +44,7 @@ export function PageFormGroup(props: PageFormGroupProps) {
           {label}
         </>
       }
-      labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
+      labelHelp={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
       labelInfo={props.additionalControls}
       isRequired={isRequired}
       data-cy={`${props.fieldId}-form-group`}

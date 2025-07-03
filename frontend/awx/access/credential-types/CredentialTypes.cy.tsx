@@ -89,7 +89,7 @@ describe('Credential Types List', () => {
         },
       }));
       cy.mount(<CredentialTypes />);
-      cy.contains('a', /^Create credential type$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('a', /^Create credential type$/).should('not.have.attr', 'aria-disabled');
     });
 
     it('Displays error if credential types are not successfully loaded', () => {

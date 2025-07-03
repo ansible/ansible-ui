@@ -38,7 +38,6 @@ export const CalculationCost: FunctionComponent<Props> = ({
           {t('Manual cost of automation')}
           <span
             style={{
-              // color: 'var(--pf-v5-global--Color--dark-200)',
               fontSize: '0.8em',
               display: 'block',
             }}

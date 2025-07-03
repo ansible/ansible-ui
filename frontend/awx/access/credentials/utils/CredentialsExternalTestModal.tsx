@@ -6,7 +6,7 @@ import {
   PageFormTextInput,
 } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { AlertProps, Modal } from '@patternfly/react-core';
+import { AlertProps, Modal, ModalHeader, ModalVariant, ModalBody } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxPageForm } from '../../../common/AwxPageForm';
@@ -91,67 +91,68 @@ export function CredentialsExternalTestModal(
   return (
     <Modal
       aria-label={t(`Test external credential`)}
-      variant="small"
+      variant={ModalVariant.small}
       position="default"
-      title={t`Test external credential`}
-      hasNoBodyWrapper
       isOpen
       onClose={() => props.popDialog()}
     >
-      <AwxPageForm
-        submitText={t('Run')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        singleColumn
-      >
-        {props.credentialType.inputs.metadata.map((field: CredentialInputField) => {
-          const isRequired = props.credentialType.inputs?.required.includes(field.id);
-          if (field.type === 'string') {
-            if (field.choices) {
+      <ModalHeader title={t`Test external credential`} />
+      <ModalBody>
+        <AwxPageForm
+          submitText={t('Run')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          singleColumn
+        >
+          {props.credentialType.inputs.metadata.map((field: CredentialInputField) => {
+            const isRequired = props.credentialType.inputs?.required.includes(field.id);
+            if (field.type === 'string') {
+              if (field.choices) {
+                return (
+                  <PageFormSelect
+                    key={field.id}
+                    name={field.id}
+                    label={field.label}
+                    labelHelp={field.help_text}
+                    isRequired={isRequired}
+                    options={field.choices.map((choice) => ({
+                      value: choice,
+                      key: choice,
+                      label: choice,
+                    }))}
+                  />
+                );
+              }
+
+              if (field.multiline) {
+                return (
+                  <PageFormTextArea
+                    key={field.id}
+                    name={field.id}
+                    label={field.label}
+                    labelHelp={field.help_text}
+                    isRequired={isRequired}
+                  />
+                );
+              }
+
               return (
-                <PageFormSelect
+                <PageFormTextInput
                   key={field.id}
                   name={field.id}
                   label={field.label}
                   labelHelp={field.help_text}
-                  isRequired={isRequired}
-                  options={field.choices.map((choice) => ({
-                    value: choice,
-                    key: choice,
-                    label: choice,
-                  }))}
-                />
-              );
-            }
-
-            if (field.multiline) {
-              return (
-                <PageFormTextArea
-                  key={field.id}
-                  name={field.id}
-                  label={field.label}
-                  labelHelp={field.help_text}
+                  type="text"
                   isRequired={isRequired}
                 />
               );
             }
 
-            return (
-              <PageFormTextInput
-                key={field.id}
-                name={field.id}
-                label={field.label}
-                labelHelp={field.help_text}
-                type="text"
-                isRequired={isRequired}
-              />
-            );
-          }
-
-          return null;
-        })}
-      </AwxPageForm>
+            return null;
+          })}
+        </AwxPageForm>
+      </ModalBody>
     </Modal>
   );
 }

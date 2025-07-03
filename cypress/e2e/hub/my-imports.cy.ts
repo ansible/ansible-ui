@@ -53,7 +53,7 @@ describe('GalaxyKit Installation Check for My Imports', () => {
       cy.contains('No namespace selected.');
       cy.contains('No data');
       cy.get('#namespace-selector').contains('Select namespace');
-      cy.get('.pf-v5-c-chip-group').should('not.exist');
+      cy.get('.pf-v6-c-chip-group').should('not.exist');
     });
 
     it('should be able to inspect completed collection import', () => {
@@ -78,9 +78,9 @@ describe('GalaxyKit Installation Check for My Imports', () => {
       visitImports(validCollection.namespace);
       cy.get('#namespace-selector').contains(namespace);
       cy.get('#namespace-selector').click();
-      cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
-      cy.get('.pf-v5-c-modal-box__header').click();
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('.pf-v6-c-menu__footer').contains('Browse').click();
+      cy.get('.pf-v6-c-modal-box__header').click();
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.getTableRowBySingleText(validCollection.namespace).within(() => {
           cy.get('td[data-cy=checkbox-column-cell]').click();
         });
@@ -89,8 +89,8 @@ describe('GalaxyKit Installation Check for My Imports', () => {
       cy.filterTableBySingleText(validCollection.name);
       cy.filterTableByTypeAndSingleText('Version', validCollection.version);
       cy.filterBySingleSelection('Status', 'Completed');
-      cy.get('.pf-v5-c-chip-group').contains(validCollection.name);
-      cy.get('.pf-v5-c-chip-group').contains(validCollection.version);
+      cy.get('[class*="label-group__list"]').contains(validCollection.name);
+      cy.get('[class*="label-group__list"]').contains(validCollection.version);
       cy.url().should('include', validCollection.namespace);
       cy.url().should('include', validCollection.name);
       cy.get(`[data-cy="row-id-${validCollection.name}"]`).within(() => {
@@ -98,10 +98,10 @@ describe('GalaxyKit Installation Check for My Imports', () => {
         cy.contains('Completed');
       });
       cy.clickButton('Clear all filters');
-      cy.get('.pf-v5-c-toolbar__group').contains(validCollection.name).should('not.exist');
-      cy.get('.pf-v5-c-toolbar__group').contains(validCollection.version).should('not.exist');
-      cy.get('.pf-v5-c-toolbar__group').contains('Completed').should('not.exist');
-      cy.get('.pf-v5-c-chip-group').should('not.exist');
+      cy.get('.pf-v6-c-toolbar__group').contains(validCollection.name).should('not.exist');
+      cy.get('.pf-v6-c-toolbar__group').contains(validCollection.version).should('not.exist');
+      cy.get('.pf-v6-c-toolbar__group').contains('Completed').should('not.exist');
+      cy.get('[class*="label-group__list"]').should('not.exist');
     });
   });
 });

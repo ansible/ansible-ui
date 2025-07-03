@@ -93,11 +93,11 @@ describe('Workflow Visualizer', () => {
         .then((wfjt: WorkflowJobTemplate) => {
           expect(wfjt.description).to.eql('this is a description');
           cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
-          cy.get('h4.pf-v5-c-empty-state__title-text').should(
+          cy.get('h4.pf-v6-c-empty-state__title-text').should(
             'have.text',
             'There are currently no nodes in this workflow'
           );
-          cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+          cy.get('div.pf-v6-c-empty-state__actions').within(() => {
             cy.get('[data-cy="add-node-button"]').should('be.visible');
           });
           cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
@@ -508,6 +508,7 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
+
   it('Should update skip tags', () => {
     cy.navigateTo('awx', 'templates');
     cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
@@ -525,7 +526,7 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.get('[data-cy="prompt.skip_tags-form-group"]').contains('Skip tags');
 
     cy.getByDataCy('prompt.skip_tags-typeahead-input').within(() => {
-      cy.get('span.pf-v5-c-chip__content').should('have.text', 'aap-ui');
+      cy.get('[data-cy="selected-chip"]').should('have.text', 'aap-ui');
       cy.get('input').type('new skip tag');
     });
     cy.getByDataCy('prompt.skip_tags-typeahead-select').within(() => {
@@ -539,7 +540,7 @@ describe('Workflow Visualizer Prompt Step', () => {
       cy.get('ellipse').click({ force: true });
     });
     const skipTagLabels = ['aap-ui', 'new skip tag'];
-    cy.get('span.pf-v5-c-label__text').each(($el, index) => {
+    cy.get('span.pf-v6-c-label__text').each(($el, index) => {
       cy.wrap($el).should('have.text', `${skipTagLabels[index]}`);
     });
   });

@@ -20,8 +20,8 @@ const getIconStyle = (variant: string): CSSProperties => {
 };
 
 const classNames = {
-  nav: 'pf-v5-c-nav__link',
-  menu: 'pf-v5-c-dropdown__menu-item',
+  nav: 'pf-v6-c-nav__link',
+  menu: 'pf-v6-c-dropdown__menu-item',
   default: undefined,
   download: undefined,
 };

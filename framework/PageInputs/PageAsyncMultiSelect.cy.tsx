@@ -15,7 +15,7 @@ function PageAsyncMultiSelectTest(
   const { defaultValues, ...rest } = props;
   const [values, setValues] = useState<number[] | undefined>(() => defaultValues);
   return (
-    <PageSection>
+    <PageSection hasBodyWrapper={false}>
       <PageAsyncMultiSelect<number>
         {...rest}
         id="test"

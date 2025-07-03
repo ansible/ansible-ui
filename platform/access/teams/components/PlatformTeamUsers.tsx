@@ -28,7 +28,7 @@ export function PlatformTeamUsers() {
 
   return (
     <>
-      <PageRoutedTabs tabs={usersTabs} isBox={false} params={{ id: params.id }} />
+      <PageRoutedTabs tabs={usersTabs} params={{ id: params.id }} />
     </>
   );
 }

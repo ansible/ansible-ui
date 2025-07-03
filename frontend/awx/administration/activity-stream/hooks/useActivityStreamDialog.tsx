@@ -1,7 +1,14 @@
 import { PageDetail, PageDetails, usePageDialog } from '@ansible/ansible-ui-framework';
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import {
+  Button,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+} from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityStream } from '../../../interfaces/ActivityStream';
@@ -20,47 +27,48 @@ export function ActivityStreamDialog({ activity }: ActivityStreamModalProps) {
 
   return (
     <Modal
-      title={t('Event details')}
       data-cy="activity-stream-event-modal"
       aria-label={t('Event details')}
       isOpen
-      hasNoBodyWrapper
       onClose={onClose}
       variant={ModalVariant.medium}
-      actions={[
+    >
+      <ModalHeader title={t('Event details')} />
+      <ModalBody>
+        <PageDetails>
+          <PageDetail label={t('Time')}>{formatDateString(activity.timestamp)}</PageDetail>
+          <PageDetail label={t('Initiated by')}>
+            <ActivityStreamInitiatedByCell item={activity} />
+          </PageDetail>
+          {activity.object1 === 'setting' && activity.summary_fields?.setting && (
+            <PageDetail label={t('Setting category')}>
+              {activity.summary_fields.setting[0].category}
+            </PageDetail>
+          )}
+          {activity.object1 === 'setting' && activity.summary_fields?.setting && (
+            <PageDetail label={t('Setting name')}>
+              {activity.summary_fields.setting[0].name}
+            </PageDetail>
+          )}
+          <PageDetail label={t('Action')}>
+            <ActivityDescription activity={activity} />
+          </PageDetail>
+        </PageDetails>
+        {activity.changes && (
+          <PageDetails numberOfColumns="single">
+            <PageDetailCodeEditor
+              label={t('Changes')}
+              value={JSON.stringify(activity.changes)}
+              showCopyToClipboard={true}
+            />
+          </PageDetails>
+        )}
+      </ModalBody>
+      <ModalFooter>
         <Button key="cancel" variant="primary" onClick={onClose}>
           {t('Close')}
-        </Button>,
-      ]}
-    >
-      <PageDetails>
-        <PageDetail label={t('Time')}>{formatDateString(activity.timestamp)}</PageDetail>
-        <PageDetail label={t('Initiated by')}>
-          <ActivityStreamInitiatedByCell item={activity} />
-        </PageDetail>
-        {activity.object1 === 'setting' && activity.summary_fields?.setting && (
-          <PageDetail label={t('Setting category')}>
-            {activity.summary_fields.setting[0].category}
-          </PageDetail>
-        )}
-        {activity.object1 === 'setting' && activity.summary_fields?.setting && (
-          <PageDetail label={t('Setting name')}>
-            {activity.summary_fields.setting[0].name}
-          </PageDetail>
-        )}
-        <PageDetail label={t('Action')}>
-          <ActivityDescription activity={activity} />
-        </PageDetail>
-      </PageDetails>
-      {activity.changes && (
-        <PageDetails numberOfColumns="single">
-          <PageDetailCodeEditor
-            label={t('Changes')}
-            value={JSON.stringify(activity.changes)}
-            showCopyToClipboard={true}
-          />
-        </PageDetails>
-      )}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

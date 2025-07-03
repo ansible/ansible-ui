@@ -203,7 +203,7 @@ collections:
         cy.getBy('[data-cy="Submit"]').click();
         cy.url().should('include', `remotes/${remoteName}/details`);
         cy.get('[data-cy="label-yaml-requirements"]').should('contain', 'YAML requirements');
-        cy.get('.pf-v5-c-code-block__content').should('not.exist');
+        cy.get('.pf-v6-c-code-block__content').should('not.exist');
         cy.get('[data-cy="actions-dropdown"]').click();
         cy.getBy('[data-cy="delete-remote"]').click();
         cy.getBy('#confirm').click();

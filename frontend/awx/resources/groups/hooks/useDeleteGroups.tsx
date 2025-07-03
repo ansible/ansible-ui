@@ -5,9 +5,12 @@ import {
   Button,
   HelperText,
   HelperTextItem,
+  Radio,
   Modal,
   ModalVariant,
-  Radio,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -73,14 +76,51 @@ function DeleteGroupsDialog(props: {
 
   return (
     <Modal
-      titleIconVariant="danger"
-      title={t('Delete group')}
+      aria-labelledby={t('Delete group')}
       variant={ModalVariant.small}
-      description={t(`Are you sure you want to delete the groups below?`)}
       isOpen
       onClose={props.onClose}
       data-cy="delete-groups-dialog"
-      actions={[
+    >
+      <ModalHeader
+        titleIconVariant="danger"
+        title={t('Delete group')}
+        description={t(`Are you sure you want to delete the groups below?`)}
+        labelId={t('Delete group')}
+      />
+      <ModalBody>
+        <>
+          <HelperText className="pf-v6-u-pb-lg" data-cy="delete-groups-dialog-names">
+            {props.groups.map((group) => (
+              <HelperTextItem variant="error" key={group.name}>
+                {group.name}
+              </HelperTextItem>
+            ))}
+          </HelperText>
+          <Radio
+            data-cy="delete-groups-dialog-radio-delete"
+            isChecked={deleteType === 'delete'}
+            name="radio-delete-group"
+            onChange={() => {
+              setDeleteType('delete');
+            }}
+            label={t('Delete all groups and hosts')}
+            id="radio-delete-group"
+          />
+          <Radio
+            data-cy="delete-groups-dialog-radio-promote"
+            isChecked={deleteType === 'promote'}
+            name="radio-promote-group"
+            onChange={() => {
+              setDeleteType('promote');
+            }}
+            label={t('Promote child groups and hosts')}
+            id="radio-promote-group"
+          />
+          {error && <AwxError error={new Error(error)} />}
+        </>
+      </ModalBody>
+      <ModalFooter>
         <Button
           data-cy="delete-group-modal-delete-button"
           ouiaId="delete-group-modal-delete-button"
@@ -91,7 +131,7 @@ function DeleteGroupsDialog(props: {
           aria-label={t`Confirm delete`}
         >
           {t(`Delete`)}
-        </Button>,
+        </Button>
         <Button
           ouiaId="delete-group-modal-cancel-button"
           key="cancel"
@@ -99,39 +139,8 @@ function DeleteGroupsDialog(props: {
           onClick={props.onClose}
         >
           {t(`Cancel`)}
-        </Button>,
-      ]}
-    >
-      <>
-        <HelperText className="pf-v5-u-pb-lg" data-cy="delete-groups-dialog-names">
-          {props.groups.map((group) => (
-            <HelperTextItem variant="error" key={group.name}>
-              {group.name}
-            </HelperTextItem>
-          ))}
-        </HelperText>
-        <Radio
-          data-cy="delete-groups-dialog-radio-delete"
-          isChecked={deleteType === 'delete'}
-          name="radio-delete-group"
-          onChange={() => {
-            setDeleteType('delete');
-          }}
-          label={t('Delete all groups and hosts')}
-          id="radio-delete-group"
-        />
-        <Radio
-          data-cy="delete-groups-dialog-radio-promote"
-          isChecked={deleteType === 'promote'}
-          name="radio-promote-group"
-          onChange={() => {
-            setDeleteType('promote');
-          }}
-          label={t('Promote child groups and hosts')}
-          id="radio-promote-group"
-        />
-        {error && <AwxError error={new Error(error)} />}
-      </>
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

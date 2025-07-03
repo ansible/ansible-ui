@@ -26,7 +26,7 @@ export function PlatformTeamRoles() {
   }, [awxService, edaService, hubService, t]);
   return (
     <>
-      <PageRoutedTabs tabs={rolesTabs} isBox={false} params={{ id: params.id }} />
+      <PageRoutedTabs tabs={rolesTabs} params={{ id: params.id }} />
     </>
   );
 }

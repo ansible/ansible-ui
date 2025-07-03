@@ -56,7 +56,7 @@ describe('Users.cy.ts', () => {
     }));
     cy.intercept({ method: 'GET', url: awxAPI`/users/*` }, { fixture: 'users.json' });
     cy.mount(<Users />);
-    cy.contains('a', /^Create user$/).should('have.attr', 'aria-disabled', 'false');
+    cy.contains('a', /^Create user$/).should('not.have.attr', 'aria-disabled', 'true');
   });
 
   it('deletes user from toolbar menu is enabled if user has permissions', () => {

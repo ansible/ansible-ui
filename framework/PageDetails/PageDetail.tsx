@@ -5,7 +5,7 @@ import {
 } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import styled from 'styled-components';
-import { StandardPopover } from '../components/StandardPopover';
+import { Help } from '../components/Help';
 import { useID } from '../hooks/useID';
 
 export function PageDetail(props: {
@@ -29,7 +29,7 @@ export function PageDetail(props: {
       {label && (
         <DescriptionListTerm data-cy={`label-${id}`} data-testid={`label-${id}`}>
           {label}
-          {helpText ? <StandardPopover header={label} content={helpText} /> : null}
+          {helpText ? <Help title={label} help={helpText} /> : null}
         </DescriptionListTerm>
       )}
       <DescriptionListDescriptionStyled id={id} data-cy={id} data-testid={id}>

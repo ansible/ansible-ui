@@ -37,9 +37,9 @@ describe('Create event stream ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.get('[data-cy="organization_id"]').click();
     cy.get('[data-cy="event_stream_type_id"]').click();
-    cy.get('#basic-event-stream > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#basic-event-stream > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="credential_id"]').click();
-    cy.get('#basic-es-3 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#basic-es-3 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.clickButton('Create event stream');
 
     cy.intercept('POST', edaAPI`/event-streams/`, (req) => {

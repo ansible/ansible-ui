@@ -1,4 +1,4 @@
-import { ClipboardCopy, Truncate } from '@patternfly/react-core';
+import { ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useClipboard } from '../hooks/useClipboard';
 
@@ -9,6 +9,7 @@ export function CopyCell(props: { text?: string; minWidth?: number }) {
   if (!props.text) return <></>;
   return (
     <ClipboardCopy
+      truncation
       hoverTip={t('Copy to clipboard')}
       clickTip={t('Successfully copied to clipboard!')}
       variant="inline-compact"
@@ -19,7 +20,7 @@ export function CopyCell(props: { text?: string; minWidth?: number }) {
         writeToClipboard(props.text ?? '');
       }}
     >
-      <Truncate content={props.text} style={{ minWidth: props.minWidth }} />
+      {props.text}
     </ClipboardCopy>
   );
 }

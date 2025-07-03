@@ -43,7 +43,7 @@ export function ExecutionEnvironmentImages() {
 
   return (
     <Scrollable>
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         <PageTable<Image>
           id="hub-execution-environment-images-table"
           tableColumns={tableColumns}

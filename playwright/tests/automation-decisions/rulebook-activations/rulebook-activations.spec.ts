@@ -48,7 +48,7 @@ test(
     await page.getByText('Rulebook activation enabled').click();
     await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
     await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
-    await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
+    await expect(page.locator('[data-ouia-component-type="PF6/ModalContent"]')).toContainText(
       'Success'
     );
     await expect(page.locator('label')).toContainText('Rulebook activation disabled');
@@ -93,7 +93,7 @@ test(
     await page.getByText('Rulebook activation enabled').click();
     await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
     await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
-    await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
+    await expect(page.locator('[data-ouia-component-type="PF6/ModalContent"]')).toContainText(
       'Success'
     );
     await expect(page.locator('label')).toContainText('Rulebook activation disabled');

@@ -13,7 +13,6 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useState, type CSSProperties } from 'react';
 import { useMatch } from 'react-router';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
-import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
 
 /** Renders a sidebar navigation menu from an arroy of navigation items. */
@@ -26,7 +25,7 @@ export function PageNavigation(props: {
   const navBar = usePageNavSideBar();
 
   return (
-    <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
+    <PageSidebar isSidebarOpen={navBar.isOpen}>
       <PageSidebarBody>
         {props.contextSwitcher}
         <Nav data-cy="page-navigation" className="side-nav">
@@ -104,7 +103,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         id={id}
         href={item.href || route}
         isActive={isActive}
-        className={isActive ? 'bg-lighten' : undefined}
+        // className={isActive ? 'bg-lighten' : undefined}
         onClick={() => (item.href ? window.open(item.href, '_blank') : onClickNavItem(route))}
         target={item.href ? '_blank' : ''}
         data-cy={id}
@@ -121,8 +120,8 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
           )}
           {'href' in item && item.href && (
             <FlexItem>
-              <span className="pf-v5-c-nav__toggle">
-                <span className="pf-v5-c-nav__toggle-icon">
+              <span className="pf-v6-c-nav__toggle">
+                <span className="pf-v6-c-nav__toggle-icon">
                   <ExternalLinkAltIcon />
                 </span>
               </span>

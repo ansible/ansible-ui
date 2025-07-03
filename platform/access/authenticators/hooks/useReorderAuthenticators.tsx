@@ -2,7 +2,15 @@ import { usePageDialog } from '@ansible/ansible-ui-framework';
 import { ReorderItems } from '@ansible/ansible-ui-framework/components/ReorderItems';
 import { requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
+import {
+  Button,
+  Divider,
+  ModalVariant,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Authenticator } from '../../../interfaces/Authenticator';
@@ -81,27 +89,24 @@ export function ReorderItemsModal(
 
   return (
     <Modal
-      title={t('Manage authentication order')}
-      aria-label={t('Manage authentication order')}
-      ouiaId={t('Manage authentication order')}
-      description={
-        <div style={{ marginBottom: 16 }}>
-          {t(
-            'The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your authentication.'
-          )}
-        </div>
-      }
       variant={ModalVariant.medium}
       isOpen
       onClose={onClose}
-      actions={[
-        <Button key="apply" variant="primary" onClick={onApply}>{t`Apply`}</Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>{t`Cancel`}</Button>,
-      ]}
-      hasNoBodyWrapper
+      aria-label={t('Manage authentication order')}
+      ouiaId={t('Manage authentication order')}
     >
+      <ModalHeader
+        title={t('Manage authentication order')}
+        description={
+          <div style={{ marginBottom: 16 }}>
+            {t(
+              'The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your authentication.'
+            )}
+          </div>
+        }
+      />
       <Divider />
-      <ModalBoxBody style={{ padding: 0 }}>
+      <ModalBody style={{ padding: 0 }}>
         <ReorderItems
           keyFn={(item: Authenticator) => item.name}
           items={items}
@@ -114,8 +119,12 @@ export function ReorderItemsModal(
           selectAll={() => null}
           unselectAll={() => null}
         />
-      </ModalBoxBody>
+      </ModalBody>
       <Divider />
+      <ModalFooter>
+        <Button key="apply" variant="primary" onClick={onApply}>{t`Apply`}</Button>
+        <Button key="cancel" variant="link" onClick={onClose}>{t`Cancel`}</Button>
+      </ModalFooter>
     </Modal>
   );
 }

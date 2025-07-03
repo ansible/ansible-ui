@@ -118,7 +118,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
       cy.verifyPageTitle('Inventories');
       cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-      cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
+      cy.get('.pf-v6-c-tabs__item > a').contains('Job Templates').click();
       cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launch');
       cy.filterTableBySearch(jobTemplate.name, 1);
       cy.get('[data-cy="launch-template"]').first().click();

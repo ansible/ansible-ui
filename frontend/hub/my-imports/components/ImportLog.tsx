@@ -58,7 +58,7 @@ export function ImportLog({ isLoading, collectionImport, collection, error }: IP
       <CodeBlock
         style={{
           marginTop: '10px',
-          backgroundColor: 'var(--pf-v5-global--palette--black-850)',
+          backgroundColor: 'var(--pf-t--global--background--color--secondary--default)',
           position: 'relative',
         }}
         data-cy="import-console"

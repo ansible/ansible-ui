@@ -8,7 +8,7 @@ import {
 import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
 import { getItemKey } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { CardBody, Flex, FlexItem, Text } from '@patternfly/react-core';
+import { CardBody, Flex, FlexItem, Content } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -69,13 +69,13 @@ export function SubscriptionUsage() {
           headerControls={
             <Flex spaceItems={{ default: 'spaceItemsNone' }} style={{ gap: 8 }}>
               <FlexItem>
-                <Text component="small">
+                <Content component="small">
                   Last recalculation date:{' '}
                   {systemData.data !== undefined &&
                   !!systemData.data.HOST_METRIC_SUMMARY_TASK_LAST_TS
                     ? systemData.data.HOST_METRIC_SUMMARY_TASK_LAST_TS.slice(0, 10)
                     : t('None')}
-                </Text>
+                </Content>
               </FlexItem>
             </Flex>
           }

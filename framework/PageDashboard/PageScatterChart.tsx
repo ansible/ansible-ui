@@ -1,4 +1,9 @@
-import { Chart, ChartAxis, ChartScatter, ChartVoronoiContainer } from '@patternfly/react-charts';
+import {
+  Chart,
+  ChartAxis,
+  ChartScatter,
+  ChartVoronoiContainer,
+} from '@patternfly/react-charts/victory';
 import { ReactNode, useMemo, useState } from 'react';
 import { PageChartContainer } from './PageChartContainer';
 

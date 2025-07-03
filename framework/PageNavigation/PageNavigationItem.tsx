@@ -1,3 +1,5 @@
+import { LabelColor } from '../components/pfcolors';
+
 interface PageNavigationGroup {
   id?: string;
   label?: string;
@@ -16,7 +18,7 @@ interface PageNavigationComponent {
   element: JSX.Element;
   hidden?: boolean;
   badge?: string;
-  badgeColor?: 'blue' | 'cyan' | 'green' | 'orange' | 'purple' | 'red' | 'grey' | 'gold';
+  badgeColor?: LabelColor;
   href?: string;
 }
 

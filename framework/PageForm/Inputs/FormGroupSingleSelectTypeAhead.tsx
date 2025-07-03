@@ -307,9 +307,12 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
         />
         {(selected || inputValue) && (
           <TextInputGroupUtilities>
-            <Button variant="plain" onClick={onClearButtonClick} aria-label="Clear input value">
-              <TimesIcon aria-hidden />
-            </Button>
+            <Button
+              icon={<TimesIcon aria-hidden />}
+              variant="plain"
+              onClick={onClearButtonClick}
+              aria-label="Clear input value"
+            />
           </TextInputGroupUtilities>
         )}
       </TextInputGroup>

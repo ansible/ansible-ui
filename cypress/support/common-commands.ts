@@ -33,7 +33,7 @@ Cypress.Commands.add(
     if (variant === 'MultiText') {
       cy.getByDataCy('apply-filter').click();
     }
-    cy.contains('.pf-v5-c-chip__text', text);
+    cy.contains('[class*="label-group__list-item"]', text);
   }
 );
 
@@ -84,7 +84,7 @@ Cypress.Commands.add(
   'singleSelectShouldHaveSelectedOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).within(() => {
-      cy.get('.pf-v5-c-menu-toggle__text').should('have.text', label);
+      cy.get('.pf-v6-c-menu-toggle__text').should('have.text', label);
     });
   }
 );
@@ -93,7 +93,7 @@ Cypress.Commands.add(
   'multiSelectShouldHaveSelectedOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).within(() => {
-      cy.contains('.pf-v5-c-chip__text', label).should('have.text', label);
+      cy.contains('[class*="label-group__list-item"]', label).should('have.text', label);
     });
   }
 );
@@ -102,7 +102,7 @@ Cypress.Commands.add(
   'multiSelectShouldNotHaveSelectedOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).within(() => {
-      cy.contains('.pf-v5-c-chip__text', label).should('not.exist');
+      cy.contains('[class*="label-group__list-item"]', label).should('not.exist');
     });
   }
 );
@@ -113,9 +113,9 @@ Cypress.Commands.add(
     cy.get(selector).click();
     cy.get(selector)
       .parent()
-      .get('.pf-v5-c-menu__content')
+      .get('.pf-v6-c-menu__content')
       .within(() => {
-        cy.contains('.pf-v5-c-menu__item-text', label).should('contain.text', label);
+        cy.contains('.pf-v6-c-menu__item-text', label).should('contain.text', label);
       });
     cy.get(selector).click();
   }
@@ -125,9 +125,9 @@ Cypress.Commands.add('selectSingleSelectOption', (selector: string, label: strin
   cy.get(selector).click();
   cy.get(selector)
     .parent()
-    .get('.pf-v5-c-menu__content')
+    .get('.pf-v6-c-menu__content')
     .within(() => {
-      cy.contains('.pf-v5-c-menu__item-text', label).parent().click();
+      cy.contains('.pf-v6-c-menu__item-text', label).parent().click();
     });
 });
 
@@ -137,8 +137,8 @@ Cypress.Commands.add(
     cy.get(`button#${selector}`).click();
     cy.get(`div#${selector}-select`);
     cy.get("input[aria-label='Search input']").type(`${label}`);
-    cy.get('.pf-v5-c-menu__list').within(() => {
-      cy.get('.pf-v5-c-menu__item-text').contains(label).click();
+    cy.get('.pf-v6-c-menu__list').within(() => {
+      cy.get('.pf-v6-c-menu__item-text').contains(label).click();
     });
   }
 );
@@ -146,9 +146,9 @@ Cypress.Commands.add(
 Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string | RegExp) => {
   cy.get(selector)
     .parent()
-    .get('.pf-v5-c-menu__content')
+    .get('.pf-v6-c-menu__content')
     .within(() => {
-      cy.contains('.pf-v5-c-menu__item-text', label)
+      cy.contains('.pf-v6-c-menu__item-text', label)
         .parent()
         .within(() => {
           cy.get('input').click();
@@ -161,7 +161,7 @@ Cypress.Commands.add('clickTableHeader', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('getModal', () => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]');
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]');
 });
 
 Cypress.Commands.add('getWizard', () => {
@@ -184,7 +184,7 @@ Cypress.Commands.add(
               expect(itemsList).to.include(text.trim());
             });
         });
-      cy.get('.pf-v5-c-badge').should('have.text', itemCount);
+      cy.get('.pf-v6-c-badge').should('have.text', itemCount);
     });
   }
 );

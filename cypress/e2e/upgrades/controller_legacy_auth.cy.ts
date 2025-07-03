@@ -49,7 +49,7 @@ describe('Authenticate using Controller legacy login', () => {
     cy.get('input[id*="login-password-id"]').type(awxPassword);
     cy.clickButton(/^Log in$/);
     cy.checkLinkedButton('Automation Controller');
-    cy.get('.pf-v5-c-card__title-text').contains('Link your Ansible Automation Platform accounts');
+    cy.get('.pf-v6-c-card__title-text').contains('Link your Ansible Automation Platform accounts');
     cy.clickButton(/^Next$/);
     cy.getByDataCy('new-username').should('have.value', awxUsername);
     cy.getByDataCy('aap-password').type('testPassword');
@@ -94,7 +94,7 @@ describe('Negative paths for controller legacy authentication', () => {
     cy.get('input[id*="login-username-id"]').type(awxUsername);
     cy.get('input[id*="login-password-id"]').type('incorrectPassword');
     cy.clickButton(/^Log in$/);
-    cy.get('.pf-v5-c-helper-text__item-text').contains(
+    cy.get('.pf-v6-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );
   });
@@ -104,7 +104,7 @@ describe('Negative paths for controller legacy authentication', () => {
     cy.get('input[id*="login-username-id"]').type('non-existentUser');
     cy.get('input[id*="login-password-id"]').type('non-existentPassword');
     cy.clickButton(/^Log in$/);
-    cy.get('.pf-v5-c-helper-text__item-text').contains(
+    cy.get('.pf-v6-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );
   });
@@ -128,7 +128,7 @@ describe('Negative paths for controller legacy authentication', () => {
     cy.get('input[id*="login-username-id"]').type(awxUsername);
     cy.get('input[id*="login-password-id"]').type(awxPassword);
     cy.clickButton(/^Log in$/);
-    cy.get('.pf-v5-c-helper-text__item-text').contains(
+    cy.get('.pf-v6-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );
   });

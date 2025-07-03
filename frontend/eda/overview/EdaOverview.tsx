@@ -2,7 +2,7 @@ import { PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-frame
 import { PageDashboard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
-import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
+import { CardBody, ProgressStep, ProgressStepper, Stack, Content } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -61,7 +61,7 @@ export function EdaOverview() {
           >
             <CardBody>
               <Stack hasGutter>
-                <Text>
+                <Content component="p">
                   {t('To learn how to get started, ')}
                   <ExternalLink href="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index">
                     {t`Documentation.`}
@@ -72,7 +72,7 @@ export function EdaOverview() {
                   <>
                     {t(', or follow the steps below.')} <ExternalLinkAltIcon />
                   </>
-                </Text>
+                </Content>
                 <ProgressStepper>
                   <ProgressStep
                     variant={hasProject ? 'success' : 'info'}

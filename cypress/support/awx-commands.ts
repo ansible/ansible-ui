@@ -60,7 +60,7 @@ Cypress.Commands.add(
     const btnText: string = `${action} workflow approvals`;
     cy.log(btnText);
     // FIXME: header is present but the get always fails
-    // cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    // cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     //   cy.get('header').should('contain', btnText);
     // });
     cy.clickModalConfirmCheckbox();
@@ -303,7 +303,13 @@ Cypress.Commands.add(
     cy.verifyPageTitle(customCredTypeName);
     cy.hasDetail(/^Name$/, `${customCredTypeName}`);
     cy.hasDetail(/^Description$/, `${credentialTypeDesc}`);
-    cy.clickPageAction('delete-credential-type');
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.document()
+      .its('body')
+      .find('.pf-v6-c-menu__content ul[role="menu"]')
+      .within(() => {
+        cy.getBy(`[data-cy="delete-credential-type"] button`).click();
+      });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential type/);
   }
@@ -344,7 +350,7 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
   cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
     cy.get('button').eq(1).click();
   });
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     cy.searchAndDisplayResource(itemName);
     cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
       cy.get('[data-cy="checkbox-column-cell"] input').click();
@@ -362,7 +368,7 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
     .then(($elements) => {
       if ($elements.length) {
         cy.get(`${menuSelector}`).find('button').click();
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           //wait for table to load
           cy.get('table').should('exist');
           cy.filterTableBySingleSelect('name', itemName);
@@ -375,11 +381,7 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
           .last()
           .click()
           .then(() => {
-            cy.get(`${menuSelector}`)
-              .first()
-              .within(() => {
-                cy.contains('li', itemName).click();
-              });
+            cy.contains('[class*="menu__list-item"]', itemName).click();
           });
       }
     });
@@ -404,7 +406,7 @@ Cypress.Commands.add('clickTab', (label: string | RegExp, isLink, assertSelected
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.containsBy('button:enabled', label).click();
+  cy.contains('button:enabled', label).click();
 });
 
 Cypress.Commands.add(
@@ -434,7 +436,7 @@ Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
-  cy.contains('.pf-v5-c-tooltip__content', label);
+  cy.contains('.pf-v6-c-tooltip__content', label);
 });
 
 Cypress.Commands.add('clickToolbarKebabAction', (dataCy: string) => {
@@ -442,7 +444,7 @@ Cypress.Commands.add('clickToolbarKebabAction', (dataCy: string) => {
     cy.getByDataCy('actions-dropdown').click();
     cy.document()
       .its('body')
-      .find('.pf-v5-c-menu__content')
+      .find('.pf-v6-c-menu__content')
       .within(() => {
         cy.getByDataCy(dataCy).click();
       });
@@ -476,7 +478,7 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
     .click()
     .then(() => {
       cy.getByDataCy(`${dataCy}`).click();
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();
       });
@@ -501,7 +503,7 @@ Cypress.Commands.add('clickListCardKebabAction', (id: number, dataCyLabel: strin
     cy.get('[data-cy*="actions-dropdown"]').click();
     cy.document()
       .its('body')
-      .find('.pf-v5-c-menu__content')
+      .find('.pf-v6-c-menu__content')
       .within(() => {
         cy.getByDataCy(dataCyLabel).click();
       });
@@ -547,19 +549,19 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('clickModalButton', (label: string | RegExp) => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     cy.clickButton(label);
   });
 });
 
 Cypress.Commands.add('clickModalConfirmCheckbox', () => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     cy.get('input[id="confirm"]').click();
   });
 });
 
 Cypress.Commands.add('assertModalSuccess', () => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     cy.get('tbody>tr')
       .find('[data-label="Status"]')
       .each(($li) => {
@@ -572,7 +574,7 @@ Cypress.Commands.add('clickPageAction', (dataCy: string) => {
   cy.getByDataCy('actions-dropdown').click();
   cy.document()
     .its('body')
-    .find('.pf-v5-c-menu__content ul[role="menu"]')
+    .find('.pf-v6-c-menu__content ul[role="menu"]')
     .within(() => {
       cy.getBy(`[data-cy="${dataCy}"] button`).click();
     });
@@ -1466,7 +1468,7 @@ Cypress.Commands.add(
       .then((statusCode: string) => {
         expect(statusCode).to.eql(201);
       });
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Application information');
     });
     cy.get('button[aria-label="Close"]').click();
@@ -1552,7 +1554,7 @@ Cypress.Commands.add(
     cy.clickButton('Delete application');
     cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');
     //Verify Delete modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently delete applications');
       cy.get('button').contains('Delete application').should('have.attr', 'aria-disabled', 'true');
       cy.get('[data-cy="name-column-cell"]').should('have.text', customAppName);
@@ -1573,7 +1575,7 @@ Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: s
   cy.clickTableRowKebabAction(customAppName, 'delete-application');
   cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');
   //Verify Delete modal
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+  cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
     cy.get('header').contains('Permanently delete applications');
     cy.get('button').contains('Delete application').should('have.attr', 'aria-disabled', 'true');
     cy.get('[data-cy="name-column-cell"]').should('have.text', customAppName);

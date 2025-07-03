@@ -1,5 +1,6 @@
 import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { Chip, ChipGroup, Flex, Icon, Tooltip } from '@patternfly/react-core';
+import { Label, LabelGroup, Flex, Icon, Tooltip } from '@patternfly/react-core';
+
 import { AsteriskIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -72,16 +73,16 @@ export function useSurveyColumns(options?: {
             return question.default;
           }
           return (
-            <ChipGroup>
+            <LabelGroup>
               {question.default
                 .toString()
                 .split('\n')
                 .map((chip) => (
-                  <Chip key={chip} isReadOnly ouiaId={`${question.variable}-${chip}`}>
+                  <Label variant="outline" key={chip}>
                     {chip}
-                  </Chip>
+                  </Label>
                 ))}
-            </ChipGroup>
+            </LabelGroup>
           );
         },
       },

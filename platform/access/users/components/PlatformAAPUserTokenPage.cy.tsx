@@ -27,7 +27,7 @@ describe('PlatformAAPUserTokenPage', () => {
       cy.contains('Details');
     });
     cy.get('[data-cy="manage-view"]').get('[data-cy="delete-token"]').contains('Delete token');
-    cy.get('ul.pf-v5-c-tabs__list').within(() => {
+    cy.get('ul.pf-v6-c-tabs__list').within(() => {
       cy.get('button[aria-selected="false"]').contains(
         'Back to Ansible Automation Platform tokens'
       );

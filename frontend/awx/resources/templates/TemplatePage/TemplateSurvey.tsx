@@ -169,7 +169,6 @@ export function TemplateSurveyInternal({
       toolbarContent={
         <SurveySwitch
           label={t('Survey enabled')}
-          labelOff={t('Survey disabled')}
           id="survey-switch"
           data-cy="survey-switch"
           aria-label="Survey enabled"

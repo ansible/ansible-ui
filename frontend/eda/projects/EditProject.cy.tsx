@@ -40,7 +40,7 @@ describe('Create project ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.get('[data-cy="url"]').type('test.example.com');
     cy.get('[data-cy="organization_id"]').click();
-    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#organization-2 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.clickButton('Create project');
 
     cy.intercept('POST', edaAPI`/projects/`, (req) => {

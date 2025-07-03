@@ -22,8 +22,10 @@ describe('CredentialsExternalTestModal.tsx', () => {
     cy.getByDataCy('url').type('http://foo.com');
     cy.getByDataCy('client-id').type('foo');
     cy.getByDataCy('client-password').type('foo');
-    cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+    cy.contains('Test').click();
     cy.contains('Test external credential').should('be.visible');
+    cy.contains('Account Name').should('be.visible');
+    cy.contains('System Name').should('be.visible');
   });
 
   it('External test modal opens when test button is selected in edit credential form', () => {
@@ -35,7 +37,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
       initialEntries: ['/35'],
     });
     cy.wait('@getCredential');
-    cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+    cy.contains('Test').click();
     cy.contains('Test external credential').should('be.visible');
   });
 
@@ -46,7 +48,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
     cy.getByDataCy('centrify-vault-credential-provider-lookup').click();
     cy.getByDataCy('url').type('http://foo.com');
     cy.getByDataCy('client-id').type('foo');
-    cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'true');
+    cy.get('button[aria-label="Test"]').should('be.disabled');
   });
 
   it('Test button is disabled when required fields are not completed when editing an existing credential', () => {
@@ -58,8 +60,8 @@ describe('CredentialsExternalTestModal.tsx', () => {
       initialEntries: ['/35'],
     });
     cy.wait('@getCredential');
-    cy.getByDataCy('name').clear();
-    cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="url"]').clear();
+    cy.get('button[aria-label="Test"]').should('be.disabled');
   });
 
   it('Renders test button for all external credential types', () => {
@@ -79,7 +81,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
     credentialTypes.forEach((type) => {
       cy.getByDataCy('credential_type').click();
       cy.getByDataCy(type).click();
-      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'true');
+      cy.get('button[aria-label="Test"]').should('be.disabled');
     });
   });
 
@@ -265,6 +267,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
     cy.getByDataCy('name').type('foo');
 
     credentialTypes.forEach((type) => {
+      cy.get('[data-cy="credential_type-form-group"]').scrollIntoView();
       cy.getByDataCy('credential_type').click();
       cy.getByDataCy(type.name).click();
 
@@ -277,7 +280,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
         }
       });
 
-      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test').click();
 
       type.inputs.modal_fields.forEach((modalField) => {
         cy.getByDataCy(`${modalField}-form-group`).should('be.visible');
@@ -295,10 +298,10 @@ describe('CredentialsExternalTestModal.tsx', () => {
     cy.getByDataCy('url').type('http://foo.com');
     cy.getByDataCy('client-id').type('foo');
     cy.getByDataCy('client-password').type('foo');
-    cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+    cy.get('button').contains('Test').click();
     cy.contains('Test external credential').should('be.visible');
     cy.getByDataCy('account-name').type('foo');
-    cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+    cy.get('button').contains('Run').click();
     cy.contains('System name is required.').should('be.visible');
   });
 });

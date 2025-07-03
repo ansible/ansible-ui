@@ -29,8 +29,8 @@ Cypress.Commands.add('setTablePageSize', (text: string) => {
     .first()
     .within(() => {
       cy.get('#options-menu-bottom-toggle').click();
-      cy.contains('button', `${text} per page`).click();
     });
+  cy.contains('button', `${text} per page`).click();
 });
 
 Cypress.Commands.add('selectTableFilter', (dataCy: string) => {
@@ -83,7 +83,7 @@ Cypress.Commands.add(
     });
     // Wait for the chip to show up
     // This handles the debounce of the single text filter
-    cy.contains('.pf-v5-c-chip__text', text);
+    cy.contains('[class*="label-group__list-item"]', text);
     if (options?.expectedLength) {
       cy.get('tbody').find('tr', { timeout: 10000 }).should('have.length', options.expectedLength);
     }

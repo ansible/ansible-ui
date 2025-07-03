@@ -1,6 +1,13 @@
 import { usePageAlertToaster, usePageDialogs } from '@ansible/ansible-ui-framework';
 import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import {
+  Button,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
@@ -64,14 +71,19 @@ export function RevertAllDialog(
 
   return (
     <Modal
-      title={t('Revert settings')}
-      titleIconVariant="warning"
       data-cy="revert-settings-modal"
       aria-label={t('Revert settings confirmation dialog')}
       variant={ModalVariant.small}
       isOpen
       onClose={() => popDialog()}
-      actions={[
+    >
+      <ModalHeader title={t('Revert settings')} titleIconVariant="warning" />
+      <ModalBody>
+        {t(
+          `This will revert all configuration values on this page to their factory defaults. Are you sure you want to proceed?`
+        )}
+      </ModalBody>
+      <ModalFooter>
         <Button
           data-cy="delete-group-modal-delete-button"
           ouiaId="delete-group-modal-delete-button"
@@ -81,15 +93,11 @@ export function RevertAllDialog(
           aria-label={t`Confirm revert all`}
         >
           {t('Revert all')}
-        </Button>,
+        </Button>
         <Button key="cancel" variant="link" onClick={() => popDialog()}>
           {t('Cancel')}
-        </Button>,
-      ]}
-    >
-      {t(
-        `This will revert all configuration values on this page to their factory defaults. Are you sure you want to proceed?`
-      )}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

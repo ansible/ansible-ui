@@ -3,8 +3,7 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
-  Text,
-  TextContent,
+  Content,
 } from '@patternfly/react-core';
 
 type KeyValue = {
@@ -30,14 +29,15 @@ export function PageDetailKeyValueList(props: KeyValueProps) {
   return (
     <>
       <DescriptionListGroup>
-        <TextContent>
-          <Text
+        <Content>
+          <Content
+            component="p"
             data-cy={'key-value-list-title'}
             style={{ fontSize: 'medium-text', fontWeight: 'bold' }}
           >
             {title}
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
         <DescriptionList isHorizontal>
           <DescriptionListGroup>
             <DescriptionListTerm>{keyColumn}</DescriptionListTerm>

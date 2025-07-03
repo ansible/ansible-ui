@@ -5,7 +5,6 @@ import { PageAlertToasterProvider } from './PageAlertToaster';
 import { PageDialogProvider } from './PageDialogs/PageDialog';
 import { PageNavSideBarProvider } from './PageNavigation/PageNavSidebar';
 import { PageNavigationRoutesProvider } from './PageNavigation/PageNavigationRoutesProvider';
-import { PageNotificationsProvider } from './PageNotifications/PageNotificationsProvider';
 import { PageSettingsProvider } from './PageSettings/PageSettingsProvider';
 import { PageBreadcrumbsProvider } from './PageTabs/PageBreadcrumbs';
 import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
@@ -24,9 +23,7 @@ export function PageFramework(props: { children: ReactNode; defaultRefreshInterv
           <PageDialogProvider>
             <PageAlertToasterProvider>
               <PageNavSideBarProvider>
-                <PageNotificationsProvider>
-                  <PageBreadcrumbsProvider>{props.children}</PageBreadcrumbsProvider>
-                </PageNotificationsProvider>
+                <PageBreadcrumbsProvider>{props.children}</PageBreadcrumbsProvider>
               </PageNavSideBarProvider>
             </PageAlertToasterProvider>
           </PageDialogProvider>

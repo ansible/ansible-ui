@@ -29,7 +29,7 @@ const ViewWrapper = styled.div`
   .pf-topology-container {
     min-height: 0;
   }
-  .pf-v5-c-toolbar__group {
+  .pf-v6-c-toolbar__group {
     flex: 1;
     width: 100%;
     display: flex;

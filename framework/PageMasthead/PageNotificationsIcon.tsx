@@ -1,5 +1,5 @@
 import { NotificationBadge } from '@patternfly/react-core';
-import { usePageNotifications } from '../PageNotifications/PageNotificationsProvider';
+import { usePageNotifications } from '../PageNotifications/usePageNotifications';
 
 export function PageNotificationsIcon() {
   const { setNotificationsDrawerOpen, notificationGroups } = usePageNotifications();

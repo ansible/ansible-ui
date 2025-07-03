@@ -37,7 +37,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
 
   return (
     <PageToolbarToggleGroup breakpoint="md" toggleIcon={icon} id="view">
-      <ToolbarGroup variant="button-group" style={{ justifyContent: 'end', marginRight: 0 }}>
+      <ToolbarGroup variant="action-group" style={{ justifyContent: 'end', marginRight: 0 }}>
         <ToolbarItem>
           <Split hasGutter>
             {openColumnModal && (

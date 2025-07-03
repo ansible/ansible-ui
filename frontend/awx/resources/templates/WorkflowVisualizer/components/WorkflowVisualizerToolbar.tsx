@@ -10,10 +10,14 @@ import {
   FlexItem,
   Icon,
   MenuToggle,
-  Modal,
   Title,
   ToolbarItem,
   Tooltip,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -69,7 +73,7 @@ export const ToolbarHeader = observer(() => {
 
   return (
     <>
-      <ToolbarItem align={{ default: 'alignLeft' }}>
+      <ToolbarItem align={{ default: 'alignStart' }}>
         <Title headingLevel="h1">
           <Flex>
             <FlexItem data-cy="wf-vzr-title">{t('Workflow Visualizer')}</FlexItem>
@@ -83,7 +87,7 @@ export const ToolbarHeader = observer(() => {
         </Title>
       </ToolbarItem>
       <ToolbarItem
-        align={{ default: 'alignRight' }}
+        align={{ default: 'alignEnd' }}
         visibility={{ default: isFullScreen ? 'hidden' : 'visible' }}
       >
         <Button
@@ -95,13 +99,21 @@ export const ToolbarHeader = observer(() => {
         />
       </ToolbarItem>
       <Modal
-        title={t('Warning: Unsaved changes')}
         data-cy="visualizer-unsaved-changes-modal"
-        titleIconVariant="warning"
         isOpen={showUnsavedChangesModal}
-        variant="small"
+        variant={ModalVariant.small}
         onClose={() => setShowUnsavedChangesModal(false)}
-        actions={[
+        aria-labelledby={t('Warning: Unsaved changes')}
+      >
+        <ModalHeader
+          title={t('Warning: Unsaved changes')}
+          titleIconVariant="warning"
+          labelId={t('Warning: Unsaved changes')}
+        />
+        <ModalBody>
+          {t(`You have unsaved changes. Are you sure you want to leave this page?`)}
+        </ModalBody>
+        <ModalFooter>
           <Button
             key="save-and-exit"
             data-cy="save-and-exit"
@@ -137,7 +149,7 @@ export const ToolbarHeader = observer(() => {
             }}
           >
             {t('Save and exit')}
-          </Button>,
+          </Button>
           <Button
             key="exit-without-saving"
             data-cy="exit-without-saving"
@@ -149,10 +161,8 @@ export const ToolbarHeader = observer(() => {
             }}
           >
             {t('Exit without saving')}
-          </Button>,
-        ]}
-      >
-        {t(`You have unsaved changes. Are you sure you want to leave this page?`)}
+          </Button>
+        </ModalFooter>
       </Modal>
     </>
   );
@@ -307,7 +317,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
           {t('Total nodes')} <Badge isRead>{nodes.length || 0}</Badge>
         </div>
       </ToolbarItem>
-      <ToolbarItem align={{ default: 'alignRight' }}>
+      <ToolbarItem align={{ default: 'alignEnd' }}>
         <Button
           data-cy="workflow-visualizer-toolbar-expand-collapse"
           variant="plain"

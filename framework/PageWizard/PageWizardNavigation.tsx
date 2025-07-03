@@ -12,8 +12,8 @@ export function PageWizardNavigation() {
     visibleStepsFlattened, // Flattened list containing all visible steps including substeps
   } = usePageWizard();
   const navClassName = isToggleExpanded
-    ? 'pf-v5-c-wizard__nav pf-m-expanded'
-    : 'pf-v5-c-wizard__nav bg-lighten';
+    ? 'pf-v6-c-wizard__nav pf-m-expanded'
+    : 'pf-v6-c-wizard__nav bg-lighten';
 
   const goToStepByIndex = useGoToStepByIndex();
 
@@ -21,7 +21,7 @@ export function PageWizardNavigation() {
 
   return (
     <nav className={navClassName} aria-label="Steps" data-cy="wizard-nav">
-      <ol className="pf-v5-c-wizard__nav-list">
+      <ol className="pf-v6-c-wizard__nav-list">
         {visibleSteps.map((step) => {
           /** Index of current step in flattened list */
           const index = visibleStepsFlattened.findIndex(
@@ -33,7 +33,7 @@ export function PageWizardNavigation() {
           const isDisabled = index > activeStepIndex;
 
           const className =
-            'pf-v5-c-wizard__nav-link' + // eslint-disable-line i18next/no-literal-string
+            'pf-v6-c-wizard__nav-link' + // eslint-disable-line i18next/no-literal-string
             (activeStep.id === step.id ||
             (isPageWizardParentStep(step) &&
               step.substeps?.some((substep) => substep.id === activeStep.id))
@@ -44,7 +44,7 @@ export function PageWizardNavigation() {
 
           return (
             <li
-              className="pf-v5-c-wizard__nav-item"
+              className="pf-v6-c-wizard__nav-item"
               data-cy={`wizard-nav-item-${step.id}`}
               key={index}
             >
@@ -53,13 +53,16 @@ export function PageWizardNavigation() {
                 onClick={() => goToStepByIndex(index)}
                 disabled={isDisabled}
               >
-                {' '}
-                {step.label}
-                {stepError[step.id] && activeStep.id === step.id && (
-                  <span style={{ marginLeft: '8px' }}>
-                    <ExclamationCircleIcon color="#C9190B" />
+                <span className="pf-v6-c-wizard__nav-link-main">
+                  <span className="pf-v6-c-wizard__nav-link-text">
+                    {step.label}
+                    {stepError[step.id] && activeStep.id === step.id && (
+                      <span style={{ marginLeft: '8px' }}>
+                        <ExclamationCircleIcon color="#C9190B" />
+                      </span>
+                    )}
                   </span>
-                )}
+                </span>
               </button>
               {
                 /** Nav for substeps */
@@ -86,7 +89,7 @@ function SubstepsNav(props: { step: PageWizardParentStep; activeStepIndex: numbe
 
   if (!activeStep) return;
   return (
-    <ol className="pf-v5-c-wizard__nav-list">
+    <ol className="pf-v6-c-wizard__nav-list">
       {step.substeps.map((substep) => {
         /** Index of current step in flattened list */
         const indexOfSubstep = visibleStepsFlattened.findIndex(
@@ -95,7 +98,7 @@ function SubstepsNav(props: { step: PageWizardParentStep; activeStepIndex: numbe
         const isDisabled = indexOfSubstep > activeStepIndex;
 
         const className =
-          'pf-v5-c-wizard__nav-link' + // eslint-disable-line i18next/no-literal-string
+          'pf-v6-c-wizard__nav-link' + // eslint-disable-line i18next/no-literal-string
           (activeStep.id === substep.id
             ? // eslint-disable-next-line i18next/no-literal-string
               ' pf-m-current'
@@ -104,7 +107,7 @@ function SubstepsNav(props: { step: PageWizardParentStep; activeStepIndex: numbe
 
         return (
           <li
-            className="pf-v5-c-wizard__nav-item"
+            className="pf-v6-c-wizard__nav-item"
             data-cy={`wizard-nav-item-${substep.id}`}
             key={substep.id}
           >

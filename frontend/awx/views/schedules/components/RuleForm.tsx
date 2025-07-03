@@ -4,7 +4,8 @@ import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inpu
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
-import { ActionGroup, Button, Chip, ChipGroup } from '@patternfly/react-core';
+import { Label, LabelGroup, ActionGroup, Button } from '@patternfly/react-core';
+
 import { DateTime } from 'luxon';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -175,11 +176,17 @@ export function RuleForm(
                   'This is the byminute field. Select the minutes of each hour that the schedule will run.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>1</Chip>
-                <Chip disabled>37</Chip>
-                <Chip disabled>59</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  1
+                </Label>
+                <Label variant="outline" disabled>
+                  37
+                </Label>
+                <Label variant="outline" disabled>
+                  59
+                </Label>
+              </LabelGroup>
             </>
           }
           labelHelpTitle={t('Minutes of the hour')}
@@ -197,11 +204,17 @@ export function RuleForm(
                   'This is the byhour field. Select the hours of each day that the schedule will run.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>0</Chip>
-                <Chip disabled>7</Chip>
-                <Chip disabled>18</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  0
+                </Label>
+                <Label variant="outline" disabled>
+                  7
+                </Label>
+                <Label variant="outline" disabled>
+                  18
+                </Label>
+              </LabelGroup>
             </>
           }
           labelHelpTitle={t('Hours of the day')}
@@ -219,11 +232,17 @@ export function RuleForm(
                   'This is the byweekday field. Select days of the week on which the run will schedule.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>{t('Sunday')}</Chip>
-                <Chip disabled>{t('Wednesday')}</Chip>
-                <Chip disabled>{t('Friday')}</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  {t('Sunday')}
+                </Label>
+                <Label variant="outline" disabled>
+                  {t('Wednesday')}
+                </Label>
+                <Label variant="outline" disabled>
+                  {t('Friday')}
+                </Label>
+              </LabelGroup>
             </>
           }
           disableSortOptions
@@ -240,11 +259,17 @@ export function RuleForm(
                   'This is the bymonthday field. Select the numerical days of each month on which the schedule will run.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>1</Chip>
-                <Chip disabled>15</Chip>
-                <Chip disabled>28</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  1
+                </Label>
+                <Label variant="outline" disabled>
+                  15
+                </Label>
+                <Label variant="outline" disabled>
+                  28
+                </Label>
+              </LabelGroup>
             </>
           }
           labelHelpTitle={t('Days of the month')}
@@ -262,11 +287,17 @@ export function RuleForm(
                   'This is the byweekno field. Select the numerical weeks of the year on which the schedule will run.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>17</Chip>
-                <Chip disabled>43</Chip>
-                <Chip disabled>52</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  17
+                </Label>
+                <Label variant="outline" disabled>
+                  43
+                </Label>
+                <Label variant="outline" disabled>
+                  52
+                </Label>
+              </LabelGroup>
             </>
           }
           labelHelpTitle={t('Weeks of the year')}
@@ -284,11 +315,17 @@ export function RuleForm(
                   'This is the bymonth field. Select the months of the year that the schedule will run.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>{t('June')}</Chip>
-                <Chip disabled>{t('August')}</Chip>
-                <Chip disabled>{t('January')}</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  {t('June')}
+                </Label>
+                <Label variant="outline" disabled>
+                  {t('August')}
+                </Label>
+                <Label variant="outline" disabled>
+                  {t('January')}
+                </Label>
+              </LabelGroup>
             </>
           }
           placeholder={t('Select months of the year')}
@@ -306,11 +343,17 @@ export function RuleForm(
                   'This is the byyearday field. Select the numerical days of the year that the schedule will run.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>1</Chip>
-                <Chip disabled>235</Chip>
-                <Chip disabled>300</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  1
+                </Label>
+                <Label variant="outline" disabled>
+                  235
+                </Label>
+                <Label variant="outline" disabled>
+                  300
+                </Label>
+              </LabelGroup>
             </>
           }
           labelHelpTitle={t('Days of the year')}
@@ -327,11 +370,17 @@ export function RuleForm(
                   'This is the bysetpos field. Use this field to filter recurrence instances within a single interval of the exception. See the iCalendar RFC for bysetpos field more information.'
                 )}
               </div>
-              <ChipGroup>
-                <Chip disabled>1</Chip>
-                <Chip disabled>235</Chip>
-                <Chip disabled>300</Chip>
-              </ChipGroup>
+              <LabelGroup>
+                <Label variant="outline" disabled>
+                  1
+                </Label>
+                <Label variant="outline" disabled>
+                  235
+                </Label>
+                <Label variant="outline" disabled>
+                  300
+                </Label>
+              </LabelGroup>
             </>
           }
           labelHelpTitle={t('Occurrences')}
@@ -375,7 +424,7 @@ export function RuleForm(
         )}
       </PageFormSection>
 
-      <ActionGroup className="pf-v5-u-pt-xl">
+      <ActionGroup className="pf-v6-u-pt-xl">
         <Button
           variant="secondary"
           data-cy={ruleId ? 'update-rule-button' : 'add-rule-button'}

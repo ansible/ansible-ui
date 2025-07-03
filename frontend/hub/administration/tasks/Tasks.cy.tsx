@@ -52,7 +52,7 @@ describe('Tasks List', () => {
   it('Row action for stopping a task is enabled if the task is running', () => {
     cy.mount(<Tasks />);
     cy.contains('tr', 'galaxy_ng.app.tasks.namespaces._create_pulp_namespace').within(() => {
-      cy.get('[data-cy="stop-task"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="stop-task"]').should('not.have.attr', 'aria-disabled', 'true');
     });
   });
   it('Stop a running task', () => {

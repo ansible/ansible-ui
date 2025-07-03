@@ -1,7 +1,8 @@
 import { PageFormExpandableSection } from './PageFormExpandableSection';
 
-describe('PageFromExpandableSection', () => {
+describe('PageFormExpandableSection', () => {
   const childrenContent = 'Test';
+
   beforeEach(() => {
     cy.mount(
       <PageFormExpandableSection singleColumn={true}>
@@ -11,22 +12,12 @@ describe('PageFromExpandableSection', () => {
   });
 
   it('should expand the section when clicked on', () => {
-    cy.get('.pf-v5-c-expandable-section__toggle-text').should(
-      'contain.text',
-      'Show advanced options'
-    );
     cy.get('#expandable-section').should('not.be.visible');
-    cy.get('button').click();
-    cy.get('.pf-v5-c-expandable-section__toggle-text').should(
-      'contain.text',
-      'Hide advanced options'
-    );
-    cy.get('#expandable-section').should('be.visible').should('contain.text', childrenContent);
-    cy.get('button').click();
+    cy.contains('button', /show advanced options/i).click();
+    cy.get('#expandable-section').should('be.visible').and('contain.text', childrenContent);
+    cy.contains('button', /hide advanced options/i).should('exist');
+    cy.contains('button', /hide advanced options/i).click();
     cy.get('#expandable-section').should('not.be.visible');
-    cy.get('.pf-v5-c-expandable-section__toggle-text').should(
-      'contain.text',
-      'Show advanced options'
-    );
+    cy.contains('button', /show advanced options/i).should('exist');
   });
 });

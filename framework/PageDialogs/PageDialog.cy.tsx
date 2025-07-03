@@ -1,25 +1,31 @@
 /* eslint-disable i18next/no-literal-string */
-import { Button, Modal, PageSection } from '@patternfly/react-core';
+import { Button, PageSection, Modal, ModalHeader, ModalBody } from '@patternfly/react-core';
 import { usePageDialogs } from './PageDialog';
 
 function TestComponent() {
   const { pushDialog, popDialog } = usePageDialogs();
   const secondDialog = (
-    <Modal title="Second Modal" isOpen key="second" onClose={popDialog}>
-      <></>
+    <Modal isOpen key="second" onClose={popDialog}>
+      <ModalHeader title="Second Modal" />
+      <ModalBody>
+        <></>
+      </ModalBody>
     </Modal>
   );
   const openSecondDialog = () => pushDialog(secondDialog);
   const firstDialog = (
-    <Modal title="First Modal" isOpen key="first" onClose={popDialog}>
-      <Button variant="primary" onClick={openSecondDialog}>
-        Open second dialog
-      </Button>
+    <Modal isOpen key="first" onClose={popDialog}>
+      <ModalHeader title="First Modal" />
+      <ModalBody>
+        <Button variant="primary" onClick={openSecondDialog}>
+          Open second dialog
+        </Button>
+      </ModalBody>
     </Modal>
   );
   const openFirstDialog = () => pushDialog(firstDialog);
   return (
-    <PageSection>
+    <PageSection hasBodyWrapper={false}>
       <Button variant="primary" onClick={openFirstDialog}>
         Open first dialog
       </Button>

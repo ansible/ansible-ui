@@ -10,12 +10,12 @@ describe('PageDashboardCountBar', () => {
           {
             label: 'Synced',
             count: 11,
-            color: 'var(--pf-v5-chart-color-green-400)',
+            color: 'var(--pf-v6-chart-color-green-400)',
           },
           {
             label: 'Synced failures',
             count: 2,
-            color: 'var(--pf-v5-chart-color-red-400)',
+            color: 'var(--pf-v6-chart-color-red-400)',
           },
         ],
       },
@@ -36,12 +36,12 @@ describe('PageDashboardCountBar', () => {
           {
             label: 'Ready',
             count: 100,
-            color: 'var(--pf-v5-chart-color-green-400)',
+            color: 'var(--pf-v6-chart-color-green-400)',
           },
           {
             label: 'Failed',
             count: 13,
-            color: 'var(--pf-v5-chart-color-red-400)',
+            color: 'var(--pf-v6-chart-color-red-400)',
           },
         ],
       },
@@ -62,12 +62,12 @@ describe('PageDashboardCountBar', () => {
           {
             label: 'Synced',
             count: 11,
-            color: 'var(--pf-v5-chart-color-green-400)',
+            color: 'var(--pf-v6-chart-color-green-400)',
           },
           {
             label: 'Synced failures',
             count: 2,
-            color: 'var(--pf-v5-chart-color-red-400)',
+            color: 'var(--pf-v6-chart-color-red-400)',
           },
         ],
       },

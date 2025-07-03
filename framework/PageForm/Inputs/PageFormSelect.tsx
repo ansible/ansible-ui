@@ -238,6 +238,10 @@ export function PageFormSelect<
                 shouldFocusToggleOnSelect
                 toggle={(ref) => toggle(ref, selected?.label)}
                 isScrollable
+                popperProps={{
+                  enableFlip: true,
+                  preventOverflow: true,
+                }}
               >
                 <>
                   <SelectList>

@@ -36,7 +36,7 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
   it('should validate that at least one team is selected for moving to next step', () => {
     cy.get('table tbody').find('tr').should('have.length', 4);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one team.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one team.');
     cy.selectTableRowByCheckbox('name', 'Demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
@@ -47,7 +47,7 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one role.');
+    cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.selectTableRowByCheckbox('name', 'Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
@@ -64,7 +64,7 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Demo');
     cy.get('[data-cy="expandable-section-edaRoles"]').within(() => {
       cy.get('div > span').should('contain.text', 'Roles');
-      cy.get('div > .pf-v5-c-badge').should('contain.text', '1');
+      cy.get('div > .pf-v6-c-badge').should('contain.text', '1');
       cy.get('[data-cy="name-column-cell"]').should('contain.text', 'Admin');
       cy.get('[data-cy="description-column-cell"]').should(
         'contain.text',
@@ -89,12 +89,12 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     cy.clickButton(/^Finish$/);
     cy.wait('@createRoleAssignment');
     // Bulk action modal is displayed with success
-    cy.get('.pf-v5-c-modal-box').within(() => {
+    cy.get('.pf-v6-c-modal-box').within(() => {
       cy.get('table tbody').find('tr').should('have.length', 1);
       cy.get('table tbody').should('contain.text', 'Demo');
       cy.get('table tbody').should('contain.text', 'Admin');
-      cy.get('div.pf-v5-c-progress__description').should('contain.text', 'Success');
-      cy.get('div.pf-v5-c-progress__status').should('contain.text', '100%');
+      cy.get('div.pf-v6-c-progress__description').should('contain.text', 'Success');
+      cy.get('div.pf-v6-c-progress__status').should('contain.text', '100%');
     });
   });
 });

@@ -75,7 +75,7 @@ describe('Platform organization users controller list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
+          .find('.pf-v6-c-menu__content')
           .within(() => {
             cy.get('button')
               .contains(/^Remove users$/)

@@ -110,7 +110,7 @@ describe('Check if the build includes EDA', () => {
         cy.get('[data-cy="toggle-switch"]').click();
       });
       cy.get('div[role="dialog"]').within(() => {
-        cy.get('.pf-v5-c-check__label').should(
+        cy.get('.pf-v6-c-check__label').should(
           'contain',
           `Yes, I confirm that I want to disable these`
         );
@@ -127,7 +127,7 @@ describe('Check if the build includes EDA', () => {
         inKebab: true,
       });
       cy.get('div[role="dialog"]').within(() => {
-        cy.get('.pf-v5-c-check__label').should(
+        cy.get('.pf-v6-c-check__label').should(
           'contain',
           `Yes, I confirm that I want to delete these`
         );

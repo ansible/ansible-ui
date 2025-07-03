@@ -115,7 +115,9 @@ describe('RulebookActivations.cy.ts', () => {
     cy.get('[data-cy="number-of-rules-column-header"]').should('be.visible');
     cy.get('[data-cy="fire-count-column-header"]').should('be.visible');
     cy.get('[data-cy="restart-count-column-header"]').should('be.visible');
-    cy.get('#expand-toggle0 > .pf-v5-c-table__toggle-icon').click();
+    cy.getTableRow('name', 'Activation 1', { disableFilter: true }).within(() => {
+      cy.getByDataCy('expand-column-cell').click();
+    });
     cy.get('[data-cy="status-message"]').should('be.visible');
     cy.get('[data-cy="created"]').should('be.visible');
     cy.get('[data-cy="last-modified"]').should('be.visible');
@@ -127,7 +129,7 @@ describe('RulebookActivations.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="restart-rulebook-activations"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to restart these`
       );
@@ -145,7 +147,7 @@ describe('RulebookActivations.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="disable-rulebook-activations"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to disable these`
       );
@@ -163,7 +165,7 @@ describe('RulebookActivations.cy.ts', () => {
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-rulebook-activations"]').click();
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-v5-c-check__label').should(
+      cy.get('.pf-v6-c-check__label').should(
         'contain',
         `Yes, I confirm that I want to delete these`
       );

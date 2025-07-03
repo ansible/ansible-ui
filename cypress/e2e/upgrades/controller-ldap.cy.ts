@@ -92,7 +92,7 @@ describe('Negative paths for controller LDAP authentication', () => {
     cy.get('input[id*="login-username-id"]').type(controllerLdapUsername);
     cy.get('input[id*="login-password-id"]').type(errorControllerLdapPassword);
     cy.clickButton('Log in');
-    cy.get('.pf-v5-c-helper-text__item-text').contains(
+    cy.get('.pf-v6-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );
   });
@@ -105,7 +105,7 @@ describe('Negative paths for controller LDAP authentication', () => {
     cy.get('input[id*="login-username-id"]').type(errorControllerLdapUsername);
     cy.get('input[id*="login-password-id"]').type(errorControllerLdapPassword);
     cy.clickButton('Log in');
-    cy.get('.pf-v5-c-helper-text__item-text').contains(
+    cy.get('.pf-v6-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );
   });

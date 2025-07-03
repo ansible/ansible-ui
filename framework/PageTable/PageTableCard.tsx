@@ -6,12 +6,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Content,
   DescriptionList,
   FlexItem,
   Label,
   LabelGroup,
   Popover,
-  Text,
   Truncate,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo } from 'react';
@@ -144,9 +144,7 @@ export function PageTableCard<T extends object>(props: {
       id={`card-${card.id}`}
       ouiaId={card.id as string}
       key={card.id ?? card.title}
-      isFlat
       isLarge
-      isRounded
       isSelectable={showSelect}
       isSelected={isItemSelected}
       isClickable={showSelect}
@@ -155,6 +153,7 @@ export function PageTableCard<T extends object>(props: {
         cursor: 'default',
         maxWidth: '100%',
       }}
+      // variant="secondary"
     >
       <CardHeader
         selectableActions={
@@ -180,14 +179,14 @@ export function PageTableCard<T extends object>(props: {
               ) : null}
               <CardTitle>{card.title}</CardTitle>
               {card.subtitle ? (
-                <Text component="small" style={{ opacity: 0.7 }}>
+                <Content component="small" style={{ opacity: 0.7 }}>
                   {card.subtitle}
-                </Text>
+                </Content>
               ) : (
                 defaultCardSubtitle && (
-                  <Text component="small" style={{ opacity: 0.7 }}>
+                  <Content component="small" style={{ opacity: 0.7 }}>
                     {defaultCardSubtitle}
-                  </Text>
+                  </Content>
                 )
               )}
             </CardDiv>

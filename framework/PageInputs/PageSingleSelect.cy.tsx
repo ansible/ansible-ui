@@ -31,7 +31,7 @@ function PageSingleSelectTest<T>(props: {
   const { placeholder, defaultValue, options } = props;
   const [value, setValue] = useState(() => defaultValue);
   return (
-    <PageSection>
+    <PageSection hasBodyWrapper={false}>
       <PageSingleSelect
         id="test"
         value={value}

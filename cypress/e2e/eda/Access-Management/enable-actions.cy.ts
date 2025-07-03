@@ -92,40 +92,39 @@ describe('Check if the build includes EDA', () => {
           edaUser.id,
           'eda.activation'
         );
+        cy.platformLogout();
+        // login as user without permissions
+        cy.contains('Log in');
+        cy.get('#pf-login-username-id').type(edaUser.username);
+        cy.get('#pf-login-password-id').type('pass');
+        cy.contains('button', 'Log in').click();
+        cy.contains('button', `${edaUser.username}`).should('be.visible');
+        cy.navigateTo('eda', 'rulebook-activations');
+        cy.verifyPageTitle('Rulebook Activations');
+        // verify that the user can read but not create a project
+        cy.filterTableByText(RBA.name);
+        cy.contains('tr', RBA.name);
+        cy.contains(`Create rulebook activation`)
+          .should('have.attr', 'aria-disabled', 'true')
+          .click();
+        // verify the action buttons are disabled in details view
+        cy.clickTableRow(RBA.name);
+        cy.contains('h1', RBA.name).should('be.visible');
+        cy.intercept('DELETE', edaAPI`/activations/${RBA.id.toString()}/`).as('deleteRBA');
+        cy.clickPageAction('delete-rulebook-activation');
+        cy.clickModalConfirmCheckbox();
+        cy.clickModalButton('Delete rulebook activations');
+        cy.wait('@deleteRBA').then((deleteRBA) => {
+          expect(deleteRBA?.response?.statusCode).to.eql(403);
+        });
+        cy.contains('You do not have permission to perform this action.');
+        cy.clickButton(/^Close$/);
+        // logout as normal user
+        cy.platformLogout();
+        // log back in as admin to delete newly created user
+        cy.platformLogin();
+        cy.deleteEdaRoleDefinition(readActivationRole);
       });
-      cy.platformLogout();
-      // login as user without permissions
-      cy.contains('Log in');
-      cy.get('#pf-login-username-id').type(edaUser.username);
-      cy.get('#pf-login-password-id').type('pass');
-      cy.contains('button', 'Log in').click();
-      cy.contains('button', `${edaUser.username}`).should('be.visible');
-      cy.navigateTo('eda', 'rulebook-activations');
-      cy.verifyPageTitle('Rulebook Activations');
-      // verify that the user can read but not create a project
-      cy.filterTableByText(RBA.name);
-      cy.contains('tr', RBA.name);
-      cy.get('a')
-        .contains(`Create rulebook activation`)
-        .should('have.attr', 'aria-disabled', 'true')
-        .click();
-      // verify the action buttons are disabled in details view
-      cy.clickTableRow(RBA.name);
-      cy.contains('h1', RBA.name).should('be.visible');
-      cy.intercept('DELETE', edaAPI`/activations/${RBA.id.toString()}/`).as('deleteRBA');
-      cy.clickPageAction('delete-rulebook-activation');
-      cy.clickModalConfirmCheckbox();
-      cy.clickModalButton('Delete rulebook activations');
-      cy.wait('@deleteRBA').then((deleteRBA) => {
-        expect(deleteRBA?.response?.statusCode).to.eql(403);
-      });
-      cy.contains('You do not have permission to perform this action.');
-      cy.clickButton(/^Close$/);
-      // logout as normal user
-      cy.platformLogout();
-      // log back in as admin to delete newly created user
-      cy.platformLogin();
-      // cy.deleteEdaRoleDefinition(readActivationRole);
     });
 
     it('user cannot perform any actions other than read on Decision Environment', () => {
@@ -143,39 +142,37 @@ describe('Check if the build includes EDA', () => {
           edaUser.id,
           'eda.decisionenvironment'
         );
+        cy.platformLogout();
+        // login as user without permissions
+        cy.contains('Log in');
+        cy.get('#pf-login-username-id').type(edaUser.username);
+        cy.get('#pf-login-password-id').type('pass');
+        cy.contains('button', 'Log in').click();
+        cy.contains('button', `${edaUser.username}`).should('be.visible');
+        cy.navigateTo('eda', 'decision-environments');
+        cy.verifyPageTitle('Decision Environments');
+        // verify that the user can read but not create a decision environment
+        cy.contains(`Create decision environment`)
+          .should('have.attr', 'aria-disabled', 'true')
+          .click();
+        cy.setTableView('table');
+        cy.filterTableByTextFilter('name', edadecisionEnvironment.name, {
+          disableFilterSelection: true,
+        });
+        cy.contains('td', edadecisionEnvironment.name).within(() => {
+          cy.get('a').click();
+        });
+        cy.verifyPageTitle(edadecisionEnvironment.name);
+        // verify the action buttons are disabled in details view
+        cy.contains('Edit decision environment').should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
+        cy.get('#delete-decision-environment').should('have.attr', 'aria-disabled', 'true');
+        // logout as normal user
+        cy.platformLogout();
+        // log back in as admin to delete newly created user
+        cy.platformLogin();
+        cy.deleteEdaRoleDefinition(readDERole);
       });
-      cy.platformLogout();
-      // login as user without permissions
-      cy.contains('Log in');
-      cy.get('#pf-login-username-id').type(edaUser.username);
-      cy.get('#pf-login-password-id').type('pass');
-      cy.contains('button', 'Log in').click();
-      cy.contains('button', `${edaUser.username}`).should('be.visible');
-      cy.navigateTo('eda', 'decision-environments');
-      cy.verifyPageTitle('Decision Environments');
-      // verify that the user can read but not create a decision environment
-      cy.get('button')
-        .contains(`Create decision environment`)
-        .should('have.attr', 'aria-disabled', 'true')
-        .click();
-      cy.setTableView('table');
-      cy.filterTableByTextFilter('name', edadecisionEnvironment.name, {
-        disableFilterSelection: true,
-      });
-      cy.contains('td', edadecisionEnvironment.name).within(() => {
-        cy.get('a').click();
-      });
-      cy.verifyPageTitle(edadecisionEnvironment.name);
-      // verify the action buttons are disabled in details view
-      cy.get('button')
-        .contains('Edit decision environment')
-        .should('have.attr', 'aria-disabled', 'true');
-      cy.getByDataCy('actions-dropdown').click();
-      cy.get('#delete-decision-environment').should('have.attr', 'aria-disabled', 'true');
-      // logout as normal user
-      cy.platformLogout();
-      // log back in as admin to delete newly created user
-      cy.platformLogin();
     });
 
     it('user cannot perform any actions other than read on Project', () => {
@@ -193,32 +190,30 @@ describe('Check if the build includes EDA', () => {
           edaUser.id,
           'eda.project'
         );
+        cy.platformLogout();
+        // login as user without permissions
+        cy.contains('Log in');
+        cy.get('#pf-login-username-id').type(edaUser.username);
+        cy.get('#pf-login-password-id').type('pass');
+        cy.contains('button', 'Log in').click();
+        cy.contains('button', `${edaUser.username}`).should('be.visible');
+        cy.navigateTo('eda', 'projects');
+        cy.verifyPageTitle('Projects');
+        // verify that the user can read but not create a project
+        cy.filterTableByText(edaProject.name);
+        cy.contains('tr', edaProject.name);
+        cy.contains(`Create project`).should('have.attr', 'aria-disabled', 'true').click();
+        // verify the action buttons are disabled in details view
+        cy.clickTableRow(edaProject.name, false);
+        cy.contains(`Edit project`).should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
+        cy.get('#delete-project').should('have.attr', 'aria-disabled', 'true');
+        // logout as normal user
+        cy.platformLogout();
+        // log back in as admin to delete newly created user
+        cy.platformLogin();
+        cy.deleteEdaRoleDefinition(readProjectRole);
       });
-      cy.platformLogout();
-      // login as user without permissions
-      cy.contains('Log in');
-      cy.get('#pf-login-username-id').type(edaUser.username);
-      cy.get('#pf-login-password-id').type('pass');
-      cy.contains('button', 'Log in').click();
-      cy.contains('button', `${edaUser.username}`).should('be.visible');
-      cy.navigateTo('eda', 'projects');
-      cy.verifyPageTitle('Projects');
-      // verify that the user can read but not create a project
-      cy.filterTableByText(edaProject.name);
-      cy.contains('tr', edaProject.name);
-      cy.get('button')
-        .contains(`Create project`)
-        .should('have.attr', 'aria-disabled', 'true')
-        .click();
-      // verify the action buttons are disabled in details view
-      cy.clickTableRow(edaProject.name, false);
-      cy.get('button').contains(`Edit project`).should('have.attr', 'aria-disabled', 'true');
-      cy.getByDataCy('actions-dropdown').click();
-      cy.get('#delete-project').should('have.attr', 'aria-disabled', 'true');
-      // logout as normal user
-      cy.platformLogout();
-      // log back in as admin to delete newly created user
-      cy.platformLogin();
     });
 
     it('user cannot perform any actions other than read on credential', () => {
@@ -236,31 +231,29 @@ describe('Check if the build includes EDA', () => {
           edaUser.id,
           'eda.edaCredential'
         );
+        cy.platformLogout();
+        // login as user without permissions
+        cy.contains('Log in');
+        cy.get('#pf-login-username-id').type(edaUser.username);
+        cy.get('#pf-login-password-id').type('pass');
+        cy.contains('button', 'Log in').click();
+        cy.contains('button', `${edaUser.username}`).should('be.visible');
+        cy.navigateTo('eda', 'credentials');
+        cy.verifyPageTitle('Credentials');
+        // verify that the user can read but not create a credential
+        cy.contains('tr', edaCredential.name);
+        cy.contains(`Create credential`).should('have.attr', 'aria-disabled', 'true').click();
+        // verify the action buttons are disabled in details view
+        cy.clickTableRow(edaCredential.name, false);
+        cy.contains(`Edit credential`).should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
+        cy.get('#delete-credential').should('have.attr', 'aria-disabled', 'true');
+        // logout as normal user
+        cy.platformLogout();
+        // log back in as admin to delete newly created user
+        cy.platformLogin();
+        cy.deleteEdaRoleDefinition(readCredRole);
       });
-      cy.platformLogout();
-      // login as user without permissions
-      cy.contains('Log in');
-      cy.get('#pf-login-username-id').type(edaUser.username);
-      cy.get('#pf-login-password-id').type('pass');
-      cy.contains('button', 'Log in').click();
-      cy.contains('button', `${edaUser.username}`).should('be.visible');
-      cy.navigateTo('eda', 'credentials');
-      cy.verifyPageTitle('Credentials');
-      // verify that the user can read but not create a credential
-      cy.contains('tr', edaCredential.name);
-      cy.get('button')
-        .contains(`Create credential`)
-        .should('have.attr', 'aria-disabled', 'true')
-        .click();
-      // verify the action buttons are disabled in details view
-      cy.clickTableRow(edaCredential.name, false);
-      cy.get('button').contains(`Edit credential`).should('have.attr', 'aria-disabled', 'true');
-      cy.getByDataCy('actions-dropdown').click();
-      cy.get('#delete-credential').should('have.attr', 'aria-disabled', 'true');
-      // logout as normal user
-      cy.platformLogout();
-      // log back in as admin to delete newly created user
-      cy.platformLogin();
     });
 
     it('user cannot perform any actions other than read on event stream', () => {
@@ -278,31 +271,29 @@ describe('Check if the build includes EDA', () => {
           edaUser.id,
           'eda.edaCredential'
         );
+        cy.platformLogout();
+        // login as user without permissions
+        cy.contains('Log in');
+        cy.get('#pf-login-username-id').type(edaUser.username);
+        cy.get('#pf-login-password-id').type('pass');
+        cy.contains('button', 'Log in').click();
+        cy.contains('button', `${edaUser.username}`).should('be.visible');
+        cy.navigateTo('eda', 'credentials');
+        cy.verifyPageTitle('Credentials');
+        // verify that the user can read but not create a credential
+        cy.contains('tr', edaCredential.name);
+        cy.contains(`Create credential`).should('have.attr', 'aria-disabled', 'true').click();
+        // verify the action buttons are disabled in details view
+        cy.clickTableRow(edaCredential.name, false);
+        cy.contains(`Edit credential`).should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
+        cy.get('#delete-credential').should('have.attr', 'aria-disabled', 'true');
+        // logout as normal user
+        cy.platformLogout();
+        // log back in as admin to delete newly created user
+        cy.platformLogin();
+        cy.deleteEdaRoleDefinition(readCredRole);
       });
-      cy.platformLogout();
-      // login as user without permissions
-      cy.contains('Log in');
-      cy.get('#pf-login-username-id').type(edaUser.username);
-      cy.get('#pf-login-password-id').type('pass');
-      cy.contains('button', 'Log in').click();
-      cy.contains('button', `${edaUser.username}`).should('be.visible');
-      cy.navigateTo('eda', 'credentials');
-      cy.verifyPageTitle('Credentials');
-      // verify that the user can read but not create a credential
-      cy.contains('tr', edaCredential.name);
-      cy.get('button')
-        .contains(`Create credential`)
-        .should('have.attr', 'aria-disabled', 'true')
-        .click();
-      // verify the action buttons are disabled in details view
-      cy.clickTableRow(edaCredential.name, false);
-      cy.get('button').contains(`Edit credential`).should('have.attr', 'aria-disabled', 'true');
-      cy.getByDataCy('actions-dropdown').click();
-      cy.get('#delete-credential').should('have.attr', 'aria-disabled', 'true');
-      // logout as normal user
-      cy.platformLogout();
-      // log back in as admin to delete newly created user
-      cy.platformLogin();
     });
   });
 });

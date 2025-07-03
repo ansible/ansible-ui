@@ -5,7 +5,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '@ansible/common-ui/columns';
-import { Chip, ChipGroup } from '@patternfly/react-core';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -148,13 +148,13 @@ function useRelatedGroupsColumn() {
           count: 0,
         };
         return (
-          <ChipGroup aria-label={t`Related groups`}>
+          <LabelGroup aria-label={t`Related groups`}>
             {groups.results.map((group) => (
-              <Chip key={group.name} isReadOnly>
+              <Label variant="outline" key={group.name}>
                 {group.name}
-              </Chip>
+              </Label>
             ))}
-          </ChipGroup>
+          </LabelGroup>
         );
       },
       sort: undefined,

@@ -1,3 +1,4 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import job from '@ansible/cypress/fixtures/job.json';
 import jobWorkflowNodes from '@ansible/cypress/fixtures/job_workflow_nodes.json';
 import workflowNodes from '@ansible/cypress/fixtures/workflow_nodes.json';
@@ -10,7 +11,7 @@ describe('HostStatusBar and WorkflowNodesStatusBar (StatusBar)', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: `/api/v2/workflow_jobs/126/*`,
+        url: awxAPI`/workflow_jobs/126/*`,
         hostname: 'localhost',
       },
       {
@@ -20,7 +21,7 @@ describe('HostStatusBar and WorkflowNodesStatusBar (StatusBar)', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: `/api/v2/workflow_jobs/*/workflow_nodes/*`,
+        url: awxAPI`/workflow_jobs/*/workflow_nodes/*`,
         hostname: 'localhost',
       },
       {
@@ -30,7 +31,7 @@ describe('HostStatusBar and WorkflowNodesStatusBar (StatusBar)', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: `/api/v2/workflow_jobs/*/workflow_nodes/*`,
+        url: awxAPI`/workflow_jobs/*/workflow_nodes/*`,
         hostname: 'localhost',
       },
       {

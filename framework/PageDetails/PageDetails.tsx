@@ -45,7 +45,7 @@ export function PageDetails(props: {
   );
 
   let component = (
-    <PageSectionStyled variant="light" padding={{ default: 'noPadding' }}>
+    <PageSectionStyled padding={{ default: 'noPadding' }}>
       {alertPrompts &&
         alertPrompts.length > 0 &&
         alertPrompts.map((alertPrompt, i) => (

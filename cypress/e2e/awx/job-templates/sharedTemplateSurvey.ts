@@ -44,9 +44,9 @@ export class ReusableTemplateSurveyTestSuite {
     ).as('createQuestion');
     cy.clickButton('Create survey question');
     cy.wait('@createQuestion');
-    cy.contains('Survey disabled');
+    cy.get('[data-cy="survey-switch"]').should('not.be.checked');
     cy.get('[for="survey-switch"]').click();
-    cy.contains('Survey enabled');
+    cy.get('[data-cy="survey-switch"]').should('be.checked');
     cy.getByDataCy('row-0').within(() => {
       cy.contains(question?.question_name);
       cy.contains(question?.type);
@@ -181,7 +181,7 @@ export class ReusableTemplateSurveyTestSuite {
       .within(() => {
         cy.contains(survey.question_name);
         cy.contains('*');
-        cy.get('.pf-v5-c-icon').click();
+        cy.get('.pf-v6-c-icon').click();
       });
     cy.contains(survey.question_description);
     return groupType;
@@ -229,6 +229,7 @@ export class ReusableTemplateSurveyTestSuite {
               cy.contains(def);
             });
         }
+        cy.contains(/^Success$/).should('be.visible');
       });
   }
 }

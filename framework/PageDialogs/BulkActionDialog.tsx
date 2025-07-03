@@ -1,11 +1,13 @@
 import {
   Button,
-  Modal,
-  ModalBoxBody,
-  ModalVariant,
   Progress,
   ProgressSize,
   ProgressVariant,
+  Modal,
+  ModalVariant,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
 import pLimit from 'p-limit';
@@ -306,28 +308,28 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
 
   return (
     <Modal
-      titleIconVariant={isDanger ? 'warning' : undefined}
-      title={title}
       ouiaId={title}
-      aria-label={title}
-      description={description}
       variant={ModalVariant.medium}
       isOpen
       onClose={() => {
         onCancelClicked();
         onCloseClicked();
       }}
-      actions={modalActions}
-      hasNoBodyWrapper
+      aria-label={title}
     >
-      <ModalBoxBody style={{ paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}>
+      <ModalHeader
+        title={title}
+        titleIconVariant={isDanger ? 'warning' : undefined}
+        description={description}
+      />
+      <ModalBody style={{ paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}>
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             maxHeight: 560,
             overflow: 'hidden',
-            borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)',
+            borderTop: 'var(--pf-t--global--border--color--default)',
           }}
         >
           <PageTable<T>
@@ -383,8 +385,8 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
             {...pagination}
           />
         </div>
-      </ModalBoxBody>
-      <ModalBoxBody style={{ paddingTop: 0 }}>
+      </ModalBody>
+      <ModalBody style={{ paddingTop: 0 }}>
         <Progress
           data-cy="progress"
           value={(progress / items.length) * 100}
@@ -392,7 +394,8 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
           size={ProgressSize.lg}
           variant={progressVariant}
         />
-      </ModalBoxBody>
+      </ModalBody>
+      <ModalFooter>{modalActions}</ModalFooter>
     </Modal>
   );
 }

@@ -36,7 +36,7 @@ describe('Users list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
+          .find('.pf-v6-c-menu__content')
           .within(() => {
             cy.get('button')
               .contains(/^Delete users$/)
@@ -48,13 +48,11 @@ describe('Users list', () => {
         .find('tr')
         .first()
         .within(() => {
-          cy.get(`[data-cy="edit-user"]`)
-            .should('be.visible')
-            .should('have.attr', 'aria-disabled', 'false');
+          cy.get(`[data-cy="edit-user"]`).should('be.visible').should('be.enabled');
           cy.get('.toggle-kebab').click();
           cy.document()
             .its('body')
-            .find('.pf-v5-c-menu__content')
+            .find('.pf-v6-c-menu__content')
             .within(() => {
               cy.get('button')
                 .contains(/^Delete user$/)
@@ -120,7 +118,10 @@ describe('Users list', () => {
         },
       }));
       cy.mount(<PlatformUsersList />);
-      cy.get('a[data-cy="create-user"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="create-user"]')
+        .should('exist')
+        .and('be.visible')
+        .and('not.have.attr', 'aria-disabled');
     });
   });
   describe('Empty list', () => {

@@ -8,6 +8,7 @@ import { navigateTo } from '../../../commands/navigateTo';
 export async function createOrganization(page: Page, options: { organizationName?: string } = {}) {
   await navigateTo(page, 'Access Management', 'Organizations');
   await page.getByText('Create organization', { exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Create organization' })).toBeVisible();
   const organizationName = options.organizationName ?? createE2EName();
   await page.getByLabel('Name').fill(organizationName);
   await page.getByRole('button', { name: 'Next', exact: true }).click();

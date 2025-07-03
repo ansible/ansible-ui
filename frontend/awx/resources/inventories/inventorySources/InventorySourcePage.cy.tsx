@@ -44,6 +44,6 @@ describe('InventorySourcePage', () => {
       initialEntries: ['/inventories/1/sources/1'],
     });
     cy.clickButton(/^Sync inventory source$/);
-    cy.get('.pf-v5-c-alert__title').contains('Failed to update inventory source');
+    cy.get('.pf-v6-c-alert__title').contains('Failed to update inventory source');
   });
 });

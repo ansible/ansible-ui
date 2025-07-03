@@ -4,53 +4,59 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Automation Execution: Roles', () => {
   describe('Automation Execution: Verify Role Permissions', () => {
-    it(`can verify that a managed Automation Execution role displays the proper permissions`, () => {
+    const verifyRolePermissions = (roleId: string) => {
+      cy.getAwxRoleDetail(roleId).then((roleDetail) => {
+        const { permissions } = roleDetail;
+
+        // Show all permissions if there are more than 3
+        if (permissions.length > 3) {
+          cy.get('[data-cy="permissions-description-list"] button').click();
+        }
+
+        // Verify each permission is visible
+        permissions.forEach((permission) => {
+          const permissionSelector = `[data-cy="${JSON.parse(JSON.stringify(permission))}"]`;
+          cy.get(permissionSelector).should('be.visible');
+        });
+      });
+    };
+
+    it('can verify that a managed Automation Execution role displays the proper permissions', () => {
       cy.getAwxRoles({ managed: true })
         .its('results')
         .then((roles) => {
           const testRole = roles[17];
+
+          if (!testRole?.managed) {
+            cy.log('Test role is not managed, skipping test');
+            return;
+          }
+
           cy.intercept('GET', awxAPI`/role_definitions/*`).as('roleDefinitions');
           cy.navigateTo('platform', 'roles');
           cy.wait('@roleDefinitions');
           cy.verifyPageTitle('Roles');
           cy.setTablePageSize('50');
-          if (testRole.managed === true) {
-            cy.get('[data-ouia-component-id="simple-table"]').within(() => {
-              cy.get(`[data-cy="row-id-${testRole.id}"]`)
-                .scrollIntoView()
-                .should('be.visible')
-                .within(() => {
-                  cy.contains(`${testRole.name}`).should('be.visible');
-                  cy.getByDataCy('expand-column-cell').click();
-                });
-              cy.wait('@roleDefinitions');
-              cy.getAwxRoleDetail(testRole.id.toString()).then((roleDetail) => {
-                if (roleDetail.permissions.length > 3) {
-                  cy.get('[data-cy="permissions-description-list"] button').click();
-                }
-                const roleDetailPermissions = roleDetail.permissions;
-                roleDetailPermissions.forEach((detail) => {
-                  cy.get(`[data-cy="${JSON.parse(JSON.stringify(detail))}"]`).should('be.visible');
-                });
-              });
-              cy.get(`[data-cy="row-id-${testRole.id}"]`).within(() => {
-                cy.contains(`${testRole.name}`).click();
-              });
-            });
-            cy.verifyPageTitle(`${testRole.name}`);
-            cy.get(`dd[data-cy="name"]`).should('contain', `${testRole.name}`);
-            cy.get(`[data-cy="description"]`).should('contain', `${testRole.description}`);
-            cy.getAwxRoleDetail(testRole.id.toString()).then((roleDetail) => {
-              if (roleDetail.permissions.length > 3) {
-                cy.get('[data-cy="permissions-description-list"] button').click();
-              }
-              const roleDetailPermissions = roleDetail.permissions;
-              roleDetailPermissions.forEach((detail) => {
-                cy.get(`[data-cy="${JSON.parse(JSON.stringify(detail))}"]`).should('be.visible');
-              });
-            });
-            cy.get('[data-cy="back-to automation execution roles"]').click();
-          }
+          cy.filterTableByText(testRole.name);
+
+          // Verify permissions in the expanded row
+          cy.get(`[data-cy="row-id-${testRole.id}"]`).within(() => {
+            cy.contains(testRole.name).should('be.visible');
+            cy.getByDataCy('expand-column-cell').click();
+          });
+          cy.wait('@roleDefinitions');
+          verifyRolePermissions(testRole.id.toString());
+
+          // Verify permissions on role details page
+          cy.get(`[data-cy="row-id-${testRole.id}"]`).within(() => {
+            cy.contains(testRole.name).click();
+          });
+          cy.verifyPageTitle(testRole.name);
+          cy.get('dd[data-cy="name"]').should('contain', testRole.name);
+          cy.get('[data-cy="description"]').should('contain', testRole.description);
+          verifyRolePermissions(testRole.id.toString());
+
+          cy.get('[data-cy="back-to automation execution roles"]').click();
         });
     });
   });

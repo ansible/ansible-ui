@@ -15,13 +15,7 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { ScmType } from '@ansible/common-ui/scm';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
-import {
-  LabelGroup,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { LabelGroup, Content, ContentVariants } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
@@ -143,18 +137,18 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
     </>
   );
   const renderOptions = (options: Project) => (
-    <TextList component={TextListVariants.ul}>
+    <Content component={ContentVariants.ul}>
       {options.scm_clean && (
-        <TextListItem component={TextListItemVariants.li}>
+        <Content component={ContentVariants.li}>
           {t`Discard local changes before syncing`}
           <StandardPopover
             header={''}
             content={t`Remove any local modifications prior to performing an update.`}
           />
-        </TextListItem>
+        </Content>
       )}
       {options.scm_delete_on_update && (
-        <TextListItem component={TextListItemVariants.li}>
+        <Content component={ContentVariants.li}>
           {t`Delete the project before syncing`}
           <StandardPopover
             header={''}
@@ -163,10 +157,10 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
                   repository this may significantly increase the amount
                   of time required to complete an update.`}
           />
-        </TextListItem>
+        </Content>
       )}
       {options.scm_track_submodules && (
-        <TextListItem component={TextListItemVariants.li}>
+        <Content component={ContentVariants.li}>
           {t`Track submodules latest commit on branch`}
           <StandardPopover
             header={''}
@@ -177,29 +171,29 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
                   This is equivalent to specifying the --remote
                   flag to git submodule update.`}
           />
-        </TextListItem>
+        </Content>
       )}
       {options.scm_update_on_launch && (
-        <TextListItem component={TextListItemVariants.li}>
+        <Content component={ContentVariants.li}>
           {t`Update revision on job launch`}
           <StandardPopover
             header={''}
             content={t`Each time a job runs using this project, update the
                   revision of the project prior to starting the job.`}
           />
-        </TextListItem>
+        </Content>
       )}
       {options.allow_override && (
-        <TextListItem component={TextListItemVariants.li}>
+        <Content component={ContentVariants.li}>
           {t`Allow branch override`}
           <StandardPopover
             header={''}
             content={t`Allow changing the Source Control branch or revision in a job
                     template that uses this project.`}
           />
-        </TextListItem>
+        </Content>
       )}
-    </TextList>
+    </Content>
   );
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!project) return <LoadingPage breadcrumbs tabs />;

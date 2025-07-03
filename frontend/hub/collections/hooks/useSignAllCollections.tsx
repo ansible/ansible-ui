@@ -7,10 +7,13 @@ import {
   FormSelectOption,
   Grid,
   GridItem,
-  Modal,
-  ModalVariant,
   Split,
   SplitItem,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { useCallback, useState } from 'react';
@@ -46,12 +49,40 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
   const signing_service_name = 'ansible-default';
 
   return (
-    <Modal
-      title={t('Sign all collections')}
-      variant={ModalVariant.small}
-      isOpen
-      onClose={onCloseClicked}
-      actions={[
+    <Modal variant={ModalVariant.small} isOpen onClose={onCloseClicked}>
+      <ModalHeader title={t('Sign all collections')} />
+      <ModalBody>
+        <Grid hasGutter>
+          <GridItem span={12}>
+            <p>
+              <Trans>
+                You are about to sign <strong>all versions</strong> under{' '}
+                <strong>{namespace.name}</strong>.
+              </Trans>
+            </p>
+          </GridItem>
+          <GridItem span={12}>
+            <Split hasGutter>
+              <SplitItem>
+                <Trans>Signed version(s)</Trans>
+              </SplitItem>
+              <SplitItem />
+              <SplitItem>
+                <Trans>Unsigned version(s)</Trans>
+              </SplitItem>
+            </Split>
+          </GridItem>
+          <GridItem span={12}>
+            <FormGroup fieldId="service-selector" label={t`Signing service selector:`}>
+              <FormSelect value="ansible-default" id="service-selector">
+                <FormSelectOption value="ansible-default" label={signing_service_name} />
+              </FormSelect>
+            </FormGroup>
+          </GridItem>
+          {error && <HubError error={{ name: '', message: error }} />}
+        </Grid>
+      </ModalBody>
+      <ModalFooter>
         <Button
           key="sign-all"
           data-cy="modal-sign-button"
@@ -77,41 +108,11 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
           }}
         >
           {t`Sign all`}
-        </Button>,
+        </Button>
         <Button key="cancel" variant="link" onClick={onCloseClicked}>
           {t`Cancel`}
-        </Button>,
-      ]}
-    >
-      <Grid hasGutter>
-        <GridItem span={12}>
-          <p>
-            <Trans>
-              You are about to sign <strong>all versions</strong> under{' '}
-              <strong>{namespace.name}</strong>.
-            </Trans>
-          </p>
-        </GridItem>
-        <GridItem span={12}>
-          <Split hasGutter>
-            <SplitItem>
-              <Trans>Signed version(s)</Trans>
-            </SplitItem>
-            <SplitItem />
-            <SplitItem>
-              <Trans>Unsigned version(s)</Trans>
-            </SplitItem>
-          </Split>
-        </GridItem>
-        <GridItem span={12}>
-          <FormGroup fieldId="service-selector" label={t`Signing service selector:`}>
-            <FormSelect value="ansible-default" id="service-selector">
-              <FormSelectOption value="ansible-default" label={signing_service_name} />
-            </FormSelect>
-          </FormGroup>
-        </GridItem>
-        {error && <HubError error={{ name: '', message: error }} />}
-      </Grid>
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

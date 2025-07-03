@@ -50,7 +50,7 @@ export function InstanceDetails() {
           instanceForks={instanceForks}
         />
       ) : (
-        <PageSection variant="light">
+        <PageSection hasBodyWrapper={false}>
           <Skeleton />
         </PageSection>
       )}
@@ -96,14 +96,23 @@ export function InstanceDetailsTab(props: {
       {instanceGroups && instanceGroups.results.length > 0 && (
         <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
           {instanceGroups.results.map((instance) => (
-            <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
-              <Link
-                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                  params: { id: instance.id },
-                })}
-              >
-                {instance.name}
-              </Link>
+            <Label
+              isClickable
+              color="blue"
+              style={{ marginRight: '10px' }}
+              key={instance.id}
+              render={({ content, className }) => (
+                <Link
+                  className={className}
+                  to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                    params: { id: instance.id },
+                  })}
+                >
+                  {content}
+                </Link>
+              )}
+            >
+              {instance.name}
             </Label>
           ))}
         </PageDetail>
@@ -111,6 +120,7 @@ export function InstanceDetailsTab(props: {
       {!instance.managed && instance.related?.install_bundle && (
         <PageDetail label={t`Download bundle`} data-cy="download-bundle">
           <Button
+            icon={<DownloadIcon />}
             size="sm"
             aria-label={t`Download Bundle`}
             component="a"
@@ -119,9 +129,7 @@ export function InstanceDetailsTab(props: {
             target="_blank"
             variant="secondary"
             rel="noopener noreferrer"
-          >
-            <DownloadIcon />
-          </Button>
+          ></Button>
         </PageDetail>
       )}
       {instance.listener_port ? (

@@ -119,7 +119,9 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickTab(/^Groups$/, true);
-        cy.clickButton(/^Run command$/);
+        cy.contains('button', /^Run command$/)
+          .should('not.have.attr', 'aria-disabled', 'true')
+          .click();
 
         runCommand({
           selections: 'all',
@@ -357,7 +359,9 @@ describe('Inventory Groups', () => {
         cy.filterTableBySingleSelect('name', newRelatedGroup);
         cy.selectTableRow(newRelatedGroup);
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
-        cy.clickButton(/^Run command$/);
+        cy.contains('button', /^Run command$/)
+          .should('not.have.attr', 'aria-disabled', 'true')
+          .click();
 
         runCommand({
           selections: newRelatedGroup,
@@ -402,7 +406,7 @@ describe('Inventory Groups', () => {
         cy.getModal().within(() => {
           cy.filterTableBySearch(thisHost.name);
           cy.get('[data-cy="checkbox-column-cell"]').first().click();
-          cy.clickButton('Add host');
+          cy.contains('button', 'Add host').click();
         });
         cy.filterTableBySingleSelect('name', thisHost.name).should('be.visible');
         cy.requestDelete(awxAPI`/groups/${group.id.toString()}`);
@@ -473,7 +477,9 @@ describe('Inventory Groups', () => {
       cy.clickTableRowLink('name', thisInventory.name, { disableFilter: true });
       cy.verifyPageTitle(thisInventory.name);
       cy.clickTab(/^Hosts$/, true);
-      cy.clickButton(/^Run command$/);
+      cy.contains('button', /^Run command$/)
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
 
       runCommand({
         selections: 'all',

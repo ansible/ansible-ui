@@ -78,31 +78,31 @@ describe('Workflow Approvals List', () => {
 
     it('Clicking name table header sorts workflow approvals by name', () => {
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/?order_by=-name*').as('nameDescSortRequest');
-      cy.contains('th', 'Name').click();
+      cy.intercept(awxAPI`/workflow_approvals/?order_by=-name*`).as('nameDescSortRequest');
+      cy.get('[data-cy="name-column-header"] button').click();
       cy.wait('@nameDescSortRequest');
-      cy.intercept('api/v2/workflow_approvals/?order_by=name*').as('nameAscSortRequest');
-      cy.contains('th', 'Name').click();
+      cy.intercept(awxAPI`/workflow_approvals/?order_by=name*`).as('nameAscSortRequest');
+      cy.get('[data-cy="name-column-header"] button').click();
       cy.wait('@nameAscSortRequest');
     });
 
     it('Clicking started table header sorts workflow approvals by start time', () => {
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/?order_by=-started*').as('startedDescSortRequest');
-      cy.contains('th', 'Started').click();
+      cy.intercept(awxAPI`/workflow_approvals/?order_by=-started*`).as('startedDescSortRequest');
+      cy.get('[data-cy="started-column-header"] button').click();
       cy.wait('@startedDescSortRequest');
-      cy.intercept('api/v2/workflow_approvals/?order_by=started*').as('startedAscSortRequest');
-      cy.contains('th', 'Started').click();
+      cy.intercept(awxAPI`/workflow_approvals/?order_by=started*`).as('startedAscSortRequest');
+      cy.get('[data-cy="started-column-header"] button').click();
       cy.wait('@startedAscSortRequest');
     });
 
     it('Clicking status table header sorts workflow approvals by status', () => {
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/?order_by=-status*').as('statusDescSortRequest');
-      cy.contains('th', 'Status').click();
+      cy.intercept(awxAPI`/workflow_approvals/?order_by=-status*`).as('statusDescSortRequest');
+      cy.get('[data-cy="status-column-header"] button').click();
       cy.wait('@statusDescSortRequest');
-      cy.intercept('api/v2/workflow_approvals/?order_by=status*').as('statusAscSortRequest');
-      cy.contains('th', 'Status').click();
+      cy.intercept(awxAPI`/workflow_approvals/?order_by=status*`).as('statusAscSortRequest');
+      cy.get('[data-cy="status-column-header"] button').click();
       cy.wait('@statusAscSortRequest');
     });
 
@@ -137,7 +137,7 @@ describe('Workflow Approvals List', () => {
       cy.contains('tr', 'can approve or deny').within(() => {
         // can_approve_or_deny: true
         cy.get('[data-cy="actions-column-cell"]').within(() => {
-          cy.get(`[data-cy="approve"]`).should('have.attr', 'aria-disabled', 'false');
+          cy.get(`[data-cy="approve"]`).should('be.enabled');
         });
       });
     });
@@ -147,7 +147,7 @@ describe('Workflow Approvals List', () => {
       cy.contains('tr', 'can approve or deny').within(() => {
         // can_approve_or_deny: true
         cy.get('[data-cy="actions-column-cell"]').within(() => {
-          cy.get(`[data-cy="deny"]`).should('have.attr', 'aria-disabled', 'false');
+          cy.get(`[data-cy="deny"]`).should('be.enabled');
         });
       });
     });
@@ -178,12 +178,12 @@ describe('Workflow Approvals List', () => {
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/141/approve/', {
+      cy.intercept(awxAPI`/workflow_approvals/141/approve/`, {
         statusCode: 200,
       }).as('approveRequest');
-      cy.getTableRow('name', 'can approve or deny', { disableFilter: true }).within(() => {
-        cy.getByDataCy('actions-column-cell').within(() => {
-          cy.getByDataCy('approve').click();
+      cy.contains('tr', 'can approve or deny').within(() => {
+        cy.get('[data-cy="actions-column-cell"]').within(() => {
+          cy.get(`[data-cy="approve"]`).click();
         });
       });
       cy.get('#confirm').click();
@@ -197,12 +197,12 @@ describe('Workflow Approvals List', () => {
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/141/deny/', {
+      cy.intercept(awxAPI`/workflow_approvals/141/deny/`, {
         statusCode: 200,
       }).as('denyRequest');
-      cy.getTableRow('name', 'can approve or deny', { disableFilter: true }).within(() => {
-        cy.getByDataCy('actions-column-cell').within(() => {
-          cy.getByDataCy('deny').click();
+      cy.contains('tr', 'can approve or deny').within(() => {
+        cy.get('[data-cy="actions-column-cell"]').within(() => {
+          cy.get(`[data-cy="deny"]`).click();
         });
       });
       cy.get('#confirm').click();
@@ -216,7 +216,7 @@ describe('Workflow Approvals List', () => {
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/131/', {
+      cy.intercept(awxAPI`/workflow_approvals/131/`, {
         statusCode: 204,
       }).as('deleteRequest');
       cy.intercept('GET', awxAPI`/workflow_approvals/?search=can*`, {

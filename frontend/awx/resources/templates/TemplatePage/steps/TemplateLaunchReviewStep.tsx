@@ -164,16 +164,24 @@ export function TemplateLaunchReviewStep(props: Readonly<{ template: JobTemplate
       >
         <LabelGroup>
           {prompt?.instance_groups?.map((ig) => (
-            <Label color="blue" key={ig.id}>
-              <Link
-                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                  params: {
-                    id: ig.id,
-                  },
-                })}
-              >
-                {ig.name}
-              </Link>
+            <Label
+              color="blue"
+              key={ig.id}
+              isClickable
+              render={({ content, className }) => (
+                <Link
+                  className={className}
+                  to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                    params: {
+                      id: ig.id,
+                    },
+                  })}
+                >
+                  {content}
+                </Link>
+              )}
+            >
+              {ig.name}
             </Label>
           ))}
         </LabelGroup>

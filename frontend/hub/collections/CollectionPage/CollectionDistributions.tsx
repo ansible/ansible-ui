@@ -23,7 +23,7 @@ export function CollectionDistributions() {
 
   return (
     <Scrollable>
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         <PageTable<Distribution>
           id="hub-collection-version-search-table"
           tableColumns={tableColumns}

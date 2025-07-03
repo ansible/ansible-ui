@@ -10,15 +10,7 @@ import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { StatusCell } from '@ansible/common-ui/Status';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import {
-  Label,
-  LabelGroup,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-  Tooltip,
-} from '@patternfly/react-core';
+import { Content, ContentVariants, Label, LabelGroup, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useOutletContext, useParams } from 'react-router';
 import { AwxError } from '../../../common/AwxError';
@@ -172,16 +164,24 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
       <PageDetail label={t`Instance groups`} isEmpty={instanceGroups.length === 0}>
         <LabelGroup>
           {instanceGroups.map((ig) => (
-            <Label color="blue" key={ig.id}>
-              <Link
-                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                  params: {
-                    id: ig.id,
-                  },
-                })}
-              >
-                {ig.name}
-              </Link>
+            <Label
+              isClickable
+              color="blue"
+              key={ig.id}
+              render={({ content, className }) => (
+                <Link
+                  className={className}
+                  to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                    params: {
+                      id: ig.id,
+                    },
+                  })}
+                >
+                  {content}
+                </Link>
+              )}
+            >
+              {ig.name}
             </Label>
           ))}
         </LabelGroup>
@@ -199,17 +199,25 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
         ) : (
           <LabelGroup>
             {inputInventories?.results.map((inventory) => (
-              <Label color="blue" key={inventory.id}>
-                <Link
-                  to={getPageUrl(AwxRoute.InventoryDetails, {
-                    params: {
-                      inventory_type: INVENTORYURLPATHS[inventory.kind],
-                      id: inventory.id,
-                    },
-                  })}
-                >
-                  {inventory.name}
-                </Link>
+              <Label
+                isClickable
+                color="blue"
+                key={inventory.id}
+                render={({ content, className }) => (
+                  <Link
+                    className={className}
+                    to={getPageUrl(AwxRoute.InventoryDetails, {
+                      params: {
+                        inventory_type: INVENTORYURLPATHS[inventory.kind],
+                        id: inventory.id,
+                      },
+                    })}
+                  >
+                    {content}
+                  </Link>
+                )}
+              >
+                {inventory.name}
               </Label>
             ))}
           </LabelGroup>
@@ -253,13 +261,11 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
         isEmpty={!inventory.prevent_instance_group_fallback}
         helpText={inventoryFormDetailLables.prevent_instance_group_fallback}
       >
-        <TextList component={TextListVariants.ul}>
+        <Content component={ContentVariants.ul}>
           {inventory.prevent_instance_group_fallback && (
-            <TextListItem component={TextListItemVariants.li}>
-              {t`Prevent instance group fallback`}
-            </TextListItem>
+            <Content component={ContentVariants.li}>{t`Prevent instance group fallback`}</Content>
           )}
-        </TextList>
+        </Content>
       </PageDetail>
       <PageDetailCodeEditor
         helpText={<LabelHelp inventoryKind={inventory.kind} />}

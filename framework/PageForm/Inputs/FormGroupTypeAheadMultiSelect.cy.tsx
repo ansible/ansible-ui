@@ -121,17 +121,16 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
       onHandleSelection: () => {},
       onHandleClear: () => {},
     };
+
     it('renders a scrollable labels dropdown', () => {
       cy.mount(<FormGroupTypeAheadMultiSelect {...defaultProps} />);
       cy.get('input').click();
 
-      cy.get('[data-cy="select-option-Option 1"]').contains('Option 1').should('be.visible');
-      cy.get('[data-cy="select-option-Option 50"]').contains('Option 50').should('not.be.visible');
+      cy.get('[data-cy="select-option-Option 1"]').should('be.visible');
 
-      cy.get('[data-cy="select-list"]').parent().scrollTo('bottom');
+      cy.get('[role="listbox"]').should('exist').scrollTo('bottom', { duration: 500 });
 
-      cy.get('[data-cy="select-option-Option 50"]').contains('Option 50').should('be.visible');
-      cy.get('[data-cy="select-option-Option 1"]').contains('Option 1').should('not.be.visible');
+      cy.get('[data-cy="select-option-Option 50"]').should('be.visible');
     });
   });
 

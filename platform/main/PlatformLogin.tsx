@@ -22,7 +22,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
   const brandImg = options?.custom_logo ? (
     <img src={options.custom_logo} alt={t('Custom logo')} style={{ height: 64 }} />
   ) : (
-    <AAPLogo style={{ height: 64 }} />
+    <AAPLogo style={{ height: 64, color: 'white' }} />
   );
 
   const [mode, setModeState] = useState<'aap' | 'awx' | 'hub'>('aap');

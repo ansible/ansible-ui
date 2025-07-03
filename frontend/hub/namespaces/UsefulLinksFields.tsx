@@ -96,22 +96,20 @@ export function UsefulLinksFields() {
                 }}
               >
                 <Button
+                  icon={<PlusCircleIcon />}
                   type="button"
                   variant="plain"
                   aria-label={t('Add link')}
                   onClick={() => append({ name: '', url: '' })}
-                >
-                  <PlusCircleIcon />
-                </Button>
+                />
                 {fields.length > 1 && (
                   <Button
+                    icon={<TrashIcon />}
                     type="button"
                     variant="plain"
                     aria-label={t('Remove link')}
                     onClick={() => remove(index)}
-                  >
-                    <TrashIcon />
-                  </Button>
+                  />
                 )}
               </div>
             </div>

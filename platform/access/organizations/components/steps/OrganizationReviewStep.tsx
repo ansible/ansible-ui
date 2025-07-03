@@ -8,7 +8,7 @@ import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnviro
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { Label, LabelGroup, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
@@ -41,9 +41,9 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
 
   return (
     <>
-      <TextContent style={{ marginBottom: 25 }}>
-        <Text component={TextVariants.h2}>{t('Review')}</Text>
-      </TextContent>
+      <Content style={{ marginBottom: 25 }}>
+        <Content component={ContentVariants.h2}>{t('Review')}</Content>
+      </Content>
       <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{organization.name}</PageDetail>
         <PageDetail label={t('Description')}>{organization?.description}</PageDetail>
@@ -67,14 +67,22 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
           >
             <LabelGroup>
               {instanceGroups.map((ig) => (
-                <Label color="blue" key={ig.id}>
-                  <Link
-                    to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                      params: { id: ig.id },
-                    })}
-                  >
-                    {ig.name}
-                  </Link>
+                <Label
+                  isClickable
+                  color="blue"
+                  key={ig.id}
+                  render={({ content, className }) => (
+                    <Link
+                      className={className}
+                      to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                        params: { id: ig.id },
+                      })}
+                    >
+                      {content}
+                    </Link>
+                  )}
+                >
+                  {ig.name}
                 </Label>
               ))}
             </LabelGroup>

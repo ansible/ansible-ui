@@ -1,4 +1,4 @@
-import { TextContent } from '@patternfly/react-core';
+import { Content } from '@patternfly/react-core';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
@@ -10,12 +10,10 @@ export type MarkdownPreviewProps = {
 export function PageMarkdownDetail(props: MarkdownPreviewProps) {
   const { value, label } = props;
   return (
-    <PreviewLabelContainer className="pf-v5-c-form__group">
+    <PreviewLabelContainer className="pf-v6-c-form__group">
       {label && <LabelDiv>{label}</LabelDiv>}
       <PreviewContainer>
-        <TextContent>
-          {<ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>}
-        </TextContent>
+        <Content>{<ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>}</Content>
       </PreviewContainer>
     </PreviewLabelContainer>
   );
@@ -33,7 +31,7 @@ const PreviewLabelContainer = styled.div`
 
 const PreviewContainer = styled.div`
   padding: 24px;
-  border: thin solid var(--pf-v5-global--BorderColor--100);
+  border: thin solid var(--pf-t--global--border--color--default);
   td,
   th {
     padding: 2px 16px 2px 0;
@@ -41,7 +39,7 @@ const PreviewContainer = styled.div`
   }
   code {
     display: inline-block;
-    background: var(--pf-v5-global--BackgroundColor--200);
+    background: var(--pf-t--global--background--color--secondary--default);
     padding: 2px 6px;
     border-radius: 6px;
   }

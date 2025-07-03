@@ -52,7 +52,7 @@ describe('Create credential ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.getBy('[data-cy="credential_type_id"]').click();
     cy.clickButton('Browse');
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('table').should('exist');
       cy.getBy('[data-cy="text-input"] input').type('Source Control');
       cy.getBy('button[data-cy="apply-filter"]').click();
@@ -60,8 +60,10 @@ describe('Create credential ', () => {
       cy.clickButton('Confirm');
     });
     cy.get('[data-cy="organization_id"]').click();
-    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
-    cy.get('[id="inputs-ssh-key-data-browse-button"]').should('be.visible');
+    cy.get('#organization-2 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
+    cy.getByDataCy('inputs-ssh-key-data').within(() => {
+      cy.contains('button', /^Browse/).should('be.visible');
+    });
     cy.clickButton('Create credential');
 
     cy.intercept('POST', edaAPI`/eda-credentials/`, (req) => {
@@ -78,7 +80,7 @@ describe('Create credential ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.getBy('[data-cy="credential_type_id"]').click();
     cy.clickButton('Browse');
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('table').should('exist');
       cy.getBy('[data-cy="text-input"] input').type('Sample Base 64 Binary');
       cy.getBy('button[data-cy="apply-filter"]').click();
@@ -86,7 +88,7 @@ describe('Create credential ', () => {
       cy.clickButton('Confirm');
     });
     cy.get('[data-cy="organization_id"]').click();
-    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#organization-2 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('#inputs-binary-file-filename').should('be.visible');
     cy.clickButton('Create credential');
     cy.intercept('POST', edaAPI`/eda-credentials/`, (req) => {

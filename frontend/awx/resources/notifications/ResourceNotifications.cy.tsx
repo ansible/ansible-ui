@@ -52,7 +52,7 @@ describe('ResourceNotifications', () => {
       path: '/:source_id/',
       initialEntries: ['/1'],
     });
-    cy.get(':nth-child(1) > div > .pf-v5-c-switch').click();
+    cy.get(':nth-child(1) > div > .pf-v6-c-switch').click();
   });
 
   it('filter by name', () => {

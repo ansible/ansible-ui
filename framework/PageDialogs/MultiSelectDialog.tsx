@@ -1,4 +1,11 @@
-import { Button, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
+import {
+  Button,
+  Modal,
+  ModalVariant,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+} from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
@@ -49,15 +56,26 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
   const modalColumns = useVisibleModalColumns(tableColumns);
   return (
     <Modal
-      title={title}
-      aria-label={title}
       ouiaId={title}
-      description={description}
       isOpen
       onClose={onClose}
       variant={ModalVariant.medium}
       tabIndex={0}
-      actions={[
+      aria-label={title}
+    >
+      <ModalHeader title={title} description={description} />
+      <ModalBody style={{ overflow: 'hidden' }}>
+        <PageMultiSelectList
+          view={view}
+          tableColumns={modalColumns}
+          toolbarFilters={toolbarFilters}
+          emptyStateTitle={emptyStateTitle}
+          errorStateTitle={errorStateTitle}
+          maxSelections={maxSelections}
+          isCompact
+        />
+      </ModalBody>
+      <ModalFooter>
         <Button
           key="submit"
           variant="primary"
@@ -69,24 +87,11 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
           isAriaDisabled={view.selectedItems.length === 0 && !allowZeroSelections}
         >
           {confirmText ?? translations.confirmText}
-        </Button>,
+        </Button>
         <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
           {cancelText ?? translations.cancelText}
-        </Button>,
-      ]}
-      hasNoBodyWrapper
-    >
-      <ModalBoxBody style={{ overflow: 'hidden' }}>
-        <PageMultiSelectList
-          view={view}
-          tableColumns={modalColumns}
-          toolbarFilters={toolbarFilters}
-          emptyStateTitle={emptyStateTitle}
-          errorStateTitle={errorStateTitle}
-          maxSelections={maxSelections}
-          isCompact
-        />
-      </ModalBoxBody>
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 }

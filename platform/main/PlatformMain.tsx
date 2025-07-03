@@ -3,9 +3,6 @@ import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
-// patternfly-charts-theme-dark.css must come after patternfly-charts.css
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
-
 import { PageFramework } from '@ansible/ansible-ui-framework';
 import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';

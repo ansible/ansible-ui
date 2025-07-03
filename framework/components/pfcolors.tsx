@@ -50,22 +50,33 @@ export function getPatternflyColor(color: PFColor) {
   }
 }
 
-export const pfSuccess = 'var(--pf-v5-global--success-color--100)';
-export const pfDanger = 'var(--pf-v5-global--danger-color--100)';
-export const pfWarning = 'var(--pf-v5-global--warning-color--100)';
-export const pfInfo = 'var(--pf-v5-global--info-color--100)';
-export const pfDisabled = 'var(--pf-v5-global--disabled-color--100)';
-export const pfLink = 'var(--pf-v5-global--link--Color)';
-export const pfUnreachable = 'var(--pf-v5-global--danger-color--100)';
+export const pfSuccess = 'var(--pf-t--global--color--status--success--default)';
+export const pfDanger = 'var(--pf-t--global--color--status--danger--default)';
+export const pfWarning = 'var(--pf-t--global--color--status--warning--default)';
+export const pfInfo = 'var(--pf-t--global--color--status--info--default)';
+export const pfDisabled = 'var(--pf-t--global--text--color--disabled)';
+export const pfLink = 'var(--pf-t--global--text--color--link--default)';
+export const pfUnreachable = 'var(--pf-t--global--color--status--danger--default)';
 
 export enum LabelColorE {
   blue = 'blue',
-  cyan = 'cyan',
+  teal = 'teal',
   green = 'green',
   orange = 'orange',
   purple = 'purple',
   red = 'red',
+  orangered = 'orangered',
   grey = 'grey',
+  yellow = 'yellow',
 }
 
-export type LabelColor = 'blue' | 'cyan' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
+export type LabelColor =
+  | 'blue'
+  | 'teal'
+  | 'green'
+  | 'orange'
+  | 'purple'
+  | 'red'
+  | 'orangered'
+  | 'grey'
+  | 'yellow';
