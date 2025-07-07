@@ -41,6 +41,33 @@ test.describe('Job Templates', () => {
   );
 
   test(
+    'can create a job template with a survey, add limits and verify they are displayed on Edit',
+    { tag: ['@not_mock', '@compare'] },
+    async ({ page }) => {
+      test.setTimeout(5 * 30 * 1000);
+      const jobTemplateName = await createJobTemplate({ survey: true }, page);
+      await page
+        .getByLabel('Global', { exact: true })
+        .getByRole('link', { name: 'Templates' })
+        .click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).fill(jobTemplateName);
+      await page.getByRole('link', { name: jobTemplateName }).click();
+      await page.getByRole('tab', { name: 'Survey' }).click();
+      await page.getByRole('button', { name: 'Edit survey question' }).click();
+      await page.getByRole('spinbutton', { name: 'Minimum length' }).click();
+      await page.getByRole('spinbutton', { name: 'Minimum length' }).fill('5');
+      await page.getByRole('spinbutton', { name: 'Maximum length' }).click();
+      await page.getByRole('spinbutton', { name: 'Maximum length' }).fill('15');
+      await page.getByRole('button', { name: 'Save survey question' }).click();
+      await page.getByRole('button', { name: 'Edit survey question' }).click();
+      await expect(page.getByRole('spinbutton', { name: 'Minimum length' })).toHaveValue('5');
+      await expect(page.getByRole('spinbutton', { name: 'Maximum length' })).toHaveValue('15');
+      await deleteJobTemplate(jobTemplateName, page);
+    }
+  );
+
+  test(
     'can launch a job template from the details page launch button using the prompt on launch',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
