@@ -3,7 +3,7 @@ import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, PanelCloseIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { usePlatformView } from '../../../hooks/usePlatformView';
@@ -64,15 +64,18 @@ export function PlatformOrganizationTeams() {
       emptyState={
         canCreateTeam ? (
           <PageTableEmptyState
-            title={t('No teams found')}
-            description={t('There are currently no teams created in this organization.')}
+            title={t('No teams')}
+            description={t(
+              'No teams have been created or assigned to this organization. Go to the Teams section to create a team, then you can assign that team to this organization. Once teams are assigned to this organization, they can be assigned roles for the resources within this organization.'
+            )}
+            style={{ maxWidth: '40%', display: 'inline-block' }}
           >
             <ButtonLink
-              icon={<PlusCircleIcon />}
-              variant={ButtonVariant.primary}
+              icon={<PanelCloseIcon />}
+              variant={ButtonVariant.link}
               href={getPageUrl(PlatformRoute.CreateTeam)}
             >
-              {t('Create team')}
+              {t('Go to Teams section and create team')}
             </ButtonLink>
           </PageTableEmptyState>
         ) : (

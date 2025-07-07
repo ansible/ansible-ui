@@ -406,7 +406,7 @@ describe('If SaaS Build', () => {
       cy.clickTab('Teams', true);
       const teamName = `E2E PlatformTeam ${randomString(4)}`;
       cy.intercept('POST', gatewayAPI`/teams/`).as('createTeam');
-      cy.clickLink(/^Create team$/);
+      cy.clickLink(/^Go to Teams section and create team$/);
       cy.get('[data-cy="name"]').type(teamName);
       cy.singleSelectByDataCy('organization', organization.name);
       cy.clickButton(/^Create team$/);
