@@ -1,4 +1,4 @@
-# Description
+## Description
 
 Jira issue # <!-- Link JIRA issue -->
 
@@ -24,7 +24,7 @@ Jira issue # <!-- Link JIRA issue -->
 
 ## Testing
 
-### E2E Run
+#### • E2E Run:
 
 <!-- Link an E2E run. -->
 
@@ -34,7 +34,8 @@ Jira issue # <!-- Link JIRA issue -->
 
 <!-- List any relevant steps needed for testing this PR (if it is not obvious from the JIRA issue). -->
 
-#### • Screenshots
+#### • Screenshots (if applicable):
+
 <!-- Include screenshots if applicable. -->
 
 #### • Test coverage
@@ -43,13 +44,4 @@ Jira issue # <!-- Link JIRA issue -->
 
 ## Additional Notes
 
-- [ ] **Verify PF5 `next` components:** When adding new code, ensure that components with updated PF6 APIs are imported from the PF5 `next` release (for example, see the [Modal API preview](https://v5-archive.patternfly.org/components/modal/react-next)) rather than using legacy PF5 components. This helps avoid rework during the PF6 migration.
-
-**Components to verify:**
-
-- `DualListSelector-next` (matches PF6 `DualListSelector`)
-- `Modal-next` (matches PF6 `Modal`)
-- Non-deprecated `Select` (matches PF6 `Select`)
-- Non-deprecated `Dropdown` (matches PF6 `Dropdown`)
-- Non-deprecated `Wizard` (matches PF6 `Wizard`)
-- Non-deprecated `Table` (matches PF6 `Table`)
+<!-- Provide any additional information or context that is relevant to the PR. -->
