@@ -101,7 +101,7 @@ export function InstanceGroupAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function InstanceGroupAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Instance groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
           {
@@ -149,7 +149,7 @@ export function InstanceGroupAddUsers() {
               },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

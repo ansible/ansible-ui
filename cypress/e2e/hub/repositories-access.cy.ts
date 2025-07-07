@@ -35,7 +35,7 @@ describe('Repositories user and team access tests', () => {
     cy.createHubUser().then((hubUser) => {
       cy.clickTab(/^Details$/, true);
       cy.clickTab(/^User Access$/, true);
-      cy.getByDataCy('add-roles').click();
+      cy.getByDataCy('assign-users').click();
       cy.getWizard().within(() => {
         cy.filterTableByTextFilter('name', hubUser.username, { disableFilterSelection: true });
         cy.getTableRowByText(hubUser.username, false).within(() => {

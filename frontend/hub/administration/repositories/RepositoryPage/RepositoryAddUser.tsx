@@ -116,7 +116,7 @@ export function RepositoryAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -145,7 +145,7 @@ export function RepositoryAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
           {
@@ -156,7 +156,7 @@ export function RepositoryAddUsers() {
             label: t('User Access'),
             to: getPageUrl(HubRoute.RepositoryUserAccess, { params: { id: repository?.name } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

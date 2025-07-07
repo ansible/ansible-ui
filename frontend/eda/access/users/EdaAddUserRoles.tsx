@@ -26,7 +26,7 @@ export function EdaAddUserRoles(props: { id?: string; userRolesRoute?: string })
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(EdaRoute.Users) },
           {
@@ -37,7 +37,7 @@ export function EdaAddUserRoles(props: { id?: string; userRolesRoute?: string })
             label: t('Roles'),
             to: getPageUrl(EdaRoute.UserRoles, { params: { id: user?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <EdaAddRoles

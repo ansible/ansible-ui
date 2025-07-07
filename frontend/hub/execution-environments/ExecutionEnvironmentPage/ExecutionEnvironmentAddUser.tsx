@@ -115,7 +115,7 @@ export function ExecutionEnvironmentAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -144,7 +144,7 @@ export function ExecutionEnvironmentAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Execution environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
           {
@@ -159,7 +159,7 @@ export function ExecutionEnvironmentAddUsers() {
               params: { id: executionEnvironment?.name },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

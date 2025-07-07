@@ -94,7 +94,7 @@ describe('Check if the build includes EDA', () => {
         cy.clickTableRow(RBA.name, false);
         cy.verifyPageTitle(RBA.name);
         cy.clickTab('User Access', true);
-        cy.getByDataCy('add-roles').click();
+        cy.getByDataCy('assign-users').click();
         cy.getTableRowByText(edaUser1.username, true).within(() => {
           cy.get('input[type=checkbox]').click();
         });

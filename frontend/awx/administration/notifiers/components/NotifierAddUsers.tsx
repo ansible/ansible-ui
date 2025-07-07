@@ -101,7 +101,7 @@ export function NotifierAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function NotifierAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           {
@@ -145,7 +145,7 @@ export function NotifierAddUsers() {
               params: { id: credential?.id },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

@@ -116,7 +116,7 @@ export function RemoteAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -145,7 +145,7 @@ export function RemoteAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
           {
@@ -156,7 +156,7 @@ export function RemoteAddUsers() {
             label: t('User Access'),
             to: getPageUrl(HubRoute.RemoteUserAccess, { params: { id: remote?.name } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

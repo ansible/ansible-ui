@@ -101,7 +101,7 @@ export function JobTemplateAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function JobTemplateAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           {
@@ -141,7 +141,7 @@ export function JobTemplateAddUsers() {
             label: t('User Access'),
             to: getPageUrl(AwxRoute.JobTemplateUserAccess, { params: { id: template?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

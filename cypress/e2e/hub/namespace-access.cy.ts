@@ -55,7 +55,7 @@ describe('Namespace - team and user access', () => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_user_assignments/*`).as('userRoleAssignments');
       cy.clickTab('User Access', true);
       cy.wait('@userRoleAssignments');
-      cy.getByDataCy('add-roles').click();
+      cy.getByDataCy('assign-users').click();
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
         cy.filterTableByTextFilter('name', hubUser.username, {

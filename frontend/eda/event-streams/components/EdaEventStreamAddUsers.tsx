@@ -102,7 +102,7 @@ export function EdaEventStreamAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -131,7 +131,7 @@ export function EdaEventStreamAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('EventStreams'), to: getPageUrl(EdaRoute.EventStreams) },
           {
@@ -142,7 +142,7 @@ export function EdaEventStreamAddUsers() {
             label: t('User Access'),
             to: getPageUrl(EdaRoute.EventStreamUserAccess, { params: { id: eventstream?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

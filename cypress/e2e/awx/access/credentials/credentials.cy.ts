@@ -684,8 +684,8 @@ cyLabel(['upstream'], () => {
       cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
       cy.clickTab('User Access', true);
 
-      cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
+      cy.getByDataCy('assign-users').click();
+      cy.verifyPageTitle('Assign users');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
         cy.selectTableRowByCheckbox('username', createdAwxUser.username);

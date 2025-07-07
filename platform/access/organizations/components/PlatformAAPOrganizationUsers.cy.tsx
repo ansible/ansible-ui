@@ -34,7 +34,7 @@ describe('Organization users list', () => {
       cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 2);
       // Toolbar actions are visible
-      cy.get(`[data-cy="add-users"]`).should('be.visible');
+      cy.get(`[data-cy="assign-users"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab').click();
         cy.document()
@@ -67,7 +67,7 @@ describe('Organization users list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/1/users'],
       });
-      cy.get('[data-cy="add-users"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="assign-users"]').should('have.attr', 'aria-disabled', 'true');
     });
     it('Add users button is enabled if the user has the required permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
@@ -90,7 +90,7 @@ describe('Organization users list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/1/users'],
       });
-      cy.get('[data-cy="add-users"]').should('not.have.attr', 'aria-disabled');
+      cy.get('[data-cy="assign-users"]').should('not.have.attr', 'aria-disabled');
     });
   });
   describe('Empty list', () => {

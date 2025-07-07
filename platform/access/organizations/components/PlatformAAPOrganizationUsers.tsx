@@ -73,7 +73,7 @@ export function PlatformAAPOrganizationUsers() {
               variant={ButtonVariant.primary}
               href={getPageUrl(PlatformRoute.OrganizationAddUsers, { params: { id: params.id } })}
             >
-              {t('Add user(s)')}
+              {t('Assign users')}
             </ButtonLink>
           </PageTableEmptyState>
         ) : (

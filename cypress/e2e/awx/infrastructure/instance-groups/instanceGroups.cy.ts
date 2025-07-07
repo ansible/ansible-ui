@@ -770,7 +770,7 @@ describe(`Instance Groups`, () => {
         /^There are currently no users assigned to this instance group./
       );
       cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
-      cy.getByDataCy('add-roles').click();
+      cy.getByDataCy('assign-users').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/users/add-users')).to.be.true;
@@ -854,7 +854,7 @@ describe(`Instance Groups`, () => {
         /^There are currently no users assigned to this instance group./
       );
       cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
-      cy.getByDataCy('add-roles').click();
+      cy.getByDataCy('assign-users').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/users/add-users')).to.be.true;

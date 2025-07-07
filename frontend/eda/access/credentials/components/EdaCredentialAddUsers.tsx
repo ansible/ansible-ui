@@ -102,7 +102,7 @@ export function EdaCredentialAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -131,7 +131,7 @@ export function EdaCredentialAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
           {
@@ -142,7 +142,7 @@ export function EdaCredentialAddUsers() {
             label: t('User Access'),
             to: getPageUrl(EdaRoute.CredentialUserAccess, { params: { id: credential?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

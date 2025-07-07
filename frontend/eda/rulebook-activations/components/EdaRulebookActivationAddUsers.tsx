@@ -102,7 +102,7 @@ export function EdaRulebookActivationAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -131,7 +131,7 @@ export function EdaRulebookActivationAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('RulebookActivations'), to: getPageUrl(EdaRoute.RulebookActivations) },
           {
@@ -144,7 +144,7 @@ export function EdaRulebookActivationAddUsers() {
               params: { id: activation?.id },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>
