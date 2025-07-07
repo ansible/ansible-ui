@@ -57,8 +57,8 @@ describe('Remotes User Access tab', () => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_user_assignments/*`).as('userRoleAssignments');
       cy.clickTab('User Access', true);
       cy.wait('@userRoleAssignments');
-      cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
+      cy.getByDataCy('assign-users').click();
+      cy.verifyPageTitle('Assign users');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
         cy.filterTableByTextFilter('name', hubUser.username, { disableFilterSelection: true });

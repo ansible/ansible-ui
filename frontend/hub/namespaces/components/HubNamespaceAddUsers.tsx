@@ -116,7 +116,7 @@ export function HubNamespaceAddUsers() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
@@ -145,7 +145,7 @@ export function HubNamespaceAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
           {
@@ -156,7 +156,7 @@ export function HubNamespaceAddUsers() {
             label: t('User Access'),
             to: getPageUrl(HubRoute.NamespaceUserAccess, { params: { id: namespace?.name } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

@@ -4,6 +4,8 @@ import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { useTranslation } from 'react-i18next';
 import { UserAssignment } from '../interfaces/UserAssignment';
 import { Access } from './Access';
+import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 
 export function UserAccess(props: {
   service: 'awx' | 'eda' | 'hub';
@@ -16,6 +18,7 @@ export function UserAccess(props: {
 }) {
   const { type, service, ...rest } = props;
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const roleUserAssignmentsURL =
     service === 'awx'
       ? awxAPI`/role_user_assignments/`
@@ -31,6 +34,10 @@ export function UserAccess(props: {
           function: (userAccess: UserAssignment) => userAccess?.summary_fields?.user?.username,
           sort: 'user__username',
           label: t('Username'),
+          to: (userAccess: UserAssignment) =>
+            getPageUrl(PlatformRoute.UserDetails, {
+              params: { id: userAccess?.summary_fields?.user?.id },
+            }),
         },
       }}
       additionalTableColumns={[
@@ -51,6 +58,7 @@ export function UserAccess(props: {
       url={roleUserAssignmentsURL}
       content_type_model={type}
       accessListType={'user'}
+      addRoleButtonText={t('Assign users')}
     />
   );
 }

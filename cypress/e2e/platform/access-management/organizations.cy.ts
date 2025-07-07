@@ -170,8 +170,8 @@ describe('If SaaS Build', () => {
           cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
           cy.clickTableRowLink('name', organization.name, { disableFilter: true });
           cy.clickTab('Users', true);
-          cy.clickLink('Add user(s)');
-          cy.verifyPageTitle('Add roles');
+          cy.clickLink('Assign users');
+          cy.verifyPageTitle('Assign users');
           cy.getWizard().within(() => {
             cy.selectTableRowByCheckbox('username', createdUser1.username);
             cy.selectTableRowByCheckbox('username', createdUser2.username);
@@ -238,8 +238,8 @@ describe('If SaaS Build', () => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
         cy.clickTableRowLink('name', organization.name, { disableFilter: true });
         cy.clickTab('Users', true);
-        cy.clickLink('Add user(s)');
-        cy.verifyPageTitle('Add roles');
+        cy.clickLink('Assign users');
+        cy.verifyPageTitle('Assign users');
         cy.getWizard().within(() => {
           cy.selectTableRowByCheckbox('username', createdUser1.username);
           cy.clickButton(/^Next/);

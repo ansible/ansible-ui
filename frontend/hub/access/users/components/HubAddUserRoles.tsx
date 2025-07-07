@@ -116,7 +116,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
 
     return new Promise<void>((resolve) => {
       progressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: ({ resource, role }) =>
           `${(resource as ResourceTypeWithID)?.id ?? parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href)}_${role.id}`,
         items,
@@ -149,7 +149,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(HubRoute.Users) },
           {
@@ -160,7 +160,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
             label: t('Roles'),
             to: getPageUrl(HubRoute.UserRoles, { params: { id: user?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>

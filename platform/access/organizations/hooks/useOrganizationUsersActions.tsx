@@ -60,7 +60,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add users'),
+        label: t('Assign users'),
         isDisabled: canEditOrganization
           ? undefined
           : t(

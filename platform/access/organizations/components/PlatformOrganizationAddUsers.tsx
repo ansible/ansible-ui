@@ -204,7 +204,7 @@ export function PlatformOrganizationAddUsers() {
 
     return new Promise<void>((resolve) => {
       progressDialog({
-        title: t('Add roles'),
+        title: t('Assign users'),
         keyFn: (item) =>
           (item as UserAndPlatformRole).platformOrgMemberRole
             ? `${item.user?.id}_${(item as UserAndPlatformRole).platformOrgMemberRole.id}`
@@ -263,7 +263,7 @@ export function PlatformOrganizationAddUsers() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign users')}
         breadcrumbs={[
           { label: t('Organizations'), to: getPageUrl(PlatformRoute.Organizations) },
           {
@@ -274,7 +274,7 @@ export function PlatformOrganizationAddUsers() {
             label: t('Users'),
             to: getPageUrl(PlatformRoute.OrganizationUsers, { params: { id: organization?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign users') },
         ]}
       />
       <PageWizard<WizardFormValues>
