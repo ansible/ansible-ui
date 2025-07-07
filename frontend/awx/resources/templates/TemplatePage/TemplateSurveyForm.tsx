@@ -322,13 +322,16 @@ function TemplateSurveyInputs() {
 function SelectedAnswerType({ answer }: { answer: string }) {
   const { t } = useTranslation();
 
-  const { setValue, reset } = useFormContext();
+  const { setValue, reset, getFieldState } = useFormContext();
 
   useEffect(() => {
-    setValue('min', minDefault);
-    setValue('max', maxDefault);
-    reset(undefined, { keepValues: true, keepErrors: false });
-  }, [answer, setValue, reset]);
+    const { isDirty } = getFieldState('type');
+    if (isDirty) {
+      setValue('min', minDefault);
+      setValue('max', maxDefault);
+      reset(undefined, { keepValues: true, keepErrors: false });
+    }
+  }, [answer, setValue, reset, getFieldState]);
 
   const min = Number(useWatch({ name: 'min' }));
   const max = Number(useWatch({ name: 'max' }));
