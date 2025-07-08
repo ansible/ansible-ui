@@ -134,8 +134,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
 
   const tooltipContent = getToolTipContent();
 
-  const dropdownMenuLabel: string | JSX.Element | undefined =
-    iconOnly && CustomIcon ? <CustomIcon /> : label;
+  const dropdownMenuLabel: string | JSX.Element | undefined = iconOnly ? undefined : label;
 
   const disabledMenuToggle = (
     <Button data-cy={id} icon={CustomIcon ? <CustomIcon /> : undefined} isAriaDisabled>
@@ -181,7 +180,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
               isExpanded={dropdownOpen}
               icon={CustomIcon ? <CustomIcon /> : undefined}
             >
-              {dropdownMenuLabel ?? <EllipsisVIcon />}
+              {dropdownMenuLabel ?? (CustomIcon ? null : <EllipsisVIcon />)}
             </MenuToggle>
           )}
         >
