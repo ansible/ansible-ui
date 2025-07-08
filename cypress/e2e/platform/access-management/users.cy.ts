@@ -86,7 +86,8 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
     cy.get('[data-cy="username"]').type(userName);
     cy.get('[data-cy="password"]').type(password);
     cy.get('[data-cy="confirmpassword"]').type(password);
-    cy.getByDataCy('platformAdmin').click();
+    cy.get('[style="display: flex;"] > [data-cy="usertype-form-group"]').click();
+    cy.get('#ansible-automation-platform-administrator').click();
     cy.get('[data-cy="first-name"]').type(firstName);
     cy.get('[data-cy="last-name"]').type(lastName);
     cy.get('[data-cy="email"]').type(userEmail);
@@ -117,7 +118,8 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
     cy.get('[data-cy="username"]').type(userName);
     cy.get('[data-cy="password"]').type(password);
     cy.get('[data-cy="confirmpassword"]').type(password);
-    cy.getByDataCy('platformAuditor').click();
+    cy.get('[style="display: flex;"] > [data-cy="usertype-form-group"]').click();
+    cy.get('#ansible-automation-platform-auditor').click();
     cy.get('[data-cy="first-name"]').type(firstName);
     cy.get('[data-cy="last-name"]').type(lastName);
     cy.get('[data-cy="email"]').type(userEmail);
