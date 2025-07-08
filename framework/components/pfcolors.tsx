@@ -57,6 +57,9 @@ export const pfInfo = 'var(--pf-t--global--color--status--info--default)';
 export const pfDisabled = 'var(--pf-t--global--text--color--disabled)';
 export const pfLink = 'var(--pf-t--global--text--color--link--default)';
 export const pfUnreachable = 'var(--pf-t--global--color--status--danger--default)';
+// pfTopologyInfo is to be used ONLY in topology-
+// the default PatternFly info color in topology is blue, whereas it is purple everywhere else
+export const pfTopologyInfo = 'var(--pf-topology__edge--m-info--EdgeFill)';
 
 export enum LabelColorE {
   blue = 'blue',

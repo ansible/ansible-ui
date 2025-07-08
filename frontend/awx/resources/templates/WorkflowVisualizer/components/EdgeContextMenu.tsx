@@ -1,4 +1,11 @@
-import { ReactElement } from 'react';
+import { pfTopologyInfo } from '@ansible/ansible-ui-framework';
+import { Icon } from '@patternfly/react-core';
+import {
+  CheckCircleIcon,
+  CircleIcon,
+  ExclamationCircleIcon,
+  TrashIcon,
+} from '@patternfly/react-icons';
 import {
   ContextMenuItem,
   ContextMenuSeparator,
@@ -7,13 +14,7 @@ import {
   action,
   useVisualizationController,
 } from '@patternfly/react-topology';
-import {
-  CheckCircleIcon,
-  CircleIcon,
-  ExclamationCircleIcon,
-  TrashIcon,
-} from '@patternfly/react-icons';
-import { Icon } from '@patternfly/react-core';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControllerState, EdgeStatus } from '../types';
 import { useViewOptions } from '../ViewOptionsProvider';
@@ -83,7 +84,7 @@ export function useEdgeMenuItems(
       status: EdgeStatus.info,
       icon: (
         <Icon status="info">
-          <CircleIcon />
+          <CircleIcon color={pfTopologyInfo} />
         </Icon>
       ),
       label: t('Run always'),

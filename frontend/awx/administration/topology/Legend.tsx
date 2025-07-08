@@ -1,4 +1,4 @@
-import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '@ansible/ansible-ui-framework';
+import { pfDanger, pfDisabled, pfSuccess, pfTopologyInfo } from '@ansible/ansible-ui-framework';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -87,7 +87,10 @@ export const Legend = () => {
                 />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Installed')} icon={<ClockIcon color={pfInfo} />} />
+                <LegendDescription
+                  label={t('Installed')}
+                  icon={<ClockIcon color={pfTopologyInfo} />}
+                />
               </DescriptionListDescription>
               <DescriptionListDescription>
                 <LegendDescription
