@@ -10,6 +10,10 @@ export function PlatformEdaRoles() {
         title={t('These roles only apply to resources in the context of automation decisions.')}
         variant="info"
         isInline
+        style={{
+          marginInline: 'var(--pf-t--global--spacer--md)',
+          marginBlock: 'var(--pf-t--global--spacer--sm)',
+        }}
       />
       <EdaRolesTable />
     </>
