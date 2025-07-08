@@ -190,7 +190,7 @@ export function CollectionPage() {
             {t(` to switch to it.`)}
           </span>
         ),
-        timeout: false,
+        timeout: true,
       });
     }
   }, [collection, alertToaster, t, versions, versionsCount, pageNavigate]);
