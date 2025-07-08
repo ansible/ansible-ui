@@ -82,6 +82,9 @@ export function PageRoutedTabs(props: {
         onSelect={onSelect}
         inset={{ default: 'insetSm' }}
         activeKey={activeTab ? activeTab.page : undefined}
+        style={{
+          flexShrink: 0,
+        }}
       >
         {props.backTab && (
           <Tab
