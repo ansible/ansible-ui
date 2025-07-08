@@ -1,8 +1,8 @@
-import { getPatternflyColor, pfDisabled } from '@ansible/ansible-ui-framework';
+import { getPatternflyColor, pfDisabled, pfTopologyInfo } from '@ansible/ansible-ui-framework';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import { useSize, WithContextMenuProps, WithSelectionProps } from '@patternfly/react-topology';
 import { FC, LegacyRef } from 'react';
-import type { CustomLabelProps, EdgeStatus } from '../types';
+import { EdgeStatus, type CustomLabelProps } from '../types';
 
 const getEdgeStyles = (
   status: EdgeStatus
@@ -10,7 +10,11 @@ const getEdgeStyles = (
   fill: string;
   stroke: string;
 } => {
-  const pfStatusColor = getPatternflyColor(status) || pfDisabled;
+  let pfStatusColor = getPatternflyColor(status) || pfDisabled;
+  // If info status is selected, the pfTopologyInfo constant should be used here rather than the default pfInfo
+  if (status === EdgeStatus.info) {
+    pfStatusColor = pfTopologyInfo;
+  }
   return {
     fill: pfStatusColor,
     stroke: pfStatusColor,

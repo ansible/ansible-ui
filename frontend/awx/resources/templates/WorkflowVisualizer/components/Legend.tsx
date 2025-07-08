@@ -1,6 +1,4 @@
-import { ReactElement } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { pfTopologyInfo } from '@ansible/ansible-ui-framework';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -17,12 +15,15 @@ import {
   ClipboardCheckIcon,
   ClockIcon,
   CogIcon,
-  ExclamationTriangleIcon,
   ExclamationCircleIcon,
+  ExclamationTriangleIcon,
   ProcessAutomationIcon,
   ShareAltIcon,
   SyncAltIcon,
 } from '@patternfly/react-icons';
+import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const Panel = styled(PFPanel)`
   position: absolute;
@@ -123,7 +124,7 @@ export const Legend = () => {
                   label={t('Run always')}
                   icon={
                     <Icon status="info">
-                      <CircleIcon />
+                      <CircleIcon color={pfTopologyInfo} />
                     </Icon>
                   }
                 />
