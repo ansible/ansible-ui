@@ -39,8 +39,9 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
   const isRunning = isJobRunning(job.status);
   const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isRunning);
 
+  const wfJobId = job?.summary_fields?.source_workflow_job?.id;
   const { results: workflowNodes, refresh } = useAwxGetAllPages<WorkflowNode>(
-    awxAPI`/workflow_jobs/${props.job.id.toString() || ''}/workflow_nodes/`
+    wfJobId ? awxAPI`/workflow_jobs/${wfJobId.toString()}/workflow_nodes/` : ''
   );
 
   if (!job) {
