@@ -1,15 +1,16 @@
 import { expect, Page } from '@playwright/test';
 import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
 import { createJobTemplate } from '../templates/job-template-utils';
-import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 
 export async function createAwxJobTemplateSchedule(options: { scheduleName?: string }, page: Page) {
   const jobTemplateName = await createJobTemplate({}, page);
   await navigateTo(page, 'Automation Execution', 'Schedules');
-  await page.getByText('Create schedule', { exact: true }).click();
+  await page.getByRole('link', { name: 'Create schedule' }).click();
+  await expect(page.getByRole('heading', { name: 'Create schedule' })).toBeVisible();
   const scheduleName = options.scheduleName ?? createE2EName();
   await page.getByRole('button', { name: 'Select resource type' }).click();
   await page.getByRole('option', { name: 'Job template', exact: true }).click();

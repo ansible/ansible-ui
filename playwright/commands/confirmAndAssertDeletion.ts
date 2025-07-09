@@ -14,7 +14,9 @@ import { Page } from 'playwright-core';
  * @param page - The Playwright Page object representing the browser page.
  */
 export async function confirmAndAssertDeletion(page: Page) {
+  await expect(page.locator('#confirm')).toBeVisible();
   await page.locator('#confirm').click();
+  await expect(page.locator('#submit')).toBeVisible();
   await page.locator('#submit').click();
 
   //while modal is showing

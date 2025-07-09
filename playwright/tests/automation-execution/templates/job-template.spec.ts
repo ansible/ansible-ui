@@ -31,11 +31,12 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(5 * 30 * 1000);
+      const label = createE2EName('label-jt');
       const jobTemplateName = await createJobTemplate(
-        { PromptOnLaunch: true, labels: ['Label 1'] },
+        { PromptOnLaunch: true, labels: [label], createLabel: true },
         page
       );
-      await runJobTemplate(jobTemplateName, { PromptOnLaunch: true, labels: ['Label 1'] }, page);
+      await runJobTemplate(jobTemplateName, { PromptOnLaunch: true, labels: [label] }, page);
       await deleteJobTemplate(jobTemplateName, page);
     }
   );
@@ -373,7 +374,7 @@ test.describe('Job Templates', () => {
       await expect(
         page.getByRole('heading', { name: 'Automation Templates', exact: true })
       ).toBeVisible();
-      await page.getByLabel('dropdown toggle', { exact: true }).click();
+      await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Create job template' }).click();
       await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
       await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
@@ -384,6 +385,7 @@ test.describe('Job Templates', () => {
       const projectName = 'Demo Project';
       await page.locator('#project-select').click();
       await page.getByRole('option', { name: projectName }).click();
+      await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible();
       await page.getByPlaceholder('Add a project, then select a').click();
       await page.getByPlaceholder('Add a project, then select a').fill('hello');
       await page.getByRole('option', { name: 'hello_world.yml' }).click();

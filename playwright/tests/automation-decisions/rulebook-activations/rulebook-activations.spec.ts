@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
+import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
 import { expectRowToContain } from '../../../commands/expectRowToContain';
+import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createEdaCredential, deleteEdaCredential } from '../credentials/credentials-utils';
 import { createEdaEventStream, deleteEdaEventStream } from '../event-streams/event-stream-utils';
 import { createEdaProject, deleteEdaProject } from '../projects/projects-utils';
 import { createRulebookActivation, deleteRulebookActivation } from './rulebook-activations-utils';
-import { navigateTo } from '../../../commands/navigateTo';
-import { clickPageAction } from '../../../commands/clickPageAction';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
@@ -51,7 +51,7 @@ test(
     await expect(page.locator('[data-ouia-component-type="PF6/ModalContent"]')).toContainText(
       'Success'
     );
-    await expect(page.locator('label')).toContainText('Rulebook activation disabled');
+    await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
     await page.getByRole('tab', { name: 'Back to Rulebook Activations' }).click();
     await page.getByRole('textbox', { name: 'Type to filter' }).fill(rulebookActivationName);
     await page.getByRole('button', { name: 'apply filter' }).click();
@@ -96,7 +96,7 @@ test(
     await expect(page.locator('[data-ouia-component-type="PF6/ModalContent"]')).toContainText(
       'Success'
     );
-    await expect(page.locator('label')).toContainText('Rulebook activation disabled');
+    await expect(page.getByText('Rulebook activation enabled')).toBeVisible();
     await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
       timeout: 15000,
     });
@@ -179,6 +179,8 @@ test(
       page
     );
     await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
+    await expect(page.locator('#source-mappings-form-group')).toBeVisible();
+
     await page
       .locator('#source-mappings-form-group')
       .getByRole('button', { name: 'Options menu' })
@@ -193,7 +195,7 @@ test(
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'Save rulebook activation' })).toBeVisible();
     await page.getByRole('button', { name: 'Save rulebook activation' }).click();
-
+    await expect(page.getByRole('tab', { name: 'Details' })).toBeVisible();
     // update the branch for the project
     await navigateTo(page, 'Automation Decisions', 'Projects');
     await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
@@ -258,11 +260,17 @@ test(
     await page.getByRole('textbox', { name: 'Type to filter' }).fill(`${rulebookActivationName} @`);
     await page.getByRole('button', { name: 'apply filter' }).click();
     await page.getByRole('link', { name: `${rulebookActivationName} @`, exact: false }).click();
-    await page.getByText('Rulebook activation disabled').click();
+    await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
+    await expect(page.getByRole('switch', { name: 'Click to enable instance' })).toBeVisible();
+    await page
+      .locator('label', {
+        has: page.locator('input[aria-label="Click to enable instance"]'),
+      })
+      .locator('span')
+      .first()
+      .click();
     await expect(page.getByRole('dialog', { name: 'Enable rulebook activation' })).toBeVisible();
-    await expect(
-      page.locator('#pf-modal-part-3').getByText('Enable rulebook activation')
-    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Enable rulebook activation' })).toBeVisible();
     await expect(page.getByText('Note: This warning is')).toBeVisible();
     await page.getByRole('button', { name: 'Enable rulebook activation' }).click();
     await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');

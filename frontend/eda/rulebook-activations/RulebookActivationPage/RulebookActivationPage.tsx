@@ -140,7 +140,9 @@ export function RulebookActivationPage() {
             ariaLabel: (isEnabled) =>
               isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
             isPinned: true,
-            label: t('Rulebook activation enabled'),
+            label: rulebookActivation?.is_enabled
+              ? t('Rulebook activation enabled')
+              : t('Rulebook activation disabled'),
             onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
               if (activate) void enableRulebookActivation(activation);
               else void disableRulebookActivation([activation]);
@@ -202,6 +204,7 @@ export function RulebookActivationPage() {
     return actions;
   }, [
     isActionTab,
+    rulebookActivation?.is_enabled,
     t,
     enableRulebookActivation,
     disableRulebookActivation,
