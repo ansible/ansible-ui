@@ -150,6 +150,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
       cy.verifyPageTitle(workflowJobTemplate.name);
       cy.clickLink('Edit template');
+      cy.verifyPageTitle(`Edit ${workflowJobTemplate.name}`);
       cy.get('[data-cy="name"]').clear().type(newName);
       cy.get('[data-cy="description"]').type('this is a new description');
       cy.singleSelectByDataCy('organization', newOrganization.name);
@@ -288,7 +289,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
 
-    it('can copy an existing workflow job template from the list', () => {
+    it('can duplicate an existing workflow job template from the list', () => {
       cy.navigateTo('awx', 'templates');
       cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
       cy.contains(workflowJobTemplate.name).should('be.visible');
@@ -317,7 +318,7 @@ describe('Workflow Job Templates Tests', () => {
         });
     });
 
-    it('can copy an existing workflow job template from the details page', () => {
+    it('can duplicate an existing workflow job template from the details page', () => {
       cy.navigateTo('awx', 'templates');
       cy.filterTableBySearch(workflowJobTemplate.name);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
@@ -325,6 +326,8 @@ describe('Workflow Job Templates Tests', () => {
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/copy/`
       ).as('copiedWFJT');
+      cy.verifyPageTitle(workflowJobTemplate.name);
+
       cy.getBy(`[data-cy="actions-dropdown"]`).click();
       cy.getBy('[data-cy="duplicate-template"]').click();
       cy.wait('@copiedWFJT')
@@ -426,6 +429,8 @@ describe('Workflow Job Templates Tests', () => {
       cy.navigateTo('awx', 'templates');
       cy.filterTableBySearch(workflowJobTemplate.name);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+      cy.verifyPageTitle(workflowJobTemplate.name);
+
       cy.getBy(`[data-cy="actions-dropdown"]`).click();
       cy.getBy('[data-cy="delete-template"]').click();
       cy.clickModalConfirmCheckbox();

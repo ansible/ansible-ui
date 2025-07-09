@@ -60,6 +60,8 @@ describe('Credentials', () => {
       cy.clickTableRowLink('name', `${credential.name} - edited`, { disableFilter: true });
       cy.verifyPageTitle(`${credential.name} - edited`);
       cy.clickButton(/^Edit credential$/);
+      cy.verifyPageTitle(`${credential.name} - edited`);
+      cy.get('[data-cy="name"]').should('be.enabled');
       cy.getByDataCy('name').clear().type(`${credential.name}`);
       cy.clickButton(/^Save credential$/);
       cy.verifyPageTitle(credential.name);
