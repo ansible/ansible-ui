@@ -5,7 +5,6 @@ import {
   createTopologyControlButtons,
   defaultControlButtonsOptions,
   NodeStatus,
-  observer,
   TopologyView as PFTopologyView,
   TopologyControlBar,
   useVisualizationController,
@@ -29,114 +28,116 @@ const TopologyView = styled(PFTopologyView)`
     display: none;
   }
 `;
-export const WorkflowOutputGraph = observer(
-  (props: { job?: Job; reloadJob: () => void; refreshNodeStatus: () => void }) => {
-    const controller = useVisualizationController();
-    const { t } = useTranslation();
-    const model = controller.toModel();
-    const nodes = model.nodes;
-    const message = useWorkflowOutput(props.reloadJob, props.job);
+export const WorkflowOutputGraph = (props: {
+  job?: Job;
+  reloadJob: () => void;
+  refreshNodeStatus: () => void;
+}) => {
+  const controller = useVisualizationController();
+  const { t } = useTranslation();
+  const model = controller.toModel();
+  const nodes = model.nodes;
+  const message = useWorkflowOutput(props.reloadJob, props.job);
 
-    const nodeId = message?.workflow_node_id?.toString();
+  const nodeId = message?.workflow_node_id?.toString();
 
-    const { data: newNode } = useGet<WorkflowNode>(
-      nodeId ? awxAPI`/workflow_job_nodes/${nodeId}/` : '',
-      undefined,
-      { refreshInterval: 1000 }
-    );
+  const { data: newNode } = useGet<WorkflowNode>(
+    nodeId ? awxAPI`/workflow_job_nodes/${nodeId}/` : '',
+    undefined,
+    { refreshInterval: 1000 }
+  );
 
-    const node = controller.getNodeById(message?.workflow_node_id?.toString() || '');
-    const { refreshNodeStatus } = props;
-    useEffect(() => {
-      const getElapsedTime = (nodeId: number) => {
-        if (!props.job || !nodeId) return;
+  const node = controller.getNodeById(message?.workflow_node_id?.toString() || '');
+  const { refreshNodeStatus } = props;
+  useEffect(() => {
+    const getElapsedTime = (nodeId: number) => {
+      if (!props.job || !nodeId) return;
 
-        node?.setData({
-          ...node?.getData(),
-          secondaryLabel: newNode
-            ? t(`Elapsed time ${secondsToHHMMSS(newNode?.summary_fields?.job?.elapsed || 0)}`)
-            : '',
-        });
-        return;
-      };
+      node?.setData({
+        ...node?.getData(),
+        secondaryLabel: newNode
+          ? t(`Elapsed time ${secondsToHHMMSS(newNode?.summary_fields?.job?.elapsed || 0)}`)
+          : '',
+      });
+      return;
+    };
 
-      if (!message?.workflow_node_id || !message?.status || !nodes?.length) {
-        return;
-      }
+    if (!message?.workflow_node_id || !message?.status || !nodes?.length) {
+      return;
+    }
 
-      if (message?.unified_job_id && message.unified_job_id !== props.job?.id) {
-        if (node) {
-          const { resource } = node.getData() as { resource: WorkflowNode };
-          action(() => {
-            node.setData({
-              ...node.getData(),
-              resource: {
-                ...resource,
-                summary_fields: {
-                  ...resource.summary_fields,
-                  job: {
-                    ...resource.summary_fields.job,
-                    id: message.unified_job_id,
-                    type: message.type,
-                  },
+    if (message?.unified_job_id && message.unified_job_id !== props.job?.id) {
+      if (node) {
+        const { resource } = node.getData() as { resource: WorkflowNode };
+        action(() => {
+          node.setData({
+            ...node.getData(),
+            resource: {
+              ...resource,
+              summary_fields: {
+                ...resource.summary_fields,
+                job: {
+                  ...resource.summary_fields.job,
+                  id: message.unified_job_id,
+                  type: message.type,
                 },
               },
-            });
-          })();
-        }
+            },
+          });
+        })();
       }
+    }
 
-      if (message.finished) {
-        void getElapsedTime(message.workflow_node_id);
-      }
+    if (message.finished) {
+      void getElapsedTime(message.workflow_node_id);
+    }
 
-      action(() => {
-        node?.setNodeStatus(message.status as NodeStatus);
-      })();
-    }, [node, message, props.job, t, nodes, newNode]);
+    action(() => {
+      node?.setNodeStatus(message.status as NodeStatus);
+    })();
+  }, [node, message, props.job, t, nodes, newNode]);
 
-    useEffect(() => {
-      refreshNodeStatus();
-    }, [node, refreshNodeStatus]);
+  useEffect(() => {
+    refreshNodeStatus();
+  }, [node, refreshNodeStatus]);
 
-    return (
-      <ViewOptionsProvider>
-        <ViewOptionsContext.Consumer>
-          {({ isLegendOpen, toggleLegend }) => {
-            return (
-              <TopologyView
-                data-cy="workflow-visualizer-output-graph"
-                controlBar={
-                  <TopologyControlBar
-                    controlButtons={createTopologyControlButtons({
-                      ...defaultControlButtonsOptions,
-                      zoomInCallback: action(() => {
-                        controller.getGraph().scaleBy(4 / 3);
-                      }),
-                      zoomOutCallback: action(() => {
-                        controller.getGraph().scaleBy(0.75);
-                      }),
-                      fitToScreenCallback: action(() => {
-                        controller.getGraph().fit(80);
-                      }),
-                      resetViewCallback: action(() => {
-                        controller.getGraph().reset();
-                        controller.getGraph().layout();
-                      }),
-                      legend: true,
-                      legendCallback: toggleLegend,
-                    })}
-                  />
-                }
-                sideBarOpen={false}
-              >
-                {isLegendOpen && <Legend />}
-                <VisualizationSurface />
-              </TopologyView>
-            );
-          }}
-        </ViewOptionsContext.Consumer>
-      </ViewOptionsProvider>
-    );
-  }
-);
+  return (
+    <ViewOptionsProvider>
+      <ViewOptionsContext.Consumer>
+        {({ isLegendOpen, toggleLegend }) => {
+          return (
+            <TopologyView
+              data-cy="workflow-visualizer-output-graph"
+              controlBar={
+                <TopologyControlBar
+                  controlButtons={createTopologyControlButtons({
+                    ...defaultControlButtonsOptions,
+                    zoomInCallback: action(() => {
+                      controller.getGraph().scaleBy(4 / 3);
+                    }),
+                    zoomOutCallback: action(() => {
+                      controller.getGraph().scaleBy(0.75);
+                    }),
+                    fitToScreenCallback: action(() => {
+                      controller.getGraph().fit(80);
+                    }),
+                    resetViewCallback: action(() => {
+                      controller.getGraph().reset();
+                      controller.getGraph().layout();
+                    }),
+                    legend: true,
+                    legendCallback: toggleLegend,
+                  })}
+                />
+              }
+              sideBarOpen={false}
+            >
+              {isLegendOpen && <Legend />}
+              <VisualizationSurface />
+            </TopologyView>
+          );
+        }}
+      </ViewOptionsContext.Consumer>
+    </ViewOptionsProvider>
+  );
+};

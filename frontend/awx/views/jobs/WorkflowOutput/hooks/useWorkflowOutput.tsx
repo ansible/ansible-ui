@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useWSThrottle } from '@ansible/awx-ui/common/useWSThrottle';
+import { useCallback, useEffect, useState } from 'react';
 import { useAwxWebSocketSubscription } from '../../../../common/useAwxWebSocket';
-import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { Job } from '../../../../interfaces/Job';
+import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 
 export type WebSocketMessage = {
   group_name?: string;
@@ -16,20 +17,11 @@ export type WebSocketWorkflowNode = WorkflowNode & { job?: WebSocketMessage };
 export function useWorkflowOutput(reloadJob: () => void, job?: Job) {
   const [message, setMessage] = useState<WebSocketMessage>();
 
-  const handleWebSocketMessage = useCallback(
-    (message?: WebSocketMessage) => {
-      if (!message) return;
+  const handleWebSocketMessage = useCallback((message?: WebSocketMessage) => {
+    if (message) {
       setMessage(message);
-      if (
-        message?.group_name === 'jobs' &&
-        message?.unified_job_id?.toString() === job?.id.toString() &&
-        message?.status
-      ) {
-        reloadJob();
-      }
-    },
-    [job?.id, reloadJob]
-  );
+    }
+  }, []);
   useAwxWebSocketSubscription(
     {
       control: ['limit_reached_1'],
@@ -38,6 +30,19 @@ export function useWorkflowOutput(reloadJob: () => void, job?: Job) {
     },
     handleWebSocketMessage as (message: unknown) => void
   );
+  const throttledMessage = useWSThrottle({
+    value: message,
+    limit: 500,
+  });
+  useEffect(() => {
+    if (
+      throttledMessage?.group_name === 'jobs' &&
+      throttledMessage.unified_job_id?.toString() === job?.id.toString() &&
+      throttledMessage.status
+    ) {
+      reloadJob();
+    }
+  }, [throttledMessage, job?.id, reloadJob]);
 
-  return message;
+  return throttledMessage;
 }
