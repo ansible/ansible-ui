@@ -1,9 +1,9 @@
 import { expect, Page } from '@playwright/test';
 import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
-import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 
 export async function createRulebookActivation(
   options: {
@@ -37,12 +37,12 @@ export async function createRulebookActivation(
   await page.getByRole('button', { name: 'apply filter' }).click();
   await page.getByRole('checkbox', { name: 'Select row' }).check();
   await page.getByRole('button', { name: 'Confirm' }).click();
-  await page.getByRole('button', { name: 'Select decision environment' }).click();
-  await page.getByRole('option', { name: 'Default Decision Environment', exact: true }).click();
+  await page.locator('button[data-cy="decision-environment-id-form-group"]').click();
+  await page.getByRole('option', { name: 'Automation Hub Default' }).click();
   if (options?.disabled) {
-    await page.locator('#rulebook-activation-form-group path').nth(1).click();
+    await page.locator('label:has([data-cy="rulebook-activation-toggle"])').click();
   }
-  await page.getByRole('link', { name: 'Create rulebook activation' }).click();
+  await page.getByRole('button', { name: 'Create rulebook activation' }).click();
   await expect(page.locator('#name')).toContainText(rulebookActivationName);
   return rulebookActivationName;
 }

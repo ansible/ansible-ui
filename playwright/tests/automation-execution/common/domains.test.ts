@@ -18,11 +18,11 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
 
   // Create Job Template A with label A
   const labelA = randomString(12);
-  const jobTemplateAName = await createJobTemplate({ labels: [labelA] }, page);
+  const jobTemplateAName = await createJobTemplate({ labels: [labelA], createLabel: true }, page);
 
   // Create Job Template B with label B
   const labelB = randomString(12);
-  const jobTemplateBName = await createJobTemplate({ labels: [labelB] }, page);
+  const jobTemplateBName = await createJobTemplate({ labels: [labelB], createLabel: true }, page);
 
   // Create Domains
   await navigateTo(page, 'Automation Execution', 'Templates');

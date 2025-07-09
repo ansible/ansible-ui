@@ -247,7 +247,7 @@ test.describe('Workflow Viz', () => {
       );
       await page.getByRole('link', { name: 'View workflow visualizer' }).click();
       await expect(page.getByText('Workflow Visualizer')).toBeVisible();
-      await expect(page.getByText(wfJobTemplate)).toBeVisible();
+      await expect(page.getByRole('heading', { name: wfJobTemplate })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
       await expect(page.getByText('Total nodes')).toBeVisible();
       await page.getByRole('button', { name: 'Close' }).click();
@@ -349,14 +349,16 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: 'Success alert: Successfully' })
+      ).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await page.locator('g > .pf-v6-svg > path').first().click();
       await page.locator('.pf-topology__node__action-icon > path').click();
       await page.getByRole('menuitem', { name: 'Run on fail' }).click();
       await expect(page.getByText('Run on fail', { exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'Close' }).click();
-      await expect(page.getByRole('dialog', { name: 'Warning alert: Warning:' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Warning alert: Warning:' })).toBeVisible();
       await expect(page.getByText('Warning: Unsaved changes')).toBeVisible();
       await page.getByRole('button', { name: 'Save and exit' }).click();
       await deleteWorkflowJobTemplate(wfjt, page);

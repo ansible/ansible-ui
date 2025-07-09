@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
 import { clickPageAction } from '../../../../commands/clickPageAction';
 import { clickTableRow } from '../../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
+import { createE2EName } from '../../../../commands/createE2EName';
+import { navigateTo } from '../../../../commands/navigateTo';
 
 export async function createAwxCredential(
   options: { credentialName?: string; credentialType?: string },
@@ -13,8 +13,9 @@ export async function createAwxCredential(
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
   await page.getByText('Create credential', { exact: true }).click();
   const credentialName = options.credentialName ?? createE2EName('credential');
+  await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
   await page.getByPlaceholder('Enter credential name').fill(credentialName);
-  await page.getByLabel('Credential type *').click();
+  await page.getByRole('button', { name: 'Credential type' }).click();
   if (options?.credentialType && options.credentialType === 'Vault') {
     await page.getByRole('textbox', { name: 'Search input' }).fill('Vault');
     await page.getByRole('option', { name: 'Vault', exact: true }).click();
@@ -23,10 +24,15 @@ export async function createAwxCredential(
     await page.getByRole('textbox', { name: 'Vault Identifier' }).click();
     await page.getByRole('textbox', { name: 'Vault Identifier' }).fill('id');
   } else if (options?.credentialType && options.credentialType === 'Machine') {
+    await expect(page.getByRole('textbox', { name: 'Search input' })).toBeVisible();
     await page.getByRole('textbox', { name: 'Search input' }).fill('Machine');
     await page.getByRole('option', { name: 'Machine', exact: true }).click();
+
+    await expect(page.locator('#username-form-group')).toBeVisible();
     await page.getByRole('textbox', { name: 'Username', exact: true }).click();
     await page.getByRole('textbox', { name: 'Username', exact: true }).fill('username');
+
+    await expect(page.locator('#password-form-group')).toBeVisible();
     await page.getByRole('textbox', { name: 'Password', exact: true }).click();
     await page.getByRole('textbox', { name: 'Password', exact: true }).fill('pwd');
   } else {

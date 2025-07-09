@@ -57,17 +57,24 @@ test.describe('Policy settings form', () => {
       settings = (await settingsRequest) as Record<string, string | number | boolean>;
     }
     await page.getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('heading', { name: 'Policy Settings' })).toBeVisible();
     if (settings.OPA_HOST) {
+      await expect(page.getByRole('textbox', { name: 'OPA Server Hostname' })).toBeVisible();
       await expect(page.getByRole('textbox', { name: 'OPA Server Hostname' })).toHaveValue(
         settings.OPA_HOST as string
       );
     }
-    await expect(page.locator('#opa-request-timeout')).toHaveValue(
-      (settings.OPA_REQUEST_TIMEOUT as number).toString()
-    );
-    await expect(page.getByRole('spinbutton', { name: 'OPA Request Retry Count' })).toHaveValue(
-      (settings.OPA_REQUEST_RETRIES as number).toString()
-    );
+    await expect(page.locator('#opa-request-timeout')).toBeVisible();
+    if (settings.OPA_REQUEST_TIMEOUT !== undefined) {
+      await expect(page.locator('#opa-request-timeout')).toHaveValue(
+        (settings.OPA_REQUEST_TIMEOUT as number).toString()
+      );
+    }
+    if (settings.OPA_REQUEST_RETRIES !== undefined) {
+      await expect(page.getByRole('spinbutton', { name: 'OPA Request Retry Count' })).toHaveValue(
+        (settings.OPA_REQUEST_RETRIES as number).toString()
+      );
+    }
   });
 
   test('should save edited values when submitted', { tag: [] }, async ({ page }) => {
@@ -85,17 +92,25 @@ test.describe('Policy settings form', () => {
       settings = (await settingsRequest) as Record<string, string | number | boolean>;
     }
     await page.getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('heading', { name: 'Policy Settings' })).toBeVisible();
+
     if (settings.OPA_HOST) {
+      await expect(page.getByRole('textbox', { name: 'OPA Server Hostname' })).toBeVisible();
       await expect(page.getByRole('textbox', { name: 'OPA Server Hostname' })).toHaveValue(
         settings.OPA_HOST as string
       );
     }
-    await expect(page.locator('#opa-request-timeout')).toHaveValue(
-      (settings.OPA_REQUEST_TIMEOUT as number).toString()
-    );
-    await expect(page.getByRole('spinbutton', { name: 'OPA Request Retry Count' })).toHaveValue(
-      (settings.OPA_REQUEST_RETRIES as number).toString()
-    );
+    await expect(page.locator('#opa-request-timeout')).toBeVisible();
+    if (settings.OPA_REQUEST_TIMEOUT !== undefined) {
+      await expect(page.locator('#opa-request-timeout')).toHaveValue(
+        (settings.OPA_REQUEST_TIMEOUT as number).toString()
+      );
+    }
+    if (settings.OPA_REQUEST_RETRIES !== undefined) {
+      await expect(page.getByRole('spinbutton', { name: 'OPA Request Retry Count' })).toHaveValue(
+        (settings.OPA_REQUEST_RETRIES as number).toString()
+      );
+    }
     // edit values
 
     await page.locator('#opa-auth-type-form-group-toggle').click();

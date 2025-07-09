@@ -15,6 +15,7 @@ export async function createJobTemplate(
     skipTagsPrompt?: boolean;
     extraVarsPrompt?: boolean;
     survey?: boolean;
+    createLabel?: boolean;
   },
   page: Page
 ) {
@@ -27,6 +28,7 @@ export async function createJobTemplate(
     timeout: 5000,
   });
   await page.getByText('Create template', { exact: true }).click();
+  await expect(page.getByRole('menuitem', { name: 'Create job template' })).toBeVisible();
   await page.getByRole('menuitem', { name: 'Create job template' }).click();
   await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
   await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
@@ -43,13 +45,20 @@ export async function createJobTemplate(
   const projectName = options.projectName ?? 'Demo Project';
   await page.locator('#project-select').click();
   await page.getByRole('option', { name: projectName }).click();
+  await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible();
   await page.getByPlaceholder('Add a project, then select a').click();
   await page.getByPlaceholder('Add a project, then select a').fill('hello');
+  await expect(page.getByRole('option', { name: 'hello_world.yml' })).toBeVisible();
   await page.getByRole('option', { name: 'hello_world.yml' }).click();
   if (options.labels) {
     for (const label of options.labels) {
+      await expect(page.getByPlaceholder('Select or create labels')).toBeVisible();
       await page.getByPlaceholder('Select or create labels').fill(label);
-      await page.getByRole('option', { name: label }).click();
+      if (options.createLabel) {
+        await page.getByRole('option', { name: 'Create' }).click();
+      } else {
+        await page.getByRole('option', { name: label, exact: true }).click();
+      }
     }
   }
   if (options.extraVarsPrompt) {
@@ -58,15 +67,20 @@ export async function createJobTemplate(
   if (options.skipTagsPrompt) {
     await page.locator('#ask_skip_tags_on_launch').check();
   }
+  await page.getByRole('combobox', { name: 'Type to filter' }).click();
+  await page.getByRole('option', { name: 'hello_world.yml' }).click();
   await expect(page.getByPlaceholder('Add a project, then select a')).toHaveValue(
     'hello_world.yml'
   );
+  await expect(page.getByRole('button', { name: 'Create job template' })).toBeVisible();
   await page.getByRole('button', { name: 'Create job template' }).click();
-  await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
-  await expect(page.locator('#name')).toContainText(jobTemplateName);
-  await expect(page.locator('#description')).toContainText(jobTemplateDescription);
-  await expect(page.locator('#job-type')).toContainText('run');
-  await expect(page.locator('#organization')).toContainText('Default');
+  await expect(page.getByRole('heading', { name: jobTemplateName })).toBeVisible();
+  await expect(page.getByTestId('name').getByText(jobTemplateName)).toBeVisible();
+  await expect(page.getByTestId('description').getByText(jobTemplateDescription)).toBeVisible();
+  await expect(page.getByTestId('job-type').getByText('run')).toBeVisible();
+  await expect(
+    page.getByTestId('organization').getByRole('link', { name: 'Default' })
+  ).toBeVisible();
   if (!options.PromptOnLaunch) {
     await expect(page.locator('#inventory')).toContainText(inventoryName);
   }
@@ -80,12 +94,8 @@ export async function createJobTemplate(
     await page.getByRole('textbox', { name: 'Answer variable name' }).click();
     await page.getByRole('textbox', { name: 'Answer variable name' }).fill('Variable1');
     await page.getByRole('button', { name: 'Create survey question' }).click();
-    await page
-      .locator('label')
-      .filter({ hasText: 'Survey enabledSurvey disabled' })
-      .locator('span')
-      .first()
-      .click();
+    await expect(page.getByText('Survey enabled')).toBeVisible();
+    await page.getByText('Survey enabled').click();
   }
   return jobTemplateName;
 }
