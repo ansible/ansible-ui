@@ -56,8 +56,6 @@ export enum PlatformRoute {
   OrganizationPage = 'platform-organization-page',
   OrganizationDetails = 'platform-organization-details',
   OrganizationUsers = 'platform-organization-users',
-  AAPOrganizationUsers = 'platform-aap-organization-users',
-  AwxOrganizationUsers = 'platform-awx-organization-users',
   OrganizationAddUsers = 'platform-organization-add-users',
   OrganizationManageUserRoles = 'platform-organization-manage-user-roles',
   OrganizationAdmins = 'platform-organization-admins',

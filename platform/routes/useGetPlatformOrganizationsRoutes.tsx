@@ -2,13 +2,10 @@ import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { ResourceNotifications } from '@ansible/awx-ui/resources/notifications/ResourceNotifications';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
 import { CreatePlatformOrganization } from '../access/organizations/components/CreatePlatformOrganization';
 import { EditPlatformOrganization } from '../access/organizations/components/EditPlatformOrganization';
-import { PlatformAAPOrganizationUsers } from '../access/organizations/components/PlatformAAPOrganizationUsers';
 import { PlatformAwxOrganizationExecutionEnvironments } from '../access/organizations/components/PlatformAwxOrganizationExecutionEnvironments';
 import { PlatformAwxOrganizationIdLookup } from '../access/organizations/components/PlatformAwxOrganizationIdLookup';
-import { PlatformAwxOrganizationUsers } from '../access/organizations/components/PlatformAwxOrganizationUsers';
 import { PlatformOrganizationAddUsers } from '../access/organizations/components/PlatformOrganizationAddUsers';
 import { PlatformOrganizationAdmins } from '../access/organizations/components/PlatformOrganizationAdmins';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
@@ -53,22 +50,6 @@ export function useGetPlatformOrganizationsRoutes() {
               id: PlatformRoute.OrganizationUsers,
               path: 'users',
               element: <PlatformOrganizationUsers />,
-              children: [
-                {
-                  id: PlatformRoute.AAPOrganizationUsers,
-                  path: 'platform',
-                  element: <PlatformAAPOrganizationUsers />,
-                },
-                {
-                  id: PlatformRoute.AwxOrganizationUsers,
-                  path: 'controller',
-                  element: <PlatformAwxOrganizationUsers />,
-                },
-                {
-                  path: '',
-                  element: <Navigate to="platform" />,
-                },
-              ],
             },
             {
               id: PlatformRoute.OrganizationAdmins,
