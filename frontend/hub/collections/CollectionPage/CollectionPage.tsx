@@ -308,6 +308,7 @@ export function CollectionPage() {
                 </PageSingleSelectContext.Consumer>
               }
               queryLabel={(value) => `${value.collection_version?.version}`}
+              disableMaxDropdownWidth
             />
             {collection?.collection_version &&
               t('Last updated') +
