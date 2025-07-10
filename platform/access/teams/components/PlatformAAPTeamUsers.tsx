@@ -51,18 +51,20 @@ export function PlatformAAPTeamUsers() {
       errorStateTitle={t('Error loading users')}
       emptyStateTitle={
         canEditTeam
-          ? t('There are currently no users added to this team.')
-          : t('You do not have permission to add a user to this team.')
+          ? t('No users assigned to this team.')
+          : t('You do not have permission to assign a user to this team.')
       }
       emptyStateDescription={
         canEditTeam
-          ? t('Add users by clicking the button below.')
+          ? t(
+              'To get started, assign users to this team. These users will inherit roles assigned to this team.'
+            )
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
       emptyStateIcon={canEditTeam ? undefined : CubesIcon}
-      emptyStateButtonText={canEditTeam ? t('Add users') : undefined}
+      emptyStateButtonText={canEditTeam ? t('Assign users') : undefined}
       emptyStateActions={canEditTeam ? toolbarActions.slice(0, 1) : undefined}
       {...view}
     />

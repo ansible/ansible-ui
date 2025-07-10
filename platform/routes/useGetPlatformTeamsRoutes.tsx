@@ -10,17 +10,14 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router';
 import { PlatformAAPTeamUsers } from '../access/teams/components/PlatformAAPTeamUsers';
 import { PlatformAwxTeamIdLookup } from '../access/teams/components/PlatformAwxTeamIdLookup';
-import { PlatformAwxTeamUsers } from '../access/teams/components/PlatformAwxTeamUsers';
 import { PlatformEdaTeamIdLookup } from '../access/teams/components/PlatformEdaTeamIdLookup';
 import { PlatformHubTeamIdLookup } from '../access/teams/components/PlatformHubTeamIdLookup';
-import { PlatformHubTeamUsers } from '../access/teams/components/PlatformHubTeamUsers';
 import { PlatformTeamAdmins } from '../access/teams/components/PlatformTeamAdmins';
 import { PlatformTeamDetails } from '../access/teams/components/PlatformTeamDetails';
 import { CreatePlatformTeam, EditPlatformTeam } from '../access/teams/components/PlatformTeamForm';
 import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
 import { PlatformTeamPage } from '../access/teams/components/PlatformTeamPage';
 import { PlatformTeamRoles } from '../access/teams/components/PlatformTeamRoles';
-import { PlatformTeamUsers } from '../access/teams/components/PlatformTeamUsers';
 import { useGatewayService } from '../main/GatewayServices';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
@@ -101,36 +98,7 @@ export function useGetPlatformTeamsRoutes() {
             {
               id: PlatformRoute.TeamUsers,
               path: 'users',
-              element: <PlatformTeamUsers />,
-              children: [
-                {
-                  id: PlatformRoute.AAPTeamUsers,
-                  path: 'platform',
-                  element: <PlatformAAPTeamUsers />,
-                },
-                {
-                  id: PlatformRoute.AwxTeamUsers,
-                  path: 'controller',
-                  element: (
-                    <PlatformAwxTeamIdLookup>
-                      <PlatformAwxTeamUsers />
-                    </PlatformAwxTeamIdLookup>
-                  ),
-                },
-                {
-                  id: PlatformRoute.HubTeamUsers,
-                  path: 'hub',
-                  element: (
-                    <PlatformHubTeamIdLookup>
-                      <PlatformHubTeamUsers />
-                    </PlatformHubTeamIdLookup>
-                  ),
-                },
-                {
-                  path: '',
-                  element: <Navigate to="platform" />,
-                },
-              ],
+              element: <PlatformAAPTeamUsers />,
             },
             {
               id: PlatformRoute.TeamAdmins,

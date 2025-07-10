@@ -17,9 +17,9 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
 
   const associateUsers = useCallback(() => {
     selectUsers(
-      t('Add users'),
-      t('Select users below to be added to this team'),
-      t('Add users'),
+      t('Assign users'),
+      t('Select users below to be assigned to this team'),
+      t('Assign users'),
       async (users: PlatformUser[]) => {
         if (!team) return;
         await postRequest(gatewayAPI`/teams/${team?.id?.toString() ?? ''}/users/associate/`, {
