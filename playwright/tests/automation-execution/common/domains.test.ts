@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
-import { randomString } from '../../../upgrades-tests/utils/random-string';
+import { randomString } from '../../../../framework/utils/random-string';
 import {
   createJobTemplate,
   deleteJobTemplate,

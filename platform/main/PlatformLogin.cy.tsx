@@ -1,6 +1,4 @@
 import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
-import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
-import { hubAPI } from '@ansible/cypress/support/formatApiPathForHub';
 import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewayServicesProvider } from './GatewayServices';
@@ -43,46 +41,5 @@ describe('PlatformLogin', () => {
         expect(el).to.contain('Github OAuth');
       }
     );
-  });
-
-  it('should render hub login screen with SSO options', () => {
-    cy.intercept(
-      {
-        method: 'GET',
-        url: hubAPI`/_ui/v1/settings/`,
-      },
-      {
-        fixture: 'hub_settings.json',
-      }
-    );
-    cy.clickLink('I have an Automation Hub account');
-    cy.contains('Log in to Automation Hub and migrate your account').should('be.visible');
-    cy.get('[data-cy="social-auth-keycloak"]').then((el) => {
-      expect(el).to.contain('Keycloak');
-    });
-  });
-
-  it('should render controller login screen with SSO options', () => {
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/auth/`,
-      },
-      {
-        fixture: 'controllerAuth.json',
-      }
-    );
-    cy.clickLink('I have an Automation Controller account');
-    cy.contains('Log in to Automation Controller and migrate your account').should('be.visible');
-    cy.get('[data-cy="social-auth-github"]').then((el) => {
-      expect(el).to.contain('GitHub');
-    });
-  });
-
-  it('should render AAP login screen after switching back from controller login screen', () => {
-    cy.clickLink('I have an Automation Controller account');
-    cy.contains('Log in to Automation Controller and migrate your account').should('be.visible');
-    cy.clickLink('Switch to Ansible Automation Platform login');
-    cy.contains('Log in to your account').should('be.visible');
   });
 });

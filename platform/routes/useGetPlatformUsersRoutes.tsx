@@ -27,7 +27,6 @@ import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
 import { PlatformUserRoles } from '../access/users/components/PlatformUserRoles';
 import { PlatformUserTeams } from '../access/users/components/PlatformUserTeams';
 import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
-import { LinkUserAccounts } from '../main/LinkUserAccounts';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformUsersRoutes() {
@@ -49,11 +48,6 @@ export function useGetPlatformUsersRoutes() {
           id: PlatformRoute.EditUser,
           path: ':id/edit',
           element: <EditPlatformUser />,
-        },
-        {
-          id: PlatformRoute.LinkUserAccounts,
-          path: ':id/link-user-accounts',
-          element: <LinkUserAccounts />,
         },
         {
           id: PlatformRoute.UserPage,

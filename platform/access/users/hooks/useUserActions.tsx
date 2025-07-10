@@ -8,14 +8,11 @@ import {
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
-import { CogIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { useLegacyAuth } from '../../../main/LegacyAuthProvider';
-import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteUsers } from './useDeleteUsers';
@@ -104,73 +101,4 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
   }, [deleteUsers, pageNavigate, t]);
 
   return rowActions;
-}
-
-export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => void) {
-  const { activePlatformUser } = usePlatformActiveUser();
-  const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const deleteUsers = useDeleteUsers(onUsersDeleted);
-  const params = useParams<{ id: string }>();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayAPI`/users/${params.id ?? ''}/`
-  );
-  const { legacyAuth } = useLegacyAuth();
-
-  const canEditUser = Boolean(
-    data && data.actions && (data.actions['PUT'] || data.actions['PATCH'])
-  );
-
-  const pageActions = useMemo<IPageAction<PlatformUser>[]>(() => {
-    const cannotDeleteUser = (user: PlatformUser) => {
-      if (canEditUser) return '';
-      return user.managed
-        ? t(`System managed users cannot be deleted`)
-        : t(`The user cannot be deleted due to insufficient permissions.`);
-    };
-    const cannotEditUser = (user: PlatformUser) => {
-      if (canEditUser) return '';
-      return user.managed
-        ? t(`System managed users cannot be edited`)
-        : t(`The user cannot be edited due to insufficient permissions.`);
-    };
-
-    const isLoggedInUser = activePlatformUser?.id.toString() === params.id;
-    const canLinkAdditionalAccounts =
-      legacyAuth?.is_migrated && legacyAuth?.linked_accounts.length < 2;
-
-    return [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        isPinned: true,
-        icon: PencilAltIcon,
-        variant: ButtonVariant.primary,
-        label: t('Edit user'),
-        isDisabled: cannotEditUser,
-        onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user?.id } }),
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: CogIcon,
-        label: t('Link user accounts'),
-        isHidden: () => !isLoggedInUser || !canLinkAdditionalAccounts,
-        onClick: (user) =>
-          pageNavigate(PlatformRoute.LinkUserAccounts, { params: { id: user?.id } }),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete user'),
-        isDisabled: cannotDeleteUser,
-        onClick: (user) => deleteUsers([user]),
-        isDanger: true,
-      },
-    ];
-  }, [deleteUsers, pageNavigate, canEditUser, activePlatformUser, params, legacyAuth, t]);
-
-  return pageActions;
 }
