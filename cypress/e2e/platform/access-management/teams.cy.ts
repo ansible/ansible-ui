@@ -189,7 +189,7 @@ describe('Platform Teams - Tabs Tests', function () {
             cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
             cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
             cy.clickTab('Users', true);
-            cy.getByDataCy('add-users').click();
+            cy.getByDataCy('assign-users').click();
             cy.getModal().within(() => {
               cy.selectTableRowByCheckbox('username', user1.username);
               cy.selectTableRowByCheckbox('username', user2.username);

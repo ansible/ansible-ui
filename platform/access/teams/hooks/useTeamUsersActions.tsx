@@ -37,11 +37,11 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add users'),
+        label: t('Assign users'),
         isDisabled: canEditTeam
           ? undefined
           : t(
-              'You do not have permission to add users to this team. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to assign users to this team. Please contact your system administrator if there is an issue with your access.'
             ),
         onClick: associateUsers,
       },
