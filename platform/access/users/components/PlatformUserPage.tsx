@@ -15,7 +15,7 @@ import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { useUserPageActions } from '../hooks/useUserActions';
+import { useUserRowActions } from '../hooks/useUserActions';
 
 export function PlatformUserPage() {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export function PlatformUserPage() {
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const { activePlatformUser: activeUser } = usePlatformActiveUser();
-  const actions = useUserPageActions(() => pageNavigate(PlatformRoute.Users));
+  const actions = useUserRowActions(() => pageNavigate(PlatformRoute.Users));
 
   const pageTabs = [
     { label: t('Details'), page: PlatformRoute.UserDetails },

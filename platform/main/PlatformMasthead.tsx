@@ -24,7 +24,6 @@ import RedHatIcon from '../assets/redhat-icon.svg?react';
 import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
-import { useLegacyAuth } from './LegacyAuthProvider';
 import { PlatformAbout } from './PlatformAbout';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
@@ -40,7 +39,6 @@ export function PlatformMasthead() {
   const { refreshActiveAwxUser } = useAwxActiveUser();
   const { refreshActiveEdaUser } = useEdaActiveUser();
   const { refreshActiveHubUser } = useHubActiveUser();
-  const { refreshLegacyAuth } = useLegacyAuth();
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const quickStarts = useQuickStarts();
 
@@ -54,7 +52,6 @@ export function PlatformMasthead() {
     void refreshActiveEdaUser?.();
     void refreshActiveHubUser?.();
     void refreshActivePlatformUser?.();
-    void refreshLegacyAuth?.();
 
     pageNavigate(PlatformRoute.Overview);
   }, [
@@ -63,7 +60,6 @@ export function PlatformMasthead() {
     refreshActiveAwxUser,
     refreshActiveHubUser,
     refreshActivePlatformUser,
-    refreshLegacyAuth,
   ]);
 
   return (

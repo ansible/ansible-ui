@@ -25,8 +25,6 @@ import {
   useHasHubService,
 } from './GatewayServices';
 import { GatewayUIAuthProvider } from './GatewayUIAuth';
-import { LegacyAuthProvider } from './LegacyAuthProvider';
-import { LegacyMigration } from './LegacyMigration';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
@@ -50,17 +48,13 @@ export default function PlatformMain() {
           <PlatformActiveUserProvider>
             <AwxActiveUserProvider>
               <HubActiveUserProvider>
-                <LegacyAuthProvider>
-                  <LegacyMigration>
-                    <PlatformLogin>
-                      <GatewayUIAuthProvider>
-                        <GatewayServicesProvider>
-                          <PlatformMainInternal />
-                        </GatewayServicesProvider>
-                      </GatewayUIAuthProvider>
-                    </PlatformLogin>
-                  </LegacyMigration>
-                </LegacyAuthProvider>
+                <PlatformLogin>
+                  <GatewayUIAuthProvider>
+                    <GatewayServicesProvider>
+                      <PlatformMainInternal />
+                    </GatewayServicesProvider>
+                  </GatewayUIAuthProvider>
+                </PlatformLogin>
               </HubActiveUserProvider>
             </AwxActiveUserProvider>
           </PlatformActiveUserProvider>
