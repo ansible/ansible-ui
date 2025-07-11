@@ -1,0 +1,29 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 10,
+      "url": "/api/gateway/v1/users/10/",
+      "username": "test-user1",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": false,
+      "is_platform_auditor": false,
+      "organizations": [1]
+    },
+    {
+      "id": 11,
+      "url": "/api/gateway/v1/users/11/",
+      "username": "test-user2",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": false,
+      "is_platform_auditor": false,
+      "organizations": [1]
+    }
+  ]
+}

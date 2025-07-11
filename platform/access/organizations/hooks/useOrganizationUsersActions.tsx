@@ -15,7 +15,7 @@ import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { ButtonVariant } from '@patternfly/react-core';
-import { CogIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -177,8 +177,8 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
         isPinned: true,
-        icon: CogIcon,
-        label: t(`Manage roles`),
+        icon: PencilAltIcon,
+        label: t(`Manage organization roles`),
         onClick: manageRolesHandleClick,
       },
       {
