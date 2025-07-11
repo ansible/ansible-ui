@@ -249,7 +249,7 @@ describe('If SaaS Build', () => {
         });
         cy.getModal().should('not.exist');
         cy.verifyPageTitle(organization.name);
-        cy.clickTableRowPinnedAction(createdUser1.username, 'manage-roles', false);
+        cy.clickTableRowPinnedAction(createdUser1.username, 'manage-organization-roles', false);
         cy.getModal().within(() => {
           cy.contains(
             `${createdUser1.username} has no organization roles. To add roles to ${createdUser1.username} click on the button below.`

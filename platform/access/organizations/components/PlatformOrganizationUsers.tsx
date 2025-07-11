@@ -65,8 +65,12 @@ export function PlatformOrganizationUsers() {
       emptyState={
         canEditOrganization ? (
           <PageTableEmptyState
-            title={t('There are currently no users added to this organization.')}
-            description={t('Add users by clicking the button below.')}
+            title={t('No users')}
+            description={t(
+              'To get started, assign users to this organization. Once users are ' +
+                'assigned to this organization, they can be assigned roles for the ' +
+                'resources within this organization.'
+            )}
           >
             <ButtonLink
               icon={<PlusCircleIcon />}

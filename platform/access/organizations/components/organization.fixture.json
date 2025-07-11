@@ -1,0 +1,35 @@
+{
+  "id": 1,
+  "name": "Test Organization",
+  "description": "Test organization description",
+  "url": "/api/gateway/v1/organizations/1/",
+  "created": "2024-01-01T00:00:00Z",
+  "created_by": 1,
+  "modified": "2024-01-01T00:00:00Z",
+  "modified_by": 1,
+  "related": {
+    "created_by": "/api/gateway/v1/users/1/",
+    "modified_by": "/api/gateway/v1/users/1/",
+    "users": "/api/gateway/v1/organizations/1/users/",
+    "teams": "/api/gateway/v1/organizations/1/teams/"
+  },
+  "summary_fields": {
+    "created_by": {
+      "id": 1,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "modified_by": {
+      "id": 1,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "related_field_counts": {
+      "teams": 0,
+      "users": 2
+    }
+  },
+  "managed": false
+}

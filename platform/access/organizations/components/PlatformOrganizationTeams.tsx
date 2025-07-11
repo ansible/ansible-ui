@@ -68,7 +68,6 @@ export function PlatformOrganizationTeams() {
             description={t(
               'No teams have been created or assigned to this organization. Go to the Teams section to create a team, then you can assign that team to this organization. Once teams are assigned to this organization, they can be assigned roles for the resources within this organization.'
             )}
-            style={{ maxWidth: '40%', display: 'inline-block' }}
           >
             <ButtonLink
               icon={<PanelCloseIcon />}

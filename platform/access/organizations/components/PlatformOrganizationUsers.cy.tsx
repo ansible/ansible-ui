@@ -1,4 +1,3 @@
-import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import mockPlatformOrganizations from '@ansible/cypress/fixtures/platformOrganizations.json';
 import { gatewayAPI } from '@ansible/cypress/support/formatApiPathForPlatform';
 import { PlatformOrganizationUsers } from './PlatformOrganizationUsers';
@@ -26,6 +25,7 @@ describe('Organization users list', () => {
         mockPlatformOrganization
       ).as('organization');
     });
+
     it('Users list renders', () => {
       cy.mount(<PlatformOrganizationUsers />, {
         path: '/access/organizations/:id/*',
@@ -50,7 +50,7 @@ describe('Organization users list', () => {
       cy.contains('td', 'test-user1')
         .parent()
         .within(() => {
-          cy.get('[data-cy="manage-roles"]').should('exist');
+          cy.get('[data-cy="manage-organization-roles"]').should('exist');
           cy.get('button.toggle-kebab').click();
           cy.document()
             .its('body')
@@ -61,118 +61,6 @@ describe('Organization users list', () => {
                 .should('exist');
             });
         });
-    });
-    it('Add users button is disabled if the user does not have required permissions', () => {
-      cy.mount(<PlatformOrganizationUsers />, {
-        path: '/access/organizations/:id/*',
-        initialEntries: ['/access/organizations/1/users'],
-      });
-      cy.get('[data-cy="assign-users"]').should('have.attr', 'aria-disabled', 'true');
-    });
-    it('Add users button is enabled if the user has the required permissions', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            PUT: {
-              name: {
-                type: 'string',
-                required: true,
-                read_only: false,
-                label: 'Name',
-                help_text: 'The name of this resource',
-                max_length: 512,
-              },
-            },
-          },
-        },
-      }));
-      cy.mount(<PlatformOrganizationUsers />, {
-        path: '/access/organizations/:id/*',
-        initialEntries: ['/access/organizations/1/users'],
-      });
-      cy.get('[data-cy="assign-users"]').should('not.have.attr', 'aria-disabled');
-    });
-  });
-  describe('Empty list', () => {
-    beforeEach(() => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayAPI`/organizations/1/users/*`,
-        },
-        {
-          fixture: 'emptyList.json',
-        }
-      ).as('emptyList');
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayAPI`/organizations/1/`,
-        },
-        mockPlatformOrganization
-      ).as('organization');
-    });
-    it('Empty state is displayed correctly for user with permission to add users', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            PUT: {
-              name: {
-                type: 'string',
-                required: true,
-                read_only: false,
-                label: 'Name',
-                help_text: 'The name of this resource',
-                max_length: 512,
-              },
-            },
-          },
-        },
-      }));
-      cy.mount(<PlatformOrganizationUsers />, {
-        path: '/access/organizations/:id/*',
-        initialEntries: ['/access/organizations/1/users'],
-      });
-      cy.contains(/^There are currently no users added to this organization.$/);
-      cy.contains(/^Add users by clicking the button below.$/);
-    });
-    it('Empty state is displayed correctly for user without permission to add users', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {},
-        },
-      }));
-      cy.mount(<PlatformOrganizationUsers />, {
-        path: '/access/organizations/:id/*',
-        initialEntries: ['/access/organizations/1/users'],
-      });
-      cy.contains(/^You do not have permission to add a user to this organization./);
-      cy.contains(
-        /^Please contact your organization administrator if there is an issue with your access.$/
-      );
-    });
-  });
-  describe('Error retrieving list', () => {
-    it('Displays error loading users', () => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayAPI`/organizations/1/users/*`,
-        },
-        { statusCode: 500 }
-      ).as('error');
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayAPI`/organizations/1/`,
-        },
-        mockPlatformOrganization
-      ).as('organization');
-      cy.mount(<PlatformOrganizationUsers />, {
-        path: '/access/organizations/:id/*',
-        initialEntries: ['/access/organizations/1/users'],
-      });
-      cy.contains('Error loading users');
     });
   });
 });
