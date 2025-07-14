@@ -32,6 +32,7 @@
     ]
   },
   "scripts": {
+    "start": "npm --prefix platform start",
     "coverage:fix-paths": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\"}' npx ts-node ./fix-coverage-paths.ts",
     "nyc-report": "npm run coverage:fix-paths && npx nyc report --cwd=$(pwd) && open coverage/combined/index.html",
     "reinstall": "nx exec -- rm -rf node_modules && npm ci",
