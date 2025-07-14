@@ -65,9 +65,9 @@ export function PlatformMasthead() {
   return (
     <PageMasthead
       brand={
-        <AAPLogo
-          style={{ height: 48, textDecoration: 'none', color: 'var(--pf-v5-global--Color--100)' }}
-        />
+        <div style={{ marginTop: -6 }}>
+          <AAPLogo style={{ height: 48 }} />
+        </div>
       }
     >
       <ToolbarItem style={{ flexGrow: 1 }}>
