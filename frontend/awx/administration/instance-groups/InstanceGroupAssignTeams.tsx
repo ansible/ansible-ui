@@ -100,7 +100,7 @@ export function InstanceGroupAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamRoleProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -129,7 +129,7 @@ export function InstanceGroupAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Instance groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
           {
@@ -144,7 +144,7 @@ export function InstanceGroupAssignTeams() {
             label: t('Team access'),
             to: getPageUrl(AwxRoute.InstanceGroupTeamAccess, { params: { id: instanceGroup?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

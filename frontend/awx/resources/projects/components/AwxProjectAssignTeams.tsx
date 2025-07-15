@@ -102,7 +102,7 @@ export function AwxProjectAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -131,7 +131,7 @@ export function AwxProjectAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
           {
@@ -142,7 +142,7 @@ export function AwxProjectAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(AwxRoute.ProjectTeams, { params: { id: project?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

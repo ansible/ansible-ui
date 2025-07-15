@@ -115,7 +115,7 @@ export function RepositoryAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -144,7 +144,7 @@ export function RepositoryAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
           {
@@ -155,7 +155,7 @@ export function RepositoryAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(HubRoute.RepositoryTeamAccess, { params: { id: repository?.name } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

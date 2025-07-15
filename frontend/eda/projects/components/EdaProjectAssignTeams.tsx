@@ -99,7 +99,7 @@ export function EdaProjectAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamRoleProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -128,7 +128,7 @@ export function EdaProjectAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
           {
@@ -139,7 +139,7 @@ export function EdaProjectAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

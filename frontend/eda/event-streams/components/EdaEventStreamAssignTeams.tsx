@@ -101,7 +101,7 @@ export function EdaEventStreamAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamRoleProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function EdaEventStreamAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('EventStreams'), to: getPageUrl(EdaRoute.EventStreams) },
           {
@@ -141,7 +141,7 @@ export function EdaEventStreamAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(EdaRoute.EventStreamTeamAccess, { params: { id: eventstream?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

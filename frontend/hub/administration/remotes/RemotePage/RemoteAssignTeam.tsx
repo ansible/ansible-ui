@@ -115,7 +115,7 @@ export function RemoteAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -144,7 +144,7 @@ export function RemoteAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
           {
@@ -155,7 +155,7 @@ export function RemoteAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(HubRoute.RemoteTeamAccess, { params: { id: remote?.name } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

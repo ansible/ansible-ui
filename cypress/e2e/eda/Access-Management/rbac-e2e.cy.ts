@@ -202,7 +202,7 @@ describe('Check if the build includes EDA', () => {
         cy.get('tr [data-cy="name-column-cell"]').contains(edaProject.name).click();
         cy.verifyPageTitle(edaProject.name);
         cy.clickTab('Team Access', true);
-        cy.get('a[data-cy="add-roles"]').click();
+        cy.get('a[data-cy="assign-teams"]').click();
         cy.getTableRowByText(edaTeam.name, true).within(() => {
           cy.get('input[type=checkbox]').click();
         });

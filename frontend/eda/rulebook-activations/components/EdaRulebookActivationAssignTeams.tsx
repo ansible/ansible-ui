@@ -101,7 +101,7 @@ export function EdaRulebookActivationAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamRoleProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function EdaRulebookActivationAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
           {
@@ -143,7 +143,7 @@ export function EdaRulebookActivationAssignTeams() {
               params: { id: activation?.id },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

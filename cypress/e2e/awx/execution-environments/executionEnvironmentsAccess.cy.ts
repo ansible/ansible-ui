@@ -96,8 +96,8 @@ describe('Execution Environments: User/Team access', () => {
     cy.clickTableRowLink('name', execEnvName, { disableFilter: true });
     cy.hasDetail('Name', execEnvName);
     cy.clickTab(/^Team Access$/, true);
-    cy.getByDataCy('add-roles').click();
-    cy.verifyPageTitle('Add roles');
+    cy.getByDataCy('assign-teams').click();
+    cy.verifyPageTitle('Assign teams');
     cy.getWizard().within(() => {
       cy.contains('h1', 'Select team(s)').should('be.visible');
       cy.filterTableBySearch(team.name);

@@ -557,11 +557,11 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^Team Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(
-        /^There are currently no teams assigned to this instance group./
+      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No teams assigned to instance group/);
+      cy.get('.pf-v6-c-empty-state__body').contains(
+        /^To get started, assign teams to this instance group./
       );
-      cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
-      cy.getByDataCy('add-roles').click();
+      cy.getByDataCy('assign-teams').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/teams/assign-teams')).to.be.true;
@@ -644,11 +644,11 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^Team Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(
-        /^There are currently no teams assigned to this instance group./
+      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No teams assigned to instance group/);
+      cy.get('.pf-v6-c-empty-state__body').contains(
+        /^To get started, assign teams to this instance group./
       );
-      cy.get('.pf-v6-c-empty-state__body').contains(/^Add a role by clicking the button below./);
-      cy.getByDataCy('add-roles').click();
+      cy.getByDataCy('assign-teams').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/teams/assign-teams')).to.be.true;

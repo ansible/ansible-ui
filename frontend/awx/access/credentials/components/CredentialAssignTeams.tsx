@@ -101,7 +101,7 @@ export function CredentialAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function CredentialAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
           {
@@ -141,7 +141,7 @@ export function CredentialAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(AwxRoute.CredentialTeamAccess, { params: { id: credential?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

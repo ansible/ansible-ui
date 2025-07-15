@@ -114,7 +114,7 @@ export function ExecutionEnvironmentAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -143,7 +143,7 @@ export function ExecutionEnvironmentAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Execution environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
           {
@@ -158,7 +158,7 @@ export function ExecutionEnvironmentAssignTeams() {
               params: { id: executionEnvironment?.name },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

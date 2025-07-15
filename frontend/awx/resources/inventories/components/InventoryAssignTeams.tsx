@@ -101,7 +101,7 @@ export function InventoryAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function InventoryAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           {
@@ -141,7 +141,7 @@ export function InventoryAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(AwxRoute.InventoryTeamAccess, { params: { id: inventory?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>
