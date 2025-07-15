@@ -991,6 +991,7 @@ function CredentialTextInput({
       isReadOnly={handleIsDisabled(field)}
       labelHelp={field.help_text}
       helperText={handleHelperText(field)}
+      autoComplete={field.secret ? 'new-password' : 'off'}
       button={
         credentialType?.kind !== 'external' ? (
           <>
