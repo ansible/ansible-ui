@@ -3,3 +3,4 @@ dist
 interfaces/generated-from-swagger
 node_modules
 test-results
+coverage
