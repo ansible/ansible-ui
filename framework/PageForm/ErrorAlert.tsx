@@ -62,7 +62,14 @@ export function ErrorAlert({ error, isMd, onCancel }: ErrorAlertProps) {
   const title = getTitle();
 
   return (
-    <Alert variant="danger" title={title} isInline style={style} isExpandable={isExpandable}>
+    <Alert
+      variant="danger"
+      title={title}
+      isInline
+      style={style}
+      isExpandable={isExpandable}
+      role="alert"
+    >
       <ErrorContent error={error} />
     </Alert>
   );
