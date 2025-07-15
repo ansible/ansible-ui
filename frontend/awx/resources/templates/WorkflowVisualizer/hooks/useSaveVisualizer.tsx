@@ -1,4 +1,3 @@
-import { useAbortController } from '@ansible/ansible-ui-framework/hooks/useAbortController';
 import { parseVariableField } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
@@ -45,7 +44,6 @@ type CreatePayloadProperty = keyof CreateWorkflowNodePayload;
 
 export function useSaveVisualizer(templateId: string) {
   const controller = useVisualizationController();
-  const abortController = useAbortController();
   const deleteRequest = useDeleteRequest();
   const patchWorkflowNode = usePatchRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
   const patchWorkflowNodeApproval = usePatchRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
@@ -108,8 +106,7 @@ export function useSaveVisualizer(templateId: string) {
           {
             all_parents_must_converge: nodeData.resource.all_parents_must_converge,
             ...nodeIdentifier,
-          },
-          abortController.signal
+          }
         );
 
         if (workflowNode && workflowNode.id) {
@@ -119,8 +116,7 @@ export function useSaveVisualizer(templateId: string) {
               name: nodeTemplate.name,
               description: nodeTemplate.description || '',
               timeout: nodeTemplate.timeout || 0,
-            },
-            abortController.signal
+            }
           );
           setCreatedNodeId(node, workflowNode.id.toString());
         }
@@ -141,8 +137,7 @@ export function useSaveVisualizer(templateId: string) {
           {
             all_parents_must_converge: nodeData.resource.all_parents_must_converge,
             ...nodeIdentifier,
-          },
-          abortController.signal
+          }
         );
 
         if (workflowNode && workflowNode.id) {
@@ -154,8 +149,7 @@ export function useSaveVisualizer(templateId: string) {
                 name: nodeTemplate.name,
                 description: nodeTemplate.description || '',
                 timeout: nodeTemplate.timeout || 0,
-              },
-              abortController.signal
+              }
             );
             setCreatedNodeId(node, workflowNode.id.toString());
           } else {
@@ -165,8 +159,7 @@ export function useSaveVisualizer(templateId: string) {
                 name: nodeTemplate.name,
                 description: nodeTemplate.description || '',
                 timeout: nodeTemplate.timeout || 0,
-              },
-              abortController.signal
+              }
             );
           }
         }
@@ -252,8 +245,7 @@ export function useSaveVisualizer(templateId: string) {
 
         const newNode = await postWorkflowNode(
           awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
-          createNodePayload,
-          abortController.signal
+          createNodePayload
         );
 
         if (!newNode.id) return;
@@ -350,8 +342,7 @@ export function useSaveVisualizer(templateId: string) {
           await processCredentials(nodeId, launch_data);
           await patchWorkflowNode(
             awxAPI`/workflow_job_template_nodes/${nodeId}/`,
-            updatedNodePayload,
-            abortController.signal
+            updatedNodePayload
           );
         })
       );
@@ -502,77 +493,51 @@ export function useSaveVisualizer(templateId: string) {
 
     await Promise.all(
       disassociateSuccessNodes.map((node) =>
-        postDisassociate(
-          awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`,
-          {
-            id: Number(node.targetId),
-            disassociate: true,
-          },
-          abortController.signal
-        )
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`, {
+          id: Number(node.targetId),
+          disassociate: true,
+        })
       )
     );
     await Promise.all(
       disassociateFailureNodes.map((node) =>
-        postDisassociate(
-          awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`,
-          {
-            id: Number(node.targetId),
-            disassociate: true,
-          },
-          abortController.signal
-        )
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`, {
+          id: Number(node.targetId),
+          disassociate: true,
+        })
       )
     );
     await Promise.all(
       disassociateAlwaysNodes.map((node) =>
-        postDisassociate(
-          awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`,
-          {
-            id: Number(node.targetId),
-            disassociate: true,
-          },
-          abortController.signal
-        )
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`, {
+          id: Number(node.targetId),
+          disassociate: true,
+        })
       )
     );
     await Promise.all(
       associateSuccessNodes.map((node) =>
-        postAssociateNode(
-          awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`,
-          {
-            id: Number(node.targetId),
-          },
-          abortController.signal
-        )
+        postAssociateNode(awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`, {
+          id: Number(node.targetId),
+        })
       )
     );
     await Promise.all(
       associateFailureNodes.map((node) =>
-        postAssociateNode(
-          awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`,
-          {
-            id: Number(node.targetId),
-          },
-          abortController.signal
-        )
+        postAssociateNode(awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`, {
+          id: Number(node.targetId),
+        })
       )
     );
     await Promise.all(
       associateAlwaysNodes.map((node) =>
-        postAssociateNode(
-          awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`,
-          {
-            id: Number(node.targetId),
-          },
-          abortController.signal
-        )
+        postAssociateNode(awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`, {
+          id: Number(node.targetId),
+        })
       )
     );
     await Promise.all(
-      deletedNodeIds.map((id) =>
-        deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`, abortController.signal)
-      )
+      deletedNodeIds.map((id) => deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`))
     );
 
     action(() => {
@@ -584,7 +549,6 @@ export function useSaveVisualizer(templateId: string) {
     })();
   }, [
     controller,
-    abortController,
     deleteRequest,
     patchWorkflowNode,
     patchWorkflowNodeApproval,
@@ -616,7 +580,6 @@ async function getDefaultOrganization(): Promise<number> {
 }
 
 const useProcessLabels = () => {
-  const abortController = useAbortController();
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
   const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
 
@@ -636,49 +599,36 @@ const useProcessLabels = () => {
         );
 
         const disassociationPromises = removed.map((label: { id: number }) =>
-          postDisassociate(
-            awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`,
-            {
-              id: label.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
+          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+            id: label.id,
+            disassociate: true,
+          })
         );
 
         const associationPromises = added.map(
           (label: { name: string; id?: number; organization?: number }) =>
-            postAssociateLabel(
-              awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`,
-              {
-                name: label.name,
-                organization: label?.organization ?? defaultOrganization,
-              },
-              abortController.signal
-            )
+            postAssociateLabel(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+              name: label.name,
+              organization: label?.organization ?? defaultOrganization,
+            })
         );
 
         await Promise.all([...disassociationPromises, ...associationPromises]);
       } else if (existingLabels) {
         const disassociationPromises = existingLabels.map((label: { id: number }) =>
-          postDisassociate(
-            awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`,
-            {
-              id: label.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
+          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+            id: label.id,
+            disassociate: true,
+          })
         );
         await Promise.all(disassociationPromises);
       }
     },
-    [postDisassociate, postAssociateLabel, abortController]
+    [postDisassociate, postAssociateLabel]
   );
 };
 
 const useProcessInstanceGroups = () => {
-  const abortController = useAbortController();
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
   const postAssociateInstanceGroup = usePostRequest<{ id: number }, InstanceGroup>();
 
@@ -696,14 +646,10 @@ const useProcessInstanceGroups = () => {
         );
 
         const disassociationPromises = removed.map((group: { id: number }) =>
-          postDisassociate(
-            awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`,
-            {
-              id: group.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
+          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
+            id: group.id,
+            disassociate: true,
+          })
         );
 
         const associationPromises = added.map((group) =>
@@ -711,32 +657,26 @@ const useProcessInstanceGroups = () => {
             awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`,
             {
               id: group.id,
-            },
-            abortController.signal
+            }
           )
         );
 
         await Promise.all([...disassociationPromises, ...associationPromises]);
       } else if (existingInstanceGroups) {
         const disassociationPromises = existingInstanceGroups.map((group: { id: number }) =>
-          postDisassociate(
-            awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`,
-            {
-              id: group.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
+          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
+            id: group.id,
+            disassociate: true,
+          })
         );
         await Promise.all(disassociationPromises);
       }
     },
-    [postDisassociate, postAssociateInstanceGroup, abortController]
+    [postDisassociate, postAssociateInstanceGroup]
   );
 };
 
 const useProcessCredentials = () => {
-  const abortController = useAbortController();
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
   const postAssociateCredential = usePostRequest<{ id: number }, Credential>();
 
@@ -753,30 +693,22 @@ const useProcessCredentials = () => {
           templateCredentials
         );
         const disassociationPromises = removed.map((credential: { id: number }) =>
-          postDisassociate(
-            awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`,
-            {
-              id: credential.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
+          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+            id: credential.id,
+            disassociate: true,
+          })
         );
 
         const associationPromises = added.map((credential) =>
-          postAssociateCredential(
-            awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`,
-            {
-              id: credential.id,
-            },
-            abortController.signal
-          )
+          postAssociateCredential(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+            id: credential.id,
+          })
         );
 
         await Promise.all([...disassociationPromises, ...associationPromises]);
       }
     },
-    [postDisassociate, postAssociateCredential, abortController]
+    [postDisassociate, postAssociateCredential]
   );
 };
 
