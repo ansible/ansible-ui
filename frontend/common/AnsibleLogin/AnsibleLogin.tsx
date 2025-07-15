@@ -139,6 +139,18 @@ export function AnsibleLogin(props: {
     }
   }, [hasAuthFailedFlag, t]);
 
+  useEffect(() => {
+    const passwordInput = document.getElementById('pf-login-password-id');
+    const usernameInput = document.getElementById('pf-login-username-id');
+
+    if (passwordInput) {
+      passwordInput.setAttribute('autocomplete', 'new-password');
+    }
+    if (usernameInput) {
+      usernameInput.setAttribute('autocomplete', 'off');
+    }
+  }, []);
+
   // Need to use component version of PatternFly's LoginPage
   // because we need to be able to use a component for the brand image
   // SEE: https://github.com/patternfly/patternfly-react/blob/main/packages/react-core/src/components/LoginPage/LoginPage.tsx

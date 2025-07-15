@@ -130,7 +130,6 @@ export function CredentialFormStringInput(props: {
             labelHelpTitle={props.field.label}
             labelHelp={props.field.help_text}
             isRequired={!!props?.required && props.required.includes(props.field.id)}
-            autoComplete={'off'}
           />
         );
       }

@@ -27,7 +27,10 @@ import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
 import { useRequiredValidationRule } from './validation-hooks';
 
-export type PageFormTextInputProps<
+/**
+ * Base props for PageFormTextInput without conditional type logic
+ */
+type PageFormTextInputBaseProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TSelection extends FieldValues = FieldValues,
@@ -174,15 +177,6 @@ export type PageFormTextInputProps<
    */
   autoFocus?: boolean;
 
-  /**
-   * The autocomplete attribute specifies whether or not an input field should have autocomplete enabled.
-   *
-   * Autocomplete allows the browser to predict the value. When a user starts to type in a field, the browser should display options to fill in the field, based on earlier typed values.
-   *
-   * Note: The autocomplete attribute works with the following input types: text, search, url, tel, email, password, datepickers, range, and color.
-   */
-  autoComplete?: string;
-
   defaultValue?: FieldPathValue<TFieldValues, TFieldName>;
 
   enableUndo?: boolean;
@@ -192,6 +186,49 @@ export type PageFormTextInputProps<
 
   fullWidth?: boolean;
 };
+
+/**
+ * Conditional props type with smart defaults for password fields
+ */
+export type PageFormTextInputProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TSelection extends FieldValues = FieldValues,
+> = PageFormTextInputBaseProps<TFieldValues, TFieldName, TSelection> &
+  (
+    | {
+        type: 'password';
+        /**
+         * OPTIONAL for password fields: The autocomplete attribute for security.
+         *
+         * Defaults to "new-password" if not specified.
+         *
+         * Use:
+         * - "new-password" for creating new passwords (signup, password change) [DEFAULT]
+         * - "current-password" for login forms
+         * - "off" in cases where you want to disable all autocomplete
+         */
+        autoComplete?: 'new-password' | 'current-password' | 'off';
+      }
+    | {
+        type?:
+          | 'text'
+          | 'date'
+          | 'datetime-local'
+          | 'email'
+          | 'month'
+          | 'number'
+          | 'search'
+          | 'tel'
+          | 'time'
+          | 'url';
+        /**
+         * OPTIONAL for non-password fields: The autocomplete attribute specifies whether or not an input field should have autocomplete enabled.
+         * Autocomplete allows the browser to predict the value. When a user starts to type in a field, the browser should display options to fill in the field, based on earlier typed values.
+         */
+        autoComplete?: string;
+      }
+  );
 
 /**
  * TextInput component that is used to render a text input field in a PageForm.
@@ -243,6 +280,9 @@ export function PageFormTextInput<
 
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
+
+  // Smart defaults: password fields default to 'new-password', others default to 'off'
+  // TypeScript provides type safety for valid autoComplete values
 
   const undoValue = getValue(defaultValues as object, props.name) as PathValue<
     TFieldValues,
@@ -328,7 +368,7 @@ export function PageFormTextInput<
                   readOnlyVariant={isReadOnly ? 'default' : undefined}
                   isDisabled={isDisabled}
                   autoFocus={autoFocus}
-                  autoComplete={autoComplete || 'off'}
+                  autoComplete={autoComplete || (type === 'password' ? 'new-password' : 'off')}
                   data-cy={id}
                 />
               </InputGroupItem>
