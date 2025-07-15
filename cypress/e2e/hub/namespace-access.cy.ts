@@ -102,7 +102,7 @@ describe('Namespace - team and user access', () => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_team_assignments/*`).as('teamRoleAssignment');
       cy.clickTab('Team Access', true);
       cy.wait('@teamRoleAssignment');
-      cy.getByDataCy('add-roles').click();
+      cy.getByDataCy('assign-teams').click();
       cy.getWizard().within(() => {
         cy.filterTableByTextFilter('name', hubTeam.name, {
           disableFilterSelection: true,

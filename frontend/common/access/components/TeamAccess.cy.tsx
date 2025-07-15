@@ -82,8 +82,8 @@ describe('Empty list', () => {
   });
   it('Empty state is displayed correctly', () => {
     cy.mount(<TeamAccess service="eda" id={'1'} type={'activation'} addRolesRoute="xyz" />);
-    cy.contains(/^There are currently no teams assigned to this rulebook activation.$/);
-    cy.contains(/^Add a role by clicking the button below.$/);
-    cy.contains('a[data-cy="add-roles"]', /^Add roles$/).should('be.visible');
+    cy.contains(/^No teams assigned to rulebook activation$/);
+    cy.contains(/^To get started, assign teams to this rulebook activation.$/);
+    cy.contains('a[data-cy="assign-teams"]', /^Assign teams$/).should('be.visible');
   });
 });

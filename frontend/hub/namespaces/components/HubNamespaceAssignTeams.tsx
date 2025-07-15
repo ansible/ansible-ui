@@ -115,7 +115,7 @@ export function HubNamespaceAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       teamProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -144,7 +144,7 @@ export function HubNamespaceAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
           {
@@ -155,7 +155,7 @@ export function HubNamespaceAssignTeams() {
             label: t('Team Access'),
             to: getPageUrl(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

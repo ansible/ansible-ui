@@ -105,8 +105,8 @@ describe('Execution Environment User Access tab', () => {
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab(/^Details$/, true);
       cy.clickTab(/^Team Access$/, true);
-      cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
+      cy.getByDataCy('assign-teams').click();
+      cy.verifyPageTitle('Assign teams');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
         cy.getTableRowByText(hubTeam.name, true).within(() => {

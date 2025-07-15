@@ -101,7 +101,7 @@ export function ExecutionEnvironmentAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function ExecutionEnvironmentAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
           {
@@ -145,7 +145,7 @@ export function ExecutionEnvironmentAssignTeams() {
               params: { id: executionenvironment?.id },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>

@@ -103,8 +103,8 @@ describe('Remotes User Access tab', () => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_team_assignments/*`).as('teamRoleAssignment');
       cy.clickTab('Team Access', true);
       cy.wait('@teamRoleAssignment');
-      cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
+      cy.getByDataCy('assign-teams').click();
+      cy.verifyPageTitle('Assign teams');
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');

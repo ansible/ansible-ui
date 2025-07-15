@@ -233,10 +233,10 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         break;
       case 'team':
         title = props.content_type_model
-          ? t('There are currently no teams assigned to this {{resourceType}}.', {
+          ? t('No teams assigned to {{resourceType}}', {
               resourceType: getDisplayName(props.content_type_model),
             })
-          : t('There are currently no teams assigned to this resource.');
+          : t('No teams assigned to this resource');
         break;
       case 'user-roles':
         title =
@@ -256,6 +256,20 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     }
     return title;
   }, [getDisplayName, props.accessListType, props.content_type_model, props.service, t]);
+
+  const emptyStateDescription = useMemo(() => {
+    let title: string;
+    if (props.accessListType === 'team') {
+      title = props.content_type_model
+        ? t('To get started, assign teams to this {{resourceType}}.', {
+            resourceType: getDisplayName(props.content_type_model),
+          })
+        : t('To get started, assign teams to this resource.');
+    } else title = t('Add a role by clicking the button below.');
+
+    return title;
+  }, [getDisplayName, props.accessListType, props.content_type_model, t]);
+
   return (
     <PageTable
       id={
@@ -269,7 +283,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
       rowActions={rowActions}
       errorStateTitle={t('Error loading access data.')}
       emptyStateTitle={emptyStateTitle}
-      emptyStateDescription={t('Add a role by clicking the button below.')}
+      emptyStateDescription={emptyStateDescription}
       emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={props.addRoleButtonText ?? t('Add roles')}
       emptyStateActions={toolbarActions.slice(0, 1)}

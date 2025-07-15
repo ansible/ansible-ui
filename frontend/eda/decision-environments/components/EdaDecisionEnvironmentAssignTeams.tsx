@@ -101,7 +101,7 @@ export function EdaDecisionEnvironmentAssignTeams() {
     }
     return new Promise<void>((resolve) => {
       userProgressDialog({
-        title: t('Add roles'),
+        title: t('Assign teams'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -130,7 +130,7 @@ export function EdaDecisionEnvironmentAssignTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign teams')}
         breadcrumbs={[
           { label: t('DecisionEnvironments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
           {
@@ -145,7 +145,7 @@ export function EdaDecisionEnvironmentAssignTeams() {
               params: { id: decisionEnvironment.id },
             }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign teams') },
         ]}
       />
       <PageWizard<WizardFormValues>
