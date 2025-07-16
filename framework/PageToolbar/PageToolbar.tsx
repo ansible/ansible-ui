@@ -182,7 +182,6 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
           xl: 'insetLg',
           '2xl': 'insetLg',
         }}
-        hasNoPadding
       >
         <ToolbarContent>
           {/* Selection */}
