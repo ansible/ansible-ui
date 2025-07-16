@@ -1,18 +1,16 @@
-import t_global_breakpoint_xl from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_xl';
-import t_global_breakpoint_2xl from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_2xl';
-import t_global_breakpoint_lg from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_lg';
-import t_global_breakpoint_md from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_md';
-import t_global_breakpoint_sm from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_sm';
-import t_global_breakpoint_xs from '@patternfly/react-tokens/dist/esm/t_global_breakpoint_xs';
 import { useCallback, useEffect, useState } from 'react';
 
+// SEE: https://www.patternfly.org/tokens/all-patternfly-tokens/
+// And search for "breakpoint" to see the values used in PatternFly.
+// PF uses rems for breakpoints, but we convert them to pixels here.
+const BASE_FONT_SIZE = 16;
 const breakpoints: Record<string, number> = {
-  xs: Number(t_global_breakpoint_xs.value.replace('px', '')),
-  sm: Number(t_global_breakpoint_sm.value.replace('px', '')),
-  md: Number(t_global_breakpoint_md.value.replace('px', '')),
-  lg: Number(t_global_breakpoint_lg.value.replace('px', '')),
-  xl: Number(t_global_breakpoint_xl.value.replace('px', '')),
-  xxl: Number(t_global_breakpoint_2xl.value.replace('px', '')),
+  xs: 0,
+  sm: 36 * BASE_FONT_SIZE,
+  md: 48 * BASE_FONT_SIZE,
+  lg: 62 * BASE_FONT_SIZE,
+  xl: 75 * BASE_FONT_SIZE,
+  xxl: 90.625 * BASE_FONT_SIZE,
 };
 
 export type WindowSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
