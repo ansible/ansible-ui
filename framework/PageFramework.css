@@ -38,3 +38,7 @@ table tbody tr td.expanded {
 :root:where(.pf-v6-theme-dark) .pf-topology-content {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
 }
+
+.pf-v6-c-tabs + .pf-v6-c-toolbar {
+  margin-top: var(--pf-t--global--spacer--md);
+}
