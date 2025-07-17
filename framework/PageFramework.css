@@ -1,6 +1,6 @@
 /* This is used to fix the tables borders disappearing on sticky columns */
 table tbody tr td {
-  border-bottom: thin solid var(--pf-t--global--border--color--default);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
 }
 
 /* This is used to remove the border on the expanded row */
