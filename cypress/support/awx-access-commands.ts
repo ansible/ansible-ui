@@ -129,7 +129,7 @@ Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: strin
   cy.filterTableByTextFilter('name', organizationName, { disableFilterSelection: true });
   cy.clickTableRowLink('name', organizationName, { disableFilter: true });
   cy.clickTab(/^Teams$/, true);
-  cy.getByDataCy('manage-roles').click();
+  cy.getByDataCy('view-and-manage-organization-roles').click();
   cy.clickButton(/^Manage roles/);
   cy.getWizard().within(() => {
     cy.contains('h1', 'Select Automation Execution roles').should('be.visible');

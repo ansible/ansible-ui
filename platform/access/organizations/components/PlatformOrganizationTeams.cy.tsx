@@ -33,13 +33,13 @@ describe('Organization teams list', () => {
       cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 2);
       // Toolbar actions are visible
-      cy.get(`[data-cy="add-roles"]`).should('be.visible');
+      cy.get(`[data-cy="assign-organization-roles"]`).should('be.visible');
       // Row actions are visible
       cy.contains('td', 'Test team 1')
         .parent()
         .within(() => {
           // Manage roles
-          cy.get('[data-cy="manage-roles"]').should('exist');
+          cy.get('[data-cy="view-and-manage-organization-roles"]').should('exist');
         });
     });
   });

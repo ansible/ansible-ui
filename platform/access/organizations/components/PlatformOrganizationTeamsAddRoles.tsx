@@ -182,7 +182,7 @@ export function PlatformOrganizationTeamsAddRoles() {
 
     return new Promise<void>((resolve) => {
       progressDialog({
-        title: t('Add roles'),
+        title: t('Assign organization roles'),
         keyFn: (item) =>
           (item as TeamAndAwxRole).awxRole
             ? `${item.team.id}_${(item as TeamAndAwxRole).awxRole.id}`
@@ -230,7 +230,7 @@ export function PlatformOrganizationTeamsAddRoles() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add roles')}
+        title={t('Assign organization roles')}
         breadcrumbs={[
           { label: t('Organizations'), to: getPageUrl(PlatformRoute.Organizations) },
           {
@@ -241,7 +241,7 @@ export function PlatformOrganizationTeamsAddRoles() {
             label: t('Teams'),
             to: getPageUrl(PlatformRoute.OrganizationTeams, { params: { id: organization?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Assign organization roles') },
         ]}
       />
       <PageWizard<WizardFormValues>

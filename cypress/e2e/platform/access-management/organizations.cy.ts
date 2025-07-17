@@ -289,8 +289,8 @@ describe('If SaaS Build', () => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
         cy.clickTableRowLink('name', organization.name, { disableFilter: true });
         cy.clickTab('Teams', true);
-        cy.getByDataCy('add-roles').click();
-        cy.verifyPageTitle('Add roles');
+        cy.getByDataCy('assign-organization-roles').click();
+        cy.verifyPageTitle('Assign organization roles');
         cy.getWizard().within(() => {
           cy.filterTableByTextFilter('name', createdPlatformTeam, {
             disableFilterSelection: true,
@@ -338,7 +338,7 @@ describe('If SaaS Build', () => {
         cy.getModal().should('not.exist');
         cy.verifyPageTitle(organization.name);
         cy.getTableRow('name', createdPlatformTeam, { disableFilter: true }).within(() => {
-          cy.get('[data-cy="manage-roles"]').click();
+          cy.get('[data-cy="view-and-manage-organization-roles"]').click();
         });
         cy.getModal().should('exist');
         cy.getModal().within(() => {
@@ -386,8 +386,8 @@ describe('If SaaS Build', () => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
         cy.clickTableRowLink('name', organization.name, { disableFilter: true });
         cy.clickTab('Teams', true);
-        cy.getByDataCy('add-roles').click();
-        cy.verifyPageTitle('Add roles');
+        cy.getByDataCy('assign-organization-roles').click();
+        cy.verifyPageTitle('Assign organization roles');
         cy.getWizard().within(() => {
           cy.selectTableRowByCheckbox('name', createdPlatformTeam, { disableFilter: true });
           cy.clickButton(/^Next/);
