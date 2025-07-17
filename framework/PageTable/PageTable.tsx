@@ -623,10 +623,9 @@ function TableHead<T extends object>(props: {
       <Tr style={{ background: 'inherit' }} ref={headerRowRef}>
         {expandedRow && (
           <Th
-            style={{ padding: 0 }}
             aria-label="Expand"
             isStickyColumn
-            stickyMinWidth="0px"
+            stickyMinWidth="1px"
             ref={expandColumnRef as LegacyRef<HTMLTableCellElement>}
           />
         )}
@@ -634,9 +633,9 @@ function TableHead<T extends object>(props: {
           <Th
             aria-label="Select"
             isStickyColumn
-            stickyMinWidth="48px"
+            stickyMinWidth="1px"
             data-cy={'selections-column-header'}
-            style={{ paddingTop: 18, paddingLeft: 18, left: expandColumnWidth }}
+            style={{ left: expandColumnWidth }}
             ref={checkboxColumnRef as LegacyRef<HTMLTableCellElement>}
           >
             &nbsp;
@@ -669,7 +668,7 @@ function TableHead<T extends object>(props: {
           <Th
             aria-label="Actions"
             isStickyColumn
-            stickyMinWidth="48px"
+            stickyMinWidth="1px"
             data-cy={'action-column-header'}
             ref={actionColumnRef as LegacyRef<HTMLTableCellElement>}
           />
@@ -719,7 +718,6 @@ function TableRow<T extends object>(props: {
   const expandedRowContent = expandedRow?.(item);
   const { expandColumnWidth } = props;
   const [expanded, setExpanded] = useState(!!props.defaultExpandedRows && !!expandedRowContent);
-  const settings = usePageSettings();
   const disableRow = useCallback(
     (item: T) => {
       if (selectedItems?.length === maxSelections) {
@@ -768,10 +766,9 @@ function TableRow<T extends object>(props: {
                   }
                 : undefined
             }
-            style={{ paddingLeft: 0, paddingRight: 0 }}
             data-cy={'expand-column-cell'}
             isStickyColumn
-            stickyMinWidth="0px"
+            stickyMinWidth="1px"
             className={expanded && expandedRowContent ? 'expanded' : undefined}
           />
         )}
@@ -794,9 +791,9 @@ function TableRow<T extends object>(props: {
                 : undefined
             }
             isStickyColumn
-            stickyMinWidth="48px"
+            stickyMinWidth="1px"
             data-cy={'checkbox-column-cell'}
-            style={{ paddingTop: 18, paddingLeft: 16, left: expandColumnWidth }}
+            style={{ left: expandColumnWidth }}
             className={expandedRow && expanded && expandedRowContent ? 'expanded' : undefined}
           />
         )}
@@ -810,7 +807,7 @@ function TableRow<T extends object>(props: {
               props: { 'aria-label': 'Select row' },
             }}
             isStickyColumn
-            stickyMinWidth="48px"
+            stickyMinWidth="1px"
             data-cy={'checkbox-column-cell'}
           />
         )}
@@ -823,30 +820,23 @@ function TableRow<T extends object>(props: {
       </Tr>
       {expandedRow && expanded && expandedRowContent && (
         <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
-          <Td isStickyColumn stickyMinWidth="0px" />
+          <Td isStickyColumn stickyMinWidth="1px" />
           {showSelect && (
             <Td
               aria-label="Select"
               isStickyColumn
-              stickyMinWidth="48px"
-              style={{ paddingTop: 18, paddingLeft: 16, left: expandColumnWidth }}
+              stickyMinWidth="1px"
+              style={{ left: expandColumnWidth }}
             />
           )}
           {onSelect && (
-            <Td
-              isStickyColumn
-              stickyMinWidth="48px"
-              style={{ paddingTop: 18, paddingLeft: 16, left: expandColumnWidth }}
-            />
+            <Td isStickyColumn stickyMinWidth="1px" style={{ left: expandColumnWidth }} />
           )}
-          <Td
-            colSpan={columns.length}
-            style={{ paddingBottom: settings.tableLayout === 'compact' ? 12 : 24, paddingTop: 0 }}
-          >
+          <Td colSpan={columns.length}>
             <CollapseColumn>{expandedRowContent}</CollapseColumn>
           </Td>
           {rowActions !== undefined && rowActions.length > 0 && (
-            <Td isActionCell isStickyColumn stickyMinWidth="48px">
+            <Td isActionCell isStickyColumn stickyMinWidth="1px">
               &nbsp;
             </Td>
           )}
@@ -885,9 +875,8 @@ function TableCells<T extends object>(props: {
         <Td
           isActionCell
           isStickyColumn
-          stickyMinWidth="48px"
+          stickyMinWidth="1px"
           style={{
-            padding: 10,
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           data-cy={'actions-column-cell'}
