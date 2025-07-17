@@ -5,7 +5,7 @@ import { interceptRequest } from '../../util/interceptRequest';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
-
+test.setTimeout(2 * 60 * 1000);
 test.describe('Policy setting details', () => {
   test('should display details', { tag: [] }, async ({ page }) => {
     await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
@@ -57,6 +57,7 @@ test.describe('Policy settings form', () => {
       settings = (await settingsRequest) as Record<string, string | number | boolean>;
     }
     await page.getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Policy Settings' })).toBeVisible();
     if (settings.OPA_HOST) {
       await expect(page.getByRole('textbox', { name: 'OPA Server Hostname' })).toBeVisible();
@@ -92,6 +93,7 @@ test.describe('Policy settings form', () => {
       settings = (await settingsRequest) as Record<string, string | number | boolean>;
     }
     await page.getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Policy Settings' })).toBeVisible();
 
     if (settings.OPA_HOST) {

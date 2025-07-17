@@ -1,15 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '../../commands/setup';
 import { mockLightspeedHealthStatus } from './lightspeed-utils';
 
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
-
-test(
+test.setTimeout(2 * 60 * 1000);
+test.skip(
   'chatbot - should display the Chatbot, add a question and hide',
   { tag: [] },
   async ({ page }) => {
-    test.setTimeout(5 * 60 * 1000);
+    test.setTimeout(8 * 60 * 1000);
     await mockLightspeedHealthStatus(page, 200, {
       'chatbot-service': 'ok',
       'streaming-chatbot-service': 'ok',

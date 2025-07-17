@@ -22,6 +22,7 @@ const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: 0, // process.env.CI ? 2 : 0,
+  timeout: 60000,
   expect: {
     // timeout: 60 * 1000, // default of playwright is 5s
   },

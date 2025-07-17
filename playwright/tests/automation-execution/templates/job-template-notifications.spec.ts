@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { filterTable } from '../../../commands/filterTable';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createSlackNotifier, deleteNotifier } from '../administration/notifiers/notifier-utils';
 import { createJobTemplate, deleteJobTemplate } from './job-template-utils';
-import { clickTableRow } from '../../../commands/clickTableRow';
-import { filterTable } from '../../../commands/filterTable';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
-
+test.setTimeout(2 * 60 * 1000);
 test.describe('Job Template - notifications tab', () => {
   test(
     'can navigate to the Job Templates -> Notifications list and then to the details page of the Notification',

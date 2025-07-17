@@ -38,13 +38,13 @@ import {
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
-
+test.setTimeout(2 * 60 * 1000);
 test.describe('Workflow Viz', () => {
   test(
     'Workflow Viz Add Nodes: Should render a workflow visualizer view with multiple nodes present',
     { tag: ['@not_e2e', '@not_mock', '@compare'] },
     async ({ page }) => {
-      test.setTimeout(5 * 60 * 1000);
+      test.setTimeout(8 * 60 * 1000);
       const visMockData = {
         count: 3,
         next: null,

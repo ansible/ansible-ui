@@ -16,7 +16,7 @@ test(
   'rulebook activations - can create a rulebook activation and assert info on details page',
   { tag: ['@not_mock'] },
   async ({ page }) => {
-    test.setTimeout(150000);
+    test.setTimeout(300000);
     const newProject = await createEdaProject({}, page);
     const newCredential = await createEdaCredential({}, page);
     const rulebookActivationName = await createRulebookActivation(

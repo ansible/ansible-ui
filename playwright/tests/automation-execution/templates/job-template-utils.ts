@@ -188,3 +188,74 @@ export async function deleteJobTemplate(
   }
   await confirmAndAssertDeletion(page);
 }
+
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { APIRequestContext } from '@playwright/test';
+import { platformUI } from '../../../commands/login';
+import { controllerAPI } from '../workflow-visualizer/controller-api';
+
+interface CreateJobTemplateOptions {
+  name?: string;
+  inventoryId?: number;
+  projectId?: number;
+  playbook?: string;
+  ask_inventory_on_launch?: boolean;
+  ask_variables_on_launch?: boolean;
+  ask_skip_tags_on_launch?: boolean;
+  ask_labels_on_launch?: boolean;
+  ask_credential_on_launch?: boolean;
+  ask_instance_groups_on_launch?: boolean;
+  labels?: string[];
+}
+
+export async function createJobTemplateAPI(
+  request: APIRequestContext,
+  options: CreateJobTemplateOptions = {}
+): Promise<{ id: number; name: string }> {
+  const name = options.name ?? `e2e-job-template-${Date.now()}`;
+  const playbook = options.playbook ?? 'hello_world.yml';
+  const url = platformUI + controllerAPI(`/job_templates/`);
+  // sanitize and remove double slashes
+  const sanitizedUrl = url.replace(/\/{2,}/g, '/');
+  const cookie = (await request.storageState()).cookies.find(
+    (cookie) => cookie.name === 'csrftoken'
+  );
+
+  const response = await request.post(sanitizedUrl, {
+    data: {
+      name,
+      job_type: 'run',
+      inventory: options.inventoryId ?? 1,
+      project: options.projectId ?? 6,
+      playbook,
+      ask_inventory_on_launch: options.ask_inventory_on_launch ?? false,
+      ask_credential_on_launch: options.ask_credential_on_launch ?? false,
+      ask_instance_groups_on_launch: options.ask_instance_groups_on_launch ?? false,
+      ask_variables_on_launch: options.ask_variables_on_launch ?? false,
+      ask_skip_tags_on_launch: options.ask_skip_tags_on_launch ?? false,
+      ask_labels_on_launch: options.ask_labels_on_launch ?? false,
+    },
+    headers: {
+      'X-CSRFToken': cookie?.value as string,
+    },
+  });
+  expect(response.ok()).toBeTruthy();
+  const json = (await response.json()) as JobTemplate;
+  return { id: json.id, name };
+}
+
+export async function deleteJobTemplateAPI(request: APIRequestContext, id: number): Promise<void> {
+  const cookie = (await request.storageState()).cookies.find(
+    (cookie) => cookie.name === 'csrftoken'
+  );
+  const url = platformUI + controllerAPI(`/job_templates/${id}/`);
+  // sanitize and remove double slashes
+  const sanitizedUrl = url.replace(/\/{2,}/g, '/');
+  const response = await request.delete(sanitizedUrl, {
+    headers: {
+      'X-CSRFToken': cookie?.value ?? '',
+    },
+  });
+
+  expect(response.ok()).toBeTruthy();
+}

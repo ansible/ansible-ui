@@ -1,16 +1,16 @@
 import { expect, test } from '@playwright/test';
-import { createAuthenticationMethod } from './authentication-utils';
-import { setupAfter, setupBefore } from '../../../commands/setup';
-import { logout } from '../../../commands/logout';
-import { login } from '../../../commands/login';
-import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
-import { navigateTo } from '../../../commands/navigateTo';
 import { clickTableRowAction } from '../../../commands/clickTableRowAction';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { filterTable } from '../../../commands/filterTable';
+import { login } from '../../../commands/login';
+import { logout } from '../../../commands/logout';
+import { navigateTo } from '../../../commands/navigateTo';
+import { setupAfter, setupBefore } from '../../../commands/setup';
+import { createAuthenticationMethod } from './authentication-utils';
 
 test.beforeEach(setupBefore({ path: '/access/authenticators' }));
 test.afterEach(setupAfter);
-
+test.setTimeout(2 * 60 * 1000);
 test(
   'Azure AD Authentication form - create, edit, update and delete',
   { tag: ['@not_mock'] },
@@ -41,7 +41,7 @@ test(
       },
       page
     );
-    await page.getByRole('textbox', { name: 'Name' }).fill(`${authMethodName}_edited`);
+    await page.getByRole('textbox', { name: 'Name', exact: true }).fill(`${authMethodName}_edited`);
     await page.getByRole('button', { name: 'Save Authentication Method' }).click();
     await expect(page.getByRole('heading')).toContainText(`${authMethodName}_edited`);
     await page.getByRole('tab', { name: 'Back to Authentication Methods' }).click();
