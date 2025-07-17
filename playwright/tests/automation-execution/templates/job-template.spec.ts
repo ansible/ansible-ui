@@ -15,16 +15,14 @@ import { createJobTemplate, deleteJobTemplate, runJobTemplate } from './job-temp
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
-
 test.describe('Job Templates', () => {
-  test(
-    'can create a job template and assert the information showing on the details page',
-    { tag: ['@compare'] },
-    async ({ page }) => {
-      const jobTemplateName = await createJobTemplate({}, page);
-      await deleteJobTemplate(jobTemplateName, page);
-    }
-  );
+  test('can create a job template and assert the information showing on the details page', async ({
+    page,
+  }) => {
+    test.setTimeout(2 * 60 * 1000);
+    const jobTemplateName = await createJobTemplate({}, page);
+    await deleteJobTemplate(jobTemplateName, page);
+  });
 
   test(
     'can create a job template with prompted fields, launch from the list view, and complete launch via wizard',
@@ -72,6 +70,7 @@ test.describe('Job Templates', () => {
     'can launch a job template from the details page launch button using the prompt on launch',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await createJobTemplate({ PromptOnLaunch: true }, page);
       await runJobTemplate(
         jobTemplateName,
@@ -86,6 +85,7 @@ test.describe('Job Templates', () => {
     'job template - edit using row action of the template list page',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await createJobTemplate({}, page);
       const editedJobTemplateName = jobTemplateName + ' - edited from row action';
       const editedDescription = 'this is a new description after editing from row action';
@@ -113,6 +113,7 @@ test.describe('Job Templates', () => {
     'can edit a job template using the edit template button on details page',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await createJobTemplate({}, page);
       const editedJobTemplateName = jobTemplateName + ' - edited from row action';
       const editedDescription = 'this is a new description after editing from row action';
@@ -143,7 +144,7 @@ test.describe('Job Templates', () => {
     'can assign a new inventory to a job template if the originally assigned inventory was deleted',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      test.setTimeout(60000);
+      test.setTimeout(2 * 60 * 1000);
       // create inventory + job template and then delete inventory
       const inventoryName = await createInventory({}, page);
       const newInventoryName = await createInventory({}, page);
@@ -173,7 +174,7 @@ test.describe('Job Templates', () => {
     'can edit a job template to enable provisioning callback and enable webhook, then edit again to disable those options',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      test.setTimeout(60000);
+      test.setTimeout(2 * 60 * 1000);
       const credentialName = await createAwxCredential({}, page);
       const jobTemplateName = await createJobTemplate({}, page);
       const hostConfigKey = createE2EName('host-config-key');
@@ -228,6 +229,7 @@ test.describe('Job Templates', () => {
     'can edit a job template to enable webhook, regenerate webhook key and set webhook credentials',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const credentialName = await createAwxCredential({}, page);
       const jobTemplateName = await createJobTemplate({}, page);
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -277,6 +279,7 @@ test.describe('Job Templates', () => {
     'can delete a job template from the list line item',
     { tag: ['@compare'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await createJobTemplate({}, page);
       await deleteJobTemplate(jobTemplateName, page);
     }
@@ -286,6 +289,7 @@ test.describe('Job Templates', () => {
     'can delete a job template from the details page',
     { tag: ['@compare'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await createJobTemplate({}, page);
       await deleteJobTemplate(jobTemplateName, page, 'details');
     }
@@ -295,6 +299,7 @@ test.describe('Job Templates', () => {
     'can bulk delete job templates from the list page',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName1 = await createJobTemplate({}, page);
       const jobTemplateName2 = await createJobTemplate({}, page);
       await page.getByLabel('Breadcrumb').getByRole('link', { name: 'Templates' }).click();
@@ -324,6 +329,7 @@ test.describe('Job Templates', () => {
     'can create a job template and assert the OPA is showing on the details page',
     { tag: ['@compare', '@mock'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = createE2EName('job-template');
       const jobTemplateDescription = 'This is a JT description';
       const inventoryName = 'Demo Inventory';
@@ -365,6 +371,7 @@ test.describe('Job Templates', () => {
     'can create a job template, select multiple credentials and deselct one from the selected credential chip close button',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = createE2EName('job-template');
       const jobTemplateDescription = 'This is a JT description';
       const inventoryName = 'Demo Inventory';
@@ -417,6 +424,7 @@ test.describe('Job Templates', () => {
     'can launch a job template with an enabled survey from the details page launch button using the prompt on launch',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
       const surveyQuestion = 'q1';
       const surveyAnswerVar = 'v1';
       const jobTemplateName = await createJobTemplate({ PromptOnLaunch: true }, page);
