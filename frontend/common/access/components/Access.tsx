@@ -226,10 +226,10 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     switch (props.accessListType) {
       case 'user':
         title = props.content_type_model
-          ? t('There are currently no users assigned to this {{resourceType}}.', {
+          ? t('No users assigned to this {{resourceType}}.', {
               resourceType: getDisplayName(props.content_type_model),
             })
-          : t('There are currently no users assigned to this resource.');
+          : t('No users assigned to this resource.');
         break;
       case 'team':
         title = props.content_type_model
@@ -265,7 +265,13 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
             resourceType: getDisplayName(props.content_type_model),
           })
         : t('To get started, assign teams to this resource.');
-    } else title = t('Add a role by clicking the button below.');
+    } else {
+      title = props.content_type_model
+        ? t('To get started, assign users to this {{resourceType}}.', {
+            resourceType: getDisplayName(props.content_type_model),
+          })
+        : t('Add a role by clicking the button below.');
+    }
 
     return title;
   }, [getDisplayName, props.accessListType, props.content_type_model, t]);
