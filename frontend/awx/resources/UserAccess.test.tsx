@@ -45,7 +45,7 @@ describe('Resource User Access', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/No users assigned to this {{resourceType}}./)).toBeInTheDocument();
+      expect(screen.getByText(/No users assigned to {{resourceType}}/)).toBeInTheDocument();
       expect(
         screen.getByText(/To get started, assign users to this {{resourceType}}./)
       ).toBeInTheDocument();
