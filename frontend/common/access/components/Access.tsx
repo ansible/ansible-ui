@@ -226,10 +226,10 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     switch (props.accessListType) {
       case 'user':
         title = props.content_type_model
-          ? t('No users assigned to this {{resourceType}}.', {
+          ? t('No users assigned to {{resourceType}}', {
               resourceType: getDisplayName(props.content_type_model),
             })
-          : t('No users assigned to this resource.');
+          : t('No users assigned to this resource');
         break;
       case 'team':
         title = props.content_type_model

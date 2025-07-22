@@ -766,9 +766,7 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^User Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(
-        /^No users assigned to this instance group./
-      );
+      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No users assigned to instance group/);
       cy.get('.pf-v6-c-empty-state__body').contains(
         /^To get started, assign users to this instance group./
       );
@@ -852,9 +850,7 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^User Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(
-        /^No users assigned to this instance group./
-      );
+      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No users assigned to instance group/);
       cy.get('.pf-v6-c-empty-state__body').contains(
         /^To get started, assign users to this instance group./
       );
