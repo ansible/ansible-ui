@@ -33,8 +33,8 @@ export function TemplatesList(props: {
   executionEnvironmentId?: string;
 }) {
   const { t } = useTranslation();
-  const { activeDomains: activeFocusAreas } = useDomainsStore();
-  const focusLabels = activeFocusAreas.map((fa) => fa.labels.map((l) => l.name)).flat();
+  const activeDomains = useDomainsStore((state) => state.activeDomains);
+  const focusLabels = activeDomains.map((fa) => fa.labels.map((l) => l.name)).flat();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters({
     url: props.url,
@@ -167,7 +167,12 @@ export function TemplatesList(props: {
       rowActions={rowActions}
       errorStateTitle={t('Error loading templates')}
       emptyState={
-        canCreateJobs ? (
+        activeDomains.length > 0 ? (
+          <PageTableEmptyState
+            title={t('No templates match the selected domains')}
+            description={t('Please select a different domain or clear the current selection.')}
+          />
+        ) : canCreateJobs ? (
           <PageTableEmptyState
             title={t('No templates yet')}
             description={t('Please create a template by using the button below.')}
