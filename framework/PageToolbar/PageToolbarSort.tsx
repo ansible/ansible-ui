@@ -1,4 +1,4 @@
-import { Button, Split, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import {
   SortAlphaDownAltIcon,
   SortAlphaUpIcon,
@@ -70,25 +70,25 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
 
   return (
     <PageToolbarToggleGroup breakpoint="2xl" toggleIcon={sortDirectionIcon} id="sort">
-      <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 8 }}>
-        <ToolbarItem variant="label">{translations.sort}</ToolbarItem>
+      <ToolbarItem variant="label">{translations.sort}</ToolbarItem>
+      <ToolbarGroup variant="filter-group">
         <ToolbarItem>
-          <Split>
-            <ToolbarSortSelect
-              sortOptions={sortOptions}
-              sort={sort}
-              setSort={setSort}
-              setSortDirection={setSortDirection}
-            />
-            <Button
-              variant="control"
-              icon={sortDirectionIcon}
-              onClick={() => {
-                if (sortDirection === 'asc') setSortDirection?.('desc');
-                else setSortDirection?.('asc');
-              }}
-            />
-          </Split>
+          <ToolbarSortSelect
+            sortOptions={sortOptions}
+            sort={sort}
+            setSort={setSort}
+            setSortDirection={setSortDirection}
+          />
+        </ToolbarItem>
+        <ToolbarItem>
+          <Button
+            variant="control"
+            icon={sortDirectionIcon}
+            onClick={() => {
+              if (sortDirection === 'asc') setSortDirection?.('desc');
+              else setSortDirection?.('asc');
+            }}
+          />
         </ToolbarItem>
       </ToolbarGroup>
     </PageToolbarToggleGroup>
