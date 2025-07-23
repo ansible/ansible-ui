@@ -32,8 +32,8 @@ type WebSocketMessage = {
 
 export function Inventories() {
   const { t } = useTranslation();
-  const { activeDomains: activeFocusAreas } = useDomainsStore();
-  const focusLabels = activeFocusAreas.map((fa) => fa.labels.map((l) => l.name)).flat();
+  const activeDomains = useDomainsStore((state) => state.activeDomains);
+  const focusLabels = activeDomains.map((fa) => fa.labels.map((l) => l.name)).flat();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventories/`);
   const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
   const toolbarFilters = useInventoriesFilters();
@@ -120,19 +120,29 @@ export function Inventories() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading inventories')}
         emptyStateTitle={
-          canCreateInventory
-            ? t('There are currently no inventories added.')
-            : t('You do not have permission to create an inventory.')
+          activeDomains.length > 0
+            ? t('No inventories found for the selected domains.')
+            : canCreateInventory
+              ? t('There are currently no inventories added.')
+              : t('You do not have permission to create an inventory.')
         }
         emptyStateDescription={
-          canCreateInventory
-            ? t('Please create an inventory by using the button below.')
-            : t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )
+          activeDomains.length > 0
+            ? t('Please select a different domain or clear the current selection.')
+            : canCreateInventory
+              ? t('Please create an inventory by using the button below.')
+              : t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )
         }
         emptyStateIcon={canCreateInventory ? undefined : CubesIcon}
-        emptyStateActions={canCreateInventory ? toolbarActions.slice(0, 1) : undefined}
+        emptyStateActions={
+          activeDomains.length > 0
+            ? undefined
+            : canCreateInventory
+              ? toolbarActions.slice(0, 1)
+              : undefined
+        }
         {...view}
         defaultSubtitle={t('Inventory')}
       />

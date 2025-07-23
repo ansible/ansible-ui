@@ -11,6 +11,7 @@ import {
   ModalBody,
   ModalHeader,
   ModalVariant,
+  PageSection,
   Split,
   SplitItem,
   ToggleGroup,
@@ -30,25 +31,27 @@ export function Domains() {
   const { domains, activeDomains, toggleActiveDomain, clearActiveDomains } = useDomainsStore();
   const [configureOpen, setConfigureOpen] = useState(false);
   return (
-    <>
-      <Flex
-        style={{ padding: 24, paddingTop: 12, paddingBottom: 12 }}
-        spaceItems={{ default: 'spaceItemsSm' }}
-      >
+    <PageSection
+      variant="secondary"
+      style={{
+        marginLeft: 'var(--pf-t--global--spacer--xs)',
+        marginRight: 'var(--pf-t--global--spacer--xs)',
+        marginBottom: 'var(--pf-t--global--spacer--md)',
+        borderRadius: 'var(--pf-t--global--border--radius--medium)',
+      }}
+    >
+      <Flex spaceItems={{ default: 'spaceItemsSm' }}>
         <FlexItem>
           <Split>
             <SplitItem>{t('Domains')}</SplitItem>
-            <div
-              style={{
-                marginTop: -6,
-              }}
-            >
+            <div style={{ marginTop: -6 }}>
               <Help
                 title={t('Domains')}
                 help={[
                   t(
                     'Specify a domain to make relevant resources easily accessible. Select a label to customize your domain.'
                   ),
+                  t('Domain selection persists across views that support domains.'),
                 ]}
               />
             </div>
@@ -86,7 +89,7 @@ export function Domains() {
         </FlexItem>
       </Flex>
       <ConfigureDomainsModal isOpen={configureOpen} setOpen={setConfigureOpen} />
-    </>
+    </PageSection>
   );
 }
 

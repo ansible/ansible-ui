@@ -19,8 +19,8 @@ export function JobsList(props: {
   columns: ITableColumn<UnifiedJob>[];
 }) {
   const { t } = useTranslation();
-  const { activeDomains: activeFocusAreas } = useDomainsStore();
-  const focusLabels = activeFocusAreas.map((fa) => fa.labels.map((l) => l.name)).flat();
+  const activeDomains = useDomainsStore((state) => state.activeDomains);
+  const focusLabels = activeDomains.map((fa) => fa.labels.map((l) => l.name)).flat();
   const toolbarFilters = useJobsFilters(props.queryParams ?? {});
   const tableColumns = props.columns;
   const view = useAwxView<UnifiedJob>({
@@ -68,8 +68,14 @@ export function JobsList(props: {
       rowActions={rowActions}
       toolbarActions={toolbarActions}
       errorStateTitle={t('Error loading jobs')}
-      emptyStateTitle={t('No jobs yet')}
-      emptyStateDescription={t('Please run a job to populate this list.')}
+      emptyStateTitle={
+        activeDomains.length > 0 ? t('No jobs match the selected domains') : t('No jobs yet')
+      }
+      emptyStateDescription={
+        activeDomains.length > 0
+          ? t('Please select a different domain or clear the current selection.')
+          : t('Please run a job to populate this list.')
+      }
       emptyStateIcon={CubesIcon}
       {...view}
     />
