@@ -1,3 +1,8 @@
+#app {
+  --pf-t--global--border--color--default: light-dark(#ccc, #505050);
+  --pf-t--chart--global--success--color--100: var(--pf-t--chart--color--green--200);
+}
+
 /* This is used to fix the tables borders disappearing on sticky columns */
 table tbody tr td {
   border-bottom: 1px solid var(--pf-t--global--border--color--default);
@@ -25,20 +30,11 @@ table tbody tr td.expanded {
   margin-inline-start: 0 !important;
 }
 
-/** PF Button Icons are too close to the button text */
-.pf-v6-c-button__icon.pf-m-start {
-  margin-inline-end: 8px;
-}
-
-/** PF Button Icons are not spaced correctly in the dropdown text */
-.pf-v6-c-dropdown__toggle-image {
-  margin-inline-start: 8px;
-}
-
 :root:where(.pf-v6-theme-dark) .pf-topology-content {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
 }
 
+/* Ansible UI override for PF Tabs that contain a Toolbar */
 .pf-v6-c-tabs + .pf-v6-c-toolbar {
   margin-top: var(--pf-t--global--spacer--md);
 }
