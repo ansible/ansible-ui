@@ -14,20 +14,12 @@ export function PlatformSubscription(props: { children: ReactNode }) {
   const hasAwxService = useHasAwxService(true);
 
   if (hasAwxService === undefined) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   if (hasAwxService && !serviceDown) {
     if (awxConfig === undefined && !awxConfigError) {
-      return (
-        <Page>
-          <LoadingState />
-        </Page>
-      );
+      return <LoadingState />;
     }
 
     if (awxConfigError) {

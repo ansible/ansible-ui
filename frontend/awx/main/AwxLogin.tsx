@@ -3,7 +3,6 @@ import { AnsibleLogin } from '@ansible/common-ui/AnsibleLogin/AnsibleLogin';
 import type { AuthOption } from '@ansible/common-ui/SocialAuthLogin';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
-import { Page } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import useSWR, { mutate } from 'swr';
 import { awxAPI } from '../common/api/awx-utils';
@@ -41,11 +40,7 @@ export function AwxLogin(props: {
   const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
 
   if (activeAwxUser === undefined) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   if (!activeAwxUser) {

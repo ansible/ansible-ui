@@ -1,7 +1,6 @@
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AnsibleLogin } from '@ansible/common-ui/AnsibleLogin/AnsibleLogin';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { Page } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import useSWR, { mutate } from 'swr';
 import { hubAPI } from '../common/api/formatPath';
@@ -36,11 +35,7 @@ export function HubLogin(props: {
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
 
   if (activeHubUser === undefined) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   if (!activeHubUser) {
