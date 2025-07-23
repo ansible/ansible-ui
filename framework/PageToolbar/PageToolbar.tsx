@@ -7,7 +7,6 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import React, { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react';
-import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { BulkSelector } from '../components/BulkSelector';
@@ -196,8 +195,8 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
             />
           </ToolbarGroup>
 
-          {/* The flex below is needed to make the toolbar wrap elements properly */}
-          <FlexGrowDiv>
+          {/* Right aligned items */}
+          <ToolbarGroup align={{ default: 'alignEnd' }}>
             {/* Sort */}
             <PageToolbarSort
               sort={sort}
@@ -218,16 +217,9 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
                 openColumnModal={openColumnModal}
               />
             )}
-          </FlexGrowDiv>
+          </ToolbarGroup>
         </ToolbarContent>
       </Toolbar>
     </PageToolbarToggleGroupContext.Provider>
   );
 }
-
-const FlexGrowDiv = styled.div`
-  display: flex;
-  flex-grow: 1;
-  justify-content: end;
-  flex-wrap: wrap;
-`;

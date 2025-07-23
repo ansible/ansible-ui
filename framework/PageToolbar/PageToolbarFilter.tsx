@@ -111,33 +111,37 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
           />
         </ToolbarItem>
       ) : (
-        <ToolbarItem>
-          <PageSingleSelect
-            id="filter"
-            value={selectedFilterKey}
-            onSelect={setSeletedFilterKey}
-            icon={
-              selectedFilter.type === ToolbarFilterType.Search ? <SearchIcon /> : <FilterIcon />
-            }
-            options={toolbarFilters.map((filter) => ({
-              label: filter.label,
-              value: filter.key,
-            }))}
-            placeholder=""
-            data-cy={selectedFilter}
-            disableSortOptions
-            isRequired
-            disableMaxDropdownWidth
-          />
-          <ToolbarFilterComponent
-            id="filter-input"
-            filter={selectedFilter}
-            filterState={filterState}
-            setFilterState={setFilterState}
-            data-cy={selectedFilter}
-            limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
-          />
-        </ToolbarItem>
+        <ToolbarGroup variant="filter-group">
+          <ToolbarItem>
+            <PageSingleSelect
+              id="filter"
+              value={selectedFilterKey}
+              onSelect={setSeletedFilterKey}
+              icon={
+                selectedFilter.type === ToolbarFilterType.Search ? <SearchIcon /> : <FilterIcon />
+              }
+              options={toolbarFilters.map((filter) => ({
+                label: filter.label,
+                value: filter.key,
+              }))}
+              placeholder=""
+              data-cy={selectedFilter}
+              disableSortOptions
+              isRequired
+              disableMaxDropdownWidth
+            />
+          </ToolbarItem>
+          <ToolbarItem>
+            <ToolbarFilterComponent
+              id="filter-input"
+              filter={selectedFilter}
+              filterState={filterState}
+              setFilterState={setFilterState}
+              data-cy={selectedFilter}
+              limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
+            />
+          </ToolbarItem>
+        </ToolbarGroup>
       )}
     </>
   );
@@ -167,95 +171,93 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 
   return (
     <PageToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" id="filters">
-      <ToolbarGroup variant="action-group" style={{ flexWrap: 'wrap', gap: 8 }}>
-        {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
+      {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
+      <FiltersToolbarItem
+        toolbarFilters={groupedFilters}
+        setFilterState={setFilterState}
+        filterState={filterState}
+        limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
+      />
+      {pinnedFilters?.map((filter) => (
         <FiltersToolbarItem
-          toolbarFilters={groupedFilters}
+          key={filter.key}
+          toolbarFilters={[filter]}
           setFilterState={setFilterState}
           filterState={filterState}
           limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
         />
-        {pinnedFilters?.map((filter) => (
-          <FiltersToolbarItem
-            key={filter.key}
-            toolbarFilters={[filter]}
-            setFilterState={setFilterState}
-            filterState={filterState}
-            limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
-          />
-        ))}
+      ))}
 
-        {toolbarFilters?.map((filter) => {
-          // Render the filter chips
-          const values = filterState?.[filter.key] || [];
+      {toolbarFilters?.map((filter) => {
+        // Render the filter chips
+        const values = filterState?.[filter.key] || [];
 
-          // If the filter is pinned and is a single select filter, don't render the chip
-          // this is because the value of the single select filter is already shown in the filter component
-          if (filter.isPinned && filter.type === ToolbarFilterType.SingleSelect) return null;
-          if (filter.isPinned && filter.type === ToolbarFilterType.DateRange) return null;
+        // If the filter is pinned and is a single select filter, don't render the chip
+        // this is because the value of the single select filter is already shown in the filter component
+        if (filter.isPinned && filter.type === ToolbarFilterType.SingleSelect) return null;
+        if (filter.isPinned && filter.type === ToolbarFilterType.DateRange) return null;
 
-          return (
-            <ToolbarFilter
-              key={filter.label}
-              categoryName={filter.label}
-              labels={[
-                ...values.map((value) => {
-                  switch (filter.type) {
-                    case ToolbarFilterType.SingleSelect:
-                    case ToolbarFilterType.MultiSelect:
-                    case ToolbarFilterType.DateRange:
-                      return (
-                        filter.options?.find((o) => {
-                          return o.value === value;
-                        })?.label ?? value
-                      );
-                    case ToolbarFilterType.AsyncSingleSelect:
-                    case ToolbarFilterType.AsyncMultiSelect:
-                      return { key: value, node: filter.queryLabel(value) };
-                    default:
-                      return value;
+        return (
+          <ToolbarFilter
+            key={filter.label}
+            categoryName={filter.label}
+            labels={[
+              ...values.map((value) => {
+                switch (filter.type) {
+                  case ToolbarFilterType.SingleSelect:
+                  case ToolbarFilterType.MultiSelect:
+                  case ToolbarFilterType.DateRange:
+                    return (
+                      filter.options?.find((o) => {
+                        return o.value === value;
+                      })?.label ?? value
+                    );
+                  case ToolbarFilterType.AsyncSingleSelect:
+                  case ToolbarFilterType.AsyncMultiSelect:
+                    return { key: value, node: filter.queryLabel(value) };
+                  default:
+                    return value;
+                }
+              }),
+            ]}
+            deleteLabel={(_group, value) => {
+              setFilterState?.((filters) => {
+                const newState = { ...filters };
+                value = typeof value === 'string' ? value : value.key;
+                switch (filter.type) {
+                  case ToolbarFilterType.SingleSelect:
+                  case ToolbarFilterType.MultiSelect:
+                  case ToolbarFilterType.DateRange:
+                    // The value is a label, we need to get the real value from the option
+                    value = filter.options.find((o) => o.label === value)?.value ?? value;
+                    break;
+                }
+                let values = filters[filter.key];
+                if (values) {
+                  values = values.filter((v) => v !== value);
+                  if (values.length === 0) {
+                    delete newState[filter.key];
+                  } else {
+                    newState[filter.key] = values;
                   }
-                }),
-              ]}
-              deleteLabel={(_group, value) => {
-                setFilterState?.((filters) => {
-                  const newState = { ...filters };
-                  value = typeof value === 'string' ? value : value.key;
-                  switch (filter.type) {
-                    case ToolbarFilterType.SingleSelect:
-                    case ToolbarFilterType.MultiSelect:
-                    case ToolbarFilterType.DateRange:
-                      // The value is a label, we need to get the real value from the option
-                      value = filter.options.find((o) => o.label === value)?.value ?? value;
-                      break;
-                  }
-                  let values = filters[filter.key];
-                  if (values) {
-                    values = values.filter((v) => v !== value);
-                    if (values.length === 0) {
-                      delete newState[filter.key];
-                    } else {
-                      newState[filter.key] = values;
-                    }
-                  }
-                  return newState;
-                });
-              }}
-              deleteLabelGroup={() => {
-                setFilterState?.((filters) => {
-                  const newState = { ...filters };
-                  delete newState[filter.key];
-                  return newState;
-                });
-              }}
-              // We hide this item because this is only used for the filter chips
-              showToolbarItem={false}
-            >
-              <></>
-            </ToolbarFilter>
-          );
-        })}
-      </ToolbarGroup>
+                }
+                return newState;
+              });
+            }}
+            deleteLabelGroup={() => {
+              setFilterState?.((filters) => {
+                const newState = { ...filters };
+                delete newState[filter.key];
+                return newState;
+              });
+            }}
+            // We hide this item because this is only used for the filter chips
+            showToolbarItem={false}
+          >
+            <></>
+          </ToolbarFilter>
+        );
+      })}
     </PageToolbarToggleGroup>
   );
 }
