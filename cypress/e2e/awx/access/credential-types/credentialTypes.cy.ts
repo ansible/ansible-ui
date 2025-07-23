@@ -254,13 +254,13 @@ describe('Credential Types', () => {
 
     it('shows a bulk deletion dialog with warnings for managed credential types', () => {
       cy.navigateTo('awx', 'credential-types');
-      cy.getByDataCy('select-all').check();
+      cy.get('input[name="check-all"]').check();
       cy.clickToolbarKebabAction('delete-credential-types');
       cy.contains(
         'of the selected credential types cannot be deleted because they are read-only.'
       ).should('be.visible');
       cy.contains('button', 'Cancel').click();
-      cy.getByDataCy('select-all').check();
+      cy.get('input[name="check-all"]').check();
       cy.reload();
     });
 

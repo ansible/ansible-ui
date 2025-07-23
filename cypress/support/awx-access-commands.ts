@@ -114,7 +114,7 @@ Cypress.Commands.add('addEERolesToUsersInOrganization', (organizationName: strin
     cy.checkBuildType().then((buildType) => {
       if (buildType !== SAAS_URL) {
         cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
-        cy.getByDataCy('select-all').check();
+        cy.get('input[name="check-all"]').check();
         cy.clickButton(/^Next/);
       }
     });
@@ -143,7 +143,7 @@ Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: strin
     cy.checkBuildType().then((buildType) => {
       if (buildType !== SAAS_URL) {
         cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
-        cy.getByDataCy('select-all').check();
+        cy.get('input[name="check-all"]').check();
         cy.clickButton(/^Next/);
       }
     });

@@ -351,9 +351,7 @@ describe('Automation Execution: Roles', () => {
           cy.get('ul li').should('have.length', 3);
         });
         cy.get('tbody tr').should('have.length', 3);
-        cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-          cy.getByDataCy('select-all').check();
-        });
+        cy.get('input[name="check-all"]').check();
         cy.clickToolbarKebabAction('delete-roles');
         cy.getModal().within(() => {
           cy.get('#confirm').click();

@@ -541,6 +541,10 @@ function TableHead<T extends object>(props: {
   expandedRow?: (item: T) => ReactNode;
   expandColumnWidth: number;
   setExpandColumnWidth: Dispatch<SetStateAction<number>>;
+  pageItems?: T[];
+  isSelected?: (item: T) => boolean;
+  selectItems?: (items: T[]) => void;
+  unselectAll?: () => void;
 }) {
   const {
     tableColumns: columns,
@@ -552,6 +556,10 @@ function TableHead<T extends object>(props: {
     showSelect,
     onSelect,
     expandedRow,
+    pageItems,
+    isSelected,
+    selectItems,
+    unselectAll,
   } = props;
 
   const [_scrollableState, setScrollableState] = useScrollableState();
@@ -637,9 +645,20 @@ function TableHead<T extends object>(props: {
             data-cy={'selections-column-header'}
             style={{ left: expandColumnWidth }}
             ref={checkboxColumnRef as LegacyRef<HTMLTableCellElement>}
-          >
-            &nbsp;
-          </Th>
+            select={{
+              onSelect: (_event, isSelecting) => {
+                if (isSelecting) {
+                  selectItems?.(pageItems ?? []);
+                } else {
+                  unselectAll?.();
+                }
+              },
+              isSelected:
+                pageItems && pageItems.length > 0
+                  ? pageItems.every((item) => isSelected?.(item))
+                  : false,
+            }}
+          ></Th>
         )}
         {columns.map((column, index) => {
           return (

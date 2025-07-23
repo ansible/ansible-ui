@@ -165,7 +165,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
       >
         <ToolbarContent>
           {/* Selection */}
-          {showSelect && (
+          {viewType !== 'table' && showSelect && (
             <ToolbarGroup>
               <ToolbarItem>
                 <BulkSelector {...props} />

@@ -150,7 +150,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.clickTab(/^Groups$/, true);
         cy.get('tbody tr').should('have.length', 5);
-        cy.getByDataCy('select-all').check();
+        cy.get('input[name="check-all"]').check();
         cy.intercept('DELETE', awxAPI`/groups/*/`).as('deleted');
         cy.clickToolbarKebabAction('delete-groups');
         cy.getModal().within(() => {
