@@ -78,6 +78,8 @@ export function JobsList(props: {
       }
       emptyStateIcon={CubesIcon}
       {...view}
+      disableListView
+      disableCardView
     />
   );
 }

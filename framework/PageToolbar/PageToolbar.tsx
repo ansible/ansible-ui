@@ -198,13 +198,15 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
           {/* Right aligned items */}
           <ToolbarGroup align={{ default: 'alignEnd' }}>
             {/* Sort */}
-            <PageToolbarSort
-              sort={sort}
-              setSort={setSort}
-              sortDirection={sortDirection}
-              setSortDirection={setSortDirection}
-              sortOptions={sortOptions}
-            />
+            {viewType !== 'table' && (
+              <PageToolbarSort
+                sort={sort}
+                setSort={setSort}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                sortOptions={sortOptions}
+              />
+            )}
 
             {/* View */}
             {viewType && setViewType && (

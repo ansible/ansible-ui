@@ -42,7 +42,6 @@ describe('UserTokens', () => {
     });
     cy.get('div.pf-v6-c-toolbar').within(() => {
       cy.contains('Create token').should('be.visible');
-      cy.contains('Sort').should('be.visible');
     });
     cy.get('table').within(() => {
       cy.contains('Application name').should('be.visible');
