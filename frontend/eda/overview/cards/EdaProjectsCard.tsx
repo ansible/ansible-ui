@@ -32,6 +32,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
       to={getPageUrl(EdaRoute.Projects)}
       helpTitle={t('Projects')}
       help={t('A project is a logical collection of rulebooks.')}
+      disableBodyPadding
     >
       <PageTable
         disableBodyPadding={true}

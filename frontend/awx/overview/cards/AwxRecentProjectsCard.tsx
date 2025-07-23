@@ -38,6 +38,7 @@ export function AwxRecentProjectsCard() {
       height="md"
       linkText={t('View all Projects')}
       to={getPageUrl(AwxRoute.Projects)}
+      disableBodyPadding
     >
       <PageTable
         disableBodyPadding={true}
