@@ -1,7 +1,6 @@
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AnsibleLogin } from '@ansible/common-ui/AnsibleLogin/AnsibleLogin';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { Page } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
@@ -22,11 +21,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
   );
 
   if (activePlatformUser === undefined) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   if (!activePlatformUser) {

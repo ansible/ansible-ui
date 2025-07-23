@@ -7,13 +7,14 @@ import { PageFramework } from '@ansible/ansible-ui-framework';
 import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
 import { WebSocketProvider } from '@ansible/awx-ui/common/useAwxWebSocket';
-import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
+import { ChatbotProvider } from '@ansible/chatbot/ChatbotProvider';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import '@ansible/common-ui/i18n';
+import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
 import { EdaActiveUserProvider } from '@ansible/eda-ui/common/useEdaActiveUser';
 import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
 import { HubContextProvider } from '@ansible/hub-ui/common/useHubContext';
-import { Bullseye, Page, Spinner } from '@patternfly/react-core';
+import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
@@ -29,7 +30,6 @@ import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformSubscription } from './PlatformSubscription';
-import { ChatbotProvider } from '@ansible/chatbot/ChatbotProvider';
 
 // eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {
@@ -37,11 +37,9 @@ export default function PlatformMain() {
     <BrowserRouter>
       <Suspense
         fallback={
-          <Page>
-            <Bullseye>
-              <Spinner />
-            </Bullseye>
-          </Page>
+          <Bullseye>
+            <Spinner />
+          </Bullseye>
         }
       >
         <PageFramework defaultRefreshInterval={10}>

@@ -35,11 +35,7 @@ export function PlatformResource() {
   const resourceResponse = useGet<AwxItemsResponse<{ id: number }>>(resourceUrl);
 
   if (resourceResponse.isLoading) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   if (resourceResponse.error) {

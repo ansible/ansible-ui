@@ -4,7 +4,6 @@ import { useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { setEdaApiPath } from '@ansible/eda-ui/common/eda-utils';
 import { setHubApiPath } from '@ansible/hub-ui/common/api/formatPath';
-import { Page } from '@patternfly/react-core';
 import { ReactNode, createContext, useContext, useLayoutEffect, useState } from 'react';
 import useSWR from 'swr';
 
@@ -59,11 +58,7 @@ export function GatewayServicesProvider(props: { children: ReactNode }) {
   }, [result.data, setGatewayServices]);
 
   if (!gatewayServices) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   return (

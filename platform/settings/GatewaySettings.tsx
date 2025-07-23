@@ -1,7 +1,6 @@
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { Page } from '@patternfly/react-core';
 import { Outlet } from 'react-router';
 import useSWR from 'swr';
 import { gatewayAPI } from '../utils/gateway-api-utils';
@@ -17,11 +16,7 @@ export function GatewaySettings() {
   const settings = settingsResponse.data;
 
   if (!options || !settings) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   return (

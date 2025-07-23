@@ -19,11 +19,7 @@ export function PlatformHubUser(props: { route?: string }) {
   const getPageUrl = useGetPageUrl();
 
   if (platformResponse.isLoading) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
+    return <LoadingState />;
   }
 
   if (platformResponse.error) {
