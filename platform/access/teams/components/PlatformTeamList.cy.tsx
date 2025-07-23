@@ -96,8 +96,8 @@ describe('Teams list', () => {
         },
       }));
       cy.mount(<PlatformTeamList />);
-      cy.contains(/^No teams found.$/);
-      cy.contains(/^There are currently no teams assigned to your organization.$/);
+      cy.contains(/^No teams$/);
+      cy.contains(/^To get started, create a team.$/);
       cy.contains(/^Create team$/).should('be.visible');
     });
     it('Empty state is displayed correctly for user without permission to create teams', () => {
