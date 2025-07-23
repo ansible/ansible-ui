@@ -1,8 +1,4 @@
 import {
-  OnPerPageSelect,
-  OnSetPage,
-  Pagination,
-  PaginationVariant,
   PerPageOptions,
   Skeleton,
   Toolbar,
@@ -84,10 +80,6 @@ export type PageToolbarProps<T extends object> = {
 export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   const {
     itemCount,
-    page,
-    perPage,
-    setPage,
-    setPerPage,
     toolbarFilters,
     selectedItems,
     filterState,
@@ -99,7 +91,6 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     setSortDirection,
     sortOptions,
     clearAllFilters: clearAllFiltersProp,
-    perPageOptions,
   } = props;
 
   const clearAllFilters = useCallback(() => {
@@ -111,22 +102,12 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   }, [setFilterState, clearAllFiltersProp]);
 
   const isMdOrLarger = useBreakpoint('md');
-  const isXxlOrLarger = useBreakpoint('xxl');
 
   const { viewType, setViewType } = props;
   let { toolbarActions } = props;
   toolbarActions = toolbarActions ?? [];
 
   const [activeGroup, setActiveGroup] = useState('');
-
-  const onSetPage = useCallback<OnSetPage>(
-    (_event, page) => (setPage ? setPage(page) : null),
-    [setPage]
-  );
-  const onPerPageSelect = useCallback<OnPerPageSelect>(
-    (_event, perPage) => (setPerPage ? setPerPage(perPage) : null),
-    [setPerPage]
-  );
 
   const showSearchAndFilters = toolbarFilters !== undefined;
   const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0;
@@ -236,26 +217,6 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
                 setViewType={setViewType}
                 openColumnModal={openColumnModal}
               />
-            )}
-
-            {/* Pagination */}
-            {!props.disablePagination && !props.autoHidePagination && isXxlOrLarger && (
-              <ToolbarItem
-                visibility={{ default: 'hidden', '2xl': 'visible' }}
-                style={{ marginLeft: 18, alignSelf: 'center' }}
-              >
-                <Pagination
-                  variant={PaginationVariant.top}
-                  isCompact
-                  itemCount={itemCount}
-                  perPage={perPage}
-                  page={page}
-                  onSetPage={onSetPage}
-                  onPerPageSelect={onPerPageSelect}
-                  perPageOptions={perPageOptions}
-                  style={{ marginTop: -8, marginBottom: -8 }}
-                />
-              </ToolbarItem>
             )}
           </FlexGrowDiv>
         </ToolbarContent>
