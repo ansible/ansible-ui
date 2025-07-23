@@ -1,7 +1,7 @@
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import {
   Table /* data-codemods */,
-  Tbody,
+  Tbody as PFTbody,
   TbodyProps,
   Td,
   Th,
@@ -11,6 +11,11 @@ import {
 } from '@patternfly/react-table';
 import React, { ReactNode, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+const Tbody = styled(PFTbody)`
+  --pf-v6-c-table--cell--LineHeight: 2;
+`;
 
 type ReorderItemsProps<T extends object> = {
   /** Array of columns */
