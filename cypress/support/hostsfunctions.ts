@@ -74,7 +74,7 @@ function deleteHostDetailsView(inventoryName: string, host_type: string, hostNam
 
 function deleteAllInventoryHosts(inventory: Inventory) {
   navigateToBaseView('inventory_host', inventory.name);
-  cy.getByDataCy('select-all').check();
+  cy.get('input[name="check-all"]').check();
   cy.clickToolbarKebabAction('delete-hosts');
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
@@ -136,11 +136,11 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       navigateToHost(host_type, host.name, '[data-cy="name-column-cell"] a', inventory.name);
       cy.clickLink(/^Groups$/);
       cy.contains(group2.name);
-      cy.getByDataCy('select-all').check();
+      cy.get('input[name="check-all"]').check();
       disassociate();
       cy.contains('There are currently no groups associated with this host').should('be.visible');
       cy.clickButton(/^Associate groups$/);
-      cy.getByDataCy('select-all').check();
+      cy.get('input[name="check-all"]').check();
       cy.clickModalButton('Confirm');
       cy.contains(group.name);
       cy.contains(group2.name);
@@ -184,7 +184,7 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
   createHost(host_type, inventory.id);
   navigateToBaseView(host_type, inventory.name);
   cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 3);
-  cy.getByDataCy('select-all').check();
+  cy.get('input[name="check-all"]').check();
   cy.clickToolbarKebabAction('delete-hosts');
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();

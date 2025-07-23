@@ -84,7 +84,7 @@ describe('Execution Environments: Team access', () => {
     // https://issues.redhat.com/browse/AAP-31401
     cy.clickTab(/^Details$/, true);
     cy.clickTab(/^Team Access$/, true);
-    cy.getByDataCy('select-all').check();
+    cy.get('input[name="check-all"]').check();
     cy.clickToolbarKebabAction('remove-roles');
     cy.contains('Remove role');
     cy.clickModalConfirmCheckbox();

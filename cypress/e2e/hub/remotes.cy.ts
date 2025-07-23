@@ -1,8 +1,8 @@
 import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { AZURE_URL, SAAS_URL } from '../../support/constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { Remotes } from './constants';
-import { AZURE_URL, SAAS_URL } from '../../support/constants';
 
 describe('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
@@ -25,7 +25,7 @@ describe('Remotes', () => {
         cy.setTablePageSize('50');
         cy.filterTableBySingleText(testSignature);
         cy.getBy('tbody').find('tr').should('have.length', numberOfRemotes);
-        cy.getBy('[data-cy="select-all"]').click({ force: true });
+        cy.get('input[name="check-all"]').click({ force: true });
         cy.clickToolbarKebabAction('delete-remotes');
         cy.getBy('#confirm').click();
         cy.clickButton(/^Delete remotes$/);
@@ -47,7 +47,7 @@ describe('Remotes', () => {
       cy.contains(remote.name).should('be.visible');
       cy.getBy('[data-cy="table-view"]').click();
       cy.contains(remote.name).should('be.visible');
-      cy.getByDataCy('select-all').check();
+      cy.get('input[name="check-all"]').check();
       cy.clickToolbarKebabAction('delete-remotes');
       cy.getBy('#confirm').click();
       cy.clickButton(/^Delete remotes$/);

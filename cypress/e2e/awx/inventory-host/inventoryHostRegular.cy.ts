@@ -191,7 +191,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     cy.verifyPageTitle(groupName);
     cy.clickTab('Hosts', true);
     cy.getByDataCy('add-existing-host').click();
-    cy.getByDataCy('select-all').check();
+    cy.get('input[name="check-all"]').check();
     cy.clickModalButton('Add hosts');
     cy.getByDataCy('run-command').click();
     runCommand({

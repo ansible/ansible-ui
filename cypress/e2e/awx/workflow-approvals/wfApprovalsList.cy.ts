@@ -402,7 +402,7 @@ describe('Workflow Approvals Tests', () => {
                           jobName = wfApprovalC.name.split(' ').slice(-1).toString();
                           cy.filterTableBySearch(jobName);
                           cy.get('tbody').find('tr').should('have.length', 3);
-                          cy.getByDataCy('select-all').check();
+                          cy.get('input[name="check-all"]').check();
                           cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
                             cy.getByDataCy(`${selectorDataCy}`).click();
                           });
@@ -428,7 +428,7 @@ describe('Workflow Approvals Tests', () => {
   **/
   function deleteApprovalFromListToolbar() {
     cy.get('tbody').find('tr').should('have.length', 3);
-    cy.getByDataCy('select-all').check();
+    cy.get('input[name="check-all"]').check();
     // cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
     //   cy.getBy(`[data-cy="actions-dropdown"]`).click();
     // });

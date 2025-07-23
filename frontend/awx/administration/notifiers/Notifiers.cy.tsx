@@ -33,7 +33,7 @@ describe('Notifiers.cy.tsx', () => {
 
     it('Bulk deletion confirmation', () => {
       cy.mount(<Notifiers />);
-      cy.getByDataCy('select-all').check();
+      cy.get('input[name="check-all"]').check();
       cy.clickToolbarKebabAction('delete-notifiers');
       cy.contains('Delete notifiers').should('be.visible');
     });

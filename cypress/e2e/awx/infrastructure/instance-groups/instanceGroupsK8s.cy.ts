@@ -121,7 +121,7 @@ describe('Instance Groups: Instances Tab', () => {
         cy.get('tbody tr').should('have.length', 5);
       });
       cy.get('button').contains('Disassociate').should('have.attr', 'aria-disabled', 'true');
-      cy.getByDataCy('select-all').check();
+      cy.get('input[name="check-all"]').check();
       cy.get('button')
         .contains('Disassociate')
         .should('have.attr', 'aria-disabled', 'false')
