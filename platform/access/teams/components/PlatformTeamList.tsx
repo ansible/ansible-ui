@@ -74,8 +74,8 @@ export function PlatformTeamList() {
         emptyState={
           canCreateTeam ? (
             <PageTableEmptyState
-              title={t('No teams found.')}
-              description={t('There are currently no teams assigned to your organization.')}
+              title={t('No teams')}
+              description={t('To get started, create a team.')}
             >
               <ButtonLink
                 icon={<PlusCircleIcon />}
