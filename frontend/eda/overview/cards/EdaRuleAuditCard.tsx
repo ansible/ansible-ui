@@ -30,6 +30,7 @@ export function EdaRuleAuditCard() {
       help={t(
         'Rule audit allows for monitoring and reviewing the execution of defined rules which have been triggered by incoming events.'
       )}
+      disableBodyPadding
     >
       <PageTable
         disableBodyPadding={true}

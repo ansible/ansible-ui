@@ -39,6 +39,7 @@ export function AwxRecentInventoriesCard() {
       height="md"
       linkText={t('View all Inventories')}
       to={getPageUrl(AwxRoute.Inventories)}
+      disableBodyPadding
     >
       <PageTable<Inventory>
         disableBodyPadding={true}

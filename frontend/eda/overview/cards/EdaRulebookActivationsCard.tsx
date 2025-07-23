@@ -33,6 +33,7 @@ export function EdaRulebookActivationsCard() {
       help={t(
         'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
       )}
+      disableBodyPadding
     >
       <PageTable
         disableBodyPadding={true}

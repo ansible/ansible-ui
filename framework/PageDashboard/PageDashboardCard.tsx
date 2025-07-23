@@ -64,6 +64,8 @@ export function PageDashboardCard(props: {
   isCompact?: boolean;
 
   canCollapse?: boolean;
+
+  disableBodyPadding?: boolean;
 }) {
   const id = useID(props);
 
@@ -188,7 +190,11 @@ export function PageDashboardCard(props: {
           )}
         </CardHeader>
       )}
-      {!isCollapsed && props.children && <CardBody>{props.children}</CardBody>}
+      {!isCollapsed && props.children && (
+        <CardBody style={{ padding: props.disableBodyPadding ? 0 : undefined }}>
+          {props.children}
+        </CardBody>
+      )}
       {!isCollapsed && props.footerActionButton && (
         <CardFooter style={{ textAlign: 'end' }}>
           <Button

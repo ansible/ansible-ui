@@ -48,6 +48,7 @@ export function AwxRecentJobsCard() {
       height="md"
       linkText={t('View all Jobs')}
       to={getPageUrl(AwxRoute.Jobs)}
+      disableBodyPadding
     >
       <PageTable<Job>
         disableBodyPadding={true}
