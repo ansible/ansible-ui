@@ -8,6 +8,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
@@ -59,7 +60,9 @@ export function Users() {
   const selectOrganizationsRemoveUsers = useSelectOrganizationsRemoveUsers();
   const selectTeamsRemoveUsers = useSelectTeamsRemoveUsers();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/users/`);
+  const { data, isLoading: isLoadingUserOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/users/`
+  );
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<AwxUser>[]>(
@@ -219,39 +222,43 @@ export function Users() {
         )}
         headerActions={<ActivityStreamIcon type={'user'} />}
       />
-      <PageTable<AwxUser>
-        id="awx-users-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading users')}
-        emptyState={
-          canCreateUser ? (
-            <PageTableEmptyState
-              title={t('There are currently no users added.')}
-              description={t('Please create a user by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUrl(AwxRoute.CreateUser)}
+      {isLoadingUserOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable<AwxUser>
+          id="awx-users-table"
+          toolbarFilters={toolbarFilters}
+          toolbarActions={toolbarActions}
+          tableColumns={tableColumns}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading users')}
+          emptyState={
+            canCreateUser ? (
+              <PageTableEmptyState
+                title={t('There are currently no users added.')}
+                description={t('Please create a user by using the button below.')}
               >
-                {t('Create user')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create a user')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant={ButtonVariant.primary}
+                  href={getPageUrl(AwxRoute.CreateUser)}
+                >
+                  {t('Create user')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create a user')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+        />
+      )}
     </PageLayout>
   );
 }

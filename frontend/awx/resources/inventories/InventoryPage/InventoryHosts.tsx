@@ -1,5 +1,6 @@
 import { PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
@@ -31,7 +32,9 @@ export function InventoryHosts() {
   const toolbarActions = useInventoriesHostsToolbarActions(view);
   const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.updateItem);
 
-  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
+  const { data: hostOptions, isLoading: isLoadingHostOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/hosts/`);
   const canCreateHost = Boolean(
     hostOptions &&
       hostOptions.actions &&
@@ -56,6 +59,9 @@ export function InventoryHosts() {
   }
 
   usePersistentFilters('inventories');
+
+  if (isLoadingHostOptions) return <PageLoadingTable />;
+
   return (
     <PageLayout>
       <PageTable<AwxHost>

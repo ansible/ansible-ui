@@ -1,4 +1,5 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { PageTableViewTypeE } from '@ansible/ansible-ui-framework/PageToolbar/PageTableViewType';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
@@ -29,7 +30,9 @@ export function DecisionEnvironments() {
     tableColumns,
   });
   const toolbarActions = useDecisionEnvironmentsActions(view);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/decision-environments/`);
+  const { data, isLoading: isLoadingDecisionEnvOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(edaAPI`/decision-environments/`);
   const canCreateDE = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useDecisionEnvironmentActions(view);
   const config = useEdaConfig();
@@ -42,44 +45,48 @@ export function DecisionEnvironments() {
         description={t('Decision environments are a container image to run Ansible rulebooks.')}
         titleDocLink={useGetDocsUrl(config, 'decisionEnvironments')}
       />
-      <PageTable
-        id="eda-decision-environments-table"
-        tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
-        toolbarFilters={toolbarFilters}
-        defaultTableView={PageTableViewTypeE.Cards}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading decision environments')}
-        emptyState={
-          canCreateDE ? (
-            <PageTableEmptyState
-              title={t(
-                'There are currently no decision environments created for your organization.'
-              )}
-              description={t('Please create a decision environment by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUr(EdaRoute.CreateDecisionEnvironment)}
-                data-cy="create-decision-environment"
+      {isLoadingDecisionEnvOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable
+          id="eda-decision-environments-table"
+          tableColumns={tableColumns}
+          toolbarActions={toolbarActions}
+          toolbarFilters={toolbarFilters}
+          defaultTableView={PageTableViewTypeE.Cards}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading decision environments')}
+          emptyState={
+            canCreateDE ? (
+              <PageTableEmptyState
+                title={t(
+                  'There are currently no decision environments created for your organization.'
+                )}
+                description={t('Please create a decision environment by using the button below.')}
               >
-                {t('Create decision environment')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create a decision environment.')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-        defaultSubtitle={t('Decision Environment')}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant={ButtonVariant.primary}
+                  href={getPageUr(EdaRoute.CreateDecisionEnvironment)}
+                  data-cy="create-decision-environment"
+                >
+                  {t('Create decision environment')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create a decision environment.')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+          defaultSubtitle={t('Decision Environment')}
+        />
+      )}
     </PageLayout>
   );
 }

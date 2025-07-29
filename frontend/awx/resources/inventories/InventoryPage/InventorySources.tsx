@@ -1,5 +1,6 @@
 import { PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
@@ -46,9 +47,9 @@ export function InventorySources() {
     onInvUpdateCanceled: view.unselectItemsAndRefresh,
   });
 
-  const sourceOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventory_sources/`
-  ).data;
+  const { data: sourceOptions, isLoading: isLoadingSourceOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/inventory_sources/`);
   const canCreateSource = Boolean(
     sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']
   );
@@ -82,6 +83,8 @@ export function InventorySources() {
     { control: ['limit_reached_1'], jobs: ['status_changed'], inventories: ['status_changed'] },
     handleWebSocketMessage as (data: unknown) => void
   );
+
+  if (isLoadingSourceOptions) return <PageLoadingTable />;
 
   return (
     <PageLayout>

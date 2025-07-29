@@ -10,6 +10,7 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { PageLoadingTable } from '../../../../framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
 import { useOptions } from '../../../common/crud/useOptions';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
@@ -84,13 +85,13 @@ export function TemplatesList(props: {
     tableColumns,
   });
 
-  const { data: jobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/job_templates/`
-  );
+  const { data: jobTemplateActions, isLoading: isLoadingJobTemplateActions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/job_templates/`);
 
-  const { data: wfJobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/workflow_job_templates/`
-  );
+  const { data: wfJobTemplateActions, isLoading: isLoadingWfJobTemplateActions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/workflow_job_templates/`);
 
   const canCreateJobTemplate = Boolean(
     jobTemplateActions && jobTemplateActions.actions && jobTemplateActions.actions['POST']
@@ -99,6 +100,8 @@ export function TemplatesList(props: {
   const canCreateWFJobTemplate = Boolean(
     wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
   );
+
+  const isLoadingPermissions = isLoadingJobTemplateActions || isLoadingWfJobTemplateActions;
 
   usePersistentFilters('templates');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
@@ -157,6 +160,8 @@ export function TemplatesList(props: {
   });
 
   const canCreateJobs = canCreateJobTemplate || canCreateWFJobTemplate;
+
+  if (isLoadingPermissions) return <PageLoadingTable />;
 
   return (
     <PageTable<JobTemplate | WorkflowJobTemplate>

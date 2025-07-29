@@ -1,6 +1,7 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -35,7 +36,9 @@ export function Projects() {
   const showToastMessage = true;
   const toolbarActions = useProjectToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useProjectActions(view.unselectItemsAndRefresh, showToastMessage);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
+  const { data, isLoading: isLoadingProjectOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/projects/`
+  );
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;
   usePersistentFilters('projects');
@@ -82,40 +85,44 @@ export function Projects() {
         )}
         headerActions={<ActivityStreamIcon type={'project'} />}
       />
-      <PageTable<Project>
-        id="awx-projects-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading projects')}
-        emptyState={
-          canCreateProject ? (
-            <PageTableEmptyState
-              title={t('There are currently no projects added to your organization.')}
-              description={t('Please create a project by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUrl(AwxRoute.CreateProject)}
+      {isLoadingProjectOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable<Project>
+          id="awx-projects-table"
+          toolbarFilters={toolbarFilters}
+          toolbarActions={toolbarActions}
+          tableColumns={tableColumns}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading projects')}
+          emptyState={
+            canCreateProject ? (
+              <PageTableEmptyState
+                title={t('There are currently no projects added to your organization.')}
+                description={t('Please create a project by using the button below.')}
               >
-                {t('Create project')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create a project')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-        defaultSubtitle={t('Project')}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant={ButtonVariant.primary}
+                  href={getPageUrl(AwxRoute.CreateProject)}
+                >
+                  {t('Create project')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create a project')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+          defaultSubtitle={t('Project')}
+        />
+      )}
     </PageLayout>
   );
 }

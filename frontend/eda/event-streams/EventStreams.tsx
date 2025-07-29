@@ -1,6 +1,7 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +28,9 @@ export function EventStreams() {
     tableColumns,
   });
   const toolbarActions = useEventStreamsActions(view);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/event-streams/`);
+  const { data, isLoading: isLoadingEventStreamOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(edaAPI`/event-streams/`);
   const canCreateEventStream = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useEventStreamActions(view);
   const config = useEdaConfig();
@@ -47,40 +50,44 @@ export function EventStreams() {
         )}
         titleDocLink={useGetDocsUrl(config, 'eventStreams')}
       />
-      <PageTable
-        id="eda-event-streams-table"
-        tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
-        toolbarFilters={toolbarFilters}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading event streams')}
-        emptyState={
-          canCreateEventStream ? (
-            <PageTableEmptyState
-              title={t('There are currently no event streams created for your organization.')}
-              description={t('Please create an event stream by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant="primary"
-                href={getPageUrl(EdaRoute.CreateEventStream)}
+      {isLoadingEventStreamOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable
+          id="eda-event-streams-table"
+          tableColumns={tableColumns}
+          toolbarActions={toolbarActions}
+          toolbarFilters={toolbarFilters}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading event streams')}
+          emptyState={
+            canCreateEventStream ? (
+              <PageTableEmptyState
+                title={t('There are currently no event streams created for your organization.')}
+                description={t('Please create an event stream by using the button below.')}
               >
-                {t('Create event stream')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create an event stream')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-        defaultSubtitle={t('Event stream')}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant="primary"
+                  href={getPageUrl(EdaRoute.CreateEventStream)}
+                >
+                  {t('Create event stream')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create an event stream')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+          defaultSubtitle={t('Event stream')}
+        />
+      )}
     </PageLayout>
   );
 }

@@ -13,6 +13,7 @@ import { Job } from '../../interfaces/Job';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 
 export function AwxRecentJobsCard() {
   const getPageUrl = useGetPageUrl();
@@ -26,18 +27,26 @@ export function AwxRecentJobsCard() {
   let columns = useJobsColumns();
   columns = useDashboardColumns(columns);
 
-  const { data: jobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/job_templates/`
-  );
-  const { data: wfJobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/workflow_job_templates/`
-  );
+  const { data: jobTemplateActions, isLoading: isLoadingJobTemplateOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/job_templates/`);
+  const { data: wfJobTemplateActions, isLoading: isLoadingWFJobTemplateOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/workflow_job_templates/`);
   const canCreateJobTemplate = Boolean(
     jobTemplateActions && jobTemplateActions.actions && jobTemplateActions.actions['POST']
   );
   const canCreateWFJobTemplate = Boolean(
     wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
   );
+
+  if (isLoadingJobTemplateOptions || isLoadingWFJobTemplateOptions) {
+    return (
+      <PageDashboardCard>
+        <PageLoadingTable rows={6} />
+      </PageDashboardCard>
+    );
+  }
 
   return (
     <PageDashboardCard

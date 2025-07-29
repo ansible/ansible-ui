@@ -1,4 +1,5 @@
 import { PageTable } from '@ansible/ansible-ui-framework';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -28,10 +29,14 @@ export function GroupHosts() {
   const rowActions = useInventoriesGroupsHostsActions(view.refresh);
   const emptyStateActions = useHostsEmptyStateActions(view);
 
-  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
+  const { data: hostOptions, isLoading: isLoadingHostOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/hosts/`);
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
 
   usePersistentFilters('inventories');
+
+  if (isLoadingHostOptions) return <PageLoadingTable />;
 
   return (
     <PageTable<AwxHost>

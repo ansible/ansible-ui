@@ -12,6 +12,7 @@ import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsRespon
 import { Project } from '../../interfaces/Project';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 
 export function AwxRecentProjectsCard() {
   const view = useAwxView<Project>({
@@ -23,11 +24,21 @@ export function AwxRecentProjectsCard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
+  const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/projects/`
+  );
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
 
   let columns = useProjectsColumns();
   columns = useDashboardColumns(columns);
+
+  if (isLoadingOptions) {
+    return (
+      <PageDashboardCard>
+        <PageLoadingTable rows={6} />
+      </PageDashboardCard>
+    );
+  }
 
   return (
     <PageDashboardCard
