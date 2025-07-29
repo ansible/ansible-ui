@@ -28,7 +28,7 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
     name: 'projects',
     roles_tab_name: 'Project',
     content_type: 'eda.project',
-    role: 'Project Admin',
+    role: 'EDA Project Admin',
   },
   {
     name: 'decision-environments',
