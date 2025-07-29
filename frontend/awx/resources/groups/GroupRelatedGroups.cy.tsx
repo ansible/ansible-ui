@@ -177,8 +177,7 @@ inventories.forEach((inventory) => {
         });
         cy.get(`[data-cy="run-command"]`);
         cy.get(`[data-cy="add-group"]`);
-        cy.get(`[data-cy="actions-dropdown"]`).click();
-        cy.get(`[data-cy="disassociate-groups"]`);
+        cy.clickToolbarKebabAction('disassociate-groups');
       });
     }
   });

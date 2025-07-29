@@ -1,5 +1,6 @@
 import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -31,7 +32,9 @@ export function InventoryGroups() {
   const rowActions = useInventoriesGroupsActions();
 
   const constructed_inventory = params.inventory_type === 'constructed_inventory' ? true : false;
-  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
+  const { data: groupOptions, isLoading: isLoadingGroupOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/groups/`);
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST'] && !constructed_inventory
   );
@@ -51,6 +54,8 @@ export function InventoryGroups() {
       ? t('Please create a group by using the button below.')
       : t('Please contact your organization administrator if there is an issue with your access.');
   }
+
+  if (isLoadingGroupOptions) return <PageLoadingTable />;
 
   return (
     <PageTable<InventoryGroup>

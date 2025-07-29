@@ -1,6 +1,7 @@
 import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -30,19 +31,21 @@ export function ExecutionEnvironmentsList({
     ? tableColumns.filter((column) => column.header !== 'Organization')
     : tableColumns;
   const view = useAwxView<ExecutionEnvironment>({
-    url: url ? url : awxAPI`/execution_environments/`,
+    url: url || awxAPI`/execution_environments/`,
     toolbarFilters,
     tableColumns,
   });
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    url ? url : awxAPI`/execution_environments/`
-  );
+  const { data, isLoading: isLoadingExecutionEnvOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(url || awxAPI`/execution_environments/`);
   const rowActions = useExecutionEnvRowActions({
     onDelete: view.unselectItemsAndRefresh,
     onCopy: view.refresh,
   });
   const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useExecutionEnvToolbarActions(view);
+
+  if (isLoadingExecutionEnvOptions) return <PageLoadingTable />;
 
   return (
     <PageTable<ExecutionEnvironment>

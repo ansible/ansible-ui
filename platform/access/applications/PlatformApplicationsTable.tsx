@@ -9,6 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
@@ -46,7 +47,9 @@ export function PlatformApplicationsTable() {
   const deleteApplications = useDeleteApplications(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/applications/`);
+  const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/applications/`
+  );
   const canCreateApplication = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<Application>[]>(
@@ -120,6 +123,8 @@ export function PlatformApplicationsTable() {
 
   const canCreateApplicationAndIsSuperUser =
     canCreateApplication && activePlatformUser?.is_superuser;
+
+  if (isLoadingOptions) return <PageLoadingTable />;
 
   return (
     <PageTable<Application>

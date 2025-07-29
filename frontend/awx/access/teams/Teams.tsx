@@ -1,5 +1,6 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
@@ -27,7 +28,9 @@ export function Teams() {
   const view = useAwxView<Team>({ url: awxAPI`/teams/`, toolbarFilters, tableColumns });
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/teams/`);
+  const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/teams/`
+  );
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   usePersistentFilters('teams');
   const config = useAwxConfig();
@@ -54,40 +57,44 @@ export function Teams() {
         )}
         headerActions={<ActivityStreamIcon type={'team'} />}
       />
-      <PageTable<Team>
-        id="awx-teams-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading teams')}
-        emptyState={
-          canCreateTeam ? (
-            <PageTableEmptyState
-              title={t('No teams found')}
-              description={t('There are currently no teams assigned to your organization.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUrl(AwxRoute.CreateTeam)}
+      {isLoadingOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable<Team>
+          id="awx-teams-table"
+          toolbarFilters={toolbarFilters}
+          toolbarActions={toolbarActions}
+          tableColumns={tableColumns}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading teams')}
+          emptyState={
+            canCreateTeam ? (
+              <PageTableEmptyState
+                title={t('No teams found')}
+                description={t('There are currently no teams assigned to your organization.')}
               >
-                {t('Create team')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('No teams found')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        defaultSubtitle={t('Team')}
-        {...view}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant={ButtonVariant.primary}
+                  href={getPageUrl(AwxRoute.CreateTeam)}
+                >
+                  {t('Create team')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('No teams found')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          defaultSubtitle={t('Team')}
+          {...view}
+        />
+      )}
     </PageLayout>
   );
 }

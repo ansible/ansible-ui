@@ -1,6 +1,7 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -31,7 +32,9 @@ export function Hosts() {
 
   const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.updateItem);
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`);
+  const { data, isLoading: isLoadingHostOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/hosts/`
+  );
   const canCreateHost = Boolean(data && data.actions && data.actions['POST']);
 
   return (
@@ -55,40 +58,44 @@ export function Hosts() {
         titleDocLink={useGetDocsUrl(config, 'hosts')}
         headerActions={<ActivityStreamIcon type={'host'} />}
       />
-      <PageTable<AwxHost>
-        id="awx-hosts-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading hosts')}
-        emptyState={
-          canCreateHost ? (
-            <PageTableEmptyState
-              title={t('There are currently no hosts added')}
-              description={t('Please create a host by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUrl(AwxRoute.CreateHost)}
+      {isLoadingHostOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable<AwxHost>
+          id="awx-hosts-table"
+          toolbarFilters={toolbarFilters}
+          toolbarActions={toolbarActions}
+          tableColumns={tableColumns}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading hosts')}
+          emptyState={
+            canCreateHost ? (
+              <PageTableEmptyState
+                title={t('There are currently no hosts added')}
+                description={t('Please create a host by using the button below.')}
               >
-                {t('Create host')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create a host.')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-        defaultSubtitle={t('Host')}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant={ButtonVariant.primary}
+                  href={getPageUrl(AwxRoute.CreateHost)}
+                >
+                  {t('Create host')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create a host.')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+          defaultSubtitle={t('Host')}
+        />
+      )}
     </PageLayout>
   );
 }

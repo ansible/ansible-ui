@@ -1,6 +1,7 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -30,7 +31,9 @@ export function AuthenticatorsList() {
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/authenticators/`);
+  const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/authenticators/`
+  );
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useAuthenticatorToolbarActions(view);
   const rowActions = useAuthenticatorRowActions(view);
@@ -48,39 +51,43 @@ export function AuthenticatorsList() {
         )}
         titleDocLink={useGetDocsUrl(undefined, 'authenticationMethods')}
       />
-      <PageTable<Authenticator>
-        id="platform-authenticators-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading authentications')}
-        emptyState={
-          canCreateAuthenticator ? (
-            <PageTableEmptyState
-              title={t('There are currently no authentications added.')}
-              description={t('Please create an authentication by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUrl(PlatformRoute.CreateAuthenticator)}
+      {isLoadingOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable<Authenticator>
+          id="platform-authenticators-table"
+          toolbarFilters={toolbarFilters}
+          toolbarActions={toolbarActions}
+          tableColumns={tableColumns}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading authentications')}
+          emptyState={
+            canCreateAuthenticator ? (
+              <PageTableEmptyState
+                title={t('There are currently no authentications added.')}
+                description={t('Please create an authentication by using the button below.')}
               >
-                {t('Create authentication')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create an authentication')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant={ButtonVariant.primary}
+                  href={getPageUrl(PlatformRoute.CreateAuthenticator)}
+                >
+                  {t('Create authentication')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create an authentication')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+        />
+      )}
     </PageLayout>
   );
 }

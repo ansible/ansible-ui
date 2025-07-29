@@ -1,5 +1,6 @@
 import { PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { Button } from '@patternfly/react-core';
@@ -45,12 +46,16 @@ export function InventoryHostGroups(props: { page: string }) {
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
   const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh, hostId);
 
-  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
+  const { data: groupOptions, isLoading: isLoadingGroupOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/groups/`);
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
 
   usePersistentFilters('inventories');
+
+  if (isLoadingGroupOptions) return <PageLoadingTable />;
 
   return (
     <PageLayout>

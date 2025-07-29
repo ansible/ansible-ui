@@ -1,6 +1,7 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -22,7 +23,9 @@ export function RulebookActivations() {
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useRulebookActivationFilters();
   const tableColumns = useRulebookActivationColumns();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
+  const { data, isLoading: isLoadingActivationOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(edaAPI`/activations/`);
   const canCreateActivations = Boolean(data && data.actions && data.actions['POST']);
   const view = useEdaView<EdaRulebookActivation>({
     url: edaAPI`/activations/`,
@@ -45,42 +48,46 @@ export function RulebookActivations() {
         )}
         titleDocLink={useGetDocsUrl(config, 'rulebookActivations')}
       />
-      <PageTable
-        id="eda-rulebook-activations-table"
-        tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
-        toolbarFilters={toolbarFilters}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading rulebook activations')}
-        emptyState={
-          canCreateActivations ? (
-            <PageTableEmptyState
-              title={t(
-                'There are currently no rulebook activations created for your organization.'
-              )}
-              description={t('Please create a rulebook activation by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUrl(EdaRoute.CreateRulebookActivation)}
+      {isLoadingActivationOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable
+          id="eda-rulebook-activations-table"
+          tableColumns={tableColumns}
+          toolbarActions={toolbarActions}
+          toolbarFilters={toolbarFilters}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading rulebook activations')}
+          emptyState={
+            canCreateActivations ? (
+              <PageTableEmptyState
+                title={t(
+                  'There are currently no rulebook activations created for your organization.'
+                )}
+                description={t('Please create a rulebook activation by using the button below.')}
               >
-                {t('Create rulebook activation')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create a rulebook activation.')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-        defaultSubtitle={t('Rulebook Activation')}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant={ButtonVariant.primary}
+                  href={getPageUrl(EdaRoute.CreateRulebookActivation)}
+                >
+                  {t('Create rulebook activation')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create a rulebook activation.')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+          defaultSubtitle={t('Rulebook Activation')}
+        />
+      )}
     </PageLayout>
   );
 }

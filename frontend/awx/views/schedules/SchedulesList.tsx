@@ -1,4 +1,5 @@
 import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
@@ -77,7 +78,9 @@ export function SchedulesList(props: {
   });
   usePersistentFilters(props.resourceType ? `${props.resourceType}-schedules` : 'schedules');
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(apiEndPoint ?? awxAPI`/schedules/`);
+  const { data, isLoading: isLoadingScheduleOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(apiEndPoint ?? awxAPI`/schedules/`);
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useScheduleToolbarActions(
@@ -107,6 +110,9 @@ export function SchedulesList(props: {
       'Please contact your organization administrator if there is an issue with your access.'
     );
   }
+
+  if (isLoadingScheduleOptions) return <PageLoadingTable />;
+
   return (
     <PageTable<Schedule>
       id="awx-schedules-table"
@@ -118,15 +124,13 @@ export function SchedulesList(props: {
       emptyState={
         canCreateSchedule && !isMissingResource ? (
           <PageTableEmptyState title={emptyStateTitle} description={emptyStateDescription}>
-            {
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={pageUrl(props.createSchedulePageId, { params })}
-              >
-                {t('Create schedule')}
-              </ButtonLink>
-            }
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={pageUrl(props.createSchedulePageId, { params })}
+            >
+              {t('Create schedule')}
+            </ButtonLink>
           </PageTableEmptyState>
         ) : (
           <PageTableEmptyState

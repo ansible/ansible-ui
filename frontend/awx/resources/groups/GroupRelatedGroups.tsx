@@ -1,4 +1,5 @@
 import { PageTable } from '@ansible/ansible-ui-framework';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubeIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -29,12 +30,16 @@ export function GroupRelatedGroups() {
   const rowActions = useInventoriesGroupsActions();
   const emptyStateActions = useRelatedGroupsEmptyStateActions(view);
 
-  const groupsOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
+  const { data: groupsOptions, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/groups/`
+  );
   const canCreateGroup = Boolean(
     groupsOptions && groupsOptions.actions && groupsOptions.actions['POST']
   );
 
   const isConstructed = params.inventory_type === 'constructed_inventory';
+
+  if (isLoading) return <PageLoadingTable />;
 
   return (
     <PageTable<InventoryGroup>

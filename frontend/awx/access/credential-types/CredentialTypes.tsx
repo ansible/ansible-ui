@@ -1,5 +1,6 @@
 import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
@@ -36,7 +37,9 @@ export function CredentialTypes() {
   const toolbarActions = useCredentialTypeToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useCredentialTypeRowActions(view.unselectItemsAndRefresh);
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
+  const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/credential_types/`
+  );
 
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
 
@@ -54,39 +57,43 @@ export function CredentialTypes() {
         titleDocLink={useGetDocsUrl(config, 'credentialTypes')}
         headerActions={<ActivityStreamIcon type={'credential_type'} />}
       />
-      <PageTable<CredentialType>
-        id="awx-credential-types"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading credential types')}
-        emptyState={
-          canCreateCredentialType ? (
-            <PageTableEmptyState
-              title={t('There are currently no credential types added.')}
-              description={t('Please create a credential type by using the button below.')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant="primary"
-                href={getPageUrl(AwxRoute.CreateCredentialType)}
+      {isLoadingOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable<CredentialType>
+          id="awx-credential-types"
+          toolbarFilters={toolbarFilters}
+          toolbarActions={toolbarActions}
+          tableColumns={tableColumns}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading credential types')}
+          emptyState={
+            canCreateCredentialType ? (
+              <PageTableEmptyState
+                title={t('There are currently no credential types added.')}
+                description={t('Please create a credential type by using the button below.')}
               >
-                {t('Create credential type')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('You do not have permission to create a credential type.')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
-        }
-        {...view}
-      />
+                <ButtonLink
+                  icon={<PlusCircleIcon />}
+                  variant="primary"
+                  href={getPageUrl(AwxRoute.CreateCredentialType)}
+                >
+                  {t('Create credential type')}
+                </ButtonLink>
+              </PageTableEmptyState>
+            ) : (
+              <PageTableEmptyState
+                icon={CubesIcon}
+                title={t('You do not have permission to create a credential type.')}
+                description={t(
+                  'Please contact your organization administrator if there is an issue with your access.'
+                )}
+              />
+            )
+          }
+          {...view}
+        />
+      )}
     </PageLayout>
   );
 }

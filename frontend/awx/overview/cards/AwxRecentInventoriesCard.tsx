@@ -12,12 +12,15 @@ import { Inventory } from '../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 
 export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventories/`);
+  const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/inventories/`
+  );
   const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
 
   const view = useAwxView<Inventory>({
@@ -29,6 +32,14 @@ export function AwxRecentInventoriesCard() {
 
   let columns = useInventoriesColumns();
   columns = useDashboardColumns(columns);
+
+  if (isLoadingOptions) {
+    return (
+      <PageDashboardCard>
+        <PageLoadingTable rows={6} />
+      </PageDashboardCard>
+    );
+  }
 
   return (
     <PageDashboardCard

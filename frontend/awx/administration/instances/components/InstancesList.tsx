@@ -1,6 +1,7 @@
 import { IPageAction, ITableColumn, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { Button, ButtonVariant } from '@patternfly/react-core';
@@ -38,9 +39,9 @@ export function InstancesList(props: {
   const rowActions = useRowActions(view.unselectItemsAndRefresh);
   const toolbarActions = useToolbarActions(view);
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    instanceGroupId ? awxAPI`/instance_groups/${instanceGroupId}/instances/` : awxAPI`/instances/`
-  );
+  const { data, isLoading: isLoadingInstanceOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(instanceGroupId ? awxAPI`/instance_groups/${instanceGroupId}/instances/` : awxAPI`/instances/`);
   const canCreateInstance = Boolean(data && data.actions && data.actions['POST']);
 
   usePersistentFilters('instances');
@@ -65,6 +66,8 @@ export function InstancesList(props: {
       'Please contact your organization administrator if there is an issue with your access.'
     );
   }
+
+  if (isLoadingInstanceOptions) return <PageLoadingTable />;
 
   return (
     <PageTable<Instance>

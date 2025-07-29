@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 
 import { PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -30,7 +31,9 @@ export function CredentialTypeCredentials() {
     tableColumns,
   });
   const toolbarActions = useCredentialsActions(view);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/eda-credentials/`);
+  const { data, isLoading: isLoadingCredentialOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(edaAPI`/eda-credentials/`);
   const canCreateCredential = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useCredentialActions(view);
   const noCredentialsState = (
@@ -56,6 +59,9 @@ export function CredentialTypeCredentials() {
       )}
     />
   );
+
+  if (isLoadingCredentialOptions) return <PageLoadingTable />;
+
   return (
     <PageLayout>
       <PageTable
