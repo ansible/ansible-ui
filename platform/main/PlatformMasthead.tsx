@@ -21,6 +21,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import AAPLogo from '../assets/aap-logo.svg?react';
 import RedHatIcon from '../assets/redhat-icon.svg?react';
+import { useRssNotifications } from '../notifications/useRssNotifications';
 import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
@@ -33,6 +34,7 @@ export function PlatformMasthead() {
   const pageNavigate = usePageNavigate();
   useAwxNotifications();
   useHubNotifications();
+  useRssNotifications();
   const isSmOrLarger = useBreakpoint('sm');
   const [_dialog, setDialog] = usePageDialog();
   const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
