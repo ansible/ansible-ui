@@ -129,6 +129,7 @@ export function useAwxNotifications() {
         title: t('Workflow Approvals'),
         notifications:
           data?.results.map((workflow_approval) => ({
+            id: workflow_approval.id.toString(),
             title: workflow_approval.name,
             description: workflow_approval.summary_fields.workflow_job?.name,
             timestamp: workflow_approval.created,

@@ -89,6 +89,7 @@ export function useHubNotifications() {
         title: t('Collection Approvals'),
         notifications:
           result?.data.map((approval) => ({
+            id: approval.collection_version?.name ?? '',
             title: approval.collection_version?.name ?? '',
             description: t('Namespace: ') + (approval.collection_version?.namespace ?? ''),
             // timestamp: approval.created,
