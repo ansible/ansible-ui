@@ -10,13 +10,13 @@ import { ExternalLink } from '../hub/common/ExternalLink';
 import { useGetDocsUrl } from './utils/useGetDocsUrl';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
-  color: var(--pf-global--warning-color--100);
+  color: var(--pf-t--global--icon--color--status--warning--default);
   margin-left: 18px;
   cursor: pointer;
 `;
 
 const ExclamationTrianglePopover = styled(PFExclamationTriangleIcon)`
-  color: var(--pf-global--warning-color--100);
+  color: var(--pf-t--global--icon--color--status--warning--default);
   margin-left: 18px;
   cursor: pointer;
 `;

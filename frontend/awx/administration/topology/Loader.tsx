@@ -11,7 +11,7 @@ import { TopologyIcon as PFTopologyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 const EmptyState = styled(PFEmptyState)`
-  --pf-c-empty-state--m-lg--MaxWidth: none;
+  --pf-v6-c-empty-state--m-lg--MaxWidth: none;
   min-height: 250px;
 `;
 
