@@ -204,7 +204,7 @@ interface CollectionContent {
 }
 
 const hoverOrSelected = `
-    border-bottom: 2px solid var(--pf-global--link--Color);
+    border-bottom: 2px solid var(--pf-t--global--text--color--link--default);
     padding-bottom: 2px;
     margin-bottom: -4px;
     cursor: pointer;

@@ -17,7 +17,7 @@ import { MappingAttributesSubform } from './MappingAttributesSubform';
 export const MappingFieldsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 24px 24px;
-  gap: var(--pf-v5-l-grid--m-gutter--GridGap);
+  gap: var(--pf-t--global--spacer--md);
 
   & > button {
     justify-self: start;
