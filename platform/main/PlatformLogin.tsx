@@ -13,14 +13,13 @@ export function PlatformLogin(props: { children: ReactNode }) {
   const { activePlatformUser } = usePlatformActiveUser();
   const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
   const { t } = useTranslation();
-
   const brandImg = options?.custom_logo ? (
     <img src={options.custom_logo} alt={t('Custom logo')} style={{ height: 64 }} />
   ) : (
     <AAPLogo style={{ height: 64, color: 'white' }} />
   );
 
-  if (activePlatformUser === undefined) {
+  if (activePlatformUser === undefined || options === undefined) {
     return <LoadingState />;
   }
 
@@ -31,6 +30,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
         onSuccess={() => void mutate(() => true, undefined)}
         authOptions={options && options?.ssos.length > 0 ? options?.ssos : undefined}
         showLoginForm={options?.show_login_form ?? true}
+        externalLoginUrl={options?.login_redirect_override}
         brandImg={brandImg}
         brandImgAlt={process.env.PRODUCT as unknown as string}
         textContent={options?.custom_login_info}
