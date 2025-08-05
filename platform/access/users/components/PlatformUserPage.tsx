@@ -32,9 +32,9 @@ export function PlatformUserPage() {
     { label: t('Roles'), page: PlatformRoute.UserRoles },
   ];
 
-  // add tokens tab if the user from params(URL path) matches active user
-  if (activeUser?.id !== undefined && activeUser?.id.toString() === params.id) {
-    pageTabs.push({ label: t('Tokens'), page: PlatformRoute.AAPUserTokens });
+  if (activeUser && activeUser.id.toString() === params.id) {
+    pageTabs.push({ label: t('API Tokens'), page: PlatformRoute.UserApiTokens });
+    pageTabs.push({ label: t('Legacy Tokens'), page: PlatformRoute.UserLegacyTokens });
   }
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

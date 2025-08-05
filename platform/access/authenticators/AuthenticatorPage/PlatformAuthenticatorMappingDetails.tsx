@@ -5,14 +5,14 @@ import {
   PageLayout,
 } from '@ansible/ansible-ui-framework';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useParams } from 'react-router';
-import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
-import { useMappingColumns } from '../hooks/useMappingColumns';
 import { Divider, Label, LabelGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
 import React from 'react';
+import { useParams } from 'react-router';
+import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useMappingColumns } from '../hooks/useMappingColumns';
 
 interface MapBase {
   map_type: AuthenticatorMapType;
@@ -175,7 +175,7 @@ function GroupsSubsection(props: { mapping: AuthenticatorMap }) {
 
   groups.forEach((group) => {
     if (typeof group === 'string') {
-      groupDetails.push(<Label>{group}</Label>);
+      groupDetails.push(<Label key={group}>{group}</Label>);
     }
   });
   return (

@@ -1,22 +1,19 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
-import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router';
-import { ApplicationClientSecretModal } from '../access/applications/ApplicationPage/ApplicationClientSecretModal';
-import { PlatformApplicationPage } from '../access/applications/ApplicationPage/PlatformApplicationPage';
-import { PlatformApplicationPageDetails } from '../access/applications/ApplicationPage/PlatformApplicationPageDetails';
-import { PlatformApplicationPageTokens } from '../access/applications/ApplicationPage/PlatformApplicationPageTokens';
+import { ApiTokensTable } from '../access/api-tokens/ApiTokensTable';
+import { OAuthApplication } from '../access/oauth-applications/OAuthApplication';
+import { OAuthApplicationDetails } from '../access/oauth-applications/OAuthApplicationDetails';
 import {
-  CreatePlatformApplication,
-  EditPlatformApplication,
-} from '../access/applications/PlatformApplicationForm';
-import { PlatformGatewayApplications } from '../access/applications/PlatformGatewayApplications';
+  CreateOAuthApplication,
+  EditOAuthApplication,
+} from '../access/oauth-applications/OAuthApplicationForm';
+import { OAuthGatewayApplications } from '../access/oauth-applications/OAuthGatewayApplications';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformApplicationsRoutes() {
   const { t } = useTranslation();
-  const [platformAppModalSource, setPlatformAppModalSource] = useState<Application>();
 
   const applicationsRoutes = useMemo<PageNavigationItem[]>(
     () => [
@@ -24,55 +21,41 @@ export function useGetPlatformApplicationsRoutes() {
         id: PlatformRoute.Applications,
         label: t('OAuth Applications'),
         path: 'applications',
-        element: <PlatformGatewayApplications />,
+        element: <OAuthGatewayApplications />,
       },
       {
         id: PlatformRoute.ApplicationPage,
-        path: 'applications/:id',
-        element: (
-          <>
-            <PlatformApplicationPage />
-            {platformAppModalSource && (
-              <ApplicationClientSecretModal
-                onClose={setPlatformAppModalSource}
-                applicationModalSource={platformAppModalSource}
-              ></ApplicationClientSecretModal>
-            )}
-          </>
-        ),
+        path: 'applications/:applicationId',
+        element: <OAuthApplication />,
         children: [
           {
             id: PlatformRoute.ApplicationDetails,
             path: 'details',
-            element: <PlatformApplicationPageDetails />,
-          },
-          {
-            path: '',
-            element: <Navigate to="details" />,
+            element: <OAuthApplicationDetails />,
           },
           {
             id: PlatformRoute.ApplicationTokens,
             path: 'tokens',
-            element: <PlatformApplicationPageTokens />,
+            element: <ApiTokensTable />,
+          },
+          {
+            path: '',
+            element: <Navigate to="details" />,
           },
         ],
       },
       {
         id: PlatformRoute.CreateApplication,
         path: 'applications/create',
-        element: (
-          <CreatePlatformApplication
-            onSuccessfulCreate={(app: Application) => setPlatformAppModalSource(app)}
-          />
-        ),
+        element: <CreateOAuthApplication />,
       },
       {
         id: PlatformRoute.EditApplication,
         path: 'applications/:id/edit',
-        element: <EditPlatformApplication />,
+        element: <EditOAuthApplication />,
       },
     ],
-    [t, platformAppModalSource]
+    [t]
   );
   return applicationsRoutes;
 }

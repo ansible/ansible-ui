@@ -92,6 +92,7 @@ const config: VitestUserConfig = {
   },
   test: {
     coverage: {
+      all: true,
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',

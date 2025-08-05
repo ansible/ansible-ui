@@ -1,21 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { ErrorAlert } from './ErrorAlert';
-
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        Errors: 'Errors',
-        Error: 'Error',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
 
 describe('ErrorAlert', () => {
   test('renders string error correctly', () => {

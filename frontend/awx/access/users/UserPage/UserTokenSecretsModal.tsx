@@ -1,13 +1,6 @@
 import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import {
-  ClipboardCopy,
-  ClipboardCopyVariant,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  ModalVariant,
-} from '@patternfly/react-core';
+import { ClipboardCopy, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { SetStateAction } from 'react';
 import { Token } from '../../../interfaces/Token';
@@ -34,15 +27,11 @@ export function UserTokenSecretsModal(props: {
           numberOfColumns="single"
         >
           <PageDetail label={t`Token`}>
-            <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
-              {String(token ?? '')}
-            </ClipboardCopy>
+            <ClipboardCopy isReadOnly>{String(token ?? '')}</ClipboardCopy>
           </PageDetail>
           {refresh_token && (
             <PageDetail label={t`Refresh Token`}>
-              <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
-                {refresh_token}
-              </ClipboardCopy>
+              <ClipboardCopy isReadOnly>{refresh_token}</ClipboardCopy>
             </PageDetail>
           )}
           <PageDetail label={t`Expires`}>{formatDateString(props.newToken.expires)}</PageDetail>
