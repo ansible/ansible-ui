@@ -45,5 +45,21 @@ describe('If SaaS Build', () => {
           }
         });
     });
+    it('checks login redirect override', () => {
+      cy.get('[data-cy="page-navigation"]').then((nav) => {
+        if (nav.is(':visible')) {
+          cy.get(`[data-cy="platform-gateway-settings"]`).click({ force: true });
+        } else {
+          cy.get('[data-cy="nav-toggle"]').click();
+          cy.get(`[data-cy="platform-gateway-settings"]`).click({ force: true });
+        }
+      });
+      cy.clickButton(/^Edit platform gateway settings$/);
+      cy.getByDataCy('login-redirect-override').clear().type('https://www.google.com');
+      cy.getByDataCy('confirm-login-redirect-override').clear().type('https://www.google.com');
+      cy.getByDataCy('Submit').click();
+      cy.platformLogout();
+      cy.url().should('be.equal', 'https://www.google.com');
+    });
   });
 });

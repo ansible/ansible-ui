@@ -24,6 +24,9 @@ import { AuthOption, SocialAuthLogin } from '../SocialAuthLogin';
 import { validateUrlPath } from './validateUrlPath';
 
 export function AnsibleLogin(props: {
+  //** Url for external authentication service where users will login if login_redirect_override is set */
+  externalLoginUrl?: string;
+
   /** Title for the login main body header of the login page */
   loginTitle?: string;
 
@@ -150,7 +153,10 @@ export function AnsibleLogin(props: {
       usernameInput.setAttribute('autocomplete', 'off');
     }
   }, []);
-
+  if (props.externalLoginUrl) {
+    window.location.replace(props.externalLoginUrl);
+    return null;
+  }
   // Need to use component version of PatternFly's LoginPage
   // because we need to be able to use a component for the brand image
   // SEE: https://github.com/patternfly/patternfly-react/blob/main/packages/react-core/src/components/LoginPage/LoginPage.tsx
