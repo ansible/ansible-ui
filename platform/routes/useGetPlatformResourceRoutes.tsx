@@ -93,11 +93,6 @@ export function useGetPlatformResourceRoutes() {
         element: <PlatformAwxUser route={PlatformRoute.UserRoles} />,
       },
       {
-        id: AwxRoute.UserTokens,
-        path: 'controller/user/:id/tokens',
-        element: <PlatformAwxUser route={PlatformRoute.AwxUserTokens} />,
-      },
-      {
         id: AwxRoute.TeamPage,
         path: 'controller/team/:id',
         element: <PlatformAwxTeam />,

@@ -22,6 +22,20 @@ import { useHubNavigation } from '@ansible/hub-ui/main/useHubNavigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate } from 'react-router';
+import { ApiTokenForm } from '../access/api-tokens/ApiTokenForm';
+import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
+import { ApiTokensPage } from '../access/api-tokens/ApiTokensPage';
+import { LegacyApplication } from '../access/legacy/legacy-applications/LegacyApplication';
+import { LegacyApplicationDetails } from '../access/legacy/legacy-applications/LegacyApplicationDetails';
+import {
+  CreateLegacyApplication,
+  EditLegacyApplication,
+} from '../access/legacy/legacy-applications/LegacyApplicationForm';
+import { LegacyApplications } from '../access/legacy/legacy-applications/LegacyApplications';
+import { LegacyTokenForm } from '../access/legacy/legacy-tokens/LegacyTokenForm';
+import { LegacyTokenPage } from '../access/legacy/legacy-tokens/LegacyTokenPage';
+import { LegacyTokensPage } from '../access/legacy/legacy-tokens/LegacyTokensPage';
+import { LegacyTokensTable } from '../access/legacy/legacy-tokens/LegacyTokensTable';
 import { Lightspeed } from '../lightspeed/Lightspeed';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
@@ -357,6 +371,109 @@ function usePlatformAccessNavigation(): PageNavigationItem {
   if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
     platformAccessRouteChildren.push(...applications);
   }
+
+  platformAccessRouteChildren.push({
+    id: PlatformRoute.ApiTokens,
+    label: t('API Tokens'),
+    path: 'api-tokens',
+    children: [
+      {
+        id: PlatformRoute.CreateApiToken,
+        path: 'create',
+        element: <ApiTokenForm />,
+      },
+      {
+        id: PlatformRoute.EditApiToken,
+        path: ':tokenid/edit',
+        element: <ApiTokenForm />,
+      },
+      {
+        id: PlatformRoute.ApiTokenPage,
+        path: ':tokenid',
+        element: <ApiTokenPage />,
+      },
+      {
+        path: '',
+        element: <ApiTokensPage />,
+      },
+    ],
+  });
+
+  platformAccessRouteChildren.push({
+    label: t('Legacy Access'),
+    path: 'legacy-access',
+    children: [
+      {
+        id: PlatformRoute.LegacyApplications,
+        label: t('Legacy Applications'),
+        path: 'legacy-applications',
+        children: [
+          {
+            id: PlatformRoute.CreateLegacyApplication,
+            path: 'create',
+            element: <CreateLegacyApplication />,
+          },
+          {
+            id: PlatformRoute.EditLegacyApplication,
+            path: ':applicationId/edit',
+            element: <EditLegacyApplication />,
+          },
+          {
+            id: PlatformRoute.LegacyApplicationPage,
+            element: <LegacyApplication />,
+            path: ':applicationId',
+            children: [
+              {
+                id: PlatformRoute.LegacyApplicationDetails,
+                path: 'details',
+                element: <LegacyApplicationDetails />,
+              },
+              {
+                id: PlatformRoute.LegacyApplicationTokens,
+                path: 'tokens',
+                element: <LegacyTokensTable />,
+              },
+              {
+                path: '',
+                element: <Navigate to="details" />,
+              },
+            ],
+          },
+          {
+            path: '',
+            element: <LegacyApplications />,
+          },
+        ],
+      },
+      {
+        id: PlatformRoute.LegacyTokens,
+        label: t('Legacy Tokens'),
+        path: 'legacy-tokens',
+        children: [
+          {
+            id: PlatformRoute.CreateLegacyToken,
+            path: 'create',
+            element: <LegacyTokenForm />,
+          },
+          {
+            id: PlatformRoute.EditLegacyToken,
+            path: ':tokenid/edit',
+            element: <LegacyTokenForm />,
+          },
+          {
+            id: PlatformRoute.LegacyTokenPage,
+            path: ':tokenid',
+            element: <LegacyTokenPage />,
+          },
+          {
+            path: '',
+            element: <LegacyTokensPage />,
+          },
+        ],
+      },
+    ],
+  });
+
   return {
     id: PlatformRoute.Access,
     label: t('Access Management'),

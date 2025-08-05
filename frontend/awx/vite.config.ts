@@ -82,6 +82,7 @@ export default defineConfig({
   },
   test: {
     coverage: {
+      all: true,
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',

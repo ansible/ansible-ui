@@ -20,7 +20,7 @@ import { Token } from '../../interfaces/Token';
 import { AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 
-export function CreateUserToken(props: { onSuccessfulCreate: (newToken: Token) => void }) {
+export function AwxCreateUserToken(props: { onSuccessfulCreate: (newToken: Token) => void }) {
   const params = useParams<{ id: string }>();
   const { activeAwxUser } = useAwxActiveUser();
   const pageNavigate = usePageNavigate();
@@ -35,13 +35,13 @@ export function CreateUserToken(props: { onSuccessfulCreate: (newToken: Token) =
   if (!activeAwxUser) return <LoadingPage breadcrumbs tabs />;
 
   return activeAwxUser?.id.toString() === params.id ? (
-    <CreateUserTokenInternal user={activeAwxUser} onCreate={props.onSuccessfulCreate} />
+    <AwxCreateUserTokenInternal user={activeAwxUser} onCreate={props.onSuccessfulCreate} />
   ) : (
     <></>
   );
 }
 
-function CreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken: Token) => void }) {
+function AwxCreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken: Token) => void }) {
   const { user } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();

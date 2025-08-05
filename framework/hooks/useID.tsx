@@ -17,14 +17,26 @@ export function getID(
   }
 
   if (props.name) {
-    return props.name.toLowerCase().replace(/ /g, '-').replace(/_/g, '-').replace(/\./g, '-');
+    return String(props.name)
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/_/g, '-')
+      .replace(/\./g, '-');
   }
 
   if (props.title) {
-    return props.title.toLowerCase().replace(/ /g, '-').replace(/_/g, '-').replace(/\./g, '-');
+    return String(props.title)
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/_/g, '-')
+      .replace(/\./g, '-');
   }
 
   if (props.label) {
-    return props.label.toLowerCase().replace(/ /g, '-').replace(/_/g, '-').replace(/\./g, '-');
+    return String(props.label)
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/_/g, '-')
+      .replace(/\./g, '-');
   }
 }

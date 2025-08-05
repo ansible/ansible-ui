@@ -20,6 +20,7 @@ export interface Token {
   user: number;
   application: number;
   expires: string;
+  last_used: string | null;
   scope: string;
   /** Token */
   token?: string;

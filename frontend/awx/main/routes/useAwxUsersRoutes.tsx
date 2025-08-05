@@ -12,7 +12,7 @@ import { UserTokenDetails } from '../../access/users/UserPage/UserTokenDetails';
 import { UserTokenPage } from '../../access/users/UserPage/UserTokenPage';
 import { UserTokenSecretsModal } from '../../access/users/UserPage/UserTokenSecretsModal';
 import { UserTokens } from '../../access/users/UserPage/UserTokens';
-import { CreateUserToken } from '../../access/users/UserTokenForm';
+import { AwxCreateUserToken } from '../../access/users/UserTokenForm';
 import { Users } from '../../access/users/Users';
 import { AddRolesToUser } from '../../access/users/components/AddRolesToUser';
 import { Token } from '../../interfaces/Token';
@@ -82,7 +82,7 @@ export function useAwxUsersRoutes() {
         {
           id: AwxRoute.CreateUserToken,
           path: ':id/tokens/create',
-          element: <CreateUserToken onSuccessfulCreate={(t: Token) => setNewUserToken(t)} />,
+          element: <AwxCreateUserToken onSuccessfulCreate={(t: Token) => setNewUserToken(t)} />,
         },
         {
           id: AwxRoute.UserTokenPage,

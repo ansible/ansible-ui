@@ -1,5 +1,5 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
-import { CreateUserToken } from './UserTokenForm';
+import { AwxCreateUserToken } from './UserTokenForm';
 
 describe('CreateUserToken', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('CreateUserToken', () => {
 
   it('renders form for creating user token', () => {
     const onCreateFn = cy.spy();
-    cy.mount(<CreateUserToken onSuccessfulCreate={onCreateFn} />, {
+    cy.mount(<AwxCreateUserToken onSuccessfulCreate={onCreateFn} />, {
       path: '/users/:id/tokens/create',
       initialEntries: ['/users/20/tokens/create'],
     });
