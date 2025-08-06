@@ -25,7 +25,7 @@ export function useQueryPlatformOptions<
         url += `&${options.orderQuery}=${queryOptions.next}`;
       }
       if (queryOptions.search) {
-        url += `&${options.labelKey as string}__icontains=${queryOptions.search}`;
+        url += `&${options.labelKey as string}__icontains=${encodeURIComponent(queryOptions.search)}`;
       }
       const itemsResponse = await requestGet<PlatformItemsResponse<ItemT>>(url);
       const remaining = itemsResponse.count - itemsResponse.results.length;
