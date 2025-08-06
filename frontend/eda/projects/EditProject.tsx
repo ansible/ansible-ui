@@ -72,7 +72,9 @@ function ProjectCreateInputs() {
           label={t('Source control URL')}
           placeholder={t('Enter source control URL')}
           labelHelpTitle={t('Source control URL')}
-          labelHelp={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
+          labelHelp={t(
+            'HTTP[S] or SSH protocol address of a repository, such as GitHub or GitLab.'
+          )}
         />
         <PageFormTextInput<EdaProjectCreate>
           name="proxy"
@@ -182,6 +184,16 @@ function ProjectEditInputs() {
           labelHelpTitle={t('Source control type')}
           labelHelp={t('There is currently only one source control available for use.')}
           placeholder={t('Git')}
+        />
+        <PageFormTextInput<EdaProjectCreate>
+          name="url"
+          isRequired={true}
+          label={t('Source control URL')}
+          placeholder={t('Enter source control URL')}
+          labelHelpTitle={t('Source control URL')}
+          labelHelp={t(
+            'HTTP[S] or SSH protocol address of a repository, such as GitHub or GitLab.'
+          )}
         />
         <PageFormTextInput<EdaProjectCreate>
           name="proxy"

@@ -63,6 +63,7 @@ describe('Edit Project', () => {
       name: 'Organization 5',
     },
     project_type: { id: 1, name: 'Source control' },
+    url: 'test.example.com',
   };
 
   beforeEach(() => {
@@ -86,10 +87,14 @@ describe('Edit Project', () => {
     cy.get('[data-cy="name"]').should('have.value', 'Sample Project');
     cy.get('[data-cy="name"]').clear();
     cy.get('[data-cy="name"]').type('Modified Project');
+    cy.get('[data-cy="url"]').should('have.value', 'test.example.com');
+    cy.get('[data-cy="url"]').clear();
+    cy.get('[data-cy="url"]').type('test2.example.com');
     cy.get('[data-cy="Submit"]').clickButton(/^Save project$/);
     cy.intercept('PATCH', edaAPI`/projects/`, (req) => {
       expect(req.body).to.contain({
         name: 'Modified Project',
+        url: 'test2.example.com',
       });
     });
   });
