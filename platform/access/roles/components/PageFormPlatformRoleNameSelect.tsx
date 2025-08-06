@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 
 export function PageFormPlatformRoleNameSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -27,6 +28,15 @@ export function PageFormPlatformRoleNameSelect<
   const { t } = useTranslation();
   const queryOptions = useQueryRoleOptions(props.contentType);
 
+  const writeInOption = useCallback(
+    (searchString: string) =>
+      ({
+        label: searchString,
+        value: searchString,
+      }) as PageSelectOption<PathValue<TFieldValues, TFieldName>>,
+    []
+  );
+
   return (
     <PageFormAsyncSingleSelect<TFieldValues, TFieldName>
       name={props.name}
@@ -40,6 +50,7 @@ export function PageFormPlatformRoleNameSelect<
       queryLabel={(name: string) => name}
       isRequired={props.isRequired}
       onChange={props.onChange}
+      writeInOption={writeInOption}
     />
   );
 }
@@ -52,7 +63,7 @@ function useQueryRoleOptions(contentType?: string | null): PageAsyncSelectOption
         url += `&order_by=${queryOptions.next}`;
       }
       if (queryOptions.search) {
-        url += `&name__icontains=${queryOptions.search}`;
+        url += `&name__icontains=${encodeURIComponent(queryOptions.search)}`;
       }
       const itemsResponse = await requestGet<PlatformItemsResponse<PlatformRole>>(url);
       const remaining = itemsResponse.count - itemsResponse.results.length;
