@@ -9,7 +9,15 @@ import {
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { requestPut } from '@ansible/common-ui/crud/Data';
-import { Button } from '@patternfly/react-core';
+import {
+  Button,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+} from '@patternfly/react-core';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router';
 import { PlatformRoute } from '../main/PlatformRoutes';
@@ -17,7 +25,8 @@ import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewaySettingsOption, UrlOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 import { useRevertAllGatewaySettingsModal } from './useRevertAllGatewaySettingsModal';
-import { useWatch } from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 
 export function GatewaySettingsEdit(props: { categoryId?: string }) {
   const { t } = useTranslation();
@@ -32,38 +41,47 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
 
   const categories = useGatewaySettingsCategories(options);
   const category = categories.find((category) => category.id === props.categoryId);
+
   if (!category) {
     return null;
   }
+
+  const handleSubmit = async (values: Record<string, unknown>) => {
+    const { CONFIRM_LOGIN_REDIRECT_OVERRIDE, CSRF_TRUSTED_ORIGINS, ...submitValues } = values;
+
+    // Process CSRF_TRUSTED_ORIGINS array
+    const processedCSRF = Array.isArray(CSRF_TRUSTED_ORIGINS)
+      ? CSRF_TRUSTED_ORIGINS.filter((url: string) => url && url.trim() !== '').map((url: string) =>
+          url.trim()
+        )
+      : [];
+
+    // Handle custom logo file upload
+    if ('custom_logo' in submitValues && submitValues.custom_logo instanceof File) {
+      const ext = submitValues.custom_logo.name.split('.').pop()?.toLowerCase();
+      if (['gif', 'jpg', 'jpeg', 'png'].includes(ext || '')) {
+        submitValues.custom_logo = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(values.custom_logo as Blob);
+        });
+      }
+    }
+
+    await requestPut(gatewayAPI`/settings/all/`, {
+      ...submitValues,
+      CSRF_TRUSTED_ORIGINS: processedCSRF,
+    });
+    await refresh();
+    pageNavigate(PlatformRoute.GatewaySettings);
+  };
+
   return (
     <PageLayout>
       <PageHeader title={category.title} description={category.description} />
       <PageForm
         submitText={t('Save platform gateway settings')}
-        onSubmit={async (values) => {
-          const { CONFIRM_LOGIN_REDIRECT_OVERRIDE, ...submitValues } = values;
-          if ('custom_logo' in submitValues && submitValues.custom_logo instanceof File) {
-            // get the extension of the file
-            const ext = submitValues.custom_logo.name.split('.').pop()?.toLowerCase();
-            switch (ext) {
-              case 'gif':
-              case 'jpg':
-              case 'jpeg':
-              case 'png':
-                {
-                  submitValues.custom_logo = await new Promise<string>((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result as string);
-                    reader.readAsDataURL(values.custom_logo as Blob);
-                  });
-                }
-                break;
-            }
-          }
-          await requestPut(gatewayAPI`/settings/all/`, submitValues);
-          await refresh();
-          pageNavigate(PlatformRoute.GatewaySettings);
-        }}
+        onSubmit={handleSubmit}
         onCancel={() => pageNavigate(PlatformRoute.GatewaySettings)}
         defaultValue={settings}
         additionalActions={
@@ -84,19 +102,18 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
           <PageFormSection title={section.title} key={section.title}>
             {Object.keys(section.options).map((key) => {
               const option = options[key];
-              /**
-               * The if block below is needed because the Gateway token name field
-               * should be disabled.  If a user edits it, the platform breaks.  From the api
-               * this field has a read_only value of false, which makes the field active and
-               * editable.  This should be fixed on the api side. Here is the issue
-               * https://issues.redhat.com/browse/AAP-26871
-               */
+              // Gateway token name should be read-only
               if (key === 'gateway_token_name') {
                 option.read_only = true;
               }
               if (key === 'LOGIN_REDIRECT_OVERRIDE' && option.type === 'url') {
                 return <LoginRedirectOverrideInputs key={key} name={key} option={option} />;
               }
+
+              if (key === 'CSRF_TRUSTED_ORIGINS') {
+                return <CSRFTrustedOriginsInputs key={key} name={key} />;
+              }
+
               switch (option.type) {
                 case 'string':
                   return (
@@ -173,7 +190,7 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                     />
                   );
                 default:
-                  return <div>{t(`Unsupported settings type`)}</div>;
+                  return <div key={key}>{t('Unsupported settings type')}</div>;
               }
             })}
           </PageFormSection>
@@ -226,5 +243,96 @@ export function LoginRedirectOverrideInputs(props: {
         defaultValue={LOGINREDIRECT}
       />
     </>
+  );
+}
+
+export function CSRFTrustedOriginsInputs({ name }: { name: string }) {
+  const { t } = useTranslation();
+  const { control } = useFormContext();
+  const isValidUrl = useIsValidUrl();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name,
+  });
+
+  // Initialize with at least one empty field if none exist (run only once on mount)
+  useEffect(() => {
+    if (fields.length === 0) {
+      append('');
+    }
+  }, [append, fields.length]); // Empty dependency array = runs only once on mount
+  const validate = (url: string) => {
+    /**If there is not string in the input it is valid.  This is an optional field. */
+    if (!url.trim().length) return true;
+    /**
+     * The API expects a url formatted like https://www.example.com, not https://www.example.com/
+     * The difference is the trailing slash, and anything that might come after it is not allowed.
+     */
+    try {
+      const parsed = new URL(url);
+      if (url.endsWith(`${parsed.pathname}`)) {
+        return t(`Trusted origins must be http protocol and host name only: ${url}`);
+      }
+      return isValidUrl(url);
+    } catch (error) {
+      // Handle URL parsing errors - check for specific error types
+      if (error instanceof TypeError) {
+        return t('Invalid URL format - please check the URL syntax');
+      }
+      return t('Invalid URL');
+    }
+  };
+  return (
+    <PageFormSection title={t('CSRF trusted origins list')} singleColumn>
+      {fields.map((field, index) => (
+        <div key={field.id} style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ flexGrow: 1 }}>
+            <Controller
+              name={`${name}.${index}`}
+              rules={{ validate: validate }}
+              control={control}
+              render={({ field: { ...rest }, fieldState: { error } }) => {
+                return (
+                  <>
+                    <TextInput
+                      id={`link-url-${index}`}
+                      data-cy={`link-url-${index}`}
+                      {...rest}
+                      type="url"
+                      placeholder={t('Enter trusted origin URL')}
+                    />
+                    {error ? (
+                      <FormHelperText>
+                        <HelperText>
+                          <HelperTextItem variant="error">{error?.message}</HelperTextItem>
+                        </HelperText>
+                      </FormHelperText>
+                    ) : null}
+                  </>
+                );
+              }}
+            />
+          </div>
+          <Button
+            icon={<PlusCircleIcon />}
+            type="button"
+            variant="plain"
+            data-cy={`add-trusted-origin-${index}`}
+            aria-label={t('Add CSRF trusted origin')}
+            onClick={() => append('')}
+          />
+          <Button
+            icon={<TrashIcon />}
+            type="button"
+            variant="plain"
+            data-cy={`remove-trusted-origin-${index}`}
+            isDisabled={fields.length < 2}
+            aria-label={t('Remove trusted origin')}
+            onClick={() => remove(index)}
+          />
+        </div>
+      ))}
+    </PageFormSection>
   );
 }

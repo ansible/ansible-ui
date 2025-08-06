@@ -37,6 +37,7 @@ export function useGatewaySettingsCategories(options: Record<string, GatewaySett
               'jwt_public_key',
               'LOGIN_REDIRECT_OVERRIDE',
               'SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL',
+              'CSRF_TRUSTED_ORIGINS',
             ],
             options: {},
           },

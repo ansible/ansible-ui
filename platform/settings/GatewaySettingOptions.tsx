@@ -3,7 +3,8 @@ export type GatewaySettingsOption =
   | IntegerOption
   | BooleanOption
   | UrlOption
-  | FieldOption;
+  | FieldOption
+  | StringArrayOption;
 
 interface StringOption {
   type: 'string';
@@ -12,6 +13,15 @@ interface StringOption {
   label: string;
   help_text: string;
   default: string;
+}
+
+interface StringArrayOption {
+  type: 'string_array';
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text: string;
+  default: string[];
 }
 
 interface IntegerOption {
