@@ -17,6 +17,15 @@
         "required": false,
         "type": "integer"
       },
+
+      "CSRF_TRUSTED_ORIGINS": {
+        "default": [],
+        "help_text": "List of CSRF trusted origin URLs. Note, if there are values in Djangos CSRF_TRUSTED_ORIGIN, they will always appear in this list.",
+        "label": "Csrf trusted origins",
+        "read_only": "false",
+        "required": "false",
+        "type": "list"
+      },
       "gateway_token_name": {
         "default": "X-DAB-JW-TOKEN",
         "help_text": "The header name to push from the proxy to the backend service. WARNING: if this is changed, backends must be updated to compensate!",

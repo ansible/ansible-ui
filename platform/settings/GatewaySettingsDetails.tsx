@@ -8,7 +8,7 @@ import {
   PageHeader,
   PageLayout,
 } from '@ansible/ansible-ui-framework';
-import { ButtonVariant } from '@patternfly/react-core';
+import { ButtonVariant, Label, LabelGroup } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,6 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
     ],
     [navigate, t]
   );
-
   const categories = useGatewaySettingsCategories(options);
   const category = categories.find((category) => category.id === props.categoryId);
   if (!category) {
@@ -83,6 +82,16 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
                         {value ? t('Enabled') : t('Disabled')}
                       </PageDetail>
                     );
+                  case 'object':
+                    return value && Array.isArray(value) ? (
+                      <PageDetail key={key} label={option.label} helpText={option.help_text}>
+                        <LabelGroup>
+                          {value.map((url) => (
+                            <Label key={url as string}>{url}</Label>
+                          ))}
+                        </LabelGroup>
+                      </PageDetail>
+                    ) : null;
                   default:
                     return null;
                 }
