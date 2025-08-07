@@ -215,7 +215,7 @@ export function LaunchWizard({
   handleSubmit,
   jobType,
 }: Readonly<{
-  template: JobTemplate;
+  template: JobTemplate | WorkflowJobTemplate;
   config: LaunchConfiguration;
   handleSubmit: (values: TemplateLaunch) => Promise<void>;
   jobType: string;
@@ -322,7 +322,10 @@ export function LaunchWizard({
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           {
             label: template.name,
-            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: template.id } }),
+            to:
+              template.type === 'job_template'
+                ? getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: template.id } })
+                : getPageUrl(AwxRoute.WorkflowJobTemplateDetails, { params: { id: template.id } }),
           },
         ]}
       />
