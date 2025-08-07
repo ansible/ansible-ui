@@ -13,7 +13,8 @@ import { CredentialTypePage } from '../access/credential-types/CredentialTypePag
 import { CredentialTypes } from '../access/credential-types/CredentialTypes';
 import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
 import { EdaCredentialAssignTeams } from '../access/credentials/components/EdaCredentialAssignTeams';
-import { CreateCredential, EditCredential } from '../access/credentials/CredentialForm';
+import { CreateCredential } from '../access/credentials/CreateCredential';
+import { EditCredential } from '../access/credentials/EditCredential';
 import { CredentialDetails } from '../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
 import { CredentialTeamAccess } from '../access/credentials/CredentialPage/CredentialTeamAccess';

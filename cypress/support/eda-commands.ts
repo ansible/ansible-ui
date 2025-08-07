@@ -624,3 +624,101 @@ Cypress.Commands.add('getEdaUsers', (page: number, perPage: number) => {
     edaAPI`/users/?page=${page.toString()}&page_size=${perPage.toString()}`
   );
 });
+
+Cypress.Commands.add(
+  'createEdaExternalCredential',
+  (edaOrgId: number, credentialTypeId?: number) => {
+    cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
+      name: 'E2E External Credential ' + randomString(4),
+      organization_id: edaOrgId,
+      credential_type_id: credentialTypeId || 27, // Default to HashiCorp Vault Secret Lookup (external credential type)
+      description: 'This is an external credential for testing',
+      inputs: {
+        url: 'https://vault.example.com',
+        token: 'test-vault-token-' + randomString(8),
+        api_version: 'v1',
+        secret_path: '/test/secret',
+        secret_key: 'password',
+      },
+    }).then((edaCredential) => {
+      Cypress.log({
+        displayName: 'EDA EXTERNAL CREDENTIAL CREATION :',
+        message: [`Created 👉  ${edaCredential.name}`],
+      });
+      return edaCredential;
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'createEdaCredentialWithLinks',
+  (edaOrgId: number, sourceCredentialId: number) => {
+    const credentialName = 'E2E Linked Credential ' + randomString(4);
+
+    cy.requestPost<EdaCredential>(edaAPI`/eda-credentials/`, {
+      name: credentialName,
+      organization_id: edaOrgId,
+      credential_type_id: 2, // Non-external credential type
+      description: 'This credential has linked external fields',
+      inputs: {
+        username: 'regular-user',
+        password: 'Value is managed by external: External Source',
+      },
+    } as EdaCredentialCreate).then((credential: EdaCredential) => {
+      cy.requestPost(edaAPI`/credential-input-sources/`, {
+        input_field_name: 'password',
+        source_credential: sourceCredentialId,
+        target_credential: credential.id,
+        organization_id: edaOrgId,
+        metadata: {},
+      }).then(() => {
+        Cypress.log({
+          displayName: 'EDA LINKED CREDENTIAL CREATION :',
+          message: [`Created 👉  ${credentialName} with external links`],
+        });
+        return credential;
+      });
+    });
+  }
+);
+
+Cypress.Commands.add('testEdaExternalCredential', (credentialId: number) => {
+  cy.requestPost(edaAPI`/eda-credentials/${credentialId.toString()}/test/`, {}).then((response) => {
+    const testResponse = response as { status?: string; message?: string; [key: string]: unknown };
+    Cypress.log({
+      displayName: 'EDA EXTERNAL CREDENTIAL TEST :',
+      message: [
+        `Test result for credential ID ${credentialId}: ${testResponse?.status || 'unknown'}`,
+      ],
+    });
+    return testResponse;
+  });
+});
+
+Cypress.Commands.add('getEdaCredentialInputSources', (credentialId: number) => {
+  cy.requestGet<
+    EdaResult<{
+      id: number;
+      input_field_name: string;
+      source_credential: number;
+      target_credential: number;
+      organization_id: number;
+      metadata: Record<string, unknown>;
+    }>
+  >(edaAPI`/credential-input-sources/?target_credential=${credentialId.toString()}`).then(
+    (response) => {
+      return response?.results || [];
+    }
+  );
+});
+
+Cypress.Commands.add('deleteEdaCredentialInputSource', (inputSourceId: number) => {
+  cy.requestDelete(edaAPI`/credential-input-sources/${inputSourceId.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL INPUT SOURCE DELETION :',
+      message: [`Deleted input source ID: ${inputSourceId}`],
+    });
+  });
+});

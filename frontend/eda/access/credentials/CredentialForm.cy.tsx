@@ -1,5 +1,6 @@
 import { edaAPI } from '../../common/eda-utils';
-import { CreateCredential, EditCredential } from './CredentialForm';
+import { CreateCredential } from './CreateCredential';
+import { EditCredential } from './EditCredential';
 
 describe('Create credential ', () => {
   beforeEach(() => {

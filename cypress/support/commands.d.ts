@@ -1461,6 +1461,58 @@ declare global {
        */
       deleteEdaCredentialType(delete_cred_type: EdaCredentialType): Chainable<void>;
 
+      /**
+       * Creates an EDA external credential and returns the same.
+       *
+       * @returns {Chainable<EdaCredential>}
+       */
+      createEdaExternalCredential(
+        edaOrgId: number,
+        credentialTypeId?: number
+      ): Chainable<EdaCredential>;
+
+      /**
+       * Creates an EDA credential with linked external fields and returns the same.
+       *
+       * @returns {Chainable<EdaCredential>}
+       */
+      createEdaCredentialWithLinks(
+        edaOrgId: number,
+        sourceCredentialId: number
+      ): Chainable<EdaCredential>;
+
+      /**
+       * Tests an EDA external credential and returns the test result.
+       *
+       * @returns {Chainable<{ status?: string; message?: string; [key: string]: unknown }>}
+       */
+      testEdaExternalCredential(
+        credentialId: number
+      ): Chainable<{ status?: string; message?: string; [key: string]: unknown }>;
+
+      /**
+       * Gets credential input sources for a given credential ID.
+       *
+       * @returns {Chainable<{ id: number; input_field_name: string; source_credential: number; target_credential: number; organization_id: number; metadata: Record<string, unknown> }[]>}
+       */
+      getEdaCredentialInputSources(credentialId: number): Chainable<
+        {
+          id: number;
+          input_field_name: string;
+          source_credential: number;
+          target_credential: number;
+          organization_id: number;
+          metadata: Record<string, unknown>;
+        }[]
+      >;
+
+      /**
+       * Deletes a credential input source by ID.
+       *
+       * @returns {Chainable<void>}
+       */
+      deleteEdaCredentialInputSource(inputSourceId: number): Chainable<void>;
+
       getEdaRoles(queryParams?: {
         content_type__model?: string;
         managed?: boolean;
