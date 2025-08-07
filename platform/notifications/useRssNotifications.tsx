@@ -3,6 +3,7 @@ import { usePageNotifications } from '@ansible/ansible-ui-framework/PageNotifica
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import DOMPurify from 'dompurify';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { parseStringPromise } from 'xml2js';
 import { gatewayAPI } from '../utils/gateway-api-utils';
@@ -153,6 +154,9 @@ export function useRssNotifications() {
     }
   );
 
+  const { t } = useTranslation();
+  const title = t('Product Notifications');
+
   const { setNotificationGroups } = usePageNotifications();
 
   useEffect(() => {
@@ -162,11 +166,6 @@ export function useRssNotifications() {
           trim: true,
           explicitArray: false,
         })) as { feed: XmlNode };
-
-        const title = feed.title;
-        if (typeof title !== 'string') {
-          return;
-        }
 
         if (!feed.entry || (!Array.isArray(feed.entry) && typeof feed.entry !== 'object')) {
           return;
@@ -198,7 +197,17 @@ export function useRssNotifications() {
     if (feedContent) {
       void parseRssFeed(feedContent, gatewaySettings?.AAP_DEPLOYMENT_TYPE);
     }
-  }, [feedContent, gatewaySettings?.AAP_DEPLOYMENT_TYPE, setNotificationGroups]);
+  }, [feedContent, gatewaySettings?.AAP_DEPLOYMENT_TYPE, setNotificationGroups, title]);
+
+  useEffect(() => {
+    if (gatewaySettings?.NOTIFICATION_RSS_FEED_ENABLED === false) {
+      setNotificationGroups((groups) => {
+        const filteredGroups = { ...groups };
+        delete filteredGroups[title];
+        return filteredGroups;
+      });
+    }
+  }, [gatewaySettings?.NOTIFICATION_RSS_FEED_ENABLED, setNotificationGroups, title]);
 }
 
 export interface XmlNode {
