@@ -1,5 +1,7 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
-import { ComponentClass, Fragment, FunctionComponent, useCallback } from 'react';
+import { TableContext } from '@patternfly/react-table';
+import { ComponentClass, Fragment, FunctionComponent, useCallback, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, LinkProps } from 'react-router';
 import { useID } from '../hooks/useID';
 import {
@@ -12,7 +14,6 @@ import {
   PageActionType,
 } from './PageAction';
 import { usePageActionDisabled } from './PageActionUtils';
-import { useTranslation } from 'react-i18next';
 
 export function PageActionButton<T extends object>(props: {
   action:
@@ -98,6 +99,7 @@ export function PageActionButton<T extends object>(props: {
   const id = useID(action);
   const content = iconOnly && Icon ? null : action.label;
   const LinkComponent = useCallback((p: LinkProps) => <Link {...p} to={to ?? ''} />, [to]);
+  const { variant: TableVariant } = useContext(TableContext);
 
   return (
     <Wrapper>
@@ -109,6 +111,7 @@ export function PageActionButton<T extends object>(props: {
           isDanger={action.isDanger}
           icon={Icon ? <Icon /> : undefined}
           isAriaDisabled={isButtonDisabled}
+          size={TableVariant === 'compact' ? 'sm' : 'default'}
           onClick={() => {
             if (action.type !== PageActionType.Link) {
               switch (action.selection) {

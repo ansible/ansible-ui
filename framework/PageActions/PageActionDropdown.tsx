@@ -12,7 +12,8 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { CaretDownIcon, CircleIcon, EllipsisVIcon } from '@patternfly/react-icons';
-import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { TableContext } from '@patternfly/react-table';
+import { ComponentClass, FunctionComponent, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import styled from 'styled-components';
@@ -76,6 +77,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
   } = props;
 
   let { actions } = props;
+  const { variant: TableVariant } = useContext(TableContext);
 
   actions = actions.filter((action) => !isPageActionHidden(action, selectedItem));
   actions = filterActionSeperators(actions);
@@ -165,6 +167,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
             <MenuToggle
               ref={toggleRef}
               data-cy={id}
+              size={TableVariant === 'compact' ? 'sm' : 'default'}
               id={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               className={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               aria-disabled={Boolean(isDisabled)}

@@ -9,7 +9,6 @@ import {
   Toolbar,
   ToolbarContent,
 } from '@patternfly/react-core';
-import { BarsIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { usePageNavSideBar } from '../PageNavigation/PageNavSidebar';
@@ -51,9 +50,12 @@ export function PageMastheadToggle() {
   const navBar = usePageNavSideBar();
   return (
     <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
-      <PageToggleButton data-cy={'nav-toggle'} variant="plain" aria-label="Global navigation">
-        <BarsIcon />
-      </PageToggleButton>
+      <PageToggleButton
+        isHamburgerButton
+        data-cy={'nav-toggle'}
+        variant="plain"
+        aria-label="Global navigation"
+      />
     </MastheadToggle>
   );
 }
