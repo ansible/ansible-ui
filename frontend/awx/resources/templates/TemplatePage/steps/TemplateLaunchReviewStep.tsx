@@ -69,7 +69,9 @@ function processSurvey(
   return jsonToYaml(JSON.stringify(mergedData));
 }
 
-export function TemplateLaunchReviewStep(props: Readonly<{ template: JobTemplate }>) {
+export function TemplateLaunchReviewStep(
+  props: Readonly<{ template: JobTemplate | WorkflowJobTemplate }>
+) {
   const { template } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
