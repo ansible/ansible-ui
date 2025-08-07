@@ -179,8 +179,10 @@ describe('useRssNotifications', () => {
     const callArgs = mockSetNotificationGroups.mock.calls[0][0];
     const updatedGroups = callArgs({});
 
-    expect(updatedGroups['Test Feed'].notifications).toHaveLength(1);
-    expect(updatedGroups['Test Feed'].notifications[0].title).toBe('Standalone Notification');
+    expect(updatedGroups['Product Notifications'].notifications).toHaveLength(1);
+    expect(updatedGroups['Product Notifications'].notifications[0].title).toBe(
+      'Standalone Notification'
+    );
   });
 
   test('should skip unpublished notifications', () => {
@@ -274,9 +276,13 @@ describe('useRssNotifications', () => {
     const callArgs = mockSetNotificationGroups.mock.calls[0][0];
     const updatedGroups = callArgs({});
 
-    expect(updatedGroups['Test Feed'].notifications).toHaveLength(2);
-    expect(updatedGroups['Test Feed'].notifications[0].title).toBe('First Notification');
-    expect(updatedGroups['Test Feed'].notifications[1].title).toBe('Second Notification');
+    expect(updatedGroups['Product Notifications'].notifications).toHaveLength(2);
+    expect(updatedGroups['Product Notifications'].notifications[0].title).toBe(
+      'First Notification'
+    );
+    expect(updatedGroups['Product Notifications'].notifications[1].title).toBe(
+      'Second Notification'
+    );
   });
 
   test('should handle array deployment types', async () => {
@@ -312,7 +318,9 @@ describe('useRssNotifications', () => {
     const callArgs = mockSetNotificationGroups.mock.calls[0][0];
     const updatedGroups = callArgs({});
 
-    expect(updatedGroups['Test Feed'].notifications).toHaveLength(1);
-    expect(updatedGroups['Test Feed'].notifications[0].title).toBe('Multi-deployment Notification');
+    expect(updatedGroups['Product Notifications'].notifications).toHaveLength(1);
+    expect(updatedGroups['Product Notifications'].notifications[0].title).toBe(
+      'Multi-deployment Notification'
+    );
   });
 });
