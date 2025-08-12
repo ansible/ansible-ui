@@ -142,7 +142,6 @@
     "p-debounce": "4.0.0",
     "p-limit": "6.2.0",
     "path-to-regexp": "8.2.0",
-    "rc-resize-observer": "^1.4.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-dropzone": "14.3.5",
