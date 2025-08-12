@@ -9,7 +9,7 @@ import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/Pa
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
@@ -27,14 +27,11 @@ export function EditInstance() {
     swrOptions
   );
 
-  const { cache } = useSWRConfig();
-
   const onSubmit: PageFormSubmitHandler<Instance> = async (editedInstance) => {
     editedInstance.capacity_adjustment = (Math.round(
       (editedInstance.capacity_adjustment as unknown as number) * 100
     ) / 100) as unknown as string;
     await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, editedInstance);
-    (cache as unknown as { clear: () => void }).clear?.();
     void navigate(-1);
   };
   const onCancel = () => void navigate(-1);

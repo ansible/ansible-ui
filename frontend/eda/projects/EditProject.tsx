@@ -19,7 +19,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
@@ -275,7 +275,6 @@ export function CreateProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const { cache } = useSWRConfig();
   const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
@@ -289,7 +288,6 @@ export function CreateProject() {
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     const newProject = await postRequest(edaAPI`/projects/`, project);
-    (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.ProjectPage, { params: { id: newProject.id } });
   };
 
@@ -330,11 +328,9 @@ export function EditProject() {
 
   const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
 
-  const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     await patchRequest(edaAPI`/projects/${id.toString()}/`, project);
-    (cache as unknown as { clear: () => void }).clear?.();
     void navigate(-1);
   };
   const onCancel = () => void navigate(-1);

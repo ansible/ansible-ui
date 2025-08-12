@@ -16,7 +16,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
@@ -101,7 +101,6 @@ export function CreateDecisionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const { cache } = useSWRConfig();
 
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
@@ -120,7 +119,6 @@ export function CreateDecisionEnvironment() {
       edaAPI`/decision-environments/`,
       decisionEnvironment
     );
-    (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.DecisionEnvironmentPage, { params: { id: newDecisionEnvironment.id } });
   };
   const onCancel = () => void navigate(-1);
@@ -160,12 +158,10 @@ export function EditDecisionEnvironment() {
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${id.toString()}/`
   );
-  const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
     await patchRequest(edaAPI`/decision-environments/${id.toString()}/`, decisionEnvironment);
-    (cache as unknown as { clear: () => void }).clear?.();
     void navigate(-1);
   };
   const onCancel = () => void navigate(-1);

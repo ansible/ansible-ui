@@ -18,7 +18,7 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
@@ -170,7 +170,6 @@ export function CreateEventStream() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
 
-  const { cache } = useSWRConfig();
   const postRequest = usePostRequest<EdaEventStreamCreate, EdaEventStream>();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
@@ -187,7 +186,6 @@ export function CreateEventStream() {
       ...eventStream,
       test_mode: !eventStream?.enabled,
     });
-    (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.EventStreamPage, { params: { id: newEventStream?.id } });
   };
   const onCancel = () => void navigate(-1);
@@ -226,7 +224,6 @@ export function EditEventStream() {
   const canEditEventStream = data ? Boolean(data.actions && data.actions['PATCH']) : true;
   const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
 
-  const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();
 
   const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (eventStream) => {
@@ -234,7 +231,6 @@ export function EditEventStream() {
       ...eventStream,
       test_mode: !eventStream?.enabled,
     });
-    (cache as unknown as { clear: () => void }).clear?.();
     void navigate(-1);
   };
   const onCancel = () => void navigate(-1);

@@ -13,7 +13,6 @@ import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalida
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import { useSWRConfig } from 'swr';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -52,7 +51,6 @@ export function EditJobTemplate() {
     () => getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []),
     [t, jobTemplate, instanceGroups]
   );
-  const { cache } = useSWRConfig();
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values: JobTemplateForm) => {
     const {
       credentials,
@@ -76,7 +74,6 @@ export function EditJobTemplate() {
       host_config_key: isProvisioningCallbackEnabled ? host_config_key : null,
     };
     await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id}/`, formValues);
-    (cache as unknown as { clear: () => void }).clear?.();
     const promises = [];
 
     promises.push(submitCredentials(jobTemplate as JobTemplate, credentials));
