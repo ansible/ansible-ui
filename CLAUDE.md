@@ -56,6 +56,11 @@ npm run e2e:run:chatbot
 
 # Run component tests
 npm run component
+
+# Run Playwright tests (from /playwright directory)
+cd playwright && npm run live    # Run against live server
+cd playwright && npm run mock    # Run against mocked data
+cd playwright && npm run compare # Run comparison tests
 ```
 
 ### Platform Development (run from `/platform` directory)
@@ -70,6 +75,7 @@ npm run build
 ### Running Tests
 - **Unit/Component Tests**: `npm run vitest` (uses Vitest)
 - **E2E Tests**: `npm run e2e:run` (uses Cypress)
+- **Playwright E2E Tests**: See Playwright Testing section below
 - **Linting**: `npm run eslint`
 - **Type Checking**: `npm run tsc`
 
@@ -97,6 +103,7 @@ The project uses NPM workspaces with the following structure:
 - **Vite** for build tooling
 - **Vitest** for unit testing
 - **Cypress** for E2E testing
+- **Playwright** for additional E2E testing
 - **NX** for monorepo management
 
 ### API Integration
@@ -133,13 +140,140 @@ Example:
 
 ### Testing
 - Write unit tests with Vitest
-- Use Playwright for E2E tests
+- Use Cypress for primary E2E tests  
+- Use Playwright for additional E2E tests and live testing
 - Follow testing best practices for React components
 
 ### Internationalization
 - Use `useTranslation` hook from react-i18next
 - Mark strings for translation with `t('String to translate')`
 - Run `npm run i18n` to extract translation keys
+
+## Playwright Testing
+
+### Overview
+Playwright tests provide additional E2E testing capabilities and can run against both live servers and mocked data. The Playwright workspace is located in `/playwright` and includes tests for various AAP components.
+
+### Environment Configuration
+Create or update `/playwright/.env` with the following variables:
+```bash
+PLATFORM_UI=http://localhost:4100        # UI server URL
+PLATFORM_USERNAME=your_username          # Login username
+PLATFORM_PASSWORD=your_password          # Login password
+```
+
+### Available Test Commands (run from `/playwright` directory)
+```bash
+# Run tests against live server (UI must be running)
+npm run live
+
+# Run tests against mocked data
+npm run mock
+
+# Run comparison tests
+npm run compare
+
+# Run specific test file
+npx playwright test tests/path/to/test.spec.ts --project 'live chromium'
+
+# Run tests with specific tags
+npx playwright test --grep @not_mock
+
+# Run with debug mode
+npx playwright test --debug
+
+# Generate test report
+npm run allure
+
+# View coverage report
+npm run coverage
+```
+
+### Test Project Configuration
+- **live chromium**: Tests against live server (excludes @not_live tests)
+- **mock chromium**: Tests against mocked data (excludes @not_mock tests)
+- **live firefox**: Firefox tests against live server
+- **mock firefox**: Firefox tests against mocked data
+
+### Writing Playwright Tests
+
+#### Test Structure
+```typescript
+import { test, expect } from '@playwright/test';
+import { setupBefore, setupAfter } from '../../commands/setup';
+
+test.beforeEach(setupBefore({ path: '/your/path' }));
+test.afterEach(setupAfter);
+
+test('your test description', { tag: ['@not_mock'] }, async ({ page }) => {
+  // Your test code here
+});
+```
+
+#### Selector Best Practices
+- Use `exact: true` for precise text matching:
+  ```typescript
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill('value');
+  ```
+- Prefer semantic selectors over CSS selectors:
+  ```typescript
+  // Good
+  await page.getByRole('button', { name: 'Submit' }).click();
+  
+  // Avoid if possible  
+  await page.locator('#submit-btn').click();
+  ```
+- Use data-cy attributes for test-specific selectors:
+  ```typescript
+  await page.locator('[data-cy="name"]').fill('value');
+  ```
+
+#### Common Test Utilities
+Located in `/playwright/commands/`:
+- `setupBefore()` / `setupAfter()` - Test setup and teardown
+- `navigateTo()` - Navigate to specific pages
+- `clickTableRow()` - Interact with table rows
+- `clickPageAction()` - Click page action buttons
+- `login()` - Handle authentication
+
+#### Test Tags
+- `@not_mock` - Don't run against mocked data
+- `@not_live` - Don't run against live server
+- `@compare` - Comparison tests only
+
+### Debugging Tests
+
+#### Using Playwright Inspector
+```bash
+npx playwright test --debug
+```
+
+#### Viewing Test Reports
+```bash
+# Generate and view Allure report
+npm run allure
+
+# View coverage
+npm run coverage
+```
+
+#### Common Issues and Solutions
+- **Strict mode violations**: Use `exact: true` for precise element matching
+- **Timeouts**: Increase timeout for slow operations or use `test.setTimeout()`
+- **Element not found**: Check if elements are loaded, use proper wait strategies
+- **Authentication issues**: Verify environment variables in `.env` file
+
+### Test Environment Setup
+1. Ensure your local UI is running on the configured port (default: 4100)
+2. Set up proper authentication credentials in `.env`
+3. For live tests, ensure backend services are accessible
+4. For mock tests, mocking is handled automatically
+
+### Coverage and Reporting
+- Coverage reports are generated automatically during test runs
+- Allure reports provide detailed test execution information
+- Screenshots and videos are captured on test failures
+- Traces can be viewed with `npx playwright show-trace`
 
 ## Environment Setup
 
@@ -190,8 +324,15 @@ npm test
 # Run tests for specific workspace
 cd frontend/awx && npm test
 
-# Run E2E tests
+# Run Cypress E2E tests
 npm run e2e:run
+
+# Run Playwright tests
+cd playwright && npm run live    # Against live server
+cd playwright && npm run mock    # Against mocked data
+
+# Run specific Playwright test
+cd playwright && npx playwright test tests/path/to/test.spec.ts --project 'live chromium'
 ```
 
 ## Troubleshooting
@@ -201,8 +342,14 @@ npm run e2e:run
 - **Type errors**: Check TypeScript configuration in relevant workspace
 - **Test failures**: Ensure all dependencies are installed and up to date
 - **E2E test failures**: Check environment variables and server connectivity
+- **Playwright test failures**: 
+  - Verify UI server is running on correct port (default: 4100)
+  - Check `/playwright/.env` for correct credentials
+  - Use `exact: true` for selector specificity issues
+  - Run with `--debug` flag to investigate issues
 
 ### Log Access
 - Platform logs: Check platform server logs
 - Development logs: Check browser console and terminal output
 - Test logs: Check test output and Cypress/Playwright reports
+- Playwright traces: Use `npx playwright show-trace trace.zip` to debug test failures
