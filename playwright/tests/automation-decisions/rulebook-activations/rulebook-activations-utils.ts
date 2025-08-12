@@ -19,8 +19,8 @@ export async function createRulebookActivation(
   const credentialName = options.credentialName ?? 'Demo Credential';
   await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
   await page.getByText('Create rulebook activation').click();
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill(rulebookActivationName);
+  await page.getByRole('textbox', { name: 'Name', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill(rulebookActivationName);
   await page.getByRole('button', { name: 'Organization' }).click();
   await page.getByRole('option', { name: 'Default The default' }).click();
   await page.getByRole('button', { name: 'Project' }).click();
