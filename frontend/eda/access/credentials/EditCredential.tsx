@@ -13,7 +13,6 @@ import { Alert, Button } from '@patternfly/react-core';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import { useSWRConfig } from 'swr';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
@@ -102,7 +101,6 @@ export function EditCredential() {
     credential?.credential_type?.id &&
     parsedCredentialTypes?.[credential.credential_type.id]?.kind === 'external';
 
-  const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaCredentialCreate, EdaCredential>();
   const postInputSourceRequest = usePostRequest();
   const deleteRequest = useDeleteRequest();
@@ -131,7 +129,6 @@ export function EditCredential() {
       }
     }
 
-    (cache as unknown as { clear: () => void }).clear?.();
     void navigate(-1);
   };
   const onCancel = () => void navigate(-1);

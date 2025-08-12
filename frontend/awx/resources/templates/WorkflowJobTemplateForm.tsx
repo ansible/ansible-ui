@@ -13,7 +13,6 @@ import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalida
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { useSWRConfig } from 'swr';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -61,7 +60,6 @@ export function EditWorkflowJobTemplate() {
       webhook_credential: values.webhook_credential?.id ?? null,
       webhook_service: values.webhook_service ?? '',
     });
-    (cache as unknown as { clear: () => void }).clear?.();
 
     await submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels);
     clearCacheByKey(awxAPI`/labels/`);
@@ -99,7 +97,6 @@ export function EditWorkflowJobTemplate() {
       webhook_service: workflowJobTemplate.webhook_service || '',
     };
   }, [t, workflowJobTemplate]);
-  const { cache } = useSWRConfig();
 
   if (wfjtError instanceof Error) {
     return <AwxError error={wfjtError} handleRefresh={wfjtRefresh} />;

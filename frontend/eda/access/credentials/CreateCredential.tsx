@@ -11,7 +11,7 @@ import { Button } from '@patternfly/react-core';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
@@ -64,7 +64,6 @@ export function CreateCredential() {
     setAccumulatedPluginValues((prev) => prev.filter((cp) => cp.input_field_name !== fieldName));
   }, []);
 
-  const { cache } = useSWRConfig();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
     requestGet,
@@ -105,7 +104,6 @@ export function CreateCredential() {
       }
     }
 
-    (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.CredentialPage, { params: { id: newCredential.id } });
   };
   const onCancel = () => void navigate(-1);

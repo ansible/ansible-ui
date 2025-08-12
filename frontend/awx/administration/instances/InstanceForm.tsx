@@ -15,7 +15,6 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import { useSWRConfig } from 'swr';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
@@ -71,13 +70,10 @@ export function EditInstance() {
   const pageNavigate = usePageNavigate();
   const { data: instance } = useGet<Instance>(awxAPI`/instances/${id?.toString()}/`);
 
-  const { cache } = useSWRConfig();
-
   const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
     instanceInput.listener_port =
       instanceInput.listener_port && Number(instanceInput?.listener_port);
     await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, instanceInput);
-    (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(AwxRoute.InstanceDetails, { params: { id } });
   };
 

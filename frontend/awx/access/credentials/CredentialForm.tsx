@@ -21,7 +21,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router';
-import { useSWRConfig } from 'swr';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -247,7 +246,6 @@ export function EditCredential() {
     CredentialPluginsInputSource[]
   >([]);
   const [pluginsToDelete, setPluginsToDelete] = useState<string[]>([]);
-  const { cache } = useSWRConfig();
 
   useEffect(() => {
     setAccumulatedPluginValues((prev) => {
@@ -432,7 +430,6 @@ export function EditCredential() {
         })
       );
     }
-    (cache as unknown as { clear: () => void }).clear?.();
     void navigate(-1);
   };
   if (!credential) {

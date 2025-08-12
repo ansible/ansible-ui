@@ -24,7 +24,7 @@ import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
@@ -343,7 +343,6 @@ export function EditRulebookActivation() {
   const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
     edaAPI`/activations/${id.toString()}/`
   );
-  const { cache } = useSWRConfig();
   const patchEdaRulebookActivation = usePatchRequest<object, EdaRulebookActivation>();
 
   const onSubmit: PageFormSubmitHandler<IEdaRulebookActivationInputs> = async (
@@ -357,7 +356,6 @@ export function EditRulebookActivation() {
       ...rulebookActivation,
       eda_credentials: credential_refs,
     });
-    (cache as unknown as { clear: () => void }).clear?.();
     void navigate(-1);
   };
   const onCancel = () => void navigate(-1);
