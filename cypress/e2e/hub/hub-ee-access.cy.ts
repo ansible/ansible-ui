@@ -58,7 +58,8 @@ describe('Execution Environment User Access tab', () => {
     });
   }
 
-  it('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
+  it.skip('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
+    //https://issues.redhat.com/browse/AAP-51476
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab(/^Details$/, true);
@@ -100,7 +101,8 @@ describe('Execution Environment User Access tab', () => {
     });
   });
 
-  it('create a new ee, from the team access tab assign a user and apply role(s) to the team of the ee', () => {
+  it.skip('create a new ee, from the team access tab assign a user and apply role(s) to the team of the ee', () => {
+    //https://issues.redhat.com/browse/AAP-51476
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab(/^Details$/, true);

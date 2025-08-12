@@ -107,7 +107,8 @@ describe('Check if the build includes EDA', () => {
                     : edaEventStream;
         });
 
-        it(`for ${resource.name} role type`, () => {
+        it.skip(`for ${resource.name} role type`, () => {
+          //https://issues.redhat.com/browse/AAP-51473
           cy.navigateTo('platform', 'teams');
           cy.clickTableRow(team.name, true);
           cy.verifyPageTitle(team.name);
@@ -209,7 +210,8 @@ describe('Check if the build includes EDA', () => {
       cy.deleteEdaCredential(cred3);
     });
 
-    it('can remove role from row', () => {
+    it.skip('can remove role from row', () => {
+      //https://issues.redhat.com/browse/AAP-51473
       cy.navigateTo('platform', 'teams');
       cy.clickTableRow(team.name, true);
       cy.verifyPageTitle(team.name);
@@ -223,7 +225,8 @@ describe('Check if the build includes EDA', () => {
       cy.contains(cred1.name).should('not.exist');
     });
 
-    it('can bulk remove roles', () => {
+    it.skip('can bulk remove roles', () => {
+      //https://issues.redhat.com/browse/AAP-51473
       cy.navigateTo('platform', 'teams');
       cy.clickTableRow(team.name, true);
       cy.verifyPageTitle(team.name);

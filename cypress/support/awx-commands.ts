@@ -572,12 +572,7 @@ Cypress.Commands.add('assertModalSuccess', () => {
 
 Cypress.Commands.add('clickPageAction', (dataCy: string) => {
   cy.getByDataCy('actions-dropdown').click();
-  cy.document()
-    .its('body')
-    .find('.pf-v6-c-menu__content ul[role="menu"]')
-    .within(() => {
-      cy.getBy(`[data-cy="${dataCy}"] button`).click();
-    });
+  cy.getByDataCy(dataCy).click();
 });
 
 Cypress.Commands.add('getCredentialTypeByName', (CredentialTypeName: string) => {

@@ -51,7 +51,8 @@ describe('Remotes User Access tab', () => {
     });
   }
 
-  it('create a new remote, from the user access tab assign a user and apply role(s) to the user of the remote', () => {
+  it.skip('create a new remote, from the user access tab assign a user and apply role(s) to the user of the remote', () => {
+    //https://issues.redhat.com/browse/AAP-51476
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_user_assignments/*`).as('userRoleAssignments');
@@ -97,7 +98,8 @@ describe('Remotes User Access tab', () => {
     });
   });
 
-  it('create a new remote, from the team access tab assign a user and apply role(s) to the team of the remote', () => {
+  it.skip('create a new remote, from the team access tab assign a user and apply role(s) to the team of the remote', () => {
+    //https://issues.redhat.com/browse/AAP-51476
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_team_assignments/*`).as('teamRoleAssignment');

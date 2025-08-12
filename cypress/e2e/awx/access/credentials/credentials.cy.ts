@@ -31,6 +31,7 @@ describe('Credentials', () => {
 
   describe('Credentials: List View', () => {
     let credential: Credential;
+
     beforeEach(() => {
       cy.createAWXCredential(
         {
@@ -42,6 +43,7 @@ describe('Credentials', () => {
         credential = cred;
       });
     });
+
     afterEach(() => {
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
     });
@@ -136,6 +138,7 @@ describe('Credentials', () => {
 
   describe('Credentials: Details View', () => {
     let credential: Credential;
+
     beforeEach(() => {
       cy.createAWXCredential(
         {
@@ -153,6 +156,7 @@ describe('Credentials', () => {
     afterEach(() => {
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
     });
+
     it('details page should render boolean field', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
@@ -274,6 +278,7 @@ describe('Credentials', () => {
 
   describe('Credentials Edit: External test modal', () => {
     let credential: Credential;
+
     before(() => {
       cy.createAWXCredential(
         {
@@ -350,7 +355,6 @@ describe('Credentials', () => {
         ).then((cred) => {
           machineCredential = cred;
         });
-
         cy.createAwxInventory(awxOrganization).then((inv) => {
           awxInventory = inv;
         });
@@ -384,9 +388,11 @@ describe('Credentials', () => {
 
 describe('Credentials: Credential Types Tests', () => {
   let organization: Organization;
+
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => (organization = o));
   });
+
   afterEach(() => {
     cy.deleteAwxOrganization(organization);
   });
@@ -539,15 +545,17 @@ describe('Credentials: Credential Types Tests', () => {
     cy.getByDataCy('password').contains('Encrypted');
     cy.contains('Private Key Passphrase').should('be.visible');
     cy.getByDataCy('private-key-passphrase').contains('Prompt on launch');
-    cy.clickPageAction('delete-credential');
+    cy.getByDataCy('actions-dropdown').should('be.visible').click();
+    cy.getByDataCy('delete-credential')
+      .should('be.visible')
+      .should('not.have.attr', 'aria-disabled', 'true')
+      .click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.verifyPageTitle('Credentials');
   });
 
   it('machine credential type should render privilege escalation', () => {
-    // This is a test for the custom component that renders the privilege
-    // escalation method using a custom component
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
@@ -555,10 +563,8 @@ describe('Credentials: Credential Types Tests', () => {
     cy.singleSelectByDataCy('organization', organization.name);
     cy.singleSelectBy('[data-cy="credential_type"]', 'Machine');
     cy.contains('Type Details').should('be.visible');
-    // Use custom component to render the privilege escalation method is sudo
     cy.contains('Privilege Escalation Method ').should('be.visible');
     cy.get('button[aria-label="Typeahead creatable menu toggle"]').click();
-
     cy.get('button#select-create-typeahead-sudo').click();
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
@@ -578,6 +584,7 @@ cyLabel(['upstream'], () => {
     let createdAwxUser: AwxUser;
     let awxOrganization: Organization;
     let awxTeam: Team;
+
     beforeEach(() => {
       cy.createAwxOrganization().then((awxOrg) => {
         awxOrganization = awxOrg;
@@ -626,7 +633,6 @@ cyLabel(['upstream'], () => {
       cy.filterTableBySearch(machineCredential.name);
       cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
       cy.clickTab('Team Access', true);
-
       cy.getByDataCy('assign-teams').click();
       cy.verifyPageTitle('Assign teams');
       cy.getWizard().within(() => {
@@ -685,13 +691,11 @@ cyLabel(['upstream'], () => {
       cy.filterTableBySearch(machineCredential.name);
       cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
       cy.clickTab('User Access', true);
-
       cy.getByDataCy('assign-users').click();
       cy.verifyPageTitle('Assign users');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
         cy.selectTableRowByCheckbox('username', createdAwxUser.username);
-
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'Credential Admin', {
