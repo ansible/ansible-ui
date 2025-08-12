@@ -139,7 +139,7 @@ function processRssEntry(entry: XmlNode, deploymentType?: string): IPageNotifica
 }
 
 export function useRssNotifications() {
-  const { data: gatewaySettings } = useGet<{
+  const { data: gatewaySettings, error: settingsError } = useGet<{
     AAP_DEPLOYMENT_TYPE: string;
     NOTIFICATION_RSS_FEED_URL: string;
     NOTIFICATION_RSS_FEED_ENABLED: boolean;
@@ -208,6 +208,16 @@ export function useRssNotifications() {
       });
     }
   }, [gatewaySettings?.NOTIFICATION_RSS_FEED_ENABLED, setNotificationGroups, title]);
+
+  useEffect(() => {
+    if (settingsError) {
+      setNotificationGroups((groups) => {
+        const filteredGroups = { ...groups };
+        delete filteredGroups[title];
+        return filteredGroups;
+      });
+    }
+  }, [settingsError, setNotificationGroups, title]);
 }
 
 export interface XmlNode {
