@@ -265,7 +265,7 @@ describe('LegacyTokensTable', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Error loading Legacy tokens')).toBeInTheDocument();
+      expect(screen.getByText('Error loading legacy tokens')).toBeInTheDocument();
     });
   });
 

@@ -1,17 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageTable } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { useAwxView } from '@ansible/awx-ui/common/useAwxView';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
-import { Alert, AlertGroup, ButtonVariant, PageSection } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { Alert, AlertGroup, PageSection } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useLegacyTokenColumns } from './hooks/useLegacyTokenColumns';
 import { useLegacyTokensFilters } from './hooks/useLegacyTokenFilters';
 import { useLegacyTokenRowActions } from './hooks/useLegacyTokenRowActions';
@@ -21,7 +18,6 @@ export function LegacyTokensTable() {
   const { id, applicationId } = useParams<{ id?: string; applicationId?: string }>();
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const getPageUrl = useGetPageUrl();
   const tableColumns = useLegacyTokenColumns();
   const toolbarFilters = useLegacyTokensFilters();
 
@@ -76,20 +72,14 @@ export function LegacyTokensTable() {
       </PageSection>
       <PageTable<Token>
         id="api-tokens"
-        errorStateTitle={t('Error loading Legacy tokens')}
+        errorStateTitle={t('Error loading legacy tokens')}
         emptyState={
           <PageTableEmptyState
-            title={t('There are currently no Legacy tokens.')}
-            description={t('Create an Legacy token by clicking the button below.')}
-          >
-            <ButtonLink
-              icon={<PlusCircleIcon />}
-              variant={ButtonVariant.primary}
-              href={getPageUrl(PlatformRoute.CreateLegacyToken)}
-            >
-              {t('Create Legacy token')}
-            </ButtonLink>
-          </PageTableEmptyState>
+            title={t('No legacy tokens found.')}
+            description={t(
+              'Please contact your organization administrator if there is an issue with your access.'
+            )}
+          />
         }
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}

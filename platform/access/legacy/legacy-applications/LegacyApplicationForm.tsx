@@ -7,7 +7,6 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageDialogs,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
@@ -17,7 +16,6 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
-import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { Alert, Content } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
@@ -26,58 +24,6 @@ import { useNavigate, useParams } from 'react-router';
 import useSWR from 'swr';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
-import { LegacyApplicationSecretModal } from './LegacyApplicationSecretModal';
-
-export function CreateLegacyApplication() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const pageNavigate = usePageNavigate();
-  const postRequest = usePostRequest<Application>();
-  const { clearCacheByKey } = useClearCache();
-  const { pushDialog, popDialog } = usePageDialogs();
-  const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
-    const newApplication = await postRequest(awxAPI`/applications/`, application);
-    clearCacheByKey(awxAPI`/app_urls/`);
-    setTimeout(() => {
-      pushDialog(
-        <LegacyApplicationSecretModal
-          onClose={() => popDialog()}
-          applicationModalSource={newApplication}
-        />
-      );
-    }, 300);
-    pageNavigate(PlatformRoute.LegacyApplicationDetails, {
-      params: { applicationId: newApplication.id },
-    });
-  };
-
-  const onCancel = () => void navigate(-1);
-  const getPageUrl = useGetPageUrl();
-
-  return (
-    <PageLayout>
-      <PageHeader
-        title={t('Create legacy application')}
-        breadcrumbs={[
-          { label: t('Legacy Applications'), to: getPageUrl(PlatformRoute.LegacyApplications) },
-          { label: t('Create legacy application') },
-        ]}
-      />
-      <AwxPageForm<Application>
-        submitText={t('Create legacy application')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        defaultValue={{
-          authorization_grant_type: 'authorization-code',
-          client_type: 'confidential',
-        }}
-      >
-        <LegacyApplicationInputs mode="create" />
-      </AwxPageForm>
-    </PageLayout>
-  );
-}
 
 export function EditLegacyApplication() {
   const { t } = useTranslation();

@@ -4,10 +4,8 @@ import {
   PageActionSelection,
   PageActionType,
   PageTable,
-  useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import {
@@ -18,8 +16,8 @@ import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { useAwxView } from '@ansible/awx-ui/common/useAwxView';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
-import { Alert, AlertGroup, ButtonVariant, PageSection } from '@patternfly/react-core';
-import { CubesIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { Alert, AlertGroup, PageSection } from '@patternfly/react-core';
+import { CubesIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -33,7 +31,6 @@ export function LegacyApplicationsTable() {
   const orgFilter = useOrganizationToolbarFilter();
   const toolbarFilters: IToolbarFilter[] = [nameFilter, orgFilter];
   const tableColumns = useLegacyApplicationColumns();
-  const getPageUrl = useGetPageUrl();
   usePersistentFilters('applications');
 
   const view = useAwxView<Application>({
@@ -46,22 +43,6 @@ export function LegacyApplicationsTable() {
 
   const toolbarActions = useMemo<IPageAction<Application>[]>(
     () => [
-      {
-        type: PageActionType.Link,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: PlusCircleIcon,
-        label: t('Create legacy application'),
-        isDisabled: activeAwxUser?.is_superuser
-          ? undefined
-          : t(
-              'You do not have permission to create a legacy application. Please contact your system administrator if there is an issue with your access.'
-            ),
-        href: getPageUrl(PlatformRoute.CreateLegacyApplication),
-        isHidden: () => process.env.NODE_ENV !== 'development',
-      },
-      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -76,7 +57,7 @@ export function LegacyApplicationsTable() {
         isDanger: true,
       },
     ],
-    [t, activeAwxUser?.is_superuser, getPageUrl, deleteApplications]
+    [t, activeAwxUser?.is_superuser, deleteApplications]
   );
 
   const rowActions = useMemo<IPageAction<Application>[]>(
@@ -141,28 +122,13 @@ export function LegacyApplicationsTable() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading legacy applications')}
         emptyState={
-          process.env.NODE_ENV === 'development' ? (
-            <PageTableEmptyState
-              title={t('No legacy applications found')}
-              description={t('No legacy applications match the filter criteria')}
-            >
-              <ButtonLink
-                icon={<PlusCircleIcon />}
-                variant={ButtonVariant.primary}
-                href={getPageUrl(PlatformRoute.CreateLegacyApplication)}
-              >
-                {t('Create legacy application')}
-              </ButtonLink>
-            </PageTableEmptyState>
-          ) : (
-            <PageTableEmptyState
-              icon={CubesIcon}
-              title={t('No legacy applications found')}
-              description={t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-          )
+          <PageTableEmptyState
+            icon={CubesIcon}
+            title={t('No legacy applications found')}
+            description={t(
+              'Please contact your organization administrator if there is an issue with your access.'
+            )}
+          />
         }
         defaultSubtitle={t('Application')}
         {...view}

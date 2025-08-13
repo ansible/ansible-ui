@@ -194,8 +194,9 @@ describe('LegacyApplicationsTable', () => {
       </MemoryRouter>
     );
 
+    // Creation is no longer supported, so no create button should be present
     await waitFor(() => {
-      expect(screen.getByText('Create legacy application')).toBeInTheDocument();
+      expect(screen.queryByText('Create legacy application')).not.toBeInTheDocument();
     });
 
     // Restore original NODE_ENV
@@ -224,9 +225,9 @@ describe('LegacyApplicationsTable', () => {
       </MemoryRouter>
     );
 
+    // Creation is no longer supported, so no create button should be present
     await waitFor(() => {
-      const createButton = screen.getByRole('link', { name: 'Create legacy application' });
-      expect(createButton).toHaveAttribute('aria-disabled', 'true');
+      expect(screen.queryByText('Create legacy application')).not.toBeInTheDocument();
     });
 
     // Restore original NODE_ENV
@@ -274,8 +275,9 @@ describe('LegacyApplicationsTable', () => {
       </MemoryRouter>
     );
 
+    // Creation is no longer supported, so no create button should be present
     await waitFor(() => {
-      expect(screen.getByText('Create legacy application')).toBeInTheDocument();
+      expect(screen.queryByText('Create legacy application')).not.toBeInTheDocument();
     });
 
     // Restore original NODE_ENV
@@ -304,9 +306,9 @@ describe('LegacyApplicationsTable', () => {
       </MemoryRouter>
     );
 
+    // Creation is no longer supported, so no create button should be present
     await waitFor(() => {
-      const createButton = screen.getByRole('link', { name: 'Create legacy application' });
-      expect(createButton).toHaveAttribute('aria-disabled', 'true');
+      expect(screen.queryByText('Create legacy application')).not.toBeInTheDocument();
     });
 
     // Restore original NODE_ENV
@@ -393,33 +395,5 @@ describe('LegacyApplicationsTable', () => {
         )
       ).toBeInTheDocument();
     });
-  });
-
-  test('should render empty state with create button in development mode', async () => {
-    // Mock NODE_ENV to development
-    const originalEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'development';
-
-    server.use(
-      http.get(awxAPI`/applications/`, () => {
-        return HttpResponse.json({ results: [], count: 0 });
-      })
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/access/legacy-applications']}>
-        <Routes>
-          <Route path="/access/legacy-applications" element={<LegacyApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('No legacy applications found')).toBeInTheDocument();
-      expect(screen.getByText('Create legacy application')).toBeInTheDocument();
-    });
-
-    // Restore original NODE_ENV
-    process.env.NODE_ENV = originalEnv;
   });
 });

@@ -7,7 +7,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { CreateLegacyApplication, EditLegacyApplication } from './LegacyApplicationForm';
+import { EditLegacyApplication } from './LegacyApplicationForm';
 
 // Mock usePageNavigate and related hooks
 vi.mock('@ansible/ansible-ui-framework', async () => {
@@ -146,145 +146,6 @@ describe('LegacyApplicationForm', () => {
     server.close();
   });
 
-  describe('CreateLegacyApplication', () => {
-    beforeEach(() => {
-      render(
-        <MemoryRouter initialEntries={['/access/legacy-applications/create']}>
-          <Routes>
-            <Route
-              path="/access/legacy-applications/create"
-              element={<CreateLegacyApplication />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
-
-    test('should render create form with correct title and breadcrumbs', async () => {
-      await waitFor(() => {
-        expect(
-          screen.getByRole('heading', { name: 'Create legacy application' })
-        ).toBeInTheDocument();
-      });
-
-      expect(
-        screen.getByRole('button', { name: /create legacy application/i })
-      ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
-    });
-
-    test('should display all required form fields', async () => {
-      await waitFor(() => {
-        expect(screen.getByPlaceholderText('Enter legacy application name')).toBeInTheDocument();
-      });
-
-      expect(screen.getByPlaceholderText('Enter description')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Enter redirect URIs')).toBeInTheDocument();
-
-      // Check for select fields by their labels
-      expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
-      expect(screen.getByText('Client type')).toBeInTheDocument();
-      expect(screen.getByText('Organization')).toBeInTheDocument();
-    });
-
-    test('should show informational alert with Legacy configuration instructions', async () => {
-      await waitFor(() => {
-        expect(screen.getByText('Configure Legacy Application')).toBeInTheDocument();
-      });
-
-      // The alert content is expandable, so we need to expand it first
-      const expandButton = screen.getByLabelText('Info alert details');
-      const user = userEvent.setup();
-      await user.click(expandButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/You are setting up a legacy application/)).toBeInTheDocument();
-        expect(screen.getByText(/Auth URL/)).toBeInTheDocument();
-        expect(screen.getByText(/Token URL/)).toBeInTheDocument();
-      });
-    });
-
-    test('should have default values set correctly', async () => {
-      await waitFor(() => {
-        expect(screen.getByText('Authorization code')).toBeInTheDocument();
-      });
-
-      expect(screen.getByText('Confidential')).toBeInTheDocument();
-    });
-
-    test('should make redirect URIs required when authorization grant type is authorization-code', async () => {
-      await waitFor(() => {
-        expect(screen.getByPlaceholderText('Enter redirect URIs')).toBeInTheDocument();
-      });
-
-      const redirectUrisField = screen.getByPlaceholderText('Enter redirect URIs');
-      expect(redirectUrisField).toBeInTheDocument();
-
-      // Default grant type is authorization-code, so redirect URIs should be present
-      expect(screen.getByText('Authorization code')).toBeInTheDocument();
-    });
-
-    test('should handle form submission for create', async () => {
-      await waitFor(() => {
-        expect(screen.getByPlaceholderText('Enter legacy application name')).toBeInTheDocument();
-      });
-
-      // Fill out required fields
-      await userEvent.type(
-        screen.getByPlaceholderText('Enter legacy application name'),
-        'New Legacy App'
-      );
-      await userEvent.type(screen.getByPlaceholderText('Enter description'), 'Test description');
-      await userEvent.type(
-        screen.getByPlaceholderText('Enter redirect URIs'),
-        'https://example.com/callback'
-      );
-
-      // Submit form
-      const submitButton = screen.getByRole('button', { name: /create legacy application/i });
-      await userEvent.click(submitButton);
-
-      // Verify the request was made (form submission behavior)
-      await waitFor(() => {
-        expect(submitButton).toBeInTheDocument();
-      });
-    });
-
-    test('should display gateway URLs in the Legacy configuration instructions', async () => {
-      await waitFor(() => {
-        expect(screen.getByText('Configure Legacy Application')).toBeInTheDocument();
-      });
-
-      // Expand the alert to see the content
-      const expandButton = screen.getByLabelText('Info alert details');
-      const user = userEvent.setup();
-      await user.click(expandButton);
-
-      await waitFor(() => {
-        expect(screen.getByText('https://gateway.example.com/o/authorize/')).toBeInTheDocument();
-        expect(screen.getByText('https://gateway.example.com/o/token/')).toBeInTheDocument();
-      });
-    });
-
-    test('should show different descriptions for authorization grant types', async () => {
-      await waitFor(() => {
-        expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
-      });
-
-      // Check that the authorization code option is selected by default
-      expect(screen.getByText('Authorization code')).toBeInTheDocument();
-    });
-
-    test('should show different descriptions for client types', async () => {
-      await waitFor(() => {
-        expect(screen.getByText('Client type')).toBeInTheDocument();
-      });
-
-      // Check that confidential option is selected by default
-      expect(screen.getByText('Confidential')).toBeInTheDocument();
-    });
-  });
-
   describe('EditLegacyApplication', () => {
     beforeEach(() => {
       render(
@@ -414,53 +275,6 @@ describe('LegacyApplicationForm', () => {
       await waitFor(() => {
         expect(screen.getAllByText('Legacy Applications')).toHaveLength(2);
       });
-    });
-  });
-
-  describe('Form Validation', () => {
-    test('should show required field indicators', async () => {
-      render(
-        <MemoryRouter initialEntries={['/access/legacy-applications/create']}>
-          <Routes>
-            <Route
-              path="/access/legacy-applications/create"
-              element={<CreateLegacyApplication />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByPlaceholderText('Enter legacy application name')).toBeInTheDocument();
-      });
-
-      // Form fields should be present
-      expect(screen.getByPlaceholderText('Enter legacy application name')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Enter redirect URIs')).toBeInTheDocument();
-      expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
-      expect(screen.getByText('Client type')).toBeInTheDocument();
-      expect(screen.getByText('Organization')).toBeInTheDocument();
-    });
-
-    test('should enforce maximum length on name field', async () => {
-      render(
-        <MemoryRouter initialEntries={['/access/legacy-applications/create']}>
-          <Routes>
-            <Route
-              path="/access/legacy-applications/create"
-              element={<CreateLegacyApplication />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByPlaceholderText('Enter legacy application name')).toBeInTheDocument();
-      });
-
-      const nameField = screen.getByPlaceholderText('Enter legacy application name');
-      // Check if the field has a maxLength property
-      expect(nameField).toBeInTheDocument();
     });
   });
 });

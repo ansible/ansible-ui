@@ -59,11 +59,6 @@ export function useGetPlatformUsersRoutes() {
           element: <ApiTokenPage />,
         },
         {
-          id: PlatformRoute.CreateUserLegacyToken,
-          path: ':id/legacy-tokens/create',
-          element: <LegacyTokenForm />,
-        },
-        {
           id: PlatformRoute.EditUserLegacyToken,
           path: ':id/legacy-tokens/:tokenid/edit',
           element: <LegacyTokenForm />,
