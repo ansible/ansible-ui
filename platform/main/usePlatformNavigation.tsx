@@ -27,10 +27,7 @@ import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
 import { ApiTokensPage } from '../access/api-tokens/ApiTokensPage';
 import { LegacyApplication } from '../access/legacy/legacy-applications/LegacyApplication';
 import { LegacyApplicationDetails } from '../access/legacy/legacy-applications/LegacyApplicationDetails';
-import {
-  CreateLegacyApplication,
-  EditLegacyApplication,
-} from '../access/legacy/legacy-applications/LegacyApplicationForm';
+import { EditLegacyApplication } from '../access/legacy/legacy-applications/LegacyApplicationForm';
 import { LegacyApplications } from '../access/legacy/legacy-applications/LegacyApplications';
 import { LegacyTokenForm } from '../access/legacy/legacy-tokens/LegacyTokenForm';
 import { LegacyTokenPage } from '../access/legacy/legacy-tokens/LegacyTokenPage';
@@ -409,11 +406,6 @@ function usePlatformAccessNavigation(): PageNavigationItem {
         path: 'legacy-applications',
         children: [
           {
-            id: PlatformRoute.CreateLegacyApplication,
-            path: 'create',
-            element: <CreateLegacyApplication />,
-          },
-          {
             id: PlatformRoute.EditLegacyApplication,
             path: ':applicationId/edit',
             element: <EditLegacyApplication />,
@@ -450,11 +442,6 @@ function usePlatformAccessNavigation(): PageNavigationItem {
         label: t('Legacy Tokens'),
         path: 'legacy-tokens',
         children: [
-          {
-            id: PlatformRoute.CreateLegacyToken,
-            path: 'create',
-            element: <LegacyTokenForm />,
-          },
           {
             id: PlatformRoute.EditLegacyToken,
             path: ':tokenid/edit',

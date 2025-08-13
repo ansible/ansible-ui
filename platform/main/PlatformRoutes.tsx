@@ -19,7 +19,6 @@ export enum PlatformRoute {
   LegacyApplicationPage = 'platform-legacy-application-page',
   LegacyApplicationDetails = 'platform-legacy-application-details',
   LegacyApplicationTokens = 'platform-legacy-application-tokens',
-  CreateLegacyApplication = 'platform-create-legacy-application',
   EditLegacyApplication = 'platform-edit-legacy-application',
 
   Users = 'platform-users',
@@ -45,17 +44,12 @@ export enum PlatformRoute {
   LegacyTokens = 'legacy-tokens',
   LegacyTokenPage = 'legacy-token-page',
   LegacyTokenDetails = 'legacy-token-details',
-  CreateLegacyToken = 'create-legacy-token',
   EditLegacyToken = 'edit-legacy-token',
 
   UserLegacyTokens = 'user-legacy-tokens',
   UserLegacyTokenPage = 'user-legacy-token-page',
   UserLegacyTokenDetails = 'user-legacy-token-details',
-  CreateUserLegacyToken = 'create-user-legacy-token',
   EditUserLegacyToken = 'edit-user-legacy-token',
-
-  // AwxUserTokens = 'platform-awx-user-tokens',
-  // CreateAwxUserToken = 'platform-awx-user-token-create',
 
   CreateEdaControllerToken = 'platform-eda-controller-token-create',
   AwxUserRoles = 'platform-awx-user-roles',
