@@ -8,7 +8,7 @@ import { EdaRuleAuditCard } from '@ansible/eda-ui/overview/cards/EdaRuleAuditCar
 import { EdaRulebookActivationsCard } from '@ansible/eda-ui/overview/cards/EdaRulebookActivationsCard';
 import { Button, CardHeader, CardTitle, Split, SplitItem, Stack } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useHasAwxService, useHasEdaService } from '../main/GatewayServices';
@@ -20,6 +20,17 @@ export function PlatformOverview() {
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
   const awxService = useHasAwxService();
   const edaService = useHasEdaService();
+
+  // Check for social auth redirect URL in sessionStorage
+  useEffect(() => {
+    const storedRedirectUrl = sessionStorage.getItem('social_auth_redirect_url');
+    if (storedRedirectUrl) {
+      // Clear the stored URL to prevent repeated redirects
+      sessionStorage.removeItem('social_auth_redirect_url');
+      // Redirect to the stored URL
+      window.location.href = storedRedirectUrl;
+    }
+  }, []);
   return (
     <PageLayout>
       <PageHeader
