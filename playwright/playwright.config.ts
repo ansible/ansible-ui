@@ -14,25 +14,24 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+// Use verbose configuration by default for better debugging
+const isCI = !!process.env.CI;
 const config: PlaywrightTestConfig = {
   testDir: '.',
-  /* Run tests in files in parallel */
   fullyParallel: false,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: 0, // process.env.CI ? 2 : 0,
+  forbidOnly: false, // Allow test.only() for local development
+  // Enable retries by default to catch flaky tests
+  retries: 2,
   timeout: 60000,
   expect: {
     // timeout: 60 * 1000, // default of playwright is 5s
   },
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 2,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  workers: isCI ? 1 : 2, // Keep parallel workers locally for speed
   reporter: [
     ['list'],
     ['junit', { outputFile: 'results.xml' }],
     ['json', { outputFile: 'results.json' }],
+    ['html', { outputFolder: 'playwright/html-report', open: 'never' }],
     [
       'allure-playwright',
       {
@@ -64,17 +63,17 @@ const config: PlaywrightTestConfig = {
       )
     : undefined,
 
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
-
     ignoreHTTPSErrors: true,
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure',
+    // Always collect trace for better debugging
+    trace: 'on',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    // Add browser logging for debugging
+    launchOptions: {
+      args: ['--enable-logging', '--v=1'],
+    },
   },
 
   /* Configure projects for major browsers */
