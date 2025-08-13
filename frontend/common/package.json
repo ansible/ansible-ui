@@ -1,5 +1,19 @@
 {
   "name": "@ansible/common-ui",
   "type": "module",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "scripts": {
+    "dump-nyc-vitest": "mkdir -p ../../.nyc_output && vitest run --coverage && mv coverage/vitest/coverage-final.json ../../.nyc_output/common-vitest.json",
+    "test": "concurrently npm:eslint npm:prettier npm:tsc npm:vitest -c auto",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
+    "vitest": "vitest --run"
+  },
+  "dependencies": {
+    "vitest": "^3.2.4"
+  }
 }

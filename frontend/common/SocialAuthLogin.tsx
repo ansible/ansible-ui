@@ -73,13 +73,27 @@ function SocialAuthLink(props: { option: AuthOption }) {
 
   const Icon = icons[option.type] ?? UserCircleIcon;
 
+  const handleSocialAuthClick = () => {
+    const currentPath =
+      window.location.pathname !== '/login'
+        ? window.location.pathname + window.location.search
+        : null;
+
+    if (currentPath) {
+      // Store the redirect URL in sessionStorage
+      sessionStorage.setItem('social_auth_redirect_url', currentPath);
+    }
+  };
+
   return (
     <Button
       data-cy={`social-auth-${option.type}`}
+      data-testid={`social-auth-${option.type}`}
       component="a"
       href={option.login_url}
       variant="secondary"
       icon={<Icon />}
+      onClick={handleSocialAuthClick}
     >
       {option.name || labels[option.type] || ''}
     </Button>
