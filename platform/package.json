@@ -36,10 +36,10 @@
     "vitest": "vitest --run"
   },
   "dependencies": {
-    "@ansible/ansible-ui-framework": "^0.0.0",
-    "@ansible/awx-ui": "^0.0.0",
-    "@ansible/common-ui": "^0.0.0",
-    "@ansible/eda-ui": "^0.0.0",
-    "@ansible/hub-ui": "^0.0.0"
+    "@ansible/ansible-ui-framework": "file:../framework",
+    "@ansible/awx-ui": "file:../frontend/awx",
+    "@ansible/common-ui": "file:../frontend/common",
+    "@ansible/eda-ui": "file:../frontend/eda",
+    "@ansible/hub-ui": "file:../frontend/hub"
   }
 }
