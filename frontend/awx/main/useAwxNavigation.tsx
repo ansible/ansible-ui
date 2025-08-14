@@ -136,7 +136,7 @@ export function useAwxNavigation() {
             awxNotificationsRoutes,
             awxManagementJobsRoutes,
           ]
-        : [awxActivityStreamRoutes, awxWorkflowApprovalRoutes],
+        : [awxActivityStreamRoutes, awxWorkflowApprovalRoutes, awxNotificationsRoutes],
     },
   ];
   const accessItems: PageNavigationItem[] = [
