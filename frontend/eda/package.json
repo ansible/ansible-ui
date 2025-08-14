@@ -3,8 +3,8 @@
   "type": "module",
   "version": "0.0.0",
   "dependencies": {
-    "@ansible/ansible-ui-framework": "^0.0.0",
-    "@ansible/common-ui": "^0.0.0"
+    "@ansible/ansible-ui-framework": "file:../../framework",
+    "@ansible/common-ui": "file:../common"
   },
   "scripts": {
     "dump-nyc-vitest": "mkdir -p ../../.nyc_output && vitest run --coverage && mv coverage/vitest/coverage-final.json ../../.nyc_output/eda-vitest.json",

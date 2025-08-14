@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "dependencies": {
-    "@ansible/common-ui": "^0.0.0"
+    "@ansible/common-ui": "file:../common"
   },
   "localDependencies": {
     "ansible-ai-connect-chatbot": "../../../back/chat-package/package"
