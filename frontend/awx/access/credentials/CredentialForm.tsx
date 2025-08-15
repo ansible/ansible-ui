@@ -551,9 +551,6 @@ function CredentialInputs({
 
   const credentialTypeID = selectedCredentialTypeId || watchedCredentialTypeId;
 
-  const isGalaxyCredential =
-    !!credentialTypes && credentialTypes?.[credentialTypeID]?.kind === 'galaxy';
-
   const watchedRequiredFields = useWatch<{
     name: string;
     credential_type: number;
@@ -586,7 +583,7 @@ function CredentialInputs({
         label={t('Description')}
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOrganization<Credential> isRequired={isGalaxyCredential} name="organization" />
+      <PageFormSelectOrganization<Credential> name="organization" />
       <PageFormSelectCredentialType
         name="credential_type"
         isRequired
