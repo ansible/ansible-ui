@@ -24,7 +24,7 @@ export function AsyncQueryLabel(
     if (error.name === 'RequestError') {
       const requestError = error as RequestError;
       if (requestError.statusCode === 404) {
-        return props.id.toString();
+        return props?.id?.toString();
       }
       // AAP-40529
       // Workaround for RBAC issues: a user with no permissions should
@@ -38,7 +38,7 @@ export function AsyncQueryLabel(
   }
 
   if (!data) {
-    return props.id.toString();
+    return props?.id?.toString();
   }
 
   const value = data[props.field ?? 'name'];
@@ -47,8 +47,8 @@ export function AsyncQueryLabel(
     case 'string':
       return value;
     case 'number':
-      return value.toString();
+      return value?.toString();
     default:
-      return props.id.toString();
+      return props?.id?.toString();
   }
 }

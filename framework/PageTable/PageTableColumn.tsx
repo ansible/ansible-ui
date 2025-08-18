@@ -91,6 +91,8 @@ interface ITableColumnCommon<T extends object> {
   /** Makes the column take up the full width */
   fullWidth?: boolean;
 
+  detailsFullWidth?: boolean;
+
   /** Indicates the key for the sorting. This key is usually handled by the view to so the sorting. */
   sort?: string;
 

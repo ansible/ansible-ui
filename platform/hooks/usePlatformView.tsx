@@ -12,7 +12,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 
-export type IPlatformView<T extends { id: number }> = IView &
+export type IPlatformView<T extends { id: number | string }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
@@ -42,7 +42,7 @@ export function getQueryString(queryParams: QueryParams) {
     .join('&');
 }
 
-export function usePlatformView<T extends { id: number }>(options: {
+export function usePlatformView<T extends { id: number | string }>(options: {
   /** The base url for the view. */
   url: string;
 
@@ -93,11 +93,19 @@ export function usePlatformView<T extends { id: number }>(options: {
       if (toolbarFilter) {
         const values = filterState[key];
         if (values && values.length > 0) {
+          // if a value has a "," in it, we need to break it into two values in the values array
+          const realValues = values.flatMap((value) =>
+            value.includes(',') ? value.split(',').map((v) => v.trim()) : value
+          );
+          // we also need to make the new values unique
+          const uniqueValues = Array.from(new Set(realValues));
           queryString ? (queryString += '&') : (queryString += '?');
-          if (values.length > 1) {
-            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
+          if (uniqueValues.length > 1) {
+            queryString += uniqueValues
+              .map((value) => `or__${toolbarFilter.query}=${value}`)
+              .join('&');
           } else {
-            queryString += `${toolbarFilter.query}=${values.join(',')}`;
+            queryString += `${toolbarFilter.query}=${uniqueValues.join(',')}`;
           }
         }
       }

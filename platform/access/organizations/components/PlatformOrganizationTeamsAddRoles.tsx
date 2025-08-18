@@ -7,24 +7,20 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { AwxSelectRolesStep } from '@ansible/awx-ui/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxBulkActionDialog } from '@ansible/awx-ui/common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '@ansible/awx-ui/interfaces/AwxRbacRole';
-import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { PlatformRoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/PlatformRoleAssignmentsReviewStep';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { EdaSelectRolesStep } from '@ansible/eda-ui/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { useGatewayService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PlatformSelectOrganizationRolesStep } from '../roles-wizard-steps/PlatformSelectOrganizationRolesStep';
 import { PlatformSelectOrganizationTeamsStep } from '../roles-wizard-steps/PlatformSelectOrganizationTeamsStep';
 
 interface WizardFormValues {
@@ -51,8 +47,6 @@ export function PlatformOrganizationTeamsAddRoles() {
   const { data: organization, isLoading } = useGet<PlatformOrganization>(
     gatewayAPI`/organizations/${params.id || ''}/`
   );
-  const awxService = useGatewayService('controller');
-  const edaService = useGatewayService('eda');
 
   const steps = useMemo<PageWizardStep[]>(
     () => [
@@ -67,93 +61,18 @@ export function PlatformOrganizationTeamsAddRoles() {
           }
         },
       },
-      // Show a Roles step with substeps for Controller and EDA roles if both Controller and EDA services are enabled
-      ...(awxService && edaService
-        ? ([
-            {
-              id: 'roles',
-              label: t('Select roles'),
-              substeps: [
-                {
-                  id: 'awxRoles',
-                  label: t('Automation Execution'),
-                  inputs: (
-                    <AwxSelectRolesStep
-                      contentType="organization"
-                      fieldNameForPreviousStep="teams"
-                      descriptionForRoleSelection={t(
-                        'Select the roles that you want to apply to the selected teams.'
-                      )}
-                      title={t('Select Automation Execution roles')}
-                    />
-                  ),
-                },
-                {
-                  id: 'edaRoles',
-                  label: t('Automation Decisions'),
-                  inputs: (
-                    <EdaSelectRolesStep
-                      contentType="organization"
-                      fieldNameForPreviousStep="teams"
-                      descriptionForRoleSelection={t(
-                        'Select the roles that you want to apply to the selected teams.'
-                      )}
-                      title={t('Select Automation Decisions roles')}
-                    />
-                  ),
-                },
-              ],
-            },
-          ] as PageWizardStep[])
-        : []),
-      ...(awxService && !edaService
-        ? ([
-            {
-              id: 'roles',
-              label: t('Select Automation Execution roles'),
-              inputs: (
-                <AwxSelectRolesStep
-                  contentType="organization"
-                  fieldNameForPreviousStep="teams"
-                  descriptionForRoleSelection={t(
-                    'Select the roles that you want to apply to the selected teams.'
-                  )}
-                  title={t('Select Automation Execution roles')}
-                />
-              ),
-            },
-          ] as PageWizardStep[])
-        : []),
-      ...(!awxService && edaService
-        ? ([
-            {
-              id: 'roles',
-              label: t('Select Automation Decisions roles'),
-              inputs: (
-                <EdaSelectRolesStep
-                  contentType="organization"
-                  fieldNameForPreviousStep="teams"
-                  descriptionForRoleSelection={t(
-                    'Select the roles that you want to apply to the selected teams.'
-                  )}
-                  title={t('Select Automation Decisions roles')}
-                />
-              ),
-            },
-          ] as PageWizardStep[])
-        : []),
+      {
+        id: 'roles',
+        label: t('Select organization roles'),
+        inputs: <PlatformSelectOrganizationRolesStep />,
+      },
       {
         id: 'review',
         label: t('Review'),
-        element: (
-          <RoleAssignmentsReviewStep
-            edaRolesLabel={t('Automation Decisions roles')}
-            awxRolesLabel={t('Automation Execution roles')}
-          />
-        ),
+        element: <PlatformRoleAssignmentsReviewStep />,
       },
     ],
-    [awxService, edaService, t]
+    [t]
   );
 
   if (isLoading || !organization) return <LoadingPage />;
@@ -200,14 +119,14 @@ export function PlatformOrganizationTeamsAddRoles() {
         ],
         actionFn: (item) => {
           if ((item as TeamAndAwxRole).awxRole) {
-            return postRequest(awxAPI`/role_team_assignments/`, {
+            return postRequest(gatewayAPI`/role_team_assignments/`, {
               team_ansible_id: item.team.summary_fields.resource.ansible_id,
               role_definition: (item as TeamAndAwxRole).awxRole.id,
               content_type: 'shared.organization',
               object_ansible_id: organization?.summary_fields?.resource?.ansible_id || '',
             });
           } else {
-            return postRequest(edaAPI`/role_team_assignments/`, {
+            return postRequest(gatewayAPI`/role_team_assignments/`, {
               team_ansible_id: item.team.summary_fields.resource.ansible_id,
               role_definition: (item as TeamAndEdaRole).edaRole.id,
               content_type: 'shared.organization',

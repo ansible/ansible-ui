@@ -1,5 +1,6 @@
 import { edaAPI } from '../../common/eda-utils';
 import { EdaDecisionEnvironmentAssignTeams } from './EdaDecisionEnvironmentAssignTeams';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 describe('EdaDecisionEnvironmentAssignTeams', () => {
   const component = <EdaDecisionEnvironmentAssignTeams />;
@@ -14,8 +15,11 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     cy.intercept('GET', edaAPI`/decision-environments/*`, {
       fixture: 'edaDecisionEnvironment.json',
     });
-    cy.intercept('GET', edaAPI`/teams/?order_by=name*`, { fixture: 'edaTeams.json' });
-    cy.intercept('GET', edaAPI`/role_definitions/*`, {
+    cy.intercept('GET', gatewayAPI`/teams/?order_by=name*`, { fixture: 'edaTeams.json' });
+    cy.intercept('GET', gatewayAPI`/service-index/role-types/`, {
+      fixture: 'platformRoleTypes.json',
+    });
+    cy.intercept('GET', gatewayAPI`/role_definitions/*`, {
       fixture: 'edaDecisionEnvironmentRoles.json',
     });
     cy.mount(component, params);
@@ -28,7 +32,9 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     cy.get('table tbody').find('tr').should('have.length', 4);
   });
   it('can filter teams by name', () => {
-    cy.intercept(edaAPI`/teams/?name=Gal*`, { fixtures: 'edaTeams.json' }).as('nameFilterRequest');
+    cy.intercept(gatewayAPI`/teams/?name=Gal*`, { fixtures: 'edaTeams.json' }).as(
+      'nameFilterRequest'
+    );
     cy.filterTableByText('Gal');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();
@@ -40,17 +46,20 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     cy.selectTableRowByCheckbox('name', 'Demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
   });
   it('should validate that at least one role is selected for moving to Review step', () => {
     cy.selectTableRowByCheckbox('name', 'Demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.selectTableRowByCheckbox('name', 'Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should(
+      'not.have.class',
+      'pf-m-current'
+    );
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
   it('should display selected team and role in the Review step', () => {
@@ -62,7 +71,7 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Teams');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', '1');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Demo');
-    cy.get('[data-cy="expandable-section-edaRoles"]').within(() => {
+    cy.get('[data-cy="expandable-section-platformRoles"]').within(() => {
       cy.get('div > span').should('contain.text', 'Roles');
       cy.get('div > .pf-v6-c-badge').should('contain.text', '1');
       cy.get('[data-cy="name-column-cell"]').should('contain.text', 'Admin');
@@ -73,12 +82,11 @@ describe('EdaDecisionEnvironmentAssignTeams', () => {
     });
   });
   it('should trigger bulk action dialog on submit', () => {
-    cy.intercept('POST', edaAPI`/role_team_assignments/`, {
+    cy.intercept('POST', gatewayAPI`/role_team_assignments/`, {
       statusCode: 201,
       body: {
         team: 3,
         role_definition: 14,
-        content_type: 'eda.decision-environment',
         object_id: 1,
       },
     }).as('createRoleAssignment');

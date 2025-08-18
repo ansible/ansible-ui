@@ -1,14 +1,15 @@
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
 import { useParams } from 'react-router';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { ResourceUserAccess } from '../../../common/access/components/ResourceUserAccess';
 
 export function DecisionEnvironmentUserAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="eda"
       id={params.id || ''}
-      type={'decisionenvironment'}
+      type={'eda.decisionenvironment'}
+      manageRoleRoute={EdaRoute.DecisionEnvironmentManageUsers}
       addRolesRoute={EdaRoute.DecisionEnvironmentAddUsers}
     />
   );

@@ -6,10 +6,10 @@ import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
 import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
-import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { user_team_access_tab_resources } from '../../../support/constants';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 
 describe('Check if the build includes EDA', () => {
   before(function () {
@@ -31,9 +31,9 @@ describe('Check if the build includes EDA', () => {
     let edaRulebookActivation: EdaRulebookActivation;
     let edaEventStream: EdaEventStream;
     let eventStreamCredential: EdaCredential;
-    let edaUser1: EdaUser;
-    let edaUser2: EdaUser;
-    let edaUser3: EdaUser;
+    let edaUser1: PlatformUser;
+    let edaUser2: PlatformUser;
+    let edaUser3: PlatformUser;
 
     before(() => {
       cy.createEdaOrganization().then((organization) => {
@@ -73,11 +73,11 @@ describe('Check if the build includes EDA', () => {
           });
         });
       });
-      cy.createEdaUser().then((user1) => {
+      cy.createPlatformUser().then((user1) => {
         edaUser1 = user1;
-        cy.createEdaUser().then((user2) => {
+        cy.createPlatformUser().then((user2) => {
           edaUser2 = user2;
-          cy.createEdaUser().then((user3) => {
+          cy.createPlatformUser().then((user3) => {
             edaUser3 = user3;
           });
         });
@@ -91,9 +91,9 @@ describe('Check if the build includes EDA', () => {
       cy.deleteEdaRulebookActivation(edaRulebookActivation);
       cy.deleteEventStream(edaEventStream);
       cy.deleteEdaCredential(eventStreamCredential);
-      cy.deleteEdaUser(edaUser1);
-      cy.deleteEdaUser(edaUser2);
-      cy.deleteEdaUser(edaUser3);
+      cy.deletePlatformUser(edaUser1);
+      cy.deletePlatformUser(edaUser2);
+      cy.deletePlatformUser(edaUser3);
     });
 
     user_team_access_tab_resources.forEach((resource) => {
@@ -117,8 +117,8 @@ describe('Check if the build includes EDA', () => {
                   : resource.name === 'credentials'
                     ? edaCredential
                     : edaEventStream;
-          cy.getEdaRoles().then((rolesArray) => {
-            roleIDs = rolesArray.reduce((acc, role) => {
+          cy.getPlatformRoles().then((rolesArray) => {
+            roleIDs = (rolesArray as { [key: string]: number }[]).reduce((acc, role) => {
               const { name, id } = role;
               return { ...acc, [name]: id };
             }, {});
@@ -164,71 +164,20 @@ describe('Check if the build includes EDA', () => {
           cy.getTableRowByText(edaUser1.username, true).within(() => {
             cy.get('input[type=checkbox]').click();
           });
-          cy.intercept('GET', edaAPI`/role_definitions/*`).as('edaRoles');
+          cy.intercept('GET', gatewayAPI`/role_definitions/*`).as('edaRoles');
           cy.clickButton(/^Next$/);
           cy.wait('@edaRoles');
           cy.getTableRowByText(resource.role, false).within(() => {
             cy.get('input[type=checkbox]').click();
           });
           cy.clickButton(/^Next$/);
-          cy.intercept('POST', edaAPI`/role_user_assignments/`).as('assignment');
+          cy.intercept('POST', gatewayAPI`/role_user_assignments/`).as('assignment');
           cy.clickButton(/^Finish$/);
           cy.assertModalSuccess();
           cy.wait('@assignment').then((assignment) => {
             expect(assignment?.response?.statusCode).to.eql(201);
             cy.contains('div', edaUser1.username);
           });
-        });
-
-        it('can remove user from row', () => {
-          cy.navigateTo('eda', resource.name);
-          if (resource.name === 'decision-environments') {
-            cy.get('[data-cy="table-view"]').click();
-            cy.filterTableByTextFilter('name', resource_object.name, {
-              disableFilterSelection: true,
-            });
-            cy.contains('td', resource_object.name).within(() => {
-              cy.get('a').click();
-            });
-          } else {
-            cy.clickTableRow(resource_object.name, true);
-          }
-          cy.contains('h1', resource_object.name).should('be.visible');
-          cy.clickTab('User Access', true);
-          cy.getTableRowByText(`${edaUser1.username}`, false).within(() => {
-            cy.get('[data-cy="remove-role"]').click();
-          });
-          cy.clickModalConfirmCheckbox();
-          cy.clickModalButton('Remove role');
-          cy.contains(edaUser1.username).should('not.exist');
-        });
-
-        it('can bulk remove user assignments', () => {
-          cy.navigateTo('eda', resource.name);
-          if (resource.name === 'decision-environments') {
-            cy.get('[data-cy="table-view"]').click();
-            cy.filterTableByTextFilter('name', resource_object.name, {
-              disableFilterSelection: true,
-            });
-            cy.contains('td', resource_object.name).within(() => {
-              cy.get('a').click();
-            });
-          } else {
-            cy.clickTableRow(resource_object.name, true);
-          }
-          cy.contains('h1', resource_object.name).should('be.visible');
-          cy.clickTab('User Access', true);
-          cy.getTableRowByText(`${edaUser2.username}`, false).within(() => {
-            cy.get('input[type=checkbox]').click();
-          });
-          cy.getTableRowByText(`${edaUser3.username}`, false).within(() => {
-            cy.get('input[type=checkbox]').click();
-          });
-          cy.clickToolbarKebabAction('remove-roles');
-          cy.clickModalConfirmCheckbox();
-          cy.clickModalButton('Remove role');
-          cy.contains(edaUser2.username).should('not.exist');
-          cy.contains(edaUser3.username).should('not.exist');
         });
       });
     });

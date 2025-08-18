@@ -56,6 +56,14 @@ export function CreatePlatformUser() {
   >(gatewayAPI`/role_definitions/`, {
     name: 'Platform Auditor',
   });
+
+  const { data: organizationMemberRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Organization Member',
+    }
+  );
+
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput,
     setError,
@@ -78,8 +86,10 @@ export function CreatePlatformUser() {
     if (organizations) {
       for (const orgId of organizations) {
         try {
-          await postRequest(gatewayAPI`/organizations/${orgId.toString() ?? ''}/users/associate/`, {
-            instances: [createdUser.id],
+          await postRequest(gatewayAPI`/role_user_assignments/`, {
+            user: createdUser.id,
+            role_definition: organizationMemberRoleData?.results?.[0]?.id,
+            object_id: orgId,
           });
         } catch (error) {
           const { genericErrors, fieldErrors } = awxErrorAdapter(error);
@@ -149,6 +159,12 @@ export function EditPlatformUser() {
     name: 'Platform Auditor',
   });
 
+  const { data: organizationMemberRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Organization Member',
+    }
+  );
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
   const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
   const deleteRequest = useDeleteRequest();
@@ -209,12 +225,11 @@ export function EditPlatformUser() {
           getAddedAndRemovedOrganizationIds(organizations);
         for (const addedOrganizationId of addedOrganizationIds) {
           try {
-            await postRequest(
-              gatewayAPI`/organizations/${addedOrganizationId.toString() ?? ''}/users/associate/`,
-              {
-                instances: [user?.id],
-              }
-            );
+            await postRequest(gatewayAPI`/role_user_assignments/`, {
+              object_id: addedOrganizationId,
+              role_definition: organizationMemberRoleData?.results?.[0].id,
+              user: user?.id,
+            });
           } catch (error) {
             const { genericErrors, fieldErrors } = awxErrorAdapter(error);
             alertToaster.addAlert({
@@ -234,11 +249,13 @@ export function EditPlatformUser() {
         }
         for (const removedOrganizationId of removedOrganizationIds) {
           try {
-            await postRequest(
-              gatewayAPI`/organizations/${removedOrganizationId.toString() ?? ''}/users/disassociate/`,
-              {
-                instances: [user?.id],
-              }
+            const orgMemberRoleAssignment = await getRequest(gatewayAPI`/role_user_assignments/`, {
+              user: user?.id,
+              role_definition: organizationMemberRoleData?.results?.[0]?.id || '',
+            });
+            // Delete the organization member role assignment
+            await deleteRequest(
+              gatewayAPI`/role_user_assignments/${orgMemberRoleAssignment?.results?.[0].id}/`
             );
           } catch (error) {
             const { genericErrors, fieldErrors } = awxErrorAdapter(error);
@@ -260,11 +277,13 @@ export function EditPlatformUser() {
       } else if (user.is_superuser && organizationIds) {
         for (const organizationId of organizationIds) {
           try {
-            await postRequest(
-              gatewayAPI`/organizations/${organizationId.toString() ?? ''}/users/disassociate/`,
-              {
-                instances: [user?.id],
-              }
+            const orgMemberRoleAssignment = await getRequest(gatewayAPI`/role_user_assignments/`, {
+              user: user?.id,
+              role_definition: organizationMemberRoleData?.results?.[0]?.id || '',
+            });
+            // Delete the organization member role assignment
+            await deleteRequest(
+              gatewayAPI`/role_user_assignments/${orgMemberRoleAssignment?.results?.[0].id}/`
             );
           } catch (error) {
             const { genericErrors, fieldErrors } = awxErrorAdapter(error);
@@ -295,6 +314,7 @@ export function EditPlatformUser() {
       getAddedAndRemovedOrganizationIds,
       getRequest,
       organizationIds,
+      organizationMemberRoleData?.results,
       pageNavigate,
       patchUser,
       platformAuditorRoleData?.results,

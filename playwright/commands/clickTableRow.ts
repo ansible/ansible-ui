@@ -34,7 +34,9 @@ type ClickTableRowOptions = {
  *
  */
 export async function clickTableRow(options: ClickTableRowOptions, page: Page) {
-  await page.getByRole('button', { name: 'table view' }).click();
+  if (await page.getByRole('button', { name: 'table view' }).isVisible()) {
+    await page.getByRole('button', { name: 'table view' }).click({ timeout: 5000 });
+  }
   await filterTable(
     {
       pageTitle: options.pageTitle,

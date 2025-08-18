@@ -15,21 +15,22 @@ import { useParams } from 'react-router';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 import { Credential } from '../../../interfaces/Credential';
-import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxSelectRolesStep } from '../../common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PlatformSelectTeamsStep } from '@ansible/common-ui/access/components/PlatformSelectTeamsStep';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 interface WizardFormValues {
-  teams: Team[];
-  awxRoles: AwxRbacRole[];
+  teams: PlatformTeam[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface TeamRolePair {
-  team: Team;
-  role: AwxRbacRole;
+  team: PlatformTeam;
+  role: PlatformRbacRole;
 }
 
 export function CredentialAssignTeams() {
@@ -49,9 +50,9 @@ export function CredentialAssignTeams() {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <AwxSelectTeamsStep
+        <PlatformSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{credentialName}}.',
+            'Select the team(s) that you want to give access to {{inventoryName}}.',
             {
               credentialName: credential?.name,
             }
@@ -59,18 +60,18 @@ export function CredentialAssignTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: Team[] };
+        const { teams } = formData as { teams: PlatformTeam[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="credential"
+        <PlatformSelectRolesStep
+          contentType="awx.credential"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
             credentialName: credential?.name,
@@ -78,8 +79,8 @@ export function CredentialAssignTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as { awxRoles: AwxRbacRole[] };
-        if (!awxRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +93,10 @@ export function CredentialAssignTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, awxRoles } = data;
+    const { teams, platformRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of awxRoles) {
+      for (const role of platformRoles) {
         items.push({ team, role });
       }
     }
@@ -109,7 +110,7 @@ export function CredentialAssignTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(awxAPI`/role_team_assignments/`, {
+          postRequest(gatewayAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
             content_type: 'awx.credential',

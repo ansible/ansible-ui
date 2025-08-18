@@ -47,6 +47,7 @@ import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 import { AwxRoute } from '../AwxRoutes';
+import { InventoryManageUsers } from '../../resources/inventories/components/InventoryManageUsers';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -287,6 +288,11 @@ export function useAwxInventoryRoutes() {
           id: AwxRoute.InventoryAddUsers,
           path: ':id/user-access/add',
           element: <InventoryAddUsers />,
+        },
+        {
+          id: AwxRoute.InventoryManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <InventoryManageUsers />,
         },
         {
           id: AwxRoute.InventoryAssignTeams,

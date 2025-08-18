@@ -1,9 +1,6 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
-import { UserRoles } from '@ansible/awx-ui/access/users/UserPage/UserRoles';
 import { AddRolesToUser } from '@ansible/awx-ui/access/users/components/AddRolesToUser';
 import { EdaAddUserRoles } from '@ansible/eda-ui/access/users/EdaAddUserRoles';
-import { EdaUserRoles } from '@ansible/eda-ui/access/users/UserPage/EdaUserRoles';
-import { HubUserRoles } from '@ansible/hub-ui/access/users/UserPage/HubUserRoles';
 import { HubAddUserRoles } from '@ansible/hub-ui/access/users/components/HubAddUserRoles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +19,7 @@ import { CreatePlatformUser, EditPlatformUser } from '../access/users/components
 import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
 import { PlatformUserRoles } from '../access/users/components/PlatformUserRoles';
 import { PlatformUserTeams } from '../access/users/components/PlatformUserTeams';
+import { PlatformUsersAssignRoles } from '../access/users/components/PlatformUsersAssignRoles';
 import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
@@ -87,39 +85,6 @@ export function useGetPlatformUsersRoutes() {
               id: PlatformRoute.UserRoles,
               path: 'roles',
               element: <PlatformUserRoles />,
-              children: [
-                {
-                  id: PlatformRoute.AwxUserRoles,
-                  path: 'controller',
-                  element: (
-                    <PlatformAwxUserIdLookup>
-                      <UserRoles addRolesRoute={PlatformRoute.AwxUserAddRoles} />
-                    </PlatformAwxUserIdLookup>
-                  ),
-                },
-                {
-                  id: PlatformRoute.EdaUserRoles,
-                  path: 'eda',
-                  element: (
-                    <PlatformEdaUserIdLookup>
-                      <EdaUserRoles addRolesRoute={PlatformRoute.EdaUserAddRoles} />
-                    </PlatformEdaUserIdLookup>
-                  ),
-                },
-                {
-                  id: PlatformRoute.HubUserRoles,
-                  path: 'hub',
-                  element: (
-                    <PlatformHubUserIdLookup>
-                      <HubUserRoles addRolesRoute={PlatformRoute.HubUserAddRoles} />
-                    </PlatformHubUserIdLookup>
-                  ),
-                },
-                {
-                  path: '',
-                  element: <Navigate to="controller" />,
-                },
-              ],
             },
             {
               id: PlatformRoute.UserApiTokens,
@@ -136,6 +101,11 @@ export function useGetPlatformUsersRoutes() {
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: PlatformRoute.UserAssignRoles,
+          path: ':id/roles/assign',
+          element: <PlatformUsersAssignRoles />,
         },
         {
           id: PlatformRoute.AwxUserAddRoles,

@@ -49,17 +49,7 @@ describe('Execution Environment User Access tab', () => {
     cy.verifyPageTitle(executionEnvironment.name);
   });
 
-  function removeRoleFromListRow(roleName: string) {
-    cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
-    cy.getModal().within(() => {
-      cy.get('#confirm').click();
-      cy.clickButton(/^Remove role/);
-      cy.contains(/^Success$/);
-    });
-  }
-
-  it.skip('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
-    //https://issues.redhat.com/browse/AAP-51476
+  it('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab(/^Details$/, true);
@@ -82,7 +72,11 @@ describe('Execution Environment User Access tab', () => {
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Review').should('be.visible');
         cy.verifyReviewStepWizardDetails('users', [hubUser.username], '1');
-        cy.verifyReviewStepWizardDetails('hubRoles', [role.name, role.description], '1');
+        cy.verifyReviewStepWizardDetails(
+          'hubRoles',
+          [role.name, role.description, 'Automation Content'],
+          '1'
+        );
         cy.clickButton(/^Finish/);
         cy.wait('@userRoleAssignment')
           .its('response')
@@ -96,13 +90,11 @@ describe('Execution Environment User Access tab', () => {
         disableFilter: true,
       });
       cy.contains(role.name).should('be.visible');
-      removeRoleFromListRow(role.name);
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
 
-  it.skip('create a new ee, from the team access tab assign a user and apply role(s) to the team of the ee', () => {
-    //https://issues.redhat.com/browse/AAP-51476
+  it('create a new ee, from the team access tab assign a user and apply role(s) to the team of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab(/^Details$/, true);
@@ -127,7 +119,11 @@ describe('Execution Environment User Access tab', () => {
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Review').should('be.visible');
         cy.verifyReviewStepWizardDetails('teams', [hubTeam.name], '1');
-        cy.verifyReviewStepWizardDetails('hubRoles', [role.name, role.description], '1');
+        cy.verifyReviewStepWizardDetails(
+          'hubRoles',
+          [role.name, role.description, 'Automation Content'],
+          '1'
+        );
         cy.clickButton(/^Finish/);
         cy.wait('@teamRoleAssignment')
           .its('response')
@@ -141,7 +137,6 @@ describe('Execution Environment User Access tab', () => {
         disableFilter: true,
       });
       cy.contains(role.name).should('be.visible');
-      removeRoleFromListRow(role.name);
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });

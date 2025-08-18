@@ -45,6 +45,7 @@ export enum AwxRoute {
   TemplateLaunchWizard = 'awx-template-launch-wizard',
   JobTemplateAssignTeams = 'awx-template-assign-teams',
   JobTemplateAddUsers = 'awx-template-add-users',
+  JobTemplateManageUsers = 'awx-template-manage-users',
 
   WorkflowJobTemplatePage = 'awx-workflow-job-template-page',
   WorkflowJobTemplateDetails = 'awx-workflow-job-template-details',
@@ -66,6 +67,7 @@ export enum AwxRoute {
   WorkflowJobTemplateLaunchWizard = 'awx-workflow-job-template-launch-wizard',
   WorkflowJobTemplateAssignTeams = 'awx-workflow-job-template-assign-teams',
   WorkflowJobTemplateAddUsers = 'awx-workflow-job-template-add-users',
+  WorkflowJobTemplateManageUsers = 'awx-workflow-job-template-manage-users',
 
   Credentials = 'awx-credentials',
   CreateCredential = 'awx-create-credential',
@@ -76,6 +78,7 @@ export enum AwxRoute {
   CredentialTeamAccess = 'awx-credential-team-access',
   CredentialUserAccess = 'awx-credential-user-access',
   CredentialAddUsers = 'awx-credentials-add-users',
+  CredentialManageUsers = 'awx-credentials-manage-users',
   CredentialAssignTeams = 'awx-credentials-assign-teams',
 
   Projects = 'awx-projects',
@@ -91,6 +94,7 @@ export enum AwxRoute {
   ProjectUsers = 'awx-project-users',
   ProjectTeams = 'awx-project-teams',
   ProjectAddUsers = 'awx-project-add-users',
+  ProjectManageUsers = 'awx-project-manage-users',
   ProjectAssignTeams = 'awx-project-assign-teams',
 
   ProjectSchedulePage = 'awx-project-schedule-page',
@@ -137,6 +141,7 @@ export enum AwxRoute {
   InventoryTeamAccess = 'awx-inventory-team-access',
   InventoryUserAccess = 'awx-inventory-user-access',
   InventoryAddUsers = 'awx-inventory-add-users',
+  InventoryManageUsers = 'awx-inventory-manage-users',
   InventoryAssignTeams = 'awx-inventory-assign-teams',
 
   Hosts = 'awx-hosts',
@@ -210,6 +215,8 @@ export enum AwxRoute {
   NotificationTemplateTeamAccess = 'awx-notification-template-team-access',
   NotificationTemplateUserAccess = 'awx-notification-template-user-access',
   NotificationAddUsers = 'awx-notification-add-users',
+  NotificationManageUsers = 'awx-notification-manage-users',
+
   NotificationAssignTeams = 'awx-notification-assign-teams',
   EditNotificationTemplate = 'awx-edit-notification-template',
   AddNotificationTemplate = 'awx-add-notification-template',
@@ -238,6 +245,7 @@ export enum AwxRoute {
   InstanceGroupJobs = 'awx-instance-group-jobs',
   InstanceGroups = 'awx-instance-groups',
   InstanceGroupAssignTeams = 'awx-instance-group-assign-teams',
+  InstanceGroupManageUsers = 'awx-instance-group-manage-users',
   InstanceGroupAddUsers = 'awx-instance-group-add-users',
 
   CreateContainerGroup = 'awx-create-container-group',
@@ -262,6 +270,7 @@ export enum AwxRoute {
   ExecutionEnvironmentTeamAccess = 'awx-execution-environment-team-access',
   ExecutionEnvironmentUserAccess = 'awx-execution-environment-user-access',
   ExecutionEnvironmentAddUsers = 'awx-execution-environment-add-users',
+  ExecutionEnvironmentManageUsers = 'awx-execution-environment-manage-users',
   ExecutionEnvironmentAssignTeams = 'awx-execution-environment-assign-teams',
 
   TopologyView = 'awx-topology-view',

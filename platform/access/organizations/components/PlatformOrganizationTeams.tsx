@@ -13,7 +13,14 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
-import { ButtonVariant } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertGroup,
+  ButtonVariant,
+  Content,
+  ContentVariants,
+  PageSection,
+} from '@patternfly/react-core';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
@@ -54,40 +61,57 @@ export function PlatformOrganizationTeams() {
   if (error) return <AwxError error={error} />;
 
   return (
-    <PageTable<PlatformTeam>
-      id="platform-organization-teams-table"
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns.slice(0, 1)}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading teams')}
-      emptyState={
-        canCreateTeam ? (
-          <PageTableEmptyState
-            title={t('No teams')}
-            description={t(
-              'No teams have been created or assigned to this organization. Go to the Teams section to create a team, then you can assign that team to this organization. Once teams are assigned to this organization, they can be assigned roles for the resources within this organization.'
+    <>
+      <PageSection>
+        <AlertGroup>
+          <Alert
+            isInline
+            variant="info"
+            title={t(
+              `Below displays a list of teams within this organization whether or not they have been assigned organization roles.`
             )}
           >
-            <ButtonLink
-              icon={<PanelCloseIcon />}
-              variant={ButtonVariant.link}
-              href={getPageUrl(PlatformRoute.CreateTeam)}
+            <Content
+              component={ContentVariants.p}
+            >{t`To view and manage a team's organization roles click on the team's view and manage organization roles action.`}</Content>
+          </Alert>
+        </AlertGroup>
+      </PageSection>
+      <PageTable<PlatformTeam>
+        id="platform-organization-teams-table"
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns.slice(0, 1)}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading teams')}
+        emptyState={
+          canCreateTeam ? (
+            <PageTableEmptyState
+              title={t('No teams')}
+              description={t(
+                'No teams have been created or assigned to this organization. Go to the Teams section to create a team, then you can assign that team to this organization. Once teams are assigned to this organization, they can be assigned roles for the resources within this organization.'
+              )}
             >
-              {t('Go to Teams section and create team')}
-            </ButtonLink>
-          </PageTableEmptyState>
-        ) : (
-          <PageTableEmptyState
-            icon={CubesIcon}
-            title={t('You do not have permission to create teams.')}
-            description={t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )}
-          />
-        )
-      }
-      {...view}
-    />
+              <ButtonLink
+                icon={<PanelCloseIcon />}
+                variant={ButtonVariant.link}
+                href={getPageUrl(PlatformRoute.CreateTeam)}
+              >
+                {t('Go to Teams section and create team')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create teams.')}
+              description={t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+          )
+        }
+        {...view}
+      />
+    </>
   );
 }

@@ -1,15 +1,16 @@
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 import { useParams } from 'react-router';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function CredentialUserAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="eda"
       id={params.id || ''}
-      type={'edacredential'}
+      type={'eda.edacredential'}
       addRolesRoute={EdaRoute.CredentialAddUsers}
+      manageRoleRoute={EdaRoute.CredentialManageUsers}
     />
   );
 }

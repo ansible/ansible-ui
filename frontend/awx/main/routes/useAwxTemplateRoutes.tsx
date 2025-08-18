@@ -36,6 +36,8 @@ import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 import { AwxRoute } from '../AwxRoutes';
+import { JobTemplateManageUsers } from '../../resources/templates/JobTemplateManageUsers';
+import { WorkflowJobTemplateManageUsers } from '../../resources/templates/WorkflowJobTemplateManageUsers';
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -171,6 +173,11 @@ export function useAwxTemplateRoutes() {
               id: AwxRoute.JobTemplateAddUsers,
               path: ':id/user-access/add',
               element: <JobTemplateAddUsers />,
+            },
+            {
+              id: AwxRoute.JobTemplateManageUsers,
+              path: ':resource_id/user-access/:resource_type/:user_id/manage',
+              element: <JobTemplateManageUsers />,
             },
             {
               id: AwxRoute.TemplateLaunchWizard,
@@ -314,6 +321,11 @@ export function useAwxTemplateRoutes() {
               id: AwxRoute.WorkflowJobTemplateAddUsers,
               path: ':id/user-access/add',
               element: <WorkflowJobTemplateAddUsers />,
+            },
+            {
+              id: AwxRoute.WorkflowJobTemplateManageUsers,
+              path: ':resource_id/user-access/:resource_type/:user_id/manage',
+              element: <WorkflowJobTemplateManageUsers />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateLaunchWizard,

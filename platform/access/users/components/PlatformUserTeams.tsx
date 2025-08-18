@@ -22,6 +22,9 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
 import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
 
 export function PlatformUserTeams() {
   const { t } = useTranslation();
@@ -110,6 +113,12 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
 
+  const { data: teamMemberRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Team Member',
+    }
+  );
   const associateTeams = useCallback(() => {
     selectTeams(
       t('Assign teams'),
@@ -120,8 +129,10 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
         try {
           await Promise.all(
             teams.map((team) =>
-              postRequest(gatewayAPI`/teams/${team.id.toString()}/users/associate/`, {
-                instances: [userId],
+              postRequest(gatewayAPI`/role_user_assignments/`, {
+                object_id: team.id,
+                role_definition: teamMemberRoleData?.results[0]?.id,
+                user: userId,
               })
             )
           );
@@ -135,7 +146,7 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
         await onComplete();
       }
     );
-  }, [alertToaster, onComplete, postRequest, selectTeams, t, userId]);
+  }, [alertToaster, onComplete, postRequest, selectTeams, t, teamMemberRoleData?.results, userId]);
   return associateTeams;
 }
 

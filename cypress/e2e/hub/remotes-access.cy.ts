@@ -42,17 +42,7 @@ describe('Remotes User Access tab', () => {
     cy.verifyPageTitle(remote.name);
   });
 
-  function removeRoleFromListRow(roleName: string) {
-    cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
-    cy.getModal().within(() => {
-      cy.get('#confirm').click();
-      cy.clickButton(/^Remove role/);
-      cy.contains(/^Success$/).should('be.visible');
-    });
-  }
-
-  it.skip('create a new remote, from the user access tab assign a user and apply role(s) to the user of the remote', () => {
-    //https://issues.redhat.com/browse/AAP-51476
+  it('create a new remote, from the user access tab assign a user and apply role(s) to the user of the remote', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_user_assignments/*`).as('userRoleAssignments');
@@ -79,7 +69,11 @@ describe('Remotes User Access tab', () => {
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Review').should('be.visible');
         cy.verifyReviewStepWizardDetails('users', [hubUser.username], '1');
-        cy.verifyReviewStepWizardDetails('hubRoles', [role.name, role.description], '1');
+        cy.verifyReviewStepWizardDetails(
+          'hubRoles',
+          [role.name, role.description, 'Automation Content'],
+          '1'
+        );
         cy.clickButton(/^Finish/);
         cy.wait('@userRoleAssignment')
           .its('response')
@@ -93,13 +87,11 @@ describe('Remotes User Access tab', () => {
         disableFilter: true,
       });
       cy.contains(role.name).should('be.visible');
-      removeRoleFromListRow(role.name);
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
 
-  it.skip('create a new remote, from the team access tab assign a user and apply role(s) to the team of the remote', () => {
-    //https://issues.redhat.com/browse/AAP-51476
+  it('create a new remote, from the team access tab assign a user and apply role(s) to the team of the remote', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.intercept('GET', hubAPI`/_ui/v2/role_team_assignments/*`).as('teamRoleAssignment');
@@ -129,7 +121,11 @@ describe('Remotes User Access tab', () => {
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Review').should('be.visible');
         cy.verifyReviewStepWizardDetails('teams', [hubTeam.name], '1');
-        cy.verifyReviewStepWizardDetails('hubRoles', [role.name, role.description], '1');
+        cy.verifyReviewStepWizardDetails(
+          'hubRoles',
+          [role.name, role.description, 'Automation Content'],
+          '1'
+        );
         cy.clickButton(/^Finish/);
         cy.wait('@teamRoleAssignment')
           .its('response')
@@ -143,7 +139,6 @@ describe('Remotes User Access tab', () => {
         disableFilter: false,
       });
       cy.contains(role.name).should('be.visible');
-      removeRoleFromListRow(role.name);
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });

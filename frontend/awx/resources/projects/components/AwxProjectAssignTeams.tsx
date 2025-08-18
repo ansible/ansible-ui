@@ -12,27 +12,25 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Project } from '../../../interfaces/Project';
-import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
-
-interface AwxRole {
-  id: string;
-  name: string;
-}
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PlatformSelectTeamsStep } from '@ansible/common-ui/access/components/PlatformSelectTeamsStep';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 interface WizardFormValues {
-  teams: Team[];
-  awxRoles: AwxRole[];
+  teams: PlatformTeam[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface TeamRolePair {
-  team: Team;
-  role: AwxRole;
+  team: PlatformTeam;
+  role: PlatformRbacRole;
 }
 
 export function AwxProjectAssignTeams() {
@@ -50,7 +48,7 @@ export function AwxProjectAssignTeams() {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <AwxSelectTeamsStep
+        <PlatformSelectTeamsStep
           descriptionForTeamsSelection={t(
             'Select the team(s) that you want to give access to {{projectName}}.',
             {
@@ -60,18 +58,18 @@ export function AwxProjectAssignTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: Team[] };
+        const { teams } = formData as { teams: PlatformTeam[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="project"
+        <PlatformSelectRolesStep
+          contentType="awx.project"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
             projectName: project?.name,
@@ -79,8 +77,8 @@ export function AwxProjectAssignTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as { awxRoles: AwxRole[] };
-        if (!awxRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -93,10 +91,10 @@ export function AwxProjectAssignTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, awxRoles } = data;
+    const { teams, platformRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of awxRoles) {
+      for (const role of platformRoles) {
         items.push({ team, role });
       }
     }
@@ -110,10 +108,10 @@ export function AwxProjectAssignTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(awxAPI`/role_team_assignments/`, {
+          postRequest(gatewayAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'project',
+            content_type: 'awx.project',
             object_id: project.id,
           }),
         onComplete: () => {
@@ -146,6 +144,7 @@ export function AwxProjectAssignTeams() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid

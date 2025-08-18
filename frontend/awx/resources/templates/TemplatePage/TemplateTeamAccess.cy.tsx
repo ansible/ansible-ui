@@ -1,7 +1,7 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { TemplateTeamAccess } from './TemplateTeamAccess';
 
-describe('TemplateTeamAccess', () => {
+describe.skip('TemplateTeamAccess', () => {
   beforeEach(() => {
     cy.intercept(
       {

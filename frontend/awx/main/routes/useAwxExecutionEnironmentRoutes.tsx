@@ -14,6 +14,7 @@ import { ExecutionEnvironmentTemplates } from '../../administration/execution-en
 import { ExecutionEnvironmentUserAccess } from '../../administration/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentUserAccess';
 import { ExecutionEnvironments } from '../../administration/execution-environments/ExecutionEnvironments';
 import { AwxRoute } from '../AwxRoutes';
+import { ExecutionEnvironmentManageUsers } from '../../administration/execution-environments/components/ExecutionEnvironmentManageUsers';
 
 export function useAwxExecutionEnvironmentRoutes() {
   const { t } = useTranslation();
@@ -68,6 +69,11 @@ export function useAwxExecutionEnvironmentRoutes() {
           id: AwxRoute.ExecutionEnvironmentAddUsers,
           path: ':id/user-access/add',
           element: <ExecutionEnvironmentAddUsers />,
+        },
+        {
+          id: AwxRoute.ExecutionEnvironmentManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <ExecutionEnvironmentManageUsers />,
         },
         {
           id: AwxRoute.ExecutionEnvironmentAssignTeams,

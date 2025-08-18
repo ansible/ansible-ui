@@ -2,34 +2,25 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
-import { Organization } from '@ansible/awx-ui/interfaces/Organization';
-import { AwxUser } from '@ansible/awx-ui/interfaces/User';
-import { useManageOrgRoles } from '@ansible/common-ui/access/hooks/useManageOrgRolesDialog';
+import { UserRoleAccess } from '@ansible/common-ui/access/interfaces/UserRoleAccess';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
-import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
-import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { MinusCircleIcon, PencilAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
-import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { useHasAwxService, useHasEdaService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useRemoveOrganizationUsers } from './useRemoveOrganizationUsers';
 
-export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformUser>) {
+export function useOrganizationUsersToolbarActions(view: IPlatformView<UserRoleAccess>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
@@ -52,7 +43,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
 
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<PlatformUser>[]>(
+  const toolbarActions = useMemo<IPageAction<UserRoleAccess>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -67,7 +58,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
               'You do not have permission to add users to this organization. Please contact your system administrator if there is an issue with your access.'
             ),
         onClick: () => {
-          pageNavigate(PlatformRoute.OrganizationAddUsers, {
+          pageNavigate(PlatformRoute.OrganizationAssignUsers, {
             params: { id: params.id },
           });
         },
@@ -93,20 +84,15 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
   return toolbarActions;
 }
 
-export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>) {
+export function useOrganizationUsersRowActions(view: IPlatformView<UserRoleAccess>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
     gatewayAPI`/organizations`,
     params.id
   );
-  const { resource: awxOrganization, error: errorRetrievingAwxOrg } = useAwxResource<Organization>(
-    'organizations/',
-    organization
-  );
-  const { resource: edaOrganization, error: errorRetrievingEdaOrg } =
-    useEdaResource<EdaOrganization>('organizations/', organization);
+
+  const getPageUrl = useGetPageUrl();
 
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
   const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
@@ -116,70 +102,23 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
     organizationOptions?.actions &&
       (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
   );
-  const manageOrgRoles = useManageOrgRoles();
-  const awxService = useHasAwxService();
-  const edaService = useHasEdaService();
-  const manageRolesHandleClick = useCallback(
-    async (user: PlatformUser) => {
-      const awxUser = awxService ? await getAwxResource<AwxUser>('/users/', user) : null;
-      const edaUser = edaService ? await getEdaResource<EdaUser>('users/', user) : null;
-      const orgListOptions = [
-        ...(awxService && !errorRetrievingAwxOrg && awxOrganization?.id && (awxUser as AwxUser)?.id
-          ? [
-              {
-                title: t('Automation Execution roles'),
-                isExpandable: true,
-                apiPrefixFunction: awxAPI,
-                orgId: awxOrganization?.id?.toString() ?? '',
-                userId: (awxUser as AwxUser)?.id?.toString(),
-              },
-            ]
-          : []),
-        ...(edaService && !errorRetrievingEdaOrg && edaOrganization?.id && (edaUser as EdaUser)?.id
-          ? [
-              {
-                title: t('Automation Decisions roles'),
-                isExpandable: true,
-                apiPrefixFunction: edaAPI,
-                orgId: edaOrganization?.id?.toString() ?? '',
-                userId: (edaUser as EdaUser)?.id?.toString() ?? '',
-              },
-            ]
-          : []),
-      ];
-      manageOrgRoles({
-        orgListsOptions: orgListOptions,
-        onManageRolesClick: () =>
-          pageNavigate(PlatformRoute.OrganizationManageUserRoles, {
-            params: { id: params.id, userId: user?.id },
-          }),
-        userOrTeamName: user?.username,
-      });
-    },
-    [
-      awxOrganization?.id,
-      awxService,
-      edaOrganization?.id,
-      edaService,
-      errorRetrievingAwxOrg,
-      errorRetrievingEdaOrg,
-      manageOrgRoles,
-      pageNavigate,
-      params.id,
-      t,
-    ]
-  );
 
-  const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
+  const rowActions = useMemo<IPageAction<UserRoleAccess>[]>(() => {
     return [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
         isPinned: true,
         icon: PencilAltIcon,
         label: t(`Manage organization roles`),
-        onClick: manageRolesHandleClick,
+        href: (user: UserRoleAccess) =>
+          getPageUrl(PlatformRoute.OrganizationManageUserRoles, {
+            params: {
+              id: organization?.id,
+              userId: user.id,
+            },
+          }),
       },
       {
         type: PageActionType.Button,
@@ -193,7 +132,7 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         isDanger: true,
       },
     ];
-  }, [canEditOrganization, manageRolesHandleClick, removeUsers, t]);
+  }, [canEditOrganization, removeUsers, getPageUrl, organization?.id, t]);
 
   return rowActions;
 }

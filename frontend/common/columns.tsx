@@ -82,6 +82,7 @@ export function useDescriptionColumn<
       card: 'description',
       modal: ColumnModalOption.hidden,
       dashboard: ColumnDashboardOption.hidden,
+      detailsFullWidth: true,
     }),
     [t, options]
   );

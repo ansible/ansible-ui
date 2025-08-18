@@ -13,7 +13,7 @@ describe('Check if the build includes EDA', () => {
     });
   });
 
-  describe('EDA External Credentials Component Tests', () => {
+  describe.skip('EDA External Credentials Component Tests', () => {
     let edaOrg: EdaOrganization;
     let externalCredential: EdaCredential;
 

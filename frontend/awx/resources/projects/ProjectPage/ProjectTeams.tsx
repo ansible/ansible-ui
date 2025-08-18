@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useParams } from 'react-router';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
+
 export function ProjectTeams() {
   const params = useParams<{ id: string }>();
 
   return (
-    <TeamAccess
-      service={'awx'}
+    <PlatformTeamAccess
       id={params.id || ''}
-      type={'project'}
+      type={'awx.project'}
       addRolesRoute={AwxRoute.ProjectAssignTeams}
     />
   );

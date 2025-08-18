@@ -33,6 +33,7 @@ import {
   StatusEnum,
 } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
+import { gatewayAPI } from './formatApiPathForPlatform';
 
 /*  EDA related custom command implementation  */
 
@@ -466,7 +467,7 @@ Cypress.Commands.add('deleteEdaRoleDefinition', (edaRoleDefinition: RoleDefiniti
 Cypress.Commands.add(
   'createRoleTeamAssignments',
   (object_id, role_definition, team, content_type) => {
-    cy.requestPost<TeamAssignment>(edaAPI`/role_team_assignments/`, {
+    cy.requestPost<TeamAssignment>(gatewayAPI`/role_team_assignments/`, {
       object_id: object_id,
       content_type: content_type,
       role_definition: role_definition,
@@ -482,7 +483,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'createRoleUserAssignments',
   (object_id, role_definition, user, content_type) => {
-    cy.requestPost<UserAssignment>(edaAPI`/role_user_assignments/`, {
+    cy.requestPost<UserAssignment>(gatewayAPI`/role_user_assignments/`, {
       object_id: object_id,
       content_type: content_type,
       role_definition: role_definition,

@@ -748,6 +748,11 @@ function TableRow<T extends object>(props: {
     [maxSelections, selectedItems]
   );
 
+  const rowId =
+    'id' in item && (typeof item.id === 'string' || typeof item.id === 'number')
+      ? `row-id-${item.id.toString()}`
+      : `row-${rowIndex}`;
+
   return (
     <>
       <Tr
@@ -756,11 +761,8 @@ function TableRow<T extends object>(props: {
           borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
           cursor: onSelect ? 'pointer' : 'default',
         }}
-        data-cy={
-          'id' in item && (typeof item.id === 'string' || typeof item.id === 'number')
-            ? `row-id-${item.id.toString()}`
-            : `row-${rowIndex}`
-        }
+        data-testid={rowId}
+        data-cy={rowId}
         onClick={() => {
           if (!onSelect) return;
           if (!isSelectMultiple) {

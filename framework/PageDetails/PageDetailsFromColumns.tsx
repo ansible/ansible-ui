@@ -52,6 +52,7 @@ export function PageDetailsFromColumns<T extends object>(props: {
             key={column.id ?? column.header}
             helpText={column.helpText}
             label={column.header}
+            fullWidth={column.detailsFullWidth}
           >
             <TableColumnCell column={column} item={item} />
           </PageDetail>

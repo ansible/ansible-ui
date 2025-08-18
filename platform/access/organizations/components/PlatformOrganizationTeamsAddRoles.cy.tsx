@@ -51,25 +51,7 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
     });
     cy.mount(component, params);
     cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
-    cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles');
-    cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Automation Execution');
-    cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Automation Decisions');
-    cy.get('[data-cy="wizard-nav"] li').eq(4).should('contain.text', 'Review');
-    cy.get('[data-cy="wizard-nav-item-teams"] button').should('have.class', 'pf-m-current');
-  });
-
-  it('should render with correct steps when only one service is enabled', () => {
-    cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
-      if (serviceType === 'controller') {
-        return '/api/controller/';
-      }
-      return undefined;
-    });
-    cy.mount(component, params);
-    cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
-    cy.get('[data-cy="wizard-nav"] li')
-      .eq(1)
-      .should('contain.text', 'Select Automation Execution roles');
+    cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select organization roles');
     cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('have.class', 'pf-m-current');
   });
@@ -90,7 +72,7 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
     cy.selectTableRowByCheckbox('name', 'Test team 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
 
   it('selection of service-specific roles is optional', () => {
@@ -106,9 +88,7 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
     cy.selectTableRowByCheckbox('name', 'Test team 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
-    cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-edaRoles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
@@ -126,50 +106,18 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
     cy.selectTableRowByCheckbox('name', 'Test team 1', { disableFilter: true });
     cy.selectTableRowByCheckbox('name', 'Test team 2', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
-    cy.contains('Select Automation Execution roles');
-    cy.selectTableRowByCheckbox('name', 'Organization Credential Admin', { disableFilter: true });
-    cy.selectTableRowByCheckbox('name', 'Organization Inventory Admin', { disableFilter: true });
-    cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-edaRoles"] button').should('have.class', 'pf-m-current');
-    cy.contains('Select Automation Decisions roles');
-    cy.selectTableRowByCheckbox('name', 'Contributor', { disableFilter: true });
+    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.contains('Select organization roles');
+    cy.selectTableRowByCheckbox('name', 'Organization Member', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Teams');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', '2');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Test team 1');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Test team 2');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should(
-      'contain.text',
-      'Automation Decisions roles'
-    );
-    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', '1');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Contributor');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should(
-      'contain.text',
-      'Has create and update permissions with an exception of users and roles. Has enable and disable rulebook activation permissions.'
-    );
-    cy.get('[data-cy="expandable-section-awxRoles"]').should(
-      'contain.text',
-      'Automation Execution roles'
-    );
-    cy.get('[data-cy="expandable-section-awxRoles"]').should('contain.text', '2');
-    cy.get('[data-cy="expandable-section-awxRoles"]').should(
-      'contain.text',
-      'Organization Credential Admin'
-    );
-    cy.get('[data-cy="expandable-section-awxRoles"]').should(
-      'contain.text',
-      'Organization Inventory Admin'
-    );
-    cy.get('[data-cy="expandable-section-awxRoles"]').should(
-      'contain.text',
-      'Has all permissions to credentials within an organization'
-    );
-    cy.get('[data-cy="expandable-section-awxRoles"]').should(
-      'contain.text',
-      'Has all permissions to inventories within an organization'
-    );
+    cy.get('[data-cy="expandable-section-awxRoles"]').should('contain.text', 'Organization roles');
+    cy.get('[data-cy="expandable-section-awxRoles"]').should('contain.text', '1');
+    cy.get('[data-cy="expandable-section-awxRoles"]').should('contain.text', 'Organization Member');
+    cy.get('[data-cy="components-column-cell"]').should('be.visible');
   });
 });

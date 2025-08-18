@@ -16,6 +16,7 @@ import { HubUser } from '@ansible/hub-ui/interfaces/expanded/HubUser';
 import { Authenticator } from '@ansible/platform-ui/interfaces/Authenticator';
 import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { AZURE_URL, OCP_A_URL, SAAS_URL, UpgradeUserType, usersForMigration } from './constants';
@@ -605,6 +606,56 @@ Cypress.Commands.add('getPlatformApis', () => {
       galaxy?: string;
     };
   }>('/api/');
+});
+
+// Platform Role Helper Functions
+Cypress.Commands.add(
+  'getPlatformRoles',
+  (options: { managed?: boolean; content_type__model?: string } = {}) => {
+    let roleDefinitionsUrl = gatewayAPI`/role_definitions/?order_by=name`;
+
+    const { managed, content_type__model } = options;
+
+    roleDefinitionsUrl = content_type__model
+      ? (roleDefinitionsUrl += `&content_type__model=${content_type__model}`)
+      : roleDefinitionsUrl;
+    roleDefinitionsUrl =
+      managed !== undefined ? (roleDefinitionsUrl += `&managed=${managed}`) : roleDefinitionsUrl;
+
+    cy.requestGet<PlatformItemsResponse<PlatformRole>>(roleDefinitionsUrl).then((response) => {
+      cy.wrap(response.results ?? []);
+    });
+  }
+);
+
+Cypress.Commands.add('getPlatformRoleDetail', (roleID: string) => {
+  cy.requestGet<PlatformRole>(gatewayAPI`/role_definitions/${roleID}/`).then((response) => {
+    cy.wrap(response);
+  });
+});
+
+Cypress.Commands.add(
+  'createPlatformRole',
+  (roleName: string, description: string, contentType: string, permissions: string[]) => {
+    cy.requestPost<PlatformRole>(gatewayAPI`/role_definitions/`, {
+      name: roleName,
+      description: description,
+      content_type: contentType,
+      permissions: permissions,
+    }).then((role) => {
+      cy.wrap(role, { log: false });
+    });
+  }
+);
+
+Cypress.Commands.add('deletePlatformRole', (platformRoleDefinition: PlatformRole) => {
+  cy.requestDelete(gatewayAPI`/role_definitions/${platformRoleDefinition.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    cy.log('**Platform Role Deleted**').then(() => {
+      cy.wrap(undefined, { log: false });
+    });
+  });
 });
 
 Cypress.Commands.add('checkBuildType', () => {

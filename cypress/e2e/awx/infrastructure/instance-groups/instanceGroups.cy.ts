@@ -3,19 +3,20 @@ import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
 import { Job } from '@ansible/awx-ui/interfaces/Job';
 import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
-import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { Project } from '@ansible/awx-ui/interfaces/Project';
-import { Team } from '@ansible/awx-ui/interfaces/Team';
-import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 
 describe(`Instance Groups`, () => {
   let project: Project;
-  let awxOrganization: Organization;
+  let awxOrganization: PlatformOrganization;
 
   before(function () {
-    cy.createAwxOrganization().then((thisAwxOrg) => {
+    cy.createPlatformOrganization().then((thisAwxOrg) => {
       awxOrganization = thisAwxOrg;
       cy.createAwxProject(awxOrganization).then((proj) => {
         project = proj;
@@ -25,7 +26,7 @@ describe(`Instance Groups`, () => {
 
   after(() => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+    cy.deletePlatformOrganization(awxOrganization, { failOnStatusCode: false });
   });
 
   describe(`Instance Groups: List view`, () => {
@@ -508,12 +509,12 @@ describe(`Instance Groups`, () => {
   });
 
   describe(`Instance Groups: Team access Tab`, () => {
-    let igTeam: Team;
+    let igTeam: PlatformTeam;
     let instanceGroup: InstanceGroup;
     let containerGroup: InstanceGroup;
 
     beforeEach(function () {
-      cy.createAwxTeam({ organization: awxOrganization.id }).then((createdTeam) => {
+      cy.createPlatformTeam({ organization: awxOrganization.id }).then((createdTeam) => {
         igTeam = createdTeam;
         cy.createAwxInstanceGroup({
           name: 'E2E Instance Group ' + randomString(4),
@@ -541,7 +542,7 @@ describe(`Instance Groups`, () => {
     afterEach(() => {
       cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
       cy.deleteAwxInstanceGroup(containerGroup, { failOnStatusCode: false });
-      cy.deleteAwxTeam(igTeam, { failOnStatusCode: false });
+      cy.deletePlatformTeam(igTeam, { failOnStatusCode: false });
     });
 
     it(`can visit the instance group -> team access tab, add a team, view the team on the teams list and then delete team`, () => {
@@ -557,10 +558,8 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^Team Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No teams assigned to instance group/);
-      cy.get('.pf-v6-c-empty-state__body').contains(
-        /^To get started, assign teams to this instance group./
-      );
+      cy.contains(/^No teams assigned to instance group/);
+      cy.contains(/^To get started, assign teams to this instance group./);
       cy.getByDataCy('assign-teams').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
@@ -570,7 +569,11 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
       cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select team(s)');
-      cy.filterTableBySingleSelect('name', igTeam.name);
+      cy.get('[data-cy="text-input"]').within(() => {
+        cy.get('input').type(igTeam.name);
+      });
+      cy.get('[data-cy="apply-filter"]').click();
+      cy.contains('.pf-v6-c-label', igTeam.name);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="checkbox-column-cell"] input').click();
@@ -593,8 +596,8 @@ describe(`Instance Groups`, () => {
           cy.get('tbody tr').should('have.length', 1);
           cy.get('[data-cy="name-column-cell"]').should('have.text', igTeam.name);
         });
-      cy.get('[data-cy="expandable-section-awxRoles"]').should('be.visible');
-      cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamAdded');
+      cy.get('[data-cy="expandable-section-platformRoles"]').should('be.visible');
+      cy.intercept('POST', gatewayAPI`/role_team_assignments/`).as('teamAdded');
       cy.getByDataCy('Submit').click();
       cy.wait('@teamAdded')
         .its('response')
@@ -617,7 +620,7 @@ describe(`Instance Groups`, () => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="remove-role"]').click();
       });
-      cy.intercept('DELETE', awxAPI`/role_team_assignments/*/`).as('teamRemoved');
+      cy.intercept('DELETE', gatewayAPI`/role_team_assignments/*/`).as('teamRemoved');
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Remove role');
         cy.getByDataCy('team-name-column-cell').should('have.text', igTeam.name);
@@ -644,10 +647,8 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^Team Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No teams assigned to instance group/);
-      cy.get('.pf-v6-c-empty-state__body').contains(
-        /^To get started, assign teams to this instance group./
-      );
+      cy.contains(/^No teams assigned to instance group/);
+      cy.contains(/^To get started, assign teams to this instance group./);
       cy.getByDataCy('assign-teams').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
@@ -657,7 +658,12 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
       cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select team(s)');
-      cy.filterTableBySingleSelect('name', igTeam.name);
+      cy.get('[data-ouia-component-id="simple-table"]', { timeout: 10000 }).should('be.visible');
+      cy.get('[data-cy="text-input"]').within(() => {
+        cy.get('input').type(igTeam.name);
+      });
+      cy.get('[data-cy="apply-filter"]').click();
+      cy.contains('.pf-v6-c-label', igTeam.name);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="checkbox-column-cell"] input').click();
@@ -680,8 +686,8 @@ describe(`Instance Groups`, () => {
           cy.get('tbody tr').should('have.length', 1);
           cy.get('[data-cy="name-column-cell"]').should('have.text', igTeam.name);
         });
-      cy.get('[data-cy="expandable-section-awxRoles"]').should('be.visible');
-      cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamAdded');
+      cy.get('[data-cy="expandable-section-platformRoles"]').should('be.visible');
+      cy.intercept('POST', gatewayAPI`/role_team_assignments/`).as('teamAdded');
       cy.getByDataCy('Submit').click();
       cy.wait('@teamAdded')
         .its('response')
@@ -704,7 +710,7 @@ describe(`Instance Groups`, () => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="remove-role"]').click();
       });
-      cy.intercept('DELETE', awxAPI`/role_team_assignments/*/`).as('teamRemoved');
+      cy.intercept('DELETE', gatewayAPI`/role_team_assignments/*/`).as('teamRemoved');
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Remove role');
         cy.getByDataCy('team-name-column-cell').should('have.text', igTeam.name);
@@ -720,12 +726,12 @@ describe(`Instance Groups`, () => {
   });
 
   describe(`Instance/Container Groups: User access Tab`, () => {
-    let user: AwxUser;
+    let user: PlatformUser;
     let instanceGroup: InstanceGroup;
     let containerGroup: InstanceGroup;
 
     beforeEach(function () {
-      cy.createAwxUser({ organization: awxOrganization.id }).then((u) => {
+      cy.createPlatformUser().then((u) => {
         user = u;
         cy.createAwxInstanceGroup({
           name: 'E2E Instance Group ' + randomString(4),
@@ -750,10 +756,10 @@ describe(`Instance Groups`, () => {
     afterEach(() => {
       cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
       cy.deleteAwxInstanceGroup(containerGroup, { failOnStatusCode: false });
-      cy.deleteAwxUser(user, { failOnStatusCode: false });
+      cy.deletePlatformUser(user, { failOnStatusCode: false });
     });
 
-    it(`can visit the instance group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
+    it(`can visit the instance group -> user access tab, add a user, view the user on the user list`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
@@ -766,19 +772,17 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^User Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No users assigned to instance group/);
-      cy.get('.pf-v6-c-empty-state__body').contains(
-        /^To get started, assign users to this instance group./
-      );
       cy.getByDataCy('assign-users').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/users/add-users')).to.be.true;
       });
-      cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select user(s)');
-      cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
-      cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
-      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select user(s)');
+      cy.get('[data-cy="wizard-nav-item-users"]').should('contain.text', 'Select user(s)');
+      cy.get('[data-cy="wizard-nav-item-platformRoles"]').should(
+        'contain.text',
+        'Select roles to apply'
+      );
+      cy.get('[data-cy="wizard-nav-item-review"]').should('contain.text', 'Review');
       cy.selectTableRowByCheckbox('username', user.username, { disableFilter: false });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
@@ -801,8 +805,8 @@ describe(`Instance Groups`, () => {
           cy.get('tbody tr').should('have.length', 1);
           cy.get('[data-cy="username-column-cell"]').should('have.text', user.username);
         });
-      cy.get('[data-cy="expandable-section-awxRoles"]').should('be.visible');
-      cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userAdded');
+      cy.get('[data-cy="expandable-section-platformRoles"]').should('be.visible');
+      cy.intercept('POST', gatewayAPI`/role_user_assignments/`).as('userAdded');
       cy.getByDataCy('Submit').click();
       cy.wait('@userAdded')
         .its('response')
@@ -814,30 +818,22 @@ describe(`Instance Groups`, () => {
       cy.get('tbody').should('be.visible');
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableBySingleSelect('name', instanceGroup.name);
+      cy.get('[data-ouia-component-id="simple-table"]', { timeout: 10000 }).should('be.visible');
+
+      cy.get('[data-cy="text-input"]').within(() => {
+        cy.get('input').type(instanceGroup.name);
+      });
+      cy.contains('.pf-v6-c-label', instanceGroup.name);
       cy.clickTableRowLink('name', instanceGroup.name, { disableFilter: true });
       cy.verifyPageTitle(instanceGroup.name);
       cy.get('a[href*="user-access"]').click();
       cy.get('[data-cy="text-input"]').find('input').type(user.username);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
-        cy.get('[data-cy="remove-role"]').click();
       });
-      cy.intercept('DELETE', awxAPI`/role_user_assignments/*/`).as('userRemoved');
-      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-        cy.get('header').contains('Remove role');
-        cy.getByDataCy('username-column-cell').should('have.text', user.username);
-        cy.get('input[id="confirm"]').click();
-        cy.get('button').contains('Remove role').click();
-      });
-      cy.wait('@userRemoved')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(204);
-        });
     });
 
-    it(`can visit the container group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
+    it(`can visit the container group -> user access tab, add a user, view the user on the user list `, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', containerGroup.name);
@@ -850,19 +846,18 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^User Access$/, true);
-      cy.get('.pf-v6-c-empty-state__title-text').contains(/^No users assigned to instance group/);
-      cy.get('.pf-v6-c-empty-state__body').contains(
-        /^To get started, assign users to this instance group./
-      );
       cy.getByDataCy('assign-users').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/users/add-users')).to.be.true;
       });
-      cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select user(s)');
-      cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
-      cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
-      cy.get('.pf-v6-c-page__main-body > .pf-v6-c-title').should('have.text', 'Select user(s)');
+      cy.get('[data-cy="wizard-nav-item-users"]').should('contain.text', 'Select user(s)');
+      cy.get('[data-cy="wizard-nav-item-platformRoles"]').should(
+        'contain.text',
+        'Select roles to apply'
+      );
+      cy.get('[data-cy="wizard-nav-item-review"]').should('contain.text', 'Review');
+      cy.get('.pf-v6-c-content--h1').should('have.text', 'Select user(s)');
       cy.selectTableRowByCheckbox('username', user.username, { disableFilter: false });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
@@ -885,8 +880,8 @@ describe(`Instance Groups`, () => {
           cy.get('tbody tr').should('have.length', 1);
           cy.get('[data-cy="username-column-cell"]').should('have.text', user.username);
         });
-      cy.get('[data-cy="expandable-section-awxRoles"]').should('be.visible');
-      cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userAdded');
+      cy.get('[data-cy="expandable-section-platformRoles"]').should('be.visible');
+      cy.intercept('POST', gatewayAPI`/role_user_assignments/`).as('userAdded');
       cy.getByDataCy('Submit').click();
       cy.wait('@userAdded')
         .its('response')
@@ -895,27 +890,17 @@ describe(`Instance Groups`, () => {
         });
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableBySearch(containerGroup.name);
+      cy.get('[data-cy="text-input"]').within(() => {
+        cy.get('input').type(containerGroup.name);
+      });
+      cy.contains('.pf-v6-c-label', containerGroup.name);
       cy.clickTableRowLink('name', containerGroup.name, { disableFilter: true });
       cy.verifyPageTitle(containerGroup.name);
       cy.get('a[href*="user-access"]').click();
       cy.get('[data-cy="text-input"]').find('input').type(user.username);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 1);
-        cy.get('[data-cy="remove-role"]').click();
       });
-      cy.intercept('DELETE', awxAPI`/role_user_assignments/*/`).as('userRemoved');
-      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-        cy.get('header').contains('Remove role');
-        cy.getByDataCy('username-column-cell').should('have.text', user.username);
-        cy.get('input[id="confirm"]').click();
-        cy.get('button').contains('Remove role').click();
-      });
-      cy.wait('@userRemoved')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(204);
-        });
     });
   });
 

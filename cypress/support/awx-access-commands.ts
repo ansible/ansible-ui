@@ -6,7 +6,6 @@ import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import '@cypress/code-coverage/support';
-import { SAAS_URL } from './constants';
 import { awxAPI } from './formatApiPathForAwx';
 
 // Base create and delete commands for AWX organizations, teams, and users
@@ -103,7 +102,7 @@ Cypress.Commands.add('addEERolesToUsersInOrganization', (organizationName: strin
   cy.getByDataCy('manage-organization-roles').click();
   cy.clickButton(/^Manage roles/);
   cy.getWizard().within(() => {
-    cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+    cy.contains('h1', 'Select Organization roles').should('be.visible');
     cy.filterTableByTextFilter('name', 'Organization ExecutionEnvironment Admin', {
       disableFilterSelection: true,
     });
@@ -111,14 +110,6 @@ Cypress.Commands.add('addEERolesToUsersInOrganization', (organizationName: strin
       disableFilter: true,
     });
     cy.clickButton(/^Next/);
-    cy.checkBuildType().then((buildType) => {
-      if (buildType !== SAAS_URL) {
-        cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
-        cy.get('input[name="check-all"]').check();
-        cy.clickButton(/^Next/);
-      }
-    });
-
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);
   });
@@ -132,7 +123,7 @@ Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: strin
   cy.getByDataCy('view-and-manage-organization-roles').click();
   cy.clickButton(/^Manage roles/);
   cy.getWizard().within(() => {
-    cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+    cy.contains('h1', 'Select organization roles').should('be.visible');
     cy.filterTableByTextFilter('name', 'Organization ExecutionEnvironment Admin', {
       disableFilterSelection: true,
     });
@@ -140,13 +131,6 @@ Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: strin
       disableFilter: true,
     });
     cy.clickButton(/^Next/);
-    cy.checkBuildType().then((buildType) => {
-      if (buildType !== SAAS_URL) {
-        cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
-        cy.get('input[name="check-all"]').check();
-        cy.clickButton(/^Next/);
-      }
-    });
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);
   });

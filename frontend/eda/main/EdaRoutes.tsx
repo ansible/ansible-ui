@@ -21,6 +21,7 @@ export enum EdaRoute {
   RulebookActivationUserAccess = 'eda-rulebook-activation-user-access',
   RulebookActivationAssignTeams = 'eda-rulebook-activation-assign-teams',
   RulebookActivationAddUsers = 'eda-rulebook-activation-add-users',
+  RulebookActivationManageUsers = 'eda-rulebook-activation-manage-users',
 
   Projects = 'eda-projects',
   CreateProject = 'eda-create-project',
@@ -30,6 +31,7 @@ export enum EdaRoute {
   ProjectTeamAccess = 'eda-project-project-team-access',
   ProjectUserAccess = 'eda-project-project-user-access',
   ProjectAddUsers = 'eda-project-add-users',
+  ProjectManageUsers = 'eda-project-manage-users',
   ProjectAssignTeams = 'eda-project-assign-teams',
 
   DecisionEnvironments = 'eda-decision-environments',
@@ -41,6 +43,7 @@ export enum EdaRoute {
   DecisionEnvironmentUserAccess = 'eda-decision-environments-user-access',
   DecisionEnvironmentAssignTeams = 'eda-decision-environments-assign-teams',
   DecisionEnvironmentAddUsers = 'eda-decision-environments-add-users',
+  DecisionEnvironmentManageUsers = 'eda-decision-environments-manage-users',
 
   Credentials = 'eda-credentials',
   CreateCredential = 'eda-create-credential',
@@ -51,7 +54,7 @@ export enum EdaRoute {
   CredentialUserAccess = 'eda-credential-user-access',
   CredentialAssignTeams = 'eda-credential-assign-teams',
   CredentialAddUsers = 'eda-credential-add-users',
-
+  CredentialManageUsers = 'eda-credential-manage-users',
   CredentialTypes = 'eda-credential-types',
   CreateCredentialType = 'eda-create-credential-type',
   EditCredentialType = 'eda-edit-credential-type',
@@ -93,6 +96,7 @@ export enum EdaRoute {
   EventStreamUserAccess = 'eda-event-stream-user-access',
   EventStreamAssignTeams = 'eda-event-stream-assign-teams',
   EventStreamAddUsers = 'eda-event-stream-add-users',
+  EventStreamManageUsers = 'eda-event-stream-manage-users',
 
   Settings = 'eda-settings',
   SettingsPreferences = 'eda-settings-preferences',

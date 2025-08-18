@@ -95,10 +95,12 @@ describe('Check if the build includes EDA', () => {
         cy.verifyPageTitle(RBA.name);
         cy.clickTab('User Access', true);
         cy.getByDataCy('assign-users').click();
+        cy.get('.pf-v6-c-text-input-group__text-input').click();
+        cy.get('.pf-v6-c-text-input-group__text-input').type(edaUser1.username);
         cy.getTableRowByText(edaUser1.username, true).within(() => {
           cy.get('input[type=checkbox]').click();
         });
-        cy.intercept('GET', edaAPI`/role_definitions/?*`).as('edaRoles');
+        cy.intercept('GET', gatewayAPI`/role_definitions/?*`).as('edaRoles');
         cy.clickButton(/^Next$/);
         cy.wait('@edaRoles');
         cy.getTableRowByText('Activation Admin', false).within(() => {
@@ -109,21 +111,10 @@ describe('Check if the build includes EDA', () => {
         cy.assertModalSuccess();
         cy.contains('div', edaUser1.username);
         cy.intercept('GET', gatewayAPI`/users/*`).as('user1');
+        cy.intercept('GET', edaAPI`/users/*`).as('user1');
         cy.visit(`/access/users/${edaUser1.id.toString()}/details`);
         cy.verifyPageTitle(edaUser1.username);
         cy.url().should('contain', '/details');
-        cy.get(`a[href*="/access/users/${edaUser1.id}/roles?"]`).click();
-        cy.intercept('OPTIONS', edaAPI`/role_definitions/`).as('edaRoleDefinitions');
-        cy.intercept('GET', edaAPI`/role_user_assignments/*`).as('edaRoleAssignments');
-        cy.get(`a[href*="/access/users/${edaUser1.id}/roles/eda?"]`).click();
-        cy.wait('@edaRoleDefinitions');
-        cy.wait('@edaRoleAssignments');
-        cy.get('tbody').within(() => {
-          cy.getBy('[data-cy="resource-name-column-cell"]').should('contain', RBA.name);
-        });
-        cy.get('tbody').within(() => {
-          cy.getBy('[data-cy="role-column-cell"]').should('contain', 'Activation Admin');
-        });
         cy.platformLogout();
         cy.get('h2').should('contain', 'Log in to your account');
         cy.get('input[id*="login-username-id"]').type(edaUser1.username);
@@ -136,15 +127,6 @@ describe('Check if the build includes EDA', () => {
         });
         cy.edaRuleBookActivationActionsModal('disable', RBA.name);
         cy.get('button').contains('rulebook activations').click();
-        // cy.contains('[data-label="Status"]', 'Stopped', { timeout: 120000 });
-        //Reenable to following lines of code with this issue is fixed: https://issues.redhat.com/browse/AAP-29872
-        // Also refer to https://issues.redhat.com/browse/AAP-29873
-        // cy.getTableRowByText(RBA.name).within(() => {
-        //   cy.contains('tr', RBA.name);
-        //   cy.get('.pf-v6-c-switch__toggle').click();
-        // });
-        // cy.contains('[data-label="Status"]', 'Completed', { timeout: 120000 });
-        // cy.clickButton(/^Clear all filters$/);
       });
 
       it('other user cannot perform a specific action', () => {
@@ -206,7 +188,7 @@ describe('Check if the build includes EDA', () => {
         cy.getTableRowByText(edaTeam.name, true).within(() => {
           cy.get('input[type=checkbox]').click();
         });
-        cy.intercept('GET', edaAPI`/role_definitions/?*`).as('edaRoles');
+        cy.intercept('GET', gatewayAPI`/role_definitions/?*`).as('edaRoles');
         cy.clickButton(/^Next$/);
         cy.wait('@edaRoles');
         cy.clickButton(/^Next$/);

@@ -13,6 +13,7 @@ import { NotificationTeamAccess } from '../../administration/notifiers/Notificat
 import { NotificationUserAccess } from '../../administration/notifiers/NotificationPage/NotificationUserAccess';
 import { NotifierAddUsers } from '../../administration/notifiers/components/NotifierAddUsers';
 import { NotifierAssignTeams } from '../../administration/notifiers/components/NotifierAssignTeams';
+import { NotifierManageUsers } from '../../administration/notifiers/components/NotifierManageUsers';
 
 export function useAwxNotificationsRoutes() {
   const { t } = useTranslation();
@@ -57,6 +58,11 @@ export function useAwxNotificationsRoutes() {
           id: AwxRoute.NotificationAddUsers,
           path: ':id/user-access/add',
           element: <NotifierAddUsers />,
+        },
+        {
+          id: AwxRoute.NotificationManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <NotifierManageUsers />,
         },
         {
           id: AwxRoute.NotificationAssignTeams,

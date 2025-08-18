@@ -1,63 +1,56 @@
 import {
   LoadingPage,
+  PageForm,
   PageHeader,
   PageLayout,
-  PageWizard,
-  PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { AwxSelectRolesStep } from '@ansible/awx-ui/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxBulkActionDialog } from '@ansible/awx-ui/common/useAwxBulkActionDialog';
-import { AwxRbacRole } from '@ansible/awx-ui/interfaces/AwxRbacRole';
-import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { EdaSelectRolesStep } from '@ansible/eda-ui/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
-import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { useGatewayService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { useGetAwxOrganizationRolesForTeam } from '../hooks/useGetAwxOrganizationRolesForTeam';
-import { useGetEdaOrganizationRolesForTeam } from '../hooks/useGetEdaOrganizationRolesForTeam';
-import { getAddedAndRemovedRoles } from '../utils/getAddedAndRemovedRoles';
+import { PlatformRbacRole } from '../../../interfaces/PlatformRbacRole';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { usePlatformRoleColumns } from '../../roles/hooks/usePlatformRoleColumns';
+import { usePlatformRolesFilters } from '../../roles/hooks/usePlatformRolesFilters';
+import { useGetOrganizationRolesForTeam } from '../hooks/useGetOrganizationRolesForTeam';
+import { getAddedAndRemovedPlatformRoles } from '../utils/getAddedAndRemovedPlatformRoles';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { Content, ContentVariants } from '@patternfly/react-core';
+import styled from 'styled-components';
 
 interface RemoveRole {
   remove?: boolean;
   roleAssignmentId?: number;
 }
 
-interface WizardFormValues {
+export interface WizardFormValues {
   teams: PlatformTeam[];
-  awxRoles: (AwxRbacRole & RemoveRole)[];
-  edaRoles: (EdaRbacRole & RemoveRole)[];
+  platformRoles: (PlatformRbacRole & RemoveRole)[];
 }
 
-interface TeamAndAwxRole {
+interface TeamAndPlatformRole {
   team: PlatformTeam;
-  awxRole: AwxRbacRole & RemoveRole;
+  platformRole: PlatformRbacRole & RemoveRole;
 }
 
-interface TeamAndEdaRole {
-  team: PlatformTeam;
-  edaRole: EdaRbacRole & RemoveRole;
-}
-
-type TeamAndRolePair = TeamAndAwxRole | TeamAndEdaRole;
+const HelpText = styled(Content)`
+  margin-block: var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--xl);
+`;
 
 export function PlatformOrganizationManageTeamRoles() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; teamId: string }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
-  const progressDialog = useAwxBulkActionDialog<TeamAndRolePair>();
+  const progressDialog = useAwxBulkActionDialog<TeamAndPlatformRole>();
   // Platform Organization
   const { data: organization, isLoading: isLoadingOrg } = useGet<PlatformOrganization>(
     gatewayAPI`/organizations/${params.id || ''}/`
@@ -68,210 +61,89 @@ export function PlatformOrganizationManageTeamRoles() {
   );
 
   // Existing selection of roles for the team based on role team assignments
-  const { selectedRoles: selectedAwxRoles, isLoading: isLoadingSelectedAwxRoles } =
-    useGetAwxOrganizationRolesForTeam(organization, team);
-  const { selectedRoles: selectedEdaRoles, isLoading: isLoadingSelectedEdaRoles } =
-    useGetEdaOrganizationRolesForTeam(organization, team);
+  const { selectedRoles: initialRoles, isLoading: isInitialRolesLoading } =
+    useGetOrganizationRolesForTeam(organization, team);
 
-  // Set default selections in the wizard
-  const defaultValue = useMemo(
-    () => ({
-      roles: {
-        awxRoles: selectedAwxRoles ? selectedAwxRoles : [],
-        edaRoles: selectedEdaRoles ? selectedEdaRoles : [],
-      },
-    }),
-    [selectedAwxRoles, selectedEdaRoles]
-  );
+  const defaultValue = {
+    platformRoles: initialRoles ?? [],
+  };
 
-  const awxService = useGatewayService('controller');
-  const edaService = useGatewayService('eda');
+  const toolbarFilters = usePlatformRolesFilters();
+  const tableColumns = usePlatformRoleColumns({ disableExtraColumns: true, disableLinks: true });
 
-  const steps = useMemo<PageWizardStep[]>(
-    () => [
-      // Show a Roles step with substeps for Controller and EDA roles if both Controller and EDA services are enabled
-      ...(awxService && edaService
-        ? ([
-            {
-              id: 'roles',
-              label: t('Select roles'),
-              substeps: [
-                {
-                  id: 'awxRoles',
-                  label: t('Automation Execution'),
-                  idOfparentStep: 'roles',
-                  inputs: (
-                    <AwxSelectRolesStep
-                      contentType="organization"
-                      descriptionForRoleSelection={t(
-                        'Select the roles that you want to apply to {{teamName}}.',
-                        { teamName: team?.name }
-                      )}
-                      title={t('Select Automation Execution roles')}
-                    />
-                  ),
-                },
-                {
-                  id: 'edaRoles',
-                  label: t('Automation Decisions'),
-                  idOfparentStep: 'roles',
-                  inputs: (
-                    <EdaSelectRolesStep
-                      contentType="organization"
-                      descriptionForRoleSelection={t(
-                        'Select the roles that you want to apply to {{teamName}}.',
-                        { teamName: team?.name }
-                      )}
-                      title={t('Select Automation Decisions roles')}
-                    />
-                  ),
-                },
-              ],
-            },
-          ] as PageWizardStep[])
-        : []),
-      ...(awxService && !edaService
-        ? ([
-            {
-              id: 'roles',
-              label: t('Select Automation Execution roles'),
-              inputs: (
-                <AwxSelectRolesStep
-                  contentType="organization"
-                  descriptionForRoleSelection={t(
-                    'Select the roles that you want to apply to {{teamName}}.',
-                    { teamName: team?.name }
-                  )}
-                  title={t('Select Automation Execution roles')}
-                />
-              ),
-            },
-          ] as PageWizardStep[])
-        : []),
-      ...(!awxService && edaService
-        ? ([
-            {
-              id: 'roles',
-              label: t('Select Automation Decisions roles'),
-              inputs: (
-                <EdaSelectRolesStep
-                  contentType="organization"
-                  descriptionForRoleSelection={t(
-                    'Select the roles that you want to apply to {{teamName}}.',
-                    { teamName: team?.name }
-                  )}
-                  title={t('Select Automation Decisions roles')}
-                />
-              ),
-            },
-          ] as PageWizardStep[])
-        : []),
-      {
-        id: 'review',
-        label: t('Review'),
-        element: (
-          <RoleAssignmentsReviewStep
-            edaRolesLabel={t('Automation Decisions roles')}
-            awxRolesLabel={t('Automation Execution roles')}
-            selectedTeam={team}
-          />
-        ),
-      },
-    ],
-    [awxService, edaService, t, team]
-  );
+  const view = usePlatformView<PlatformRbacRole>({
+    url: gatewayAPI`/role_definitions/`,
+    queryParams: {
+      content_type__api_slug: 'shared.organization',
+    },
+    toolbarFilters,
+    tableColumns,
+    disableQueryString: true,
+    defaultSelection: initialRoles,
+  });
+
+  // If the user saves then immediately re-enters the manage
+  // roles form, the old assignments are sometimes still cached
+  // in swr. This ensures the updated values show in the form
+  // when that occurs.
+  useEffect(() => {
+    view.unselectAll();
+    view.selectItems(initialRoles);
+  }, [initialRoles]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const progressDialogActionFunction = useCallback(
-    (item: TeamAndRolePair, signal: AbortSignal) => {
-      if ((item as TeamAndAwxRole).awxRole) {
-        if ((item as TeamAndAwxRole).awxRole.remove) {
-          return requestDelete(
-            awxAPI`/role_team_assignments/` +
-              `${(item as TeamAndAwxRole).awxRole.roleAssignmentId?.toString()}/`,
-            signal
-          );
-        } else {
-          return postRequest(
-            awxAPI`/role_team_assignments/`,
-            {
-              team_ansible_id: item.team.summary_fields.resource.ansible_id,
-              role_definition: (item as TeamAndAwxRole).awxRole.id,
-              content_type: 'shared.organization',
-              object_ansible_id: organization?.summary_fields?.resource?.ansible_id || '',
-            },
-            signal
-          );
-        }
-      } else {
-        if ((item as TeamAndEdaRole).edaRole.remove) {
-          return requestDelete(
-            edaAPI`/role_team_assignments/` +
-              `${(item as TeamAndEdaRole).edaRole.roleAssignmentId?.toString()}/`,
-            signal
-          );
-        } else {
-          return postRequest(
-            edaAPI`/role_team_assignments/`,
-            {
-              team_ansible_id: item.team.summary_fields.resource.ansible_id,
-              role_definition: (item as TeamAndEdaRole).edaRole.id,
-              content_type: 'shared.organization',
-              object_ansible_id: organization?.summary_fields?.resource?.ansible_id || '',
-            },
-            signal
-          );
-        }
+    (item: TeamAndPlatformRole, signal: AbortSignal): Promise<unknown> | undefined => {
+      if (!item.platformRole) {
+        return;
       }
+
+      if (item.platformRole.remove) {
+        return requestDelete(
+          gatewayAPI`/role_team_assignments/` +
+            `${item.platformRole.roleAssignmentId?.toString()}/`,
+          signal
+        );
+      }
+      return postRequest(
+        gatewayAPI`/role_team_assignments/`,
+        {
+          team: team?.id,
+          role_definition: item.platformRole.id,
+          content_type: 'shared.organization',
+          object_id: organization?.id || '',
+        },
+        signal
+      );
     },
-    [organization?.summary_fields?.resource?.ansible_id]
+    [organization, team?.id]
   );
 
-  if (
-    isLoadingOrg ||
-    isLoadingTeam ||
-    !organization ||
-    !team ||
-    isLoadingSelectedAwxRoles ||
-    isLoadingSelectedEdaRoles
-  ) {
+  if (isLoadingOrg || isLoadingTeam || isInitialRolesLoading || !organization || !team) {
     return <LoadingPage />;
   }
 
-  const onSubmit = (data: WizardFormValues) => {
-    const { awxRoles: updatedAwxRoles, edaRoles: updatedEdaRoles } = data;
-    const awxRolesData: (AwxRbacRole & { remove?: boolean })[] = [];
-    const edaRolesData: (EdaRbacRole & { remove?: boolean })[] = [];
+  const onSubmit = () => {
+    const updatedRoles = view.selectedItems as (PlatformRbacRole & RemoveRole)[];
+    const platformRolesData: (PlatformRbacRole & { remove?: boolean })[] = [];
 
-    if (selectedAwxRoles?.length || selectedEdaRoles?.length) {
-      const awxRoles = getAddedAndRemovedRoles(
-        selectedAwxRoles as (AwxRbacRole & RemoveRole)[],
-        updatedAwxRoles
+    if (initialRoles?.length) {
+      const platformRoles = getAddedAndRemovedPlatformRoles(
+        initialRoles as (PlatformRbacRole & RemoveRole)[],
+        updatedRoles
       );
-      awxRolesData.push(...(awxRoles as (AwxRbacRole & { remove?: boolean })[]));
-      const edaRoles = getAddedAndRemovedRoles(
-        selectedEdaRoles as (AwxRbacRole & RemoveRole)[],
-        updatedEdaRoles
-      );
-      edaRolesData.push(...(edaRoles as (EdaRbacRole & { remove?: boolean })[]));
+      platformRolesData.push(...(platformRoles as (PlatformRbacRole & { remove?: boolean })[]));
     } else {
-      awxRolesData.push(...updatedAwxRoles);
-      edaRolesData.push(...updatedEdaRoles);
+      platformRolesData.push(...updatedRoles);
     }
 
-    const awxTeamRolePairs: TeamAndAwxRole[] = [];
-    if (awxRolesData) {
-      for (const awxRole of awxRolesData) {
-        awxTeamRolePairs.push({ team, awxRole });
+    const platformTeamRolePairs: TeamAndPlatformRole[] = [];
+    if (platformRolesData) {
+      for (const platformRole of platformRolesData) {
+        platformTeamRolePairs.push({ team, platformRole });
       }
     }
-    const edaTeamRolePairs: TeamAndEdaRole[] = [];
-    if (edaRolesData) {
-      for (const edaRole of edaRolesData) {
-        edaTeamRolePairs.push({ team, edaRole });
-      }
-    }
-    const items = [...awxTeamRolePairs, ...edaTeamRolePairs];
 
+    const items = platformTeamRolePairs;
     if (!items.length) {
       return new Promise<void>((resolve) => {
         resolve();
@@ -289,31 +161,26 @@ export function PlatformOrganizationManageTeamRoles() {
             The organization roles listed below for <b>{team.name}</b> have been changed.
           </Trans>
         ),
-        keyFn: (item) =>
-          (item as TeamAndAwxRole).awxRole
-            ? `${item.team.id}_${(item as TeamAndAwxRole).awxRole.id}`
-            : `${item.team.id}_${(item as TeamAndEdaRole).edaRole.id}`,
+        keyFn: (item) => item.platformRole.id,
         items,
         actionColumns: [
           {
             header: t('Role'),
-            cell: (item) =>
-              (item as TeamAndAwxRole).awxRole
-                ? (item as TeamAndAwxRole).awxRole.name
-                : (item as TeamAndEdaRole).edaRole.name,
+            cell: (item) => item.platformRole.name,
           },
           {
             header: t('Assignment type'),
             cell: (item) => {
-              if ((item as TeamAndAwxRole).awxRole) {
-                return (item as TeamAndAwxRole).awxRole.remove ? t('Removed') : t('Added');
-              } else {
-                return (item as TeamAndEdaRole).edaRole.remove ? t('Removed') : t('Added');
+              if (item.platformRole) {
+                return item.platformRole.remove ? t('Removed') : t('Added');
               }
             },
           },
         ],
-        actionFn: progressDialogActionFunction,
+        actionFn: progressDialogActionFunction as (
+          item: TeamAndPlatformRole,
+          signal: AbortSignal
+        ) => Promise<unknown>,
         onComplete: () => {
           resolve();
         },
@@ -343,17 +210,34 @@ export function PlatformOrganizationManageTeamRoles() {
           { label: t('Manage {{teamName}} roles', { teamName: team?.name }) },
         ]}
       />
-      <PageWizard<WizardFormValues>
-        steps={steps}
+      <PageForm
+        submitText={t`Save roles`}
         onSubmit={onSubmit}
-        onCancel={() => {
+        cancelText={t`Cancel`}
+        onCancel={() =>
           pageNavigate(PlatformRoute.OrganizationTeams, {
-            params: { id: organization.id.toString() },
-          });
-        }}
-        stepDefaults={defaultValue}
+            params: { id: organization.id, teamId: team.id },
+          })
+        }
+        defaultValue={defaultValue}
         disableGrid
-      />
+      >
+        <HelpText component={ContentVariants.p}>
+          {t(
+            'Select organization roles that you want to directly assign to {{team}}. These roles will apply to the relevant resources within this organization.',
+            {
+              team: team.name,
+            }
+          )}
+        </HelpText>
+        <PageMultiSelectList
+          view={view}
+          tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
+          labelForSelectedItems={t('Selected roles')}
+          errorStateTitle={t('Error loading roles')}
+        />
+      </PageForm>
     </PageLayout>
   );
 }

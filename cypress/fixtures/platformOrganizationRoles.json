@@ -1,0 +1,296 @@
+{
+  "count": 16,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 17,
+      "url": "/api/controller/v2/role_definitions/17/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/17/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/17/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["shared.audit_organization", "shared.view_organization"],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.360123Z",
+      "created": "2024-05-09T05:22:59.360105Z",
+      "name": "Organization Audit",
+      "description": "Has audit permissions to a single organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 24,
+      "url": "/api/controller/v2/role_definitions/2/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/2/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/2/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.add_credential",
+        "awx.change_credential",
+        "awx.delete_credential",
+        "awx.use_credential",
+        "awx.view_credential",
+        "shared.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.256452Z",
+      "created": "2024-05-09T05:22:59.256434Z",
+      "name": "Organization Credential Admin",
+      "description": "Has all permissions to credentials within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 29,
+      "url": "/api/controller/v2/role_definitions/29/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/29/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/29/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.add_inventory",
+        "awx.adhoc_inventory",
+        "awx.change_inventory",
+        "awx.delete_inventory",
+        "awx.update_inventory",
+        "awx.use_inventory",
+        "awx.view_inventory",
+        "shared.view_organization"
+      ],
+      "content_type": "awx.organization",
+      "modified": "2024-05-09T05:22:59.447854Z",
+      "created": "2024-05-09T05:22:59.447838Z",
+      "name": "Organization Inventory Admin",
+      "description": "Has all permissions to inventories within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 5,
+      "url": "/api/controller/v2/role_definitions/5/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/5/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/5/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.change_jobtemplate",
+        "awx.delete_jobtemplate",
+        "awx.execute_jobtemplate",
+        "awx.view_jobtemplate",
+        "shared.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.280061Z",
+      "created": "2024-05-09T05:22:59.280016Z",
+      "name": "Organization JobTemplate Admin",
+      "description": "Has all permissions to job templates within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 26,
+      "url": "/api/controller/v2/role_definitions/26/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/26/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/26/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "shared.view_organization",
+        "awx.add_project",
+        "awx.change_project",
+        "awx.delete_project",
+        "awx.update_project",
+        "awx.use_project",
+        "awx.view_project"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.425712Z",
+      "created": "2024-05-09T05:22:59.425692Z",
+      "name": "Organization Project Admin",
+      "description": "Has all permissions to projects within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 6,
+      "url": "/api/eda/v1/role_definitions/6/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/6/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/6/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_credentialtype",
+        "eda.view_decisionenvironment",
+        "eda.view_edacredential",
+        "shared.view_organization",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess",
+        "shared.view_team"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:25:14.396549Z",
+      "created": "2024-05-09T05:25:14.396571Z",
+      "name": "Auditor",
+      "description": "Has all read permissions.",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 4,
+      "url": "/api/eda/v1/role_definitions/4/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/4/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/4/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.add_activation",
+        "eda.delete_activation",
+        "eda.disable_activation",
+        "eda.enable_activation",
+        "eda.restart_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.add_credentialtype",
+        "eda.view_credentialtype",
+        "eda.add_decisionenvironment",
+        "eda.change_decisionenvironment",
+        "eda.delete_decisionenvironment",
+        "eda.view_decisionenvironment",
+        "eda.add_edacredential",
+        "eda.view_edacredential",
+        "shared.view_organization",
+        "eda.add_project",
+        "eda.change_project",
+        "eda.delete_project",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess"
+      ],
+      "content_type": "esharedorganization",
+      "modified": "2024-05-09T05:25:14.349924Z",
+      "created": "2024-05-09T05:25:14.349954Z",
+      "name": "Contributor",
+      "description": "Has create and update permissions with an exception of users and roles. Has enable and disable rulebook activation permissions.",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 3,
+      "url": "/api/eda/v1/role_definitions/3/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/3/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/3/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.add_activation",
+        "eda.delete_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.add_credentialtype",
+        "eda.view_credentialtype",
+        "eda.add_decisionenvironment",
+        "eda.change_decisionenvironment",
+        "eda.delete_decisionenvironment",
+        "eda.view_decisionenvironment",
+        "eda.add_edacredential",
+        "eda.view_edacredential",
+        "shared.view_organization",
+        "eda.add_project",
+        "eda.change_project",
+        "eda.delete_project",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess",
+        "shared.view_team"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:25:14.325797Z",
+      "created": "2024-05-09T05:25:14.325823Z",
+      "name": "Editor",
+      "description": "Has create and edit permissions.",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 5,
+      "url": "/api/eda/v1/role_definitions/5/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/5/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/5/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.disable_activation",
+        "eda.enable_activation",
+        "eda.restart_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_credentialtype",
+        "eda.view_decisionenvironment",
+        "eda.view_edacredential",
+        "shared.view_organization",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:25:14.373532Z",
+      "created": "2024-05-09T05:25:14.373555Z",
+      "name": "Operator",
+      "description": "Has read permissions. Has permissions to enable and disable rulebook activations.",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 7,
+      "url": "/api/eda/v1/role_definitions/7/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/7/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/7/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_credentialtype",
+        "eda.view_decisionenvironment",
+        "eda.view_edacredential",
+        "shared.view_organization",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess",
+        "shared.view_team"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:25:14.417146Z",
+      "created": "2024-05-09T05:25:14.417170Z",
+      "name": "Viewer",
+      "description": "Has read permissions, except users and roles.",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    }
+  ]
+}

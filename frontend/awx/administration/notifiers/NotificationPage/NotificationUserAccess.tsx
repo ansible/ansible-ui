@@ -1,15 +1,16 @@
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 import { useParams } from 'react-router';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function NotificationUserAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="awx"
       id={params.id || ''}
-      type={'notificationtemplate'}
+      type={'awx.notificationtemplate'}
       addRolesRoute={AwxRoute.NotificationAddUsers as string}
+      manageRoleRoute={AwxRoute.NotificationManageUsers}
     />
   );
 }

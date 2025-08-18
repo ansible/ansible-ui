@@ -11,7 +11,7 @@ describe('Organization users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/organizations/1/users/?*`,
+          url: gatewayAPI`/role_user_access/shared.organization/1/?*`,
         },
         {
           fixture: 'platformOrganizationUsers.json',

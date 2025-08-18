@@ -703,7 +703,7 @@ declare global {
        * @returns {Chainable<Project>}
        */
       createAwxProject(
-        organization: Organization,
+        organization: Organization | PlatformOrganization,
         project?: Partial<Project>,
         scm_url?: string,
         skipSync?: boolean
@@ -732,7 +732,7 @@ declare global {
       ): Chainable<AwxItemsResponse<CredentialType, count>>;
 
       createAwxInventory(
-        organization: Organization,
+        organization: Organization | PlatformOrganization,
         inventory?: Partial<Inventory>
       ): Chainable<Inventory>;
 
@@ -1943,6 +1943,38 @@ declare global {
           galaxy?: string;
         };
       }>;
+
+      /**
+       * Gets a list of platform roles
+       * @returns {Chainable<PlatformRole[]>}
+       */
+      getPlatformRoles(options?: {
+        managed?: boolean;
+        content_type__model?: string;
+      }): Chainable<PlatformRole[]>;
+
+      /**
+       * Gets platform role details by ID
+       * @returns {Chainable<PlatformRole>}
+       */
+      getPlatformRoleDetail(roleID: string): Chainable<PlatformRole>;
+
+      /**
+       * Creates a platform role definition
+       * @returns {Chainable<PlatformRole>}
+       */
+      createPlatformRole(
+        roleName: string,
+        description: string,
+        contentType: string,
+        permissions: string[]
+      ): Chainable<PlatformRole>;
+
+      /**
+       * Deletes a platform role definition
+       */
+      deletePlatformRole(platformRoleDefinition: PlatformRole): Chainable<void>;
+
       deletePlatformUser(
         user: PlatformUser,
         options?: {

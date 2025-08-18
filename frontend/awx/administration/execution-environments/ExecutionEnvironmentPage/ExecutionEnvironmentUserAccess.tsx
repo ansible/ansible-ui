@@ -1,11 +1,11 @@
 import { usePageNavigate } from '@ansible/ansible-ui-framework';
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 
 export function ExecutionEnvironmentUserAccess() {
   const params = useParams<{ id: string }>();
@@ -28,11 +28,12 @@ export function ExecutionEnvironmentUserAccess() {
     executionEnvironment?.id,
   ]);
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="awx"
       id={params.id || ''}
-      type={'executionenvironment'}
+      type={'awx.executionenvironment'}
       addRolesRoute={AwxRoute.ExecutionEnvironmentAddUsers}
+      manageRoleRoute={AwxRoute.ExecutionEnvironmentManageUsers}
     />
   );
 }

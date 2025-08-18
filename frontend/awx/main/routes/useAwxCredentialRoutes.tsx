@@ -11,6 +11,7 @@ import { CredentialTeamAccess } from '../../access/credentials/CredentialPage/Cr
 import { CredentialUserAccess } from '../../access/credentials/CredentialPage/CredentialUserAccess';
 import { Credentials } from '../../access/credentials/Credentials';
 import { AwxRoute } from '../AwxRoutes';
+import { CredentialManageUsers } from '../../access/credentials/components/CredentialManageUsers';
 
 export function useAwxCredentialRoutes() {
   const { t } = useTranslation();
@@ -61,6 +62,11 @@ export function useAwxCredentialRoutes() {
           id: AwxRoute.CredentialAddUsers,
           path: ':id/user-access/add',
           element: <CredentialAddUsers />,
+        },
+        {
+          id: AwxRoute.CredentialManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <CredentialManageUsers />,
         },
         {
           id: AwxRoute.CredentialAssignTeams,

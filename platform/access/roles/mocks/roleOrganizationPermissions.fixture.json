@@ -1,0 +1,307 @@
+{
+  "count": 66,
+  "next": "/api/gateway/v1/service-index/role-permissions/?or__content_type__api_slug__startswith=awx&or__content_type__api_slug__startswith=eda&page=2",
+  "previous": null,
+  "results": [
+    {
+      "api_slug": "awx.add_credential",
+      "codename": "add_credential",
+      "content_type": "awx.credential",
+      "name": "Can add credential"
+    },
+    {
+      "api_slug": "awx.change_credential",
+      "codename": "change_credential",
+      "content_type": "awx.credential",
+      "name": "Can change credential"
+    },
+    {
+      "api_slug": "awx.delete_credential",
+      "codename": "delete_credential",
+      "content_type": "awx.credential",
+      "name": "Can delete credential"
+    },
+    {
+      "api_slug": "awx.use_credential",
+      "codename": "use_credential",
+      "content_type": "awx.credential",
+      "name": "Can use credential in a job or related resource"
+    },
+    {
+      "api_slug": "awx.view_credential",
+      "codename": "view_credential",
+      "content_type": "awx.credential",
+      "name": "Can view credential"
+    },
+    {
+      "api_slug": "awx.add_executionenvironment",
+      "codename": "add_executionenvironment",
+      "content_type": "awx.executionenvironment",
+      "name": "Can add execution environment"
+    },
+    {
+      "api_slug": "awx.change_executionenvironment",
+      "codename": "change_executionenvironment",
+      "content_type": "awx.executionenvironment",
+      "name": "Can change execution environment"
+    },
+    {
+      "api_slug": "awx.delete_executionenvironment",
+      "codename": "delete_executionenvironment",
+      "content_type": "awx.executionenvironment",
+      "name": "Can delete execution environment"
+    },
+    {
+      "api_slug": "awx.change_instancegroup",
+      "codename": "change_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can change instance group"
+    },
+    {
+      "api_slug": "awx.delete_instancegroup",
+      "codename": "delete_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can delete instance group"
+    },
+    {
+      "api_slug": "awx.use_instancegroup",
+      "codename": "use_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can use instance group in a preference list of a resource"
+    },
+    {
+      "api_slug": "awx.view_instancegroup",
+      "codename": "view_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can view instance group"
+    },
+    {
+      "api_slug": "awx.add_inventory",
+      "codename": "add_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can add inventory"
+    },
+    {
+      "api_slug": "awx.adhoc_inventory",
+      "codename": "adhoc_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can run ad hoc commands"
+    },
+    {
+      "api_slug": "awx.change_inventory",
+      "codename": "change_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can change inventory"
+    },
+    {
+      "api_slug": "awx.delete_inventory",
+      "codename": "delete_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can delete inventory"
+    },
+    {
+      "api_slug": "awx.update_inventory",
+      "codename": "update_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can update inventory sources in inventory"
+    },
+    {
+      "api_slug": "awx.use_inventory",
+      "codename": "use_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can use inventory in a job template"
+    },
+    {
+      "api_slug": "awx.view_inventory",
+      "codename": "view_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can view inventory"
+    },
+    {
+      "api_slug": "awx.change_jobtemplate",
+      "codename": "change_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can change job template"
+    },
+    {
+      "api_slug": "awx.delete_jobtemplate",
+      "codename": "delete_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can delete job template"
+    },
+    {
+      "api_slug": "awx.execute_jobtemplate",
+      "codename": "execute_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can run this job template"
+    },
+    {
+      "api_slug": "awx.view_jobtemplate",
+      "codename": "view_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can view job template"
+    },
+    {
+      "api_slug": "awx.add_notificationtemplate",
+      "codename": "add_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can add notification template"
+    },
+    {
+      "api_slug": "awx.change_notificationtemplate",
+      "codename": "change_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can change notification template"
+    },
+    {
+      "api_slug": "awx.delete_notificationtemplate",
+      "codename": "delete_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can delete notification template"
+    },
+    {
+      "api_slug": "awx.view_notificationtemplate",
+      "codename": "view_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can view notification template"
+    },
+    {
+      "api_slug": "awx.add_project",
+      "codename": "add_project",
+      "content_type": "awx.project",
+      "name": "Can add project"
+    },
+    {
+      "api_slug": "awx.change_project",
+      "codename": "change_project",
+      "content_type": "awx.project",
+      "name": "Can change project"
+    },
+    {
+      "api_slug": "awx.delete_project",
+      "codename": "delete_project",
+      "content_type": "awx.project",
+      "name": "Can delete project"
+    },
+    {
+      "api_slug": "awx.update_project",
+      "codename": "update_project",
+      "content_type": "awx.project",
+      "name": "Can run a project update"
+    },
+    {
+      "api_slug": "awx.use_project",
+      "codename": "use_project",
+      "content_type": "awx.project",
+      "name": "Can use project in a job template"
+    },
+    {
+      "api_slug": "awx.view_project",
+      "codename": "view_project",
+      "content_type": "awx.project",
+      "name": "Can view project"
+    },
+    {
+      "api_slug": "awx.add_workflowjobtemplate",
+      "codename": "add_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can add workflow job template"
+    },
+    {
+      "api_slug": "awx.approve_workflowjobtemplate",
+      "codename": "approve_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can approve steps in this workflow job template"
+    },
+    {
+      "api_slug": "awx.change_workflowjobtemplate",
+      "codename": "change_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can change workflow job template"
+    },
+    {
+      "api_slug": "awx.delete_workflowjobtemplate",
+      "codename": "delete_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can delete workflow job template"
+    },
+    {
+      "api_slug": "awx.execute_workflowjobtemplate",
+      "codename": "execute_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can run this workflow job template"
+    },
+    {
+      "api_slug": "awx.view_workflowjobtemplate",
+      "codename": "view_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can view workflow job template"
+    },
+    {
+      "api_slug": "eda.add_activation",
+      "codename": "add_activation",
+      "content_type": "eda.activation",
+      "name": "Can add activation"
+    },
+    {
+      "api_slug": "eda.change_activation",
+      "codename": "change_activation",
+      "content_type": "eda.activation",
+      "name": "Can change activation"
+    },
+    {
+      "api_slug": "eda.delete_activation",
+      "codename": "delete_activation",
+      "content_type": "eda.activation",
+      "name": "Can delete activation"
+    },
+    {
+      "api_slug": "eda.disable_activation",
+      "codename": "disable_activation",
+      "content_type": "eda.activation",
+      "name": "Can disable an activation"
+    },
+    {
+      "api_slug": "eda.enable_activation",
+      "codename": "enable_activation",
+      "content_type": "eda.activation",
+      "name": "Can enable an activation"
+    },
+    {
+      "api_slug": "eda.restart_activation",
+      "codename": "restart_activation",
+      "content_type": "eda.activation",
+      "name": "Can restart an activation"
+    },
+    {
+      "api_slug": "eda.view_activation",
+      "codename": "view_activation",
+      "content_type": "eda.activation",
+      "name": "Can view activation"
+    },
+    {
+      "api_slug": "eda.view_auditrule",
+      "codename": "view_auditrule",
+      "content_type": "eda.auditrule",
+      "name": "Can view audit rule"
+    },
+    {
+      "api_slug": "eda.add_decisionenvironment",
+      "codename": "add_decisionenvironment",
+      "content_type": "eda.decisionenvironment",
+      "name": "Can add decision environment"
+    },
+    {
+      "api_slug": "eda.change_decisionenvironment",
+      "codename": "change_decisionenvironment",
+      "content_type": "eda.decisionenvironment",
+      "name": "Can change decision environment"
+    },
+    {
+      "api_slug": "eda.delete_decisionenvironment",
+      "codename": "delete_decisionenvironment",
+      "content_type": "eda.decisionenvironment",
+      "name": "Can delete decision environment"
+    }
+  ]
+}

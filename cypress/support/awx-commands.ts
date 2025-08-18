@@ -31,6 +31,7 @@ import '@cypress/code-coverage/support';
 import jsyaml from 'js-yaml';
 import { SetRequired } from 'type-fest';
 import { awxAPI } from './formatApiPathForAwx';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 
 //  AWX related custom command implementation
 
@@ -701,7 +702,7 @@ Cypress.Commands.add('deleteAwxRole', (awxRoleDefinition: AwxRbacRole) => {
 Cypress.Commands.add(
   'createAwxProject',
   (
-    organization: Organization,
+    organization: Organization | PlatformOrganization,
     project?: Partial<Project>,
     scm_url?: string,
     skipSync?: boolean
@@ -810,7 +811,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    if (execution_environment.id) {
+    if (execution_environment?.id) {
       cy.requestDelete(
         awxAPI`/execution_environments/${execution_environment.id.toString()}/`,
         options
@@ -839,7 +840,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createAwxInventory',
-  (organization: Organization, inventory?: Partial<Inventory>) => {
+  (organization: Organization | PlatformOrganization, inventory?: Partial<Inventory>) => {
     cy.requestPost<Inventory>(awxAPI`/inventories/`, {
       name: 'E2E Inventory ' + randomString(4),
       organization: organization.id,

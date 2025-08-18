@@ -397,9 +397,10 @@ export function PageMultiSelect<
                 <SelectGroup label={groupName} key={groupName}>
                   <PageMultiSelectList
                     searchRef={searchRef}
-                    options={visibleOptions}
-                    selectedOptions={selectedOptions}
+                    options={visibleOptions.filter((option) => option.group === groupName)}
+                    selectedOptions={selectedOptions.filter((option) => option.group === groupName)}
                   />
+                  <Divider />
                 </SelectGroup>
               ))}
             </>

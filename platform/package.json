@@ -5,7 +5,7 @@
   "scripts": {
     "dump-nyc-vitest": "mkdir -p ../.nyc_output && vitest run --coverage && mv coverage/vitest/coverage-final.json ../.nyc_output/platform-vitest.json",
     "dump-nyc-pw": "mkdir -p ../.nyc_output && npx playwright test --config ../playwright/playwright.config.ts playwright/tests/platform --project='live chromium' && mv coverage/playwright/coverage-final.json ../.nyc_output/platform-playwright.json",
-    "start": "vite --open --force --port 4100",
+    "start": "vite --force --open --port 4100",
     "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "build:watch": "NODE_OPTIONS=--max-old-space-size=8192 vite build --watch",
     "preview": "vite preview --port 4100",

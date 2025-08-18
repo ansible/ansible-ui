@@ -34,6 +34,7 @@ describe('EDA user: Add roles', () => {
 
   it('should validate that a resource type is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
+    cy.get('#resourcetype-form-group').should('be.visible');
     cy.clickButton(/^Next$/);
     cy.contains('Resource type is required.').should('be.visible');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');

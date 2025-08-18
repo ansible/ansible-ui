@@ -6,7 +6,7 @@ import { CreatePlatformOrganization } from '../access/organizations/components/C
 import { EditPlatformOrganization } from '../access/organizations/components/EditPlatformOrganization';
 import { PlatformAwxOrganizationExecutionEnvironments } from '../access/organizations/components/PlatformAwxOrganizationExecutionEnvironments';
 import { PlatformAwxOrganizationIdLookup } from '../access/organizations/components/PlatformAwxOrganizationIdLookup';
-import { PlatformOrganizationAddUsers } from '../access/organizations/components/PlatformOrganizationAddUsers';
+import { PlatformOrganizationAssignUsers } from '../access/organizations/components/PlatformOrganizationAssignUsers';
 import { PlatformOrganizationAdmins } from '../access/organizations/components/PlatformOrganizationAdmins';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
 import { PlatformOrganizationList } from '../access/organizations/components/PlatformOrganizationList';
@@ -82,13 +82,13 @@ export function useGetPlatformOrganizationsRoutes() {
           ],
         },
         {
-          id: PlatformRoute.OrganizationAddUsers,
+          id: PlatformRoute.OrganizationAssignUsers,
           path: ':id/users/add-users',
-          element: <PlatformOrganizationAddUsers />,
+          element: <PlatformOrganizationAssignUsers />,
         },
         {
           id: PlatformRoute.OrganizationTeamsAddRoles,
-          path: ':id/teams/add-roles',
+          path: ':id/teams/assign-organization-roles',
           element: <PlatformOrganizationTeamsAddRoles />,
         },
         {

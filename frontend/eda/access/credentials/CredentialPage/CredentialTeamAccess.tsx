@@ -1,14 +1,13 @@
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useParams } from 'react-router';
 import { EdaRoute } from '../../../main/EdaRoutes';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 
 export function CredentialTeamAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <TeamAccess
-      service="eda"
+    <PlatformTeamAccess
       id={params.id || ''}
-      type={'edacredential'}
+      type={'eda.edacredential'}
       addRolesRoute={EdaRoute.CredentialAssignTeams}
     />
   );

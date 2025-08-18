@@ -1,4 +1,5 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { InstanceGroupTeamAccess } from './InstanceGroupTeamAccess';
 
 describe('InstanceGroupTeamAccess', () => {
@@ -6,7 +7,7 @@ describe('InstanceGroupTeamAccess', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: awxAPI`/role_team_assignments/?object_id=1&content_type__model=instancegroup*`,
+        url: gatewayAPI`/role_team_assignments/?object_id=1&content_type__api_slug=awx.instancegroup*`,
       },
       {
         count: 1,
@@ -15,11 +16,11 @@ describe('InstanceGroupTeamAccess', () => {
         results: [
           {
             id: 31,
-            url: awxAPI`/role_team_assignments/31/`,
+            url: gatewayAPI`/role_team_assignments/31/`,
             related: {
-              created_by: awxAPI`/users/3/`,
-              role_definition: awxAPI`/role_definitions/5/`,
-              team: awxAPI`/teams/4/`,
+              created_by: gatewayAPI`/users/3/`,
+              role_definition: gatewayAPI`/role_definitions/5/`,
+              team: gatewayAPI`/teams/4/`,
               content_object: awxAPI`/instance_groups/2/`,
             },
             summary_fields: {

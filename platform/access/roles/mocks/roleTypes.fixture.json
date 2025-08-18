@@ -1,0 +1,215 @@
+{
+  "count": 26,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "api_slug": "shared.organization",
+      "service": "shared",
+      "app_label": "aap_gateway_api",
+      "model": "organization",
+      "parent_content_type": null,
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "galaxy.task",
+      "service": "galaxy",
+      "app_label": "core",
+      "model": "task",
+      "parent_content_type": null,
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "galaxy.namespace",
+      "service": "galaxy",
+      "app_label": "galaxy",
+      "model": "namespace",
+      "parent_content_type": null,
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "galaxy.containerrepository",
+      "service": "galaxy",
+      "app_label": "container",
+      "model": "containerrepository",
+      "parent_content_type": null,
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "galaxy.containerregistryremote",
+      "service": "galaxy",
+      "app_label": "galaxy",
+      "model": "containerregistryremote",
+      "parent_content_type": null,
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "galaxy.containernamespace",
+      "service": "galaxy",
+      "app_label": "container",
+      "model": "containernamespace",
+      "parent_content_type": null,
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "galaxy.collectionremote",
+      "service": "galaxy",
+      "app_label": "ansible",
+      "model": "collectionremote",
+      "parent_content_type": null,
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "galaxy.collectionimport",
+      "service": "galaxy",
+      "app_label": "galaxy",
+      "model": "collectionimport",
+      "parent_content_type": "galaxy.namespace",
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "galaxy.collection",
+      "service": "galaxy",
+      "app_label": "ansible",
+      "model": "collection",
+      "parent_content_type": null,
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "galaxy.ansiblerepository",
+      "service": "galaxy",
+      "app_label": "ansible",
+      "model": "ansiblerepository",
+      "parent_content_type": null,
+      "pk_field_type": "uuid"
+    },
+    {
+      "api_slug": "eda.rulebookprocess",
+      "service": "eda",
+      "app_label": "core",
+      "model": "rulebookprocess",
+      "parent_content_type": "eda.activation",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "eda.rulebook",
+      "service": "eda",
+      "app_label": "core",
+      "model": "rulebook",
+      "parent_content_type": "eda.project",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "eda.project",
+      "service": "eda",
+      "app_label": "core",
+      "model": "project",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "eda.eventstream",
+      "service": "eda",
+      "app_label": "core",
+      "model": "eventstream",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "eda.edacredential",
+      "service": "eda",
+      "app_label": "core",
+      "model": "edacredential",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "eda.decisionenvironment",
+      "service": "eda",
+      "app_label": "core",
+      "model": "decisionenvironment",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "eda.auditrule",
+      "service": "eda",
+      "app_label": "core",
+      "model": "auditrule",
+      "parent_content_type": "eda.rulebookprocess",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "eda.activation",
+      "service": "eda",
+      "app_label": "core",
+      "model": "activation",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "bigint"
+    },
+    {
+      "api_slug": "awx.workflowjobtemplate",
+      "service": "awx",
+      "app_label": "main",
+      "model": "workflowjobtemplate",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "awx.project",
+      "service": "awx",
+      "app_label": "main",
+      "model": "project",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "awx.notificationtemplate",
+      "service": "awx",
+      "app_label": "main",
+      "model": "notificationtemplate",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "awx.jobtemplate",
+      "service": "awx",
+      "app_label": "main",
+      "model": "jobtemplate",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "awx.inventory",
+      "service": "awx",
+      "app_label": "main",
+      "model": "inventory",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "awx.instancegroup",
+      "service": "awx",
+      "app_label": "main",
+      "model": "instancegroup",
+      "parent_content_type": null,
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "awx.executionenvironment",
+      "service": "awx",
+      "app_label": "main",
+      "model": "executionenvironment",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "integer"
+    },
+    {
+      "api_slug": "awx.credential",
+      "service": "awx",
+      "app_label": "main",
+      "model": "credential",
+      "parent_content_type": "shared.organization",
+      "pk_field_type": "integer"
+    }
+  ]
+}

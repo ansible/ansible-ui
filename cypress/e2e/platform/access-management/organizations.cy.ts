@@ -3,8 +3,8 @@ import { NotificationTemplate } from '@ansible/awx-ui/interfaces/NotificationTem
 import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { AZURE_URL, SAAS_URL } from '../../../support/constants';
-import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Platform Organizations - Create, Edit and Delete', () => {
@@ -100,13 +100,15 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
       testOrganization1 = organization;
       cy.createPlatformOrganization().then((organization: PlatformOrganization) => {
         testOrganization2 = organization;
+        cy.get('[data-ouia-component-id="simple-table"]', { timeout: 10000 }).should('be.visible');
         cy.filterTableByTextFilter('name', testOrganization1.name, {
           disableFilterSelection: true,
         });
-        cy.getTableRowByText(testOrganization1.name, false).within(() => {
+        cy.getTableRowByText(testOrganization1.name, true).within(() => {
           cy.get('input[type=checkbox]').click();
         });
         cy.clearAllFilters();
+        cy.get('[data-ouia-component-id="simple-table"]', { timeout: 10000 }).should('be.visible');
         cy.filterTableByTextFilter('name', testOrganization2.name, {
           disableFilterSelection: true,
         });
@@ -170,13 +172,13 @@ describe('If SaaS Build', () => {
           cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
           cy.clickTableRowLink('name', organization.name, { disableFilter: true });
           cy.clickTab('Users', true);
-          cy.clickLink('Assign users');
+          cy.clickButton('Assign users');
           cy.verifyPageTitle('Assign users');
           cy.getWizard().within(() => {
             cy.selectTableRowByCheckbox('username', createdUser1.username);
             cy.selectTableRowByCheckbox('username', createdUser2.username);
             cy.clickButton(/^Next/);
-            cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+            cy.contains('h1', 'Select organization roles').should('be.visible');
             cy.filterTableByTextFilter('name', 'Organization Credential Admin', {
               disableFilterSelection: true,
             });
@@ -184,28 +186,13 @@ describe('If SaaS Build', () => {
               disableFilter: true,
             });
             cy.clickButton(/^Next/);
-            cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
-            cy.filterTableByTextFilter('name', 'Editor', {
-              disableFilterSelection: true,
-            });
-            cy.selectTableRowByCheckbox('name', 'Editor', {
-              disableFilter: true,
-            });
-            cy.clickButton(/^Next/);
             cy.contains('h1', 'Review').should('be.visible');
             cy.verifyReviewStepWizardDetails(
-              'edaRoles',
-              [
-                'Organization Editor',
-                'Has create and update permissions to all objects within a single organization',
-              ],
-              '1'
-            );
-            cy.verifyReviewStepWizardDetails(
-              'awxRoles',
+              'platformRoles',
               [
                 'Organization Credential Admin',
                 'Has all permissions to credentials within an organization',
+                'Automation ExecutionAutomation Decisions',
               ],
               '1'
             );
@@ -230,35 +217,6 @@ describe('If SaaS Build', () => {
           cy.deletePlatformUser(createdUser1, { failOnStatusCode: false });
           cy.deletePlatformUser(createdUser2, { failOnStatusCode: false });
         });
-      });
-    });
-
-    it('verifies the modal displayed when no organization roles are added to a user', function () {
-      cy.createPlatformUser().then((createdUser1) => {
-        cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
-        cy.clickTableRowLink('name', organization.name, { disableFilter: true });
-        cy.clickTab('Users', true);
-        cy.clickLink('Assign users');
-        cy.verifyPageTitle('Assign users');
-        cy.getWizard().within(() => {
-          cy.selectTableRowByCheckbox('username', createdUser1.username);
-          cy.clickButton(/^Next/);
-          cy.clickButton(/^Next/);
-          cy.clickButton(/^Next/);
-          cy.clickButton(/^Finish/);
-        });
-        cy.getModal().should('not.exist');
-        cy.verifyPageTitle(organization.name);
-        cy.clickTableRowPinnedAction(createdUser1.username, 'manage-organization-roles', false);
-        cy.getModal().within(() => {
-          cy.contains(
-            `${createdUser1.username} has no organization roles. To add roles to ${createdUser1.username} click on the button below.`
-          ).should('be.visible');
-        });
-        cy.getModal().within(() => {
-          cy.clickButton(/^Close$/);
-        });
-        cy.deletePlatformUser(createdUser1, { failOnStatusCode: false });
       });
     });
 
@@ -299,7 +257,7 @@ describe('If SaaS Build', () => {
             disableFilter: true,
           });
           cy.clickButton(/^Next/);
-          cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+          cy.contains('h1', 'Select organization roles').should('be.visible');
           cy.filterTableByTextFilter('name', 'Organization Audit', {
             disableFilterSelection: true,
           });
@@ -307,32 +265,7 @@ describe('If SaaS Build', () => {
             disableFilter: true,
           });
           cy.clickButton(/^Next/);
-          cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
-          cy.filterTableByTextFilter('name', 'Operator', {
-            disableFilterSelection: true,
-          });
-          cy.selectTableRowByCheckbox('name', 'Operator', {
-            disableFilter: true,
-          });
-          cy.clickButton(/^Next/);
           cy.contains('h1', 'Review').should('be.visible');
-          cy.verifyReviewStepWizardDetails(
-            'edaRoles',
-            [
-              'Organization Operator',
-              'Has read permission to all objects and enable/disable/restart permissions for all rulebook activations within a single organization',
-            ],
-            '1'
-          );
-          cy.verifyReviewStepWizardDetails(
-            'awxRoles',
-            [
-              'Organization Audit',
-              'Has permission to view all objects inside of a single organization',
-            ],
-            '1'
-          );
-          cy.verifyReviewStepWizardDetails('teams', [createdPlatformTeam], '1');
           cy.clickButton(/^Finish/);
         });
         cy.getModal().should('not.exist');
@@ -340,43 +273,16 @@ describe('If SaaS Build', () => {
         cy.getTableRow('name', createdPlatformTeam, { disableFilter: true }).within(() => {
           cy.get('[data-cy="view-and-manage-organization-roles"]').click();
         });
-        cy.getModal().should('exist');
-        cy.getModal().within(() => {
-          cy.get('[data-ouia-component-id="manage-roles-modal-manage-roles-button"]').click();
+        cy.contains('h1', `Manage roles for ${team.name}`).should('be.visible');
+        cy.selectTableRowByCheckbox('name', 'Organization Audit', {
+          disableFilter: true,
         });
-        cy.getWizard().within(() => {
-          cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
-          cy.filterTableByTextFilter('name', 'Organization Audit', {
-            disableFilterSelection: true,
-          });
-          cy.selectTableRowByCheckbox('name', 'Organization Audit', {
-            disableFilter: true,
-          });
-          cy.clickButton(/^Next/);
-          cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
-          cy.filterTableByTextFilter('name', 'Operator', {
-            disableFilterSelection: true,
-          });
-          cy.selectTableRowByCheckbox('name', 'Operator', {
-            disableFilter: true,
-          });
-          cy.clickButton(/^Next/);
-          cy.contains('h1', 'Review').should('be.visible');
-          cy.contains('.pf-v6-c-description-list__text', createdPlatformTeam).should('be.visible');
-          cy.clickButton(/^Finish/);
-        });
+        cy.clickButton(/^Save roles/);
         cy.verifyPageTitle(organization.name);
         cy.contains('a', `${createdPlatformTeam}`).click();
         cy.verifyPageTitle(createdPlatformTeam);
         cy.clickTab('Roles', true);
-        cy.contains('h4', 'There are currently no roles assigned to this team.').should(
-          'be.visible'
-        );
-        cy.get('li.pf-v6-c-tabs__item').contains('Automation Decisions').click();
-        cy.contains('h4', 'There are currently no roles assigned to this team.').should(
-          'be.visible'
-        );
-        cy.deletePlatformTeam(team, { failOnStatusCode: false });
+        cy.contains('h4', 'No roles assigned to this team').should('be.visible');
       });
     });
 
@@ -392,9 +298,7 @@ describe('If SaaS Build', () => {
           cy.selectTableRowByCheckbox('name', createdPlatformTeam, { disableFilter: true });
           cy.clickButton(/^Next/);
           cy.clickButton(/^Next/);
-          cy.clickButton(/^Next/);
           cy.clickButton(/^Finish/);
-          // TODO: Update after no items modal is removed AAP-25090
         });
         cy.deletePlatformTeam(team, { failOnStatusCode: false });
       });

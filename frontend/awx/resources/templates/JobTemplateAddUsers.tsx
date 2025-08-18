@@ -12,23 +12,25 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectUsersStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
 import { JobTemplate } from '../../interfaces/JobTemplate';
-import { Role } from '../../interfaces/Role';
-import { AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 
 interface WizardFormValues {
-  users: AwxUser[];
-  awxRoles: Role[];
+  users: PlatformUser[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface UserRolePair {
-  user: AwxUser;
-  role: Role;
+  user: PlatformUser;
+  role: PlatformRole;
 }
 
 export function JobTemplateAddUsers() {
@@ -49,7 +51,7 @@ export function JobTemplateAddUsers() {
       id: 'users',
       label: t('Select user(s)'),
       inputs: (
-        <AwxSelectUsersStep
+        <PlatformSelectUsersStep
           descriptionForUsersSelection={t(
             'Select the user(s) that you want to give access to {{templateName}}.',
             {
@@ -59,18 +61,18 @@ export function JobTemplateAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as WizardFormValues;
+        const { users } = formData as { users: PlatformUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="jobtemplate"
+        <PlatformSelectRolesStep
+          contentType="awx.jobtemplate"
           fieldNameForPreviousStep="users"
           descriptionForRoleSelection={t('Choose roles to apply to {{templateName}}.', {
             templateName: template?.name,
@@ -78,8 +80,8 @@ export function JobTemplateAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as WizardFormValues;
-        if (!awxRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +94,10 @@ export function JobTemplateAddUsers() {
   ];
 
   const onSubmit = (data: WizardFormValues) => {
-    const { users, awxRoles } = data;
+    const { users, platformRoles } = data;
     const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of awxRoles) {
+      for (const role of platformRoles) {
         items.push({ user, role });
       }
     }
@@ -109,10 +111,10 @@ export function JobTemplateAddUsers() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
-          postRequest(awxAPI`/role_user_assignments/`, {
+          postRequest(gatewayAPI`/role_user_assignments/`, {
             user: user?.id,
             role_definition: role.id,
-            content_type: 'jobtemplate',
+            content_type: 'awx.jobtemplate',
             object_id: template.id,
           }),
         onComplete: () => {

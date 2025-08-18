@@ -77,12 +77,20 @@ describe('Inventory Sources', () => {
           cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
           cy.get('div#inventory-file-toggle').within(() => {
             cy.get('button').click();
-            cy.get('input[aria-label="Type to filter"]').type(inventoryFile);
+            cy.get('input[aria-label="Type to filter"]').should('be.visible').and('be.focused');
+            cy.get('input[aria-label="Type to filter"]').clear().type(inventoryFile, { delay: 50 });
           });
           cy.get('div#inventory-typeahead-select').within(() => {
+            cy.contains('Create').should('be.visible');
             cy.get('li.pf-v6-c-menu__list-item').within(() => {
-              cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
+              cy.get('button#select-create-typeahead-CREATE_NEW_VALUE')
+                .should('be.visible')
+                .click();
             });
+          });
+          cy.get('div#inventory-typeahead-select').should('not.exist');
+          cy.get('div#inventory-file-toggle').within(() => {
+            cy.get('input').should('have.value', inventoryFile);
           });
           cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
           cy.singleSelectByDataCy('credential', credentialName);
@@ -365,12 +373,18 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
     cy.get('div#inventory-file-toggle').within(() => {
       cy.get('button').click();
-      cy.get('input[aria-label="Type to filter"]').type(inventoryFile);
+      cy.get('input[aria-label="Type to filter"]').should('be.visible').and('be.focused');
+      cy.get('input[aria-label="Type to filter"]').clear().type(inventoryFile, { delay: 50 });
     });
     cy.get('div#inventory-typeahead-select').within(() => {
+      cy.contains('Create').should('be.visible');
       cy.get('li.pf-v6-c-menu__list-item').within(() => {
-        cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
+        cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').should('be.visible').click();
       });
+    });
+    cy.get('div#inventory-typeahead-select').should('not.exist');
+    cy.get('div#inventory-file-toggle').within(() => {
+      cy.get('input').should('have.value', inventoryFile);
     });
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);

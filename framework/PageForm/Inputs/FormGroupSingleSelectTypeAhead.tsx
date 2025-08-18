@@ -1,8 +1,10 @@
 import {
   Button,
+  Divider,
   MenuToggle,
   MenuToggleElement,
   Select,
+  SelectGroup,
   SelectList,
   SelectOption,
   SelectOptionProps,
@@ -11,7 +13,7 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageFormGroup } from './PageFormGroup';
 
@@ -30,13 +32,14 @@ export type FormGroupSingleSelectTypeAheadProps = {
   additionalControls?: React.ReactNode;
   isReadOnly?: boolean;
   placeholderText?: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; group?: string }[];
   onHandleSelection: (value: { name: string }) => void;
   isSubmitting?: boolean;
   value: string | string[] | Partial<{ name: string }> | null;
   onHandleClear: () => void;
   isRequired?: boolean;
   toggleButtonId?: string;
+  allowCreate?: boolean; // New prop to control creation of new options
 };
 
 export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeAheadProps) {
@@ -57,6 +60,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     onHandleClear,
     isRequired,
     toggleButtonId = '',
+    allowCreate = true,
   } = props;
 
   const { t } = useTranslation();
@@ -64,11 +68,12 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
   const CREATE_NEW_VALUE = 'CREATE_NEW_VALUE';
   const placeholder = placeholderText ?? t('Select an option');
 
-  const baseOptions: SelectOptionProps[] = useMemo(
+  const baseOptions: (SelectOptionProps & { group?: string })[] = useMemo(
     () =>
       propOptions.map((option) => ({
         value: option.value,
         children: option.label,
+        group: option.group,
       })),
     [propOptions]
   );
@@ -83,10 +88,33 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     return null;
   }, [propValue]);
 
+  const getInitialLabel = (value: string | null): string => {
+    if (!value) return '';
+    const option = propOptions.find((opt) => opt.value === value);
+    return option ? option.label : value;
+  };
+
+  // Get the display label for the selected value
+  const getSelectedLabel = useCallback(
+    (value: string | null): string => {
+      if (!value) return '';
+
+      if (baseOptions.length === 0 && propOptions.length > 0) {
+        const option = propOptions.find((opt) => opt.value === value);
+        return option ? option.label : value;
+      }
+
+      const selectedOption = baseOptions.find((option) => option.value === value);
+      return selectedOption ? (selectedOption.children as string) : value;
+    },
+    [baseOptions, propOptions]
+  );
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>(initialSelected ?? '');
+  const [inputValue, setInputValue] = useState<string>(getInitialLabel(initialSelected));
   const [selected, setSelected] = useState<string | null>(initialSelected);
-  const [selectOptions, setSelectOptions] = useState<SelectOptionProps[]>(baseOptions);
+  const [selectOptions, setSelectOptions] =
+    useState<(SelectOptionProps & { group?: string })[]>(baseOptions);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
@@ -113,11 +141,21 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     }
 
     setSelected(val);
-    setInputValue(val ?? '');
-  }, [propValue]);
+    setInputValue(getSelectedLabel(val));
+  }, [propValue, getSelectedLabel]);
+
+  // Update display label when baseOptions are populated
+  useEffect(() => {
+    if (selected && baseOptions.length > 0) {
+      const currentLabel = getSelectedLabel(selected);
+      if (currentLabel !== inputValue) {
+        setInputValue(currentLabel);
+      }
+    }
+  }, [baseOptions, selected, getSelectedLabel, inputValue]);
 
   useEffect(() => {
-    let filteredOptions: SelectOptionProps[] = baseOptions;
+    let filteredOptions: (SelectOptionProps & { group?: string })[] = baseOptions;
 
     if (inputValue) {
       // Filter options matching the input value (case-insensitive)
@@ -130,8 +168,28 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
         (option) => (option.children as string).toLowerCase() === inputValue.toLowerCase()
       );
 
-      // If no exact match, add a "Create new option" entry
-      if (!exactMatch) {
+      // If no exact match and no filtered results
+      if (!exactMatch && filteredOptions.length === 0) {
+        if (allowCreate) {
+          // Add a "Create new option" entry
+          filteredOptions = [
+            {
+              children: `${t('Create new option')} "${inputValue}"`,
+              value: CREATE_NEW_VALUE,
+            },
+          ];
+        } else {
+          // Show "No results found" message
+          filteredOptions = [
+            {
+              children: t('No results found for "{{searchTerm}}"', { searchTerm: inputValue }),
+              value: 'NO_RESULTS',
+              isDisabled: true,
+            },
+          ];
+        }
+      } else if (!exactMatch && filteredOptions.length > 0 && allowCreate) {
+        // Add a "Create new option" entry when there are filtered results but no exact match
         filteredOptions = [
           ...filteredOptions,
           {
@@ -143,7 +201,21 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     }
 
     setSelectOptions(filteredOptions);
-  }, [inputValue, baseOptions, t]);
+  }, [inputValue, baseOptions, t, allowCreate]);
+
+  // Group options if any have a group property
+  const groups = useMemo(() => {
+    const hasGroups = selectOptions.some((option) => !!option.group);
+    if (hasGroups) {
+      const groups: Record<string, (SelectOptionProps & { group?: string })[]> = {};
+      for (const option of selectOptions) {
+        const group = option.group ?? '';
+        if (!groups[group]) groups[group] = [];
+        groups[group].push(option);
+      }
+      return groups;
+    }
+  }, [selectOptions]);
 
   const createItemId = (value: string) => `select-create-typeahead-${value.replace(/\s+/g, '-')}`;
 
@@ -172,7 +244,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
   };
 
   const onSelect = (value: string) => {
-    if (value) {
+    if (value && value !== 'NO_RESULTS') {
       if (value === CREATE_NEW_VALUE) {
         setSelected(inputValue);
         onHandleSelection({ name: inputValue });
@@ -183,7 +255,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
           setSelected(null);
         }
         setSelected(value);
-        setInputValue(value);
+        setInputValue(getSelectedLabel(value));
         onHandleSelection({ name: value });
         closeMenu();
       }
@@ -344,23 +416,51 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
           maxWidth: '0%',
         }}
       >
-        <SelectList
-          id={`${id}-typeahead-select-listbox`}
-          style={{
-            overflowY: 'auto',
-            maxHeight: '150px',
-          }}
-        >
-          {selectOptions.map((option, index) => (
-            <SelectOption
-              key={`${option.value}-${index}`}
-              isFocused={focusedItemIndex === index}
-              isSelected={selected === option.value}
-              id={createItemId(option.value as string)}
-              {...option}
-            />
-          ))}
-        </SelectList>
+        {groups ? (
+          <>
+            {Object.keys(groups).map((groupName, groupIndex) => (
+              <div key={groupName}>
+                {groupIndex > 0 && <Divider />}
+                <SelectGroup label={groupName || t('Other')}>
+                  <SelectList id={`${id}-typeahead-select-listbox-${groupName}`}>
+                    {groups[groupName].map((option, index) => {
+                      const globalIndex = selectOptions.findIndex(
+                        (opt) => opt.value === option.value
+                      );
+                      return (
+                        <SelectOption
+                          key={`${option.value}-${index}`}
+                          isFocused={focusedItemIndex === globalIndex}
+                          isSelected={selected === option.value}
+                          id={createItemId(option.value as string)}
+                          {...option}
+                        />
+                      );
+                    })}
+                  </SelectList>
+                </SelectGroup>
+              </div>
+            ))}
+          </>
+        ) : (
+          <SelectList
+            id={`${id}-typeahead-select-listbox`}
+            style={{
+              overflowY: 'auto',
+              maxHeight: '150px',
+            }}
+          >
+            {selectOptions.map((option, index) => (
+              <SelectOption
+                key={`${option.value}-${index}`}
+                isFocused={focusedItemIndex === index}
+                isSelected={selected === option.value}
+                id={createItemId(option.value as string)}
+                {...option}
+              />
+            ))}
+          </SelectList>
+        )}
       </Select>
     </PageFormGroup>
   );

@@ -55,7 +55,7 @@ export type PageFormMultiInputProps<
   LabelGroupProps;
 
 export function PageFormMultiInput<
-  T extends { id: number | string },
+  T extends { id?: number | string },
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPathByValue<TFieldValues, T[]> = FieldPathByValue<TFieldValues, T[]>,
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
