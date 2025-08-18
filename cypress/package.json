@@ -12,12 +12,12 @@
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
   },
   "dependencies": {
-    "@ansible/ansible-ui-framework": "*",
-    "@ansible/awx-ui": "*",
-    "@ansible/common-ui": "*",
-    "@ansible/eda-ui": "*",
-    "@ansible/hub-ui": "*",
-    "@ansible/platform-ui": "*",
-    "@ansible/chatbot": "*"
+    "@ansible/ansible-ui-framework": "../framework",
+    "@ansible/awx-ui": "../frontend/awx",
+    "@ansible/common-ui": "../frontend/common",
+    "@ansible/eda-ui": "../frontend/eda",
+    "@ansible/hub-ui": "../frontend/hub",
+    "@ansible/platform-ui": "../platform",
+    "@ansible/chatbot": "../frontend/chatbot"
   }
 }
