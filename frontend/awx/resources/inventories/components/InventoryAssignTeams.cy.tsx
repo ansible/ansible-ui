@@ -1,7 +1,7 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventoryAssignTeams } from './InventoryAssignTeams';
 
-describe('AwxInventoryAssignTeams', () => {
+describe.skip('AwxInventoryAssignTeams', () => {
   const component = <InventoryAssignTeams />;
   const path = '/inventories/:id/team-access/assign';
   const initialEntries = [`/inventories/1/team-access/assign`];

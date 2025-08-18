@@ -12,24 +12,25 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
 import { edaAPI } from '../../common/eda-utils';
 import { edaErrorAdapter } from '../../common/edaErrorAdapter';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
 import { EdaProject } from '../../interfaces/EdaProject';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaUser } from '../../interfaces/EdaUser';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 
 interface WizardFormValues {
-  users: EdaUser[];
-  edaRoles: EdaRbacRole[];
+  users: PlatformUser[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface UserRolePair {
-  user: EdaUser;
-  role: EdaRbacRole;
+  user: PlatformUser;
+  role: PlatformRbacRole;
 }
 
 export function EdaProjectAddUsers() {
@@ -48,7 +49,7 @@ export function EdaProjectAddUsers() {
       id: 'users',
       label: t('Select user(s)'),
       inputs: (
-        <EdaSelectUsersStep
+        <PlatformSelectUsersStep
           descriptionForUsersSelection={t(
             'Select the user(s) that you want to give access to {{projectName}}.',
             {
@@ -58,18 +59,18 @@ export function EdaProjectAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as { users: EdaUser[] };
+        const { users } = formData as { users: PlatformUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <EdaSelectRolesStep
-          contentType="project"
+        <PlatformSelectRolesStep
+          contentType="eda.project"
           fieldNameForPreviousStep="users"
           descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
             projectName: project?.name,
@@ -77,8 +78,8 @@ export function EdaProjectAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
-        if (!edaRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -91,10 +92,10 @@ export function EdaProjectAddUsers() {
   ];
 
   const onSubmit = (data: WizardFormValues) => {
-    const { users, edaRoles } = data;
+    const { users, platformRoles } = data;
     const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of edaRoles) {
+      for (const role of platformRoles) {
         items.push({ user, role });
       }
     }
@@ -108,7 +109,7 @@ export function EdaProjectAddUsers() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
-          postRequest(edaAPI`/role_user_assignments/`, {
+          postRequest(gatewayAPI`/role_user_assignments/`, {
             user: user?.id,
             role_definition: role.id,
             content_type: 'eda.project',

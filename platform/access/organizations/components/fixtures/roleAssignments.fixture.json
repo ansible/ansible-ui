@@ -1,0 +1,15 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 100,
+      "user": 10,
+      "role_definition": 2,
+      "content_type": "shared.organization",
+      "object_id": "1",
+      "created": "2024-01-01T00:00:00Z"
+    }
+  ]
+}

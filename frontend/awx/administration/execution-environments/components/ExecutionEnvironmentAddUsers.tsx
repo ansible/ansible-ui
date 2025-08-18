@@ -12,24 +12,25 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
-import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 
 interface WizardFormValues {
-  users: AwxUser[];
-  awxRoles: AwxRbacRole[];
+  users: PlatformUser[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface UserRolePair {
-  user: AwxUser;
-  role: AwxRbacRole;
+  user: PlatformUser;
+  role: PlatformRole;
 }
 
 export function ExecutionEnvironmentAddUsers() {
@@ -50,7 +51,7 @@ export function ExecutionEnvironmentAddUsers() {
       id: 'users',
       label: t('Select user(s)'),
       inputs: (
-        <AwxSelectUsersStep
+        <PlatformSelectUsersStep
           descriptionForUsersSelection={t(
             'Select the user(s) that you want to give access to {{executionenvironmentName}}.',
             {
@@ -60,18 +61,18 @@ export function ExecutionEnvironmentAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as { users: AwxUser[] };
+        const { users } = formData as { users: PlatformUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'awxRoles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="executionenvironment"
+        <PlatformSelectRolesStep
+          contentType="awx.executionenvironment"
           fieldNameForPreviousStep="users"
           descriptionForRoleSelection={t('Choose roles to apply to {{executionenvironmentName}}.', {
             executionenvironmentName: executionenvironment?.name,
@@ -79,8 +80,8 @@ export function ExecutionEnvironmentAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as { awxRoles: AwxRbacRole[] };
-        if (!awxRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -93,10 +94,10 @@ export function ExecutionEnvironmentAddUsers() {
   ];
 
   const onSubmit = (data: WizardFormValues) => {
-    const { users, awxRoles } = data;
+    const { users, platformRoles } = data;
     const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of awxRoles) {
+      for (const role of platformRoles) {
         items.push({ user, role });
       }
     }
@@ -110,7 +111,7 @@ export function ExecutionEnvironmentAddUsers() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
-          postRequest(awxAPI`/role_user_assignments/`, {
+          postRequest(gatewayAPI`/role_user_assignments/`, {
             user: user?.id,
             role_definition: role.id,
             content_type: 'awx.executionenvironment',
@@ -150,7 +151,6 @@ export function ExecutionEnvironmentAddUsers() {
         ]}
       />
       <PageWizard<WizardFormValues>
-        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid

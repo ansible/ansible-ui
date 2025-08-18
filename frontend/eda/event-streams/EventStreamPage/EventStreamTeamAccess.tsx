@@ -1,14 +1,13 @@
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 import { useParams } from 'react-router';
 import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EventStreamTeamAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <TeamAccess
-      service="eda"
+    <PlatformTeamAccess
       id={params.id || ''}
-      type={'eventstream'}
+      type={'eda.eventstream'}
       addRolesRoute={EdaRoute.EventStreamAssignTeams}
     />
   );

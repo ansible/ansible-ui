@@ -1,6 +1,17 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AwxContentType } from './AwxContentType';
 
+/**
+ * @deprecated as the API will be providing this information
+ */
+export interface AwxRoleMetadata {
+  content_types: Record<AwxContentType, AwxRoleMetadaContentType>;
+}
+
+/**
+ * @deprecated as the API will be providing this information
+ */
 export type AwxRoleMetadaContentType = {
   displayName: string;
   permissions: {
@@ -8,23 +19,9 @@ export type AwxRoleMetadaContentType = {
   };
 };
 
-export enum AwxContentTypes {
-  Credential = 'awx.credential',
-  ExecutionEnvironement = 'awx.executionenvironment',
-  InstanceGroup = 'awx.instancegroup',
-  Inventory = 'awx.inventory',
-  JobTemplate = 'awx.jobtemplate',
-  NotificationTemplate = 'awx.notificationtemplate',
-  Organization = 'shared.organization',
-  Project = 'awx.project',
-  Team = 'shared.team',
-  WorkflowJobTemplate = 'awx.workflowjobtemplate',
-}
-
-export interface AwxRoleMetadata {
-  content_types: Record<AwxContentTypes, AwxRoleMetadaContentType>;
-}
-
+/**
+ * @deprecated as the API will be providing this information
+ */
 export function useAwxRoleMetadata(): AwxRoleMetadata {
   const { t } = useTranslation();
 

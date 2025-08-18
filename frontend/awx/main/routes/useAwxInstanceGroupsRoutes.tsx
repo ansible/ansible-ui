@@ -22,6 +22,7 @@ import { InstanceGroupUserAccess } from '../../administration/instance-groups/In
 import { InstanceGroups } from '../../administration/instance-groups/InstanceGroups';
 import { InstanceDetails } from '../../administration/instances/InstanceDetails';
 import { AwxRoute } from '../AwxRoutes';
+import { InstanceGroupManageUsers } from '../../administration/instance-groups/InstanceGroupManageUsers';
 
 export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();
@@ -108,6 +109,11 @@ export function useAwxInstanceGroupsRoutes() {
           id: AwxRoute.InstanceGroupAddUsers,
           path: ':id/instance-groups/users/add-users',
           element: <InstanceGroupAddUsers />,
+        },
+        {
+          id: AwxRoute.InstanceGroupManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <InstanceGroupManageUsers />,
         },
         {
           path: '',

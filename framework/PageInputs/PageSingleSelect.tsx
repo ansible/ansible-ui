@@ -188,6 +188,7 @@ export function PageSingleSelect<
         <MenuToggle
           id={id}
           data-cy={id}
+          data-testid={id}
           ref={toggleRef}
           icon={icon ?? selectedOption?.icon}
           onClick={() => setOpen(!open)}
@@ -376,6 +377,7 @@ export function PageSingleSelect<
                 {Object.keys(groups).map((groupName) => (
                   <SelectGroup label={groupName} key={groupName}>
                     <PageSingleSelectList searchRef={searchRef} options={groups[groupName]} />
+                    <Divider />
                   </SelectGroup>
                 ))}
               </>

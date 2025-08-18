@@ -21,7 +21,8 @@ import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { AwxContentTypes, useAwxRoleMetadata } from './hooks/useAwxRoleMetadata';
+import { AwxContentType } from './hooks/AwxContentType';
+import { useAwxRoleMetadata } from './hooks/useAwxRoleMetadata';
 
 export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
@@ -158,7 +159,7 @@ function AwxRoleInputs(props: { disableContentType?: boolean }) {
           name="permissions"
           label={t('Permissions')}
           options={Object.entries(
-            awxRoleMetadata.content_types[content_type as AwxContentTypes]?.permissions || {}
+            awxRoleMetadata.content_types[content_type as AwxContentType]?.permissions || {}
           ).map(([key, value]) => ({
             label: value,
             value: key,

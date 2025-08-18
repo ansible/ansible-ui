@@ -1,11 +1,11 @@
 import { usePageNavigate } from '@ansible/ansible-ui-framework';
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 
 export function ExecutionEnvironmentTeamAccess() {
   const params = useParams<{ id: string }>();
@@ -29,10 +29,9 @@ export function ExecutionEnvironmentTeamAccess() {
   ]);
 
   return (
-    <TeamAccess
-      service="awx"
+    <PlatformTeamAccess
       id={params.id || ''}
-      type={'executionenvironment'}
+      type={'awx.executionenvironment'}
       addRolesRoute={AwxRoute.ExecutionEnvironmentAssignTeams as string}
     />
   );

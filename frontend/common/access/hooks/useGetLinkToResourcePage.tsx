@@ -36,7 +36,9 @@ export function useGetLinkToResourcePage() {
         'awx.instancegroup': getPageUrl(AwxRoute.InstanceGroupDetails, {
           params: { id: objectId },
         }),
-        'awx.inventory': getPageUrl(AwxRoute.InventoryDetails, { params: { id: objectId } }),
+        'awx.inventory': getPageUrl(AwxRoute.InventoryDetails, {
+          params: { id: objectId, inventory_type: 'inventory' },
+        }),
         'awx.jobtemplate': getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: objectId } }),
         'awx.notificationtemplate': getPageUrl(AwxRoute.NotificationTemplateDetails, {
           params: { id: objectId },

@@ -1,0 +1,37 @@
+{
+  "id": 1,
+  "url": "/api/gateway/v1/role_definitions/1/",
+  "related": {
+    "created_by": "/api/gateway/v1/users/2/",
+    "modified_by": "/api/gateway/v1/users/2/",
+    "team_assignments": "/api/gateway/v1/role_definitions/148/team_assignments/",
+    "user_assignments": "/api/gateway/v1/role_definitions/148/user_assignments/"
+  },
+  "summary_fields": {
+    "modified_by": {
+      "id": 2,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "created_by": {
+      "id": 2,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "resource": {
+      "ansible_id": "b9857929-d142-4191-b5c8-457c307643c9",
+      "resource_type": "shared.roledefinition"
+    }
+  },
+  "permissions": ["eda.restart_activation", "eda.view_activation"],
+  "content_type": "eda.activation",
+  "modified": "2025-07-21T04:17:07.169716Z",
+  "created": "2025-07-14T00:52:01.552761Z",
+  "name": "Demo role",
+  "description": "This is a demo role",
+  "managed": false,
+  "modified_by": 2,
+  "created_by": 2
+}

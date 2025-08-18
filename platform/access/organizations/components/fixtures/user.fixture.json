@@ -1,0 +1,11 @@
+{
+  "id": 10,
+  "url": "/api/gateway/v1/users/10/",
+  "username": "test-user1",
+  "email": "test-user1@example.com",
+  "first_name": "Test",
+  "last_name": "User",
+  "is_superuser": false,
+  "is_platform_auditor": false,
+  "organizations": [1]
+}

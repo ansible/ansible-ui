@@ -1,14 +1,13 @@
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useParams } from 'react-router';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 
 export function NotificationTeamAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <TeamAccess
-      service="awx"
+    <PlatformTeamAccess
       id={params.id || ''}
-      type={'notificationtemplate'}
+      type={'awx.notificationtemplate'}
       addRolesRoute={AwxRoute.NotificationAssignTeams as string}
     />
   );

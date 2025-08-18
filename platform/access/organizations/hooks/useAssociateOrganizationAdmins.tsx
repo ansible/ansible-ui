@@ -1,4 +1,4 @@
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,8 @@ import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useSelectUsers } from '../../users/hooks/useSelectUsers';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
 
 export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) {
   const { t } = useTranslation();
@@ -17,7 +19,12 @@ export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) 
     gatewayAPI`/organizations`,
     params.id
   );
-
+  const { data: organizationAdminRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Organization Admin',
+    }
+  );
   const associateUsers = useCallback(() => {
     selectUsers(
       t('Add administrators'),
@@ -25,15 +32,18 @@ export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) 
       t('Add administrators'),
       async (users: PlatformUser[]) => {
         if (!organization) return;
-        await postRequest(
-          gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/admins/associate/`,
-          {
-            instances: users.map((user) => user?.id.toString()),
-          }
+        await Promise.all(
+          users.map((user) =>
+            postRequest(gatewayAPI`/role_user_assignments/`, {
+              object_id: organization?.id,
+              role_definition: organizationAdminRoleData?.results[0]?.id,
+              user: user?.id,
+            })
+          )
         );
         await onComplete();
       }
     );
-  }, [onComplete, postRequest, selectUsers, t, organization]);
+  }, [selectUsers, t, organization, onComplete, postRequest, organizationAdminRoleData?.results]);
   return associateUsers;
 }

@@ -1,0 +1,48 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "url": "/api/gateway/v1/teams/1/",
+      "related": {
+        "activity_stream": "/api/gateway/v1/activitystream/?content_type=11&object_id=1",
+        "created_by": "/api/gateway/v1/users/3/",
+        "modified_by": "/api/gateway/v1/users/3/",
+        "organization": "/api/gateway/v1/organizations/1/",
+        "users": "/api/gateway/v1/teams/1/users/",
+        "admins": "/api/gateway/v1/teams/1/admins/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "organization": {
+          "id": 1,
+          "name": "Default"
+        },
+        "resource": {
+          "ansible_id": "483889a5-08d0-43e0-aa59-d825efbae689",
+          "resource_type": "shared.team"
+        }
+      },
+      "created": "2025-08-12T16:21:29.389218Z",
+      "created_by": 3,
+      "modified": "2025-08-12T16:21:29.389200Z",
+      "modified_by": 3,
+      "name": "test-team",
+      "organization": 1,
+      "description": ""
+    }
+  ]
+}

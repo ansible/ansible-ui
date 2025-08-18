@@ -12,26 +12,25 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Project } from '../../../interfaces/Project';
-import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 
-interface AwxRole {
-  id: string;
-  name: string;
-}
 interface WizardFormValues {
-  users: AwxUser[];
-  awxRoles: AwxRole[];
+  users: PlatformUser[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface UserRolePair {
-  user: AwxUser;
-  role: AwxRole;
+  user: PlatformUser;
+  role: PlatformRole;
 }
 
 export function AwxProjectAddUsers() {
@@ -50,7 +49,7 @@ export function AwxProjectAddUsers() {
       id: 'users',
       label: t('Select user(s)'),
       inputs: (
-        <AwxSelectUsersStep
+        <PlatformSelectUsersStep
           descriptionForUsersSelection={t(
             'Select the user(s) that you want to give access to {{projectName}}.',
             {
@@ -60,18 +59,18 @@ export function AwxProjectAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as { users: AwxUser[] };
+        const { users } = formData as { users: PlatformUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'awxRoles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="project"
+        <PlatformSelectRolesStep
+          contentType="awx.project"
           fieldNameForPreviousStep="users"
           descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
             projectName: project?.name,
@@ -79,8 +78,8 @@ export function AwxProjectAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as { awxRoles: AwxRole[] };
-        if (!awxRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -93,10 +92,10 @@ export function AwxProjectAddUsers() {
   ];
 
   const onSubmit = (data: WizardFormValues) => {
-    const { users, awxRoles } = data;
+    const { users, platformRoles } = data;
     const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of awxRoles) {
+      for (const role of platformRoles) {
         items.push({ user, role });
       }
     }
@@ -110,10 +109,10 @@ export function AwxProjectAddUsers() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
-          postRequest(awxAPI`/role_user_assignments/`, {
+          postRequest(gatewayAPI`/role_user_assignments/`, {
             user: user?.id,
             role_definition: role.id,
-            content_type: 'project',
+            content_type: 'awx.project',
             object_id: project.id,
           }),
         onComplete: () => {
@@ -139,7 +138,7 @@ export function AwxProjectAddUsers() {
             to: getPageUrl(AwxRoute.ProjectDetails, { params: { id: project?.id } }),
           },
           {
-            label: t('Users '),
+            label: t('User Access '),
             to: getPageUrl(AwxRoute.ProjectUsers, { params: { id: project?.id } }),
           },
           { label: t('Assign users') },

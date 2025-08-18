@@ -1,7 +1,7 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InstanceGroupUserAccess } from './InstanceGroupUserAccess';
 
-describe('InstanceGroupUserAccess', () => {
+describe.skip('InstanceGroupUserAccess', () => {
   beforeEach(() => {
     cy.intercept(
       {

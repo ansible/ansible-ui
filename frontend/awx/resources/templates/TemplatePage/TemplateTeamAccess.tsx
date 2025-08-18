@@ -1,14 +1,13 @@
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useParams } from 'react-router';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 
 export function TemplateTeamAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <TeamAccess
-      service="awx"
+    <PlatformTeamAccess
       id={params.id || ''}
-      type={'jobtemplate'}
+      type={'awx.jobtemplate'}
       addRolesRoute={AwxRoute.JobTemplateAssignTeams}
     />
   );

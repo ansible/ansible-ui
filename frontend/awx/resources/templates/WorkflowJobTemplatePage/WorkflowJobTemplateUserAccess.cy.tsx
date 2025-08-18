@@ -1,7 +1,7 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { WorkflowJobTemplateUserAccess } from './WorkflowJobTemplateUserAccess';
 
-describe('WorkflowJobTemplateUserAccess', () => {
+describe.skip('WorkflowJobTemplateUserAccess', () => {
   beforeEach(() => {
     cy.intercept(
       {

@@ -21,7 +21,8 @@ import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { EdaContentTypes, useEdaRoleMetadata } from './hooks/useEdaRoleMetadata';
+import { EdaContentType } from './hooks/EdaContentType';
+import { useEdaRoleMetadata } from './hooks/useEdaRoleMetadata';
 
 export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
@@ -173,7 +174,7 @@ function EdaRoleInputs(props: { disableContentType?: boolean }) {
           name="permissions"
           label={t('Permissions')}
           options={Object.entries(
-            edaRoleMetadata.content_types[content_type as EdaContentTypes]?.permissions || {}
+            edaRoleMetadata.content_types[content_type as EdaContentType]?.permissions || {}
           ).map(([key, value]) => ({
             label: value,
             value: key,

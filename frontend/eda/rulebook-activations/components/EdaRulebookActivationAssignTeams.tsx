@@ -12,24 +12,25 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
 import { edaAPI } from '../../common/eda-utils';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { edaErrorAdapter } from '../../common/edaErrorAdapter';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { EdaTeam } from '../../interfaces/EdaTeam';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PlatformSelectTeamsStep } from '../../../common/access/components/PlatformSelectTeamsStep';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 
 interface WizardFormValues {
-  teams: EdaTeam[];
-  edaRoles: EdaRbacRole[];
+  teams: PlatformTeam[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface TeamRolePair {
-  team: EdaTeam;
-  role: EdaRbacRole;
+  team: PlatformTeam;
+  role: PlatformRbacRole;
 }
 
 export function EdaRulebookActivationAssignTeams() {
@@ -49,7 +50,7 @@ export function EdaRulebookActivationAssignTeams() {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <EdaSelectTeamsStep
+        <PlatformSelectTeamsStep
           descriptionForTeamsSelection={t(
             'Select the team(s) that you want to give access to {{activationName}}.',
             {
@@ -59,18 +60,18 @@ export function EdaRulebookActivationAssignTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: EdaTeam[] };
+        const { teams } = formData as { teams: PlatformTeam[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <EdaSelectRolesStep
-          contentType="activation"
+        <PlatformSelectRolesStep
+          contentType="eda.activation"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{activationName}}.', {
             activationName: activation?.name,
@@ -78,8 +79,8 @@ export function EdaRulebookActivationAssignTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
-        if (!edaRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +93,10 @@ export function EdaRulebookActivationAssignTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, edaRoles } = data;
+    const { teams, platformRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of edaRoles) {
+      for (const role of platformRoles) {
         items.push({ team, role });
       }
     }
@@ -109,7 +110,7 @@ export function EdaRulebookActivationAssignTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(edaAPI`/role_team_assignments/`, {
+          postRequest(gatewayAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
             content_type: 'eda.activation',

@@ -478,7 +478,7 @@ describe('Workflow Approvals Tests', () => {
                       });
                       cy.get('a[href*="user-access"]').click();
                       cy.verifyPageTitle(workflowJobTemplate.name);
-                      cy.get('tbody tr').should('have.length', 0);
+                      cy.get('tbody tr').should('have.length', 3);
                       cy.getByDataCy('assign-users').click();
                       cy.verifyPageTitle('Assign users');
                       cy.filterTableBySearch(userWFApprove.username);

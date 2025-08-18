@@ -19,6 +19,7 @@ import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 import { AwxRoute } from '../AwxRoutes';
+import { AwxProjectManageUsers } from '../../resources/projects/components/AwxProjectManageUsers';
 
 export function useAwxProjectRoutes() {
   const { t } = useTranslation();
@@ -128,6 +129,11 @@ export function useAwxProjectRoutes() {
           id: AwxRoute.ProjectAddUsers,
           path: ':id/user-access/add-users',
           element: <AwxProjectAddUsers />,
+        },
+        {
+          id: AwxRoute.ProjectManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <AwxProjectManageUsers />,
         },
         {
           id: AwxRoute.ProjectAssignTeams,

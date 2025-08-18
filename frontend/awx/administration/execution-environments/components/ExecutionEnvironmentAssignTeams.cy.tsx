@@ -1,5 +1,6 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { ExecutionEnvironmentAssignTeams } from './ExecutionEnvironmentAssignTeams';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 describe('AwxExecutionEnvironmentAssignTeams', () => {
   const component = <ExecutionEnvironmentAssignTeams />;
@@ -11,21 +12,15 @@ describe('AwxExecutionEnvironmentAssignTeams', () => {
   };
 
   beforeEach(() => {
-    cy.intercept(
-      {
-        method: 'OPTIONS',
-        url: awxAPI`/teams/`,
-      },
-      {
-        fixture: 'awx_teams_options.json',
-      }
-    ).as('getOptions');
     cy.intercept('GET', awxAPI`/execution_environments/*`, {
       fixture: 'execution_environment.json',
     });
-    cy.intercept('GET', awxAPI`/teams/*`, { fixture: 'teams.json' });
-    cy.intercept('GET', awxAPI`/role_definitions/*`, {
+    cy.intercept('GET', gatewayAPI`/teams/*`, { fixture: 'teams.json' });
+    cy.intercept('GET', gatewayAPI`/role_definitions/*`, {
       fixture: 'awxExecutionEnvironmentRoles.json',
+    });
+    cy.intercept('GET', gatewayAPI`/service-index/role-types/`, {
+      fixture: 'platformRoleTypes.json',
     });
     cy.mount(component, params);
   });
@@ -39,10 +34,10 @@ describe('AwxExecutionEnvironmentAssignTeams', () => {
   });
 
   it('can filter teams by name', () => {
-    cy.intercept(awxAPI`/teams/?search=Sample*`, { fixtures: 'teams.json' }).as(
+    cy.intercept(gatewayAPI`/teams/?name=Sample*`, { fixtures: 'edaTeams.json' }).as(
       'nameFilterRequest'
     );
-    cy.filterTableBySearch('Sample');
+    cy.filterTableByText('Sample');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();
   });
@@ -54,18 +49,21 @@ describe('AwxExecutionEnvironmentAssignTeams', () => {
     cy.selectTableRowByCheckbox('name', 'Sample', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
   });
 
   it('should validate that at least one role is selected for moving to Review step', () => {
     cy.selectTableRowByCheckbox('name', 'Sample', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.selectTableRowByCheckbox('name', 'Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should(
+      'not.have.class',
+      'pf-m-current'
+    );
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
 
@@ -78,7 +76,7 @@ describe('AwxExecutionEnvironmentAssignTeams', () => {
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Teams');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', '1');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Sample');
-    cy.get('[data-cy="expandable-section-awxRoles"]').within(() => {
+    cy.get('[data-cy="expandable-section-platformRoles"]').within(() => {
       cy.get('div > span').should('contain.text', 'Roles');
       cy.get('div > .pf-v6-c-badge').should('contain.text', '1');
       cy.get('[data-cy="name-column-cell"]').should('contain.text', 'Admin');
@@ -90,7 +88,7 @@ describe('AwxExecutionEnvironmentAssignTeams', () => {
   });
 
   it('should trigger bulk action dialog on submit', () => {
-    cy.intercept('POST', awxAPI`/role_team_assignments/`, {
+    cy.intercept('POST', gatewayAPI`/role_team_assignments/`, {
       statusCode: 201,
       body: {
         team: 3,

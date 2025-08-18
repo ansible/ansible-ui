@@ -1,8 +1,8 @@
-import { ITableColumn, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { ITableColumn, IToolbarFilter, QueryParams } from '@ansible/ansible-ui-framework';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { QueryParams, usePlatformView } from '../hooks/usePlatformView';
+import { usePlatformView } from '../hooks/usePlatformView';
 
 /**
  * Hook for defining the view for a multi-select list in the context of a wizard. The selections made in the list
@@ -14,6 +14,8 @@ import { QueryParams, usePlatformView } from '../hooks/usePlatformView';
 export function usePlatformMultiSelectListView<T extends { id: number }>(
   viewOptions: {
     url: string;
+    viewPage?: number;
+    viewPerPage?: number;
     toolbarFilters?: IToolbarFilter[];
     tableColumns?: ITableColumn<T>[];
     queryParams?: QueryParams;
@@ -24,11 +26,29 @@ export function usePlatformMultiSelectListView<T extends { id: number }>(
   fieldName: string
 ) {
   const { setValue } = useFormContext();
-  const { wizardData } = usePageWizard();
-
+  const { wizardData, stepData, activeStep } = usePageWizard();
+  const defaultSelection = () => {
+    if (!Object.keys(wizardData).length && !Object.keys(stepData).length) return;
+    if (`${fieldName}` in wizardData) {
+      return (wizardData as { [key: string]: [] })[fieldName];
+    }
+    if (stepData[fieldName] !== undefined) {
+      return stepData[fieldName];
+    }
+    if (
+      activeStep !== null &&
+      'idOfparentStep' in activeStep &&
+      activeStep.idOfparentStep !== undefined
+    ) {
+      return (stepData as { [key: string]: { [key: string]: [] } })[`${activeStep.idOfparentStep}`][
+        fieldName
+      ];
+    }
+    return [];
+  };
   const view = usePlatformView<T>({
     ...viewOptions,
-    defaultSelection: ((wizardData as { [key: string]: [] })[fieldName] || []) as T[],
+    defaultSelection: (defaultSelection() as T[]) || [],
   });
 
   useEffect(() => {

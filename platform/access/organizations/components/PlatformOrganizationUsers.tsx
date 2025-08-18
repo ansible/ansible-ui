@@ -4,6 +4,7 @@ import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink'
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { UserRoleAccess } from '@ansible/common-ui/access/interfaces/UserRoleAccess';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -12,11 +13,10 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { useUsersFilters } from '../../users/hooks/useUsersFilters';
+import { useOrganizationUserColumns } from '../../users/hooks/useOrganizationUserColumns';
+import { useOrganizationUsersFilters } from '../../users/hooks/useOrganizationUsersFilters';
 import {
   useOrganizationUsersRowActions,
   useOrganizationUsersToolbarActions,
@@ -24,8 +24,8 @@ import {
 
 export function PlatformOrganizationUsers() {
   const { t } = useTranslation();
-  const toolbarFilters = useUsersFilters();
-  const tableColumns = useUsersColumns();
+  const toolbarFilters = useOrganizationUsersFilters();
+  const tableColumns = useOrganizationUserColumns();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const {
@@ -34,8 +34,8 @@ export function PlatformOrganizationUsers() {
     error,
   } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations`, params.id);
 
-  const view = usePlatformView<PlatformUser>({
-    url: gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/users/`,
+  const view = usePlatformView<UserRoleAccess>({
+    url: gatewayAPI`/role_user_access/shared.organization/${organization?.id?.toString() ?? ''}/`,
     toolbarFilters,
     tableColumns,
   });
@@ -55,7 +55,7 @@ export function PlatformOrganizationUsers() {
   if (error) return <AwxError error={error} />;
 
   return (
-    <PageTable<PlatformUser>
+    <PageTable<UserRoleAccess>
       id="platform-organization-users-table"
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
@@ -75,7 +75,9 @@ export function PlatformOrganizationUsers() {
             <ButtonLink
               icon={<PlusCircleIcon />}
               variant={ButtonVariant.primary}
-              href={getPageUrl(PlatformRoute.OrganizationAddUsers, { params: { id: params.id } })}
+              href={getPageUrl(PlatformRoute.OrganizationAssignUsers, {
+                params: { id: params.id },
+              })}
             >
               {t('Assign users')}
             </ButtonLink>

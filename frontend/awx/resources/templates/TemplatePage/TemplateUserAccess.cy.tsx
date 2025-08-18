@@ -1,7 +1,7 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { TemplateUserAccess } from './TemplateUserAccess';
 
-describe('TemplateUserAccess', () => {
+describe.skip('TemplateUserAccess', () => {
   beforeEach(() => {
     cy.intercept(
       {

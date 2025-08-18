@@ -88,6 +88,11 @@ import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookAc
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
+import { EdaCredentialManageUsers } from '../access/credentials/components/EdaCredentialManageUsers';
+import { EdaProjectManageUsers } from '../projects/components/EdaProjectManageUsers';
+import { EdaDecisionEnvironmentManageUsers } from '../decision-environments/components/EdaDecisionEnvironmentManageUsers';
+import { EdaEventStreamManageUsers } from '../event-streams/components/EdaEventStreamManageUsers';
+import { EdaRulebookActivationManageUsers } from '../rulebook-activations/components/EdaRulebookActivationManageUsers';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -204,6 +209,11 @@ export function useEdaNavigation() {
           element: <EdaRulebookActivationAddUsers />,
         },
         {
+          id: EdaRoute.RulebookActivationManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <EdaRulebookActivationManageUsers />,
+        },
+        {
           id: EdaRoute.RulebookActivationAssignTeams,
           path: ':id/team-access/assign',
           element: <EdaRulebookActivationAssignTeams />,
@@ -261,6 +271,11 @@ export function useEdaNavigation() {
           element: <EdaProjectAddUsers />,
         },
         {
+          id: EdaRoute.ProjectManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <EdaProjectManageUsers />,
+        },
+        {
           id: EdaRoute.ProjectAssignTeams,
           path: ':id/team-access/assign',
           element: <EdaProjectAssignTeams />,
@@ -316,6 +331,11 @@ export function useEdaNavigation() {
           id: EdaRoute.DecisionEnvironmentAddUsers,
           path: ':id/user-access/add',
           element: <EdaDecisionEnvironmentAddUsers />,
+        },
+        {
+          id: EdaRoute.DecisionEnvironmentManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <EdaDecisionEnvironmentManageUsers />,
         },
         {
           id: EdaRoute.DecisionEnvironmentAssignTeams,
@@ -378,6 +398,11 @@ export function useEdaNavigation() {
           id: EdaRoute.EventStreamAddUsers,
           path: ':id/user-access/add',
           element: <EdaEventStreamAddUsers />,
+        },
+        {
+          id: EdaRoute.EventStreamManageUsers,
+          path: ':resource_id/user-access/:resource_type/:user_id/manage',
+          element: <EdaEventStreamManageUsers />,
         },
         {
           id: EdaRoute.EventStreamAssignTeams,
@@ -591,8 +616,13 @@ export function useEdaNavigation() {
             },
             {
               id: EdaRoute.CredentialAddUsers,
-              path: ':id/user-access/add',
+              path: ':id/user-access/assign',
               element: <EdaCredentialAddUsers />,
+            },
+            {
+              id: EdaRoute.CredentialManageUsers,
+              path: ':resource_id/user-access/:resource_type/:user_id/manage',
+              element: <EdaCredentialManageUsers />,
             },
             {
               id: EdaRoute.CredentialAssignTeams,

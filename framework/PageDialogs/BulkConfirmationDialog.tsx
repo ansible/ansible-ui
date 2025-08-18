@@ -43,7 +43,7 @@ export interface BulkConfirmationDialog<T extends object> {
   title: string;
 
   /** The prompt/description that shows up under the confirmation title. */
-  prompt?: string;
+  prompt?: React.ReactNode;
 
   /** Alert prompts that shows up under the confirmation title. */
   alertPrompts?: string[];

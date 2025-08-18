@@ -4,10 +4,10 @@ import { Title } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { edaAPI } from '../../../common/eda-utils';
 import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
 import { EdaTeam } from '../../../interfaces/EdaTeam';
 import { useEdaTeamFilters } from '../../teams/hooks/useEdaTeamFilters';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;
@@ -33,7 +33,7 @@ export function EdaSelectTeamsStep(props: { descriptionForTeamsSelection?: strin
 
   const view = useEdaMultiSelectListView<EdaTeam>(
     {
-      url: edaAPI`/teams/`,
+      url: gatewayAPI`/teams/`,
       toolbarFilters,
       tableColumns,
       disableQueryString: true,

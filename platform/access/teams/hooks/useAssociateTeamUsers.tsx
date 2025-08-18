@@ -1,4 +1,4 @@
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,8 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useSelectUsers } from '../../users/hooks/useSelectUsers';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
 
 export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
   const { t } = useTranslation();
@@ -14,7 +16,12 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
   const postRequest = usePostRequest();
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
-
+  const { data: teamMemberRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Team Member',
+    }
+  );
   const associateUsers = useCallback(() => {
     selectUsers(
       t('Assign users'),
@@ -22,12 +29,18 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
       t('Assign users'),
       async (users: PlatformUser[]) => {
         if (!team) return;
-        await postRequest(gatewayAPI`/teams/${team?.id?.toString() ?? ''}/users/associate/`, {
-          instances: users.map((user) => user?.id.toString()),
-        });
+        await Promise.all(
+          users.map((user) =>
+            postRequest(gatewayAPI`/role_user_assignments/`, {
+              object_id: team?.id,
+              role_definition: teamMemberRoleData?.results[0]?.id,
+              user: user?.id,
+            })
+          )
+        );
         await onComplete();
       }
     );
-  }, [onComplete, postRequest, selectUsers, t, team]);
+  }, [onComplete, postRequest, selectUsers, t, team, teamMemberRoleData?.results]);
   return associateUsers;
 }

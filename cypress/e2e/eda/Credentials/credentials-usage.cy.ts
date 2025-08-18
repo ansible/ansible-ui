@@ -52,15 +52,7 @@ describe('Check if the build includes EDA', () => {
       cy.contains('h1', 'Create rulebook activation').should('be.visible');
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
-      cy.getBy('[data-cy="organization_id"]').click();
-      cy.clickButton('Browse');
-      cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-        cy.get('table').should('exist');
-        cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
-        cy.getBy('button[data-cy="apply-filter"]').click();
-        cy.get('tbody tr input').click();
-        cy.clickButton('Confirm');
-      });
+      cy.singleSelectByDataCy('organization_id', edaOrg.name);
       cy.get('[data-cy="project_id"]').click();
       cy.clickButton('Browse');
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
@@ -115,7 +107,7 @@ describe('Check if the build includes EDA', () => {
       cy.clickButton(/^Create project$/);
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');
-      cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
+      cy.selectSingleSelectOption('[data-cy="organization_id"]', edaOrg.name);
       cy.intercept('POST', edaAPI`/projects/`).as('project');
       cy.clickButton(/^Create project$/);
       cy.wait('@project')

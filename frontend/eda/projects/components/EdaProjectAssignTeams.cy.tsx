@@ -1,4 +1,5 @@
 import { edaAPI } from '../../common/eda-utils';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { EdaProjectAssignTeams } from './EdaProjectAssignTeams';
 
 describe('EdaProjectAssignTeams', () => {
@@ -12,8 +13,11 @@ describe('EdaProjectAssignTeams', () => {
 
   beforeEach(() => {
     cy.intercept('GET', edaAPI`/projects/*`, { fixture: 'edaProject.json' });
-    cy.intercept('GET', edaAPI`/teams/?order_by=name*`, { fixture: 'edaTeams.json' });
-    cy.intercept('GET', edaAPI`/role_definitions/?content_type__model=project*`, {
+    cy.intercept('GET', gatewayAPI`/teams/?order_by=name*`, { fixture: 'edaTeams.json' });
+    cy.intercept('GET', gatewayAPI`/service-index/role-types/`, {
+      fixture: 'platformRoleTypes.json',
+    });
+    cy.intercept('GET', gatewayAPI`/role_definitions/*`, {
       fixture: 'edaProjectRoles.json',
     });
     cy.mount(component, params);
@@ -26,7 +30,9 @@ describe('EdaProjectAssignTeams', () => {
     cy.get('table tbody').find('tr').should('have.length', 4);
   });
   it('can filter teams by name', () => {
-    cy.intercept(edaAPI`/teams/?name=Gal*`, { fixtures: 'edaTeams.json' }).as('nameFilterRequest');
+    cy.intercept(gatewayAPI`/teams/?name=Gal*`, { fixtures: 'edaTeams.json' }).as(
+      'nameFilterRequest'
+    );
     cy.filterTableByText('Gal');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();
@@ -38,44 +44,47 @@ describe('EdaProjectAssignTeams', () => {
     cy.selectTableRowByCheckbox('name', 'Demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
   });
   it('should validate that at least one role is selected for moving to Review step', () => {
     cy.selectTableRowByCheckbox('name', 'Demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
-    cy.selectTableRowByCheckbox('name', 'Project Admin', { disableFilter: true });
+    cy.selectTableRowByCheckbox('name', 'Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should(
+      'not.have.class',
+      'pf-m-current'
+    );
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
   it('should display selected team and role in the Review step', () => {
     cy.selectTableRowByCheckbox('name', 'Demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.selectTableRowByCheckbox('name', 'Project Admin', { disableFilter: true });
+    cy.selectTableRowByCheckbox('name', 'Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Teams');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', '1');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Demo');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Roles');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', '1');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Project Admin');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should(
+    cy.get('[data-cy="expandable-section-platformRoles"]').should('contain.text', 'Roles');
+    cy.get('[data-cy="expandable-section-platformRoles"]').should('contain.text', '1');
+    cy.get('[data-cy="expandable-section-platformRoles"]').should('contain.text', 'Admin');
+    cy.get('[data-cy="expandable-section-platformRoles"]').should(
       'contain.text',
       'Has all permissions to a single project and its child resources - rulebook'
     );
   });
   it('should trigger bulk action dialog on submit', () => {
-    cy.intercept('POST', edaAPI`/role_team_assignments/`, {
+    cy.intercept('POST', gatewayAPI`/role_team_assignments/`, {
       statusCode: 201,
       body: { team: 3, role_definition: 14, content_type: 'eda.project', object_id: 1 },
     }).as('createRoleAssignment');
     cy.selectTableRowByCheckbox('name', 'Demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.selectTableRowByCheckbox('name', 'Project Admin', { disableFilter: true });
+    cy.selectTableRowByCheckbox('name', 'Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Finish$/);
     cy.wait('@createRoleAssignment');
@@ -83,7 +92,7 @@ describe('EdaProjectAssignTeams', () => {
     cy.get('.pf-v6-c-modal-box').within(() => {
       cy.get('table tbody').find('tr').should('have.length', 1);
       cy.get('table tbody').should('contain.text', 'Demo');
-      cy.get('table tbody').should('contain.text', 'Project Admin');
+      cy.get('table tbody').should('contain.text', 'Admin');
       cy.get('div.pf-v6-c-progress__description').should('contain.text', 'Success');
       cy.get('div.pf-v6-c-progress__status').should('contain.text', '100%');
     });

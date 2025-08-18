@@ -1,26 +1,31 @@
 import { TextCell, compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
-import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { UserRoleAccess } from '@ansible/common-ui/access/interfaces/UserRoleAccess';
+import { getItemKey } from '@ansible/common-ui/crud/Data';
+import { useGetRequest, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { useUsersColumns } from '../../users/hooks/useUserColumns';
+import { useOrganizationUserColumns } from '../../users/hooks/useOrganizationUserColumns';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useParams } from 'react-router';
 
-export function useRemoveOrganizationUsers(onComplete: (users: PlatformUser[]) => void) {
+export function useRemoveOrganizationUsers(onComplete: (users: UserRoleAccess[]) => void) {
   const { t } = useTranslation();
+  const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
+  const deleteRequest = useDeleteRequest();
   const params = useParams<{ id: string }>();
   const { data: organization } = useGetItem<PlatformOrganization>(
     gatewayAPI`/organizations`,
     params.id
   );
-  const confirmationColumns = useUsersColumns({ disableLinks: true });
+  const confirmationColumns = useOrganizationUserColumns({ disableLinks: true });
   const removeActionNameColumn = useMemo(
     () => ({
       header: t('Username'),
-      cell: (user: PlatformUser) => <TextCell text={user?.username} />,
+      cell: (user: UserRoleAccess) => <TextCell text={user?.username} />,
       sort: 'username',
       maxWidth: 200,
     }),
@@ -28,10 +33,23 @@ export function useRemoveOrganizationUsers(onComplete: (users: PlatformUser[]) =
   );
   const actionColumns = useMemo(() => [removeActionNameColumn], [removeActionNameColumn]);
 
-  const bulkAction = useBulkConfirmation<PlatformUser>();
-  const removeUsers = (users: PlatformUser[]) => {
+  const bulkAction = useBulkConfirmation<UserRoleAccess>();
+  const removeUsers = (users: UserRoleAccess[]) => {
     bulkAction({
-      title: t('Remove users', { count: users.length }),
+      title: t('Remove users from organization', { count: users.length }),
+      prompt: (
+        <>
+          {t('Are you sure you want to remove the user below?')}
+          <br />
+          <br />
+          <strong>{t('Note:', 'Note:')}</strong>{' '}
+          {t(
+            'This will remove all directly assigned organization roles for this user. ' +
+              'If the user has indirectly assigned roles through a team assignment, they cannot be managed here. ' +
+              'To modify roles assigned to the user from a team assignment manage the teams assignments or remove the user from the team.'
+          )}
+        </>
+      ),
       confirmText: t(
         'Yes, I confirm that I want to remove these {{count}} users from the organization.',
         {
@@ -45,12 +63,18 @@ export function useRemoveOrganizationUsers(onComplete: (users: PlatformUser[]) =
       confirmationColumns: confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: PlatformUser, signal) =>
-        postRequest(
-          gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/users/disassociate/`,
-          { instances: [user?.id.toString()] },
-          signal
-        ),
+      actionFn: async (user: UserRoleAccess) => {
+        const orgMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
+          user: user?.id,
+          object_id: organization?.id ?? '',
+        });
+
+        await Promise.all(
+          orgMemberRoleAssignments?.results?.map(async (assignment) => {
+            await deleteRequest(gatewayAPI`/role_user_assignments/${assignment.id}/`);
+          })
+        );
+      },
     });
   };
   return removeUsers;

@@ -1,3 +1,4 @@
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { ExecutionEnvironmentAddUsers } from './ExecutionEnvironmentAddUsers';
 
@@ -14,18 +15,12 @@ describe('ExecutionEnvironmentAddUsers', () => {
     cy.intercept('GET', awxAPI`/execution_environments/*`, {
       fixture: 'execution_environment.json',
     });
-    cy.intercept(
-      {
-        method: 'OPTIONS',
-        url: awxAPI`/users/`,
-      },
-      {
-        fixture: 'awx_users_options.json',
-      }
-    ).as('getOptions');
-    cy.intercept('GET', awxAPI`/users/*`, { fixture: 'awx-normal-users.json' });
-    cy.intercept('GET', awxAPI`/role_definitions/*`, {
+    cy.intercept('GET', gatewayAPI`/users/*`, { fixture: 'awx-normal-users.json' });
+    cy.intercept('GET', gatewayAPI`/role_definitions/*`, {
       fixture: 'awxExecutionEnvironmentRoles.json',
+    });
+    cy.intercept('GET', gatewayAPI`/service-index/role-types/`, {
+      fixture: 'platformRoleTypes.json',
     });
     cy.mount(component, params);
   });
@@ -39,7 +34,7 @@ describe('ExecutionEnvironmentAddUsers', () => {
   });
 
   it('can filter users by username', () => {
-    cy.intercept(awxAPI`/users/?is_superuser=false&username__icontains=e2e-user-avAE*`, {
+    cy.intercept(gatewayAPI`/users/?is_superuser=false&username__contains=e2e-user-avAE*`, {
       fixture: 'users.json',
     }).as('nameFilterRequest');
     cy.selectTableFilter('username');
@@ -55,18 +50,21 @@ describe('ExecutionEnvironmentAddUsers', () => {
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-users"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
   });
 
   it('should validate that at least one role is selected for moving to Review step', () => {
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.selectTableRowByCheckbox('name', 'Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('not.have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should(
+      'not.have.class',
+      'pf-m-current'
+    );
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
 
@@ -79,7 +77,7 @@ describe('ExecutionEnvironmentAddUsers', () => {
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', 'Users');
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', '1');
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', 'demo-user');
-    cy.get('[data-cy="expandable-section-awxRoles"]').within(() => {
+    cy.get('[data-cy="expandable-section-platformRoles"]').within(() => {
       cy.get('div > span').should('contain.text', 'Roles');
       cy.get('div > .pf-v6-c-badge').should('contain.text', '1');
       cy.get('[data-cy="name-column-cell"]').should('contain.text', 'Admin');
@@ -91,7 +89,7 @@ describe('ExecutionEnvironmentAddUsers', () => {
   });
 
   it('should trigger bulk action dialog on submit', () => {
-    cy.intercept('POST', awxAPI`/role_user_assignments/`, {
+    cy.intercept('POST', gatewayAPI`/role_user_assignments/`, {
       statusCode: 201,
       body: {
         user: 5,

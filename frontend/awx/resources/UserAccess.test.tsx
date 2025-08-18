@@ -3,7 +3,7 @@ import { describe, test, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { MemoryRouter, Routes, Route } from 'react-router';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import mockEmptyUsers from '../../../platform/access/organizations/components/emptyUsers.fixture.json';
+import mockEmptyUsers from '../../../platform/access/organizations/components/fixtures/emptyUsers.fixture.json';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';

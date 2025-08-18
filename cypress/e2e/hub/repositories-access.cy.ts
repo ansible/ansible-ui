@@ -21,17 +21,7 @@ describe('Repositories user and team access tests', () => {
     cy.verifyPageTitle(repository.name);
   });
 
-  function removeRoleFromListRow(roleName: string) {
-    cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
-    cy.getModal().within(() => {
-      cy.get('#confirm').click();
-      cy.clickButton(/^Remove role/);
-      cy.contains(/^Success$/).should('be.visible');
-    });
-  }
-
-  it.skip('create a new repository, from the user access tab assign a user and apply role(s) to the user of the repository', () => {
-    //https://issues.redhat.com/browse/AAP-51476
+  it('create a new repository, from the user access tab assign a user and apply role(s) to the user of the repository', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab(/^Details$/, true);
@@ -57,7 +47,7 @@ describe('Repositories user and team access tests', () => {
         cy.verifyReviewStepWizardDetails('users', [hubUser.username], '1');
         cy.verifyReviewStepWizardDetails(
           'hubRoles',
-          ['galaxy.ansible_repository_owner', 'Manage ansible repositories.'],
+          ['galaxy.ansible_repository_owner', 'Manage ansible repositories.', 'Automation Content'],
           '1'
         );
         cy.clickButton(/^Finish/);
@@ -74,13 +64,11 @@ describe('Repositories user and team access tests', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.ansible_repository_owner');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
 
-  it.skip('create a new repository, from the team access tab assign a user and apply role(s) to the team of the repository', () => {
-    //https://issues.redhat.com/browse/AAP-51476
+  it('create a new repository, from the team access tab assign a user and apply role(s) to the team of the repository', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab(/^Details$/, true);
@@ -108,7 +96,7 @@ describe('Repositories user and team access tests', () => {
         cy.verifyReviewStepWizardDetails('teams', [hubTeam.name], '1');
         cy.verifyReviewStepWizardDetails(
           'hubRoles',
-          ['galaxy.ansible_repository_owner', 'Manage ansible repositories.'],
+          ['galaxy.ansible_repository_owner', 'Manage ansible repositories.', 'Automation Content'],
           '1'
         );
         cy.clickButton(/^Finish/);
@@ -123,9 +111,8 @@ describe('Repositories user and team access tests', () => {
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(repository.name);
       cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
-        disableFilter: true,
+        disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.ansible_repository_owner');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });

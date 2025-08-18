@@ -1,23 +1,18 @@
-import { ITableColumn, LoadingPage, TextCell } from '@ansible/ansible-ui-framework';
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
 import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
-import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
 import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 
-export function PlatformSelectUsersStep() {
+export function PlatformSelectUsersStep(props: { descriptionForUsersSelection?: string }) {
   const toolbarFilters = useUsersFilters();
   const { t } = useTranslation();
-  const params = useParams<{ id: string }>();
-  const { data: organization, isLoading } = useGet<PlatformOrganization>(
-    gatewayAPI`/organizations/${params.id || ''}/`
-  );
+
+  const { descriptionForUsersSelection } = props;
 
   const tableColumns: ITableColumn<PlatformUser>[] = useMemo(() => {
     return [
@@ -56,14 +51,14 @@ export function PlatformSelectUsersStep() {
     },
     'users'
   );
-  if (isLoading || !organization) return <LoadingPage />;
 
   return (
     <>
       <Content>
         <Content component={ContentVariants.h1}>{t('Select user(s)')}</Content>
         <Content component={ContentVariants.p} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
-          {t('Select the users that you want to apply new roles to.')}
+          {descriptionForUsersSelection ??
+            t('Select the user(s) that you want to apply new roles to.')}
         </Content>
       </Content>
       <PageMultiSelectList

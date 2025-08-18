@@ -12,23 +12,25 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 
 interface WizardFormValues {
-  users: AwxUser[];
-  awxRoles: AwxRbacRole[];
+  users: PlatformUser[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface UserRolePair {
-  user: AwxUser;
-  role: AwxRbacRole;
+  user: PlatformUser;
+  role: PlatformRole;
 }
 
 export function NotifierAddUsers() {
@@ -36,50 +38,50 @@ export function NotifierAddUsers() {
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
 
-  const { data: credential, isLoading } = useGet<NotificationTemplate>(
+  const { data: notifier, isLoading } = useGet<NotificationTemplate>(
     awxAPI`/notification_templates/${params.id ?? ''}/`
   );
   const userProgressDialog = useAwxBulkActionDialog<UserRolePair>();
   const pageNavigate = usePageNavigate();
 
-  if (isLoading || !credential) return <LoadingPage />;
+  if (isLoading || !notifier) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
       id: 'users',
       label: t('Select user(s)'),
       inputs: (
-        <AwxSelectUsersStep
+        <PlatformSelectUsersStep
           descriptionForUsersSelection={t(
-            'Select the user(s) that you want to give access to {{credentialName}}.',
+            'Select the user(s) that you want to give access to {{notifierName}}.',
             {
-              credentialName: credential?.name,
+              notifierName: notifier?.name,
             }
           )}
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as { users: AwxUser[] };
+        const { users } = formData as { users: PlatformUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'awxRoles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <AwxSelectRolesStep
-          contentType="notificationtemplate"
+        <PlatformSelectRolesStep
+          contentType="awx.notificationtemplate"
           fieldNameForPreviousStep="users"
-          descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
-            credentialName: credential?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{notifierName}}.', {
+            notifierName: notifier?.name,
           })}
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as { awxRoles: AwxRbacRole[] };
-        if (!awxRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +94,10 @@ export function NotifierAddUsers() {
   ];
 
   const onSubmit = (data: WizardFormValues) => {
-    const { users, awxRoles } = data;
+    const { users, platformRoles } = data;
     const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of awxRoles) {
+      for (const role of platformRoles) {
         items.push({ user, role });
       }
     }
@@ -109,18 +111,18 @@ export function NotifierAddUsers() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
-          postRequest(awxAPI`/role_user_assignments/`, {
+          postRequest(gatewayAPI`/role_user_assignments/`, {
             user: user?.id,
             role_definition: role.id,
             content_type: 'awx.notificationtemplate',
-            object_id: credential.id,
+            object_id: notifier.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
           pageNavigate(AwxRoute.NotificationTemplateUserAccess, {
-            params: { id: credential.id.toString() },
+            params: { id: notifier.id.toString() },
           });
         },
       });
@@ -134,15 +136,15 @@ export function NotifierAddUsers() {
         breadcrumbs={[
           { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           {
-            label: credential?.name,
+            label: notifier?.name,
             to: getPageUrl(AwxRoute.NotificationTemplateDetails, {
-              params: { id: credential?.id },
+              params: { id: notifier?.id },
             }),
           },
           {
             label: t('User Access'),
             to: getPageUrl(AwxRoute.NotificationTemplateUserAccess, {
-              params: { id: credential?.id },
+              params: { id: notifier?.id },
             }),
           },
           { label: t('Assign users') },
@@ -153,7 +155,7 @@ export function NotifierAddUsers() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.NotificationTemplateUserAccess, { params: { id: credential?.id } });
+          pageNavigate(AwxRoute.NotificationTemplateUserAccess, { params: { id: notifier?.id } });
         }}
       />
     </PageLayout>

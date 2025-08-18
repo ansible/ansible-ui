@@ -2,26 +2,17 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
-import { Organization } from '@ansible/awx-ui/interfaces/Organization';
-import { Team } from '@ansible/awx-ui/interfaces/Team';
-import { useManageOrgRoles } from '@ansible/common-ui/access/hooks/useManageOrgRolesDialog';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
-import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
-import { EdaTeam } from '@ansible/eda-ui/interfaces/EdaTeam';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
-import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { useGatewayService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
@@ -55,85 +46,33 @@ export function useOrganizationTeamsToolbarActions() {
 export function useOrganizationTeamsRowActions() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
     gatewayAPI`/organizations`,
     params.id
   );
-  const { resource: awxOrganization, error: errorRetrievingAwxOrg } = useAwxResource<Organization>(
-    'organizations/',
-    organization
-  );
-  const { resource: edaOrganization, error: errorRetrievingEdaOrg } =
-    useEdaResource<EdaOrganization>('organizations/', organization);
-  const manageOrgRoles = useManageOrgRoles();
-  const awxService = useGatewayService('controller');
-  const edaService = useGatewayService('eda');
-  const manageRolesHandleClick = useCallback(
-    async (team: PlatformTeam) => {
-      const awxTeam = awxService ? await getAwxResource<Team>('/teams/', team) : null;
-      const edaTeam = edaService ? await getEdaResource<EdaTeam>('teams/', team) : null;
-      const orgListOptions = [
-        ...(awxService && !errorRetrievingAwxOrg && awxOrganization?.id && (awxTeam as Team)?.id
-          ? [
-              {
-                title: t('Automation Execution roles'),
-                isExpandable: true,
-                apiPrefixFunction: awxAPI,
-                orgId: awxOrganization?.id?.toString() ?? '',
-                teamId: (awxTeam as Team)?.id?.toString(),
-              },
-            ]
-          : []),
-        ...(edaService && !errorRetrievingEdaOrg && edaOrganization?.id && (edaTeam as EdaTeam)?.id
-          ? [
-              {
-                title: t('Automation Decisions roles'),
-                isExpandable: true,
-                apiPrefixFunction: edaAPI,
-                orgId: edaOrganization?.id?.toString() ?? '',
-                teamId: (edaTeam as EdaTeam)?.id?.toString() ?? '',
-              },
-            ]
-          : []),
-      ];
-      manageOrgRoles({
-        orgListsOptions: orgListOptions,
-        onManageRolesClick: () =>
-          pageNavigate(PlatformRoute.OrganizationManageTeamRoles, {
-            params: { id: params.id, teamId: team.id },
-          }),
-        userOrTeamName: team.name,
-      });
-    },
-    [
-      awxOrganization?.id,
-      awxService,
-      edaOrganization?.id,
-      edaService,
-      errorRetrievingAwxOrg,
-      errorRetrievingEdaOrg,
-      manageOrgRoles,
-      pageNavigate,
-      params.id,
-      t,
-    ]
-  );
+
+  const getPageUrl = useGetPageUrl();
 
   const rowActions = useMemo<IPageAction<PlatformTeam>[]>(() => {
     return [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
         isPinned: true,
         icon: PencilAltIcon,
         label: t(`View and manage organization roles`),
         // isDisabled: // TODO
-        onClick: manageRolesHandleClick,
+        href: (team: PlatformTeam) =>
+          getPageUrl(PlatformRoute.OrganizationManageTeamRoles, {
+            params: {
+              id: organization?.id,
+              teamId: team.id,
+            },
+          }),
       },
     ];
-  }, [manageRolesHandleClick, t]);
+  }, [getPageUrl, organization?.id, t]);
 
   return rowActions;
 }

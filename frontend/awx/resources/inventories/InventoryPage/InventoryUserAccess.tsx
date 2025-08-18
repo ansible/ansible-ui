@@ -1,15 +1,16 @@
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
 import { useParams } from 'react-router';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 
 export function InventoryUserAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="awx"
       id={params.id || ''}
-      type={'inventory'}
+      type={'awx.inventory'}
       addRolesRoute={AwxRoute.InventoryAddUsers}
+      manageRoleRoute={AwxRoute.InventoryManageUsers}
     />
   );
 }

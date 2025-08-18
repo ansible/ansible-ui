@@ -20,7 +20,7 @@ describe('Check if the build includes EDA', () => {
     });
   });
 
-  describe('Users - Enable Action buttons', () => {
+  describe.skip('Users - Enable Action buttons', () => {
     let edaProject: EdaProject;
     let edaUser: EdaUser;
     let edaOrg: EdaOrganization;

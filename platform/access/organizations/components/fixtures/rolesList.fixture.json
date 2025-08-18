@@ -1,0 +1,37 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": "Organization Admin",
+      "description": "Full admin access to organization",
+      "content_type": "shared.organization",
+      "permissions": ["organization:read", "organization:write", "organization:delete"],
+      "managed": true,
+      "created": "2024-01-01T00:00:00Z",
+      "modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Organization Member",
+      "description": "Basic member access to organization",
+      "content_type": "shared.organization",
+      "permissions": ["organization:read"],
+      "managed": true,
+      "created": "2024-01-01T00:00:00Z",
+      "modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Organization Auditor",
+      "description": "Read-only access to organization",
+      "content_type": "shared.organization",
+      "permissions": ["organization:read"],
+      "managed": true,
+      "created": "2024-01-01T00:00:00Z",
+      "modified": "2024-01-01T00:00:00Z"
+    }
+  ]
+}

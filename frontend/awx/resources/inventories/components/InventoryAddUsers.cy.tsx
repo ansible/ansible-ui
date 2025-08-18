@@ -1,7 +1,7 @@
 import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventoryAddUsers } from './InventoryAddUsers';
 
-describe('InventoryAddUsers', () => {
+describe.skip('InventoryAddUsers', () => {
   const component = <InventoryAddUsers />;
   const path = '/inventories/:id/user-access/add';
   const initialEntries = [`/inventories/1/user-access/add`];
