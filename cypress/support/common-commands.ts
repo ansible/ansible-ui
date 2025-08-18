@@ -28,7 +28,9 @@ Cypress.Commands.add(
     cy.get('[data-cy="text-input"]')
       .should('be.visible')
       .within(() => {
-        cy.get('input').clear().type(text, { delay: 0 });
+        // Break up clear and type to avoid acting on a detached subject if the input re-renders
+        cy.get('input').clear();
+        cy.get('input').type(text, { delay: 0 });
       });
     if (variant === 'MultiText') {
       cy.getByDataCy('apply-filter').click();

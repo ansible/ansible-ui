@@ -67,7 +67,9 @@ Cypress.Commands.add(
     }
     cy.get('#filters').within(() => {
       cy.get('#filter-input').within(() => {
-        cy.get('input').clear().type(text, { delay: 0 });
+        // Separate clear and type to survive input remount on keypress
+        cy.get('input').clear();
+        cy.get('input').type(text, { delay: 0 });
       });
       // cy.getByDataCy('apply-filter').click();
       // FIXME: sometimes it gets filter all over again and breaks the search
@@ -167,9 +169,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('clickKebabAction', (actionDataCy: string) => {
   cy.getBy(`[data-cy="actions-dropdown"]`);
-  // cy.get('ul', { timeout: 10000 }).within(() => {
   cy.get(`[data-cy="${actionDataCy}"]`).click();
-  // });
 });
 
 Cypress.Commands.add(

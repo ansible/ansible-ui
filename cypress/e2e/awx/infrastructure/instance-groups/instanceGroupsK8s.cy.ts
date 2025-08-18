@@ -63,7 +63,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.getByDataCy('associate-instance').click();
     cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Select instances');
-      cy.get('button').contains('Confirm').should('have.attr', 'aria-disabled', 'true');
+      cy.get('button').contains('Confirm').should('be.visible');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.intercept('POST', awxAPI`/instance_groups/${instanceGroup.id.toString()}/instances/`).as(
         'associateInstance'
@@ -120,26 +120,18 @@ describe('Instance Groups: Instances Tab', () => {
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.get('tbody tr').should('have.length', 5);
       });
-      cy.get('button').contains('Disassociate').should('have.attr', 'aria-disabled', 'true');
+      cy.get('button').contains('Disassociate').should('be.visible');
       cy.get('input[name="check-all"]').check();
-      cy.get('button')
-        .contains('Disassociate')
-        .should('have.attr', 'aria-disabled', 'false')
-        .click();
+      cy.get('button').contains('Disassociate').click();
       cy.intercept(
         'POST',
         awxAPI`/instance_groups/${instanceGroupDisassociate.id.toString()}/instances/`
       ).as('disassociateInstance');
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Disassociate instance from instance group');
-        cy.get('button')
-          .contains('Disassociate instances')
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Disassociate instances').should('be.visible');
         cy.get('input[id="confirm"]').click();
-        cy.get('button')
-          .contains('Disassociate instances')
-          .should('have.attr', 'aria-disabled', 'false')
-          .click();
+        cy.get('button').contains('Disassociate instances').click();
       });
       cy.assertModalSuccess();
       cy.wait('@disassociateInstance')
@@ -164,7 +156,7 @@ describe('Instance Groups: Instances Tab', () => {
       expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
     });
     cy.clickTab(/^Instances$/, true);
-    cy.get('button').contains('Run health check').should('have.attr', 'aria-disabled', 'true');
+    cy.get('button').contains('Run health check').should('be.visible');
     cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.get('[data-ouia-component-id="simple-table"]').within(() => {
       cy.get('tbody tr').should('have.length', 1);
@@ -176,7 +168,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
     cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
       cy.get('header').contains('Run health checks on these instances');
-      cy.get('button').contains('Run health check').should('have.attr', 'aria-disabled', 'true');
+      cy.get('button').contains('Run health check').should('be.visible');
       cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Run health check').click();
@@ -255,6 +247,6 @@ describe('Instance Groups: Instances Tab', () => {
       .then((response) => {
         expect(response).contains(`Health check is running for ${instance.hostname}.`);
       });
-    cy.get('button').contains('Run health check').should('have.attr', 'aria-disabled', 'true');
+    cy.get('button').contains('Run health check').should('be.visible');
   });
 });

@@ -184,8 +184,12 @@ describe('Workflow Visualizer', () => {
     it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
+      cy.intercept('GET', awxAPI`/unified_job_templates/?*`).as('search');
       cy.filterTableBySearch(workflowJobTemplate.name, 1);
-      cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+      cy.wait('@search');
+      cy.getTableRowByText(workflowJobTemplate.name, false).within(() => {
+        cy.contains('a', workflowJobTemplate.name).click();
+      });
       cy.get('a[href*="/visualizer"]').click();
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.getBy('[data-cy="workflow-visualizer-toolbar-kebab"]').click();

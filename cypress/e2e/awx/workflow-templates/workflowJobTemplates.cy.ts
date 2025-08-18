@@ -181,26 +181,23 @@ describe('Workflow Job Templates Tests', () => {
         cy.intercept(
           'PATCH',
           awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
-        ).as('editWFJT');
+        ).as('editedWFJT');
         cy.clickButton(/^Save workflow job template$/);
-        cy.wait('@editWFJT')
+        cy.wait('@editedWFJT')
           .its('response.body')
           .then((editedWFJT: WorkflowJobTemplate) => {
             expect(editedWFJT.webhook_service).contains('github');
+
+            cy.clickLink('Edit template');
+            cy.get('[data-cy="isWebhookEnabled"]').click();
+            cy.clickButton(/^Save workflow job template$/);
+            cy.wait('@editedWFJT')
+              .its('response.body')
+              .then((revertWFJT: WorkflowJobTemplate) => {
+                expect(revertWFJT.webhook_service).contains('');
+              });
+            cy.deleteAwxCredential(tokenCredential, { failOnStatusCode: false });
           });
-        cy.clickLink('Edit template');
-        cy.get('[data-cy="isWebhookEnabled"]').click();
-        cy.intercept(
-          'PATCH',
-          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
-        ).as('editWFJT');
-        cy.clickButton(/^Save workflow job template$/);
-        cy.wait('@editWFJT')
-          .its('response.body')
-          .then((editedWFJT: WorkflowJobTemplate) => {
-            expect(editedWFJT.webhook_service).contains('');
-          });
-        cy.deleteAwxCredential(tokenCredential, { failOnStatusCode: false });
       });
     });
 
@@ -227,26 +224,23 @@ describe('Workflow Job Templates Tests', () => {
         cy.intercept(
           'PATCH',
           awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
-        ).as('editWFJT');
+        ).as('editedWFJT');
         cy.clickButton(/^Save workflow job template$/);
-        cy.wait('@editWFJT')
+        cy.wait('@editedWFJT')
           .its('response.body')
           .then((editedWFJT: WorkflowJobTemplate) => {
             expect(editedWFJT.webhook_service).contains('gitlab');
+
+            cy.clickLink('Edit template');
+            cy.get('[data-cy="isWebhookEnabled"]').click();
+            cy.clickButton(/^Save workflow job template$/);
+            cy.wait('@editedWFJT')
+              .its('response.body')
+              .then((revertWFJT: WorkflowJobTemplate) => {
+                expect(revertWFJT.webhook_service).contains('');
+              });
+            cy.deleteAwxCredential(tokenCredential, { failOnStatusCode: false });
           });
-        cy.clickLink('Edit template');
-        cy.get('[data-cy="isWebhookEnabled"]').click();
-        cy.intercept(
-          'PATCH',
-          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
-        ).as('editWFJT');
-        cy.clickButton(/^Save workflow job template$/);
-        cy.wait('@editWFJT')
-          .its('response.body')
-          .then((editedWFJT: WorkflowJobTemplate) => {
-            expect(editedWFJT.webhook_service).contains('');
-          });
-        cy.deleteAwxCredential(tokenCredential, { failOnStatusCode: false });
       });
     });
 

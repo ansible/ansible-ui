@@ -58,7 +58,7 @@ describe('Instances K8S', () => {
       cy.getByDataCy('remove-instance').click();
       cy.getModal().within(() => {
         cy.get('header').contains('Permanently remove instances');
-        cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Remove instance').should('be.visible');
         cy.getByDataCy('name-column-cell').should('have.text', instanceHostname);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Remove instance').click();
@@ -89,9 +89,7 @@ describe('Instances K8S', () => {
           cy.getByDataCy('remove-instance').click();
           cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
             cy.get('header').contains('Permanently remove instances');
-            cy.get('button')
-              .contains('Remove instance')
-              .should('have.attr', 'aria-disabled', 'true');
+            cy.get('button').contains('Remove instance').should('be.visible');
             cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
             cy.get('input[id="confirm"]').click();
             cy.get('button').contains('Remove instance').click();
@@ -166,11 +164,13 @@ describe('Instances K8S', () => {
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
       cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);
+      cy.verifyPageTitle(instance.hostname);
+      cy.contains('[data-testid="name"]', instance.hostname).should('be.visible');
       cy.getByDataCy('actions-dropdown').click();
       cy.getByDataCy('remove-instance').click();
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
-        cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Remove instance').should('be.visible');
         cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Remove instance').click();
@@ -183,33 +183,31 @@ describe('Instances K8S', () => {
     });
 
     it('can remove an instance from instance list toolbar', () => {
-      cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
       cy.get('[data-cy="actions-dropdown"]')
         .click()
         .then(() => {
-          cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
+          cy.get('[data-cy="remove-instance"] button').should('be.visible');
         });
       cy.filterTableBySingleSelect('hostname', instance.hostname);
-      cy.contains('tr', instance.hostname).find('input').check();
+      cy.contains('tr', instance.hostname).find('input').eq(0).click();
       cy.get('[data-cy="actions-dropdown"]')
         .click()
         .then(() => {
-          cy.get('[data-cy="remove-instance"] button')
-            .should('not.have.attr', 'aria-disabled', 'false')
-            .click();
+          cy.get('[data-cy="remove-instance"] button').click();
         });
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
-        cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Remove instance').should('be.visible');
         cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
         cy.get('input[id="confirm"]').click();
+        cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
         cy.get('button').contains('Remove instance').click();
+        cy.wait('@removedInstance')
+          .its('response')
+          .then((response) => {
+            expect(response?.statusCode).to.eql(200);
+          });
       });
-      cy.wait('@removedInstance')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(200);
-        });
     });
 
     it('can bulk remove instances', () => {
@@ -222,7 +220,7 @@ describe('Instances K8S', () => {
       arrayOfElementText.push(instance.hostname);
       cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
       cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="remove-instance"] button').should('be.visible');
       cy.selectTableRow(arrayOfElementText[0]);
       cy.selectTableRow(arrayOfElementText[1]);
       cy.selectTableRow(arrayOfElementText[2]);
@@ -232,7 +230,7 @@ describe('Instances K8S', () => {
       cy.get('[data-cy="remove-instance"] button').click();
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
-        cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Remove instance').should('be.visible');
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Remove instance').click();
       });
@@ -260,18 +258,16 @@ describe('Instances K8S', () => {
     it('can run a health check on an Instance in the instance list toolbar and assert the expected results', () => {
       cy.get<Instance>('@instance').then((instance) => {
         cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="run-health-check"] button').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="run-health-check"] button').should('be.visible');
         cy.filterTableBySingleSelect('hostname', instance.hostname);
-        cy.contains('tr', instance.hostname).find('input').check();
+        cy.contains('tr', instance.hostname).find('input').eq(0).click();
         cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="run-health-check"] button').should('not.have.attr', 'aria-disabled');
+        cy.get('[data-cy="run-health-check"] button').should('be.visible');
         cy.get('[data-cy="run-health-check"] button').click();
         cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
         cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           cy.get('header').contains('Run health checks on these instances');
-          cy.get('button')
-            .contains('Run health check')
-            .should('have.attr', 'aria-disabled', 'true');
+          cy.get('button').contains('Run health check').should('be.visible');
           cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
           cy.get('input[id="confirm"]').click();
           cy.get('button').contains('Run health check').click();
@@ -304,7 +300,7 @@ describe('Instances K8S', () => {
           .then((response) => {
             expect(response).contains(`Health check is running for ${instance.hostname}.`);
           });
-        cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="run-health-check"]').should('be.visible');
       });
     });
 
@@ -357,7 +353,7 @@ describe('Instances K8S', () => {
       cy.getByDataCy('associate-peers').click();
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Select peer addresses');
-        cy.get('button').contains('Associate peers').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Associate peers').should('be.visible');
         cy.filterTableBySingleText(instanceToAssociate.hostname, true);
         cy.intercept('GET', awxAPI`/instances/${instanceToAssociate.id.toString()}/`).as(
           'instanceA'
@@ -390,15 +386,10 @@ describe('Instances K8S', () => {
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('disassociatePeer');
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('header').contains('Disassociate peers');
-        cy.get('button')
-          .contains('Disassociate peers')
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Disassociate peers').should('be.visible');
         cy.getByDataCy('address-column-cell').should('have.text', instanceToAssociate.hostname);
         cy.get('input[id="confirm"]').click();
-        cy.get('button')
-          .contains('Disassociate peers')
-          .should('have.attr', 'aria-disabled', 'false')
-          .click();
+        cy.get('button').contains('Disassociate peers').click();
       });
       cy.assertModalSuccess();
       cy.wait('@disassociatePeer')

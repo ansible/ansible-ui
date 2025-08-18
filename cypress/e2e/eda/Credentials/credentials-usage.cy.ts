@@ -102,8 +102,10 @@ describe('Check if the build includes EDA', () => {
 
     it('cannot create a private project without credentials', () => {
       const name = 'E2E Project ' + randomString(4);
+      cy.intercept('OPTIONS', edaAPI`/projects/`).as('options');
       cy.navigateTo('eda', 'projects');
       cy.get('h1').should('contain', 'Projects');
+      cy.wait('@options');
       cy.clickButton(/^Create project$/);
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');

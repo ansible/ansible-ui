@@ -29,7 +29,9 @@ describe('Check if the build includes EDA', () => {
       it('can create a Credential Type', () => {
         const name = 'E2E Credential Type' + randomString(4);
         cy.navigateTo('eda', 'credential-types');
-        cy.get('h1').should('contain', 'Credential Types');
+        cy.intercept('OPTIONS', edaAPI`/credential-types/`).as('options');
+        cy.verifyPageTitle('Credential Types');
+        cy.wait('@options');
         cy.clickButton(/^Create credential type$/);
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
@@ -55,23 +57,13 @@ describe('Check if the build includes EDA', () => {
         });
       });
 
-      it('verify error message on invalid input field', () => {
-        const name = 'E2E Credential Type' + randomString(4);
-        cy.navigateTo('eda', 'credential-types');
-        cy.get('h1').should('contain', 'Credential Types');
-        cy.clickButton(/^Create credential type$/);
-        cy.get('[data-cy="name"]').type(name);
-        cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
-        cy.get('[data-cy="inputs-form-group"]').type('random');
-        cy.clickButton(/^Create credential type$/);
-        cy.contains('schema must be in dict format');
-      });
-
       it('can edit a credential type', () => {
         cy.createEdaCredentialType().then((edaCredentialType) => {
           cy.navigateTo('eda', 'credential-types');
-          cy.get('h1').should('contain', 'Credential Types');
+          cy.verifyPageTitle('Credential Types');
+          cy.intercept('GET', edaAPI`/credential-types/*`).as('search');
           cy.filterTableByText(edaCredentialType.name, 'MultiText');
+          cy.wait('@search');
           cy.clickTableRow(edaCredentialType.name, false);
           cy.clickButton(/^Edit credential type$/);
           cy.verifyPageTitle(`Edit ${edaCredentialType.name}`);
@@ -87,8 +79,10 @@ describe('Check if the build includes EDA', () => {
       it('can delete a credential type', () => {
         cy.createEdaCredentialType().then((edaCredentialType) => {
           cy.navigateTo('eda', 'credential-types');
-          cy.get('h1').should('contain', 'Credential Types');
+          cy.verifyPageTitle('Credential Types');
+          cy.intercept('GET', edaAPI`/credential-types/*`).as('search');
           cy.filterTableByText(edaCredentialType.name, 'MultiText');
+          cy.wait('@search');
           cy.clickTableRow(edaCredentialType.name, false);
           cy.verifyPageTitle(edaCredentialType.name);
           cy.intercept('DELETE', edaAPI`/credential-types/${edaCredentialType.id.toString()}/`).as(
@@ -117,9 +111,13 @@ describe('Check if the build includes EDA', () => {
             },
           }).then((cred) => {
             cy.navigateTo('eda', 'credential-types');
-            cy.get('h1').should('contain', 'Credential Types');
+            cy.verifyPageTitle('Credential Types');
+            cy.intercept('GET', edaAPI`/credential-types/*`).as('search');
             cy.filterTableByText(credtype.name, 'MultiText');
-            cy.clickTableRow(credtype.name, false);
+            cy.wait('@search');
+            cy.getTableRowByText(credtype.name, false).within(() => {
+              cy.get('a').click();
+            });
             cy.verifyPageTitle(credtype.name);
             cy.intercept('DELETE', edaAPI`/credential-types/${credtype.id.toString()}/`).as(
               'deleted'
@@ -157,8 +155,10 @@ describe('Check if the build includes EDA', () => {
             },
           }).then((cred) => {
             cy.navigateTo('eda', 'credential-types');
-            cy.get('h1').should('contain', 'Credential Types');
+            cy.verifyPageTitle('Credential Types');
+            cy.intercept('GET', edaAPI`/credential-types/*`).as('search');
             cy.filterTableByText(credtype.name, 'MultiText');
+            cy.wait('@search');
             cy.clickTableRow(credtype.name, false);
             cy.verifyPageTitle(credtype.name);
             cy.intercept('PATCH', edaAPI`/credential-types/${credtype.id.toString()}/`).as('edit');
@@ -186,8 +186,10 @@ describe('Check if the build includes EDA', () => {
       it('can bulk delete credential types', () => {
         cy.createEdaCredentialType().then((credtype) => {
           cy.navigateTo('eda', 'credential-types');
-          cy.get('h1').should('contain', 'Credential Types');
+          cy.verifyPageTitle('Credential Types');
+          cy.intercept('GET', edaAPI`/credential-types/*`).as('search');
           cy.filterTableByText(credtype.name, 'MultiText');
+          cy.wait('@search');
           cy.getTableRowByText(credtype.name, false).within(() => {
             cy.get('input[type=checkbox]').click();
           });
@@ -209,7 +211,9 @@ describe('Check if the build includes EDA', () => {
       it('verify error message on invalid input field', () => {
         const name = 'E2E Credential Type' + randomString(4);
         cy.navigateTo('eda', 'credential-types');
-        cy.get('h1').should('contain', 'Credential Types');
+        cy.intercept('OPTIONS', edaAPI`/credential-types/`).as('options');
+        cy.verifyPageTitle('Credential Types');
+        cy.wait('@options');
         cy.clickButton(/^Create credential type$/);
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
@@ -221,7 +225,9 @@ describe('Check if the build includes EDA', () => {
       it('verify boolean field can show up as checkbox', () => {
         const name = 'E2E Credential Type' + randomString(4);
         cy.navigateTo('eda', 'credential-types');
-        cy.get('h1').should('contain', 'Credential Types');
+        cy.intercept('OPTIONS', edaAPI`/credential-types/`).as('options');
+        cy.verifyPageTitle('Credential Types');
+        cy.wait('@options');
         cy.clickButton(/^Create credential type$/);
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
@@ -258,7 +264,9 @@ describe('Check if the build includes EDA', () => {
       it('verify default value of a field shows up', () => {
         const name = 'E2E Credential Type' + randomString(4);
         cy.navigateTo('eda', 'credential-types');
-        cy.get('h1').should('contain', 'Credential Types');
+        cy.intercept('OPTIONS', edaAPI`/credential-types/`).as('options');
+        cy.verifyPageTitle('Credential Types');
+        cy.wait('@options');
         cy.clickButton(/^Create credential type$/);
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
@@ -295,7 +303,9 @@ describe('Check if the build includes EDA', () => {
       it('verify cannot create credential without required field', () => {
         const name = 'E2E Credential Type' + randomString(4);
         cy.navigateTo('eda', 'credential-types');
-        cy.get('h1').should('contain', 'Credential Types');
+        cy.intercept('OPTIONS', edaAPI`/credential-types/`).as('options');
+        cy.verifyPageTitle('Credential Types');
+        cy.wait('@options');
         cy.clickButton(/^Create credential type$/);
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
