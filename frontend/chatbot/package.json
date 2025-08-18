@@ -1,12 +1,9 @@
 {
   "name": "@ansible/chatbot",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "dependencies": {
     "@ansible/common-ui": "file:../common"
-  },
-  "localDependencies": {
-    "ansible-ai-connect-chatbot": "../../../back/chat-package/package"
   },
   "scripts": {
     "build": "vite build",

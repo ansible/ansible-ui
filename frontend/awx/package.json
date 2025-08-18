@@ -1,7 +1,7 @@
 {
   "name": "@ansible/awx-ui",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "dependencies": {
     "@ansible/ansible-ui-framework": "file:../../framework",
     "@ansible/common-ui": "file:../common"
