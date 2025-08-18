@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui-framework",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "./index.ts",
   "scripts": {
     "dump-nyc-vitest": "mkdir -p ../.nyc_output && vitest run --coverage && mv coverage/vitest/coverage-final.json ../.nyc_output/framework-vitest.json",

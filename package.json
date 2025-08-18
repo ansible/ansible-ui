@@ -2,7 +2,7 @@
   "name": "@ansible/ui",
   "author": "Red Hat",
   "license": "Apache-2.0",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "node": ">=20.0.0"
   },
