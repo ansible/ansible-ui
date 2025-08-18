@@ -43,10 +43,11 @@ Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
     .find('.pf-v6-c-menu__content')
     .should('have.length', 1)
     .within(() => {
-      // cy.selectLoadAll();
       for (const value of values) {
         cy.getByDataCy('search-input').within(() => {
-          cy.get('input').clear().type(value);
+          // Break clear+type into separate steps to avoid detachment during async renders
+          cy.get('input').clear();
+          cy.get('input').type(value);
         });
         cy.contains('.pf-v6-c-menu__item-text', value)
           .parent()

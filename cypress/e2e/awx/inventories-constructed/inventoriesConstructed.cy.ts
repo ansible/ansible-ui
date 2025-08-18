@@ -50,10 +50,14 @@ describe('Constructed Inventories CRUD Tests', () => {
     const constInvName = 'E2E Constructed Inventory ' + randomString(4);
     const cacheTimeoutValue = generateRandom(0, 15);
     const verbosityValue = generateRandom(0, 2);
+    cy.intercept('GET', awxAPI`/inventories/*`).as('getInventories');
+    cy.intercept('OPTIONS', awxAPI`/inventories/`).as('options');
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
-    cy.clickButton(/^Create inventory$/);
-    cy.clickButton(/^Create constructed inventory$/);
+    cy.wait(['@getInventories', '@options']);
+    cy.get('#toggle-dropdown').should('have.attr', 'aria-disabled', 'false');
+    cy.get('[data-cy="create-inventory"]').click();
+    cy.get('#create-constructed-inventory').click();
     cy.getByDataCy('name').type(constInvName);
     cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
     cy.singleSelectBy('[data-cy="organization"]', organization.name);

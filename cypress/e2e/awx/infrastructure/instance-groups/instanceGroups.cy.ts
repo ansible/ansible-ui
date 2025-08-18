@@ -48,10 +48,14 @@ describe(`Instance Groups`, () => {
 
     it(`can create new Instance Group, assert info on details page and then delete the Instance group from list view`, () => {
       const name = `E2E Instance Group` + randomString(4);
+      cy.intercept('GET', awxAPI`/instance_groups/*`).as('getInstanceGroups');
+      cy.intercept('OPTIONS', awxAPI`/instance_groups/`).as('options');
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.clickButton(/^Create group$/);
-      cy.clickButton(`Create instance group`);
+      cy.wait(['@getInstanceGroups', '@options']);
+      cy.get('#toggle-dropdown').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="create-group"]').click();
+      cy.get('#create-instance-group').click();
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="policy-instance-minimum"]').clear();
       cy.get('[data-cy="policy-instance-minimum"]').type('1');
@@ -223,10 +227,14 @@ describe(`Instance Groups`, () => {
 
     it(`can create new container Group, assert info on details page and then delete the container group from list view`, () => {
       const name = `E2E Container Group` + randomString(4);
+      cy.intercept('GET', awxAPI`/instance_groups/*`).as('getInstanceGroups');
+      cy.intercept('OPTIONS', awxAPI`/instance_groups/`).as('igOptions');
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.clickButton(/^Create group$/);
-      cy.clickButton(/^Create container group$/);
+      cy.wait(['@getInstanceGroups', '@igOptions']);
+      cy.get('#toggle-dropdown').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="create-group"]').click();
+      cy.get('#create-container-group').click();
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="max-concurrent-jobs"]').clear();
       cy.get('[data-cy="max-concurrent-jobs"]').type('3');
@@ -464,6 +472,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="name-column-cell"]').click();
       cy.contains('h1', containerGroup.name).should('be.visible');
       cy.getByDataCy(`edit-container-group`).click();
+      cy.verifyPageTitle(containerGroup.name);
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type(`${containerGroup.name}- edited`);
       cy.get('[data-cy="max-concurrent-jobs"]').clear();
@@ -817,13 +826,10 @@ describe(`Instance Groups`, () => {
       // await roles loading before navigating away (prevents query param flake)
       cy.get('tbody').should('be.visible');
       cy.navigateTo('awx', 'instance-groups');
+      cy.intercept('GET', awxAPI`/instance_groups/*`).as('instanceGroups');
       cy.verifyPageTitle('Instance Groups');
-      cy.get('[data-ouia-component-id="simple-table"]', { timeout: 10000 }).should('be.visible');
-
-      cy.get('[data-cy="text-input"]').within(() => {
-        cy.get('input').type(instanceGroup.name);
-      });
-      cy.contains('.pf-v6-c-label', instanceGroup.name);
+      cy.wait('@instanceGroups');
+      cy.filterTableBySingleSelect('name', instanceGroup.name);
       cy.clickTableRowLink('name', instanceGroup.name, { disableFilter: true });
       cy.verifyPageTitle(instanceGroup.name);
       cy.get('a[href*="user-access"]').click();

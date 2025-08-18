@@ -79,7 +79,9 @@ describe('Workflow Approvals Tests', () => {
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
               ).as('thisWfjt');
               cy.navigateTo('awx', 'templates');
+              cy.intercept('GET', awxAPI`/unified_job_templates/*`).as('results');
               cy.filterTableBySearch(workflowJobTemplate.name);
+              cy.wait('@results');
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
               cy.wait('@thisWfjt');
@@ -429,10 +431,6 @@ describe('Workflow Approvals Tests', () => {
   function deleteApprovalFromListToolbar() {
     cy.get('tbody').find('tr').should('have.length', 3);
     cy.get('input[name="check-all"]').check();
-    // cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-    //   cy.getBy(`[data-cy="actions-dropdown"]`).click();
-    // });
-    // cy.getBy('[data-cy="delete-workflow-approvals"]').click();
     cy.clickToolbarKebabAction('delete-workflow-approvals');
     cy.getModal().within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();

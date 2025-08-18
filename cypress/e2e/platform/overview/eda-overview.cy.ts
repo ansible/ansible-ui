@@ -77,7 +77,7 @@ describe('Check if the build includes EDA', () => {
                   'div.pf-v6-c-empty-state__body',
                   'Create a rulebook activation by clicking the button below.'
                 );
-                cy.clickLink(/^Create rulebook activation$/);
+                cy.contains('a', 'Create rulebook activation').click();
               });
             cy.verifyPageTitle('Create rulebook activation');
           } else if (results.length >= 1) {
@@ -113,7 +113,7 @@ describe('Check if the build includes EDA', () => {
                   'div.pf-v6-c-empty-state__body',
                   'Create a decision environment by clicking the button below.'
                 );
-                cy.getByDataCy('create-decision-environment-card').click();
+                cy.get('[data-cy="create-decision-environment-card"]').click();
               });
             cy.verifyPageTitle('Create decision environment');
           } else if (results.length >= 1) {

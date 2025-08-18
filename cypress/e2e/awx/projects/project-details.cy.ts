@@ -151,7 +151,7 @@ describe('Projects', () => {
             .should('be.visible')
             .and('contain', 'Next occurrence timestamps');
           cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
-          cy.get('tbody tr').should('have.length', 2); //Now, 2 rules are showing
+          cy.get('tbody tr').should('have.length', 2);
         });
       cy.getByDataCy('edit-schedule').click();
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -167,6 +167,7 @@ describe('Projects', () => {
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
+      cy.contains('[data-testid="label-resource"]', 'Resource').should('be.visible');
       cy.intercept('POST', awxAPI`/schedules/preview/`).as('edit');
       cy.clickButton(/^Finish$/);
       cy.wait('@edit');
@@ -174,11 +175,14 @@ describe('Projects', () => {
       cy.get('[data-ouia-component-id="simple-table"]')
         .scrollIntoView()
         .within(() => {
-          cy.getByDataCy('next-occurrence-timestamps-column-header')
+          cy.get('[data-cy="next-occurrence-timestamps-column-header"]')
             .should('be.visible')
             .and('contain', 'Next occurrence timestamps');
-          cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
-          cy.get('tbody tr').should('have.length', 1); //1 Rule is showing again
+          cy.get('[data-cy="next-occurrence-timestamps-column-cell"]').should(
+            'have.descendants',
+            'ul'
+          );
+          cy.get('tbody tr').should('have.length', 1);
         });
     });
 
@@ -208,30 +212,29 @@ describe('Projects', () => {
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('edited');
       cy.getByDataCy('Submit').click();
       cy.intercept('GET', awxAPI`/projects/${project.id.toString()}/`).as('projectList');
-      cy.wait('@edited');
-      cy.wait('@projectList');
-      cy.get('[data-ouia-component-id="simple-table"]')
-        .first()
-        .scrollIntoView()
-        .should('be.visible');
-      cy.get('[data-cy="edit-schedule"]').click();
-      cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
+      cy.wait('@edited').then(() => {
+        cy.get('[data-ouia-component-id="simple-table"]')
+          .first()
+          .scrollIntoView()
+          .should('be.visible');
+        cy.get('[data-cy="edit-schedule"]').click();
+        cy.get('[data-cy="wizard-nav"]').within(() => {
+          ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+            cy.get('li')
+              .eq(index)
+              .should((el) => expect(el.text().trim()).to.equal(text));
+          });
         });
+        cy.clickButton(/^Next$/);
+        cy.clickButton(/^Next$/);
+        cy.getBy('[data-cy="row-id-1"]').within(() => {
+          cy.getBy('[data-cy="delete-exception"]').click();
+        });
+        cy.clickButton(/^Next$/);
+        cy.getByDataCy('Submit').click();
+        cy.wait('@preview');
+        cy.get('[data-cy="next-exclusion-timestamps-column-header"]').should('not.exist');
       });
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Next$/);
-      cy.getBy('[data-cy="row-id-1"]').within(() => {
-        cy.getBy('[data-cy="delete-exception"]').click();
-      });
-      cy.clickButton(/^Next$/);
-      cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('editedAgain');
-      cy.getByDataCy('Submit').click();
-      cy.wait('@editedAgain');
-      cy.get('[data-cy="next-exclusion-timestamps-column-header"]').should('not.exist');
     });
 
     it('can toggle a schedule', () => {

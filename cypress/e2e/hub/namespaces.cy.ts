@@ -105,8 +105,15 @@ describe('Namespaces - use existing namespaces', () => {
     visitNamespace(namespace.name);
     cy.url().should('include', `/namespaces/${namespace.name}/details`);
     cy.getByDataCy('edit-namespace').click();
-    cy.getByDataCy('company').clear().type('new company');
-    cy.getByDataCy('description').clear().type('new description');
+    // Ensure fields are visible, then avoid chaining after clear() to prevent detached subject issues
+    cy.getByDataCy('company').should('be.visible');
+    cy.getByDataCy('description').should('be.visible');
+
+    cy.getByDataCy('company').clear();
+    cy.getByDataCy('company').type('new company');
+
+    cy.getByDataCy('description').clear();
+    cy.getByDataCy('description').type('new description');
     cy.getByDataCy('Submit').click();
     cy.getByDataCy('company').contains(/^new company$/);
     cy.getByDataCy('description').contains(/^new description$/);
