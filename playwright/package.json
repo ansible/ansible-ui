@@ -1,5 +1,6 @@
 {
   "name": "@ansible/playwright",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "clean": "rm -rf allure-results allure-report coverage test-results blob-report .allure results.xml",
