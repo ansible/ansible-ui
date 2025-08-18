@@ -24,7 +24,12 @@ export function PlatformOverview() {
   // Check for social auth redirect URL in sessionStorage
   useEffect(() => {
     const storedRedirectUrl = sessionStorage.getItem('social_auth_redirect_url');
-    if (storedRedirectUrl) {
+    if (
+      storedRedirectUrl &&
+      storedRedirectUrl !== '' &&
+      storedRedirectUrl !== '/' &&
+      storedRedirectUrl !== '/overview'
+    ) {
       // Clear the stored URL to prevent repeated redirects
       sessionStorage.removeItem('social_auth_redirect_url');
       // Redirect to the stored URL
