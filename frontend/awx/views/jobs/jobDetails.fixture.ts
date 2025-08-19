@@ -85,7 +85,7 @@ export const testFixture: Job = {
   playbook: 'hello_world.yml',
   scm_branch: '',
   forks: 0,
-  limit: '',
+  limit: '3',
   verbosity: 0,
   extra_vars: '{}',
   job_tags: '',

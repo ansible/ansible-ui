@@ -101,6 +101,7 @@ export function JobDetails() {
       >
         {job.timeout === 0 ? timeoutDefaultText : job.timeout}
       </PageDetail>
+      <PageDetail label={t('Limit')}>{job?.limit}</PageDetail>
       <PageDetail
         label={t('Verbosity')}
         helpText={t('Control the level of output Ansible will produce as the playbook executes.')}
