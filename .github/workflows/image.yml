@@ -42,7 +42,6 @@ on:
 jobs:
   image:
     name: Image
-    if: github.repository == 'ansible/aap-ui'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -52,7 +51,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
+
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
 
@@ -128,7 +127,7 @@ jobs:
           load: true
         env:
           DOCKER_BUILD_SUMMARY: false
-          
+
       - name: Save Image
         if: ${{ inputs.upload-artifact }}
         run: docker save ${{ inputs.docker-image }} > ${{ inputs.docker-image }}.tar

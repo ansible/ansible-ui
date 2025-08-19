@@ -19,7 +19,7 @@ jobs:
       - uses: mshick/add-pr-comment@v2
         with:
           message: |
-            [GitHub Actions Summary](https://github.com/ansible/aap-ui/actions/runs/${{ github.run_id }})
+            [GitHub Actions Summary](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           refresh-message-position: true
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,7 +35,7 @@ jobs:
           key: modules-${{ hashFiles('package-lock.json') }}
       - run: npm ci
         if: steps.cache.outputs.cache-hit != 'true'
-        
+
   checks:
     name: Checks
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        script: 
+        script:
           - eslint
           - tsc
           - prettier
@@ -51,7 +51,7 @@ jobs:
           - vitest
     steps:
       - uses: actions/checkout@v4
-        with: 
+        with:
           fetch-depth: 0
           fetch-tags: true
       - run: npm version 0.0.0 --no-git-tag-version
@@ -73,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        directory: 
+        directory:
           - frontend/awx
           - frontend/eda
           - frontend/hub
@@ -96,7 +96,7 @@ jobs:
       docker-target: platform-ui
       docker-image: platform-ui
       upload-artifact: true
-      
+
   playwright:
     name: Playwright
     needs: platform-ui-image
