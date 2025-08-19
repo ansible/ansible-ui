@@ -8,7 +8,6 @@ on:
 jobs:
   publish-framework:
     name: Publish Framework
-    if: github.repository == 'ansible/aap-ui'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -33,7 +32,7 @@ jobs:
           npm run build
           cp -f ../LICENSE.md ./publish/LICENSE.md
           cp -f ./README.md ./publish/README.md
-          cd publish          
+          cd publish
           LATEST_VERSION=$(npm view @ansible/ansible-ui-framework version)
           npm version $LATEST_VERSION --no-git-tag-version
           LATEST_SHASUM=$(npm view @ansible/ansible-ui-framework dist.shasum)

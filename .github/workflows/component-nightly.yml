@@ -111,7 +111,6 @@ jobs:
       generate_junit_results: true
 
   upload-test-results:
-    # if: github.repository == 'ansible/aap-ui' && github.ref_name == 'main'
     name: Upload jUnit test results
     needs:
         - checks
