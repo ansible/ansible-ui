@@ -47,6 +47,7 @@ describe('JobDetails Component', () => {
     expect(screen.getByText('Execution node')).toBeInTheDocument();
     expect(screen.getByText('Forks')).toBeInTheDocument();
     expect(screen.getByText('Timeout')).toBeInTheDocument();
+    expect(screen.getByText('Limit')).toBeInTheDocument();
     expect(screen.getByText('Verbosity')).toBeInTheDocument();
     expect(screen.getByText('Instance group')).toBeInTheDocument();
     expect(screen.getByText('Created')).toBeInTheDocument();
