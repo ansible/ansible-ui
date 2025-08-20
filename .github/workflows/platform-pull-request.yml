@@ -16,11 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: mshick/add-pr-comment@v2
-        with:
-          message: |
-            [GitHub Actions Summary](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          refresh-message-position: true
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
