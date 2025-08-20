@@ -4,7 +4,7 @@ import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useCreatedColumn, useModifiedColumn } from '@ansible/common-ui/columns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { PlatformRoute } from '../../../../main/PlatformRoutes';
 
 export function useLegacyTokenColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {

@@ -2,9 +2,9 @@ import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '@ansible/an
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { Label, LabelGroup, Content, ContentVariants } from '@patternfly/react-core';
+import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';

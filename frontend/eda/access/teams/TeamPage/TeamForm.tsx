@@ -11,7 +11,7 @@ import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Da
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaPageForm } from '../../../common/EdaPageForm';

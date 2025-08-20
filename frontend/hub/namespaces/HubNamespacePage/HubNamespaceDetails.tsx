@@ -3,7 +3,7 @@ import { PageDetailKeyValueList } from '@ansible/ansible-ui-framework/PageDetail
 import { PageMarkdownDetail } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageMarkdownDetail';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { ExternalLink } from '../../common/ExternalLink';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';

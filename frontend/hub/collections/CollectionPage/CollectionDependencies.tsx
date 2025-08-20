@@ -13,7 +13,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { Button, PageSection, Title } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router';
+import { useOutletContext } from 'react-router-dom';
 import styled from 'styled-components';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';

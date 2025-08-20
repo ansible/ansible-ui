@@ -8,7 +8,7 @@ import { cannotEditResource } from '@ansible/common-ui/utils/RBAChelpers';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';

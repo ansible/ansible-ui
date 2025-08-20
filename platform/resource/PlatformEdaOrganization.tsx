@@ -6,7 +6,7 @@ import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformEdaOrganization(props: { route?: string }) {

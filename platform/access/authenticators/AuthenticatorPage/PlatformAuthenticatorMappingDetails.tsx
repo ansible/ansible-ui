@@ -8,7 +8,7 @@ import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Divider, Label, LabelGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
 import React from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

@@ -10,7 +10,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { CodeBlock, PageSection, Stack } from '@patternfly/react-core';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router';
+import { useOutletContext } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { NavigationArrow } from '../../common/ImportLogNavigationArrow';
 import { hubAPI } from '../../common/api/formatPath';

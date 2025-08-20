@@ -15,7 +15,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';

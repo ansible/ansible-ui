@@ -5,7 +5,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';

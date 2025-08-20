@@ -1,16 +1,16 @@
 import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
-import { OptionsResponse, ActionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { IPlatformView } from '../../../hooks/usePlatformView';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useRemoveUserRoleAssignments } from './useRemoveUserRoleAssignments';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 
 export function usePlatformUserRolesRowActions(view: IPlatformView<UserAssignment>) {
   const { t } = useTranslation();

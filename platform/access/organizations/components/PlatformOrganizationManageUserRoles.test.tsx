@@ -1,16 +1,16 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, test, expect, beforeAll, afterAll, afterEach, vi } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { PlatformOrganizationManageUserRoles } from './PlatformOrganizationManageUserRoles';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import mockOrganization from './fixtures/organization.fixture.json';
-import mockUser from './fixtures/user.fixture.json';
-import mockRoles from './fixtures/rolesList.fixture.json';
-import mockRoleAssignments from './fixtures/roleAssignments.fixture.json';
 import mockEmptyRoleAssignments from './fixtures/emptyRoleAssignments.fixture.json';
+import mockOrganization from './fixtures/organization.fixture.json';
+import mockRoleAssignments from './fixtures/roleAssignments.fixture.json';
+import mockRoles from './fixtures/rolesList.fixture.json';
+import mockUser from './fixtures/user.fixture.json';
+import { PlatformOrganizationManageUserRoles } from './PlatformOrganizationManageUserRoles';
 
 // Mock react-i18next to immediately interpolate variables
 vi.mock('react-i18next', () => ({

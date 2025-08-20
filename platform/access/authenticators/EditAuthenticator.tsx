@@ -4,7 +4,7 @@ import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { Authenticator } from '../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
 import { PlatformRoute } from '../../main/PlatformRoutes';

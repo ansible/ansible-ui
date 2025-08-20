@@ -2,19 +2,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access*/
 /* eslint-disable @typescript-eslint/no-unsafe-return*/
 /* eslint-disable @typescript-eslint/no-unsafe-assignment*/
-import { render, waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
-import { MemoryRouter, Route, Routes } from 'react-router';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import sourceTypesOptions from './mocks/InventorySourceTypes.json';
-import inventories from './../../../../cypress/fixtures/inventory.json';
-import credentialTypes from './../../../../cypress/fixtures/credentialTypes.json';
-import { awxAPI } from '../../common/api/awx-utils';
-import { CreateInventorySource } from './InventorySourceForm';
-import { JsonBodyType } from 'msw/lib/core/handlers/RequestHandler';
-import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/dom';
+import { render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { JsonBodyType } from 'msw/lib/core/handlers/RequestHandler';
+import { setupServer } from 'msw/node';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { awxAPI } from '../../common/api/awx-utils';
+import credentialTypes from './../../../../cypress/fixtures/credentialTypes.json';
+import inventories from './../../../../cypress/fixtures/inventory.json';
+import { CreateInventorySource } from './InventorySourceForm';
+import sourceTypesOptions from './mocks/InventorySourceTypes.json';
 
 export const restHandlers = [
   http.options(awxAPI`/inventory_sources/`, () => {

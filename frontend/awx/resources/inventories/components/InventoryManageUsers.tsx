@@ -1,17 +1,17 @@
 import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
-import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   ManageResourceRoles,
   ResourceType,
 } from '../../../../common/access/components/ManageResourceRoles';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function InventoryManageUsers() {
   const { t } = useTranslation();

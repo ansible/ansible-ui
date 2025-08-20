@@ -3,7 +3,7 @@ import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLo
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubeIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';

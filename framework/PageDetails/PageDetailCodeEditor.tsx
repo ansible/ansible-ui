@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import React, { ReactNode, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { usePageSettings } from '..';
 import { objectToString, valueToObject } from '../PageForm/Inputs/PageFormDataEditor';
 import { DataEditorLanguages } from '../components/DataEditor';

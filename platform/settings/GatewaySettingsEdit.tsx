@@ -9,6 +9,7 @@ import {
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { requestPut } from '@ansible/common-ui/crud/Data';
+import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 import {
   Button,
   FormHelperText,
@@ -18,15 +19,14 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
+import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router';
+import { useOutletContext } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewaySettingsOption, UrlOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 import { useRevertAllGatewaySettingsModal } from './useRevertAllGatewaySettingsModal';
-import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 
 export function GatewaySettingsEdit(props: { categoryId?: string }) {
   const { t } = useTranslation();

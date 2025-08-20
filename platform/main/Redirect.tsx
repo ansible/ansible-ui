@@ -1,6 +1,6 @@
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export function Redirect() {
   const [searchParams] = useURLSearchParams();

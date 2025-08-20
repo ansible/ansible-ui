@@ -7,22 +7,22 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
+import { PlatformSelectTeamsStep } from '@ansible/common-ui/access/components/PlatformSelectTeamsStep';
 import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
 import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
-import { edaAPI } from '../../common/eda-utils';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { edaAPI } from '../../common/eda-utils';
 import { edaErrorAdapter } from '../../common/edaErrorAdapter';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaTeam } from '../../interfaces/EdaTeam';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
-import { PlatformSelectTeamsStep } from '@ansible/common-ui/access/components/PlatformSelectTeamsStep';
-import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 
 interface WizardFormValues {
   teams: EdaTeam[];

@@ -4,7 +4,7 @@ import { Button, ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router';
+import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { useCollectionColumns } from '../../../collections/hooks/useCollectionColumns';
 import { deleteCollectionFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';

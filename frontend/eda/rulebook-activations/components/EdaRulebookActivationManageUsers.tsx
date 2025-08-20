@@ -1,17 +1,17 @@
 import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { edaAPI } from '../../common/eda-utils';
-import { EdaRoute } from '../../main/EdaRoutes';
+import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   ManageResourceRoles,
   ResourceType,
 } from '../../../common/access/components/ManageResourceRoles';
-import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EdaRulebookActivationManageUsers() {
   const { t } = useTranslation();

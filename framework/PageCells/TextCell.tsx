@@ -1,6 +1,6 @@
 import { Flex, FlexItem, Tooltip } from '@patternfly/react-core';
 import { ReactElement, ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { IconWrapper } from '../components/IconWrapper';
 import { PFColor } from '../components/pfcolors';
 

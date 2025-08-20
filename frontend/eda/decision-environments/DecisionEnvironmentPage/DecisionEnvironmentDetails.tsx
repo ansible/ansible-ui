@@ -7,7 +7,7 @@ import {
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';

@@ -5,20 +5,20 @@ import { jsonToYaml, yamlToJson } from '@ansible/ansible-ui-framework/utils/code
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
+import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import { LaunchConfigCredential } from '../../../../interfaces/LaunchConfiguration';
+import { SummaryFieldCredential } from '../../../../interfaces/summary-fields/summary-fields';
 import { Survey } from '../../../../interfaces/Survey';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
-import { SummaryFieldCredential } from '../../../../interfaces/summary-fields/summary-fields';
-import { CredentialLabel } from '../../../../common/CredentialLabel';
-import { LaunchConfigCredential } from '../../../../interfaces/LaunchConfiguration';
 
 function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   if (!template) return '';

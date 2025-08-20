@@ -1,7 +1,7 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { ApiTokensTable } from '../access/api-tokens/ApiTokensTable';
 import { OAuthApplication } from '../access/oauth-applications/OAuthApplication';
 import { OAuthApplicationDetails } from '../access/oauth-applications/OAuthApplicationDetails';

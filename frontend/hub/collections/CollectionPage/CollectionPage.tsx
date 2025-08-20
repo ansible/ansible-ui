@@ -25,7 +25,7 @@ import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icon
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useSearchParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { useHubContext } from '../../common/useHubContext';

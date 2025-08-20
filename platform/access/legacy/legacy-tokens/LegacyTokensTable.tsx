@@ -8,7 +8,7 @@ import { Token } from '@ansible/awx-ui/interfaces/Token';
 import { Alert, AlertGroup, PageSection } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { useLegacyTokenColumns } from './hooks/useLegacyTokenColumns';
 import { useLegacyTokensFilters } from './hooks/useLegacyTokenFilters';
 import { useLegacyTokenRowActions } from './hooks/useLegacyTokenRowActions';

@@ -1,7 +1,7 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { ProjectDetails } from '../../resources/projects/ProjectPage/ProjectDetails';
@@ -13,13 +13,13 @@ import { ProjectUsers } from '../../resources/projects/ProjectPage/ProjectUsers'
 import { Projects } from '../../resources/projects/Projects';
 import { AwxProjectAddUsers } from '../../resources/projects/components/AwxProjectAddUsers';
 import { AwxProjectAssignTeams } from '../../resources/projects/components/AwxProjectAssignTeams';
+import { AwxProjectManageUsers } from '../../resources/projects/components/AwxProjectManageUsers';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 import { AwxRoute } from '../AwxRoutes';
-import { AwxProjectManageUsers } from '../../resources/projects/components/AwxProjectManageUsers';
 
 export function useAwxProjectRoutes() {
   const { t } = useTranslation();

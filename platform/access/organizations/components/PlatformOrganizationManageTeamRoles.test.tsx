@@ -1,16 +1,16 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, test, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { PlatformOrganizationManageTeamRoles } from './PlatformOrganizationManageTeamRoles';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import mockOrganization from './fixtures/organization.fixture.json';
-import mockTeam from './fixtures/team.fixture.json';
-import mockRoles from './fixtures/rolesList.fixture.json';
-import mockRoleAssignments from './fixtures/roleAssignments.fixture.json';
 import mockEmptyRoleAssignments from './fixtures/emptyRoleAssignments.fixture.json';
+import mockOrganization from './fixtures/organization.fixture.json';
+import mockRoleAssignments from './fixtures/roleAssignments.fixture.json';
+import mockRoles from './fixtures/rolesList.fixture.json';
+import mockTeam from './fixtures/team.fixture.json';
+import { PlatformOrganizationManageTeamRoles } from './PlatformOrganizationManageTeamRoles';
 
 describe('PlatformOrganizationManageTeamRoles', () => {
   const server = setupServer(

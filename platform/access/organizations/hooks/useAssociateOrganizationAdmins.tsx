@@ -2,13 +2,13 @@ import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useSelectUsers } from '../../users/hooks/useSelectUsers';
-import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
-import { PlatformRole } from '../../../interfaces/PlatformRole';
 
 export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) {
   const { t } = useTranslation();

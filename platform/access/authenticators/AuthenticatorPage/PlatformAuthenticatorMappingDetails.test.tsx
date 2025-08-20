@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter, Route, Routes } from 'react-router';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import mockAllowMapping from './authenticatorMappingAllowDetails.fixture.json';

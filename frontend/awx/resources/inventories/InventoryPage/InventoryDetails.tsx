@@ -12,7 +12,7 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants, Label, LabelGroup, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useOutletContext, useParams } from 'react-router';
+import { Link, useOutletContext, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';

@@ -13,7 +13,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   AttributeDefinition,
   AttributesTriggers,
@@ -21,12 +21,12 @@ import {
   AuthenticatorMapTriggers,
   AuthenticatorMapType,
 } from '../../../interfaces/AuthenticatorMap';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
-import { MappingFields } from './MappingFields';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { MappingFields } from './MappingFields';
 
 interface MapBase {
   map_type: AuthenticatorMapType;

@@ -12,7 +12,7 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';

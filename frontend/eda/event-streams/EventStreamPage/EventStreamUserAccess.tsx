@@ -1,6 +1,6 @@
-import { useParams } from 'react-router';
-import { EdaRoute } from '../../main/EdaRoutes';
 import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
+import { useParams } from 'react-router-dom';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EventStreamUserAccess() {
   const params = useParams<{ id: string }>();

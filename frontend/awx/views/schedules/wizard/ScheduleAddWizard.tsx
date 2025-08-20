@@ -4,7 +4,7 @@ import { dateToInputDateTime } from '@ansible/ansible-ui-framework/utils/dateTim
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';

@@ -12,7 +12,7 @@ import { ButtonVariant, Label, LabelGroup } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useOutletContext } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 

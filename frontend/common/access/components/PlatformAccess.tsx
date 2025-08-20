@@ -10,16 +10,16 @@ import {
   useBulkConfirmation,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { usePlatformView } from '@ansible/platform-ui/hooks/usePlatformView';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { requestDelete } from '../../crud/Data';
 import { idKeyFn } from '../../utils/nameKeyFn';
 import { useMapContentTypeToDisplayName } from '../hooks/useMapContentTypeToDisplayName';
 import { Assignment } from '../interfaces/Assignment';
-import { usePlatformView } from '@ansible/platform-ui/hooks/usePlatformView';
 
 type QueryParams = {
   [key: string]: string;

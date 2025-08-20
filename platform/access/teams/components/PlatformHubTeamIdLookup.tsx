@@ -6,7 +6,7 @@ import { HubTeam } from '@ansible/hub-ui/interfaces/expanded/HubTeam';
 import { Page } from '@patternfly/react-core';
 import { ReactElement, ReactNode, cloneElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { useHubResource } from '../../../hooks/useHubResource';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

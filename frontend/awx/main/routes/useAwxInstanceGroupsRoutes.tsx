@@ -1,7 +1,7 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import {
   CreateContainerGroup,
   EditContainerGroup,
@@ -12,6 +12,7 @@ import {
   CreateInstanceGroup,
   EditInstanceGroup,
 } from '../../administration/instance-groups/InstanceGroupForm';
+import { InstanceGroupManageUsers } from '../../administration/instance-groups/InstanceGroupManageUsers';
 import { InstanceGroupDetails } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupDetails';
 import { InstanceGroupInstances } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstances';
 import { InstanceGroupInstancesPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstancesPage/InstanceGroupInstancesPage';
@@ -22,7 +23,6 @@ import { InstanceGroupUserAccess } from '../../administration/instance-groups/In
 import { InstanceGroups } from '../../administration/instance-groups/InstanceGroups';
 import { InstanceDetails } from '../../administration/instances/InstanceDetails';
 import { AwxRoute } from '../AwxRoutes';
-import { InstanceGroupManageUsers } from '../../administration/instance-groups/InstanceGroupManageUsers';
 
 export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();

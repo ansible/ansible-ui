@@ -1,10 +1,10 @@
 import { render, waitFor } from '@testing-library/react';
-import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import userEvent from '@testing-library/user-event';
 import { CreateAuthenticatorMapping, EditAuthenticatorMapping } from './AuthenticatorMappingForm';
 import authenticator from './mocks/authenticator.json';
 import authenticatorMapping from './mocks/authenticatorMapping.json';

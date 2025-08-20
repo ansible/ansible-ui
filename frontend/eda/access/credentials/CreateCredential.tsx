@@ -5,14 +5,14 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
+import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Button } from '@patternfly/react-core';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
-import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
@@ -20,9 +20,9 @@ import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
 import { EdaOrganization } from '../../interfaces/EdaOrganization';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
-import { CredentialPluginsInputSource } from './hooks/useCredentialSecretModal';
 import { CredentialInputs, EdaCredentialTypes } from './CredentialInputs';
+import { CredentialPluginsInputSource } from './hooks/useCredentialSecretModal';
+import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
 
 export function CreateCredential() {
   const { t } = useTranslation();

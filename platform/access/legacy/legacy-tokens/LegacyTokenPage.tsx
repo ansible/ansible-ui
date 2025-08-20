@@ -6,7 +6,7 @@ import { Token } from '@ansible/awx-ui/interfaces/Token';
 import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { LegacyTokenDetails } from './LegacyTokenDetails';
 import { useLegacyTokenRowActions } from './hooks/useLegacyTokenRowActions';

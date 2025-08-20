@@ -17,7 +17,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';

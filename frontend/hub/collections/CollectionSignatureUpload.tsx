@@ -8,7 +8,7 @@ import {
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { useGet, useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Repository } from '../administration/repositories/Repository';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';

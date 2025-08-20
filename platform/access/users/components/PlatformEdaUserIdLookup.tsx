@@ -8,7 +8,7 @@ import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { Page } from '@patternfly/react-core';
 import { ReactElement, ReactNode, cloneElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 

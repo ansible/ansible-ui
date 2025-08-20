@@ -2,7 +2,7 @@ import { PageDetails, PageDetailsFromColumns } from '@ansible/ansible-ui-framewo
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { Token } from '../../interfaces/Token';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { useApiTokenColumns } from './hooks/useApiTokenColumns';

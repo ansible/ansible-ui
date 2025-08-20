@@ -10,7 +10,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';

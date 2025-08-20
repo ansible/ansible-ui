@@ -5,7 +5,7 @@ import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignm
 import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { useGetResourceEndpoint } from '../../../hooks/useGetResourceEndpoint';
 import { ContentType } from '../../roles/hooks/ContentType';
 import { useContentTypeComponentNames } from '../../roles/hooks/useContentTypeComponentNames';

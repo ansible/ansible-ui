@@ -2,7 +2,7 @@ import { PageNavigationItem } from '@ansible/ansible-ui-framework/PageNavigation
 import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import {
   CreateCredentialType,
   EditCredentialType,
@@ -13,13 +13,14 @@ import { CredentialTypePage } from '../access/credential-types/CredentialTypePag
 import { CredentialTypes } from '../access/credential-types/CredentialTypes';
 import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
 import { EdaCredentialAssignTeams } from '../access/credentials/components/EdaCredentialAssignTeams';
+import { EdaCredentialManageUsers } from '../access/credentials/components/EdaCredentialManageUsers';
 import { CreateCredential } from '../access/credentials/CreateCredential';
-import { EditCredential } from '../access/credentials/EditCredential';
 import { CredentialDetails } from '../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
 import { CredentialTeamAccess } from '../access/credentials/CredentialPage/CredentialTeamAccess';
 import { CredentialUserAccess } from '../access/credentials/CredentialPage/CredentialUserAccess';
 import { Credentials } from '../access/credentials/Credentials';
+import { EditCredential } from '../access/credentials/EditCredential';
 import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { EdaRolePage } from '../access/roles/EdaRolePage';
 import { EdaRoles } from '../access/roles/EdaRoles';
@@ -40,6 +41,7 @@ import { UserPage } from '../access/users/UserPage/UserPage';
 import { Users } from '../access/users/Users';
 import { EdaDecisionEnvironmentAddUsers } from '../decision-environments/components/EdaDecisionEnvironmentAddUsers';
 import { EdaDecisionEnvironmentAssignTeams } from '../decision-environments/components/EdaDecisionEnvironmentAssignTeams';
+import { EdaDecisionEnvironmentManageUsers } from '../decision-environments/components/EdaDecisionEnvironmentManageUsers';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -51,6 +53,7 @@ import { DecisionEnvironmentUserAccess } from '../decision-environments/Decision
 import { DecisionEnvironments } from '../decision-environments/DecisionEnvironments';
 import { EdaEventStreamAddUsers } from '../event-streams/components/EdaEventStreamAddUsers';
 import { EdaEventStreamAssignTeams } from '../event-streams/components/EdaEventStreamAssignTeams';
+import { EdaEventStreamManageUsers } from '../event-streams/components/EdaEventStreamManageUsers';
 import { CreateEventStream, EditEventStream } from '../event-streams/EventStreamForm';
 import { EventStreamActivations } from '../event-streams/EventStreamPage/EventStreamActivations';
 import { EventStreamDetails } from '../event-streams/EventStreamPage/EventStreamDetails';
@@ -61,6 +64,7 @@ import { EventStreams } from '../event-streams/EventStreams';
 import { EdaOverview } from '../overview/EdaOverview';
 import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
 import { EdaProjectAssignTeams } from '../projects/components/EdaProjectAssignTeams';
+import { EdaProjectManageUsers } from '../projects/components/EdaProjectManageUsers';
 import { CreateProject, EditProject } from '../projects/EditProject';
 import { ProjectDetails } from '../projects/ProjectPage/ProjectDetails';
 import { ProjectPage } from '../projects/ProjectPage/ProjectPage';
@@ -76,6 +80,7 @@ import { ActivationInstanceDetails } from '../rulebook-activations/ActivationIns
 import { ActivationInstancePage } from '../rulebook-activations/ActivationInstancePage/ActivationInstancePage';
 import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
 import { EdaRulebookActivationAssignTeams } from '../rulebook-activations/components/EdaRulebookActivationAssignTeams';
+import { EdaRulebookActivationManageUsers } from '../rulebook-activations/components/EdaRulebookActivationManageUsers';
 import {
   CreateRulebookActivation,
   EditRulebookActivation,
@@ -88,11 +93,6 @@ import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookAc
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
-import { EdaCredentialManageUsers } from '../access/credentials/components/EdaCredentialManageUsers';
-import { EdaProjectManageUsers } from '../projects/components/EdaProjectManageUsers';
-import { EdaDecisionEnvironmentManageUsers } from '../decision-environments/components/EdaDecisionEnvironmentManageUsers';
-import { EdaEventStreamManageUsers } from '../event-streams/components/EdaEventStreamManageUsers';
-import { EdaRulebookActivationManageUsers } from '../rulebook-activations/components/EdaRulebookActivationManageUsers';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();

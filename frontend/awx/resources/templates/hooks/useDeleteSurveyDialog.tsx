@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { JobTemplate } from '../../../interfaces/JobTemplate';

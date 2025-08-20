@@ -2,7 +2,7 @@ import { CopyCell, ITableColumn, PageTable, Scrollable } from '@ansible/ansible-
 import { PageSection } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router';
+import { useOutletContext } from 'react-router-dom';
 import { pulpAPI } from '../../common/api/formatPath';
 import { getRepoURL } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';

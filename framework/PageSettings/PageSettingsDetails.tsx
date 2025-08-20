@@ -2,7 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageDetail } from '../PageDetails/PageDetail';

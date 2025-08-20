@@ -1,6 +1,6 @@
-import { useParams } from 'react-router';
-import { EdaRoute } from '../../main/EdaRoutes';
+import { useParams } from 'react-router-dom';
 import { ResourceUserAccess } from '../../../common/access/components/ResourceUserAccess';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function DecisionEnvironmentUserAccess() {
   const params = useParams<{ id: string }>();

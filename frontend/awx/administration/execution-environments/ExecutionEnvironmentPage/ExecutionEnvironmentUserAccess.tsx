@@ -1,11 +1,11 @@
 import { usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 
 export function ExecutionEnvironmentUserAccess() {
   const params = useParams<{ id: string }>();

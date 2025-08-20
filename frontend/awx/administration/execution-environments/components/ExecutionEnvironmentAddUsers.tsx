@@ -10,18 +10,18 @@ import {
 import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
-import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
-import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
-import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
-import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 
 interface WizardFormValues {
   users: PlatformUser[];

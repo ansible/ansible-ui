@@ -1,4 +1,4 @@
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { JobsList } from '../../../views/jobs/JobsList';
 import { useInstanceGroupJobsColumns } from './hooks/useInstanceGroupJobsColumns';
 
