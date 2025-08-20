@@ -16,7 +16,7 @@ import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { PlatformSelectResourcesStep } from '../../common/roles-wizard/PlatformSelectResourcesStep';
 import { PlatformSelectResourceTypeStep } from '../../common/roles-wizard/PlatformSelectResourceTypeStep';
 import { PlatformSelectRolesStep } from '../../common/roles-wizard/PlatformSelectRolesStep';

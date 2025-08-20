@@ -17,7 +17,7 @@ import { t } from 'i18next';
 import jsyaml from 'js-yaml';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxSettingsOptionsAction } from './AwxSettingsForm';

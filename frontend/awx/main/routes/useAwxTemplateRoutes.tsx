@@ -1,11 +1,12 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { JobTemplateAddUsers } from '../../resources/templates/JobTemplateAddUsers';
 import { JobTemplateAssignTeams } from '../../resources/templates/JobTemplateAssignTeams';
+import { JobTemplateManageUsers } from '../../resources/templates/JobTemplateManageUsers';
 import { CreateJobTemplate, EditJobTemplate } from '../../resources/templates/TemplateForm';
 import { TemplateDetails } from '../../resources/templates/TemplatePage/TemplateDetails';
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
@@ -25,6 +26,7 @@ import {
   CreateWorkflowJobTemplate,
   EditWorkflowJobTemplate,
 } from '../../resources/templates/WorkflowJobTemplateForm';
+import { WorkflowJobTemplateManageUsers } from '../../resources/templates/WorkflowJobTemplateManageUsers';
 import { WorkflowJobTemplateDetails } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { WorkflowJobTemplatePage } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import { WorkflowJobTemplateTeamAccess } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateTeamAccess';
@@ -36,8 +38,6 @@ import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 import { AwxRoute } from '../AwxRoutes';
-import { JobTemplateManageUsers } from '../../resources/templates/JobTemplateManageUsers';
-import { WorkflowJobTemplateManageUsers } from '../../resources/templates/WorkflowJobTemplateManageUsers';
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();

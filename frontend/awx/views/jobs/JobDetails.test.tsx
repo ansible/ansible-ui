@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import * as reactRouterDom from 'react-router';
-import { MemoryRouter } from 'react-router';
+import * as reactRouterDom from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { JobDetails } from './JobDetails';
 import { testFixture } from './jobDetails.fixture';
@@ -10,8 +10,8 @@ const mockJob = {
 };
 const mockNavigate = vi.fn();
 
-vi.mock('react-router', async () => {
-  const actual = await vi.importActual<typeof reactRouterDom>('react-router');
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof reactRouterDom>('react-router-dom');
   return {
     ...actual,
     usePageNavigate: () => mockNavigate,

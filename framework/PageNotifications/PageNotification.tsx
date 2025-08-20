@@ -11,7 +11,7 @@ import {
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { usePageNotifications } from './usePageNotifications';
 import { usePageNotificationsRead } from './usePageNotificationsRead';
 

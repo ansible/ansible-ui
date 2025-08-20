@@ -10,7 +10,7 @@ import {
   ToolbarContent,
 } from '@patternfly/react-core';
 import { ReactNode } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { usePageNavSideBar } from '../PageNavigation/PageNavSidebar';
 
 export function PageMasthead(props: { brand: ReactNode; children?: ReactNode }) {

@@ -1,7 +1,7 @@
 import { ITableColumn, PageTable, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOutletContext, useParams } from 'react-router';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { CollectionReduced } from '../../../collections/Collection';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubView } from '../../../common/useHubView';

@@ -1,11 +1,11 @@
 import { DateTimeCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
-import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 

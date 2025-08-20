@@ -1,13 +1,13 @@
 import { render, waitFor } from '@testing-library/react';
-import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 
 import roleDefinition from './mocks/roleDefinition.fixture.json';
-import roleTypes from './mocks/roleTypes.fixture.json';
 import rolePermissions from './mocks/roleOrganizationPermissions.fixture.json';
+import roleTypes from './mocks/roleTypes.fixture.json';
 import { CreatePlatformRole, EditPlatformRole } from './PlatformRoleForm';
 
 describe('platformRoleForm', () => {

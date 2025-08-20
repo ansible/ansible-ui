@@ -17,7 +17,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { usePutRequest } from '@ansible/common-ui/crud/usePutRequest';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PlatformUser } from '../../interfaces/PlatformUser';
 import { Token } from '../../interfaces/Token';
 import { PlatformRoute } from '../../main/PlatformRoutes';

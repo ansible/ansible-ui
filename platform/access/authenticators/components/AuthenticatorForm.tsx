@@ -4,7 +4,13 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { t } from 'i18next';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import {
   AttributeDefinition,
@@ -19,16 +25,10 @@ import type {
 } from '../../../interfaces/AuthenticatorPlugin';
 import type { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PageFormAutoMigrateUsersSelect } from './PageFormAutoMigrateUsersSelect';
 import { AuthenticatorSubForm } from './steps/AuthenticatorSubForm';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
-import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
-import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { useCallback } from 'react';
-import { requestGet } from '@ansible/common-ui/crud/Data';
-import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
-import { t } from 'i18next';
-import { PageFormAutoMigrateUsersSelect } from './PageFormAutoMigrateUsersSelect';
-import { useNavigate } from 'react-router';
 
 export interface Configuration {
   [key: string]: boolean | string | string[] | { [k: string]: string | boolean | object };

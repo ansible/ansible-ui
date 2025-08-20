@@ -1,6 +1,6 @@
 import { Button, ButtonProps } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { SetRequired } from 'type-fest';
 
 /**

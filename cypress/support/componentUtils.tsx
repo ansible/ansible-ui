@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Routes, Route, Outlet } from 'react-router';
+import { Outlet, Route, Routes } from 'react-router-dom';
 interface RenderRouteWithOutletContextProps<T> {
   context: T;
   children: ReactNode;

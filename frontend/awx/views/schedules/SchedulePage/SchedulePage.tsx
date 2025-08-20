@@ -6,7 +6,7 @@ import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';

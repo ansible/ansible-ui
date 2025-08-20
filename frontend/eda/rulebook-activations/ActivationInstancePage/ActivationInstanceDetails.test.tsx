@@ -4,14 +4,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import { getAllByText, render, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, test, beforeAll, afterAll, afterEach } from 'vitest';
-import { ActivationInstanceDetails } from './ActivationInstanceDetails';
-import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { edaAPI } from '../../common/eda-utils';
+import { ActivationInstanceDetails } from './ActivationInstanceDetails';
 import activationInstanceResp from './mocks/ActivationInstance.json';
 import activationInstanceLogs from './mocks/ActivationInstanceLogs.json';
-import { MemoryRouter, Route, Routes } from 'react-router';
 
 function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

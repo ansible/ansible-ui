@@ -6,7 +6,7 @@ import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaTeam } from '@ansible/eda-ui/interfaces/EdaTeam';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformEdaTeam(props: { route?: string }) {

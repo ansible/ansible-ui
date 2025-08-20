@@ -1,14 +1,14 @@
 import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { useGetLinkToResourcePage } from '@ansible/common-ui/access/hooks/useGetLinkToResourcePage';
+import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { useGetResourceEndpoint } from '../../../hooks/useGetResourceEndpoint';
 import { ContentType } from '../../roles/hooks/ContentType';
 import { useContentTypeComponentNames } from '../../roles/hooks/useContentTypeComponentNames';
-import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
-import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
-import { useGetLinkToResourcePage } from '@ansible/common-ui/access/hooks/useGetLinkToResourcePage';
-import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
-import { Link } from 'react-router';
-import { useGetResourceEndpoint } from '../../../hooks/useGetResourceEndpoint';
 
 function ResourceNameCell({ role }: { role: UserAssignment }) {
   const endpoint = useGetResourceEndpoint(role.content_type, role.object_id);

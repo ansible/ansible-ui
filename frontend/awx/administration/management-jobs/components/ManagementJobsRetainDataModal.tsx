@@ -1,8 +1,8 @@
 import { PageFormSubmitHandler, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { Modal, ModalVariant, ModalHeader, ModalBody } from '@patternfly/react-core';
+import { Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { t } from 'i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';

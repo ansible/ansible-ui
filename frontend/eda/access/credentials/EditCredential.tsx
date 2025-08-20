@@ -4,15 +4,15 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
 import { Alert, Button } from '@patternfly/react-core';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
@@ -20,10 +20,10 @@ import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
-import { CredentialPluginsInputSource } from './hooks/useCredentialSecretModal';
 import { CredentialInputs, EdaCredentialTypes } from './CredentialInputs';
 import { CredentialDetails } from './CredentialPage/CredentialDetails';
+import { CredentialPluginsInputSource } from './hooks/useCredentialSecretModal';
+import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
 
 export function EditCredential() {
   const { t } = useTranslation();

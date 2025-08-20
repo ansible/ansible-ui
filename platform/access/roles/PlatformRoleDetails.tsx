@@ -10,7 +10,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { t } from 'i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { PlatformRole } from '../../interfaces/PlatformRole';
 import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';

@@ -1,6 +1,6 @@
 import { Dropdown, DropdownItem, DropdownList, MenuToggle } from '@patternfly/react-core';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { PersonaViewType } from './PersonaView';
 import { usePersonaView } from './usePersonaView';
 import { usePersonaViews } from './usePersonaViews';

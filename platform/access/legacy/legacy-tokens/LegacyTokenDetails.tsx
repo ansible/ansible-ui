@@ -4,7 +4,7 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { useLegacyTokenColumns } from './hooks/useLegacyTokenColumns';
 
 export function LegacyTokenDetails() {

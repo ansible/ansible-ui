@@ -7,25 +7,25 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { postRequest, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { AlertGroup, Alert, Content, ContentVariants, Button } from '@patternfly/react-core';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { Alert, AlertGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { useGetOrganizationRolesForUser } from '../hooks/useGetOrganizationRolesForUser';
-import { getAddedAndRemovedPlatformRoles } from '../utils/getAddedAndRemovedPlatformRoles';
-import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { usePlatformRoleColumns } from '../../roles/hooks/usePlatformRoleColumns';
 import { usePlatformRolesFilters } from '../../roles/hooks/usePlatformRolesFilters';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import styled from 'styled-components';
 import { ViewIndirectlyAssignedRolesModal } from '../../users/components/ViewIndirectlyAssignedRolesModal';
+import { useGetOrganizationRolesForUser } from '../hooks/useGetOrganizationRolesForUser';
+import { getAddedAndRemovedPlatformRoles } from '../utils/getAddedAndRemovedPlatformRoles';
 
 interface RemoveRole {
   remove?: boolean;

@@ -19,7 +19,7 @@ import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { hubAPI } from '../../common/api/formatPath';

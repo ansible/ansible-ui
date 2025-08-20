@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useSearchParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { HubRoute } from '../../../main/HubRoutes';
 import { IContents } from '../../Collection';
 

@@ -1,6 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { PageFormSingleSelect } from '../PageForm/Inputs/PageFormSingleSelect';
 import { PageForm } from '../PageForm/PageForm';
 import { PageHeader } from '../PageHeader';

@@ -3,7 +3,7 @@ import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingSt
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PlatformUser } from '../../interfaces/PlatformUser';
 import { Token } from '../../interfaces/Token';
 import { PlatformRoute } from '../../main/PlatformRoutes';

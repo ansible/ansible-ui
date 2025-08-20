@@ -18,7 +18,7 @@ import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { Alert, Button, Content, ContentVariants } from '@patternfly/react-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { postRequest, requestDelete } from '../../crud/Data';
 

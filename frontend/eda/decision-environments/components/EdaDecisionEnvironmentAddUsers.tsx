@@ -10,19 +10,19 @@ import {
 import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
 import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { edaErrorAdapter } from '../../common/edaErrorAdapter';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
-import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
-import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
-import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
   users: PlatformUser[];

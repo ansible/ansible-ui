@@ -1,17 +1,17 @@
 import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   ManageResourceRoles,
   ResourceType,
 } from '../../../../common/access/components/ManageResourceRoles';
-import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function CredentialManageUsers() {
   const { t } = useTranslation();

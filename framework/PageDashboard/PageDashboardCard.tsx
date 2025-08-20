@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import { CSSProperties, ReactNode, useContext, useState } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
 import { useID } from '../hooks/useID';
 import { PageDashboardContext } from './PageDashboard';

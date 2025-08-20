@@ -12,12 +12,12 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
+import { AwxSettingsCategoryDetails } from './AwxSettingsCategoryDetails';
 import { AwxSettingsOptionsAction } from './AwxSettingsForm';
 import { useAwxSettingsGroups, useAwxSettingsGroupsBase } from './useAwxSettingsGroups';
-import { AwxSettingsCategoryDetails } from './AwxSettingsCategoryDetails';
 
 const CATEGORY_ID = 'policyascode';
 const DYNAMIC_FIELDS: Record<string, string> = {

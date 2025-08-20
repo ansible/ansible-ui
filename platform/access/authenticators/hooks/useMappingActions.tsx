@@ -6,15 +6,15 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon, CogIcon } from '@patternfly/react-icons';
+import { CogIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { IPlatformView } from '../../../hooks/usePlatformView';
+import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteMappings } from './useDeleteMappings';
 import { useManageMappings } from './useManageMappings';
-import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 
 export function useMappingToolbarActions(view: IPlatformView<AuthenticatorMap>, mapId: string) {
   const { t } = useTranslation();

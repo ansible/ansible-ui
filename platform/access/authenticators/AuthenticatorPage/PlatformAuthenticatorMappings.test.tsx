@@ -1,11 +1,11 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
-import { describe, test, expect, beforeAll, afterAll } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { PlatformAuthenticatorMappings } from './PlatformAuthenticatorMappings';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import mockMappings from './authenticatorMappings.fixture.json';
+import { PlatformAuthenticatorMappings } from './PlatformAuthenticatorMappings';
 
 describe('PlatformAuthenticatorMappings', () => {
   const server = setupServer(

@@ -1,6 +1,6 @@
-import { useParams } from 'react-router';
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { useParams } from 'react-router-dom';
 import { ResourceUserAccess } from '../../../../common/access/components/ResourceUserAccess';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function CredentialUserAccess() {
   const params = useParams<{ id: string }>();

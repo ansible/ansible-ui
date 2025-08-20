@@ -11,15 +11,15 @@ import {
 } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamRolesColumns } from '../../teams/hooks/useTeamRolesColumns';
 
-import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignment';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignment';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 // Extend the TeamAssignment interface to include intermediary_roles
 interface ExtendedTeamAssignment extends TeamAssignment {

@@ -2,7 +2,7 @@ import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { TableContext } from '@patternfly/react-table';
 import { ComponentClass, Fragment, FunctionComponent, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, LinkProps } from 'react-router';
+import { Link, LinkProps } from 'react-router-dom';
 import { useID } from '../hooks/useID';
 import {
   IPageActionButton,

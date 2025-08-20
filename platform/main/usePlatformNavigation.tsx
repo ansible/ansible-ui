@@ -21,7 +21,7 @@ import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { useHubNavigation } from '@ansible/hub-ui/main/useHubNavigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { ApiTokenForm } from '../access/api-tokens/ApiTokenForm';
 import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
 import { ApiTokensPage } from '../access/api-tokens/ApiTokensPage';

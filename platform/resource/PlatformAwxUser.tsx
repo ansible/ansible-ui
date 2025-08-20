@@ -6,7 +6,7 @@ import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformAwxUser(props: { route?: string }) {

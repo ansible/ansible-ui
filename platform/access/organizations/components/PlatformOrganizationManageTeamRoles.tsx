@@ -6,25 +6,25 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { useAwxBulkActionDialog } from '@ansible/awx-ui/common/useAwxBulkActionDialog';
 import { postRequest, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { useCallback, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformRbacRole } from '../../../interfaces/PlatformRbacRole';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { PlatformRbacRole } from '../../../interfaces/PlatformRbacRole';
-import { usePlatformView } from '../../../hooks/usePlatformView';
 import { usePlatformRoleColumns } from '../../roles/hooks/usePlatformRoleColumns';
 import { usePlatformRolesFilters } from '../../roles/hooks/usePlatformRolesFilters';
 import { useGetOrganizationRolesForTeam } from '../hooks/useGetOrganizationRolesForTeam';
 import { getAddedAndRemovedPlatformRoles } from '../utils/getAddedAndRemovedPlatformRoles';
-import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
-import { Content, ContentVariants } from '@patternfly/react-core';
-import styled from 'styled-components';
 
 interface RemoveRole {
   remove?: boolean;

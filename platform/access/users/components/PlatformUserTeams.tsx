@@ -11,20 +11,20 @@ import {
   usePageDialog,
 } from '@ansible/ansible-ui-framework';
 import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { IPlatformView, usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
 import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
-import { useGet } from '@ansible/common-ui/crud/useGet';
-import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
-import { PlatformRole } from '../../../interfaces/PlatformRole';
 
 export function PlatformUserTeams() {
   const { t } = useTranslation();

@@ -18,7 +18,7 @@ import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Button, Label, PageSection, Progress, Skeleton, Tooltip } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';

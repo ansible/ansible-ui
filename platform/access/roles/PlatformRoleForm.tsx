@@ -12,17 +12,17 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
+import { HelperText, HelperTextItem } from '@patternfly/react-core';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
+import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
 import { PlatformRole } from '../../interfaces/PlatformRole';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
-import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useEffect } from 'react';
-import { HelperText, HelperTextItem } from '@patternfly/react-core';
-import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
 import { PageFormRolePermissionsSelect } from './components/PageFormPermissionsSelect';
+import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
 
 export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();

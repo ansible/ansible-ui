@@ -9,12 +9,12 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
-import { EdaRoute } from '../../../main/EdaRoutes';
 import { EdaResult } from '../../../interfaces/EdaResult';
+import { EdaRoute } from '../../../main/EdaRoutes';
 import { CredentialPluginsInputSource } from '../hooks/useCredentialSecretModal';
 import { CredentialDetailFields } from './CredentialDetailFields';
 

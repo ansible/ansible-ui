@@ -3,7 +3,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useAwxView } from '../../common/useAwxView';

@@ -7,13 +7,14 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
+import { useAwxBulkActionDialog } from '@ansible/awx-ui/common/useAwxBulkActionDialog';
 import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useAwxBulkActionDialog } from '@ansible/awx-ui/common/useAwxBulkActionDialog';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
@@ -21,7 +22,6 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformSelectRolesStep } from '../roles-wizard-steps/PlatformSelectRolesStep';
 import { PlatformSelectUsersStep } from '../roles-wizard-steps/PlatformSelectUsersStep';
-import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 
 interface WizardFormValues {
   users: PlatformUser[];

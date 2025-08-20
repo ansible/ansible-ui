@@ -4,7 +4,7 @@ import { EdaAddUserRoles } from '@ansible/eda-ui/access/users/EdaAddUserRoles';
 import { HubAddUserRoles } from '@ansible/hub-ui/access/users/components/HubAddUserRoles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { ApiTokenForm } from '../access/api-tokens/ApiTokenForm';
 import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
 import { ApiTokensTable } from '../access/api-tokens/ApiTokensTable';

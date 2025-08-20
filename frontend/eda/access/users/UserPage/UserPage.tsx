@@ -17,7 +17,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../../common/eda-utils';
 import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
 import { EdaUser } from '../../../interfaces/EdaUser';

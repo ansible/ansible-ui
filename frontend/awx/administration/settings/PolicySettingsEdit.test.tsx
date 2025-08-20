@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/dom';
 import { render } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import options from './policySettingsOptions.fixture.json';
-import { PolicySettingsForm } from './PolicySettingsEdit';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { AwxSettingsOptionsAction } from './AwxSettingsForm';
+import { PolicySettingsForm } from './PolicySettingsEdit';
+import options from './policySettingsOptions.fixture.json';
 
 const data = {
   OPA_HOST: '',

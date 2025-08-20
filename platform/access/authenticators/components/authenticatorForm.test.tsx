@@ -1,15 +1,15 @@
 import { render, waitFor } from '@testing-library/react';
-import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import authenticators from './authenticators.fixture.json';
-import authenticator_plugins from './authenticatorPlugins.fixture.json';
-import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
-import { AuthenticatorForm } from './AuthenticatorForm';
-import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { AuthenticatorForm } from './AuthenticatorForm';
+import authenticator_plugins from './authenticatorPlugins.fixture.json';
+import authenticators from './authenticators.fixture.json';
 
 describe('authenticatorForm', () => {
   const server = setupServer(

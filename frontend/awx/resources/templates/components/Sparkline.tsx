@@ -2,7 +2,7 @@ import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDate
 import { StatusCell } from '@ansible/common-ui/Status';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
