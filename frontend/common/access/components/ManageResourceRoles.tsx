@@ -73,7 +73,6 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
     }),
     [initialRoles]
   );
-
   // If the user saves then immediately re-enters the manage
   // roles form, the old assignments are sometimes still cached
   // in swr. This ensures the updated values show in the form
@@ -232,7 +231,7 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
         </Content>
       </Alert>
       <HelpText component={ContentVariants.p}>
-        {t('Selected roles will be directly assign to {{username}}.', {
+        {t('Selected roles will be directly assigned to {{username}}.', {
           username: user?.username ?? '',
         })}
       </HelpText>

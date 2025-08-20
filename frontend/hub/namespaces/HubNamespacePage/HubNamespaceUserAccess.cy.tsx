@@ -1,12 +1,13 @@
 import { hubAPI } from '../../common/api/formatPath';
 import { HubNamespaceUserAccess } from './HubNamespaceUserAccess';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 describe('HubNamespaceUserAccess', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: hubAPI`/_ui/v2/role_user_assignments/?object_id=1&content_type__model=namespace*`,
+        url: gatewayAPI`/role_user_assignments/?object_id=1&content_type__model=namespace*`,
       },
       {
         count: 1,
@@ -42,6 +43,18 @@ describe('HubNamespaceUserAccess', () => {
     cy.intercept('GET', hubAPI`/_ui/v1/namespaces/?limit=1&name=demo`, {
       fixture: 'hubNamespace.json',
     });
+    cy.intercept('GET', gatewayAPI`/users/*`, {
+      fixture: 'platformUsers.json',
+    });
+    cy.intercept(
+      {
+        method: 'GET',
+        url: gatewayAPI`/role_user_access/galaxy.namespace/1/?*`,
+      },
+      {
+        fixture: 'hubNamespaceUsers.json',
+      }
+    ).as('namespaceUsersList');
   });
 
   it('should render user assignments', () => {
@@ -54,8 +67,8 @@ describe('HubNamespaceUserAccess', () => {
 
     cy.mount(<HubNamespaceUserAccess />, params);
 
-    cy.get('tbody tr').should('have.length', 1);
-    cy.getByDataCy('username-column-cell').contains('test-user');
-    cy.getByDataCy('role-column-cell').contains('galaxy.collection_publisher');
+    cy.get('tbody tr').should('have.length', 2);
+    cy.getByDataCy('username-column-cell').contains('test-user1');
+    cy.getByDataCy('roles-column-cell').contains('galaxy.collection_publisher');
   });
 });

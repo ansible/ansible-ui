@@ -1,5 +1,5 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework';
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router';
 import { hubAPI } from '../../common/api/formatPath';
@@ -28,10 +28,9 @@ export function HubNamespaceTeamAccess() {
   }
 
   return (
-    <TeamAccess
-      service="hub"
+    <PlatformTeamAccess
       id={namespace?.id.toString() || ''}
-      type={'namespace'}
+      type={'galaxy.namespace'}
       addRolesRoute={HubRoute.NamespaceAssignTeams}
     />
   );

@@ -1,6 +1,5 @@
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
-import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { useTranslation } from 'react-i18next';
 import { UserRoleAccess } from '../interfaces/UserRoleAccess';
 import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
@@ -8,12 +7,12 @@ import { LabelsCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { AccessList } from './AccessList';
 import { PlatformIdForUsername } from './platformIdForUsername';
 import { Alert, Content, ContentVariants, Label, PageSection } from '@patternfly/react-core';
-import { UserFirstNameCell } from './UserFirstNameCell';
-import { UserLastNameCell } from './UserLastNameCell';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 export function ResourceUserAccess(props: {
   service: 'awx' | 'eda' | 'hub';
   id: string;
+  name?: string;
   type: string;
   addRolesRoute?: string;
   manageRoleRoute?: string;
@@ -32,7 +31,7 @@ export function ResourceUserAccess(props: {
       case 'eda':
         return edaAPI`/role_user_access/${type}/${props.id}/`;
       default:
-        return hubAPI`/_ui/v2/role_user_access/${type}/${props.id}/`;
+        return gatewayAPI`/role_user_access/${type}/${props.id}/`;
     }
   };
 
@@ -71,13 +70,11 @@ export function ResourceUserAccess(props: {
         additionalTableColumns={[
           {
             header: t('First name'),
-            cell: (item) => <UserFirstNameCell userAccess={item} />,
-            value: (item: UserRoleAccess) => item?.id,
+            cell: (item) => item?.first_name,
           },
           {
             header: t('Last name'),
-            cell: (item) => <UserLastNameCell userAccess={item} />,
-            value: (item: UserRoleAccess) => item?.id,
+            cell: (item) => item?.last_name,
           },
           {
             header: t('Roles'),

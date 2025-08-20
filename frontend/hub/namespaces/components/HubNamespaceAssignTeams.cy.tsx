@@ -1,5 +1,6 @@
 import { hubAPI } from '../../common/api/formatPath';
 import { HubNamespaceAssignTeams } from './HubNamespaceAssignTeams';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 describe('HubNamespaceAssignTeams', () => {
   const component = <HubNamespaceAssignTeams />;
@@ -14,10 +15,10 @@ describe('HubNamespaceAssignTeams', () => {
     cy.intercept('GET', hubAPI`/_ui/v1/namespaces/?limit=1&name=demo*`, {
       fixture: 'hubNamespace.json',
     });
-    cy.intercept('GET', hubAPI`/_ui/v2/teams/?order_by=name*`, {
+    cy.intercept('GET', gatewayAPI`/teams/?*`, {
       fixture: 'hubV2Teams.json',
     });
-    cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/?content_type__model=namespace*`, {
+    cy.intercept('GET', gatewayAPI`/role_definitions/?content_type__api_slug=galaxy.namespace*`, {
       fixture: 'hubNamespaceRoles.json',
     });
     cy.mount(component, params);
@@ -29,14 +30,6 @@ describe('HubNamespaceAssignTeams', () => {
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('have.class', 'pf-m-current');
     cy.get('table tbody').find('tr').should('have.length', 2);
   });
-  it('can filter teams by name', () => {
-    cy.intercept('GET', hubAPI`/_ui/v2/teams/?name__icontains=demoteam1*`, {
-      fixture: 'hubV2Teams.json',
-    }).as('nameFilterRequest');
-    cy.filterTableByText('demoteam1');
-    cy.wait('@nameFilterRequest');
-    cy.clearAllFilters();
-  });
   it('should validate that at least one team is selected for moving to next step', () => {
     cy.get('table tbody').find('tr').should('have.length', 2);
     cy.clickButton(/^Next$/);
@@ -44,18 +37,21 @@ describe('HubNamespaceAssignTeams', () => {
     cy.selectTableRowByCheckbox('name', 'demoteam1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
   });
   it('should validate that at least one role is selected for moving to Review step', () => {
     cy.get('table tbody').find('tr').should('have.length', 2);
     cy.selectTableRowByCheckbox('name', 'demoteam1', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.selectTableRowByCheckbox('name', 'galaxy.collection_publisher', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should(
+      'not.have.class',
+      'pf-m-current'
+    );
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
   it('should display selected team and role in the Review step', () => {
@@ -68,19 +64,19 @@ describe('HubNamespaceAssignTeams', () => {
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'Teams');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', '1');
     cy.get('[data-cy="expandable-section-teams"]').should('contain.text', 'demoteam1');
-    cy.get('[data-cy="expandable-section-hubRoles"]').should('contain.text', 'Roles');
-    cy.get('[data-cy="expandable-section-hubRoles"]').should('contain.text', '1');
-    cy.get('[data-cy="expandable-section-hubRoles"]').should(
+    cy.get('[data-cy="expandable-section-platformRoles"]').should('contain.text', 'Roles');
+    cy.get('[data-cy="expandable-section-platformRoles"]').should('contain.text', '1');
+    cy.get('[data-cy="expandable-section-platformRoles"]').should(
       'contain.text',
       'galaxy.collection_publisher'
     );
-    cy.get('[data-cy="expandable-section-hubRoles"]').should(
+    cy.get('[data-cy="expandable-section-platformRoles"]').should(
       'contain.text',
       'Upload and modify collections.'
     );
   });
   it('should trigger bulk action dialog on submit', () => {
-    cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`, {
+    cy.intercept('POST', gatewayAPI`/role_team_assignments/`, {
       statusCode: 201,
       body: { team: 2, role_definition: 4, content_type: 'galaxy.namespace', object_id: 1 },
     }).as('createRoleAssignment');

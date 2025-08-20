@@ -1,5 +1,5 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework';
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router';
 import { pulpAPI } from '../../../common/api/formatPath';
@@ -30,10 +30,9 @@ export function RemoteTeamAccess() {
   }
 
   return (
-    <TeamAccess
-      service="hub"
+    <PlatformTeamAccess
       id={parsePulpIDFromURL(remote?.pulp_href) || ''}
-      type={'collectionremote'}
+      type={'galaxy.collectionremote'}
       addRolesRoute={HubRoute.RemoteAssignTeams}
     />
   );

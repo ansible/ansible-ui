@@ -12,26 +12,27 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
-import { HubSelectUsersStep } from '../../access/common/HubRoleWizardSteps/HubSelectUsersStep';
 import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
 import { HubItemsResponse } from '../../common/useHubView';
-import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
-import { HubUser } from '../../interfaces/expanded/HubUser';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 
 interface WizardFormValues {
-  users: HubUser[];
-  hubRoles: HubRbacRole[];
+  users: PlatformUser[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface UserRolePair {
-  user: HubUser;
-  role: HubRbacRole;
+  user: PlatformUser;
+  role: PlatformRbacRole;
 }
 
 export function HubNamespaceAddUsers() {
@@ -64,7 +65,7 @@ export function HubNamespaceAddUsers() {
       id: 'users',
       label: t('Select user(s)'),
       inputs: (
-        <HubSelectUsersStep
+        <PlatformSelectUsersStep
           descriptionForUsersSelection={t(
             'Select the user(s) that you want to give access to {{namespaceName}}.',
             {
@@ -74,18 +75,18 @@ export function HubNamespaceAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as { users: HubUser[] };
+        const { users } = formData as { users: PlatformUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <HubSelectRolesStep
-          contentType="namespace"
+        <PlatformSelectRolesStep
+          contentType="galaxy.namespace"
           fieldNameForPreviousStep="users"
           descriptionForRoleSelection={t('Choose roles to apply to {{namespaceName}}.', {
             namespaceName: namespace?.name,
@@ -93,8 +94,8 @@ export function HubNamespaceAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { hubRoles } = formData as { hubRoles: HubRbacRole[] };
-        if (!hubRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -107,10 +108,10 @@ export function HubNamespaceAddUsers() {
   ];
 
   const onSubmit = (data: WizardFormValues) => {
-    const { users, hubRoles } = data;
+    const { users, platformRoles } = data;
     const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of hubRoles) {
+      for (const role of platformRoles) {
         items.push({ user, role });
       }
     }
@@ -124,7 +125,7 @@ export function HubNamespaceAddUsers() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
-          postRequest(hubAPI`/_ui/v2/role_user_assignments/`, {
+          postRequest(gatewayAPI`/role_user_assignments/`, {
             user: user?.id,
             role_definition: role.id,
             content_type: 'galaxy.namespace',

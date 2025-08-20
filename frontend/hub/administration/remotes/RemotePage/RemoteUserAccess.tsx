@@ -1,5 +1,5 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework';
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router';
 import { pulpAPI } from '../../../common/api/formatPath';
@@ -30,11 +30,12 @@ export function RemoteUserAccess() {
   }
 
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="hub"
       id={parsePulpIDFromURL(remote?.pulp_href) || ''}
-      type={'collectionremote'}
+      type={'galaxy.collectionremote'}
       addRolesRoute={HubRoute.RemoteAddUsers}
+      manageRoleRoute={HubRoute.RemoteManageUsers}
     />
   );
 }
