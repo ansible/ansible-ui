@@ -1,5 +1,5 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework';
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router';
 import { hubAPI } from '../../common/api/formatPath';
@@ -9,16 +9,16 @@ import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
 export function ExecutionEnvironmentUserAccess() {
   const params = useParams<{ id: string }>();
-  const { data, error, refresh } = useGet<Partial<ExecutionEnvironment>>(
+  const {
+    data: executionEnvironment,
+    error,
+    isLoading,
+    refresh,
+  } = useGet<ExecutionEnvironment>(
     hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
   );
 
-  let executionEnvironment: Partial<ExecutionEnvironment> | undefined = undefined;
-  if (data && Object.keys(data).length > 0) {
-    executionEnvironment = data;
-  }
-
-  if (!data && !error) {
+  if (isLoading || (!executionEnvironment && !error)) {
     return <LoadingPage />;
   }
 
@@ -27,11 +27,13 @@ export function ExecutionEnvironmentUserAccess() {
   }
 
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="hub"
-      id={executionEnvironment?.namespace?.id?.toString() || ''}
-      type={'containernamespace'}
+      id={executionEnvironment?.namespace?.id || ''}
+      name={executionEnvironment?.name || ''}
+      type={'galaxy.containernamespace'}
       addRolesRoute={HubRoute.ExecutionEnvironmentAddUsers}
+      manageRoleRoute={HubRoute.ExecutionEnvironmentManageUsers}
     />
   );
 }

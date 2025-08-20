@@ -1,5 +1,5 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework';
-import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
+import { ResourceUserAccess } from '@ansible/common-ui/access/components/ResourceUserAccess';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router';
 import { hubAPI } from '../../common/api/formatPath';
@@ -28,11 +28,12 @@ export function HubNamespaceUserAccess() {
   }
 
   return (
-    <UserAccess
+    <ResourceUserAccess
       service="hub"
       id={namespace?.id.toString() || ''}
-      type={'namespace'}
+      type={'galaxy.namespace'}
       addRolesRoute={HubRoute.NamespaceAddUsers}
+      manageRoleRoute={HubRoute.NamespaceManageUsers}
     />
   );
 }

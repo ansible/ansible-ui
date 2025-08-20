@@ -12,27 +12,28 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { HubSelectRolesStep } from '../../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
-import { HubSelectUsersStep } from '../../../access/common/HubRoleWizardSteps/HubSelectUsersStep';
 import { hubErrorAdapter } from '../../../common/adapters/hubErrorAdapter';
-import { hubAPI, pulpAPI } from '../../../common/api/formatPath';
+import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { HubError } from '../../../common/HubError';
 import { useHubBulkActionDialog } from '../../../common/useHubBulkActionDialog';
 import { PulpItemsResponse } from '../../../common/useHubView';
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import { HubUser } from '../../../interfaces/expanded/HubUser';
 import { HubRoute } from '../../../main/HubRoutes';
 import { HubRemote } from '../Remotes';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformSelectUsersStep } from '@ansible/platform-ui/access/organizations/roles-wizard-steps/PlatformSelectUsersStep';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 
 interface WizardFormValues {
-  users: HubUser[];
-  hubRoles: HubRbacRole[];
+  users: PlatformUser[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface UserRolePair {
-  user: HubUser;
-  role: HubRbacRole;
+  user: PlatformUser;
+  role: PlatformRbacRole;
 }
 
 export function RemoteAddUsers() {
@@ -64,7 +65,7 @@ export function RemoteAddUsers() {
       id: 'users',
       label: t('Select user(s)'),
       inputs: (
-        <HubSelectUsersStep
+        <PlatformSelectUsersStep
           descriptionForUsersSelection={t(
             'Select the user(s) that you want to give access to {{remote}}.',
             {
@@ -74,18 +75,18 @@ export function RemoteAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as { users: HubUser[] };
+        const { users } = formData as { users: PlatformUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <HubSelectRolesStep
-          contentType="collectionremote"
+        <PlatformSelectRolesStep
+          contentType="galaxy.collectionremote"
           fieldNameForPreviousStep="users"
           descriptionForRoleSelection={t('Choose roles to apply to {{remote}}.', {
             remote: remote?.name,
@@ -93,8 +94,8 @@ export function RemoteAddUsers() {
         />
       ),
       validate: (formData, _) => {
-        const { hubRoles } = formData as { hubRoles: HubRbacRole[] };
-        if (!hubRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -107,10 +108,10 @@ export function RemoteAddUsers() {
   ];
 
   const onSubmit = (data: WizardFormValues) => {
-    const { users, hubRoles } = data;
+    const { users, platformRoles } = data;
     const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of hubRoles) {
+      for (const role of platformRoles) {
         items.push({ user, role });
       }
     }
@@ -124,7 +125,7 @@ export function RemoteAddUsers() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
-          postRequest(hubAPI`/_ui/v2/role_user_assignments/`, {
+          postRequest(gatewayAPI`/role_user_assignments/`, {
             user: user?.id,
             role_definition: role.id,
             content_type: 'galaxy.collectionremote',

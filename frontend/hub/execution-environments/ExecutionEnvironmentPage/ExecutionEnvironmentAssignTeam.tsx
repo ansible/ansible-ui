@@ -12,25 +12,27 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
-import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
 import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
-import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
 import { HubUserGroup } from '../../interfaces/expanded/HubUser';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { PlatformSelectTeamsStep } from '@ansible/common-ui/access/components/PlatformSelectTeamsStep';
+import { PlatformSelectRolesStep } from '@ansible/platform-ui/access/organizations/components/PlatformSelectRolesStep';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 
 interface WizardFormValues {
-  teams: HubUserGroup[]; // Assuming groups will map to team
-  hubRoles: HubRbacRole[];
+  teams: PlatformTeam[];
+  platformRoles: PlatformRbacRole[];
 }
 
 interface TeamRolePair {
-  team: HubUserGroup;
-  role: HubRbacRole;
+  team: PlatformTeam;
+  role: PlatformRbacRole;
 }
 
 export function ExecutionEnvironmentAssignTeams() {
@@ -62,7 +64,7 @@ export function ExecutionEnvironmentAssignTeams() {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <HubSelectTeamsStep
+        <PlatformSelectTeamsStep
           descriptionForTeamsSelection={t(
             'Select the team(s) that you want to give access to {{executionEnvironment}}.',
             {
@@ -79,11 +81,11 @@ export function ExecutionEnvironmentAssignTeams() {
       },
     },
     {
-      id: 'roles',
+      id: 'platformRoles',
       label: t('Select roles to apply'),
       inputs: (
-        <HubSelectRolesStep
-          contentType="containernamespace"
+        <PlatformSelectRolesStep
+          contentType="galaxy.containernamespace"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{executionEnvironment}}.', {
             executionEnvironment: executionEnvironment?.name,
@@ -91,8 +93,8 @@ export function ExecutionEnvironmentAssignTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { hubRoles } = formData as { hubRoles: HubRbacRole[] };
-        if (!hubRoles?.length) {
+        const { platformRoles } = formData as { platformRoles: PlatformRbacRole[] };
+        if (!platformRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -105,10 +107,10 @@ export function ExecutionEnvironmentAssignTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, hubRoles } = data;
+    const { teams, platformRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of hubRoles) {
+      for (const role of platformRoles) {
         items.push({ team, role });
       }
     }
@@ -122,7 +124,7 @@ export function ExecutionEnvironmentAssignTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
+          postRequest(gatewayAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
             content_type: 'galaxy.containernamespace', // Verify this one?

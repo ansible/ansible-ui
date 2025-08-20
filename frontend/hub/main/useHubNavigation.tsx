@@ -85,6 +85,10 @@ import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUs
 import { HubNamespaceAssignTeams } from '../namespaces/components/HubNamespaceAssignTeams';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { RemoteManageUsers } from '../administration/remotes/RemotePage/RemoteManageUser';
+import { ExecutionEnvironmentManageUsers } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentManageUser';
+import { HubNamespaceManageUsers } from '../namespaces/components/HubNamespaceManageUsers';
+import { RepositoryManageUsers } from '../administration/repositories/RepositoryPage/RepositoryManageUser';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -150,6 +154,12 @@ export function useHubNavigation() {
           id: HubRoute.NamespaceAddUsers,
           path: ':id/user-access/add',
           element: <HubNamespaceAddUsers />,
+        },
+        {
+          id: HubRoute.NamespaceManageUsers,
+          path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+          // eslint-disable-next-line react/jsx-no-undef
+          element: <HubNamespaceManageUsers />,
         },
         {
           id: HubRoute.NamespaceAssignTeams,
@@ -301,6 +311,11 @@ export function useHubNavigation() {
           element: <ExecutionEnvironmentAddUsers />,
         },
         {
+          id: HubRoute.ExecutionEnvironmentManageUsers,
+          path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+          element: <ExecutionEnvironmentManageUsers />,
+        },
+        {
           id: HubRoute.ExecutionEnvironmentImagePage,
           path: ':id/images/:tag/',
           element: <ExecutionEnvironmentImagePage />,
@@ -402,6 +417,11 @@ export function useHubNavigation() {
               id: HubRoute.RepositoryAddUsers,
               path: ':id/users-access/add',
               element: <RepositoryAddUsers />,
+            },
+            {
+              id: HubRoute.RepositoryManageUsers,
+              path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+              element: <RepositoryManageUsers />,
             },
             {
               path: ':id/versions-details/:version/',
@@ -535,6 +555,11 @@ export function useHubNavigation() {
               id: HubRoute.RemoteAddUsers,
               path: ':id/user-access/add',
               element: <RemoteAddUsers />,
+            },
+            {
+              id: HubRoute.RemoteManageUsers,
+              path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+              element: <RemoteManageUsers />,
             },
             {
               id: HubRoute.RemoteAssignTeams,

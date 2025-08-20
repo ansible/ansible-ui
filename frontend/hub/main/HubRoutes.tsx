@@ -14,6 +14,7 @@ export enum HubRoute {
   NamespaceTeamAccess = 'hub-namespace-team-access',
   NamespaceUserAccess = 'hub-namespace-user-access',
   NamespaceAddUsers = 'hub-namespace-add-users',
+  NamespaceManageUsers = 'hub-namespace-manage-users',
   NamespaceAssignTeams = 'hub-namespace-assign-teams',
 
   CollectionSignatureUpload = 'hub-signature-upload',
@@ -40,6 +41,7 @@ export enum HubRoute {
   ExecutionEnvironmentImageDetails = 'hub-create-execution-environment-image-details',
   ExecutionEnvironmentAssignTeams = 'hub-execution-environment-assign-teams',
   ExecutionEnvironmentAddUsers = 'hub-execution-environment-add-users',
+  ExecutionEnvironmentManageUsers = 'hub-execution-environment-manage-users',
   ExecutionEnvironmentTeamAccess = 'hub-execution-environment-team-access',
   ExecutionEnvironmentUserAccess = 'hub-execution-environment-user-access',
 
@@ -59,6 +61,7 @@ export enum HubRoute {
   RepositoryDistributions = 'hub-repository-page-distributions',
   RepositoryAssignTeams = 'hub-repository-assign-teams',
   RepositoryAddUsers = 'hub-repository-add-users',
+  RepositoryManageUsers = 'hub-repository-manage-users',
   RepositoryTeamAccess = 'hub-repository-team-access',
   RepositoryUserAccess = 'hub-repository-user-access',
 
@@ -80,6 +83,7 @@ export enum HubRoute {
   RemoteDetails = 'hub-remote-details',
   RemoteAssignTeams = 'hub-remote-assign-teams',
   RemoteAddUsers = 'hub-remote-add-users',
+  RemoteManageUsers = 'hub-remote-manage-users',
   RemoteTeamAccess = 'hub-remote-add-team-access',
   RemoteUserAccess = 'hub-remote-user-access',
 

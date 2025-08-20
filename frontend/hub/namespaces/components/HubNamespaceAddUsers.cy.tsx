@@ -1,5 +1,6 @@
 import { hubAPI } from '../../common/api/formatPath';
 import { HubNamespaceAddUsers } from './HubNamespaceAddUsers';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 describe('HubNamespaceAddUsers', () => {
   const component = <HubNamespaceAddUsers />;
@@ -14,11 +15,14 @@ describe('HubNamespaceAddUsers', () => {
     cy.intercept('GET', hubAPI`/_ui/v1/namespaces/?limit=1&name=demo*`, {
       fixture: 'hubNamespace.json',
     });
-    cy.intercept('GET', hubAPI`/_ui/v2/users/?is_superuser=false*`, {
+    cy.intercept('GET', gatewayAPI`/users/*`, {
       fixture: 'hubV2Users.json',
     });
-    cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/?content_type__model=namespace*`, {
+    cy.intercept('GET', gatewayAPI`/role_definitions/?content_type__api_slug=galaxy.namespace*`, {
       fixture: 'hubNamespaceRoles.json',
+    });
+    cy.intercept('GET', gatewayAPI`/service-index/role-types/`, {
+      fixture: 'platformRoleTypes.json',
     });
     cy.mount(component, params);
   });
@@ -29,14 +33,7 @@ describe('HubNamespaceAddUsers', () => {
     cy.get('[data-cy="wizard-nav-item-users"] button').should('have.class', 'pf-m-current');
     cy.get('table tbody').find('tr').should('have.length', 2);
   });
-  it('can filter users by username', () => {
-    cy.intercept('GET', hubAPI`/_ui/v2/users/?is_superuser=false&username__contains=demo-user*`, {
-      fixture: 'hubV2Users.json',
-    }).as('nameFilterRequest');
-    cy.filterTableByText('demo-user');
-    cy.wait('@nameFilterRequest');
-    cy.clearAllFilters();
-  });
+
   it('should validate that at least one user is selected for moving to next step', () => {
     cy.get('table tbody').find('tr').should('have.length', 2);
     cy.clickButton(/^Next$/);
@@ -44,18 +41,21 @@ describe('HubNamespaceAddUsers', () => {
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-users"] button').should('not.have.class', 'pf-m-current');
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
   });
   it('should validate that at least one role is selected for moving to Review step', () => {
     cy.get('table tbody').find('tr').should('have.length', 2);
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one role.');
     cy.selectTableRowByCheckbox('name', 'galaxy.collection_publisher', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
+    cy.get('[data-cy="wizard-nav-item-platformRoles"] button').should(
+      'not.have.class',
+      'pf-m-current'
+    );
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
   it('should display selected user and role in the Review step', () => {
@@ -68,19 +68,19 @@ describe('HubNamespaceAddUsers', () => {
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', 'Users');
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', '1');
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', 'demo-user');
-    cy.get('[data-cy="expandable-section-hubRoles"]').should('contain.text', 'Roles');
-    cy.get('[data-cy="expandable-section-hubRoles"]').should('contain.text', '1');
-    cy.get('[data-cy="expandable-section-hubRoles"]').should(
+    cy.get('[data-cy="expandable-section-platformRoles"]').should('contain.text', 'Roles');
+    cy.get('[data-cy="expandable-section-platformRoles"]').should('contain.text', '1');
+    cy.get('[data-cy="expandable-section-platformRoles"]').should(
       'contain.text',
       'galaxy.collection_publisher'
     );
-    cy.get('[data-cy="expandable-section-hubRoles"]').should(
+    cy.get('[data-cy="expandable-section-platformRoles"]').should(
       'contain.text',
       'Upload and modify collections.'
     );
   });
   it('should trigger bulk action dialog on submit', () => {
-    cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`, {
+    cy.intercept('POST', gatewayAPI`/role_user_assignments/`, {
       statusCode: 201,
       body: { user: 6, role_definition: 4, content_type: 'galaxy.namespace', object_id: 1 },
     }).as('createRoleAssignment');

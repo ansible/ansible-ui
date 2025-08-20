@@ -125,7 +125,7 @@ export function AccessList<T extends UserRoleAccess>(props: AccessProps<T>) {
     toolbarFilters,
     queryParams: queryParams,
   });
-  const rowActions = useResourceRolesActions(props?.manageRolesRoute ?? '');
+  const rowActions = useResourceRolesActions(props?.manageRolesRoute ?? '', params?.id);
 
   const toolbarActions = useMemo<IPageAction<T>[]>(
     () => [

@@ -34,7 +34,7 @@ export interface RoleAccess {
   ];
 }
 
-export function useResourceRolesActions(manageRolesRoute: string) {
+export function useResourceRolesActions(manageRolesRoute: string, id: string | undefined) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
@@ -50,6 +50,7 @@ export function useResourceRolesActions(manageRolesRoute: string) {
           const roleArray = roleAccess?.related?.details?.split('/');
           return pageNavigate(manageRolesRoute, {
             params: {
+              id: id,
               resource_type: roleArray?.length >= 4 ? roleArray[roleArray.length - 4] : undefined,
               resource_id: roleArray?.length >= 3 ? roleArray[roleArray.length - 3] : undefined,
               user_id: roleArray?.length >= 2 ? roleArray[roleArray.length - 2] : undefined,
@@ -58,5 +59,5 @@ export function useResourceRolesActions(manageRolesRoute: string) {
         },
       },
     ];
-  }, [manageRolesRoute, pageNavigate, t]);
+  }, [id, manageRolesRoute, pageNavigate, t]);
 }

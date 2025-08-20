@@ -1,12 +1,13 @@
 import { hubAPI } from '../../common/api/formatPath';
 import { HubNamespaceTeamAccess } from './HubNamespaceTeamAccess';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 
 describe('HubNamespaceTeamAccess', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: hubAPI`/_ui/v2/role_team_assignments/?object_id=*`,
+        url: gatewayAPI`/role_team_assignments/?object_id=*`,
       },
       {
         count: 1,

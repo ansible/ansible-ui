@@ -1,11 +1,11 @@
 import { LoadingPage } from '@ansible/ansible-ui-framework';
-import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
+import { PlatformTeamAccess } from '@ansible/common-ui/access/components/PlatformTeamAccess';
 
 export function ExecutionEnvironmentTeamAccess() {
   const params = useParams<{ id: string }>();
@@ -27,10 +27,9 @@ export function ExecutionEnvironmentTeamAccess() {
   }
 
   return (
-    <TeamAccess
-      service="hub"
+    <PlatformTeamAccess
       id={executionEnvironment?.namespace?.id?.toString() || ''}
-      type={'containernamespace'}
+      type={'galaxy.containernamespace'}
       addRolesRoute={HubRoute.ExecutionEnvironmentAssignTeams}
     />
   );
