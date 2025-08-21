@@ -4,14 +4,14 @@
 
 - Git tags determine release version and inform PDE team
 - **Checklist before tagging**:
-  - All backports merged into `release/2.5`
-  - e2e tests for `release/2.5` are green
-  - Upgrade pipelines targeting `release/2.5` are passing
+  - All backports merged into `release/2.5-lts`
+  - e2e tests for `release/2.5-lts` are green
+  - Upgrade pipelines targeting `release/2.5-lts` are passing
 
 ### Current Release Branch
 
-- Current shipping branch: `release/2.5`
-- > Note: branch name may change soon based on the branch strategy outcome.
+- Current shipping branch: `release/2.5-lts`
+- > Note: This is the long-term support branch for AAP 2.5
 - Remote assumed as `origin`
 
 ## Step-by-Step Instructions
@@ -20,15 +20,15 @@
 
 - Commands:
   - `git fetch origin`
-  - `git checkout origin/release/2.5`
+  - `git checkout origin/release/2.5-lts`
 
 ### 2. Verify your local `HEAD` matches the latest commit on the remote branch
 
-- Goal: ensure your local commit is identical to `origin/release/2.5`
+- Goal: ensure your local commit is identical to `origin/release/2.5-lts`
 - Commands:
-  - `git status` (should say "up to date" or "detached at origin/release/2.5")
+  - `git status` (should say "up to date" or "detached at origin/release/2.5-lts")
   - `git rev-parse HEAD`
-  - `git rev-parse origin/release/2.5`
+  - `git rev-parse origin/release/2.5-lts`
 - SHAs must match exactly
 - If not:
   - Pull/fetch again
@@ -69,5 +69,5 @@
 
 - Follow **Semantic Versioning**: **MAJOR.MINOR.PATCH**
 - For 2.5 line, only increment **PATCH**
-- Always tag the tip of `release/2.5`, not any other commit
+- Always tag the tip of `release/2.5-lts`, not any other commit
 - Double-check your local tag list and GitHub Tags page before pushing

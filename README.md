@@ -1,6 +1,6 @@
 # Ansible UI
 
-Ansible Automation Platform (AAP) UI code is housed in this repo and is maintained by the AAP-UI team of engineers. On the main branch, you can find the most up-to-date code for the UI. The release/2.5 branch contains code for AAP 2.5 GA and AAP 2.5_next.
+Ansible Automation Platform (AAP) UI code is housed in this repo and is maintained by the AAP-UI team of engineers. On the main branch, you can find the most up-to-date stable code for the UI. The release/2.5-lts branch contains code for AAP 2.5 GA and AAP 2.5_next long-term support.
 
 UI projects for [Ansible](https://www.ansible.com).
 
