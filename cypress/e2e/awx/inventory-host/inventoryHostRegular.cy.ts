@@ -59,13 +59,14 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   it("can view a host's facts on the facts tab of a host inside an inventory", () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
-    cy.clickButton(/^Create host$/);
+    cy.verifyPageTitle('Hosts');
+    cy.contains('a', 'Create host').click();
     cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
     cy.singleSelectByDataCy('inventory', inventory.name);
     cy.getByDataCy('variables').type('test: true');
-    cy.clickButton(/^Create host/);
+    cy.get('[data-cy="Submit"]').click();
     cy.hasDetail(/^Name$/, hostName);
     cy.hasDetail(/^Description$/, 'This is the description');
     cy.get('[data-cy="code-block-value"]').should('contains.text', 'test: true');

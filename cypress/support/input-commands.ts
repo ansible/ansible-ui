@@ -17,9 +17,7 @@ Cypress.Commands.add(
         if (notFound) {
           cy.contains('No results found');
         } else {
-          cy.contains('.pf-v6-c-menu__item-text', exactMatch ? regExp : value)
-            .parent()
-            .click();
+          cy.contains('.pf-v6-c-menu__item-text', exactMatch ? regExp : value).click();
         }
       });
   }

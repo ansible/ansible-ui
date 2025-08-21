@@ -36,6 +36,7 @@ describe('Workflow Job Templates Tests', () => {
     it('can create a WFJT with only a name and then edit it to add all optional fields, including extra vars', () => {
       const jtName = 'E2E ' + randomString(4);
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.clickButton(/^Create template$/);
       cy.clickLink(/^Create workflow job template$/);
       cy.get('[data-cy="name"]').type(jtName);
@@ -46,6 +47,7 @@ describe('Workflow Job Templates Tests', () => {
         .then((newWfjt: WorkflowJobTemplate) => {
           cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
           cy.navigateTo('awx', 'templates');
+          cy.verifyPageTitle('Automation Templates');
           cy.filterTableBySingleSelect('name', newWfjt.name);
           cy.clickTableRowAction('name', newWfjt.name, 'edit-template', {
             disableFilter: true,
@@ -86,6 +88,7 @@ describe('Workflow Job Templates Tests', () => {
     it('can create a workflow job template using all optional fields', () => {
       const jtName = 'E2E ' + randomString(4);
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.clickButton(/^Create template$/);
       cy.clickLink(/^Create workflow job template$/);
       cy.get('[data-cy="name"]').type(jtName);
@@ -146,6 +149,7 @@ describe('Workflow Job Templates Tests', () => {
     it('can edit a workflow job template from the details view', () => {
       const newName = (workflowJobTemplate.name ?? '') + ' edited';
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.filterTableBySingleSelect('name', workflowJobTemplate?.name);
       cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
       cy.verifyPageTitle(workflowJobTemplate.name);
@@ -170,27 +174,42 @@ describe('Workflow Job Templates Tests', () => {
       ).then((cred) => {
         tokenCredential = cred;
         cy.navigateTo('awx', 'templates');
+        cy.verifyPageTitle('Automation Templates');
+        cy.intercept('GET', awxAPI`/unified_job_templates/*`).as('result');
         cy.filterTableBySingleSelect('name', workflowJobTemplate?.name);
+        cy.wait('@result');
         expect(workflowJobTemplate.webhook_service).equals('');
         cy.clickTableRowAction('name', workflowJobTemplate.name, 'edit-template', {
           disableFilter: true,
         });
+        cy.verifyPageTitle(`Edit ${workflowJobTemplate.name}`);
+        cy.get('[data-cy="isWebhookEnabled"]').should('not.be.checked');
         cy.get('[data-cy="isWebhookEnabled"]').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
-        cy.singleSelectByDataCy('webhook_credential', tokenCredential.name);
+        cy.get('button').filter(`[data-cy="webhook_credential"]`).click();
+        cy.document()
+          .its('body')
+          .find('.pf-v6-c-menu__content')
+          .within(() => {
+            cy.getByDataCy('search-input').type(tokenCredential.name);
+            cy.contains('.pf-v6-c-menu__item-text', tokenCredential.name).click();
+          });
         cy.intercept(
           'PATCH',
           awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
         ).as('editedWFJT');
-        cy.clickButton(/^Save workflow job template$/);
+        cy.contains('Save workflow job template').click();
         cy.wait('@editedWFJT')
           .its('response.body')
           .then((editedWFJT: WorkflowJobTemplate) => {
             expect(editedWFJT.webhook_service).contains('github');
-
-            cy.clickLink('Edit template');
+            cy.verifyPageTitle(editedWFJT.name);
+            cy.get('[data-cy="name"]').should('be.visible');
+            cy.contains('Edit template').click();
+            cy.verifyPageTitle(`Edit ${workflowJobTemplate.name}`);
+            cy.get('[data-cy="isWebhookEnabled"]').should('be.checked');
             cy.get('[data-cy="isWebhookEnabled"]').click();
-            cy.clickButton(/^Save workflow job template$/);
+            cy.contains('Save workflow job template').click();
             cy.wait('@editedWFJT')
               .its('response.body')
               .then((revertWFJT: WorkflowJobTemplate) => {
@@ -211,29 +230,43 @@ describe('Workflow Job Templates Tests', () => {
       ).then((cred) => {
         tokenCredential = cred;
         cy.navigateTo('awx', 'templates');
+        cy.verifyPageTitle('Automation Templates');
+        cy.intercept('GET', awxAPI`/unified_job_templates/*`).as('result');
         cy.filterTableBySingleSelect('name', workflowJobTemplate?.name);
+        cy.wait('@result');
         expect(workflowJobTemplate.webhook_service).equals('');
         cy.clickTableRowAction('name', workflowJobTemplate.name, 'edit-template', {
           disableFilter: true,
         });
+        cy.verifyPageTitle(`Edit ${workflowJobTemplate.name}`);
+        cy.get('[data-cy="isWebhookEnabled"]').should('not.be.checked');
         cy.get('[data-cy="isWebhookEnabled"]').click();
-        cy.intercept('GET', awxAPI`/credential_types/?page=1&page_size=200`).as('credentialsList');
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitLab');
-        cy.wait('@credentialsList');
-        cy.singleSelectByDataCy('webhook_credential', tokenCredential.name);
+        cy.get('button').filter(`[data-cy="webhook_credential"]`).click();
+        cy.document()
+          .its('body')
+          .find('.pf-v6-c-menu__content')
+          .within(() => {
+            cy.getByDataCy('search-input').type(tokenCredential.name);
+            cy.contains('.pf-v6-c-menu__item-text', tokenCredential.name).click();
+          });
         cy.intercept(
           'PATCH',
           awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
         ).as('editedWFJT');
-        cy.clickButton(/^Save workflow job template$/);
+        cy.contains('Save workflow job template').click();
+        cy.wait(2000);
         cy.wait('@editedWFJT')
           .its('response.body')
           .then((editedWFJT: WorkflowJobTemplate) => {
             expect(editedWFJT.webhook_service).contains('gitlab');
-
-            cy.clickLink('Edit template');
+            cy.verifyPageTitle(editedWFJT.name);
+            cy.get('[data-cy="name"]').should('be.visible');
+            cy.contains('Edit template').click();
+            cy.verifyPageTitle(`Edit ${workflowJobTemplate.name}`);
+            cy.get('[data-cy="isWebhookEnabled"]').should('be.checked');
             cy.get('[data-cy="isWebhookEnabled"]').click();
-            cy.clickButton(/^Save workflow job template$/);
+            cy.contains('Save workflow job template').click();
             cy.wait('@editedWFJT')
               .its('response.body')
               .then((revertWFJT: WorkflowJobTemplate) => {
@@ -247,6 +280,7 @@ describe('Workflow Job Templates Tests', () => {
     it('can edit a workflow job template from the list row', () => {
       const newName = (workflowJobTemplate.name ?? '') + ' edited';
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.filterTableBySearch(workflowJobTemplate?.name);
       cy.clickTableRowAction('name', workflowJobTemplate?.name, 'edit-template', {
         disableFilter: true,
@@ -285,6 +319,7 @@ describe('Workflow Job Templates Tests', () => {
 
     it('can duplicate an existing workflow job template from the list', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
       cy.contains(workflowJobTemplate.name).should('be.visible');
       cy.intercept(
@@ -314,6 +349,7 @@ describe('Workflow Job Templates Tests', () => {
 
     it('can duplicate an existing workflow job template from the details page', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.filterTableBySearch(workflowJobTemplate.name);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
       cy.intercept(
@@ -321,7 +357,6 @@ describe('Workflow Job Templates Tests', () => {
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/copy/`
       ).as('copiedWFJT');
       cy.verifyPageTitle(workflowJobTemplate.name);
-
       cy.getBy(`[data-cy="actions-dropdown"]`).click();
       cy.getBy('[data-cy="duplicate-template"]').click();
       cy.wait('@copiedWFJT')
@@ -372,6 +407,7 @@ describe('Workflow Job Templates Tests', () => {
       }).then((wfJT) => {
         newWorkflowJobTemplate = wfJT;
         cy.navigateTo('awx', 'templates');
+        cy.verifyPageTitle('Automation Templates');
         cy.selectTableRow(workflowJobTemplate.name);
         cy.selectTableRow(newWorkflowJobTemplate?.name);
         cy.clickToolbarKebabAction('delete-templates');
@@ -424,7 +460,6 @@ describe('Workflow Job Templates Tests', () => {
       cy.filterTableBySearch(workflowJobTemplate.name);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(workflowJobTemplate.name);
-
       cy.getBy(`[data-cy="actions-dropdown"]`).click();
       cy.getBy('[data-cy="delete-template"]').click();
       cy.clickModalConfirmCheckbox();
@@ -443,6 +478,7 @@ describe('Workflow Job Templates Tests', () => {
 
     it('can delete a workflow job template from the list row', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.intercept(
         'DELETE',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
@@ -506,6 +542,7 @@ describe('Workflow Job Templates Tests', () => {
 
     it('can save and launch a workflow job template from list view', function () {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.intercept(
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
@@ -525,6 +562,7 @@ describe('Workflow Job Templates Tests', () => {
 
     it('can save and launch a workflow job template from details view', () => {
       cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Automation Templates');
       cy.filterTableBySearch(workflowJobTemplate?.name);
       cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
       cy.verifyPageTitle(workflowJobTemplate.name);

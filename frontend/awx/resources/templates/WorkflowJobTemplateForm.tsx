@@ -62,7 +62,7 @@ export function EditWorkflowJobTemplate() {
     });
 
     await submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels);
-    clearCacheByKey(awxAPI`/labels/`);
+    clearCacheByKey(awxAPI`/workflow_job_templates/${id.toString()}/`);
     pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: id.toString() } });
   };
 

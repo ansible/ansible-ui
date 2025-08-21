@@ -206,12 +206,18 @@ export function createHostAndCancelJob(
     project: projectId,
   }).then((jobTemplate) => {
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
+    cy.intercept('GET', awxAPI`/inventories/*`).as('invResult');
     cy.filterTableBySearch(inventory.name);
+    cy.wait('@invResult');
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v6-c-tabs__item > a').contains('Hosts').click();
     const hostName = createHost('inventory_host', inventory.id);
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
+    cy.intercept('GET', awxAPI`/inventories/*`).as('invResult');
     cy.filterTableBySearch(inventory.name);
+    cy.wait('@invResult');
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v6-c-tabs__item > a').contains('Job Templates').click();
     // run  a template and wait for redirect to Job output
