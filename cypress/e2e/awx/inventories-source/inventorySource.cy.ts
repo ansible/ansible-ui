@@ -51,7 +51,7 @@ describe('Inventory Sources', () => {
     it('inventory source tab - user can create an inventory and create a source from a project', () => {
       const credentialName = 'e2e-' + randomString(4);
       const executionEnvironmentName = 'e2e-' + randomString(4);
-      const inventoryFile = 'e2e-' + randomString(4);
+      const inventoryFile = randomString(4);
 
       let credential: Credential;
       let executionEnvironment: ExecutionEnvironment;
@@ -78,7 +78,8 @@ describe('Inventory Sources', () => {
           cy.get('div#inventory-file-toggle').within(() => {
             cy.get('button').click();
             cy.get('input[aria-label="Type to filter"]').should('be.visible').and('be.focused');
-            cy.get('input[aria-label="Type to filter"]').clear().type(inventoryFile, { delay: 50 });
+            cy.get('input[aria-label="Type to filter"]').clear();
+            cy.get('input[aria-label="Type to filter"]').type(inventoryFile, { delay: 200 });
           });
           cy.get('div#inventory-typeahead-select').within(() => {
             cy.contains('Create').should('be.visible');
@@ -337,16 +338,20 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
   });
 
   it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page', () => {
-    const inventoryFile = 'e2e-' + randomString(4);
+    const inventoryFile = randomString(4);
+    const sourceName = 'source-' + randomString(4);
+    const projName = 'proj-' + randomString(4);
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
+    cy.intercept('GET', awxAPI`/inventories/*`).as('invResult');
     cy.filterTableBySingleSelect('name', inventory.name);
+    cy.wait('@invResult');
     cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
     cy.verifyPageTitle(inventory.name);
     cy.clickTab(/^Sources$/, true);
     cy.contains('Create source').click();
     cy.verifyPageTitle('Create source');
-    cy.getByDataCy('name').type('amazon ec2 source');
+    cy.getByDataCy('name').type(sourceName);
     cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
     cy.singleSelectByDataCy('credential', credentialName);
     cy.getByDataCy('host-filter').type('/^test$/');
@@ -355,18 +360,18 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.getByDataCy('enabled-value').type('test');
     cy.getByDataCy('overwrite').check();
     cy.getByDataCy('Submit').click();
-    cy.verifyPageTitle('amazon ec2 source');
+    cy.verifyPageTitle(sourceName);
     cy.clickButton('Edit inventory source');
-    cy.verifyPageTitle(`Edit amazon ec2 source`);
-    cy.getByDataCy('name').clear().type('updated amazon ec2 source');
+    cy.verifyPageTitle(`Edit ${sourceName}`);
+    cy.getByDataCy('name').clear().type(`updated ${sourceName}`);
     cy.getByDataCy('overwrite_vars').check();
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);
-    cy.verifyPageTitle('updated amazon ec2 source');
+    cy.verifyPageTitle(`updated ${sourceName}`);
     cy.clickButton('Edit inventory source');
     cy.location('pathname').should('match', /\/edit$/);
-    cy.verifyPageTitle(`Edit updated amazon ec2 source`);
-    cy.getByDataCy('name').clear().type('new project');
+    cy.verifyPageTitle(`Edit ${`updated ${sourceName}`}`);
+    cy.getByDataCy('name').clear().type(projName);
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
     cy.getByDataCy('overwrite_vars').check();
     cy.getByDataCy('update_on_launch').check();
@@ -374,7 +379,8 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.get('div#inventory-file-toggle').within(() => {
       cy.get('button').click();
       cy.get('input[aria-label="Type to filter"]').should('be.visible').and('be.focused');
-      cy.get('input[aria-label="Type to filter"]').clear().type(inventoryFile, { delay: 50 });
+      cy.get('input[aria-label="Type to filter"]').clear();
+      cy.get('input[aria-label="Type to filter"]').type(inventoryFile, { delay: 200 });
     });
     cy.get('div#inventory-typeahead-select').within(() => {
       cy.contains('Create').should('be.visible');
@@ -388,8 +394,8 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     });
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);
-    cy.verifyPageTitle('new project');
-    cy.getByDataCy('name').should('contain', 'new project');
+    cy.verifyPageTitle(projName);
+    cy.getByDataCy('name').should('contain', projName);
     cy.getByDataCy('organization').should('contain', organizationEC2.name);
     cy.getByDataCy('project').should('contain', project.name);
     cy.getByDataCy('inventory-file').should('contain', inventoryFile);

@@ -104,12 +104,12 @@ describe('Check if the build includes EDA', () => {
       const name = 'E2E Project ' + randomString(4);
       cy.intercept('OPTIONS', edaAPI`/projects/`).as('options');
       cy.navigateTo('eda', 'projects');
-      cy.get('h1').should('contain', 'Projects');
+      cy.verifyPageTitle('Projects');
       cy.wait('@options');
       cy.clickButton(/^Create project$/);
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');
-      cy.selectSingleSelectOption('[data-cy="organization_id"]', edaOrg.name);
+      cy.singleSelectByDataCy('organization_id', edaOrg.name);
       cy.intercept('POST', edaAPI`/projects/`).as('project');
       cy.clickButton(/^Create project$/);
       cy.wait('@project')

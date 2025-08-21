@@ -19,7 +19,32 @@ describe('If SaaS Build', () => {
 
     it('checks the browse content titles user can see in the hands on quick starts on Automation Hub ', () => {
       cy.navigateTo('platform', 'quickstarts');
+      cy.verifyPageTitle('Quick Starts');
       cy.contains('Learn Ansible automation with hands-on quickstarts.').should('be.visible');
+      const quickstartTitles = [
+        'Building a decision environment',
+        'Building an automation execution environment',
+        'Create organization',
+        'Create teams',
+        'Create users',
+        'Creating a dynamic inventory',
+        'Creating a project',
+        'Creating a rulebook activation',
+        'Creating an inventory',
+        'Creating and running a job or workflow template',
+        'Environments',
+        'Finding content in Ansible Automation Platform',
+        'Getting started with Ansible Automation Platform - Ansible Operator',
+        'Getting started with Ansible Automation Platform - Automation Developer',
+        'Getting started with Ansible Automation Platform - Platform Administrator',
+        'Inventories',
+        'Projects',
+        'Review roles',
+        'Rulebook activations',
+        'Setting up Ansible Lightspeed',
+        'Setting up automation mesh',
+        'Templates',
+      ];
       const quickstartDescriptions = [
         `Build a decision environment.\nPersona: Platform administrator, Automation developer`,
         `Build, view, and sync an environment.\nPersona: Platform administrator, Automation developer`,
@@ -44,11 +69,17 @@ describe('If SaaS Build', () => {
         `Automate at scale in a cloud-native way\nPersona: All`,
         `Launching a job template.\nPersona: Ansible Operator`,
       ];
-      cy.get('[class*="catalog-item"] [class*="card__body"] [id*="markdown"]')
-        .should('have.length', quickstartDescriptions.length)
-        .each(($el, index) => {
-          expect($el.text().trim()).to.eq(quickstartDescriptions[index]);
-        });
+      cy.contains('button', 'Status').should('be.visible');
+      cy.contains('button', 'Status').and('have.attr', 'aria-expanded', 'false');
+      cy.get('[class*="catalog-item"] [class*="card__title-text"] [data-test="title"]').each(
+        ($el, index) => {
+          expect($el.text().trim()).to.eq(quickstartTitles[index]);
+        }
+      );
+      cy.get('[class*="catalog-item"] [class*="card__body"] [id*="markdown"]').should(
+        'have.length',
+        quickstartDescriptions.length
+      );
       cy.get('button[id="finding-content-in-ansible-automation-platform"]')
         .click({ force: true })
         .then(() => {
@@ -99,6 +130,11 @@ describe('If SaaS Build', () => {
               cy.get('[class*="drawer__close"]').click();
             });
         });
+      cy.get('[class*="catalog-item"] [class*="card__body"] [id*="markdown"]').each(
+        ($el, index) => {
+          expect($el.text().trim()).to.eq(quickstartDescriptions[index]);
+        }
+      );
     });
 
     it('task 1 - Filter content by repository type in the Collections view', () => {
