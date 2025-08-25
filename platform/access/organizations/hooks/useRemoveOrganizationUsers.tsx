@@ -67,6 +67,7 @@ export function useRemoveOrganizationUsers(onComplete: (users: UserRoleAccess[])
         const orgMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
           user: user?.id,
           object_id: organization?.id ?? '',
+          content_type__api_slug: 'shared.organization',
         });
 
         await Promise.all(

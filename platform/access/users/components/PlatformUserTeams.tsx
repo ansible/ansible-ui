@@ -10,8 +10,8 @@ import {
   usePageAlertToaster,
   usePageDialog,
 } from '@ansible/ansible-ui-framework';
-import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
-import { useGet } from '@ansible/common-ui/crud/useGet';
+import { getItemKey } from '@ansible/common-ui/crud/Data';
+import { useGet, useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -25,6 +25,8 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
 import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
 
 export function PlatformUserTeams() {
   const { t } = useTranslation();
@@ -152,7 +154,21 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
 
 function useRemoveUserTeams(userId: string, onComplete: (teams: PlatformTeam[]) => void) {
   const { t } = useTranslation();
+  const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
+  const deleteRequest = useDeleteRequest();
   const confirmationColumns = useTeamColumns({ disableLinks: true });
+  const { data: teamMemberRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Team Member',
+    }
+  );
+  const { data: teamAdminRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Team Admin',
+    }
+  );
   const removeActionNameColumn = useMemo(
     () => ({
       header: t('Team name'),
@@ -178,12 +194,30 @@ function useRemoveUserTeams(userId: string, onComplete: (teams: PlatformTeam[]) 
       confirmationColumns: confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team: PlatformTeam, signal) =>
-        postRequest(
-          userId && team?.id ? gatewayAPI`/teams/${team.id.toString()}/users/disassociate/` : '',
-          { instances: [userId] },
-          signal
-        ),
+      actionFn: async (team: PlatformTeam) => {
+        const teamMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
+          object_id: team?.id ?? '',
+          user_id: userId,
+          role_definition: `${teamMemberRoleData?.results[0]?.id}`,
+        });
+
+        await Promise.all(
+          teamMemberRoleAssignments?.results?.map(async (assignment) => {
+            await deleteRequest(gatewayAPI`/role_user_assignments/${assignment?.id}/`);
+          })
+        );
+        const teamAdminRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
+          object_id: team?.id ?? '',
+          user_id: userId,
+          role_definition: `${teamAdminRoleData?.results[0]?.id}`,
+        });
+
+        await Promise.all(
+          teamAdminRoleAssignments?.results?.map(async (assignment) => {
+            await deleteRequest(gatewayAPI`/role_user_assignments/${assignment?.id}/`);
+          })
+        );
+      },
     });
   };
   return removeTeams;
