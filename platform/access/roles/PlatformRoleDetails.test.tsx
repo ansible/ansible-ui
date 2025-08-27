@@ -132,6 +132,7 @@ describe('PlatformRoleDetails', () => {
 
     // Should render even with minimal data - check that the name is displayed
     expect(screen.getByTestId('name')).toHaveTextContent('Basic Role');
+    expect(screen.getByTestId('role-creation')).toHaveTextContent('Custom');
   });
 
   it('should handle role with special characters in name', async () => {

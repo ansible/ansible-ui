@@ -76,7 +76,7 @@ export function usePlatformRoleColumns(options?: {
       {
         header: t('Role creation'),
         type: 'text',
-        value: () => 'Default',
+        value: (role) => (role.managed ? 'Default' : 'Custom'),
         modal: options?.disableExtraColumns ? 'hidden' : undefined,
         table: options?.disableExtraColumns ? 'hidden' : undefined,
       },
