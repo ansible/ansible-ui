@@ -60,7 +60,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
     cy.verifyPageTitle('Hosts');
-    cy.contains('a', 'Create host').click();
+    cy.getByDataCy('create-host').click();
     cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
