@@ -35,20 +35,21 @@ export function CreateOAuthApplication() {
   const postRequest = usePostRequest<Application>();
   const { clearCacheByKey } = useClearCache();
   const { pushDialog, popDialog } = usePageDialogs();
+
   const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
     const newApplication = await postRequest(gatewayAPI`/applications/`, application);
     clearCacheByKey(gatewayAPI`/app_urls/`);
-    setTimeout(() => {
-      pushDialog(
-        <OAuthApplicationSecretModal
-          onClose={() => popDialog()}
-          applicationModalSource={newApplication}
-        />
-      );
-    }, 300);
-    pageNavigate(PlatformRoute.ApplicationDetails, {
-      params: { applicationId: newApplication.id },
-    });
+    pushDialog(
+      <OAuthApplicationSecretModal
+        onClose={() => {
+          popDialog();
+          pageNavigate(PlatformRoute.ApplicationDetails, {
+            params: { applicationId: newApplication.id },
+          });
+        }}
+        applicationModalSource={newApplication}
+      />
+    );
   };
 
   const onCancel = () => void navigate(-1);

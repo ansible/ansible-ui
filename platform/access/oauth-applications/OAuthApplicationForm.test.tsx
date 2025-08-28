@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PlatformOrganization } from '../../interfaces/PlatformOrganization';
@@ -10,6 +11,9 @@ import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { CreateOAuthApplication, EditOAuthApplication } from './OAuthApplicationForm';
 
 // Mock usePageNavigate and related hooks
+const mockPushDialog = vi.fn();
+const mockPopDialog = vi.fn();
+
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
   return {
@@ -21,8 +25,8 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
           `/mock-url/${route}/${params ? JSON.stringify(params) : ''}`
       ),
     usePageDialogs: () => ({
-      pushDialog: vi.fn(),
-      popDialog: vi.fn(),
+      pushDialog: mockPushDialog,
+      popDialog: mockPopDialog,
     }),
   };
 });
@@ -107,6 +111,12 @@ describe('OAuthApplicationForm', () => {
   };
 
   const server = setupServer(
+    http.get(gatewayAPI`/organizations/`, () => {
+      return HttpResponse.json({
+        count: 1,
+        results: [mockOrganization],
+      });
+    }),
     http.get(gatewayAPI`/organizations/1/`, () => {
       return HttpResponse.json(mockOrganization);
     }),
@@ -123,6 +133,8 @@ describe('OAuthApplicationForm', () => {
         id: 2,
         name: body.name || 'New Application',
         description: body.description || '',
+        client_id: 'new-client-id',
+        client_secret: 'new-client-secret',
       });
     }),
     http.patch(gatewayAPI`/applications/1/`, async ({ request }) => {
@@ -141,6 +153,8 @@ describe('OAuthApplicationForm', () => {
   afterEach(() => {
     server.resetHandlers();
     vi.clearAllMocks();
+    mockPushDialog.mockClear();
+    mockPopDialog.mockClear();
   });
 
   afterAll(() => {
@@ -260,6 +274,62 @@ describe('OAuthApplicationForm', () => {
       await waitFor(() => {
         expect(submitButton).toBeInTheDocument();
       });
+    });
+
+    test('should show OAuth application secrets modal after successful creation', async () => {
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('Enter OAuth application name')).toBeInTheDocument();
+      });
+
+      // Fill out required fields
+      await userEvent.type(
+        screen.getByPlaceholderText('Enter OAuth application name'),
+        'New OAuth App'
+      );
+      await userEvent.type(screen.getByPlaceholderText('Enter description'), 'Test description');
+      await userEvent.type(
+        screen.getByPlaceholderText('Enter redirect URIs'),
+        'https://example.com/callback'
+      );
+
+      // Need to select an organization as it's required
+      const orgSelectButton = screen.getByRole('button', { name: 'Organization' });
+      await userEvent.click(orgSelectButton);
+
+      // Wait for dropdown options to appear and select the first one
+      await waitFor(() => {
+        expect(screen.getAllByText('Test Organization')).toHaveLength(2);
+      });
+      const organizationOptions = screen.getAllByText('Test Organization');
+      // Click the option in the dropdown menu (should be the second one)
+      await userEvent.click(organizationOptions[1]);
+
+      // Submit form
+      const submitButton = screen.getByRole('button', { name: /create oauth application/i });
+      await userEvent.click(submitButton);
+
+      // Wait for the API call to complete and verify the modal was opened
+      await waitFor(
+        () => {
+          expect(mockPushDialog).toHaveBeenCalledTimes(1);
+        },
+        { timeout: 3000 }
+      );
+
+      // Verify that pushDialog was called with the OAuthApplicationSecretModal
+      const pushDialogCall = mockPushDialog.mock.calls[0][0] as React.ReactElement<{
+        applicationModalSource: Application;
+        onClose: () => void;
+      }>;
+      expect(pushDialogCall.type).toHaveProperty('name', 'OAuthApplicationSecretModal');
+      expect(pushDialogCall.props).toHaveProperty('applicationModalSource');
+      expect(pushDialogCall.props.applicationModalSource).toEqual(
+        expect.objectContaining({
+          id: 2,
+          name: 'New OAuth App',
+          description: 'Test description',
+        })
+      );
     });
 
     test('should display gateway URLs in the OAuth configuration instructions', async () => {
