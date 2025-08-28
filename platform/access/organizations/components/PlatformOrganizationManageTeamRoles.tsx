@@ -75,6 +75,7 @@ export function PlatformOrganizationManageTeamRoles() {
     url: gatewayAPI`/role_definitions/`,
     queryParams: {
       content_type__api_slug: 'shared.organization',
+      not__name__contains: ['Organization Member', 'Organization Admin'],
     },
     toolbarFilters,
     tableColumns,
