@@ -357,9 +357,7 @@ describe('Workflow Visualizer', () => {
                 cy.clickButton('Finish');
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
-
                 cy.selectAsyncSingleSelectOption('project-select', project.name);
-
                 cy.selectDropdownOptionByResourceName('node-convergence', 'All');
                 cy.clickButton('Next');
                 cy.clickButton('Finish');
@@ -378,8 +376,7 @@ describe('Workflow Visualizer', () => {
   });
 
   describe('Workflow Visualizer: Delete Nodes or Links', () => {
-    //TODO: unskip this test once the UI bug AAP-42422 is fixed
-    it.skip('Can delete one single node and save the visualizer', function () {
+    it('Can delete one single node and save the visualizer', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then((projNode) => {
         projectNode = projNode;
         cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then(() => {

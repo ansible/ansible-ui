@@ -45,6 +45,8 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.get('[data-cy="Submit"]').click();
       cy.hasAlert(`Sync started for repository "${repository.name}"`).should('be.visible');
       cy.navigateTo('hub', Tasks.url);
+      cy.verifyPageTitle('Task Management');
+      cy.filterTableByTextFilter('Task name', 'pulp_ansible.app.tasks.collections.sync');
       cy.clickTableRowLink('name', 'pulp_ansible.app.tasks.collections.sync', {
         disableFilter: true,
       });

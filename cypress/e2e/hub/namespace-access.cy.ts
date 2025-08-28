@@ -20,7 +20,7 @@ describe('Namespace - team and user access', () => {
     cy.createPlatformRole(customRole.roleName, customRole.roleDescription, customRole.contentType, [
       customRole.permission,
     ]).then((createdRole) => {
-      role = createdRole as PlatformRole;
+      role = createdRole;
     });
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;

@@ -1,14 +1,14 @@
 //Tests a user's ability within a team to perform certain actions on the Resources toolbar in the EDA UI.
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
 import { EdaEventStream } from '@ansible/eda-ui/interfaces/EdaEventStream';
 import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
 import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
-import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { LogLevelEnum, Organization } from '@ansible/eda-ui/interfaces/generated/eda-api';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { user_team_access_tab_resources } from '../../../support/constants';
-import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 
 describe('Check if the build includes EDA', () => {
@@ -126,10 +126,13 @@ describe('Check if the build includes EDA', () => {
                     ? edaCredential
                     : edaEventStream;
           cy.getPlatformRoles().then((rolesArray) => {
-            roleIDs = (rolesArray as { [key: string]: number }[]).reduce((acc, role) => {
-              const { name, id } = role;
-              return { ...acc, [name]: id };
-            }, {});
+            roleIDs = rolesArray.reduce(
+              (acc, role) => {
+                const { name, id } = role;
+                return { ...acc, [name]: id };
+              },
+              {} as { [key: string]: number }
+            );
             RoleID = roleIDs[resource.role];
             cy.createRoleTeamAssignments(
               resource_object.id.toString(),

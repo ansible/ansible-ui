@@ -9,6 +9,7 @@ import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 
 describe('Inventories Tests', () => {
   let organization: Organization;
@@ -31,14 +32,17 @@ describe('Inventories Tests', () => {
             cy.createAwxInstanceGroup().then((ig) => {
               instanceGroup = ig;
               cy.createAwxInventory(organization).then((inv) => {
-                //the cy.createAwxInventory() custom command needs to be updated to accept the
-                //'kind' parameter, in order to work with the conditional in this spec file
                 inventory = inv;
+
+                cy.createAwxUser({ organization: organization.id }).then((testUser) => {
+                  user = testUser;
+                  cy.getPlatformRoleByName('Inventory Admin', 'awx.inventory').then(
+                    (invRole: PlatformRole) => {
+                      cy.assignUserNewRole(inventory.id.toString(), invRole.id, user.id.toString());
+                    }
+                  );
+                });
               });
-            });
-            cy.createAwxUser({ organization: organization.id }).then((testUser) => {
-              user = testUser;
-              cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
             });
           });
         });
@@ -134,7 +138,6 @@ describe('Inventories Tests', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.selectTableRowByCheckbox('name', inventory.name, { disableFilter: true });
-          //Add an assertion that the expected inventory name appears where it should
           cy.clickToolbarKebabAction('delete-inventories');
           cy.get('#confirm').click();
           cy.clickButton(/^Delete inventory/);

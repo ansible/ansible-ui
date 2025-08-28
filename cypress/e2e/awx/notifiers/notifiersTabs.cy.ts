@@ -3,6 +3,7 @@ import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 import { testDelete } from './notifiersSharedFunctions';
+import { NotificationTemplate } from '@ansible/awx-ui/interfaces/NotificationTemplate';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
@@ -21,7 +22,6 @@ describe('Notifications', () => {
 
   describe('Notifications: Details View', () => {
     beforeEach(() => {
-      // reloading page so the notifications disappears
       cy.reload();
     });
 
@@ -54,12 +54,21 @@ describe('Notifications', () => {
 
     it('can delete the Notification on its details page and assert deletion', () => {
       const notificationName = randomE2Ename();
-      cy.createNotificationTemplate(notificationName, awxOrganization).then(() => {
+      let notificationTemplate: NotificationTemplate;
+
+      cy.createNotificationTemplate(notificationName, awxOrganization).then((template) => {
+        notificationTemplate = template;
         cy.navigateTo('awx', 'notification-templates');
         cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+        cy.verifyPageTitle('Notifiers');
         cy.filterTableBySearch(notificationName);
         cy.wait('@search');
+        cy.intercept(
+          'GET',
+          awxAPI`/notification_templates/${notificationTemplate.id.toString()}/`
+        ).as('template');
         cy.get('[data-cy="name-column-cell"] a').click();
+        cy.wait('@template');
         testDelete(notificationName, { details: true });
       });
     });
@@ -69,7 +78,7 @@ describe('Notifications', () => {
       const orgName = randomE2Ename();
       cy.createAwxOrganization({ name: orgName }).then(() => {
         cy.navigateTo('awx', 'notification-templates');
-        cy.get(`[data-cy="create-notifier"]`).click();
+        cy.contains('Create notifier').click();
         cy.verifyPageTitle('Create notifier');
         cy.get(`[data-cy="name"]`).type(notificationName);
         cy.get(`[data-cy="description"]`).type('this is test description');
@@ -103,8 +112,11 @@ describe('Notifications', () => {
         cy.contains(`[data-cy="port"]`, '80');
         cy.contains(`[data-cy="timeout"]`, '100');
         cy.getByDataCy(`edit-notifier`).click();
-        cy.get(`[data-cy="name"]`).clear().type(notificationName);
-        cy.get(`[data-cy="description"]`).clear().type('this is test description edited');
+        cy.verifyPageTitle(`Edit ${notificationName}`);
+        cy.get(`[data-cy="name"]`).clear();
+        cy.get(`[data-cy="name"]`).type(notificationName);
+        cy.get(`[data-cy="description"]`).clear();
+        cy.get(`[data-cy="description"]`).type('this is test description edited');
         cy.get(`[data-cy="notification-configuration-username"]`).clear().type('email user edited');
         cy.get(`[data-cy="notification-configuration-host"]`)
           .clear()
