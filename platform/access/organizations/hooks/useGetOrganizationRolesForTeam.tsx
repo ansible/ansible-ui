@@ -23,7 +23,7 @@ export function useGetOrganizationRolesForTeam(
     results: TeamAssignment[];
   }>(gatewayApiUrl);
   const { data: roles, isLoading: isLoadingRoles } = useGet<{ results: PlatformRole[] }>(
-    gatewayAPI`/role_definitions/?content_type__api_slug=shared.organization`
+    gatewayAPI`/role_definitions/?content_type__api_slug=shared.organization&not__name__contains=Organization Member&not__name__contains=Organization Admin`
   );
 
   return useMemo(() => {

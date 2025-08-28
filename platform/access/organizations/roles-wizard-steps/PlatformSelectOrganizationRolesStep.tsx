@@ -6,7 +6,10 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { usePlatformRoleColumns } from '../../roles/hooks/usePlatformRoleColumns';
 import { usePlatformRolesFilters } from '../../roles/hooks/usePlatformRolesFilters';
 
-export function PlatformSelectOrganizationRolesStep(props: { fieldNameForPreviousStep?: string }) {
+export function PlatformSelectOrganizationRolesStep(props: {
+  fieldNameForPreviousStep?: string;
+  excludeRoles?: string[];
+}) {
   const toolbarFilters = usePlatformRolesFilters();
 
   const { t } = useTranslation();
@@ -19,6 +22,7 @@ export function PlatformSelectOrganizationRolesStep(props: { fieldNameForPreviou
       url: gatewayAPI`/role_definitions/`,
       queryParams: {
         content_type__api_slug: 'shared.organization',
+        not__name__contains: props.excludeRoles ?? [],
       },
       toolbarFilters,
       tableColumns,
