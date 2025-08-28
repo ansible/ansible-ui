@@ -8,8 +8,8 @@ import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
 import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
-import { ActivationRead } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { ActivationRead } from '@ansible/eda-ui/interfaces/generated/eda-api';
 
 describe('Check if the build includes EDA', () => {
   before(function () {
@@ -27,37 +27,31 @@ describe('Check if the build includes EDA', () => {
     let edaDecisionEnvironment: EdaDecisionEnvironment;
     let edaRuleBook: EdaRulebook;
     let edaOrg: EdaOrganization;
-    let edaCredential: EdaCredential | undefined;
-    let AAPCredential: EdaCredential | undefined;
+    let edaCredential: EdaCredential;
+    let AAPCredential: EdaCredential;
     let edaEventStream1: EdaEventStream;
-    let edaEventStream2: EdaEventStream;
-    let RBA: EdaRulebookActivation;
+    let edaRBA1: EdaRulebookActivation;
 
-    before(() => {
+    beforeEach(() => {
       cy.createEdaOrganization().then((organization) => {
         edaOrg = organization;
         cy.requestPost<EdaProject>(edaAPI`/projects/`, {
           name: 'E2E Project ' + randomString(4),
           organization_id: edaOrg.id,
-          url: 'https://github.com/appuk/eda-project',
+          url: 'https://github.com/Alex-Izquierdo/eda-sample-project',
         }).then((project) => {
           edaProject = project;
           cy.waitEdaProjectSync(project);
-          cy.getEdaRulebooks(edaProject, 'multiple_source_job_template.yml').then(
-            (edaRuleBooks) => {
-              edaRuleBook = edaRuleBooks[0];
-              cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
-                edaDecisionEnvironment = decisionEnvironment;
-                cy.createBasicEventStreamCredential(edaOrg.id).then((credential) => {
-                  if (credential) {
-                    edaCredential = credential;
-                  }
-                  cy.createBasicEventStream(credential, edaOrg.id).then((EdaEventStream) => {
-                    edaEventStream1 = EdaEventStream;
-                  });
-                  cy.createBasicEventStream(credential, edaOrg.id).then((EdaEventStream) => {
-                    edaEventStream2 = EdaEventStream;
-                  });
+          cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+            edaRuleBook = edaRuleBooks[0];
+            cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
+              edaDecisionEnvironment = decisionEnvironment;
+              cy.createBasicEventStreamCredential(edaOrg.id).then((credential) => {
+                if (credential) {
+                  edaCredential = credential;
+                }
+                cy.createBasicEventStream(edaCredential, edaOrg.id).then((EdaEventStream) => {
+                  edaEventStream1 = EdaEventStream;
                   cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
                     name: 'E2E Credential ' + randomString(4),
                     organization_id: edaOrg.id,
@@ -74,31 +68,99 @@ describe('Check if the build includes EDA', () => {
                         AAPCredential = credential;
                       }
                     });
+
+                    const name = 'E2E Rulebook Activation ' + randomString(4);
+                    cy.navigateTo('eda', 'rulebook-activations');
+                    cy.clickLink('Create rulebook activation');
+                    cy.verifyPageTitle('Create rulebook activation');
+                    cy.get('[data-cy="name"]').type(name);
+                    cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
+                    cy.get('[data-cy="project_id"]').click();
+                    cy.clickButton('Browse');
+                    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+                      cy.get('table').should('exist');
+                      cy.getBy('[data-cy="text-input"] input').type(edaProject.name);
+                      cy.getBy('button[data-cy="apply-filter"]').click();
+                      cy.get('tbody tr input').click();
+                      cy.clickButton('Confirm');
+                    });
+                    cy.get('[data-cy="rulebook_id"]').click();
+                    cy.clickButton('Browse');
+                    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+                      cy.get('table').should('exist');
+                      cy.getBy('[data-cy="text-input"] input').type(edaRuleBook.name);
+                      cy.getBy('button[data-cy="apply-filter"]').click();
+                      cy.get('tbody tr input').click();
+                      cy.clickButton('Confirm');
+                    });
+                    cy.selectDropdownOptionByResourceName(
+                      'decision-environment-id',
+                      edaDecisionEnvironment.name
+                    );
+                    cy.getBy('[data-cy="organization_id"]').click();
+                    cy.clickButton('Browse');
+                    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+                      cy.get('table').should('exist');
+                      cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
+                      cy.getBy('button[data-cy="apply-filter"]').click();
+                      cy.get('tbody tr input').click();
+                      cy.clickButton('Confirm');
+                    });
+                    cy.get(
+                      '[id="credential-select-form-group"] [aria-label="Options menu"]'
+                    ).click();
+                    cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+                      cy.get('table').should('exist');
+                      if (AAPCredential) {
+                        cy.getBy('[data-cy="text-input"] input').type(AAPCredential.name);
+                      }
+                      cy.getBy('button[data-cy="apply-filter"]').click();
+                      cy.get('tbody tr input').click();
+                      cy.clickButton('Confirm');
+                    });
+                    cy.getByDataCy('select-event-stream-button').click();
+                    cy.selectSingleSelectOption('[data-cy="mappings-0-source-name"]', '__SOURCE_1');
+                    cy.selectSingleSelectOption(
+                      '[data-cy="mappings-0-event-stream-id"]',
+                      edaEventStream1.name
+                    );
+                    cy.get('[id="0-source-info"]').contains('ansible.eda.range:');
+                    cy.clickButton('Save');
+                    cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
+                    cy.clickButton(/^Create rulebook activation$/);
+                    cy.wait('@edaRBA').then((rba) => {
+                      edaRBA1 = rba?.response?.body as ActivationRead;
+                      cy.get('h1').should('contain', name);
+                      cy.url().should('contain', '/details');
+                      cy.get('[data-cy="event-stream(s)"]')
+                        .should('be.visible')
+                        .and('contain', edaEventStream1.name);
+                      cy.get('[data-cy="name"]').should('be.visible').and('contain', name);
+                    });
                   });
                 });
               });
-            }
-          );
+            });
+          });
         });
       });
     });
 
-    after(() => {
+    afterEach(() => {
       cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
       cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
       cy.deleteEdaOrganization(edaOrg);
       cy.deleteEventStream(edaEventStream1);
-      cy.deleteEventStream(edaEventStream2);
       if (edaCredential) {
         cy.deleteEdaCredential(edaCredential);
       }
       if (AAPCredential) {
         cy.deleteEdaCredential(AAPCredential);
       }
-      cy.deleteEdaRulebookActivation(RBA);
+      cy.deleteEdaRulebookActivation(edaRBA1);
     });
 
-    it('Basic Flow -  can create a Rulebook Activation  and map event streams to sources', () => {
+    it('Basic Flow -  can create a Rulebook Activation and map event streams to sources', () => {
       const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.navigateTo('eda', 'rulebook-activations');
       cy.clickLink('Create rulebook activation');
@@ -144,42 +206,36 @@ describe('Check if the build includes EDA', () => {
         cy.clickButton('Confirm');
       });
       cy.getByDataCy('select-event-stream-button').click();
-      cy.selectSingleSelectOption('[data-cy="mappings-0-source-name"]', 'my first source');
+      cy.selectSingleSelectOption('[data-cy="mappings-0-source-name"]', '__SOURCE_1');
       cy.selectSingleSelectOption('[data-cy="mappings-0-event-stream-id"]', edaEventStream1.name);
-      cy.get('[id="0-source-info"]').contains(
-        'name: my first source ansible.eda.range: limit: 6 delay: 1'
-      );
-      cy.clickButton(/^Add event stream$/);
-      cy.selectSingleSelectOption('[data-cy="mappings-1-source-name"]', 'my second source');
-      cy.selectSingleSelectOption('[data-cy="mappings-1-event-stream-id"]', edaEventStream2.name);
-      cy.get('[id="1-source-info"]').contains(
-        'name: my second source ansible.eda.range: limit: 100'
-      );
+      cy.get('[id="0-source-info"]').contains('ansible.eda.range:');
       cy.clickButton('Save');
       cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
       cy.clickButton(/^Create rulebook activation$/);
-      cy.wait('@edaRBA').then((edaRBA) => {
-        RBA = edaRBA?.response?.body as ActivationRead;
-        cy.get('h1').should('contain', name);
-        cy.navigateTo('eda', 'rulebook-activations');
-      });
+      cy.wait('@edaRBA');
+      cy.get('h1').should('contain', name);
+      cy.url().should('contain', '/details');
+      cy.get('[data-cy="event-stream(s)"]')
+        .should('be.visible')
+        .and('contain', edaEventStream1.name);
+      cy.get('[data-cy="name"]').should('be.visible').and('contain', name);
     });
 
     it('can redirect to event streams and view activations for that event stream', () => {
       cy.navigateTo('eda', 'rulebook-activations');
-      cy.clickTableRow(RBA.name, true);
-      cy.verifyPageTitle(RBA.name);
+      cy.verifyPageTitle('Rulebook Activations');
+      cy.clickTableRow(edaRBA1.name, true);
+      cy.verifyPageTitle(edaRBA1.name);
       cy.get(`[href="/decisions/event-streams/${edaEventStream1.id}"]`).click();
       cy.verifyPageTitle(edaEventStream1.name);
       cy.clickTab('Activations', true);
-      cy.contains('div', RBA.name);
-      cy.navigateTo('eda', 'rulebook-activations');
-      cy.clickTableRow(RBA.name, true);
-      cy.verifyPageTitle(RBA.name);
-      cy.get(`[href="/decisions/event-streams/${edaEventStream2.id}"]`).click();
-      cy.verifyPageTitle(edaEventStream2.name);
+      cy.contains('div', edaRBA1.name);
+      cy.clickTableRow(edaRBA1.name, true);
+      cy.verifyPageTitle(edaRBA1.name);
+      cy.get(`[href="/decisions/event-streams/${edaEventStream1.id}"]`).click();
+      cy.verifyPageTitle(edaEventStream1.name);
       cy.clickTab('Activations', true);
-      cy.contains('div', RBA.name);
+      cy.contains('div', edaRBA1.name);
     });
 
     it('cannot delete event stream if an activation is using it', () => {

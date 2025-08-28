@@ -26,6 +26,7 @@ import { hubAPI } from './formatApiPathForHub';
 import { gatewayAPI } from './formatApiPathForPlatform';
 import './rest-commands';
 import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { PlatformRoleUserAssignment } from '@ansible/platform-ui/interfaces/PlatformRoleUserAssignment ';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -628,10 +629,65 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'assignUserNewRole',
+  (resourceId: string, roleDefinitionID: number, userId: string) => {
+    cy.requestPost<PlatformRoleUserAssignment>(gatewayAPI`/role_user_assignments/`, {
+      object_id: resourceId,
+      role_definition: roleDefinitionID,
+      user: userId,
+    }).then((role) => {
+      cy.wrap(role, { log: false });
+    });
+  }
+);
+
 Cypress.Commands.add('getPlatformRoleDetail', (roleID: string) => {
   cy.requestGet<PlatformRole>(gatewayAPI`/role_definitions/${roleID}/`).then((response) => {
     cy.wrap(response);
   });
+});
+
+/*
+Content Type available choices:
+shared.organization
+shared.team
+awx.jobtemplate
+awx.project
+awx.workflowjobtemplate
+awx.credential
+awx.inventory
+awx.notificationtemplate
+awx.instancegroup
+awx.executionenvironment
+galaxy.collection
+galaxy.ansiblerepository
+galaxy.collectionremote
+galaxy.containerrepository
+galaxy.containernamespace
+galaxy.task
+galaxy.namespace
+galaxy.collectionimport
+galaxy.containerregistryremote
+eda.rulebook
+eda.auditrule
+eda.project
+eda.eventstream
+eda.edacredential
+eda.activation
+eda.rulebookprocess
+eda.credentialinputsource
+eda.decisionenvironment
+ **/
+
+Cypress.Commands.add('getPlatformRoleByName', (roleName: string, contentType: string) => {
+  cy.requestGet<PlatformRole>(
+    gatewayAPI`/role_definitions/?name__contains=${roleName}&content_type__api_slug=${contentType}&order_by=name&page=1&page_size=50/`
+  )
+    .its('results')
+    .then((results: PlatformRole[]) => {
+      cy.wrap(results[0]);
+    });
 });
 
 Cypress.Commands.add(

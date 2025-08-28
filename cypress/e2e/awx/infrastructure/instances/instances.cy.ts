@@ -129,7 +129,7 @@ describe('Instances K8S', () => {
       cy.get('input[aria-label="Enabled"]').should('exist');
       cy.getByDataCy('actions-dropdown').click();
       cy.getByDataCy('edit-instance').click();
-      cy.getByDataCy('enabled').uncheck();
+      cy.getByDataCy('enabled').click();
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
       cy.clickButton(/^Save instance$/);
       cy.wait('@editedInstance')

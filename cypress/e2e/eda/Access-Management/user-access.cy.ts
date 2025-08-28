@@ -7,9 +7,9 @@ import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
 import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
 import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { user_team_access_tab_resources } from '../../../support/constants';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
-import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 
 describe('Check if the build includes EDA', () => {
   before(function () {
@@ -118,10 +118,13 @@ describe('Check if the build includes EDA', () => {
                     ? edaCredential
                     : edaEventStream;
           cy.getPlatformRoles().then((rolesArray) => {
-            roleIDs = (rolesArray as { [key: string]: number }[]).reduce((acc, role) => {
-              const { name, id } = role;
-              return { ...acc, [name]: id };
-            }, {});
+            roleIDs = rolesArray.reduce(
+              (acc, role) => {
+                const { name, id } = role;
+                return { ...acc, [name]: id };
+              },
+              {} as { [key: string]: number }
+            );
             RoleID = roleIDs[resource.role];
             cy.createRoleUserAssignments(
               resource_object.id.toString(),

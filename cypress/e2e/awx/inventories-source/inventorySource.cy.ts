@@ -48,7 +48,8 @@ describe('Inventory Sources', () => {
   }
 
   describe('Inventory Source List', () => {
-    it('inventory source tab - user can create an inventory and create a source from a project', () => {
+    it.skip('inventory source tab - user can create an inventory and create a source from a project', () => {
+      //enable this test when https://issues.redhat.com/browse/AAP-51881 is fixed
       const credentialName = 'e2e-' + randomString(4);
       const executionEnvironmentName = 'e2e-' + randomString(4);
       const inventoryFile = randomString(4);
@@ -337,7 +338,8 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
-  it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page', () => {
+  it.skip('can create an Amazon EC2 Inventory Source and access the Edit form from its details page', () => {
+    //enable this test when https://issues.redhat.com/browse/AAP-51881 is fixed
     const inventoryFile = randomString(4);
     const sourceName = 'source-' + randomString(4);
     const projName = 'proj-' + randomString(4);

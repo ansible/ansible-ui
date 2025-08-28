@@ -245,11 +245,11 @@ describe('Jobs', () => {
           cy.clickLink(/^Success$/);
           cy.verifyPageTitle(projectName);
           cy.url().then((currentUrl) => {
-            expect(currentUrl.includes(`/jobs/project/${thisId}/output`)).to.be.true;
+            expect(currentUrl.includes(`/project/${thisId}/output`)).to.be.true;
           });
           cy.clickTab(/^Details$/, true);
           cy.url().then((currentUrl) => {
-            expect(currentUrl.includes(`/jobs/project/${thisId}/details`)).to.be.true;
+            expect(currentUrl.includes(`/project/${thisId}/details`)).to.be.true;
           });
           cy.getByDataCy('name').should('contain', projectName);
           cy.getByDataCy('type').should('contain', 'Source control update');
