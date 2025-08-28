@@ -41,7 +41,7 @@
     "clean": "nx exec -- rm -rf dist build coverage test-results && rm -rf dist build coverage test-results && nx run-many --target=clean",
     "build": "nx run-many --target=build",
     "test": "nx run-many --target=eslint,tsc,prettier,vitest",
-    "test:all": "nx run-many --target=eslint,tsc,prettier --skip-nx-cache",
+    "test:force": "nx run-many --target=eslint,tsc,prettier --skip-nx-cache",
     "vitest": "nx run-many --target=vitest",
     "tsc": "nx run-many --target=tsc",
     "prettier": "nx run-many --target=prettier",

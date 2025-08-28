@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
   expect: {
     // timeout: 60 * 1000, // default of playwright is 5s
   },
-  workers: isCI ? 1 : 2, // Keep parallel workers locally for speed
+  workers: isCI ? 1 : 1,
   reporter: [
     ['list'],
     ['junit', { outputFile: 'results.xml' }],

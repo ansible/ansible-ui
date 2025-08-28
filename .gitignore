@@ -1,6 +1,7 @@
 **/.env
 **/allure-report
 **/allure-results
+**/html-report
 **/blob-report/
 **/coverage/
 **/dist/
