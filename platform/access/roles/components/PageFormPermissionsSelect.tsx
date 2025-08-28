@@ -36,6 +36,7 @@ export function PageFormRolePermissionsSelect(props: {
   return (
     <PageFormMultiSelect
       name={props?.name ?? 'permissions'}
+      label={t('Permissions')}
       options={
         dataPermissions?.results
           ? dataPermissions?.results.map((rolePermission) => {

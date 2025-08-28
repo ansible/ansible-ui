@@ -58,7 +58,7 @@ export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: str
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
-        <PlatformRoleInputs />
+        <PlatformRoleInputs isEditMode={false} />
       </PageForm>
     </PageLayout>
   );
@@ -116,7 +116,7 @@ export function EditPlatformRole(props: { breadcrumbLabelForPreviousPage?: strin
             onCancel={onCancel}
             defaultValue={role}
           >
-            <PlatformRoleInputs />
+            <PlatformRoleInputs isEditMode={true} />
           </PageForm>
         </PageLayout>
       );
@@ -124,7 +124,7 @@ export function EditPlatformRole(props: { breadcrumbLabelForPreviousPage?: strin
   }
 }
 
-function PlatformRoleInputs() {
+function PlatformRoleInputs({ isEditMode = false }: { isEditMode?: boolean }) {
   const { t } = useTranslation();
   const { setValue, getFieldState } = useFormContext();
   const contentType = useWatch({
@@ -151,6 +151,7 @@ function PlatformRoleInputs() {
           name="description"
           label={t('Description')}
           placeholder={t('Enter description')}
+          isRequired
         />
       </PageFormSection>
       <PageFormSection title={t('Permissions')}>
@@ -164,9 +165,17 @@ function PlatformRoleInputs() {
           </HelperText>
         </PageFormSection>
         <PageFormSection>
-          <PageFormRoleTypeSelect name={'content_type'} />
+          <PageFormRoleTypeSelect
+            name={'content_type'}
+            isRequired
+            isDisabled={isEditMode ? t('The resource type cannot be edited.') : undefined}
+          />
           <PageFormHidden watch="content_type" hidden={(content_type: string) => !content_type}>
-            <PageFormRolePermissionsSelect name={'permissions'} contentType={contentType} />
+            <PageFormRolePermissionsSelect
+              name={'permissions'}
+              isRequired
+              contentType={contentType}
+            />
           </PageFormHidden>
         </PageFormSection>
       </PageFormSection>
