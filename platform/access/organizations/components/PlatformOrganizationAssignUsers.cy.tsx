@@ -31,7 +31,7 @@ describe('PlatformOrganizationAssignUsers', () => {
       }
     ).as('organizationRoles');
     cy.intercept('GET', gatewayAPI`/role_definitions?name=Organization+Member`, {
-      fixiture: 'platformOrganizationMemberRole.json',
+      fixture: 'platformOrganizationMemberRole.json',
     }).as('organizationUserRole');
   });
 
@@ -103,7 +103,7 @@ describe('PlatformOrganizationAssignUsers', () => {
     // Select EDA roles
     cy.selectTableRowByCheckbox('name', 'Contributor', { disableFilter: true });
 
-    cy.get('[data-cy="Submit"]').click();
+    cy.get('[data-cy="Submit"]').should('be.visible').click();
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
 
     // Check selected users

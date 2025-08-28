@@ -4,6 +4,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 
 export function PageFormRoleTypeSelect(props: {
   name: string;
@@ -15,6 +16,7 @@ export function PageFormRoleTypeSelect(props: {
     gatewayAPI`/service-index/role-types/?or__api_slug__startswith=awx&or__api_slug__startswith=eda&or__api_slug__startswith=galaxy&or__api_slug=shared.organization&order_by=-api_slug`
   );
   const dataRoles = responseRoles.data;
+  const getDisplayName = useMapContentTypeToDisplayName();
 
   const groupFromResourceType = (role: PlatformResourceType): string => {
     const group = role.service.split('.')[0];
@@ -22,7 +24,7 @@ export function PageFormRoleTypeSelect(props: {
       case 'awx':
         return t('Automation Execution');
       case 'eda':
-        return t('Automation Decision');
+        return t('Automation Decisions');
       case 'galaxy':
         return t('Automation Content');
       default:
@@ -52,7 +54,7 @@ export function PageFormRoleTypeSelect(props: {
         dataRoles?.results
           ? dataRoles.results.map((role) => {
               return {
-                label: role.model,
+                label: getDisplayName(role.model, { isTitleCase: true }),
                 value: role.api_slug,
                 order_by: role.model,
                 group: groupFromResourceType(role),
