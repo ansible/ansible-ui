@@ -64,12 +64,12 @@ export function ResourceUserAccess(props: {
           isInline
           variant="info"
           title={t(
-            `This list includes all users that have assigned roles for this resource, whether assigned directly or inherited from a team`
+            `Below displays a list of users with access to this resource and the roles they are directly assigned.`
           )}
         >
           <Content component={ContentVariants.p} style={{ paddingBottom: 0, marginBottom: 0 }}>
             {t(
-              `Roles inherited from a team cannot be managed here. To modify these role assignments, manage the team's assignments.`
+              `When a user has a Team Member role, they inherit roles from the team they are assigned to. To view a user’s inherited roles and the team they are assigned to click on the user’s view and manage roles action. To modify these role assignments, manage the team’s assignments.`
             )}
           </Content>
         </Alert>
