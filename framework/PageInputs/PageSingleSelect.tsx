@@ -224,7 +224,7 @@ export function PageSingleSelect<
         >
           {selectedLabel ? selectedLabel : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
         </MenuToggle>
-        {!props.isRequired && selectedLabel && (
+        {!props.isRequired && selectedLabel && !props?.isDisabled && (
           <Button
             icon={
               <Icon size="md" style={{ opacity: 0.7 }}>

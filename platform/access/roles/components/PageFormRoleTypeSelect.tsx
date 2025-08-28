@@ -47,6 +47,7 @@ export function PageFormRoleTypeSelect(props: {
   return (
     <PageFormSingleSelect
       name={props?.name ?? 'content_type'}
+      label={t('Resource type')}
       options={
         dataRoles?.results
           ? dataRoles.results.map((role) => {
@@ -63,7 +64,7 @@ export function PageFormRoleTypeSelect(props: {
       disableSortOptions
       isRequired={props?.isRequired}
       isDisabled={props?.isDisabled}
-      placeholder={t('Select resource')}
+      placeholder={t('Select resource type')}
     />
   );
 }
