@@ -11,18 +11,18 @@ export function OAuthApplicationSecretModal(props: {
   const { t } = useTranslation();
   return (
     <Modal
+      isOpen
       variant={ModalVariant.medium}
-      position="top"
       onClose={() => props.onClose()}
-      aria-label={t`Application information`}
+      aria-label={t`OAuth Application Secrets`}
     >
-      <ModalHeader title={t`Application information`} />
+      <ModalHeader title={t`OAuth Application Secrets`} />
       <ModalBody>
         <PageDetails
           alertPrompts={[t`This is the only time the client secret will be shown.`]}
           numberOfColumns="single"
         >
-          <PageDetail label={t`Name`}>{applicationModalSource.name}</PageDetail>
+          <PageDetail label={t`OAuth Application Name`}>{applicationModalSource.name}</PageDetail>
           <PageDetail label={t`Client ID`}>
             <ClipboardCopy isReadOnly>
               {String(applicationModalSource.client_id ?? '')}
