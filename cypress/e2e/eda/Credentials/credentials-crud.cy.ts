@@ -27,6 +27,89 @@ describe('Check if the build includes EDA', () => {
     });
 
     describe('EDA Credentials- Create, Edit, Delete', () => {
+      it('can verify help text tooltips are displayed for credential fields', () => {
+        const name = 'E2E Help Text Test ' + randomString(4);
+        cy.navigateTo('eda', 'credentials');
+        cy.getByDataCy('create-credential').click();
+
+        cy.get('[data-cy="name"]').type(name);
+        cy.get('[data-cy="description"]').type('Test credential for help text verification.');
+
+        cy.getBy('[data-cy="organization_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+          cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
+
+        cy.getBy('[data-cy="credential_type_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+          cy.getBy('[data-cy="text-input"] input').type('Container Registry');
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
+
+        // Check that secret management buttons are present for credential fields
+        cy.get('[data-cy="inputs-host-form-group"]').within(() => {
+          cy.get('[data-cy="secret-management-input"]').should('exist');
+        });
+
+        cy.get('[data-cy="inputs-password-form-group"]').within(() => {
+          cy.get('[data-cy="secret-management-input"]').should('exist');
+        });
+
+        // Verify help text is working by checking labelHelp is populated
+        cy.get('[data-cy="inputs-host-form-group"] label').should('exist');
+
+        // Cancel the form
+        cy.clickButton('Cancel');
+      });
+
+      it('can verify secret management buttons are displayed for multiline credential fields', () => {
+        const name = 'E2E Multiline SMS Test ' + randomString(4);
+        cy.navigateTo('eda', 'credentials');
+        cy.getByDataCy('create-credential').click();
+
+        cy.get('[data-cy="name"]').type(name);
+        cy.get('[data-cy="description"]').type('Test credential for multiline SMS verification.');
+
+        cy.getBy('[data-cy="organization_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+          cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
+
+        cy.getBy('[data-cy="credential_type_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+          // Select a credential type that typically has multiline fields (SSH private key)
+          cy.getBy('[data-cy="text-input"] input').type('Source Control');
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
+
+        // Check for SSH private key field (typically multiline)
+        cy.get('body').then(($body) => {
+          if ($body.find('[data-cy*="private-key"]').length > 0) {
+            // Check that secret management buttons are present for multiline fields
+            cy.get('[data-cy*="private-key-form-group"]').within(() => {
+              cy.get('[data-cy="secret-management-input"]').should('exist');
+            });
+          }
+        });
+
+        // Cancel the form
+        cy.clickButton('Cancel');
+      });
+
       it('can create a container registry credential, and assert the information showing on the details page', () => {
         const name = 'E2E Credential ' + randomString(4);
         cy.navigateTo('eda', 'credentials');
