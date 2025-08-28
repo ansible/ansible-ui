@@ -25,7 +25,7 @@ export function PageFormRolePermissionsSelect(props: {
       case 'awx':
         return t('Automation Execution');
       case 'eda':
-        return t('Automation Decision');
+        return t('Automation Decisions');
       case 'galaxy':
         return t('Automation Content');
       default:

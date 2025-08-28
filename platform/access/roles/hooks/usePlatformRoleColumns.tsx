@@ -12,6 +12,7 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { ContentType } from './ContentType';
 import { useContentTypeComponentNames } from './useContentTypeComponentNames';
 import { useGetResourceTypes } from './useResourceType';
+import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 
 export function usePlatformRoleColumns(options?: {
   disableSort?: boolean;
@@ -20,6 +21,7 @@ export function usePlatformRoleColumns(options?: {
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const getDisplayName = useMapContentTypeToDisplayName();
 
   const nameColumn = useNameColumn<PlatformRole>({
     to: (role) => getPageUrl(PlatformRoute.RoleDetails, { params: { id: role.id } }),
@@ -69,7 +71,9 @@ export function usePlatformRoleColumns(options?: {
       {
         header: t('Resource type'),
         type: 'text',
-        value: (role) => resourceModelMap[role.content_type ?? ''] ?? role.content_type ?? '',
+        value: (role) =>
+          getDisplayName(resourceModelMap[role.content_type ?? ''], { isTitleCase: true }) ??
+          getDisplayName(role.content_type ?? '', { isTitleCase: true }),
         modal: 'hidden',
         table: options?.disableExtraColumns ? 'hidden' : undefined,
       },
@@ -102,6 +106,7 @@ export function usePlatformRoleColumns(options?: {
       modifiedColumn,
       getContentTypeComponentNames,
       resourceModelMap,
+      getDisplayName,
     ]
   );
 }

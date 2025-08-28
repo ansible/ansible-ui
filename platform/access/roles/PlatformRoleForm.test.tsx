@@ -93,7 +93,7 @@ describe('platformRoleForm', () => {
     await waitFor(() => {
       expect(container.querySelector('[id="description"]')).toHaveValue('This is a demo role');
     });
-    expect(await findByText('activation')).toBeInTheDocument();
+    expect(await findByText('Rulebook Activation')).toBeInTheDocument();
     expect(await findByText('Can view activation')).toBeInTheDocument();
     expect(await findByText('Can restart an activation')).toBeInTheDocument();
   });
