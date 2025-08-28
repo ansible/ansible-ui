@@ -18,7 +18,7 @@ export const coverageOptions: CoverageReportOptions = {
   outputDir: 'coverage/playwright',
   reports: [
     // raw V8 entries
-    ['raw',  { outputDir: 'raw' }],
+    ['raw', { outputDir: 'raw' }],
     // Istanbul JSON report
     ['json', { outputFile: 'coverage-final.json' }],
   ],
@@ -32,9 +32,7 @@ export const coverageOptions: CoverageReportOptions = {
       p = info.distFile;
     } else {
       // Strip Playwright dev-server prefixes
-      p = filePath
-        .replace(/^\/?localhost:\d+\/@?fs\//, '')
-        .replace(/^\/@?fs\//, '');
+      p = filePath.replace(/^\/?localhost:\d+\/@?fs\//, '').replace(/^\/@?fs\//, '');
 
       // Prepend leading slash if missing
       if (!p.startsWith('/')) p = '/' + p;
