@@ -125,7 +125,7 @@ function SelectRolesStepHeader<
     <>
       <StyledTitle headingLevel="h1">{title ?? t('Select roles to apply')}</StyledTitle>
       {resourceType !== 'system' ? (
-        <Split hasGutter>
+        <Split hasGutter style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}>
           <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
             {labelForSelectedItemsFromPreviousStep ?? t('Selected')}
           </SplitItem>
