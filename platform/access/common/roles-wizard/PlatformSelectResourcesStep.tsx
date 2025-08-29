@@ -3,24 +3,25 @@ import { AwxSelectResourcesStep } from '@ansible/awx-ui/access/common/AwxRolesWi
 import { EdaSelectResourcesStep } from '@ansible/eda-ui/access/common/EdaRolesWizardSteps/EdaSelectResourcesStep';
 import { HubSelectResourcesStep } from '@ansible/hub-ui/access/common/HubRoleWizardSteps/HubSelectResourcesStep';
 
-export function PlatformSelectResourcesStep() {
+export function PlatformSelectResourcesStep(props: { userOrTeamName: string }) {
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
+  const { userOrTeamName } = props;
 
   if (typeof resourceType !== 'string') {
     return null;
   }
 
   if (resourceType.startsWith('awx.')) {
-    return <AwxSelectResourcesStep />;
+    return <AwxSelectResourcesStep userOrTeamName={userOrTeamName} />;
   }
 
   if (resourceType.startsWith('eda.')) {
-    return <EdaSelectResourcesStep />;
+    return <EdaSelectResourcesStep userOrTeamName={userOrTeamName} />;
   }
 
   if (resourceType.startsWith('galaxy.')) {
-    return <HubSelectResourcesStep />;
+    return <HubSelectResourcesStep userOrTeamName={userOrTeamName} />;
   }
 
   return null;

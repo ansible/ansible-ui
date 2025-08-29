@@ -26,7 +26,7 @@ const StyledTitle = styled(Title)`
 `;
 
 /** Roles wizard step for selecting resources based on the resourceType selected */
-export function HubSelectResourcesStep() {
+export function HubSelectResourcesStep(props: { userOrTeamName: string }) {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
   const { resourceType } = wizardData as { [key: string]: unknown };
@@ -89,7 +89,8 @@ export function HubSelectResourcesStep() {
       <StyledTitle headingLevel="h1">{resourceToTitleMapping[resourceType as string]}</StyledTitle>
       <h2 style={{ marginTop: '1rem', marginBottom: '1rem' }}>
         {t(
-          "Choose the resources that will be receiving new roles. You'll be able to select the roles to apply in the next step. Note that the resources chosen here will receive all roles chosen in the next step."
+          "Choose the resources that you want {{userOrTeamName}} to have certain access to. You'll be able to select the roles to apply in the next step.",
+          { userOrTeamName: props.userOrTeamName }
         )}
       </h2>
       <PageMultiSelectList

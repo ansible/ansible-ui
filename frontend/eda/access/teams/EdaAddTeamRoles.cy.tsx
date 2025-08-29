@@ -4,13 +4,14 @@ import { EdaAddTeamRoles } from './EdaAddTeamRoles';
 describe('EDA team: Add roles', () => {
   const component = <EdaAddTeamRoles />;
   const path = '/team/:id/roles/add-roles';
-  const initialEntries = [`/team/7/roles/add-roles`];
+  const initialEntries = [`/team/2/roles/add-roles`];
   const params = {
     path,
     initialEntries,
   };
+
   beforeEach(() => {
-    cy.intercept('GET', edaAPI`/teams/*`, { fixture: 'edaUser.json' });
+    cy.intercept('GET', edaAPI`/teams/*`, { fixture: 'edaTeam.json' });
     cy.intercept('GET', edaAPI`/role_team_assignments/*`, {
       fixture: 'edaUserRoles.json',
     });
@@ -23,6 +24,7 @@ describe('EDA team: Add roles', () => {
     cy.intercept('GET', edaAPI`/projects/*`, { fixture: 'edaProjects.json' });
     cy.mount(component, params);
   });
+
   it('should render with correct steps', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select a resource type');
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select resources');
@@ -30,6 +32,7 @@ describe('EDA team: Add roles', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a resource type is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.clickButton(/^Next$/);
@@ -46,21 +49,21 @@ describe('EDA team: Add roles', () => {
     );
     cy.get('[data-cy="wizard-nav-item-resources"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a resource is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
     cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
-    cy.contains(
-      /^Choose the resources that will be receiving new roles. You'll be able to select the roles to apply in the next step. Note that the resources chosen here will receive all roles chosen in the next step.$/
-    );
+    cy.contains('Choose the resources that you want Test to have certain access to.');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one resource.');
     cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a role is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
@@ -78,6 +81,7 @@ describe('EDA team: Add roles', () => {
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
+
   it('should display selected resources and roles in the Review step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();

@@ -1,4 +1,4 @@
-import { ITableColumn } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGetLinkToResourcePage } from '@ansible/common-ui/access/hooks/useGetLinkToResourcePage';
 import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignment';
@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { useGetResourceEndpoint } from '../../../hooks/useGetResourceEndpoint';
 import { ContentType } from '../../roles/hooks/ContentType';
 import { useContentTypeComponentNames } from '../../roles/hooks/useContentTypeComponentNames';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 function ResourceNameCell({ role }: { role: TeamAssignment }) {
   const endpoint = useGetResourceEndpoint(role.content_type, role.object_id);
@@ -30,6 +31,7 @@ export function useTeamRolesColumns(options?: { disableSort?: boolean; disableLi
   const { t } = useTranslation();
   const getDisplayName = useMapContentTypeToDisplayName();
   const getContentTypeComponentNames = useContentTypeComponentNames();
+  const getPageUrl = useGetPageUrl();
 
   return useMemo<ITableColumn<TeamAssignment>[]>(
     () => [
@@ -45,8 +47,12 @@ export function useTeamRolesColumns(options?: { disableSort?: boolean; disableLi
         type: 'text',
         value: (role) => role.summary_fields.role_definition.name,
         sort: options?.disableSort ? undefined : 'role',
-        card: 'subtitle',
-        list: 'subtitle',
+        to: (role) =>
+          options?.disableLinks
+            ? undefined
+            : getPageUrl(PlatformRoute.RoleDetails, {
+                params: { id: role.role_definition },
+              }),
       },
       {
         header: t('Type'),
@@ -62,6 +68,13 @@ export function useTeamRolesColumns(options?: { disableSort?: boolean; disableLi
         value: (role) => getContentTypeComponentNames(role.content_type as ContentType),
       },
     ],
-    [t, options?.disableSort, getContentTypeComponentNames, getDisplayName]
+    [
+      t,
+      options?.disableSort,
+      options?.disableLinks,
+      getContentTypeComponentNames,
+      getDisplayName,
+      getPageUrl,
+    ]
   );
 }
