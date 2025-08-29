@@ -65,7 +65,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
     {
       id: 'resources',
       label: t('Select resources'),
-      inputs: <HubSelectResourcesStep />,
+      inputs: <HubSelectResourcesStep userOrTeamName={user.username} />,
       validate: (formData, _) => {
         const { resources } = formData as { resources: HubResourceType[] };
         if (!resources?.length) {

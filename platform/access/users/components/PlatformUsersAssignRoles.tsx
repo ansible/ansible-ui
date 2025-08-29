@@ -53,7 +53,7 @@ export function PlatformUsersAssignRoles(props: { id?: string; userRolesRoute?: 
     {
       id: 'resources',
       label: t('Select resources'),
-      inputs: <PlatformSelectResourcesStep />,
+      inputs: <PlatformSelectResourcesStep userOrTeamName={user.username} />,
       validate: (formData, _) => {
         const { resources } = formData as { resources: AwxResourceType[] };
         if (!resources?.length) {

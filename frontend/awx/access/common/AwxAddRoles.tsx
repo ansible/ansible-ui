@@ -31,7 +31,12 @@ interface RoleResponse {
   team?: string;
 }
 
-export function AwxAddRoles(params: { id: string; type: 'team' | 'user'; onClose: () => void }) {
+export function AwxAddRoles(props: {
+  id: string;
+  type: 'team' | 'user';
+  userOrTeamName: string;
+  onClose: () => void;
+}) {
   const { t } = useTranslation();
   const progressDialog = useAwxBulkActionDialog<ResourceRolePair>();
 
@@ -44,7 +49,7 @@ export function AwxAddRoles(params: { id: string; type: 'team' | 'user'; onClose
     {
       id: 'resources',
       label: t('Select resources'),
-      inputs: <AwxSelectResourcesStep />,
+      inputs: <AwxSelectResourcesStep userOrTeamName={props.userOrTeamName} />,
       validate: (formData, _) => {
         const { resources } = formData as { resources: AwxResourceType[] };
         if (!resources?.length) {
@@ -89,13 +94,13 @@ export function AwxAddRoles(params: { id: string; type: 'team' | 'user'; onClose
             content_type: resourceType,
             object_id: resource.id,
           };
-          params.type === 'user' ? (data.user = params.id) : (data.team = params.id);
-          return postRequest(awxAPI`/role_${params.type}_assignments/`, data);
+          props.type === 'user' ? (data.user = props.id) : (data.team = props.id);
+          return postRequest(awxAPI`/role_${props.type}_assignments/`, data);
         },
         onComplete: () => {
           resolve();
         },
-        onClose: params.onClose,
+        onClose: props.onClose,
       });
     });
   };
@@ -104,7 +109,7 @@ export function AwxAddRoles(params: { id: string; type: 'team' | 'user'; onClose
     <PageWizard<WizardFormValues>
       steps={steps}
       onSubmit={onSubmit}
-      onCancel={params.onClose}
+      onCancel={props.onClose}
       disableGrid
     />
   );

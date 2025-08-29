@@ -50,7 +50,7 @@ export function PlatformTeamAssignRoles() {
     {
       id: 'resources',
       label: t('Select resources'),
-      inputs: <PlatformSelectResourcesStep />,
+      inputs: <PlatformSelectResourcesStep userOrTeamName={team.name} />,
       validate: (formData, _) => {
         const { resources } = formData as { resources: { id: string; name: string }[] };
         if (!resources?.length) {

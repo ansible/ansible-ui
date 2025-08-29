@@ -54,9 +54,7 @@ describe('AWX user: Add roles', () => {
     cy.contains('Inventory').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select inventories$/);
-    cy.contains(
-      /^Choose the resources that will be receiving new roles. You'll be able to select the roles to apply in the next step. Note that the resources chosen here will receive all roles chosen in the next step.$/
-    );
+    cy.contains('Choose the resources that you want vn-admin to have certain access to');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one resource.');
     cy.selectTableRowByCheckbox('name', 'Demo Inventory', { disableFilter: true });
