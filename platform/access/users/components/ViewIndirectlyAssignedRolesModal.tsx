@@ -20,6 +20,22 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignment';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
+
+export function RoleFromName(name: string): PlatformRole | undefined {
+  const { data, error } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: name,
+    },
+    { refreshInterval: 0 }
+  );
+  if (error) {
+    return undefined;
+  }
+  return data?.results && data.results.length >= 0 ? data.results[0] : undefined;
+}
 
 // Extend the TeamAssignment interface to include intermediary_roles
 interface ExtendedTeamAssignment extends TeamAssignment {
@@ -83,14 +99,12 @@ export function ViewIndirectlyAssignedRolesModal({
       {
         header: t('Name'),
         cell: (item: ExtendedTeamAssignment) => {
-          const roleId = item.intermediary_roles?.[0]?.role_definition.url
-            .split('/')
-            .slice(-2, -1)[0];
           const roleName = item.intermediary_roles?.[0]?.role_definition.name;
+          const role = roleName ? RoleFromName(roleName) : undefined;
           return roleName ? (
             <Link
               to={getPageUrl(PlatformRoute.RoleDetails, {
-                params: { id: roleId },
+                params: { id: role?.id },
               })}
             >
               {roleName}
@@ -104,7 +118,9 @@ export function ViewIndirectlyAssignedRolesModal({
       {
         header: t('Description'),
         cell: (item: ExtendedTeamAssignment) => {
-          return item.summary_fields?.role_definition?.description || '';
+          const roleName = item.intermediary_roles?.[0]?.role_definition.name;
+          const role = roleName ? RoleFromName(roleName) : undefined;
+          return role?.description;
         },
         sort: undefined,
       },
@@ -138,7 +154,7 @@ export function ViewIndirectlyAssignedRolesModal({
     return userTeamAssignments.results.filter((team) => team.id).map((team) => team.id);
   }, [userTeamAssignments]);
 
-  const teamIdsParam = teamIds.length > 0 ? teamIds.join(',') : '';
+  const teamIdsParam = teamIds.length > 0 ? teamIds.join(',') : '0';
 
   // Build query params based on whether this is for resource roles or general roles
   const queryParams = useMemo(() => {

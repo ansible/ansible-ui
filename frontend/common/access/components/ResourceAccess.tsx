@@ -50,7 +50,7 @@ export function ResourceAccess(props: {
   const { data, isLoading } = useOptions<{
     actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
   }>(roleDefinitionsURL);
-  const getLinkToResourcePage = useGetLinkToResourcePage();
+  const getLinkToResourcePage = useGetLinkToResourcePage(undefined);
 
   // This filter applies to a user/team's roles list to filter based on the resource types
   const contentTypeFilterOptions = useMemo(() => {

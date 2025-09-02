@@ -33,6 +33,7 @@ interface UserAndPlatformRole {
 export interface ResourceType {
   id: string;
   name: string;
+  organization?: { id: string; name: string };
   summary_fields: {
     organization: { id: string; name: string };
   };
@@ -214,10 +215,12 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
             {
               <Link
                 to={getPageUrl(PlatformRoute.OrganizationUsers, {
-                  params: { id: resource?.summary_fields?.organization?.id },
+                  params: {
+                    id: resource?.organization?.id ?? resource?.summary_fields?.organization?.id,
+                  },
                 })}
               >
-                {resource?.summary_fields?.organization?.name}
+                {resource?.organization?.name ?? resource?.summary_fields?.organization?.name}
               </Link>
             }{' '}
             roles assignments.
