@@ -93,11 +93,10 @@ describe('PlatformOrganizationManageTeamRoles', () => {
         </Routes>
       </MemoryRouter>
     );
-
     await waitFor(() => {
       expect(
         screen.getByRole('heading', {
-          name: /Manage roles for test-team/,
+          name: /Manage organization roles for test-team/,
         })
       ).toBeInTheDocument();
     });

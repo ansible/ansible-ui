@@ -197,7 +197,7 @@ export function PlatformOrganizationManageTeamRoles() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Manage roles for {{teamName}}', { teamName: team?.name })}
+        title={t('Manage organization roles for {{teamName}}', { teamName: team?.name })}
         breadcrumbs={[
           { label: t('Organizations'), to: getPageUrl(PlatformRoute.Organizations) },
           {
@@ -225,7 +225,7 @@ export function PlatformOrganizationManageTeamRoles() {
       >
         <HelpText component={ContentVariants.p}>
           {t(
-            'Select organization roles that you want to directly assign to {{team}}. These roles will apply to the relevant resources within this organization.',
+            'Select organization roles that you want to apply to {{team}}. These roles will apply to relevant resources within this organization. Users in {{team}} will inherit these roles.',
             {
               team: team.name,
             }
