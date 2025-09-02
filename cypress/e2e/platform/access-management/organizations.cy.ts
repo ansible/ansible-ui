@@ -273,7 +273,7 @@ describe('If SaaS Build', () => {
         cy.getTableRow('name', createdPlatformTeam, { disableFilter: true }).within(() => {
           cy.get('[data-cy="view-and-manage-organization-roles"]').click();
         });
-        cy.contains('h1', `Manage roles for ${team.name}`).should('be.visible');
+        cy.contains('h1', `Manage organization roles for ${team.name}`).should('be.visible');
         cy.selectTableRowByCheckbox('name', 'Organization Audit', {
           disableFilter: true,
         });
