@@ -1,7 +1,7 @@
 import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
 import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
-import { Repositories, Tasks } from './constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
+import { Repositories, Tasks } from './constants';
 
 describe('GalaxyKit Installation Check for Repositories', () => {
   before(function () {
@@ -46,7 +46,7 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.hasAlert(`Sync started for repository "${repository.name}"`).should('be.visible');
       cy.navigateTo('hub', Tasks.url);
       cy.verifyPageTitle('Task Management');
-      cy.filterTableByTextFilter('Task name', 'pulp_ansible.app.tasks.collections.sync');
+      cy.filterTableByTextFilter('task-name', 'pulp_ansible.app.tasks.collections.sync');
       cy.clickTableRowLink('name', 'pulp_ansible.app.tasks.collections.sync', {
         disableFilter: true,
       });
