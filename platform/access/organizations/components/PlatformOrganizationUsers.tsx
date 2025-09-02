@@ -7,7 +7,13 @@ import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/Opt
 import { UserRoleAccess } from '@ansible/common-ui/access/interfaces/UserRoleAccess';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { ButtonVariant } from '@patternfly/react-core';
+import {
+  Alert,
+  ButtonVariant,
+  Content,
+  ContentVariants,
+  PageSection,
+} from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -55,44 +61,61 @@ export function PlatformOrganizationUsers() {
   if (error) return <AwxError error={error} />;
 
   return (
-    <PageTable<UserRoleAccess>
-      id="platform-organization-users-table"
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading users')}
-      emptyState={
-        canEditOrganization ? (
-          <PageTableEmptyState
-            title={t('No users')}
-            description={t(
-              'To get started, assign users to this organization. Once users are ' +
-                'assigned to this organization, they can be assigned roles for the ' +
-                'resources within this organization.'
+    <>
+      <PageSection>
+        <Alert
+          isInline
+          variant="info"
+          title={t(
+            `Below displays a list of users assigned to this organization and the organization roles they are directly assigned for this organization.`
+          )}
+        >
+          <Content component={ContentVariants.p} style={{ paddingBottom: 0, marginBottom: 0 }}>
+            {t(
+              `When a user has a Team Member role, they inherit roles from the team they are assigned to. To view a user’s inherited organization roles and the team they are assigned to click on the user’s view and manage roles action. To modify these role assignments, manage the team’s assignments.`
             )}
-          >
-            <ButtonLink
-              icon={<PlusCircleIcon />}
-              variant={ButtonVariant.primary}
-              href={getPageUrl(PlatformRoute.OrganizationAssignUsers, {
-                params: { id: params.id },
-              })}
+          </Content>
+        </Alert>
+      </PageSection>
+      <PageTable<UserRoleAccess>
+        id="platform-organization-users-table"
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading users')}
+        emptyState={
+          canEditOrganization ? (
+            <PageTableEmptyState
+              title={t('No users')}
+              description={t(
+                'To get started, assign users to this organization. Once users are ' +
+                  'assigned to this organization, they can be assigned roles for the ' +
+                  'resources within this organization.'
+              )}
             >
-              {t('Assign users')}
-            </ButtonLink>
-          </PageTableEmptyState>
-        ) : (
-          <PageTableEmptyState
-            icon={CubesIcon}
-            title={t('You do not have permission to add a user to this organization.')}
-            description={t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )}
-          />
-        )
-      }
-      {...view}
-    />
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(PlatformRoute.OrganizationAssignUsers, {
+                  params: { id: params.id },
+                })}
+              >
+                {t('Assign users')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to add a user to this organization.')}
+              description={t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+          )
+        }
+        {...view}
+      />
+    </>
   );
 }
