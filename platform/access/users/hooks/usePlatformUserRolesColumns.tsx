@@ -2,15 +2,15 @@ import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGetLinkToResourcePage } from '@ansible/common-ui/access/hooks/useGetLinkToResourcePage';
 import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useGetResourceEndpoint } from '../../../hooks/useGetResourceEndpoint';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { ContentType } from '../../roles/hooks/ContentType';
 import { useContentTypeComponentNames } from '../../roles/hooks/useContentTypeComponentNames';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { RequestError } from '@ansible/common-ui/crud/RequestError';
 
 export function useAsyncQueryField(
   props: Readonly<{
@@ -125,10 +125,10 @@ export function usePlatformUserRolesColumns(options?: {
     [
       t,
       options?.disableSort,
-      options?.disableLinks,
       getContentTypeComponentNames,
       getDisplayName,
       getPageUrl,
+      options?.disableLinks,
     ]
   );
 }
