@@ -20,7 +20,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for namespace management',
     resourceType: 'galaxy.namespace',
-    resourceTypeDisplayName: 'namespace',
+    resourceTypeDisplayName: 'Namespace',
     permissions: ['galaxy.view_namespace'],
     permissionDisplayNames: ['Can view namespace'],
     expectedComponent: 'Automation Content',
@@ -29,7 +29,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for collection management',
     resourceType: 'galaxy.collection',
-    resourceTypeDisplayName: 'collection',
+    resourceTypeDisplayName: 'Collection',
     permissions: ['galaxy.change_collection', 'galaxy.view_collection'],
     permissionDisplayNames: ['Can change collection', 'Can view collection'],
     expectedComponent: 'Automation Content',
@@ -38,7 +38,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for AWX inventory management',
     resourceType: 'awx.inventory',
-    resourceTypeDisplayName: 'inventory',
+    resourceTypeDisplayName: 'Inventory',
     permissions: ['awx.view_inventory'],
     permissionDisplayNames: ['Can view inventory'],
     expectedComponent: 'Automation Execution',
@@ -47,7 +47,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for EDA rulebook management',
     resourceType: 'eda.rulebook',
-    resourceTypeDisplayName: 'rulebook',
+    resourceTypeDisplayName: 'Rulebook',
     permissions: ['eda.view_rulebook'],
     permissionDisplayNames: ['Can view rulebook'],
     expectedComponent: 'Automation Decisions',
@@ -385,7 +385,7 @@ export async function createRole(page: Page, resourceInput: string, roleName?: s
   const roleNameInput = roleName ?? createE2EName();
   await page.getByRole('textbox', { name: 'Name' }).fill(roleNameInput);
   await page.getByText('Select resource', { exact: true }).click();
-  await page.getByText('namespace', { exact: true }).click();
+  await page.getByText('Namespace', { exact: true }).click();
   await page.getByText('Select permissions', { exact: true }).click();
   await page.getByText('Can view namespace', { exact: true }).click();
   await page.getByRole('button', { name: 'Create role', exact: true }).click();
