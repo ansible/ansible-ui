@@ -2,6 +2,7 @@ import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
 import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
+import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
 import { useCallback } from 'react';
 
 export function useGetLinkToResourcePage(name?: string | undefined) {
@@ -61,6 +62,10 @@ export function useGetLinkToResourcePage(name?: string | undefined) {
         }),
         'galaxy.collectionremote': getPageUrl(HubRoute.RemoteDetails, {
           params: { id: name ?? objectId },
+        }),
+        'shared.team': getPageUrl(PlatformRoute.TeamDetails, { params: { id: objectId } }),
+        'shared.organization': getPageUrl(PlatformRoute.OrganizationDetails, {
+          params: { id: objectId },
         }),
       };
       return resourceToEndpointMapping[contentType] ?? undefined;
