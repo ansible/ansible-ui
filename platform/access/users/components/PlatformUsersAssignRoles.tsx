@@ -21,14 +21,15 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformSelectResourceTypeStep } from '../../common/roles-wizard/PlatformSelectResourceTypeStep';
 import { PlatformSelectResourcesStep } from '../../common/roles-wizard/PlatformSelectResourcesStep';
 import { PlatformSelectRolesStep } from '../../common/roles-wizard/PlatformSelectRolesStep';
+import { objectIdForResource } from '../../teams/components/PlatformTeamAssignRoles';
 interface WizardFormValues {
   resourceType: string;
-  resources: AwxResourceType[];
+  resources: { id: string; name: string }[];
   platformRoles: PlatformRole[];
 }
 
 interface ResourceRolePair {
-  resource: AwxResourceType;
+  resource: { id: string; name: string; pulp_href?: string };
   role: PlatformRole;
 }
 
@@ -110,7 +111,7 @@ export function PlatformUsersAssignRoles(props: { id?: string; userRolesRoute?: 
           const requestData = {
             user: user.id,
             role_definition: role.id,
-            object_id: resource.id,
+            object_id: objectIdForResource(resourceType, resource),
             content_type: resourceType,
           };
           return postRequest(gatewayAPI`/role_user_assignments/`, requestData, signal);

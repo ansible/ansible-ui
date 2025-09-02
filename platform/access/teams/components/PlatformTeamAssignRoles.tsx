@@ -20,6 +20,7 @@ import { useParams } from 'react-router-dom';
 import { PlatformSelectResourcesStep } from '../../common/roles-wizard/PlatformSelectResourcesStep';
 import { PlatformSelectResourceTypeStep } from '../../common/roles-wizard/PlatformSelectResourceTypeStep';
 import { PlatformSelectRolesStep } from '../../common/roles-wizard/PlatformSelectRolesStep';
+import { parsePulpIDFromURL } from '@ansible/hub-ui/common/api/hub-api-utils';
 
 interface WizardFormValues {
   resourceType: string;
@@ -28,8 +29,26 @@ interface WizardFormValues {
 }
 
 interface ResourceRolePair {
-  resource: { id: string; name: string };
+  resource: { id: string; name: string; pulp_href?: string };
   role: PlatformRole;
+}
+
+export function objectIdForResource(
+  resourceType: string,
+  resource: { id: string; name: string; namespace?: { id?: string }; pulp_href?: string }
+) {
+  switch (resourceType) {
+    case 'galaxy.containernamespace':
+      return resource?.namespace?.id;
+    case 'galaxy.collectionremote':
+    case 'galaxy.ansiblerepository':
+      return parsePulpIDFromURL(resource?.pulp_href);
+    default:
+      return resource.id;
+  }
+  return resourceType.substring(0, resourceType.indexOf('.')) === 'galaxy'
+    ? parsePulpIDFromURL(resource?.pulp_href)
+    : resource.id;
 }
 export function PlatformTeamAssignRoles() {
   const { t } = useTranslation();
@@ -107,8 +126,7 @@ export function PlatformTeamAssignRoles() {
           const requestData = {
             team: team.id,
             role_definition: role.id,
-            object_id: resource.id,
-            content_type: resourceType,
+            object_id: objectIdForResource(resourceType, resource),
           };
           return postRequest(gatewayAPI`/role_team_assignments/`, requestData, signal);
         },
