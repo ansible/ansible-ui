@@ -114,7 +114,7 @@ test.describe('Role Creation Tests', () => {
         await navigateToRolesPage(page);
         await clickCreateRole(page);
         await expect(page.getByText('Select permissions')).not.toBeVisible();
-        await selectResourceType(page, 'namespace');
+        await selectResourceType(page, 'Namespace');
         await expect(page.getByText('Select permissions')).toBeVisible();
       }
     );
@@ -127,10 +127,10 @@ test.describe('Role Creation Tests', () => {
 
         await navigateToRolesPage(page);
         await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName);
+        await fillRoleBasicInfo(page, roleName, 'Test role description');
 
         // Select first resource type and permissions
-        await selectResourceType(page, 'namespace');
+        await selectResourceType(page, 'Namespace');
         await selectPermissions(page, ['Can view namespace']);
 
         // Wait for permissions to be properly selected
@@ -139,7 +139,7 @@ test.describe('Role Creation Tests', () => {
         });
 
         // Change resource type - this should clear permissions
-        await selectResourceType(page, 'collection');
+        await selectResourceType(page, 'Collection');
 
         // Wait for the permissions dropdown to reset
         await expect(page.getByText('Select permissions')).toBeVisible({ timeout: 5000 });
@@ -154,7 +154,7 @@ test.describe('Role Creation Tests', () => {
         await expect(page.getByRole('heading', { name: roleName })).toBeVisible({ timeout: 10000 });
 
         // Verify final state
-        await expect(page.locator('#resource-type')).toHaveText('collection');
+        await expect(page.locator('#resource-type')).toHaveText('Collection');
         await expect(page.locator('#permissions')).toContainText('galaxy.view_collection');
         await expect(page.locator('#permissions')).not.toContainText('galaxy.view_namespace');
 
@@ -200,7 +200,7 @@ test.describe('Role Creation Tests', () => {
 
         await navigateToRolesPage(page);
         await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName);
+        await fillRoleBasicInfo(page, roleName, 'Test description');
         await submitRoleForm(page);
         await expect(page.getByRole('heading', { name: 'Create role' })).toBeVisible();
       }
@@ -214,8 +214,8 @@ test.describe('Role Creation Tests', () => {
 
         await navigateToRolesPage(page);
         await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName);
-        await selectResourceType(page, 'namespace');
+        await fillRoleBasicInfo(page, roleName, 'Test description');
+        await selectResourceType(page, 'Namespace');
         await submitRoleForm(page);
         await expect(page.getByRole('heading', { name: 'Create role' })).toBeVisible();
       }
@@ -237,7 +237,7 @@ test.describe('Role Creation Tests', () => {
 
         // Now try to create a duplicate role
         await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName);
+        await fillRoleBasicInfo(page, roleName, 'Test description');
         await selectResourceType(page, config.resourceTypeDisplayName);
         await selectPermissions(page, config.permissionDisplayNames);
 
@@ -308,15 +308,17 @@ test.describe('Role Creation Tests', () => {
       async ({ page }) => {
         await navigateToRolesPage(page);
         await clickCreateRole(page);
-        await fillRoleBasicInfo(page, createE2EName());
-        await selectResourceType(page, 'namespace');
+        await fillRoleBasicInfo(page, createE2EName(), 'Test description');
+        await selectResourceType(page, 'Namespace');
         await selectPermissions(page, ['Can view namespace']);
-        await page
-          .locator('#content-type-form-group')
-          .getByRole('button')
-          .filter({ hasText: /^$/ })
-          .click();
-        await selectResourceType(page, 'collection');
+
+        // Verify permissions are selected
+        await expect(page.locator('#permissions')).toContainText('Can view namespace');
+
+        // Change resource type - this should clear permissions automatically
+        await selectResourceType(page, 'Collection');
+
+        // Verify permissions dropdown is reset
         await expect(page.getByText('Select permissions')).toBeVisible();
         await page.getByText('Select permissions').click();
         await expect(page.getByText('Can view collection')).not.toBeChecked();
@@ -331,8 +333,8 @@ test.describe('Role Creation Tests', () => {
 
         await navigateToRolesPage(page);
         await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName);
-        await selectResourceType(page, 'namespace');
+        await fillRoleBasicInfo(page, roleName, 'Test description');
+        await selectResourceType(page, 'Namespace');
         await cancelRoleForm(page);
         await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
         await expect(page.getByRole('row').filter({ hasText: roleName })).not.toBeVisible();
