@@ -39,6 +39,7 @@ table tbody tr td.expanded {
 }
 
 /* Ansible UI override for PF Tabs that contain a Toolbar */
-.pf-v6-c-tabs + .pf-v6-c-toolbar {
+.pf-v6-c-page__main-section:has(> .pf-v6-c-page__main-body:only-child > .pf-v6-c-tabs:only-child)
+  + .pf-v6-c-toolbar {
   margin-top: var(--pf-t--global--spacer--md);
 }
