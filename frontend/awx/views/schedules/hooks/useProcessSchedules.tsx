@@ -71,32 +71,40 @@ export const useProcessSchedule = () => {
           };
         }
         case 'workflow_job_template': {
-          const promptData = mungePromptData(prompt);
-          schedule = await request(awxAPI`/workflow_job_templates/${id.toString()}/schedules/`, {
+          const promptData = mungePromptData(prompt, payloadData.launch_config);
+          const requestPayload: BaseSchedulePayload | ScheduleAccessoriesPayload = {
             ...payload,
             ...promptData,
             extra_data: mungeSurveyAndExtraVarsData(survey ?? {}, prompt?.extra_vars ?? ''),
-          });
+          };
+          schedule = await request(
+            awxAPI`/workflow_job_templates/${id.toString()}/schedules/`,
+            requestPayload
+          );
           await postAccessories(schedule, {
             ...payload,
             ...promptData,
-          });
+          } as Parameters<typeof postAccessories>[1]);
           return {
             schedule,
           };
         }
         default: {
-          const promptData = mungePromptData(prompt);
-          schedule = await request(awxAPI`/job_templates/${id.toString()}/schedules/`, {
+          const promptData = mungePromptData(prompt, payloadData.launch_config);
+          const requestPayload: BaseSchedulePayload | ScheduleAccessoriesPayload = {
             ...payload,
             ...promptData,
             extra_data: mungeSurveyAndExtraVarsData(survey ?? {}, prompt?.extra_vars ?? ''),
-          });
-          if (prompt !== undefined && payload.launch_config !== null) {
+          };
+          schedule = await request(
+            awxAPI`/job_templates/${id.toString()}/schedules/`,
+            requestPayload
+          );
+          if (prompt !== undefined && payloadData.launch_config !== undefined) {
             await postAccessories(schedule, {
               ...payload,
               ...promptData,
-            });
+            } as Parameters<typeof postAccessories>[1]);
           }
 
           return {
