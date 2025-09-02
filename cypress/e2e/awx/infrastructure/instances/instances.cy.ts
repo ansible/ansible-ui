@@ -128,7 +128,11 @@ describe('Instances K8S', () => {
       cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);
       cy.get('input[aria-label="Enabled"]').should('exist');
       cy.getByDataCy('actions-dropdown').click();
+      cy.intercept('GET', awxAPI`/instances/*/`).as('editForm');
       cy.getByDataCy('edit-instance').click();
+      cy.wait('@editForm').then((response) => {
+        expect(response?.response?.statusCode).to.eql(200);
+      });
       cy.getByDataCy('enabled').click();
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
       cy.clickButton(/^Save instance$/);
