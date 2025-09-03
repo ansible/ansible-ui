@@ -1,18 +1,32 @@
-import { ITableColumn, useGetPageUrl, ColumnTableOption } from '@ansible/ansible-ui-framework';
+import { ColumnTableOption, ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
 } from '@ansible/common-ui/columns';
-import { useMemo } from 'react';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { ContentType } from './ContentType';
 import { useContentTypeComponentNames } from './useContentTypeComponentNames';
 import { useGetResourceTypes } from './useResourceType';
-import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
+
+// Define RolePermission type to match permission objects
+interface RolePermission {
+  api_slug: string;
+  codename: string;
+  name: string;
+}
+
+// Optionally, define RolePermissionsResponse if not already defined
+interface RolePermissionsResponse {
+  results: RolePermission[];
+}
 
 export function usePlatformRoleColumns(options?: {
   disableSort?: boolean;
@@ -22,6 +36,41 @@ export function usePlatformRoleColumns(options?: {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const getDisplayName = useMapContentTypeToDisplayName();
+
+  // Fetch role permissions to map permission codes to display names
+  const { data: rolePermissionsResponse } = useGet<RolePermissionsResponse>(
+    gatewayAPI`/service-index/role-permissions/?page_size=200`
+  );
+
+  // Create a map of permission codes to display names
+  const permissionCodeToNameMap = useMemo(() => {
+    if (!rolePermissionsResponse?.results) {
+      return {};
+    }
+
+    return Object.fromEntries(
+      rolePermissionsResponse.results.map((permission: RolePermission) => [
+        permission.api_slug,
+        permission.name,
+      ])
+    ) as Record<string, string>;
+  }, [rolePermissionsResponse]);
+
+  // Function to get permission display names
+  const getPermissionDisplayNames = useCallback(
+    (permissions: string[]) => {
+      if (!permissions || !Array.isArray(permissions)) {
+        return [];
+      }
+
+      // Convert permission codes to display names using the mapping
+      return permissions.map((permissionCode) => {
+        const displayName = permissionCodeToNameMap[permissionCode];
+        return displayName || permissionCode;
+      });
+    },
+    [permissionCodeToNameMap]
+  );
 
   const nameColumn = useNameColumn<PlatformRole>({
     to: (role) => getPageUrl(PlatformRoute.RoleDetails, { params: { id: role.id } }),
@@ -87,7 +136,7 @@ export function usePlatformRoleColumns(options?: {
       {
         header: t('Permissions'),
         type: 'labels',
-        value: (role) => role.permissions,
+        value: (role) => getPermissionDisplayNames(role.permissions),
         sort: options?.disableSort ? undefined : 'permissions',
         modal: 'hidden',
         table: options?.disableExtraColumns ? 'hidden' : ColumnTableOption.expanded,
@@ -107,6 +156,7 @@ export function usePlatformRoleColumns(options?: {
       getContentTypeComponentNames,
       resourceModelMap,
       getDisplayName,
+      getPermissionDisplayNames,
     ]
   );
 }
