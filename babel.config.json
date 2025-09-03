@@ -10,7 +10,7 @@
         "namespace": "ans"
       }
     ],
-    "transform-class-properties",
-    "istanbul"
+    "@babel/plugin-transform-class-properties",
+    "babel-plugin-istanbul"
   ]
 }

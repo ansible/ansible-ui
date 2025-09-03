@@ -7,7 +7,6 @@
 /Dockerfile
 /coverage
 /docs
-/locales
 /node_modules
 /playbooks
 /publish

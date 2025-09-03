@@ -1,6 +1,6 @@
 // vite.config.js
 /* eslint-disable no-restricted-exports */
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
