@@ -1,4 +1,4 @@
-import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl, ColumnTableOption } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -90,7 +90,7 @@ export function usePlatformRoleColumns(options?: {
         value: (role) => role.permissions,
         sort: options?.disableSort ? undefined : 'permissions',
         modal: 'hidden',
-        table: 'hidden',
+        table: options?.disableExtraColumns ? 'hidden' : ColumnTableOption.expanded,
         detailsFullWidth: true,
       },
       createdColumn,
