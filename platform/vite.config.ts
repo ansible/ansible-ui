@@ -1,7 +1,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import selfsigned from 'selfsigned';
 import { defineConfig, PluginOption, UserConfig } from 'vite';
 import compression from 'vite-plugin-compression';
