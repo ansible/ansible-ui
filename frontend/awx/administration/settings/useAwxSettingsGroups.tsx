@@ -98,12 +98,12 @@ export function useAwxSettingsGroups(categoryId: string = 'all') {
   const optionsResponse = useOptions<AwxSettingsOptionsResponse>(awxAPI`/settings/${categoryId}/`);
 
   const options = useMemo(() => {
-    if (!optionsResponse.data?.actions.PUT) return undefined;
+    // Require at least GET permissions to display settings
     if (!optionsResponse.data?.actions.GET) return undefined;
 
     const { actions } = optionsResponse.data;
     const getKeys = Object.keys(actions.GET);
-    const putKeys = Object.keys(actions.PUT);
+    const putKeys = actions.PUT ? Object.keys(actions.PUT) : [];
 
     // Settings marked as 'defined_in_file' are read-only in the API
     // and won't be included in the OPTIONS PUT response,
@@ -113,15 +113,18 @@ export function useAwxSettingsGroups(categoryId: string = 'all') {
       (x) => !putKeys.includes(x) && actions.GET[x].defined_in_file
     );
 
-    return [...putKeys, ...awxSettingsDefinedInFile].reduce<
-      Record<string, AwxSettingsOptionsAction>
-    >((acc, key) => {
+    // If no PUT permissions (e.g., auditor role), show all GET settings as read-only
+    const allSettingsKeys = actions.PUT ? [...putKeys, ...awxSettingsDefinedInFile] : getKeys;
+
+    const options = allSettingsKeys.reduce<Record<string, AwxSettingsOptionsAction>>((acc, key) => {
       if (awxSettingsExcludeKeys.includes(key)) return acc;
-      const value = awxSettingsDefinedInFile.includes(key) ? actions.GET[key] : actions.PUT[key];
+      // Use PUT action if available and key exists there, otherwise use GET action
+      const value = actions.PUT && putKeys.includes(key) ? actions.PUT[key] : actions.GET[key];
       if (value.hidden) return acc;
       acc[key] = value;
       return acc;
     }, {});
+    return options;
   }, [optionsResponse.data]);
 
   const groups = useMemo(() => {
@@ -170,7 +173,14 @@ export function useAwxSettingsGroups(categoryId: string = 'all') {
       error: optionsResponse.error,
       groups,
       options: options,
+      hasWritePermissions: !!optionsResponse.data?.actions.PUT,
     }),
-    [groups, optionsResponse.error, optionsResponse.isLoading, options]
+    [
+      groups,
+      optionsResponse.error,
+      optionsResponse.isLoading,
+      options,
+      optionsResponse.data?.actions,
+    ]
   );
 }
