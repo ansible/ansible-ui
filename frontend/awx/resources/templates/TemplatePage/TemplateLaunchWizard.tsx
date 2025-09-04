@@ -74,7 +74,7 @@ interface LaunchPayload {
   scm_branch: string;
   skip_tags: string;
   timeout: number;
-  verbosity: number;
+  verbosity: 0 | 1 | 2 | 3 | 4 | 5;
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
 

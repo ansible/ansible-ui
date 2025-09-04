@@ -85,7 +85,7 @@ export interface JobTemplateCreate {
   survey_enabled?: boolean;
   timeout?: number;
   use_fact_cache: boolean;
-  verbosity: number;
+  verbosity: 0 | 1 | 2 | 3 | 4 | 5;
   webhook_credential: number | null;
   webhook_service: string;
 }

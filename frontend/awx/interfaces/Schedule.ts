@@ -4,7 +4,15 @@ import { SummaryFieldInventory, SummaryFieldsByUser } from './summary-fields/sum
 export interface Schedule
   extends Omit<
     SwaggerSchedule,
-    'summary_fields' | 'id' | 'name' | 'related' | 'enabled' | 'next_run' | 'rrule'
+    | 'summary_fields'
+    | 'id'
+    | 'name'
+    | 'related'
+    | 'enabled'
+    | 'next_run'
+    | 'rrule'
+    | 'job_tags'
+    | 'skip_tags'
   > {
   id: number;
   next_run?: string;
@@ -15,6 +23,8 @@ export interface Schedule
   enabled: boolean;
   created: string;
   modified: string;
+  skip_tags: string;
+  job_tags: string;
   related: { unified_job_template: string };
   summary_fields: {
     unified_job_template: {
@@ -35,5 +45,6 @@ export interface Schedule
   };
   extra_data: {
     days?: number;
+    [key: string]: unknown;
   };
 }
