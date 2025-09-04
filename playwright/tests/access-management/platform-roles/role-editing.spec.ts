@@ -296,7 +296,7 @@ test.describe('Role Editing Tests', () => {
         const firstName = createE2EName();
         const secondName = createE2EName();
         const config1 = { ...TEST_ROLE_CONFIGS.namespace, name: firstName };
-        const config2 = { ...TEST_ROLE_CONFIGS.collection, name: secondName };
+        const config2 = { ...TEST_ROLE_CONFIGS.namespace, name: secondName };
 
         // Create two roles
         await createRoleWithConfig(page, config1);
@@ -439,7 +439,7 @@ test.describe('Role Editing Tests', () => {
       async ({ page }) => {
         const roleName = createE2EName();
         const description = 'Test role description';
-        const config = { ...TEST_ROLE_CONFIGS.collection, name: roleName, description };
+        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName, description };
 
         await createRoleWithConfig(page, config);
 

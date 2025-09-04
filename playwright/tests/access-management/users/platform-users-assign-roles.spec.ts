@@ -29,9 +29,6 @@ test('should assign a user role', { tag: ['@not_mock'] }, async ({ page }) => {
   await page.getByRole('button', { name: 'apply filter' }).click();
   await page.getByRole('checkbox', { name: 'Select row' }).check();
   await page.getByRole('button', { name: 'Next', exact: true }).click();
-  await page.getByRole('button', { name: 'Search' }).click();
-  await page.getByRole('textbox', { name: 'Search input' }).fill('Name');
-  await page.getByRole('option', { name: 'Name' }).click();
   await page.getByRole('textbox', { name: 'Type to filter' }).fill('Inventory Admin');
   await page.getByRole('button', { name: 'apply filter' }).click();
   await page.getByRole('checkbox', { name: 'Select row' }).check();
