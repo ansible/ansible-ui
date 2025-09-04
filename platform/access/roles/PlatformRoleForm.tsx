@@ -23,6 +23,7 @@ import { PlatformRole } from '../../interfaces/PlatformRole';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormRolePermissionsSelect } from './components/PageFormPermissionsSelect';
 import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
 
 export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
@@ -33,8 +34,12 @@ export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: str
 
   const postRequest = usePostRequest<Partial<PlatformRole>, PlatformRole>();
 
-  const onSubmit: PageFormSubmitHandler<PlatformRole> = async (Role) => {
-    const newRole = await postRequest(gatewayAPI`/role_definitions/`, Role);
+  const onSubmit: PageFormSubmitHandler<PlatformRole> = async (role) => {
+    const toCreateRole: PlatformRole = {
+      ...role,
+      content_type: role.content_type === 'system' ? null : role.content_type,
+    };
+    const newRole = await postRequest(gatewayAPI`/role_definitions/`, toCreateRole);
     pageNavigate(PlatformRoute.RoleDetails, { params: { id: newRole.id } });
   };
   const onCancel = () => void navigate(-1);
@@ -113,8 +118,12 @@ export function EditPlatformRole(props: { breadcrumbLabelForPreviousPage?: strin
             submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
+            defaultValue={{
+              ...role,
+              content_type:
+                role?.content_type === null ? ContentTypeEnum.System : role?.content_type,
+            }}
             onCancel={onCancel}
-            defaultValue={role}
           >
             <PlatformRoleInputs isEditMode={true} />
           </PageForm>

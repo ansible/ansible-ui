@@ -16,7 +16,7 @@ export interface PlatformRbacRole {
     [key: string]: Record<string, string>[] | undefined;
   };
   permissions: string[];
-  content_type: string;
+  content_type: string | null;
   created: string;
   modified: string;
   name: string;
