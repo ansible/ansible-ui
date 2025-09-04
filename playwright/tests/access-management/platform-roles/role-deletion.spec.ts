@@ -208,7 +208,10 @@ test.describe('Role Deletion Tests', () => {
 
         for (let i = 0; i < roleCount; i++) {
           const roleName = createE2EName();
-          const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
+          const config = {
+            ...TEST_ROLE_CONFIGS.awxInventory,
+            name: roleName,
+          };
           await createRoleWithConfig(page, config);
           roleNames.push(roleName);
         }

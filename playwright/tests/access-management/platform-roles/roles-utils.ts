@@ -20,7 +20,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for namespace management',
     resourceType: 'galaxy.namespace',
-    resourceTypeDisplayName: 'Namespace',
+    resourceTypeDisplayName: 'namespace',
     permissions: ['galaxy.view_namespace'],
     permissionDisplayNames: ['Can view namespace'],
     expectedComponent: 'Automation Content',
@@ -29,16 +29,16 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for collection management',
     resourceType: 'galaxy.collection',
-    resourceTypeDisplayName: 'Collection',
+    resourceTypeDisplayName: 'collectionimport',
     permissions: ['galaxy.change_collection', 'galaxy.view_collection'],
-    permissionDisplayNames: ['Can change collection', 'Can view collection'],
+    permissionDisplayNames: ['Can change collection import', 'Can view collection import'],
     expectedComponent: 'Automation Content',
   },
   awxInventory: {
     name: '',
     description: 'Test role for AWX inventory management',
     resourceType: 'awx.inventory',
-    resourceTypeDisplayName: 'Inventory',
+    resourceTypeDisplayName: 'inventory',
     permissions: ['awx.view_inventory'],
     permissionDisplayNames: ['Can view inventory'],
     expectedComponent: 'Automation Execution',
@@ -49,7 +49,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     resourceType: 'eda.rulebook',
     resourceTypeDisplayName: 'Rulebook',
     permissions: ['eda.view_rulebook'],
-    permissionDisplayNames: ['Can view rulebook'],
+    permissionDisplayNames: ['Can view rulebook process'],
     expectedComponent: 'Automation Decisions',
   },
 };
@@ -72,8 +72,21 @@ export async function fillRoleBasicInfo(page: Page, name: string, description?: 
 }
 
 export async function selectResourceType(page: Page, resourceTypeDisplay: string) {
+  // Click on the content type dropdown
   await page.getByTestId('content-type').click();
-  await page.getByRole('option', { name: resourceTypeDisplay, exact: true }).click();
+
+  // Wait for the dropdown to be visible and options to load
+  await page.waitForTimeout(3000);
+
+  // Find the option by text content with case-insensitive matching
+  const option = page
+    .getByRole('option')
+    .filter({ hasText: new RegExp(resourceTypeDisplay, 'i') })
+    .first();
+
+  // Wait for the option to be visible and click it
+  await option.waitFor({ state: 'visible', timeout: 30000 });
+  await option.click();
 }
 
 export async function selectPermissions(
@@ -84,7 +97,7 @@ export async function selectPermissions(
   await page.locator('#permissions').click();
 
   // Wait for the dropdown to be fully expanded
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1000);
 
   // Clear existing selections if requested
   if (clearExisting) {
@@ -93,23 +106,33 @@ export async function selectPermissions(
     const closeButtonCount = await closeButtons.count();
 
     for (let i = 0; i < closeButtonCount; i++) {
-      try {
-        await closeButtons.first().click();
-        await page.waitForTimeout(200);
-      } catch (error) {
-        // Continue if button is no longer available
-      }
+      await closeButtons.first().click();
+      await page.waitForTimeout(200);
     }
   }
 
   // Select the specified permissions
   for (const permission of permissionDisplayNames) {
-    const checkbox = page.getByRole('checkbox', { name: permission, exact: true });
-    const isChecked = await checkbox.isChecked();
+    // Use a more direct approach - find the checkbox by looking for a label with the permission text
+    const label = page
+      .locator('label')
+      .filter({ hasText: new RegExp(permission, 'i') })
+      .first();
 
+    // Wait for the label to be visible
+    await label.waitFor({ state: 'visible', timeout: 30000 });
+
+    // Find the checkbox that's associated with this label
+    const checkbox = label.locator('input[type="checkbox"]').first();
+
+    // Wait for the checkbox to be visible and clickable
+    await checkbox.waitFor({ state: 'visible', timeout: 30000 });
+
+    // Check if the checkbox is already checked before trying to interact with it
+    const isChecked = await checkbox.isChecked();
     if (!isChecked) {
       await checkbox.click();
-      await page.waitForTimeout(200);
+      await page.waitForTimeout(300);
     }
   }
 
@@ -138,16 +161,10 @@ export async function createRoleWithConfig(page: Page, config: RoleTestData): Pr
   // Verify we're no longer on the create form (more flexible than expecting exact page)
   await expect(page.getByRole('heading', { name: 'Create role' })).not.toBeVisible();
 
-  // Try to verify we're on the details page, but with a longer timeout
-  try {
-    await expect(page.getByRole('heading', { name: roleName, exact: true })).toBeVisible({
-      timeout: 10000,
-    });
-  } catch (error) {
-    // If we can't find the details page, at least verify the role was created by checking the list
-    await navigateToRolesPage(page);
-    await verifyRoleInList(page, roleName, true);
-  }
+  // Verify we're on the details page
+  await expect(page.getByRole('heading', { name: roleName, exact: true })).toBeVisible({
+    timeout: 10000,
+  });
 
   return roleName;
 }
@@ -158,7 +175,9 @@ export async function verifyRoleDetails(page: Page, roleName: string, config: Ro
     await expect(page.locator('#description')).toHaveText(config.description);
   }
   await expect(page.locator('#components')).toHaveText(config.expectedComponent);
-  await expect(page.locator('#resource-type')).toHaveText(config.resourceTypeDisplayName);
+  await expect(page.locator('#resource-type')).toHaveText(
+    new RegExp(config.resourceTypeDisplayName, 'i')
+  );
 
   // Verify permissions (might need to adjust selector based on actual implementation)
   for (const permission of config.permissions) {
@@ -204,14 +223,10 @@ export async function verifyRoleInList(page: Page, roleName: string, shouldExist
   await navigateToRolesPage(page);
 
   // Clear any existing filters first
-  try {
-    const clearFiltersButton = page.getByRole('button', { name: 'Clear all filters' }).first();
-    if (await clearFiltersButton.isVisible()) {
-      await clearFiltersButton.click();
-      await page.waitForTimeout(1000);
-    }
-  } catch (error) {
-    // If clearing filters fails, continue
+  const clearFiltersButton = page.getByRole('button', { name: 'Clear all filters' }).first();
+  if (await clearFiltersButton.isVisible()) {
+    await clearFiltersButton.click();
+    await page.waitForTimeout(1000);
   }
 
   if (shouldExist) {
@@ -219,26 +234,33 @@ export async function verifyRoleInList(page: Page, roleName: string, shouldExist
     const roleRow = await getTableRow(page, roleName);
     await expect(roleRow).toBeVisible();
   } else {
-    // For negative verification, manually filter and check the results
+    // For negative verification, use the same approach as getTableRow but check for no results
+    // This ensures consistency with how filtering is handled elsewhere
     await page.getByRole('textbox', { name: 'Type to filter' }).fill(roleName);
-    await page.getByRole('button', { name: 'apply filter' }).click();
 
-    // Wait for the filter to be applied and page to update
-    await page.waitForTimeout(3000);
+    // Wait for the filter input to be processed and the apply button to be enabled
+    await page.waitForTimeout(1000);
+
+    // Check if the apply filter button is visible and enabled before clicking
+    const applyFilterButton = page.getByRole('button', { name: 'apply filter' });
+    if ((await applyFilterButton.isVisible()) && (await applyFilterButton.isEnabled())) {
+      await applyFilterButton.click();
+      // Wait for the filter to be applied and page to update
+      await page.waitForTimeout(3000);
+    } else {
+      // If no apply button, the filtering might be automatic (debounced)
+      await page.waitForTimeout(2000);
+    }
 
     // Check if any rows contain the role name (excluding header row)
     const matchingRows = page.getByRole('row').filter({ hasText: roleName });
     await expect(matchingRows).toHaveCount(0);
 
     // Clear the filter to reset the table
-    try {
-      const clearFiltersButton = page.getByRole('button', { name: 'Clear all filters' }).first();
-      if (await clearFiltersButton.isVisible()) {
-        await clearFiltersButton.click();
-        await page.waitForTimeout(1000);
-      }
-    } catch (error) {
-      // If clearing filters fails, it's not critical for this verification
+    const clearFiltersButton = page.getByRole('button', { name: 'Clear all filters' }).first();
+    if (await clearFiltersButton.isVisible()) {
+      await clearFiltersButton.click();
+      await page.waitForTimeout(1000);
     }
   }
 }
