@@ -1,11 +1,11 @@
-import { ColumnTableOption, ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 import {
-  useCreatedColumn,
-  useDescriptionColumn,
-  useModifiedColumn,
-  useNameColumn,
-} from '@ansible/common-ui/columns';
+  ColumnDashboardOption,
+  ColumnModalOption,
+  ColumnTableOption,
+  ITableColumn,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,8 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { ContentType } from './ContentType';
 import { useContentTypeComponentNames } from './useContentTypeComponentNames';
 import { useGetResourceTypes } from './useResourceType';
+import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
+import { useManagedRolesWithDescription } from '@ansible/hub-ui/access/roles/hooks/useManagedRolesWithDescription';
 
 // Define RolePermission type to match permission objects
 interface RolePermission {
@@ -78,14 +80,6 @@ export function usePlatformRoleColumns(options?: {
     disableLinks: options?.disableLinks,
   });
 
-  const descriptionBaseColumn = useDescriptionColumn<PlatformRole>({
-    disableSort: options?.disableSort,
-  });
-  const descriptionColumn = useMemo(
-    () => ({ ...descriptionBaseColumn, table: undefined }),
-    [descriptionBaseColumn]
-  );
-
   const createdColumn = useCreatedColumn({
     disableSort: options?.disableSort,
     disableLinks: options?.disableLinks,
@@ -106,11 +100,27 @@ export function usePlatformRoleColumns(options?: {
       ) as Record<string, string>,
     [resourceTypeResponse]
   );
-
+  const manageRoleWithDescription = useManagedRolesWithDescription();
+  const isHubColumnWithNoDescription = (name: string, description: string) => {
+    return name === description && name.startsWith('galaxy.');
+  };
   return useMemo<ITableColumn<PlatformRole>[]>(
     () => [
       nameColumn,
-      descriptionColumn,
+      {
+        id: 'description',
+        header: t('Description'),
+        type: 'description',
+        value: (item) =>
+          item?.name && isHubColumnWithNoDescription(item?.name, item?.description)
+            ? (manageRoleWithDescription[item.name] ?? item.description)
+            : item.description,
+        list: 'description',
+        card: 'description',
+        modal: ColumnModalOption.hidden,
+        dashboard: ColumnDashboardOption.hidden,
+        detailsFullWidth: true,
+      },
       {
         header: t('Components'),
         type: 'labels',
@@ -147,12 +157,12 @@ export function usePlatformRoleColumns(options?: {
     ],
     [
       nameColumn,
-      descriptionColumn,
       t,
-      options?.disableSort,
       options?.disableExtraColumns,
+      options?.disableSort,
       createdColumn,
       modifiedColumn,
+      manageRoleWithDescription,
       getContentTypeComponentNames,
       resourceModelMap,
       getDisplayName,

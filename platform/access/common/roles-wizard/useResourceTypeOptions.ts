@@ -4,6 +4,7 @@ import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformI
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { useMemo } from 'react';
 import {
+  ALLOWED_EDA_TYPES,
   ALLOWED_GALAXY_TYPES,
   EXCLUDED_SERVICES,
   SERVICE_DISPLAY_NAMES,
@@ -23,6 +24,7 @@ export interface ResourceTypeOption {
   value: string;
   label: string;
   group: string;
+  description?: string;
 }
 
 const isKnownService = (service: string): service is ServiceType => {
@@ -37,6 +39,11 @@ const isAllowedRoleType = (roleType: RoleTypeResult): boolean => {
   // Exclude specified services
   if (EXCLUDED_SERVICES.some((excludedService) => excludedService === roleType.service)) {
     return false;
+  }
+
+  // For the eda service, only include specific allowed types
+  if (roleType.service === 'eda') {
+    return ALLOWED_EDA_TYPES.some((allowedType) => allowedType === roleType.api_slug);
   }
 
   // For galaxy service, only include specific allowed types

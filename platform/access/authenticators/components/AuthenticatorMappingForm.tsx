@@ -199,7 +199,7 @@ function MappingInputs() {
   const roleTypes: { [k: string]: string } = {};
   if (!isRolesLoading && roles?.results) {
     for (const r of roles.results) {
-      roleTypes[r.name] = r.content_type;
+      roleTypes[r.name] = r.content_type ?? '';
     }
   }
   return <MappingFields roleTypes={roleTypes} />;
