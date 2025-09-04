@@ -8,19 +8,13 @@ describe('Platform: Roles', () => {
     const verifyRolePermissions = (roleId: string) => {
       cy.getPlatformRoleDetail(roleId).then((roleDetail) => {
         const { permissions } = roleDetail;
-
-        // Check if permissions section exists and verify permissions
         cy.get('body').then(($body) => {
           if ($body.find('[data-cy="permissions-description-list"]').length > 0) {
-            // Show all permissions if there are more than 3
             if (permissions.length > 3) {
               cy.get('[data-cy="permissions-description-list"] button').click();
             }
-
-            // Verify permissions are visible
             cy.get('[data-cy="permissions-description-list"]').should('be.visible');
           } else {
-            // Fallback: just check that some permissions are displayed
             cy.contains('Permissions').should('be.visible');
           }
         });
@@ -29,33 +23,26 @@ describe('Platform: Roles', () => {
 
     it('can verify that a managed role displays the proper permissions', () => {
       cy.getPlatformRoles({ managed: true }).then((roles) => {
-        const testRole = roles[0]; // Use first role instead of index 17
-
+        const testRole = roles[0];
         if (!testRole?.managed) {
           cy.log('Test role is not managed, skipping test');
           return;
         }
-
         cy.intercept('GET', gatewayAPI`/role_definitions/*`).as('roleDefinitions');
         cy.navigateTo('platform', 'roles');
         cy.wait('@roleDefinitions');
         cy.verifyPageTitle('Roles');
         cy.setTablePageSize('50');
         cy.filterTableByTextFilter('name', testRole.name);
-
-        // Navigate directly to role details page (permissions are not shown in table)
         cy.clickTableRowLink('name', testRole.name, { disableFilter: true });
         cy.verifyPageTitle(testRole.name);
         cy.get('dd[data-cy="name"]').should('contain', testRole.name);
         cy.get('[data-cy="description"]').should('contain', testRole.description);
         verifyRolePermissions(testRole.id.toString());
-
-        // Try different back button selectors
         cy.get('body').then(($body) => {
           if ($body.find('[data-cy="back-to roles"]').length > 0) {
             cy.get('[data-cy="back-to roles"]').click();
           } else {
-            // Just navigate back programmatically
             cy.navigateTo('platform', 'roles');
           }
         });
@@ -63,62 +50,116 @@ describe('Platform: Roles', () => {
     });
   });
 
-  describe.skip('Platform: Create and Delete Roles - SKIPPED (Content type loading issues)', () => {
-    const roleTypes = [
-      {
-        role: 'awx.jobtemplate',
-        rolePermission: ['awx.view_jobtemplate', 'awx.execute_jobtemplate'],
-      },
-      { role: 'awx.project', rolePermission: ['awx.view_project', 'awx.update_project'] },
-    ];
-
-    roleTypes.forEach((roleType) => {
-      it(`can create ${roleType.role} role with 2 permissions and then delete the role from the details page`, () => {
-        cy.intercept('GET', gatewayAPI`/role_definitions/*`).as('roleDefinitions');
-        cy.navigateTo('platform', 'roles');
-        cy.wait('@roleDefinitions');
-        cy.verifyPageTitle('Roles');
-        cy.setTablePageSize('50');
-        cy.getByDataCy('create-role').click();
-        cy.verifyPageTitle('Create role');
-        const roleName = `${roleType.role}` + `${randomString(5)}`;
-        cy.getByDataCy('name').type(`${roleName}`);
-        cy.getByDataCy('description').type(`${roleType.role} description`);
-        cy.get(`[data-cy="content-type-form-group"]`)
-          .find('button')
-          .first()
-          .click()
-          .then(() => {
-            cy.get('#content-type').within(() => {
-              cy.contains('li', roleType.role).click();
+  describe('Platform: Create and Delete Roles - SKIPPED (Content type loading issues)', () => {
+    it(`can create an Automation Execution job template role with 2 permissions and then delete the role from the details page`, () => {
+      cy.intercept('GET', gatewayAPI`/role_definitions/*`).as('roleDefinitions');
+      cy.navigateTo('platform', 'roles');
+      cy.wait('@roleDefinitions');
+      cy.verifyPageTitle('Roles');
+      cy.setTablePageSize('50');
+      cy.getByDataCy('create-role').click();
+      cy.verifyPageTitle('Create role');
+      const roleName = 'awx.jobtemplate' + `${randomString(5)}`;
+      cy.getByDataCy('name').type(`${roleName}`);
+      cy.getByDataCy('description').type(`awx.jobtemplate description`);
+      cy.get(`[data-cy="content-type-form-group"]`)
+        .find('button')
+        .first()
+        .click()
+        .then(() => {
+          cy.contains('h1', 'Automation Execution')
+            .parent()
+            .scrollIntoView()
+            .within(() => {
+              cy.get('#job-template').click();
+            });
+        });
+      cy.get(`[data-cy="permissions-form-group"]`)
+        .find('button')
+        .first()
+        .click()
+        .then(() => {
+          cy.get('#permissions-select').within(() => {
+            cy.get('ul').within(() => {
+              cy.get('#can-view-job-template').click();
             });
           });
-        const permissions = roleType.rolePermission;
-        cy.get(`[data-cy="permissions-form-group"]`)
-          .find('button')
-          .first()
-          .click()
-          .then(() => {
-            cy.get('#permissions-select').within(() => {
-              cy.get('ul').within(() => {
-                permissions.forEach((permission) => {
-                  cy.contains('li', permission).click();
-                });
-              });
+          cy.get('#permissions-select').within(() => {
+            cy.get('ul').within(() => {
+              cy.get('#can-run-this-job-template').click();
             });
           });
-        cy.getByDataCy('Submit').click();
-        cy.verifyPageTitle(`${roleName}`);
-        cy.clickTab('Details', true); //this line can be removed when https://issues.redhat.com/browse/AAP-25014 is fixed
-        cy.url().should('contain', '/details');
-        cy.selectDetailsPageKebabAction('delete-role');
-        cy.getBy('#filter-input').type(`${roleName}{enter}`);
-        cy.wait(2000);
+        });
+      cy.getByDataCy('Submit').click();
+      cy.verifyPageTitle(`${roleName}`);
+      cy.get('[data-cy="components"]').within(() => {
+        cy.contains('Automation Execution').should('be.visible');
       });
+      cy.get('[data-cy="permissions"]').within(() => {
+        cy.contains('awx.execute_jobtemplate').should('be.visible');
+        cy.contains('awx.view_jobtemplate').should('be.visible');
+      });
+      cy.selectDetailsPageKebabAction('delete-role');
+      cy.getBy('#filter-input').type(`${roleName}{enter}`);
+      cy.wait('@roleDefinitions');
+      cy.contains('No results found').should('be.visible');
+    });
+
+    it(`can create an Automation Decision project role with 2 permissions and then delete the role from the details page`, () => {
+      cy.intercept('GET', gatewayAPI`/role_definitions/*`).as('roleDefinitions');
+      cy.navigateTo('platform', 'roles');
+      cy.wait('@roleDefinitions');
+      cy.verifyPageTitle('Roles');
+      cy.setTablePageSize('50');
+      cy.getByDataCy('create-role').click();
+      cy.verifyPageTitle('Create role');
+      const roleName = 'eda.project' + `${randomString(5)}`;
+      cy.getByDataCy('name').type(`${roleName}`);
+      cy.getByDataCy('description').type(`eda.project description`);
+      cy.get(`[data-cy="content-type-form-group"]`)
+        .find('button')
+        .first()
+        .click()
+        .then(() => {
+          cy.contains('h1', 'Automation Decisions')
+            .parent()
+            .scrollIntoView()
+            .find('#project')
+            .click();
+        });
+      cy.get(`[data-cy="permissions-form-group"]`)
+        .find('button')
+        .first()
+        .click()
+        .then(() => {
+          cy.get('#permissions-select').within(() => {
+            cy.get('ul').within(() => {
+              cy.get('#can-view-project').click();
+            });
+          });
+          cy.get('#permissions-select').within(() => {
+            cy.get('ul').within(() => {
+              cy.get('#can-sync-a-project').click();
+            });
+          });
+        });
+      cy.getByDataCy('Submit').click();
+      cy.verifyPageTitle(`${roleName}`);
+      cy.get('[data-cy="components"]').within(() => {
+        cy.contains('Automation Decisions').should('be.visible');
+      });
+      cy.get('[data-cy="permissions"]').within(() => {
+        cy.contains('eda.sync_project').should('be.visible');
+        cy.contains('eda.view_project').should('be.visible');
+      });
+      cy.selectDetailsPageKebabAction('delete-role');
+      cy.getBy('#filter-input').type(`${roleName}{enter}`);
+      cy.wait('@roleDefinitions');
+      cy.contains('No results found').should('be.visible');
     });
   });
 
-  describe.skip('Platform: Edit Roles - SKIPPED (Content type issues)', () => {
+  describe('Platform: Edit Roles - SKIPPED (Content type issues)', () => {
     let editableRole: PlatformRole;
     const roleName = 'Inventory' + `${randomString(5)}`;
     const roleDescription = roleName + '-description';
@@ -151,8 +192,10 @@ describe('Platform: Roles', () => {
         expect(editableRole.name).to.eql(roleName);
         cy.get('[data-cy="description"]').should('contain', roleDescription);
         expect(editableRole.description).to.eql(roleDescription);
-        cy.get(`[data-cy="${JSON.parse(JSON.stringify(permissionA))}"]`).should('be.visible');
-        cy.get(`[data-cy="${JSON.parse(JSON.stringify(permissionB))}"]`).should('be.visible');
+        cy.get('[data-cy="permissions"]').within(() => {
+          cy.contains(`${permissionA}`).should('be.visible');
+          cy.contains(`${permissionB}`).should('be.visible');
+        });
         expect(editableRole.permissions).to.include(permissionA);
         expect(editableRole.permissions).to.include(permissionB);
         cy.getByDataCy('edit-role').click();
@@ -174,22 +217,26 @@ describe('Platform: Roles', () => {
       ).as('editableRole');
       cy.filterTableByTextFilter('name', editableRole.name);
       cy.wait('@editableRole').then(() => {
-        cy.get('tbody tr')
-          .should('have.length', 1)
-          .within(() => {
-            cy.getByDataCy('expand-column-cell').click();
-          });
         cy.get('tbody')
           .find('tr')
-          .eq(1)
+          .eq(0)
           .within(() => {
-            cy.get('[data-cy="permissions-description-list"]').within(() => {
-              const oldPermissions = ['awx.view_inventory', 'awx.update_inventory'];
-              oldPermissions.forEach((oldPermission) => {
-                cy.get(`[data-cy="${oldPermission}"]`).should('be.visible');
-              });
-            });
+            cy.contains('a', editableRole.name).click();
           });
+        cy.verifyPageTitle(editableRole.name);
+        cy.get('[data-cy="permissions"]').within(() => {
+          cy.contains(`${permissionA}`).should('be.visible');
+          cy.contains(`${permissionB}`).should('be.visible');
+        });
+        cy.navigateTo('platform', 'roles');
+        cy.wait('@roleDefinitions');
+        cy.verifyPageTitle('Roles');
+        cy.setTablePageSize('50');
+        cy.intercept(
+          'GET',
+          gatewayAPI`/role_definitions/?name__icontains=${editableRole.name}&order_by=name&page=1&page_size=50`
+        ).as('editableRole');
+        cy.filterTableByTextFilter('name', editableRole.name);
         cy.get('tbody')
           .find('tr')
           .eq(0)
@@ -198,15 +245,23 @@ describe('Platform: Roles', () => {
             cy.getByDataCy('edit-role').click();
           });
         cy.verifyPageTitle(`Edit ${editableRole.name}`);
+        cy.get('[data-cy="permissions"]').within(() => {
+          cy.get('button').eq(0).click();
+          cy.get('button').eq(0).click();
+        });
         cy.get(`[data-cy="permissions-form-group"]`)
           .last()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {
               cy.get('ul').within(() => {
-                const newPermissions = ['awx.change_inventory', 'awx.use_inventory'];
+                const newPermissions = [
+                  'can-view-inventory',
+                  'can-change-inventory',
+                  'can-use-inventory-in-a-job-template',
+                ];
                 newPermissions.forEach((newPermission) => {
-                  cy.get(`li[data-cy="${newPermission}"]`).click();
+                  cy.get(`[data-cy="${newPermission}"]`).click();
                 });
               });
             });
@@ -237,21 +292,31 @@ describe('Platform: Roles', () => {
         expect(editableRole.name).to.eql(roleName);
         cy.get('[data-cy="description"]').should('contain', roleDescription);
         expect(editableRole.description).to.eql(roleDescription);
-        cy.get(`[data-cy="${JSON.parse(JSON.stringify(permissionA))}"]`).should('be.visible');
-        cy.get(`[data-cy="${JSON.parse(JSON.stringify(permissionB))}"]`).should('be.visible');
+        cy.get('[data-cy="permissions"]').within(() => {
+          cy.contains(`${permissionA}`).should('be.visible');
+          cy.contains(`${permissionB}`).should('be.visible');
+        });
         expect(editableRole.permissions).to.include(permissionA);
         expect(editableRole.permissions).to.include(permissionB);
         cy.getByDataCy('edit-role').click();
         cy.verifyPageTitle(`Edit ${roleName}`);
+        cy.get('[data-cy="permissions"]').within(() => {
+          cy.get('button').eq(0).click();
+          cy.get('button').eq(0).click();
+        });
         cy.get(`[data-cy="permissions-form-group"]`)
           .last()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {
               cy.get('ul').within(() => {
-                const newPermissions = ['awx.change_inventory', 'awx.use_inventory'];
+                const newPermissions = [
+                  'can-view-inventory',
+                  'can-change-inventory',
+                  'can-use-inventory-in-a-job-template',
+                ];
                 newPermissions.forEach((newPermission) => {
-                  cy.get(`li[data-cy="${newPermission}"]`).click();
+                  cy.get(`[data-cy="${newPermission}"]`).click();
                 });
               });
             });
@@ -265,19 +330,13 @@ describe('Platform: Roles', () => {
           .then((response: PlatformRole) => {
             expect(response.permissions).to.include('awx.view_inventory');
             expect(response.permissions).to.include('awx.change_inventory');
-            cy.get(`[data-cy="${JSON.parse(JSON.stringify('awx.view_inventory'))}"]`).should(
-              'be.visible'
-            );
-            cy.get(`[data-cy="${JSON.parse(JSON.stringify('awx.use_inventory'))}"]`).should(
-              'be.visible'
-            );
-            cy.url().should('contain', '/details');
+            expect(response.permissions).to.include('awx.use_inventory');
           });
       });
     });
   });
 
-  describe.skip('Platform: Delete Roles from List View - SKIPPED (Content type issues)', () => {
+  describe('Platform: Delete Roles from List View', () => {
     let editableRole: PlatformRole;
     let editableRoleTwo: PlatformRole;
     let editableRoleThree: PlatformRole;
@@ -359,7 +418,7 @@ describe('Platform: Roles', () => {
         });
         cy.get('tbody tr').should('have.length', 3);
         cy.get('input[name="check-all"]').check();
-        cy.clickToolbarKebabAction('delete-roles');
+        cy.clickToolbarKebabAction('delete-selected-roles');
         cy.getModal().within(() => {
           cy.get('#confirm').click();
           cy.get('[data-ouia-component-id="submit"]').click();
