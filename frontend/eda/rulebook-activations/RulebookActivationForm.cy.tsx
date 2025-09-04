@@ -110,9 +110,7 @@ describe('Create rulebook activation ', () => {
     cy.get('#hello-echo-yml > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
-    cy.get(
-      '[data-cy="credential-select-form-group"] > .pf-v6-c-form__group-control > .pf-v6-c-input-group > .pf-v6-c-button'
-    ).click();
+    cy.get('[data-cy="credential-select"]').click();
 
     cy.intercept('GET', edaAPI`/eda-credentials/`, (req) => {
       expect(req.url).to.contain('credential_type__kind__in=vault%2Ccloud');
