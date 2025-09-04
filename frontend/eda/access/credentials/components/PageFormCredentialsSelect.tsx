@@ -1,8 +1,10 @@
-import { PageFormMultiInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiInput';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
-import { useSelectCredentials } from '../hooks/useSelectCredentials';
+import { PageFormMultiSelectEdaResource } from '../../../common/PageFormMultiSelectEdaResource';
+import { edaAPI } from '../../../common/eda-utils';
+import { useCredentialColumns } from '../hooks/useCredentialColumns';
+import { useCredentialFilters } from '../hooks/useCredentialFilters';
 
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -14,28 +16,42 @@ export function PageFormCredentialSelect<
   credentialKinds?: string[];
 }) {
   const { t } = useTranslation();
-  const selectCredential = useSelectCredentials(props.credentialKinds);
+  const credentialColumns = useCredentialColumns({ disableLinks: true });
+  const credentialFilters = useCredentialFilters();
+
+  // Build query params based on credential kinds if provided
+  const queryParams = props.credentialKinds
+    ? { credential_type__kind__in: props.credentialKinds.join(',') }
+    : undefined;
 
   return (
-    <PageFormMultiInput<EdaCredential>
-      {...props}
+    <PageFormMultiSelectEdaResource<EdaCredential>
       name={props.name}
       id="credential-select"
-      data-cy={'credentials-select'}
-      placeholder={t('Select credentials')}
-      labelHelpTitle={t('Credentials')}
-      labelHelp={props.labelHelp}
       label={t('Credential')}
-      selectTitle={t('Select a credential')}
-      selectOpen={selectCredential}
+      placeholder={t('Select credentials')}
+      queryPlaceholder={t('Loading credentials...')}
+      queryErrorText={t('Error loading credentials')}
+      isRequired={props.isRequired}
+      labelHelp={props.labelHelp}
+      url={edaAPI`/eda-credentials/`}
+      tableColumns={credentialColumns}
+      toolbarFilters={credentialFilters}
+      queryParams={queryParams}
+      compareOptionValues={(currentCredential: EdaCredential, selectCredential: EdaCredential) =>
+        currentCredential.id === selectCredential.id
+      }
       validate={(credentials: EdaCredential[]) => {
         if (props.isRequired && credentials.length === 0) {
-          return t('Credential is required.');
+          return Promise.resolve(t('Credential is required.'));
         }
-        return undefined;
+        return Promise.resolve(undefined);
       }}
-      isRequired={props.isRequired}
-      getChipLabel={(item: EdaCredential) => item.name}
+      formatLabel={(credential: EdaCredential) => {
+        return `${credential.name} | ${credential.credential_type?.name || t('Unknown type')}`;
+      }}
+      disableClearChips={false}
+      disableClearSelection={false}
     />
   );
 }

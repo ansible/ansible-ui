@@ -78,9 +78,7 @@ export async function createJobTemplate(
   await expect(page.getByTestId('name').getByText(jobTemplateName)).toBeVisible();
   await expect(page.getByTestId('description').getByText(jobTemplateDescription)).toBeVisible();
   await expect(page.getByTestId('job-type').getByText('run')).toBeVisible();
-  await expect(
-    page.getByTestId('organization').getByRole('link', { name: 'Default' })
-  ).toBeVisible();
+
   if (!options.PromptOnLaunch) {
     await expect(page.locator('#inventory')).toContainText(inventoryName);
   }

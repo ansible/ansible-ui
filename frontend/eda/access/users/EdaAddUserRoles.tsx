@@ -42,6 +42,7 @@ export function EdaAddUserRoles(props: { id?: string; userRolesRoute?: string })
       />
       <EdaAddRoles
         id={user?.id.toString()}
+        resourceName={user?.username}
         type={'user'}
         onClose={() => {
           pageNavigate(props.userRolesRoute || EdaRoute.UserRoles, {

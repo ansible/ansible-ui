@@ -1,5 +1,6 @@
 
 allure-results
+html-report
 node_modules
 test-results
 coverage

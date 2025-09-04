@@ -2,8 +2,10 @@ import { useCallback, useEffect } from 'react';
 import { useSWRConfig } from 'swr';
 
 export function useInvalidateCacheOnUnmount() {
-  const { cache } = useSWRConfig();
-  useEffect(() => () => (cache as unknown as { clear: () => void }).clear?.(), [cache]);
+  const { mutate } = useSWRConfig();
+  // https://swr.vercel.app/docs/mutation#revalidation
+  // When you call mutate(key) without any data, it will trigger a revalidation for the resource.
+  useEffect(() => () => void mutate(() => true), [mutate]);
 }
 
 /**

@@ -1,6 +1,7 @@
 **/.env
-**/allure-report 
+**/allure-report
 **/allure-results
+**/html-report
 **/blob-report/
 **/coverage/
 **/dist/
@@ -24,3 +25,4 @@
 /framework/publish
 /storybook-static
 results.xml
+/playwright/playwright/html-report/

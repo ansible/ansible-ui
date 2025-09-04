@@ -1,6 +1,6 @@
 import { useGetPageUrl, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { usePageBreadcrumbs } from '@ansible/ansible-ui-framework/PageTabs/PageBreadcrumbs';
-import { Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
+import { PageSection, Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -78,30 +78,29 @@ export function PageRoutedTabs(props: {
 
   return (
     <>
-      <Tabs
-        onSelect={onSelect}
-        inset={{ default: 'insetSm' }}
-        activeKey={activeTab ? activeTab.page : undefined}
-        style={{
-          flexShrink: 0,
-        }}
-      >
-        {props.backTab && (
-          <Tab
-            key={props.backTab.page}
-            eventKey={props.backTab.page}
-            title={
-              <TabTitleText>
-                <CaretLeftIcon />
-                <span style={{ marginLeft: 6 }}>{props.backTab.label}</span>
-              </TabTitleText>
-            }
-            href={getPageUrl(props.backTab.page, { params: props.params, query })}
-            data-cy={props.backTab.label.replace(' ', '-').toLocaleLowerCase()}
-          />
-        )}
-        {tabs}
-      </Tabs>
+      <PageSection style={{ padding: 0 }}>
+        <Tabs
+          onSelect={onSelect}
+          inset={{ default: 'insetSm' }}
+          activeKey={activeTab ? activeTab.page : undefined}
+        >
+          {props.backTab && (
+            <Tab
+              key={props.backTab.page}
+              eventKey={props.backTab.page}
+              title={
+                <TabTitleText>
+                  <CaretLeftIcon />
+                  <span style={{ marginLeft: 6 }}>{props.backTab.label}</span>
+                </TabTitleText>
+              }
+              href={getPageUrl(props.backTab.page, { params: props.params, query })}
+              data-cy={props.backTab.label.replace(' ', '-').toLocaleLowerCase()}
+            />
+          )}
+          {tabs}
+        </Tabs>
+      </PageSection>
       <Outlet context={props.componentParams} />
     </>
   );

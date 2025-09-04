@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { existsSync } from 'fs';
 import MCR from 'monocart-coverage-reports';
 import { mock } from '../mock/mock';
-import { coverageOptions } from '../tests/coverage/coverage-options';
+import { coverageOptions } from '../tests/coverage-utils/coverage-options';
 import { login, platformUI } from './login';
 
 export function setupBefore(options?: { path?: string }) {
@@ -27,6 +27,5 @@ export async function setupAfter({ page }: { page: Page }) {
     // DO NOTHING
   }
 
-  await page.goto('about:blank');
   await page.unrouteAll({ behavior: 'ignoreErrors' });
 }

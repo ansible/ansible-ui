@@ -15,7 +15,7 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
   const selectUsers = useSelectUsers();
   const postRequest = usePostRequest();
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params?.id);
   const { data: teamMemberRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
     gatewayAPI`/role_definitions/`,
     {

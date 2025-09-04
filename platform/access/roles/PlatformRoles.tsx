@@ -19,6 +19,7 @@ export function PlatformRoles() {
     resourceTypeData?.results?.map((resourceType) => ({
       name: resourceType.model,
       value: resourceType.api_slug,
+      service: resourceType.service,
     })) ?? [];
   const tableColumns = usePlatformRoleColumns();
   const toolbarFilters = usePlatformRolesFilters(resourceTypeNames);

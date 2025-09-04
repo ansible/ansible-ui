@@ -123,7 +123,7 @@ export interface PromptFormValues {
         credential_type: number;
         passwords_needed: string[];
         vault_id?: string;
-        inputs: { [key: string]: string };
+        inputs?: { [key: string]: string };
       }
   )[];
   credential_passwords?: { [key: string]: string };

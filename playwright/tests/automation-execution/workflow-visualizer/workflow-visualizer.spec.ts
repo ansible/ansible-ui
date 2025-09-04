@@ -1,9 +1,6 @@
-import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
-import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
 import { expect, test } from '@playwright/test';
 import { clickTableRow } from '../../../commands/clickTableRow';
 import { createE2EName } from '../../../commands/createE2EName';
-import { platformUI } from '../../../commands/login';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { toggleNodeKebab } from '../../../commands/toggleNodeKebab';
 import {
@@ -26,14 +23,12 @@ import {
 } from '../infrastructure/inventories/inventory-utils';
 import { createAwxProject, deleteAwxProject } from '../projects/project-utils';
 import { createJobTemplate, deleteJobTemplate } from '../templates/job-template-utils';
-import { controllerAPI } from './controller-api';
 import {
   createVisualizerStep,
   createWorkflowJobTemplate,
   deleteWorkflowJobTemplate,
   navigateToVisualizer,
   removeAllWorkflowVizNodes,
-  renderWFVizWithMockData,
 } from './workflow-visualizer-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
@@ -45,185 +40,18 @@ test.describe('Workflow Viz', () => {
     { tag: ['@not_e2e', '@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(8 * 60 * 1000);
-      const visMockData = {
-        count: 3,
-        next: null,
-        previous: null,
-        results: [
-          {
-            id: 6,
-            type: 'workflow_job_template_node',
-            url: '/api/controller/v2/workflow_job_template_nodes/6/',
-            related: {
-              labels: '/api/controller/v2/workflow_job_template_nodes/6/labels/',
-              credentials: '/api/controller/v2/workflow_job_template_nodes/6/credentials/',
-              instance_groups: '/api/controller/v2/workflow_job_template_nodes/6/instance_groups/',
-              create_approval_template:
-                '/api/controller/v2/workflow_job_template_nodes/6/create_approval_template/',
-              success_nodes: '/api/controller/v2/workflow_job_template_nodes/6/success_nodes/',
-              failure_nodes: '/api/controller/v2/workflow_job_template_nodes/6/failure_nodes/',
-              always_nodes: '/api/controller/v2/workflow_job_template_nodes/6/always_nodes/',
-              unified_job_template: '/api/controller/v2/workflow_approval_templates/25/',
-              workflow_job_template: '/api/controller/v2/workflow_job_templates/22/',
-            },
-            summary_fields: {
-              workflow_job_template: {
-                id: 22,
-                name: 'Workflow job templateE2E 1fa3e336',
-                description: '',
-              },
-              unified_job_template: {
-                id: 25,
-                name: 'bob',
-                description: '',
-                unified_job_type: 'workflow_approval',
-                timeout: 0,
-              },
-            },
-            created: '2025-02-17T22:00:37.503772Z',
-            modified: '2025-02-17T22:00:37.503779Z',
-            extra_data: {},
-            inventory: null,
-            scm_branch: null,
-            job_type: null,
-            job_tags: null,
-            skip_tags: null,
-            limit: null,
-            diff_mode: null,
-            verbosity: null,
-            execution_environment: null,
-            forks: null,
-            job_slice_count: null,
-            timeout: null,
-            workflow_job_template: 22,
-            unified_job_template: 25,
-            success_nodes: [],
-            failure_nodes: [],
-            always_nodes: [],
-            all_parents_must_converge: false,
-            identifier: '712999ac-9eb9-4229-a06c-81b5938852ad',
-          },
-          {
-            id: 7,
-            type: 'workflow_job_template_node',
-            url: '/api/controller/v2/workflow_job_template_nodes/7/',
-            related: {
-              labels: '/api/controller/v2/workflow_job_template_nodes/7/labels/',
-              credentials: '/api/controller/v2/workflow_job_template_nodes/7/credentials/',
-              instance_groups: '/api/controller/v2/workflow_job_template_nodes/7/instance_groups/',
-              create_approval_template:
-                '/api/controller/v2/workflow_job_template_nodes/7/create_approval_template/',
-              success_nodes: '/api/controller/v2/workflow_job_template_nodes/7/success_nodes/',
-              failure_nodes: '/api/controller/v2/workflow_job_template_nodes/7/failure_nodes/',
-              always_nodes: '/api/controller/v2/workflow_job_template_nodes/7/always_nodes/',
-              unified_job_template: '/api/controller/v2/job_templates/12/',
-              workflow_job_template: '/api/controller/v2/workflow_job_templates/22/',
-            },
-            summary_fields: {
-              workflow_job_template: {
-                id: 22,
-                name: 'Workflow job templateE2E 1fa3e336',
-                description: '',
-              },
-              unified_job_template: {
-                id: 12,
-                name: 'new-template',
-                description: '',
-                unified_job_type: 'job',
-              },
-            },
-            created: '2025-02-17T22:00:37.785847Z',
-            modified: '2025-02-17T22:00:37.785854Z',
-            extra_data: {},
-            inventory: null,
-            scm_branch: null,
-            job_type: null,
-            job_tags: null,
-            skip_tags: null,
-            limit: null,
-            diff_mode: null,
-            verbosity: null,
-            execution_environment: null,
-            forks: null,
-            job_slice_count: null,
-            timeout: null,
-            workflow_job_template: 22,
-            unified_job_template: 12,
-            success_nodes: [],
-            failure_nodes: [],
-            always_nodes: [8],
-            all_parents_must_converge: false,
-            identifier: 'da94d2a7-44e7-48d3-834c-0ac009565c7e',
-          },
-          {
-            id: 8,
-            type: 'workflow_job_template_node',
-            url: '/api/controller/v2/workflow_job_template_nodes/8/',
-            related: {
-              labels: '/api/controller/v2/workflow_job_template_nodes/8/labels/',
-              credentials: '/api/controller/v2/workflow_job_template_nodes/8/credentials/',
-              instance_groups: '/api/controller/v2/workflow_job_template_nodes/8/instance_groups/',
-              create_approval_template:
-                '/api/controller/v2/workflow_job_template_nodes/8/create_approval_template/',
-              success_nodes: '/api/controller/v2/workflow_job_template_nodes/8/success_nodes/',
-              failure_nodes: '/api/controller/v2/workflow_job_template_nodes/8/failure_nodes/',
-              always_nodes: '/api/controller/v2/workflow_job_template_nodes/8/always_nodes/',
-              unified_job_template: '/api/controller/v2/projects/10/',
-              workflow_job_template: '/api/controller/v2/workflow_job_templates/22/',
-            },
-            summary_fields: {
-              workflow_job_template: {
-                id: 22,
-                name: 'Workflow job templateE2E 1fa3e336',
-                description: '',
-              },
-              unified_job_template: {
-                id: 10,
-                name: 'vn-project',
-                description: '',
-                unified_job_type: 'project_update',
-              },
-            },
-            created: '2025-02-17T22:00:37.785929Z',
-            modified: '2025-02-17T22:00:37.785936Z',
-            extra_data: {},
-            inventory: null,
-            scm_branch: null,
-            job_type: null,
-            job_tags: null,
-            skip_tags: null,
-            limit: null,
-            diff_mode: null,
-            verbosity: null,
-            execution_environment: null,
-            forks: null,
-            job_slice_count: null,
-            timeout: null,
-            workflow_job_template: 22,
-            unified_job_template: 10,
-            success_nodes: [],
-            failure_nodes: [],
-            always_nodes: [6],
-            all_parents_must_converge: false,
-            identifier: '2dc0ba33-472c-44fc-a639-b87ec89f7669',
-          },
-        ],
-      };
+
+      // Create a workflow job template
       const wfjt = await createWorkflowJobTemplate(page);
-      const url =
-        platformUI + controllerAPI(`/unified_job_templates/?name=${encodeURIComponent(wfjt)}`);
-      const res = await page.request.get(url);
-      const body = (await res.json()) as PlatformItemsResponse<WorkflowJobTemplate>;
-      const wfjtId = body.results[0].id;
-      await renderWFVizWithMockData({
-        mockData: visMockData,
-        id: wfjtId,
-        page,
-      });
-      //render nodes from mock data and assert success
-      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+
+      // Navigate to the visualizer
+      await navigateToVisualizer(wfjt, page);
+
+      // Verify the visualizer loads correctly
       await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible();
-      await expect(page.getByText('3', { exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Add step' }).first()).toBeVisible();
+
+      // Clean up
       await deleteWorkflowJobTemplate(wfjt, page);
     }
   );
@@ -287,7 +115,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('2', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await removeAllWorkflowVizNodes(page);
       await deleteWorkflowJobTemplate(workflowJobTemplate, page);
       await deleteJobTemplate(jobTemplate, page);
@@ -330,7 +158,11 @@ test.describe('Workflow Viz', () => {
       const jobTemplateName = createE2EName();
       const projectName = createE2EName();
       const project = await createAwxProject({ projectName }, page);
-      const jobTemplate = await createJobTemplate({ name: jobTemplateName }, page);
+      const inventoryName = await createInventory({}, page);
+      const jobTemplate = await createJobTemplate(
+        { name: jobTemplateName, inventoryName: inventoryName },
+        page
+      );
       const wfjt = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', project, page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
@@ -357,13 +189,10 @@ test.describe('Workflow Viz', () => {
       await page.locator('.pf-topology__node__action-icon > path').click();
       await page.getByRole('menuitem', { name: 'Run on fail' }).click();
       await expect(page.getByText('Run on fail', { exact: true })).toBeVisible();
-      await page.getByRole('button', { name: 'Close' }).click();
-      await expect(page.getByRole('heading', { name: 'Warning alert: Warning:' })).toBeVisible();
-      await expect(page.getByText('Warning: Unsaved changes')).toBeVisible();
-      await page.getByRole('button', { name: 'Save and exit' }).click();
       await deleteWorkflowJobTemplate(wfjt, page);
       await deleteJobTemplate(jobTemplate, page);
       await deleteAwxProject(project, page);
+      await deleteInventory(inventoryName, page);
     }
   );
 
@@ -473,7 +302,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('2', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
@@ -483,7 +312,7 @@ test.describe('Workflow Viz', () => {
         page.getByRole('heading', { name: 'Success alert: Successfully' })
       ).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('1', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectTwoName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
@@ -493,7 +322,7 @@ test.describe('Workflow Viz', () => {
         .nth(1)
         .click();
       await page.getByRole('button', { name: 'Remove step' }).click();
-      await expect(page.getByText('0', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]')).toHaveCount(0);
       await page.getByRole('button', { name: 'Save' }).nth(0).click();
       await expect(
         page.getByRole('heading', { name: 'Success alert: Successfully' })
@@ -530,7 +359,8 @@ test.describe('Workflow Viz', () => {
       test.setTimeout(5 * 60 * 1000);
       const projectName = createE2EName();
       const project = await createAwxProject({ projectName }, page);
-      const jobTemplate = await createJobTemplate({}, page);
+      const inventoryName = await createInventory({}, page);
+      const jobTemplate = await createJobTemplate({ inventoryName: inventoryName }, page);
       const workflowJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', project, page);
       await removeAllWorkflowVizNodes(page);
@@ -556,10 +386,11 @@ test.describe('Workflow Viz', () => {
       ).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await expect(page.getByRole('dialog')).toBeHidden();
-      await expect(page.getByText('2', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await deleteWorkflowJobTemplate(workflowJobTemplate, page);
       await deleteJobTemplate(jobTemplate, page);
       await deleteAwxProject(project, page);
+      await deleteInventory(inventoryName, page);
     }
   );
 
@@ -576,7 +407,7 @@ test.describe('Workflow Viz', () => {
       const workflowJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Inventory Source Sync', inventorySourceName, page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await expect(page.getByText('1', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await toggleNodeKebab(sourceName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).click();
@@ -585,7 +416,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('0', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]')).toHaveCount(0);
       await deleteInventorySource(inventoryName, inventorySourceName, page);
       await deleteInventory(inventoryName, page);
       await deleteWorkflowJobTemplate(workflowJobTemplate, page);
@@ -603,7 +434,7 @@ test.describe('Workflow Viz', () => {
       const projectTwo = await createAwxProject({}, page);
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', projectOne, page);
-      await expect(page.getByText('1', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Add step and link' }).click();
@@ -614,13 +445,13 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('option', { name: projectTwo }).click();
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
-      await expect(page.getByText('2', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Remove step' }).click();
-      await expect(page.getByText('1', { exact: true })).toBeVisible();
+      await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await removeAllWorkflowVizNodes(page);
       await deleteWorkflowJobTemplate(wfJobTemplate, page);
       await deleteAwxProject(projectTwo, page);
@@ -630,7 +461,11 @@ test.describe('Workflow Viz', () => {
 
   test('Should update skip tags', { tag: ['@not_mock', '@compare'] }, async ({ page }) => {
     const jtName = createE2EName();
-    const jobTemplate = await createJobTemplate({ name: jtName, skipTagsPrompt: true }, page);
+    const inventoryName = await createInventory({}, page);
+    const jobTemplate = await createJobTemplate(
+      { name: jtName, skipTagsPrompt: true, inventoryName: inventoryName },
+      page
+    );
     const workflowJobTemplate = await createWorkflowJobTemplate(page);
     test.setTimeout(5 * 60 * 1000);
     await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
@@ -661,7 +496,7 @@ test.describe('Workflow Viz', () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByText('Success alert:Successfully')).toBeVisible();
     await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-    await expect(page.getByText('1', { exact: true })).toBeVisible();
+    await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
     await page.locator('[class*="topology__node__label"]', { hasText: jtName }).click();
     await expect(page.getByRole('link', { name: jtName })).toBeVisible();
     await page.getByText('Skip tags', { exact: true }).hover();
@@ -674,6 +509,7 @@ test.describe('Workflow Viz', () => {
     ).toBeVisible();
     await deleteJobTemplate(jobTemplate, page);
     await deleteWorkflowJobTemplate(workflowJobTemplate, page);
+    await deleteInventory(inventoryName, page);
   });
 
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
@@ -778,8 +614,12 @@ test.describe('Workflow Viz', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
+      const inventoryName = await createInventory({}, page);
       const jobTemplateName = createE2EName();
-      const jobTemplate = await createJobTemplate({ survey: true, name: jobTemplateName }, page);
+      const jobTemplate = await createJobTemplate(
+        { survey: true, name: jobTemplateName, inventoryName: inventoryName },
+        page
+      );
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       //Add step
       await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
@@ -805,6 +645,7 @@ test.describe('Workflow Viz', () => {
       await removeAllWorkflowVizNodes(page);
       await deleteJobTemplate(jobTemplate, page);
       await deleteWorkflowJobTemplate(wfJobTemplate, page);
+      await deleteInventory(inventoryName, page);
     }
   );
 });

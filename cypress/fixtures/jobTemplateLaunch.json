@@ -21,6 +21,19 @@
   "variables_needed_to_start": [],
   "credential_needed_to_start": false,
   "inventory_needed_to_start": false,
+  "credential_passwords": {
+    "ssh_password": "",
+    "become_password": "",
+    "ssh_key_unlock": "",
+    "vault_password": "",
+    "vault_password.vault_id": ""
+  },
+  "unified_job_template_object": {
+    "name": "JT with Default Cred",
+    "id": 7,
+    "description": "",
+    "survey_enabled": false
+  },
   "job_template_data": {
     "name": "JT with Default Cred",
     "id": 7,

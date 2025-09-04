@@ -30,7 +30,7 @@ export function PlatformUserRoles() {
     })) ?? [];
 
   const toolbarFilters = usePlatformUserRolesFilters(resourceTypeNames);
-  const tableColumns = usePlatformUserRolesColumns();
+  const tableColumns = usePlatformUserRolesColumns({ disableSort: true, disableLinks: false });
 
   const view = usePlatformView<UserAssignment>({
     url: gatewayAPI`/role_user_assignments/`,
@@ -54,6 +54,9 @@ export function PlatformUserRoles() {
   const canEditUser = Boolean(
     userOptions?.actions && (userOptions.actions['PUT'] || userOptions.actions['PATCH'])
   );
+  const { data: userTeamAssignments } = useGet<{
+    results: Array<{ id: number; name: string }>;
+  }>(gatewayAPI`/users/${params?.id ?? ''}/teams/`);
 
   const toolbarActions = usePlatformUserRolesToolbarActions(view);
   const rowActions = usePlatformUserRolesRowActions(view);
@@ -63,7 +66,7 @@ export function PlatformUserRoles() {
 
   return (
     <PageDetails numberOfColumns={'single'} disablePadding>
-      {(view?.itemCount ?? 0) > 0 && (
+      {userTeamAssignments && userTeamAssignments.results?.length > 0 && (
         <IndirectlyAssignedRolesAlert
           userId={params.id ?? ''}
           username={user?.username ?? ''}

@@ -11,6 +11,7 @@ import {
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { usePlatformView } from '@ansible/platform-ui/hooks/usePlatformView';
+import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
@@ -73,8 +74,14 @@ export function PlatformAccess<T extends Assignment>(props: PlatformAccessProps<
       ...(firstColumns ?? []),
       {
         header: t('Role'),
-        type: 'description',
-        value: (item: T) => item.summary_fields.role_definition.name,
+        cell: (item: T) => {
+          const role = item.summary_fields.role_definition;
+          return (
+            <a href={getPageUrl(PlatformRoute.RoleDetails, { params: { id: role.id } })}>
+              {role.name}
+            </a>
+          );
+        },
         sort: 'role_definition__name',
       },
       ...(lastColumns ?? []),
@@ -87,6 +94,7 @@ export function PlatformAccess<T extends Assignment>(props: PlatformAccessProps<
       firstColumns,
       t,
       lastColumns,
+      getPageUrl,
     ]
   );
   function useRemoveRoles(onComplete: (roles: T[]) => void) {

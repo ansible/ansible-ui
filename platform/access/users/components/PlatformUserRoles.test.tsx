@@ -123,6 +123,96 @@ const mockResourceTypes = {
   ],
 };
 
+const mockUserTeams = {
+  count: 2,
+  next: null,
+  previous: null,
+  results: [
+    {
+      id: 2,
+      url: '/api/gateway/v1/teams/2/',
+      related: {
+        activity_stream: '/api/gateway/v1/activitystream/?content_type=11&object_id=2',
+        created_by: '/api/gateway/v1/users/2/',
+        modified_by: '/api/gateway/v1/users/2/',
+        organization: '/api/gateway/v1/organizations/3/',
+        users: '/api/gateway/v1/teams/2/users/',
+        admins: '/api/gateway/v1/teams/2/admins/',
+      },
+      summary_fields: {
+        modified_by: {
+          id: 2,
+          username: 'admin',
+          first_name: '',
+          last_name: '',
+        },
+        created_by: {
+          id: 2,
+          username: 'admin',
+          first_name: '',
+          last_name: '',
+        },
+        organization: {
+          id: 3,
+          name: 'lgOrg',
+        },
+        resource: {
+          ansible_id: '6ce88679-4e9a-4687-9e72-63e83744d0a4',
+          resource_type: 'shared.team',
+        },
+      },
+      created: '2025-08-29T18:23:34.233434Z',
+      created_by: 2,
+      modified: '2025-08-29T18:23:34.233409Z',
+      modified_by: 2,
+      name: 'LGTeam1',
+      organization: 3,
+      description: '',
+    },
+    {
+      id: 3,
+      url: '/api/gateway/v1/teams/3/',
+      related: {
+        activity_stream: '/api/gateway/v1/activitystream/?content_type=11&object_id=3',
+        created_by: '/api/gateway/v1/users/2/',
+        modified_by: '/api/gateway/v1/users/2/',
+        organization: '/api/gateway/v1/organizations/3/',
+        users: '/api/gateway/v1/teams/3/users/',
+        admins: '/api/gateway/v1/teams/3/admins/',
+      },
+      summary_fields: {
+        modified_by: {
+          id: 2,
+          username: 'admin',
+          first_name: '',
+          last_name: '',
+        },
+        created_by: {
+          id: 2,
+          username: 'admin',
+          first_name: '',
+          last_name: '',
+        },
+        organization: {
+          id: 3,
+          name: 'lgOrg',
+        },
+        resource: {
+          ansible_id: '1c9c8280-46f6-45ed-8dbb-7e34c5fb2f27',
+          resource_type: 'shared.team',
+        },
+      },
+      created: '2025-08-29T18:23:43.881418Z',
+      created_by: 2,
+      modified: '2025-08-29T18:23:43.881399Z',
+      modified_by: 2,
+      name: 'LGTeam2',
+      organization: 3,
+      description: '',
+    },
+  ],
+};
+
 describe('PlatformUserRoles - Role Explanation', () => {
   const server = setupServer(
     // User endpoint
@@ -157,6 +247,9 @@ describe('PlatformUserRoles - Role Explanation', () => {
       return HttpResponse.json(mockResourceTypes);
     }),
 
+    http.get(gatewayAPI`/users/1/teams/`, () => {
+      return HttpResponse.json(mockUserTeams);
+    }),
     // Service index role types endpoint
     http.get(gatewayAPI`/service-index/role-types/`, () => {
       return HttpResponse.json({ results: [] });

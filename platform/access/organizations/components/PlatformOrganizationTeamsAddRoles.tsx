@@ -64,7 +64,12 @@ export function PlatformOrganizationTeamsAddRoles() {
       {
         id: 'roles',
         label: t('Select organization roles'),
-        inputs: <PlatformSelectOrganizationRolesStep />,
+        inputs: (
+          <PlatformSelectOrganizationRolesStep
+            fieldNameForPreviousStep="teams"
+            excludeRoles={['Organization Member', 'Organization Admin']}
+          />
+        ),
       },
       {
         id: 'review',

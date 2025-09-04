@@ -43,7 +43,7 @@ export interface WorkflowJobLaunch {
     scm_branch: string;
     skip_tags: string;
     job_type: string;
-    verbosity: number;
+    verbosity: 0 | 1 | 2 | 3 | 4 | 5;
     credentials: {
       name: string;
       credential_type: string | number;

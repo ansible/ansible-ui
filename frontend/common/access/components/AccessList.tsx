@@ -9,7 +9,7 @@ import {
   ToolbarFilterType,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
-import { useEdaView } from '@ansible/eda-ui/common/useEventDrivenView';
+import { usePlatformView } from '@ansible/platform-ui/hooks/usePlatformView';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
@@ -119,7 +119,7 @@ export function AccessList<T extends UserRoleAccess>(props: AccessProps<T>) {
     }
     return params;
   }, [props.id, props.accessListType]);
-  const view = useEdaView<T>({
+  const view = usePlatformView<T>({
     url: props.url,
     tableColumns,
     toolbarFilters,

@@ -122,6 +122,12 @@ describe('Check if the build includes EDA', () => {
 
     it('can delete a single Rulebook Activation from the line item on the list view', () => {
       cy.navigateTo('eda', 'rulebook-activations');
+      cy.verifyPageTitle('Rulebook Activations');
+      cy.get('#filter-input').within(() => {
+        cy.get('input').clear();
+        cy.get('input').type(edaRBA1.name, { delay: 0 });
+      });
+      cy.get('[data-cy="apply-filter"]').click();
       cy.clickTableRowAction('name', edaRBA1.name, 'delete-rulebook-activation', {
         disableFilter: true,
         inKebab: true,

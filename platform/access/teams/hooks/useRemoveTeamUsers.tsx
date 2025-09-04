@@ -1,6 +1,6 @@
 import { TextCell, compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
-import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { getItemKey } from '@ansible/common-ui/crud/Data';
+import { useGet, useGetItem, useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -8,11 +8,21 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUsersColumns } from '../../users/hooks/useUserColumns';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
 
 export function useRemoveTeamUsers(onComplete: (users: PlatformUser[]) => void) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params?.id);
+  const { data: teamMemberRoleData } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/`,
+    {
+      name: 'Team Member',
+    }
+  );
   const confirmationColumns = useUsersColumns({ disableLinks: true });
   const removeActionNameColumn = useMemo(
     () => ({
@@ -26,6 +36,8 @@ export function useRemoveTeamUsers(onComplete: (users: PlatformUser[]) => void) 
   const actionColumns = useMemo(() => [removeActionNameColumn], [removeActionNameColumn]);
 
   const bulkAction = useBulkConfirmation<PlatformUser>();
+  const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
+  const deleteRequest = useDeleteRequest();
   const removeUsers = (users: PlatformUser[]) => {
     bulkAction({
       title: t('Remove users', { count: users.length }),
@@ -39,12 +51,19 @@ export function useRemoveTeamUsers(onComplete: (users: PlatformUser[]) => void) 
       confirmationColumns: confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: PlatformUser, signal) =>
-        postRequest(
-          gatewayAPI`/teams/${team?.id?.toString() ?? ''}/users/disassociate/`,
-          { instances: [user?.id.toString()] },
-          signal
-        ),
+      actionFn: async (user: PlatformUser) => {
+        const teamMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
+          user: user?.id,
+          object_id: team?.id ?? '',
+          role_definition: `${teamMemberRoleData?.results[0]?.id}`,
+        });
+
+        await Promise.all(
+          teamMemberRoleAssignments?.results?.map(async (assignment) => {
+            await deleteRequest(gatewayAPI`/role_user_assignments/${assignment?.id}/`);
+          })
+        );
+      },
     });
   };
   return removeUsers;

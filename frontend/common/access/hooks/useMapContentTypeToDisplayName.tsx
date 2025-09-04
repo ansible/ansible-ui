@@ -12,7 +12,7 @@ export function useMapContentTypeToDisplayName() {
   return useCallback(
     (contentType: string, options?: { isTitleCase: boolean }) => {
       const contentTypeToDisplayName: { [key: string]: string } = {
-        activation: options?.isTitleCase ? t('Rulebook activation') : t('rulebook activation'),
+        activation: options?.isTitleCase ? t('Rulebook Activation') : t('rulebook activation'),
         ansiblerepository: options?.isTitleCase ? t('Repository') : t('repository'),
         auditrule: options?.isTitleCase ? t('Rule Audit') : t('rule audit'),
         collection: options?.isTitleCase ? t('Collection') : t('collection'),
@@ -28,6 +28,9 @@ export function useMapContentTypeToDisplayName() {
           ? t('Container Repository')
           : t('container repository'),
         credential: options?.isTitleCase ? t('Credential') : t('credential'),
+        credentialinputsource: options?.isTitleCase
+          ? t('Credential Input Source')
+          : t('credential input source'),
         credentialtype: options?.isTitleCase ? t('Credential Type') : t('credential type'),
         decisionenvironment: options?.isTitleCase
           ? t('Decision Environment')

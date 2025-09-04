@@ -54,15 +54,14 @@ describe('EDA user: Add roles', () => {
     cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
-    cy.contains(
-      /^Choose the resources that will be receiving new roles. You'll be able to select the roles to apply in the next step. Note that the resources chosen here will receive all roles chosen in the next step.$/
-    );
+    cy.contains('Choose the resources that you want user1 to have certain access to');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v6-c-alert__title').should('contain.text', 'Select at least one resource.');
     cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a role is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
@@ -80,6 +79,7 @@ describe('EDA user: Add roles', () => {
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
+
   it('should display selected resources and roles in the Review step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();

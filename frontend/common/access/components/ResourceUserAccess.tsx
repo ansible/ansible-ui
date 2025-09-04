@@ -1,13 +1,25 @@
+import { LabelsCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { useGetAll } from '@ansible/platform-ui/common/useGetAll';
+import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { Alert, Content, ContentVariants, Label, PageSection } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserRoleAccess } from '../interfaces/UserRoleAccess';
-import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
-import { LabelsCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { AccessList } from './AccessList';
 import { PlatformIdForUsername } from './platformIdForUsername';
-import { Alert, Content, ContentVariants, Label, PageSection } from '@patternfly/react-core';
-import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+
+// Custom hook to get role definitions
+function useRoleDefinitions() {
+  const { items: roleDefinitions, isLoading } = useGetAll<{
+    id: number;
+    name: string;
+    url: string;
+  }>(gatewayAPI`/role_definitions/`, 200);
+  return { roleDefinitions, isLoading };
+}
 
 export function ResourceUserAccess(props: {
   service: 'awx' | 'eda' | 'hub';
@@ -23,6 +35,16 @@ export function ResourceUserAccess(props: {
   const { type, service, ...rest } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const { roleDefinitions } = useRoleDefinitions();
+
+  // Create a map of role names to role IDs for quick lookup
+  const roleNameToIdMap = useMemo(() => {
+    const map = new Map<string, number>();
+    roleDefinitions?.forEach((role) => {
+      map.set(role.name, role.id);
+    });
+    return map;
+  }, [roleDefinitions]);
 
   const roleUserRoleAccessURL = () => {
     switch (service) {
@@ -42,12 +64,12 @@ export function ResourceUserAccess(props: {
           isInline
           variant="info"
           title={t(
-            `This list includes all users that have assigned roles for this resource, whether assigned directly or inherited from a team`
+            `Below displays a list of users with access to this resource and the roles they are directly assigned.`
           )}
         >
           <Content component={ContentVariants.p} style={{ paddingBottom: 0, marginBottom: 0 }}>
             {t(
-              `Roles inherited from a team cannot be managed here. To modify these role assignments, manage the team's assignments.`
+              `When a user has a Team Member role, they inherit roles from the team they are assigned to. To view a user’s inherited roles and the team they are assigned to click on the user’s view and manage roles action. To modify these role assignments, manage the team’s assignments.`
             )}
           </Content>
         </Alert>
@@ -78,14 +100,22 @@ export function ResourceUserAccess(props: {
           },
           {
             header: t('Roles'),
-            cell: (item: UserRoleAccess) =>
-              item?.is_superuser ? (
+            cell: (item: UserRoleAccess) => {
+              return item?.is_superuser ? (
                 <Label>{t('AAP Administrator')}</Label>
               ) : (
                 <LabelsCell
-                  labels={item?.object_role_assignments?.map((obj) => obj.role_definition?.name)}
+                  labelsWithLinks={item.object_role_assignments.map((obj) => {
+                    return {
+                      name: obj?.role_definition?.name,
+                      link: getPageUrl(PlatformRoute.RoleDetails, {
+                        params: { id: roleNameToIdMap.get(obj?.role_definition?.name) },
+                      }),
+                    };
+                  })}
                 />
-              ),
+              );
+            },
           },
         ]}
         toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'username__icontains' }}

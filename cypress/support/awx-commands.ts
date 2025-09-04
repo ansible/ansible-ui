@@ -364,11 +364,12 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
   const menuSelector = `[data-cy*="${resource}-form-group"]`;
   cy.get('[data-cy="loading-spinner"]').should('not.exist');
   cy.get(`${menuSelector}`)
+    .first()
     .find('svg[data-cy="lookup-button"]', { timeout: 1000 })
     .should((_) => {})
     .then(($elements) => {
       if ($elements.length) {
-        cy.get(`${menuSelector}`).find('button').click();
+        cy.get(`${menuSelector}`).first().find('button').click();
         cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
           //wait for table to load
           cy.get('table').should('exist');
@@ -378,12 +379,11 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
         });
       } else {
         cy.get(`${menuSelector}`)
-          .find('button')
-          .last()
-          .click()
-          .then(() => {
-            cy.contains('[class*="menu__list-item"]', itemName).click();
+          .first()
+          .within(() => {
+            cy.get('button').last().click();
           });
+        cy.contains('[class*="menu__list-item"]', itemName).click();
       }
     });
 });

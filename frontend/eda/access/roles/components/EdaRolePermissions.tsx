@@ -9,10 +9,12 @@ import {
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { ContentTypeEnum } from '../../../interfaces/generated/eda-api';
 import { useEdaRoleMetadata } from '../hooks/useEdaRoleMetadata';
+import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 
 export function EdaRolePermissions(props: { role: EdaRbacRole }) {
   const { role } = props;
   const rolesMetadata = useEdaRoleMetadata();
+  const getDisplayName = useMapContentTypeToDisplayName();
 
   return (
     <DescriptionList
@@ -35,7 +37,8 @@ export function EdaRolePermissions(props: { role: EdaRbacRole }) {
               style={{ fontWeight: 'normal' }}
               key={role.content_type}
             >
-              {rolesMetadata.content_types[role.content_type]?.displayName || role.content_type}
+              {getDisplayName(rolesMetadata.content_types[role.content_type]?.displayName) ||
+                getDisplayName(role.content_type)}
             </DescriptionListTerm>
             <DescriptionListDescription>
               {!!role?.permissions.length && (

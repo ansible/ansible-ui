@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(npm ci:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run eslint:*)",
+      "Bash(npm run prettier:fix:*)",
+      "Bash(npm start)",
+      "Bash(npx eslint:*)",
+      "Bash(npx playwright show-trace:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(rm:*)",
+      "Bash(true)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_wait_for"
+    ],
+    "deny": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["playwright"]
+}

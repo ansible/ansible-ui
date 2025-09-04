@@ -229,7 +229,7 @@ type AggregateCredential =
       credential_type: number;
       passwords_needed: string[];
       vault_id?: string;
-      inputs: { [key: string]: string };
+      inputs?: { [key: string]: string };
     }
   | Credential;
 function getAggregateCredentials(

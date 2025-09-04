@@ -3,6 +3,7 @@ import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
+import { deleteInventory } from '../infrastructure/inventories/inventory-utils';
 import { deleteJobTemplate } from '../templates/job-template-utils';
 import { createAwxJobTemplateSchedule, deleteAwxSchedule } from './schedule-utils';
 
@@ -10,14 +11,21 @@ test.beforeEach(setupBefore({ path: '/execution/schedules' }));
 test.afterEach(setupAfter);
 
 test('schedule - create, delete', { tag: ['@not_mock'] }, async ({ page }) => {
-  const { scheduleName, jobTemplateName } = await createAwxJobTemplateSchedule({}, page);
+  const { scheduleName, jobTemplateName, inventoryName } = await createAwxJobTemplateSchedule(
+    {},
+    page
+  );
   await deleteAwxSchedule(scheduleName, page);
   await deleteJobTemplate(jobTemplateName, page);
+  await deleteInventory(inventoryName, page);
 });
 
 test('schedule - edit', { tag: ['@not_mock'] }, async ({ page }) => {
   test.setTimeout(5 * 20 * 1000);
-  const { scheduleName, jobTemplateName } = await createAwxJobTemplateSchedule({}, page);
+  const { scheduleName, jobTemplateName, inventoryName } = await createAwxJobTemplateSchedule(
+    {},
+    page
+  );
   await navigateTo(page, 'Automation Execution', 'Schedules');
   await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
   await clickPageAction('Edit schedule', page);
@@ -33,11 +41,15 @@ test('schedule - edit', { tag: ['@not_mock'] }, async ({ page }) => {
   ).toBeVisible();
   await deleteAwxSchedule(`${scheduleName}`, page);
   await deleteJobTemplate(jobTemplateName, page);
+  await deleteInventory(inventoryName, page);
 });
 
 test('schedule - edit with existing RRule', { tag: ['@not_mock'] }, async ({ page }) => {
   test.setTimeout(5 * 20 * 1000);
-  const { scheduleName, jobTemplateName } = await createAwxJobTemplateSchedule({}, page);
+  const { scheduleName, jobTemplateName, inventoryName } = await createAwxJobTemplateSchedule(
+    {},
+    page
+  );
   await navigateTo(page, 'Automation Execution', 'Schedules');
   await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
   await clickPageAction('Edit schedule', page);
@@ -66,4 +78,5 @@ test('schedule - edit with existing RRule', { tag: ['@not_mock'] }, async ({ pag
   ).toBeVisible();
   await deleteAwxSchedule(scheduleName, page);
   await deleteJobTemplate(jobTemplateName, page);
+  await deleteInventory(inventoryName, page);
 });

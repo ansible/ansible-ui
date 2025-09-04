@@ -4,10 +4,12 @@ import { clickTableRow } from '../../../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
+import { createInventory } from '../infrastructure/inventories/inventory-utils';
 import { createJobTemplate } from '../templates/job-template-utils';
 
 export async function createAwxJobTemplateSchedule(options: { scheduleName?: string }, page: Page) {
-  const jobTemplateName = await createJobTemplate({}, page);
+  const inventoryName = await createInventory({}, page);
+  const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
   await navigateTo(page, 'Automation Execution', 'Schedules');
   await page.getByRole('link', { name: 'Create schedule' }).click();
   await expect(page.getByRole('heading', { name: 'Create schedule' })).toBeVisible();
@@ -26,7 +28,7 @@ export async function createAwxJobTemplateSchedule(options: { scheduleName?: str
   await expect(page.getByText(scheduleName)).toBeVisible();
   await page.getByRole('button', { name: 'Finish' }).click();
   await expect(page.getByRole('heading', { name: scheduleName, exact: true })).toBeVisible();
-  return { scheduleName, jobTemplateName };
+  return { scheduleName, jobTemplateName, inventoryName };
 }
 
 export async function deleteAwxSchedule(scheduleName: string, page: Page) {

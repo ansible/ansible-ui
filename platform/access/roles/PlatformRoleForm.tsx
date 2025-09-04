@@ -23,6 +23,7 @@ import { PlatformRole } from '../../interfaces/PlatformRole';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormRolePermissionsSelect } from './components/PageFormPermissionsSelect';
 import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
 
 export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
@@ -33,8 +34,12 @@ export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: str
 
   const postRequest = usePostRequest<Partial<PlatformRole>, PlatformRole>();
 
-  const onSubmit: PageFormSubmitHandler<PlatformRole> = async (Role) => {
-    const newRole = await postRequest(gatewayAPI`/role_definitions/`, Role);
+  const onSubmit: PageFormSubmitHandler<PlatformRole> = async (role) => {
+    const toCreateRole: PlatformRole = {
+      ...role,
+      content_type: role.content_type === 'system' ? null : role.content_type,
+    };
+    const newRole = await postRequest(gatewayAPI`/role_definitions/`, toCreateRole);
     pageNavigate(PlatformRoute.RoleDetails, { params: { id: newRole.id } });
   };
   const onCancel = () => void navigate(-1);
@@ -58,7 +63,7 @@ export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: str
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
-        <PlatformRoleInputs />
+        <PlatformRoleInputs isEditMode={false} />
       </PageForm>
     </PageLayout>
   );
@@ -113,10 +118,14 @@ export function EditPlatformRole(props: { breadcrumbLabelForPreviousPage?: strin
             submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
+            defaultValue={{
+              ...role,
+              content_type:
+                role?.content_type === null ? ContentTypeEnum.System : role?.content_type,
+            }}
             onCancel={onCancel}
-            defaultValue={role}
           >
-            <PlatformRoleInputs />
+            <PlatformRoleInputs isEditMode={true} />
           </PageForm>
         </PageLayout>
       );
@@ -124,7 +133,7 @@ export function EditPlatformRole(props: { breadcrumbLabelForPreviousPage?: strin
   }
 }
 
-function PlatformRoleInputs() {
+function PlatformRoleInputs({ isEditMode = false }: { isEditMode?: boolean }) {
   const { t } = useTranslation();
   const { setValue, getFieldState } = useFormContext();
   const contentType = useWatch({
@@ -151,6 +160,7 @@ function PlatformRoleInputs() {
           name="description"
           label={t('Description')}
           placeholder={t('Enter description')}
+          isRequired
         />
       </PageFormSection>
       <PageFormSection title={t('Permissions')}>
@@ -164,9 +174,17 @@ function PlatformRoleInputs() {
           </HelperText>
         </PageFormSection>
         <PageFormSection>
-          <PageFormRoleTypeSelect name={'content_type'} />
+          <PageFormRoleTypeSelect
+            name={'content_type'}
+            isRequired
+            isDisabled={isEditMode ? t('The resource type cannot be edited.') : undefined}
+          />
           <PageFormHidden watch="content_type" hidden={(content_type: string) => !content_type}>
-            <PageFormRolePermissionsSelect name={'permissions'} contentType={contentType} />
+            <PageFormRolePermissionsSelect
+              name={'permissions'}
+              isRequired
+              contentType={contentType}
+            />
           </PageFormHidden>
         </PageFormSection>
       </PageFormSection>

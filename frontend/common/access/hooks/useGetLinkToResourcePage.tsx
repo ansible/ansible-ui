@@ -2,9 +2,10 @@ import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
 import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
+import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
 import { useCallback } from 'react';
 
-export function useGetLinkToResourcePage() {
+export function useGetLinkToResourcePage(name?: string | undefined) {
   const getPageUrl = useGetPageUrl();
   return useCallback(
     (options: { contentType: string | null; objectId: string | number | null }) => {
@@ -47,20 +48,28 @@ export function useGetLinkToResourcePage() {
           params: { id: objectId },
         }),
         'awx.project': getPageUrl(AwxRoute.ProjectDetails, { params: { id: objectId } }),
-        'galaxy.namespace': getPageUrl(HubRoute.NamespaceDetails, { params: { id: objectId } }),
+        'galaxy.namespace': getPageUrl(HubRoute.NamespaceDetails, {
+          params: { id: name ?? objectId },
+        }),
         'galaxy.ansiblerepository': getPageUrl(HubRoute.RepositoryDetails, {
-          params: { id: objectId },
+          params: { id: name ?? objectId },
         }),
         'galaxy.containernamespace': getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
+          params: { id: name ?? objectId },
+        }),
+        'galaxy.containerrepository': getPageUrl(HubRoute.RepositoryDetails, {
+          params: { id: name ?? objectId },
+        }),
+        'galaxy.collectionremote': getPageUrl(HubRoute.RemoteDetails, {
+          params: { id: name ?? objectId },
+        }),
+        'shared.team': getPageUrl(PlatformRoute.TeamDetails, { params: { id: objectId } }),
+        'shared.organization': getPageUrl(PlatformRoute.OrganizationDetails, {
           params: { id: objectId },
         }),
-        'galaxy.containerrepository': getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
-          params: { id: objectId },
-        }),
-        'galaxy.collectionremote': getPageUrl(HubRoute.RemoteDetails, { params: { id: objectId } }),
       };
       return resourceToEndpointMapping[contentType] ?? undefined;
     },
-    [getPageUrl]
+    [getPageUrl, name]
   );
 }

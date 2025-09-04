@@ -24,7 +24,7 @@ describe('Remotes User Access tab', () => {
       ContentTypeEnum.CollectionRemote,
       [customRole.permission]
     ).then((createdRole) => {
-      role = createdRole as PlatformRole;
+      role = createdRole;
     });
     cy.createHubRemote().then((createdRemote) => {
       remote = createdRemote;

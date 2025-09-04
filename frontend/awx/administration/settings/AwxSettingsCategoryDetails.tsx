@@ -24,7 +24,7 @@ import { AwxSettingsOptionsAction } from './AwxSettingsForm';
 import { useAwxSettingsGroups, useAwxSettingsGroupsBase } from './useAwxSettingsGroups';
 
 export function AwxSettingsCategoryDetailsPage(props: { categoryId: string }) {
-  const { isLoading, error, groups, options } = useAwxSettingsGroups();
+  const { isLoading, error, groups, options, hasWritePermissions } = useAwxSettingsGroups();
   const { categoryId } = props;
   const group = groups.find((group) =>
     group.categories.some((category) => category.id === categoryId)
@@ -50,20 +50,22 @@ export function AwxSettingsCategoryDetailsPage(props: { categoryId: string }) {
 
   const groupsBase = useAwxSettingsGroupsBase();
 
-  const actions = useMemo<IPageAction<object>[]>(
-    () => [
+  const actions = useMemo<IPageAction<object>[]>(() => {
+    if (!hasWritePermissions) {
+      return [];
+    }
+    return [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PencilAltIcon,
         label: t('Edit'),
-        onClick: () => void navigate('./edit', { replace: true }),
+        onClick: () => navigate('./edit', { replace: true }),
         isPinned: true,
       },
-    ],
-    [navigate, t]
-  );
+    ];
+  }, [navigate, t, hasWritePermissions]);
 
   if (error) return <AwxError error={error} />;
   if (isLoading || !group || !category) return <LoadingPage />;

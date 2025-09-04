@@ -5,7 +5,7 @@ export interface LaunchConfigCredential {
   name: string;
   credential_type: number;
   passwords_needed: string[];
-  inputs: {
+  inputs?: {
     [key: string]: string;
   };
 }
@@ -45,15 +45,14 @@ export interface LaunchConfiguration {
       name: string;
       id: number;
     };
-    time_out: number;
     limit: string;
     labels: { id: number; name: string }[];
     scm_branch: string;
     job_tags: string;
     skip_tags: string;
     extra_vars: string;
-    diff_mode: false;
-    job_type: 'run' | 'check';
+    diff_mode: boolean;
+    job_type: string;
     verbosity: 0 | 1 | 2 | 3 | 4 | 5;
     credentials: LaunchConfigCredential[];
     execution_environment: { id: number; name: string } | Record<string, never>;

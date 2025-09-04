@@ -69,10 +69,10 @@ export interface JobTemplateCreate {
   description?: string;
   diff_mode: boolean;
   extra_vars: string;
-  forks: number;
+  forks?: number;
   host_config_key: string;
   inventory: number;
-  job_slice_count: number;
+  job_slice_count?: number;
   job_tags: string | null;
   job_type: string;
   limit: string;
@@ -83,9 +83,9 @@ export interface JobTemplateCreate {
   scm_branch: string;
   skip_tags: string | null;
   survey_enabled?: boolean;
-  timeout: number;
+  timeout?: number;
   use_fact_cache: boolean;
-  verbosity: number;
+  verbosity: 0 | 1 | 2 | 3 | 4 | 5;
   webhook_credential: number | null;
   webhook_service: string;
 }

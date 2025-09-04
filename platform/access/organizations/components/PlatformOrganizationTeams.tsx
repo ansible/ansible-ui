@@ -63,19 +63,21 @@ export function PlatformOrganizationTeams() {
   return (
     <>
       <PageSection>
-        <AlertGroup>
-          <Alert
-            isInline
-            variant="info"
-            title={t(
-              `Below displays a list of teams within this organization whether or not they have been assigned organization roles.`
-            )}
-          >
-            <Content
-              component={ContentVariants.p}
-            >{t`To view and manage a team's organization roles click on the team's view and manage organization roles action.`}</Content>
-          </Alert>
-        </AlertGroup>
+        {view.pageItems && view.pageItems.length > 0 && (
+          <AlertGroup>
+            <Alert
+              isInline
+              variant="info"
+              title={t(
+                `Below displays a list of teams within this organization whether or not they have been assigned organization roles.`
+              )}
+            >
+              <Content
+                component={ContentVariants.p}
+              >{t`To view and manage a team's organization roles click on the team's \"view and manage organization roles\" action.`}</Content>
+            </Alert>
+          </AlertGroup>
+        )}
       </PageSection>
       <PageTable<PlatformTeam>
         id="platform-organization-teams-table"

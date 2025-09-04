@@ -160,15 +160,10 @@ describe('ScheduleAddWizard', () => {
       cy.intercept(
         { method: 'GET', url: awxAPI`/projects/*` },
         {
-          count: 1,
-          results: [
-            {
-              id: 100,
-              name: 'Mock Project',
-              description: 'Project Description',
-              type: 'project',
-            },
-          ],
+          id: 100,
+          name: 'Mock Project',
+          description: 'Project Description',
+          type: 'project',
         }
       );
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/projects/`} />, {
@@ -239,7 +234,7 @@ describe('ScheduleAddWizard', () => {
         }
       );
       cy.intercept(
-        { method: 'GET', url: awxAPI`/inventories/1/inventory_sources/*/` },
+        { method: 'GET', url: awxAPI`/inventory_sources/*/` },
         {
           id: 2,
           type: 'inventory_source',
@@ -270,12 +265,22 @@ describe('ScheduleAddWizard', () => {
     });
 
     it('job template should not go to next step due to name failed validation', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/job_templates/*/` },
+        {
+          id: 2,
+          type: 'job_template',
+          name: 'Mock Job Template',
+        }
+      ).as('jobTemplate');
       cy.intercept('GET', awxAPI`/schedules/zoneinfo`, zones); // 🔧 add this
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
         initialEntries: ['/templates/job-template/8/schedules/create'],
         path: '/templates/job-template/:id/schedules/create',
       });
+      cy.wait('@jobTemplate');
 
+      cy.get('input[data-cy="name"]').focus();
       cy.clickButton(/^Next$/);
 
       cy.get('[data-cy="name-form-group"]').within(() => {

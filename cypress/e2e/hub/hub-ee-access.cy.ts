@@ -23,7 +23,7 @@ describe('Execution Environment User Access tab', () => {
     cy.createPlatformRole(customRole.roleName, customRole.roleDescription, customRole.contentType, [
       customRole.permission,
     ]).then((createdRole) => {
-      role = createdRole as PlatformRole;
+      role = createdRole;
     });
     cy.createPlatformOrganization().then((org) => {
       organization = org;

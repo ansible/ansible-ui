@@ -41,7 +41,7 @@
     "clean": "nx exec -- rm -rf dist build coverage test-results && rm -rf dist build coverage test-results && nx run-many --target=clean",
     "build": "nx run-many --target=build",
     "test": "nx run-many --target=eslint,tsc,prettier,vitest",
-    "test:all": "nx run-many --target=eslint,tsc,prettier --skip-nx-cache",
+    "test:force": "nx run-many --target=eslint,tsc,prettier --skip-nx-cache",
     "vitest": "nx run-many --target=vitest",
     "tsc": "nx run-many --target=tsc",
     "prettier": "nx run-many --target=prettier",
@@ -80,6 +80,7 @@
     "@ansible/react-json-chart-builder": "3.0.0",
     "@babel/core": "7.26.7",
     "@babel/plugin-proposal-object-rest-spread": "7.20.7",
+    "@babel/plugin-transform-class-properties": "^7.22.0",
     "@babel/preset-react": "7.26.3",
     "@babel/preset-typescript": "7.26.0",
     "@patternfly/patternfly": "6.3.1",
@@ -93,7 +94,6 @@
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.15",
     "@react-hook/resize-observer": "2.0.2",
     "@svgr/webpack": "8.1.0",
-    "@swc/core": "1.10.15",
     "@types/debounce": "1.2.4",
     "@types/dompurify": "^3.0.5",
     "@types/get-value": "3.0.5",
@@ -109,7 +109,7 @@
     "@types/uuid": "10.0.0",
     "@types/webpack": "5.28.5",
     "@types/xml2js": "^0.4.14",
-    "@vitejs/plugin-react-swc": "3.8.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "anser": "2.3.0",
     "antsibull-docs": "1.1.1",
     "babel-loader": "9.2.1",
@@ -177,6 +177,9 @@
     "xml2js": "^0.6.2",
     "yaml": "2.7.0",
     "zustand": "^5.0.1"
+  },
+  "overrides": {
+    "nanoid": "3.3.11"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.0",

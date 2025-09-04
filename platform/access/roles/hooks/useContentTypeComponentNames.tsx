@@ -10,7 +10,7 @@ import { ContentType } from './ContentType';
 export function useContentTypeComponentNames() {
   const { t } = useTranslation();
   return (contentType: ContentType) => {
-    const componentId = contentType.split('.')[0];
+    const componentId = contentType ? contentType.split('.')[0] : 'galaxy';
     switch (componentId) {
       case 'awx':
         return [t('Automation Execution')];

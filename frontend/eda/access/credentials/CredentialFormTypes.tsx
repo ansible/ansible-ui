@@ -2,9 +2,9 @@ import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '@ansible/an
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { Button, Icon, Tooltip } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 import { KeyIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../common/eda-utils';
@@ -12,8 +12,8 @@ import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
 import { PageFormDataUrlFileUpload } from './components/PageFormDataUrlFileUpload';
 import {
-  useCredentialPluginsModal,
   CredentialPluginsInputSource,
+  useCredentialPluginsModal,
 } from './hooks/useCredentialSecretModal';
 
 export function isFieldRequired(required: string[] | undefined, fieldId: string): boolean {
@@ -96,30 +96,114 @@ export function CredentialFormBooleanInput(props: {
 export function CredentialFormMultilineStringInput(props: {
   readonly field: FieldType | undefined;
   readonly required: string[];
+  readonly kind?: string;
+  readonly onSecretModalToggle?: () => void;
+  readonly accumulatedPluginValues?: CredentialPluginsInputSource[];
+  readonly removeCredentialPluginValue?: (fieldName: string) => void;
 }) {
+  const { t } = useTranslation();
+  const { setValue, clearErrors } = useFormContext();
+
+  // Move hooks before early return
+  const sourceCredentialId = props.accumulatedPluginValues?.filter(
+    (cp) => cp.input_field_name === props.field?.id
+  )[0]?.source_credential;
+
+  const { data: sourceCredential } = useGetItem<EdaCredential>(
+    edaAPI`/eda-credentials/`,
+    sourceCredentialId
+  );
+
+  const renderFieldValue = useCallback((): string => {
+    let placeholder = 'Drag a file here or browse to upload';
+    props.accumulatedPluginValues?.forEach((cp) => {
+      if (cp.input_field_name === props.field?.id && sourceCredential) {
+        placeholder = t(
+          `Value is managed by ${sourceCredential.credential_type?.namespace || 'external'}: ${
+            sourceCredential.name
+          }`
+        );
+      }
+    });
+    return placeholder;
+  }, [props.accumulatedPluginValues, sourceCredential, t, props.field?.id]);
+
+  useEffect(() => {
+    // if field id matches accumulatedPluginValues input_field_name, set value to kind: credential name
+    if (
+      props.field &&
+      props.accumulatedPluginValues?.some((cp) => cp.input_field_name === props.field?.id)
+    ) {
+      setValue(`inputs.${props.field.id}`, renderFieldValue(), { shouldDirty: true });
+    }
+  }, [setValue, props.accumulatedPluginValues, renderFieldValue, props.field]);
+
   if (!props?.field || props.field.type !== 'string' || !props.field.multiline) {
     return;
   }
+
+  const field = props.field;
+
+  const handleIsDisabled = (): boolean => {
+    return props.accumulatedPluginValues?.some((cp) => cp.input_field_name === field.id) || false;
+  };
+
+  const handleHelperText = (): string => {
+    const hasExternalCredential = props.accumulatedPluginValues?.some(
+      (cp) => cp.input_field_name === field.id
+    );
+    return hasExternalCredential
+      ? t(
+          'This field will be retrieved from an external secret management system using the specified credential.'
+        )
+      : '';
+  };
+
+  const onClear = () => {
+    setValue(`inputs.${field.id}`, '', { shouldDirty: false });
+    clearErrors(`inputs.${field.id}`);
+    if (props.removeCredentialPluginValue) {
+      props.removeCredentialPluginValue(field.id);
+    }
+  };
+
+  const secretManagementButton =
+    props.kind !== 'external' ? (
+      <div style={{ display: 'flex', justifyContent: 'flex-start', width: 'fit-content' }}>
+        <Button
+          data-cy="secret-management-input"
+          icon={<KeyIcon />}
+          variant="control"
+          onClick={props.onSecretModalToggle}
+        />
+      </div>
+    ) : undefined;
+
   return (
     <PageFormSection singleColumn>
-      {props.field?.format && props.field.format === 'binary_base64' ? (
+      {field?.format && field.format === 'binary_base64' ? (
         <PageFormDataUrlFileUpload
-          label={props.field.label}
-          name={`inputs.${props.field.id}`}
-          labelHelpTitle={props.field.label}
-          labelHelp={props.field.help_text}
-          isRequired={isFieldRequired(props.required, props.field.id)}
+          label={field.label}
+          name={`inputs.${field.id}`}
+          labelHelpTitle={field.label}
+          labelHelp={field.help_text}
+          isRequired={isFieldRequired(props.required, field.id)}
+          helperText={handleHelperText()}
         />
       ) : (
         <PageFormFileUpload
+          onClearClick={onClear}
           type="text"
-          label={props.field.label}
-          name={`inputs.${props.field.id}`}
-          labelHelpTitle={props.field.label}
-          labelHelp={props.field.help_text}
-          isRequired={isFieldRequired(props.required, props.field.id)}
-          isReadOnly={false}
+          label={field.label}
+          name={`inputs.${field.id}`}
+          labelHelpTitle={field.label}
+          labelHelp={field.help_text}
+          helperText={handleHelperText()}
+          isRequired={isFieldRequired(props.required, field.id)}
+          isReadOnly={handleIsDisabled()}
           allowEditingUploadedText={true}
+          placeholder={renderFieldValue()}
+          icon={secretManagementButton}
         />
       )}
     </PageFormSection>
@@ -225,6 +309,8 @@ function CredentialFormTextInputWithButton(props: {
       type={props.field.secret ? 'password' : undefined}
       placeholder={externalCredentialInfo.managedByText || undefined}
       helperText={helperText}
+      labelHelpTitle={props.field.label}
+      labelHelp={props.field.help_text}
       isRequired={
         !externalCredentialInfo.hasExternalCredential &&
         isFieldRequired(props.required, props.field.id)
@@ -240,11 +326,7 @@ function CredentialFormTextInputWithButton(props: {
               <Button
                 data-cy="secret-management-input"
                 variant="control"
-                icon={
-                  <Icon>
-                    <KeyIcon />
-                  </Icon>
-                }
+                icon={<KeyIcon />}
                 onClick={props.onSecretModalToggle}
               />
             </Tooltip>
@@ -289,7 +371,16 @@ export function CredentialFormStringInput(props: {
   };
 
   if (props.field.multiline) {
-    return <CredentialFormMultilineStringInput field={props.field} required={props.required} />;
+    return (
+      <CredentialFormMultilineStringInput
+        field={props.field}
+        required={props.required}
+        kind={props.kind}
+        onSecretModalToggle={handleSecretModalToggle}
+        accumulatedPluginValues={props.accumulatedPluginValues}
+        removeCredentialPluginValue={props.removeCredentialPluginValue}
+      />
+    );
   }
 
   if (props.field.choices && props.field.choices.length > 0) {

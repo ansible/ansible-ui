@@ -73,7 +73,11 @@ export function EditJobTemplate() {
       webhook_service: isWebhookEnabled ? values.webhook_service : null,
       host_config_key: isProvisioningCallbackEnabled ? host_config_key : null,
     };
-    await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id}/`, formValues);
+
+    // Filter out null optional fields before API call
+    const apiPayload = filterOptionalFields(formValues);
+
+    await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id}/`, apiPayload);
     const promises = [];
 
     promises.push(submitCredentials(jobTemplate as JobTemplate, credentials));
@@ -145,15 +149,18 @@ export function CreateJobTemplate() {
       webhook_credential: values.webhook_credential || null,
     };
 
-    const template = await postRequest(awxAPI`/job_templates/`, formValues);
+    // Filter out null optional fields before API call
+    const apiPayload = filterOptionalFields(formValues);
+
+    const template = await postRequest(awxAPI`/job_templates/`, apiPayload);
     const promises = [];
-    if (credentials?.length > 0) {
+    if (credentials && credentials.length > 0) {
       promises.push(submitCredentials(template, credentials));
     }
-    if (labels && labels?.length > 0) {
+    if (labels && labels.length > 0) {
       promises.push(submitLabels(template, labels));
     }
-    if (instance_groups.length > 0) {
+    if (instance_groups && instance_groups.length > 0) {
       promises.push(submitInstanceGroups(template.id, instance_groups));
     }
     if (promises.length > 0) await Promise.all(promises);
@@ -255,7 +262,7 @@ async function submitInstanceGroups(templateId: number, newInstanceGroups: Insta
       });
     }
     for (const group of newInstanceGroups) {
-      await await postRequest(awxAPI`/job_templates/${templateId}/instance_groups/`, {
+      await postRequest(awxAPI`/job_templates/${templateId}/instance_groups/`, {
         id: group.id,
       });
     }
@@ -267,4 +274,17 @@ function isEqual(array1: InstanceGroup[], array2: InstanceGroup[]) {
     array1.length === array2.length &&
     array1.every((element, index) => element.id === array2[index].id)
   );
+}
+
+/**
+ * Filters out null/undefined values for optional numeric fields to avoid API validation issues
+ */
+function filterOptionalFields<T extends Record<string, unknown>>(payload: T): T {
+  const optionalFields: (keyof T)[] = ['job_slice_count', 'forks', 'timeout'];
+  return Object.fromEntries(
+    Object.entries(payload).filter(
+      ([key, value]) =>
+        !optionalFields.includes(key as keyof T) || (value !== null && value !== undefined)
+    )
+  ) as T;
 }

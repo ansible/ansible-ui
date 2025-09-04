@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { randomString } from '../../../../framework/utils/random-string';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
-import { randomString } from '../../../../framework/utils/random-string';
+import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
 import {
   createJobTemplate,
   deleteJobTemplate,
@@ -16,13 +17,21 @@ test.afterEach(setupAfter);
 test('domains of interest', { tag: [] }, async ({ page }) => {
   test.setTimeout(2 * 60 * 1000);
 
+  const inventoryName = await createInventory({}, page);
+
   // Create Job Template A with label A
   const labelA = randomString(12);
-  const jobTemplateAName = await createJobTemplate({ labels: [labelA], createLabel: true }, page);
+  const jobTemplateAName = await createJobTemplate(
+    { labels: [labelA], createLabel: true, inventoryName: inventoryName },
+    page
+  );
 
   // Create Job Template B with label B
   const labelB = randomString(12);
-  const jobTemplateBName = await createJobTemplate({ labels: [labelB], createLabel: true }, page);
+  const jobTemplateBName = await createJobTemplate(
+    { labels: [labelB], createLabel: true, inventoryName: inventoryName },
+    page
+  );
 
   // Create Domains
   await navigateTo(page, 'Automation Execution', 'Templates');
@@ -97,4 +106,5 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
   // Clean up Job Templates
   await deleteJobTemplate(jobTemplateAName, page);
   await deleteJobTemplate(jobTemplateBName, page);
+  await deleteInventory(inventoryName, page);
 });

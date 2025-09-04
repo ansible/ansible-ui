@@ -152,7 +152,7 @@ Example:
 ## Playwright Testing
 
 ### Overview
-Playwright tests provide additional E2E testing capabilities and can run against both live servers and mocked data. The Playwright workspace is located in `/playwright` and includes tests for various AAP components.
+Playwright tests provide comprehensive E2E testing capabilities and can run against both live servers and mocked data. The Playwright workspace is located in `/playwright` and includes tests for various AAP components including access management, roles, users, and UI workflows.
 
 ### Environment Configuration
 Create or update `/playwright/.env` with the following variables:
@@ -187,6 +187,9 @@ npm run allure
 
 # View coverage report
 npm run coverage
+
+# Show trace files for debugging failed tests
+npx playwright show-trace trace.zip
 ```
 
 ### Test Project Configuration
@@ -225,16 +228,19 @@ test('your test description', { tag: ['@not_mock'] }, async ({ page }) => {
   ```
 - Use data-cy attributes for test-specific selectors:
   ```typescript
-  await page.locator('[data-cy="name"]').fill('value');
+  await page.locator('[data-cy="content-type"]').click();
   ```
 
 #### Common Test Utilities
 Located in `/playwright/commands/`:
 - `setupBefore()` / `setupAfter()` - Test setup and teardown
 - `navigateTo()` - Navigate to specific pages
+- `getTableRow()` - Find and filter table rows (handles pagination automatically)
 - `clickTableRow()` - Interact with table rows
 - `clickPageAction()` - Click page action buttons
 - `login()` - Handle authentication
+- `createE2EName()` - Generate unique test names
+- `confirmAndAssertDeletion()` - Handle deletion confirmations
 
 #### Test Tags
 - `@not_mock` - Don't run against mocked data
@@ -247,6 +253,20 @@ Located in `/playwright/commands/`:
 ```bash
 npx playwright test --debug
 ```
+
+#### Using Playwright MCP Server (Claude Code Integration)
+When debugging test failures, Claude Code can use the Playwright MCP server to:
+- Navigate to live applications and examine actual UI structure
+- Take screenshots and snapshots of pages
+- Interact with UI elements to understand behavior
+- Debug selector issues by testing elements in real-time
+- Verify form interactions and data flows
+
+This is particularly useful for:
+- Understanding why selectors fail in tests
+- Discovering the actual DOM structure vs expected structure
+- Testing new UI features before writing tests
+- Debugging complex user workflows
 
 #### Viewing Test Reports
 ```bash
@@ -262,6 +282,8 @@ npm run coverage
 - **Timeouts**: Increase timeout for slow operations or use `test.setTimeout()`
 - **Element not found**: Check if elements are loaded, use proper wait strategies
 - **Authentication issues**: Verify environment variables in `.env` file
+- **Selector failures**: Use MCP server tools to examine actual UI structure
+- **Table row selection**: Always use `getTableRow()` utility for paginated tables
 
 ### Test Environment Setup
 1. Ensure your local UI is running on the configured port (default: 4100)
@@ -273,7 +295,8 @@ npm run coverage
 - Coverage reports are generated automatically during test runs
 - Allure reports provide detailed test execution information
 - Screenshots and videos are captured on test failures
-- Traces can be viewed with `npx playwright show-trace`
+- Traces can be viewed with `npx playwright show-trace trace.zip`
+- Test artifacts are stored in `test-results/` directory
 
 ## Environment Setup
 
@@ -335,6 +358,36 @@ cd playwright && npm run mock    # Against mocked data
 cd playwright && npx playwright test tests/path/to/test.spec.ts --project 'live chromium'
 ```
 
+### Playwright Test Guidelines
+
+#### Table Row Selection
+When writing Playwright tests that need to select rows from tables, **always use the `getTableRow` command** instead of manually filtering table rows. This command automatically handles table filtering which is essential because:
+
+- Tables often contain many rows that are paginated
+- Without filtering, the desired row may not be visible on the current page
+- Manual row selection without filtering causes test failures
+
+**Correct approach:**
+```typescript
+import { getTableRow } from '../../../commands/getTableRow';
+
+// Use getTableRow to find and filter for a specific row
+const roleRow = await getTableRow(page, roleName);
+await roleRow.click();
+```
+
+**Avoid this pattern:**
+```typescript
+// DON'T do this - may fail if row is not visible due to pagination
+const roleRow = page.getByRole('row').filter({ hasText: roleName });
+```
+
+The `getTableRow` command:
+1. Automatically clears existing table filters
+2. Applies a filter for the specified text
+3. Returns the table row containing that text
+4. Ensures the row is visible before any further actions
+
 ## Troubleshooting
 
 ### Common Issues
@@ -347,6 +400,8 @@ cd playwright && npx playwright test tests/path/to/test.spec.ts --project 'live 
   - Check `/playwright/.env` for correct credentials
   - Use `exact: true` for selector specificity issues
   - Run with `--debug` flag to investigate issues
+  - Use Claude Code's Playwright MCP server to examine live UI structure and debug selectors
+  - Always use `getTableRow()` utility for table interactions to handle pagination
 
 ### Log Access
 - Platform logs: Check platform server logs
