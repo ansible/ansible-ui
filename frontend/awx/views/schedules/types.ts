@@ -94,7 +94,7 @@ export type ScheduleAccessoriesPayload = BaseSchedulePayload & {
   skip_tags?: string;
   limit?: string;
   diff_mode?: boolean;
-  verbosity?: number;
+  verbosity?: 0 | 1 | 2 | 3 | 4 | 5;
   enabled: boolean;
   execution_environment?: number | null;
   organization?: number | null;

@@ -340,6 +340,9 @@ describe('Schedules - Create and Delete', () => {
               ask_skip_tags_on_launch: true,
               ask_tags_on_launch: true,
               ask_variables_on_launch: true,
+              skip_tags: 'skip_tag',
+              job_tags: 'job_tag',
+              extra_vars: 'var: original_value',
             }).then((jt) => {
               const surveySpec = {
                 name: '',
@@ -397,7 +400,7 @@ describe('Schedules - Create and Delete', () => {
       cy.contains('ul', 'Create "test_job_tag"').click();
       cy.get('input[placeholder="Select or create skip tags"]').type('test_skip_tag');
       cy.contains('ul', 'Create "test_skip_tag"').click();
-      cy.getBy('[data-cy="prompt-extra-vars"]').type('foo: bar');
+      cy.getBy('[data-cy="prompt-extra-vars"]').type('\nfoo: bar');
       cy.clickButton(/^Next$/);
       //Survey step
       cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Survey');
@@ -479,8 +482,8 @@ describe('Schedules - Create and Delete', () => {
       });
       cy.getByDataCy('name').should('have.text', scheduleName);
       cy.getByDataCy('time-zone').should('have.text', 'America/Mexico_City');
-      cy.getByDataCy('job-tags').should('have.text', 'test_job_tag');
-      cy.getByDataCy('skip-tags').should('have.text', 'test_skip_tag');
+      cy.getByDataCy('job-tags').should('have.text', 'job_tagtest_job_tag');
+      cy.getByDataCy('skip-tags').should('have.text', 'skip_tagtest_skip_tag');
       cy.getByDataCy('rruleset').contains('DTSTART;TZID=America/Mexico_City');
       cy.getByDataCy('rruleset').contains('RRULE:FREQ=HOURLY;INTERVAL=100');
       cy.getByDataCy('rruleset').contains('EXRULE:FREQ=YEARLY;INTERVAL=200');
@@ -506,6 +509,77 @@ describe('Schedules - Create and Delete', () => {
           cy.getByDataCy('next-exclusion-timestamps-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1);
         });
+    });
+    it('can create a schedule with prompt values and verify they persist when editing', () => {
+      const scheduleName = 'E2E Schedule Edit Test' + randomString(4);
+      const surveyAnswer = 'E2E edit test survey' + randomString(4);
+
+      // Navigate to schedules and create new schedule
+      cy.navigateTo('awx', 'schedules');
+      cy.verifyPageTitle('Schedules');
+      cy.getByDataCy('create-schedule').click();
+
+      // Details step - select job template and basic info
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
+      cy.getByDataCy('name').type(`${scheduleName}`);
+      cy.singleSelectByDataCy('timezone', 'America/New_York');
+      cy.clickButton(/^Next$/);
+
+      // Prompts step - add values to prompt fields
+      cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
+      cy.get('input[placeholder="Select or create job tags"]').type('edit_test_job_tag');
+      cy.contains('ul', 'Create "edit_test_job_tag"').click();
+      cy.get('input[placeholder="Select or create skip tags"]').type('edit_test_skip_tag');
+      cy.contains('ul', 'Create "edit_test_skip_tag"').click();
+      cy.getBy('[data-cy="prompt-extra-vars"]').type('\nedit_test_var: edited_original_value');
+      cy.clickButton(/^Next$/);
+
+      // Survey step
+      cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Survey');
+      cy.getByDataCy('survey-test').type(surveyAnswer);
+      cy.clickButton(/^Next$/);
+
+      // Rules step - add simple rule
+      cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Rules');
+      cy.selectDropdownOptionByResourceName('freq', 'Daily');
+      cy.getByDataCy('interval').clear().type('1');
+      cy.getByDataCy('add-rule-button').click();
+      cy.clickButton(/^Next$/);
+
+      // Skip exceptions step
+      cy.get('[data-cy="wizard-nav"] li').eq(4).should('contain.text', 'Exceptions');
+      cy.clickButton(/^Next$/);
+
+      // Review and save
+      cy.get('[data-cy="wizard-nav"] li').eq(5).should('contain.text', 'Review');
+      cy.intercept('POST', awxAPI`/job_templates/*/schedules/`).as('scheduleCreated');
+      cy.contains('button', 'Finish').click();
+      cy.wait('@scheduleCreated');
+
+      // Verify we're on the schedule details page
+      cy.verifyPageTitle(`${scheduleName}`);
+
+      // Now edit the schedule to verify prompt values persist
+      cy.getByDataCy('edit-schedule').click();
+      cy.intercept('GET', awxAPI`/job_templates/*/survey_spec`).as('scheduleResource');
+      cy.wait('@scheduleResource');
+      // Navigate to prompts step
+      cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
+      cy.clickButton(/^Next$/);
+
+      // Verify the prompt values are preserved
+      cy.get('[data-cy="prompt.job_tags-typeahead-input"]').should(
+        'contain.text',
+        'edit_test_job_tag'
+      );
+      cy.get('[data-cy="prompt.skip_tags-typeahead-input"]').should(
+        'contain.text',
+        'edit_test_skip_tag'
+      );
+      cy.getBy('[data-cy="prompt-extra-vars"]')
+        .should('contain.text', 'edit_test_var')
+        .and('contain.text', 'original_value');
     });
   });
 });

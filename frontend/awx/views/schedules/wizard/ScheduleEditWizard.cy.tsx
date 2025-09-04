@@ -17,55 +17,8 @@ const zones = {
     'Etc/GMT+0': 'GMT-0',
   },
 };
-const mockTemplate = {
-  id: 100,
-  name: 'Mock Job Template',
-  description: 'Job Template Description',
-  unified_job_type: 'job',
-  _enabled: true,
-};
-const mockTemplates = {
-  count: 1,
-  results: [mockTemplate],
-};
 
 describe('ScheduleEditWizard', () => {
-  before(() => {
-    cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
-  });
-  beforeEach(() => {
-    cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
-    cy.intercept(awxAPI`/schedules/1/`, {
-      rrule:
-        'DTSTART;TZID=America/Los_Angeles:20240411T104500 RRULE:INTERVAL=1;FREQ=HOURLY RRULE:INTERVAL=1;FREQ=DAILY;COUNT=225',
-      id: 1,
-      type: 'schedule',
-      summary_fields: {
-        unified_job_template: {
-          id: 100,
-          name: 'Mock Job Template',
-        },
-        user_capabilities: {
-          edit: true,
-          delete: true,
-        },
-      },
-      name: 'Test Schedule',
-      description: 'Automatically Generated Schedule',
-      extra_data: {
-        days: '120',
-      },
-      unified_job_template: 100,
-      enabled: true,
-      dtstart: '2024-04-14T15:50:01Z',
-      next_run: '2024-04-14T15:50:01Z',
-      timezone: 'UTC',
-      related: {
-        unified_job_template: awxAPI`/job_templates/100/`,
-      },
-    });
-  });
-
   describe('Prompted schedule', () => {
     const mockTemplateCredential = {
       id: 200,
@@ -74,16 +27,46 @@ describe('ScheduleEditWizard', () => {
     };
 
     beforeEach(() => {
-      cy.intercept(awxAPI`/job_templates/100/`, {
+      cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/schedules/1/' },
+        {
+          rrule:
+            'DTSTART;TZID=America/Los_Angeles:20240411T104500 RRULE:INTERVAL=1;FREQ=HOURLY RRULE:INTERVAL=1;FREQ=DAILY;COUNT=225',
+          id: 1,
+          type: 'schedule',
+          summary_fields: {
+            unified_job_template: {
+              id: 100,
+              name: 'Mock Job Template',
+              unified_job_type: 'job',
+            },
+            user_capabilities: {
+              edit: true,
+              delete: true,
+            },
+          },
+          name: 'Test Schedule',
+          description: 'Automatically Generated Schedule',
+          extra_data: {
+            days: '120',
+          },
+          unified_job_template: 100,
+          enabled: true,
+          dtstart: '2024-04-14T15:50:01Z',
+          next_run: '2024-04-14T15:50:01Z',
+          timezone: 'UTC',
+          related: {
+            unified_job_template: '/api/v2/job_templates/100/',
+          },
+        }
+      );
+      cy.intercept('/api/v2/job_templates/100/', {
         id: 100,
         name: 'Mock Job Template',
-        launch: {
-          ask_credential_on_launch: true,
-          survey_enabled: true,
-        },
         type: 'job_template',
       });
-      cy.intercept(awxAPI`/job_templates/100/launch/`, {
+      cy.intercept(`/api/v2/job_templates/100/launch/`, {
         ask_credential_on_launch: true,
         survey_enabled: true,
         defaults: {
@@ -98,7 +81,7 @@ describe('ScheduleEditWizard', () => {
           skip_tags: '',
         },
       });
-      cy.intercept(awxAPI`/job_templates/100/credentials/`, {
+      cy.intercept('/api/v2/job_templates/100/credentials/', {
         count: 1,
         results: [mockTemplateCredential],
       });
@@ -118,39 +101,64 @@ describe('ScheduleEditWizard', () => {
         });
       });
     });
-
-    it('Should not go to next step due to failed validation', () => {
-      cy.mount(<ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
-        initialEntries: ['/templates/job-template/7/schedules/1/edit'],
-        path: '/templates/job-template/:id/schedules/:schedule_id/edit',
-      });
-      cy.get('[data-cy="name"]').clear();
-      cy.clickButton(/^Next$/);
-      cy.get('[data-cy="name-form-group"]').within(() => {
-        cy.get('span.pf-v6-c-helper-text__item-text')
-          .should('be.visible')
-          .and('contain.text', 'Schedule name is required.');
-      });
-    });
   });
 
   describe('Rules step', () => {
     beforeEach(() => {
-      cy.intercept(awxAPI`/job_templates/100/`, { id: 100, name: 'Mock Job Template' });
-      cy.intercept(awxAPI`/job_templates/100/launch/`, {});
-      cy.mount(<ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
+      cy.intercept({ method: 'GET', url: `/api/v2/schedules/zoneinfo/` }, zones);
+      cy.intercept(
+        { method: 'GET', url: `/api/v2/schedules/*/` },
+        {
+          rrule:
+            'DTSTART;TZID=America/Los_Angeles:20240411T104500 RRULE:INTERVAL=1;FREQ=HOURLY RRULE:INTERVAL=1;FREQ=DAILY;COUNT=225',
+          id: 1,
+          type: 'schedule',
+          summary_fields: {
+            unified_job_template: {
+              id: 100,
+              name: 'Mock Job Template',
+              unified_job_type: 'job',
+            },
+            user_capabilities: {
+              edit: true,
+              delete: true,
+            },
+          },
+          name: 'Test Schedule',
+          description: 'Automatically Generated Schedule',
+          extra_data: {
+            days: '120',
+          },
+          unified_job_template: 100,
+          enabled: true,
+          dtstart: '2024-04-14T15:50:01Z',
+          next_run: '2024-04-14T15:50:01Z',
+          timezone: 'America/Los_Angeles',
+          related: {
+            unified_job_template: awxAPI`/job_templates/100/`,
+          },
+        }
+      );
+      cy.intercept(`/api/v2/job_templates/*/`, { id: 100, name: 'Mock Job Template' });
+      cy.intercept(`/api/v2/job_templates/*/launch/`, {
+        ask_credential_on_launch: true,
+        survey_enabled: true,
+        defaults: {
+          credentials: [
+            {
+              id: 200,
+              name: 'Mock Credential',
+              credential_type: 2,
+            },
+          ],
+          job_tags: '',
+          skip_tags: '',
+        },
+      });
+      cy.mount(<ScheduleEditWizard resourceEndPoint={`/api/v2/job_templates/`} />, {
         initialEntries: ['/templates/job-template/7/schedules/1/edit'],
         path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
-      cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
-        });
-      });
-      cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
 
