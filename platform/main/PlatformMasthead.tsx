@@ -12,6 +12,7 @@ import { useAwxNotifications } from '@ansible/awx-ui/main/AwxMasthead';
 import { ChatbotToolbarItem } from '@ansible/chatbot/ChatbotToolbarItem';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { PageRefreshIcon } from '@ansible/common-ui/PageRefreshIcon';
+import { useDocsVersion } from '@ansible/common-ui/utils/useDocsVersion';
 import { useEdaActiveUser } from '@ansible/eda-ui/common/useEdaActiveUser';
 import { useHubActiveUser } from '@ansible/hub-ui/common/useHubActiveUser';
 import { useHubNotifications } from '@ansible/hub-ui/main/HubMasthead';
@@ -31,6 +32,7 @@ import { PlatformRoute } from './PlatformRoutes';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
+  const { version: platformVersion } = useDocsVersion();
   const pageNavigate = usePageNavigate();
   useAwxNotifications();
   useHubNotifications();
@@ -113,7 +115,7 @@ export function PlatformMasthead() {
             ) : null}
             <DropdownItem
               id="about"
-              onClick={() => setDialog(<PlatformAbout />)}
+              onClick={() => setDialog(<PlatformAbout platformVersion={platformVersion} />)}
               data-cy="masthead-about"
             >
               {t('About')}

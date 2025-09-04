@@ -7,7 +7,9 @@ import { AboutModal, Content } from '@patternfly/react-core';
 import { t } from 'i18next';
 import React from 'react';
 
-export const PlatformAbout: React.FunctionComponent = () => {
+export const PlatformAbout: React.FunctionComponent<{
+  platformVersion?: string;
+}> = ({ platformVersion }) => {
   const awxInfo = useGet<{ version: string }>(awxAPI`/ping/`);
   const hubInfo = useGet<{ galaxy_ng_version: string }>(hubAPI`/`);
   const edaInfo = useGet<{ version: string }>(edaAPI`/config/`);
@@ -23,7 +25,7 @@ export const PlatformAbout: React.FunctionComponent = () => {
       onClose={(_e: React.MouseEvent<Element, MouseEvent> | KeyboardEvent | MouseEvent) =>
         setPageDialog(undefined)
       }
-      productName={t('Ansible Automation Platform 2.5')}
+      productName={t('Ansible Automation Platform {{version}}', { version: platformVersion })}
       trademark="Copyright 2025 Red Hat, Inc."
       brandImageAlt={t('Brand Logo')}
       brandImageSrc={'aap-logo.svg?react'}
