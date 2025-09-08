@@ -50,7 +50,7 @@ describe('Platform: Roles', () => {
     });
   });
 
-  describe('Platform: Create and Delete Roles - SKIPPED (Content type loading issues)', () => {
+  describe('Platform: Create and Delete Roles', () => {
     it(`can create an Automation Execution job template role with 2 permissions and then delete the role from the details page`, () => {
       cy.intercept('GET', gatewayAPI`/role_definitions/*`).as('roleDefinitions');
       cy.navigateTo('platform', 'roles');
@@ -86,7 +86,7 @@ describe('Platform: Roles', () => {
           });
           cy.get('#permissions-select').within(() => {
             cy.get('ul').within(() => {
-              cy.get('#can-run-this-job-template').click();
+              cy.get('#can-execute-job-template').click();
             });
           });
         });
@@ -96,8 +96,8 @@ describe('Platform: Roles', () => {
         cy.contains('Automation Execution').should('be.visible');
       });
       cy.get('[data-cy="permissions"]').within(() => {
-        cy.contains('awx.execute_jobtemplate').should('be.visible');
-        cy.contains('awx.view_jobtemplate').should('be.visible');
+        cy.contains('Can run this job template').should('be.visible');
+        cy.contains('Can view job template').should('be.visible');
       });
       cy.selectDetailsPageKebabAction('delete-role');
       cy.getBy('#filter-input').type(`${roleName}{enter}`);
@@ -105,7 +105,7 @@ describe('Platform: Roles', () => {
       cy.contains('No results found').should('be.visible');
     });
 
-    it(`can create an Automation Decision project role with 2 permissions and then delete the role from the details page`, () => {
+    it(`can create an Automation Execution project role with 2 permissions and then delete the role from the details page`, () => {
       cy.intercept('GET', gatewayAPI`/role_definitions/*`).as('roleDefinitions');
       cy.navigateTo('platform', 'roles');
       cy.wait('@roleDefinitions');
@@ -121,7 +121,7 @@ describe('Platform: Roles', () => {
         .first()
         .click()
         .then(() => {
-          cy.contains('h1', 'Automation Decisions')
+          cy.contains('h1', 'Automation Execution')
             .parent()
             .scrollIntoView()
             .find('#project')
@@ -139,18 +139,18 @@ describe('Platform: Roles', () => {
           });
           cy.get('#permissions-select').within(() => {
             cy.get('ul').within(() => {
-              cy.get('#can-sync-a-project').click();
+              cy.get('#can-update-project').click();
             });
           });
         });
       cy.getByDataCy('Submit').click();
       cy.verifyPageTitle(`${roleName}`);
       cy.get('[data-cy="components"]').within(() => {
-        cy.contains('Automation Decisions').should('be.visible');
+        cy.contains('Automation Execution').should('be.visible');
       });
       cy.get('[data-cy="permissions"]').within(() => {
-        cy.contains('eda.sync_project').should('be.visible');
-        cy.contains('eda.view_project').should('be.visible');
+        cy.contains('Can run a project update').should('be.visible');
+        cy.contains('Can view project').should('be.visible');
       });
       cy.selectDetailsPageKebabAction('delete-role');
       cy.getBy('#filter-input').type(`${roleName}{enter}`);
@@ -159,7 +159,7 @@ describe('Platform: Roles', () => {
     });
   });
 
-  describe('Platform: Edit Roles - SKIPPED (Content type issues)', () => {
+  describe('Platform: Edit Roles', () => {
     let editableRole: PlatformRole;
     const roleName = 'Inventory' + `${randomString(5)}`;
     const roleDescription = roleName + '-description';
@@ -193,8 +193,8 @@ describe('Platform: Roles', () => {
         cy.get('[data-cy="description"]').should('contain', roleDescription);
         expect(editableRole.description).to.eql(roleDescription);
         cy.get('[data-cy="permissions"]').within(() => {
-          cy.contains(`${permissionA}`).should('be.visible');
-          cy.contains(`${permissionB}`).should('be.visible');
+          cy.contains('Can view inventory').should('be.visible');
+          cy.contains('Can update inventory sources in inventory').should('be.visible');
         });
         expect(editableRole.permissions).to.include(permissionA);
         expect(editableRole.permissions).to.include(permissionB);
@@ -225,8 +225,8 @@ describe('Platform: Roles', () => {
           });
         cy.verifyPageTitle(editableRole.name);
         cy.get('[data-cy="permissions"]').within(() => {
-          cy.contains(`${permissionA}`).should('be.visible');
-          cy.contains(`${permissionB}`).should('be.visible');
+          cy.contains('Can view inventory').should('be.visible');
+          cy.contains('Can update inventory sources in inventory').should('be.visible');
         });
         cy.navigateTo('platform', 'roles');
         cy.wait('@roleDefinitions');
@@ -258,7 +258,7 @@ describe('Platform: Roles', () => {
                 const newPermissions = [
                   'can-view-inventory',
                   'can-change-inventory',
-                  'can-use-inventory-in-a-job-template',
+                  'can-use-inventory',
                 ];
                 newPermissions.forEach((newPermission) => {
                   cy.get(`[data-cy="${newPermission}"]`).click();
@@ -293,8 +293,8 @@ describe('Platform: Roles', () => {
         cy.get('[data-cy="description"]').should('contain', roleDescription);
         expect(editableRole.description).to.eql(roleDescription);
         cy.get('[data-cy="permissions"]').within(() => {
-          cy.contains(`${permissionA}`).should('be.visible');
-          cy.contains(`${permissionB}`).should('be.visible');
+          cy.contains('Can view inventory').should('be.visible');
+          cy.contains('Can update inventory sources in inventory').should('be.visible');
         });
         expect(editableRole.permissions).to.include(permissionA);
         expect(editableRole.permissions).to.include(permissionB);
@@ -313,7 +313,7 @@ describe('Platform: Roles', () => {
                 const newPermissions = [
                   'can-view-inventory',
                   'can-change-inventory',
-                  'can-use-inventory-in-a-job-template',
+                  'can-use-inventory',
                 ];
                 newPermissions.forEach((newPermission) => {
                   cy.get(`[data-cy="${newPermission}"]`).click();
