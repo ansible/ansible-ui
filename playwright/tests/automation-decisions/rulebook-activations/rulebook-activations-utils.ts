@@ -25,6 +25,7 @@ export async function createRulebookActivation(
   await page.getByRole('option', { name: 'Default The default' }).click();
   await page.getByRole('button', { name: 'Project' }).click();
   await page.getByRole('textbox', { name: 'Search input' }).fill(projectName);
+
   await page.getByRole('option', { name: projectName }).click();
   await page.getByRole('button', { name: 'Rulebook', exact: true }).click();
   await page.getByRole('option', { name: 'basic_short.yml' }).click();
@@ -43,12 +44,13 @@ export async function createRulebookActivation(
     await page.locator('label:has([data-cy="rulebook-activation-toggle"])').click();
   }
   await page.getByRole('button', { name: 'Create rulebook activation' }).click();
-  await expect(page.locator('#name')).toContainText(rulebookActivationName);
+  await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
   return rulebookActivationName;
 }
 
 export async function deleteRulebookActivation(rulebookActivationName: string, page: Page) {
   await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+
   await clickTableRow(
     {
       text: rulebookActivationName,
@@ -59,6 +61,7 @@ export async function deleteRulebookActivation(rulebookActivationName: string, p
     },
     page
   );
+
   await clickPageAction('Delete rulebook activation', page);
   await confirmAndAssertDeletion(page);
 }

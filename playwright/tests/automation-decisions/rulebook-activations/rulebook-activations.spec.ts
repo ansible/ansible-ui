@@ -23,7 +23,7 @@ test(
       { projectName: newProject, credentialName: newCredential },
       page
     );
-    await expect(page.locator('#name')).toContainText(rulebookActivationName);
+    await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
     await expect(page.locator('#project')).toContainText(newProject);
     await expect(page.getByLabel('Label group category').getByRole('listitem')).toContainText(
       newCredential
@@ -247,7 +247,7 @@ test(
       { projectName: newProject, credentialName: newCredential },
       page
     );
-    await expect(page.locator('#name')).toContainText(rulebookActivationName);
+    await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
     await page.getByRole('button', { name: 'kebab dropdown toggle' }).click();
     await page.getByRole('menuitem', { name: 'Duplicate rulebook activation' }).click();
     await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');

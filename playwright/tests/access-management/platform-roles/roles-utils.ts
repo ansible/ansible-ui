@@ -20,7 +20,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for namespace management',
     resourceType: 'galaxy.namespace',
-    resourceTypeDisplayName: 'namespace',
+    resourceTypeDisplayName: 'Namespace',
     permissions: ['galaxy.view_namespace'],
     permissionDisplayNames: ['Can view namespace'],
     expectedComponent: 'Automation Content',
@@ -29,7 +29,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for collection management',
     resourceType: 'galaxy.collection',
-    resourceTypeDisplayName: 'collectionimport',
+    resourceTypeDisplayName: 'Namespace',
     permissions: ['galaxy.change_collection', 'galaxy.view_collection'],
     permissionDisplayNames: ['Can change collection import', 'Can view collection import'],
     expectedComponent: 'Automation Content',
@@ -38,7 +38,7 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     name: '',
     description: 'Test role for AWX inventory management',
     resourceType: 'awx.inventory',
-    resourceTypeDisplayName: 'inventory',
+    resourceTypeDisplayName: 'Inventory',
     permissions: ['awx.view_inventory'],
     permissionDisplayNames: ['Can view inventory'],
     expectedComponent: 'Automation Execution',
@@ -84,8 +84,6 @@ export async function selectResourceType(page: Page, resourceTypeDisplay: string
     .filter({ hasText: new RegExp(resourceTypeDisplay, 'i') })
     .first();
 
-  // Wait for the option to be visible and click it
-  await option.waitFor({ state: 'visible', timeout: 30000 });
   await option.click();
 }
 
@@ -179,9 +177,9 @@ export async function verifyRoleDetails(page: Page, roleName: string, config: Ro
     new RegExp(config.resourceTypeDisplayName, 'i')
   );
 
-  // Verify permissions (might need to adjust selector based on actual implementation)
-  for (const permission of config.permissions) {
-    await expect(page.locator('#permissions')).toContainText(permission);
+  // Verify permissions using human-readable display names
+  for (const permissionDisplayName of config.permissionDisplayNames) {
+    await expect(page.locator('#permissions')).toContainText(permissionDisplayName);
   }
 }
 
