@@ -26,9 +26,20 @@ Jira issue # <!-- Link JIRA issue -->
 
 #### • E2E Run:
 
-<!-- Link an E2E run. -->
+<!-- Please run both Cypress and Playwright E2E tests to help us maintain quality and avoid regressions. Share your results via GitHub Actions links or local test output. -->
 
-<!-- NOTE: If there are any failures in the linked run, please list them here and indicate whether or not they are related to the changes.-->
+- [ ] **Cypress Tests:** E2E tests completed successfully (npm run e2e:run)
+  <!-- Share GitHub Actions E2E run link or local test results/screenshots -->
+
+- [ ] **Playwright Tests:** E2E tests completed successfully (cd playwright && npm run live)
+  <!-- Share GitHub Actions E2E run link or local test results/screenshots -->
+
+<!-- 
+💡 If you encounter any test failures:
+• Please list them here and let us know if they're related to your changes
+• If they are related to your changes, we'd appreciate fixing them before merging
+• This helps us maintain stability - if regressions are introduced, we may need to collaborate on reverting or fixing them quickly
+-->
 
 #### • Manual testing instructions:
 
