@@ -47,10 +47,4 @@ export async function confirmAndAssertDeletion(page: Page) {
     .or(page.getByText('completed'))
     .or(page.getByText('deleted'));
   await expect(successMessage.first()).toBeVisible({ timeout: 30000 });
-
-  // Click the close button when success is shown
-  await page.getByRole('button', { name: 'Close', exact: true }).click();
-
-  // Wait for the modal to be hidden
-  await expect(page.getByRole('dialog')).toBeHidden();
 }

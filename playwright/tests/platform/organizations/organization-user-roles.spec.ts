@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { filterTable } from '../../../commands/filterTable';
+import { navigateTo } from '../../../commands/navigateTo';
+import { selectTableRow } from '../../../commands/selectTableRow';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import {
   createOrganization,
   deleteOrganization,
 } from '../../access-management/organizations/organization-utils';
 import { createUser, deleteUser } from '../../access-management/users/user-utils';
-import { navigateTo } from '../../../commands/navigateTo';
-import { clickTableRow } from '../../../commands/clickTableRow';
-import { filterTable } from '../../../commands/filterTable';
-import { selectTableRow } from '../../../commands/selectTableRow';
 
 test.describe('Organization User Roles', () => {
   let organizationName: string;
@@ -121,12 +121,10 @@ test.describe('Organization User Roles', () => {
       await page.getByRole('tab', { name: 'Roles' }).click();
       await expect(page.locator('table tbody tr')).toHaveCount(2);
 
-      await expect(
-        page.getByRole('gridcell', { name: 'Has member permission to a' })
-      ).toBeVisible();
+      await expect(page.getByRole('gridcell', { name: 'Organization Member' })).toBeVisible();
       await expect(
         page.getByRole('gridcell', {
-          name: 'Has all permissions to a single organization',
+          name: 'Organization Admin',
         })
       ).toBeVisible();
     }

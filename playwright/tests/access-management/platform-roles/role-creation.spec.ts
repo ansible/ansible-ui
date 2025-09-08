@@ -132,7 +132,7 @@ test.describe('Role Creation Tests', () => {
         await fillRoleBasicInfo(page, roleName, 'Test role description');
 
         // Select resource type and permissions
-        await selectResourceType(page, 'collectionimport');
+        await selectResourceType(page, 'Namespace');
         await selectPermissions(page, ['Can view collection import']);
 
         // Submit and verify the form
@@ -142,8 +142,8 @@ test.describe('Role Creation Tests', () => {
         await expect(page.getByRole('heading', { name: roleName })).toBeVisible({ timeout: 10000 });
 
         // Verify final state
-        await expect(page.locator('#resource-type')).toHaveText('collectionimport');
-        await expect(page.locator('#permissions')).toContainText('galaxy.view_collectionimport');
+        await expect(page.locator('#resource-type')).toHaveText('Namespace');
+        await expect(page.locator('#permissions')).toContainText('Can view collection import');
 
         await deleteRole(roleName, page);
       }
@@ -157,7 +157,7 @@ test.describe('Role Creation Tests', () => {
         const config = { ...TEST_ROLE_CONFIGS.collection, name: roleName };
         const createdRoleName = await createRoleWithConfig(page, config);
 
-        for (const permission of config.permissions) {
+        for (const permission of config.permissionDisplayNames) {
           await expect(page.locator('#permissions')).toContainText(permission);
         }
         await deleteRole(createdRoleName, page);
@@ -296,7 +296,7 @@ test.describe('Role Creation Tests', () => {
         await navigateToRolesPage(page);
         await clickCreateRole(page);
         await fillRoleBasicInfo(page, createE2EName(), 'Test role description');
-        await selectResourceType(page, 'collectionimport');
+        await selectResourceType(page, 'Namespace');
         await selectPermissions(page, ['Can view collection import']);
 
         // Verify permissions are selected

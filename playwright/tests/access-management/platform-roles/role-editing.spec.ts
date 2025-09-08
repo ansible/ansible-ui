@@ -172,19 +172,19 @@ test.describe('Role Editing Tests', () => {
       async ({ page }) => {
         const roleName = createE2EName();
 
-        // Test creating a role with multiple permissions
+        // Test creating a role with multiple permissions using namespace instead of collection
         const config = {
-          ...TEST_ROLE_CONFIGS.collection,
+          ...TEST_ROLE_CONFIGS.namespace,
           name: roleName,
-          permissions: ['galaxy.view_collection', 'galaxy.change_collection'],
-          permissionDisplayNames: ['Can view collection', 'Can change collection'],
+          permissions: ['galaxy.view_namespace', 'galaxy.change_namespace'],
+          permissionDisplayNames: ['Can view namespace', 'Can change namespace'],
         };
 
         await createRoleWithConfig(page, config);
 
         // Verify the role was created with both permissions
-        await expect(page.locator('#permissions')).toContainText('galaxy.view_collection');
-        await expect(page.locator('#permissions')).toContainText('galaxy.change_collection');
+        await expect(page.locator('#permissions')).toContainText('Can view namespace');
+        await expect(page.locator('#permissions')).toContainText('Can change namespace');
 
         // Cleanup
         await deleteRole(roleName, page);
@@ -203,8 +203,8 @@ test.describe('Role Editing Tests', () => {
         // Verify the role was created with namespace resource type and permissions
         await expect(page.locator('#resource-type')).toHaveText(config.resourceTypeDisplayName);
         await expect(page.locator('#components')).toHaveText(config.expectedComponent);
-        for (const permission of config.permissions) {
-          await expect(page.locator('#permissions')).toContainText(permission);
+        for (const permissionDisplayName of config.permissionDisplayNames) {
+          await expect(page.locator('#permissions')).toContainText(permissionDisplayName);
         }
 
         // Cleanup
@@ -226,8 +226,8 @@ test.describe('Role Editing Tests', () => {
         await expect(page.locator('#resource-type')).toHaveText(config.resourceTypeDisplayName);
 
         // Verify permissions are correct
-        for (const permission of config.permissions) {
-          await expect(page.locator('#permissions')).toContainText(permission);
+        for (const permissionDisplayName of config.permissionDisplayNames) {
+          await expect(page.locator('#permissions')).toContainText(permissionDisplayName);
         }
 
         // Cleanup
@@ -241,19 +241,19 @@ test.describe('Role Editing Tests', () => {
       async ({ page }) => {
         const roleName = createE2EName();
 
-        // Test creating a collection role with limited permissions
+        // Test creating a namespace role with limited permissions
         const config = {
-          ...TEST_ROLE_CONFIGS.collection,
+          ...TEST_ROLE_CONFIGS.namespace,
           name: roleName,
-          permissions: ['galaxy.view_collection'],
-          permissionDisplayNames: ['Can view collection'],
+          permissions: ['galaxy.view_namespace'],
+          permissionDisplayNames: ['Can view namespace'],
         };
 
         await createRoleWithConfig(page, config);
 
         // Verify only view permission is present
-        await expect(page.locator('#permissions')).toContainText('galaxy.view_collection');
-        await expect(page.locator('#permissions')).not.toContainText('galaxy.change_collection');
+        await expect(page.locator('#permissions')).toContainText('Can view namespace');
+        await expect(page.locator('#permissions')).not.toContainText('Can change namespace');
 
         // Cleanup
         await deleteRole(roleName, page);

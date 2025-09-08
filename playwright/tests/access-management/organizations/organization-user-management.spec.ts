@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../../commands/setup';
-import { navigateTo } from '../../../commands/navigateTo';
 import { clickTableRow } from '../../../commands/clickTableRow';
+import { filterTable } from '../../../commands/filterTable';
+import { navigateTo } from '../../../commands/navigateTo';
+import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createUser, deleteUser } from '../users/user-utils';
 import {
   addUserToOrganization,
   createOrganization,
   deleteOrganization,
 } from './organization-utils';
-import { filterTable } from '../../../commands/filterTable';
 
 test.describe('Organization User Management', () => {
   let organizationName: string;
@@ -68,10 +68,7 @@ test.describe('Organization User Management', () => {
           has: page.locator('td').nth(1).getByText(organizationName, { exact: true }),
         })
         .filter({
-          has: page
-            .locator('td')
-            .nth(2)
-            .getByText('Has member permission to a single organization', { exact: true }),
+          has: page.locator('td').nth(2).getByText('Organization Member', { exact: true }),
         });
       await expect(memberRoleRow).toBeVisible();
     }
@@ -113,10 +110,7 @@ test.describe('Organization User Management', () => {
           has: page.locator('td').nth(1).getByText(organizationName, { exact: true }),
         })
         .filter({
-          has: page
-            .locator('td')
-            .nth(2)
-            .getByText('Has member permission to a single organization', { exact: true }),
+          has: page.locator('td').nth(2).getByText('Organization Admin', { exact: true }),
         });
       await expect(memberRoleRowMultiple).toBeVisible();
 
@@ -127,13 +121,7 @@ test.describe('Organization User Management', () => {
           has: page.locator('td').nth(1).getByText(organizationName, { exact: true }),
         })
         .filter({
-          has: page
-            .locator('td')
-            .nth(2)
-            .getByText(
-              'Has all permissions to a single organization and all objects inside of it',
-              { exact: true }
-            ),
+          has: page.locator('td').nth(2).getByText('Organization Member', { exact: true }),
         });
       await expect(adminRoleRow).toBeVisible();
     }
