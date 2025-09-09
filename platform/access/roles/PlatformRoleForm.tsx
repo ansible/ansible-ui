@@ -37,7 +37,7 @@ export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: str
   const onSubmit: PageFormSubmitHandler<PlatformRole> = async (role) => {
     const toCreateRole: PlatformRole = {
       ...role,
-      content_type: role.content_type === 'system' ? null : role.content_type,
+      content_type: role.content_type === ContentTypeEnum.System ? null : role.content_type,
     };
     const newRole = await postRequest(gatewayAPI`/role_definitions/`, toCreateRole);
     pageNavigate(PlatformRoute.RoleDetails, { params: { id: newRole.id } });
