@@ -133,6 +133,7 @@ describe('Instances K8S', () => {
       cy.wait('@editForm').then((response) => {
         expect(response?.response?.statusCode).to.eql(200);
       });
+      cy.verifyPageTitle(`Edit ${instance.hostname}`);
       cy.getByDataCy('enabled').click();
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
       cy.clickButton(/^Save instance$/);
