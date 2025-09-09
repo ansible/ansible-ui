@@ -106,6 +106,18 @@ test.describe('Role Creation Tests', () => {
       await verifyRoleDetails(page, createdRoleName, config);
       await deleteRole(createdRoleName, page);
     });
+
+    test('should create a Galaxy system role', { tag: ['@not_mock'] }, async ({ page }) => {
+      const roleName = createE2EName();
+      const config = { ...TEST_ROLE_CONFIGS.system, name: roleName };
+      const createdRoleName = await createRoleWithConfig(page, config);
+      await expect(page.locator('#name')).toHaveText(roleName);
+      if (config.description) {
+        await expect(page.locator('#description')).toHaveText(config.description);
+      }
+      await expect(page.locator('#components')).toHaveText(config.expectedComponent);
+      await deleteRole(createdRoleName, page);
+    });
   });
 
   test.describe('Permission Selection Validation', () => {

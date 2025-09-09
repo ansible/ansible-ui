@@ -8,7 +8,7 @@ import { navigateTo } from '../../../commands/navigateTo';
 export interface RoleTestData {
   name: string;
   description?: string;
-  resourceType: string;
+  resourceType: string | null;
   resourceTypeDisplayName: string;
   permissions: string[];
   permissionDisplayNames: string[];
@@ -51,6 +51,15 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     permissions: ['eda.view_rulebook'],
     permissionDisplayNames: ['Can view rulebook process'],
     expectedComponent: 'Automation Decisions',
+  },
+  system: {
+    name: '',
+    description: 'Test role for system galaxy',
+    resourceType: null,
+    resourceTypeDisplayName: 'System',
+    permissions: ['galaxy.view_namespace'],
+    permissionDisplayNames: ['Can view namespace'],
+    expectedComponent: 'Automation Content',
   },
 };
 
