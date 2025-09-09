@@ -106,9 +106,8 @@ describe('Check if the build includes EDA', () => {
                       cy.get('tbody tr input').click();
                       cy.clickButton('Confirm');
                     });
-                    cy.get(
-                      '[id="credential-select-form-group"] [aria-label="Options menu"]'
-                    ).click();
+                    cy.get('[id="credential-select-form-group"]').find('button').eq(1).click();
+                    cy.get('#browse').click();
                     cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
                       cy.get('table').should('exist');
                       if (AAPCredential) {
@@ -157,7 +156,6 @@ describe('Check if the build includes EDA', () => {
       if (AAPCredential) {
         cy.deleteEdaCredential(AAPCredential);
       }
-      cy.deleteEdaRulebookActivation(edaRBA1);
     });
 
     it('Basic Flow -  can create a Rulebook Activation and map event streams to sources', () => {
@@ -195,7 +193,8 @@ describe('Check if the build includes EDA', () => {
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
       });
-      cy.get('[id="credential-select-form-group"] [aria-label="Options menu"]').click();
+      cy.get('[id="credential-select-form-group"]').find('button').eq(1).click();
+      cy.get('#browse').click();
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
         cy.get('table').should('exist');
         if (AAPCredential) {
@@ -219,6 +218,7 @@ describe('Check if the build includes EDA', () => {
         .should('be.visible')
         .and('contain', edaEventStream1.name);
       cy.get('[data-cy="name"]').should('be.visible').and('contain', name);
+      cy.deleteEdaRulebookActivation(edaRBA1);
     });
 
     it('can redirect to event streams and view activations for that event stream', () => {
