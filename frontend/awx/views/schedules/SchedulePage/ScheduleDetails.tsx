@@ -126,6 +126,8 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
         <PageDetail label={t('Job type')}>{schedule.job_type}</PageDetail>
         <PageDetail label={t('Limit')}>{schedule.limit}</PageDetail>
         <PageDetail label={t('Forks')}>{schedule.forks}</PageDetail>
+        <PageDetail label={t('Job slicing')}>{schedule.job_slice_count}</PageDetail>
+        <PageDetail label={t('Timeout')}>{schedule.timeout}</PageDetail>
         <PageDetail label={t('Verbosity')}>{schedule.verbosity}</PageDetail>
         <PageDetail label={t('Show changes')}>{schedule.diff_mode ? t`On` : t`Off`}</PageDetail>
         <PageDetail label={t('Job tags')} isEmpty={!schedule.job_tags}>
