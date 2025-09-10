@@ -59,6 +59,8 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
         };
         throw new RequestError('', '', 400, '', errors);
       }
+      // Re-throw the original error so the PageWizard can display it
+      throw error;
     }
   };
 

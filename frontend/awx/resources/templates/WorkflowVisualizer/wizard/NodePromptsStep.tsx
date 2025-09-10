@@ -164,6 +164,7 @@ export function NodePromptsStep({
           )}
           name="prompt.job_slice_count"
           type="number"
+          min={0}
           placeholder={t('Add number of slices')}
         />
       </ConditionalField>
@@ -177,6 +178,7 @@ export function NodePromptsStep({
           )}
           name="prompt.timeout"
           type="number"
+          min={0}
           placeholder={t('Add timeout')}
         />
       </ConditionalField>
