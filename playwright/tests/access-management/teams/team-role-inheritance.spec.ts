@@ -10,9 +10,9 @@ import {
   createAwxProject,
   deleteAwxProject,
 } from '../../automation-execution/projects/project-utils';
+import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
 import { createUser, deleteUser } from '../users/user-utils';
 import { createTeam, deleteTeam } from './team-utils';
-import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
 
 test.beforeEach(setupBefore({ path: '/access/teams' }));
 test.afterEach(setupAfter);
@@ -103,7 +103,7 @@ test(
     // Verify team inheritance shows up in user roles
     const teamRow = page.locator('table tr', { hasText: teamName });
     await expect(teamRow).toContainText(teamName);
-    await expect(teamRow).toContainText('Inherits all role assignments to a single team');
+    await expect(teamRow).toContainText('Team Member');
 
     // Step 4: Verify role inheritance on Resource Team Access tabs
     // Navigate to Inventory and check Team Access tab

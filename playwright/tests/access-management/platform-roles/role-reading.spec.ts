@@ -164,7 +164,7 @@ test.describe('Role Reading/Listing Tests', () => {
         await expect(page.locator('#resource-type')).toHaveText(config.resourceTypeDisplayName);
 
         // Verify permissions are displayed
-        for (const permission of config.permissions) {
+        for (const permission of config.permissionDisplayNames) {
           await expect(page.locator('#permissions')).toContainText(permission);
         }
 

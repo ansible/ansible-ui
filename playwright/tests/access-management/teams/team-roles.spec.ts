@@ -111,7 +111,7 @@ test(
 
     // Verify the row contains the team name and inheritance description
     await expect(row).toContainText(teamName);
-    await expect(row).toContainText('Inherits all role assignments to a single team');
+    await expect(row).toContainText('Team Member');
 
     await deleteTeam(teamName, page);
     await deleteEdaProject(edaProjectName, page);
