@@ -284,6 +284,8 @@ describe('Projects', () => {
         cy.getBy('[data-cy="edit-template"]').click();
         cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
         cy.selectAsyncSingleSelectOption('project-select', thisProject.name);
+        // After changing project, playbook gets cleared, so we need to select one
+        cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
         cy.getByDataCy('Submit').click();
         cy.wait('@edited')

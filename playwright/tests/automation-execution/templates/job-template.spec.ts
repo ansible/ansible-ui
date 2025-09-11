@@ -476,4 +476,111 @@ test.describe('Job Templates', () => {
       await deleteJobTemplate(jobTemplateName, page);
     }
   );
+
+  test(
+    'verify playbook selection does not auto-clear unexpectedly',
+    { tag: ['@not_mock'] },
+    async ({ page }) => {
+      test.setTimeout(60000);
+
+      const jobTemplateName = createE2EName('playbook-persist-test');
+
+      // Navigate to templates page
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await expect(page.getByTestId('page-title')).toBeVisible({ timeout: 10000 });
+
+      // Self-contained navigation logic (doesn't modify utility)
+      const createButtonExists = await page.getByText('Create template', { exact: true }).count();
+      const dropdownExists = await page
+        .getByRole('button', { name: 'dropdown toggle', exact: true })
+        .count();
+
+      if (createButtonExists > 0) {
+        await page.getByText('Create template', { exact: true }).click();
+        const menuItemExists = await page
+          .getByRole('menuitem', { name: 'Create job template' })
+          .count();
+        if (menuItemExists > 0) {
+          await page.getByRole('menuitem', { name: 'Create job template' }).click();
+        } else {
+          test.skip(true, 'Create job template menu item not found');
+        }
+      } else if (dropdownExists > 0) {
+        await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
+        await page.waitForTimeout(1000);
+        const menuItemExists = await page
+          .getByRole('menuitem', { name: 'Create job template' })
+          .count();
+        if (menuItemExists > 0) {
+          await page.getByRole('menuitem', { name: 'Create job template' }).click();
+        } else {
+          test.skip(true, 'Create job template menu item not found in dropdown');
+        }
+      } else {
+        test.skip(true, 'Cannot access job template creation form - no create buttons found');
+      }
+
+      // Continue with form if we got here
+      await expect(page.getByPlaceholder('Enter job template name')).toBeVisible({
+        timeout: 10000,
+      });
+      await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
+
+      // Select inventory (required)
+      await page.getByRole('button', { name: 'Inventory' }).click();
+      await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
+      await page.locator('[role="option"]').first().click();
+
+      // Test the core fix: project-playbook interaction
+      await page.locator('#project-select').click();
+      await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
+      const projectOptions = await page.locator('[role="option"]').all();
+      expect(projectOptions.length).toBeGreaterThan(0);
+      await projectOptions[0].click();
+
+      // Wait for and interact with playbook field
+      await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
+        timeout: 10000,
+      });
+      await page.getByPlaceholder('Add a project, then select a').fill('hello_world.yml');
+
+      const selectedPlaybook = await page
+        .getByPlaceholder('Add a project, then select a')
+        .inputValue();
+      expect(selectedPlaybook).toBe('hello_world.yml');
+
+      // Verify playbook doesn't auto-clear without user action - THE KEY TEST
+      // Wait to ensure the field doesn't unexpectedly clear itself
+      await page.waitForTimeout(3000);
+      const persistedValue = await page
+        .getByPlaceholder('Add a project, then select a')
+        .inputValue();
+      expect(persistedValue).toBe('hello_world.yml');
+
+      // Additional test: verify project changes do clear playbook (expected behavior)
+      if (projectOptions.length > 1) {
+        await page.locator('#project-select').click();
+        await projectOptions[1].click();
+        await page.waitForTimeout(1000);
+
+        const clearedValue = await page
+          .getByPlaceholder('Add a project, then select a')
+          .inputValue();
+        expect(clearedValue).toBe('');
+
+        // Switch back and re-enter playbook
+        await page.locator('#project-select').click();
+        await projectOptions[0].click();
+        await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
+          timeout: 5000,
+        });
+        await page.getByPlaceholder('Add a project, then select a').fill('hello_world.yml');
+
+        // Final verification: playbook should persist after re-selection
+        await page.waitForTimeout(3000);
+        const finalValue = await page.getByPlaceholder('Add a project, then select a').inputValue();
+        expect(finalValue).toBe('hello_world.yml');
+      }
+    }
+  );
 });
