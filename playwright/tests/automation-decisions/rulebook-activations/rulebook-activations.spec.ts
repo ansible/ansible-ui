@@ -71,6 +71,7 @@ test.describe('Rulebook Activations', () => {
         },
         page
       );
+      await page.waitForTimeout(1000);
       await page.getByText('Rulebook activation enabled').click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
@@ -115,7 +116,10 @@ test.describe('Rulebook Activations', () => {
       const organizationName = await createOrganization(page);
       const newProject = await createEdaProject({}, page);
       const newCredential = await createEdaCredential({}, page);
-      const { decisionEnvironmentName } = await createDecisionEnvironment({}, page);
+      const { decisionEnvironmentName } = await createDecisionEnvironment(
+        { organizationName },
+        page
+      );
       const rulebookActivationName = await createRulebookActivation(
         {
           projectName: newProject,
@@ -125,6 +129,7 @@ test.describe('Rulebook Activations', () => {
         },
         page
       );
+      await page.waitForTimeout(1000);
       await page.getByText('Rulebook activation enabled').click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
