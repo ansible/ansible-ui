@@ -1,19 +1,19 @@
 import {
   Button,
   Modal,
-  ModalVariant,
   ModalBody,
-  ModalHeader,
   ModalFooter,
+  ModalHeader,
+  ModalVariant,
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
+import { PageMultiSelectList } from '../PageTable/PageMultiSelectList';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
-import { PageMultiSelectList } from '../PageTable/PageMultiSelectList';
 
 export type MultiSelectDialogProps<T extends object> = {
   title: string;
@@ -64,7 +64,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
       aria-label={title}
     >
       <ModalHeader title={title} description={description} />
-      <ModalBody style={{ overflow: 'hidden' }}>
+      <ModalBody>
         <PageMultiSelectList
           view={view}
           tableColumns={modalColumns}
