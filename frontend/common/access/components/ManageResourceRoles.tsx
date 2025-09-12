@@ -1,9 +1,4 @@
-import {
-  PageForm,
-  QueryParams,
-  useBulkActionDialog,
-  useGetPageUrl,
-} from '@ansible/ansible-ui-framework';
+import { PageForm, QueryParams, useBulkActionDialog } from '@ansible/ansible-ui-framework';
 import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { getAddedAndRemovedPlatformRoles } from '@ansible/platform-ui/access/organizations/utils/getAddedAndRemovedPlatformRoles';
 import { usePlatformRoleColumns } from '@ansible/platform-ui/access/roles/hooks/usePlatformRoleColumns';
@@ -13,14 +8,14 @@ import { useGetPlatformRolesForUser } from '@ansible/platform-ui/access/users/ho
 import { usePlatformView } from '@ansible/platform-ui/hooks/usePlatformView';
 import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { Alert, Button, Content, ContentVariants } from '@patternfly/react-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { postRequest, requestDelete } from '../../crud/Data';
+import { OrganizationUsersLink } from '@ansible/platform-ui/access/organizations/utils/OrganizationUsersLink';
 
 interface RemoveRole {
   remove?: boolean;
@@ -53,7 +48,6 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
   const { t } = useTranslation();
   const navigate = useNavigate();
   const progressDialog = useBulkActionDialog<UserAndPlatformRole>();
-  const getPageUrl = useGetPageUrl();
   const [isIndirectRolesModalOpen, setIsIndirectRolesModalOpen] = useState(false);
 
   const params = useParams<{
@@ -210,21 +204,21 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
         <Content component={ContentVariants.p} style={{ paddingBottom: 0, marginBottom: 0 }}>
           <Trans>
             To view these indirectly assigned roles click the button below. To modify indirect
-            assignments, manage the team&apos;s assignments, to modify direct organization roles,
-            manage{' '}
-            {
-              <Link
-                to={getPageUrl(PlatformRoute.OrganizationUsers, {
-                  params: {
-                    id: resource?.organization?.id ?? resource?.summary_fields?.organization?.id,
-                  },
-                })}
-              >
-                {resource?.organization?.name ?? resource?.summary_fields?.organization?.name}
-              </Link>
-            }{' '}
-            roles assignments.
+            assignments, manage the team&apos;s assignments.
           </Trans>
+          {(resource?.organization?.id ?? resource?.summary_fields?.organization?.id) && (
+            <Trans>
+              &nbsp;To modify direct organization roles, manage{' '}
+              {
+                <OrganizationUsersLink
+                  organizationName={
+                    resource?.organization?.name ?? resource?.summary_fields?.organization?.name
+                  }
+                />
+              }{' '}
+              roles assignments.
+            </Trans>
+          )}
         </Content>
         <Content>
           <IndirectAssignmentsButton
