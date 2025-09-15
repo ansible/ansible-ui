@@ -47,10 +47,14 @@ export function EditJobTemplate() {
   } = useGet<AwxItemsResponse<InstanceGroup>>(awxAPI`/job_templates/${id}/instance_groups/`);
   const { clearCacheByKey } = useClearCache();
 
-  const defaultValues = useMemo(
-    () => getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []),
-    [t, jobTemplate, instanceGroups]
-  );
+  const defaultValues = useMemo(() => {
+    // Only update defaultValues when we have actual jobTemplate data to prevent form resets
+    if (!jobTemplate?.id) {
+      return undefined;
+    }
+    return getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []);
+  }, [t, jobTemplate, instanceGroups]);
+
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values: JobTemplateForm) => {
     const {
       credentials,

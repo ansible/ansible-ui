@@ -41,9 +41,10 @@ const acceptableCredentialKinds = [
 export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateForm }>) {
   const { jobtemplate } = props;
   const { t } = useTranslation();
-  const { setValue, getValues, reset } = useFormContext<JobTemplateForm>();
+  const { setValue } = useFormContext<JobTemplateForm>();
   const [allowOverride, setAllowOverride] = useState<boolean>();
   const [organization, setOrganization] = useState<number | undefined>();
+
   const projectId = useWatch<JobTemplateForm, 'project'>({ name: 'project' });
   const isProvisioningCallbackEnabled = useWatch<JobTemplateForm, 'isProvisioningCallbackEnabled'>({
     name: 'isProvisioningCallbackEnabled',
@@ -57,9 +58,6 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   const askJobTypeOnLaunch = useWatch<JobTemplateForm, 'ask_job_type_on_launch'>({
     name: 'ask_job_type_on_launch',
   });
-  useEffect(() => {
-    reset(getValues());
-  }, [isProvisioningCallbackEnabled, reset, getValues]);
 
   useEffect(() => {
     async function handleFetchPlaybooks() {
