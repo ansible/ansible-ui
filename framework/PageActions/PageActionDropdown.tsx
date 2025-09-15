@@ -291,7 +291,8 @@ function PageActionLink<T extends object>(
   return (
     <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
       <DropdownItem
-        component={(p) => <Link {...p} to={to} aria-disabled={Boolean(isDisabled)} />}
+        isAriaDisabled={Boolean(isDisabled)}
+        component={(p) => <Link {...p} to={to} />}
         data-cy={getID(action)?.split('.').join('-')}
         style={{
           color: action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
