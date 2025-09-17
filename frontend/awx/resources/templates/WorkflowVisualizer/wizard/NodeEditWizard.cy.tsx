@@ -18,6 +18,11 @@ describe('NodeEditWizard', () => {
       id: 200,
       name: 'Template Mock Credential',
       credential_type: 2,
+      summary_fields: {
+        credential_type: {
+          name: 'Machine',
+        },
+      },
     };
 
     beforeEach(() => {

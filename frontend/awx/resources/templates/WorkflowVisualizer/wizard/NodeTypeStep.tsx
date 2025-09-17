@@ -21,6 +21,7 @@ import { PageFormManagementJobsSelect } from '../../../../administration/managem
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
+import type { Credential } from '../../../../interfaces/Credential';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
@@ -29,6 +30,7 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { RESOURCE_TYPE } from '../constants';
 import { AllResources, type PromptFormValues, type WizardFormValues } from '../types';
+import { getAggregateCredentials } from './getAggregateCredentials';
 import { getResourceURL, shouldHideOtherStep } from './helpers';
 
 export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
@@ -85,10 +87,17 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
 
       const nodeResource = await fetchResource();
 
+      // Fetch template credentials for job templates
+      let templateCredentials: Credential[] = [];
       if (nodeType === RESOURCE_TYPE.job) {
         launchConfigResults = await requestGet<LaunchConfiguration>(
           awxAPI`/job_templates/${resourceId.toString()}/launch/`
         );
+        // Fetch template credentials to determine required credential types
+        const templateCredentialsResponse = await requestGet<AwxItemsResponse<Credential>>(
+          awxAPI`/job_templates/${resourceId.toString()}/credentials/`
+        );
+        templateCredentials = templateCredentialsResponse.results || [];
       } else if (nodeType === RESOURCE_TYPE.workflow_job) {
         launchConfigResults = await requestGet<LaunchConfiguration>(
           awxAPI`/workflow_job_templates/${resourceId?.toString()}/launch/`
@@ -125,10 +134,11 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
               prompt: {
                 ...launchConfigValue,
                 inventory: prompts?.inventory ?? launchConfigValue.inventory,
-                credentials: [
-                  ...(prompts?.credentials ?? []),
-                  ...(launchConfigValue?.credentials ?? []),
-                ],
+                credentials: getAggregateCredentials(
+                  [], // no node credentials for new nodes
+                  prompts?.credentials ?? [],
+                  launchConfigValue?.credentials ?? []
+                ),
                 skip_tags: [...(prompts?.skip_tags || []), ...(launchConfigValue?.skip_tags || [])],
                 job_tags: [...(prompts?.job_tags || []), ...(launchConfigValue?.job_tags ?? [])],
                 execution_environment: prompts?.execution_environment
@@ -153,6 +163,11 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                 job_slice_count: prompts?.job_slice_count ?? launchConfigValue?.job_slice_count,
                 timeout: prompts?.timeout ?? launchConfigValue?.timeout,
                 job_type: prompts?.job_type ?? launchConfigValue?.job_type,
+                // Add required credential types for job templates
+                requiredCredentialTypes: templateCredentials.map((cred) => ({
+                  id: cred.credential_type,
+                  name: cred.summary_fields.credential_type.name,
+                })),
               },
             },
           };
