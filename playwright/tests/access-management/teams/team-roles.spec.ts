@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 import { clickTableRow } from '../../../commands/clickTableRow';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import {
-  createEdaProject,
-  deleteEdaProject,
-} from '../../automation-decisions/projects/projects-utils';
+  createAwxCredential,
+  deleteAwxCredential,
+} from '../../automation-execution/infrastructure/credentials/credential-utils';
 import { createUser, deleteUser } from '../users/user-utils';
 import { createTeam, deleteTeam } from './team-utils';
 test.beforeEach(setupBefore({ path: '/access/teams' }));
@@ -14,7 +14,7 @@ test(
   'team roles tab - assign a role to a team and then remove it',
   { tag: ['@team', '@not_mock'] },
   async ({ page }) => {
-    const edaProjectName = await createEdaProject({}, page);
+    const credentialName = await createAwxCredential({}, page);
     const teamName = await createTeam({}, page);
 
     await page.getByRole('tab', { name: 'Roles' }).click();
@@ -23,11 +23,11 @@ test(
     await page.getByLabel('Breadcrumb').getByText('Assign roles').click();
     await expect(page.getByRole('heading', { name: 'Assign roles' })).toBeVisible();
     await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill('Project');
-    await page.locator('[id="select-create-typeahead-eda.project"]').click();
+    await page.getByRole('textbox', { name: 'Type to filter' }).fill('Credential');
+    await page.locator('[id="select-create-typeahead-awx.credential"]').click();
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill(edaProjectName);
+    await page.getByRole('textbox', { name: 'Type to filter' }).fill(credentialName);
     await page.getByRole('button', { name: 'apply filter' }).click();
     await page.getByRole('checkbox', { name: 'Select row' }).check();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
@@ -36,14 +36,14 @@ test(
     await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
     await page.getByRole('checkbox', { name: 'Select all rows' }).check();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await expect(page.getByRole('region', { name: 'Resources' })).toContainText(edaProjectName);
+    await expect(page.getByRole('region', { name: 'Resources' })).toContainText(credentialName);
     await expect(page.getByRole('region', { name: 'Platform roles' })).toContainText(
-      'EDA Project Admin'
+      'Credential Admin'
     );
     await page.getByRole('button', { name: 'Finish' }).click();
 
     await expect(page.getByRole('heading', { name: teamName })).toBeVisible();
-    await expect(page.getByRole('link', { name: edaProjectName }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: credentialName }).first()).toBeVisible();
     await page.getByRole('button', { name: 'Remove role' }).click();
     await expect(page.getByRole('heading', { name: 'Warning alert: Remove role' })).toBeVisible();
     await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
@@ -52,7 +52,7 @@ test(
       page.getByRole('heading', { name: 'No roles assigned to this team' })
     ).toBeVisible();
     await deleteTeam(teamName, page);
-    await deleteEdaProject(edaProjectName, page);
+    await deleteAwxCredential(credentialName, page);
   }
 );
 
@@ -63,7 +63,7 @@ test(
   },
   async ({ page }) => {
     const userName = await createUser({}, page);
-    const edaProjectName = await createEdaProject({}, page);
+    const credentialName = await createAwxCredential({}, page);
     const teamName = await createTeam({}, page);
 
     //Assign role to team
@@ -73,11 +73,11 @@ test(
     await page.getByLabel('Breadcrumb').getByText('Assign roles').click();
     await expect(page.getByRole('heading', { name: 'Assign roles' })).toBeVisible();
     await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill('Project');
-    await page.locator('[id="select-create-typeahead-eda.project"]').click();
+    await page.getByRole('textbox', { name: 'Type to filter' }).fill('Credential');
+    await page.locator('[id="select-create-typeahead-awx.credential"]').click();
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill(edaProjectName);
+    await page.getByRole('textbox', { name: 'Type to filter' }).fill(credentialName);
     await page.getByRole('button', { name: 'apply filter' }).click();
     await page.getByRole('checkbox', { name: 'Select row' }).check();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
@@ -86,9 +86,9 @@ test(
     await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
     await page.getByRole('checkbox', { name: 'Select all rows' }).check();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await expect(page.getByRole('region', { name: 'Resources' })).toContainText(edaProjectName);
+    await expect(page.getByRole('region', { name: 'Resources' })).toContainText(credentialName);
     await expect(page.getByRole('region', { name: 'Platform roles' })).toContainText(
-      'EDA Project Admin'
+      'Credential Admin'
     );
     await page.getByRole('button', { name: 'Finish' }).click();
 
@@ -114,7 +114,7 @@ test(
     await expect(row).toContainText('Team Member');
 
     await deleteTeam(teamName, page);
-    await deleteEdaProject(edaProjectName, page);
+    await deleteAwxCredential(credentialName, page);
     await deleteUser(userName, page);
   }
 );

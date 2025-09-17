@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { checkBuildType } from '../../commands/checkBuildType';
+import { SAAS_URL } from '../../commands/constants';
 import { login, platformUI } from '../../commands/login';
 import { logout } from '../../commands/logout';
 import { setupAfter, setupBefore } from '../../commands/setup';
@@ -18,6 +20,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(setupAfter);
+
+// Skip all tests if running on SaaS deployment (QuickStarts not available)
+test.beforeAll(async ({ request }) => {
+  const buildType = await checkBuildType(request);
+  if (buildType === SAAS_URL) {
+    test.skip();
+  }
+});
 
 test('Persona views for System Administrator', async ({ page }) => {
   // Administration View
