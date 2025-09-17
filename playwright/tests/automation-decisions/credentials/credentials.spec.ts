@@ -1,12 +1,22 @@
 import { expect, test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../../commands/setup';
-import { createEdaCredential, deleteEdaCredential } from './credentials-utils';
-import { createEdaCredentialType } from '../credential-types/credential-types-utils';
-import { navigateTo } from '../../../commands/navigateTo';
+import { checkBuildType } from '../../../commands/checkBuildType';
+import { SAAS_URL } from '../../../commands/constants';
 import { createE2EName } from '../../../commands/createE2EName';
+import { navigateTo } from '../../../commands/navigateTo';
+import { setupAfter, setupBefore } from '../../../commands/setup';
+import { createEdaCredentialType } from '../credential-types/credential-types-utils';
+import { createEdaCredential, deleteEdaCredential } from './credentials-utils';
 
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
 test.afterEach(setupAfter);
+
+// Skip all tests if running on SaaS deployment
+test.beforeAll(async ({ request }) => {
+  const buildType = await checkBuildType(request);
+  if (buildType === SAAS_URL) {
+    test.skip();
+  }
+});
 
 test(
   'eda credentials - can create a credential and assert info on the details page',

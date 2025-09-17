@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { checkBuildType } from '../../../commands/checkBuildType';
+import { SAAS_URL } from '../../../commands/constants';
 import { createE2EName } from '../../../commands/createE2EName';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import {
@@ -98,14 +100,24 @@ test.describe('Role Creation Tests', () => {
       await deleteRole(createdRoleName, page);
     });
 
-    test('should create an EDA rulebook role', { tag: ['@not_mock'] }, async ({ page }) => {
-      const roleName = createE2EName();
-      const config = { ...TEST_ROLE_CONFIGS.edaRulebook, name: roleName };
-      const createdRoleName = await createRoleWithConfig(page, config);
+    test(
+      'should create an EDA rulebook role',
+      { tag: ['@not_mock'] },
+      async ({ page, request }) => {
+        // Skip this test if running on SaaS deployment
+        const buildType = await checkBuildType(request);
+        if (buildType === SAAS_URL) {
+          test.skip();
+        }
 
-      await verifyRoleDetails(page, createdRoleName, config);
-      await deleteRole(createdRoleName, page);
-    });
+        const roleName = createE2EName();
+        const config = { ...TEST_ROLE_CONFIGS.edaRulebook, name: roleName };
+        const createdRoleName = await createRoleWithConfig(page, config);
+
+        await verifyRoleDetails(page, createdRoleName, config);
+        await deleteRole(createdRoleName, page);
+      }
+    );
 
     test('should create a Galaxy system role', { tag: ['@not_mock'] }, async ({ page }) => {
       const roleName = createE2EName();

@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { checkBuildType } from '../../../commands/checkBuildType';
 import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
+import { SAAS_URL } from '../../../commands/constants';
 import { expectRowToContain } from '../../../commands/expectRowToContain';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
@@ -19,6 +21,14 @@ import { createRulebookActivation, deleteRulebookActivation } from './rulebook-a
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
+
+// Skip all tests if running on SaaS deployment
+test.beforeAll(async ({ request }) => {
+  const buildType = await checkBuildType(request);
+  if (buildType === SAAS_URL) {
+    test.skip();
+  }
+});
 
 test.describe('Rulebook Activations', () => {
   test(
