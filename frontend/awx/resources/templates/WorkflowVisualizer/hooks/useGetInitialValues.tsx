@@ -1,6 +1,7 @@
 import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback } from 'react';
+import { getAggregateCredentials } from '../wizard/getAggregateCredentials';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { stringIsUUID } from '../../../../common/util/strings';
@@ -98,10 +99,11 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       };
 
       let aggregateCredentials;
+      let templateCredentials: Credential[] = [];
 
       const UJT = defaults?.summary_fields?.unified_job_template;
       if (UJT?.id && UJT?.unified_job_type === RESOURCE_TYPE.job) {
-        const templateCredentials = await getTemplateCredentialData(UJT.id.toString());
+        templateCredentials = await getTemplateCredentialData(UJT.id.toString());
 
         aggregateCredentials = getAggregateCredentials(
           nodeCredentials,
@@ -147,6 +149,12 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         verbosity: prompt?.verbosity ?? (defaults?.verbosity || 0),
         launch_config: launch,
         original,
+        requiredCredentialTypes: templateCredentials.map((cred) => {
+          return {
+            id: cred.credential_type,
+            name: cred.summary_fields?.credential_type.name,
+          };
+        }),
       };
 
       return {
@@ -220,44 +228,4 @@ async function getInstanceGroupData(nodeId: string) {
 }
 async function getTemplateCredentialData(templateId: string) {
   return getRelated<Credential>(awxAPI`/job_templates/${templateId}/credentials/`);
-}
-
-type AggregateCredential =
-  | {
-      id: number;
-      name: string;
-      credential_type: number;
-      passwords_needed: string[];
-      vault_id?: string;
-      inputs?: { [key: string]: string };
-    }
-  | Credential;
-function getAggregateCredentials(
-  nodeCredentials: AggregateCredential[] = [],
-  promptCredentials: AggregateCredential[] = [],
-  templateCredentials: AggregateCredential[] = []
-) {
-  // Step 1: Get the aggregate credentials from the template and node
-  const aggregateCredentialsMap: Record<number, AggregateCredential> = {};
-  templateCredentials.forEach((templateCredential) => {
-    aggregateCredentialsMap[templateCredential.credential_type] = templateCredential;
-  });
-
-  // Step 2: Override template credential with node credential if their types match
-  nodeCredentials.forEach((nodeCredential) => {
-    const key = nodeCredential.credential_type;
-    if (aggregateCredentialsMap[key]?.id !== nodeCredential.id) {
-      aggregateCredentialsMap[key] = nodeCredential;
-    }
-  });
-
-  // Step 3: Override aggregate credential with prompt credential if their types match
-  promptCredentials.forEach((promptCredential) => {
-    const key = promptCredential.credential_type;
-    if (aggregateCredentialsMap[key]?.id !== promptCredential.id) {
-      aggregateCredentialsMap[key] = promptCredential;
-    }
-  });
-
-  return Object.values(aggregateCredentialsMap);
 }

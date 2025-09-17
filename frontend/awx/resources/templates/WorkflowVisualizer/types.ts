@@ -113,6 +113,11 @@ export interface NodeResource {
   summary_fields?: { inventory: { kind: string } };
 }
 
+export interface RequiredCredentialType {
+  id: number;
+  name: string;
+}
+
 export interface PromptFormValues {
   inventory?: Partial<Inventory> | SummaryFieldInventory | null;
   credentials: (
@@ -142,6 +147,7 @@ export interface PromptFormValues {
   timeout: number;
   verbosity: 0 | 1 | 2 | 3 | 4 | 5;
   organization?: number | null;
+  requiredCredentialTypes?: RequiredCredentialType[];
   original?: {
     credentials?:
       | {

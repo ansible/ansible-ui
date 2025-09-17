@@ -1,5 +1,4 @@
 import { PageWizard, PageWizardStep } from '@ansible/ansible-ui-framework';
-import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { NodeModel, NodeShape, useVisualizationController } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
@@ -12,6 +11,10 @@ import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './he
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
+import {
+  validateJobTemplateRequirements,
+  validateRequiredCredentialTypes,
+} from './validationHelpers';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -56,31 +59,7 @@ export function NodeAddWizard() {
       label: t('Node details'),
       inputs: <NodeTypeStep hasSourceNode={Boolean(state.sourceNode)} />,
       validate: (wizardData: Partial<WizardFormValues>) => {
-        const { resource } = wizardData;
-        if (resource?.type === 'job_template') {
-          if (
-            'project' in resource &&
-            'inventory' in resource &&
-            'ask_inventory_on_launch' in resource
-          ) {
-            if (
-              !resource?.project ||
-              resource?.project === null ||
-              ((!resource?.inventory || resource?.inventory === null) &&
-                !resource?.ask_inventory_on_launch)
-            ) {
-              const errors = {
-                __all__: [
-                  t(
-                    'Job Templates with a missing inventory or project cannot be selected when creating or editing nodes. Select another template or fix the missing fields to proceed.'
-                  ),
-                ],
-              };
-
-              throw new RequestError('', '', 400, '', errors);
-            }
-          }
-        }
+        validateJobTemplateRequirements(t, wizardData);
       },
     },
     {
@@ -99,6 +78,10 @@ export function NodeAddWizard() {
           return shouldHideOtherStep(launch_config);
         }
         return true;
+      },
+      validate: (wizardData: Partial<WizardFormValues>) => {
+        const requiredCredentialTypes = wizardData.prompt?.requiredCredentialTypes;
+        validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes || []);
       },
     },
     {

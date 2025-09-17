@@ -1,5 +1,4 @@
 import { PageWizard, PageWizardStep, usePageAlertToaster } from '@ansible/ansible-ui-framework';
-import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useVisualizationController } from '@patternfly/react-topology';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +18,10 @@ import {
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
+import {
+  validateJobTemplateRequirements,
+  validateRequiredCredentialTypes,
+} from './validationHelpers';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -66,31 +69,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       label: t('Node details'),
       inputs: <NodeTypeStep />,
       validate: (wizardData: Partial<WizardFormValues>) => {
-        const { resource } = wizardData;
-        if (resource?.type === 'job_template') {
-          if (
-            'project' in resource &&
-            'inventory' in resource &&
-            'ask_inventory_on_launch' in resource
-          ) {
-            if (
-              !resource?.project ||
-              resource?.project === null ||
-              ((!resource?.inventory || resource?.inventory === null) &&
-                !resource?.ask_inventory_on_launch)
-            ) {
-              const errors = {
-                __all__: [
-                  t(
-                    'Job Templates with a missing inventory or project cannot be selected when creating or editing nodes. Select another template or fix the missing fields to proceed.'
-                  ),
-                ],
-              };
-
-              throw new RequestError('', '', 400, '', errors);
-            }
-          }
-        }
+        validateJobTemplateRequirements(t, wizardData);
       },
     },
     {
@@ -113,6 +92,11 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
           return false;
         }
         return true;
+      },
+      validate: (wizardData: Partial<WizardFormValues>) => {
+        const requiredCredentialTypes =
+          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || [];
+        validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes);
       },
     },
     {
