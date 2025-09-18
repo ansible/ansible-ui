@@ -22,7 +22,7 @@ describe('Gateway Settings Details', () => {
         refresh: () => void;
       }>
         context={{
-          options: platformSettingsOptions.actions.PUT,
+          options: platformSettingsOptions.actions,
           settings: platformSettings.data,
           refresh: () => {},
         }}
@@ -58,7 +58,7 @@ describe('Gateway Settings Details', () => {
         refresh: () => void;
       }>
         context={{
-          options: platformSettingsOptions.actions.PUT,
+          options: platformSettingsOptions.actions,
           settings: platformSettings.data,
           refresh: () => {},
         }}
@@ -109,7 +109,7 @@ describe('Gateway Settings Details', () => {
         refresh: () => void;
       }>
         context={{
-          options: platformSettingsOptions.actions.PUT,
+          options: platformSettingsOptions.actions,
           settings: platformSettings.data,
           refresh: () => {},
         }}
@@ -148,7 +148,7 @@ describe('Gateway Settings Details', () => {
         refresh: () => void;
       }>
         context={{
-          options: platformSettingsOptions.actions.PUT,
+          options: platformSettingsOptions.actions,
           settings: platformSettings.data,
           refresh: () => {},
         }}
@@ -185,7 +185,7 @@ describe('Gateway Settings Details', () => {
         refresh: () => void;
       }>
         context={{
-          options: platformSettingsOptions.actions.PUT,
+          options: platformSettingsOptions.actions,
           settings: platformSettings.data,
           refresh: () => {},
         }}
@@ -229,7 +229,7 @@ describe('Gateway Settings Details', () => {
         refresh: () => void;
       }>
         context={{
-          options: platformSettingsOptions.actions.PUT,
+          options: platformSettingsOptions.actions,
           settings: platformSettings.data,
           refresh: () => {},
         }}

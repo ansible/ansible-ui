@@ -17,14 +17,22 @@ describe('Gateway Settings Details', () => {
 
     cy.mount(
       <RenderRouteWithOutletContext<{
-        options: object;
+        options: {
+          GET: Record<string, unknown>;
+          PUT: Record<string, unknown>;
+        };
         settings: object;
         refresh: () => void;
+        hasWritePermissions: boolean;
       }>
         context={{
-          options: platformSettingsOptions.actions.PUT,
+          options: {
+            GET: platformSettingsOptions.actions.PUT,
+            PUT: platformSettingsOptions.actions.PUT,
+          },
           settings: platformSettings.data,
           refresh: () => {},
+          hasWritePermissions: true,
         }}
       >
         <GatewaySettingsDetails categoryId="platform" />
