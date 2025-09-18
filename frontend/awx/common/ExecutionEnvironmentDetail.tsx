@@ -1,6 +1,4 @@
 import { PageDetail, useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
-import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { Popover, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
@@ -9,7 +7,6 @@ import styled from 'styled-components';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 import { AwxRoute } from '../main/AwxRoutes';
-import { useAwxConfig } from './useAwxConfig';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-t--global--icon--color--status--warning--default);
@@ -34,8 +31,6 @@ function ExecutionEnvironmentDetail(props: {
 }) {
   const { executionEnvironment, virtualEnvironment, verifyMissingVirtualEnv, helpText } = props;
   const { t } = useTranslation();
-  const config = useAwxConfig();
-  const docsLink = useGetDocsUrl(config, 'eeMigration');
   const label = t('Execution environment');
   const getPageUrl = useGetPageUrl();
 
@@ -64,8 +59,7 @@ function ExecutionEnvironmentDetail(props: {
               <div>
                 <Trans>
                   Custom virtual environment {virtualEnvironment} must be replaced by an execution
-                  environment. For more information about migrating to execution environments see{' '}
-                  <ExternalLink href={docsLink}>the documentation.</ExternalLink>
+                  environment.
                 </Trans>
               </div>
             }
