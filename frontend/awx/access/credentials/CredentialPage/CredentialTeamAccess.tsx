@@ -7,7 +7,7 @@ export function CredentialTeamAccess() {
   return (
     <PlatformTeamAccess
       id={params.id || ''}
-      type={'credential'}
+      type={'awx.credential'}
       addRolesRoute={AwxRoute.CredentialAssignTeams as string}
     />
   );
