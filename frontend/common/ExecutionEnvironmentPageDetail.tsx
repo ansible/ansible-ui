@@ -1,13 +1,10 @@
 import { PageDetail } from '@ansible/ansible-ui-framework';
-import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
 import { SummaryFieldsExecutionEnvironment } from '@ansible/awx-ui/interfaces/summary-fields/summary-fields';
 import { Popover, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { ExternalLink } from '../hub/common/ExternalLink';
-import { useGetDocsUrl } from './utils/useGetDocsUrl';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-t--global--icon--color--status--warning--default);
@@ -30,9 +27,7 @@ export function ExecutionEnvironmentDetail(props: {
   verifyMissingVirtualEnv?: boolean;
   helpText?: string;
 }) {
-  const config = useAwxConfig();
   const { t } = useTranslation();
-  const docsLink = useGetDocsUrl(config, 'eeMigration');
   const label = props.isDefaultEnvironment
     ? t('Default Execution Environment')
     : t('Execution Environment');
@@ -59,8 +54,7 @@ export function ExecutionEnvironmentDetail(props: {
                 <div>
                   {t(`
                     Custom virtual environment {virtualEnvironment} must be replaced by an execution
-                    environment. For more information about migrating to execution environments see `)}
-                  <ExternalLink href={docsLink}>{t('the documentation.')}</ExternalLink>
+                    environment.`)}
                 </div>
               }
               position="right"
