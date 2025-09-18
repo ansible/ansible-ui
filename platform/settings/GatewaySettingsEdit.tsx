@@ -34,12 +34,15 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
   const openRevertAllSettingsModal = useRevertAllGatewaySettingsModal();
 
   const { settings, options, refresh } = useOutletContext<{
-    options: Record<string, GatewaySettingsOption>;
+    options: {
+      GET: Record<string, GatewaySettingsOption>;
+      PUT: Record<string, GatewaySettingsOption>;
+    };
     settings: Record<string, unknown>;
     refresh: () => Promise<void>;
   }>();
 
-  const categories = useGatewaySettingsCategories(options);
+  const categories = useGatewaySettingsCategories(options.PUT);
   const category = categories.find((category) => category.id === props.categoryId);
 
   if (!category) {
@@ -101,7 +104,7 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
         {category.sections.map((section) => (
           <PageFormSection title={section.title} key={section.title}>
             {Object.keys(section.options).map((key) => {
-              const option = options[key];
+              const option = options.PUT[key];
               // Gateway token name should be read-only
               if (key === 'gateway_token_name') {
                 option.read_only = true;

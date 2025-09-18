@@ -18,9 +18,13 @@ import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 
 export function GatewaySettingsDetails(props: { categoryId: string }) {
   const { t } = useTranslation();
-  const { settings, options } = useOutletContext<{
-    options: Record<string, GatewaySettingsOption>;
+  const { settings, options, hasWritePermissions } = useOutletContext<{
+    options: {
+      GET: Record<string, GatewaySettingsOption>;
+      PUT: Record<string, GatewaySettingsOption>;
+    };
     settings: Record<string, unknown>;
+    hasWritePermissions: boolean;
   }>();
   const navigate = useNavigate();
   const actions = useMemo<IPageAction<object>[]>(
@@ -33,11 +37,12 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
         label: t('Edit platform gateway settings'),
         onClick: () => void navigate('./edit'),
         isPinned: true,
+        isHidden: () => !hasWritePermissions,
       },
     ],
-    [navigate, t]
+    [navigate, t, hasWritePermissions]
   );
-  const categories = useGatewaySettingsCategories(options);
+  const categories = useGatewaySettingsCategories(options.GET);
   const category = categories.find((category) => category.id === props.categoryId);
   if (!category) {
     return null;
@@ -54,7 +59,7 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
         {category.sections.map((section) => (
           <Fragment key={section.title}>
             {Object.keys(section.options).map((key) => {
-              const option = options[key];
+              const option = options.GET[key];
               const value = settings[key];
               if (key === 'custom_logo' && value && value !== '') {
                 return (
