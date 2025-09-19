@@ -111,19 +111,32 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
   );
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>(getInitialLabel(initialSelected));
+  const [inputValue, setInputValueInternal] = useState<string>(getInitialLabel(initialSelected));
   const [selected, setSelected] = useState<string | null>(initialSelected);
   const [selectOptions, setSelectOptions] =
     useState<(SelectOptionProps & { group?: string })[]>(baseOptions);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [isUserTyping, setIsUserTyping] = useState<boolean>(false);
+  const userInputRef = useRef<string>('');
   const textInputRef = useRef<HTMLInputElement>(null);
+
+  const setInputValue = useCallback((value: string) => {
+    setInputValueInternal(value);
+  }, []);
 
   // Sync internal state with propValue changes
   useEffect(() => {
     if (propValue === null) {
       setSelected(null);
+
+      const hasActiveInput = userInputRef.current && userInputRef.current.length > 0;
+      if (isUserTyping && hasActiveInput) {
+        return;
+      }
+
       setInputValue('');
+      userInputRef.current = '';
       return;
     }
 
@@ -141,18 +154,24 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     }
 
     setSelected(val);
-    setInputValue(getSelectedLabel(val));
-  }, [propValue, getSelectedLabel]);
+
+    if (!isUserTyping) {
+      setInputValue(getSelectedLabel(val));
+      setIsUserTyping(false);
+    }
+
+    userInputRef.current = '';
+  }, [propValue, getSelectedLabel, isUserTyping, setInputValue, inputValue]);
 
   // Update display label when baseOptions are populated
   useEffect(() => {
-    if (selected && baseOptions.length > 0) {
+    if (selected && baseOptions.length > 0 && !isOpen && !isUserTyping) {
       const currentLabel = getSelectedLabel(selected);
-      if (currentLabel !== inputValue) {
+      if (currentLabel !== inputValue && currentLabel !== '') {
         setInputValue(currentLabel);
       }
     }
-  }, [baseOptions, selected, getSelectedLabel, inputValue]);
+  }, [baseOptions, selected, getSelectedLabel, inputValue, isOpen, isUserTyping, setInputValue]);
 
   useEffect(() => {
     let filteredOptions: (SelectOptionProps & { group?: string })[] = baseOptions;
@@ -245,15 +264,16 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
 
   const onSelect = (value: string) => {
     if (value && value !== 'NO_RESULTS') {
+      setIsUserTyping(false);
+      userInputRef.current = '';
+
       if (value === CREATE_NEW_VALUE) {
         setSelected(inputValue);
+        setInputValue(inputValue);
         onHandleSelection({ name: inputValue });
         resetActiveAndFocusedItem();
         closeMenu();
       } else {
-        if (selected && !baseOptions.some((option) => option.value === selected)) {
-          setSelected(null);
-        }
         setSelected(value);
         setInputValue(getSelectedLabel(value));
         onHandleSelection({ name: value });
@@ -265,11 +285,22 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
 
   const onTextInputChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
     setInputValue(value);
+    userInputRef.current = value;
+    setIsUserTyping(true);
+    setSelected(null);
     resetActiveAndFocusedItem();
     if (!isOpen) {
       setIsOpen(true); // Open the menu when user types
     }
   };
+
+  const onInputFocus = () => {
+    if (userInputRef.current || inputValue) {
+      setIsUserTyping(true);
+    }
+  };
+
+  const onInputBlur = () => {};
 
   const findNextFocusableIndex = (startIndex: number, step: number): number | null => {
     const totalOptions = selectOptions.length;
@@ -347,6 +378,8 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
   const onClearButtonClick = () => {
     setSelected(null);
     setInputValue('');
+    setIsUserTyping(false);
+    userInputRef.current = '';
     resetActiveAndFocusedItem();
     onHandleClear();
     textInputRef.current?.focus();
@@ -369,6 +402,8 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
           onClick={onInputClick}
           onChange={onTextInputChange}
           onKeyDown={onInputKeyDown}
+          onFocus={onInputFocus}
+          onBlur={onInputBlur}
           id={`${id}-typeahead-select-input`}
           autoComplete="off"
           innerRef={textInputRef}
@@ -406,7 +441,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
         id={`${id}-typeahead-select`}
         isOpen={isOpen}
         isScrollable
-        selected={selected ?? undefined}
+        selected={selected || ''}
         onSelect={(_event, selection) => onSelect(selection as string)}
         onOpenChange={(open) => {
           if (!open) closeMenu();
