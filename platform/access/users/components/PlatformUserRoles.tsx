@@ -1,4 +1,4 @@
-import { LoadingPage, PageDetails, PageTable } from '@ansible/ansible-ui-framework';
+import { LoadingPage, PageTable } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
@@ -10,12 +10,12 @@ import { useParams } from 'react-router-dom';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { IndirectlyAssignedRolesAlert } from '../../common/IndirectlyAssignedRolesAlert';
 import { useGetResourceTypes } from '../../roles/hooks/useResourceType';
 import { usePlatformUserRolesColumns } from '../hooks/usePlatformUserRolesColumns';
 import { usePlatformUserRolesFilters } from '../hooks/usePlatformUserRolesFilters';
 import { usePlatformUserRolesRowActions } from '../hooks/usePlatformUserRolesRowActions';
 import { usePlatformUserRolesToolbarActions } from '../hooks/usePlatformUserRolesToolbarActions';
+import { UserIndirectRolesPanel } from '@ansible/common-ui/access/indirect-roles/components/UserIndirectRolesPanel';
 
 export function PlatformUserRoles() {
   const { t } = useTranslation();
@@ -54,27 +54,18 @@ export function PlatformUserRoles() {
   const canEditUser = Boolean(
     userOptions?.actions && (userOptions.actions['PUT'] || userOptions.actions['PATCH'])
   );
-  const { data: userTeamAssignments } = useGet<{
-    results: Array<{ id: number; name: string }>;
-  }>(gatewayAPI`/users/${params?.id ?? ''}/teams/`);
 
   const toolbarActions = usePlatformUserRolesToolbarActions(view);
   const rowActions = usePlatformUserRolesRowActions(view);
 
   if (isLoading) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
-
   return (
-    <PageDetails numberOfColumns={'single'} disablePadding>
-      {userTeamAssignments && userTeamAssignments.results?.length > 0 && (
-        <IndirectlyAssignedRolesAlert
-          userId={params.id ?? ''}
-          username={user?.username ?? ''}
-          isUsersRoles={true}
-        />
-      )}
+    <>
+      <UserIndirectRolesPanel userId={params.id ?? ''} username={user?.username ?? ''} />
       <PageTable<UserAssignment>
         {...view}
+        disableBodyPadding
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         rowActions={rowActions}
@@ -98,6 +89,6 @@ export function PlatformUserRoles() {
         disableCardView
         disableListView
       />
-    </PageDetails>
+    </>
   );
 }

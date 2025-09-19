@@ -6,6 +6,7 @@ import {
   deleteOrganization,
 } from '../../access-management/organizations/organization-utils';
 import { createUser, deleteUser } from '../../access-management/users/user-utils';
+import { createTeam, deleteTeam } from '../../access-management/teams/team-utils';
 import { navigateTo } from '../../../commands/navigateTo';
 import { clickTableRow } from '../../../commands/clickTableRow';
 
@@ -24,26 +25,36 @@ test('project - test user access organization link', { tag: ['@not_mock'] }, asy
   const organizationName = await createOrganization(page, {});
   const projectName = await createAwxProject({ organizationName: organizationName }, page);
   const userName = await createUser({}, page);
+  const teamName = await createTeam({ organizationName: organizationName }, page);
+
+  // Assign user to team
+  await page.getByRole('tab', { name: 'Users' }).click();
+  await page.getByRole('button', { name: 'Assign users' }).click();
+  await page.getByRole('textbox', { name: 'Type to filter' }).click();
+  await page.getByRole('textbox', { name: 'Type to filter' }).fill(userName);
+  await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
+  await page.getByRole('checkbox', { name: 'Select all rows' }).check();
+  await page.getByRole('button', { name: 'Assign users' }).click();
+
+  // assign project admin role to team
   await navigateTo(page, 'Automation Execution', 'Projects');
   await clickTableRow({ filterLabel: 'Name', text: projectName }, page);
   await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
-  await page.getByRole('tab', { name: 'User Access' }).click();
-  await page.getByRole('link', { name: 'Assign users' }).click();
+  await page.getByRole('tab', { name: 'Team Access' }).click();
+  await page.getByRole('link', { name: 'Assign teams' }).click();
   await page.getByRole('textbox', { name: 'Type to filter' }).click();
-  await page.getByRole('textbox', { name: 'Type to filter' }).fill(userName);
+  await page.getByRole('textbox', { name: 'Type to filter' }).fill(teamName);
+  await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
+  await page.getByRole('checkbox', { name: 'Select all rows' }).check();
+  await page.locator('button', { hasText: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Type to filter' }).fill('Project Admin');
   await page.getByRole('button', { name: 'apply filter' }).click();
   await page.getByRole('checkbox', { name: 'Select row' }).check();
-  await page.getByRole('button', { name: 'Next', exact: true }).click();
-  await page.getByRole('checkbox', { name: 'Select all rows' }).check();
-  await page.getByRole('button', { name: 'Next', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Users' })).toContainText(userName);
-  await expect(page.getByRole('region', { name: 'Roles' })).toContainText('Project Admin');
+  await page.locator('button', { hasText: 'Next' }).click();
   await page.getByRole('button', { name: 'Finish' }).click();
 
-  await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
-  await page.getByRole('textbox', { name: 'Type to filter' }).click();
-  await page.getByRole('textbox', { name: 'Type to filter' }).fill(userName);
-  await page.waitForTimeout(100);
+  // view the project user access role alert
+  await page.getByRole('tab', { name: 'User Access' }).click();
   await page
     .getByRole('row', { name: userName })
     .getByRole('button', { name: 'Manage roles' })
@@ -56,5 +67,6 @@ test('project - test user access organization link', { tag: ['@not_mock'] }, asy
   await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
   await deleteAwxProject(projectName, page);
   await deleteUser(userName, page);
+  await deleteTeam(teamName, page);
   await deleteOrganization(organizationName, page);
 });
