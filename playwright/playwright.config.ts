@@ -44,6 +44,10 @@ const config: PlaywrightTestConfig = {
         },
       },
     ],
+    // Add Currents.dev reporter when running in CI with credentials
+    ...(process.env.CURRENTS_PROJECT_ID && process.env.CURRENTS_RECORD_KEY
+      ? [['@currents/playwright'] as [string]]
+      : []),
   ],
 
   // Split TAGS by comma and create a regular expression that matches any of the tags
@@ -68,8 +72,10 @@ const config: PlaywrightTestConfig = {
     ignoreHTTPSErrors: true,
     // Always collect trace for better debugging
     trace: 'on',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    screenshot: 'on',
+    video: 'on',
+    // screenshot: 'only-on-failure',
+    // video: 'retain-on-failure',
     // Add browser logging for debugging
     launchOptions: {
       args: ['--enable-logging', '--v=1'],

@@ -38,7 +38,8 @@
     "platform",
     "playwright",
     "webpack/environment.d.ts",
-    "fix-coverage-paths.ts"
+    "fix-coverage-paths.ts",
+    "currents.config.ts"
   ],
   "exclude": ["**/coverage/**", "**/node_modules/**", "**/dist/**", "**/build/**"]
 }

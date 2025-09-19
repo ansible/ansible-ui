@@ -1,0 +1,179 @@
+name: Playwright Tests with Currents.dev
+
+on:
+  # pull_request:
+  #   branches: [ main, develop ]
+  # push:
+  #   branches: [ currents-playwright-ga ]
+  workflow_call:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: false
+        default: 'https://localhost:4100'
+      PLATFORM_UI:
+        type: string
+        required: false
+        default: 'https://localhost:4100'
+      PLATFORM_USERNAME:
+        type: string
+        required: false
+      PLATFORM_PASSWORD:
+        type: string
+        required: false
+      TAGS:
+        description: 'Test tags to include'
+        type: string
+        required: false
+      NOT_TAGS:
+        description: 'Test tags to exclude'
+        type: string
+        required: false
+      PROJECT:
+        type: string
+        default: "mock chromium"
+      BROWSER:
+        type: string
+        required: false
+        default: chromium
+    secrets:
+      PLATFORM_PASSWORD:
+        required: false
+      CURRENTS_PROJECT_ID:
+        required: true
+      CURRENTS_RECORD_KEY:
+        required: true
+
+jobs:
+  playwright-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Install Currents for Playwright
+      run: npm install @currents/playwright
+
+    - name: Setup environment variables
+      run: |
+        echo "PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER || 'https://localhost:4100' }}" >> $GITHUB_ENV
+        echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}" >> $GITHUB_ENV
+        echo "PLATFORM_USERNAME=${{ 'e2e' }}" >> $GITHUB_ENV
+        echo "PLATFORM_PASSWORD=${{ secrets.PLATFORM_PASSWORD || inputs.PLATFORM_PASSWORD || 'admin' }}" >> $GITHUB_ENV
+        # echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
+        # echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
+        # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
+        # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
+
+    - name: Run Playwright tests with Currents.dev
+      working-directory: ./playwright
+      env:
+        CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+        CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
+        CURRENTS_CI_BUILD_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PROJECT: ${{ inputs.PROJECT || 'live chromium' }}
+      run: |
+        npx pwc \
+          --key="${CURRENTS_RECORD_KEY}" \
+          --project-id="${CURRENTS_PROJECT_ID}" \
+          --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
+          -- \
+          --shard=${{ matrix.shard }}/4 \
+          --project="${PROJECT}"
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-test-results-shard-${{ matrix.shard }}
+        path: playwright/test-results/shard-${{ matrix.shard }}
+        retention-days: 30
+
+    - name: Upload HTML report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-html-report-shard-${{ matrix.shard }}
+        path: playwright/playwright-report
+        retention-days: 30
+
+  publish-results:
+    if: always()
+    needs: playwright-tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Publish test summary
+      if: always()
+      run: |
+        echo "## 🎭 Playwright Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Tests completed and results published to [Currents.dev Dashboard](https://app.currents.dev)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Test Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- Test results and HTML reports are available in the artifacts section" >> $GITHUB_STEP_SUMMARY
+        echo "- Detailed analysis available on Currents.dev dashboard" >> $GITHUB_STEP_SUMMARY
+
+  notify-slack:
+    if: always() && (github.event_name == 'push' || github.event_name == 'schedule')
+    needs: playwright-tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Notify Slack on failure
+      if: needs.playwright-tests.result == 'failure'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#ci-notifications'
+        text: |
+          🚨 Playwright tests failed on ${{ github.ref_name }}
+          
+          **Repository:** ${{ github.repository }}
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+          
+          [View Results on Currents.dev](https://app.currents.dev)
+          [View GitHub Action](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Slack on success
+      if: needs.playwright-tests.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        channel: '#ci-notifications'
+        text: |
+          ✅ Playwright tests passed on main branch
+          
+          **Repository:** ${{ github.repository }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+          
+          [View Results on Currents.dev](https://app.currents.dev)
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

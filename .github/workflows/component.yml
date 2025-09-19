@@ -66,6 +66,12 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Temporarily hide Currents config to bypass Cypress blocking
+        run: |
+          if [ -f "currents.config.ts" ]; then
+            mv currents.config.ts foo.config.ts.backup
+          fi
+
       - name: Cypress
         if: ${{ !inputs.generate_junit_results }}
         uses: cypress-io/github-action@v6
@@ -86,6 +92,13 @@ jobs:
         env:
           install: false
           CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT: 300000
+
+      - name: Restore Currents config after Cypress tests
+        if: always()
+        run: |
+          if [ -f "foo.config.ts.backup" ]; then
+            mv foo.config.ts.backup currents.config.ts
+          fi
 
       - name: Compose directory name for jUnit results
         if: ${{ inputs.generate_junit_results }}
