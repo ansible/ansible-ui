@@ -265,6 +265,48 @@ describe('PlatformUserRoles - Role Explanation', () => {
     server.use(
       http.get(gatewayAPI`/role_user_assignments/`, () => {
         return HttpResponse.json(mockUserRoleAssignments);
+      }),
+      http.get(gatewayAPI`/role_team_assignments/`, ({ request }) => {
+        const url = new URL(request.url);
+        const teamIn = url.searchParams.get('team__in');
+        if (teamIn) {
+          return HttpResponse.json({
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+              {
+                id: 1,
+                role_definition: 2,
+                team: 2,
+                content_type: 'platform.organization',
+                object_id: '1',
+                summary_fields: {
+                  role_definition: {
+                    id: 2,
+                    name: 'Organization Member',
+                    description: 'Basic organization membership',
+                    managed: true,
+                  },
+                  team: {
+                    id: 2,
+                    name: 'LGTeam1',
+                  },
+                  content_object: {
+                    id: 1,
+                    name: 'Test Organization',
+                  },
+                },
+              },
+            ],
+          });
+        }
+        return HttpResponse.json({
+          count: 0,
+          next: null,
+          previous: null,
+          results: [],
+        });
       })
     );
 
@@ -276,28 +318,18 @@ describe('PlatformUserRoles - Role Explanation', () => {
       </MemoryRouter>
     );
 
-    // Wait for the explanation text to appear (this is the main purpose of the test)
     await waitFor(() => {
       expect(
         screen.getByText(
           "The list below includes all of this user's direct role assignments. Indirectly assigned roles, which are inherited through a team assignment, for test-user cannot be managed here."
         )
       ).toBeInTheDocument();
-    });
-
-    // Check for the additional explanation - look for the specific paragraph element
-    const explanationParagraph = screen.getByText((content, element) => {
-      return !!(
-        element?.tagName === 'P' &&
-        element?.textContent?.includes(
-          'To view these indirectly assigned roles click the button below'
-        ) &&
-        element?.textContent?.includes(
-          "To modify indirect assignments manage the team's assignments"
+      expect(
+        screen.getByText(
+          "To view these indirectly assigned roles click the button below. To modify indirect role assignments, manage the team's assignments."
         )
-      );
+      ).toBeInTheDocument();
     });
-    expect(explanationParagraph).toBeInTheDocument();
 
     // Check for the button to view indirect assignments
     expect(

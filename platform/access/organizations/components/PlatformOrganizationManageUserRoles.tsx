@@ -11,11 +11,10 @@ import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/Pag
 import { postRequest, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { PlatformRbacRole } from '@ansible/platform-ui/interfaces/PlatformRbacRole';
-import { Alert, AlertGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
-import { useCallback, useEffect, useState } from 'react';
+import { Content, ContentVariants } from '@patternfly/react-core';
+import { useCallback, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
@@ -23,9 +22,9 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { usePlatformRoleColumns } from '../../roles/hooks/usePlatformRoleColumns';
 import { usePlatformRolesFilters } from '../../roles/hooks/usePlatformRolesFilters';
-import { ViewIndirectlyAssignedRolesModal } from '../../users/components/ViewIndirectlyAssignedRolesModal';
 import { useGetOrganizationRolesForUser } from '../hooks/useGetOrganizationRolesForUser';
 import { getAddedAndRemovedPlatformRoles } from '../utils/getAddedAndRemovedPlatformRoles';
+import { ResourceUserIndirectRolesPanel } from '@ansible/common-ui/access/indirect-roles/components/ResourceUserIndirectRolesPanel';
 
 interface RemoveRole {
   remove?: boolean;
@@ -41,14 +40,6 @@ interface UserAndPlatformRole {
   user: PlatformUser;
   platformRole: PlatformRbacRole & RemoveRole;
 }
-
-const HelpText = styled(Content)`
-  margin-block: var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--xl);
-`;
-
-const IndirectAssignmentsButton = styled(Button)`
-  margin-left: calc(var(--pf-v6-c-button--PaddingBlockStart) * -1);
-`;
 
 export function PlatformOrganizationManageUserRoles() {
   const { t } = useTranslation();
@@ -66,7 +57,6 @@ export function PlatformOrganizationManageUserRoles() {
   // Existing selection of roles for the user based on role user assignments
   const { selectedRoles: initialRoles, isLoading: isInitialRolesLoading } =
     useGetOrganizationRolesForUser(organization, user);
-  const [isIndirectRolesModalOpen, setIsIndirectRolesModalOpen] = useState(false);
   const defaultValue = {
     platformRoles: initialRoles ?? [],
   };
@@ -124,13 +114,6 @@ export function PlatformOrganizationManageUserRoles() {
     return <LoadingPage />;
   }
 
-  const handleViewIndirectRoles = () => {
-    setIsIndirectRolesModalOpen(true);
-  };
-
-  const handleCloseIndirectRolesModal = () => {
-    setIsIndirectRolesModalOpen(false);
-  };
   const onSubmit = () => {
     const updatedRoles = view.selectedItems as (PlatformRbacRole & RemoveRole)[];
     const platformRolesData: (PlatformRbacRole & { remove?: boolean })[] = [];
@@ -236,50 +219,39 @@ export function PlatformOrganizationManageUserRoles() {
         defaultValue={defaultValue}
         disableGrid
       >
-        <AlertGroup>
-          <Alert
-            isInline
-            variant="info"
-            style={{ paddingBottom: 0, marginBottom: 0 }}
-            title={t`Indirectly assigned organization roles, which are inherited through a team assignment, cannot be managed here`}
-          >
-            <Content component={ContentVariants.p} style={{ paddingBottom: 0, marginBottom: 0 }}>
-              {t`To view these indirectly assigned roles click the button below. To modify these view assignments, manage the team's assignments.`}
-            </Content>
-            <Content component={ContentVariants.p}>
-              <IndirectAssignmentsButton
-                style={{ paddingLeft: 0, marginLeft: 0 }}
-                variant="link"
-                onClick={handleViewIndirectRoles}
-              >{t`View indirectly assigned organization roles.`}</IndirectAssignmentsButton>
-            </Content>
-          </Alert>
-        </AlertGroup>
-        <HelpText component={ContentVariants.p}>
-          {t(
-            'Select organization roles that you want to directly assign to {{username}}. These roles will apply to the relevant resources within this organization.',
-            {
-              username: user.username,
-            }
-          )}
-        </HelpText>
+        <ResourceUserIndirectRolesPanel
+          context={{
+            resourceType: 'shared.organization',
+            resourceId: organization?.id?.toString() ?? '',
+            ansibleUserId: user?.summary_fields?.resource?.ansible_id ?? '',
+            username: user.username,
+            resourceName: organization.name,
+          }}
+          content={{
+            alertLink: t`View indirectly assigned organization roles`,
+            alertTitle: t`Indirectly assigned organization roles, which are inherited through a team assignment, cannot be managed here.`,
+            alertDescription: t`To view these indirectly assigned roles click the button below. To modify these role assignments, manage the team's assignments.`,
+            modalTitle: t('Indirectly assigned organization roles for {{username}}', {
+              username: user.username ?? 'user',
+            }),
+            modalDescription: t`Below is a list of organization roles indirectly assigned to this user through a team assignment. These roles give this user permissions for all relevant resources within this organization. To modify roles assigned to the user from a team assignment manage the team's assignments.`,
+          }}
+        />
+        <Content component={ContentVariants.p}>
+          <Trans>
+            Select organization roles that you want to directly assign to {user.username ?? 'user'}.
+            These roles will apply to relevant resources within this organization.
+            <br />
+            <strong>Note:</strong> Removing the Organization Member role will remove{' '}
+            {user.username ?? 'user'} from this organization.
+          </Trans>
+        </Content>
         <PageMultiSelectList
           view={view}
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           labelForSelectedItems={t('Selected roles')}
           errorStateTitle={t('Error loading roles')}
-        />
-        <ViewIndirectlyAssignedRolesModal
-          isOpen={isIndirectRolesModalOpen}
-          onClose={handleCloseIndirectRolesModal}
-          userId={user?.id?.toString() ?? ''}
-          userAnsibleId={user?.summary_fields?.resource?.ansible_id ?? ''}
-          username={user?.username}
-          resourceId={`${organization?.id}`}
-          resourceType={'shared.organization'}
-          resourceName={organization?.name}
-          isManageResourceRoles={true}
         />
       </PageForm>
     </PageLayout>
