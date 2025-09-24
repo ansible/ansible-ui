@@ -19,8 +19,8 @@ export async function createAuthenticationMethod(
   await page.getByRole('option', { name: authType, exact: true }).click();
   switch (authType) {
     case 'Azuread':
-      await page.getByRole('textbox', { name: 'OIDC Key' }).fill('1234abc');
-      await page.getByRole('textbox', { name: 'OIDC Secret' }).fill('secret');
+      await page.getByRole('textbox', { name: 'Client ID' }).fill('1234abc');
+      await page.getByRole('textbox', { name: 'Secret' }).fill('secret');
       break;
     case 'GitHub':
       await page.getByRole('textbox', { name: 'GitHub OAuth2 Key' }).fill('GithubKey');
