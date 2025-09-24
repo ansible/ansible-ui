@@ -1,20 +1,14 @@
 name: Playwright Tests with Currents.dev
 
 on:
-  # pull_request:
-  #   branches: [ main, develop ]
-  # push:
-  #   branches: [ currents-playwright-ga ]
   workflow_call:
     inputs:
       PLATFORM_SERVER:
         type: string
-        required: false
-        default: 'https://localhost:4100'
+        required: true
       PLATFORM_UI:
         type: string
         required: false
-        default: 'https://localhost:4100'
       PLATFORM_USERNAME:
         type: string
         required: false
@@ -36,7 +30,13 @@ on:
         type: string
         required: false
         default: chromium
+      PARALLEL_TESTS:
+        type: string
+        required: false
+        default: matrix.shard
     secrets:
+      PLATFORM_USERNAME:
+        required: false
       PLATFORM_PASSWORD:
         required: false
       CURRENTS_PROJECT_ID:
@@ -76,12 +76,20 @@ jobs:
       run: |
         echo "PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER || 'https://localhost:4100' }}" >> $GITHUB_ENV
         echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}" >> $GITHUB_ENV
-        echo "PLATFORM_USERNAME=${{ 'e2e' }}" >> $GITHUB_ENV
-        echo "PLATFORM_PASSWORD=${{ secrets.PLATFORM_PASSWORD || inputs.PLATFORM_PASSWORD || 'admin' }}" >> $GITHUB_ENV
+        echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME || '' }}" >> $GITHUB_ENV
+        echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD || '' }}" >> $GITHUB_ENV
         # echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
         # echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
         # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
         # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
+        # echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || matrix.shard }}" >> $GITHUB_ENV
+
+    - name: Setup coverage directory
+      working-directory: ./playwright
+      run: |
+        # Ensure coverage directory exists for coverage collection
+        mkdir -p coverage
+        echo "Coverage directory created"
 
     - name: Run Playwright tests with Currents.dev
       working-directory: ./playwright
@@ -91,6 +99,7 @@ jobs:
         CURRENTS_CI_BUILD_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PROJECT: ${{ inputs.PROJECT || 'live chromium' }}
+        SHARD: ${{ inputs.PARALLEL_TESTS || matrix.shard }}
       run: |
         npx pwc \
           --key="${CURRENTS_RECORD_KEY}" \
@@ -105,75 +114,100 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: playwright-test-results-shard-${{ matrix.shard }}
-        path: playwright/test-results/shard-${{ matrix.shard }}
+        path: playwright/test-results
         retention-days: 30
+        if-no-files-found: warn
 
-    - name: Upload HTML report
+    - name: Debug coverage data
       if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-html-report-shard-${{ matrix.shard }}
-        path: playwright/playwright-report
-        retention-days: 30
+      working-directory: ./playwright
+      run: |
+        echo "=== Coverage directory contents ==="
+        ls -la coverage/ 2>/dev/null || echo "Coverage directory is empty or doesn't exist"
+        echo "=== Looking for coverage files ==="
+        find . -name "*coverage*" -type f 2>/dev/null || echo "No coverage files found"
+        echo "=== Looking for .nyc_output ==="
+        ls -la ../.nyc_output/ 2>/dev/null || echo "No .nyc_output directory found"
+
+    - name: Generate Monocart coverage report (for NYC combination)
+      if: always()
+      working-directory: ./playwright
+      run: |
+        # Generate Monocart coverage report if coverage data exists
+        # This creates the coverage data needed for NYC combination
+        if [ -d "coverage" ]; then
+          echo "Generating Monocart coverage report..."
+          npx playwright test tests/coverage-utils/coverage.teardown.ts
+        else
+          echo "No coverage data found, skipping report generation"
+        fi
 
   publish-results:
     if: always()
     needs: playwright-tests
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
     - name: Download all artifacts
       uses: actions/download-artifact@v4
       with:
         path: artifacts
 
+    - name: Combine NYC coverage data
+      if: always()
+      run: |
+        # Create .nyc_output directory
+        mkdir -p .nyc_output
+        
+        # Look for coverage data in test results artifacts
+        # The Monocart coverage generates coverage-final.json files
+        find artifacts/playwright-test-results-shard-* -name "coverage-final.json" -exec cp {} .nyc_output/ \; 2>/dev/null || echo "No coverage files found in test results"
+        
+        # Also check for any .nyc_output directories in the artifacts
+        for shard in artifacts/playwright-test-results-shard-*; do
+          if [ -d "$shard" ]; then
+            # Look for any JSON coverage files
+            find "$shard" -name "*.json" -path "*coverage*" -exec cp {} .nyc_output/ \; 2>/dev/null || true
+          fi
+        done
+        
+        # Generate combined NYC report
+        if [ -d ".nyc_output" ] && [ "$(ls -A .nyc_output)" ]; then
+          echo "Generating combined NYC coverage report..."
+          npm run coverage:fix-paths
+          npx nyc report --cwd=$(pwd)
+        else
+          echo "No coverage data found for NYC report"
+        fi
+
+    - name: Upload combined coverage report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: combined-coverage-report
+        path: coverage/combined
+        retention-days: 30
+        if-no-files-found: warn
+
     - name: Publish test summary
       if: always()
       run: |
-        echo "## 🎭 Playwright Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "## 🎭 Playwright Test Results with Coverage" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "✅ Tests completed and results published to [Currents.dev Dashboard](https://app.currents.dev)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### Test Artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "- Test results and HTML reports are available in the artifacts section" >> $GITHUB_STEP_SUMMARY
-        echo "- Detailed analysis available on Currents.dev dashboard" >> $GITHUB_STEP_SUMMARY
-
-  notify-slack:
-    if: always() && (github.event_name == 'push' || github.event_name == 'schedule')
-    needs: playwright-tests
-    runs-on: ubuntu-latest
-    steps:
-    - name: Notify Slack on failure
-      if: needs.playwright-tests.result == 'failure'
-      uses: 8398a7/action-slack@v3
-      with:
-        status: failure
-        channel: '#ci-notifications'
-        text: |
-          🚨 Playwright tests failed on ${{ github.ref_name }}
-          
-          **Repository:** ${{ github.repository }}
-          **Branch:** ${{ github.ref_name }}
-          **Commit:** ${{ github.sha }}
-          **Author:** ${{ github.actor }}
-          
-          [View Results on Currents.dev](https://app.currents.dev)
-          [View GitHub Action](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-    - name: Notify Slack on success
-      if: needs.playwright-tests.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: 8398a7/action-slack@v3
-      with:
-        status: success
-        channel: '#ci-notifications'
-        text: |
-          ✅ Playwright tests passed on main branch
-          
-          **Repository:** ${{ github.repository }}
-          **Commit:** ${{ github.sha }}
-          **Author:** ${{ github.actor }}
-          
-          [View Results on Currents.dev](https://app.currents.dev)
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        echo "- **Combined Coverage Report**: HTML coverage report in \`combined-coverage-report\` artifact" >> $GITHUB_STEP_SUMMARY
+        echo "- **Test Results**: Traces, screenshots, and videos in \`playwright-test-results-shard-*\` artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- **Detailed Analysis**: Available on Currents.dev dashboard" >> $GITHUB_STEP_SUMMARY
