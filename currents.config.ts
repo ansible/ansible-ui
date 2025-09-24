@@ -17,6 +17,12 @@ export const currentsConfig = {
   // Build configuration for better organization
   ciBuildId: process.env.CURRENTS_CI_BUILD_ID || `local-${Date.now()}`,
 
+  // Coverage configuration
+  coverage: {
+    projects: [process.env.PROJECT || 'live chromium'], // Dynamic project based on environment
+    dir: './coverage', // Directory to store coverage reports
+  },
+
   // Test result metadata for better organization
   tags: {
     // Add Git information to test results

@@ -70,12 +70,12 @@ jobs:
     uses: ./.github/workflows/playwright-currents.yml
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
-      PLATFORM_UI: ${{ inputs.TEST_UI == 'branch' && 'https://localhost:4100' || inputs.PLATFORM_SERVER }}
-      PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME }}
-      PLATFORM_PASSWORD: ${{ inputs.PLATFORM_PASSWORD }}
+      PLATFORM_UI: ${{ inputs.PLATFORM_SERVER }}
       TAGS: ${{ inputs.TAGS }}
       NOT_TAGS: ${{ inputs.NOT_TAGS }}
       PROJECT: ${{ inputs.PROJECT }}
     secrets:
       CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
       CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
+      PLATFORM_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      PLATFORM_USERNAME: ${{ secrets.E2E_USER }}
