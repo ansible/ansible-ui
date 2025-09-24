@@ -22,8 +22,8 @@ test(
       },
       page
     );
-    await expect(page.locator('#oidc-key')).toContainText('1234abc');
-    await expect(page.locator('#oidc-secret')).toContainText('$encrypted$');
+    await expect(page.locator('#client-id')).toContainText('1234abc');
+    await expect(page.locator('#secret')).toContainText('$encrypted$');
     await page.getByRole('tab', { name: 'Back to Authentication Methods' }).click();
     await filterTable({ filterValue: authMethodName }, page);
     await page.getByRole('gridcell', { name: 'Click to enable' }).locator('span').first().click();
