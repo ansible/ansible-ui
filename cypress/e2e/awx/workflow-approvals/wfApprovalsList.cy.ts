@@ -534,9 +534,5 @@ describe('Workflow Approvals Tests', () => {
         }
       });
     });
-
-    it.skip('can assign a normal user admin access to a workflow approval', () => {
-      //This test needs to be written
-    });
   });
 });

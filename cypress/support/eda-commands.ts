@@ -632,14 +632,14 @@ Cypress.Commands.add(
     cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
       name: 'E2E External Credential ' + randomString(4),
       organization_id: edaOrgId,
-      credential_type_id: credentialTypeId || 27, // Default to HashiCorp Vault Secret Lookup (external credential type)
+      credential_type_id: credentialTypeId || 17, // Default to HashiCorp Vault Secret Lookup (external credential type)
       description: 'This is an external credential for testing',
       inputs: {
         url: 'https://vault.example.com',
         token: 'test-vault-token-' + randomString(8),
         api_version: 'v1',
-        secret_path: '/test/secret',
-        secret_key: 'password',
+        default_auth_path: '/test/secret',
+        secret_id: 'password',
       },
     }).then((edaCredential) => {
       Cypress.log({

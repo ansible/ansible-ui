@@ -1,9 +1,5 @@
 describe('Workflow Approvals - Job Output and Details', () => {
-  it.skip('can visit the job output screen of a workflow approval and relaunch and then cancel the job', () => {});
-
-  it.skip('can visit the job details screen of a workflow approval and relaunch and then cancel the job', () => {});
-
-  it.skip('can visit the job details screen of a workflow approval, confirm job is running, and verify details showing there', () => {});
+  it.skip('can visit the job details screen of a workflow approval, confirm job is running, and verify details showing there, and relaunch', () => {});
 });
 
 describe('Workflow Approvals - Details Screen', () => {
