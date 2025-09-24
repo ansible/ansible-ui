@@ -161,8 +161,7 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       navigateToRepositories();
     });
 
-    it.skip('should be able to revert repository version', () => {
-      //unskip when https://issues.redhat.com/browse/AAP-51887 is resolved
+    it('should be able to revert repository version', () => {
       cy.clickTableRowLink('name', repository.name);
       cy.verifyPageTitle(repository.name);
       cy.clickTab('Collection Versions', true);

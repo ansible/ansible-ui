@@ -723,7 +723,7 @@ describe('Job Templates Tests', function () {
   });
 
   describe('Job Template Form:Validation', () => {
-    it.skip('cannot create a job template with more than 1 machine credential', function () {
+    it.skip('cannot create a job template with more than one machine credential', function () {
       let machineCredential1: Credential;
       let machineCredential2: Credential;
       /**
@@ -781,7 +781,7 @@ describe('Job Templates Tests', function () {
       });
     });
 
-    it.skip('cannot create a job template with more than credential per vault_id', function () {
+    it.skip('cannot create a job template with more than one credential per vault_id', function () {
       let vaultCredential1: Credential;
       let vaultCredential2: Credential;
       /**

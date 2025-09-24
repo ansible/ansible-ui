@@ -54,7 +54,7 @@ describe('GalaxykKit Installation for Collections Tabs: Distributions', () => {
       cy.verifyPageTitle(Collections.title);
     });
 
-    it.skip('can inspect distribution information from collection detail page', () => {
+    it('can inspect distribution information from collection detail page', () => {
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
       cy.navigateTo('hub', Repositories.url);
       cy.verifyPageTitle('Repositories');
@@ -86,12 +86,13 @@ describe('GalaxykKit Installation for Collections Tabs: Distributions', () => {
         const formattedDateTime = `${createdDate.toLocaleDateString()}, ${createdDate.toLocaleTimeString()}`;
         cy.checkValueByHeaderName('Name', name);
         cy.checkValueByHeaderName('Base path', base_path);
-        cy.checkValueByHeaderName('Created', formattedDateTime);
-        cy.get('button[aria-label="Copy to clipboard"]').click();
+        cy.get('[data-cy="upload-new-version"]').should('be.visible');
+        cy.get('[id*=copy-button]').click();
         cy.get('[data-cy="alert-toaster"]').should('be.visible');
         cy.get('[data-cy="alert-toaster"]').within(() => {
           cy.get('button').click();
         });
+        cy.checkValueByHeaderName('Created', formattedDateTime);
       });
     });
   });

@@ -16,7 +16,6 @@ function formatBytes(bytes: number): string {
 
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return `${Math.round(bytes / Math.pow(k, i))} ${sizes[i]}`;
@@ -61,12 +60,9 @@ describe('Execution Environments', () => {
           cy.getBy('#registry')
             .click()
             .then(() => {
-              //This element renders differently depending on how many registries the API returns
               if (count < 11) {
-                //fewer than 11 remote registries
                 cy.contains('button[type="button"]', remoteRegistry.name).click();
               } else if (count > 10 && count < 50) {
-                //between 11 and 49 remote registries
                 cy.getByDataCy('dropdown-menu')
                   .find('input')
                   .type(remoteRegistry.name)
@@ -74,7 +70,6 @@ describe('Execution Environments', () => {
                     cy.containsBy('button', `${remoteRegistry.name}`).click();
                   });
               } else {
-                //50 or more remote registries
                 cy.filterTableBySingleText(remoteRegistry.name);
                 cy.getByDataCy('checkbox-column-cell').find('input').click();
                 cy.containsBy('button', 'Confirm').click();
@@ -84,7 +79,6 @@ describe('Execution Environments', () => {
           cy.url().should('contain', '/execution-environments/');
           cy.filterTableBySingleText(eeName);
           cy.get('tbody').find('tr').should('have.length', 1);
-          // edit ee
           cy.get('tbody').within(() => {
             cy.getByDataCy('name-column-cell').should('contain', eeName);
             cy.get('[data-cy="edit-execution-environment"]').click();
@@ -101,7 +95,6 @@ describe('Execution Environments', () => {
           });
           cy.get('[data-cy="upstream-name"]').click().clear().type(upstreamName);
           cy.getByDataCy('Submit').click();
-          // delete ee
           cy.filterTableBySingleText(eeName);
           cy.get('tbody').within(() => {
             cy.getByDataCy('name-column-cell').should('contain', eeName);
@@ -266,7 +259,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
   });
 
-  it.skip('should successfully sync execution environment from Docker registry', () => {
+  it('should successfully sync execution environment from Docker registry', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -274,9 +267,9 @@ describe('Execution Environment Details tab', () => {
         },
       }).then((executionEnvironment) => {
         cy.syncRemoteExecutionEnvironment(executionEnvironment);
-        cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
-          cy.deleteHubRemoteRegistry(remoteRegistry);
-        });
+      });
+      cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
+        cy.deleteHubRemoteRegistry(remoteRegistry);
       });
     });
   });
@@ -308,7 +301,7 @@ describe('Execution Environment Activity and Image tabs', () => {
     });
   });
 
-  it.skip('should display populated activity and images tabs', () => {
+  it('should display populated activity and images tabs', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {

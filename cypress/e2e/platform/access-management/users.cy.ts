@@ -139,58 +139,6 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
       });
     cy.clickButton(/^Clear all filters$/);
   });
-
-  it.skip('creates a normal user, logs in as the normal user, and verifies auth type is set to local', () => {
-    const userName = `platform-e2e-normal-user-${randomString(3).toLowerCase()}`;
-    const firstName = `FirstName${randomString(2)}`;
-    const lastName = `LastName ${randomString(2)}`;
-    const userEmail = `user${randomString(3)}@email.com`;
-    const password = 'password';
-
-    cy.get('[data-cy="create-user"]').click();
-    cy.get('[data-cy="username"]').type(userName);
-    cy.get('[data-cy="password"]').type(password);
-    cy.get('[data-cy="confirmpassword"]').type(password);
-    cy.get('[data-cy="first-name"]').type(firstName);
-    cy.get('[data-cy="last-name"]').type(lastName);
-    cy.get('[data-cy="email"]').type(userEmail);
-    cy.intercept('POST', gatewayAPI`/users/`).as('createdUser');
-    cy.get('[data-cy="Submit"]').click();
-    cy.wait('@createdUser')
-      .its('response.body')
-      .then((createdNormalUser: PlatformUser) => {
-        cy.verifyPageTitle(createdNormalUser.username);
-        cy.platformLogout();
-        // login as normal user credentials
-        cy.get('[data-cy="username"]').type(createdNormalUser.username);
-        cy.get('[data-cy="password"]').type(password);
-        cy.get('[data-cy="Submit"]').click();
-        cy.contains('button', `${createdNormalUser.username}`).should('be.visible');
-        cy.navigateTo('platform', 'users');
-        cy.verifyPageTitle('Users');
-        cy.intercept('GET', gatewayAPI`/users/${createdNormalUser.id.toString()}/`).as(
-          'normalUser'
-        );
-        cy.clickTableRowLink('username', createdNormalUser.username);
-
-        cy.contains('a[role="tab"]', 'Details').click();
-        // verify auth type is set to local
-        cy.wait('@normalUser').then(() => {
-          cy.contains('[data-cy="authentication-method"]', 'Local').should('be.visible');
-        });
-        // logout as normal user
-        cy.platformLogout();
-        // log back in as admin to delete newly created user
-        cy.platformLogin();
-        cy.intercept('GET', gatewayAPI`/users/?order_by=username&page=1&page_size=10`).as(
-          'getUsers'
-        );
-        cy.navigateTo('platform', 'users');
-        cy.wait('@getUsers').then(() => {
-          cy.deletePlatformUser(createdNormalUser, { failOnStatusCode: false });
-        });
-      });
-  });
 });
 
 describe('Users - Teams and Roles Tab Tests', () => {
