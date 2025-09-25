@@ -191,6 +191,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
           'The number of parallel or simultaneous processes to use while executing the playbook. An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of forks can be overwritten with a change to ansible.cfg. Refer to the Ansible documentation for details about the configuration file.'
         )}
         type="number"
+        min={0}
         label={t('Forks')}
       />
       <PageFormTextInput<JobTemplateForm>
@@ -234,11 +235,13 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         )}
         name="job_slice_count"
         type="number"
+        min={0}
         label={t('Job slicing')}
       />
       <PageFormTextInput<JobTemplateForm>
         placeholder={t('Enter timeout value')}
         type="number"
+        min={0}
         labelHelpTitle={t('Timeout')}
         labelHelp={t(
           'The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.'
