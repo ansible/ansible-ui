@@ -57,6 +57,7 @@ export const CustomNode: FC<
         onSelect && onSelect(e);
       }}
       truncateLength={20}
+      raiseLabelOnHover={false}
       {...rest}
       badge={data?.badge}
       badgeColor={data?.badgeColor}
@@ -74,6 +75,7 @@ export const CustomNode: FC<
       labelClassName={`${id}-node-label`}
       dragging={false}
       truncateLength={20}
+      raiseLabelOnHover={false}
       badge={data?.badge}
       badgeColor={data?.badgeColor}
       badgeTextColor={data?.badgeTextColor}
