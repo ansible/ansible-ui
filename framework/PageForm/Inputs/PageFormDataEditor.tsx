@@ -113,6 +113,36 @@ export function PageFormDataEditor<
     else return objectToString(value, defaultLanguage);
   });
 
+  const [originalYamlWithComments, setOriginalYamlWithComments] = useState<string | null>(null);
+
+  const getDisplayValue = useCallback(
+    (formValue: string | object, targetLanguage: DataEditorLanguages): string => {
+      if (originalYamlWithComments) {
+        if (targetLanguage === 'yaml') {
+          return originalYamlWithComments;
+        } else if (targetLanguage === 'json') {
+          try {
+            const parsedFromOriginal = valueToObject(originalYamlWithComments, isArray);
+            if (
+              typeof parsedFromOriginal === 'object' &&
+              parsedFromOriginal !== null &&
+              '__preserveYamlString' in parsedFromOriginal
+            ) {
+              const actualData = jsyaml.load(originalYamlWithComments) as object;
+              return objectToString(actualData, 'json');
+            }
+            return objectToString(parsedFromOriginal, 'json');
+          } catch {
+            return objectToString(valueToObject(formValue, isArray), targetLanguage);
+          }
+        }
+      }
+
+      return objectToString(valueToObject(formValue, isArray), targetLanguage);
+    },
+    [originalYamlWithComments, isArray]
+  );
+
   const alertToaster = usePageAlertToaster();
   const { writeToClipboard } = useClipboard();
 
@@ -143,19 +173,33 @@ export function PageFormDataEditor<
   }, [alertToaster, getValues, isArray, language, name, t]);
 
   useLayoutEffect(() => {
-    const value = objectToString(valueToObject(getValues(name), isArray), language);
+    const formValue = getValues(name);
+
+    if (typeof formValue === 'string' && hasYamlComments(formValue) && !originalYamlWithComments) {
+      setOriginalYamlWithComments(formValue);
+    }
+
+    const value = getDisplayValue(formValue, language);
     setDataEditorValue(value);
-  }, [getValues, isArray, language, name]);
+  }, [getValues, isArray, language, name, getDisplayValue, originalYamlWithComments]);
 
   const [hasFocus, setHasFocus] = useState(false);
 
-  // This will update the data editor value when the value changes
-  // in react-hook-form, but only if the data editor does not have focus
   const watchValue = useWatch({ name });
   useEffect(() => {
     if (hasFocus) return;
-    setDataEditorValue(objectToString(valueToObject(watchValue, isArray), language));
-  }, [hasFocus, watchValue, isArray, language]);
+
+    if (
+      typeof watchValue === 'string' &&
+      hasYamlComments(watchValue) &&
+      !originalYamlWithComments
+    ) {
+      setOriginalYamlWithComments(watchValue);
+    }
+
+    const value = getDisplayValue(watchValue, language);
+    setDataEditorValue(value);
+  }, [hasFocus, watchValue, isArray, language, getDisplayValue, originalYamlWithComments]);
 
   const {
     setValue,
@@ -178,10 +222,27 @@ export function PageFormDataEditor<
         function handleChange(stringValue: string) {
           try {
             const valueAsObject = valueToObject(stringValue, isArray);
+
+            if (language === 'yaml' && hasYamlComments(stringValue)) {
+              setOriginalYamlWithComments(stringValue);
+            }
+
             switch (valueFormat) {
               case 'object':
                 onChange(valueAsObject);
                 return;
+              case 'yaml':
+                if (
+                  typeof valueAsObject === 'object' &&
+                  valueAsObject !== null &&
+                  '__preserveYamlString' in valueAsObject
+                ) {
+                  const preservedObj = valueAsObject as { __preserveYamlString: string };
+                  onChange(preservedObj.__preserveYamlString);
+                  return;
+                }
+                onChange(objectToString(valueAsObject, valueFormat));
+                break;
               default:
                 onChange(objectToString(valueAsObject, valueFormat));
                 break;
@@ -406,6 +467,17 @@ export function DataEditorActions(props: {
   );
 }
 
+function hasYamlComments(yamlString: string): boolean {
+  const lines = yamlString.split('\n');
+  return lines.some((line) => {
+    const trimmed = line.trim();
+    return (
+      trimmed.startsWith('#') ||
+      (trimmed.includes('#') && !/^[^#]*["'][^"']*#[^"']*["'][^#]*$/.exec(trimmed))
+    );
+  });
+}
+
 export function valueToObject(
   value: string | object | undefined | null,
   isArray?: boolean
@@ -429,6 +501,14 @@ export function valueToObject(
   };
 
   if (typeof value === 'string') {
+    if (hasYamlComments(value)) {
+      try {
+        jsyaml.load(value);
+        return { __preserveYamlString: value } as object;
+      } catch {
+        // If invalid YAML, fall through to normal processing
+      }
+    }
     try {
       value = JSON.parse(value) as object;
     } catch {
@@ -458,6 +538,20 @@ export function objectToString(obj: object, language: DataEditorLanguages): stri
 
   if (obj instanceof Error) {
     return obj.message;
+  }
+
+  if (typeof obj === 'object' && obj !== null && '__preserveYamlString' in obj) {
+    const preservedObj = obj as { __preserveYamlString: string };
+    if (language === 'yaml') {
+      return preservedObj.__preserveYamlString;
+    } else {
+      try {
+        const parsedYaml = jsyaml.load(preservedObj.__preserveYamlString);
+        return JSON.stringify(parsedYaml, null, 2);
+      } catch {
+        return preservedObj.__preserveYamlString; // Fallback to original
+      }
+    }
   }
 
   switch (language) {
