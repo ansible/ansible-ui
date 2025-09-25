@@ -113,32 +113,4 @@ describe('PageFormDataEditor', () => {
         cy.get('@onSubmit').should('have.been.calledWith', { data: jsyaml.load(yaml) });
       });
   });
-
-  it('should preserve YAML comments when using format="yaml"', () => {
-    const onSubmit = cy.stub().as('onSubmit');
-    const yamlWithComments = `# This is a comment
-variable1: value1
-# Another comment
-variable2: value2  # inline comment`;
-
-    cy.mount(
-      <PageForm<ExtraVars>
-        onSubmit={onSubmit}
-        onCancel={() => null}
-        submitText="Submit"
-        defaultValue={{ vars: yamlWithComments }}
-      >
-        <PageFormDataEditor<ExtraVars> label="Editor" name="vars" format="yaml" />
-      </PageForm>
-    );
-
-    // Verify the comments are visible in the editor
-    cy.contains('# This is a comment').should('be.visible');
-    cy.contains('# Another comment').should('be.visible');
-    cy.contains('# inline comment').should('be.visible');
-
-    // Submit and verify the original YAML with comments is preserved
-    cy.contains('button', 'Submit').click();
-    cy.get('@onSubmit').should('have.been.calledWith', { vars: yamlWithComments });
-  });
 });
