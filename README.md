@@ -15,7 +15,7 @@ UI projects for [Ansible](https://www.ansible.com).
    - Node 18.x (recommended)
    - NPM 8.x (recommended)
 
-   Note: The project should with older versions of node and npm but may require regenerating the package-lock.json.
+   Note: The project should work with older versions of node and npm but may require regenerating the package-lock.json.
 
 2. Clone Repository
 
