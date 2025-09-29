@@ -11,9 +11,9 @@ export async function createUser(
   page: Page
 ) {
   await navigateTo(page, 'Access Management', 'Users');
-  await expect(page.getByText('Create user', { exact: true })).toBeVisible();
-  await page.getByText('Create user', { exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Create user', exact: true })).toBeVisible();
+  await expect(page.getByText('Create user')).toBeVisible();
+  await page.getByText('Create user').click();
+  await expect(page.getByRole('heading', { name: 'Create user' })).toBeVisible();
   const userName = options.userName ?? createE2EName('user', { noWhitespace: true });
   await page.getByLabel('Username').fill(userName);
   const password = 'password';

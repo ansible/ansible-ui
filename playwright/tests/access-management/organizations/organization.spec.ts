@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { clickTableRowAction } from '../../../commands/clickTableRowAction';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
+import { selectTableRow } from '../../../commands/selectTableRow';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createOrganization, deleteOrganization } from './organization-utils';
 
@@ -44,3 +48,120 @@ test('organization - create/edit', { tag: ['@not_mock'] }, async ({ page }) => {
   await expect(page.locator('dl')).toContainText(`${opaPolicyPath}-edit`);
   await deleteOrganization(`${organizationName}-edited`, page);
 });
+
+test('edits an organization from the list view', { tag: ['@not_mock'] }, async ({ page }) => {
+  // Create organization first
+  const organizationName = await createOrganization(page);
+  const editedName = `${createE2EName()} from list page`;
+
+  await navigateTo(page, 'Access Management', 'Organizations');
+
+  // Find and edit the organization from list view
+  await clickTableRowAction(
+    {
+      pageTitle: 'Organizations',
+      text: organizationName,
+      action: 'Edit organization',
+    },
+    page
+  );
+
+  await expect(page.getByRole('heading', { name: `Edit ${organizationName}` })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).clear();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill(editedName);
+
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Finish' }).click();
+
+  await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible();
+
+  // Clean up
+  await deleteOrganization(editedName, page);
+});
+
+test('edits an organization from the details view', { tag: ['@not_mock'] }, async ({ page }) => {
+  // Create organization first
+  const organizationName = await createOrganization(page);
+  const editedName = `${createE2EName()} from details page`;
+
+  await navigateTo(page, 'Access Management', 'Organizations');
+  await clickTableRow({ text: organizationName }, page);
+
+  await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Edit organization' }).click();
+
+  await expect(page.getByRole('heading', { name: `Edit ${organizationName}` })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).clear();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill(editedName);
+
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Finish' }).click();
+
+  await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible();
+
+  // Clean up
+  await deleteOrganization(editedName, page);
+});
+
+test(
+  'deletes an organization from the organizations list view',
+  { tag: ['@not_mock'] },
+  async ({ page }) => {
+    // Create organization first
+    const organizationName = await createOrganization(page);
+
+    await navigateTo(page, 'Access Management', 'Organizations');
+
+    // Find and delete the organization from list view
+    await clickTableRowAction(
+      {
+        pageTitle: 'Organizations',
+        text: organizationName,
+        action: 'Delete organization',
+        inKebab: true,
+      },
+      page
+    );
+
+    await confirmAndAssertDeletion(page);
+  }
+);
+
+test(
+  'bulk creates and deletes organizations from the organizations list toolbar',
+  { tag: ['@not_mock'] },
+  async ({ page }) => {
+    // Create two organizations first
+    const org1Name = await createOrganization(page);
+    const org2Name = await createOrganization(page);
+
+    await navigateTo(page, 'Access Management', 'Organizations');
+
+    // Select first organization
+    await selectTableRow(
+      {
+        pageTitle: 'Organizations',
+        filterLabel: 'Name',
+        filterValue: org1Name,
+      },
+      page
+    );
+
+    // Select second organization
+    await selectTableRow(
+      {
+        pageTitle: 'Organizations',
+        filterLabel: 'Name',
+        filterValue: org2Name,
+        clearFilters: true,
+      },
+      page
+    );
+
+    // Delete both organizations
+    await page.getByRole('button', { name: 'Actions' }).click();
+    await page.getByRole('menuitem', { name: 'Delete organizations' }).click();
+
+    await confirmAndAssertDeletion(page);
+  }
+);

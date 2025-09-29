@@ -12,13 +12,13 @@ export async function createTeam(
   page: Page
 ) {
   await navigateTo(page, 'Access Management', 'Teams');
-  await page.getByText('Create team', { exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Create team', exact: true })).toBeVisible();
+  await page.getByText('Create team').click();
+  await expect(page.getByRole('heading', { name: 'Create team' })).toBeVisible();
   const teamName = options.teamName ?? createE2EName();
   await page.getByLabel('Name').fill(teamName);
   await singleSelectByLabel('Organization', options.organizationName ?? 'Default', page);
-  await page.getByRole('button', { name: 'Create team', exact: true }).click();
-  await expect(page.getByRole('heading', { name: teamName, exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Create team' }).click();
+  await expect(page.getByRole('heading', { name: teamName })).toBeVisible();
   return teamName;
 }
 
