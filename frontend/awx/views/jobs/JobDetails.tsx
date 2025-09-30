@@ -17,6 +17,7 @@ import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useJobsColumns } from './hooks/useJobsColumns';
+import { getFilteredExtraVars } from './jobUtils';
 
 export function JobDetails() {
   const { t } = useTranslation();
@@ -27,6 +28,8 @@ export function JobDetails() {
 
   const verbosity = useVerbosityString(job.verbosity || 0);
   const timeoutDefaultText = t`No timeout specified`;
+
+  const filteredExtraVars = getFilteredExtraVars(job.extra_vars);
 
   return (
     <PageDetails>
@@ -149,7 +152,7 @@ export function JobDetails() {
           })
         }
       />
-      {job.extra_vars && (
+      {filteredExtraVars && (
         <PageDetailCodeEditor
           label={t`Extra variables`}
           helpText={t(
@@ -157,7 +160,7 @@ export function JobDetails() {
           )}
           showCopyToClipboard
           data-cy="inventory-source-detail-variables"
-          value={job.extra_vars}
+          value={filteredExtraVars}
         />
       )}
       {job.artifacts && (
