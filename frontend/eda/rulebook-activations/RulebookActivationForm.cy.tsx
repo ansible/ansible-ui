@@ -74,7 +74,7 @@ describe('Create rulebook activation ', () => {
   it('Should update fields properly', () => {
     cy.mount(<CreateRulebookActivation />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
+    cy.selectDropdownOptionByResourceName('decision_environment_id', 'EDA Decision Environment 3');
     cy.get('[data-cy="project_id"]').click();
     cy.get('#project-4 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="rulebook_id"]').click();
@@ -103,7 +103,7 @@ describe('Create rulebook activation ', () => {
   it('Should use kind_in filter for credentials', () => {
     cy.mount(<CreateRulebookActivation />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
+    cy.selectDropdownOptionByResourceName('decision_environment_id', 'EDA Decision Environment 3');
     cy.get('[data-cy="project_id"]').click();
     cy.get('#project-4 > .pf-v6-c-menu__item-main > .pf-v6-c-menu__item-text').click();
     cy.get('[data-cy="rulebook_id"]').click();

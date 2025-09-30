@@ -10,6 +10,7 @@ export async function createRulebookActivation(
     name?: string;
     projectName?: string;
     credentialName?: string;
+    decisionEnvironmentName?: string;
     disabled?: boolean;
   },
   page: Page
@@ -28,17 +29,12 @@ export async function createRulebookActivation(
   await page.getByRole('option', { name: projectName }).click();
   await page.getByRole('button', { name: 'Rulebook', exact: true }).click();
   await page.getByRole('option', { name: 'basic_short.yml' }).click();
-  await page
-    .locator('#credential-select-form-group')
-    .getByRole('button', { name: 'Options menu' })
-    .click();
-  await page.getByRole('textbox', { name: 'Type to filter' }).click();
-  await page.getByRole('textbox', { name: 'Type to filter' }).fill(credentialName);
-  await page.getByRole('button', { name: 'apply filter' }).click();
-  await page.getByRole('checkbox', { name: 'Select row' }).check();
-  await page.getByRole('button', { name: 'Confirm' }).click();
-  await page.locator('button[data-cy="decision-environment-id-form-group"]').click();
-  await page.getByRole('option', { name: 'Automation Hub Default' }).click();
+  await page.getByRole('button', { name: 'Credential' }).click();
+  await page.getByRole('textbox', { name: 'Search input' }).click();
+  await page.getByRole('textbox', { name: 'Search input' }).fill(credentialName);
+  await page.getByText(credentialName).click();
+  await page.getByRole('button', { name: 'Decision Environment' }).click();
+  await page.getByRole('option', { name: options.decisionEnvironmentName }).click();
   if (options?.disabled) {
     await page.locator('label:has([data-cy="rulebook-activation-toggle"])').click();
   }

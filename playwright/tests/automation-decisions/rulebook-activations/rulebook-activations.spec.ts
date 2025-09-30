@@ -4,7 +4,12 @@ import { clickTableRow } from '../../../commands/clickTableRow';
 import { expectRowToContain } from '../../../commands/expectRowToContain';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
+import { createOrganization } from '../../access-management/organizations/organization-utils';
 import { createEdaCredential, deleteEdaCredential } from '../credentials/credentials-utils';
+import {
+  createDecisionEnvironment,
+  deleteDecisionEnvironment,
+} from '../decision-environments/decision-environments-utils';
 import { createEdaEventStream, deleteEdaEventStream } from '../event-streams/event-stream-utils';
 import { createEdaProject, deleteEdaProject } from '../projects/projects-utils';
 import { createRulebookActivation, deleteRulebookActivation } from './rulebook-activations-utils';
@@ -19,8 +24,13 @@ test(
     test.setTimeout(300000);
     const newProject = await createEdaProject({}, page);
     const newCredential = await createEdaCredential({}, page);
+    const { decisionEnvironmentName } = await createDecisionEnvironment({}, page);
     const rulebookActivationName = await createRulebookActivation(
-      { projectName: newProject, credentialName: newCredential },
+      {
+        projectName: newProject,
+        credentialName: newCredential,
+        decisionEnvironmentName: decisionEnvironmentName,
+      },
       page
     );
     await expect(page.locator('#name')).toContainText(rulebookActivationName);
@@ -31,6 +41,7 @@ test(
     await deleteRulebookActivation(rulebookActivationName, page);
     await deleteEdaProject(newProject, page);
     await deleteEdaCredential(newCredential, page);
+    await deleteDecisionEnvironment(decisionEnvironmentName, page);
   }
 );
 
@@ -41,8 +52,13 @@ test(
     test.setTimeout(150000);
     const newProject = await createEdaProject({}, page);
     const newCredential = await createEdaCredential({}, page);
+    const { decisionEnvironmentName } = await createDecisionEnvironment({}, page);
     const rulebookActivationName = await createRulebookActivation(
-      { projectName: newProject, credentialName: newCredential },
+      {
+        projectName: newProject,
+        credentialName: newCredential,
+        decisionEnvironmentName: decisionEnvironmentName,
+      },
       page
     );
     await page.getByText('Rulebook activation enabled').click();
@@ -76,6 +92,7 @@ test(
     await deleteRulebookActivation(rulebookActivationName, page);
     await deleteEdaProject(newProject, page);
     await deleteEdaCredential(newCredential, page);
+    await deleteDecisionEnvironment(decisionEnvironmentName, page);
   }
 );
 
@@ -84,10 +101,12 @@ test(
   { tag: ['@not_mock'] },
   async ({ page }) => {
     test.setTimeout(150000);
+    const organizationName = await createOrganization(page);
     const newProject = await createEdaProject({}, page);
     const newCredential = await createEdaCredential({}, page);
+    const { decisionEnvironmentName } = await createDecisionEnvironment({ organizationName }, page);
     const rulebookActivationName = await createRulebookActivation(
-      { projectName: newProject, credentialName: newCredential },
+      { projectName: newProject, credentialName: newCredential, decisionEnvironmentName },
       page
     );
     await page.getByText('Rulebook activation enabled').click();
@@ -112,6 +131,7 @@ test(
     await deleteRulebookActivation(rulebookActivationName, page);
     await deleteEdaProject(newProject, page);
     await deleteEdaCredential(newCredential, page);
+    await deleteDecisionEnvironment(decisionEnvironmentName, page);
   }
 );
 
@@ -124,8 +144,14 @@ test(
     const newCredential = await createEdaCredential({}, page);
     const eventStreamOne = await createEdaEventStream({}, page);
     const eventStreamTwo = await createEdaEventStream({}, page);
+    const { decisionEnvironmentName } = await createDecisionEnvironment({}, page);
     const rulebookActivationName = await createRulebookActivation(
-      { projectName: newProject, credentialName: newCredential, disabled: true },
+      {
+        projectName: newProject,
+        credentialName: newCredential,
+        disabled: true,
+        decisionEnvironmentName: decisionEnvironmentName,
+      },
       page
     );
     await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
@@ -163,6 +189,7 @@ test(
     await deleteEdaCredential(newCredential, page);
     await deleteEdaEventStream(eventStreamOne, page);
     await deleteEdaEventStream(eventStreamTwo, page);
+    await deleteDecisionEnvironment(decisionEnvironmentName, page);
   }
 );
 
@@ -174,8 +201,14 @@ test(
     const newProject = await createEdaProject({}, page);
     const newCredential = await createEdaCredential({}, page);
     const eventStreamOne = await createEdaEventStream({}, page);
+    const { decisionEnvironmentName } = await createDecisionEnvironment({}, page);
     const rulebookActivationName = await createRulebookActivation(
-      { projectName: newProject, credentialName: newCredential, disabled: true },
+      {
+        projectName: newProject,
+        credentialName: newCredential,
+        disabled: true,
+        decisionEnvironmentName: decisionEnvironmentName,
+      },
       page
     );
     await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
@@ -233,6 +266,7 @@ test(
     await deleteRulebookActivation(rulebookActivationName, page);
     await deleteEdaProject(newProject, page);
     await deleteEdaEventStream(eventStreamOne, page);
+    await deleteDecisionEnvironment(decisionEnvironmentName, page);
   }
 );
 
@@ -243,8 +277,9 @@ test(
     test.setTimeout(150000);
     const newProject = await createEdaProject({}, page);
     const newCredential = await createEdaCredential({}, page);
+    const { decisionEnvironmentName } = await createDecisionEnvironment({}, page);
     const rulebookActivationName = await createRulebookActivation(
-      { projectName: newProject, credentialName: newCredential },
+      { projectName: newProject, credentialName: newCredential, decisionEnvironmentName },
       page
     );
     await expect(page.locator('#name')).toContainText(rulebookActivationName);
@@ -285,5 +320,6 @@ test(
     await page.getByRole('button', { name: 'Delete rulebook activations' }).click();
     await deleteEdaProject(newProject, page);
     await deleteEdaCredential(newCredential, page);
+    await deleteDecisionEnvironment(decisionEnvironmentName, page);
   }
 );

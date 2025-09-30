@@ -91,7 +91,7 @@ describe('Check if the build includes EDA', () => {
           cy.clickButton('Confirm');
         });
         cy.selectDropdownOptionByResourceName(
-          'decision-environment-id',
+          'decision_environment_id',
           edaDecisionEnvironment.name
         );
         cy.selectDropdownOptionByResourceName('restart-policy', 'Always');
