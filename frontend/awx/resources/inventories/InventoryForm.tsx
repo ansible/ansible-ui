@@ -37,6 +37,7 @@ import { ConstructedInventoryHint } from './components/ConstructedInventoryHint'
 import { LabelHelp } from './components/LabelHelp';
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
+import jsyaml from 'js-yaml';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
@@ -455,7 +456,18 @@ function InventoryInputs(props: { inventoryKind: string }) {
             if (inventoryKind !== 'constructed') {
               return undefined;
             }
-            const obj = valueToObject(item) as { plugin?: unknown };
+            const obj = valueToObject(item) as { plugin?: unknown; __preserveYamlString?: string };
+            if (obj.__preserveYamlString) {
+              // check if yaml string has plugin parameter
+              const yamlString = obj.__preserveYamlString;
+              const varsObject = jsyaml.load(yamlString) as { plugin?: unknown };
+
+              if (varsObject.plugin) {
+                return undefined;
+              } else {
+                return t(`The plugin parameter is required.`);
+              }
+            }
             if (obj.plugin) {
               return undefined;
             } else {
