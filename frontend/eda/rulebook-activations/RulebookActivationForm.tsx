@@ -30,8 +30,8 @@ import { PageFormSelectOrganization } from '../access/organizations/components/P
 import { EdaPageForm } from '../common/EdaPageForm';
 import { PageFormEventSourceSelect } from '../common/PageFormEventSourceSelect';
 import { edaAPI } from '../common/eda-utils';
+import { PageFormDecisionEnvironmentSelect } from '../decision-environments/components/PageFormDecisionEnvironmentSelect';
 import { EdaCredential } from '../interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaEventStream } from '../interfaces/EdaEventStream';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -145,9 +145,6 @@ export function RulebookActivationInputs() {
       </p>
     </>
   );
-  const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
-    edaAPI`/decision-environments/?page=1&page_size=200`
-  );
 
   const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(
     edaAPI`/event-streams/?test_mode=false`
@@ -252,22 +249,7 @@ export function RulebookActivationInputs() {
         credentialKinds={['vault,cloud']}
         labelHelp={t(`Select the credentials for this rulebook activation.`)}
       />
-      <PageFormSelect<IEdaRulebookActivationInputs>
-        name="decision_environment_id"
-        label={t('Decision environment')}
-        placeholderText={t('Select decision environment')}
-        options={
-          environments?.results
-            ? environments.results.map((item: { name: string; id: number }) => ({
-                label: item.name,
-                value: item.id,
-              }))
-            : []
-        }
-        isRequired
-        labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
-        labelHelpTitle={t('Decision environment')}
-      />
+      <PageFormDecisionEnvironmentSelect isRequired name={'decision_environment_id'} />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="restart_policy"
         label={t('Restart policy')}
