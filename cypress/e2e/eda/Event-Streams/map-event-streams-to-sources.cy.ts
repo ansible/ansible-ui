@@ -8,8 +8,8 @@ import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
 import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { ActivationRead } from '@ansible/eda-ui/interfaces/generated/eda-api';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('Check if the build includes EDA', () => {
   before(function () {
@@ -94,7 +94,7 @@ describe('Check if the build includes EDA', () => {
                       cy.clickButton('Confirm');
                     });
                     cy.selectDropdownOptionByResourceName(
-                      'decision-environment-id',
+                      'decision_environment_id',
                       edaDecisionEnvironment.name
                     );
                     cy.getBy('[data-cy="organization_id"]').click();
@@ -183,7 +183,7 @@ describe('Check if the build includes EDA', () => {
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
       });
-      cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
+      cy.selectDropdownOptionByResourceName('decision_environment_id', edaDecisionEnvironment.name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {

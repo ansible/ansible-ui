@@ -50,7 +50,7 @@ export async function createRulebookActivation(
   await page.getByRole('textbox', { name: 'Search input' }).click();
   await page.getByRole('textbox', { name: 'Search input' }).fill(credentialName);
   await page.getByText(credentialName).click();
-  await page.locator('button[data-cy="decision-environment-id-form-group"]').click();
+  await page.getByRole('button', { name: 'Decision Environment' }).click();
   await page.getByRole('option', { name: options.decisionEnvironmentName }).click();
   if (options?.disabled) {
     await page.locator('label:has([data-cy="rulebook-activation-toggle"])').click();
