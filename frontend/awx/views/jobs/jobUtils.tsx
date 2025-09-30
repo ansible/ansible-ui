@@ -162,3 +162,18 @@ export function useGetLaunchedByDetails() {
   }, [getPageUrl, getScheduleUrl]);
   return getLaunchedByDetails;
 }
+
+// Filter out empty string values from extra_vars
+export const getFilteredExtraVars = (
+  extraVars: string | null | undefined
+): string | null | undefined => {
+  if (!extraVars) return extraVars;
+
+  try {
+    const parsed = JSON.parse(extraVars) as Record<string, unknown>;
+    const filtered = Object.fromEntries(Object.entries(parsed).filter(([, value]) => value !== ''));
+    return JSON.stringify(filtered);
+  } catch (error) {
+    return extraVars;
+  }
+};
