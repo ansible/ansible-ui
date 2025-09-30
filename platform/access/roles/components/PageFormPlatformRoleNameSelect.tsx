@@ -4,6 +4,7 @@ import {
   PageAsyncSelectQueryOptions,
   PageAsyncSelectQueryResult,
 } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback } from 'react';
 import { FieldPathByValue, FieldValues, PathValue } from 'react-hook-form';
@@ -11,7 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
+
+const PAGE_SIZE = 20;
 
 export function PageFormPlatformRoleNameSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -58,34 +60,33 @@ export function PageFormPlatformRoleNameSelect<
 function useQueryRoleOptions(contentType?: string | null): PageAsyncSelectOptionsFn<string> {
   return useCallback(
     async (queryOptions: PageAsyncSelectQueryOptions) => {
-      let url = gatewayAPI`/role_definitions/?order_by=name`;
-      if (queryOptions.next) {
-        url += `&order_by=${queryOptions.next}`;
-      }
+      let url = gatewayAPI`/role_definitions/?order_by=name&page_size=${PAGE_SIZE}`;
+      const currentPage = (queryOptions.next as number) || 1;
+      url += `&page=${currentPage}`;
       if (queryOptions.search) {
         url += `&name__icontains=${encodeURIComponent(queryOptions.search)}`;
       }
+      if (contentType) {
+        url += `&content_type__api_slug=${encodeURIComponent(contentType)}`;
+      }
       const itemsResponse = await requestGet<PlatformItemsResponse<PlatformRole>>(url);
-      const remaining = itemsResponse.count - itemsResponse.results.length;
-      const itemOptions = itemsResponse.results
-        .filter((item) => {
-          if (!contentType) {
-            return true;
-          }
-          return item.content_type === contentType;
-        })
-        .map((item) => {
-          return {
-            label: item.name,
-            value: item.name,
-          };
-        });
-      const lastItem = itemsResponse.results[itemsResponse.results.length - 1];
-      const next = lastItem?.name as number | string | undefined;
+      const itemOptions = itemsResponse.results.map((item) => {
+        return {
+          label: item.name,
+          value: item.name,
+        };
+      });
+
+      // Calculate remaining items based on actual API response
+      const totalItems = itemsResponse.count;
+      const currentItemCount = itemsResponse.results.length;
+      const itemsReturnedSoFar = (currentPage - 1) * PAGE_SIZE + currentItemCount;
+      const remaining = Math.max(0, totalItems - itemsReturnedSoFar);
+
       const result: PageAsyncSelectQueryResult<string> = {
         remaining,
         options: itemOptions,
-        next: next ?? '',
+        next: currentPage + 1,
       };
       return result;
     },
