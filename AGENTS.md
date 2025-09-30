@@ -1,0 +1,568 @@
+# AGENTS.md
+
+This file provides guidance to AI coding assistants when working with code in this repository.
+
+## Project Overview
+
+This is the Ansible Automation Platform (AAP) UI monorepo built with React, TypeScript, and PatternFly. The project uses NPM workspaces and is structured as a unified UI that integrates multiple services:
+
+- **Platform** - Unified gateway UI for AAP (main entry point)
+- **AWX** - Ansible Controller UI
+- **EDA** - Event-Driven Ansible UI  
+- **Hub** - Automation Hub UI
+- **Chatbot** - Ansible Virtual Assistant UI
+- **Framework** - Shared UI framework using PatternFly
+- **Common** - Shared components and utilities
+
+## Development Commands
+
+### Root Level Commands (run from project root)
+```bash
+# Install dependencies
+npm ci
+
+# Run type checking across all workspaces
+npm run tsc
+
+# Run tests (TypeScript, ESLint, Prettier, Vitest)
+npm test
+
+# Run linting
+npm run eslint
+npm run eslint:fix
+
+# Run formatting
+npm run prettier
+npm run prettier:fix
+
+# Fix both linting and formatting
+npm run fix
+
+# Build all workspaces
+npm run build
+
+# Clean build artifacts
+npm run clean
+
+# Generate translations
+npm run i18n
+
+# Run Cypress E2E tests
+npm run e2e:run
+npm run e2e:run:awx
+npm run e2e:run:hub
+npm run e2e:run:eda
+npm run e2e:run:chatbot
+
+# Run component tests
+npm run component
+
+# Run Playwright tests (from /playwright directory)
+cd playwright && npm run live    # Run against live server
+cd playwright && npm run mock    # Run against mocked data
+```
+
+### Platform Development (run from `/platform` directory)
+```bash
+# Start platform development server
+npm start
+
+# Build platform for production
+npm run build
+```
+
+### Running Tests
+- **Unit/Component Tests**: `npm run vitest` (uses Vitest)
+- **E2E Tests**: `npm run e2e:run` (uses Cypress)
+- **Playwright E2E Tests**: See Playwright Testing section below
+- **Linting**: `npm run eslint`
+- **Type Checking**: `npm run tsc`
+
+## Architecture
+
+### Monorepo Structure
+The project uses NPM workspaces with the following structure:
+- `/platform` - Main Platform UI (unified entry point)
+- `/framework` - Shared UI framework
+- `/frontend/awx` - AWX Controller UI
+- `/frontend/eda` - Event-Driven Ansible UI
+- `/frontend/hub` - Automation Hub UI
+- `/frontend/chatbot` - Chatbot UI
+- `/frontend/common` - Shared components
+- `/cypress` - E2E tests
+- `/playwright` - Additional E2E tests
+
+### Key Technologies
+- **React 18** with TypeScript
+- **PatternFly** for UI components
+- **React Hook Form** for form management
+- **React Router** for navigation
+- **SWR** for data fetching
+- **i18next** for internationalization
+- **Vite** for build tooling
+- **Vitest** for unit testing
+- **Cypress** for E2E testing
+- **Playwright** for additional E2E testing
+- **NX** for monorepo management
+
+### API Integration
+Each service has its own API prefix:
+- Platform: `/api/gateway/`
+- AWX: `/api/controller/v2/`
+- EDA: `/api/eda/v1/`
+- Hub: `/api/galaxy/`
+
+Each route has a helper wrapper to route to the correct API based on the service that should be used in the code instead of the raw URL. This allows for easier integration and testing across services.
+Example:
+- gatewayAPI`/users/`
+- awxAPI`/projects/`
+- edaAPI`/events/`
+- hubAPI`/collections/`
+
+## Development Guidelines
+
+### Code Organization
+- Follow workspace-based architecture - each UI has its own workspace
+- Use the shared framework for common UI patterns
+- Place shared utilities in `/frontend/common`
+- Use TypeScript interfaces for type safety
+
+### Styling
+- Use PatternFly components and design system
+- CSS modules or styled-components for custom styling
+- Follow PatternFly design guidelines
+
+### State Management
+- Use React hooks for local state
+- SWR for server state management
+- Zustand for global state when needed
+
+### Testing
+- Write unit tests with Vitest
+- Use Cypress for primary E2E tests  
+- Use Playwright for additional E2E tests and live testing
+- Follow testing best practices for React components
+
+### Internationalization
+- Use `useTranslation` hook from react-i18next
+- Mark strings for translation with `t('String to translate')`
+- Run `npm run i18n` to extract translation keys
+
+## Playwright Testing
+
+### Overview
+Playwright tests provide comprehensive E2E testing capabilities and can run against both live servers and mocked data. The Playwright workspace is located in `/playwright` and includes tests for various AAP components including access management, roles, users, and UI workflows.
+
+### Environment Configuration
+Create or update `/playwright/.env` with the following variables:
+```bash
+PLATFORM_UI=http://localhost:4100        # UI server URL
+PLATFORM_USERNAME=your_username          # Login username
+PLATFORM_PASSWORD=your_password          # Login password
+```
+
+### Available Test Commands (run from `/playwright` directory)
+```bash
+# Run tests against live server (UI must be running)
+npm run live
+
+# Run tests against mocked data
+npm run mock
+
+# Run specific test file
+npx playwright test tests/path/to/test.spec.ts --project 'live chromium'
+
+# Run tests with specific tags
+npx playwright test --grep @not_mock
+
+# Run with debug mode
+npx playwright test --debug
+
+# Generate test report
+npm run allure
+
+# View coverage report
+npm run coverage
+
+# Show trace files for debugging failed tests
+npx playwright show-trace trace.zip
+```
+
+### Test Project Configuration
+- **live chromium**: Tests against live server (excludes @not_live tests)
+- **mock chromium**: Tests against mocked data (excludes @not_mock tests)
+- **live firefox**: Firefox tests against live server
+- **mock firefox**: Firefox tests against mocked data
+
+### Writing Playwright Tests
+
+#### Test Structure
+Always use `describe` blocks to organize tests for easier debugging and troubleshooting:
+```typescript
+import { test, expect } from '@playwright/test';
+import { setupBefore, setupAfter } from '../../commands/setup';
+
+test.beforeEach(setupBefore({ path: '/your/path' }));
+test.afterEach(setupAfter);
+
+test.describe('Feature Name - Description', () => {
+  test('your test description', { tag: ['@not_mock'] }, async ({ page }) => {
+    // Your test code here
+  });
+  
+  test('another test description', { tag: ['@not_mock'] }, async ({ page }) => {
+    // Your test code here
+  });
+});
+```
+
+**Benefits of describe blocks:**
+- Groups related tests together
+- Makes test output more readable
+- Easier to run specific test groups
+- Better organization in test reports
+- Simplifies debugging when tests fail
+
+#### Selector Best Practices
+- Use `exact: true` for precise text matching:
+  ```typescript
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill('value');
+  ```
+- **Avoid strict mode violations** by being specific with selectors:
+  ```typescript
+  // BAD - May match multiple elements
+  await expect(page.getByText('Success')).toBeVisible();
+  
+  // GOOD - Scope to specific container
+  await expect(page.locator('dialog').getByText('Success')).toBeVisible();
+  await expect(page.locator('tbody').getByText('Success')).toBeVisible();
+  
+  // GOOD - Use more specific selectors
+  await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+  
+  // GOOD - Use role-based selectors with containers
+  await expect(page.locator('dialog').getByRole('button', { name: 'Submit' })).toBeVisible();
+  ```
+  
+  **Always scope selectors to avoid ambiguity**: When text or elements appear multiple times on a page, use container selectors (dialog, main, nav, etc.) or more specific role-based selectors to target the exact element needed.
+
+- **Follow existing patterns in the codebase**: Before writing new test logic, search for similar functionality in existing tests and use the same patterns:
+  ```bash
+  # Search for existing patterns
+  grep -r "Success.*toBeVisible" playwright/tests/
+  grep -r "confirmAndAssertDeletion" playwright/tests/
+  ```
+  Example: Use `{ exact: true }` for Success messages as established in job-template-utils.ts
+
+- **Use existing Playwright commands**: Always check `/playwright/commands/` for existing utilities before writing custom logic:
+  ```typescript
+  // GOOD - Use existing commands
+  import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
+  import { clickTableRow } from '../../../commands/clickTableRow';
+  
+  // Instead of writing custom deletion logic
+  await clickTableRow({ filterLabel: 'Username', text: userName }, page);
+  await clickPageAction('Delete user', page);
+  await confirmAndAssertDeletion(page);
+  ```
+
+- **Create new Playwright commands for reusable patterns**: If you encounter a test flow that doesn't exist in `/playwright/commands/` but appears in Cypress tests or is needed by multiple tests, create a generic command:
+  ```bash
+  # Check Cypress commands for reference
+  grep -r "clickToolbarKebabAction" cypress/support/
+  grep -r "bulk.*delete" cypress/e2e/
+  ```
+  
+  Example: Created `bulkDeleteResources` command for toolbar-based bulk deletion that can be reused across different resource types (users, teams, organizations, etc.)
+
+- Prefer semantic selectors over CSS selectors:
+  ```typescript
+  // Good
+  await page.getByRole('button', { name: 'Submit' }).click();
+  
+  // Avoid if possible  
+  await page.locator('#submit-btn').click();
+  ```
+- Use data-cy attributes for test-specific selectors:
+  ```typescript
+  await page.locator('[data-cy="content-type"]').click();
+  ```
+
+#### Common Test Utilities
+Located in `/playwright/commands/`:
+- `setupBefore()` / `setupAfter()` - Test setup and teardown
+- `navigateTo()` - Navigate to specific pages
+- `getTableRow()` - Find and filter table rows (handles pagination automatically)
+- `clickTableRow()` - Interact with table rows
+- `clickPageAction()` - Click page action buttons
+- `login()` - Handle authentication
+- `createE2EName()` - Generate unique test names
+- `confirmAndAssertDeletion()` - Handle deletion confirmations
+- `bulkDeleteResources()` - Generic bulk deletion from list view
+- `deleteResourceFromDetailsPage()` - Generic deletion from details page
+- `deleteResourceFromList()` - Generic deletion from list view
+
+#### Test Tags
+- `@not_mock` - Don't run against mocked data
+- `@not_live` - Don't run against live server
+
+#### Table Row Selection - CRITICAL RULE
+**ALWAYS use the `getTableRow` utility** for table interactions:
+```typescript
+import { getTableRow } from '../../../commands/getTableRow';
+
+// Correct approach
+const roleRow = await getTableRow(page, roleName);
+await roleRow.click();
+
+// NEVER do this - will fail due to pagination
+const roleRow = page.getByRole('row').filter({ hasText: roleName });
+```
+
+The `getTableRow` command automatically:
+- Clears existing table filters
+- Applies filter for specified text
+- Returns visible table row
+- Handles pagination correctly
+
+#### Test Validation Requirement - CRITICAL
+**ALWAYS run Playwright tests after creating or updating them** to ensure they pass before considering the work complete. This is mandatory for all test development.
+
+```bash
+# Run specific test file (fail-fast mode)
+cd playwright && npx playwright test tests/path/to/your/test.spec.ts --project 'live chromium' --max-failures=1 --retries=0
+
+# Run all tests in a directory (fail-fast mode)
+cd playwright && npx playwright test tests/access-management/users/ --project 'live chromium' --max-failures=1 --retries=0
+
+# Run with debug mode if tests fail
+cd playwright && npx playwright test tests/path/to/your/test.spec.ts --project 'live chromium' --debug
+```
+
+**Fail-Fast Testing Strategy**: Use `--max-failures=1` to stop execution after the first failure and `--retries=0` to disable retries for immediate feedback. This enables immediate analysis and fixing rather than waiting for all tests to complete. After applying a fix, re-run tests to validate the solution.
+
+**CRITICAL RULE**: Never conclude test development work or mark tasks as completed until ALL tests pass successfully AND all linting/TypeScript issues are resolved. Always run tests and check for linting issues as the final validation steps before considering any test work complete.
+
+This ensures:
+- Tests are syntactically correct and execute without errors
+- Selectors work correctly with the actual UI
+- Test logic functions as intended
+- No regressions are introduced
+
+### Debugging Tests
+
+#### Using Playwright Inspector
+```bash
+npx playwright test --debug
+```
+
+#### Using Playwright MCP Server (AI Code Integration)
+When debugging test failures, AI coding assistants can use the Playwright MCP server to:
+- Navigate to live applications and examine actual UI structure
+- Take screenshots and snapshots of pages
+- Interact with UI elements to understand behavior
+- Debug selector issues by testing elements in real-time
+- Verify form interactions and data flows
+
+**Browser Navigation Setup for AAP:**
+1. Navigate to `https://localhost:4100` (always use HTTPS)
+2. Handle SSL certificate warning:
+   - Click "Advanced" button
+   - Click "Proceed to localhost (unsafe)" link
+3. Login with credentials from `/playwright/.env` file
+   - Default admin username: `admin`
+   - Default admin password: `Admin!Password!Gw`
+
+**Test Development Methodology:**
+Before writing any Playwright test, use the MCP server to:
+1. **Manual Workflow Validation**: Navigate through the complete user workflow manually
+2. **Selector Discovery**: Identify exact selectors for each UI element by examining snapshots
+3. **Interaction Verification**: Test each interaction step (clicks, form fills, etc.)
+4. **State Validation**: Verify expected page states after each action
+5. **Write Confident Tests**: Build tests using verified selectors and workflows
+
+This approach is similar to using Playwright's record feature but provides more control and understanding.
+
+This is particularly useful for:
+- Understanding why selectors fail in tests
+- Discovering the actual DOM structure vs expected structure  
+- Testing new UI features before writing tests
+- Debugging complex user workflows
+- Finding correct selectors instead of guessing
+- Building tests that work reliably from the first run
+
+#### Viewing Test Reports
+```bash
+# Generate and view Allure report
+npm run allure
+
+# View coverage
+npm run coverage
+```
+
+#### Common Issues and Solutions
+- **Strict mode violations**: Use `exact: true` for precise element matching
+- **Timeouts**: Increase timeout for slow operations or use `test.setTimeout()`
+- **Element not found**: Check if elements are loaded, use proper wait strategies
+- **Authentication issues**: Verify environment variables in `.env` file
+- **Selector failures**: Use MCP server tools to examine actual UI structure
+- **Table row selection**: Always use `getTableRow()` utility for paginated tables
+
+### Test Environment Setup
+1. Ensure your local UI is running on the configured port (default: 4100)
+2. Set up proper authentication credentials in `.env`
+3. For live tests, ensure backend services are accessible
+4. For mock tests, mocking is handled automatically
+
+### Coverage and Reporting
+- Coverage reports are generated automatically during test runs
+- Allure reports provide detailed test execution information
+- Screenshots and videos are captured on test failures
+- Traces can be viewed with `npx playwright show-trace trace.zip`
+- Test artifacts are stored in `test-results/` directory
+
+## Environment Setup
+
+### Required Environment Variables
+```bash
+# Platform server URL
+export PLATFORM_SERVER='https://localhost:443'
+
+# For standalone services (if needed)
+export AWX_SERVER='https://localhost:8043'
+export EDA_SERVER='http://localhost:8000'
+export HUB_SERVER='http://localhost:5001'
+
+# API prefixes
+export AWX_API_PREFIX='/api/controller/v2'
+export EDA_API_PREFIX='/api/eda/v1'
+export HUB_API_PREFIX='/api/galaxy'
+```
+
+### Prerequisites
+- Node.js 20.x or higher
+- NPM 8.x or higher
+
+## Common Development Tasks
+
+### Adding New Features
+1. Identify the appropriate workspace (platform, awx, eda, hub, etc.)
+2. Create components in the relevant workspace
+3. Use shared framework components when possible
+4. Add tests for new functionality
+5. Update translations if needed
+
+### Working with Forms
+- Use React Hook Form with the framework's form components
+- Leverage existing form validation patterns
+- Follow the PageForm patterns in the framework
+
+### API Integration
+- Use the appropriate API utilities for each service
+- Follow existing patterns for error handling
+- Use SWR for data fetching and caching
+
+### Testing New Code
+```bash
+# Run all tests
+npm test
+
+# Run tests for specific workspace
+cd frontend/awx && npm test
+
+# Run Cypress E2E tests
+npm run e2e:run
+
+# Run Playwright tests
+cd playwright && npm run live    # Against live server
+cd playwright && npm run mock    # Against mocked data
+
+# Run specific Playwright test
+cd playwright && npx playwright test tests/path/to/test.spec.ts --project 'live chromium'
+```
+
+### Playwright Test Guidelines
+
+#### Table Row Selection
+When writing Playwright tests that need to select rows from tables, **always use the `getTableRow` command** instead of manually filtering table rows. This command automatically handles table filtering which is essential because:
+
+- Tables often contain many rows that are paginated
+- Without filtering, the desired row may not be visible on the current page
+- Manual row selection without filtering causes test failures
+
+**Correct approach:**
+```typescript
+import { getTableRow } from '../../../commands/getTableRow';
+
+// Use getTableRow to find and filter for a specific row
+const roleRow = await getTableRow(page, roleName);
+await roleRow.click();
+```
+
+**Avoid this pattern:**
+```typescript
+// DON'T do this - may fail if row is not visible due to pagination
+const roleRow = page.getByRole('row').filter({ hasText: roleName });
+```
+
+The `getTableRow` command:
+1. Automatically clears existing table filters
+2. Applies a filter for the specified text
+3. Returns the table row containing that text
+4. Ensures the row is visible before any further actions
+
+## Troubleshooting
+
+### Common Issues
+- **Build errors**: Run `npm run clean` then `npm ci`
+- **Type errors**: Check TypeScript configuration in relevant workspace
+- **Test failures**: Ensure all dependencies are installed and up to date
+- **E2E test failures**: Check environment variables and server connectivity
+- **Playwright test failures**: 
+  - Verify UI server is running on correct port (default: 4100)
+  - Check `/playwright/.env` for correct credentials
+  - Use `exact: true` for selector specificity issues
+  - Run with `--debug` flag to investigate issues
+  - Use AI coding assistant's Playwright MCP server to examine live UI structure and debug selectors
+  - Always use `getTableRow()` utility for table interactions to handle pagination
+
+### Log Access
+- Platform logs: Check platform server logs
+- Development logs: Check browser console and terminal output
+- Test logs: Check test output and Cypress/Playwright reports
+- Playwright traces: Use `npx playwright show-trace trace.zip` to debug test failures
+
+## AI Assistant Guidelines
+
+### Code Quality Standards
+- Follow TypeScript strict mode
+- Use ESLint and Prettier configurations
+- Write descriptive test names
+- Add comments only for complex logic, avoid obvious comments
+- Ensure proper error handling
+
+### Test Development Methodology - CRITICAL
+**ALWAYS validate workflows manually before writing tests** using available browser automation tools:
+
+1. **Manual Workflow Validation**: Navigate through the complete user workflow manually
+2. **Selector Discovery**: Identify exact selectors for each UI element by examining snapshots  
+3. **Interaction Verification**: Test each interaction step (clicks, form fills, etc.)
+4. **State Validation**: Verify expected page states after each action
+5. **Write Confident Tests**: Build tests using verified selectors and workflows
+6. **Run Tests**: Execute tests as final validation (should pass on first run)
+
+This prevents the cycle of: write test → run test → fix selector → repeat.
+
+### File Naming Conventions
+- Test files: `*.spec.ts` or `*.test.ts`
+- Component files: PascalCase (e.g., `UserTable.tsx`)
+- Utility files: camelCase (e.g., `apiHelpers.ts`)
+- Constants: UPPER_SNAKE_CASE
+
+### Best Practices
+- Always prefer editing existing files over creating new ones
+- Use existing Playwright commands where possible
+- Create generic commands for reusable patterns
+- Validate all changes with tests, linting, and TypeScript checking
+- Remove obvious comments from test files
+- Follow established patterns in the codebase
