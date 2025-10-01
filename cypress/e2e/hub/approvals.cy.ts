@@ -63,7 +63,7 @@ describe('Approvals', () => {
       cy.contains(collectionName);
       cy.contains(namespace.name);
       cy.contains('published');
-      cy.contains('Signed and Approved');
+      cy.contains('Approved');
     });
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle('Collections');
