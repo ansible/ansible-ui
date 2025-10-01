@@ -5,18 +5,17 @@ import {
   ITableColumn,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useMemo, useCallback } from 'react';
+import { useManagedRolesWithDescription } from '@ansible/hub-ui/access/roles/hooks/useManagedRolesWithDescription';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { ContentType } from './ContentType';
-import { useContentTypeComponentNames } from './useContentTypeComponentNames';
+import { usePermissionsComponentNames } from './usePermissionsComponentNames';
 import { useGetResourceTypes } from './useResourceType';
-import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
-import { useManagedRolesWithDescription } from '@ansible/hub-ui/access/roles/hooks/useManagedRolesWithDescription';
 
 // Define RolePermission type to match permission objects
 interface RolePermission {
@@ -89,7 +88,7 @@ export function usePlatformRoleColumns(options?: {
     disableLinks: options?.disableLinks,
   });
 
-  const getContentTypeComponentNames = useContentTypeComponentNames();
+  const getPermissionsComponentNames = usePermissionsComponentNames();
 
   const { data: resourceTypeResponse } = useGetResourceTypes();
 
@@ -124,7 +123,7 @@ export function usePlatformRoleColumns(options?: {
       {
         header: t('Components'),
         type: 'labels',
-        value: (role) => getContentTypeComponentNames((role.content_type ?? '') as ContentType),
+        value: (role) => getPermissionsComponentNames(role.permissions ?? []),
         modal: 'hidden',
       },
       {
@@ -163,9 +162,9 @@ export function usePlatformRoleColumns(options?: {
       createdColumn,
       modifiedColumn,
       manageRoleWithDescription,
-      getContentTypeComponentNames,
-      resourceModelMap,
+      getPermissionsComponentNames,
       getDisplayName,
+      resourceModelMap,
       getPermissionDisplayNames,
     ]
   );
