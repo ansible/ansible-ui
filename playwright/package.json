@@ -16,7 +16,7 @@
     "prettier": "prettier --check tests commands mock",
     "prettier:fix": "prettier --write tests commands mock",
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
-    "markdown": "tsx markdown.ts"
+    "markdown": "tsx generate-test-summary.ts"
   },
   "dependencies": {
     "@ansible/aap-mock": "file:../packages/aap-mock"
