@@ -90,7 +90,7 @@
     "@patternfly/react-icons": "6.3.1",
     "@patternfly/react-table": "6.3.1",
     "@patternfly/react-templates": "6.3.1",
-    "@patternfly/react-topology": "6.2.0",
+    "@patternfly/react-topology": "6.3.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.15",
     "@react-hook/resize-observer": "2.0.2",
     "@svgr/webpack": "8.1.0",

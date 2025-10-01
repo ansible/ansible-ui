@@ -71,6 +71,9 @@ describe('Workflow Visualizer', () => {
         `${workflowJobTemplate.name}`,
         'wf_vis_testing_A.json'
       );
+      cy.getBy('button[id="fit-to-screen"]').click();
+
+      cy;
       cy.get('[class*="66-node-label"]')
         .should('exist')
         .should('contain', 'Cleanup Activity Stream');
@@ -132,6 +135,7 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('node-alias').type('Test Node');
           cy.clickButton('Next');
           cy.clickButton('Finish');
+          cy.getBy('button[id="fit-to-screen"]').click();
           cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
           cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
           cy.intercept(
@@ -142,6 +146,8 @@ describe('Workflow Visualizer', () => {
           cy.wait('@saved').then((interception) => {
             const node = interception?.response?.body as WorkflowNode;
             cy.getByDataCy('alert-toaster').should('be.visible');
+            cy.getBy('button[id="fit-to-screen"]').click();
+
             cy.get(`g[data-id="${node.id}"]`).should('be.visible');
             cy.get(`g[data-id="${node.id}"]`)
               .should('include.text', 'ALL')
@@ -226,6 +232,8 @@ describe('Workflow Visualizer', () => {
             'have.text',
             'Run on success'
           );
+          cy.getBy('button[id="fit-to-screen"]').click();
+
           cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).within(() => {
             cy.getByDataCy('edge-context-menu_kebab').click({ force: true });
           });
@@ -431,6 +439,8 @@ describe('Workflow Visualizer', () => {
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
           cy.contains('Workflow Visualizer').should('be.visible');
+          cy.getBy('button[id="fit-to-screen"]').click();
+
           cy.contains('Run on fail').should('be.visible');
           cy.get(`g[data-id="${projectNode.id}-${workflowJtNode.id}"]`).within(() => {
             cy.getByDataCy('edge-context-menu_kebab').click({ force: true });
