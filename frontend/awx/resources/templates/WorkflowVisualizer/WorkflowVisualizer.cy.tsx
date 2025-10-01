@@ -22,11 +22,14 @@ describe('WorkflowVisualizer', () => {
 
   it('Should render nodes and labels', () => {
     cy.mount(<WorkflowVisualizer />);
+    cy.get('#fit-to-screen').click();
     cy.wait('@getWorkflowNodes')
       .its('response.body.results')
       .then((nodes: WorkflowNode[]) => {
         nodes.forEach((node: WorkflowNode) => {
-          cy.get(`[data-id="${node.id}"]`).should('be.visible');
+          cy.get(`[data-id="${node.id}"]`, { timeout: 10000 })
+            .scrollIntoView({ ensureScrollable: false })
+            .should('be.visible');
           cy.get(`[data-id="${node.id}"] text`).should(
             'have.text',
             node.summary_fields?.unified_job_template?.name
@@ -74,6 +77,7 @@ describe('WorkflowVisualizer', () => {
 
   it('Should show sidebar details when a node is selected', () => {
     cy.mount(<WorkflowVisualizer />);
+    cy.get('#fit-to-screen').click();
     cy.get('[data-id="1510"]').click();
     cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
     cy.getByDataCy('name').should('have.text', 'Cleanup Activity Stream');
@@ -82,6 +86,7 @@ describe('WorkflowVisualizer', () => {
 
   it('Node label kebab should open context menu dropdown', () => {
     cy.mount(<WorkflowVisualizer />);
+    cy.get('#fit-to-screen').click();
     cy.get('#zoom-out').click();
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
     cy.get('li[data-cy="edit-node"]').should('be.visible');
@@ -170,6 +175,7 @@ describe('WorkflowVisualizer', () => {
 
   it('Show confirmation modal when removing a link, then cancel removal, then actually remove ', () => {
     cy.mount(<WorkflowVisualizer />);
+    cy.get('#fit-to-screen').click();
     cy.get('[data-id="1356-1511"]').within(() => {
       cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
     });
@@ -188,6 +194,7 @@ describe('WorkflowVisualizer', () => {
 
   it('Show confirmation modal when removing a node, then cancel removal, then actually remove', () => {
     cy.mount(<WorkflowVisualizer />);
+    cy.get('#fit-to-screen').click();
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click({ force: true });
     cy.get('li[data-cy="remove-node"]').within(() => {
       cy.get('button').click({ force: true });
@@ -213,7 +220,7 @@ describe('WorkflowVisualizer', () => {
         <WorkflowVisualizer />
       </div>
     );
-    cy.get('#zoom-out').click();
+    cy.get('#fit-to-screen').click();
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
     cy.getByDataCy('add-node-and-link').click();
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
@@ -236,6 +243,7 @@ describe('WorkflowVisualizer', () => {
     cy.clickButton('Next');
     cy.clickButton('Finish');
     cy.get('[data-cy="workflow-topology-sidebar"]').should('not.exist');
+    cy.get('#fit-to-screen').click();
     cy.get('[data-id="7-unsavedNode"] .pf-topology__node__action-icon').should('be.visible');
     cy.get('[data-id="1510-7-unsavedNode"]').should('be.visible');
   });

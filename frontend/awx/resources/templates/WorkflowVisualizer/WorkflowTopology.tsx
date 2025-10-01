@@ -123,7 +123,6 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
 
   const createVisualization = useCallback(() => {
     const newVisualization = new Visualization();
-    newVisualization.setFitToScreenOnLayout(true);
     newVisualization.registerComponentFactory(baselineComponentFactory);
     newVisualization.registerLayoutFactory(
       (type: string, graph: Graph) =>
@@ -216,7 +215,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
     visualization.fromModel(model, true);
     visualization.getGraph().reset();
     visualization.getGraph().layout();
-  }, [t, visualization, createEdge, workflowNodes, dedupeOldNodes]);
+  }, [t, createEdge, workflowNodes, dedupeOldNodes, visualization]);
 
   return (
     <VisualizationProvider controller={visualization}>
