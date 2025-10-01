@@ -10,7 +10,7 @@ import rolePermissions from './mocks/roleOrganizationPermissions.fixture.json';
 import roleTypes from './mocks/roleTypes.fixture.json';
 import { CreatePlatformRole, EditPlatformRole } from './PlatformRoleForm';
 
-describe('platformRoleForm', () => {
+describe('PlatformRoleForm', () => {
   const server = setupServer(
     http.get(gatewayAPI`/role_definitions/1/*`, () => {
       return HttpResponse.json(roleDefinition);
@@ -75,6 +75,20 @@ describe('platformRoleForm', () => {
 
     await waitFor(() => {
       expect(getByRole('button', { name: 'Save role' })).toBeInTheDocument();
+    });
+  });
+
+  test('should disable the resource type field in edit role form', async () => {
+    const { getByRole } = render(
+      <MemoryRouter initialEntries={['/access/roles/1/edit']}>
+        <Routes>
+          <Route path={'/access/roles/:id/edit'} element={<EditPlatformRole />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(getByRole('button', { name: 'Resource type' })).toBeDisabled();
     });
   });
 
