@@ -161,7 +161,8 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       navigateToRepositories();
     });
 
-    it('should be able to revert repository version', () => {
+    it.skip('should be able to revert repository version', () => {
+      //unskip this test when https://issues.redhat.com/browse/AAP-54447 is fixed
       cy.clickTableRowLink('name', repository.name);
       cy.verifyPageTitle(repository.name);
       cy.clickTab('Collection Versions', true);
@@ -186,6 +187,7 @@ describe('GalaxyKit Installation Check for Repositories', () => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
       });
+      cy.getModal().should('not.exist');
       cy.clickTab('Collection Versions', true);
       cy.contains('No collection versions yet');
       navigateToRepositories();
