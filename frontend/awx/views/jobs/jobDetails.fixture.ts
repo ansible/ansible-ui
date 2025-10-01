@@ -87,7 +87,7 @@ export const testFixture: Job = {
   forks: 0,
   limit: '3',
   verbosity: 0,
-  extra_vars: '{}',
+  extra_vars: '{"var1": "answer1", "var2": ""}',
   job_tags: '',
   force_handlers: false,
   skip_tags: 'foo',

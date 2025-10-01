@@ -122,4 +122,14 @@ describe('JobDetails Component', () => {
     expect(screen.queryByText('Instance group')).not.toBeInTheDocument();
     expect(screen.queryByText('Container group')).not.toBeInTheDocument();
   });
+  it('renders extra_vars field', () => {
+    render(
+      <MemoryRouter>
+        <JobDetails />
+      </MemoryRouter>
+    );
+    expect(screen.queryByText('Extra variables')).toBeInTheDocument();
+    expect(screen.queryByText('var1: answer1')).toBeInTheDocument();
+    expect(screen.queryByText('var2: ')).not.toBeInTheDocument();
+  });
 });
