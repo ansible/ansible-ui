@@ -114,7 +114,7 @@ jobs:
 
     - name: Run Playwright Tests
       working-directory: playwright
-      run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: npx playwright test --project="${{ inputs.PROJECT }}" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
         PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
         PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME != '' && inputs.PLATFORM_USERNAME || 'e2e' }}
@@ -180,17 +180,51 @@ jobs:
         pattern: ${{ inputs.BROWSER }}-blob-report-*
         merge-multiple: true
 
+    - name: Merge Blob Reports
+      working-directory: playwright
+      run: |
+        echo "Extracting blob reports..."
+        cd ../all-blob-reports/
+        counter=1
+        for zip_file in *.zip; do
+          unzip -q "$zip_file"
+          # Rename the extracted report.jsonl to avoid conflicts
+          if [ -f "report.jsonl" ]; then
+            mv "report.jsonl" "report-shard-$counter.jsonl"
+          fi
+          counter=$((counter + 1))
+        done
+        cd ../playwright
+        echo "Merging blob reports..."
+        npx playwright merge-reports ../all-blob-reports --reporter json > results.json
+
     - uses: geekyeggo/delete-artifact@v5
       with:
           name: |
             ${{ inputs.BROWSER }}-blob-report-*
 
     - name: Generate Markdown Test Results
+      working-directory: playwright
+      env:
+        GITHUB_RUN_ID: ${{ github.run_id }}
+        GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        GITHUB_WORKFLOW: ${{ github.workflow }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_REF: ${{ github.ref }}
+        GITHUB_SHA: ${{ github.sha }}
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+        GITHUB_SERVER_URL: ${{ github.server_url }}
+        BROWSER: ${{ inputs.BROWSER }}
+        PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
+        PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+        PROJECT: ${{ inputs.PROJECT }}
+        TAGS: ${{ inputs.TAGS }}
+        NOT_TAGS: ${{ inputs.NOT_TAGS }}
+        PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
       run: |
-        npx playwright merge-reports --reporter json ../all-blob-reports > results.json
         npm run markdown
         cat results.md >> $GITHUB_STEP_SUMMARY
-      working-directory: playwright
   
     # - name: Merge into JUint Report
     #   run: npx playwright merge-reports --reporter junit ./all-blob-reports > ${{ inputs.BROWSER }}-junit.xml
