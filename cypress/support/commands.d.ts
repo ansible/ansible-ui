@@ -1955,12 +1955,6 @@ declare global {
         content_type__model?: string;
       }): Chainable<PlatformRole[]>;
 
-      /**
-       * Gets platform role details by ID
-       * @returns {Chainable<PlatformRole>}
-       */
-      getPlatformRoleDetail(roleID: string): Chainable<PlatformRole>;
-
       getPlatformRoleByName(roleName: string, contentType: string): Chainable<PlatformRole>;
 
       /**
