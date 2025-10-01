@@ -642,12 +642,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getPlatformRoleDetail', (roleID: string) => {
-  cy.requestGet<PlatformRole>(gatewayAPI`/role_definitions/${roleID}/`).then((response) => {
-    cy.wrap(response);
-  });
-});
-
 /*
 Content Type available choices:
 shared.organization
