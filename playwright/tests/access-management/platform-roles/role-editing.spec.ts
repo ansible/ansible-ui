@@ -525,6 +525,11 @@ test.describe('Role Editing Tests', () => {
       await page.getByLabel('Description').clear();
       await page.getByLabel('Description').fill(newDescription);
 
+      // Add permissions
+      await page.getByRole('button', { name: 'Permissions' }).click();
+      await page.getByRole('checkbox', { name: 'Can change namespace' }).check();
+      await page.getByRole('checkbox', { name: 'Can delete namespace' }).check();
+
       // Submit the form and wait for save operation to complete
       await page.getByRole('button', { name: 'Save role', exact: true }).click();
 
@@ -543,6 +548,9 @@ test.describe('Role Editing Tests', () => {
 
       // Verify changes on details page
       await expect(page.locator('#description')).toHaveText(newDescription);
+      await expect(page.locator('#permissions')).toContainText('Can view namespace');
+      await expect(page.locator('#permissions')).toContainText('Can change namespace');
+      await expect(page.locator('#permissions')).toContainText('Can delete namespace');
 
       // Navigate to list and verify updates with proper waiting
       await navigateToRolesPage(page);
@@ -557,6 +565,11 @@ test.describe('Role Editing Tests', () => {
       await verifyRoleInList(page, newName, true);
       const newRoleRow = await getTableRow(page, newName);
       await expect(newRoleRow).toContainText(newDescription, { timeout: 10000 });
+
+      await page.getByRole('button', { name: 'Details' }).click();
+      await page.getByText('Can view namespace').click();
+      await page.getByText('Can change namespace').click();
+      await page.getByText('Can delete namespace').click();
 
       // Verify old name is not in list
       await verifyRoleInList(page, originalName, false);
