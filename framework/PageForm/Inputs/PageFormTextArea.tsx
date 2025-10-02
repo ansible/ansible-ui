@@ -98,7 +98,7 @@ export function PageFormTextArea<
                   readOnlyVariant={isReadOnly ? 'default' : undefined}
                   isDisabled={isDisabled}
                   autoFocus={autoFocus}
-                  autoComplete={autoComplete || 'off'}
+                  autoComplete={autoComplete || (type === 'password' ? 'new-password' : 'off')}
                   data-cy={id}
                   autoResize={disableAutoResize === undefined ? true : !disableAutoResize}
                   rows={1}
