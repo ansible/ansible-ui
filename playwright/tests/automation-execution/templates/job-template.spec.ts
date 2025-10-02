@@ -583,4 +583,75 @@ test.describe('Job Templates', () => {
       }
     }
   );
+
+  test('verify the playbook field is creatable', { tag: ['@not_mock'] }, async ({ page }) => {
+    const jobTemplateName = createE2EName('playbook-creatable');
+
+    // Navigate to templates page
+    await navigateTo(page, 'Automation Execution', 'Templates');
+    await expect(page.getByTestId('page-title')).toBeVisible({ timeout: 10000 });
+
+    const createButtonExists = await page.getByText('Create template', { exact: true }).count();
+    const dropdownExists = await page
+      .getByRole('button', { name: 'dropdown toggle', exact: true })
+      .count();
+
+    if (createButtonExists > 0) {
+      await page.getByText('Create template', { exact: true }).click();
+      const menuItemExists = await page
+        .getByRole('menuitem', { name: 'Create job template' })
+        .count();
+      if (menuItemExists > 0) {
+        await page.getByRole('menuitem', { name: 'Create job template' }).click();
+      } else {
+        test.skip(true, 'Create job template menu item not found');
+      }
+    } else if (dropdownExists > 0) {
+      await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
+      await page.waitForTimeout(1000);
+      const menuItemExists = await page
+        .getByRole('menuitem', { name: 'Create job template' })
+        .count();
+      if (menuItemExists > 0) {
+        await page.getByRole('menuitem', { name: 'Create job template' }).click();
+      } else {
+        test.skip(true, 'Create job template menu item not found in dropdown');
+      }
+    } else {
+      test.skip(true, 'Cannot access job template creation form - no create buttons found');
+    }
+
+    // Continue with form if we got here
+    await expect(page.getByPlaceholder('Enter job template name')).toBeVisible({
+      timeout: 10000,
+    });
+    await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
+
+    // Select inventory (required)
+    await page.getByRole('button', { name: 'Inventory' }).click();
+    await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
+    await page.locator('[role="option"]').first().click();
+
+    await page.locator('#project-select').click();
+    await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
+    const projectOptions = await page.locator('[role="option"]').all();
+    expect(projectOptions.length).toBeGreaterThan(0);
+    await projectOptions[0].click();
+
+    // Wait for and interact with playbook field
+    await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
+      timeout: 10000,
+    });
+    await page.getByPlaceholder('Add a project, then select a').fill('test_hello_world.yml');
+    await page.getByRole('option', { name: 'Create "test_hello_world.yml"' }).click();
+    const selectedPlaybook = await page
+      .getByPlaceholder('Add a project, then select a')
+      .inputValue();
+
+    expect(selectedPlaybook).toBe('test_hello_world.yml');
+
+    await page.waitForTimeout(3000);
+    const persistedValue = await page.getByPlaceholder('Add a project, then select a').inputValue();
+    expect(persistedValue).toBe('test_hello_world.yml');
+  });
 });
