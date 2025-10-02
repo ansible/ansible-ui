@@ -4,16 +4,23 @@ import { navigateTo } from '../../../../commands/navigateTo';
 import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
 import { clickPageAction } from '../../../../commands/clickPageAction';
 import { clickTableRow } from '../../../../commands/clickTableRow';
+import { singleSelectByLabel } from '../../../../commands/singleSelectByLabel';
 
 export async function createExecutionEnvironment(
   page: Page,
-  options: { executionEnvName?: string } = {}
+  options: { executionEnvName?: string; organizationName?: string } = {}
 ) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
   await page.getByText('Create execution environment', { exact: true }).click();
   const executionEnvName = options.executionEnvName ?? createE2EName();
   await page.getByPlaceholder('Enter execution environment').fill(executionEnvName);
   await page.getByPlaceholder('Enter image').fill('myimage');
+
+  // Set organization if provided
+  if (options.organizationName) {
+    await singleSelectByLabel('Organization', options.organizationName, page);
+  }
+
   await page.getByRole('button', { name: 'Create execution environment' }).click();
   await expect(page.getByRole('heading', { name: executionEnvName, exact: true })).toBeVisible();
   return executionEnvName;
