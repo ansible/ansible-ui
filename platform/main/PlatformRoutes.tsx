@@ -96,7 +96,6 @@ export enum PlatformRoute {
   Roles = 'platform-roles',
   RoleDetails = 'platform-role-details',
   ExecutionRoles = 'platform-execution-roles',
-  Lightspeed = 'platform-lightspeed',
   QuickStarts = 'platform-quickstarts',
   Authenticators = 'platform-authentications',
   AuthenticatorPage = 'platform-authentication-page',

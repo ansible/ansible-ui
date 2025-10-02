@@ -38,7 +38,6 @@ test('Persona views for System Administrator', async ({ page }) => {
   await expect(page.locator('#platform-access')).toContainText('Access Management');
   await expect(page.locator('#platform-hub')).toContainText('Automation Content');
   await expect(page.locator('#awx-analytics')).toContainText('Automation Analytics');
-  await expect(page.locator('#platform-lightspeed')).toContainText('Ansible Lightspeed');
   await expect(page.locator('#awx-settings')).toContainText('Settings');
   await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
   await page.locator('#platform-awx').click();
@@ -62,7 +61,6 @@ test('Persona views for System Administrator', async ({ page }) => {
   await expect(page.locator('#platform-overview')).toBeHidden();
   await expect(page.locator('#platform-hub')).toBeHidden();
   await expect(page.locator('#awx-analytics')).toBeHidden();
-  await expect(page.locator('#platform-lightspeed')).toBeHidden();
   await expect(page.locator('#awx-settings')).toBeHidden();
   // Turn off the feature flag for Persona View Switcher
   await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
@@ -97,7 +95,6 @@ test('Persona views for Normal User', async ({ page }) => {
   await expect(page.locator('#platform-eda')).toContainText('Automation Decisions');
   await expect(page.locator('#platform-access')).toContainText('Access Management');
   await expect(page.locator('#platform-hub')).toContainText('Automation Content');
-  await expect(page.locator('#platform-lightspeed')).toContainText('Ansible Lightspeed');
   await expect(page.locator('#awx-settings')).toContainText('Settings');
   await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
   await expect(page.locator('#awx-analytics')).toBeHidden();
@@ -123,7 +120,6 @@ test('Persona views for Normal User', async ({ page }) => {
   await expect(page.locator('#platform-overview')).toBeHidden();
   await expect(page.locator('#platform-hub')).toBeHidden();
   await expect(page.locator('#awx-analytics')).toBeHidden();
-  await expect(page.locator('#platform-lightspeed')).toBeHidden();
   await expect(page.locator('#awx-settings')).toBeHidden();
   // Turn off the feature flag for Persona View Switcher
   await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
