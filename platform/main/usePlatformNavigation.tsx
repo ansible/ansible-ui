@@ -33,7 +33,6 @@ import { LegacyTokenForm } from '../access/legacy/legacy-tokens/LegacyTokenForm'
 import { LegacyTokenPage } from '../access/legacy/legacy-tokens/LegacyTokenPage';
 import { LegacyTokensPage } from '../access/legacy/legacy-tokens/LegacyTokensPage';
 import { LegacyTokensTable } from '../access/legacy/legacy-tokens/LegacyTokensTable';
-import { Lightspeed } from '../lightspeed/Lightspeed';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
 import { useGetPlatformApplicationsRoutes } from '../routes/useGetPlatformApplicationsRoutes';
@@ -128,19 +127,6 @@ export function usePlatformNavigation() {
       }
     }
 
-    // Lightspeed
-    const lightspeedApplication = oauthApplications?.results.find((app) =>
-      app.name.toLocaleLowerCase().includes('lightspeed')
-    );
-    if (!lightspeedApplication || !lightspeedApplication.app_url) {
-      navigationItems.push({
-        id: PlatformRoute.Lightspeed,
-        label: t('Ansible Lightspeed'),
-        path: 'lightspeed',
-        element: <Lightspeed />,
-      });
-    }
-
     // Access
     navigationItems.push(platformAccessNavigation);
 
@@ -181,7 +167,6 @@ export function usePlatformNavigation() {
         if (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) {
           removeNavigationItemById(navigationItems, AwxRoute.Analytics);
         }
-        findNavigationItemById(navigationItems, PlatformRoute.Lightspeed)!.hidden = true;
         findNavigationItemById(navigationItems, PlatformRoute.Access)!.hidden = true;
         findNavigationItemById(navigationItems, AwxRoute.Settings)!.hidden = true;
         navigationItems.push(removeNavigationItemById(navigationItems, AwxRoute.Jobs)!);
