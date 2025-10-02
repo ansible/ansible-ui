@@ -57,7 +57,7 @@ export function PageFormSecret({ onClear, shouldHideField, label, labelHelp, chi
             aria-label={t('hidden value')}
             placeholder="••••••••••••••••••••••"
             type="password"
-            autoComplete="off"
+            autoComplete="new-password"
             isDisabled={true}
           />
           <Button variant="control" onClick={() => onClear()}>
