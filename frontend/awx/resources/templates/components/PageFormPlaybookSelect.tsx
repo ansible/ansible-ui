@@ -43,7 +43,7 @@ export function PageFormPlaybookSelect<
     additionalControls,
     id,
     isRequired = true,
-    isCreatable = false,
+    isCreatable = true,
     label,
     labelHelp,
     labelHelpTitle,
