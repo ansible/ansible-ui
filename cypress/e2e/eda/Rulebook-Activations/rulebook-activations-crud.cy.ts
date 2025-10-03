@@ -82,7 +82,7 @@ describe('Check if the build includes EDA', () => {
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
       });
-      cy.selectDropdownOptionByResourceName('decision_environment_id', edaDecisionEnvironment.name);
+      cy.singleSelectByDataCy('decision_environment_id', edaDecisionEnvironment.name);
       cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
       cy.clickButton(/^Create rulebook activation$/);
       cy.wait('@edaRBA').then((edaRBA) => {
