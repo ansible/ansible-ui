@@ -93,10 +93,7 @@ describe('Check if the build includes EDA', () => {
                       cy.get('tbody tr input').click();
                       cy.clickButton('Confirm');
                     });
-                    cy.selectDropdownOptionByResourceName(
-                      'decision_environment_id',
-                      edaDecisionEnvironment.name
-                    );
+                    cy.singleSelectByDataCy('decision_environment_id', edaDecisionEnvironment.name);
                     cy.getBy('[data-cy="organization_id"]').click();
                     cy.clickButton('Browse');
                     cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
@@ -185,7 +182,7 @@ describe('Check if the build includes EDA', () => {
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
       });
-      cy.selectDropdownOptionByResourceName('decision_environment_id', edaDecisionEnvironment.name);
+      cy.singleSelectByDataCy('decision_environment_id', edaDecisionEnvironment.name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');
       cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
