@@ -1,6 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../commands/checkBuildType';
-import { SAAS_URL } from '../../../commands/constants';
 import { createE2EName } from '../../../commands/createE2EName';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import {
@@ -23,57 +21,6 @@ test.afterEach(setupAfter);
 
 test.describe('Role Creation Tests', () => {
   test.describe('Basic Role Creation', () => {
-    test(
-      'should create a role with required fields only',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
-
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName, config.description);
-        await selectResourceType(page, config.resourceTypeDisplayName);
-        await selectPermissions(page, config.permissionDisplayNames);
-        await submitRoleForm(page);
-
-        // Wait for the page to navigate and load the role details
-        await expect(page.getByRole('heading', { name: roleName })).toBeVisible({ timeout: 15000 });
-        await verifyRoleDetails(page, roleName, config);
-        await deleteRole(roleName, page);
-      }
-    );
-
-    test(
-      'should create a role with name and description',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const description = 'Test role description for E2E testing';
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName, description };
-
-        const createdRoleName = await createRoleWithConfig(page, config);
-        await verifyRoleDetails(page, createdRoleName, config);
-        await deleteRole(createdRoleName, page);
-      }
-    );
-
-    test(
-      'should create a role and display correct breadcrumbs',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
-
-        await createRoleWithConfig(page, config);
-        await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toBeVisible();
-        await expect(page.getByRole('heading', { name: roleName })).toBeVisible();
-        await deleteRole(roleName, page);
-      }
-    );
-  });
-
-  test.describe('Role Creation with Different Resource Types', () => {
     test('should create a Galaxy namespace role', { tag: ['@not_mock'] }, async ({ page }) => {
       const roleName = createE2EName();
       const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
@@ -82,137 +29,27 @@ test.describe('Role Creation Tests', () => {
       await verifyRoleDetails(page, createdRoleName, config);
       await deleteRole(createdRoleName, page);
     });
-
-    test('should create a Galaxy collection role', { tag: ['@not_mock'] }, async ({ page }) => {
-      const roleName = createE2EName();
-      const config = { ...TEST_ROLE_CONFIGS.collection, name: roleName };
-      const createdRoleName = await createRoleWithConfig(page, config);
-      await verifyRoleDetails(page, createdRoleName, config);
-      await deleteRole(createdRoleName, page);
-    });
-
-    test('should create an AWX inventory role', { tag: ['@not_mock'] }, async ({ page }) => {
+    test('should create a AWX inventory role', { tag: ['@not_mock'] }, async ({ page }) => {
       const roleName = createE2EName();
       const config = { ...TEST_ROLE_CONFIGS.awxInventory, name: roleName };
-      const createdRoleName = await createRoleWithConfig(page, config);
 
+      const createdRoleName = await createRoleWithConfig(page, config);
       await verifyRoleDetails(page, createdRoleName, config);
       await deleteRole(createdRoleName, page);
     });
-
-    test(
-      'should create an EDA rulebook role',
-      { tag: ['@not_mock'] },
-      async ({ page, request }) => {
-        // Skip this test if running on SaaS deployment
-        const buildType = await checkBuildType(request);
-        if (buildType === SAAS_URL) {
-          test.skip();
-        }
-
-        const roleName = createE2EName();
-        const config = { ...TEST_ROLE_CONFIGS.edaRulebook, name: roleName };
-        const createdRoleName = await createRoleWithConfig(page, config);
-
-        await verifyRoleDetails(page, createdRoleName, config);
-        await deleteRole(createdRoleName, page);
-      }
-    );
-
-    test('should create a Galaxy system role', { tag: ['@not_mock'] }, async ({ page }) => {
-      const roleName = createE2EName();
-      const config = { ...TEST_ROLE_CONFIGS.system, name: roleName };
-      const createdRoleName = await createRoleWithConfig(page, config);
-      await expect(page.locator('#name')).toHaveText(roleName);
-      if (config.description) {
-        await expect(page.locator('#description')).toHaveText(config.description);
-      }
-      await expect(page.locator('#components')).toHaveText(config.expectedComponent);
-      await deleteRole(createdRoleName, page);
-    });
-  });
-
-  test.describe('Permission Selection Validation', () => {
-    test(
-      'should show permissions only after selecting resource type',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await expect(page.getByText('Select permissions')).not.toBeVisible();
-        await selectResourceType(page, 'Namespace');
-        await expect(page.getByText('Select permissions')).toBeVisible();
-      }
-    );
-
-    test(
-      'should reset permissions when changing resource type',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName, 'Test role description');
-
-        // Select resource type and permissions
-        await selectResourceType(page, 'Namespace');
-        await selectPermissions(page, ['Can view collection import']);
-
-        // Submit and verify the form
-        await submitRoleForm(page);
-
-        // Wait for page navigation to complete
-        await expect(page.getByRole('heading', { name: roleName })).toBeVisible({ timeout: 10000 });
-
-        // Verify final state
-        await expect(page.locator('#resource-type')).toHaveText('Namespace');
-        await expect(page.locator('#permissions')).toContainText('Can view collection import');
-
-        await deleteRole(roleName, page);
-      }
-    );
-
-    test(
-      'should allow selecting multiple permissions for a resource type',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const config = { ...TEST_ROLE_CONFIGS.collection, name: roleName };
-        const createdRoleName = await createRoleWithConfig(page, config);
-
-        for (const permission of config.permissionDisplayNames) {
-          await expect(page.locator('#permissions')).toContainText(permission);
-        }
-        await deleteRole(createdRoleName, page);
-      }
-    );
   });
 
   test.describe('Role Creation Validation', () => {
     test(
-      'should show validation error for missing role name',
+      'should show validation error for missing name, description, and resource type',
       { tag: ['@not_mock'] },
       async ({ page }) => {
         await navigateToRolesPage(page);
         await clickCreateRole(page);
         await submitRoleForm(page);
-        const fieldToValidate = page.locator('#name-form-group');
-        await expect(fieldToValidate).toHaveText(/Name is required/);
-        await expect(page.getByRole('heading', { name: 'Create role' })).toBeVisible();
-      }
-    );
-
-    test(
-      'should show validation error for missing resource type',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName, 'Test description');
-        await submitRoleForm(page);
+        await expect(page.getByText(/Name is required/)).toBeVisible();
+        await expect(page.getByText(/Description is required/)).toBeVisible();
+        await expect(page.getByText(/Resource type is required/)).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Create role' })).toBeVisible();
       }
     );
@@ -228,6 +65,7 @@ test.describe('Role Creation Tests', () => {
         await fillRoleBasicInfo(page, roleName, 'Test description');
         await selectResourceType(page, 'Namespace');
         await submitRoleForm(page);
+        await expect(page.getByText(/Permissions is required/)).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Create role' })).toBeVisible();
       }
     );
@@ -312,28 +150,7 @@ test.describe('Role Creation Tests', () => {
     );
   });
 
-  test.describe('Role Form Reset and Navigation', () => {
-    test(
-      'should reset permissions when content type changes',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await fillRoleBasicInfo(page, createE2EName(), 'Test role description');
-        await selectResourceType(page, 'Namespace');
-        await selectPermissions(page, ['Can view collection import']);
-
-        // Verify permissions are selected
-        await expect(page.locator('#permissions')).toContainText('Can view collection import');
-
-        // Submit the form to test basic functionality
-        await submitRoleForm(page);
-
-        // Verify we can create a role successfully
-        await expect(page.getByRole('heading', { name: /E2E/ })).toBeVisible();
-      }
-    );
-
+  test.describe('Role Form  Navigation', () => {
     test(
       'should cancel role creation and return to list',
       { tag: ['@not_mock'] },

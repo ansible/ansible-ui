@@ -886,6 +886,7 @@ function TableCells<T extends object>(props: {
             modifier="nowrap"
             style={{ width: column.minWidth === 0 ? '0%' : undefined }}
             data-cy={getID(column.header + '-column-cell')}
+            data-testid={getID(column.header + '-column-cell')}
             className={props.expanded ? 'expanded' : undefined}
           >
             <TableColumnCell item={item} column={column} />

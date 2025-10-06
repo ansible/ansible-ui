@@ -3,19 +3,63 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import roleTypes from './mocks/roleTypes.fixture.json';
+import rolePermissions from './mocks/rolePermissions.fixture.json';
 import { PlatformRoles } from './PlatformRoles';
 
-const mockRoles: Record<string, { id: number; name: string; description?: string }[]> = {
+const mockBulkConfirmation = vi.fn();
+vi.mock('@ansible/ansible-ui-framework', async () => {
+  const actual = await vi.importActual('@ansible/ansible-ui-framework');
+  return {
+    ...actual,
+    useBulkConfirmation: () => mockBulkConfirmation,
+  };
+});
+vi.mock('@ansible/platform-ui/main/PlatformActiveUserProvider', () => ({
+  usePlatformActiveUser: () => ({
+    activePlatformUser: {
+      is_superuser: true,
+      id: 1,
+      username: 'admin',
+    },
+  }),
+}));
+
+const mockRoles: Record<
+  string,
+  {
+    id: number;
+    name: string;
+    description?: string;
+    managed?: boolean;
+    permissions?: string[];
+    content_type?: string;
+  }[]
+> = {
   awx: [
     {
       id: 20,
       name: 'AWX Admin',
+      managed: true,
     },
     {
       id: 12,
       name: 'AWX Credential Admin',
       description: 'Has all permissions to a single credential',
+      managed: true,
+      content_type: 'awx.credential',
+      permissions: [
+        'awx.change_credential',
+        'awx.delete_credential',
+        'awx.use_credential',
+        'awx.view_credential',
+      ],
+    },
+    {
+      id: 123,
+      name: 'Custom Role',
+      managed: false,
     },
   ],
   eda: [
@@ -40,6 +84,12 @@ const mockRoles: Record<string, { id: number; name: string; description?: string
 };
 
 const ALL_ROLES = [...mockRoles.awx, ...mockRoles.eda, ...mockRoles.galaxy, ...mockRoles.shared];
+
+const waitForTableToLoad = async () => {
+  await waitFor(() => {
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
+};
 
 describe('PlatformRoles', () => {
   let server: ReturnType<typeof setupServer>;
@@ -121,7 +171,10 @@ describe('PlatformRoles', () => {
         const roles = mockRoles[componentFilter as keyof typeof mockRoles] || ALL_ROLES;
         return HttpResponse.json({ count: roles.length, results: roles });
       }),
-      http.get('/api/gateway/v1/service-index/role-types/', () => HttpResponse.json([]))
+      http.get('/api/gateway/v1/service-index/role-types/', () => HttpResponse.json(roleTypes)),
+      http.get('/api/gateway/v1/service-index/role-permissions/', () =>
+        HttpResponse.json(rolePermissions as Record<string, unknown>)
+      )
     );
   });
 
@@ -161,6 +214,20 @@ describe('PlatformRoles', () => {
     });
   });
 
+  it('should display table columns headers', () => {
+    const { getByRole } = render(
+      <MemoryRouter>
+        <PlatformRoles />
+      </MemoryRouter>
+    );
+
+    expect(getByRole('columnheader', { name: 'Name' })).toBeInTheDocument();
+    expect(getByRole('columnheader', { name: 'Description' })).toBeInTheDocument();
+    expect(getByRole('columnheader', { name: 'Components' })).toBeInTheDocument();
+    expect(getByRole('columnheader', { name: 'Resource type' })).toBeInTheDocument();
+    expect(getByRole('columnheader', { name: 'Role creation' })).toBeInTheDocument();
+  });
+
   it('should load and display all available roles', async () => {
     render(
       <MemoryRouter>
@@ -178,12 +245,20 @@ describe('PlatformRoles', () => {
       'Galaxy Admin',
       'Platform Auditor',
     ]);
-    expect(
-      screen.getByRole('cell', { name: 'Has all permissions to a single credential' })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('cell', { name: 'Has view permissions to all objects' })
-    ).toBeInTheDocument();
+
+    const awxRow = screen.getByRole('row', { name: /AWX Credential Admin/ });
+
+    expect(within(awxRow).getByTestId('name-column-cell')).toHaveTextContent(
+      'AWX Credential Admin'
+    );
+    expect(within(awxRow).getByTestId('description-column-cell')).toHaveTextContent(
+      'Has all permissions to a single credential'
+    );
+    expect(within(awxRow).getByTestId('components-column-cell')).toHaveTextContent(
+      'Automation Execution'
+    );
+    expect(within(awxRow).getByTestId('resource-type-column-cell')).toHaveTextContent('Credential');
+    expect(within(awxRow).getByTestId('role-creation-column-cell')).toHaveTextContent('Default');
   });
 
   it('filters by AWX component', async () => {
@@ -277,6 +352,89 @@ describe('PlatformRoles', () => {
     });
     expectRolesVisible(['Platform Auditor', 'AWX Admin', 'AWX Credential Admin']);
     expectRolesHidden(['EDA Project Admin', 'Galaxy Admin']);
+  });
+
+  it('should enable custom role row actions (edit/delete)', async () => {
+    const { user } = setupTest();
+    await waitForTableToLoad();
+    const roleRow = screen.getByRole('row', { name: /Custom Role/ });
+
+    // Custom role should be editable
+    const editAction = within(roleRow).getByRole('link', { name: 'Edit role' });
+    expect(editAction).toBeEnabled();
+
+    const kebabButton = within(roleRow).getByRole('button', { name: 'kebab dropdown toggle' });
+    await user.click(kebabButton);
+    await waitFor(() => {
+      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    // Custom role should be deletable
+    const deleteAction = await screen.findByRole('menuitem', {
+      name: 'Delete role',
+    });
+    expect(deleteAction).toBeEnabled();
+  });
+
+  it('should disable managed/built-in roles row actions (edit/delete)', async () => {
+    const { user } = setupTest();
+    await waitForTableToLoad();
+    const roleRow = screen.getByRole('row', { name: /AWX Admin/ });
+
+    // Managed role should not be editable
+    const editAction = within(roleRow).getByRole('link', { name: 'Edit role' });
+    expect(editAction).toBeInTheDocument();
+    expect(editAction).toHaveAttribute('aria-disabled', 'true');
+
+    const kebabButton = within(roleRow).getByRole('button', { name: 'kebab dropdown toggle' });
+    await user.click(kebabButton);
+    await waitFor(() => {
+      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    // Managed role should not be deletable
+    const deleteOption = await screen.findByRole('menuitem', {
+      name: 'Delete role',
+    });
+    await user.click(deleteOption);
+    expect(deleteOption).toBeInTheDocument();
+    expect(deleteOption).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByText('Built-in roles cannot be deleted.')).toBeInTheDocument();
+  });
+
+  it('should disable bulk delete when no roles are selected', async () => {
+    const { user } = setupTest();
+    await waitForTableToLoad();
+    await user.click(screen.getByRole('button', { name: 'toolbar actions' }));
+
+    const bulkDeleteButton = await screen.findByRole('menuitem', {
+      name: 'Delete selected roles',
+    });
+    await user.click(bulkDeleteButton);
+    expect(bulkDeleteButton).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByText('Select at least one item from the list')).toBeInTheDocument();
+  });
+
+  it('should call bulk confirmation when clicking delete role', async () => {
+    const { user } = setupTest();
+    await waitForTableToLoad();
+    const roleRow = screen.getByRole('row', { name: /Custom Role/ });
+    const kebabButton = within(roleRow).getByRole('button', { name: 'kebab dropdown toggle' });
+
+    await user.click(kebabButton);
+    await waitFor(() => {
+      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    const deleteOption = await screen.findByText('Delete role');
+    await user.click(deleteOption);
+
+    expect(mockBulkConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Permanently delete roles',
+        items: [{ id: 123, name: 'Custom Role', managed: false }],
+      })
+    );
   });
 
   it('should render empty state when no roles are found', async () => {
