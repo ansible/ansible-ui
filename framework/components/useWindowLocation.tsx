@@ -24,7 +24,7 @@ export function useWindowLocation() {
 
   const push = useCallback(
     (url?: string | URL | null) => {
-      window.history.replaceState(null, '', url);
+      window.history.pushState(null, '', url);
       setWindowLocation();
     },
     [setWindowLocation]
