@@ -38,5 +38,8 @@ export async function deleteAwxProject(projectName: string, page: Page) {
   await clickTableRow({ text: projectName, clearFilters: true }, page);
   await clickPageAction('Delete project', page);
   await confirmAndAssertDeletion(page);
+
+  // After deletion, manually navigate back to Projects list to ensure we're on the correct page
+  await navigateTo(page, 'Automation Execution', 'Projects');
   await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 }
