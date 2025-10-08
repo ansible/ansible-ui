@@ -133,6 +133,7 @@ test.describe('Workflow Viz', () => {
       const projectTwo = await createAwxProject({}, page);
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', projectOne, page);
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Edit step' }).click();
       await page.getByRole('button', { name: 'Project', exact: true }).click();
@@ -185,6 +186,7 @@ test.describe('Workflow Viz', () => {
         page.getByRole('heading', { name: 'Success alert: Successfully' })
       ).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.locator('g > .pf-v6-svg > path').first().click();
       await page.locator('.pf-topology__node__action-icon > path').click();
       await page.getByRole('menuitem', { name: 'Run on fail' }).click();
@@ -286,6 +288,7 @@ test.describe('Workflow Viz', () => {
       const projectTwo = await createAwxProject({ projectName: projectTwoName }, page);
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', projectOne, page);
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.getByRole('button', { name: 'Add step' })).toBeVisible();
       await page.getByRole('button', { name: 'Add step' }).click();
       await expect(page.getByRole('dialog')).toBeVisible();
@@ -302,6 +305,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
@@ -363,6 +367,8 @@ test.describe('Workflow Viz', () => {
       const jobTemplate = await createJobTemplate({ inventoryName: inventoryName }, page);
       const workflowJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', project, page);
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+
       await removeAllWorkflowVizNodes(page);
       await navigateToVisualizer(workflowJobTemplate, page);
       await createVisualizerStep('Project Sync', project, page);
