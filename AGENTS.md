@@ -223,6 +223,34 @@ test.describe('Feature Name - Description', () => {
 - Better organization in test reports
 - Simplifies debugging when tests fail
 
+#### Migrating from Cypress - CRITICAL
+When migrating tests from Cypress to Playwright or creating new Playwright tests:
+
+**ALWAYS use `data-testid` instead of `data-cy` locators:**
+- Playwright tests should use `data-testid` attributes for test-specific selectors
+- Cypress tests use `data-cy` attributes, but Playwright should standardize on `data-testid`
+- If a `data-testid` is not available on an element that has `data-cy`, find the source component and add `data-testid`
+- **Prefer `getByTestId()` over `locator('[data-testid]')`** for better readability and Playwright best practices
+
+```typescript
+// BAD - Don't use data-cy in Playwright tests
+await page.locator('[data-cy="content-type"]').click();
+
+// BETTER - Use data-testid with locator
+await page.locator('[data-testid="content-type"]').click();
+
+// BEST - Use getByTestId helper (preferred)
+await page.getByTestId('content-type').click();
+```
+
+**Steps when data-testid is missing:**
+1. Identify the component that renders the element with `data-cy`
+2. Add `data-testid` attribute to that component alongside the existing `data-cy`
+3. Use the new `data-testid` in your Playwright test
+4. Keep `data-cy` in place for existing Cypress tests until they are fully migrated
+
+**Rationale:** This ensures consistency across Playwright tests and follows Playwright best practices while maintaining backward compatibility with Cypress during the migration period.
+
 #### Selector Best Practices
 - Use `exact: true` for precise text matching:
   ```typescript
@@ -283,9 +311,13 @@ test.describe('Feature Name - Description', () => {
   // Avoid if possible  
   await page.locator('#submit-btn').click();
   ```
-- Use data-cy attributes for test-specific selectors:
+- Use `data-testid` attributes for test-specific selectors (not `data-cy`):
   ```typescript
-  await page.locator('[data-cy="content-type"]').click();
+  // Preferred - use getByTestId helper
+  await page.getByTestId('content-type').click();
+  
+  // Alternative - use locator with data-testid
+  await page.locator('[data-testid="content-type"]').click();
   ```
 
 #### Common Test Utilities
