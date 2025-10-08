@@ -1,7 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { t } from 'i18next';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeAll, afterAll, beforeEach } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { setEdaApiPath } from '@ansible/eda-ui/common/eda-utils';
 import { PlatformOverview } from './PlatformOverview';
 
 // Mock dependencies
@@ -16,6 +20,9 @@ vi.mock('./useManagedPlatformOverview', () => ({
     managedResources: [
       { id: 'counts', name: 'Resource counts' },
       { id: 'job_activity', name: 'Job activity' },
+      { id: 'recent-rulebook-activations' },
+      { id: 'recent-rule-audits' },
+      { id: 'recent-decision-environments' },
     ],
   }),
 }));
@@ -225,6 +232,62 @@ describe('PlatformOverview', () => {
 
         unmount();
       });
+    });
+  });
+
+  describe('Platform EDA overview cards', () => {
+    const server = setupServer();
+
+    beforeAll(() => {
+      setEdaApiPath('/api/eda/v1');
+      server.listen({ onUnhandledRequest: 'error' });
+    });
+
+    afterAll(() => {
+      server.close();
+    });
+
+    it('should display EDA cards in platform overview', () => {
+      server.use(
+        http.get(edaAPI`/activations/`, () =>
+          HttpResponse.json({
+            count: 0,
+            results: [],
+            next: null,
+            previous: null,
+          })
+        ),
+        http.get(edaAPI`/decision-environments/`, () =>
+          HttpResponse.json({
+            count: 0,
+            results: [],
+            next: null,
+            previous: null,
+          })
+        ),
+        http.get(edaAPI`/audit-rules/`, () =>
+          HttpResponse.json({
+            count: 0,
+            results: [],
+            next: null,
+            previous: null,
+          })
+        )
+      );
+      render(
+        <MemoryRouter>
+          <PlatformOverview />
+        </MemoryRouter>
+      );
+
+      expect(screen.getByText('Rulebook Activations')).toBeInTheDocument();
+      expect(screen.getByText('Recently updated rulebook activations')).toBeInTheDocument();
+
+      expect(screen.getByText('Rule Audit')).toBeInTheDocument();
+      expect(screen.getByText('Recently fired rules')).toBeInTheDocument();
+
+      expect(screen.getByText('Decision Environments')).toBeInTheDocument();
+      expect(screen.getByText('Recently updated decision environments')).toBeInTheDocument();
     });
   });
 });
