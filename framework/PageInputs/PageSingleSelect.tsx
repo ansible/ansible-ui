@@ -325,7 +325,7 @@ export function PageSingleSelect<
         innerRef={selectListRef}
       >
         <MenuSearch>
-          <MenuSearchInput data-cy="search-input">
+          <MenuSearchInput data-cy="search-input" data-testid="search-input">
             <SearchInput
               id={`${id}-search`}
               ref={searchRef}
@@ -418,6 +418,7 @@ export function PageSingleSelectList(props: {
             value={option.key !== undefined ? option.key : option.label}
             description={option.description}
             data-cy={optionId}
+            data-testid={optionId}
           >
             {option.label}
           </SelectOption>

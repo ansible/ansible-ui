@@ -47,6 +47,7 @@ export function TextCell(props: Readonly<TextCellProps>) {
           <FlexItem
             style={{ maxWidth: '100%' }}
             data-cy={String(props.text).toLocaleLowerCase() + '-status'}
+            data-testid={String(props.text).toLocaleLowerCase() + '-status'}
           >
             <div
               style={{
