@@ -18,7 +18,6 @@ export async function createRulebookActivation(
 ) {
   const rulebookActivationName = options.name ?? createE2EName('rulebookActivation');
   const projectName = options.projectName ?? 'Demo Project';
-  const credentialName = options.credentialName ?? 'Demo Credential';
   await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
   await page.getByText('Create rulebook activation').click();
   await page.getByRole('textbox', { name: 'Name', exact: true }).click();
@@ -44,12 +43,15 @@ export async function createRulebookActivation(
 
   await page.getByRole('option', { name: projectName }).click();
   await page.getByRole('button', { name: 'Rulebook', exact: true }).click();
-  await page.getByRole('option', { name: 'basic_short.yml' }).click();
+  await page.getByRole('option', { name: 'hello_echo.yml' }).click();
 
-  await page.getByRole('button', { name: 'Credential' }).click();
-  await page.getByRole('textbox', { name: 'Search input' }).click();
-  await page.getByRole('textbox', { name: 'Search input' }).fill(credentialName);
-  await page.getByText(credentialName).click();
+  if (options.credentialName) {
+    await page.getByRole('button', { name: 'Credential' }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).fill(options.credentialName);
+    await page.getByText(options.credentialName).click();
+  }
+
   await page.getByRole('button', { name: 'Decision Environment' }).click();
   await page.getByRole('option', { name: options.decisionEnvironmentName }).click();
   if (options?.disabled) {

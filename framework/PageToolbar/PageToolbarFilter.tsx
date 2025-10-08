@@ -126,6 +126,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
               }))}
               placeholder=""
               data-cy={selectedFilter}
+              data-testid={selectedFilter}
               disableSortOptions
               isRequired
               disableMaxDropdownWidth

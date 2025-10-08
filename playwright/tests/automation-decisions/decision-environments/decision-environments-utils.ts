@@ -16,7 +16,7 @@ export async function createDecisionEnvironment(
     options.decisionEnvironmentName ?? createE2EName('decision-environment');
   await page.getByRole('textbox', { name: 'Name' }).fill(decisionEnvironmentName);
   await singleSelectByLabel('Organization', options.organizationName ?? 'Default', page);
-  await page.getByLabel('Image').fill('repo/project/image-name:tag');
+  await page.getByLabel('Image').fill('quay.io/ansible/ansible-rulebook:main');
   await page.getByRole('button', { name: 'Create decision environment', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: decisionEnvironmentName, exact: true })

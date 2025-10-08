@@ -68,6 +68,7 @@ export function PageFormSwitch<
           >
             <Switch
               data-cy={id + '-toggle'}
+              data-testid={id + '-toggle'}
               aria-label={label}
               isChecked={value}
               onChange={(e) => onChange(e)}
