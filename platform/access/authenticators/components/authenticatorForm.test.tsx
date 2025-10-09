@@ -10,6 +10,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { AuthenticatorForm } from './AuthenticatorForm';
 import authenticator_plugins from './authenticatorPlugins.fixture.json';
 import authenticators from './authenticators.fixture.json';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 
 describe('authenticatorForm', () => {
   const server = setupServer(
@@ -177,5 +178,67 @@ describe('authenticatorForm', () => {
       expect.any(Function),
       expect.any(Function)
     );
+  });
+
+  test('should display configuration field errors with correct field names', async () => {
+    const handleSubmit = vi.fn().mockRejectedValue(
+      new RequestError(
+        'Bad Request',
+        undefined,
+        400,
+        {
+          ADDITIONAL_UNVERIFIED_ARGS: ['Config error'],
+        },
+        {
+          ADDITIONAL_UNVERIFIED_ARGS: ['Config error'],
+        }
+      )
+    );
+
+    const { container, getByRole, getByText } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/create'}
+            element={
+              <AuthenticatorForm
+                plugins={authenticator_plugins as AuthenticatorPlugins}
+                handleSubmit={handleSubmit}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(container.querySelector('[id="name"]') as HTMLInputElement);
+    await user.type(
+      container.querySelector('[id="name"]') as HTMLInputElement,
+      'Test Authenticator'
+    );
+
+    await user.click(
+      container.querySelector(
+        '[id="configuration-editor-ADDITIONAL_UNVERIFIED_ARGS-form-group"] input'
+      ) as HTMLInputElement
+    );
+    await user.type(
+      container.querySelector(
+        '[id="configuration-editor-ADDITIONAL_UNVERIFIED_ARGS-form-group"] input'
+      ) as HTMLInputElement,
+      'xyz'
+    );
+
+    // Submit the form to trigger error handling
+    await user.click(getByRole('button', { name: 'Create Authentication Method' }));
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
+    // Verify that the authenticatorErrorAdapter processed the error correctly:
+    expect(getByText('Config error')).toBeInTheDocument();
   });
 });

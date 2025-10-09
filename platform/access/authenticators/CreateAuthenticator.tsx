@@ -1,8 +1,6 @@
-import { LoadingPage, usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { LoadingPage, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 import type { Authenticator } from '../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
 import { PlatformRoute } from '../../main/PlatformRoutes';
@@ -14,11 +12,7 @@ import {
 } from './components/AuthenticatorForm';
 import { useProcessAutoMigrationUsersRequest } from './hooks/useProcessAutoMigrationUsersRequest';
 
-type Errors = { [key: string]: string } | undefined;
-
 export function CreateAuthenticator() {
-  const { t } = useTranslation();
-  const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
   const processAutoMigrationUsersRequest = useProcessAutoMigrationUsersRequest();
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
@@ -50,33 +44,14 @@ export function CreateAuthenticator() {
       configuration: formatConfiguration(configuration, plugin),
     });
 
-    try {
-      const newAuthenticator = await request;
-      const newAuthenticatorId = newAuthenticator.id;
-      if (auto_migrate_users_to) {
-        await processAutoMigrationUsersRequest(newAuthenticator, auto_migrate_users_to);
-      }
-      pageNavigate(PlatformRoute.AuthenticatorDetails, {
-        params: { id: newAuthenticatorId },
-      });
-    } catch (err) {
-      let children: ReactNode | string | string[];
-      if (err && typeof err === 'object' && 'body' in err) {
-        const errorMessages = err.body as Errors;
-        if (errorMessages) {
-          children = Object.keys(errorMessages).map((key) => (
-            <p key="key">{`${key}: ${errorMessages[key]}`}</p>
-          ));
-        }
-      } else if (err instanceof Error && err.message) {
-        children = err.message;
-      }
-      alertToaster.addAlert({
-        variant: 'danger',
-        title: t('Error saving authenticator'),
-        children,
-      });
+    const newAuthenticator = await request;
+    const newAuthenticatorId = newAuthenticator.id;
+    if (auto_migrate_users_to) {
+      await processAutoMigrationUsersRequest(newAuthenticator, auto_migrate_users_to);
     }
+    pageNavigate(PlatformRoute.AuthenticatorDetails, {
+      params: { id: newAuthenticatorId },
+    });
   };
 
   return <AuthenticatorForm handleSubmit={handleSubmit} plugins={plugins} />;

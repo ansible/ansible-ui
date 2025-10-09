@@ -5,10 +5,9 @@ import {
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
-import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { t } from 'i18next';
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
@@ -26,9 +25,12 @@ import type {
 import type { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { authenticatorErrorAdapter } from './authenticatorErrorAdapter';
 import { PageFormAutoMigrateUsersSelect } from './PageFormAutoMigrateUsersSelect';
 import { AuthenticatorSubForm } from './steps/AuthenticatorSubForm';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
+import { useWatch } from 'react-hook-form';
+import { PlatformPageForm } from '../../../common/PlatformPageForm';
 
 export interface Configuration {
   [key: string]: boolean | string | string[] | { [k: string]: string | boolean | object };
@@ -83,7 +85,7 @@ interface AuthenticatorFormProps {
   authenticator?: Authenticator;
 }
 
-export function AuthenticatorForm(props: AuthenticatorFormProps) {
+export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
   const { plugins, authenticator } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -128,6 +130,23 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     initialValues.configuration = configuration;
   }
   const navigate = useNavigate();
+
+  const [configurationFields, setConfigurationFields] = useState<string[]>(() => {
+    // Initialize with default type configuration
+    const defaultType = authenticator?.type ?? AuthenticatorTypeEnum.Local;
+    const plugin = plugins.authenticators.find((p) => p.type === defaultType);
+    return plugin?.configuration_schema?.map((field) => field.name) || [];
+  });
+
+  // Callback to update configuration fields based on current type
+  const updateConfigurationFields = useCallback(
+    (currentType: AuthenticatorTypeEnum) => {
+      const plugin = plugins.authenticators.find((p) => p.type === currentType);
+      const fields = plugin?.configuration_schema?.map((field) => field.name) || [];
+      setConfigurationFields(fields);
+    },
+    [plugins.authenticators]
+  );
   return (
     <PageLayout>
       <PageHeader
@@ -145,24 +164,42 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
           },
         ]}
       />
-      <AwxPageForm
+      <PlatformPageForm
         submitText={
           !authenticator ? t('Create Authentication Method') : t('Save Authentication Method')
         }
         onSubmit={props.handleSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={initialValues}
+        errorAdapter={(error: unknown) => authenticatorErrorAdapter(error, configurationFields)}
       >
-        <AuthenticatorFormInputs plugins={plugins} authenticator={authenticator} />
-      </AwxPageForm>
+        <AuthenticatorFormInputs
+          plugins={plugins}
+          authenticator={authenticator}
+          onTypeChange={updateConfigurationFields}
+        />
+      </PlatformPageForm>
     </PageLayout>
   );
 }
 
-function AuthenticatorFormInputs(props: {
-  plugins: AuthenticatorPlugins;
-  authenticator?: Authenticator;
-}) {
+function AuthenticatorFormInputs(
+  props: Readonly<{
+    plugins: AuthenticatorPlugins;
+    authenticator?: Authenticator;
+    onTypeChange: (type: AuthenticatorTypeEnum) => void;
+  }>
+) {
+  const currentType = useWatch<AuthenticatorFormValues, 'type'>({ name: 'type' });
+  const { onTypeChange } = props;
+
+  // Update configuration fields when type changes
+  useEffect(() => {
+    if (currentType) {
+      onTypeChange(currentType);
+    }
+  }, [currentType, onTypeChange]);
+
   return (
     <>
       <PageFormTextInput
