@@ -35,7 +35,10 @@ export async function syncAwxProject(projectName: string, page: Page) {
 
 export async function deleteAwxProject(projectName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Projects');
-  await clickTableRow({ text: projectName, clearFilters: true }, page);
+  await clickTableRow(
+    { text: projectName, filterLabel: 'Name', filterValue: projectName, clearFilters: true },
+    page
+  );
   await clickPageAction('Delete project', page);
   await confirmAndAssertDeletion(page);
 
