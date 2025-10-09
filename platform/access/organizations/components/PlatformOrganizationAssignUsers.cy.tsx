@@ -30,7 +30,7 @@ describe('PlatformOrganizationAssignUsers', () => {
         fixture: 'platformOrganizationRoles.json',
       }
     ).as('organizationRoles');
-    cy.intercept('GET', gatewayAPI`/role_definitions?name=Organization+Member`, {
+    cy.intercept('GET', gatewayAPI`/role_definitions/?name=Organization+Member*`, {
       fixture: 'platformOrganizationMemberRole.json',
     }).as('organizationUserRole');
   });
