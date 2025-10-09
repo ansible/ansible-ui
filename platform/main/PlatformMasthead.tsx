@@ -101,6 +101,7 @@ export function PlatformMasthead() {
               component="a"
               to={`https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform`}
               data-cy="masthead-documentation"
+              data-testid="masthead-documentation"
             >
               {t('Documentation')}
             </DropdownItem>
@@ -109,6 +110,7 @@ export function PlatformMasthead() {
                 id="about"
                 onClick={() => pageNavigate(PlatformRoute.QuickStarts)}
                 data-cy="masthead-quickstarts"
+                data-testid="masthead-quickstarts"
               >
                 {t('Quick starts')}
               </DropdownItem>
@@ -117,6 +119,7 @@ export function PlatformMasthead() {
               id="about"
               onClick={() => setDialog(<PlatformAbout platformVersion={platformVersion} />)}
               data-cy="masthead-about"
+              data-testid="masthead-about"
             >
               {t('About')}
             </DropdownItem>
