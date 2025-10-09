@@ -13,4 +13,8 @@ export interface ErrorOutput {
   fieldErrors: FieldErrorDetail[];
 }
 
-export type ErrorAdapter = (error: unknown, mappedKeys?: Record<string, string>) => ErrorOutput;
+export type ErrorAdapter = (
+  error: unknown,
+  mappedKeys?: Record<string, string>,
+  configurationFields?: string[]
+) => ErrorOutput;

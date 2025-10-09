@@ -4,18 +4,17 @@ import {
   GenericErrorDetail,
 } from '@ansible/ansible-ui-framework/PageForm/typesErrorAdapter';
 import { isRequestError } from '@ansible/common-ui/crud/RequestError';
-import { PluginConfiguration } from '../../../interfaces/AuthenticatorPlugin';
 
-export const authenticatorErrorAdapter = (error: unknown): ErrorOutput => {
+export const authenticatorErrorAdapter = (
+  error: unknown,
+  configurationFields: string[]
+): ErrorOutput => {
   const genericErrors: GenericErrorDetail[] = [];
   const fieldErrors: FieldErrorDetail[] = [];
 
-  if (isRequestError(error)) {
+  if (isRequestError(error) && typeof error.json === 'object' && error.json !== null) {
     const typedBody = error.json as Record<string, unknown[]>;
 
-    const configurationFields = (
-      (error as unknown as { configurationSchema: PluginConfiguration[] }).configurationSchema || []
-    ).map((field) => field.name);
     for (const key in typedBody) {
       const messages = typedBody[key];
 
@@ -34,13 +33,21 @@ export const authenticatorErrorAdapter = (error: unknown): ErrorOutput => {
           if (configurationFields.includes(key)) {
             // handles { CONFIGURATION_FIELD: ['Error message'] }
             name = `configuration.${key}`;
+            fieldErrors.push({ name, message: message });
           } else if (configurationFields.includes(key.split('.')[0])) {
             // handles { CONFIGURATION_FIELD.object_key: ['Error message'] }
             name = `configuration.${key.split('.')[0]}`;
             message = `${key.split('.')[1]}: ${message}`;
+            // check if fieldErrors already contains this key
+            const fieldToUpdate = fieldErrors.find((field) => field.name === name);
+            if (fieldToUpdate) {
+              fieldToUpdate.message = [fieldToUpdate.message, message].join('; '); // Change Charlie's name
+            } else {
+              fieldErrors.push({ name, message: message as string });
+            }
+          } else {
+            fieldErrors.push({ name, message: message });
           }
-
-          fieldErrors.push({ name, message: message as string });
         }
       } else if (typeof messages === 'object' && messages !== null) {
         // handles { CONFIGURATION_FIELD: { object_key: 'Error message'} }
