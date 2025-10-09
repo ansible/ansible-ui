@@ -160,7 +160,7 @@
       "documentation_url": "https://django-auth-ldap.readthedocs.io/en/latest/"
     },
     {
-      "type": "ansible_base.authenticator_plugins.local",
+      "type": "ansible_base.authentication.authenticator_plugins.local",
       "configuration_schema": [
         {
           "name": "ADDITIONAL_UNVERIFIED_ARGS",
