@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test';
 import { Page } from 'playwright-core';
-import { clickPageAction } from '../../../../commands/clickPageAction';
 import { clickTableRow } from '../../../../commands/clickTableRow';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
+import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
 import { createE2EName } from '../../../../commands/createE2EName';
+import { deleteResourceFromDetailsPage } from '../../../../commands/deleteResourceFromDetailsPage';
 import { navigateTo } from '../../../../commands/navigateTo';
 import { singleSelectByLabel } from '../../../../commands/singleSelectByLabel';
 
@@ -22,9 +22,46 @@ export async function createTeam(
   return teamName;
 }
 
-export async function deleteTeam(teamName: string, page: Page) {
+export async function editTeamFromList(teamName: string, newTeamName: string, page: Page) {
   await navigateTo(page, 'Access Management', 'Teams');
-  await clickTableRow({ text: teamName }, page);
-  await clickPageAction('Delete team', page);
-  await confirmAndAssertDeletion(page);
+  await clickTableRowAction(
+    {
+      text: teamName,
+      action: 'Edit team',
+      filterLabel: 'Name',
+      clearFilters: true,
+    },
+    page
+  );
+
+  await expect(page.getByRole('heading', { name: `Edit ${teamName}`, exact: true })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).clear();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill(newTeamName);
+  await page.getByRole('button', { name: 'Save team', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Teams', exact: true })).toBeVisible();
+}
+
+export async function editTeam(teamName: string, newTeamName: string, page: Page) {
+  await navigateTo(page, 'Access Management', 'Teams');
+  await clickTableRow({ filterLabel: 'Name', text: teamName }, page);
+  await page.getByRole('tab', { name: 'Details', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit team', exact: true }).click();
+
+  await expect(page.getByRole('heading', { name: `Edit ${teamName}`, exact: true })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).clear();
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill(newTeamName);
+  await page.getByRole('button', { name: 'Save team', exact: true }).click();
+  await expect(page.getByRole('heading', { name: newTeamName, exact: true })).toBeVisible();
+}
+
+export async function deleteTeam(teamName: string, page: Page) {
+  await deleteResourceFromDetailsPage(
+    {
+      resourceName: teamName,
+      resourceType: 'team',
+      filterLabel: 'Name',
+      navigationPath: ['Access Management', 'Teams'],
+    },
+    page
+  );
 }
