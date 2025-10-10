@@ -49,6 +49,7 @@ export interface DocPathDictionary {
   apiToken?: string;
   automationCalculator?: string;
   hostMetrics?: string;
+  configureAnalytics?: string;
 }
 
 export function useGetDocsUrl(
@@ -95,6 +96,7 @@ const upstreamPaths: DocPathDictionary = {
   schedules: 'userguide/scheduling.html',
   instanceGroups: 'userguide/instance_groups.html',
   instances: 'administration/instances.html',
+  configureAnalytics: 'userguide/analytics.html',
 };
 
 export const downstreamPaths: DocPathDictionary = {
@@ -169,4 +171,6 @@ export const downstreamPaths: DocPathDictionary = {
     'html-single/using_automation_analytics/index#assembly-evaluating-automation-return',
   hostMetrics:
     'html-single/configuring_automation_execution/index#ref-controller-analytics-reports',
+  configureAnalytics:
+    'html/configuring_automation_execution/controller-usability-analytics-data-collection',
 };
