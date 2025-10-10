@@ -13,19 +13,21 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
 import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ExternalLink } from '@ansible/hub-ui//common/ExternalLink';
 import {
   Alert,
+  Content,
   Divider,
   ProgressStep,
   ProgressStepper,
   Stack,
-  Content,
   Title,
 } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import AnalyticsGraphic from '../assets/AAGraphic 1.svg?url';
 
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'username';
@@ -33,6 +35,8 @@ interface SubscriptionWizardData {
   client_id: string;
   client_secret: string;
   subscription_id?: string;
+  analytics_client_id: string;
+  analytics_client_secret: string;
   agree: boolean;
 }
 
@@ -45,6 +49,11 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
         id: 'subscription',
         label: t('Ansible Automation Platform Subscription'),
         inputs: <SubscriptionStep />,
+      },
+      {
+        id: 'analytics',
+        label: t('Optional: Automation Analytics'),
+        inputs: <AutomationAnalyticsStep />,
       },
       {
         id: 'license-agreement',
@@ -83,9 +92,15 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
           break;
       }
       refreshAwxConfig?.();
-      await requestPatch(awxAPI`/settings/system/`, {
-        INSIGHTS_TRACKING_STATE: true, // Default to true
-      });
+
+      // Set up analytics if client credentials are provided in automation analytics step
+      if (data.analytics_client_id && data.analytics_client_secret) {
+        await requestPatch(awxAPI`/settings/all/`, {
+          REDHAT_USERNAME: data.analytics_client_id,
+          REDHAT_PASSWORD: data.analytics_client_secret,
+          INSIGHTS_TRACKING_STATE: true,
+        });
+      }
       props.onSuccess();
     },
     [props, refreshAwxConfig]
@@ -248,6 +263,51 @@ function SubscriptionStep() {
           }
         />
       </PageFormHidden>
+    </>
+  );
+}
+
+function AutomationAnalyticsStep() {
+  const config = useAwxConfig();
+  const docsUrl = useGetDocsUrl(config, 'configureAnalytics');
+
+  return (
+    <>
+      <Content>
+        <Content component="h1">{t('Optional: Automation Analytics')}</Content>
+        <Content>
+          {t(
+            'Enter client ID and client secret to enable Analytics. This collects and transmits analytics on the service usage to Red Hat. For more information, see '
+          )}
+          <ExternalLink href={docsUrl}>{t('documentation')}</ExternalLink>
+          {t('.')}
+        </Content>
+        <Content>
+          <div
+            style={{
+              marginTop: 'var(--pf-t--global--spacer--xl)',
+              marginBottom: 'var(--pf-t--global--spacer--lg)',
+            }}
+          >
+            <img
+              src={AnalyticsGraphic}
+              alt={t('Automation Analytics')}
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </div>
+        </Content>
+      </Content>
+      <PageFormTextInput<SubscriptionWizardData>
+        name="analytics_client_id"
+        label={t`Client ID`}
+        labelHelp={t('Client ID used to send data to Automation Analytics')}
+      />
+      <PageFormTextInput<SubscriptionWizardData>
+        name="analytics_client_secret"
+        label={t`Client secret`}
+        type="password"
+        labelHelp={t('Client secret used to send data to Automation Analytics')}
+      />
     </>
   );
 }
