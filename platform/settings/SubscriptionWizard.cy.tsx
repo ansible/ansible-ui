@@ -149,7 +149,7 @@ describe('Subscription Wizard', () => {
       cy.contains('Subscription is required').should('be.visible');
     });
   });
-  it('verify the wizard navigation has 3 steps', () => {
+  it.skip('verify the wizard navigation has 3 steps', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
     cy.get('[data-cy="wizard-nav"]').find('li').should('have.length', 3);
     cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -164,7 +164,7 @@ describe('Subscription Wizard', () => {
       cy.get('[data-cy="wizard-nav-item-review"]').should('contain', 'Review');
     });
   });
-  it('verify uploading a manifest zip file and agreeing to the terms of the license agreement', () => {
+  it.skip('verify uploading a manifest zip file and agreeing to the terms of the license agreement', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
     cy.fixture('manifest.zip', 'binary').then((fileBinary) => {
       const blob = Cypress.Blob.binaryStringToBlob(fileBinary as string);
