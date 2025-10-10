@@ -81,5 +81,13 @@ export default defineConfig({
       include: ['**/*.{ts,tsx}'],
       exclude: ['node_modules/**'],
     },
+    css: !process.env.CI,
+    environment: 'happy-dom',
+    setupFiles: ['vitest.setup.ts'],
+    server: {
+      deps: {
+        inline: ['@patternfly/react-styles'],
+      },
+    },
   },
 });

@@ -1,6 +1,5 @@
 // vitest.setup.ts
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { enablePreview } from '@ansible/ansible-ui-framework/vitest.common';
 
-afterEach(() => cleanup());
+enablePreview();

@@ -8,6 +8,7 @@ export default defineConfig({
 
   test: {
     globals: true,
+    css: !process.env.CI,
     environment: 'happy-dom',
     setupFiles: ['vitest.setup.ts'],
     coverage: {
