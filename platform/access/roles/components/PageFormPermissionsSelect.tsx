@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
-import { PlatformContentTypeEnum } from '@ansible/common-ui/access/components/usePlatformRoleMetadata';
+import {
+  groupFromRoleType,
+  PlatformContentTypeEnum,
+} from '@ansible/common-ui/access/components/usePlatformRoleMetadata';
 import { usePlatformRoleMetadata } from '@ansible/common-ui/access/components/usePlatformRoleMetadata';
 
 export function PageFormRolePermissionsSelect(props: {
@@ -11,19 +14,6 @@ export function PageFormRolePermissionsSelect(props: {
 }) {
   const { t } = useTranslation();
   const platformRoleMetadata = usePlatformRoleMetadata();
-  const groupFromRoleType = (type: string): string => {
-    const group = type.split('.')[0];
-    switch (group) {
-      case 'awx':
-        return t('Automation Execution');
-      case 'eda':
-        return t('Automation Decisions');
-      case 'galaxy':
-        return t('Automation Content');
-      default:
-        return '';
-    }
-  };
   return (
     <PageFormMultiSelect
       name="permissions"
@@ -34,7 +24,7 @@ export function PageFormRolePermissionsSelect(props: {
       ).map(([key, value]) => ({
         label: value,
         value: key,
-        group: groupFromRoleType(key),
+        group: groupFromRoleType(key, t),
       }))}
       placeholder={t('Select permissions')}
       isRequired={props?.isRequired}

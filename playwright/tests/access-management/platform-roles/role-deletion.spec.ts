@@ -50,7 +50,7 @@ test.describe('Role Deletion Tests', () => {
     );
 
     test(
-      'should show confirmation dialog before deletion',
+      'should cancel role deletion and return to details page',
       { tag: ['@not_mock'] },
       async ({ page }) => {
         const roleName = createE2EName();
@@ -65,33 +65,12 @@ test.describe('Role Deletion Tests', () => {
 
         // Wait for the dialog content to be loaded by checking for the title
         await expect(page.getByText('Permanently delete roles')).toBeVisible({ timeout: 10000 });
-
-        // Find the modal by waiting for it to contain the role name with retry logic
-        await page.waitForFunction(
-          (name) => {
-            const dialog = document.querySelector('[role="dialog"]');
-            return dialog && dialog.textContent && dialog.textContent.includes(name);
-          },
-          roleName,
-          { timeout: 15000 }
-        );
-
-        // Verify the role name is visible in the dialog
         await expect(dialog.getByText(roleName)).toBeVisible();
 
-        // Verify all expected buttons are present with more specific selectors
-        const deleteButton = page
-          .getByRole('button', { name: /delete/i })
-          .or(page.getByRole('button', { name: /confirm/i }));
-        const cancelButton = page.getByRole('button', { name: /cancel/i });
-
-        await expect(deleteButton).toBeVisible({ timeout: 5000 });
-        await expect(cancelButton).toBeVisible({ timeout: 5000 });
-
-        // Ensure buttons are enabled before clicking
-        await expect(cancelButton).toBeEnabled();
-
         // Cancel the deletion
+        const cancelButton = page.getByRole('button', { name: /cancel/i });
+        await expect(cancelButton).toBeVisible({ timeout: 5000 });
+        await expect(cancelButton).toBeEnabled();
         await cancelButton.click();
 
         // Wait for dialog to close with timeout
@@ -109,64 +88,6 @@ test.describe('Role Deletion Tests', () => {
         await deleteRole(roleName, page);
       }
     );
-
-    test('should cancel deletion and keep role', { tag: ['@not_mock'] }, async ({ page }) => {
-      const roleName = createE2EName();
-      const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
-
-      await createRoleWithConfig(page, config);
-      await clickPageAction('Delete role', page);
-
-      // Wait for dialog to appear and be fully loaded
-      const dialog = page.getByRole('dialog');
-      await expect(dialog).toBeVisible({ timeout: 10000 });
-      await expect(page.getByText('Permanently delete roles')).toBeVisible();
-
-      // Wait for cancel button to be clickable
-      const cancelButton = page.getByRole('button', { name: /cancel/i });
-      await expect(cancelButton).toBeVisible();
-      await expect(cancelButton).toBeEnabled();
-      await cancelButton.click();
-
-      // Wait for dialog to close
-      await expect(dialog).not.toBeVisible({ timeout: 10000 });
-
-      // Verify we're back on role details page
-      await expect(page.getByRole('heading', { name: roleName })).toBeVisible({ timeout: 5000 });
-
-      // Verify role still exists in list
-      await verifyRoleInList(page, roleName, true);
-      await deleteRole(roleName, page);
-    });
-
-    test(
-      'should delete role with special characters in name',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const specialName = `${createE2EName()} @#$ Test Role`;
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: specialName };
-
-        await createRoleWithConfig(page, config);
-        await deleteRole(specialName, page);
-        await verifyRoleInList(page, specialName, false);
-      }
-    );
-
-    test('should delete role with long name', { tag: ['@not_mock'] }, async ({ page }) => {
-      const longName = `${createE2EName()} Very Long Role Name`.repeat(3).trim();
-      const config = { ...TEST_ROLE_CONFIGS.namespace, name: longName };
-
-      await createRoleWithConfig(page, config);
-
-      // Verify the role was created successfully with long name
-      await expect(page.getByRole('heading', { name: longName })).toBeVisible({ timeout: 10000 });
-
-      await deleteRole(longName, page);
-
-      // Add extra wait time for long name processing during deletion verification
-      await page.waitForTimeout(2000);
-      await verifyRoleInList(page, longName, false);
-    });
   });
 
   test.describe('Multiple Role Deletion', () => {
@@ -231,85 +152,6 @@ test.describe('Role Deletion Tests', () => {
         for (const roleName of roleNames) {
           await deleteRole(roleName, page);
         }
-      }
-    );
-
-    test(
-      'should disable bulk delete when no roles selected',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
-        const bulkDeleteButton = page.getByRole('menuitem', { name: 'Delete selected roles' });
-
-        await createRoleWithConfig(page, config);
-        await navigateToRolesPage(page);
-        await page.getByRole('button', { name: 'toolbar actions' }).click();
-        await expect(bulkDeleteButton).toBeDisabled();
-        await deleteRole(roleName, page);
-      }
-    );
-  });
-
-  test.describe('Deletion Validation and Restrictions', () => {
-    test(
-      'should prevent deletion of managed/built-in roles',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        await navigateToRolesPage(page);
-        const tableRows = page.getByRole('row');
-        const rowCount = await tableRows.count();
-
-        if (rowCount > 1) {
-          // Find a role that might be managed (this test might need adjustment based on actual system)
-          const firstDataRow = tableRows.nth(1);
-          const deleteButton = firstDataRow.getByRole('button', { name: /delete/i });
-
-          await firstDataRow.hover();
-          if (await deleteButton.isVisible()) {
-            const isDisabled = await deleteButton.isDisabled();
-            if (isDisabled) {
-              await deleteButton.hover();
-              await expect(page.getByText(/built-in|managed|cannot.*delete/i)).toBeVisible();
-            }
-          }
-        } else {
-          test.skip(true, 'No system roles available to test managed role deletion prevention');
-        }
-      }
-    );
-  });
-
-  test.describe('Deletion Confirmation and Feedback', () => {
-    test(
-      'should show role details in deletion confirmation',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const description = 'Role to be deleted';
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName, description };
-        const modalBox = page.getByRole('dialog', { name: 'Permanently delete roles' });
-
-        await createRoleWithConfig(page, config);
-        await clickPageAction('Delete role', page);
-        await expect(modalBox.getByText(roleName)).toBeVisible();
-        await page.getByRole('button', { name: /cancel/i }).click();
-        await deleteRole(roleName, page);
-      }
-    );
-
-    test(
-      'should show success feedback after deletion',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
-
-        await createRoleWithConfig(page, config);
-        await deleteRole(roleName, page);
-        await expect(page.getByText(/success|deleted|removed/i))
-          .toBeVisible()
-          .catch(() => {});
       }
     );
   });

@@ -96,8 +96,8 @@ describe('Platform: Roles', () => {
         cy.contains('Automation Execution').should('be.visible');
       });
       cy.get('[data-cy="permissions"]').within(() => {
-        cy.contains('awx.execute_jobtemplate').should('be.visible');
-        cy.contains('awx.view_jobtemplate').should('be.visible');
+        cy.contains('Can run this job template').should('be.visible');
+        cy.contains('Can view job template').should('be.visible');
       });
       cy.selectDetailsPageKebabAction('delete-role');
       cy.getBy('#filter-input').type(`${roleName}{enter}`);
@@ -124,7 +124,7 @@ describe('Platform: Roles', () => {
           cy.contains('h1', 'Automation Decisions')
             .parent()
             .scrollIntoView()
-            .find('#project')
+            .find('#project-\\(automation-decisions\\)')
             .click();
         });
       cy.get(`[data-cy="permissions-form-group"]`)
@@ -149,8 +149,8 @@ describe('Platform: Roles', () => {
         cy.contains('Automation Decisions').should('be.visible');
       });
       cy.get('[data-cy="permissions"]').within(() => {
-        cy.contains('eda.sync_project').should('be.visible');
-        cy.contains('eda.view_project').should('be.visible');
+        cy.contains('Can sync a project').should('be.visible');
+        cy.contains('Can view project').should('be.visible');
       });
       cy.selectDetailsPageKebabAction('delete-role');
       cy.getBy('#filter-input').type(`${roleName}{enter}`);
@@ -166,6 +166,8 @@ describe('Platform: Roles', () => {
     const contentType = 'awx.inventory';
     const permissionA = 'awx.view_inventory';
     const permissionB = 'awx.update_inventory';
+    const permissionALabel = 'Can view inventory';
+    const permissionBLabel = 'Can update inventory';
 
     beforeEach(() => {
       cy.createPlatformRole(roleName, roleDescription, contentType, [
@@ -193,8 +195,8 @@ describe('Platform: Roles', () => {
         cy.get('[data-cy="description"]').should('contain', roleDescription);
         expect(editableRole.description).to.eql(roleDescription);
         cy.get('[data-cy="permissions"]').within(() => {
-          cy.contains(`${permissionA}`).should('be.visible');
-          cy.contains(`${permissionB}`).should('be.visible');
+          cy.contains(`${permissionALabel}`).should('be.visible');
+          cy.contains(`${permissionBLabel}`).should('be.visible');
         });
         expect(editableRole.permissions).to.include(permissionA);
         expect(editableRole.permissions).to.include(permissionB);
@@ -225,8 +227,8 @@ describe('Platform: Roles', () => {
           });
         cy.verifyPageTitle(editableRole.name);
         cy.get('[data-cy="permissions"]').within(() => {
-          cy.contains(`${permissionA}`).should('be.visible');
-          cy.contains(`${permissionB}`).should('be.visible');
+          cy.contains(`${permissionALabel}`).should('be.visible');
+          cy.contains(`${permissionBLabel}`).should('be.visible');
         });
         cy.navigateTo('platform', 'roles');
         cy.wait('@roleDefinitions');
@@ -293,8 +295,8 @@ describe('Platform: Roles', () => {
         cy.get('[data-cy="description"]').should('contain', roleDescription);
         expect(editableRole.description).to.eql(roleDescription);
         cy.get('[data-cy="permissions"]').within(() => {
-          cy.contains(`${permissionA}`).should('be.visible');
-          cy.contains(`${permissionB}`).should('be.visible');
+          cy.contains(`${permissionALabel}`).should('be.visible');
+          cy.contains(`${permissionBLabel}`).should('be.visible');
         });
         expect(editableRole.permissions).to.include(permissionA);
         expect(editableRole.permissions).to.include(permissionB);
