@@ -40,6 +40,7 @@ export async function createJobTemplate(
     await page.locator('#ask_labels_on_launch').check();
   } else {
     await page.getByRole('button', { name: 'Inventory' }).click();
+    await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
     await page.getByRole('option', { name: inventoryName, exact: true }).click();
   }
   const projectName = options.projectName ?? 'Demo Project';

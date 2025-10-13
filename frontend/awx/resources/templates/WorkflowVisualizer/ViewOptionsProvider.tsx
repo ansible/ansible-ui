@@ -19,13 +19,15 @@ const FullPage = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: white;
+  background-color: var(--pf-t--global--background--color--primary--default);
   z-index: 1000;
+  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--sm) 0;
 `;
 
 const ViewWrapper = styled.div`
   width: 100%;
   height: 100%;
+  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--sm) 0;
   .pf-topology-container {
     min-height: 0;
   }

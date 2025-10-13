@@ -115,7 +115,8 @@ export function PageAsyncSingleSelect<
               return 0;
             });
             if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
-              onSelect(newOptions[0].value);
+              // Defer onSelect to avoid setState during render
+              setTimeout(() => onSelect(newOptions[0].value), 0);
             }
             setTotal(result.remaining + newOptions.length);
             if (writeInOption && result.remaining + newOptions.length === 0) {
