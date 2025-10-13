@@ -78,13 +78,12 @@ Solution
 
 ### NPM scripts
 
-|   Script | Description                                 |
-| -------: | ------------------------------------------- |
-|     mock | Run tests against a mock API.               |
-|     live | Run tests against a live server.            |
-|   allure | Generate a local allure report and open it. |
-| coverage | Open the coverage report.                   |
-|    clean | Cleanup all tha old test results.           |
+|   Script | Description                       |
+| -------: | --------------------------------- |
+|     mock | Run tests against a mock API.     |
+|     live | Run tests against a live server.  |
+| coverage | Open the coverage report.         |
+|    clean | Cleanup all tha old test results. |
 
 ### Tags
 

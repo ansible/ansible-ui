@@ -74,6 +74,7 @@ jobs:
       TAGS: ${{ inputs.TAGS }}
       NOT_TAGS: ${{ inputs.NOT_TAGS }}
       PROJECT: ${{ inputs.PROJECT }}
+      PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
     secrets:
       CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
       CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
