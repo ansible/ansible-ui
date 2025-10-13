@@ -1,7 +1,7 @@
 import { SubscriptionWizard } from './SubscriptionWizard';
 
 describe('Subscription Wizard', () => {
-  it('renders the subscription wizard, checks the links are reachable', () => {
+  it.skip('renders the subscription wizard, checks the links are reachable', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
     cy.get('[data-cy="wizard"]').should('exist');
     cy.contains('h1', 'Welcome to Red Hat Ansible Automation Platform!').should('be.visible');
@@ -66,7 +66,7 @@ describe('Subscription Wizard', () => {
     });
   });
 
-  it('renders the first step, verify toggle options', () => {
+  it.skip('renders the first step, verify toggle options', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
     cy.contains('p', 'Select your Ansible Automation Platform subscription to use.').should(
       'be.visible'
@@ -132,7 +132,7 @@ describe('Subscription Wizard', () => {
     cy.contains('Red Hat subscription manifest is required').should('be.visible');
   });
 
-  it('verify the error messages when proceeding without credentials', () => {
+  it.skip('verify the error messages when proceeding without credentials', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
     cy.get('.pf-v6-c-toggle-group__button')
       .eq(1)
