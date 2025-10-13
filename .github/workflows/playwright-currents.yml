@@ -45,13 +45,27 @@ on:
         required: true
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate matrix
+        id: set-matrix
+        run: |
+          PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || 4 }}
+          matrix=$(seq 1 $PARALLEL_TESTS | jq -s -c .)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "Generated matrix for $PARALLEL_TESTS parallel tests: $matrix"
+
   playwright-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    needs: generate-matrix
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     
     steps:
     - name: Checkout repository
@@ -82,7 +96,7 @@ jobs:
         # echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
         # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
         # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
-        # echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || matrix.shard }}" >> $GITHUB_ENV
+        echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || matrix.shard }}" >> $GITHUB_ENV
 
     - name: Setup coverage directory
       working-directory: ./playwright
@@ -99,14 +113,14 @@ jobs:
         CURRENTS_CI_BUILD_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PROJECT: ${{ inputs.PROJECT || 'live chromium' }}
-        SHARD: ${{ inputs.PARALLEL_TESTS || matrix.shard }}
+        SHARD: ${{ matrix.shard }}/${{ inputs.PARALLEL_TESTS || '4' }}
       run: |
         npx pwc \
           --key="${CURRENTS_RECORD_KEY}" \
           --project-id="${CURRENTS_PROJECT_ID}" \
           --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
           -- \
-          --shard=${{ matrix.shard }}/4 \
+          --shard=${SHARD} \
           --project="${PROJECT}"
 
     - name: Upload test results
