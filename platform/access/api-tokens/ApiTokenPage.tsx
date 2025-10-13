@@ -34,19 +34,10 @@ export function ApiTokenPage() {
         breadcrumbs={
           user !== undefined
             ? [
-                {
-                  label: t('API Tokens'),
-                  to: getPageUrl(PlatformRoute.UserApiTokens, {
-                    params: { id: userId, tokenid: tokenid },
-                  }),
-                },
+                { label: t('Users'), to: getPageUrl(PlatformRoute.Users) },
                 {
                   label: user?.username,
                   to: getPageUrl(PlatformRoute.UserDetails, { params: { id: userId } }),
-                },
-                {
-                  label: t('API Tokens'),
-                  to: getPageUrl(PlatformRoute.UserApiTokens, { params: { id: userId } }),
                 },
                 { label: title },
               ]
