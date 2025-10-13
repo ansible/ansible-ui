@@ -52,6 +52,15 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
     permissionDisplayNames: ['Can view rulebook process'],
     expectedComponent: 'Automation Decisions',
   },
+  edaProject: {
+    name: '',
+    description: 'Test role for EDA rulebook management',
+    resourceType: 'eda.project',
+    resourceTypeDisplayName: 'Project (Automation Decisions)',
+    permissions: ['eda.view_project'],
+    permissionDisplayNames: ['Can view project'],
+    expectedComponent: 'Automation Decisions',
+  },
   system: {
     name: '',
     description: 'Test role for system galaxy',

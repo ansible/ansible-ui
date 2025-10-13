@@ -38,6 +38,19 @@ export enum PlatformContentTypeEnum {
   System = 'null',
 }
 
+export function groupFromRoleType(type: string, t: (value: string) => string): string {
+  const group = type.split('.')[0];
+  switch (group) {
+    case 'awx':
+      return t('Automation Execution');
+    case 'eda':
+      return t('Automation Decisions');
+    case 'galaxy':
+      return t('Automation Content');
+    default:
+      return '';
+  }
+}
 export interface PlatformRoleMetadata {
   content_types: Record<PlatformContentTypeEnum, PlatformRoleMetadataContentType>;
 }
@@ -49,9 +62,9 @@ export function usePlatformRoleMetadata(): PlatformRoleMetadata {
     () => ({
       content_types: {
         'awx.credential': {
-          displayName: t('Credential'),
+          displayName: t('Credential (Automation Execution)'),
           permissions: {
-            'awx.use_credential': t('Can use credential'),
+            'awx.use_credential': t('Can use credential in a job or related resource'),
             'awx.change_credential': t('Can change credential'),
             'awx.delete_credential': t('Can delete credential'),
             'awx.view_credential': t('Can view credential'),
@@ -76,7 +89,7 @@ export function usePlatformRoleMetadata(): PlatformRoleMetadata {
         'awx.inventory': {
           displayName: t('Inventory'),
           permissions: {
-            'awx.use_inventory': t('Can use inventory'),
+            'awx.use_inventory': t('Can use inventory in a job template'),
             'awx.adhoc_inventory': t('Can run ad hoc commands'),
             'awx.update_inventory': t('Can update inventory'),
             'awx.change_inventory': t('Can change inventory'),
@@ -87,7 +100,7 @@ export function usePlatformRoleMetadata(): PlatformRoleMetadata {
         'awx.jobtemplate': {
           displayName: t('Job template'),
           permissions: {
-            'awx.execute_jobtemplate': t('Can execute job template'),
+            'awx.execute_jobtemplate': t('Can run this job template'),
             'awx.change_jobtemplate': t('Can change job template'),
             'awx.delete_jobtemplate': t('Can delete job template'),
             'awx.view_jobtemplate': t('Can view job template'),
@@ -178,7 +191,7 @@ export function usePlatformRoleMetadata(): PlatformRoleMetadata {
           },
         },
         'awx.project': {
-          displayName: t('Project'),
+          displayName: t('Project (Automation Execution)'),
           permissions: {
             'awx.update_project': t('Can update project'),
             'awx.use_project': t('Can use project'),
@@ -199,15 +212,15 @@ export function usePlatformRoleMetadata(): PlatformRoleMetadata {
         'awx.workflowjobtemplate': {
           displayName: t('Workflow job template'),
           permissions: {
-            'awx.execute_workflowjobtemplate': t('Can execute workflow job template'),
-            'awx.approve_workflowjobtemplate': t('Can approve workflow job template'),
+            'awx.execute_workflowjobtemplate': t('Can run this workflow job template'),
+            'awx.approve_workflowjobtemplate': t('Can approve steps in this workflow job template'),
             'awx.change_workflowjobtemplate': t('Can change workflow job template'),
             'awx.delete_workflowjobtemplate': t('Can delete workflow job template'),
             'awx.view_workflowjobtemplate': t('Can view workflow job template'),
           },
         },
         'eda.activation': {
-          displayName: t('Activation'),
+          displayName: t('Rulebook Activation'),
           permissions: {
             'eda.enable_activation': t('Can enable an activation'),
             'eda.disable_activation': t('Can disable an activation'),
@@ -225,7 +238,7 @@ export function usePlatformRoleMetadata(): PlatformRoleMetadata {
           },
         },
         'eda.edacredential': {
-          displayName: t('Credential'),
+          displayName: t('Credential (Automation Decisions)'),
           permissions: {
             'eda.change_edacredential': t('Can change credential'),
             'eda.delete_edacredential': t('Can delete credential'),
@@ -249,7 +262,7 @@ export function usePlatformRoleMetadata(): PlatformRoleMetadata {
           },
         },
         'eda.project': {
-          displayName: t('Project'),
+          displayName: t('Project (Automation Decisions)'),
           permissions: {
             'eda.sync_project': t('Sync project'),
             'eda.change_project': t('Can change project'),
