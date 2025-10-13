@@ -389,6 +389,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       <ModalBody style={{ paddingTop: 0 }}>
         <Progress
           data-cy="progress"
+          data-testid="progress"
           value={(progress / items.length) * 100}
           title={progressTitle}
           size={ProgressSize.lg}

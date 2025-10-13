@@ -9,7 +9,7 @@ import { createTeam, deleteTeam, editTeam, editTeamFromList } from './team-utils
 test.beforeEach(setupBefore({ path: '/access/teams' }));
 test.afterEach(setupAfter);
 
-test.describe('Teams CRUD', () => {
+test.describe('Platform Teams CRUD', () => {
   test('create team and verify it exists', { tag: ['@not_mock'] }, async ({ page }) => {
     const organizationName = await createOrganization(page);
     const teamName = await createTeam({ organizationName }, page);
