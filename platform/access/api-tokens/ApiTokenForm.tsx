@@ -94,10 +94,24 @@ export function ApiTokenForm() {
   const { pushDialog, popDialog } = usePageDialogs();
   const onSubmit: PageFormSubmitHandler<Token> = useCallback(
     async (tokenInput) => {
+      // Transform application object to just the ID
+      const payload: Partial<Token> = {
+        description: tokenInput.description,
+        scope: tokenInput.scope,
+        application:
+          typeof tokenInput.application === 'object' && tokenInput.application !== null
+            ? (tokenInput.application as { id: number }).id
+            : tokenInput.application,
+      };
+
       if (token) {
-        const updatedToken = await putRequest(gatewayAPI`/tokens/${token.id}/`, tokenInput);
+        const updatePayload = userId ? { ...payload, user: parseInt(userId) } : payload;
+        const updatedToken = await putRequest(
+          gatewayAPI`/tokens/${token.id}/`,
+          updatePayload as Token
+        );
         if (userId !== undefined) {
-          pageNavigate(PlatformRoute.UserApiTokenDetails, {
+          pageNavigate(PlatformRoute.UserApiTokenPage, {
             params: { id: userId, tokenid: updatedToken.id },
           });
         } else {
@@ -106,19 +120,29 @@ export function ApiTokenForm() {
           });
         }
       } else {
-        const newToken = await postRequest(gatewayAPI`/tokens/`, tokenInput);
-        if (userId !== undefined) {
-          pageNavigate(PlatformRoute.UserApiTokenDetails, {
-            params: { id: userId, tokenid: newToken.id },
-          });
-        } else {
-          pageNavigate(PlatformRoute.ApiTokenPage, {
-            params: { tokenid: newToken.id },
-          });
-          setTimeout(() => {
-            pushDialog(<UserTokenSecretsModal onClose={() => popDialog()} newToken={newToken} />);
-          }, 300);
-        }
+        const newToken = await postRequest(
+          gatewayAPI`/tokens/`,
+          (userId ? { ...payload, user: parseInt(userId) } : payload) as Token
+        );
+        setTimeout(() => {
+          pushDialog(
+            <UserTokenSecretsModal
+              onClose={() => {
+                popDialog();
+                if (userId !== undefined) {
+                  pageNavigate(PlatformRoute.UserApiTokenPage, {
+                    params: { id: userId, tokenid: newToken.id },
+                  });
+                } else {
+                  pageNavigate(PlatformRoute.ApiTokenPage, {
+                    params: { tokenid: newToken.id },
+                  });
+                }
+              }}
+              newToken={newToken}
+            />
+          );
+        }, 300);
       }
     },
     [token, putRequest, userId, pageNavigate, postRequest, pushDialog, popDialog]

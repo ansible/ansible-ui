@@ -39,7 +39,7 @@ export function useApiTokenColumns(options?: { disableLinks?: boolean; disableSo
               options?.disableLinks
                 ? undefined
                 : userId !== undefined
-                  ? getPageUrl(PlatformRoute.UserApiTokenDetails, {
+                  ? getPageUrl(PlatformRoute.UserApiTokenPage, {
                       params: { id: token.summary_fields.user?.id, tokenid: token.id.toString() },
                     })
                   : getPageUrl(PlatformRoute.ApiTokenPage, {

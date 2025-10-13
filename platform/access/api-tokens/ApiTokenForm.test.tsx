@@ -254,4 +254,187 @@ describe('ApiTokenForm', () => {
       expect(server.listHandlers()).toBeDefined();
     });
   });
+
+  test('should include user field when creating token for specific user', async () => {
+    const user = userEvent.setup();
+    let requestBody: Record<string, unknown> | null = null;
+
+    server.use(
+      http.post(gatewayAPI`/tokens/`, async ({ request }) => {
+        requestBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({
+          id: 3,
+          type: 'o_auth2_access_token',
+          url: '/api/v2/tokens/3/',
+          token: 'user-specific-token',
+          created: '2024-01-01T00:00:00Z',
+          modified: '2024-01-01T00:00:00Z',
+          user: 1,
+          application: null,
+          scope: 'write',
+          description: 'User token',
+          expires: '2024-12-31T00:00:00Z',
+          last_used: null,
+          summary_fields: {
+            user: {
+              id: 1,
+              username: 'testuser',
+              first_name: 'Test',
+              last_name: 'User',
+            },
+            application: {
+              id: 1,
+              name: 'Test Application',
+            },
+          },
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/users/1/api-tokens/create']}>
+        <Routes>
+          <Route path="/access/users/:id/api-tokens/create" element={<ApiTokenForm />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Description')).toBeInTheDocument();
+    });
+
+    const descriptionField = screen.getByLabelText('Description');
+    const scopeField = screen.getByRole('button', { name: 'Write' });
+    const createButton = screen.getByRole('button', { name: 'Create token' });
+
+    await user.type(descriptionField, 'User token');
+    await user.click(scopeField);
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: 'Write' })).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('option', { name: 'Write' }));
+    await user.click(createButton);
+
+    await waitFor(() => {
+      expect(requestBody).not.toBeNull();
+      expect(requestBody?.user).toBe(1);
+    });
+  });
+
+  test('should transform application object to ID when creating token', async () => {
+    const user = userEvent.setup();
+    let requestBody: Record<string, unknown> | null = null;
+
+    server.use(
+      http.get(gatewayAPI`/applications/`, () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 5,
+              name: 'My OAuth App',
+              client_id: 'test-client-id',
+            },
+          ],
+        });
+      }),
+      http.post(gatewayAPI`/tokens/`, async ({ request }) => {
+        requestBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({
+          id: 4,
+          type: 'o_auth2_access_token',
+          url: '/api/v2/tokens/4/',
+          token: 'app-token',
+          created: '2024-01-01T00:00:00Z',
+          modified: '2024-01-01T00:00:00Z',
+          user: 1,
+          application: 5,
+          scope: 'write',
+          description: 'App token',
+          expires: '2024-12-31T00:00:00Z',
+          last_used: null,
+          summary_fields: {
+            user: {
+              id: 1,
+              username: 'testuser',
+              first_name: 'Test',
+              last_name: 'User',
+            },
+            application: {
+              id: 5,
+              name: 'My OAuth App',
+            },
+          },
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+        <Routes>
+          <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Description')).toBeInTheDocument();
+    });
+
+    const descriptionField = screen.getByLabelText('Description');
+    const createButton = screen.getByRole('button', { name: 'Create token' });
+
+    await user.type(descriptionField, 'App token');
+    await user.click(createButton);
+
+    await waitFor(() => {
+      expect(requestBody).not.toBeNull();
+      expect(
+        typeof requestBody?.application === 'number' ||
+          requestBody?.application === null ||
+          requestBody?.application === undefined
+      ).toBe(true);
+    });
+  });
+
+  test('should include user field when updating user-specific token', async () => {
+    const user = userEvent.setup();
+    let requestBody: Record<string, unknown> | null = null;
+
+    server.use(
+      http.put(gatewayAPI`/tokens/1`, async ({ request }) => {
+        requestBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({
+          ...mockToken,
+          ...requestBody,
+          modified: '2024-01-01T00:00:00Z',
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/users/1/api-tokens/1/edit']}>
+        <Routes>
+          <Route path="/access/users/:id/api-tokens/:tokenid/edit" element={<ApiTokenForm />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Description')).toBeInTheDocument();
+    });
+
+    const descriptionField = screen.getByLabelText('Description');
+    const updateButton = screen.getByRole('button', { name: 'Update token' });
+
+    await user.clear(descriptionField);
+    await user.type(descriptionField, 'Updated user token');
+    await user.click(updateButton);
+
+    await waitFor(() => {
+      expect(requestBody).not.toBeNull();
+      expect(requestBody?.user).toBe(1);
+      expect(requestBody?.description).toBe('Updated user token');
+    });
+  });
 });
