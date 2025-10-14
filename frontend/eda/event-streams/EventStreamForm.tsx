@@ -96,7 +96,8 @@ function EventStreamInputs() {
         labelHelpTitle={t('Headers')}
         labelHelp={t(
           'Enter HTTP header keys, separated by commas, that you want to include in the event payload. ' +
-            'To include all headers, leave the field empty.'
+            'To include all headers, set the value as *. ' +
+            'If the Headers is empty no HTTP headers would be added to the Event Payload or displayed in Test mode.'
         )}
       />
       <PageFormSwitch<IEdaEventStreamCreate>
@@ -148,7 +149,8 @@ function EventStreamEditInputs() {
         labelHelpTitle={t('Headers')}
         labelHelp={t(
           'Enter HTTP header keys, separated by commas, that you want to include in the event payload. ' +
-            'To include all headers, leave the field empty.'
+            'To include all headers, set the value as *. ' +
+            'If the Headers is empty no HTTP headers would be added to the Event Payload or displayed in Test mode.'
         )}
       />
       <PageFormSwitch<IEdaEventStreamCreate>
