@@ -17,6 +17,7 @@ export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSPr
         }
       }}
       data-cy={'Submit'}
+      data-testid="submit"
       type="submit"
       isDisabled={isSubmitting}
       isLoading={isSubmitting}
@@ -41,6 +42,7 @@ export function PageFormCancelButton(props: { onCancel: () => void; children: Re
   return (
     <Button
       data-cy={'Cancel'}
+      data-testid="cancel"
       type="button"
       variant="link"
       onClick={handleClick}

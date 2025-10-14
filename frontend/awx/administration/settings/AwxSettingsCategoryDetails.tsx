@@ -13,7 +13,6 @@ import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
-import { t } from 'i18next';
 import jsyaml from 'js-yaml';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +21,7 @@ import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxSettingsOptionsAction } from './AwxSettingsForm';
 import { useAwxSettingsGroups, useAwxSettingsGroupsBase } from './useAwxSettingsGroups';
+import { DefaultExecutionEnvironmentDetail } from './DefaultExecutionEnvironmentDetail';
 
 export function AwxSettingsCategoryDetailsPage(props: { categoryId: string }) {
   const { isLoading, error, groups, options, hasWritePermissions } = useAwxSettingsGroups();
@@ -104,6 +104,14 @@ export function AwxSettingsCategoryDetail(props: {
   data: Record<string, unknown>;
 }) {
   const option = props.option;
+  const { t } = useTranslation();
+
+  if (props.name === 'DEFAULT_EXECUTION_ENVIRONMENT') {
+    return (
+      <DefaultExecutionEnvironmentDetail option={option} id={props.data[props.name] as number} />
+    );
+  }
+
   switch (option.type) {
     case 'string':
     case 'field':
