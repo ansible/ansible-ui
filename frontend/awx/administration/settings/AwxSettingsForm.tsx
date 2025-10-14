@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useRevertAllSettingsModal } from './useRevertAllSettingsModal';
+import { PageFormSelectExecutionEnvironment } from '../execution-environments/components/PageFormSelectExecutionEnvironment';
 
 export interface AwxSettingsOptionsResponse {
   actions: {
@@ -314,6 +315,17 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           isReadOnly={false}
         />
       </PageFormSection>
+    );
+  }
+
+  if (props.name === 'DEFAULT_EXECUTION_ENVIRONMENT') {
+    return (
+      <PageFormSelectExecutionEnvironment
+        name={props.name}
+        label={option.label}
+        isRequired={option.required}
+        labelHelp={option.help_text}
+      />
     );
   }
 
