@@ -21,7 +21,7 @@ export async function createDecisionEnvironment(
   await expect(
     page.getByRole('heading', { name: decisionEnvironmentName, exact: true })
   ).toBeVisible();
-  return { decisionEnvironmentName };
+  return decisionEnvironmentName;
 }
 
 export async function deleteDecisionEnvironment(decisionEnvironmentName: string, page: Page) {
