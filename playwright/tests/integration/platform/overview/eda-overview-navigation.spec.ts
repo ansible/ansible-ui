@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupBefore, setupAfter } from '../../../commands/setup';
+import { setupBefore, setupAfter } from '../../../../commands/setup';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
