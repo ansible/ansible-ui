@@ -66,8 +66,22 @@ jobs:
       fail-fast: false
       matrix:
         shard: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-    
+
     steps:
+    - name: Download image
+      if: ${{ inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: platform-ui.tar
+
+    - name: Load image
+      if: ${{ inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      run: docker load --input platform-ui.tar
+
+    - name: Run container
+      if: ${{ inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER }} platform-ui
+
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -92,8 +106,8 @@ jobs:
         echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}" >> $GITHUB_ENV
         echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME || '' }}" >> $GITHUB_ENV
         echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD || '' }}" >> $GITHUB_ENV
-        # echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
-        # echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
+        echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
+        echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
         # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
         # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
         echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || matrix.shard }}" >> $GITHUB_ENV
@@ -146,6 +160,9 @@ jobs:
     - name: Generate Monocart coverage report (for NYC combination)
       if: always()
       working-directory: ./playwright
+      env:
+        TAGS: ''
+        NOT_TAGS: ''
       run: |
         # Generate Monocart coverage report if coverage data exists
         # This creates the coverage data needed for NYC combination
@@ -155,6 +172,10 @@ jobs:
         else
           echo "No coverage data found, skipping report generation"
         fi
+
+    - name: Stop container
+      if: ${{ always() && inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      run: docker stop platform-ui
 
   publish-results:
     if: always()
