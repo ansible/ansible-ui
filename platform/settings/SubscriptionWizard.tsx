@@ -23,9 +23,9 @@ import {
   Stack,
   Title,
 } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import AnalyticsGraphic from '../assets/AAGraphic 1.svg?url';
 
 interface SubscriptionWizardData {
@@ -44,6 +44,7 @@ interface SubscriptionWizardData {
 }
 
 export function SubscriptionWizard(props: { onSuccess: () => void }) {
+  const { t } = useTranslation();
   const { refreshAwxConfig } = useAwxConfigState();
 
   const steps = useMemo(() => {
@@ -70,7 +71,7 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
       },
     ];
     return steps;
-  }, []);
+  }, [t]);
 
   const onSubmit = useCallback(
     async (data: SubscriptionWizardData) => {
@@ -122,6 +123,7 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
 }
 
 function SubscriptionStep() {
+  const { t } = useTranslation();
   const { setValue, watch } = useFormContext<SubscriptionWizardData>();
   const clientId = watch('client_id');
   const clientSecret = watch('client_secret');
@@ -164,7 +166,7 @@ function SubscriptionStep() {
         }) ?? [],
       next: 1,
     };
-  }, [clientSecret, clientId, username, password, satelliteUsername, satellitePassword]);
+  }, [clientId, clientSecret, username, satelliteUsername, password, satellitePassword, t]);
 
   return (
     <>
@@ -337,6 +339,7 @@ function SubscriptionStep() {
 }
 
 function AutomationAnalyticsStep() {
+  const { t } = useTranslation();
   const config = useAwxConfig();
   const docsUrl = useGetDocsUrl(config, 'configureAnalytics');
 
@@ -382,6 +385,7 @@ function AutomationAnalyticsStep() {
 }
 
 function LicenseAgreementStep() {
+  const { t } = useTranslation();
   const config = useAwxConfig();
   return (
     <>
@@ -402,6 +406,7 @@ function LicenseAgreementStep() {
 }
 
 function LicenseReviewStep() {
+  const { t } = useTranslation();
   return (
     <Stack hasGutter>
       <Content>
