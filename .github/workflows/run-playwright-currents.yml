@@ -70,7 +70,7 @@ jobs:
     uses: ./.github/workflows/playwright-currents.yml
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
-      PLATFORM_UI: ${{ inputs.PLATFORM_SERVER }}
+      PLATFORM_UI: ${{ inputs.TEST_UI == 'branch' && 'https://localhost:4100' || inputs.PLATFORM_SERVER }}
       TAGS: ${{ inputs.TAGS }}
       NOT_TAGS: ${{ inputs.NOT_TAGS }}
       PROJECT: ${{ inputs.PROJECT }}
