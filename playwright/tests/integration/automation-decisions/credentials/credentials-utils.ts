@@ -4,14 +4,17 @@ import { clickTableRow } from '../../../../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { navigateTo } from '../../../../commands/navigateTo';
+import { singleSelectByLabel } from '../../../../commands/singleSelectByLabel';
 
-export async function createEdaCredential(options: { credentialName?: string }, page: Page) {
+export async function createEdaCredential(
+  options: { credentialName?: string; organizationName?: string },
+  page: Page
+) {
   await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
   await page.getByText('Create credential').click();
   const credentialName = options.credentialName ?? createE2EName('credential');
   await page.getByPlaceholder('Enter credential name').fill(credentialName);
-  await page.getByRole('button', { name: 'Organization' }).click();
-  await page.getByRole('option', { name: 'Default' }).click();
+  await singleSelectByLabel('Organization', options.organizationName ?? 'Default', page);
   await page.getByRole('button', { name: 'Credential type' }).click();
   await page.getByRole('textbox', { name: 'Search input' }).fill('Red Hat Ansible Automation');
   await page.getByRole('option', { name: 'Red Hat Ansible Automation' }).click();
@@ -26,15 +29,14 @@ export async function createEdaCredential(options: { credentialName?: string }, 
 }
 
 export async function createEdaEventStreamCredential(
-  options: { credentialName?: string },
+  options: { credentialName?: string; organizationName?: string },
   page: Page
 ) {
   await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
   await page.getByText('Create credential').click();
   const credentialName = options.credentialName ?? createE2EName('credential');
   await page.getByPlaceholder('Enter credential name').fill(credentialName);
-  await page.getByRole('button', { name: 'Organization' }).click();
-  await page.getByRole('option', { name: 'Default' }).click();
+  await singleSelectByLabel('Organization', options.organizationName ?? 'Default', page);
   await page.getByRole('button', { name: 'Credential type' }).click();
   await page.getByRole('textbox', { name: 'Search input' }).fill('Basic Event Stream');
   await page.getByRole('option', { name: 'Basic Event Stream' }).click();

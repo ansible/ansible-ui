@@ -13,6 +13,7 @@ export async function createRulebookActivation(
     decisionEnvironmentName?: string;
     organizationName?: string;
     disabled?: boolean;
+    restartPolicy?: 'Always' | 'On failure' | 'Never';
   },
   page: Page
 ) {
@@ -47,15 +48,27 @@ export async function createRulebookActivation(
 
   if (options.credentialName) {
     await page.getByRole('button', { name: 'Credential' }).click();
-    await page.getByRole('textbox', { name: 'Search input' }).click();
-    await page.getByRole('textbox', { name: 'Search input' }).fill(options.credentialName);
-    await page.getByText(options.credentialName).click();
+    const credentialSearch = page.locator('#credential-select-search input');
+    await expect(credentialSearch).toBeVisible();
+    await credentialSearch.fill(options.credentialName);
+    const credentialOption = page.getByRole('menuitem', { name: options.credentialName });
+    await expect(credentialOption).toBeVisible({ timeout: 10000 });
+    await credentialOption.click();
   }
 
   await page.getByRole('button', { name: 'Decision Environment' }).click();
-  await page.getByRole('option', { name: options.decisionEnvironmentName }).click();
+  const decisionEnvSearch = page.locator('#decision_environment_id-search input');
+  await expect(decisionEnvSearch).toBeVisible();
+  await decisionEnvSearch.fill(options.decisionEnvironmentName!);
+  const decisionEnvOption = page.getByRole('option', { name: options.decisionEnvironmentName! });
+  await expect(decisionEnvOption).toBeVisible({ timeout: 10000 });
+  await decisionEnvOption.click();
+  if (options?.restartPolicy) {
+    await page.getByRole('button', { name: 'On failure' }).click();
+    await page.getByRole('option', { name: options.restartPolicy }).click();
+  }
   if (options?.disabled) {
-    await page.locator('label:has([data-cy="rulebook-activation-toggle"])').click();
+    await page.getByRole('switch', { name: 'Rulebook activation enabled?' }).click({ force: true });
   }
   await page.getByRole('button', { name: 'Create rulebook activation' }).click();
   await expect(page.locator('#name')).toHaveValue(rulebookActivationName);

@@ -1,11 +1,11 @@
 import {
-  Select,
-  SelectOption,
+  ButtonVariant,
+  MenuFooter,
   MenuToggle,
   MenuToggleElement,
-  ButtonVariant,
+  Select,
   SelectList,
-  MenuFooter,
+  SelectOption,
 } from '@patternfly/react-core';
 import getValue from 'get-value';
 import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from 'react';
@@ -225,10 +225,11 @@ export function PageFormSelect<
             helperTextInvalid={helperTextInvalid}
             isRequired={isRequired}
           >
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex' }} data-testid={id}>
               <Select
                 aria-describedby={`${id}-form-group-select`}
                 data-cy={id}
+                data-testid={id}
                 id={id}
                 isOpen={isOpen}
                 itemID={id}

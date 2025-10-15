@@ -32,7 +32,7 @@ test.describe('Rule Audit List', () => {
       test.setTimeout(180000);
       const organizationName = await createOrganization(page);
       const projectName = await createEdaProject({}, page);
-      const { decisionEnvironmentName } = await createDecisionEnvironment(
+      const decisionEnvironmentName = await createDecisionEnvironment(
         { organizationName: organizationName },
         page
       );
