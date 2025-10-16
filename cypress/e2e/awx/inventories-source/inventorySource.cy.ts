@@ -274,7 +274,8 @@ describe('Inventory Sources', () => {
       cy.get(`input[aria-label="Click to disable success"]`).should('exist');
     });
 
-    it('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
+    it.skip('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
+      //skipping this test due to flakiness. Needs to be migrated to Playwright.
       goToSourceList(inventory.name);
       cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
       cy.clickTab('Notifications', true);

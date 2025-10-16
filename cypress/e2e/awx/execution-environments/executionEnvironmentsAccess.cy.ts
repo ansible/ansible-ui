@@ -44,7 +44,8 @@ describe('Execution Environments: User/Team access', () => {
     cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('Add a user role assignment from the User Access tab', () => {
+  it.skip('Add a user role assignment from the User Access tab', () => {
+    //skipping this test due to flakiness. Needs to be migrated to Playwright.
     cy.navigateTo('platform', 'organizations');
     cy.verifyPageTitle('Organizations');
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });

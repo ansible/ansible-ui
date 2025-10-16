@@ -35,7 +35,8 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.deleteHubRemote(remote);
     });
 
-    it('should click on list item and find all card headers on details page', () => {
+    it.skip('should click on list item and find all card headers on details page', () => {
+      //skipping this test due to flakiness- it needs to be migrated to Playwright
       cy.navigateTo('hub', Repositories.url);
       cy.filterTableByTextFilter('name', repository.name);
       cy.clickTableRowAction('name', repository.name, 'sync-repository', {

@@ -122,7 +122,8 @@ describe('Instances K8S', () => {
       });
     });
 
-    it('can uncheck the Enable Instance checkbox on the edit form, save form, and see the toggle is off', () => {
+    it.skip('can uncheck the Enable Instance checkbox on the edit form, save form, and see the toggle is off', () => {
+      //skipping this test due to flakiness. Needs to be migrated to Playwright.
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
       cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);

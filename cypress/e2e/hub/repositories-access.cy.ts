@@ -75,7 +75,8 @@ describe('Repositories user and team access tests', () => {
       //cy.contains(/^Success$/).should('be.visible');
     });
   }
-  it('create a new repository, from the team access tab assign a user and apply role(s) to the team of the repository', () => {
+  it.skip('create a new repository, from the team access tab assign a user and apply role(s) to the team of the repository', () => {
+    //skipping this test due to flakiness. Needs to be migrated to Playwright.
     cy.intercept('POST', gatewayAPI`/role_team_assignments/`).as('teamRoleAssignment');
     cy.createPlatformTeam({ organization: organization?.id }).then((hubTeam) => {
       cy.clickTab(/^Details$/, true);

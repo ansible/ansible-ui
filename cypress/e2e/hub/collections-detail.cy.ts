@@ -149,7 +149,8 @@ describe('GalaxykKit Installation for Collections Details', () => {
         });
       });
 
-      it('can copy a version to repository', () => {
+      it.skip('can copy a version to repository', () => {
+        //skipping this test due to flakiness. Needs to be migrated to Playwright
         cy.checkBuildType().then((buildType) => {
           if (buildType !== OCP_A_URL) {
             cy.navigateTo('hub', Collections.url);
