@@ -152,8 +152,7 @@ Example:
 ### Testing
 
 - Write unit tests with Vitest
-- Use Cypress for primary E2E tests
-- Use Playwright for additional E2E tests and live testing
+- Use Playwright for primary E2E tests and live testing
 - Follow testing best practices for React components
 
 ### Internationalization
@@ -242,6 +241,53 @@ test.describe('Feature Name - Description', () => {
 - Better organization in test reports
 - Simplifies debugging when tests fail
 
+#### Test Type Criteria
+
+Follow these guidelines when deciding what type of test should be created:
+
+**Unit Test Criteria:**
+
+- Test pure logic/functions
+- No DOM rendering
+- Mock ALL dependencies
+- Test internal implementation details
+- Fast execution (milliseconds)
+- No browser needed
+- Focus on "Does this function return the correct output?"
+- Form field validation
+- Error handling
+
+**Component Test Criteria:**
+
+- Assert that several units within the codebase work together correctly
+- API endpoints should be mocked
+- Should be written using Vitest
+- Can confirm correct behavior of an entire screen, ensuring the components all interact together correctly
+- Ensuring buttons are disabled under certain circumstances
+- Ensuring data is displayed correctly on the page
+- Asserting complex form behaviors or interaction patterns
+- Navigation between screens
+
+**Integration Test Criteria:**
+
+- Uses a live API, no mocking
+- Asserts proper integration of the system as a whole
+- Target a broader set of components at one time than component tests do
+- Should minimize how often integration tests cover the same API requests across multiple tests
+- Primary goal should be to assert correct interaction with the API
+- Editing RBAC settings as an admin, switching users, and confirming RBAC access changes as required
+- Running a job and viewing output
+- Saving, editing, deleting from the database
+
+**User Acceptance Test Criteria:**
+
+- Assert the behavior of code at the full system level
+- Exercise a full user flow from start to finish, spanning multiple resources or various parts of the application
+- Provide a high level of assurance that the system as a whole is operating as expected
+- Full user flow creating a template, running a job, verifying output
+- Creating users and configuring their RBAC settings
+- Monitoring running jobs, viewing their output, and viewing failure data
+
 #### Migrating from Cypress - CRITICAL
 
 When migrating tests from Cypress to Playwright or creating new Playwright tests:
@@ -276,9 +322,11 @@ await page.getByTestId('content-type').click();
 #### Selector Best Practices
 
 - Use `exact: true` for precise text matching:
+
   ```typescript
   await page.getByRole('textbox', { name: 'Name', exact: true }).fill('value');
   ```
+
 - **Avoid strict mode violations** by being specific with selectors:
 
   ```typescript
