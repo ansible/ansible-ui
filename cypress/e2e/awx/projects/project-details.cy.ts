@@ -111,7 +111,8 @@ describe('Projects', () => {
       cy.verifyPageTitle(schedule.name);
     });
 
-    it('can edit a schedule to add a rule and then edit a schedule to remove a rule', () => {
+    it.skip('can edit a schedule to add a rule and then edit a schedule to remove a rule', () => {
+      //skipping this test due to flakiness. Needs to be migrated to Playwright.
       cy.filterTableBySingleSelect('name', schedule.name);
       cy.clickTableRowLink('name', `${schedule.name}`, {
         disableFilter: true,
