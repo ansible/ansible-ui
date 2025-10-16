@@ -29,6 +29,7 @@ import {
   useDisableRulebookActivations,
   useEnableRulebookActivationWithWarning,
   useRestartRulebookActivations,
+  useRestartRulebookActivationsWithWarning,
 } from '../hooks/useControlRulebookActivations';
 import { useCopyRulebookActivation } from '../hooks/useCopyRulebookactivation';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
@@ -60,7 +61,7 @@ export function RulebookActivationPage() {
     }
   });
 
-  const restartRulebookActivation = useRestartRulebookActivations((restarted) => {
+  const restartActivations = useRestartRulebookActivations((restarted) => {
     if (restarted.length > 0) {
       refresh();
     }
@@ -127,6 +128,19 @@ export function RulebookActivationPage() {
       [t, enableActivationWithWarning, refresh, alertToaster, parseError]
     );
 
+  const restartActivationsWithWarning = useRestartRulebookActivationsWithWarning(refresh);
+
+  const restartRulebookActivation: (activation: EdaRulebookActivation) => void = useCallback(
+    (activation) => {
+      if (activation.status === StatusEnum.WorkersOffline) {
+        restartActivationsWithWarning([activation]);
+      } else {
+        restartActivations([activation]);
+      }
+    },
+    [restartActivationsWithWarning, restartActivations]
+  );
+
   const isActionTab = location.href.includes(
     getPageUrl(EdaRoute.RulebookActivationDetails, { params: { id: rulebookActivation?.id } })
   );
@@ -173,7 +187,7 @@ export function RulebookActivationPage() {
             label: t('Restart rulebook activation'),
             isDanger: false,
             isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
-            onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
+            onClick: (activation: EdaRulebookActivation) => restartRulebookActivation(activation),
           },
           {
             type: PageActionType.Button,

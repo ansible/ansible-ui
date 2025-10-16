@@ -20,6 +20,7 @@ import {
   useDisableRulebookActivations,
   useEnableRulebookActivationWithWarning,
   useRestartRulebookActivations,
+  useRestartRulebookActivationsWithWarning,
 } from './useControlRulebookActivations';
 import { useCopyRulebookActivation } from './useCopyRulebookactivation';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
@@ -28,7 +29,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
-  const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
+  const restartRulebookActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   const copyRulebookActivation = useCopyRulebookActivation(view.refresh as () => void);
   const alertToaster = usePageAlertToaster();
@@ -81,6 +82,22 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
       }
     },
     [t, enableActivationWithWarning, view, alertToaster, parseError]
+  );
+  const restartActivationsWithWarning = useRestartRulebookActivationsWithWarning(
+    view.unselectItemsAndRefresh
+  );
+  const restartActivations = useCallback(
+    (activations: EdaRulebookActivation[]) => {
+      if (
+        activations.filter((activation) => activation.status === StatusEnum.WorkersOffline).length >
+        0
+      ) {
+        restartActivationsWithWarning(activations);
+      } else {
+        restartRulebookActivations(activations);
+      }
+    },
+    [restartActivationsWithWarning, restartRulebookActivations]
   );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
