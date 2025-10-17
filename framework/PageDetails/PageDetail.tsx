@@ -17,7 +17,7 @@ export function PageDetail(props: {
   fullWidth?: boolean;
 }) {
   const id = useID(props);
-  const { label, children, helpText, isEmpty } = props;
+  const { label, children, helpText, isEmpty, fullWidth } = props;
   if (children === null || typeof children === 'undefined' || children === '') {
     return <></>;
   }
@@ -25,7 +25,7 @@ export function PageDetail(props: {
     return <></>;
   }
   return (
-    <DescriptionListGroupStyled fullWidth={props.fullWidth}>
+    <DescriptionListGroupStyled $fullWidth={fullWidth}>
       {label && (
         <DescriptionListTerm data-cy={`label-${id}`} data-testid={`label-${id}`}>
           {label}
@@ -39,8 +39,8 @@ export function PageDetail(props: {
   );
 }
 
-const DescriptionListGroupStyled = styled(DescriptionListGroup)<{ fullWidth?: boolean }>`
-  grid-column: ${(props: { fullWidth?: boolean }) => (props.fullWidth ? '1 / -1' : 'span 1')};
+const DescriptionListGroupStyled = styled(DescriptionListGroup)<{ $fullWidth?: boolean }>`
+  grid-column: ${(props: { $fullWidth?: boolean }) => (props.$fullWidth ? '1 / -1' : 'span 1')};
 `;
 
 const DescriptionListDescriptionStyled = styled(DescriptionListDescription)`

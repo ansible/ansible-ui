@@ -178,8 +178,7 @@ describe('Workflow Job Templates Surveys', function () {
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
-      //https://issues.redhat.com/browse/AAP-28876
-      it.skip('can create float survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
+      it('can create float survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Float answer',
           question_description: 'Float description.',

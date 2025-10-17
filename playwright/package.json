@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "clean": "rm -rf allure-results allure-report coverage test-results blob-report .allure results.xml",
+    "clean": "rm -rf coverage test-results blob-report results.xml",
     "mock": "playwright test --project 'mock chromium' --grep-invert @not_mock",
     "live": "playwright test --project 'live chromium' --grep-invert @not_live",
     "compare": "playwright test --project 'live chromium' --grep @compare",
     "coverage": "open coverage/index.html",
-    "allure": "allure generate allure-results && allure open",
     "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
     "tsc": "tsc --noEmit",
     "eslint": "eslint --max-warnings=0 tests commands mock",
@@ -16,7 +15,8 @@
     "prettier": "prettier --check tests commands mock",
     "prettier:fix": "prettier --write tests commands mock",
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
-    "markdown": "tsx markdown.ts"
+    "markdown": "tsx generate-test-summary.ts",
+    "migration-stats": "tsx scripts/migration-stats.ts"
   },
   "dependencies": {
     "@ansible/aap-mock": "file:../packages/aap-mock"

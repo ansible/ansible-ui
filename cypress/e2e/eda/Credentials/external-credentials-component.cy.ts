@@ -1,4 +1,3 @@
-//Component level tests for external credentials functionality
 import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 
@@ -13,7 +12,7 @@ describe('Check if the build includes EDA', () => {
     });
   });
 
-  describe.skip('EDA External Credentials Component Tests', () => {
+  describe('EDA External Credentials Tests', () => {
     let edaOrg: EdaOrganization;
     let externalCredential: EdaCredential;
 
@@ -28,8 +27,7 @@ describe('Check if the build includes EDA', () => {
     });
 
     describe('External Credential Creation Form', () => {
-      it.skip('should show Test button only for external credential types', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
+      it('should show Test button only for external credential types', () => {
         cy.navigateTo('eda', 'credentials');
         cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type('Test External Type Detection');
@@ -54,51 +52,22 @@ describe('Check if the build includes EDA', () => {
         cy.getBy('[data-cy="credential_type_id"]').click();
         cy.clickButton('Browse');
         cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').clear().type('external');
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr').first().find('input').click();
-          cy.clickButton('Confirm');
-        });
-        cy.get('button').contains('Test').should('exist').and('be.disabled');
-        cy.get('[data-cy="inputs-username"]').type('test-user');
-        cy.get('[data-cy="inputs-password"]').type('test-pass');
-        cy.get('button').contains('Test').should('be.enabled');
-        cy.clickButton('Cancel');
-      });
-
-      it.skip('should enable/disable Test button based on form validation', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
-        cy.navigateTo('eda', 'credentials');
-        cy.getByDataCy('create-credential').click();
-        cy.get('[data-cy="name"]').type('Test Button State');
-        cy.getBy('[data-cy="organization_id"]').click();
-        cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
+          cy.getBy('[data-cy="text-input"] input').clear().type('AWS');
           cy.getBy('button[data-cy="apply-filter"]').click();
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
-        cy.getBy('[data-cy="credential_type_id"]').click();
-        cy.clickButton('Browse');
+        cy.get('button').contains('Test').should('be.visible');
+        cy.get('[data-cy="inputs-aws-access-key"]').type('accessKey');
+        cy.get('[data-cy="inputs-aws-secret-key"]').type('awsSecretKey');
+        cy.get('button').contains('Test').click();
         cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type('external');
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr').first().find('input').click();
-          cy.clickButton('Confirm');
+          cy.contains('h1', 'Test external credential').should('be.visible');
         });
-        cy.get('button').contains('Test').should('be.disabled');
-        cy.get('[data-cy="inputs-username"]').type('test-user');
-        cy.get('button').contains('Test').should('be.disabled');
-        cy.get('[data-cy="inputs-password"]').type('test-pass');
-        cy.get('button').contains('Test').should('be.enabled');
-        cy.get('[data-cy="inputs-username"]').clear();
-        cy.get('button').contains('Test').should('be.disabled');
-        cy.clickButton('Cancel');
       });
     });
 
-    describe('Credential Linking UI Components', () => {
+    describe('Credential Linking', () => {
       beforeEach(() => {
         cy.createEdaExternalCredential(edaOrg.id).then((credential) => {
           externalCredential = credential;
@@ -111,8 +80,7 @@ describe('Check if the build includes EDA', () => {
         }
       });
 
-      it.skip('should show secret management buttons for non-external credential fields', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
+      it('should show secret management buttons for non-external credential fields', () => {
         cy.navigateTo('eda', 'credentials');
         cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type('Test Link UI Components');
@@ -132,12 +100,12 @@ describe('Check if the build includes EDA', () => {
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
-        cy.get('[data-cy="inputs-username"]')
+        cy.get('[data-cy="inputs-username-form-group"]')
           .parent()
           .within(() => {
             cy.get('[data-cy="secret-management-input"]').should('exist');
           });
-        cy.get('[data-cy="inputs-password"]')
+        cy.get('[data-cy="inputs-password-form-group"]')
           .parent()
           .within(() => {
             cy.get('[data-cy="secret-management-input"]').should('exist');
@@ -145,8 +113,7 @@ describe('Check if the build includes EDA', () => {
         cy.clickButton('Cancel');
       });
 
-      it.skip('should not show secret management buttons for external credential types', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
+      it('should not show secret management buttons for external credential types', () => {
         cy.navigateTo('eda', 'credentials');
         cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type('Test No Link Buttons External');
@@ -161,28 +128,19 @@ describe('Check if the build includes EDA', () => {
         cy.getBy('[data-cy="credential_type_id"]').click();
         cy.clickButton('Browse');
         cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type('external');
+          cy.getBy('[data-cy="text-input"] input').clear().type('AWS');
           cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr').first().find('input').click();
+          cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
-        cy.get('[data-cy="inputs-username"]').type('external-user');
-        cy.get('[data-cy="inputs-password"]').type('external-pass');
-        cy.get('[data-cy="inputs-username"]')
-          .parent()
-          .within(() => {
-            cy.get('[data-cy="secret-management-input"]').should('not.exist');
-          });
-        cy.get('[data-cy="inputs-password"]')
-          .parent()
-          .within(() => {
-            cy.get('[data-cy="secret-management-input"]').should('not.exist');
-          });
+        cy.get('button').contains('Test').should('be.visible');
+        cy.get('[data-cy="inputs-aws-access-key"]').type('accessKey');
+        cy.get('[data-cy="inputs-aws-secret-key"]').type('awsSecretKey');
+        cy.get('[data-cy="secret-management-input"]').should('not.exist');
         cy.clickButton('Cancel');
       });
 
-      it.skip('should show field linking modal when secret management button is clicked', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
+      it('should show field linking modal when secret management button is clicked', () => {
         cy.navigateTo('eda', 'credentials');
         cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type('Test Link Modal');
@@ -202,20 +160,14 @@ describe('Check if the build includes EDA', () => {
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
-        cy.get('[data-cy="inputs-password"]')
-          .parent()
-          .within(() => {
-            cy.get('[data-cy="secret-management-input"]').click();
-          });
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').should('exist');
-        cy.contains('Select external credential').should('exist');
-        cy.contains(externalCredential.name).should('exist');
-        cy.clickButton('Cancel');
-        cy.clickButton('Cancel'); // Cancel main form
+        cy.get('[data-cy="inputs-password-form-group"]').within(() => {
+          cy.get('[data-cy="secret-management-input"]').click();
+        });
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').should('be.visible');
+        cy.contains('Select external credential').should('be.visible');
       });
 
-      it.skip('should disable field and show managed text when linked to external credential', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
+      it('should disable password field when linked to external credential', () => {
         cy.navigateTo('eda', 'credentials');
         cy.getByDataCy('create-credential').click();
         cy.get('[data-cy="name"]').type('Test Field Linking');
@@ -235,130 +187,26 @@ describe('Check if the build includes EDA', () => {
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
-        cy.get('[data-cy="inputs-password"]').should('not.be.disabled');
-        cy.get('[data-cy="inputs-password"]')
-          .parent()
-          .within(() => {
-            cy.get('[data-cy="secret-management-input"]').click();
-          });
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type(externalCredential.name);
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr input').click();
-          cy.clickButton('Select');
-          cy.get('select[name="source_field"]').select('password');
-          cy.clickButton('Confirm');
+        cy.get('[data-cy="inputs-password-form-group"]').should('not.be.disabled');
+        cy.get('[data-cy="inputs-password-form-group"]').within(() => {
+          cy.get('[data-cy="secret-management-input"]').click();
         });
-        cy.get('[data-cy="inputs-password"]').should('be.disabled');
-        cy.get('[data-cy="inputs-password"]')
-          .should('have.attr', 'placeholder')
-          .and('contain', 'Value is managed by external');
-        cy.get('[data-cy="clear-secret-management-input"]').should('exist');
-        cy.clickButton('Cancel');
-      });
-
-      it.skip('should clear linked field when Clear button is clicked', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
-        cy.navigateTo('eda', 'credentials');
-        cy.getByDataCy('create-credential').click();
-        cy.get('[data-cy="name"]').type('Test Clear Link');
-        cy.getBy('[data-cy="organization_id"]').click();
-        cy.clickButton('Browse');
         cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr input').click();
-          cy.clickButton('Confirm');
+          cy.getBy('[data-cy="id"]').click();
         });
-        cy.getBy('[data-cy="credential_type_id"]').click();
-        cy.clickButton('Browse');
+        cy.getBy('[data-cy="search-input"] input').type(externalCredential.name);
+        cy.contains('button', externalCredential.name).click();
         cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type('Container Registry');
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr input').click();
-          cy.clickButton('Confirm');
+          cy.get('[data-cy="secret-path"]').type('/secret/path');
+          cy.get('[data-cy="secret-key"]').type('aVerySecretKey');
+          cy.getBy('[data-cy="Submit"]').click();
         });
-        cy.get('[data-cy="inputs-password"]')
-          .parent()
-          .within(() => {
-            cy.get('[data-cy="secret-management-input"]').click();
-          });
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type(externalCredential.name);
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr input').click();
-          cy.clickButton('Select');
-          cy.get('select[name="source_field"]').select('password');
-          cy.clickButton('Confirm');
-        });
-        cy.get('[data-cy="inputs-password"]').should('be.disabled');
-        cy.get('[data-cy="clear-secret-management-input"]').click();
-        cy.get('[data-cy="inputs-password"]').should('not.be.disabled');
-        cy.get('[data-cy="clear-secret-management-input"]').should('not.exist');
-        cy.get('[data-cy="inputs-password"]').type('manual-password');
-        cy.clickButton('Cancel');
-      });
-    });
-
-    describe('Test Button Functionality', () => {
-      it.skip('should show success message when external credential test passes', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
-        cy.navigateTo('eda', 'credentials');
-        cy.getByDataCy('create-credential').click();
-        cy.get('[data-cy="name"]').type('Test Success Flow');
-        cy.getBy('[data-cy="organization_id"]').click();
-        cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr input').click();
-          cy.clickButton('Confirm');
-        });
-        cy.getBy('[data-cy="credential_type_id"]').click();
-        cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type('external');
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr').first().find('input').click();
-          cy.clickButton('Confirm');
-        });
-        cy.get('[data-cy="inputs-username"]').type('test-user');
-        cy.get('[data-cy="inputs-password"]').type('test-pass');
-        cy.get('button').contains('Test').click();
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]', { timeout: 10000 }).should('exist');
-        cy.contains(/Test (completed|failed)/i).should('exist');
-        cy.clickButton('Close');
-        cy.clickButton('Cancel');
-      });
-
-      it.skip('should show error message when external credential test fails', () => {
-        //related Jira: https://issues.redhat.com/browse/AAP-51379
-        cy.navigateTo('eda', 'credentials');
-        cy.getByDataCy('create-credential').click();
-        cy.get('[data-cy="name"]').type('Test Failure Flow');
-        cy.getBy('[data-cy="organization_id"]').click();
-        cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr input').click();
-          cy.clickButton('Confirm');
-        });
-        cy.getBy('[data-cy="credential_type_id"]').click();
-        cy.clickButton('Browse');
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
-          cy.getBy('[data-cy="text-input"] input').type('external');
-          cy.getBy('button[data-cy="apply-filter"]').click();
-          cy.get('tbody tr').first().find('input').click();
-          cy.clickButton('Confirm');
-        });
-        cy.get('[data-cy="inputs-username"]').type('invalid-user');
-        cy.get('[data-cy="inputs-password"]').type('invalid-pass');
-        cy.get('button').contains('Test').click();
-        cy.get('[data-ouia-component-type="PF6/ModalContent"]', { timeout: 10000 }).should('exist');
-        cy.get('.pf-v6-c-modal__content').should('exist');
-        cy.clickButton('Close');
-        cy.clickButton('Cancel');
+        cy.get('[data-ouia-component-type="PF6/ModalContent"]').should('not.exist');
+        cy.getBy('[data-cy="Submit"]').click();
+        cy.verifyPageTitle('Test Field Linking');
+        cy.getBy('[data-cy="edit-credential"]').click();
+        cy.verifyPageTitle('Edit Test Field Linking');
+        cy.get('[data-cy="inputs-password"]').should('have.attr', 'disabled');
       });
     });
   });

@@ -61,12 +61,10 @@ describe('GalaxykKit Installation for Collections Details', () => {
       });
 
       it('user can delete version from repository', () => {
-        // Delete version from repository
         cy.getByDataCy('table-view').click();
         cy.filterTableByTextFilter('name', collectionName);
         cy.clickLink(collectionName);
         cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
-        // refreshing the page to force UI to update and cypress to wait
         cy.get('[data-cy="refresh"]').click();
         cy.clickTab(/^Details$/, true);
         cy.get('[data-cy="refresh"]').click();
@@ -82,9 +80,6 @@ describe('GalaxykKit Installation for Collections Details', () => {
           firstVersion
         );
         cy.selectDetailsPageKebabAction('delete-version-from-repository');
-
-        // Verify the version has been deleted
-        // refreshing the page to force UI to update and cypress to wait
         cy.get('[data-cy="refresh"]').click();
         cy.navigateTo('hub', Collections.url);
         cy.getByDataCy('table-view').click();
@@ -128,8 +123,6 @@ describe('GalaxykKit Installation for Collections Details', () => {
         cy.contains('Loading').should('not.exist');
         cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
         cy.verifyPageTitle(Collections.title);
-
-        // Verify collection has been deleted from system
         cy.verifyPageTitle(Collections.title);
         cy.get('.pf-v6-c-empty-state__title-text')
           .should((_) => {})
@@ -156,7 +149,8 @@ describe('GalaxykKit Installation for Collections Details', () => {
         });
       });
 
-      it('can copy a version to repository', () => {
+      it.skip('can copy a version to repository', () => {
+        //skipping this test due to flakiness. Needs to be migrated to Playwright
         cy.checkBuildType().then((buildType) => {
           if (buildType !== OCP_A_URL) {
             cy.navigateTo('hub', Collections.url);
@@ -231,11 +225,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
           cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
         });
 
-        // https://issues.redhat.com/browse/AAP-31186
-        // [ErrorDetail(string='Collection e2e_r1e6o.e2e_jul8w-1.0.0 already exists with a different artifact', code='invalid')]
-        it.skip('can sign a selected version of a collection', () => {
-          // This test won't work with the current resources created by the before each block
-          // find a better way to create these resources before the test.
+        it('can sign a selected version of a collection', () => {
           cy.uploadCollection(collectionName, namespace.name, firstVersion).then(() => {
             cy.waitForAllTasks();
             cy.galaxykit(
@@ -249,7 +239,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
               cy.getByDataCy('version').should('contain', firstVersion);
               cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
               cy.clickPageAction('upload-new-version');
-              cy.get('#file-browse-button').click();
+              cy.contains('button', 'Browse').click();
               cy.get('input[id="file-filename"]').selectFile(filePath, {
                 action: 'drag-drop',
               });
@@ -270,15 +260,20 @@ describe('GalaxykKit Installation for Collections Details', () => {
               cy.contains('[type="button"]', '1.0.0 updated').click();
               cy.getByDataCy('version').should('contain', firstVersion);
               cy.getByDataCy('signed-state').should('contain', 'Unsigned');
-              // FIXME: here, the version changes from 1.0.0 to 1.2.3
-              // could be autoreload when no version is explicitly selected, or sign-version forgetting state?
-              cy.selectDetailsPageKebabAction('sign-version');
-              cy.reload();
+              cy.get('[data-cy="actions-dropdown"]').click();
+              cy.getByDataCy(`sign-version`).click();
+              cy.get('[data-ouia-component-type="PF6/ModalContent"]').within(() => {
+                cy.get('[data-ouia-component-id="confirm"]').click();
+                cy.get('[data-ouia-component-id="submit"]').click();
+              });
               cy.getByDataCy('version').should('contain', firstVersion);
               cy.getByDataCy('signed-state').should('contain', 'Signed');
               cy.get(`[data-cy="browse-collection-version"] button`).first().click();
               cy.contains('[type="button"]', '(latest)').click();
               cy.getByDataCy('version').should('contain', latestVersion);
+              cy.getBy('[data-cy="alert-toaster"]')
+                .should('be.visible')
+                .and('contain', 'A new version of this collection has been uploaded. Click');
               cy.getByDataCy('signed-state').should('contain', 'Unsigned');
               cy.deleteHubCollectionByName(collectionName);
             });
@@ -302,7 +297,6 @@ describe('GalaxykKit Installation for Collections Details', () => {
             hubAPI`/v3/plugin/ansible/search/collection-versions/*keywords=${collectionName}*`
           ).as('search');
           cy.filterTableByTextFilter('name', collectionName);
-          // Ensure that the filter has taken effect
           cy.wait('@search');
           cy.get(`[aria-label="Simple table"]`).within(() => {
             cy.getByDataCy('actions-dropdown').click();

@@ -21,19 +21,24 @@ import {
   useDisableRulebookActivations,
   useEnableRulebookActivationsWithWarning,
   useRestartRulebookActivations,
+  useRestartRulebookActivationsWithWarning,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
-  const restartRulebookActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
+  const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const parseError = useEdaErrorMessageParser();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
   const canCreateActivations = Boolean(data && data.actions && data.actions['POST']);
   const alertToaster = usePageAlertToaster();
   const enableActivationsWithWarning = useEnableRulebookActivationsWithWarning(
+    view.unselectItemsAndRefresh
+  );
+  const restartActivationsWithWarning = useRestartRulebookActivationsWithWarning(
     view.unselectItemsAndRefresh
   );
   const getPageUrl = useGetPageUrl();
@@ -72,6 +77,20 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
       }
     },
     [enableActivationsWithWarning, enableRulebookActivation]
+  );
+
+  const restartRulebookActivations = useCallback(
+    (activations: EdaRulebookActivation[]) => {
+      if (
+        activations.filter((activation) => activation.status === StatusEnum.WorkersOffline).length >
+        0
+      ) {
+        restartActivationsWithWarning(activations);
+      } else {
+        restartActivations(activations);
+      }
+    },
+    [restartActivations, restartActivationsWithWarning]
   );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {

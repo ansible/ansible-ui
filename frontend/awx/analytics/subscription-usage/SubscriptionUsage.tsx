@@ -8,7 +8,7 @@ import {
 import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
 import { getItemKey } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { CardBody, Flex, FlexItem, Content } from '@patternfly/react-core';
+import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -65,7 +65,7 @@ export function SubscriptionUsage() {
         <PageDashboardCard
           title={t('Subscription Compliance')}
           width="xxl"
-          height="xl"
+          height="md"
           headerControls={
             <Flex spaceItems={{ default: 'spaceItemsNone' }} style={{ gap: 8 }}>
               <FlexItem>
@@ -80,9 +80,7 @@ export function SubscriptionUsage() {
             </Flex>
           }
         >
-          <CardBody>
-            <SubscriptionUsageChart period={dateRange} />
-          </CardBody>
+          <SubscriptionUsageChart period={dateRange} />
         </PageDashboardCard>
       </PageDashboard>
     </PageLayout>

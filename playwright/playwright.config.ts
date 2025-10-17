@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-exports */
 import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
-import * as os from 'node:os';
 import path from 'path';
 
 /**
@@ -32,18 +31,10 @@ const config: PlaywrightTestConfig = {
     ['junit', { outputFile: 'results.xml' }],
     ['json', { outputFile: 'results.json' }],
     ['html', { outputFolder: 'playwright/html-report', open: 'never' }],
-    [
-      'allure-playwright',
-      {
-        resultsDir: 'playwright/allure-results',
-        environmentInfo: {
-          os_platform: os.platform(),
-          os_release: os.release(),
-          os_version: os.version(),
-          node_version: process.version,
-        },
-      },
-    ],
+    // Add Currents.dev reporter when running in CI with credentials
+    ...(process.env.CURRENTS_PROJECT_ID && process.env.CURRENTS_RECORD_KEY
+      ? [['@currents/playwright'] as [string]]
+      : []),
   ],
 
   // Split TAGS by comma and create a regular expression that matches any of the tags
@@ -68,8 +59,10 @@ const config: PlaywrightTestConfig = {
     ignoreHTTPSErrors: true,
     // Always collect trace for better debugging
     trace: 'on',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    screenshot: 'on',
+    video: 'on',
+    // screenshot: 'only-on-failure',
+    // video: 'retain-on-failure',
     // Add browser logging for debugging
     launchOptions: {
       args: ['--enable-logging', '--v=1'],

@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { parseStringPromise } from 'xml2js';
+import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 
 function extractDescription(content: unknown): string | undefined {
@@ -139,11 +140,16 @@ function processRssEntry(entry: XmlNode, deploymentType?: string): IPageNotifica
 }
 
 export function useRssNotifications() {
+  const { activePlatformUser } = usePlatformActiveUser();
+
+  // Only fetch settings if user is a superuser to avoid 403 errors
   const { data: gatewaySettings, error: settingsError } = useGet<{
     AAP_DEPLOYMENT_TYPE: string;
     NOTIFICATION_RSS_FEED_URL: string;
     NOTIFICATION_RSS_FEED_ENABLED: boolean;
-  }>(gatewayAPI`/settings/all/`, undefined, { refreshInterval: 5 * 60 * 1000 });
+  }>(activePlatformUser?.is_superuser ? gatewayAPI`/settings/all/` : undefined, undefined, {
+    refreshInterval: 5 * 60 * 1000,
+  });
 
   const { data: feedContent } = useSWR<string>(
     gatewaySettings?.NOTIFICATION_RSS_FEED_ENABLED && gatewaySettings?.NOTIFICATION_RSS_FEED_URL,

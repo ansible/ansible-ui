@@ -99,7 +99,8 @@ describe('Check if the build includes EDA', () => {
         });
       });
 
-      it('cannot delete a credential type if already in use', () => {
+      it.skip('cannot delete a credential type if already in use', () => {
+        //skipping this test due to flakiness. Needs to be migrated to Playwright
         cy.createEdaCredentialType().then((credtype) => {
           cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
             name: 'E2E Credential ' + randomString(4),

@@ -10,6 +10,7 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 import { TFunction } from 'i18next';
 import { useEdaWarningDialog } from '../components/EdaWarningDialog';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 
 export function useEnableRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
@@ -84,6 +85,25 @@ export function useDisableRulebookActivations(
     },
     [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
   );
+}
+
+function restartMessages(rulebookActivations: EdaRulebookActivation[], t: TFunction): string {
+  const nameList = rulebookActivations
+    .filter((activation) => activation.status === StatusEnum.WorkersOffline)
+    .map((activation) => activation.name)
+    .join(', ');
+
+  const count = rulebookActivations.filter(
+    (activation) => activation.status === StatusEnum.WorkersOffline
+  )?.length;
+
+  const oneMessage: string = t(
+    `${nameList} activation has workers offline. Restarting it might orphan pods and leave the existing activation running. Before restarting, we recommend contacting your admin to recover the offline workers or confirm the previous activation is no longer running and then restart it to continue executing in a different node.`
+  );
+  const multiMessage: string = t(
+    `${nameList} activations have workers offline. Restarting them might orphan pods and leave the existing activations running. Before restarting, we recommend contacting your admin to recover the offline workers or confirm the previous activations are no longer running and then restart them to continue executing in different nodes.`
+  );
+  return count > 1 ? multiMessage : oneMessage;
 }
 
 export function useRestartRulebookActivations(
@@ -225,5 +245,44 @@ export function useEnableRulebookActivationWithWarning(
       });
     },
     [edaWarningDialog, t, onComplete, postRequest]
+  );
+}
+
+export function useRestartRulebookActivationsWithWarning(
+  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
+) {
+  const { t } = useTranslation();
+  const confirmationColumns = useRulebookActivationColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useEdaBulkConfirmation<EdaRulebookActivation>();
+  const postRequest = usePostRequest<undefined, undefined>();
+
+  return useCallback(
+    (rulebookActivations: EdaRulebookActivation[]) => {
+      const sortedActivations = rulebookActivations;
+      sortedActivations.sort((l, r) => compareStrings(l.name, r.name));
+      bulkAction({
+        title: t('Restart rulebook activations', { count: rulebookActivations.length }),
+        alertPrompts: [restartMessages(rulebookActivations, t)],
+        confirmText: t(
+          'Yes, I confirm that I want to restart these {{count}} rulebook activations.',
+          {
+            count: rulebookActivations.length,
+          }
+        ),
+        actionButtonText: t('Restart rulebook activations', { count: rulebookActivations.length }),
+        items: sortedActivations,
+        keyFn: (item) => item?.id,
+        confirmationColumns,
+        actionColumns,
+        onComplete,
+        actionFn: (rulebookActivation: EdaRulebookActivation) =>
+          postRequest(
+            edaAPI`/activations/${rulebookActivation.id.toString()}/restart/?force=true`,
+            undefined
+          ),
+      });
+    },
+    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
   );
 }

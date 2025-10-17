@@ -17,7 +17,6 @@ export interface DocPathDictionary {
   notifiers: string;
   topology: string;
   workflows: string;
-  eeMigration: string;
   jobTemplateSurveys: string;
   index: string;
   hosts: string;
@@ -83,7 +82,6 @@ const upstreamPaths: DocPathDictionary = {
   notifiers: 'userguide/notifications.html',
   topology: 'userguide/topology_viewer.html',
   workflows: 'userguide/workflows.html',
-  eeMigration: 'upgrade-migration-guide/upgrade_to_ees.html',
   jobTemplateSurveys: 'userguide/job_templates.html#surveys',
   index: 'userguide/index.html',
   hosts: 'userguide/hosts.html',
@@ -104,7 +102,7 @@ const upstreamPaths: DocPathDictionary = {
 export const downstreamPaths: DocPathDictionary = {
   // Platform documentation routes
   organizations:
-    'html/access_management_and_authentication/gw-managing-access#assembly-my-user-story_gw-manage-rbac',
+    'html/access_management_and_authentication/gw-managing-access#assembly-controller-organizations_gw-manage-rbac',
   teams:
     'html/access_management_and_authentication/gw-managing-access#assembly-controller-teams_gw-manage-rbac',
   users:
@@ -126,7 +124,6 @@ export const downstreamPaths: DocPathDictionary = {
   topology: 'html/using_automation_execution/assembly-controller-topology-viewer',
   workflows:
     'html/using_automation_execution/controller-workflow-job-templates#controller-approval-nodes',
-  eeMigration: '#Upgrading',
   jobTemplateSurveys:
     'html/using_automation_execution/controller-job-templates#controller-surveys-in-job-templates',
   index: 'html/using_automation_execution/index',

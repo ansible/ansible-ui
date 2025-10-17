@@ -6,7 +6,7 @@ export function usePageChartColors() {
   const canceledColor = 'var(--pf-t--chart--global--fill--color--300)';
   const blueColor = 'var(--pf-t--chart--color--blue--100)';
   const cyanColor = 'var(--pf-t--chart--color--cyan--300)';
-  const redColor = 'var(--pf-t--chart--color--red--100)';
+  const redColor = 'var(--pf-t--chart--color--red-orange--100)';
   const greenColor = 'var(--pf-t--chart--color--green--300)';
   const yellowColor = 'var(--pf-t--chart--color--gold--400)';
   const purpleColor = 'var(--pf-t--chart--color--purple--300)';

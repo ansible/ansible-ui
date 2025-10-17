@@ -30,7 +30,7 @@ describe('PlatformOrganizationAssignUsers', () => {
         fixture: 'platformOrganizationRoles.json',
       }
     ).as('organizationRoles');
-    cy.intercept('GET', gatewayAPI`/role_definitions?name=Organization+Member`, {
+    cy.intercept('GET', gatewayAPI`/role_definitions/?name=Organization+Member*`, {
       fixture: 'platformOrganizationMemberRole.json',
     }).as('organizationUserRole');
   });
@@ -89,6 +89,7 @@ describe('PlatformOrganizationAssignUsers', () => {
 
   it('should display selected users and roles in the Review step with component labels', () => {
     cy.mount(component, params);
+    cy.wait('@userListFilteredByNormalUsers');
     cy.selectTableRowByCheckbox('username', 'test', { disableFilter: true });
     cy.selectTableRowByCheckbox('username', 'testuser2', { disableFilter: true });
     cy.clickButton(/^Next$/);

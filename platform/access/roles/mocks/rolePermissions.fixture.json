@@ -1,0 +1,853 @@
+{
+  "count": 141,
+  "next": "/api/gateway/v1/service-index/role-permissions/",
+  "previous": null,
+  "results": [
+    {
+      "api_slug": "shared.add_organization",
+      "codename": "add_organization",
+      "content_type": "shared.organization",
+      "name": "Can add organization"
+    },
+    {
+      "api_slug": "shared.change_organization",
+      "codename": "change_organization",
+      "content_type": "shared.organization",
+      "name": "Can change organization"
+    },
+    {
+      "api_slug": "shared.delete_organization",
+      "codename": "delete_organization",
+      "content_type": "shared.organization",
+      "name": "Can delete organization"
+    },
+    {
+      "api_slug": "shared.view_organization",
+      "codename": "view_organization",
+      "content_type": "shared.organization",
+      "name": "Can view organization"
+    },
+    {
+      "api_slug": "shared.member_organization",
+      "codename": "member_organization",
+      "content_type": "shared.organization",
+      "name": "User is a member of this organization"
+    },
+    {
+      "api_slug": "shared.add_team",
+      "codename": "add_team",
+      "content_type": "shared.team",
+      "name": "Can add team"
+    },
+    {
+      "api_slug": "shared.change_team",
+      "codename": "change_team",
+      "content_type": "shared.team",
+      "name": "Can change team"
+    },
+    {
+      "api_slug": "shared.delete_team",
+      "codename": "delete_team",
+      "content_type": "shared.team",
+      "name": "Can delete team"
+    },
+    {
+      "api_slug": "shared.view_team",
+      "codename": "view_team",
+      "content_type": "shared.team",
+      "name": "Can view team"
+    },
+    {
+      "api_slug": "shared.member_team",
+      "codename": "member_team",
+      "content_type": "shared.team",
+      "name": "Has all permissions granted to this team"
+    },
+    {
+      "api_slug": "awx.add_credential",
+      "codename": "add_credential",
+      "content_type": "awx.credential",
+      "name": "Can add credential"
+    },
+    {
+      "api_slug": "awx.change_credential",
+      "codename": "change_credential",
+      "content_type": "awx.credential",
+      "name": "Can change credential"
+    },
+    {
+      "api_slug": "awx.delete_credential",
+      "codename": "delete_credential",
+      "content_type": "awx.credential",
+      "name": "Can delete credential"
+    },
+    {
+      "api_slug": "awx.use_credential",
+      "codename": "use_credential",
+      "content_type": "awx.credential",
+      "name": "Can use credential in a job or related resource"
+    },
+    {
+      "api_slug": "awx.view_credential",
+      "codename": "view_credential",
+      "content_type": "awx.credential",
+      "name": "Can view credential"
+    },
+    {
+      "api_slug": "awx.add_executionenvironment",
+      "codename": "add_executionenvironment",
+      "content_type": "awx.executionenvironment",
+      "name": "Can add execution environment"
+    },
+    {
+      "api_slug": "awx.change_executionenvironment",
+      "codename": "change_executionenvironment",
+      "content_type": "awx.executionenvironment",
+      "name": "Can change execution environment"
+    },
+    {
+      "api_slug": "awx.delete_executionenvironment",
+      "codename": "delete_executionenvironment",
+      "content_type": "awx.executionenvironment",
+      "name": "Can delete execution environment"
+    },
+    {
+      "api_slug": "awx.change_instancegroup",
+      "codename": "change_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can change instance group"
+    },
+    {
+      "api_slug": "awx.delete_instancegroup",
+      "codename": "delete_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can delete instance group"
+    },
+    {
+      "api_slug": "awx.use_instancegroup",
+      "codename": "use_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can use instance group in a preference list of a resource"
+    },
+    {
+      "api_slug": "awx.view_instancegroup",
+      "codename": "view_instancegroup",
+      "content_type": "awx.instancegroup",
+      "name": "Can view instance group"
+    },
+    {
+      "api_slug": "awx.add_inventory",
+      "codename": "add_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can add inventory"
+    },
+    {
+      "api_slug": "awx.adhoc_inventory",
+      "codename": "adhoc_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can run ad hoc commands"
+    },
+    {
+      "api_slug": "awx.change_inventory",
+      "codename": "change_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can change inventory"
+    },
+    {
+      "api_slug": "awx.delete_inventory",
+      "codename": "delete_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can delete inventory"
+    },
+    {
+      "api_slug": "awx.update_inventory",
+      "codename": "update_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can update inventory sources in inventory"
+    },
+    {
+      "api_slug": "awx.use_inventory",
+      "codename": "use_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can use inventory in a job template"
+    },
+    {
+      "api_slug": "awx.view_inventory",
+      "codename": "view_inventory",
+      "content_type": "awx.inventory",
+      "name": "Can view inventory"
+    },
+    {
+      "api_slug": "awx.change_jobtemplate",
+      "codename": "change_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can change job template"
+    },
+    {
+      "api_slug": "awx.delete_jobtemplate",
+      "codename": "delete_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can delete job template"
+    },
+    {
+      "api_slug": "awx.execute_jobtemplate",
+      "codename": "execute_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can run this job template"
+    },
+    {
+      "api_slug": "awx.view_jobtemplate",
+      "codename": "view_jobtemplate",
+      "content_type": "awx.jobtemplate",
+      "name": "Can view job template"
+    },
+    {
+      "api_slug": "awx.add_notificationtemplate",
+      "codename": "add_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can add notification template"
+    },
+    {
+      "api_slug": "awx.change_notificationtemplate",
+      "codename": "change_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can change notification template"
+    },
+    {
+      "api_slug": "awx.delete_notificationtemplate",
+      "codename": "delete_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can delete notification template"
+    },
+    {
+      "api_slug": "awx.view_notificationtemplate",
+      "codename": "view_notificationtemplate",
+      "content_type": "awx.notificationtemplate",
+      "name": "Can view notification template"
+    },
+    {
+      "api_slug": "shared.audit_organization",
+      "codename": "audit_organization",
+      "content_type": "shared.organization",
+      "name": "Audit everything inside the organization"
+    },
+    {
+      "api_slug": "awx.add_project",
+      "codename": "add_project",
+      "content_type": "awx.project",
+      "name": "Can add project"
+    },
+    {
+      "api_slug": "awx.change_project",
+      "codename": "change_project",
+      "content_type": "awx.project",
+      "name": "Can change project"
+    },
+    {
+      "api_slug": "awx.delete_project",
+      "codename": "delete_project",
+      "content_type": "awx.project",
+      "name": "Can delete project"
+    },
+    {
+      "api_slug": "awx.update_project",
+      "codename": "update_project",
+      "content_type": "awx.project",
+      "name": "Can run a project update"
+    },
+    {
+      "api_slug": "awx.use_project",
+      "codename": "use_project",
+      "content_type": "awx.project",
+      "name": "Can use project in a job template"
+    },
+    {
+      "api_slug": "awx.view_project",
+      "codename": "view_project",
+      "content_type": "awx.project",
+      "name": "Can view project"
+    },
+    {
+      "api_slug": "awx.add_workflowjobtemplate",
+      "codename": "add_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can add workflow job template"
+    },
+    {
+      "api_slug": "awx.approve_workflowjobtemplate",
+      "codename": "approve_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can approve steps in this workflow job template"
+    },
+    {
+      "api_slug": "awx.change_workflowjobtemplate",
+      "codename": "change_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can change workflow job template"
+    },
+    {
+      "api_slug": "awx.delete_workflowjobtemplate",
+      "codename": "delete_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can delete workflow job template"
+    },
+    {
+      "api_slug": "awx.execute_workflowjobtemplate",
+      "codename": "execute_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can run this workflow job template"
+    },
+    {
+      "api_slug": "awx.view_workflowjobtemplate",
+      "codename": "view_workflowjobtemplate",
+      "content_type": "awx.workflowjobtemplate",
+      "name": "Can view workflow job template"
+    },
+    {
+      "api_slug": "galaxy.add_ansiblerepository",
+      "codename": "add_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can add ansible repository"
+    },
+    {
+      "api_slug": "galaxy.change_ansiblerepository",
+      "codename": "change_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can change ansible repository"
+    },
+    {
+      "api_slug": "galaxy.delete_ansiblerepository",
+      "codename": "delete_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can delete ansible repository"
+    },
+    {
+      "api_slug": "galaxy.manage_roles_ansiblerepository",
+      "codename": "manage_roles_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can manage roles on repositories"
+    },
+    {
+      "api_slug": "galaxy.modify_ansible_repo_content",
+      "codename": "modify_ansible_repo_content",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can modify repository content"
+    },
+    {
+      "api_slug": "galaxy.rebuild_metadata_ansiblerepository",
+      "codename": "rebuild_metadata_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can rebuild metadata on the repository"
+    },
+    {
+      "api_slug": "galaxy.repair_ansiblerepository",
+      "codename": "repair_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can repair the repository"
+    },
+    {
+      "api_slug": "galaxy.sign_ansiblerepository",
+      "codename": "sign_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can sign content on the repository"
+    },
+    {
+      "api_slug": "galaxy.sync_ansiblerepository",
+      "codename": "sync_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can start a sync task on the repository"
+    },
+    {
+      "api_slug": "galaxy.view_ansiblerepository",
+      "codename": "view_ansiblerepository",
+      "content_type": "galaxy.ansiblerepository",
+      "name": "Can view ansible repository"
+    },
+    {
+      "api_slug": "galaxy.add_collection",
+      "codename": "add_collection",
+      "content_type": "galaxy.collection",
+      "name": "Can add collection"
+    },
+    {
+      "api_slug": "galaxy.change_collection",
+      "codename": "change_collection",
+      "content_type": "galaxy.collection",
+      "name": "Can change collection"
+    },
+    {
+      "api_slug": "galaxy.delete_collection",
+      "codename": "delete_collection",
+      "content_type": "galaxy.collection",
+      "name": "Can delete collection"
+    },
+    {
+      "api_slug": "galaxy.view_collection",
+      "codename": "view_collection",
+      "content_type": "galaxy.collection",
+      "name": "Can view collection"
+    },
+    {
+      "api_slug": "galaxy.add_collectionimport",
+      "codename": "add_collectionimport",
+      "content_type": "galaxy.collectionimport",
+      "name": "Can add collection import"
+    },
+    {
+      "api_slug": "galaxy.change_collectionimport",
+      "codename": "change_collectionimport",
+      "content_type": "galaxy.collectionimport",
+      "name": "Can change collection import"
+    },
+    {
+      "api_slug": "galaxy.delete_collectionimport",
+      "codename": "delete_collectionimport",
+      "content_type": "galaxy.collectionimport",
+      "name": "Can delete collection import"
+    },
+    {
+      "api_slug": "galaxy.view_collectionimport",
+      "codename": "view_collectionimport",
+      "content_type": "galaxy.collectionimport",
+      "name": "Can view collection import"
+    },
+    {
+      "api_slug": "galaxy.add_collectionremote",
+      "codename": "add_collectionremote",
+      "content_type": "galaxy.collectionremote",
+      "name": "Can add collection remote"
+    },
+    {
+      "api_slug": "galaxy.change_collectionremote",
+      "codename": "change_collectionremote",
+      "content_type": "galaxy.collectionremote",
+      "name": "Can change collection remote"
+    },
+    {
+      "api_slug": "galaxy.delete_collectionremote",
+      "codename": "delete_collectionremote",
+      "content_type": "galaxy.collectionremote",
+      "name": "Can delete collection remote"
+    },
+    {
+      "api_slug": "galaxy.manage_roles_collectionremote",
+      "codename": "manage_roles_collectionremote",
+      "content_type": "galaxy.collectionremote",
+      "name": "Can manage roles on collection remotes"
+    },
+    {
+      "api_slug": "galaxy.view_collectionremote",
+      "codename": "view_collectionremote",
+      "content_type": "galaxy.collectionremote",
+      "name": "Can view collection remote"
+    },
+    {
+      "api_slug": "galaxy.add_containernamespace",
+      "codename": "add_containernamespace",
+      "content_type": "galaxy.containernamespace",
+      "name": "Can add container namespace"
+    },
+    {
+      "api_slug": "galaxy.change_containernamespace",
+      "codename": "change_containernamespace",
+      "content_type": "galaxy.containernamespace",
+      "name": "Can change container namespace"
+    },
+    {
+      "api_slug": "galaxy.delete_containernamespace",
+      "codename": "delete_containernamespace",
+      "content_type": "galaxy.containernamespace",
+      "name": "Can delete container namespace"
+    },
+    {
+      "api_slug": "galaxy.manage_roles_containernamespace",
+      "codename": "manage_roles_containernamespace",
+      "content_type": "galaxy.containernamespace",
+      "name": "Can manage role assignments on container namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_add_containerdistribution",
+      "codename": "namespace_add_containerdistribution",
+      "content_type": "galaxy.containernamespace",
+      "name": "Add any distribution to a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_change_containerdistribution",
+      "codename": "namespace_change_containerdistribution",
+      "content_type": "galaxy.containernamespace",
+      "name": "Change any distribution in a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_change_containerpushrepository",
+      "codename": "namespace_change_containerpushrepository",
+      "content_type": "galaxy.containernamespace",
+      "name": "Update any existing push repository in a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_delete_containerdistribution",
+      "codename": "namespace_delete_containerdistribution",
+      "content_type": "galaxy.containernamespace",
+      "name": "Delete any distribution from a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_modify_content_containerpushrepository",
+      "codename": "namespace_modify_content_containerpushrepository",
+      "content_type": "galaxy.containernamespace",
+      "name": "Modify content in any push repository in a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_pull_containerdistribution",
+      "codename": "namespace_pull_containerdistribution",
+      "content_type": "galaxy.containernamespace",
+      "name": "Pull from any distribution in a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_push_containerdistribution",
+      "codename": "namespace_push_containerdistribution",
+      "content_type": "galaxy.containernamespace",
+      "name": "Push to any distribution in a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_view_containerdistribution",
+      "codename": "namespace_view_containerdistribution",
+      "content_type": "galaxy.containernamespace",
+      "name": "View any distribution in a namespace"
+    },
+    {
+      "api_slug": "galaxy.namespace_view_containerpushrepository",
+      "codename": "namespace_view_containerpushrepository",
+      "content_type": "galaxy.containernamespace",
+      "name": "View any push repository in a namespace"
+    },
+    {
+      "api_slug": "galaxy.view_containernamespace",
+      "codename": "view_containernamespace",
+      "content_type": "galaxy.containernamespace",
+      "name": "Can view container namespace"
+    },
+    {
+      "api_slug": "galaxy.add_containerregistryremote",
+      "codename": "add_containerregistryremote",
+      "content_type": "galaxy.containerregistryremote",
+      "name": "Can add container registry remote"
+    },
+    {
+      "api_slug": "galaxy.change_containerregistryremote",
+      "codename": "change_containerregistryremote",
+      "content_type": "galaxy.containerregistryremote",
+      "name": "Can change container registry remote"
+    },
+    {
+      "api_slug": "galaxy.delete_containerregistryremote",
+      "codename": "delete_containerregistryremote",
+      "content_type": "galaxy.containerregistryremote",
+      "name": "Can delete container registry remote"
+    },
+    {
+      "api_slug": "galaxy.view_containerregistryremote",
+      "codename": "view_containerregistryremote",
+      "content_type": "galaxy.containerregistryremote",
+      "name": "Can view container registry remote"
+    },
+    {
+      "api_slug": "galaxy.add_containerrepository",
+      "codename": "add_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can add container repository"
+    },
+    {
+      "api_slug": "galaxy.build_image_containerrepository",
+      "codename": "build_image_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can use the image builder in a repository"
+    },
+    {
+      "api_slug": "galaxy.change_containerrepository",
+      "codename": "change_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can change container repository"
+    },
+    {
+      "api_slug": "galaxy.delete_containerrepository",
+      "codename": "delete_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can delete container repository"
+    },
+    {
+      "api_slug": "galaxy.delete_containerrepository_versions",
+      "codename": "delete_containerrepository_versions",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can delete repository versions"
+    },
+    {
+      "api_slug": "galaxy.manage_roles_containerrepository",
+      "codename": "manage_roles_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can manage role assignments on container repository"
+    },
+    {
+      "api_slug": "galaxy.modify_content_containerrepository",
+      "codename": "modify_content_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can modify content in a repository"
+    },
+    {
+      "api_slug": "galaxy.sync_containerrepository",
+      "codename": "sync_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can start a sync task"
+    },
+    {
+      "api_slug": "galaxy.view_containerrepository",
+      "codename": "view_containerrepository",
+      "content_type": "galaxy.containerrepository",
+      "name": "Can view container repository"
+    },
+    {
+      "api_slug": "galaxy.add_namespace",
+      "codename": "add_namespace",
+      "content_type": "galaxy.namespace",
+      "name": "Can add namespace"
+    },
+    {
+      "api_slug": "galaxy.change_namespace",
+      "codename": "change_namespace",
+      "content_type": "galaxy.namespace",
+      "name": "Can change namespace"
+    },
+    {
+      "api_slug": "galaxy.delete_namespace",
+      "codename": "delete_namespace",
+      "content_type": "galaxy.namespace",
+      "name": "Can delete namespace"
+    },
+    {
+      "api_slug": "galaxy.upload_to_namespace",
+      "codename": "upload_to_namespace",
+      "content_type": "galaxy.namespace",
+      "name": "Can upload collections to namespace"
+    },
+    {
+      "api_slug": "galaxy.view_namespace",
+      "codename": "view_namespace",
+      "content_type": "galaxy.namespace",
+      "name": "Can view namespace"
+    },
+    {
+      "api_slug": "galaxy.add_task",
+      "codename": "add_task",
+      "content_type": "galaxy.task",
+      "name": "Can add task"
+    },
+    {
+      "api_slug": "galaxy.change_task",
+      "codename": "change_task",
+      "content_type": "galaxy.task",
+      "name": "Can change task"
+    },
+    {
+      "api_slug": "galaxy.delete_task",
+      "codename": "delete_task",
+      "content_type": "galaxy.task",
+      "name": "Can delete task"
+    },
+    {
+      "api_slug": "galaxy.manage_roles_task",
+      "codename": "manage_roles_task",
+      "content_type": "galaxy.task",
+      "name": "Can manage role assignments on task"
+    },
+    {
+      "api_slug": "galaxy.view_task",
+      "codename": "view_task",
+      "content_type": "galaxy.task",
+      "name": "Can view task"
+    },
+    {
+      "api_slug": "eda.add_activation",
+      "codename": "add_activation",
+      "content_type": "eda.activation",
+      "name": "Can add activation"
+    },
+    {
+      "api_slug": "eda.change_activation",
+      "codename": "change_activation",
+      "content_type": "eda.activation",
+      "name": "Can change activation"
+    },
+    {
+      "api_slug": "eda.delete_activation",
+      "codename": "delete_activation",
+      "content_type": "eda.activation",
+      "name": "Can delete activation"
+    },
+    {
+      "api_slug": "eda.disable_activation",
+      "codename": "disable_activation",
+      "content_type": "eda.activation",
+      "name": "Can disable an activation"
+    },
+    {
+      "api_slug": "eda.enable_activation",
+      "codename": "enable_activation",
+      "content_type": "eda.activation",
+      "name": "Can enable an activation"
+    },
+    {
+      "api_slug": "eda.restart_activation",
+      "codename": "restart_activation",
+      "content_type": "eda.activation",
+      "name": "Can restart an activation"
+    },
+    {
+      "api_slug": "eda.view_activation",
+      "codename": "view_activation",
+      "content_type": "eda.activation",
+      "name": "Can view activation"
+    },
+    {
+      "api_slug": "eda.view_auditrule",
+      "codename": "view_auditrule",
+      "content_type": "eda.auditrule",
+      "name": "Can view audit rule"
+    },
+    {
+      "api_slug": "eda.add_credentialinputsource",
+      "codename": "add_credentialinputsource",
+      "content_type": "eda.credentialinputsource",
+      "name": "Can add credential input source"
+    },
+    {
+      "api_slug": "eda.change_credentialinputsource",
+      "codename": "change_credentialinputsource",
+      "content_type": "eda.credentialinputsource",
+      "name": "Can change credential input source"
+    },
+    {
+      "api_slug": "eda.delete_credentialinputsource",
+      "codename": "delete_credentialinputsource",
+      "content_type": "eda.credentialinputsource",
+      "name": "Can delete credential input source"
+    },
+    {
+      "api_slug": "eda.view_credentialinputsource",
+      "codename": "view_credentialinputsource",
+      "content_type": "eda.credentialinputsource",
+      "name": "Can view credential input source"
+    },
+    {
+      "api_slug": "eda.add_decisionenvironment",
+      "codename": "add_decisionenvironment",
+      "content_type": "eda.decisionenvironment",
+      "name": "Can add decision environment"
+    },
+    {
+      "api_slug": "eda.change_decisionenvironment",
+      "codename": "change_decisionenvironment",
+      "content_type": "eda.decisionenvironment",
+      "name": "Can change decision environment"
+    },
+    {
+      "api_slug": "eda.delete_decisionenvironment",
+      "codename": "delete_decisionenvironment",
+      "content_type": "eda.decisionenvironment",
+      "name": "Can delete decision environment"
+    },
+    {
+      "api_slug": "eda.view_decisionenvironment",
+      "codename": "view_decisionenvironment",
+      "content_type": "eda.decisionenvironment",
+      "name": "Can view decision environment"
+    },
+    {
+      "api_slug": "eda.add_edacredential",
+      "codename": "add_edacredential",
+      "content_type": "eda.edacredential",
+      "name": "Can add eda credential"
+    },
+    {
+      "api_slug": "eda.change_edacredential",
+      "codename": "change_edacredential",
+      "content_type": "eda.edacredential",
+      "name": "Can change eda credential"
+    },
+    {
+      "api_slug": "eda.delete_edacredential",
+      "codename": "delete_edacredential",
+      "content_type": "eda.edacredential",
+      "name": "Can delete eda credential"
+    },
+    {
+      "api_slug": "eda.view_edacredential",
+      "codename": "view_edacredential",
+      "content_type": "eda.edacredential",
+      "name": "Can view eda credential"
+    },
+    {
+      "api_slug": "eda.add_eventstream",
+      "codename": "add_eventstream",
+      "content_type": "eda.eventstream",
+      "name": "Can add event stream"
+    },
+    {
+      "api_slug": "eda.change_eventstream",
+      "codename": "change_eventstream",
+      "content_type": "eda.eventstream",
+      "name": "Can change event stream"
+    },
+    {
+      "api_slug": "eda.delete_eventstream",
+      "codename": "delete_eventstream",
+      "content_type": "eda.eventstream",
+      "name": "Can delete event stream"
+    },
+    {
+      "api_slug": "eda.view_eventstream",
+      "codename": "view_eventstream",
+      "content_type": "eda.eventstream",
+      "name": "Can view event stream"
+    },
+    {
+      "api_slug": "eda.add_project",
+      "codename": "add_project",
+      "content_type": "eda.project",
+      "name": "Can add project"
+    },
+    {
+      "api_slug": "eda.change_project",
+      "codename": "change_project",
+      "content_type": "eda.project",
+      "name": "Can change project"
+    },
+    {
+      "api_slug": "eda.delete_project",
+      "codename": "delete_project",
+      "content_type": "eda.project",
+      "name": "Can delete project"
+    },
+    {
+      "api_slug": "eda.sync_project",
+      "codename": "sync_project",
+      "content_type": "eda.project",
+      "name": "Can sync a project"
+    },
+    {
+      "api_slug": "eda.view_project",
+      "codename": "view_project",
+      "content_type": "eda.project",
+      "name": "Can view project"
+    },
+    {
+      "api_slug": "eda.view_rulebook",
+      "codename": "view_rulebook",
+      "content_type": "eda.rulebook",
+      "name": "Can view rulebook"
+    },
+    {
+      "api_slug": "eda.view_rulebookprocess",
+      "codename": "view_rulebookprocess",
+      "content_type": "eda.rulebookprocess",
+      "name": "Can view rulebook process"
+    }
+  ]
+}

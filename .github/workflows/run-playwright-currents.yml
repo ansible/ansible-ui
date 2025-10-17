@@ -1,0 +1,82 @@
+name: Run Playwright with Currents
+
+on:
+  workflow_dispatch:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+        description: "AAP Server URL"
+      TEST_UI:
+        type: choice
+        required: true
+        description: "Test UI on"
+        default: "branch"
+        options:
+          - "branch"
+          - "server"
+      PLATFORM_USERNAME:
+        type: string
+        required: false
+        description: "Username"
+      PLATFORM_PASSWORD:
+        type: string
+        required: false
+        description: "Password"
+      TAGS: 
+        type: string
+        required: false
+        description: "Include Tags"
+      NOT_TAGS: 
+        type: string
+        required: false
+        description: "Exclude Tags"
+      PARALLEL_TESTS:
+        type: number
+        required: false
+        description: "Parallel Tests"
+        default: 4
+      PROJECT:
+        type: choice
+        description: "Playwright Project"
+        default: "live chromium"
+        options:
+          - "live chromium"
+          - "live firefox"
+          - "live webkit"
+          - "mock chromium"
+          - "mock firefox"
+          - "mock webkit"
+
+jobs:
+  platform-ui-image:
+    name: Platform UI Image
+    if: ${{ inputs.TEST_UI == 'branch' }}
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-context: platform
+      docker-file: platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+    
+  playwright-currents:
+    name: Playwright with Currents
+    if: always()
+    needs:
+      - platform-ui-image
+    uses: ./.github/workflows/playwright-currents.yml
+    with:
+      PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+      PLATFORM_UI: ${{ inputs.TEST_UI == 'branch' && 'https://localhost:4100' || inputs.PLATFORM_SERVER }}
+      TAGS: ${{ inputs.TAGS }}
+      NOT_TAGS: ${{ inputs.NOT_TAGS }}
+      PROJECT: ${{ inputs.PROJECT }}
+      PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
+    secrets:
+      CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+      CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
+      PLATFORM_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      PLATFORM_USERNAME: ${{ secrets.E2E_USER }}

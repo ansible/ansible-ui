@@ -1,17 +1,17 @@
-import { useState } from 'react';
 import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
-import { AuthenticatorMapValues } from './AuthenticatorForm';
-import { PageFormPlatformTeamNameSelect } from '../../organizations/components/PageFormPlatformTeamNameSelect';
 import { PageFormPlatformOrganizationNameSelect } from '../../organizations/components/PageFormPlatformOrganizationNameSelect';
+import { PageFormPlatformTeamNameSelect } from '../../organizations/components/PageFormPlatformTeamNameSelect';
 import { PageFormPlatformRoleNameSelect } from '../../roles/components/PageFormPlatformRoleNameSelect';
+import { AuthenticatorMapValues } from './AuthenticatorForm';
 import { MappingAttributesSubform } from './MappingAttributesSubform';
 
 export const MappingFieldsGrid = styled.div`
@@ -117,7 +117,7 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
         <PageFormGroup label={t('Options')}>
           <PageFormCheckbox
             labelHelp={
-              'Selecting revoke bars matching user groups from being added to the team. Barred members will not be notified.'
+              'Selecting this option prevents matching user groups from being added to this resource.'
             }
             name={`revoke`}
             label={t('Revoke')}

@@ -1,11 +1,12 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { PlatformRole } from '../../interfaces/PlatformRole';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PlatformRoleDetails } from './PlatformRoleDetails';
+import rolePermissions from './mocks/rolePermissions.fixture.json';
 
 const mockRole: PlatformRole = {
   id: 1,
@@ -15,7 +16,7 @@ const mockRole: PlatformRole = {
     user_assignments: '/api/gateway/v1/role_definitions/1/user_assignments/',
   },
   summary_fields: {},
-  permissions: ['view_organization', 'edit_organization'],
+  permissions: ['shared.view_organization', 'shared.delete_organization'],
   content_type: 'organization',
   created: '2024-01-01T00:00:00Z',
   modified: '2024-01-02T00:00:00Z',
@@ -35,6 +36,17 @@ describe('PlatformRoleDetails', () => {
   });
 
   beforeEach(() => {
+    server.use(
+      http.get(gatewayAPI`/role_definitions/1/`, () => {
+        return HttpResponse.json(mockRole);
+      }),
+      http.get(gatewayAPI`/service-index/role-permissions/`, () => {
+        return HttpResponse.json(rolePermissions);
+      })
+    );
+  });
+
+  afterEach(() => {
     server.resetHandlers();
   });
 
@@ -42,14 +54,17 @@ describe('PlatformRoleDetails', () => {
     server.close();
   });
 
-  it('should render role details when data is loaded', async () => {
-    server.use(
-      http.get(gatewayAPI`/role_definitions/1/`, () => {
-        return HttpResponse.json(mockRole);
-      })
-    );
+  const expectBreadcrumbs = (items: string[]) => {
+    const breadcrumbNav = screen.getByRole('navigation', { name: 'Breadcrumb' });
+    const breadcrumbItems = within(breadcrumbNav).getAllByRole('listitem');
+    expect(breadcrumbItems).toHaveLength(items.length);
+    items.forEach((text, i) => {
+      expect(breadcrumbItems[i]).toHaveTextContent(text);
+    });
+  };
 
-    render(
+  it('should render role details when data is loaded', async () => {
+    const { getByTestId } = render(
       <MemoryRouter initialEntries={['/access/roles/1/details']}>
         <Routes>
           <Route path="/access/roles/:id/details" element={<PlatformRoleDetails />} />
@@ -61,18 +76,26 @@ describe('PlatformRoleDetails', () => {
       expect(screen.getByRole('heading', { name: 'Organization Admin' })).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Administrator role for organizations')).toBeInTheDocument();
-    // Breadcrumb shows the current page name
-    expect(screen.getByTestId('name')).toHaveTextContent('Organization Admin');
+    expectBreadcrumbs(['Roles', 'Organization Admin']);
+
+    expect(getByTestId('name')).toHaveTextContent(mockRole.name);
+    expect(getByTestId('description')).toHaveTextContent(mockRole.description);
+    expect(getByTestId('resource-type')).toHaveTextContent('Organization');
+    expect(getByTestId('role-creation')).toHaveTextContent('Default');
+    expect(getByTestId('created')).toBeInTheDocument();
+    expect(getByTestId('last-modified')).toBeInTheDocument();
+
+    const permissionsDetail = getByTestId('permissions');
+    expect(permissionsDetail).toHaveTextContent('Can view organization');
+    expect(permissionsDetail).toHaveTextContent('Can delete organization');
+
+    const componentsDetail = getByTestId('components');
+    expect(componentsDetail).toHaveTextContent('Automation Execution');
+    expect(componentsDetail).toHaveTextContent('Automation Decisions');
+    expect(componentsDetail).toHaveTextContent('Automation Content');
   });
 
-  it('should render with custom breadcrumb label', async () => {
-    server.use(
-      http.get(gatewayAPI`/role_definitions/1/`, () => {
-        return HttpResponse.json(mockRole);
-      })
-    );
-
+  it('should render with custom breadcrumb label', () => {
     render(
       <MemoryRouter initialEntries={['/access/roles/1/details']}>
         <Routes>
@@ -83,13 +106,7 @@ describe('PlatformRoleDetails', () => {
         </Routes>
       </MemoryRouter>
     );
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Organization Admin' })).toBeInTheDocument();
-    });
-
-    // Check for custom breadcrumb - it's rendered in the breadcrumb navigation
-    expect(screen.getByTestId('name')).toHaveTextContent('Organization Admin');
+    expectBreadcrumbs(['Custom Roles', 'Organization Admin']);
   });
 
   it('should render role with minimal data', async () => {
@@ -164,37 +181,7 @@ describe('PlatformRoleDetails', () => {
     expect(screen.getByText('Role with "quotes" and symbols!')).toBeInTheDocument();
   });
 
-  it('should display permissions as labels', async () => {
-    server.use(
-      http.get(gatewayAPI`/role_definitions/1/`, () => {
-        return HttpResponse.json(mockRole);
-      })
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/access/roles/1/details']}>
-        <Routes>
-          <Route path="/access/roles/:id/details" element={<PlatformRoleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Organization Admin' })).toBeInTheDocument();
-    });
-
-    // Check that permissions are displayed
-    expect(screen.getByText('view_organization')).toBeInTheDocument();
-    expect(screen.getByText('edit_organization')).toBeInTheDocument();
-  });
-
   it('should display action buttons', async () => {
-    server.use(
-      http.get(gatewayAPI`/role_definitions/1/`, () => {
-        return HttpResponse.json(mockRole);
-      })
-    );
-
     render(
       <MemoryRouter initialEntries={['/access/roles/1/details']}>
         <Routes>

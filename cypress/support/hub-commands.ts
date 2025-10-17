@@ -453,8 +453,6 @@ Cypress.Commands.add(
       cy.waitOnHubTask(task).then((currentSubject: unknown) => {
         const task = currentSubject as Task;
         expect(task.state).to.be.eql('completed');
-        cy.contains('Success');
-        cy.clickButton('Close');
       });
     });
   }

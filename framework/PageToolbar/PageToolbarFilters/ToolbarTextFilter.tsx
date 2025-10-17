@@ -70,7 +70,7 @@ export function ToolbarTextMultiFilter(props: {
   return (
     <InputGroup>
       <InputGroupItem>
-        <TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
+        <TextInputGroup data-cy={'text-input'} data-testid={'text-input'} style={{ minWidth: 220 }}>
           <TextInputGroupMain
             id={props.id}
             value={value}
@@ -167,7 +167,7 @@ export function ToolbarSingleTextFilter(props: {
   return (
     <InputGroup>
       <InputGroupItem>
-        <TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
+        <TextInputGroup data-cy={'text-input'} data-testid={'text-input'} style={{ minWidth: 220 }}>
           <TextInputGroupMain
             id={props.id}
             value={value}
