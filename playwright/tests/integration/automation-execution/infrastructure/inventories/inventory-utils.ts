@@ -5,8 +5,12 @@ import { confirmAndAssertDeletion } from '../../../../../commands/confirmAndAsse
 import { createE2EName } from '../../../../../commands/createE2EName';
 import { navigateTo } from '../../../../../commands/navigateTo';
 
-export async function createInventory(options: { name?: string; type?: string }, page: Page) {
+export async function createInventory(
+  options: { name?: string; type?: string; organizationName?: string },
+  page: Page
+) {
   const inventoryName = options.name ?? createE2EName('inventory');
+  const organizationName = options.organizationName ?? 'Default';
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
   await page.getByLabel('dropdown toggle', { exact: true }).click();
   await page
@@ -21,8 +25,8 @@ export async function createInventory(options: { name?: string; type?: string },
   }
   await page.getByPlaceholder('Enter inventory name').fill(inventoryName);
   await page.getByLabel('Organization *').click();
-  await page.getByRole('textbox', { name: 'Search input' }).fill('Default');
-  await page.getByRole('option', { name: 'Default' }).click();
+  await page.getByRole('textbox', { name: 'Search input' }).fill(organizationName);
+  await page.getByRole('option', { name: organizationName }).click();
   if (options.type !== 'smart') {
     await page.getByLabel('Prevent instance group').check();
   }
