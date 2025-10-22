@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { filterTable } from '../../../../commands/filterTable';
-import { navigateTo } from '../../../../commands/navigateTo';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { filterTable } from '@ansible/playwright/commands/filterTable';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 
 export async function createJobTemplate(
   options: {
@@ -190,7 +190,7 @@ export async function deleteJobTemplate(
 
 import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
 import { APIRequestContext } from '@playwright/test';
-import { platformUI } from '../../../../commands/login';
+import { platformUI } from '@ansible/playwright/commands/login';
 import { controllerAPI } from '../workflow-visualizer/controller-api';
 
 interface CreateJobTemplateOptions {

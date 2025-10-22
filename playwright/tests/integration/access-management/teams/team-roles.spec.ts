@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createAwxCredential,
   deleteAwxCredential,

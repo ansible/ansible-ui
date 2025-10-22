@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../../../../commands/setup';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createExecutionEnvironment,
   deleteExecutionEnvironment,

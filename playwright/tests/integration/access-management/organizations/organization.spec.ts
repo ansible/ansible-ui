@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { selectTableRow } from '../../../../commands/selectTableRow';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createOrganization, deleteOrganization } from './organization-utils';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));

@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createRoleWithConfig,
   deleteRole,

@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { filterTable } from '../../../../commands/filterTable';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { selectTableRow } from '../../../../commands/selectTableRow';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { filterTable } from '@ansible/playwright/commands/filterTable';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createOrganization,
   deleteOrganization,

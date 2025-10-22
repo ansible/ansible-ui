@@ -1,11 +1,11 @@
 import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
 import { APIRequestContext, Page, expect } from '@playwright/test';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { platformUI } from '../../../../commands/login';
-import { navigateTo } from '../../../../commands/navigateTo';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { platformUI } from '@ansible/playwright/commands/login';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { controllerAPI } from './controller-api';
 interface WFVizMock {
   mockData: PlatformItemsResponse<unknown> /** Object response from API */;

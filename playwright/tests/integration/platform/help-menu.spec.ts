@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { setupBefore, setupAfter } from '../../../commands/setup';
-import { checkBuildType } from '../../../commands/checkBuildType';
-import { AZURE_URL, SAAS_URL } from '../../../commands/constants';
+import { setupBefore, setupAfter } from '@ansible/playwright/commands/setup';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
 import { awxAPI, hubAPI, edaAPI, AwxConfig, HubConfig, EdaConfig } from './platform-api-utils';
 
 test.beforeEach(setupBefore({ path: '/' }));

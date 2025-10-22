@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { clearTableFilters } from '../../../../../commands/clearTableFilters';
-import { clickPageAction } from '../../../../../commands/clickPageAction';
-import { clickTableRowAction } from '../../../../../commands/clickTableRowAction';
-import { confirmAndAssertDeletion } from '../../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../../commands/createE2EName';
-import { selectTableFilter } from '../../../../../commands/selectTableFilter';
-import { setupAfter, setupBefore } from '../../../../../commands/setup';
+import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { selectTableFilter } from '@ansible/playwright/commands/selectTableFilter';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createInstanceGroup, deleteInstanceGroup } from '../instance-groups/instance-group-utils';
 import {
   createInventory,

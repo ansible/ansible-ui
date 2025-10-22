@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../commands/checkBuildType';
-import { AZURE_URL, SAAS_URL } from '../../../commands/constants';
-import { navigateTo } from '../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../commands/setup';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
 interface LicenseInfo {
   compliant: boolean;

@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);

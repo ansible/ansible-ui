@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../../commands/checkBuildType';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { SAAS_URL } from '../../../../commands/constants';
-import { expectRowToContain } from '../../../../commands/expectRowToContain';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { expectRowToContain } from '@ansible/playwright/commands/expectRowToContain';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createOrganization,
   deleteOrganization,

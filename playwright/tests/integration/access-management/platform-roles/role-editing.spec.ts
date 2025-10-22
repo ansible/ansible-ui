@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { getTableRow } from '../../../../commands/getTableRow';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { getTableRow } from '@ansible/playwright/commands/getTableRow';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   cancelRoleForm,
   createRoleWithConfig,
