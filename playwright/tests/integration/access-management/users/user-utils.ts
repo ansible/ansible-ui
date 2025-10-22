@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test';
 import { Page } from 'playwright-core';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { deleteResourceFromDetailsPage } from '../../../../commands/deleteResourceFromDetailsPage';
-import { navigateTo } from '../../../../commands/navigateTo';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { deleteResourceFromDetailsPage } from '@ansible/playwright/commands/deleteResourceFromDetailsPage';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 
 export interface CreateUserOptions {
   userName?: string;

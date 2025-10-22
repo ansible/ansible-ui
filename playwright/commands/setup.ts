@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test';
 import { existsSync } from 'fs';
 import MCR from 'monocart-coverage-reports';
-import { mock } from '../mock/mock';
-import { coverageOptions } from '../tests/coverage-utils/coverage-options';
+import { mock } from '@ansible/playwright/mock/mock';
+import { coverageOptions } from '@ansible/playwright/tests/coverage-utils/coverage-options';
 import { login, platformUI } from './login';
 
 export function setupBefore(options?: { path?: string }) {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
 import { createUser, deleteUser } from '../users/user-utils';
 import { createTeam, deleteTeam } from './team-utils';

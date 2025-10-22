@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { getTableRow } from '../../../../commands/getTableRow';
-import { navigateTo } from '../../../../commands/navigateTo';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { getTableRow } from '@ansible/playwright/commands/getTableRow';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 
 export interface RoleTestData {
   name: string;

@@ -1,6 +1,6 @@
 import { LightspeedStatusResponse } from '@ansible/chatbot/interfaces/LightspeedStatus';
 import { Page } from '@playwright/test';
-import { platformUI } from '../../../commands/login';
+import { platformUI } from '@ansible/playwright/commands/login';
 import { lightspeedAPI } from './lightspeed-api';
 
 /**

@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { filterTable } from '../../../../commands/filterTable';
-import { login } from '../../../../commands/login';
-import { logout } from '../../../../commands/logout';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { filterTable } from '@ansible/playwright/commands/filterTable';
+import { login } from '@ansible/playwright/commands/login';
+import { logout } from '@ansible/playwright/commands/logout';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createAuthenticationMethod } from './authentication-utils';
 
 test.beforeEach(setupBefore({ path: '/access/authenticators' }));

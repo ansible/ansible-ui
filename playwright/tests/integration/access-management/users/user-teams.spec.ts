@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
 import { createTeam, deleteTeam } from '../teams/team-utils';
 import { assignTeamToUser, createUser, deleteUser, removeTeamFromUser } from './user-utils';

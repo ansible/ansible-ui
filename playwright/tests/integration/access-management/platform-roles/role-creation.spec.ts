@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   cancelRoleForm,
   clickCreateRole,

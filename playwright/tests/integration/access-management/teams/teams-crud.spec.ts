@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { bulkDeleteResources } from '../../../../commands/bulkDeleteResources';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
-import { deleteResourceFromList } from '../../../../commands/deleteResourceFromList';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { bulkDeleteResources } from '@ansible/playwright/commands/bulkDeleteResources';
+import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
+import { deleteResourceFromList } from '@ansible/playwright/commands/deleteResourceFromList';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
 import { createTeam, deleteTeam, editTeam, editTeamFromList } from './team-utils';
 

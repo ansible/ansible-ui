@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
-import { toggleNodeKebab } from '../../../../commands/toggleNodeKebab';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { toggleNodeKebab } from '@ansible/playwright/commands/toggleNodeKebab';
 import {
   createAwxCredential,
   deleteAwxCredential,

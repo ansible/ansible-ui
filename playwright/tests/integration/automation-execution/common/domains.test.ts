@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { randomString } from '../../../../../framework/utils/random-string';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
 import {
   createJobTemplate,

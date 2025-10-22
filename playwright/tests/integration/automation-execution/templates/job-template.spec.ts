@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { filterTable } from '../../../../commands/filterTable';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { selectTableFilter } from '../../../../commands/selectTableFilter';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { filterTable } from '@ansible/playwright/commands/filterTable';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { selectTableFilter } from '@ansible/playwright/commands/selectTableFilter';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createAwxCredential,
   deleteAwxCredential,

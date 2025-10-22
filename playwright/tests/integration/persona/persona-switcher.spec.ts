@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../commands/checkBuildType';
-import { SAAS_URL } from '../../../commands/constants';
-import { login, platformUI } from '../../../commands/login';
-import { logout } from '../../../commands/logout';
-import { setupAfter, setupBefore } from '../../../commands/setup';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { login, platformUI } from '@ansible/playwright/commands/login';
+import { logout } from '@ansible/playwright/commands/logout';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createUser } from '../access-management/users/user-utils';
 
 const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
