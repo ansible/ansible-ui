@@ -1,5 +1,5 @@
-import { ReactNode, CSSProperties, useState } from 'react';
 import { Button } from '@patternfly/react-core';
+import { CSSProperties, ReactNode, useState } from 'react';
 import { useForm, useFormState } from 'react-hook-form';
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
@@ -17,7 +17,7 @@ export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSPr
         }
       }}
       data-cy={'Submit'}
-      data-testid="submit"
+      data-testid="Submit"
       type="submit"
       isDisabled={isSubmitting}
       isLoading={isSubmitting}

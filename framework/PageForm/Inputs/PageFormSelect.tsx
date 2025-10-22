@@ -256,6 +256,7 @@ export function PageFormSelect<
                           label={option.label}
                           description={option.description}
                           data-cy={optionId}
+                          data-testid={option.value}
                         >
                           {option.label}
                         </SelectOption>

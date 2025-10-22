@@ -71,7 +71,7 @@ export async function createJobTemplate(
   await page.getByRole('combobox', { name: 'Type to filter' }).click();
   await page.getByRole('option', { name: 'hello_world.yml' }).click();
   await expect(page.getByPlaceholder('Add a project, then select a')).toHaveValue(
-    'hello_world.yml'
+    /hello_world\.yml$/
   );
   await expect(page.getByRole('button', { name: 'Create job template' })).toBeVisible();
   await page.getByRole('button', { name: 'Create job template' }).click();

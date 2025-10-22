@@ -1,7 +1,7 @@
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
 import { isPageWizardParentStep, usePageWizard } from './PageWizardProvider';
 import { PageWizardParentStep } from './types';
-import { useCallback } from 'react';
 
 export function PageWizardNavigation() {
   const {
@@ -20,7 +20,7 @@ export function PageWizardNavigation() {
   if (!activeStep) return;
 
   return (
-    <nav className={navClassName} aria-label="Steps" data-cy="wizard-nav">
+    <nav className={navClassName} aria-label="Steps" data-cy="wizard-nav" data-testid="wizard-nav">
       <ol className="pf-v6-c-wizard__nav-list">
         {visibleSteps.map((step) => {
           /** Index of current step in flattened list */
