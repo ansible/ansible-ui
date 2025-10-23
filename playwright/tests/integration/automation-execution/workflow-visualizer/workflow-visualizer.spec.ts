@@ -30,6 +30,7 @@ import {
   navigateToVisualizer,
   removeAllWorkflowVizNodes,
 } from './workflow-visualizer-utils';
+import { createOrganization } from '../../access-management/organizations/organization-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -406,8 +407,9 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const sourceName = createE2EName();
+      const organizationName = await createOrganization(page);
       const { inventoryName, inventorySourceName } = await createInventorySource(
-        { name: sourceName },
+        { name: sourceName, organizationName },
         page
       );
       const workflowJobTemplate = await createWorkflowJobTemplate(page);

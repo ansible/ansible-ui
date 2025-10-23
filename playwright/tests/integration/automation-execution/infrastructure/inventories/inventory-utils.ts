@@ -4,39 +4,112 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 
 export async function createInventory(
-  options: { name?: string; type?: string; organizationName?: string },
+  options: {
+    name?: string;
+    description?: string;
+    organizationName?: string;
+    labelName?: string;
+    instanceGroupName?: string;
+    policyEnforcement?: string;
+    variables?: string;
+    preventInstanceGroupFallback?: boolean;
+  },
   page: Page
 ) {
   const inventoryName = options.name ?? createE2EName('inventory');
-  const organizationName = options.organizationName ?? 'Default';
+
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
   await page.getByLabel('dropdown toggle', { exact: true }).click();
   await page
     .getByRole('menuitem', {
-      name: options.type === 'smart' ? 'Create smart inventory' : 'Create inventory',
+      name: 'Create inventory',
     })
     .click();
-  if (options.type === 'smart') {
-    const smartHostFilterVal = 'name__icontains=RedHat';
-    await page.getByPlaceholder('Enter smart host filter').click();
-    await page.getByPlaceholder('Enter smart host filter').fill(`${smartHostFilterVal}`);
-  }
+
   await page.getByPlaceholder('Enter inventory name').fill(inventoryName);
-  await page.getByLabel('Organization *').click();
-  await page.getByRole('textbox', { name: 'Search input' }).fill(organizationName);
-  await page.getByRole('option', { name: organizationName }).click();
-  if (options.type !== 'smart') {
+  await page.getByPlaceholder('Enter description').fill(options.description ?? '');
+  await singleSelectByLabel('Organization', options.organizationName ?? 'Default', page);
+
+  // instance group
+  if (options.instanceGroupName) {
+    await page.getByLabel('Instance groups').click();
+    await page.getByLabel('Search input').click();
+    await page.getByLabel('Search input').fill(options.instanceGroupName);
+    await page.getByLabel(options.instanceGroupName).check();
+  }
+  // label
+  if (options.labelName) {
+    await page.getByPlaceholder('Select or create labels').click();
+    await page.getByPlaceholder('Select or create labels').fill(options.labelName);
+    await page.getByRole('option', { name: `Create "${options.labelName}"` }).click();
+  }
+  // policy enforcement
+  if (options.policyEnforcement) {
+    await page.getByLabel('Policy enforcement').click();
+    await page.getByLabel('Policy enforcement').fill(options.policyEnforcement);
+  }
+  // variables
+  if (options.variables) {
+    await page.locator('.view-line').click();
+    await page.getByRole('textbox', { name: 'Editor content' }).fill(options.variables);
+  }
+  // prevent instance group fallback
+  if (options.preventInstanceGroupFallback) {
     await page.getByLabel('Prevent instance group').check();
   }
-  // Re-enable this when we have a deployment with OPA policy enabled.
-  // get feature flags from API
-  // if( featureflags includes OPA){
-  // await page.getByLabel('OPA query path').fill('test/opa');
-  // }
+
+  // create inventory
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
+  return inventoryName;
+}
+
+export async function createSmartInventory(
+  options: {
+    name?: string;
+    organizationName: string;
+    instanceGroupName?: string;
+    labelName?: string;
+  },
+  page: Page
+) {
+  const inventoryName = options.name ?? createE2EName('inventory');
+  await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+  await page.getByLabel('dropdown toggle', { exact: true }).click();
+  await page
+    .getByRole('menuitem', {
+      name: 'Create smart inventory',
+    })
+    .click();
+
+  const smartHostFilterVal = 'name__icontains=RedHat';
+  await page.getByPlaceholder('Enter smart host filter').click();
+  await page.getByPlaceholder('Enter smart host filter').fill(`${smartHostFilterVal}`);
+  // TODO
+  return inventoryName;
+}
+
+export async function createConstructedInventory(
+  options: {
+    name?: string;
+    organizationName: string;
+    instanceGroupName?: string;
+    labelName?: string;
+  },
+  page: Page
+) {
+  const inventoryName = options.name ?? createE2EName('inventory');
+  await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+  await page.getByLabel('dropdown toggle', { exact: true }).click();
+  await page
+    .getByRole('menuitem', {
+      name: 'Create constructed inventory',
+    })
+    .click();
+
   return inventoryName;
 }
 
@@ -44,12 +117,16 @@ export async function createInventorySource(
   options: {
     name?: string;
     projectName?: string;
+    organizationName?: string;
   },
   page: Page
 ) {
   const inventorySourceName = options.name ?? createE2EName('inventory-source');
   const projectName = options.projectName ?? 'Demo Project';
-  const inventoryName = await createInventory({}, page);
+  const inventoryName = await createInventory(
+    { organizationName: options.organizationName ?? 'Default' },
+    page
+  );
   await page.getByRole('tab', { name: 'Sources' }).click();
   await page.getByText('Create source', { exact: true }).click();
   await page.getByPlaceholder('Enter source name').click();
