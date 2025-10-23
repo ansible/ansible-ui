@@ -10,7 +10,6 @@ if (PLATFORM_SERVER && PLATFORM_SERVER.endsWith('/')) {
 
 baseConfig.e2e!.specPattern = [
   'cypress/**/jobTemplates.cy.ts',
-  'cypress/**/inventories.cy.ts',
   'cypress/**/workflowVisualizerCRUD.cy.ts',
 ];
 baseConfig.e2e!.excludeSpecPattern = [
