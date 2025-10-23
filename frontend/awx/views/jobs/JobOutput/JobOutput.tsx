@@ -20,6 +20,9 @@ import { isJobRunning } from './util';
 
 const Section = styled(PageSection)`
   row-gap: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 export function JobOutput() {
