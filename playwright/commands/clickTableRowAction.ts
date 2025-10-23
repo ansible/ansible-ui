@@ -36,12 +36,22 @@ export async function clickTableRowAction(options: ClickTableRowActionOptions, p
     page
   );
 
-  await page.getByRole('button', { name: 'table view' }).click();
+  // Switch to table view if the button is present
+  try {
+    await page.getByRole('button', { name: 'table view' }).click();
+  } catch {
+    // Table view button doesn't exist, already in table view
+  }
+
   await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
   await expect(page.locator('table tbody tr')).toHaveCount(1);
-  if (await page.getByRole('row', { name: options.text }).getByLabel(options.action).isVisible()) {
-    await page.getByRole('row', { name: options.text }).getByLabel(options.action).click();
-  } else {
+
+  // Check if action is directly visible in row, otherwise use kebab menu
+  const row = page.getByRole('row', { name: options.text });
+  try {
+    await row.getByLabel(options.action).click();
+  } catch {
+    // Action not directly visible, use kebab menu
     await page.getByLabel('kebab dropdown toggle').click();
     await page.getByRole('menuitem', { name: options.action }).click();
   }
