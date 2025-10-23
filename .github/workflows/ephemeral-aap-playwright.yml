@@ -28,7 +28,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: ephemeral-aap-playwright-${{ github.event.issue.number || github.event.pull_request.number || github.event.inputs.pr_number }}
+  group: ephemeral-aap-playwright-pr-${{ github.event.issue.number || github.event.pull_request.number || github.event.inputs.pr_number }}-${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
