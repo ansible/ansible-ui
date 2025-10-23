@@ -7,7 +7,8 @@ import { login, platformUI } from './login';
 
 export function setupBefore(options?: { path?: string }) {
   return async ({ page }: { page: Page }) => {
-    if (existsSync('coverage')) {
+    // Only enable coverage if not explicitly skipped
+    if (existsSync('coverage') && process.env.SKIP_COVERAGE !== 'true') {
       await page.coverage.stopJSCoverage().catch(() => {});
       await page.coverage.startJSCoverage({ resetOnNavigation: true });
     }
@@ -19,10 +20,13 @@ export function setupBefore(options?: { path?: string }) {
 
 export async function setupAfter({ page }: { page: Page }) {
   try {
-    const coverage = await page.coverage.stopJSCoverage();
-    const coverageReport = MCR(coverageOptions);
-    await coverageReport.add(coverage);
-    await coverageReport.generate();
+    // Only collect coverage if not explicitly skipped
+    if (process.env.SKIP_COVERAGE !== 'true') {
+      const coverage = await page.coverage.stopJSCoverage();
+      const coverageReport = MCR(coverageOptions);
+      await coverageReport.add(coverage);
+      await coverageReport.generate();
+    }
   } catch (e) {
     // DO NOTHING
   }
