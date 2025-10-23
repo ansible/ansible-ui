@@ -3,23 +3,6 @@ name: Ephemeral AAP Cypress
 on:
   issue_comment:
     types: [created]
-  # TEMPORARY: workflow_dispatch added for testing before merge
-  # This allows manual testing from PR branches via Actions UI
-  # Can be removed after initial testing or kept for manual trigger capability
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to test against'
-        required: true
-        type: number
-  # TEMPORARY: pull_request trigger for testing the workflow before merge
-  # Only runs when this workflow file is modified in a PR
-  # This validates the workflow executes successfully
-  # Remove after initial testing and merge
-  pull_request:
-    paths:
-      - '.github/workflows/ephemeral-aap-cypress.yml'
-    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
@@ -28,17 +11,13 @@ permissions:
   actions: read
 
 concurrency:
-  group: ephemeral-aap-cypress-pr-${{ github.event.issue.number || github.event.pull_request.number || github.event.inputs.pr_number }}-${{ github.workflow }}
+  group: ephemeral-aap-cypress-pr-${{ github.event.issue.number }}-${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
   check-comment:
     name: Check Comment Trigger
-    # Allow workflow to run on issue_comment, workflow_dispatch, OR pull_request
-    if: |
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/run-aap-ui-cypress')) ||
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'pull_request'
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/run-aap-ui-cypress')
     runs-on: ubuntu-latest
     outputs:
       triggered: ${{ steps.check.outputs.triggered }}
@@ -55,27 +34,16 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Get PR number from different event types
-            let prNumber;
-            if (context.eventName === 'workflow_dispatch') {
-              prNumber = context.payload.inputs.pr_number;
-            } else if (context.eventName === 'pull_request') {
-              prNumber = context.payload.pull_request.number;
-            } else {
-              prNumber = context.issue.number;
-            }
-
             const pr = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: prNumber
+              pull_number: context.issue.number
             });
             core.setOutput('number', pr.data.number);
             core.setOutput('sha', pr.data.head.sha);
             core.setOutput('ref', pr.data.head.ref);
 
       - name: Add reaction to comment
-        if: github.event_name == 'issue_comment'
         uses: actions/github-script@v7
         with:
           script: |
@@ -87,7 +55,6 @@ jobs:
             });
 
       - name: Post starting message
-        if: github.event_name == 'issue_comment'
         uses: actions/github-script@v7
         with:
           script: |
