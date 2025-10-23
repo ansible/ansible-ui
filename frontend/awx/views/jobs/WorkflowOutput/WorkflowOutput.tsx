@@ -17,6 +17,7 @@ import {
 } from '@patternfly/react-topology';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
@@ -51,6 +52,13 @@ export const greyBadgeLabel = {
   badgeColor: 'var(--pf-t--global--background--color--secondary--default)',
   badgeBorderColor: 'var(--pf-t--global--border--color--on-secondary)',
 };
+
+const WorkflowOutputContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+`;
 
 export const WorkflowOutput = (props: {
   job: Job;
@@ -185,12 +193,14 @@ export const WorkflowOutput = (props: {
   }, [t, visualization, createEdge, workflowNodes]);
 
   return (
-    <VisualizationProvider controller={visualization}>
-      <WorkflowOutputGraph
-        job={props.job}
-        reloadJob={props.reloadJob}
-        refreshNodeStatus={props.refreshNodeStatus}
-      />
-    </VisualizationProvider>
+    <WorkflowOutputContainer>
+      <VisualizationProvider controller={visualization}>
+        <WorkflowOutputGraph
+          job={props.job}
+          reloadJob={props.reloadJob}
+          refreshNodeStatus={props.refreshNodeStatus}
+        />
+      </VisualizationProvider>
+    </WorkflowOutputContainer>
   );
 };

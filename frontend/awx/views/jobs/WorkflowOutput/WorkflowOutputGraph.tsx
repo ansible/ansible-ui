@@ -24,6 +24,8 @@ import { Legend } from '../../../resources/templates/WorkflowVisualizer/componen
 import { useWorkflowOutput } from './hooks/useWorkflowOutput';
 
 const TopologyView = styled(PFTopologyView)`
+  height: 100%;
+
   .pf-v6-c-divider {
     display: none;
   }

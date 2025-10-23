@@ -49,6 +49,8 @@ import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { getNodeLabel } from './wizard/helpers';
 
 const TopologyView = styled(PFTopologyView)`
+  height: 100%;
+
   .pf-v6-c-divider {
     display: none;
   }
