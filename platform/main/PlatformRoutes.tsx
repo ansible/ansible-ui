@@ -1,4 +1,5 @@
 export enum PlatformRoute {
+  Login = 'platform-login',
   Overview = 'platform-overview',
   AWX = 'platform-awx',
   HUB = 'platform-hub',

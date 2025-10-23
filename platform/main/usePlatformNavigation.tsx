@@ -93,6 +93,14 @@ export function usePlatformNavigation() {
     };
     navigationItems.push(overviewNavigation);
 
+    // blank page, allowing Login screen to appear without
+    // applying LOGIN_REDIRECT_OVERRIDE setting
+    navigationItems.push({
+      id: PlatformRoute.Login,
+      path: 'login',
+      element: <></>,
+    });
+
     // Automation Execution
     navigationItems.push(automationExecutionNavigation);
 
