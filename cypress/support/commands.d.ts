@@ -93,7 +93,6 @@ import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOr
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { UpgradeUserType } from './constants';
-import { PlatformRoleUserAssignment } from '@ansible/platform-ui/interfaces/PlatformRoleUserAssignment ';
 import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 
 declare global {
@@ -1955,17 +1954,6 @@ declare global {
         content_type__model?: string;
       }): Chainable<PlatformRole[]>;
 
-      getPlatformRoleByName(roleName: string, contentType: string): Chainable<PlatformRole>;
-
-      /**
-       * Creates a platform role definition
-       * @returns {Chainable<PlatformRole>}
-       */
-      assignUserNewRole(
-        resourceId: string,
-        roleDefinitionID: number,
-        userId: string
-      ): Chainable<PlatformRoleUserAssignment>;
       createPlatformRole(
         roleName: string,
         description: string,
