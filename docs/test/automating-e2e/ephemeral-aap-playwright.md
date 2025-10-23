@@ -80,13 +80,9 @@ The Ephemeral AAP Playwright workflow allows developers and reviewers to run ful
 
 ### Trigger
 
-**Events**:
+**Event**: `issue_comment` with type `created`
 
-- `issue_comment` with type `created`
-- `workflow_dispatch` (manual trigger with PR number)
-- `pull_request` (temporary, for testing workflow changes)
-
-**Condition for issue_comment**:
+**Condition**:
 
 - Comment must be on a pull request (not an issue)
 - Comment body must contain `/run-aap-ui-playwright`
@@ -97,13 +93,15 @@ The workflow uses concurrency groups to automatically cancel in-progress runs wh
 
 ```yaml
 concurrency:
-  group: ephemeral-aap-playwright-${{ github.event.issue.number || github.event.pull_request.number || github.event.inputs.pr_number }}
+  group: ephemeral-aap-playwright-pr-${{ github.event.issue.number }}-${{ github.workflow }}
   cancel-in-progress: true
 ```
 
 **Behavior**:
-- Each PR has its own concurrency group based on the PR number
-- When `/run-aap-ui-playwright` is triggered on a PR, any currently running workflow for that PR is automatically cancelled
+- Each PR has its own concurrency group based on the PR number and workflow name
+- When `/run-aap-ui-playwright` is triggered on a PR, any currently running Playwright workflow for that PR is automatically cancelled
+- The workflow name is included in the concurrency group to prevent interference with the Cypress workflow
+- Different workflows can run simultaneously on the same PR (Cypress and Playwright tests can run in parallel)
 - Different PRs run independently without interference (e.g., PR #123 and PR #456 can run simultaneously)
 - AAP cleanup always runs (`if: always()`) even when workflows are cancelled, preventing orphaned deployments
 
@@ -111,6 +109,7 @@ concurrency:
 - Saves runner resources by stopping obsolete test runs
 - Users can quickly restart tests after pushing new commits
 - Prevents confusion from multiple concurrent runs on the same PR
+- Allows Cypress and Playwright workflows to run in parallel without cancelling each other
 - No manual cancellation required
 
 ### Job 1: check-comment
@@ -410,17 +409,18 @@ The following secrets must be configured in the repository settings:
 
 **Configurable parameters**:
 
-- **Concurrency control**: Lines 30-32 - Auto-cancellation of old runs
+- **Concurrency control**: Lines 13-15 - Auto-cancellation of old runs
 
   ```yaml
   concurrency:
-    group: ephemeral-aap-playwright-${{ github.event.issue.number || github.event.pull_request.number || github.event.inputs.pr_number }}
+    group: ephemeral-aap-playwright-pr-${{ github.event.issue.number }}-${{ github.workflow }}
     cancel-in-progress: true
   ```
 
-  - Automatically cancels in-progress workflows when a new run is triggered on the same PR
+  - Automatically cancels in-progress Playwright workflows when a new run is triggered on the same PR
   - Set `cancel-in-progress: false` to allow multiple concurrent runs per PR (not recommended)
-  - Concurrency group uses PR number to isolate different PRs
+  - Concurrency group uses PR number and workflow name to isolate different PRs and prevent interference with Cypress workflow
+  - Allows Cypress and Playwright workflows to run simultaneously on the same PR
 
 - **Parallel jobs**: Line 112 - `PARALLEL_JOBS=4`
 

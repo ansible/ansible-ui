@@ -83,10 +83,12 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 
 **Concurrency Control**:
 
-- **Group**: `ephemeral-aap-cypress-{PR_NUMBER}`
+- **Group**: `ephemeral-aap-cypress-pr-{PR_NUMBER}-{WORKFLOW_NAME}`
 - **Cancel in progress**: `true`
 - If a new test run is triggered while one is already running for the same PR, the old run is automatically cancelled
 - This prevents wasting resources on outdated test runs
+- The workflow name is included in the concurrency group to prevent interference with the Playwright workflow
+- Different workflows can run simultaneously on the same PR (Cypress and Playwright tests can run in parallel)
 - Cleanup steps still execute on cancelled workflows to tear down AAP deployments
 
 ### Job 1: check-comment
