@@ -225,7 +225,7 @@ jobs:
       - check-comment
       - matrix-setup
       - deploy-and-test
-    if: always()
+    if: always() && needs.check-comment.outputs.triggered == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Check matrix results
