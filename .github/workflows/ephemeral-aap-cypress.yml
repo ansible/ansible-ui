@@ -86,7 +86,7 @@ jobs:
     if: needs.check-comment.outputs.triggered == 'true'
     runs-on: aap-dev
     concurrency:
-      group: ephemeral-aap-cypress-pr-${{ needs.check-comment.outputs.pr_number }}
+      group: ephemeral-aap-cypress-pr-${{ needs.check-comment.outputs.pr_number }}-${{ matrix.container }}
       cancel-in-progress: true
     strategy:
       fail-fast: false

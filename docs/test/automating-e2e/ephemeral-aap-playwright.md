@@ -94,17 +94,19 @@ The workflow uses job-level concurrency groups to automatically cancel in-progre
 ```yaml
 # Applied at the deploy-and-test job level, not workflow level
 concurrency:
-  group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}
+  group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}-${{ matrix.container }}
   cancel-in-progress: true
 ```
 
 **Behavior**:
-- Each PR has its own concurrency group based on the PR number
-- When `/run-aap-ui-playwright` is triggered on a PR, any currently running Playwright workflow for that PR is automatically cancelled
+- Each PR has its own concurrency groups based on the PR number and matrix container value
+- Each matrix job (1, 2, 3, 4) has its own concurrency group
+- When `/run-aap-ui-playwright` is triggered on a PR, all matching matrix jobs from any currently running Playwright workflow for that PR are automatically cancelled
 - Concurrency control is only applied to jobs that actually run, not to skipped workflows
 - This prevents skipped Playwright workflows (triggered by `/run-aap-ui-cypress` comments) from cancelling real Playwright runs
 - Different workflows can run simultaneously on the same PR (Cypress and Playwright tests can run in parallel)
 - Different PRs run independently without interference (e.g., PR #123 and PR #456 can run simultaneously)
+- All 4 matrix jobs within the same workflow run execute in parallel (different container values = different concurrency groups)
 - AAP cleanup always runs (`if: always()`) even when workflows are cancelled, preventing orphaned deployments
 
 **Benefits**:
@@ -112,6 +114,7 @@ concurrency:
 - Users can quickly restart tests after pushing new commits
 - Prevents confusion from multiple concurrent runs on the same PR
 - Allows Cypress and Playwright workflows to run in parallel without cancelling each other
+- Ensures all 4 matrix jobs run in parallel within the same workflow run
 - Skipped workflows (wrong comment) don't interfere with real running workflows
 - No manual cancellation required
 
@@ -417,16 +420,18 @@ The following secrets must be configured in the repository settings:
 
   ```yaml
   concurrency:
-    group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}
+    group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}-${{ matrix.container }}
     cancel-in-progress: true
   ```
 
   - Applied at the job level, not workflow level
+  - Each matrix job has its own concurrency group based on matrix container value
   - Automatically cancels in-progress Playwright test jobs when a new run is triggered on the same PR
   - Set `cancel-in-progress: false` to allow multiple concurrent runs per PR (not recommended)
-  - Concurrency group uses PR number to isolate different PRs
+  - Concurrency group uses PR number and matrix container to isolate different PRs and allow parallel matrix execution
   - Job-level concurrency prevents skipped workflows from cancelling real running workflows
   - Allows Cypress and Playwright workflows to run simultaneously on the same PR
+  - Ensures all 4 matrix jobs run in parallel within the same workflow run
 
 - **Parallel jobs**: `PARALLEL_JOBS=4` in matrix-setup job
 
