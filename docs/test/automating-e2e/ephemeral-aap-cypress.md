@@ -84,9 +84,10 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 **Concurrency Control**:
 
 - **Location**: Applied at the job level (deploy-and-test job only)
-- **Group**: `ephemeral-aap-cypress-pr-{PR_NUMBER}`
+- **Group**: `ephemeral-aap-cypress-pr-{PR_NUMBER}-{MATRIX_CONTAINER}`
 - **Cancel in progress**: `true`
-- If a new Cypress test run is triggered while one is already running for the same PR, the old run is automatically cancelled
+- Each matrix job (1, 2, 3, 4) has its own concurrency group based on the matrix container value
+- If a new Cypress test run is triggered while one is already running for the same PR, all matching matrix jobs from the old run are automatically cancelled
 - This prevents wasting resources on outdated test runs
 - Concurrency control is only applied to jobs that actually run, not to skipped workflows
 - This prevents skipped Cypress workflows (triggered by `/run-aap-ui-playwright` comments) from cancelling real Cypress runs
@@ -429,8 +430,10 @@ The following secrets must be configured in the repository settings:
 
 - **Concurrency control**: Applied at deploy-and-test job level
 
-  - Group: `ephemeral-aap-cypress-pr-${{ needs.check-comment.outputs.pr_number }}`
+  - Group: `ephemeral-aap-cypress-pr-${{ needs.check-comment.outputs.pr_number }}-${{ matrix.container }}`
+  - Each matrix job has its own concurrency group
   - Prevents duplicate runs while allowing cross-workflow parallelization
+  - Ensures all 4 matrix jobs run in parallel within the same workflow run
 
 - **AAP deployment reference**: `uses: ansible/aap-dev/.github/actions/aap_deploy@main` in deploy-and-test job
 
