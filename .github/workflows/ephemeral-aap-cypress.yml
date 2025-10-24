@@ -10,10 +10,6 @@ permissions:
   issues: write
   actions: read
 
-concurrency:
-  group: ephemeral-aap-cypress-pr-${{ github.event.issue.number }}-${{ github.workflow }}
-  cancel-in-progress: true
-
 jobs:
   check-comment:
     name: Check Comment Trigger
@@ -89,6 +85,9 @@ jobs:
       - matrix-setup
     if: needs.check-comment.outputs.triggered == 'true'
     runs-on: aap-dev
+    concurrency:
+      group: ephemeral-aap-cypress-pr-${{ needs.check-comment.outputs.pr_number }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:

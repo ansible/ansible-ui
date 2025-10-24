@@ -83,11 +83,13 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 
 **Concurrency Control**:
 
-- **Group**: `ephemeral-aap-cypress-pr-{PR_NUMBER}-{WORKFLOW_NAME}`
+- **Location**: Applied at the job level (deploy-and-test job only)
+- **Group**: `ephemeral-aap-cypress-pr-{PR_NUMBER}`
 - **Cancel in progress**: `true`
-- If a new test run is triggered while one is already running for the same PR, the old run is automatically cancelled
+- If a new Cypress test run is triggered while one is already running for the same PR, the old run is automatically cancelled
 - This prevents wasting resources on outdated test runs
-- The workflow name is included in the concurrency group to prevent interference with the Playwright workflow
+- Concurrency control is only applied to jobs that actually run, not to skipped workflows
+- This prevents skipped Cypress workflows (triggered by `/run-aap-ui-playwright` comments) from cancelling real Cypress runs
 - Different workflows can run simultaneously on the same PR (Cypress and Playwright tests can run in parallel)
 - Cleanup steps still execute on cancelled workflows to tear down AAP deployments
 
@@ -132,7 +134,7 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 
 - `matrix`: JSON array used by deploy-and-test job
 
-**Tuning parallelization**: To adjust the number of parallel AAP deployments, modify the `PARALLEL_JOBS` variable in this job (line 109 in workflow file).
+**Tuning parallelization**: To adjust the number of parallel AAP deployments, modify the `PARALLEL_JOBS` variable in this job.
 
 ### Job 3: deploy-and-test (Matrix Strategy)
 
@@ -147,6 +149,7 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 - Podman is upgraded to ensure compatibility
 - **Matrix strategy**: Creates N parallel jobs, each with its own AAP instance
 - **fail-fast: false**: All matrix jobs run to completion regardless of failures
+- **Job-level concurrency**: Prevents duplicate test runs on the same PR while allowing different workflows to run simultaneously
 - **IMPORTANT**: AAP deployment and testing must occur in the same job to ensure localhost connectivity
 
 **Why combined job**: GitHub Actions jobs run in isolated environments. Even on the same runner, separate jobs don't share localhost network access. Combining deployment and testing ensures that the AAP instance deployed at `localhost:PORT` is accessible to the Cypress tests running in the same environment.
@@ -385,7 +388,7 @@ The workflow uses a **matrix strategy with multiple AAP deployments** to achieve
 To adjust the number of parallel jobs:
 
 1. Edit `.github/workflows/ephemeral-aap-cypress.yml`
-2. Find the `matrix-setup` job (around line 107)
+2. Find the `matrix-setup` job
 3. Change the `PARALLEL_JOBS` variable:
    ```yaml
    run: |
@@ -419,30 +422,35 @@ The following secrets must be configured in the repository settings:
 
 **Configurable parameters**:
 
-- **Parallelization**: Line 109 - `PARALLEL_JOBS=4`
+- **Parallelization**: `PARALLEL_JOBS=4` in matrix-setup job
 
   - Adjust number of parallel AAP deployments and test runners
   - Higher values = faster execution, more resources
 
-- **AAP deployment reference**: Line 134 - `uses: ansible/aap-dev/.github/actions/aap_deploy@main`
+- **Concurrency control**: Applied at deploy-and-test job level
+
+  - Group: `ephemeral-aap-cypress-pr-${{ needs.check-comment.outputs.pr_number }}`
+  - Prevents duplicate runs while allowing cross-workflow parallelization
+
+- **AAP deployment reference**: `uses: ansible/aap-dev/.github/actions/aap_deploy@main` in deploy-and-test job
 
   - Can pin to specific version: `@v1.2.3`
   - Can use specific commit: `@abc123def`
 
-- **Cypress configuration**: Line 203 - `config-file: cypress.platform.config.ts`
+- **Cypress configuration**: `config-file: cypress.platform.config.ts` in Cypress test execution step
 
   - Can be changed to run different test suites
 
-- **Test tags**: Line 204 - `tag: ephemeral-aap-cypress`
+- **Test tags**: `tag: ephemeral-aap-cypress` in Cypress test execution step
 
   - Used to filter tests in Cypress Cloud
 
-- **Artifact retention**: Lines 224, 230 - `retention-days: 7`
+- **Artifact retention**: `retention-days: 7` for screenshots and videos
 
   - Adjust based on storage requirements
 
-- **Artifact naming**: Lines 222, 229
-  - Artifacts include matrix number: `cypress-screenshots-1`, `cypress-videos-1`
+- **Artifact naming**: Artifacts include matrix number
+  - `cypress-screenshots-1`, `cypress-videos-1`, etc.
   - Helps identify which parallel job produced the artifacts
 
 ## Usage
