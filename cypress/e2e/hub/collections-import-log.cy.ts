@@ -2,7 +2,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
-import { SAAS_URL, AZURE_URL, OCP_A_URL } from '../../support/constants';
+import { SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL } from '../../support/constants';
 
 describe('GalaxyKit Installation Check for Collections Import Log', () => {
   before(function () {
@@ -82,7 +82,9 @@ describe('GalaxyKit Installation Check for Collections Import Log', () => {
       cy.getByDataCy('label-version').should('be.visible');
       cy.contains('Completed').should('be.visible');
       cy.checkBuildType().then((buildType) => {
-        if (buildType !== SAAS_URL && buildType !== AZURE_URL && buildType !== OCP_A_URL) {
+        if (
+          ![SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType as string)
+        ) {
           cy.contains('Unsigned').should('be.visible');
         }
         cy.contains('1.0.0').should('be.visible');

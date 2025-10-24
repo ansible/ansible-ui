@@ -19,7 +19,14 @@ import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOr
 import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { AZURE_URL, OCP_A_URL, SAAS_URL, UpgradeUserType, usersForMigration } from './constants';
+import {
+  AAP_DEV_LOCALHOST_URL,
+  AZURE_URL,
+  OCP_A_URL,
+  SAAS_URL,
+  UpgradeUserType,
+  usersForMigration,
+} from './constants';
 import { awxAPI } from './formatApiPathForAwx';
 import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
@@ -652,8 +659,12 @@ Cypress.Commands.add('deletePlatformRole', (platformRoleDefinition: PlatformRole
   });
 });
 
-Cypress.Commands.add('checkBuildType', () => {
-  cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+Cypress.Commands.add('checkBuildType', (): Cypress.Chainable<string | undefined> => {
+  const platformServer = (Cypress.env('PLATFORM_SERVER') as string) || '';
+  if (platformServer.includes(AAP_DEV_LOCALHOST_URL)) {
+    return cy.wrap<string | undefined>(AAP_DEV_LOCALHOST_URL);
+  }
+  return cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data): string | undefined => {
     const baseUrl = data.TOWER_URL_BASE;
     const parseAzure = baseUrl.includes(AZURE_URL);
     const parseSaas = baseUrl.includes(SAAS_URL);
@@ -668,7 +679,7 @@ Cypress.Commands.add('checkBuildType', () => {
     if (parseAzure) {
       return AZURE_URL;
     } else {
-      return '';
+      return undefined;
     }
-  });
+  }) as Cypress.Chainable<string | undefined>;
 });
