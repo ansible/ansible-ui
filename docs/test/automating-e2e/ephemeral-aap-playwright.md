@@ -89,18 +89,20 @@ The Ephemeral AAP Playwright workflow allows developers and reviewers to run ful
 
 **Concurrency Control**:
 
-The workflow uses concurrency groups to automatically cancel in-progress runs when a new run is triggered on the same PR:
+The workflow uses job-level concurrency groups to automatically cancel in-progress runs when a new run is triggered on the same PR:
 
 ```yaml
+# Applied at the deploy-and-test job level, not workflow level
 concurrency:
-  group: ephemeral-aap-playwright-pr-${{ github.event.issue.number }}-${{ github.workflow }}
+  group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}
   cancel-in-progress: true
 ```
 
 **Behavior**:
-- Each PR has its own concurrency group based on the PR number and workflow name
+- Each PR has its own concurrency group based on the PR number
 - When `/run-aap-ui-playwright` is triggered on a PR, any currently running Playwright workflow for that PR is automatically cancelled
-- The workflow name is included in the concurrency group to prevent interference with the Cypress workflow
+- Concurrency control is only applied to jobs that actually run, not to skipped workflows
+- This prevents skipped Playwright workflows (triggered by `/run-aap-ui-cypress` comments) from cancelling real Playwright runs
 - Different workflows can run simultaneously on the same PR (Cypress and Playwright tests can run in parallel)
 - Different PRs run independently without interference (e.g., PR #123 and PR #456 can run simultaneously)
 - AAP cleanup always runs (`if: always()`) even when workflows are cancelled, preventing orphaned deployments
@@ -110,6 +112,7 @@ concurrency:
 - Users can quickly restart tests after pushing new commits
 - Prevents confusion from multiple concurrent runs on the same PR
 - Allows Cypress and Playwright workflows to run in parallel without cancelling each other
+- Skipped workflows (wrong comment) don't interfere with real running workflows
 - No manual cancellation required
 
 ### Job 1: check-comment
@@ -169,6 +172,7 @@ concurrency:
 - **Matrix strategy**: Creates 4 parallel jobs, each with its own AAP instance
 - **Sharding**: Each job runs a different subset of tests (`--shard=1/4`, `--shard=2/4`, etc.)
 - **fail-fast: false**: All matrix jobs run to completion regardless of failures
+- **Job-level concurrency**: Prevents duplicate test runs on the same PR while allowing different workflows to run simultaneously
 - **IMPORTANT**: AAP deployment and testing must occur in the same job to ensure localhost connectivity
 
 **Why combined job**: GitHub Actions jobs run in isolated environments. Even on the same runner, separate jobs don't share localhost network access. Combining deployment and testing ensures that the AAP instance deployed at `localhost:PORT` is accessible to the Playwright tests running in the same environment.
@@ -409,50 +413,52 @@ The following secrets must be configured in the repository settings:
 
 **Configurable parameters**:
 
-- **Concurrency control**: Lines 13-15 - Auto-cancellation of old runs
+- **Concurrency control** (deploy-and-test job) - Auto-cancellation of old runs
 
   ```yaml
   concurrency:
-    group: ephemeral-aap-playwright-pr-${{ github.event.issue.number }}-${{ github.workflow }}
+    group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}
     cancel-in-progress: true
   ```
 
-  - Automatically cancels in-progress Playwright workflows when a new run is triggered on the same PR
+  - Applied at the job level, not workflow level
+  - Automatically cancels in-progress Playwright test jobs when a new run is triggered on the same PR
   - Set `cancel-in-progress: false` to allow multiple concurrent runs per PR (not recommended)
-  - Concurrency group uses PR number and workflow name to isolate different PRs and prevent interference with Cypress workflow
+  - Concurrency group uses PR number to isolate different PRs
+  - Job-level concurrency prevents skipped workflows from cancelling real running workflows
   - Allows Cypress and Playwright workflows to run simultaneously on the same PR
 
-- **Parallel jobs**: Line 112 - `PARALLEL_JOBS=4`
+- **Parallel jobs**: `PARALLEL_JOBS=4` in matrix-setup job
 
   - To change: Modify the `PARALLEL_JOBS` variable
   - More jobs = faster tests but more AAP deployments
   - Recommended: 2-8 jobs depending on runner group capacity
 
-- **AAP deployment reference**: Line 133 - `uses: ansible/aap-dev/.github/actions/aap_deploy@main`
+- **AAP deployment reference**: `uses: ansible/aap-dev/.github/actions/aap_deploy@main` in deploy-and-test job
 
   - Can pin to specific version: `@v1.2.3`
   - Can use specific commit: `@abc123def`
 
-- **Playwright project**: Line 213 - `--project="live chromium"`
+- **Playwright project**: `--project="live chromium"` in the Playwright test execution step
 
   - Can change to `live firefox` or `live webkit`
   - `live` projects run against deployed AAP (not mock)
 
-- **Shard argument**: Line 214 - `--shard=${{matrix.container}}/4`
+- **Shard argument**: `--shard=${{matrix.container}}/4` in the Playwright test execution step
 
   - **CRITICAL**: This must match the number of parallel jobs
   - If `PARALLEL_JOBS=4`, use `--shard=${{matrix.container}}/4`
   - If `PARALLEL_JOBS=8`, use `--shard=${{matrix.container}}/8`
   - Without this argument, all tests run in all jobs (duplication!)
 
-- **Stagger delay**: Line 133 - `sleep $(( (${{ matrix.container }} - 1) * 45 ))`
+- **Stagger delay**: `sleep $(( (${{ matrix.container }} - 1) * 45 ))` in deploy-and-test job
 
   - Delays each job start to prevent simultaneous AAP deployments
   - Default: 45 seconds between each job (0s, 45s, 90s, 135s)
   - To adjust: Change the multiplier (e.g., `* 60` for 1-minute delays)
   - Purpose: Reduces resource contention and improves deployment success rate
 
-- **Artifact retention**: Line 233 - `retention-days: 7`
+- **Artifact retention**: `retention-days: 7` for test results and coverage uploads
   - Adjust based on storage requirements
 
 ## Usage
