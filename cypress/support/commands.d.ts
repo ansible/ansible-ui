@@ -598,9 +598,6 @@ declare global {
       /** Selects a table row by clicking on the row checkbox. */
       selectTableRow(name: string | RegExp): Chainable<void>;
 
-      /**Expands a table row by locating the row using the provided name and thenclicking the "expand-toggle" button on that row.*/
-      expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
-
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
       selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
 
