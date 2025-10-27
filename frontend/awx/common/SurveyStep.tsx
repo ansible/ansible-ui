@@ -99,7 +99,7 @@ export function SurveyStep({
 
         if (element.question_name === name) {
           choicesArray?.forEach((choice: string) => {
-            choices.push({ value: choice, label: t(choice) });
+            choices.push({ value: choice, label: choice });
           });
         }
       }
