@@ -78,17 +78,16 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
             placeholder={t('Select a verbosity value')}
             name="verbosity"
             options={[
-              { value: '0', label: t('0 (Warning)') },
-              { value: '1', label: t('1 (Info)') },
-              { value: '2', label: t('2 (Debug)') },
+              { value: 0, label: t('0 (Warning)') },
+              { value: 1, label: t('1 (Info)') },
+              { value: 2, label: t('2 (Debug)') },
             ]}
-            defaultValue={'1'}
+            defaultValue={1}
             labelHelpTitle={t('Verbosity')}
             labelHelp={t(
               'Control the level of output Ansible will produce for inventory source update jobs.'
             )}
             label={t('Verbosity')}
-            isRequired
           />
           <PageFormTextInput<InventorySourceForm>
             name="host_filter"
