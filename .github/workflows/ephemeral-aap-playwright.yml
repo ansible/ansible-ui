@@ -244,27 +244,41 @@ jobs:
       - name: Post success comment
         if: steps.check-results.outputs.all_success == 'true'
         uses: actions/github-script@v7
+        env:
+          CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+          CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
         with:
           script: |
             const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
+            const currentsProjectId = process.env.CURRENTS_PROJECT_ID;
+            const currentsCiBuildId = process.env.CURRENTS_CI_BUILD_ID;
+            const currentsDashboardUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
-              body: `✅ AAP Playwright E2E tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Test Results:**\n- 📊 [Currents Dashboard](https://app.currents.dev) - Detailed test analytics\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`
+              body: `✅ AAP Playwright E2E tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Test Results:**\n- 📊 [Currents Dashboard](${currentsDashboardUrl}) - Detailed test analytics\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`
             });
 
       - name: Post failure comment
         if: steps.check-results.outputs.any_failure == 'true'
         uses: actions/github-script@v7
+        env:
+          CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+          CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
         with:
           script: |
             const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
+            const currentsProjectId = process.env.CURRENTS_PROJECT_ID;
+            const currentsCiBuildId = process.env.CURRENTS_CI_BUILD_ID;
+            const currentsDashboardUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
-              body: `❌ AAP Playwright E2E tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Debugging Resources:**\n- 📊 [Currents Dashboard](https://app.currents.dev) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`
+              body: `❌ AAP Playwright E2E tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Debugging Resources:**\n- 📊 [Currents Dashboard](${currentsDashboardUrl}) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`
             });
 
       - name: Post cancelled comment
