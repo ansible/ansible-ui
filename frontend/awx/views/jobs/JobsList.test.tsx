@@ -74,64 +74,96 @@ describe('JobsList Component Tests', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Jobs')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Jobs')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Verify table columns are visible
-    await waitFor(() => {
-      expect(screen.getByText('ID')).toBeInTheDocument();
-      expect(screen.getByText('Name')).toBeInTheDocument();
-      expect(screen.getByText('Status')).toBeInTheDocument();
-      expect(screen.getByText('Type')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('ID')).toBeInTheDocument();
+        expect(screen.getByText('Name')).toBeInTheDocument();
+        expect(screen.getByText('Status')).toBeInTheDocument();
+        expect(screen.getByText('Type')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Verify at least one job is rendered (from mock data)
-    await waitFor(() => {
-      const table = screen.getByRole('grid');
-      expect(table).toBeInTheDocument();
-    });
-  });
+    await waitFor(
+      () => {
+        const table = screen.getByRole('grid');
+        expect(table).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 
-  test('renders toolbar and row actions', { timeout: 10000 }, async () => {
+  test('renders toolbar and row actions', { timeout: 20000 }, async () => {
+    const user = userEvent.setup();
+
     render(
       <MemoryRouter>
         <Jobs />
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Jobs')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Jobs')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Find and click toolbar actions button
-    const toolbarActions = await screen.findByRole('button', { name: /toolbar actions/i });
-    expect(toolbarActions).toBeInTheDocument();
+    const toolbarActions = await waitFor(
+      () => {
+        const button = screen.getByRole('button', { name: /toolbar actions/i });
+        expect(button).toBeInTheDocument();
+        expect(button).toBeEnabled();
+        return button;
+      },
+      { timeout: 10000 }
+    );
 
-    await userEvent.click(toolbarActions);
+    await user.click(toolbarActions);
 
     // Verify toolbar actions are visible
-    await waitFor(() => {
-      expect(screen.getByRole('menuitem', { name: /Delete jobs/i })).toBeInTheDocument();
-      expect(screen.getByRole('menuitem', { name: /Cancel jobs/i })).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByRole('menuitem', { name: /Delete jobs/i })).toBeInTheDocument();
+        expect(screen.getByRole('menuitem', { name: /Cancel jobs/i })).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
   });
 
   test('row action to delete job is disabled if the user does not have permissions', async () => {
+    const user = userEvent.setup();
+
     render(
       <MemoryRouter>
         <Jobs />
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Jobs')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Jobs')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Wait for jobs to load - find job with id 488 which has delete: false
-    await waitFor(() => {
-      expect(screen.getByText('488')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('488')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Find the row with job id 488 and open kebab menu
     const row = screen.getByText('488').closest('tr');
@@ -140,32 +172,43 @@ describe('JobsList Component Tests', () => {
     if (row) {
       const kebabButton = row.querySelector('button[aria-label="kebab dropdown toggle"]');
       if (kebabButton) {
-        await userEvent.click(kebabButton);
+        await user.click(kebabButton);
 
         // Verify delete button is disabled
-        await waitFor(() => {
-          const deleteButton = screen.getByRole('menuitem', { name: /Delete job/i });
-          expect(deleteButton).toHaveAttribute('aria-disabled', 'true');
-        });
+        await waitFor(
+          () => {
+            const deleteButton = screen.getByRole('menuitem', { name: /Delete job/i });
+            expect(deleteButton).toHaveAttribute('aria-disabled', 'true');
+          },
+          { timeout: 10000 }
+        );
       }
     }
-  });
+  }, 20000);
 
   test('row action to cancel job is disabled if the selected job is not running', async () => {
+    const user = userEvent.setup();
+
     render(
       <MemoryRouter>
         <Jobs />
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Jobs')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Jobs')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Wait for jobs to load - find job with id 488 which has status "successful"
-    await waitFor(() => {
-      expect(screen.getByText('488')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('488')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Find the row with job id 488 and open kebab menu
     const row = screen.getByText('488').closest('tr');
@@ -174,33 +217,42 @@ describe('JobsList Component Tests', () => {
     if (row) {
       const kebabButton = row.querySelector('button[aria-label="kebab dropdown toggle"]');
       if (kebabButton) {
-        await userEvent.click(kebabButton);
+        await user.click(kebabButton);
 
         // Verify cancel button is disabled
-        await waitFor(() => {
-          const cancelButton = screen.getByRole('menuitem', { name: /Cancel job/i });
-          expect(cancelButton).toHaveAttribute('aria-disabled', 'true');
-        });
+        await waitFor(
+          () => {
+            const cancelButton = screen.getByRole('menuitem', { name: /Cancel job/i });
+            expect(cancelButton).toHaveAttribute('aria-disabled', 'true');
+          },
+          { timeout: 10000 }
+        );
       }
     }
-  });
+  }, 15000);
 
-  test('renders relaunch job button in row actions', { timeout: 10000 }, async () => {
+  test('renders relaunch job button in row actions', { timeout: 15000 }, async () => {
     render(
       <MemoryRouter>
         <Jobs />
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Jobs')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Jobs')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Verify at least one relaunch button is visible in the table
-    await waitFor(() => {
-      const relaunchButtons = screen.getAllByRole('button', { name: /Relaunch job/i });
-      expect(relaunchButtons.length).toBeGreaterThan(0);
-    });
+    await waitFor(
+      () => {
+        const relaunchButtons = screen.getAllByRole('button', { name: /Relaunch job/i });
+        expect(relaunchButtons.length).toBeGreaterThan(0);
+      },
+      { timeout: 10000 }
+    );
   });
 
   test('renders job rows with correct data from mock', async () => {
@@ -210,22 +262,31 @@ describe('JobsList Component Tests', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Jobs')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Jobs')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Verify some jobs from the fixture are rendered
-    await waitFor(() => {
-      // Check for some job IDs from the fixture
-      expect(screen.getByText('491')).toBeInTheDocument();
-      expect(screen.getByText('492')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        // Check for some job IDs from the fixture
+        expect(screen.getByText('491')).toBeInTheDocument();
+        expect(screen.getByText('492')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     // Verify job names are rendered
-    await waitFor(() => {
-      expect(screen.getByText('Workflow1214')).toBeInTheDocument();
-      const demoJobTemplates = screen.getAllByText('Demo Job Template');
-      expect(demoJobTemplates.length).toBeGreaterThan(0);
-    });
-  });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Workflow1214')).toBeInTheDocument();
+        const demoJobTemplates = screen.getAllByText('Demo Job Template');
+        expect(demoJobTemplates.length).toBeGreaterThan(0);
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });

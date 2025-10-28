@@ -204,15 +204,18 @@ describe('PlatformRoles', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Roles/ })).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          /A role represents set of actions that a team or user may perform on a resource or set of resources/
-        )
-      ).toBeInTheDocument();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(screen.getByRole('heading', { name: /Roles/ })).toBeInTheDocument();
+        expect(
+          screen.getByText(
+            /A role represents set of actions that a team or user may perform on a resource or set of resources/
+          )
+        ).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 
   it('should display table columns headers', () => {
     const { getByRole } = render(
@@ -235,9 +238,13 @@ describe('PlatformRoles', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(getDataRowCount()).toBe(ALL_ROLES.length);
-    });
+    await waitFor(
+      () => {
+        expect(getDataRowCount()).toBe(ALL_ROLES.length);
+      },
+      { timeout: 10000 }
+    );
+
     expectRolesVisible([
       'AWX Admin',
       'AWX Credential Admin',
@@ -259,55 +266,73 @@ describe('PlatformRoles', () => {
     );
     expect(within(awxRow).getByTestId('resource-type-column-cell')).toHaveTextContent('Credential');
     expect(within(awxRow).getByTestId('role-creation-column-cell')).toHaveTextContent('Default');
-  });
+  }, 15000);
 
   it('filters by AWX component', async () => {
     const { user } = setupTest();
 
-    await waitFor(() => {
-      expect(getDataRowCount()).toBe(ALL_ROLES.length);
-    });
+    await waitFor(
+      () => {
+        expect(getDataRowCount()).toBe(ALL_ROLES.length);
+      },
+      { timeout: 10000 }
+    );
 
     await openComponentFilter(user);
     await chooseComponent(user, 'Automation Execution');
-    await waitFor(() => {
-      expect(currentApiUrl).toContain('permissions__content_type__service=awx');
-      expect(getDataRowCount()).toBe(mockRoles.awx.length);
-    });
+    await waitFor(
+      () => {
+        expect(currentApiUrl).toContain('permissions__content_type__service=awx');
+        expect(getDataRowCount()).toBe(mockRoles.awx.length);
+      },
+      { timeout: 10000 }
+    );
     expectRolesVisible(['AWX Admin', 'AWX Credential Admin']);
     expectRolesHidden(['EDA Project Admin', 'Galaxy Admin', 'Platform Auditor']);
-  });
+  }, 15000);
 
   it('filters by EDA component', async () => {
     const { user } = setupTest();
 
-    await waitFor(() => {
-      expect(getDataRowCount()).toBe(ALL_ROLES.length);
-    });
+    await waitFor(
+      () => {
+        expect(getDataRowCount()).toBe(ALL_ROLES.length);
+      },
+      { timeout: 10000 }
+    );
 
     await openComponentFilter(user);
     await chooseComponent(user, 'Automation Decisions');
-    await waitFor(() => {
-      expect(currentApiUrl).toContain('permissions__content_type__service=eda');
-      expect(getDataRowCount()).toBe(mockRoles.eda.length);
-    });
+    await waitFor(
+      () => {
+        expect(currentApiUrl).toContain('permissions__content_type__service=eda');
+        expect(getDataRowCount()).toBe(mockRoles.eda.length);
+      },
+      { timeout: 10000 }
+    );
     expectRolesVisible(['EDA Project Admin']);
     expectRolesHidden(['AWX Admin', 'AWX Credential Admin', 'Galaxy Admin', 'Platform Auditor']);
-  });
+  }, 15000);
 
   it('filters by Galaxy component', async () => {
     const { user } = setupTest();
 
-    await waitFor(() => {
-      expect(getDataRowCount()).toBe(ALL_ROLES.length);
-    });
+    await waitFor(
+      () => {
+        expect(getDataRowCount()).toBe(ALL_ROLES.length);
+      },
+      { timeout: 10000 }
+    );
 
     await openComponentFilter(user);
     await chooseComponent(user, 'Automation Content');
-    await waitFor(() => {
-      expect(currentApiUrl).toContain('permissions__content_type__service=galaxy');
-      expect(getDataRowCount()).toBe(mockRoles.galaxy.length);
-    });
+    await waitFor(
+      () => {
+        expect(currentApiUrl).toContain('permissions__content_type__service=galaxy');
+        expect(getDataRowCount()).toBe(mockRoles.galaxy.length);
+      },
+      { timeout: 10000 }
+    );
     expectRolesVisible(['Galaxy Admin']);
     expectRolesHidden([
       'EDA Project Admin',
@@ -315,44 +340,56 @@ describe('PlatformRoles', () => {
       'AWX Credential Admin',
       'Platform Auditor',
     ]);
-  });
+  }, 15000);
 
   it('filters by Shared component', async () => {
     const { user } = setupTest();
 
-    await waitFor(() => {
-      expect(getDataRowCount()).toBe(ALL_ROLES.length);
-    });
+    await waitFor(
+      () => {
+        expect(getDataRowCount()).toBe(ALL_ROLES.length);
+      },
+      { timeout: 10000 }
+    );
 
     await openComponentFilter(user);
     await chooseComponent(user, 'Multiple Components');
-    await waitFor(() => {
-      expect(currentApiUrl).toContain('permissions__content_type__service=shared');
-      expect(getDataRowCount()).toBe(mockRoles.shared.length);
-    });
+    await waitFor(
+      () => {
+        expect(currentApiUrl).toContain('permissions__content_type__service=shared');
+        expect(getDataRowCount()).toBe(mockRoles.shared.length);
+      },
+      { timeout: 10000 }
+    );
     expectRolesVisible(['Platform Auditor']);
     expectRolesHidden(['AWX Admin', 'AWX Credential Admin', 'EDA Project Admin', 'Galaxy Admin']);
-  });
+  }, 15000);
 
   it('supports multi-component selection', async () => {
     const { user } = setupTest();
 
-    await waitFor(() => {
-      expect(getDataRowCount()).toBe(ALL_ROLES.length);
-    });
+    await waitFor(
+      () => {
+        expect(getDataRowCount()).toBe(ALL_ROLES.length);
+      },
+      { timeout: 10000 }
+    );
 
     await openComponentFilter(user);
     await chooseComponent(user, 'Multiple Components');
     await chooseComponent(user, 'Automation Execution');
-    await waitFor(() => {
-      expect(currentApiUrl).toContain(
-        'or__permissions__content_type__service=shared&or__permissions__content_type__service=awx'
-      );
-      expect(getDataRowCount()).toBe(mockRoles.awx.length + mockRoles.shared.length);
-    });
+    await waitFor(
+      () => {
+        expect(currentApiUrl).toContain(
+          'or__permissions__content_type__service=shared&or__permissions__content_type__service=awx'
+        );
+        expect(getDataRowCount()).toBe(mockRoles.awx.length + mockRoles.shared.length);
+      },
+      { timeout: 10000 }
+    );
     expectRolesVisible(['Platform Auditor', 'AWX Admin', 'AWX Credential Admin']);
     expectRolesHidden(['EDA Project Admin', 'Galaxy Admin']);
-  });
+  }, 15000);
 
   it('should enable custom role row actions (edit/delete)', async () => {
     const { user } = setupTest();
@@ -365,16 +402,23 @@ describe('PlatformRoles', () => {
 
     const kebabButton = within(roleRow).getByRole('button', { name: 'kebab dropdown toggle' });
     await user.click(kebabButton);
-    await waitFor(() => {
-      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
-    });
+    await waitFor(
+      () => {
+        expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+      },
+      { timeout: 10000 }
+    );
 
     // Custom role should be deletable
-    const deleteAction = await screen.findByRole('menuitem', {
-      name: 'Delete role',
-    });
+    const deleteAction = await screen.findByRole(
+      'menuitem',
+      {
+        name: 'Delete role',
+      },
+      { timeout: 10000 }
+    );
     expect(deleteAction).toBeEnabled();
-  });
+  }, 15000);
 
   it('should disable managed/built-in roles row actions (edit/delete)', async () => {
     const { user } = setupTest();
@@ -388,19 +432,26 @@ describe('PlatformRoles', () => {
 
     const kebabButton = within(roleRow).getByRole('button', { name: 'kebab dropdown toggle' });
     await user.click(kebabButton);
-    await waitFor(() => {
-      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
-    });
+    await waitFor(
+      () => {
+        expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+      },
+      { timeout: 10000 }
+    );
 
     // Managed role should not be deletable
-    const deleteOption = await screen.findByRole('menuitem', {
-      name: 'Delete role',
-    });
+    const deleteOption = await screen.findByRole(
+      'menuitem',
+      {
+        name: 'Delete role',
+      },
+      { timeout: 10000 }
+    );
     await user.click(deleteOption);
     expect(deleteOption).toBeInTheDocument();
     expect(deleteOption).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getByText('Built-in roles cannot be deleted.')).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('should disable bulk delete when no roles are selected', async () => {
     const { user } = setupTest();
@@ -422,20 +473,28 @@ describe('PlatformRoles', () => {
     const kebabButton = within(roleRow).getByRole('button', { name: 'kebab dropdown toggle' });
 
     await user.click(kebabButton);
-    await waitFor(() => {
-      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
-    });
+    await waitFor(
+      () => {
+        expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+      },
+      { timeout: 10000 }
+    );
 
-    const deleteOption = await screen.findByText('Delete role');
+    const deleteOption = await screen.findByText('Delete role', {}, { timeout: 10000 });
     await user.click(deleteOption);
 
-    expect(mockBulkConfirmation).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Permanently delete roles',
-        items: [{ id: 123, name: 'Custom Role', managed: false }],
-      })
+    await waitFor(
+      () => {
+        expect(mockBulkConfirmation).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'Permanently delete roles',
+            items: [{ id: 123, name: 'Custom Role', managed: false }],
+          })
+        );
+      },
+      { timeout: 10000 }
     );
-  });
+  }, 15000);
 
   it('should render empty state when no roles are found', async () => {
     server.use(

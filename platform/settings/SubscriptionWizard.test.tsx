@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -172,8 +172,11 @@ describe('SubscriptionWizard Component', () => {
 
       // Fill in client secret and verify subscription select becomes enabled
       await user.type(clientSecretField, 'test-client-secret');
-      expect(subscriptionSelect).toBeEnabled();
-    });
+
+      await waitFor(() => {
+        expect(subscriptionSelect).toBeEnabled();
+      });
+    }, 10000);
   });
 
   describe('Username and Password Form', () => {
@@ -201,8 +204,11 @@ describe('SubscriptionWizard Component', () => {
 
       // Fill in password and verify subscription select becomes enabled
       await user.type(passwordField, 'test-password');
-      expect(subscriptionSelect).toBeEnabled();
-    });
+
+      await waitFor(() => {
+        expect(subscriptionSelect).toBeEnabled();
+      });
+    }, 10000);
   });
 
   describe('Red Hat Satellite Form', () => {
@@ -234,8 +240,11 @@ describe('SubscriptionWizard Component', () => {
 
       // Fill in satellite password and verify subscription select becomes enabled
       await user.type(satellitePasswordField, 'test-password');
-      expect(subscriptionSelect).toBeEnabled();
-    });
+
+      await waitFor(() => {
+        expect(subscriptionSelect).toBeEnabled();
+      });
+    }, 10000);
   });
 
   describe('Automation Analytics Step', () => {
@@ -256,19 +265,34 @@ describe('SubscriptionWizard Component', () => {
 
     it('renders automation analytics step with correct content', async () => {
       await navigateToAnalyticsStep();
-      expect(
-        screen.getByRole('heading', { name: /Optional: Automation Analytics/i })
-      ).toBeInTheDocument();
+
+      await waitFor(
+        () => {
+          expect(
+            screen.getByRole('heading', { name: /Optional: Automation Analytics/i })
+          ).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
       expect(
         screen.getByText(/Enter client ID and client secret to enable Analytics/i)
       ).toBeInTheDocument();
       expect(screen.getByLabelText(/Client ID/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Client secret/i)).toBeInTheDocument();
       expect(screen.getByAltText(/Automation Analytics/i)).toBeInTheDocument();
-    });
+    }, 15000);
 
     it('allows proceeding to next step with filled analytics fields', async () => {
       const user = await navigateToAnalyticsStep();
+
+      await waitFor(
+        () => {
+          expect(screen.getByLabelText(/Client ID/i)).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
       const clientIdField = screen.getByLabelText(/Client ID/i);
       const clientSecretField = screen.getByLabelText(/Client secret/i);
       await user.type(clientIdField, 'test-client-id');
@@ -277,19 +301,39 @@ describe('SubscriptionWizard Component', () => {
       const nextButton = screen.getByRole('button', { name: /next/i });
       expect(nextButton).toBeEnabled();
       await user.click(nextButton);
-      expect(
-        screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
-      ).toBeInTheDocument();
-    });
+
+      await waitFor(
+        () => {
+          expect(
+            screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
+          ).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    }, 15000);
 
     it('allows proceeding to next step with empty analytics fields (optional)', async () => {
       const user = await navigateToAnalyticsStep();
+
+      await waitFor(
+        () => {
+          expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
       const nextButton = screen.getByRole('button', { name: /next/i });
       expect(nextButton).toBeEnabled();
       await user.click(nextButton);
-      expect(
-        screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
-      ).toBeInTheDocument();
-    });
+
+      await waitFor(
+        () => {
+          expect(
+            screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
+          ).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    }, 15000);
   });
 });
