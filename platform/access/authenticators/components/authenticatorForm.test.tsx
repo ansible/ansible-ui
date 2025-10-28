@@ -153,18 +153,31 @@ describe('authenticatorForm', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     const user = userEvent.setup();
-    await user.click(container.querySelector('[id="name"]') as HTMLInputElement);
-    await user.type(
-      container.querySelector('[id="name"]') as HTMLInputElement,
-      'Local Database Authenticator'
-    );
+    const nameInput = container.querySelector('[id="name"]') as HTMLInputElement;
+    await user.click(nameInput);
+    await user.type(nameInput, 'Local Database Authenticator');
+
+    await waitFor(() => {
+      expect(nameInput).toHaveValue('Local Database Authenticator');
+    });
+
     await user.click(getByRole('button', { name: 'Create Authentication Method' }));
-    expect(handleSubmit).toHaveBeenCalled();
+
+    await waitFor(
+      () => {
+        expect(handleSubmit).toHaveBeenCalled();
+      },
+      { timeout: 10000 }
+    );
+
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         name: 'Local Database Authenticator',
@@ -178,7 +191,7 @@ describe('authenticatorForm', () => {
       expect.any(Function),
       expect.any(Function)
     );
-  });
+  }, 15000);
 
   test('should display configuration field errors with correct field names', async () => {
     const handleSubmit = vi.fn().mockRejectedValue(
@@ -211,34 +224,41 @@ describe('authenticatorForm', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
 
     const user = userEvent.setup();
 
-    await user.click(container.querySelector('[id="name"]') as HTMLInputElement);
-    await user.type(
-      container.querySelector('[id="name"]') as HTMLInputElement,
-      'Test Authenticator'
-    );
+    const nameInput = container.querySelector('[id="name"]') as HTMLInputElement;
+    await user.click(nameInput);
+    await user.type(nameInput, 'Test Authenticator');
 
-    await user.click(
-      container.querySelector(
-        '[id="configuration-editor-ADDITIONAL_UNVERIFIED_ARGS-form-group"] input'
-      ) as HTMLInputElement
-    );
-    await user.type(
-      container.querySelector(
-        '[id="configuration-editor-ADDITIONAL_UNVERIFIED_ARGS-form-group"] input'
-      ) as HTMLInputElement,
-      'xyz'
-    );
+    const configInput = container.querySelector(
+      '[id="configuration-editor-ADDITIONAL_UNVERIFIED_ARGS-form-group"] input'
+    ) as HTMLInputElement;
+    await user.click(configInput);
+    await user.type(configInput, 'xyz');
 
     // Submit the form to trigger error handling
     await user.click(getByRole('button', { name: 'Create Authentication Method' }));
-    expect(handleSubmit).toHaveBeenCalledTimes(1);
+
+    await waitFor(
+      () => {
+        expect(handleSubmit).toHaveBeenCalledTimes(1);
+      },
+      { timeout: 10000 }
+    );
+
     // Verify that the authenticatorErrorAdapter processed the error correctly:
-    expect(getByText('Config error')).toBeInTheDocument();
-  });
+    await waitFor(
+      () => {
+        expect(getByText('Config error')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });

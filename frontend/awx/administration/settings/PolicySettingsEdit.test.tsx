@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/dom';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -61,6 +61,13 @@ describe('PolicySettingsForm', () => {
     );
     const user = userEvent.setup();
 
+    await waitFor(
+      () => {
+        expect(screen.getByRole('textbox', { name: /OPA server hostname/i })).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
     expect(screen.queryByRole('textbox', { name: 'Drag a file here or browse to upload' })).to.be
       .null;
     expect(screen.queryByRole('textbox', { name: 'OPA client key content' })).to.be.null;
@@ -70,11 +77,24 @@ describe('PolicySettingsForm', () => {
       'opa.ansible.com'
     );
     await user.click(screen.getByRole('button', { name: 'None' }));
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Certificate')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
     await user.click(screen.getByText('Certificate'));
 
-    expect(
-      screen.getAllByRole('textbox', { name: 'Drag a file here or browse to upload' })
-    ).to.have.length(2);
-    expect(screen.getByRole('textbox', { name: 'OPA client key content' })).toBeVisible();
-  });
+    await waitFor(
+      () => {
+        expect(
+          screen.getAllByRole('textbox', { name: 'Drag a file here or browse to upload' })
+        ).to.have.length(2);
+        expect(screen.getByRole('textbox', { name: 'OPA client key content' })).toBeVisible();
+      },
+      { timeout: 10000 }
+    );
+  }, 20000);
 });

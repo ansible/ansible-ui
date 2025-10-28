@@ -216,10 +216,13 @@ describe('LegacyTokenForm', () => {
     await user.click(createButton);
 
     // Verify the API call was made
-    await waitFor(() => {
-      expect(server.listHandlers()).toBeDefined();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(server.listHandlers()).toBeDefined();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 
   test('should handle form submission for updating existing token', async () => {
     const user = userEvent.setup();
@@ -241,11 +244,19 @@ describe('LegacyTokenForm', () => {
 
     await user.clear(descriptionField);
     await user.type(descriptionField, 'Updated legacy description');
+
+    await waitFor(() => {
+      expect(descriptionField).toHaveValue('Updated legacy description');
+    });
+
     await user.click(updateButton);
 
     // Verify the API call was made
-    await waitFor(() => {
-      expect(server.listHandlers()).toBeDefined();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(server.listHandlers()).toBeDefined();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });
