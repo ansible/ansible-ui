@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import { clickRetryUntilGone } from './clickRetryUntilGone';
 
 export interface AdHocCommandOptions {
   module: string;
@@ -105,4 +106,27 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
 
   // Wait for job to start and verify we're on the job output page
   await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
+
+  // Cancel running job to allow deletion of inventory host
+  await page.waitForSelector('[data-testid="running-status"]');
+
+  await page.getByRole('button', { name: 'Cancel job' }).click();
+  const confirmCheckbox = page.locator('#confirm');
+  await expect(confirmCheckbox).toBeVisible();
+  await expect(confirmCheckbox).toBeEnabled();
+
+  // Click the confirmation checkbox
+  await confirmCheckbox.click();
+
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: 'Cancel job' }).click();
+
+  // Check if Retry button exists and click it until it's gone
+  try {
+    const retryButton = page.getByRole('button', { name: 'Retry' });
+    await retryButton.waitFor({ state: 'visible', timeout: 2000 });
+    await clickRetryUntilGone(page);
+  } catch {
+    // Intentionally empty - no retry button found, exit normally
+  }
 }

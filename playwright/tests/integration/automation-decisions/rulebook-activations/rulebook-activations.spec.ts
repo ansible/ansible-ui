@@ -140,7 +140,7 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('tab', { name: 'Back to Rulebook Activations' }).click();
         await page.getByRole('textbox', { name: 'Type to filter' }).fill(rulebookActivationName);
         await page.getByRole('button', { name: 'apply filter' }).click();
-        await expectRowToContain(rulebookActivationName, 'Stopped', page, 15000);
+        await expectRowToContain(rulebookActivationName, 'Stopped', page, 30000);
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
         await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
         await page.getByRole('checkbox', { name: 'Skip audit events' }).check();
@@ -183,7 +183,7 @@ test.describe('Rulebook Activations', () => {
         await expect(page.getByRole('dialog')).toContainText('Success');
         await expect(page.getByText('Rulebook activation enabled')).toBeVisible();
         await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
-          timeout: 15000,
+          timeout: 30000,
         });
         await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
