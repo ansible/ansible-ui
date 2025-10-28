@@ -80,6 +80,8 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 
 - Comment must be on a pull request (not an issue)
 - Comment body must contain `/run-aap-ui-cypress`
+- Optional: AAP version can be specified after the command (e.g., `/run-aap-ui-cypress 2.5-next`)
+- Default: AAP version 2.6 is used if not specified
 
 **Concurrency Control**:
 
@@ -88,6 +90,7 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 - **Cancel in progress**: `true`
 - Each matrix job (1, 2, 3, 4) has its own concurrency group based on the matrix container value
 - If a new Cypress test run is triggered while one is already running for the same PR, all matching matrix jobs from the old run are automatically cancelled
+- Concurrency control is **version-agnostic**: triggering with a different AAP version cancels previous runs
 - This prevents wasting resources on outdated test runs
 - Concurrency control is only applied to jobs that actually run, not to skipped workflows
 - This prevents skipped Cypress workflows (triggered by `/run-aap-ui-playwright` comments) from cancelling real Cypress runs
@@ -106,8 +109,9 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
    - PR number
    - PR head SHA
    - PR head ref
+   - AAP version (parsed from comment, defaults to `2.6`)
 4. Add rocket emoji reaction to the trigger comment
-5. Post a starting message to the PR thread
+5. Post a starting message to the PR thread (includes AAP version being deployed)
 
 **Outputs**:
 
@@ -115,6 +119,7 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 - `pr_number`: Pull request number
 - `pr_sha`: Commit SHA of PR head
 - `pr_ref`: Branch name of PR head
+- `aap_version`: AAP version to deploy (parsed from comment or default `2.6`)
 
 ### Job 2: matrix-setup
 
@@ -170,6 +175,7 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
    - Action location: `ansible/aap-dev/.github/actions/aap_deploy@main`
    - Inputs:
      - Red Hat registry credentials (for pulling images)
+     - AAP version (from check-comment job output, defaults to `2.6`)
      - GitHub token for aap-dev repo access
      - GitHub token for aap-test-secrets repo (optional, for license)
    - The action performs:
@@ -462,9 +468,28 @@ The following secrets must be configured in the repository settings:
 
 1. Navigate to a pull request in the aap-ui repository
 2. Add a comment with the text: `/run-aap-ui-cypress`
+   - **Default AAP version (2.6)**: `/run-aap-ui-cypress`
+   - **Specific AAP version**: `/run-aap-ui-cypress 2.5-next` or `/run-aap-ui-cypress 2.6`
 3. The workflow will start automatically
 4. A 🚀 reaction will be added to your comment
-5. A starting message will be posted to the PR thread
+5. A starting message will be posted to the PR thread (showing which AAP version will be deployed)
+
+**Re-triggering Tests**:
+
+If tests are currently running on a PR and you want to restart them (e.g., after pushing new commits):
+
+1. Simply post `/run-aap-ui-cypress` again on the same PR (with or without a version)
+2. The currently running workflow will be automatically cancelled
+3. A new workflow run will start immediately with the specified (or default) AAP version
+4. AAP deployments from the cancelled run will be cleaned up automatically
+
+**Note**: Triggering with a different AAP version (e.g., `/run-aap-ui-cypress 2.5-next`) will cancel any in-progress run on that PR, regardless of which version was previously running.
+
+This is useful when:
+- You push new commits and want to test them immediately
+- You want to restart flaky tests
+- You want to test against a different AAP version
+- You need to cancel a long-running test suite
 
 ### Monitoring Progress
 
