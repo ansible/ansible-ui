@@ -11,7 +11,12 @@ import {
   deleteAwxCredential,
 } from '../infrastructure/credentials/credential-utils';
 import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
-import { createJobTemplate, deleteJobTemplate, runJobTemplate } from './job-template-utils';
+import {
+  copyJobTemplate,
+  createJobTemplate,
+  deleteJobTemplate,
+  runJobTemplate,
+} from './job-template-utils';
 
 test.describe('Job Templates', () => {
   let inventoryName: string;
@@ -353,7 +358,6 @@ test.describe('Job Templates', () => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = createE2EName('job-template');
       const jobTemplateDescription = 'This is a JT description';
-      // const inventoryName = 'Demo Inventory';
       await navigateTo(page, 'Automation Execution', 'Templates');
       await expect(
         page.getByRole('heading', { name: 'Automation Templates', exact: true })
@@ -380,7 +384,6 @@ test.describe('Job Templates', () => {
       await expect(page.locator('#name')).toContainText(jobTemplateName);
       await expect(page.locator('#description')).toContainText(jobTemplateDescription);
       await expect(page.locator('#job-type')).toContainText('run');
-      // await expect(page.locator('#organization')).toContainText('Default');
       await expect(page.locator('#project')).toContainText(projectName);
       await expect(page.locator('#playbook')).toContainText('hello_world.yml');
       await expect(page.locator('#policy-enforcement')).toContainText('testpkg/testrule');
@@ -395,7 +398,6 @@ test.describe('Job Templates', () => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = createE2EName('job-template');
       const jobTemplateDescription = 'This is a JT description';
-      // const inventoryName = 'Demo Inventory';
       const credentialOne = await createAwxCredential({ credentialType: 'Vault' }, page);
       const credentialTwo = await createAwxCredential({ credentialType: 'Machine' }, page);
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -433,7 +435,6 @@ test.describe('Job Templates', () => {
       await expect(page.locator('#name')).toContainText(jobTemplateName);
       await expect(page.locator('#description')).toContainText(jobTemplateDescription);
       await expect(page.locator('#job-type')).toContainText('run');
-      // await expect(page.locator('#organization')).toContainText('Default');
       await expect(page.locator('#project')).toContainText(projectName);
       await expect(page.locator('#playbook')).toContainText('hello_world.yml');
       await expect(page.locator('#credentials')).toContainText(`SSH: ${credentialTwo}`);
@@ -654,4 +655,80 @@ test.describe('Job Templates', () => {
     const persistedValue = await page.getByPlaceholder('Add a project, then select a').inputValue();
     expect(persistedValue).toBe('test_hello_world.yml');
   });
+});
+
+test.describe('Job Template - Copy/Duplicate', () => {
+  let inventoryName: string;
+
+  test.beforeEach(async ({ page }) => {
+    await setupBefore({ path: '/' })({ page });
+    inventoryName = await createInventory({}, page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await deleteInventory(inventoryName, page);
+    await setupAfter({ page });
+  });
+
+  test(
+    'can copy an existing job template from the list view',
+    { tag: ['@not_mock', '@compare'] },
+    async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
+      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+
+      // Copy the job template from list view and get the exact copied name from API
+      const copiedName = await copyJobTemplate(jobTemplateName, page, 'list');
+
+      // Verify the original template exists
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByLabel('table view', { exact: true }).click();
+      await filterTable(
+        { filterLabel: 'Name', filterValue: jobTemplateName, clearFilters: true },
+        page
+      );
+      await expect(page.getByRole('link', { name: jobTemplateName, exact: true })).toBeVisible();
+
+      // Verify the copied template exists
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByLabel('table view', { exact: true }).click();
+      await filterTable({ filterLabel: 'Name', filterValue: copiedName, clearFilters: true }, page);
+      await expect(page.getByRole('link', { name: copiedName, exact: true })).toBeVisible();
+
+      // Clean up both templates
+      await deleteJobTemplate(jobTemplateName, page);
+      await deleteJobTemplate(copiedName, page);
+    }
+  );
+
+  test(
+    'can copy an existing job template from the details page',
+    { tag: ['@not_mock', '@compare'] },
+    async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
+      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+
+      // Copy the job template from details page and get the exact copied name from API
+      const copiedName = await copyJobTemplate(jobTemplateName, page, 'details');
+
+      // Verify the original template exists
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByLabel('table view', { exact: true }).click();
+      await filterTable(
+        { filterLabel: 'Name', filterValue: jobTemplateName, clearFilters: true },
+        page
+      );
+      await expect(page.getByRole('link', { name: jobTemplateName, exact: true })).toBeVisible();
+
+      // Verify the copied template exists
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByLabel('table view', { exact: true }).click();
+      await filterTable({ filterLabel: 'Name', filterValue: copiedName, clearFilters: true }, page);
+      await expect(page.getByRole('link', { name: copiedName, exact: true })).toBeVisible();
+
+      // Clean up both templates
+      await deleteJobTemplate(jobTemplateName, page);
+      await deleteJobTemplate(copiedName, page);
+    }
+  );
 });

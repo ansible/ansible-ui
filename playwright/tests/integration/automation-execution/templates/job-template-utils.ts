@@ -1,9 +1,12 @@
-import { Page, expect } from '@playwright/test';
+import { APIRequestContext, Page, expect } from '@playwright/test';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
+import { platformUI } from '@ansible/playwright/commands/login';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { controllerAPI } from '../workflow-visualizer/controller-api';
 
 export async function createJobTemplate(
   options: {
@@ -188,10 +191,47 @@ export async function deleteJobTemplate(
   await confirmAndAssertDeletion(page);
 }
 
-import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
-import { APIRequestContext } from '@playwright/test';
-import { platformUI } from '@ansible/playwright/commands/login';
-import { controllerAPI } from '../workflow-visualizer/controller-api';
+export async function copyJobTemplate(
+  jobTemplateName: string,
+  page: Page,
+  view: 'list' | 'details' = 'list'
+): Promise<string> {
+  await navigateTo(page, 'Automation Execution', 'Templates');
+  await page.getByLabel('table view', { exact: true }).click();
+
+  // Set up API interception to capture the copied template name
+  const copyResponsePromise = page.waitForResponse(
+    (response) => response.url().includes('/copy/') && response.status() === 201
+  );
+
+  if (view === 'details') {
+    await clickTableRow({ text: jobTemplateName }, page);
+    await expect(page.getByRole('heading', { name: jobTemplateName })).toBeVisible();
+    await page.getByLabel('kebab dropdown toggle').click();
+    await page.waitForTimeout(1000);
+    await page.getByRole('menuitem', { name: 'Duplicate template' }).click();
+  } else {
+    await filterTable(
+      { filterLabel: 'Name', filterValue: jobTemplateName, clearFilters: true },
+      page
+    );
+    await page
+      .getByRole('row', { name: jobTemplateName })
+      .getByLabel('kebab dropdown toggle')
+      .click();
+    await page.waitForTimeout(1000);
+    await page.getByRole('menuitem', { name: 'Duplicate template' }).click();
+  }
+
+  await expect(page.locator('h4')).toContainText(`Success alert:${jobTemplateName} duplicated.`, {
+    timeout: 10000,
+  });
+
+  // Get the exact copied template name from the API response
+  const copyResponse = await copyResponsePromise;
+  const copiedTemplate = (await copyResponse.json()) as JobTemplate;
+  return copiedTemplate.name;
+}
 
 interface CreateJobTemplateOptions {
   name?: string;
@@ -215,7 +255,7 @@ export async function createJobTemplateAPI(
   const playbook = options.playbook ?? 'hello_world.yml';
   const url = platformUI + controllerAPI(`/job_templates/`);
   // sanitize and remove double slashes
-  const sanitizedUrl = url.replace(/\/{2,}/g, '/');
+  const sanitizedUrl = url.replaceAll('//', '/');
   const cookie = (await request.storageState()).cookies.find(
     (cookie) => cookie.name === 'csrftoken'
   );
@@ -249,7 +289,7 @@ export async function deleteJobTemplateAPI(request: APIRequestContext, id: numbe
   );
   const url = platformUI + controllerAPI(`/job_templates/${id}/`);
   // sanitize and remove double slashes
-  const sanitizedUrl = url.replace(/\/{2,}/g, '/');
+  const sanitizedUrl = url.replaceAll('//', '/');
   const response = await request.delete(sanitizedUrl, {
     headers: {
       'X-CSRFToken': cookie?.value ?? '',

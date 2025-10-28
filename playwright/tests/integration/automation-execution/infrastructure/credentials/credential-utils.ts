@@ -6,7 +6,7 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 
 export async function createAwxCredential(
-  options: { credentialName?: string; credentialType?: string },
+  options: { credentialName?: string; credentialType?: string; vaultId?: string },
   page: Page
 ) {
   const testToken = createE2EName('test-token');
@@ -22,7 +22,7 @@ export async function createAwxCredential(
     await page.getByRole('textbox', { name: 'Vault Password' }).click();
     await page.getByRole('textbox', { name: 'Vault Password' }).fill('pwd');
     await page.getByRole('textbox', { name: 'Vault Identifier' }).click();
-    await page.getByRole('textbox', { name: 'Vault Identifier' }).fill('id');
+    await page.getByRole('textbox', { name: 'Vault Identifier' }).fill(options.vaultId ?? 'id');
   } else if (options?.credentialType && options.credentialType === 'Machine') {
     await expect(page.getByRole('textbox', { name: 'Search input' })).toBeVisible();
     await page.getByRole('textbox', { name: 'Search input' }).fill('Machine');

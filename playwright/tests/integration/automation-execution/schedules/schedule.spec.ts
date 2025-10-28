@@ -39,7 +39,7 @@ test('schedule - edit', { tag: ['@not_mock'] }, async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: `${scheduleName}-edited`, exact: true }).first()
   ).toBeVisible();
-  await deleteAwxSchedule(`${scheduleName}`, page);
+  await deleteAwxSchedule(`${scheduleName}-edited`, page);
   await deleteJobTemplate(jobTemplateName, page);
   await deleteInventory(inventoryName, page);
 });
