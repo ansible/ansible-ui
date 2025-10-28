@@ -20,6 +20,7 @@ jobs:
       pr_number: ${{ steps.pr.outputs.number }}
       pr_sha: ${{ steps.pr.outputs.sha }}
       pr_ref: ${{ steps.pr.outputs.ref }}
+      aap_version: ${{ steps.pr.outputs.aap_version }}
     steps:
       - name: Check trigger comment
         id: check
@@ -39,6 +40,12 @@ jobs:
             core.setOutput('sha', pr.data.head.sha);
             core.setOutput('ref', pr.data.head.ref);
 
+            // Parse AAP version from comment (e.g., "/run-aap-ui-playwright 2.5-next")
+            const commentBody = context.payload.comment.body;
+            const versionMatch = commentBody.match(/\/run-aap-ui-playwright\s+(\S+)/);
+            const aapVersion = versionMatch ? versionMatch[1] : '2.6';
+            core.setOutput('aap_version', aapVersion);
+
       - name: Add reaction to comment
         uses: actions/github-script@v7
         with:
@@ -54,11 +61,12 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const aapVersion = '${{ steps.pr.outputs.aap_version }}';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: '🚀 Starting AAP Playwright E2E tests with aap-dev deployment...\n\nWorkflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              body: `🚀 Starting AAP Playwright E2E tests with aap-dev deployment...\n\n**AAP Version**: ${aapVersion}\n\nWorkflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`
             });
 
   matrix-setup:
@@ -108,6 +116,7 @@ jobs:
         with:
           red_hat_registry_user: ${{ secrets.RED_HAT_REGISTRY_USER }}
           red_hat_registry_token: ${{ secrets.RED_HAT_REGISTRY_TOKEN }}
+          aap_version: ${{ needs.check-comment.outputs.aap_version }}
           aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
           aap_test_secrets_repo_github_token: ${{ secrets.AAP_TEST_SECRETS_REPO_GITHUB_TOKEN }}
 
