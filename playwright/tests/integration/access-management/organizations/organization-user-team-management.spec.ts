@@ -1,16 +1,16 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../../commands/checkBuildType';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { AZURE_URL, SAAS_URL } from '../../../../commands/constants';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { filterTable } from '../../../../commands/filterTable';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { selectTableRow } from '../../../../commands/selectTableRow';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
-import { singleSelectByLabel } from '../../../../commands/singleSelectByLabel';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { filterTable } from '@ansible/playwright/commands/filterTable';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 import { createTeam, deleteTeam } from '../teams/team-utils';
 import { createUser, deleteUser } from '../users/user-utils';
 import {
@@ -595,7 +595,8 @@ test.describe('Organization User and Team Management', () => {
       await confirmAndAssertDeletion(page);
 
       // Verify redirect to teams list
-      await expect(page.getByRole('heading', { name: 'Teams' })).toBeVisible();
+      await expect(page.getByTestId('page-title')).toBeVisible();
+      await expect(page.getByTestId('page-title')).toContainText('Teams');
     }
   );
 });

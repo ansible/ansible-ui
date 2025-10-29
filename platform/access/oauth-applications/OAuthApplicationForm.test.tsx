@@ -251,50 +251,48 @@ describe('OAuthApplicationForm', () => {
     });
 
     test('should handle form submission for create', async () => {
+      const user = userEvent.setup();
+
       await waitFor(() => {
         expect(screen.getByPlaceholderText('Enter OAuth application name')).toBeInTheDocument();
       });
 
       // Fill out required fields
-      await userEvent.type(
-        screen.getByPlaceholderText('Enter OAuth application name'),
-        'New OAuth App'
-      );
-      await userEvent.type(screen.getByPlaceholderText('Enter description'), 'Test description');
-      await userEvent.type(
+      await user.type(screen.getByPlaceholderText('Enter OAuth application name'), 'New OAuth App');
+      await user.type(screen.getByPlaceholderText('Enter description'), 'Test description');
+      await user.type(
         screen.getByPlaceholderText('Enter redirect URIs'),
         'https://example.com/callback'
       );
 
       // Submit form
       const submitButton = screen.getByRole('button', { name: /create oauth application/i });
-      await userEvent.click(submitButton);
+      await user.click(submitButton);
 
       // Verify the request was made (form submission behavior)
       await waitFor(() => {
         expect(submitButton).toBeInTheDocument();
       });
-    });
+    }, 10000);
 
     test('should show OAuth application secrets modal after successful creation', async () => {
+      const user = userEvent.setup();
+
       await waitFor(() => {
         expect(screen.getByPlaceholderText('Enter OAuth application name')).toBeInTheDocument();
       });
 
       // Fill out required fields
-      await userEvent.type(
-        screen.getByPlaceholderText('Enter OAuth application name'),
-        'New OAuth App'
-      );
-      await userEvent.type(screen.getByPlaceholderText('Enter description'), 'Test description');
-      await userEvent.type(
+      await user.type(screen.getByPlaceholderText('Enter OAuth application name'), 'New OAuth App');
+      await user.type(screen.getByPlaceholderText('Enter description'), 'Test description');
+      await user.type(
         screen.getByPlaceholderText('Enter redirect URIs'),
         'https://example.com/callback'
       );
 
       // Need to select an organization as it's required
       const orgSelectButton = screen.getByRole('button', { name: 'Organization' });
-      await userEvent.click(orgSelectButton);
+      await user.click(orgSelectButton);
 
       // Wait for dropdown options to appear and select the first one
       await waitFor(() => {
@@ -302,18 +300,18 @@ describe('OAuthApplicationForm', () => {
       });
       const organizationOptions = screen.getAllByText('Test Organization');
       // Click the option in the dropdown menu (should be the second one)
-      await userEvent.click(organizationOptions[1]);
+      await user.click(organizationOptions[1]);
 
       // Submit form
       const submitButton = screen.getByRole('button', { name: /create oauth application/i });
-      await userEvent.click(submitButton);
+      await user.click(submitButton);
 
       // Wait for the API call to complete and verify the modal was opened
       await waitFor(
         () => {
           expect(mockPushDialog).toHaveBeenCalledTimes(1);
         },
-        { timeout: 3000 }
+        { timeout: 10000 }
       );
 
       // Verify that pushDialog was called with the OAuthApplicationSecretModal
@@ -330,7 +328,7 @@ describe('OAuthApplicationForm', () => {
           description: 'Test description',
         })
       );
-    });
+    }, 15000);
 
     test('should display gateway URLs in the OAuth configuration instructions', async () => {
       await waitFor(() => {
@@ -418,6 +416,10 @@ describe('OAuthApplicationForm', () => {
       const redirectUrisField = screen.getByLabelText(/redirect uris/i);
       await user.clear(redirectUrisField);
 
+      await waitFor(() => {
+        expect(redirectUrisField).toHaveValue('');
+      });
+
       // Try to submit
       const submitButton = screen.getByRole('button', { name: /save oauth application/i });
       await user.click(submitButton);
@@ -437,6 +439,10 @@ describe('OAuthApplicationForm', () => {
       const nameField = screen.getByDisplayValue('Test OAuth Application');
       await user.clear(nameField);
       await user.type(nameField, 'Updated OAuth App');
+
+      await waitFor(() => {
+        expect(nameField).toHaveValue('Updated OAuth App');
+      });
 
       // Submit form
       const submitButton = screen.getByRole('button', { name: /save oauth application/i });

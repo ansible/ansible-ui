@@ -57,7 +57,7 @@ export function PlatformMasthead() {
     void refreshActiveHubUser?.();
     void refreshActivePlatformUser?.();
 
-    pageNavigate(PlatformRoute.Overview);
+    pageNavigate(PlatformRoute.Login);
   }, [
     pageNavigate,
     refreshActiveEdaUser,

@@ -116,6 +116,8 @@ export function AnsibleLogin(props: {
 
       if (nextPath) {
         window.location.href = nextPath;
+      } else if (location.pathname.includes('/login')) {
+        window.location.href = '/';
       } else {
         props.onSuccess?.();
       }
@@ -128,7 +130,7 @@ export function AnsibleLogin(props: {
         );
       }
     }
-  }, [loginApiUrl, password, props, t, username, nextPath]);
+  }, [loginApiUrl, password, props, t, username, nextPath, location.pathname]);
 
   const hasAuthFailedFlag = location.search.includes('auth_failed');
   useEffect(() => {
@@ -153,7 +155,7 @@ export function AnsibleLogin(props: {
       usernameInput.setAttribute('autocomplete', 'off');
     }
   }, []);
-  if (props.externalLoginUrl) {
+  if (props.externalLoginUrl && !location.pathname.includes('/login')) {
     window.location.replace(props.externalLoginUrl);
     return null;
   }

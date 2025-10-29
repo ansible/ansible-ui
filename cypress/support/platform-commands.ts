@@ -19,14 +19,20 @@ import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOr
 import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { AZURE_URL, OCP_A_URL, SAAS_URL, UpgradeUserType, usersForMigration } from './constants';
+import {
+  AAP_DEV_LOCALHOST_URL,
+  AZURE_URL,
+  OCP_A_URL,
+  SAAS_URL,
+  UpgradeUserType,
+  usersForMigration,
+} from './constants';
 import { awxAPI } from './formatApiPathForAwx';
 import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
 import { gatewayAPI } from './formatApiPathForPlatform';
 import './rest-commands';
 import { Settings } from '@ansible/awx-ui/interfaces/Settings';
-import { PlatformRoleUserAssignment } from '@ansible/platform-ui/interfaces/PlatformRoleUserAssignment ';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -630,61 +636,6 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  'assignUserNewRole',
-  (resourceId: string, roleDefinitionID: number, userId: string) => {
-    cy.requestPost<PlatformRoleUserAssignment>(gatewayAPI`/role_user_assignments/`, {
-      object_id: resourceId,
-      role_definition: roleDefinitionID,
-      user: userId,
-    }).then((role) => {
-      cy.wrap(role, { log: false });
-    });
-  }
-);
-
-/*
-Content Type available choices:
-shared.organization
-shared.team
-awx.jobtemplate
-awx.project
-awx.workflowjobtemplate
-awx.credential
-awx.inventory
-awx.notificationtemplate
-awx.instancegroup
-awx.executionenvironment
-galaxy.collection
-galaxy.ansiblerepository
-galaxy.collectionremote
-galaxy.containerrepository
-galaxy.containernamespace
-galaxy.task
-galaxy.namespace
-galaxy.collectionimport
-galaxy.containerregistryremote
-eda.rulebook
-eda.auditrule
-eda.project
-eda.eventstream
-eda.edacredential
-eda.activation
-eda.rulebookprocess
-eda.credentialinputsource
-eda.decisionenvironment
- **/
-
-Cypress.Commands.add('getPlatformRoleByName', (roleName: string, contentType: string) => {
-  cy.requestGet<PlatformRole>(
-    gatewayAPI`/role_definitions/?name__contains=${roleName}&content_type__api_slug=${contentType}&order_by=name&page=1&page_size=50/`
-  )
-    .its('results')
-    .then((results: PlatformRole[]) => {
-      cy.wrap(results[0]);
-    });
-});
-
-Cypress.Commands.add(
   'createPlatformRole',
   (roleName: string, description: string, contentType: string, permissions: string[]) => {
     cy.requestPost<PlatformRole>(gatewayAPI`/role_definitions/`, {
@@ -708,8 +659,12 @@ Cypress.Commands.add('deletePlatformRole', (platformRoleDefinition: PlatformRole
   });
 });
 
-Cypress.Commands.add('checkBuildType', () => {
-  cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+Cypress.Commands.add('checkBuildType', (): Cypress.Chainable<string | undefined> => {
+  const platformServer = (Cypress.env('PLATFORM_SERVER') as string) || '';
+  if (platformServer.includes(AAP_DEV_LOCALHOST_URL)) {
+    return cy.wrap<string | undefined>(AAP_DEV_LOCALHOST_URL);
+  }
+  return cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data): string | undefined => {
     const baseUrl = data.TOWER_URL_BASE;
     const parseAzure = baseUrl.includes(AZURE_URL);
     const parseSaas = baseUrl.includes(SAAS_URL);
@@ -724,7 +679,7 @@ Cypress.Commands.add('checkBuildType', () => {
     if (parseAzure) {
       return AZURE_URL;
     } else {
-      return '';
+      return undefined;
     }
-  });
+  }) as Cypress.Chainable<string | undefined>;
 });

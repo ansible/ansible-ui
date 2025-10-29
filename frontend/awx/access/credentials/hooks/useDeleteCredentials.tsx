@@ -15,12 +15,16 @@ export function useDeleteCredentials(onComplete?: (credentials: Credential[]) =>
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useAwxBulkConfirmation<Credential>();
   const deleteCredentials = (credentials: Credential[]) => {
+    const count = credentials.length;
+    const confirmText =
+      count === 1
+        ? t('Yes, I confirm that I want to delete this {{count}} credential.', { count })
+        : t('Yes, I confirm that I want to delete these {{count}} credentials.', { count });
+
     bulkAction({
-      title: t('Permanently delete credentials', { count: credentials.length }),
-      confirmText: t('Yes, I confirm that I want to delete these {{count}} credentials.', {
-        count: credentials.length,
-      }),
-      actionButtonText: t('Delete credential', { count: credentials.length }),
+      title: t('Permanently delete credentials', { count }),
+      confirmText,
+      actionButtonText: t('Delete credential', { count }),
       items: credentials.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,

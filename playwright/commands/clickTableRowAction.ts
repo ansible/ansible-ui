@@ -35,8 +35,9 @@ export async function clickTableRowAction(options: ClickTableRowActionOptions, p
     },
     page
   );
-
-  await page.getByRole('button', { name: 'table view' }).click();
+  if (await page.getByRole('button', { name: 'table view' }).isVisible()) {
+    await page.getByRole('button', { name: 'table view' }).click({ timeout: 5000 });
+  }
   await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
   await expect(page.locator('table tbody tr')).toHaveCount(1);
   if (await page.getByRole('row', { name: options.text }).getByLabel(options.action).isVisible()) {

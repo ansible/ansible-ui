@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { filterTable } from '../../../../commands/filterTable';
-import { login } from '../../../../commands/login';
-import { logout } from '../../../../commands/logout';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { filterTable } from '@ansible/playwright/commands/filterTable';
+import { login } from '@ansible/playwright/commands/login';
+import { logout } from '@ansible/playwright/commands/logout';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createAuthenticationMethod } from './authentication-utils';
 
 test.beforeEach(setupBefore({ path: '/access/authenticators' }));
@@ -22,8 +22,18 @@ test(
       },
       page
     );
-    await expect(page.locator('#client-id')).toContainText('1234abc');
-    await expect(page.locator('#secret')).toContainText('$encrypted$');
+    // getting client ID / OIDC key depending on which field the build has
+    const clientIdLocator = page.getByTestId('client-id');
+    const oidcKeyLocator = page.getByTestId('oidc-key');
+    // if build is up to date and has Client ID, use that, otherwise use OIDC
+    const keyLocator = (await clientIdLocator.count()) > 0 ? clientIdLocator : oidcKeyLocator;
+    await expect(keyLocator).toContainText('1234abc');
+    // getting secret and / OIDC secret depending on which field the build has
+    const secretLocator = page.getByTestId('secret');
+    const oidcSecretLocator = page.getByTestId('oidc-secret');
+    // if build is up to date and has secret, use that, otherwise use OIDC
+    const passwordLocator = (await secretLocator.count()) > 0 ? secretLocator : oidcSecretLocator;
+    await expect(passwordLocator).toContainText('$encrypted$');
     await page.getByRole('tab', { name: 'Back to Authentication Methods' }).click();
     await filterTable({ filterValue: authMethodName }, page);
     await page.getByRole('gridcell', { name: 'Click to enable' }).locator('span').first().click();

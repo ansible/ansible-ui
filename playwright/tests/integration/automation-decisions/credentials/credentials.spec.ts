@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../../commands/checkBuildType';
-import { SAAS_URL } from '../../../../commands/constants';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createEdaCredentialType } from '../credential-types/credential-types-utils';
 import { createEdaCredential, deleteEdaCredential } from './credentials-utils';
 

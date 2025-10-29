@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { singleSelectByLabel } from '../../../../commands/singleSelectByLabel';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 
 export async function createEdaEventStream(
   options: { credentialName?: string; organizationName?: string },

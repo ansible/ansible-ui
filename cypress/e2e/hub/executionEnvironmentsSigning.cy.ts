@@ -1,12 +1,12 @@
 import { ExecutionEnvironment } from '@ansible/hub-ui/execution-environments/ExecutionEnvironment';
 import { ExecutionEnvironments } from '../hub/constants';
 import { RemoteRegistry } from '@ansible/hub-ui/administration/remote-registries/RemoteRegistry';
-import { AZURE_URL, OCP_A_URL, SAAS_URL } from '../../support/constants';
+import { AAP_DEV_LOCALHOST_URL, AZURE_URL, OCP_A_URL, SAAS_URL } from '../../support/constants';
 
 describe('If SaaS Build', () => {
   before(function () {
     cy.checkBuildType().then((buildType) => {
-      if (buildType === SAAS_URL || buildType === AZURE_URL || buildType === OCP_A_URL) {
+      if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType as string)) {
         cy.log('Test/tests should not run on this deployment.');
         this.skip();
       } else {

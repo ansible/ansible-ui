@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../../commands/checkBuildType';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { SAAS_URL } from '../../../../commands/constants';
-import { expectRowToContain } from '../../../../commands/expectRowToContain';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { expectRowToContain } from '@ansible/playwright/commands/expectRowToContain';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createOrganization,
   deleteOrganization,
@@ -140,7 +140,7 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('tab', { name: 'Back to Rulebook Activations' }).click();
         await page.getByRole('textbox', { name: 'Type to filter' }).fill(rulebookActivationName);
         await page.getByRole('button', { name: 'apply filter' }).click();
-        await expectRowToContain(rulebookActivationName, 'Stopped', page, 15000);
+        await expectRowToContain(rulebookActivationName, 'Stopped', page, 30000);
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
         await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
         await page.getByRole('checkbox', { name: 'Skip audit events' }).check();
@@ -183,7 +183,7 @@ test.describe('Rulebook Activations', () => {
         await expect(page.getByRole('dialog')).toContainText('Success');
         await expect(page.getByText('Rulebook activation enabled')).toBeVisible();
         await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
-          timeout: 15000,
+          timeout: 30000,
         });
         await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();

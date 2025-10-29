@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import { createMock, logResponse, MockRequest } from '@ansible/aap-mock';
 import { Page, test } from '@playwright/test';
-import { platformUI } from '../commands/login';
+import { platformUI } from '@ansible/playwright/commands/login';
 
 /** Mock API calls for Playwright tests */
 export async function mock(page: Page) {

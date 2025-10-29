@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
-import { interceptRequest } from '../../../util/interceptRequest';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { interceptRequest } from '@ansible/playwright/tests/util/interceptRequest';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);

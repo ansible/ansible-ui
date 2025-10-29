@@ -76,7 +76,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
   });
 
   const managementJobsWithModal = ['Cleanup Activity Stream', 'Cleanup Job Details'];
-  const rententionDays = '4';
+  const retentionDays = '4';
   managementJobsWithModal.forEach((jobName) => {
     it(`admin can launch management job: ${jobName} with the retention days set`, () => {
       cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
@@ -97,7 +97,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
                 cy.getBy(`[data-cy="launch-management-job"]`).click();
               });
             });
-            cy.get('[data-cy="extra-vars-days"]').clear().type(rententionDays);
+            cy.get('[data-cy="extra-vars-days"]').clear().type(retentionDays);
             cy.clickButton(/^Launch/);
             cy.wait('@launchJob')
               .its('response.body.id')
@@ -109,6 +109,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
                   cy.getByDataCy('id').should('have.text', jobId);
                   cy.getByDataCy('name').should('have.text', jobName);
                   cy.getByDataCy('type').should('have.text', 'Management job');
+                  cy.get('[data-cy="success-status"]', { timeout: 10000 }).should('be.visible');
                   cy.intercept('DELETE', awxAPI`/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
                   cy.get('#confirm').click();

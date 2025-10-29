@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../commands/setup';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);

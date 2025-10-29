@@ -57,16 +57,10 @@ const config: PlaywrightTestConfig = {
   use: {
     // baseURL: 'http://127.0.0.1:3000',
     ignoreHTTPSErrors: true,
-    // Always collect trace for better debugging
-    trace: 'on',
-    screenshot: 'on',
-    video: 'on',
-    // screenshot: 'only-on-failure',
-    // video: 'retain-on-failure',
-    // Add browser logging for debugging
-    launchOptions: {
-      args: ['--enable-logging', '--v=1'],
-    },
+    // Only collect trace/screenshots/video on failure to improve performance
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 
   /* Configure projects for major browsers */

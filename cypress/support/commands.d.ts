@@ -93,7 +93,6 @@ import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOr
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { UpgradeUserType } from './constants';
-import { PlatformRoleUserAssignment } from '@ansible/platform-ui/interfaces/PlatformRoleUserAssignment ';
 import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 
 declare global {
@@ -598,9 +597,6 @@ declare global {
 
       /** Selects a table row by clicking on the row checkbox. */
       selectTableRow(name: string | RegExp): Chainable<void>;
-
-      /**Expands a table row by locating the row using the provided name and thenclicking the "expand-toggle" button on that row.*/
-      expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
       selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -1955,17 +1951,6 @@ declare global {
         content_type__model?: string;
       }): Chainable<PlatformRole[]>;
 
-      getPlatformRoleByName(roleName: string, contentType: string): Chainable<PlatformRole>;
-
-      /**
-       * Creates a platform role definition
-       * @returns {Chainable<PlatformRole>}
-       */
-      assignUserNewRole(
-        resourceId: string,
-        roleDefinitionID: number,
-        userId: string
-      ): Chainable<PlatformRoleUserAssignment>;
       createPlatformRole(
         roleName: string,
         description: string,

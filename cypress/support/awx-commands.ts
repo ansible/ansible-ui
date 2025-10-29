@@ -536,12 +536,6 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp) => {
     });
 });
 
-Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
-  cy.getTableRowByText(name, filter).within(() => {
-    cy.get('[data-cy="expand-column-cell"]').click();
-  });
-});
-
 Cypress.Commands.add(
   'hasDetail',
   (detailTerm: string | RegExp, detailDescription: string | RegExp) => {

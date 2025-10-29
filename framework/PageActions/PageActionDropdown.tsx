@@ -139,7 +139,12 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
   const dropdownMenuLabel: string | JSX.Element | undefined = iconOnly ? undefined : label;
 
   const disabledMenuToggle = (
-    <Button data-cy={id} icon={CustomIcon ? <CustomIcon /> : undefined} isAriaDisabled>
+    <Button
+      data-cy={id}
+      data-testid={id}
+      icon={CustomIcon ? <CustomIcon /> : undefined}
+      isAriaDisabled
+    >
       {dropdownMenuLabel}
       <span style={{ paddingLeft: '16px' }}>
         <CaretDownIcon aria-hidden />
@@ -167,6 +172,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
             <MenuToggle
               ref={toggleRef}
               data-cy={id}
+              data-testid={id}
               size={TableVariant === 'compact' ? 'sm' : 'default'}
               id={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               className={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
@@ -235,6 +241,7 @@ function PageActionButton<T extends object>(
         <DropdownItem
           id={getID(action)}
           data-cy={getID(action)?.split('.').join('-')}
+          data-testid={getID(action)?.split('.').join('-')}
           isAriaDisabled={isButtonDisabled}
           onClick={() => {
             switch (action.selection) {
@@ -294,6 +301,7 @@ function PageActionLink<T extends object>(
         isAriaDisabled={Boolean(isDisabled)}
         component={(p) => <Link {...p} to={to} />}
         data-cy={getID(action)?.split('.').join('-')}
+        data-testid={getID(action)?.split('.').join('-')}
         style={{
           color: action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
         }}

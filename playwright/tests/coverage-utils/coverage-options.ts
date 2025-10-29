@@ -3,6 +3,7 @@ import path from 'path';
 
 export const coverageOptions: CoverageReportOptions = {
   name: 'AAP UI Playwright Coverage Report',
+  logging: 'off',
   entryFilter: (entry) => {
     let shouldInclude = false;
     for (const path of ['frontend/', 'platform/', 'framework/']) {

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { selectTableFilter } from '../../../../commands/selectTableFilter';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { selectTableFilter } from '@ansible/playwright/commands/selectTableFilter';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createInventory,
   deleteInventory,
