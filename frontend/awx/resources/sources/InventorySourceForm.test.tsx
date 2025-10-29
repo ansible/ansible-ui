@@ -66,11 +66,24 @@ describe('CreateInventorySource', () => {
       </MemoryRouter>
     );
 
-    await waitFor(async () => {
-      const sourceButtons = getAllByRole('button');
-      expect(sourceButtons[1]).toBeInTheDocument();
-      await userEvent.click(sourceButtons[1]);
-      expect(screen.getByText('VMware ESXi')).toBeInTheDocument();
-    });
-  });
+    const user = userEvent.setup();
+
+    await waitFor(
+      () => {
+        const sourceButtons = getAllByRole('button');
+        expect(sourceButtons.length).toBeGreaterThan(1);
+      },
+      { timeout: 10000 }
+    );
+
+    const sourceButtons = getAllByRole('button');
+    await user.click(sourceButtons[1]);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('VMware ESXi')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });

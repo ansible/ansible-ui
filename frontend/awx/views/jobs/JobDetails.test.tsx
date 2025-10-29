@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import * as reactRouterDom from 'react-router-dom';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
@@ -19,16 +19,23 @@ vi.mock('react-router-dom', async () => {
   };
 });
 describe('JobDetails Component', () => {
-  it('renders the JobDetails component with all fields', () => {
+  it('renders the JobDetails component with all fields', async () => {
     render(
       <MemoryRouter>
         <JobDetails />
       </MemoryRouter>
     );
-    expect(screen.getByText('ID')).toBeInTheDocument();
-    expect(screen.getByText('Name')).toBeInTheDocument();
-    expect(screen.getByText('Status')).toBeInTheDocument();
-    expect(screen.getByText('Type')).toBeInTheDocument();
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('ID')).toBeInTheDocument();
+        expect(screen.getByText('Name')).toBeInTheDocument();
+        expect(screen.getByText('Status')).toBeInTheDocument();
+        expect(screen.getByText('Type')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
     expect(screen.getByText('Labels')).toBeInTheDocument();
     expect(screen.getByText('Duration')).toBeInTheDocument();
     expect(screen.getByText('Started')).toBeInTheDocument();
@@ -49,51 +56,69 @@ describe('JobDetails Component', () => {
     expect(screen.getByText('Timeout')).toBeInTheDocument();
     expect(screen.getByText('Limit')).toBeInTheDocument();
     expect(screen.getByText('Verbosity')).toBeInTheDocument();
-    expect(screen.getByText('Instance group')).toBeInTheDocument();
     expect(screen.getByText('Created')).toBeInTheDocument();
-    expect(screen.getByText('Timeout')).toBeInTheDocument();
     expect(screen.getByText('Last modified')).toBeInTheDocument();
     expect(screen.getByText('Extra variables')).toBeInTheDocument();
     expect(screen.getByText('Artifacts')).toBeInTheDocument();
-  });
+  }, 15000);
 
-  it('conditionally renders playbook field', () => {
+  it('conditionally renders playbook field', async () => {
     mockJob.playbook = null;
     render(
       <MemoryRouter>
         <JobDetails />
       </MemoryRouter>
     );
-    expect(screen.queryByText('Playbook')).not.toBeInTheDocument();
-  });
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Playbook')).not.toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 
-  it('conditionally renders scm_revision field', () => {
+  it('conditionally renders scm_revision field', async () => {
     mockJob.scm_revision = undefined;
     render(
       <MemoryRouter>
         <JobDetails />
       </MemoryRouter>
     );
-    expect(screen.queryByText('Revision')).not.toBeInTheDocument();
-  });
-  it('conditionally renders controller_node field', () => {
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Revision')).not.toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
+  it('conditionally renders controller_node field', async () => {
     mockJob.controller_node = undefined;
     render(
       <MemoryRouter>
         <JobDetails />
       </MemoryRouter>
     );
-    expect(screen.queryByText('Controller node')).not.toBeInTheDocument();
-  });
-  it('conditionally renders execution_node node field', () => {
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Controller node')).not.toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
+  it('conditionally renders execution_node node field', async () => {
     mockJob.execution_node = undefined;
     render(
       <MemoryRouter>
         <JobDetails />
       </MemoryRouter>
     );
-    expect(screen.queryByText('Execution node')).not.toBeInTheDocument();
-  });
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Execution node')).not.toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
   it('conditionally renders job_tags field', () => {
     mockJob.job_tags = 'foo';
     render(

@@ -60,6 +60,7 @@ export function PageFormCheckbox<
               name={name}
               id={props.id ?? name.split('.').join('-')}
               data-cy={props.id ?? name.split('.').join('-')}
+              data-testid={props.id ?? name.split('.').join('-')}
               aria-label={props.label}
               className={props.className}
               label={

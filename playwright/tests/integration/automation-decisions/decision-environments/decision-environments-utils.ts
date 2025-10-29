@@ -1,10 +1,10 @@
 import { Page, expect } from '@playwright/test';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { singleSelectByLabel } from '../../../../commands/singleSelectByLabel';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 
 export async function createDecisionEnvironment(
   options: { decisionEnvironmentName?: string; organizationName?: string },

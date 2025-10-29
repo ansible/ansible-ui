@@ -1,0 +1,289 @@
+name: Ephemeral AAP Cypress
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+jobs:
+  check-comment:
+    name: Check Comment Trigger
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/run-aap-ui-cypress')
+    runs-on: ubuntu-latest
+    outputs:
+      triggered: ${{ steps.check.outputs.triggered }}
+      pr_number: ${{ steps.pr.outputs.number }}
+      pr_sha: ${{ steps.pr.outputs.sha }}
+      pr_ref: ${{ steps.pr.outputs.ref }}
+      aap_version: ${{ steps.pr.outputs.aap_version }}
+    steps:
+      - name: Check trigger comment
+        id: check
+        run: echo "triggered=true" >> $GITHUB_OUTPUT
+
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            core.setOutput('number', pr.data.number);
+            core.setOutput('sha', pr.data.head.sha);
+            core.setOutput('ref', pr.data.head.ref);
+
+            // Parse AAP version from comment (e.g., "/run-aap-ui-cypress 2.5-next")
+            const commentBody = context.payload.comment.body;
+            const versionMatch = commentBody.match(/\/run-aap-ui-cypress\s+(\S+)/);
+            const aapVersion = versionMatch ? versionMatch[1] : '2.6';
+            core.setOutput('aap_version', aapVersion);
+
+      - name: Add reaction to comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            });
+
+      - name: Post starting message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const aapVersion = '${{ steps.pr.outputs.aap_version }}';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🚀 Starting AAP Cypress tests with aap-dev deployment...\n\n**AAP Version**: ${aapVersion}\n\nWorkflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`
+            });
+
+  matrix-setup:
+    name: Setup Matrix
+    needs: check-comment
+    if: needs.check-comment.outputs.triggered == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set matrix containers
+        id: set-matrix
+        run: |
+          # Configure number of parallel AAP deployments/test runners
+          PARALLEL_JOBS=4
+          CONTAINERS=$(seq 1 $PARALLEL_JOBS | jq --slurp -c)
+          echo "matrix=$CONTAINERS" >> $GITHUB_OUTPUT
+          echo "Running tests across $PARALLEL_JOBS parallel AAP deployments"
+
+  deploy-and-test:
+    name: Deploy AAP (${{ matrix.container }}) and Run Cypress E2E Tests
+    needs:
+      - check-comment
+      - matrix-setup
+    if: needs.check-comment.outputs.triggered == 'true'
+    runs-on: aap-dev
+    concurrency:
+      group: ephemeral-aap-cypress-pr-${{ needs.check-comment.outputs.pr_number }}-${{ matrix.container }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        container: ${{ fromJson(needs.matrix-setup.outputs.matrix) }}
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-comment.outputs.pr_sha }}
+          fetch-depth: 1
+
+      - name: Deploy AAP using aap-dev action
+        id: deploy
+        uses: ansible/aap-dev/.github/actions/aap_deploy@main
+        with:
+          red_hat_registry_user: ${{ secrets.RED_HAT_REGISTRY_USER }}
+          red_hat_registry_token: ${{ secrets.RED_HAT_REGISTRY_TOKEN }}
+          aap_version: ${{ needs.check-comment.outputs.aap_version }}
+          aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
+          aap_test_secrets_repo_github_token: ${{ secrets.AAP_TEST_SECRETS_REPO_GITHUB_TOKEN }}
+
+      - name: Display AAP deployment info
+        run: |
+          echo "AAP URL: ${{ steps.deploy.outputs.aap_url }}"
+          echo "Matrix container: ${{ matrix.container }}"
+          echo "AAP deployment successful!"
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Install python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install galaxykit
+        run: |
+          pip3 install ansible git+https://github.com/ansible/galaxykit.git@main
+
+      - name: Build Platform UI
+        run: |
+          cd platform
+          npm run build
+
+      - name: Strip trailing slash from AAP URL
+        run: |
+          echo "PLATFORM_SERVER=$(echo '${{ steps.deploy.outputs.aap_url }}' | sed 's:/*$::')" >> $GITHUB_ENV
+
+      - name: Start Platform UI
+        run: |
+          cd platform
+          PLATFORM_SERVER=${{ env.PLATFORM_SERVER }} npm start &
+          sleep 15
+
+      - name: Wait for Platform UI
+        run: |
+          timeout 60 bash -c 'until curl -k https://localhost:4100 > /dev/null 2>&1; do sleep 2; done' || exit 1
+
+      - name: Run Cypress E2E Tests
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          wait-on: 'https://localhost:4100'
+          record: true
+          parallel: true
+          config-file: cypress.platform.config.ts
+          tag: ephemeral-aap-cypress
+          publish-summary: false
+        env:
+          PLATFORM_SERVER: ${{ env.PLATFORM_SERVER }}
+          PLATFORM_USERNAME: admin
+          PLATFORM_PASSWORD: ${{ steps.deploy.outputs.admin_password }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+          CYPRESS_AWX_API_PREFIX: /api/controller/v2
+          CYPRESS_EDA_API_PREFIX: /api/eda/v1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+          CYPRESS_LABELS: '!upstream'
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-${{ matrix.container }}
+          path: cypress/screenshots
+          retention-days: 7
+
+      - name: Upload Cypress videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos-${{ matrix.container }}
+          path: cypress/videos
+          retention-days: 7
+
+      - name: Cleanup AAP deployment
+        if: always()
+        uses: ansible/aap-dev/.github/actions/aap_delete@main
+        with:
+          kube_config: ${{ steps.deploy.outputs.kube_config }}
+          aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
+
+  report-results:
+    name: Report Test Results
+    needs:
+      - check-comment
+      - matrix-setup
+      - deploy-and-test
+    if: always() && needs.check-comment.outputs.triggered == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix results
+        id: check-results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployAndTestResults = ${{ toJson(needs.deploy-and-test) }};
+            const allSuccess = deployAndTestResults.result === 'success';
+            const anyCancelled = deployAndTestResults.result === 'cancelled';
+            const anyFailure = deployAndTestResults.result === 'failure';
+
+            core.setOutput('all_success', allSuccess);
+            core.setOutput('any_cancelled', anyCancelled);
+            core.setOutput('any_failure', anyFailure);
+
+      - name: Post success comment
+        if: steps.check-results.outputs.all_success == 'true'
+        uses: actions/github-script@v7
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+        with:
+          script: |
+            const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
+            const cypressProjectId = process.env.CYPRESS_PROJECT_ID;
+            const cypressDashboardUrl = `https://cloud.cypress.io/projects/${cypressProjectId}/runs`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.check-comment.outputs.pr_number }},
+              body: `✅ AAP Cypress tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Test Results:**\n- 📊 [Cypress Dashboard](${cypressDashboardUrl}) - Detailed test analytics, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`
+            });
+
+      - name: Post failure comment
+        if: steps.check-results.outputs.any_failure == 'true'
+        uses: actions/github-script@v7
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+        with:
+          script: |
+            const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
+            const cypressProjectId = process.env.CYPRESS_PROJECT_ID;
+            const cypressDashboardUrl = `https://cloud.cypress.io/projects/${cypressProjectId}/runs`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.check-comment.outputs.pr_number }},
+              body: `❌ AAP Cypress tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Debugging Resources:**\n- 📊 [Cypress Dashboard](${cypressDashboardUrl}) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`
+            });
+
+      - name: Post cancelled comment
+        if: steps.check-results.outputs.any_cancelled == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.check-comment.outputs.pr_number }},
+              body: '⚠️ AAP Cypress tests were cancelled.\n\nWorkflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            });

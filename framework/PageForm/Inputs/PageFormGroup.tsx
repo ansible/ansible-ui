@@ -48,6 +48,7 @@ export function PageFormGroup(props: PageFormGroupProps) {
       labelInfo={props.additionalControls}
       isRequired={isRequired}
       data-cy={`${props.fieldId}-form-group`}
+      data-testid={`${props.fieldId}-form-group`}
       style={{ gridColumn: fullWidth ? 'span 12' : undefined }}
     >
       {children}

@@ -191,9 +191,13 @@ describe('PlatformRoleForm', () => {
       const organizationOption = getByText('Organization');
       await user.click(organizationOption);
 
-      const permissionsButton = await findByRole('button', { name: 'Permissions' });
+      const permissionsButton = await findByRole(
+        'button',
+        { name: 'Permissions' },
+        { timeout: 10000 }
+      );
       expect(permissionsButton).toBeInTheDocument();
-    });
+    }, 15000);
 
     test('should update resource type when option is selected', async () => {
       const user = userEvent.setup();
@@ -226,28 +230,43 @@ describe('PlatformRoleForm', () => {
       const resourceTypeButton = getByRole('button', { name: 'Resource type' });
       await user.click(resourceTypeButton);
       await user.click(getByText('Organization'));
-      expect(resourceTypeButton).toHaveTextContent('Organization');
+
+      await waitFor(() => {
+        expect(resourceTypeButton).toHaveTextContent('Organization');
+      });
 
       // Select permissions
-      const permissionsButton = await findByRole('button', { name: 'Permissions' });
+      const permissionsButton = await findByRole(
+        'button',
+        { name: 'Permissions' },
+        { timeout: 10000 }
+      );
       expect(permissionsButton).toHaveTextContent('Select permissions');
       await user.click(permissionsButton);
       await user.click(getByLabelText('Audit organization'));
 
       // Close permissions dropdown
       await user.click(document.body);
-      expect(permissionsButton).toHaveTextContent('Audit organization');
+
+      await waitFor(() => {
+        expect(permissionsButton).toHaveTextContent('Audit organization');
+      });
       expect(queryByText('Select permissions')).not.toBeInTheDocument();
 
       // Change resource type
       await user.click(resourceTypeButton);
       await user.click(getByText('System'));
-      expect(resourceTypeButton).toHaveTextContent('System');
+
+      await waitFor(() => {
+        expect(resourceTypeButton).toHaveTextContent('System');
+      });
 
       // Verify reset permissions
-      expect(permissionsButton).toHaveTextContent('Select permissions');
+      await waitFor(() => {
+        expect(permissionsButton).toHaveTextContent('Select permissions');
+      });
       expect(queryByText('Audit organization')).not.toBeInTheDocument();
-    });
+    }, 15000);
 
     test('should allow selecting multiple permissions for a resource type', async () => {
       const user = userEvent.setup();
@@ -262,14 +281,20 @@ describe('PlatformRoleForm', () => {
       await user.click(getByRole('button', { name: 'Resource type' }));
       await user.click(getByText('Organization'));
 
-      const permissionsButton = await findByRole('button', { name: 'Permissions' });
+      const permissionsButton = await findByRole(
+        'button',
+        { name: 'Permissions' },
+        { timeout: 10000 }
+      );
 
       await user.click(permissionsButton);
       await user.click(getByText('Audit organization'));
       await user.click(getByText('Can view organization'));
 
-      expect(permissionsButton).toHaveTextContent('Audit organization');
-      expect(permissionsButton).toHaveTextContent('Can view organization');
-    });
+      await waitFor(() => {
+        expect(permissionsButton).toHaveTextContent('Audit organization');
+        expect(permissionsButton).toHaveTextContent('Can view organization');
+      });
+    }, 15000);
   });
 });

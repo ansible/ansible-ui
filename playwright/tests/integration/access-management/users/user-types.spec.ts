@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
-import { deleteResourceFromList } from '../../../../commands/deleteResourceFromList';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
+import { deleteResourceFromList } from '@ansible/playwright/commands/deleteResourceFromList';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createUser, CreateUserOptions, deleteUser } from './user-utils';
 
 test.beforeEach(setupBefore({ path: '/access/users' }));

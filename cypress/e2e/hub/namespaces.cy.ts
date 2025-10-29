@@ -3,7 +3,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { MyImports, Namespaces } from './constants';
-import { AZURE_URL, OCP_A_URL, SAAS_URL } from '../../support/constants';
+import { AAP_DEV_LOCALHOST_URL, AZURE_URL, OCP_A_URL, SAAS_URL } from '../../support/constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -159,7 +159,7 @@ describe('Namespaces - sign collections', () => {
 
   it('can sign a collection', function () {
     cy.checkBuildType().then((buildType) => {
-      if (buildType === SAAS_URL || buildType === AZURE_URL || buildType === OCP_A_URL) {
+      if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType as string)) {
         this.skip();
       } else {
         cy.waitForAllTasks();
@@ -189,7 +189,7 @@ describe('Namespaces - sign collections', () => {
 
   it('can sign all collections', function () {
     cy.checkBuildType().then((buildType) => {
-      if (buildType === SAAS_URL || buildType === AZURE_URL || buildType === OCP_A_URL) {
+      if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType as string)) {
         this.skip();
       } else {
         cy.navigateTo('hub', 'namespaces');

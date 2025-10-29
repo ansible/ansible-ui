@@ -399,6 +399,115 @@ await page.getByTestId('content-type').click();
   await page.locator('[data-testid="content-type"]').click();
   ```
 
+#### Advanced Testing Patterns and Best Practices
+
+##### API Response Interception for Dynamic Values
+
+When dealing with resources that get dynamic names (timestamps, IDs, etc.), use API interception to capture exact values:
+
+```typescript
+// Set up API interception before triggering the action
+const copyResponsePromise = page.waitForResponse(
+  (response) => response.url().includes('/copy/') && response.status() === 201
+);
+
+// Trigger the copy action
+await page.getByRole('menuitem', { name: 'Duplicate template' }).click();
+
+// Get the exact copied name from the API response
+const copyResponse = await copyResponsePromise;
+const copiedResource = (await copyResponse.json()) as ResourceType;
+const copiedName = copiedResource.name; // Use this for subsequent assertions and cleanup
+```
+
+This approach is superior to string manipulation or guessing patterns because:
+
+- Captures exact API-generated values (timestamps, auto-incremented IDs, etc.)
+- No flaky pattern matching
+- Enables precise cleanup
+- Mirrors how the UI actually receives the data
+
+##### Testing Validation Logic: Prefer Hook-Level Tests
+
+For form validation logic, test the validation hook directly rather than rendering the entire form:
+
+```typescript
+// GOOD - Test the hook directly (fast, reliable, focused)
+import { renderHook } from '@testing-library/react';
+import { useCredentialsValidate } from '../../hooks/useCredentialsValidate';
+
+test('validates error when multiple credentials of same type selected', async () => {
+  const { result } = renderHook(() => useCredentialsValidate(false));
+  const validateFn = result.current;
+  const selectedCredentials = [credential1, credential2]; // Both machine type
+  
+  const errorMessage = await validateFn(selectedCredentials);
+  
+  expect(errorMessage).toBe('Cannot assign multiple credentials of the same type...');
+});
+
+// AVOID - Rendering full form for validation testing (slow, complex, brittle)
+// Only use full form rendering when testing UI interactions, not validation logic
+```
+
+Benefits of hook-level testing:
+
+- Faster execution (milliseconds vs seconds)
+- Avoids React concurrent rendering issues
+- Tests the actual validation logic in isolation
+- No need to mock entire component tree
+- More maintainable and focused
+
+**Important Trade-off:**
+
+Hook-level tests are essentially unit tests. They validate the logic but miss integration aspects:
+
+- Whether the hook is wired up correctly to the form field
+- Whether errors display in the correct location in the UI
+- Whether the form properly blocks submission on validation errors
+
+For comprehensive coverage, combine hook-level tests with:
+
+- Integration tests (Playwright) that test the full workflow with a live backend
+- Cypress component tests if React rendering issues prevent Vitest component tests
+- Manual testing for critical validation scenarios
+
+##### Handling Strict Mode Violations with Exact Matching
+
+When elements share similar text (e.g., "Template Name" and "Template Name @ timestamp"), always use `exact: true`:
+
+```typescript
+// GOOD - Prevents matching both "Job Template" and "Job Template @ 13:45:38"
+await page.getByRole('checkbox', { name: 'Job Template', exact: true }).click();
+await page.getByRole('link', { name: jobTemplateName, exact: true }).click();
+
+// AVOID - Will match multiple elements if similar names exist
+await page.getByRole('checkbox', { name: 'Job Template' }).click();
+```
+
+Apply this in utility commands too:
+
+```typescript
+// In filterTableBySelect.ts
+await page.getByRole('checkbox', { name, exact: true }).click();
+```
+
+##### Cleanup Strategies for Duplicated Resources
+
+When testing copy/duplicate functionality, clean up using specific filtering:
+
+```typescript
+// Strategy 1: Delete each resource individually using exact names
+await deleteJobTemplate(originalName, page);
+await deleteJobTemplate(copiedName, page); // copiedName from API response
+
+// Strategy 2: Use bulk delete with search filter (if both have unique common text)
+await filterTable({ filterLabel: 'Search', filterValue: uniquePrefix, clearFilters: true }, page);
+await page.getByLabel('Select all', { exact: true }).click();
+await page.getByLabel('toolbar actions').click();
+await page.getByRole('menuitem', { name: 'Delete templates' }).click();
+```
+
 #### Common Test Utilities
 
 Located in `/playwright/commands/`:
@@ -503,9 +612,17 @@ Before writing any Playwright test, use the MCP server to:
 2. **Selector Discovery**: Identify exact selectors for each UI element by examining snapshots
 3. **Interaction Verification**: Test each interaction step (clicks, form fills, etc.)
 4. **State Validation**: Verify expected page states after each action
-5. **Write Confident Tests**: Build tests using verified selectors and workflows
+5. **API Response Inspection**: Capture dynamic values (IDs, timestamps) from API responses
+6. **Write Confident Tests**: Build tests using verified selectors and workflows
 
 This approach is similar to using Playwright's record feature but provides more control and understanding.
+
+**Real-world example from job template copy tests:**
+
+- Used MCP to discover that the Name filter opens a dropdown with checkboxes, not a simple text input
+- Identified that copied templates get dynamic timestamps (e.g., "Template @ 13:45:38")
+- Tested API interception to capture exact copied names instead of guessing patterns
+- This prevented multiple test rewrites and ensured tests worked on first run
 
 This is particularly useful for:
 
@@ -687,10 +804,18 @@ The `getTableRow` command:
 2. **Selector Discovery**: Identify exact selectors for each UI element by examining snapshots
 3. **Interaction Verification**: Test each interaction step (clicks, form fills, etc.)
 4. **State Validation**: Verify expected page states after each action
-5. **Write Confident Tests**: Build tests using verified selectors and workflows
-6. **Run Tests**: Execute tests as final validation (should pass on first run)
+5. **API Response Inspection**: Identify dynamic values that need to be captured from API responses
+6. **Write Confident Tests**: Build tests using verified selectors, workflows, and API interception
+7. **Run Tests**: Execute tests as final validation (should pass on first run)
 
 This prevents the cycle of: write test → run test → fix selector → repeat.
+
+**Key patterns discovered through MCP validation:**
+
+- Filter dropdowns may use checkboxes with "Search input" instead of simple text inputs
+- Dynamic values (timestamps, auto-generated names) require API response interception
+- Always verify exact element types (textbox vs button vs dropdown) before writing selectors
+- Use `exact: true` when similar names might exist (e.g., "Name" and "Name @ timestamp")
 
 ### File Naming Conventions
 

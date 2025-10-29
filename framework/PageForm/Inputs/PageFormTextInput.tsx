@@ -370,6 +370,7 @@ export function PageFormTextInput<
                   autoFocus={autoFocus}
                   autoComplete={autoComplete || (type === 'password' ? 'new-password' : 'off')}
                   data-cy={id}
+                  data-testid={id}
                 />
               </InputGroupItem>
               {type === 'password' && (

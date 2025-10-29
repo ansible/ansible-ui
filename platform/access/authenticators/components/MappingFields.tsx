@@ -164,23 +164,8 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
         </PageFormHidden>
         <PageFormHidden
           watch={`map_type`}
-          hidden={(value: string) => !['team', 'role'].includes(value)}
-        >
-          <PageFormPlatformTeamNameSelect
-            name={`team`}
-            isRequired={['team'].includes(mapType) || isTeamRoleSelected}
-          />
-        </PageFormHidden>
-        <PageFormHidden
-          watch={`map_type`}
           hidden={(value: string) => !['team', 'organization', 'role'].includes(value)}
         >
-          <PageFormPlatformOrganizationNameSelect
-            name={`organization`}
-            isRequired={
-              ['team', 'organization'].includes(mapType) || isOrgRoleSelected || isTeamRoleSelected
-            }
-          />
           <PageFormPlatformRoleNameSelect
             name={`role`}
             contentType={roleContentType}
@@ -190,6 +175,21 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
               }
             }}
             isRequired
+          />
+          <PageFormPlatformOrganizationNameSelect
+            name={`organization`}
+            isRequired={
+              ['team', 'organization'].includes(mapType) || isOrgRoleSelected || isTeamRoleSelected
+            }
+          />
+        </PageFormHidden>
+        <PageFormHidden
+          watch={`map_type`}
+          hidden={(value: string) => !['team', 'role'].includes(value) || isOrgRoleSelected}
+        >
+          <PageFormPlatformTeamNameSelect
+            name={`team`}
+            isRequired={['team'].includes(mapType) || isTeamRoleSelected}
           />
         </PageFormHidden>
       </PageFormSection>

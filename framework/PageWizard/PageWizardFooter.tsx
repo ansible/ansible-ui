@@ -22,7 +22,7 @@ export function PageWizardFooter(props: {
     : 'pf-v6-c-button pf-m-secondary';
 
   return (
-    <footer className="pf-v6-c-wizard__footer" data-cy="wizard-footer">
+    <footer className="pf-v6-c-wizard__footer" data-cy="wizard-footer" data-testid="wizard-footer">
       <ActionList>
         <ActionListGroup>
           <ActionListItem>
@@ -48,6 +48,7 @@ export function PageWizardFooter(props: {
             <button
               type="button"
               data-cy="wizard-back"
+              data-testid="wizard-back"
               className={backClassName}
               disabled={isFirstStep}
               onClick={() => {
@@ -60,7 +61,11 @@ export function PageWizardFooter(props: {
           </ActionListItem>
         </ActionListGroup>
         <ActionListItem>
-          <div data-cy="wizard-cancel" className="pf-v6-c-wizard__footer-cancel">
+          <div
+            data-cy="wizard-cancel"
+            data-testid="wizard-cancel"
+            className="pf-v6-c-wizard__footer-cancel"
+          >
             <button className="pf-v6-c-button pf-m-link" type="button" onClick={props.onCancel}>
               {t('Cancel')}
             </button>

@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
-import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
-import { createE2EName } from '../../../../commands/createE2EName';
-import { navigateTo } from '../../../../commands/navigateTo';
+import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 
 export async function createAuthenticationMethod(
   options: { name?: string; type?: string },
@@ -18,10 +18,13 @@ export async function createAuthenticationMethod(
   await page.getByRole('button', { name: 'Local' }).click();
   await page.getByRole('option', { name: authType, exact: true }).click();
   switch (authType) {
-    case 'Azuread':
-      await page.getByRole('textbox', { name: 'Client ID' }).fill('1234abc');
-      await page.getByRole('textbox', { name: 'Secret' }).fill('secret');
+    case 'Azuread': {
+      const clientIdField = page.getByTestId('configuration-input-KEY');
+      await clientIdField.fill('1234abc');
+      const secretField = page.getByTestId('configuration-input-SECRET');
+      await secretField.fill('Azure Secret');
       break;
+    }
     case 'GitHub':
       await page.getByRole('textbox', { name: 'GitHub OAuth2 Key' }).fill('GithubKey');
       await page.getByRole('textbox', { name: 'GitHub OAuth2 Secret' }).fill('GithubSecret');

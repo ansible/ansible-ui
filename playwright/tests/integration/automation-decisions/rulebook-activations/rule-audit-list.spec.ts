@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { isEdaAvailable } from '../../../../commands/getPlatformApis';
-import { navigateTo } from '../../../../commands/navigateTo';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { isEdaAvailable } from '@ansible/playwright/commands/getPlatformApis';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   createOrganization,
   deleteOrganization,

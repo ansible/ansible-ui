@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '../../../../commands/checkBuildType';
-import { SAAS_URL } from '../../../../commands/constants';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { createEdaCredentialType, deleteEdaCredentialType } from './credential-types-utils';
 
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credential-types' }));

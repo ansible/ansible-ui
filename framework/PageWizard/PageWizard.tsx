@@ -30,6 +30,7 @@ export function PageWizard<DataT extends NonNullable<object>>(props: {
       <div
         className="pf-v6-c-wizard"
         data-cy="wizard"
+        data-testid="wizard"
         style={{
           display: 'flex',
           flexDirection: 'column',

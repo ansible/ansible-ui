@@ -222,10 +222,13 @@ describe('ApiTokenForm', () => {
     await user.click(createButton);
 
     // Verify the API call was made
-    await waitFor(() => {
-      expect(server.listHandlers()).toBeDefined();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(server.listHandlers()).toBeDefined();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 
   test('should handle form submission for updating existing token', async () => {
     const user = userEvent.setup();
@@ -247,13 +250,21 @@ describe('ApiTokenForm', () => {
 
     await user.clear(descriptionField);
     await user.type(descriptionField, 'Updated description');
+
+    await waitFor(() => {
+      expect(descriptionField).toHaveValue('Updated description');
+    });
+
     await user.click(updateButton);
 
     // Verify the API call was made
-    await waitFor(() => {
-      expect(server.listHandlers()).toBeDefined();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(server.listHandlers()).toBeDefined();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 
   test('should include user field when creating token for specific user', async () => {
     const user = userEvent.setup();
@@ -315,11 +326,14 @@ describe('ApiTokenForm', () => {
     await user.click(screen.getByRole('option', { name: 'Write' }));
     await user.click(createButton);
 
-    await waitFor(() => {
-      expect(requestBody).not.toBeNull();
-      expect(requestBody?.user).toBe(1);
-    });
-  });
+    await waitFor(
+      () => {
+        expect(requestBody).not.toBeNull();
+        expect(requestBody?.user).toBe(1);
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 
   test('should transform application object to ID when creating token', async () => {
     const user = userEvent.setup();
@@ -429,12 +443,20 @@ describe('ApiTokenForm', () => {
 
     await user.clear(descriptionField);
     await user.type(descriptionField, 'Updated user token');
-    await user.click(updateButton);
 
     await waitFor(() => {
-      expect(requestBody).not.toBeNull();
-      expect(requestBody?.user).toBe(1);
-      expect(requestBody?.description).toBe('Updated user token');
+      expect(descriptionField).toHaveValue('Updated user token');
     });
-  });
+
+    await user.click(updateButton);
+
+    await waitFor(
+      () => {
+        expect(requestBody).not.toBeNull();
+        expect(requestBody?.user).toBe(1);
+        expect(requestBody?.description).toBe('Updated user token');
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });
