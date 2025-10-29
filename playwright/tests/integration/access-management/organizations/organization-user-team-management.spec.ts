@@ -595,6 +595,7 @@ test.describe('Organization User and Team Management', () => {
       await confirmAndAssertDeletion(page);
 
       // Verify redirect to teams list
+      await expect(page.getByTestId('page-title')).toBeVisible();
       await expect(page.getByTestId('page-title')).toContainText('Teams');
     }
   );
