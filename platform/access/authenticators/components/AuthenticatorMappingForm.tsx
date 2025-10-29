@@ -193,7 +193,7 @@ export function EditAuthenticatorMapping() {
 
 function MappingInputs() {
   const { data: roles, isLoading: isRolesLoading } = useGet<PlatformItemsResponse<PlatformRole>>(
-    gatewayAPI`/role_definitions/?order_by=name`
+    gatewayAPI`/role_definitions/?order_by=name&page_size=500`
   );
 
   const roleTypes: { [k: string]: string } = {};
