@@ -5,12 +5,12 @@ import {
   Button,
   HelperText,
   HelperTextItem,
-  Radio,
   Modal,
-  ModalVariant,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  ModalVariant,
+  Radio,
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 
-function DeleteGroupsDialog(props: {
+export function DeleteGroupsDialog(props: {
   groups: InventoryGroup[];
   onClose: () => void;
   onDelete: () => void;
@@ -99,6 +99,7 @@ function DeleteGroupsDialog(props: {
           </HelperText>
           <Radio
             data-cy="delete-groups-dialog-radio-delete"
+            data-testid="delete-groups-dialog-radio-delete"
             isChecked={deleteType === 'delete'}
             name="radio-delete-group"
             onChange={() => {
@@ -109,6 +110,7 @@ function DeleteGroupsDialog(props: {
           />
           <Radio
             data-cy="delete-groups-dialog-radio-promote"
+            data-testid="delete-groups-dialog-radio-promote"
             isChecked={deleteType === 'promote'}
             name="radio-promote-group"
             onChange={() => {
@@ -123,6 +125,7 @@ function DeleteGroupsDialog(props: {
       <ModalFooter>
         <Button
           data-cy="delete-group-modal-delete-button"
+          data-testid="delete-group-modal-delete-button"
           ouiaId="delete-group-modal-delete-button"
           key="delete"
           variant="danger"
