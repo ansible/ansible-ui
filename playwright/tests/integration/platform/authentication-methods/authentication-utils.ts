@@ -18,10 +18,13 @@ export async function createAuthenticationMethod(
   await page.getByRole('button', { name: 'Local' }).click();
   await page.getByRole('option', { name: authType, exact: true }).click();
   switch (authType) {
-    case 'Azuread':
-      await page.getByRole('textbox', { name: 'Client ID' }).fill('1234abc');
-      await page.getByRole('textbox', { name: 'Secret' }).fill('secret');
+    case 'Azuread': {
+      const clientIdField = page.getByTestId('configuration-input-KEY');
+      await clientIdField.fill('1234abc');
+      const secretField = page.getByTestId('configuration-input-SECRET');
+      await secretField.fill('Azure Secret');
       break;
+    }
     case 'GitHub':
       await page.getByRole('textbox', { name: 'GitHub OAuth2 Key' }).fill('GithubKey');
       await page.getByRole('textbox', { name: 'GitHub OAuth2 Secret' }).fill('GithubSecret');
