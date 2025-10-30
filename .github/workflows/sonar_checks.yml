@@ -2,7 +2,7 @@ name: SonarCube Static Scans (PR)
 on:
   workflow_run:
     workflows:
-      - Checks
+      - Platform PR
     types:
       - completed
 permissions: read-all
