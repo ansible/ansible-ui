@@ -2,8 +2,9 @@ import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framewo
 import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
+import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { Label as ILabel } from '../../../../interfaces/Label';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
@@ -100,16 +101,53 @@ export function WorkflowJobTemplateDetails({
       >
         {limit}
       </PromptDetail>
-      <PageDetail label={t('Webhook service')} isEmpty={!template.webhook_service}>
+      <PageDetail
+        label={t('Webhook service')}
+        helpText={t('Select a webhook service.')}
+        isEmpty={!template.webhook_service}
+      >
         <WebhookService service={template.webhook_service} />
       </PageDetail>
-      <PageDetail label={t('Webhook key')} isEmpty={!webhookKey?.webhook_key}>
-        {webhookKey?.webhook_key}
-      </PageDetail>
-      <PageDetail label={t('Webhook url')} isEmpty={!webhookKey?.webhook_key}>
+      <PageDetail
+        label={t('Webhook URL')}
+        helpText={t(
+          'Webhook services can launch jobs with this workflow job template by making a POST request to this URL.'
+        )}
+        isEmpty={!webhookKey?.webhook_key}
+      >
         {`${window.location.origin}${template.related.webhook_receiver}`}
       </PageDetail>
-      <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
+      <PageDetail
+        label={t('Webhook key')}
+        helpText={t('Webhook services can use this as a shared secret.')}
+        isEmpty={!webhookKey?.webhook_key}
+      >
+        {webhookKey?.webhook_key}
+      </PageDetail>
+      {template.summary_fields.webhook_credential && (
+        <PageDetail
+          label={t('Webhook credential')}
+          helpText={t(
+            'Optionally select the credential to use to send status updates back to the webhook service.'
+          )}
+          isEmpty={!template.summary_fields.webhook_credential}
+        >
+          <CredentialLabel credential={template.summary_fields.webhook_credential} />
+        </PageDetail>
+      )}
+      <PageDetail
+        label={t('Enabled options')}
+        helpText={
+          <Trans>
+            <p>
+              Concurrent jobs: If enabled, simultaneous runs of this workflow job template will be
+              allowed.
+            </p>
+            <p>Webhooks: Enable Webhook for this workflow job template.</p>
+          </Trans>
+        }
+        isEmpty={!showOptionsField}
+      >
         <Content component={ContentVariants.ul}>
           {template.allow_simultaneous && (
             <Content component={ContentVariants.li}>{t`Concurrent jobs`}</Content>
