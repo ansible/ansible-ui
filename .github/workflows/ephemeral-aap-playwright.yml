@@ -93,8 +93,6 @@ jobs:
       - matrix-setup
     if: needs.check-comment.outputs.triggered == 'true'
     runs-on: aap-dev
-    outputs:
-      currents_run_url: ${{ steps.parse-currents-url.outputs.url }}
     concurrency:
       group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}-${{ matrix.container }}
       cancel-in-progress: true
@@ -195,7 +193,7 @@ jobs:
             --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
             -- \
             --project="live chromium" \
-            --shard=${{ matrix.container }}/4 2>&1 | tee playwright-output.log
+            --shard=${{ matrix.container }}/4
         env:
           PLATFORM_UI: https://localhost:4100
           PLATFORM_USERNAME: admin
@@ -205,21 +203,6 @@ jobs:
           CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
           CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Parse Currents Run URL
-        id: parse-currents-url
-        if: always()
-        working-directory: playwright
-        run: |
-          # Extract the Currents Run URL from the test output
-          CURRENTS_URL=$(grep -oP '🌐 Run URL: \K.*' playwright-output.log || echo "")
-          if [ -n "$CURRENTS_URL" ]; then
-            echo "url=$CURRENTS_URL" >> $GITHUB_OUTPUT
-            echo "Found Currents Run URL: $CURRENTS_URL"
-          else
-            echo "url=" >> $GITHUB_OUTPUT
-            echo "Currents Run URL not found in output"
-          fi
 
       - name: Upload Playwright Test Results
         if: failure()
@@ -272,20 +255,19 @@ jobs:
         uses: actions/github-script@v7
         env:
           CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+          CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
         with:
           script: |
             const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
             const currentsProjectId = process.env.CURRENTS_PROJECT_ID;
-
-            // Get Currents Run URL from matrix job outputs (all shards have same URL)
-            const currentsRunUrls = ${{ toJson(needs.deploy-and-test.outputs.currents_run_url) }};
-            const currentsUrl = Object.values(currentsRunUrls).find(url => url) || `https://app.currents.dev/projects/${currentsProjectId}/runs`;
+            const currentsCiBuildId = process.env.CURRENTS_CI_BUILD_ID;
+            const currentsDashboardUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
-              body: `✅ AAP Playwright E2E tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Test Results:**\n- 📊 [Currents Dashboard](${currentsUrl}) - Detailed test analytics\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`
+              body: `✅ AAP Playwright E2E tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Test Results:**\n- 📊 [Currents Dashboard](${currentsDashboardUrl}) - Detailed test analytics\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`
             });
 
       - name: Post failure comment
@@ -293,20 +275,19 @@ jobs:
         uses: actions/github-script@v7
         env:
           CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+          CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
         with:
           script: |
             const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
             const currentsProjectId = process.env.CURRENTS_PROJECT_ID;
-
-            // Get Currents Run URL from matrix job outputs (all shards have same URL)
-            const currentsRunUrls = ${{ toJson(needs.deploy-and-test.outputs.currents_run_url) }};
-            const currentsUrl = Object.values(currentsRunUrls).find(url => url) || `https://app.currents.dev/projects/${currentsProjectId}/runs`;
+            const currentsCiBuildId = process.env.CURRENTS_CI_BUILD_ID;
+            const currentsDashboardUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
-              body: `❌ AAP Playwright E2E tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Debugging Resources:**\n- 📊 [Currents Dashboard](${currentsUrl}) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`
+              body: `❌ AAP Playwright E2E tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Debugging Resources:**\n- 📊 [Currents Dashboard](${currentsDashboardUrl}) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`
             });
 
       - name: Post cancelled comment
