@@ -100,6 +100,7 @@ export function PageFormTextArea<
                   autoFocus={autoFocus}
                   autoComplete={autoComplete || (type === 'password' ? 'new-password' : 'off')}
                   data-cy={id}
+                  data-testid={id}
                   autoResize={disableAutoResize === undefined ? true : !disableAutoResize}
                   rows={1}
                   resizeOrientation="vertical"

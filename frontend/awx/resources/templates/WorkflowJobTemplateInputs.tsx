@@ -34,12 +34,14 @@ export function WorkflowJobTemplateInputs(
   return (
     <>
       <PageFormTextInput<WorkflowJobTemplateForm>
+        id="name"
         name="name"
         label={t('Name')}
         isRequired
         placeholder={t('Enter workflow job template name')}
       />
       <PageFormTextArea<WorkflowJobTemplateForm>
+        id="description"
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}
@@ -52,6 +54,7 @@ export function WorkflowJobTemplateInputs(
         name="inventory.id"
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
+        id="limit"
         placeholder={t('Enter limit to reduce number of hosts')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_limit_on_launch" />
@@ -64,6 +67,7 @@ export function WorkflowJobTemplateInputs(
         label={t('Limit')}
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
+        id="scm-branch"
         name="scm_branch"
         placeholder={t('Enter source control branch')}
         labelHelpTitle={t('Source control branch')}
@@ -87,6 +91,7 @@ export function WorkflowJobTemplateInputs(
         }
       />
       <PageFormCreatableSelect<WorkflowJobTemplateForm>
+        id="job_tags-form-group"
         labelHelpTitle={t('Job tags')}
         labelHelp={t(
           'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
@@ -101,6 +106,7 @@ export function WorkflowJobTemplateInputs(
         isMulti={true}
       />
       <PageFormCreatableSelect<WorkflowJobTemplateForm>
+        id="skip_tags-form-group"
         labelHelpTitle={t('Skip tags')}
         labelHelp={t(
           'Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
@@ -129,6 +135,7 @@ export function WorkflowJobTemplateInputs(
         <PageFormGroup label={t('Options')}></PageFormGroup>
       </PageFormSection>
       <PageFormCheckbox<WorkflowJobTemplateForm>
+        id="isWebhookEnabled"
         label={t('Enable webhook')}
         name="isWebhookEnabled"
       />
