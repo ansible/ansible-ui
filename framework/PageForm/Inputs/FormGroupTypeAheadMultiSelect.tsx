@@ -229,6 +229,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
             aria-controls={`${id}-listbox`}
             aria-expanded={isOpen}
             data-cy={`${id}-typeahead-input`}
+            data-testid={`${id}-input`}
           >
             <LabelGroup
               isClosable

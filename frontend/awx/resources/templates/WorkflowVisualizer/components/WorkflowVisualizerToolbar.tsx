@@ -92,6 +92,7 @@ export const ToolbarHeader = observer(() => {
       >
         <Button
           data-cy="workflow-visualizer-toolbar-close"
+          data-testid="workflow-visualizer-toolbar-close"
           variant="plain"
           icon={<CloseIcon />}
           aria-label={t('Close')}

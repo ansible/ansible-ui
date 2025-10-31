@@ -58,24 +58,45 @@ export const createWFVizLink = async (options: WFVizLink) => {
  * @description This helper function creates a WFJT and returns its name upon creation
  * @returns the name of created Workflow Job Template
  * @param page
+ * @param options Optional parameters for workflow job template creation
  */
-export async function createWorkflowJobTemplate(page: Page) {
+export async function createWorkflowJobTemplate(
+  page: Page,
+  options?: { inventoryName?: string; organizationName?: string }
+) {
   const name = 'Workflow job template' + createE2EName();
-  await navigateTo(page, 'Automation Execution', 'Template');
-  await page.getByRole('button', { name: 'table view' }).click();
-  await expect(page.getByRole('button', { name: 'dropdown toggle', exact: true })).toBeVisible({
-    timeout: 5000,
-  });
-  await page.getByText('Create template', { exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Create workflow job template' }).click();
-  await page.getByPlaceholder('Enter workflow job template').fill(name);
-  await page.getByRole('button', { name: 'Create workflow job template' }).click();
+  await navigateTo(page, 'Automation Execution', 'Templates');
+
+  // Navigate directly to create page
+  const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
+  await page.goto(`${platformUIWithoutSlash}/execution/templates/workflow-job-template/create`);
+
+  // Fill in name (required field)
+  await page.getByTestId('name').fill(name);
+
+  // Fill in optional fields
+  if (options?.organizationName) {
+    await page.getByLabel('Organization').click();
+    await page.getByLabel('Search input').fill(options.organizationName);
+    await page.getByRole('option', { name: options.organizationName }).click();
+  }
+
+  if (options?.inventoryName) {
+    await page.getByLabel('Inventory').click();
+    await page.getByLabel('Search input').fill(options.inventoryName);
+    await page.getByRole('option', { name: options.inventoryName }).click();
+  }
+
+  // Submit form
+  await page.getByTestId('Submit').click();
+
+  // Verify we're on the visualizer page
   await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible();
   return name;
 }
 
 export async function deleteWorkflowJobTemplate(wfjtName: string, page: Page) {
-  await navigateTo(page, 'Automation Execution', 'Template');
+  await navigateTo(page, 'Automation Execution', 'Templates');
   await clickTableRow({ text: wfjtName, clearFilters: true }, page);
   await clickPageAction('Delete template', page);
   await confirmAndAssertDeletion(page);
