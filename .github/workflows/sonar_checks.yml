@@ -7,9 +7,10 @@ on:
       - completed
   workflow_dispatch:
 permissions:
+  actions: read
   contents: read
   statuses: write
-  actions: read
+  pull-requests: read
 jobs:
   sonarcloud:
     name: SonarCube Static Scans (PR)
