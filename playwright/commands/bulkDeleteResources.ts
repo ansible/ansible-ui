@@ -1,12 +1,13 @@
 import { expect, Page } from '@playwright/test';
-import { navigateTo } from './navigateTo';
 import { clearTableFilters } from './clearTableFilters';
+import { filterTable } from './filterTable';
+import { navigateTo } from './navigateTo';
 
 export interface BulkDeleteOptions {
   resourceType: string; // e.g., 'users', 'teams', 'organizations'
   resourceNames: string[];
   filterLabel?: string; // e.g., 'Username', 'Name'
-  navigationPath: [string, string]; // e.g., ['Access Management', 'Users']
+  navigationPath: string[]; // e.g., ['Access Management', 'Users'] or ['Automation Execution', 'Infrastructure', 'Execution Environments']
 }
 
 /**
@@ -17,7 +18,7 @@ export async function bulkDeleteResources(options: BulkDeleteOptions, page: Page
   const { resourceType, resourceNames, navigationPath } = options;
 
   // Navigate to the resource list
-  await navigateTo(page, navigationPath[0], navigationPath[1]);
+  await navigateTo(page, ...navigationPath);
 
   // Clear any existing filters first
   await clearTableFilters(page);
@@ -25,11 +26,13 @@ export async function bulkDeleteResources(options: BulkDeleteOptions, page: Page
   // Select each resource by filtering for it individually, then clear filter to maintain selections
   for (const resourceName of resourceNames) {
     // Filter for this specific resource to bring it into view
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill(resourceName);
-    await page.getByRole('button', { name: 'apply filter' }).click();
+    await filterTable(
+      { filterLabel: options.filterLabel ?? 'Name', filterValue: resourceName },
+      page
+    );
 
-    // Wait for the filtered result and select it
-    await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
+    // Wait for the filtered result to appear
+    await expect(page.locator('tr', { hasText: resourceName })).toBeVisible({ timeout: 10000 });
     await page.getByRole('checkbox', { name: 'Select row' }).first().click();
 
     // Clear the filter to show all items while maintaining the selection
@@ -68,4 +71,7 @@ export async function bulkDeleteResources(options: BulkDeleteOptions, page: Page
       .getByText('Success', { exact: true })
       .first()
   ).toBeVisible();
+
+  // Clear any remaining filters after bulk delete to ensure clean table state
+  await clearTableFilters(page);
 }
