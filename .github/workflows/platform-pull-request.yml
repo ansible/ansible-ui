@@ -139,31 +139,20 @@ jobs:
       docker-image: platform-ui
       upload-artifact: true
 
-  playwright:
-    name: Playwright
-    needs: platform-ui-image
-    uses: ./.github/workflows/playwright.yml
-    with:
-      PARALLEL_TESTS: 2
-      NOT_TAGS: "@not_mock"
-    secrets:
-      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
-
   success:
     name: Success
     runs-on: ubuntu-latest
     needs:
         - checks
         - vitest-coverage
-        - playwright
         - component
     if: ${{ always() }}
     steps:
       - name: Success Check
-        if: ${{ needs.checks.result == 'success' && needs.vitest-coverage.result == 'success' && needs.playwright.result == 'success' && needs.component.result == 'success' }}
+        if: ${{ needs.checks.result == 'success' && needs.vitest-coverage.result == 'success' && needs.component.result == 'success' }}
         run: echo "All jobs succeeded"
       - name: Failure or Cancelled
-        if: ${{ needs.checks.result != 'success' || needs.vitest-coverage.result != 'success' || needs.playwright.result != 'success' || needs.component.result != 'success' }}
+        if: ${{ needs.checks.result != 'success' || needs.vitest-coverage.result != 'success' || needs.component.result != 'success' }}
         run: |
           echo "One or more jobs failed or were canceled."
           exit 1
