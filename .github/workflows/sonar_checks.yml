@@ -25,7 +25,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vitest-coverage
-          path: .
+          path: coverage/combined
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
       - name: Fetch PR Number
