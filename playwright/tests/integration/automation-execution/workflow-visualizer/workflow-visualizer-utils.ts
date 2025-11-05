@@ -62,14 +62,18 @@ export const createWFVizLink = async (options: WFVizLink) => {
  */
 export async function createWorkflowJobTemplate(
   page: Page,
-  options?: { inventoryName?: string; organizationName?: string }
+  options?: {
+    enableConcurrentJobs?: boolean;
+    inventoryName?: string;
+    name?: string;
+    organizationName?: string;
+  }
 ) {
-  const name = 'Workflow job template' + createE2EName();
+  const name = options?.name ?? createE2EName();
   await navigateTo(page, 'Automation Execution', 'Templates');
 
-  // Navigate directly to create page
-  const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
-  await page.goto(`${platformUIWithoutSlash}/execution/templates/workflow-job-template/create`);
+  await page.getByTestId('create-template').click();
+  await page.getByRole('menuitem', { name: 'Create workflow job template' }).click();
 
   // Fill in name (required field)
   await page.getByTestId('name').fill(name);
@@ -86,12 +90,17 @@ export async function createWorkflowJobTemplate(
     await page.getByLabel('Search input').fill(options.inventoryName);
     await page.getByRole('option', { name: options.inventoryName }).click();
   }
+  if (options?.enableConcurrentJobs) {
+    await page.getByText('Enable concurrent jobs').click();
+  }
 
   // Submit form
   await page.getByTestId('Submit').click();
 
-  // Verify we're on the visualizer page
-  await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible();
+  // Verify we're on the visualizer page (longer timeout for backend creation + navigation)
+  await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible({
+    timeout: 15000,
+  });
   return name;
 }
 

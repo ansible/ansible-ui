@@ -202,6 +202,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
           <ToolbarItem>
             <Button
               data-cy="workflow-visualizer-toolbar-save"
+              data-testid="workflow-visualizer-toolbar-save"
               icon={<CheckCircleIcon />}
               label={t('Save')}
               isDisabled={!modified}
@@ -238,7 +239,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
             </Button>
           </ToolbarItem>
           <ToolbarItem>
-            <AddNodeButton />
+            <AddNodeButton id="toolbar-add-node-button" />
           </ToolbarItem>
         </>
       )}

@@ -148,6 +148,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
       <Toolbar
         ouiaId="page-toolbar"
         data-cy="page-toolbar"
+        data-testid="page-toolbar"
         clearAllFilters={clearAllFilters}
         className="page-table-toolbar"
         style={{
