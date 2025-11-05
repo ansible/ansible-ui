@@ -64,7 +64,13 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
   });
   return (
     <PageAlertToasterContext.Provider value={pageAlertToaster}>
-      <AlertGroup data-cy="alert-toaster" isToast isLiveRegion hasAnimations>
+      <AlertGroup
+        data-cy="alert-toaster"
+        data-testid="alert-toaster"
+        isToast
+        isLiveRegion
+        hasAnimations
+      >
         {toasterAlerts.map((alertProps, index) => (
           <Alert
             {...alertProps}
