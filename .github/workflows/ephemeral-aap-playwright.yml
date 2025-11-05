@@ -93,6 +93,8 @@ jobs:
       - matrix-setup
     if: needs.check-comment.outputs.triggered == 'true'
     runs-on: aap-dev
+    outputs:
+      currents_run_url: ${{ steps.playwright-tests.outputs.currents_run_url }}
     concurrency:
       group: ephemeral-aap-playwright-pr-${{ needs.check-comment.outputs.pr_number }}-${{ matrix.container }}
       cancel-in-progress: true
@@ -181,19 +183,42 @@ jobs:
           timeout 60 bash -c 'until curl -k https://localhost:4100 > /dev/null 2>&1; do sleep 2; done' || exit 1
 
       - name: Run Playwright Tests with Currents
+        id: playwright-tests
         working-directory: playwright
         run: |
           # Run Playwright with Currents.dev for test reporting
           # Matrix strategy: Each job runs in parallel with its own AAP instance
           # Sharding distributes tests across matrix jobs for optimal parallelization
           # Using pwc (Playwright with Currents) command for orchestration
+
+          # Capture the output to extract the Run URL
+          set +e
           npx pwc \
             --key="${CURRENTS_RECORD_KEY}" \
             --project-id="${CURRENTS_PROJECT_ID}" \
             --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
             -- \
             --project="live chromium" \
-            --shard=${{ matrix.container }}/4
+            --shard=${{ matrix.container }}/4 2>&1 | tee output.log
+          PWC_EXIT_CODE=$?
+          set -e
+
+          # Extract and save the Currents Run URL from output
+          RUN_URL=$(grep -oP '🌐 Run URL: \K\S+' output.log | head -n 1 || echo "")
+
+          # Validate the URL before setting output
+          if [ -n "$RUN_URL" ] && [[ "$RUN_URL" =~ ^https://app\.currents\.dev/run/ ]]; then
+            echo "currents_run_url=${RUN_URL}" >> $GITHUB_OUTPUT
+            echo "✅ Currents Run URL: ${RUN_URL}"
+          else
+            echo "⚠️  Failed to extract valid Currents Run URL from output"
+          fi
+
+          # Clean up temporary file
+          rm -f output.log
+
+          # Exit with the original exit code from pwc
+          exit $PWC_EXIT_CODE
         env:
           PLATFORM_UI: https://localhost:4100
           PLATFORM_USERNAME: admin
@@ -254,40 +279,60 @@ jobs:
         if: steps.check-results.outputs.all_success == 'true'
         uses: actions/github-script@v7
         env:
-          CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+          CURRENTS_RUN_URL: ${{ needs.deploy-and-test.outputs.currents_run_url }}
           CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
         with:
           script: |
             const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
-            const currentsProjectId = process.env.CURRENTS_PROJECT_ID;
+            const currentsRunUrl = process.env.CURRENTS_RUN_URL;
             const currentsCiBuildId = process.env.CURRENTS_CI_BUILD_ID;
-            const currentsDashboardUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
+
+            let testResultsSection = '**Test Results:**\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs';
+
+            // Use the captured URL if valid, otherwise provide a fallback dashboard link
+            if (currentsRunUrl && currentsRunUrl.startsWith('https://app.currents.dev/run/')) {
+              testResultsSection = `**Test Results:**\n- 📊 [Currents Dashboard](${currentsRunUrl}) - Detailed test analytics\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`;
+            } else if (currentsCiBuildId) {
+              // Fallback: construct URL from CI build ID
+              const fallbackUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
+              testResultsSection = `**Test Results:**\n- 📊 [Currents Dashboard](${fallbackUrl}) - Detailed test analytics\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`;
+            }
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
-              body: `✅ AAP Playwright E2E tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Test Results:**\n- 📊 [Currents Dashboard](${currentsDashboardUrl}) - Detailed test analytics\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs`
+              body: `✅ AAP Playwright E2E tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n${testResultsSection}`
             });
 
       - name: Post failure comment
         if: steps.check-results.outputs.any_failure == 'true'
         uses: actions/github-script@v7
         env:
-          CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+          CURRENTS_RUN_URL: ${{ needs.deploy-and-test.outputs.currents_run_url }}
           CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
         with:
           script: |
             const parallelJobs = ${{ needs.matrix-setup.outputs.matrix }}.length;
-            const currentsProjectId = process.env.CURRENTS_PROJECT_ID;
+            const currentsRunUrl = process.env.CURRENTS_RUN_URL;
             const currentsCiBuildId = process.env.CURRENTS_CI_BUILD_ID;
-            const currentsDashboardUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
+
+            let debuggingSection = '**Debugging Resources:**\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run';
+
+            // Use the captured URL if valid, otherwise provide a fallback dashboard link
+            if (currentsRunUrl && currentsRunUrl.startsWith('https://app.currents.dev/run/')) {
+              debuggingSection = `**Debugging Resources:**\n- 📊 [Currents Dashboard](${currentsRunUrl}) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`;
+            } else if (currentsCiBuildId) {
+              // Fallback: construct URL from CI build ID
+              const fallbackUrl = `https://app.currents.dev/run/${currentsCiBuildId}`;
+              debuggingSection = `**Debugging Resources:**\n- 📊 [Currents Dashboard](${fallbackUrl}) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`;
+            }
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
-              body: `❌ AAP Playwright E2E tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n**Debugging Resources:**\n- 📊 [Currents Dashboard](${currentsDashboardUrl}) - Test results, screenshots, and videos\n- 🔧 [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - GitHub Actions logs\n- 📦 Test artifacts are available in the workflow run`
+              body: `❌ AAP Playwright E2E tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n${debuggingSection}`
             });
 
       - name: Post cancelled comment
