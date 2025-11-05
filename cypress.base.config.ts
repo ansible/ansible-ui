@@ -2,6 +2,7 @@
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import pkg from 'webpack';
 import env from './webpack/environment.cjs';
+import cypressSplit from 'cypress-split';
 const { DefinePlugin } = pkg;
 
 export const baseConfig: Cypress.ConfigOptions = {
@@ -29,7 +30,7 @@ export const baseConfig: Cypress.ConfigOptions = {
         }
         return launchOptions;
       });
-      return config;
+      return cypressSplit(on, config);
     },
     retries: { runMode: 2, openMode: 0 },
     env,
