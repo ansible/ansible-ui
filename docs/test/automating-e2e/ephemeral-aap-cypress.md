@@ -162,8 +162,8 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 
 **Parallelization model**: Each matrix job:
 1. Deploys its own independent AAP instance
-2. Runs Cypress tests in parallel mode against that instance
-3. Cypress Cloud coordinates test distribution across all matrix jobs
+2. Runs assigned subset of Cypress tests against that instance (determined by cypress-split)
+3. Generates timing data for test distribution optimization
 4. Cleans up its AAP deployment when complete
 
 **Steps**:
@@ -225,29 +225,39 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 
 7. **Run Cypress tests**:
 
-   - Uses `cypress-io/github-action@v6`
+   - Direct `npx cypress run` execution (no Cypress Cloud)
    - Configuration:
-     - `install: false` (already installed)
-     - `wait-on: 'https://localhost:4100'`
-     - `record: true` (sends results to Cypress Cloud)
-     - `parallel: true` (enables parallel test execution)
-     - `config-file: cypress.platform.config.ts`
-     - `tag: ephemeral-aap-cypress` (tags in Cypress Cloud)
+     - `--config-file: cypress.platform.config.ts`
+     - `--config video=true`: Enable video recording (overrides base config)
    - Environment variables:
-     - `PLATFORM_SERVER`: AAP deployment URL (from deployment step)
-     - `PLATFORM_USERNAME`: `admin`
-     - `PLATFORM_PASSWORD`: From deployment step (`steps.deploy.outputs.admin_password`)
-     - `CYPRESS_PROJECT_ID`: Cypress Cloud project ID
-     - `CYPRESS_RECORD_KEY`: Cypress Cloud API key
-     - `CYPRESS_AWX_API_PREFIX`: `/api/controller/v2`
-     - `CYPRESS_EDA_API_PREFIX`: `/api/eda/v1`
-     - `NODE_TLS_REJECT_UNAUTHORIZED: 0`: Accept self-signed certs
-     - `CYPRESS_LABELS: '!upstream'`: Skip upstream-only tests
+     - **cypress-split configuration**:
+       - `SPLIT`: Total number of parallel jobs (from `strategy.job-total`)
+       - `SPLIT_INDEX`: Current job index, 0-based (from `strategy.job-index`)
+       - `SPLIT_FILE`: `cypress-split-timings.json` (committed timings file)
+     - **Test environment**:
+       - `PLATFORM_SERVER`: AAP deployment URL (from deployment step)
+       - `PLATFORM_USERNAME`: `admin`
+       - `PLATFORM_PASSWORD`: From deployment step (`steps.deploy.outputs.admin_password`)
+       - `CYPRESS_AWX_API_PREFIX`: `/api/controller/v2`
+       - `CYPRESS_EDA_API_PREFIX`: `/api/eda/v1`
+       - `NODE_TLS_REJECT_UNAUTHORIZED: 0`: Accept self-signed certs
+       - `CYPRESS_LABELS: '!upstream'`: Skip upstream-only tests
+   - **Test distribution**:
+     - cypress-split plugin reads environment variables
+     - If `cypress-split-timings.json` exists: duration-based balancing
+     - If no timings file: alphabetical modulo distribution
+     - Each job runs its assigned subset of tests independently
 
 8. **Upload artifacts** (matrix-specific):
-   - Screenshots (on failure only): `cypress/screenshots` → artifact name includes matrix number
-   - Videos (always): `cypress/videos` → artifact name includes matrix number
-   - Retention: 7 days
+   - **Timings** (always): `cypress-split-timings.json` → `cypress-timings-{N}` artifact
+     - Regular filename (no leading dot) for compatibility with upload-artifact@v4
+     - Retention: 30 days
+     - Used for maintaining optimized test distribution
+   - **Screenshots** (on failure only): `cypress/screenshots` → `cypress-screenshots-{N}` artifact
+     - Retention: 7 days
+   - **Videos** (on failure only): `cypress/videos` → `cypress-videos-{N}` artifact
+     - Retention: 7 days
+     - Only recorded when tests fail (`videoUploadOnPasses=false`)
    - Each matrix job creates separate artifacts for easier troubleshooting
 
 9. **Cleanup AAP deployment** (always runs):
@@ -258,20 +268,20 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 **Test Execution**:
 
 - **Matrix parallelization**: 4 parallel jobs (configurable)
-- **Each job**: Deploys its own AAP instance
-- **Cypress Cloud coordination**: Distributes tests across all parallel runners
-- **Test distribution**: Cypress Cloud intelligently assigns tests to available runners
-- **Faster feedback**: Total runtime reduced by ~4x (with 4 parallel jobs)
+- **Each job**: Deploys its own independent AAP instance
+- **cypress-split coordination**: Distributes tests across all parallel jobs using environment variables
+- **Test distribution**: Duration-based balancing (with timings file) or alphabetical modulo (first run)
+- **Faster feedback**: Total runtime reduced by ~30% with balanced distribution
 - **Resource usage**: Higher resource usage during test execution, but cleanup ensures no waste
 - **Tradeoff**: More AAP deployments vs faster test completion
 
-**How Cypress parallel mode works**:
+**How cypress-split parallel mode works**:
 
-1. Each matrix job connects to Cypress Cloud with `parallel: true`
-2. Cypress Cloud maintains a queue of all test files
-3. Each runner requests tests from the queue as it becomes available
-4. Tests are dynamically distributed for optimal load balancing
-5. All results are aggregated in Cypress Cloud dashboard
+1. Each matrix job reads `SPLIT`, `SPLIT_INDEX`, and `SPLIT_FILE` environment variables
+2. cypress-split plugin determines which tests to run based on distribution algorithm
+3. With timings file: Uses duration-based greedy algorithm for balanced load
+4. Without timings file: Uses alphabetical modulo distribution (every Nth test)
+5. Each job generates timing data and uploads as artifact for future optimization
 
 ### Job 4: report-results
 
@@ -335,60 +345,86 @@ This ensures that Cypress tests always connect to the freshly deployed AAP insta
 
 ### Overview
 
-The workflow uses a **matrix strategy with multiple AAP deployments** to achieve parallelization:
+The workflow uses **cypress-split plugin with duration-based balancing** to achieve parallelization:
 
 - **Matrix jobs**: 4 parallel jobs (default, configurable)
 - **AAP instances**: 1 dedicated AAP instance per job
-- **Test distribution**: Cypress Cloud distributes tests across all runners
+- **Test distribution**: cypress-split divides tests evenly using modulo or duration-based algorithm
+- **No external service**: Self-contained, no Cypress Cloud required
 - **Cleanup**: Each job cleans up its own AAP deployment
 
 ### How It Works
 
+**Initial Run (No Timings File)**:
+- cypress-split divides tests alphabetically using modulo distribution
+- Each job gets every Nth test file based on its index
+- Example with 80 tests across 4 jobs:
+  - Job 0: tests 0, 4, 8, 12... (20 tests)
+  - Job 1: tests 1, 5, 9, 13... (20 tests)
+  - Job 2: tests 2, 6, 10, 14... (20 tests)
+  - Job 3: tests 3, 7, 11, 15... (20 tests)
+- Each job generates timing data for the tests it ran
+- Timings are uploaded as artifacts for later merging
+
+**With Timings File (Optimized Runs)**:
+- cypress-split reads `cypress-split-timings.json` from the repository
+- Uses duration-based greedy algorithm to balance total runtime
+- Sorts tests by duration (longest first)
+- Assigns each test to the job with smallest total duration
+- All jobs finish at approximately the same time
+- Typical improvement: 61min → 43min (30% faster)
+
+### Test Distribution Algorithm
+
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  Matrix Job 1          Matrix Job 2          Matrix Job N    │
-│  ┌─────────────┐       ┌─────────────┐       ┌─────────┐    │
-│  │ AAP Deploy  │       │ AAP Deploy  │       │  AAP    │    │
-│  │  Instance 1 │       │  Instance 2 │  ...  │Instance │    │
-│  └──────┬──────┘       └──────┬──────┘       └────┬────┘    │
-│         │                     │                    │         │
-│         │ Cypress connects with parallel: true    │         │
-│         └──────────────┬──────────────────────────┘         │
-│                        │                                     │
-│                        ▼                                     │
-│              ┌──────────────────┐                            │
-│              │  Cypress Cloud   │                            │
-│              │                  │                            │
-│              │ Test Queue:      │                            │
-│              │ ├─ test1.spec.ts │                            │
-│              │ ├─ test2.spec.ts │                            │
-│              │ ├─ test3.spec.ts │                            │
-│              │ └─ ...           │                            │
-│              └──────────────────┘                            │
-│                        │                                     │
-│         Dynamic test assignment to available runners         │
-└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  cypress-split Plugin (In Each Job)                      │
+│                                                           │
+│  1. Read cypress-split-timings.json (if exists)          │
+│  2. Get SPLIT=4, SPLIT_INDEX from environment            │
+│  3. Determine which tests this job should run:           │
+│                                                           │
+│     Without timings:                                     │
+│     └─ Alphabetical + modulo distribution               │
+│                                                           │
+│     With timings:                                        │
+│     └─ Duration-based greedy balancing                   │
+│        ├─ Sort tests by duration (desc)                  │
+│        ├─ Assign to job with smallest total              │
+│        └─ Balance across all 4 jobs                      │
+│                                                           │
+│  4. Run assigned tests                                   │
+│  5. Generate timings for this run                        │
+│  6. Upload timings as artifact                           │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ### Benefits
 
-1. **Faster feedback**: ~4x speedup with 4 parallel jobs
-2. **Isolated environments**: Each job has its own AAP instance
-3. **Dynamic load balancing**: Cypress Cloud optimally distributes tests
-4. **Fault isolation**: Failures in one job don't affect others
-5. **Scalable**: Easily adjust parallelization by changing `PARALLEL_JOBS`
+1. **Duration-based balancing**: Optimizes test distribution by runtime, not just file count
+2. **No external dependencies**: Works offline, no Cypress Cloud account needed
+3. **Persistent optimization**: Timings committed to repo, optimization persists
+4. **Cost effective**: Zero ongoing subscription costs
+5. **Faster with optimization**: 30% improvement with balanced timings
+6. **Isolated environments**: Each job has its own AAP instance
+7. **Fault isolation**: Failures in one job don't affect others
+8. **Scalable**: Easily adjust parallelization by changing `PARALLEL_JOBS`
+9. **Better privacy**: No test data sent to external services
 
 ### Tradeoffs
 
 **Pros**:
-- Significantly faster test execution
-- Better resource utilization across the self-hosted runner
-- Reduced time-to-feedback for PR authors
+- Free (no Cypress Cloud subscription required)
+- Faster execution with optimized timings (43min vs 61min)
+- Self-contained solution
+- Better data privacy
+- Works in air-gapped environments
 
 **Cons**:
+- Requires manual timings updates (see Maintenance section below)
+- First run without timings is slower and unbalanced (~61min)
+- Need to merge timing artifacts after updates
 - Higher resource usage during execution (4 AAP instances vs 1)
-- More complex workflow structure
-- Requires Cypress Cloud for test coordination
 
 ### Tuning Parallelization
 
@@ -408,6 +444,84 @@ To adjust the number of parallel jobs:
 - **8+ jobs**: For very large test suites, ensure runner has capacity
 - **1 job**: Disable parallelization (sequential execution)
 
+## Maintenance
+
+### Updating Test Timings
+
+cypress-split uses `cypress-split-timings.json` for duration-based balancing. This file should be updated when:
+
+- **Major test suite changes**: Tests are added, removed, or significantly modified
+- **Observed imbalance**: Job completion times diverge (>15 min difference between fastest and slowest)
+- **Routine maintenance**: Quarterly updates recommended
+- **Performance changes**: After infrastructure or test optimization work
+
+**Update Process**:
+
+1. **Run workflow** to generate fresh timings
+   - Post `/run-aap-ui-cypress` comment on any PR
+   - Wait for all 4 matrix jobs to complete
+   - Jobs will generate timing data for their assigned tests
+
+2. **Download timing artifacts** from all 4 matrix jobs:
+   - Navigate to workflow run → Summary → Artifacts section
+   - Download: `cypress-timings-1`, `cypress-timings-2`, `cypress-timings-3`, `cypress-timings-4`
+   - Extract all `.json` files to a working directory
+
+3. **Merge timings** into single file:
+   ```bash
+   # Navigate to directory with extracted timing files
+   jq -s '{ durations: [.[].durations[]] | sort_by(.spec) }' \
+     cypress-split-timings*.json > cypress-split-timings.json
+   ```
+
+4. **Review merged timings**:
+   ```bash
+   # Check file has all ~80 test entries
+   jq '.durations | length' cypress-split-timings.json
+
+   # Sample some entries to verify format
+   jq '.durations[0:3]' cypress-split-timings.json
+   ```
+
+5. **Commit and push** updated timings:
+   ```bash
+   git add cypress-split-timings.json
+   git commit -m "Update cypress-split timings for balanced test distribution"
+   git push
+   ```
+
+6. **Future runs automatically use updated timings**
+   - Next workflow run will read committed timings
+   - Tests will be distributed using duration-based balancing
+   - All 4 jobs should finish within 5-10 minutes of each other
+
+**Update Frequency Recommendations**:
+- **After major changes**: Update immediately after significant test suite modifications
+- **Routine maintenance**: Quarterly (every 3 months) to catch gradual drift
+- **When imbalanced**: If you notice jobs finishing >15 min apart, update timings
+
+**Monitoring Job Balance**:
+
+Check workflow run times to identify when timings need updating:
+
+```
+Good balance (no update needed):
+├─ Job 1: 41 min ✓
+├─ Job 2: 43 min ✓
+├─ Job 3: 44 min ✓
+└─ Job 4: 45 min ✓
+   Max difference: 4 minutes
+
+Needs update (imbalanced):
+├─ Job 1: 31 min
+├─ Job 2: 33 min
+├─ Job 3: 50 min ⚠
+└─ Job 4: 61 min ❌
+   Max difference: 30 minutes!
+```
+
+**Note**: The first run after committing new timings will still show the old distribution pattern. The optimization takes effect on the second and subsequent runs.
+
 ## Configuration
 
 ### Required GitHub Secrets
@@ -420,8 +534,17 @@ The following secrets must be configured in the repository settings:
 | `RED_HAT_REGISTRY_TOKEN`             | Red Hat registry token/password                                                                 | Yes      |
 | `GH_TOKEN`                           | GitHub token with access to `ansible/aap-dev` repo (used for aap-dev checkout)                  | Yes      |
 | `AAP_TEST_SECRETS_REPO_GITHUB_TOKEN` | GitHub token with access to `ansible/aap-test-secrets` repo (used for AAP license installation) | Yes      |
-| `PLATFORM_PROJECT_ID`                | Cypress Dashboard project ID for recording test results                                         | Yes      |
-| `PLATFORM_RECORD_KEY`                | Cypress Dashboard record key for authentication                                                 | Yes      |
+
+### Test Distribution
+
+- **Timings file**: `cypress-split-timings.json` (committed to repository)
+  - Contains duration data for all test files
+  - Updated manually via maintenance process (see Maintenance section)
+  - First run without timings uses alphabetical modulo distribution
+  - Subsequent runs with timings use duration-based balancing
+- **cypress-split plugin**: Automatically distributes tests across parallel jobs
+  - Uses `SPLIT` and `SPLIT_INDEX` environment variables from GitHub Actions `strategy` context
+  - No external service dependencies or API keys required
 
 ### Workflow Configuration
 
@@ -449,17 +572,16 @@ The following secrets must be configured in the repository settings:
 - **Cypress configuration**: `config-file: cypress.platform.config.ts` in Cypress test execution step
 
   - Can be changed to run different test suites
+  - Video recording enabled via `--config video=true,videoUploadOnPasses=false` (only kept on failure)
 
-- **Test tags**: `tag: ephemeral-aap-cypress` in Cypress test execution step
-
-  - Used to filter tests in Cypress Cloud
-
-- **Artifact retention**: `retention-days: 7` for screenshots and videos
-
-  - Adjust based on storage requirements
+- **Artifact retention**:
+  - Timings: 30 days (used for test distribution optimization)
+  - Screenshots and videos: 7 days (adjust based on storage requirements)
 
 - **Artifact naming**: Artifacts include matrix number
-  - `cypress-screenshots-1`, `cypress-videos-1`, etc.
+  - `cypress-timings-1` through `cypress-timings-4`
+  - `cypress-screenshots-1`, `cypress-screenshots-2`, etc. (on failure)
+  - `cypress-videos-1` through `cypress-videos-4`
   - Helps identify which parallel job produced the artifacts
 
 ## Usage
@@ -497,9 +619,10 @@ This is useful when:
 2. View job progress in GitHub Actions UI
    - You'll see multiple `deploy-and-test` jobs running in parallel
    - Each job shows its matrix number (e.g., "Deploy AAP (1)")
-3. Check Cypress Cloud for real-time test execution
-   - All parallel runners report to the same test run
-   - Test distribution is visible in the dashboard
+3. Monitor test execution in GitHub Actions logs
+   - Each job shows which tests it's running (based on cypress-split distribution)
+   - Real-time console output visible in job logs
+   - Job completion times indicate test distribution balance
 
 ### Viewing Results
 
@@ -507,17 +630,25 @@ This is useful when:
 
 - Green check mark on the PR
 - Success comment posted to PR thread with parallelization info
-- All tests passed across all parallel jobs in Cypress Cloud
+- All tests passed across all parallel jobs
 
 **Failure**:
 
 - Red X on the PR
-- Failure comment posted to PR thread with parallelization info
+- Failure comment posted to PR thread with debugging resources
 - Download artifacts from workflow run:
-  - Multiple artifact sets (one per matrix job)
-  - `cypress-screenshots-1`, `cypress-screenshots-2`, etc.
-  - `cypress-videos-1`, `cypress-videos-2`, etc.
+  - **Timings**: `cypress-timings-1`, `cypress-timings-2`, `cypress-timings-3`, `cypress-timings-4`
+    - Contains test duration data for each job
+    - Used for maintaining optimized test distribution
+  - **Screenshots** (on failure): `cypress-screenshots-1`, `cypress-screenshots-2`, etc.
+    - Visual evidence of test failures
+    - Only uploaded when tests fail
+  - **Videos** (on failure): `cypress-videos-1`, `cypress-videos-2`, etc.
+    - Video recordings of failed test executions
+    - Only recorded/uploaded when tests fail
+    - Useful for debugging failures and flaky tests
   - Check the matrix job number to correlate with test failures
-- View detailed failure information in Cypress Cloud
-  - All results are aggregated in a single test run
-  - Can see which parallel runner executed each test
+- View detailed logs in GitHub Actions:
+  - Navigate to workflow run → Jobs → Select specific matrix job
+  - View Cypress test output and error messages
+  - Each job shows which tests it ran and their results
