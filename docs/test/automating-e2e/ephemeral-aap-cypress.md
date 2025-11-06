@@ -161,6 +161,7 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 **Why combined job**: GitHub Actions jobs run in isolated environments. Even on the same runner, separate jobs don't share localhost network access. Combining deployment and testing ensures that the AAP instance deployed at `localhost:PORT` is accessible to the Cypress tests running in the same environment.
 
 **Parallelization model**: Each matrix job:
+
 1. Deploys its own independent AAP instance
 2. Runs assigned subset of Cypress tests against that instance (determined by cypress-split)
 3. Generates timing data for test distribution optimization
@@ -249,15 +250,17 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
      - Each job runs its assigned subset of tests independently
 
 8. **Upload artifacts** (matrix-specific):
+
    - **Timings** (always): `cypress-split-timings.json` → `cypress-timings-{N}` artifact
      - Regular filename (no leading dot) for compatibility with upload-artifact@v4
-     - Retention: 30 days
+     - Retention: 30 days (specified in workflow)
      - Used for maintaining optimized test distribution
    - **Screenshots** (on failure only): `cypress/screenshots` → `cypress-screenshots-{N}` artifact
-     - Retention: 7 days
+     - Retention: 7 days (specified in workflow)
    - **Videos** (on failure only): `cypress/videos` → `cypress-videos-{N}` artifact
-     - Retention: 7 days
-     - Only recorded when tests fail (`videoUploadOnPasses=false`)
+     - Retention: 7 days (specified in workflow)
+     - Videos recorded for all specs but automatically deleted for passing specs via custom `after:spec` hook
+     - Only videos of failed specs are retained and uploaded
    - Each matrix job creates separate artifacts for easier troubleshooting
 
 9. **Cleanup AAP deployment** (always runs):
@@ -296,6 +299,7 @@ The Ephemeral AAP Cypress workflow allows developers and reviewers to run full e
 **Steps**:
 
 1. **Check matrix results**: Analyzes the outcome of all matrix jobs
+
    - Checks if all jobs succeeded
    - Detects if any jobs failed
    - Detects if any jobs were cancelled
@@ -356,6 +360,7 @@ The workflow uses **cypress-split plugin with duration-based balancing** to achi
 ### How It Works
 
 **Initial Run (No Timings File)**:
+
 - cypress-split divides tests alphabetically using modulo distribution
 - Each job gets every Nth test file based on its index
 - Example with 80 tests across 4 jobs:
@@ -367,6 +372,7 @@ The workflow uses **cypress-split plugin with duration-based balancing** to achi
 - Timings are uploaded as artifacts for later merging
 
 **With Timings File (Optimized Runs)**:
+
 - cypress-split reads `cypress-split-timings.json` from the repository
 - Uses duration-based greedy algorithm to balance total runtime
 - Sorts tests by duration (longest first)
@@ -414,6 +420,7 @@ The workflow uses **cypress-split plugin with duration-based balancing** to achi
 ### Tradeoffs
 
 **Pros**:
+
 - Free (no Cypress Cloud subscription required)
 - Faster execution with optimized timings (43min vs 61min)
 - Self-contained solution
@@ -421,6 +428,7 @@ The workflow uses **cypress-split plugin with duration-based balancing** to achi
 - Works in air-gapped environments
 
 **Cons**:
+
 - Requires manual timings updates (see Maintenance section below)
 - First run without timings is slower and unbalanced (~61min)
 - Need to merge timing artifacts after updates
@@ -440,6 +448,7 @@ To adjust the number of parallel jobs:
    ```
 
 **Recommended values**:
+
 - **2-4 jobs**: Good balance for most cases
 - **8+ jobs**: For very large test suites, ensure runner has capacity
 - **1 job**: Disable parallelization (sequential execution)
@@ -458,16 +467,19 @@ cypress-split uses `cypress-split-timings.json` for duration-based balancing. Th
 **Update Process**:
 
 1. **Run workflow** to generate fresh timings
+
    - Post `/run-aap-ui-cypress` comment on any PR
    - Wait for all 4 matrix jobs to complete
    - Jobs will generate timing data for their assigned tests
 
 2. **Download timing artifacts** from all 4 matrix jobs:
+
    - Navigate to workflow run → Summary → Artifacts section
    - Download: `cypress-timings-1`, `cypress-timings-2`, `cypress-timings-3`, `cypress-timings-4`
    - Extract all `.json` files to a working directory
 
 3. **Merge timings** into single file:
+
    ```bash
    # Navigate to directory with extracted timing files
    jq -s '{ durations: [.[].durations[]] | sort_by(.spec) }' \
@@ -475,6 +487,7 @@ cypress-split uses `cypress-split-timings.json` for duration-based balancing. Th
    ```
 
 4. **Review merged timings**:
+
    ```bash
    # Check file has all ~80 test entries
    jq '.durations | length' cypress-split-timings.json
@@ -484,6 +497,7 @@ cypress-split uses `cypress-split-timings.json` for duration-based balancing. Th
    ```
 
 5. **Commit and push** updated timings:
+
    ```bash
    git add cypress-split-timings.json
    git commit -m "Update cypress-split timings for balanced test distribution"
@@ -496,6 +510,7 @@ cypress-split uses `cypress-split-timings.json` for duration-based balancing. Th
    - All 4 jobs should finish within 5-10 minutes of each other
 
 **Update Frequency Recommendations**:
+
 - **After major changes**: Update immediately after significant test suite modifications
 - **Routine maintenance**: Quarterly (every 3 months) to catch gradual drift
 - **When imbalanced**: If you notice jobs finishing >15 min apart, update timings
@@ -572,9 +587,12 @@ The following secrets must be configured in the repository settings:
 - **Cypress configuration**: `config-file: cypress.platform.config.ts` in Cypress test execution step
 
   - Can be changed to run different test suites
-  - Video recording enabled via `--config video=true,videoUploadOnPasses=false` (only kept on failure)
+  - Video recording enabled via `--config video=true` (overrides base config)
+  - Custom `after:spec` hook automatically deletes videos for passing specs (see `cypress.base.config.ts`)
+  - Only videos of failed specs are kept and uploaded when tests fail
 
-- **Artifact retention**:
+- **Artifact retention** (configured in workflow with `retention-days`):
+
   - Timings: 30 days (used for test distribution optimization)
   - Screenshots and videos: 7 days (adjust based on storage requirements)
 
@@ -608,6 +626,7 @@ If tests are currently running on a PR and you want to restart them (e.g., after
 **Note**: Triggering with a different AAP version (e.g., `/run-aap-ui-cypress 2.5-next`) will cancel any in-progress run on that PR, regardless of which version was previously running.
 
 This is useful when:
+
 - You push new commits and want to test them immediately
 - You want to restart flaky tests
 - You want to test against a different AAP version
@@ -644,8 +663,9 @@ This is useful when:
     - Visual evidence of test failures
     - Only uploaded when tests fail
   - **Videos** (on failure): `cypress-videos-1`, `cypress-videos-2`, etc.
-    - Video recordings of failed test executions
-    - Only recorded/uploaded when tests fail
+    - Video recordings of failed test executions only
+    - Videos for passing specs are automatically deleted by custom `after:spec` hook
+    - Only videos of failed specs are retained and uploaded
     - Useful for debugging failures and flaky tests
   - Check the matrix job number to correlate with test failures
 - View detailed logs in GitHub Actions:

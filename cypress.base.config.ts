@@ -3,6 +3,7 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import pkg from 'webpack';
 import env from './webpack/environment.cjs';
 import cypressSplit from 'cypress-split';
+import { unlinkSync, existsSync } from 'fs';
 const { DefinePlugin } = pkg;
 
 export const baseConfig: Cypress.ConfigOptions = {
@@ -16,7 +17,40 @@ export const baseConfig: Cypress.ConfigOptions = {
   e2e: {
     testIsolation: false,
     setupNodeEvents(on, config) {
-      on('before:browser:launch', (browser, launchOptions) => {
+      // Create inline multi-handler support to allow both video deletion and cypress-split
+      // to register after:spec handlers (Cypress bug #22428 only allows one handler per event)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handlers = new Map<string, Array<(...args: any[]) => any>>();
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const multiHandlerOn = ((event: string, handler: (...args: any[]) => any) => {
+        if (!handlers.has(event)) {
+          handlers.set(event, []);
+          // Register a single handler with Cypress that calls all stored handlers
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+          on(event as any, async (...args: any[]) => {
+            const eventHandlers = handlers.get(event) || [];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            let lastResult: any;
+            for (const h of eventHandlers) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
+              const result = h(...args);
+              if (result instanceof Promise) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                lastResult = await result;
+              } else {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                lastResult = result;
+              }
+            }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return lastResult;
+          });
+        }
+        handlers.get(event)!.push(handler);
+      }) as typeof on;
+
+      multiHandlerOn('before:browser:launch', (browser, launchOptions) => {
         if (browser?.name === 'chrome') {
           if (browser?.isHeadless) {
             launchOptions.args.push('--no-sandbox');
@@ -30,7 +64,21 @@ export const baseConfig: Cypress.ConfigOptions = {
         }
         return launchOptions;
       });
-      return cypressSplit(on, config);
+
+      multiHandlerOn('after:spec', (_spec, results) => {
+        if (results?.video) {
+          // Check if all tests ultimately passed (checking final attempt state)
+          const hasFailures = results.tests?.some((test) =>
+            test.attempts?.some((attempt) => attempt.state === 'failed')
+          );
+
+          if (!hasFailures && existsSync(results.video)) {
+            unlinkSync(results.video);
+          }
+        }
+      });
+
+      return cypressSplit(multiHandlerOn, config);
     },
     retries: { runMode: 2, openMode: 0 },
     env,
