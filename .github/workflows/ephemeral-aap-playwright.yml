@@ -191,8 +191,9 @@ jobs:
           # Sharding distributes tests across matrix jobs for optimal parallelization
           # Using pwc (Playwright with Currents) command for orchestration
 
-          # Capture the output to extract the Run URL
+          # Capture the output to extract the Run URL while preserving exit code
           set +e
+          set -o pipefail
           npx pwc \
             --key="${CURRENTS_RECORD_KEY}" \
             --project-id="${CURRENTS_PROJECT_ID}" \
@@ -217,8 +218,13 @@ jobs:
           # Clean up temporary file
           rm -f output.log
 
-          # Exit with the original exit code from pwc
-          exit $PWC_EXIT_CODE
+          # Report exit code and fail if tests failed
+          if [ $PWC_EXIT_CODE -ne 0 ]; then
+            echo "❌ Playwright tests failed with exit code: $PWC_EXIT_CODE"
+            exit $PWC_EXIT_CODE
+          else
+            echo "✅ Playwright tests passed"
+          fi
         env:
           PLATFORM_UI: https://localhost:4100
           PLATFORM_USERNAME: admin
@@ -267,9 +273,17 @@ jobs:
         with:
           script: |
             const deployAndTestResults = ${{ toJson(needs.deploy-and-test) }};
-            const allSuccess = deployAndTestResults.result === 'success';
-            const anyCancelled = deployAndTestResults.result === 'cancelled';
-            const anyFailure = deployAndTestResults.result === 'failure';
+
+            // Check overall job result
+            const jobResult = deployAndTestResults.result;
+            const allSuccess = jobResult === 'success';
+            const anyCancelled = jobResult === 'cancelled';
+            const anyFailure = jobResult === 'failure';
+
+            console.log('Deploy and test job result:', jobResult);
+            console.log('All success:', allSuccess);
+            console.log('Any cancelled:', anyCancelled);
+            console.log('Any failure:', anyFailure);
 
             core.setOutput('all_success', allSuccess);
             core.setOutput('any_cancelled', anyCancelled);
@@ -346,3 +360,9 @@ jobs:
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
               body: '⚠️ AAP Playwright E2E tests were cancelled.\n\nWorkflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
             });
+
+      - name: Fail workflow if tests failed
+        if: steps.check-results.outputs.any_failure == 'true'
+        run: |
+          echo "Tests failed - failing the workflow"
+          exit 1

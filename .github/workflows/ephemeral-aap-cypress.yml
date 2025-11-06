@@ -182,7 +182,7 @@ jobs:
         run: |
           npx cypress run \
             --config-file cypress.platform.config.ts \
-            --config video=true,videoUploadOnPasses=false
+            --config video=true
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
@@ -205,16 +205,6 @@ jobs:
           fi
           # Small wait to ensure file is fully written
           sleep 2
-
-      - name: Debug - Check for timings file
-        if: always()
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Looking for timings file..."
-          ls -la cypress-split-timings.json || echo "Timings file not found in $(pwd)"
-          find . -maxdepth 2 -name "cypress-split-timings.json" -type f 2>/dev/null || echo "Timings file not found"
-          echo "Checking GitHub workspace:"
-          ls -la $GITHUB_WORKSPACE/cypress-split-timings.json || echo "Not in GITHUB_WORKSPACE either"
 
       - name: Upload cypress-split timings
         if: always()
