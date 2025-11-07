@@ -2,12 +2,14 @@ import { QueryParams } from '@ansible/ansible-ui-framework';
 import {
   useLabelsToolbarFilter,
   useSearchToolbarFilter,
+  useLimitToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useJobsFilters(queryParams: QueryParams = {}) {
   const searchFilter = useSearchToolbarFilter();
   const labelsToolbarFilter = useLabelsToolbarFilter();
+  const limitFilter = useLimitToolbarFilter();
   const toolBarFilters = useDynamicToolbarFilters({
     optionsPath: 'unified_jobs',
     preSortedKeys: ['search', 'name', 'labels', 'description', 'status'],
@@ -21,7 +23,7 @@ export function useJobsFilters(queryParams: QueryParams = {}) {
         queryParams: queryParams,
       },
     },
-    additionalFilters: [searchFilter, labelsToolbarFilter],
+    additionalFilters: [searchFilter, labelsToolbarFilter, limitFilter],
   });
 
   return toolBarFilters;

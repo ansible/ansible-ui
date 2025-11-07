@@ -306,3 +306,18 @@ export function useHostReadyStatusFilter() {
     [t]
   );
 }
+
+export function useLimitToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'limit',
+      label: t('Limit'),
+      type: ToolbarFilterType.SingleText,
+      query: 'job__limit__icontains',
+      placeholder: t('Enter limit'),
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}
