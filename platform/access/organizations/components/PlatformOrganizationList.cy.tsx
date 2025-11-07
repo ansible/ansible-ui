@@ -44,6 +44,29 @@ describe('Organizations list', () => {
           });
       });
     });
+    it('Filter with special characters should be URL encoded in API call', () => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: gatewayAPI`/organizations/*`,
+        },
+        (req) => {
+          if (req.url.includes('name')) {
+            expect(req.url).to.include(encodeURIComponent('Test & Demo'));
+            expect(req.url).to.not.include('Test & Demo');
+          }
+          req.reply({
+            fixture: 'emptyList.json',
+          });
+        }
+      ).as('filteredOrganizations');
+
+      cy.mount(<PlatformOrganizationList />);
+      cy.get('[id="filter-input"] input').type('Test & Demo');
+      cy.get('button[data-cy="apply-filter"]').click();
+      cy.wait('@filteredOrganizations');
+      cy.clearAllFilters();
+    });
     it('Create Organization button is disabled if the user does not have permission to create organizations', () => {
       cy.mount(<PlatformOrganizationList />);
       cy.get('a[data-cy="create-organization"]').should('have.attr', 'aria-disabled', 'true');

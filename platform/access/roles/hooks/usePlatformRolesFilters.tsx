@@ -35,6 +35,7 @@ export function usePlatformRolesFilters(
     if (Array.isArray(resourceTypeNames) && resourceTypeNames.length > 0) {
       const options = resourceTypeNames
         .map((resourceType) => ({
+          key: resourceType.value,
           value: resourceType.value,
           label: getDisplayName(resourceType.name, { isTitleCase: true }),
           group: getDisplayName(resourceType.service, { isTitleCase: true }),
