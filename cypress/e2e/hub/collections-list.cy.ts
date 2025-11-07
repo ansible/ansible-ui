@@ -130,6 +130,18 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         (result: { filename: string }) => {
           cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
+
+          // Verify collection href from card view (Bug fix AAP-49006)
+          cy.setTableView('card');
+          cy.get('[data-ouia-component-type="PF6/Card"]')
+            .first()
+            .within(() => {
+              cy.contains('a', collectionName)
+                .should('have.attr', 'href')
+                .and('satisfy', (href: string) => href.endsWith(collectionName));
+            });
+          cy.setTableView('table');
+
           cy.clickTableRow(collectionName, false);
           cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
           cy.getByDataCy('upload-new-version').click();

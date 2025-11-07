@@ -30,7 +30,6 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
     () => [
       {
         header: t('Name'),
-        value: (collection) => collection.collection_version?.name,
         cell: (collection) => {
           return (
             <>
