@@ -1,7 +1,9 @@
 import { useAbortController } from '@ansible/ansible-ui-framework/hooks/useAbortController';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
@@ -19,11 +21,13 @@ export const useProcessInstanceGroups = () => {
       launch_config: LaunchConfiguration | null
     ) => {
       const hasInstanceGroupsPrompt = launch_config?.ask_instance_groups_on_launch;
-      const existingInstanceGroups = launch_config?.defaults.instance_groups;
+      const existingScheduleInstanceGroups = await requestGet<AwxItemsResponse<InstanceGroup>>(
+        awxAPI`/schedules/${scheduleId.toString()}/instance_groups/`
+      );
 
       if (hasInstanceGroupsPrompt) {
         const { added, removed } = getAddedAndRemoved(
-          existingInstanceGroups || [],
+          existingScheduleInstanceGroups.results || [],
           instance_groups || ([] as InstanceGroup[])
         );
 
@@ -49,16 +53,17 @@ export const useProcessInstanceGroups = () => {
         );
 
         await Promise.all([...disassociationPromises, ...associationPromises]);
-      } else if (existingInstanceGroups) {
-        const disassociationPromises = existingInstanceGroups.map((group: { id: number }) =>
-          postDisassociate(
-            awxAPI`/schedules/${scheduleId.toString()}/instance_groups/`,
-            {
-              id: group.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
+      } else if (existingScheduleInstanceGroups.results?.length) {
+        const disassociationPromises = existingScheduleInstanceGroups.results.map(
+          (group: { id: number }) =>
+            postDisassociate(
+              awxAPI`/schedules/${scheduleId.toString()}/instance_groups/`,
+              {
+                id: group.id,
+                disassociate: true,
+              },
+              abortController.signal
+            )
         );
         await Promise.all(disassociationPromises);
       }

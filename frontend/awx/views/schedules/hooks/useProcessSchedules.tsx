@@ -82,9 +82,12 @@ export const useProcessSchedule = () => {
             requestPayload
           );
           await postAccessories(schedule, {
-            ...payload,
-            ...promptData,
-          } as Parameters<typeof postAccessories>[1]);
+            launch_config: payloadData.launch_config,
+            credentials: prompt?.credentials,
+            instance_groups: prompt?.instance_groups,
+            labels: prompt?.labels,
+            organization: prompt?.organization,
+          });
           return {
             schedule,
           };
@@ -102,9 +105,12 @@ export const useProcessSchedule = () => {
           );
           if (prompt !== undefined && payloadData.launch_config !== undefined) {
             await postAccessories(schedule, {
-              ...payload,
-              ...promptData,
-            } as Parameters<typeof postAccessories>[1]);
+              launch_config: payloadData.launch_config,
+              credentials: prompt.credentials,
+              instance_groups: prompt.instance_groups,
+              labels: prompt.labels,
+              organization: prompt.organization,
+            });
           }
 
           return {
