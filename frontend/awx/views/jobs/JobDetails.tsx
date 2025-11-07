@@ -34,6 +34,7 @@ export function JobDetails() {
   return (
     <PageDetails>
       <PageDetailsFromColumns columns={columns} item={job as UnifiedJob} />
+      <PageDetail label={t('Source control branch')}>{job.scm_branch}</PageDetail>
       <PageDetail isEmpty={!job.playbook} label={t('Playbook')}>
         {job.playbook}
       </PageDetail>
