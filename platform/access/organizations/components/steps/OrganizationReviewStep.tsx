@@ -8,7 +8,14 @@ import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnviro
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
+import {
+  Alert,
+  Content,
+  ContentVariants,
+  Label,
+  LabelGroup,
+  PageSection,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
@@ -44,7 +51,17 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
       <Content style={{ marginBottom: 25 }}>
         <Content component={ContentVariants.h2}>{t('Review')}</Content>
       </Content>
-      <PageDetails numberOfColumns="multiple">
+      {controllerOrganization ? null : (
+        <PageSection padding={{ default: 'noPadding' }}>
+          <Alert
+            variant="info"
+            isInline
+            isPlain
+            title={t('New organizations can take up to 15 minutes to propagate across the system.')}
+          />
+        </PageSection>
+      )}
+      <PageDetails numberOfColumns="multiple" disablePadding>
         <PageDetail label={t('Name')}>{organization.name}</PageDetail>
         <PageDetail label={t('Description')}>{organization?.description}</PageDetail>
         {fetchedEE && fetchedEE.name !== undefined && (
