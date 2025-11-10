@@ -25,31 +25,14 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
   };
 });
 
-// Mock useTranslation
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
-
 // Mock useGatewaySettingsCategories
 vi.mock('./GatewaySettingsCategories', () => ({
   useGatewaySettingsCategories: vi.fn(),
 }));
 
-// Mock useRevertAllGatewaySettingsModal
-vi.mock('./useRevertAllGatewaySettingsModal', () => ({
-  useRevertAllGatewaySettingsModal: () => vi.fn(),
-}));
-
 // Mock requestPut
 vi.mock('@ansible/common-ui/crud/Data', () => ({
   requestPut: vi.fn(),
-}));
-
-// Mock useIsValidUrl
-vi.mock('@ansible/common-ui/validation/useIsValidUrl', () => ({
-  useIsValidUrl: () => true,
 }));
 
 // Mock gatewayAPI
@@ -237,6 +220,84 @@ describe('GatewaySettingsEdit Component', () => {
       expect(
         screen.queryByRole('button', { name: 'Save platform gateway settings' })
       ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('LOGIN_REDIRECT_OVERRIDE confirmation field', () => {
+    beforeEach(() => {
+      // Mock category with LOGIN_REDIRECT_OVERRIDE
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'authentication',
+          title: 'Authentication settings',
+          description: 'Edit authentication settings',
+          sections: [
+            {
+              title: 'Authentication',
+              options: {
+                LOGIN_REDIRECT_OVERRIDE: {
+                  type: 'url',
+                  label: 'Login redirect override',
+                  help_text: 'URL to redirect to after login.',
+                  default: '',
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should exclude CONFIRM_LOGIN_REDIRECT_OVERRIDE from form submission', async () => {
+      const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
+      mockRequestPut.mockResolvedValue({});
+
+      const contextWithRedirect = {
+        ...adminContext,
+        options: {
+          GET: {
+            LOGIN_REDIRECT_OVERRIDE: {
+              type: 'url',
+              label: 'Login redirect override',
+              help_text: 'URL to redirect to after login.',
+              default: '',
+              required: false,
+              read_only: false,
+            },
+          },
+          PUT: {
+            LOGIN_REDIRECT_OVERRIDE: {
+              type: 'url',
+              label: 'Login redirect override',
+              help_text: 'URL to redirect to after login.',
+              default: '',
+              required: false,
+              read_only: false,
+            },
+          },
+        },
+        settings: {
+          LOGIN_REDIRECT_OVERRIDE: 'https://example.com/login',
+        },
+        refresh: vi.fn(),
+      };
+
+      renderWithContext(contextWithRedirect, 'authentication');
+
+      // Submit the form
+      const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
+      fireEvent.click(submitButton);
+
+      // Verify CONFIRM_LOGIN_REDIRECT_OVERRIDE is excluded from submission
+      await waitFor(() => {
+        expect(mockRequestPut).toHaveBeenCalled();
+      });
+
+      const submittedData = mockRequestPut.mock.calls[0][1] as Record<string, unknown>;
+      expect(submittedData).toHaveProperty('LOGIN_REDIRECT_OVERRIDE');
+      expect(submittedData).not.toHaveProperty('CONFIRM_LOGIN_REDIRECT_OVERRIDE');
     });
   });
 

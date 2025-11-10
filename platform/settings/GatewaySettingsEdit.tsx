@@ -209,12 +209,13 @@ export function LoginRedirectOverrideInputs(props: {
 }) {
   const { name, option } = props;
   const { t } = useTranslation();
+  const { getValues } = useFormContext();
   const LOGINREDIRECT = useWatch<Record<string, string>, 'LOGIN_REDIRECT_OVERRIDE'>({
     name: 'LOGIN_REDIRECT_OVERRIDE',
   });
   const CONFIRMLOGINREDIRECT = useWatch<Record<string, string>, 'CONFIRM_LOGIN_REDIRECT_OVERRIDE'>({
     name: 'CONFIRM_LOGIN_REDIRECT_OVERRIDE',
-    defaultValue: option.default,
+    defaultValue: (getValues().LOGIN_REDIRECT_OVERRIDE as string) || '',
   });
 
   return (
@@ -242,7 +243,7 @@ export function LoginRedirectOverrideInputs(props: {
         name={'CONFIRM_LOGIN_REDIRECT_OVERRIDE'}
         label={t('Confirm login redirect override')}
         labelHelp={t('This value must match the value in login redirect override.')}
-        isRequired={LOGINREDIRECT.length > 0}
+        isRequired={LOGINREDIRECT?.length > 0}
         defaultValue={LOGINREDIRECT}
       />
     </>
