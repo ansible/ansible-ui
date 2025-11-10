@@ -105,7 +105,7 @@ export function usePlatformView<T extends { id: number | string }>(options: {
               .map((value) => `or__${toolbarFilter.query}=${value}`)
               .join('&');
           } else {
-            queryString += `${toolbarFilter.query}=${uniqueValues.join(',')}`;
+            queryString += `${encodeURIComponent(toolbarFilter.query)}=${encodeURIComponent(uniqueValues.join(','))}`;
           }
         }
       }
