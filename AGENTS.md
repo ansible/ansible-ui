@@ -154,6 +154,7 @@ Example:
 - Write unit tests with Vitest
 - Use Playwright for primary E2E tests and live testing
 - Follow testing best practices for React components
+- **CRITICAL: Avoid unnecessary mocks in Vitest tests** - only mock external APIs, browser APIs, or genuinely difficult dependencies. Do NOT mock your own utility functions, hooks, or components. Test real behavior whenever possible.
 
 ### Internationalization
 
