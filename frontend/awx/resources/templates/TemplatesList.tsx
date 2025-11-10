@@ -26,13 +26,15 @@ import { useTemplateActions } from './hooks/useTemplateActions';
 import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
 
-export function TemplatesList(props: {
+export type TemplatesListProps = {
   url?: string;
   projectId?: string;
   inventoryId?: string;
   credentialsId?: string;
   executionEnvironmentId?: string;
-}) {
+};
+
+export function TemplatesList(props: Readonly<TemplatesListProps>) {
   const { t } = useTranslation();
   const activeDomains = useDomainsStore((state) => state.activeDomains);
   const focusLabels = activeDomains.map((fa) => fa.labels.map((l) => l.name)).flat();
