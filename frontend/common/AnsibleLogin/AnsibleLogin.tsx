@@ -5,7 +5,7 @@ import {
   Brand,
   Icon,
   Login,
-  LoginFooter,
+  LoginFooter as PFLoginFooter,
   LoginForm,
   LoginHeader,
   LoginMainBody,
@@ -17,11 +17,20 @@ import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import styled from 'styled-components';
 import { getCookie } from '../crud/cookie';
 import { createRequestError, RequestError } from '../crud/RequestError';
 import { AuthOption, SocialAuthLogin } from '../SocialAuthLogin';
 import { validateUrlPath } from './validateUrlPath';
+
+const LoginFooter = styled(PFLoginFooter)`
+  color: var(--pf-t--color--white);
+
+  a {
+    color: var(--pf-t--color--blue--20);
+  }
+`;
 
 export function AnsibleLogin(props: {
   //** Url for external authentication service where users will login if login_redirect_override is set */
@@ -179,9 +188,11 @@ export function AnsibleLogin(props: {
         }
         footer={
           props.textContent && (
-            <LoginFooter>
-              <p>{props.textContent}</p>
-            </LoginFooter>
+            <LoginFooter
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(props.textContent || ''),
+              }}
+            />
           )
         }
       >
