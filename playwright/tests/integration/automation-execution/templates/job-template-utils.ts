@@ -17,6 +17,7 @@ export async function createJobTemplate(
     PromptOnLaunch?: boolean;
     skipTagsPrompt?: boolean;
     extraVarsPrompt?: boolean;
+    jobTagsPrompt?: boolean;
     survey?: boolean;
     createLabel?: boolean;
   },
@@ -70,6 +71,9 @@ export async function createJobTemplate(
   }
   if (options.skipTagsPrompt) {
     await page.locator('#ask_skip_tags_on_launch').check();
+  }
+  if (options.jobTagsPrompt) {
+    await page.locator('#ask_tags_on_launch').check();
   }
   await page.getByRole('combobox', { name: 'Type to filter' }).click();
   await page.getByRole('option', { name: 'hello_world.yml' }).click();

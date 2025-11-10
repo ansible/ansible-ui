@@ -109,7 +109,9 @@ export function PageDetailCodeEditor(props: {
       fullWidth={fullWidth}
     >
       <CodeBlock id={id} actions={actions}>
-        <CodeBlockCode data-cy={'code-block-value'}>{codeEditorValue}</CodeBlockCode>
+        <CodeBlockCode data-cy={'code-block-value'} data-testid={'code-block-value'}>
+          {codeEditorValue}
+        </CodeBlockCode>
       </CodeBlock>
     </PageDetail>
   );

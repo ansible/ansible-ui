@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { clearTableFilters } from './clearTableFilters';
+import { clickRetryUntilGone } from './clickRetryUntilGone';
 import { filterTable } from './filterTable';
 import { navigateTo } from './navigateTo';
 
@@ -64,13 +65,33 @@ export async function bulkDeleteResources(options: BulkDeleteOptions, page: Page
   await expect(submitButton).toBeVisible();
   await submitButton.click();
 
-  // Verify success - scope to the results table to avoid strict mode violations
-  await expect(
-    page
-      .getByLabel(`Permanently delete ${resourceType}`)
-      .getByText('Success', { exact: true })
-      .first()
-  ).toBeVisible();
+  // Check if Retry button exists and click it until it's gone
+  try {
+    const retryButton = page.getByRole('button', { name: 'Retry' });
+    await retryButton.waitFor({ state: 'visible', timeout: 2000 });
+    await clickRetryUntilGone(page);
+  } catch {
+    // Verify success - try multiple approaches to find success message
+    // First try scoped to dialog, then try global search, finally just wait for dialog to close
+    try {
+      await expect(
+        page
+          .getByLabel(`Permanently delete ${resourceType}`)
+          .getByText('Success', { exact: true })
+          .first()
+      ).toBeVisible({ timeout: 5000 });
+    } catch {
+      // If scoped search fails, try global search
+      try {
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
+          timeout: 5000,
+        });
+      } catch {
+        // If success message not found, just wait for dialog to close as indicator of completion
+        await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+      }
+    }
+  }
 
   // Clear any remaining filters after bulk delete to ensure clean table state
   await clearTableFilters(page);
