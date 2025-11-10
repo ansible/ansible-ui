@@ -70,4 +70,61 @@ describe('AnsibleLogin', () => {
       expect(screen.getByText('Log in to your account')).toBeInTheDocument();
     });
   });
+
+  describe('textContent HTML sanitization', () => {
+    it('should render custom footer content', () => {
+      const htmlContent = 'Welcome to AAP';
+
+      const { container } = render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} textContent={htmlContent} />
+        </MemoryRouter>
+      );
+
+      const footer = container.querySelector('.pf-v6-c-login__footer');
+      expect(footer).toBeInTheDocument();
+      expect(footer?.innerHTML).toEqual('Welcome to AAP');
+    });
+
+    it('should sanitize and render allowed HTML tags', () => {
+      const htmlContent = '<p>Welcome to <strong>AAP</strong>. <a href="/docs">Read docs</a></p>';
+
+      const { container } = render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} textContent={htmlContent} />
+        </MemoryRouter>
+      );
+
+      const footer = container.querySelector('.pf-v6-c-login__footer');
+      expect(footer).toBeInTheDocument();
+      expect(footer?.innerHTML).toContain('<strong>AAP</strong>');
+      expect(footer?.innerHTML).toContain('<a href="/docs">Read docs</a>');
+    });
+
+    it('should remove dangerous HTML tags', () => {
+      const dangerousContent = '<p>Safe text</p><script>console.log("xss")</script>';
+
+      const { container } = render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} textContent={dangerousContent} />
+        </MemoryRouter>
+      );
+
+      const footer = container.querySelector('.pf-v6-c-login__footer');
+      expect(footer).toBeInTheDocument();
+      expect(footer?.innerHTML).toContain('Safe text');
+      expect(footer?.innerHTML).not.toContain('<script>');
+    });
+
+    it('should not render footer when textContent is not provided', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} />
+        </MemoryRouter>
+      );
+
+      const footer = container.querySelector('.pf-v6-c-login__footer');
+      expect(footer).not.toBeInTheDocument();
+    });
+  });
 });
