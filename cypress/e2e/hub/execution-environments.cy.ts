@@ -103,10 +103,15 @@ describe('Execution Environments', () => {
           cy.get(`[data-cy="delete-execution-environment"]`).click();
           cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(
             () => {
+              // Verify no error alert before submitting
+              cy.get('.pf-v6-c-alert.pf-m-danger').should('not.exist');
               cy.get('[data-ouia-component-id="confirm"]').click();
               cy.get('[data-ouia-component-id="submit"]').click();
-              cy.containsBy('button', 'Close').click();
             }
+          );
+          // Wait for deletion to complete and modal to close (auto-closes on success after 1 second)
+          cy.get('[data-ouia-component-id="Permanently delete execution environments"]').should(
+            'not.exist'
           );
           cy.contains('No results found');
           cy.get('[class*="empty-state__content"]')
