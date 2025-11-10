@@ -105,10 +105,34 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.contains('No results found');
     });
 
-    it('should copy CLI to clipboard', () => {
+    it('should return 200 status for repository URL', () => {
       cy.clickTableRowLink('name', repository.name);
       cy.verifyPageTitle(repository.name);
+
+      cy.window().then((win) => {
+        cy.spy(win.navigator.clipboard, 'writeText').as('clipboardSpy');
+      });
+
       cy.clickPageAction('copy-cli-configuration');
+
+      cy.get('@clipboardSpy')
+        .its('firstCall.args.0')
+        .then((clipboardContent) => {
+          const content = clipboardContent as string;
+          const urlMatch = content.match(/url=(.+)/);
+
+          if (urlMatch) {
+            const repoUrl = urlMatch[1];
+
+            cy.request({
+              url: repoUrl,
+              failOnStatusCode: false,
+            }).then((response) => {
+              expect(response.status).to.eq(200);
+            });
+          }
+        });
+
       cy.get('[data-cy="alert-toaster"]').should('be.visible');
       cy.get('[data-cy="alert-toaster"]').within(() => {
         cy.get('button').click();

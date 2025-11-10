@@ -133,7 +133,7 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
             hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`,
             signal
           ).then(() => {
-            clearCacheByKey(hubAPI`/v3/plugin/execution-environments/repositories`);
+            clearCacheByKey(hubAPI`/v3/plugin/execution-environments/repositories/`);
             return pageNavigate(HubRoute.ExecutionEnvironments);
           }),
       });

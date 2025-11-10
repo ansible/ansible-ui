@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { Distribution } from '../../../collections/UploadCollection';
 import { pulpAPI } from '../../../common/api/formatPath';
+import { getRepoURL } from '../../../common/api/hub-api-utils';
 import { useHubView } from '../../../common/useHubView';
 import { useRepositoryDistributionFilters } from '../hooks/useRepositoryDistributionFilters';
 import { Repository } from '../Repository';
@@ -66,7 +67,7 @@ export function useRepositoryDistributionColumns() {
       {
         header: t('CLI configuration'),
         cell: (distribution: Distribution) => {
-          const copyText = `[galaxy] \n server_list = ${distribution.base_path} \n [galaxy_server.${distribution.base_path}] \n url = ${distribution.client_url} \n token=<put your token here>`;
+          const copyText = `[galaxy] \n server_list = ${distribution.base_path} \n [galaxy_server.${distribution.base_path}] \n url = ${getRepoURL(distribution.base_path)} \n token=<put your token here>`;
           return <CopyCell text={copyText} />;
         },
       },
