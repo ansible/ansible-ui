@@ -9,9 +9,9 @@ on:
         description: 'Platform Server'
       PARALLEL_TESTS:
         description: 'Number of parallel test runners'
-        type: number
+        type: string
         required: true
-        default: 16
+        default: '16'
       UPDATE_SERVER:
         type: boolean
         required: true
@@ -41,8 +41,7 @@ jobs:
       PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
-      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
-      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   platform-update-server:
     name: Platform Update Server
@@ -58,61 +57,3 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28" \
           "https://api.github.com/repos/${{ github.repository }}/actions/variables/PLATFORM_SERVER" \
           -d '{"name":"PLATFORM_SERVER","value":"${{ inputs.PLATFORM_SERVER }}"}'
-      - name: Slack Notification
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "attachments":
-                [
-                  {
-                    "color": "#00DD00",
-                    "blocks":
-                      [
-                        {
-                          "type": "section",
-                          "text":
-                            {
-                              "type": "mrkdwn",
-                              "text": "*AAP-UI E2E Server Updated* - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ inputs.PLATFORM_SERVER }}|Server>"
-                            }
-                        }
-                      ]
-                  }
-                ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-
-  slack-failure-notification:
-    name: Slack Failure Notification
-    if: ${{ failure() && inputs.UPDATE_SERVER == 'true' }}
-    needs:
-      - platform-update-server
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "attachments":
-                [
-                  {
-                    "color": "#FF0000",
-                    "blocks": [
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*AAP-UI E2E Server Update Failed* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{inputs.PLATFORM_SERVER }}|Server>"
-                        }
-                      }
-                    ]
-                  }
-                ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
