@@ -18,7 +18,7 @@ export async function createAuthenticationMethod(
   await page.getByRole('button', { name: 'Local' }).click();
   await page.getByRole('option', { name: authType, exact: true }).click();
   switch (authType) {
-    case 'Azuread': {
+    case 'Azure AD': {
       const clientIdField = page.getByTestId('configuration-input-KEY');
       await clientIdField.fill('1234abc');
       const secretField = page.getByTestId('configuration-input-SECRET');
