@@ -7,7 +7,7 @@ export function createE2EName(
   const id = crypto.randomUUID().split('-')[0];
   let randomName = `E2E ${name ? name + ' ' : ''}` + id;
   if (options?.noWhitespace) {
-    randomName = randomName.replace(/\s/g, '_');
+    randomName = randomName.replaceAll(' ', '-');
   }
   return randomName;
 }
