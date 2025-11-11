@@ -25,6 +25,7 @@ import { PageFormInventorySelect } from '../inventories/components/PageFormInven
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { PageFormPlaybookSelect } from './components/PageFormPlaybookSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 
 // This list below comes from the previous AWX code
 //https//github.com / ansible / awx / blob / c760577855bf2afacc58579e743111552dae38ef / awx / ui / src / api / models / CredentialTypes.js#L10
@@ -58,6 +59,19 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   const askJobTypeOnLaunch = useWatch<JobTemplateForm, 'ask_job_type_on_launch'>({
     name: 'ask_job_type_on_launch',
   });
+
+  const [searchParams] = useURLSearchParams();
+  const projectIdParam = Number(searchParams.get('project_id'));
+  const inventoryIdParam = Number(searchParams.get('inventory_id'));
+  // set project field if projectIdParam is provided
+  useEffect(() => {
+    if (projectIdParam && !jobtemplate) {
+      setValue('project', projectIdParam);
+    }
+    if (inventoryIdParam && !jobtemplate) {
+      setValue('inventory', inventoryIdParam);
+    }
+  }, [projectIdParam, inventoryIdParam, setValue, jobtemplate]);
 
   useEffect(() => {
     async function handleFetchPlaybooks() {

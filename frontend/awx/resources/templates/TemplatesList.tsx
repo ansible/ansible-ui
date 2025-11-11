@@ -131,7 +131,19 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
             isDisabled: canCreateJobTemplate
               ? undefined
               : 'You do not have permission to create a job template. Please contact your organization administrator if there is an issue with your access.',
-            href: getPageUrl(AwxRoute.CreateJobTemplate),
+            href: (() => {
+              if (props.projectId) {
+                return getPageUrl(AwxRoute.CreateJobTemplate, {
+                  query: { project_id: props.projectId },
+                });
+              }
+              if (props.inventoryId) {
+                return getPageUrl(AwxRoute.CreateJobTemplate, {
+                  query: { inventory_id: props.inventoryId },
+                });
+              }
+              return getPageUrl(AwxRoute.CreateJobTemplate);
+            })(),
           },
           {
             type: PageActionType.Link,
@@ -153,7 +165,15 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
         isDanger: true,
       },
     ],
-    [canCreateJobTemplate, canCreateWFJobTemplate, deleteTemplates, getPageUrl, t]
+    [
+      canCreateJobTemplate,
+      canCreateWFJobTemplate,
+      deleteTemplates,
+      getPageUrl,
+      props.inventoryId,
+      props.projectId,
+      t,
+    ]
   );
 
   const rowActions = useTemplateActions({
