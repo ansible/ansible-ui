@@ -46,7 +46,7 @@ export function getJobTemplateDefaultValues(
     organization: template.organization ?? undefined,
     playbook: template.playbook || '',
     prevent_instance_group_fallback: template.prevent_instance_group_fallback || false,
-    project: template.summary_fields?.project.id,
+    project: template.summary_fields?.project?.id,
     scm_branch: template.scm_branch,
     skip_tags: parseStringToTagArray(template.skip_tags || '') || [],
     timeout: template.timeout || 0,
