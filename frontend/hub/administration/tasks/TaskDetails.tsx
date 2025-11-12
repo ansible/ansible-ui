@@ -187,7 +187,7 @@ export function TaskDetails() {
               <StatusCell status={task?.state} />
             </PageDetail>
             <PageDetail label={t('Started')}>
-              <DateTimeCell value={task?.finished_at} />
+              <DateTimeCell value={task?.started_at} />
             </PageDetail>
             <PageDetail label={t('Finished')}>
               <DateTimeCell value={task?.finished_at} />
