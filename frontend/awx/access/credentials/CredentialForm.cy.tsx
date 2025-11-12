@@ -117,9 +117,50 @@ describe('Credential form', () => {
     assertOnSubFormFields('Centrify Vault Credential Provider Lookup');
   });
 
-  it('Create credential using Container Registry', () => {
+  it('Create credential using Container Registry and verify boolean field default value in payload', () => {
+    cy.intercept('POST', awxAPI`/credentials/`, (req) => {
+      const body = req.body as {
+        name: string;
+        credential_type: number;
+        inputs: { verify_ssl?: boolean; host?: string };
+      };
+      expect(body).to.have.property('inputs');
+      // Container Registry credential type defines verify_ssl with default: true
+      // After unchecking the checkbox, verify the payload contains verify_ssl: false (not omitted)
+      expect(body.inputs).to.have.property('verify_ssl', false);
+      req.reply({
+        statusCode: 201,
+        body: {
+          id: 999,
+          name: body.name,
+          credential_type: body.credential_type,
+          inputs: body.inputs,
+        },
+      });
+    }).as('createCredential');
+
+    cy.get('input[placeholder="Enter credential name"]').type('Test Container Registry');
     cy.selectSingleSelectOption('[data-cy="credential_type"]', 'Container Registry');
     assertOnSubFormFields('Container Registry');
+    cy.getByDataCy('host-form-group').within(() => {
+      cy.get('input').type('quay.io');
+    });
+
+    // Find the Verify SSL checkbox
+    cy.contains('label', 'Verify SSL')
+      .parent()
+      .parent()
+      .within(() => {
+        // Verify the checkbox is checked by default (honoring default: true from credential type)
+        cy.get('input[type="checkbox"]').should('be.checked');
+        // Uncheck the verify_ssl checkbox
+        cy.get('input[type="checkbox"]').uncheck();
+        // Verify it's now unchecked
+        cy.get('input[type="checkbox"]').should('not.be.checked');
+      });
+
+    cy.clickButton(/^Create credential$/);
+    cy.wait('@createCredential');
   });
 
   it('Create credential using CyberArk Central Credential Provider Lookup', () => {
