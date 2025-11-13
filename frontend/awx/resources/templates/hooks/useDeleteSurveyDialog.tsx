@@ -92,6 +92,7 @@ function DeleteSurveyDialog(props: {
       aria-label={t('Delete survey')}
       ouiaId="delete-survey-dialog"
       data-cy="delete-survey-dialog"
+      data-testid="delete-survey-dialog"
       variant={ModalVariant.medium}
       onClose={props.onClose}
     >
@@ -129,6 +130,7 @@ function DeleteSurveyDialog(props: {
       <ModalFooter>
         <Button
           data-cy="survey-modal-delete-button"
+          data-testid="survey-modal-delete-button"
           ouiaId="survey-modal-delete-button"
           key="delete"
           variant="danger"
