@@ -1,11 +1,14 @@
 import {
   DateTimeCell,
+  LoadingPage,
   PageDetail,
   PageDetails,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
@@ -30,11 +33,34 @@ export function DecisionEnvironmentDetails() {
       </Trans>
     </>
   );
-  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
+  const { data: decisionEnvironment, isLoading } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${params.id ?? ''}/`
   );
 
+  const { data: optionsData, isLoading: isLoadingOptions } = useOptions<{
+    actions: {
+      POST: {
+        pull_policy?: {
+          choices?: Array<{ value: string; display_name: string }>;
+        };
+      };
+    };
+  }>(edaAPI`/decision-environments/`);
+
+  const pullPolicyLabel = useMemo(() => {
+    const choices = optionsData?.actions?.POST?.pull_policy?.choices;
+    if (!choices || !decisionEnvironment?.pull_policy) {
+      return decisionEnvironment?.pull_policy || '';
+    }
+    const choice = choices.find((c) => c.value === decisionEnvironment.pull_policy);
+    return choice?.display_name || decisionEnvironment.pull_policy;
+  }, [optionsData, decisionEnvironment?.pull_policy]);
+
   const getPageUrl = useGetPageUrl();
+
+  if (isLoading || isLoadingOptions) {
+    return <LoadingPage />;
+  }
 
   return (
     <PageDetails>
@@ -56,6 +82,9 @@ export function DecisionEnvironmentDetails() {
 
       <PageDetail label={t('Image')} helpText={imageHelpBlock}>
         {decisionEnvironment?.image_url || ''}
+      </PageDetail>
+      <PageDetail id="pull-policy" label={t('Pull policy')}>
+        {pullPolicyLabel}
       </PageDetail>
       <PageDetail
         label={t('Credential')}

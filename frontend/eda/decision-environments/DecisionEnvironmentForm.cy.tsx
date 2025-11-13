@@ -4,15 +4,21 @@ import { CreateDecisionEnvironment, EditDecisionEnvironment } from './DecisionEn
 describe('Create decision environment ', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: edaAPI`/organizations/*` },
+      { method: 'GET', url: edaAPI`/organizations/**` },
       {
         fixture: 'edaOrganizations.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/eda-credentials/*` },
+      { method: 'GET', url: edaAPI`/eda-credentials/**` },
       {
         fixture: 'edaCredentials.json',
+      }
+    );
+    cy.intercept(
+      { method: 'OPTIONS', url: edaAPI`/decision-environments/` },
+      {
+        fixture: 'edaDecisionEnvironmentsOptions.json',
       }
     );
   });
@@ -29,8 +35,11 @@ describe('Create decision environment ', () => {
 
   it('Validates properly', () => {
     cy.mount(<CreateDecisionEnvironment />);
+    cy.get('[data-cy="name"]').should('be.visible');
+    cy.get('[data-cy="image-url"]').should('be.visible');
     cy.clickButton(/^Create decision environment$/);
-    ['Name', 'Image'].map((field) => cy.contains(`${field} is required.`).should('be.visible'));
+    cy.contains('Name is required.').should('be.visible');
+    cy.contains('Image is required.').should('be.visible');
   });
 
   it('Should update fields properly', () => {
@@ -76,6 +85,18 @@ describe('Edit Decision Environment', () => {
     cy.intercept(
       { method: 'GET', url: edaAPI`/organizations/5` },
       { id: 5, name: 'Organization 5', image_url: 'some_image' }
+    );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/eda-credentials/*` },
+      {
+        fixture: 'edaCredentials.json',
+      }
+    );
+    cy.intercept(
+      { method: 'OPTIONS', url: edaAPI`/decision-environments/**` },
+      {
+        fixture: 'edaDecisionEnvironmentOptions.json',
+      }
     );
   });
 

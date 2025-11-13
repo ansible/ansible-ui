@@ -1,4 +1,5 @@
 import {
+  LoadingPage,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextArea,
@@ -14,6 +15,7 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -37,6 +39,29 @@ function DecisionEnvironmentInputs() {
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(
     edaAPI`/eda-credentials/` + `?credential_type__kind=registry&page_size=300`
   );
+  const { data: optionsData, isLoading: isLoadingOptions } = useOptions<{
+    actions: {
+      POST: {
+        pull_policy?: {
+          choices?: Array<{ value: string; display_name: string }>;
+        };
+      };
+    };
+  }>(edaAPI`/decision-environments/`);
+
+  const pullPolicyChoices = optionsData?.actions?.POST?.pull_policy?.choices;
+
+  const pullPolicyOptions = useMemo(() => {
+    if (!Array.isArray(pullPolicyChoices) || pullPolicyChoices.length === 0) {
+      return [];
+    }
+
+    return pullPolicyChoices.map((choice) => ({
+      value: choice.value,
+      label: choice.display_name,
+    }));
+  }, [pullPolicyChoices]);
+
   const imageHelpBlock = (
     <>
       <p>
@@ -51,6 +76,11 @@ function DecisionEnvironmentInputs() {
       </Trans>
     </>
   );
+
+  if (isLoadingOptions || !optionsData) {
+    return <LoadingPage />;
+  }
+
   return (
     <>
       <PageFormTextInput<EdaDecisionEnvironment>
@@ -75,6 +105,12 @@ function DecisionEnvironmentInputs() {
         isRequired
         labelHelpTitle={t('Image')}
         labelHelp={imageHelpBlock}
+      />
+      <PageFormSelect<EdaDecisionEnvironment>
+        name="pull_policy"
+        label={t('Pull')}
+        placeholderText={t('Select pull option')}
+        options={pullPolicyOptions}
       />
       <PageFormSelect
         name={'eda_credential_id'}

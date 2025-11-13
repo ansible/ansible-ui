@@ -7,7 +7,11 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 
 export async function createDecisionEnvironment(
-  options: { decisionEnvironmentName?: string; organizationName?: string },
+  options: {
+    decisionEnvironmentName?: string;
+    organizationName?: string;
+    pullPolicy?: string;
+  },
   page: Page
 ) {
   await navigateTo(page, 'Automation Decisions', 'Decision Environments');
@@ -17,6 +21,15 @@ export async function createDecisionEnvironment(
   await page.getByRole('textbox', { name: 'Name' }).fill(decisionEnvironmentName);
   await singleSelectByLabel('Organization', options.organizationName ?? 'Default', page);
   await page.getByLabel('Image').fill('quay.io/ansible/ansible-rulebook:main');
+
+  if (options.pullPolicy) {
+    const pullLabel = page.getByLabel('Pull');
+    const isPullFieldVisible = await pullLabel.isVisible().catch(() => false);
+    if (isPullFieldVisible) {
+      await singleSelectByLabel('Pull', options.pullPolicy, page);
+    }
+  }
+
   await page.getByRole('button', { name: 'Create decision environment', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: decisionEnvironmentName, exact: true })
