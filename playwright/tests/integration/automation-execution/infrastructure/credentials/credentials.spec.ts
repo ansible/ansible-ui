@@ -1,11 +1,11 @@
-import { test, expect } from '@playwright/test';
-import { setupBefore, setupAfter } from '../../../../../commands/setup';
-import { navigateTo } from '../../../../../commands/navigateTo';
-import { clickTableRow } from '../../../../../commands/clickTableRow';
+import { expect, test } from '@playwright/test';
 import { clickPageAction } from '../../../../../commands/clickPageAction';
+import { clickTableRow } from '../../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../../commands/createE2EName';
-import { createAwxCredential, deleteAwxCredential } from './credential-utils';
 import { filterTable } from '../../../../../commands/filterTable';
+import { navigateTo } from '../../../../../commands/navigateTo';
+import { setupAfter, setupBefore } from '../../../../../commands/setup';
+import { createAwxCredential, deleteAwxCredential } from './credential-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials' }));
 test.afterEach(setupAfter);
@@ -74,29 +74,54 @@ test.describe('Credentials - List View', () => {
     await filterTable({ filterLabel: 'Name', filterValue: credentialName }, page);
     await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
 
+    // Set up API interception before clicking the duplicate button
+    const copyResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/credentials/') &&
+        response.url().includes('/copy/') &&
+        response.status() === 201
+    );
+
     // Click the duplicate credential button
-    const row = page.getByRole('row').filter({ hasText: credentialName });
+    const credentialLink = page.getByRole('link', { name: credentialName, exact: true });
+    const row = page.getByRole('row').filter({ has: credentialLink });
     await row.getByRole('button', { name: 'Duplicate credential' }).click();
 
-    // Wait for duplication to complete
-    await page.waitForTimeout(2000);
+    // Get the exact copied credential name from the API response
+    const copyResponse = await copyResponsePromise;
+    const copiedCredential = (await copyResponse.json()) as { name: string; id: number };
+    const copiedCredentialName = copiedCredential.name;
 
-    // Delete the original credential
-    await deleteAwxCredential(credentialName, page);
+    // Filter for the copied credential
+    await filterTable(
+      { filterLabel: 'Name', filterValue: copiedCredentialName, clearFilters: true },
+      page
+    );
+    await expect(page.getByRole('link', { name: copiedCredentialName, exact: true })).toBeVisible();
 
-    // Filter for the copied credential (which has a name like "credentialName @ HH:MM:SS")
-    await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-    await filterTable({ filterLabel: 'Name', filterValue: `${credentialName} @` }, page);
-    await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
-
-    // Verify exactly one credential is found (the copy)
-    const copiedRow = page.getByRole('row').filter({ hasText: `${credentialName} @` });
-    await expect(copiedRow).toHaveCount(1);
-
-    // Delete the copied credential using the toolbar action
+    // Delete the copied credential
+    const copiedLink = page.getByRole('link', {
+      name: new RegExp(`^${credentialName} @`),
+      exact: false,
+    });
+    const copiedRow = page.getByRole('row').filter({ has: copiedLink });
     await copiedRow.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'toolbar actions' }).click();
     await page.getByRole('menuitem', { name: 'Delete credentials' }).click();
+    await page.locator('#confirm').click();
+    await page.getByRole('button', { name: 'Delete credential' }).click();
+
+    // Filter for the original credential
+    await filterTable(
+      { filterLabel: 'Name', filterValue: credentialName, clearFilters: true },
+      page
+    );
+
+    // Delete the original credential
+    const originalLink = page.getByRole('link', { name: credentialName, exact: true });
+    const originalRow = page.getByRole('row').filter({ has: originalLink });
+    await originalRow.getByRole('button', { name: 'kebab dropdown toggle' }).click();
+    await page.getByRole('menuitem', { name: 'Delete credential' }).click();
     await page.locator('#confirm').click();
     await page.getByRole('button', { name: 'Delete credential' }).click();
     await expect(page.getByRole('heading', { name: 'Credentials' })).toBeVisible();
