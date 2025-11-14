@@ -44,6 +44,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
 
   const urlId = props?.templateId ? props.templateId : params.id;
   const { error, data: template, refresh } = useGetItem<JobTemplate>(awxAPI`/job_templates`, urlId);
+  const { data: webhookKey } = useGet<{ webhook_key: string }>(template?.related?.webhook_key);
   const instanceGroups = useInstanceGroups(urlId || '0');
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
@@ -224,7 +225,14 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       >
         {template.opa_query_path}
       </PageDetail>
-      <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
+      <PageDetail
+        label={t('Limit')}
+        helpText={t(
+          'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns.'
+        )}
+      >
+        {template.limit}
+      </PageDetail>
       <PageDetail
         label={t('Verbosity')}
         helpText={t('Control the level of output Ansible will produce as the playbook executes.')}
@@ -259,11 +267,37 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       <PageDetail label={t('Provisioning callback URL')} isEmpty={!template.host_config_key}>
         {`${window.location.origin} ${template.url}callback/`}
       </PageDetail>
-      <PageDetail label={t('Webhook service')} isEmpty={!template.webhook_service}>
+      <PageDetail
+        label={t('Webhook service')}
+        helpText={t('Select a webhook service.')}
+        isEmpty={!template.webhook_service}
+      >
         <WebhookService service={template.webhook_service} />
       </PageDetail>
+      <PageDetail
+        label={t('Webhook URL')}
+        helpText={t(
+          'Webhook services can launch jobs with this job template by making a POST request to this URL.'
+        )}
+        isEmpty={!webhookKey?.webhook_key}
+      >
+        {`${window.location.origin}${template.related.webhook_receiver}`}
+      </PageDetail>
+      <PageDetail
+        label={t('Webhook key')}
+        helpText={t('Webhook services can use this as a shared secret.')}
+        isEmpty={!webhookKey?.webhook_key}
+      >
+        {webhookKey?.webhook_key}
+      </PageDetail>
       {summaryFields.webhook_credential && (
-        <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
+        <PageDetail
+          label={t('Webhook credential')}
+          helpText={t(
+            'Optionally select the credential to use to send status updates back to the webhook service.'
+          )}
+          isEmpty={!summaryFields.webhook_credential}
+        >
           <CredentialLabel credential={summaryFields?.webhook_credential} />
         </PageDetail>
       )}
@@ -283,19 +317,40 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           )
         }
       />
-      <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length} fullWidth>
+      <PageDetail
+        label={t('Labels')}
+        isEmpty={!summaryFields.labels?.results?.length}
+        fullWidth
+        helpText={t(
+          `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
+        )}
+      >
         <LabelGroup>
           {summaryFields.labels?.results?.map((label) => (
             <Label key={label.id}>{label.name}</Label>
           ))}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Job tags')} isEmpty={!template.job_tags} fullWidth>
+      <PageDetail
+        label={t('Job tags')}
+        isEmpty={!template.job_tags}
+        fullWidth
+        helpText={t(
+          'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
+        )}
+      >
         <LabelGroup>
           {template.job_tags?.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags} fullWidth>
+      <PageDetail
+        label={t('Skip tags')}
+        isEmpty={!template.skip_tags}
+        fullWidth
+        helpText={t(
+          'Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
+        )}
+      >
         <LabelGroup>
           {template.skip_tags?.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>

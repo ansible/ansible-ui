@@ -171,6 +171,7 @@ export function TemplateSurveyInternal({
           label={t('Survey enabled')}
           id="survey-switch"
           data-cy="survey-switch"
+          data-testid="survey-switch"
           aria-label="Survey enabled"
           hasCheckIcon
           isChecked={template.survey_enabled ?? false}

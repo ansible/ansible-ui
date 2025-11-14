@@ -29,7 +29,12 @@ export function useSurveyColumns(options?: {
               icon={
                 question.required ? (
                   <Tooltip content={t('Required')}>
-                    <Icon status="danger" iconSize="sm" data-cy="survey-question-required">
+                    <Icon
+                      status="danger"
+                      iconSize="sm"
+                      data-cy="survey-question-required"
+                      data-testid="survey-question-required"
+                    >
                       <AsteriskIcon />
                     </Icon>
                   </Tooltip>

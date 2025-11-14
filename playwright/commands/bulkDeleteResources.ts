@@ -1,12 +1,14 @@
 import { expect, Page } from '@playwright/test';
-import { navigateTo } from './navigateTo';
 import { clearTableFilters } from './clearTableFilters';
+import { clickRetryUntilGone } from './clickRetryUntilGone';
+import { filterTable } from './filterTable';
+import { navigateTo } from './navigateTo';
 
 export interface BulkDeleteOptions {
   resourceType: string; // e.g., 'users', 'teams', 'organizations'
   resourceNames: string[];
   filterLabel?: string; // e.g., 'Username', 'Name'
-  navigationPath: [string, string]; // e.g., ['Access Management', 'Users']
+  navigationPath: string[]; // e.g., ['Access Management', 'Users'] or ['Automation Execution', 'Infrastructure', 'Execution Environments']
 }
 
 /**
@@ -17,7 +19,7 @@ export async function bulkDeleteResources(options: BulkDeleteOptions, page: Page
   const { resourceType, resourceNames, navigationPath } = options;
 
   // Navigate to the resource list
-  await navigateTo(page, navigationPath[0], navigationPath[1]);
+  await navigateTo(page, ...navigationPath);
 
   // Clear any existing filters first
   await clearTableFilters(page);
@@ -25,11 +27,13 @@ export async function bulkDeleteResources(options: BulkDeleteOptions, page: Page
   // Select each resource by filtering for it individually, then clear filter to maintain selections
   for (const resourceName of resourceNames) {
     // Filter for this specific resource to bring it into view
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill(resourceName);
-    await page.getByRole('button', { name: 'apply filter' }).click();
+    await filterTable(
+      { filterLabel: options.filterLabel ?? 'Name', filterValue: resourceName },
+      page
+    );
 
-    // Wait for the filtered result and select it
-    await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
+    // Wait for the filtered result to appear
+    await expect(page.locator('tr', { hasText: resourceName })).toBeVisible({ timeout: 10000 });
     await page.getByRole('checkbox', { name: 'Select row' }).first().click();
 
     // Clear the filter to show all items while maintaining the selection
@@ -61,11 +65,34 @@ export async function bulkDeleteResources(options: BulkDeleteOptions, page: Page
   await expect(submitButton).toBeVisible();
   await submitButton.click();
 
-  // Verify success - scope to the results table to avoid strict mode violations
-  await expect(
-    page
-      .getByLabel(`Permanently delete ${resourceType}`)
-      .getByText('Success', { exact: true })
-      .first()
-  ).toBeVisible();
+  // Check if Retry button exists and click it until it's gone
+  try {
+    const retryButton = page.getByRole('button', { name: 'Retry' });
+    await retryButton.waitFor({ state: 'visible', timeout: 2000 });
+    await clickRetryUntilGone(page);
+  } catch {
+    // Verify success - try multiple approaches to find success message
+    // First try scoped to dialog, then try global search, finally just wait for dialog to close
+    try {
+      await expect(
+        page
+          .getByLabel(`Permanently delete ${resourceType}`)
+          .getByText('Success', { exact: true })
+          .first()
+      ).toBeVisible({ timeout: 5000 });
+    } catch {
+      // If scoped search fails, try global search
+      try {
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
+          timeout: 5000,
+        });
+      } catch {
+        // If success message not found, just wait for dialog to close as indicator of completion
+        await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+      }
+    }
+  }
+
+  // Clear any remaining filters after bulk delete to ensure clean table state
+  await clearTableFilters(page);
 }

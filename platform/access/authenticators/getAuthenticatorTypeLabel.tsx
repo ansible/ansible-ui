@@ -16,6 +16,7 @@ export function getAuthenticatorTypeLabel(type: string, t: TFunction<'translatio
     radius: t('Radius'),
     saml: t('SAML'),
     tacacs: t('TACACS+'),
+    azuread: t('Azure AD'),
   };
 
   const shortType = type?.split('.').pop() || type;

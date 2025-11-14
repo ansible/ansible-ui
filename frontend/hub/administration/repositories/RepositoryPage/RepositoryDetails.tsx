@@ -10,7 +10,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { Link, useOutletContext, useParams } from 'react-router-dom';
 import { pulpAPI } from '../../../common/api/formatPath';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { getRepoURL, parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Task } from '../../tasks/Task';
 import { Repository } from '../Repository';
@@ -23,7 +23,7 @@ export function RepositoryDetails() {
   const { repository } = useOutletContext<{ repository: Repository }>();
 
   const { data: distroData, error: distroError } = useGet<{
-    results: { name: string; client_url: string }[];
+    results: { name: string; base_path: string }[];
   }>(params.id ? pulpAPI`/distributions/ansible/ansible/?name=${params.id}` : '');
 
   const repoURL = repository.remote
@@ -34,7 +34,7 @@ export function RepositoryDetails() {
   if ((!distroData && !distroError) || (!remoteData && !remoteError && repository.remote))
     return <LoadingPage breadcrumbs tabs />;
 
-  const distribution: { name: string; client_url: string } | undefined = distroData?.results[0];
+  const distribution: { name: string; base_path: string } | undefined = distroData?.results[0];
 
   return (
     <PageDetails>
@@ -49,7 +49,11 @@ export function RepositoryDetails() {
         )}
       </PageDetail>
       <PageDetail label={t('Repository URL')}>
-        {distribution?.client_url ? <CopyCell text={distribution.client_url} /> : t('None')}
+        {distribution?.base_path ? (
+          <CopyCell text={getRepoURL(distribution.base_path)} />
+        ) : (
+          t('None')
+        )}
       </PageDetail>
       <PageDetail label={t('Labels')}>
         <RepositoryLabels repository={repository} />

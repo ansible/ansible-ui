@@ -780,6 +780,7 @@ function CredentialSubForm({
             label={field.label}
             isRequired={requiredFields.includes(field.id)}
             labelHelp={field.help_text}
+            defaultValue={Boolean(field.default)}
           />
         ))}
     </PageFormSection>

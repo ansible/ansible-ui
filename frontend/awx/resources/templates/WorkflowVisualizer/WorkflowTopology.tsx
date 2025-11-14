@@ -228,6 +228,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
             return (
               <TopologyView
                 data-cy="workflow-visualizer"
+                data-testid="workflow-visualizer"
                 contextToolbar={isFullScreen ? null : <ToolbarHeader />}
                 viewToolbar={<WorkflowVisualizerToolbar />}
                 controlBar={

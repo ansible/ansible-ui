@@ -18,7 +18,7 @@ test(
     const authMethodName = await createAuthenticationMethod(
       {
         name: 'e2e-azure-ad-auth',
-        type: 'Azuread',
+        type: 'Azure AD',
       },
       page
     );

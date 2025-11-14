@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -7,6 +7,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import roleTypes from './mocks/roleTypes.fixture.json';
 import rolePermissions from './mocks/rolePermissions.fixture.json';
 import { PlatformRoles } from './PlatformRoles';
+import { usePlatformRolesFilters } from './hooks/usePlatformRolesFilters';
 
 const mockBulkConfirmation = vi.fn();
 vi.mock('@ansible/ansible-ui-framework', async () => {
@@ -66,6 +67,18 @@ const mockRoles: Record<
     {
       id: 70,
       name: 'EDA Project Admin',
+    },
+    {
+      id: 71,
+      name: 'EDA Credential Admin',
+      description: 'Has all permissions to EDA credentials',
+      managed: true,
+      content_type: 'eda.edacredential',
+      permissions: [
+        'eda.change_edacredential',
+        'eda.delete_edacredential',
+        'eda.view_edacredential',
+      ],
     },
   ],
   galaxy: [
@@ -162,6 +175,15 @@ describe('PlatformRoles', () => {
         const orComponentFilters = url.searchParams.getAll(
           'or__permissions__content_type__service'
         );
+        const resourceTypeFilter = url.searchParams.get('content_type__api_slug');
+
+        // Handle resource type filtering (for testing duplicate label bug fix)
+        if (resourceTypeFilter) {
+          const filteredRoles = ALL_ROLES.filter(
+            (role) => role.content_type === resourceTypeFilter
+          );
+          return HttpResponse.json({ count: filteredRoles.length, results: filteredRoles });
+        }
 
         if (orComponentFilters.length > 0) {
           const combinedRoles = [...mockRoles.awx, ...mockRoles.shared];
@@ -390,6 +412,44 @@ describe('PlatformRoles', () => {
     expectRolesVisible(['Platform Auditor', 'AWX Admin', 'AWX Credential Admin']);
     expectRolesHidden(['EDA Project Admin', 'Galaxy Admin']);
   }, 15000);
+
+  it('should include key property in resource type filter options to handle duplicate labels', () => {
+    // This test verifies the fix where selecting "Credential" from AWX
+    // was incorrectly filtering by EDA Credential due to duplicate label matching
+    const mockResourceTypes = [
+      { name: 'credential', value: 'awx.credential', service: 'awx' },
+      { name: 'edacredential', value: 'eda.edacredential', service: 'eda' },
+    ];
+
+    const { result } = renderHook(() => usePlatformRolesFilters(mockResourceTypes));
+    const filters = result.current;
+
+    // Find the resource type filter
+    const resourceTypeFilter = filters.find((f) => f.key === 'resource_type');
+    expect(resourceTypeFilter).toBeDefined();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    const options = (resourceTypeFilter as any)?.options as Array<{
+      key: string;
+      value: string;
+      label: string;
+    }>;
+
+    // Both credentials should have the same label "Credential" but different keys
+    const awxCredOption = options?.find((o) => o.value === 'awx.credential');
+    const edaCredOption = options?.find((o) => o.value === 'eda.edacredential');
+
+    expect(awxCredOption).toBeDefined();
+    expect(edaCredOption).toBeDefined();
+    expect(awxCredOption?.label).toBe('Credential');
+    expect(edaCredOption?.label).toBe('Credential');
+
+    // The fix: both options must have unique 'key' properties
+    // to prevent the MultiSelect component from incorrectly matching by label
+    expect(awxCredOption?.key).toBe('awx.credential');
+    expect(edaCredOption?.key).toBe('eda.edacredential');
+    expect(awxCredOption?.key).not.toBe(edaCredOption?.key);
+  });
 
   it('should enable custom role row actions (edit/delete)', async () => {
     const { user } = setupTest();

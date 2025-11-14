@@ -1,0 +1,25 @@
+name: SonarQube Static Scans (Main)
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+jobs:
+  sonarcloud:
+    name: SonarQube Static Scans (Main)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
+        with:
+          args: >
+            -Dsonar.scm.revision=${{ github.sha }}

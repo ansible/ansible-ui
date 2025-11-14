@@ -38,6 +38,7 @@ export function AwxAddRoles(props: {
   onClose: () => void;
 }) {
   const { t } = useTranslation();
+
   const progressDialog = useAwxBulkActionDialog<ResourceRolePair>();
 
   const steps: PageWizardStep[] = [

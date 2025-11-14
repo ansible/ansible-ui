@@ -175,7 +175,7 @@ export function PageHeader(props: PageHeaderProps) {
                   </Title>
                 </Popover>
               ) : (
-                <Title data-cy="page-title" headingLevel="h1">
+                <Title data-cy="page-title" data-testid="page-title" headingLevel="h1">
                   {title}
                 </Title>
               )

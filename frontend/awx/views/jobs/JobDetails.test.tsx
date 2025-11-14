@@ -157,4 +157,14 @@ describe('JobDetails Component', () => {
     expect(screen.queryByText('var1: answer1')).toBeInTheDocument();
     expect(screen.queryByText('var2: ')).not.toBeInTheDocument();
   });
+  it('conditionally renders source control branch field', () => {
+    mockJob.scm_branch = 'foo';
+    render(
+      <MemoryRouter>
+        <JobDetails />
+      </MemoryRouter>
+    );
+    expect(screen.getByTestId('label-source-control-branch')).toBeInTheDocument();
+    expect(screen.getByTestId('source-control-branch')).toHaveTextContent('foo');
+  });
 });

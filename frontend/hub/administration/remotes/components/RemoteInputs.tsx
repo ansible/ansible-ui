@@ -7,7 +7,11 @@ import { useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RemoteFormProps } from '../RemoteForm';
+import styled from 'styled-components';
 
+const StyledAlert = styled(Alert)`
+  padding-left: 1rem;
+`;
 interface IRemoteInputs {
   collection_signing?: boolean;
   disableEditName?: boolean;
@@ -68,13 +72,14 @@ export function RemoteInputs({
         isRequired
         validate={isValidUrl}
       />
-      {collection_signing ? (
-        <PageFormGroup
-          label={t('Signed collections only')}
-          labelHelp={t('Download only signed collections')}
-        >
+      <PageFormGroup label={t('Options')} fullWidth>
+        {collection_signing ? (
           <>
-            <PageFormCheckbox<RemoteFormProps> name="signed_only" />
+            <PageFormCheckbox<RemoteFormProps>
+              name="signed_only"
+              label={t('Signed collections only')}
+              labelHelp={t('Download only signed collections')}
+            />
             {isCommunityRemote && signedOnlyInput ? (
               <Alert
                 data-cy="signed-only-warning"
@@ -84,15 +89,23 @@ export function RemoteInputs({
               />
             ) : null}
           </>
-        </PageFormGroup>
-      ) : null}
-      <PageFormGroup
-        label={t('Sync all dependencies')}
-        labelHelpTitle={t('Sync all dependencies')}
-        labelHelp={t('Include all dependencies when syncing a collection.')}
-      >
-        <PageFormCheckbox<RemoteFormProps> name="sync_dependencies" />
+        ) : null}
+
+        <PageFormCheckbox<RemoteFormProps>
+          name="sync_dependencies"
+          label={t('Sync all dependencies')}
+          labelHelpTitle={t('Sync all dependencies')}
+          labelHelp={t('Include all dependencies when syncing a collection.')}
+        />
+        <StyledAlert
+          data-cy="external-sync-warning"
+          isInline
+          isPlain
+          variant="info"
+          title={t`Syncing dependencies outside of repository may cause an issue in repository sync.`}
+        />
       </PageFormGroup>
+
       <PageFormSecret
         onClear={() => {
           handleOnClear('username');
