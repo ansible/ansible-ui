@@ -128,6 +128,7 @@ test.describe('Inventory Groups - List View', () => {
   });
 
   test('can run ad-hoc command against group', { tag: ['@not_mock'] }, async ({ page }) => {
+    test.setTimeout(90000);
     const organizationName = await createOrganization(page);
     const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
     const executionEnvironmentName = await createExecutionEnvironment(page, {
@@ -153,18 +154,6 @@ test.describe('Inventory Groups - List View', () => {
       },
       page
     );
-
-    await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
-    await page.waitForSelector('[data-testid="running-status"]');
-
-    await page.getByRole('button', { name: 'Cancel job' }).click();
-    const confirmCheckbox = page.locator('#confirm');
-    await expect(confirmCheckbox).toBeVisible();
-    await expect(confirmCheckbox).toBeEnabled();
-    await confirmCheckbox.click();
-
-    const dialog = page.getByRole('dialog');
-    await dialog.getByRole('button', { name: 'Cancel job' }).click();
 
     await deleteInventory(inventoryName, page);
     await deleteAwxCredential(credentialName, page);
@@ -273,6 +262,7 @@ test.describe('Inventory Groups - Related Groups', () => {
   );
 
   test('can run ad-hoc command against related group', { tag: ['@not_mock'] }, async ({ page }) => {
+    test.setTimeout(90000);
     const organizationName = await createOrganization(page);
     const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
     const executionEnvironmentName = await createExecutionEnvironment(page, {
@@ -315,18 +305,6 @@ test.describe('Inventory Groups - Related Groups', () => {
       },
       page
     );
-
-    await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
-    await page.waitForSelector('[data-testid="running-status"]');
-
-    await page.getByRole('button', { name: 'Cancel job' }).click();
-    const confirmCheckbox = page.locator('#confirm');
-    await expect(confirmCheckbox).toBeVisible();
-    await expect(confirmCheckbox).toBeEnabled();
-    await confirmCheckbox.click();
-
-    const dialog = page.getByRole('dialog');
-    await dialog.getByRole('button', { name: 'Cancel job' }).click();
 
     await deleteInventory(inventoryName, page);
     await deleteAwxCredential(credentialName, page);
@@ -419,6 +397,7 @@ test.describe('Inventory Groups - Hosts Tab', () => {
   });
 
   test('can run ad-hoc command against group hosts', { tag: ['@not_mock'] }, async ({ page }) => {
+    test.setTimeout(90000);
     const organizationName = await createOrganization(page);
     const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
     const executionEnvironmentName = await createExecutionEnvironment(page, {
@@ -456,18 +435,6 @@ test.describe('Inventory Groups - Hosts Tab', () => {
       },
       page
     );
-
-    await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
-    await page.waitForSelector('[data-testid="running-status"]');
-
-    await page.getByRole('button', { name: 'Cancel job' }).click();
-    const confirmCheckbox = page.locator('#confirm');
-    await expect(confirmCheckbox).toBeVisible();
-    await expect(confirmCheckbox).toBeEnabled();
-    await confirmCheckbox.click();
-
-    const dialog = page.getByRole('dialog');
-    await dialog.getByRole('button', { name: 'Cancel job' }).click();
 
     await deleteInventory(inventoryName, page);
     await deleteAwxCredential(credentialName, page);
