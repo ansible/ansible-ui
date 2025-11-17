@@ -22,6 +22,8 @@ export const coverageOptions: CoverageReportOptions = {
     ['raw', { outputDir: 'raw' }],
     // Istanbul JSON report
     ['json', { outputFile: 'coverage-final.json' }],
+    // LCOV report for SonarQube
+    ['lcov'],
   ],
   sourcePath: (filePath, info) => {
     const __dirname = import.meta.dirname;
