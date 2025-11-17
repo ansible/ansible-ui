@@ -71,6 +71,32 @@ describe('AnsibleLogin', () => {
     });
   });
 
+  describe('autocomplete attributes on login form inputs', () => {
+    it('should set autocomplete="new-password" on password input', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in to your account" />
+        </MemoryRouter>
+      );
+
+      const passwordInput = container.querySelector('#pf-login-password-id') as HTMLInputElement;
+      expect(passwordInput).toBeInTheDocument();
+      expect(passwordInput).toHaveAttribute('autocomplete', 'new-password');
+    });
+
+    it('should set autocomplete="off" on username input', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in to your account" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = container.querySelector('#pf-login-username-id') as HTMLInputElement;
+      expect(usernameInput).toBeInTheDocument();
+      expect(usernameInput).toHaveAttribute('autocomplete', 'off');
+    });
+  });
+
   describe('textContent HTML sanitization', () => {
     it('should render custom footer content', () => {
       const htmlContent = 'Welcome to AAP';
