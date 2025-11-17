@@ -116,6 +116,8 @@ jobs:
           aap_version: ${{ needs.check-comment.outputs.aap_version }}
           aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
           aap_test_secrets_repo_github_token: ${{ secrets.AAP_TEST_SECRETS_REPO_GITHUB_TOKEN }}
+          quay_registry_user: ${{ secrets.QUAY_USER }}
+          quay_registry_token: ${{ secrets.QUAY_TOKEN }}
 
       - name: Display AAP deployment info
         run: |
