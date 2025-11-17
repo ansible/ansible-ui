@@ -139,13 +139,13 @@ const config: PlaywrightTestConfig = {
     },
     {
       name: 'coverage setup',
-      testMatch: /coverage\.setup\.ts/,
+      testMatch: /tests\/coverage-utils\/coverage\.setup\.ts/,
       teardown: 'coverage teardown',
       dependencies: ['global setup'],
     },
     {
       name: 'coverage teardown',
-      testMatch: /coverage\.teardown\.ts/,
+      testMatch: /tests\/coverage-utils\/coverage\.teardown\.ts/,
     },
 
     /* Test against mobile viewports. */

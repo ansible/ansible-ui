@@ -245,12 +245,12 @@ jobs:
           path: playwright/test-results
           retention-days: 7
 
-      - name: Upload Coverage Reports
+      - name: Upload Playwright Coverage Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-reports-${{ matrix.container }}
-          path: coverage/playwright/
+          name: playwright-coverage-${{ matrix.container }}
+          path: playwright/coverage/playwright/
           retention-days: 7
 
       - name: Cleanup AAP deployment
@@ -260,12 +260,74 @@ jobs:
           kube_config: ${{ steps.deploy.outputs.kube_config }}
           aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
 
+  merge-coverage:
+    name: Merge Coverage Reports
+    needs:
+      - check-comment
+      - matrix-setup
+      - deploy-and-test
+    if: always() && needs.check-comment.outputs.triggered == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-comment.outputs.pr_sha }}
+          fetch-depth: 1
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Download all Playwright coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: playwright-coverage-*
+          path: playwright-coverage-artifacts
+
+      - name: Merge Playwright coverage reports
+        run: |
+          mkdir -p coverage/playwright-merged
+          # Use nyc to merge all coverage-final.json files from each shard
+          npx nyc merge playwright-coverage-artifacts coverage/playwright-merged/coverage-final.json
+          # Create temp directory for nyc
+          mkdir -p .nyc_output
+          # Copy merged coverage to nyc temp dir
+          cp coverage/playwright-merged/coverage-final.json .nyc_output/out.json
+          # Generate lcov report from merged coverage
+          npx nyc report --reporter=lcov --report-dir=coverage/playwright-merged
+
+      - name: Upload merged Playwright coverage for SonarQube
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-coverage-merged
+          path: coverage/playwright-merged/
+          retention-days: 7
+
   report-results:
     name: Report Test Results
     needs:
       - check-comment
       - matrix-setup
       - deploy-and-test
+      - merge-coverage
     if: always() && needs.check-comment.outputs.triggered == 'true'
     runs-on: ubuntu-latest
     steps:

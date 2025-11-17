@@ -1,0 +1,198 @@
+name: SonarQube Coverage Analysis
+on:
+  workflow_run:
+    workflows:
+      - Ephemeral AAP Playwright
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to analyze'
+        required: true
+        type: number
+      platform_pr_run_id:
+        description: 'Platform PR workflow run ID (for Vitest coverage)'
+        required: true
+        type: number
+      playwright_run_id:
+        description: 'Playwright workflow run ID (for Playwright coverage)'
+        required: true
+        type: number
+permissions:
+  actions: read
+  contents: read
+  statuses: write
+  pull-requests: read
+jobs:
+  sonarqube-with-coverage:
+    name: SonarQube Coverage Analysis
+    runs-on: ubuntu-latest
+    # Run if Playwright workflow completed (success or failure), but not if cancelled
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
+    steps:
+      - name: Report initial status to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = '${{ github.event.workflow_run.head_sha || github.event.inputs.pr_number }}';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: sha,
+              state: 'pending',
+              context: 'SonarQube Coverage Analysis',
+              description: 'Coverage analysis in progress...',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            });
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR information from Playwright workflow
+        if: github.event_name == 'workflow_run'
+        id: get_pr_info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Get the Playwright workflow run to extract PR information
+            const run = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });
+            
+            // The PR number is embedded in the Playwright workflow's CURRENTS_CI_BUILD_ID
+            // Format: pr-{PR_NUMBER}-{RUN_ID}-{RUN_ATTEMPT}
+            const headBranch = run.data.head_branch;
+            
+            // Try to find the PR from the head branch
+            const pulls = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: `${context.repo.owner}:${headBranch}`
+            });
+            
+            if (pulls.data.length === 0) {
+              core.setFailed('Could not find PR for this workflow run');
+              return;
+            }
+            
+            const pr = pulls.data[0];
+            core.setOutput('pr_number', pr.number);
+            core.setOutput('pr_sha', pr.head.sha);
+            core.setOutput('pr_head', pr.head.ref);
+            core.setOutput('pr_base', pr.base.ref);
+
+      - name: Set PR information from inputs
+        if: github.event_name == 'workflow_dispatch'
+        id: set_pr_info
+        run: |
+          echo "pr_number=${{ github.event.inputs.pr_number }}" >> $GITHUB_OUTPUT
+
+      - name: Get PR details
+        id: pr_details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = '${{ steps.get_pr_info.outputs.pr_number || github.event.inputs.pr_number }}';
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: parseInt(prNumber)
+            });
+            core.setOutput('pr_sha', pr.data.head.sha);
+            core.setOutput('pr_head', pr.data.head.ref);
+            core.setOutput('pr_base', pr.data.base.ref);
+
+      - name: Find Platform PR workflow run
+        if: github.event_name == 'workflow_run'
+        id: find_platform_run
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = '${{ steps.get_pr_info.outputs.pr_number }}';
+            const prSha = '${{ steps.pr_details.outputs.pr_sha }}';
+            
+            // Find the most recent Platform PR workflow run for this PR
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'platform-pull-request.yml',
+              event: 'pull_request',
+              status: 'completed',
+              head_sha: prSha,
+              per_page: 1
+            });
+            
+            if (runs.data.workflow_runs.length === 0) {
+              core.setFailed('Could not find Platform PR workflow run');
+              return;
+            }
+            
+            core.setOutput('platform_run_id', runs.data.workflow_runs[0].id);
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch Vitest Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: vitest-coverage
+          path: coverage/vitest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.platform_pr_run_id || steps.find_platform_run.outputs.platform_run_id }}
+
+      - name: Fetch Playwright Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-coverage-merged
+          path: coverage/playwright
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.playwright_run_id || github.event.workflow_run.id }}
+
+      - name: Verify coverage files
+        run: |
+          echo "=== Vitest Coverage ==="
+          ls -lh coverage/vitest/ || echo "Vitest coverage not found"
+          echo ""
+          echo "=== Playwright Coverage ==="
+          ls -lh coverage/playwright/ || echo "Playwright coverage not found"
+
+      - name: Checkout Code for PR
+        run: |
+          gh pr checkout ${{ steps.get_pr_info.outputs.pr_number || github.event.inputs.pr_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
+        with:
+          args: >
+            -Dsonar.scm.revision=${{ steps.pr_details.outputs.pr_sha }}
+            -Dsonar.pullrequest.key=${{ steps.get_pr_info.outputs.pr_number || github.event.inputs.pr_number }}
+            -Dsonar.pullrequest.branch=${{ steps.pr_details.outputs.pr_head }}
+            -Dsonar.pullrequest.base=${{ steps.pr_details.outputs.pr_base }}
+
+      - name: Report status to PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conclusion = '${{ job.status }}' === 'success' ? 'success' : 'failure';
+            const prSha = '${{ steps.pr_details.outputs.pr_sha }}';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: prSha,
+              state: conclusion,
+              context: 'SonarQube Coverage Analysis',
+              description: conclusion === 'success' ? 'Coverage analysis completed' : 'Coverage analysis failed',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            });
