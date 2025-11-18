@@ -96,8 +96,14 @@ export async function createSmartInventory(
 export async function createConstructedInventory(
   options: {
     name?: string;
+    description?: string;
     organizationName: string;
-    instanceGroupName?: string;
+    instanceGroupNames?: string[];
+    inputInventoryNames?: string[];
+    cacheTimeout?: number;
+    verbosity?: string;
+    limit?: string;
+    sourceVars?: string;
     labelName?: string;
   },
   page: Page
@@ -111,6 +117,66 @@ export async function createConstructedInventory(
     })
     .click();
 
+  await page.getByPlaceholder('Enter inventory name').fill(inventoryName);
+  if (options.description) {
+    await page.getByPlaceholder('Enter description').fill(options.description);
+  }
+  await singleSelectByLabel('Organization', options.organizationName, page);
+
+  // instance groups
+  if (options.instanceGroupNames && options.instanceGroupNames.length > 0) {
+    await page.getByLabel('Instance groups').click();
+    for (const instanceGroupName of options.instanceGroupNames) {
+      await page
+        .locator('#instance-group-select-search')
+        .getByLabel('Search input')
+        .fill(instanceGroupName);
+      await page.getByLabel(instanceGroupName).check();
+    }
+  }
+
+  // input inventories
+  if (options.inputInventoryNames && options.inputInventoryNames.length > 0) {
+    await page.getByLabel('Input inventories').click();
+    for (const inventoryName of options.inputInventoryNames) {
+      await page.locator('#inventories-search').getByLabel('Search input').fill(inventoryName);
+      await page.getByLabel(inventoryName).check();
+    }
+  }
+
+  // cache timeout
+  if (options.cacheTimeout !== undefined) {
+    await page.getByLabel('Cache timeout').clear();
+    await page.getByLabel('Cache timeout').fill(String(options.cacheTimeout));
+  }
+
+  // verbosity
+  if (options.verbosity) {
+    await page.getByLabel('Verbosity').click();
+    await page.getByRole('option', { name: options.verbosity }).click();
+  }
+
+  // limit
+  if (options.limit) {
+    await page.getByLabel('Limit').fill(options.limit);
+  }
+
+  // source vars
+  if (options.sourceVars) {
+    await page.locator('.view-line').click();
+    await page.getByRole('textbox', { name: 'Editor content' }).fill(options.sourceVars);
+  }
+
+  // label
+  if (options.labelName) {
+    await page.getByPlaceholder('Select or create labels').click();
+    await page.getByPlaceholder('Select or create labels').fill(options.labelName);
+    await page.getByRole('option', { name: `Create "${options.labelName}"` }).click();
+  }
+
+  // create inventory
+  await page.getByRole('button', { name: 'Create inventory' }).click();
+  await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
   return inventoryName;
 }
 
