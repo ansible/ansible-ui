@@ -5,6 +5,7 @@ import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAn
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { getTableRow } from '@ansible/playwright/commands/getTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { createWorkflowJobTemplate } from '../../workflow-visualizer/workflow-visualizer-utils';
 import {
   addApprovalNode,
@@ -242,4 +243,63 @@ test.describe('Workflow Approvals - Bulk Approve/Deny Actions', () => {
       }
     );
   }
+});
+
+test.describe('Workflow Approvals - Tab Navigation and Approval', () => {
+  test(
+    'should navigate to the "Details" and "Workflow Job Details" tabs and approve from "Details" tab',
+    {
+      tag: ['@not_mock'],
+    },
+    async ({ page }) => {
+      const approvalName = createE2EName();
+      let workflowTemplateName: string;
+
+      await test.step('Setup: Create and launch workflow with approval node', async () => {
+        workflowTemplateName = await createWorkflowJobTemplate(page);
+        await addApprovalNode(page, { name: approvalName, description: workflowTemplateName });
+        await page.getByRole('button', { name: 'Save' }).click();
+
+        const alertToaster = page.getByTestId('alert-toaster');
+        await expect(alertToaster).toContainText('Successfully saved');
+
+        await page.getByRole('button', { name: 'Launch workflow' }).click();
+        await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible();
+        await expect(page.getByTestId('running-status')).toHaveText('Running');
+      });
+
+      await test.step('Navigate to approval details page', async () => {
+        await navigateTo(page, 'Automation Execution', 'Administration', 'Workflow Approvals');
+        await clickTableRow({ filterLabel: 'Name', text: approvalName }, page);
+
+        await expect(page.getByTestId('status')).toHaveText('Never expires');
+      });
+
+      await test.step('Verify approval "Workflow Job Details" tab shows running job status', async () => {
+        await page.getByRole('tab', { name: 'Workflow Job Details', exact: true }).click();
+        await expect(page.getByTestId('status')).toHaveText('Running');
+      });
+
+      await test.step('Approve workflow approval from "Details" tab', async () => {
+        await page.getByRole('tab', { name: 'Details', exact: true }).click();
+        await page.getByRole('button', { name: 'Approve' }).click();
+
+        const dialog = page.getByRole('dialog');
+        await expect(dialog).toBeVisible();
+        await dialog.locator('#confirm').click();
+        await dialog.getByRole('button', { name: 'Approve workflow approvals' }).click();
+        await expect(dialog.getByRole('progressbar')).toBeVisible();
+        await dialog.getByRole('button', { name: 'Close' }).click();
+        await expect(dialog).not.toBeVisible();
+
+        await expect(page.getByTestId('status')).toContainText('Approved', {
+          timeout: 20000,
+        });
+      });
+
+      await test.step('Cleanup workflow template', async () => {
+        await deleteWorkflowTemplateAPI({ workflowTemplateName }, page);
+      });
+    }
+  );
 });
