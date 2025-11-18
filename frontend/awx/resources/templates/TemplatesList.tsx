@@ -9,7 +9,7 @@ import {
   PageTable,
   useGetPageUrl,
 } from '../../../../framework';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { PageActionsPinned } from '../../../../framework/PageActions/PageActionsPinned';
 import { PageLoadingTable } from '../../../../framework/PageTable/PageLoadingTable';
 import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
 import { useOptions } from '../../../common/crud/useOptions';
@@ -119,7 +119,7 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
           canCreateJobTemplate || canCreateWFJobTemplate
             ? undefined
             : t(
-                'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
+                'Job template creation requires project access. You are not currently assigned to any projects. Additionally, you do not have permissions to create a workflow job template. Please contact your organization administrator if there is an issue with your access.'
               ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
@@ -130,7 +130,7 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
             label: t('Create job template'),
             isDisabled: canCreateJobTemplate
               ? undefined
-              : 'You do not have permission to create a job template. Please contact your organization administrator if there is an issue with your access.',
+              : 'Job template creation requires project access. You are not currently assigned to any projects.',
             href: (() => {
               if (props.projectId) {
                 return getPageUrl(AwxRoute.CreateJobTemplate, {
@@ -181,8 +181,6 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
     onTemplateCopied: view.refresh,
   });
 
-  const canCreateJobs = canCreateJobTemplate || canCreateWFJobTemplate;
-
   if (isLoadingPermissions) return <PageLoadingTable />;
 
   return (
@@ -199,24 +197,18 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
             title={t('No templates match the selected domains')}
             description={t('Please select a different domain or clear the current selection.')}
           />
-        ) : canCreateJobs ? (
+        ) : canCreateJobTemplate || canCreateWFJobTemplate ? (
           <PageTableEmptyState
             title={t('No templates yet')}
-            description={t('Please create a template by using the button below.')}
+            description={t('Please create a template using the button below.')}
           >
-            <ButtonLink
-              href={getPageUrl(AwxRoute.CreateJobTemplate)}
-              variant={ButtonVariant.primary}
-              icon={<PlusCircleIcon />}
-            >
-              {t('Create template')}
-            </ButtonLink>
+            <PageActionsPinned actions={toolbarActions.slice(0, 1)} />
           </PageTableEmptyState>
         ) : (
           <PageTableEmptyState
-            title={t('You do not have permission to create a template')}
+            title={t('No templates yet')}
             description={t(
-              'Please contact your organization administrator if there is an issue with your access.'
+              'Job template creation requires project access. You are not currently assigned to any projects. Additionally, you do not have permissions to create a workflow job template. Please contact your organization administrator if there is an issue with your access.'
             )}
           />
         )
