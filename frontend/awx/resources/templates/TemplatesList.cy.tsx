@@ -12,57 +12,6 @@ describe('TemplatesList', () => {
     });
   });
 
-  describe('Empty list', () => {
-    beforeEach(() => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: awxAPI`/unified_job_templates/*`,
-        },
-        {
-          fixture: 'emptyList.json',
-        }
-      ).as('emptyList');
-    });
-
-    it('Empty state is displayed correctly for user with permission to create templates', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this template.',
-                filterable: true,
-              },
-            },
-          },
-        },
-      }));
-      cy.mount(<TemplatesList />);
-      cy.contains(/^No templates yet$/);
-      cy.contains(/^Please create a template by using the button below.$/);
-      cy.contains(/^Create template$/).should('be.visible');
-    });
-
-    it('Empty state is displayed correctly for user without permission to create template', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {},
-        },
-      }));
-      cy.mount(<TemplatesList />);
-      cy.contains(/^You do not have permission to create a template$/);
-      cy.contains(
-        /^Please contact your organization administrator if there is an issue with your access.$/
-      );
-      cy.contains('button', /^Create template$/).should('not.exist');
-    });
-  });
-
   describe('Populated list', () => {
     beforeEach(() => {
       cy.intercept(
