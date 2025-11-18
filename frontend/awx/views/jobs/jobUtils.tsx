@@ -1,4 +1,8 @@
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
+import {
+  parseJSONPreservingLargeInts,
+  stringifyPreservingLargeInts,
+} from '@ansible/ansible-ui-framework/utils/jsonUtils';
 import { useMemo } from 'react';
 import { awxAPI } from '../../common/api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
@@ -163,16 +167,21 @@ export function useGetLaunchedByDetails() {
   return getLaunchedByDetails;
 }
 
-// Filter out empty string values from extra_vars
+/**
+ * Filter out empty string values from extra_vars while preserving large integer precision.
+ *
+ * Uses precision-preserving JSON utilities to prevent large integers (>16 digits)
+ * from being converted to scientific notation.
+ */
 export const getFilteredExtraVars = (
   extraVars: string | null | undefined
 ): string | null | undefined => {
   if (!extraVars) return extraVars;
 
   try {
-    const parsed = JSON.parse(extraVars) as Record<string, unknown>;
+    const parsed = parseJSONPreservingLargeInts(extraVars) as Record<string, unknown>;
     const filtered = Object.fromEntries(Object.entries(parsed).filter(([, value]) => value !== ''));
-    return JSON.stringify(filtered);
+    return stringifyPreservingLargeInts(filtered);
   } catch (error) {
     return extraVars;
   }
