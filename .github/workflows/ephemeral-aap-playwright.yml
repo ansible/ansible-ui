@@ -314,7 +314,21 @@ jobs:
           # Generate lcov report from merged coverage
           npx nyc report --reporter=lcov --report-dir=coverage/playwright-merged
 
-      - name: Upload merged Playwright coverage for SonarQube
+      - name: Save PR information for other workflows
+        run: |
+          mkdir -p pr-info
+          echo "${{ needs.check-comment.outputs.pr_number }}" > pr-info/pr_number.txt
+          echo "${{ needs.check-comment.outputs.pr_sha }}" > pr-info/pr_sha.txt
+          echo "${{ needs.check-comment.outputs.pr_ref }}" > pr-info/pr_ref.txt
+
+      - name: Upload PR information artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-info
+          path: pr-info/
+          retention-days: 7
+
+      - name: Upload Playwright coverage artifacts
         uses: actions/upload-artifact@v4
         with:
           name: playwright-coverage-merged
