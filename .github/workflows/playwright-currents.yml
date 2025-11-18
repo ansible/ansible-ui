@@ -33,7 +33,12 @@ on:
       PARALLEL_TESTS:
         type: string
         required: false
-        default: matrix.shard
+        default: '4'
+      TIMEOUT_MINUTES:
+        type: string
+        required: false
+        default: '60'
+
     secrets:
       PLATFORM_USERNAME:
         required: false
@@ -53,13 +58,13 @@ jobs:
       - name: Generate matrix
         id: set-matrix
         run: |
-          PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || 4 }}
+          PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}
           matrix=$(seq 1 $PARALLEL_TESTS | jq -s -c .)
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
           echo "Generated matrix for $PARALLEL_TESTS parallel tests: $matrix"
 
   playwright-tests:
-    timeout-minutes: 60
+    timeout-minutes: ${{ fromJSON(inputs.TIMEOUT_MINUTES || '60') }}
     runs-on: ubuntu-latest
     needs: generate-matrix
     strategy:
@@ -104,13 +109,13 @@ jobs:
       run: |
         echo "PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER || 'https://localhost:4100' }}" >> $GITHUB_ENV
         echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}" >> $GITHUB_ENV
-        echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME || '' }}" >> $GITHUB_ENV
-        echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD || '' }}" >> $GITHUB_ENV
+        echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME }}" >> $GITHUB_ENV
+        echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}" >> $GITHUB_ENV
         echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
         echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
         # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
         # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
-        echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || matrix.shard }}" >> $GITHUB_ENV
+        echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}" >> $GITHUB_ENV
 
     - name: Setup coverage directory
       working-directory: ./playwright
@@ -178,7 +183,7 @@ jobs:
       run: docker stop platform-ui
 
   publish-results:
-    if: always()
+    if: ${{ !cancelled() }}
     needs: playwright-tests
     runs-on: ubuntu-latest
     steps:
