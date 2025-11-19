@@ -1,6 +1,7 @@
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
 import { RelaunchTemplate } from '../../resources/templates/TemplatePage/RelaunchTemplateWithPasswords';
 import { JobDetails } from '../../views/jobs/JobDetails';
 import { JobOutput } from '../../views/jobs/JobOutput/JobOutput';
@@ -35,6 +36,10 @@ export function useAwxJobsRoutes() {
               id: AwxRoute.JobDetails,
               path: 'details',
               element: <JobDetails />,
+            },
+            {
+              path: '',
+              element: <Navigate to="output" replace />,
             },
           ],
         },
