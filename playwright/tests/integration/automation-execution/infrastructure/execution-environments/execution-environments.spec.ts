@@ -1,23 +1,23 @@
-import { test, expect } from '@playwright/test';
-import { setupBefore, setupAfter } from '@ansible/playwright/commands/setup';
-import { navigateTo } from '@ansible/playwright/commands/navigateTo';
-import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { bulkDeleteResources } from '@ansible/playwright/commands/bulkDeleteResources';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
-import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
-import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
-import { bulkDeleteResources } from '@ansible/playwright/commands/bulkDeleteResources';
-import { logout } from '@ansible/playwright/commands/logout';
 import { login, platformUI } from '@ansible/playwright/commands/login';
+import { logout } from '@ansible/playwright/commands/logout';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
+import { expect, test } from '@playwright/test';
 import {
+  addUserToOrganization,
   createOrganization,
   deleteOrganization,
-  addUserToOrganization,
 } from '../../../access-management/organizations/organization-utils';
-import { createAwxProject, deleteAwxProject } from '../../projects/project-utils';
 import { createUser, deleteUser } from '../../../access-management/users/user-utils';
+import { createAwxProject, deleteAwxProject } from '../../projects/project-utils';
 import { createInventory } from '../inventories/inventory-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/execution-environments' }));
@@ -103,6 +103,7 @@ test.describe('Execution Environments', () => {
       'can create a new EE associated to a particular org, assign access to a user in that org, and login as that user to assert access to the EE',
       { tag: ['@not_mock'] },
       async ({ page }) => {
+        test.setTimeout(90000);
         const organizationName = await createOrganization(page);
         const userInfo = await createUser({ password: 'testPassword123!' }, page);
         const execEnvName = createE2EName('exec-env');

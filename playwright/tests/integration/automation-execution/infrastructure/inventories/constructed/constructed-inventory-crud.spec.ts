@@ -1,3 +1,7 @@
+import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { ConstructedInventory, RegularInventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { awxAPI, gatewayAPI } from '@ansible/playwright/commands/apiClient';
 import { expect, test } from '@playwright/test';
 import { clickPageAction } from '../../../../../../commands/clickPageAction';
 import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndAssertDeletion';
@@ -5,10 +9,6 @@ import { createE2EName } from '../../../../../../commands/createE2EName';
 import { filterTableByText } from '../../../../../../commands/filterTableByText';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
-import { awxAPI, gatewayAPI } from '@ansible/playwright/commands/apiClient';
-import { Organization } from '@ansible/awx-ui/interfaces/Organization';
-import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
-import { RegularInventory, ConstructedInventory } from '@ansible/awx-ui/interfaces/Inventory';
 import { createInstanceGroupAPI } from '../../instance-groups/instance-group-utils';
 import { createConstructedInventory } from '../inventory-utils';
 
@@ -288,9 +288,22 @@ test.describe('Constructed Inventory', () => {
         // Update source vars to add strict mode and bad variables
         await page.locator('.view-line').click();
         await page.keyboard.press('Control+a');
-        await page.keyboard.type(
-          `plugin: constructed\nstrict: true\ngroups:\n  is_shutdown: "state | default('running') == 'shutdown'"\n  product_dev: "account_alias == 'product_dev'"`
-        );
+
+        // Type YAML line by line with actual Enter key presses
+        const yamlLines = [
+          `plugin: constructed`,
+          `strict: true`,
+          `groups:`,
+          `  is_shutdown: "state | default('running') == 'shutdown'"`,
+          `  product_dev: "account_alias == 'product_dev'"`,
+        ];
+
+        for (let i = 0; i < yamlLines.length; i++) {
+          await page.keyboard.type(yamlLines[i]);
+          if (i < yamlLines.length - 1) {
+            await page.keyboard.press('Enter');
+          }
+        }
 
         // Save and wait for navigation
         await page.getByRole('button', { name: 'Save inventory' }).click();
