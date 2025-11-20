@@ -8,6 +8,7 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Credential } from '../../../interfaces/Credential';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { Schedule } from '../../../interfaces/Schedule';
 
 import { ScheduleResourceInputs } from '../components/ScheduleResourceInputs';
 import { ScheduleTypeInputs } from '../components/ScheduleTypeInputs';
@@ -122,6 +123,7 @@ export function ScheduleSelectStep(props: {
         let instanceGroups: InstanceGroup[] = [];
         let scheduleLabels: Label[] = [];
         let surveySpec: Survey | undefined;
+        const surveyAnswers: { [key: string]: string | number | string[] } = {};
         if (schedule_id) {
           if (launchConfig.ask_credential_on_launch) {
             const response = await requestGet<AwxItemsResponse<Credential>>(
@@ -143,6 +145,21 @@ export function ScheduleSelectStep(props: {
           }
           if (launchConfig.survey_enabled) {
             surveySpec = await requestGet<Survey>(`${endPoint}survey_spec/`);
+            // Fetch the schedule to get extra_data with survey answers
+            const scheduleData = await requestGet<Schedule>(awxAPI`/schedules/${schedule_id}/`);
+            // Extract survey answers from extra_data
+            if (surveySpec?.spec && scheduleData.extra_data) {
+              surveySpec.spec.forEach((spec) => {
+                const value = scheduleData.extra_data[spec.variable];
+                if (
+                  value !== undefined &&
+                  value !== null &&
+                  (typeof value === 'string' || typeof value === 'number' || Array.isArray(value))
+                ) {
+                  surveyAnswers[spec.variable] = value as string | number | string[];
+                }
+              });
+            }
           }
         }
         const promptValues: PromptFormValues = await getSchedulePromptValues(
@@ -163,6 +180,7 @@ export function ScheduleSelectStep(props: {
             resource,
             launch_config: launchConfig,
           },
+          survey: Object.keys(surveyAnswers).length > 0 ? { survey: surveyAnswers } : prev.survey,
           details: { ...prev.details, resourceId: urlId, resource },
         }));
         setWizardData((prev) => ({

@@ -58,7 +58,7 @@ export interface ScheduleFormWizard {
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
   schedule_days_to_keep: number;
-  survey: { [key: string]: string };
+  survey: { [key: string]: string | number | string[] };
   enabled: boolean;
 }
 
@@ -83,7 +83,7 @@ export type BaseSchedulePayload = {
   timezone: string;
   rrule: string;
   unified_job_template?: number;
-  extra_data?: { [x: string]: string };
+  extra_data?: { [x: string]: string | number | string[] };
 };
 
 export type ScheduleAccessoriesPayload = BaseSchedulePayload & {

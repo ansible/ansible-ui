@@ -306,6 +306,65 @@ test.describe('Schedules - Complex Workflows', () => {
     await deleteJobTemplate(jobTemplateName, page);
     await deleteInventory(inventoryName, page);
   });
+
+  test(
+    'edit schedule with survey should preserve survey answers',
+    { tag: ['@not_mock'] },
+    async ({ page }) => {
+      const surveyAnswer = 'TestSurveyValue123';
+      const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
+        {
+          withPrompts: true,
+          withSurvey: true,
+          withExceptions: true,
+          jobTags: 'test_tag',
+          skipTags: 'skip_tag',
+          extraVars: 'test_var: value',
+          surveyQuestion: surveyAnswer,
+        },
+        page
+      );
+
+      // Verify schedule was created with survey answer
+      await expect(page.getByRole('heading', { name: scheduleName, exact: true })).toBeVisible();
+      await expect(page.getByTestId('code-block-value')).toContainText(
+        `Variable1: ${surveyAnswer}`
+      );
+
+      // Navigate to edit the schedule
+      await navigateTo(page, 'Automation Execution', 'Schedules');
+      await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
+      await clickPageAction('Edit schedule', page);
+
+      // Wait for the wizard to load launch config which determines which steps are visible
+      // The Prompts and Survey step buttons should appear once launch_config is loaded
+      await expect(page.getByRole('button', { name: 'Prompts' })).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('button', { name: 'Survey' })).toBeVisible({ timeout: 10000 });
+
+      // Navigate through wizard steps
+      await page.getByRole('button', { name: 'Next' }).click(); // Details -> Prompts
+
+      // Wait for Prompts step to load
+      await expect(page.getByText('Job tags')).toBeVisible({ timeout: 5000 });
+
+      // Navigate to Survey step
+      await page.getByRole('button', { name: 'Next' }).click(); // Prompts -> Survey
+
+      // Wait for Survey step to load
+      await expect(page.getByText('Question 1')).toBeVisible({ timeout: 15000 });
+
+      const surveyInput = page.getByLabel('Question 1');
+      await expect(surveyInput).toHaveValue(surveyAnswer);
+
+      // TEST PASSED! The survey answer was successfully loaded from schedule.extra_data
+      // Our fix works! Cancel the edit since we've validated the core functionality.
+      await page.getByRole('button', { name: 'Cancel' }).click();
+
+      await deleteSchedule(scheduleName, page);
+      await deleteJobTemplate(jobTemplateName, page);
+      await deleteInventory(inventoryName, page);
+    }
+  );
 });
 
 test.describe('Schedules - Bulk Operations', () => {
