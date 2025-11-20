@@ -38,8 +38,10 @@ test.describe('Job Template Form - Validation', () => {
       await page.locator('#project-select').click();
       await page.getByRole('option', { name: projectName }).click();
 
-      await page.getByPlaceholder('Add a project, then select a').fill('hello_world.yml');
-      await page.getByRole('option', { name: 'hello_world.yml' }).click();
+      // Verify playbook was auto-selected since Demo Project has only one playbook
+      await expect(page.getByTestId('playbook-form-group').locator('input')).toHaveValue(
+        'hello_world.yml'
+      );
 
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(machineCredential1);
@@ -99,8 +101,10 @@ test.describe('Job Template Form - Validation', () => {
       await page.locator('#project-select').click();
       await page.getByRole('option', { name: projectName }).click();
 
-      await page.getByPlaceholder('Add a project, then select a').fill('hello_world.yml');
-      await page.getByRole('option', { name: 'hello_world.yml' }).click();
+      // Verify playbook was auto-selected since Demo Project has only one playbook
+      await expect(page.getByTestId('playbook-form-group').locator('input')).toHaveValue(
+        'hello_world.yml'
+      );
 
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(vaultCredential1);
