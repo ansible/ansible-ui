@@ -9,6 +9,7 @@ permissions:
   pull-requests: write
   issues: write
   actions: read
+  statuses: write
 
 jobs:
   check-comment:
@@ -55,6 +56,21 @@ jobs:
               repo: context.repo.repo,
               comment_id: context.payload.comment.id,
               content: 'rocket'
+            });
+
+      - name: Report pending status to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prSha = '${{ steps.pr.outputs.sha }}';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: prSha,
+              state: 'pending',
+              context: 'Ephemeral AAP Playwright',
+              description: 'Tests in progress...',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
             });
 
       - name: Post starting message
@@ -367,6 +383,22 @@ jobs:
             core.setOutput('any_cancelled', anyCancelled);
             core.setOutput('any_failure', anyFailure);
 
+      - name: Report success status to PR
+        if: steps.check-results.outputs.all_success == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prSha = '${{ needs.check-comment.outputs.pr_sha }}';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: prSha,
+              state: 'success',
+              context: 'Ephemeral AAP Playwright',
+              description: 'Tests completed successfully',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            });
+
       - name: Post success comment
         if: steps.check-results.outputs.all_success == 'true'
         uses: actions/github-script@v7
@@ -397,6 +429,22 @@ jobs:
               body: `✅ AAP Playwright E2E tests completed successfully!\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n${testResultsSection}`
             });
 
+      - name: Report failure status to PR
+        if: steps.check-results.outputs.any_failure == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prSha = '${{ needs.check-comment.outputs.pr_sha }}';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: prSha,
+              state: 'failure',
+              context: 'Ephemeral AAP Playwright',
+              description: 'Tests failed',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            });
+
       - name: Post failure comment
         if: steps.check-results.outputs.any_failure == 'true'
         uses: actions/github-script@v7
@@ -425,6 +473,22 @@ jobs:
               repo: context.repo.repo,
               issue_number: ${{ needs.check-comment.outputs.pr_number }},
               body: `❌ AAP Playwright E2E tests failed.\n\n**Parallelization**: Tests ran across ${parallelJobs} parallel AAP deployments\n\n${debuggingSection}`
+            });
+
+      - name: Report cancelled status to PR
+        if: steps.check-results.outputs.any_cancelled == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prSha = '${{ needs.check-comment.outputs.pr_sha }}';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: prSha,
+              state: 'error',
+              context: 'Ephemeral AAP Playwright',
+              description: 'Tests were cancelled',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
             });
 
       - name: Post cancelled comment
