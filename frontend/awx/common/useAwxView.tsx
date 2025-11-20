@@ -87,7 +87,7 @@ export function useAwxView<T extends { id: number }>(options: {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
   if (error instanceof RequestError) {
-    if (error.statusCode === 404 && view.page > 1) {
+    if ((error.statusCode === 404 || error.statusCode === 400) && view.page > 1) {
       view.setPage(1);
       error = undefined;
     }
