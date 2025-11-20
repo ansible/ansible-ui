@@ -177,10 +177,13 @@ export function mungePromptData(
   return result;
 }
 
-export function mungeSurveyAndExtraVarsData(survey: { [key: string]: string }, extra_vars: string) {
+export function mungeSurveyAndExtraVarsData(
+  survey: { [key: string]: string | number | string[] },
+  extra_vars: string
+) {
   if (!survey && !extra_vars) return {};
 
-  const extraData: { [key: string]: string } = {};
+  const extraData: { [key: string]: string | number | string[] } = {};
   Object.keys(survey).forEach((k: string) => {
     extraData[k] = survey[k];
   });
