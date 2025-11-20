@@ -4,6 +4,8 @@ import isDeepEqual from 'fast-deep-equal';
 import getValue from 'get-value';
 import jsyaml, { YAMLException } from 'js-yaml';
 import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { parseJSONPreservingLargeInts, stringifyPreservingLargeInts } from '../../utils/jsonUtils';
+import { safeDump, safeLoad } from '../../utils/yamlSchema';
 import {
   Controller,
   FieldPath,
@@ -492,7 +494,7 @@ export function valueToObject(
 
   const catchError = () => {
     try {
-      value = jsyaml.load(value as string) as object;
+      value = safeLoad(value as string) as object;
     } catch (err) {
       if (err instanceof Error || err instanceof YAMLException) {
         return new Error(err.message);
@@ -504,14 +506,14 @@ export function valueToObject(
   if (typeof value === 'string') {
     if (hasYamlComments(value)) {
       try {
-        jsyaml.load(value);
+        safeLoad(value);
         return { __preserveYamlString: value } as object;
       } catch {
         // If invalid YAML, fall through to normal processing
       }
     }
     try {
-      value = JSON.parse(value) as object;
+      value = parseJSONPreservingLargeInts(value) as object;
     } catch {
       catchError();
     }
@@ -547,8 +549,8 @@ export function objectToString(obj: object, language: DataEditorLanguages): stri
       return preservedObj.__preserveYamlString;
     } else {
       try {
-        const parsedYaml = jsyaml.load(preservedObj.__preserveYamlString);
-        return JSON.stringify(parsedYaml, null, 2);
+        const parsedYaml = safeLoad(preservedObj.__preserveYamlString);
+        return stringifyPreservingLargeInts(parsedYaml, 2);
       } catch {
         return preservedObj.__preserveYamlString; // Fallback to original
       }
@@ -557,10 +559,10 @@ export function objectToString(obj: object, language: DataEditorLanguages): stri
 
   switch (language) {
     case 'json':
-      return JSON.stringify(obj, null, 2);
+      return stringifyPreservingLargeInts(obj, 2);
     case 'yaml': {
       try {
-        const yaml = jsyaml.dump(obj).trimEnd();
+        const yaml = safeDump(obj).trimEnd();
         switch (yaml) {
           case 'null':
           case '{}':
