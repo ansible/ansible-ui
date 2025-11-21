@@ -62,13 +62,21 @@ export function PageFormPlaybookSelect<
 
   // Track previous project ID to detect changes
   const previousProjectId = useRef<number | undefined>(undefined);
+  const autoSelectedPlaybook = useRef<string | null>(null);
 
   useEffect(() => {
-    if (previousProjectId.current !== undefined && previousProjectId.current !== projectId) {
-      // Always clear playbook when project changes
-      setValue(name, '' as FieldPathValue<TFieldValues, TFieldName>);
+    // Skip on initial mount
+    if (previousProjectId.current === undefined) {
+      previousProjectId.current = projectId;
+      return;
     }
-    previousProjectId.current = projectId;
+
+    // If project changed, clear the playbook and reset auto-selection tracker
+    if (previousProjectId.current !== projectId) {
+      setValue(name, '' as FieldPathValue<TFieldValues, TFieldName>);
+      autoSelectedPlaybook.current = null;
+      previousProjectId.current = projectId;
+    }
   }, [projectId, setValue, name]);
 
   const options = useMemo(() => {
@@ -98,6 +106,16 @@ export function PageFormPlaybookSelect<
             value: value,
             content: value,
           });
+        }
+
+        // Auto-select if there's only one playbook and nothing is currently selected
+        if (
+          !value &&
+          enhancedOptions.length === 1 &&
+          autoSelectedPlaybook.current !== enhancedOptions[0].value
+        ) {
+          autoSelectedPlaybook.current = enhancedOptions[0].value;
+          onChange(enhancedOptions[0].value);
         }
 
         // Mark the selected option with selected: true for TypeaheadSelect

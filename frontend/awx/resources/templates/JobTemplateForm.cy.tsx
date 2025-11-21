@@ -89,4 +89,120 @@ describe('Create job template ', () => {
     cy.multiSelectByDataCy('instance-group-select', [instanceGroups[0].name]);
     cy.clickButton('Create job template');
   });
+
+  describe('Playbook auto-selection', () => {
+    beforeEach(() => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/inventories/*`,
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'inventories.json',
+        }
+      );
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/projects/?page_size=10&order_by=name*`,
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'projects.json',
+        }
+      );
+    });
+
+    it('Should auto-select playbook when project has only one playbook', () => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/projects/6/playbooks/`,
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'playbooks.json',
+        }
+      );
+
+      cy.mount(<CreateJobTemplate />);
+      cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
+
+      cy.get('[data-cy="playbook-form-group"] input').should('have.value', 'hello_world.yml');
+    });
+
+    it('Should not auto-select playbook when project has multiple playbooks', () => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/projects/6/playbooks/`,
+          hostname: 'localhost',
+        },
+        ['playbook1.yml', 'playbook2.yml', 'playbook3.yml']
+      );
+
+      cy.mount(<CreateJobTemplate />);
+      cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
+
+      cy.get('[data-cy="playbook-form-group"] input').should('have.value', '');
+    });
+
+    it('Should clear auto-selected playbook when project is changed', () => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/projects/6/playbooks/`,
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'playbooks.json',
+        }
+      );
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/projects/7/playbooks/`,
+          hostname: 'localhost',
+        },
+        ['different_playbook.yml']
+      );
+      cy.intercept(
+        {
+          method: 'GET',
+          url: awxAPI`/projects/?page_size=10&order_by=name*`,
+          hostname: 'localhost',
+        },
+        {
+          count: 2,
+          results: [
+            {
+              id: 6,
+              name: 'Demo Project',
+              type: 'project',
+              url: '/api/v2/projects/6/',
+            },
+            {
+              id: 7,
+              name: 'Another Project',
+              type: 'project',
+              url: '/api/v2/projects/7/',
+            },
+          ],
+        }
+      );
+
+      cy.mount(<CreateJobTemplate />);
+      cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
+
+      cy.get('[data-cy="playbook-form-group"] input').should('have.value', 'hello_world.yml');
+
+      cy.selectAsyncSingleSelectOption('project-select', 'Another Project');
+
+      cy.get('[data-cy="playbook-form-group"] input').should(
+        'have.value',
+        'different_playbook.yml'
+      );
+    });
+  });
 });
