@@ -12,10 +12,35 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventorySource } from '../../interfaces/InventorySource';
+import { Project } from '../../interfaces/Project';
 import credentialTypes from './../../../../cypress/fixtures/credentialTypes.json';
 import inventories from './../../../../cypress/fixtures/inventory.json';
 import { CreateInventorySource, EditInventorySource } from './InventorySourceForm';
 import sourceTypesOptions from './mocks/InventorySourceTypes.json';
+
+const mockProjectWithOverride: Project = {
+  id: 123,
+  name: 'Test Project With Override',
+  description: 'Test project with allow_override enabled',
+  scm_type: 'git',
+  type: 'project',
+  allow_override: true,
+  base_dir: '/tmp/projects',
+  summary_fields: {} as Project['summary_fields'],
+  related: {} as Project['related'],
+} as Project;
+
+const mockProjectWithoutOverride: Project = {
+  id: 456,
+  name: 'Test Project Without Override',
+  description: 'Test project with allow_override disabled',
+  scm_type: 'git',
+  type: 'project',
+  allow_override: false,
+  base_dir: '/tmp/projects',
+  summary_fields: {} as Project['summary_fields'],
+  related: {} as Project['related'],
+} as Project;
 
 export const restHandlers = [
   http.options(awxAPI`/inventory_sources/`, () => {
@@ -24,8 +49,17 @@ export const restHandlers = [
   http.get(awxAPI`/inventories/2/`, () => {
     return HttpResponse.json(inventories);
   }),
-  http.get(awxAPI`/credential_types/?`, () => {
+  http.get(awxAPI`/credential_types/`, () => {
     return HttpResponse.json(credentialTypes);
+  }),
+  http.get('/api/v2/projects/:id', ({ params }) => {
+    const { id } = params;
+    if (id === '123') {
+      return HttpResponse.json(mockProjectWithOverride);
+    } else if (id === '456') {
+      return HttpResponse.json(mockProjectWithoutOverride);
+    }
+    return new HttpResponse(null, { status: 404 });
   }),
 ];
 
@@ -73,11 +107,11 @@ const mockInventorySource: InventorySource = {
     },
     source_project: {
       id: 123,
-      name: 'Test Project',
+      name: 'Test Project With Override',
       description: '',
       status: 'successful',
       scm_type: 'git',
-      allow_override: false,
+      allow_override: true,
     },
     execution_environment: {
       id: 789,
@@ -312,6 +346,90 @@ describe('EditInventorySource', () => {
     });
 
     expect(screen.getByDisplayValue('Test Description')).toBeInTheDocument();
+  });
+
+  test('should show source control branch field when project allows override', async () => {
+    server.use(
+      http.get(awxAPI`/inventory_sources/1/`, () => {
+        return HttpResponse.json(mockInventorySource);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
+        <Routes>
+          <Route
+            path={`/infrastructure/inventories/inventory/:id/sources/:source_id/edit`}
+            element={<EditInventorySource />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Wait for form to load
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
+    });
+
+    // Wait for project data to be fetched and source control branch field to appear
+    await waitFor(
+      () => {
+        expect(screen.getByLabelText('Source control branch')).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    const scmBranchField = screen.getByLabelText('Source control branch');
+    expect(scmBranchField).toBeVisible();
+    expect(scmBranchField).toHaveAttribute('placeholder', 'Enter source control branch');
+  });
+
+  test('should hide source control branch field when project does not allow override', async () => {
+    const mockSourceWithoutOverride: InventorySource = {
+      ...mockInventorySource,
+      id: 2,
+      name: 'Test Source Without Override',
+      source_project: '456',
+      summary_fields: {
+        ...mockInventorySource.summary_fields,
+        source_project: {
+          id: 456,
+          name: 'Test Project Without Override',
+          description: '',
+          status: 'successful',
+          scm_type: 'git',
+          allow_override: false,
+        },
+      },
+    };
+
+    server.use(
+      http.get(awxAPI`/inventory_sources/2/`, () => {
+        return HttpResponse.json(mockSourceWithoutOverride);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/2/edit']}>
+        <Routes>
+          <Route
+            path={`/infrastructure/inventories/inventory/:id/sources/:source_id/edit`}
+            element={<EditInventorySource />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Wait for form to load
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Source Without Override')).toBeInTheDocument();
+    });
+
+    // Wait a bit to ensure project data is fetched
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Source control branch field should not be visible
+    expect(screen.queryByLabelText('Source control branch')).not.toBeInTheDocument();
   });
 });
 
