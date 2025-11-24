@@ -10,6 +10,10 @@ import { PageFormCredentialSelect } from '../../access/credentials/components/Pa
 import { InventorySourceForm } from '../../interfaces/InventorySource';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';
+import { useEffect, useState } from 'react';
+import { Project } from '../../interfaces/Project';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues: string[] }) {
   const { t } = useTranslation();
@@ -45,6 +49,21 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
         };
     }
   };
+  const [allowOverride, setAllowOverride] = useState<boolean>();
+  const project = useWatch<InventorySourceForm, 'source_project'>({ name: 'source_project' });
+
+  useEffect(() => {
+    async function handleFetchProject() {
+      if (project?.id) {
+        const sourceProject = await requestGet<Project>(
+          awxAPI`/projects/${project?.id?.toString()}`
+        );
+
+        setAllowOverride(sourceProject.allow_override ?? false);
+      }
+    }
+    void handleFetchProject();
+  }, [project]);
 
   return (
     <>
@@ -67,6 +86,17 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
               name="source_project.id"
               isRequired={true}
             />
+            {allowOverride ? (
+              <PageFormTextInput<InventorySourceForm>
+                name="scm_branch"
+                placeholder={t('Enter source control branch')}
+                labelHelpTitle={t('Source control branch')}
+                labelHelp={t(
+                  'Branch to use on inventory sync. Project default used if blank. Only allowed if project allow_override field is set to true.'
+                )}
+                label={t('Source control branch')}
+              />
+            ) : null}
             <PageFormInventoryFileSelect<InventorySourceForm>
               watch="source_project"
               name="source_path"
