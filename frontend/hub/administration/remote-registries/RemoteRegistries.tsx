@@ -39,10 +39,10 @@ export function RemoteRegistries() {
         title={t('Remote Registries')}
         titleHelpTitle={t('Remote Registries')}
         titleHelp={t(
-          'Remote registries are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+          'Remote registries manage configurations for remote execution environments utilized in Ansible automation tasks.'
         )}
         description={t(
-          'Remote registries are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+          'Remote registries manage configurations for remote execution environments utilized in Ansible automation tasks.'
         )}
         titleDocLink={useGetDocsUrl(config, 'remoteRegistries')}
       />
@@ -53,7 +53,7 @@ export function RemoteRegistries() {
           <PageTableEmptyState
             title={t('No remote registries yet')}
             description={t(
-              'You can create a remote registry to provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+              'You can create a remote registry to manage configurations for remote execution environments.'
             )}
           >
             <ButtonLink
