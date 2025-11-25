@@ -113,9 +113,14 @@ export function TemplateSurveyForm(props: IProps) {
     const choices = Array.isArray(question.choices)
       ? question.choices
       : question.choices.split('\n');
-    const defaults = Array.isArray(question?.default)
-      ? question.default
-      : question.default.toString().split('\n');
+    let defaults;
+    if (Array.isArray(question?.default)) {
+      defaults = question.default;
+    } else if (question.default) {
+      defaults = question.default.toString().split('\n');
+    } else {
+      defaults = null;
+    }
 
     formattedChoices = choices?.map((c, i) => ({
       name: c,
