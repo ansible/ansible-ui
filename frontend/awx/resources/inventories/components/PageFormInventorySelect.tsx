@@ -16,12 +16,16 @@ export function PageFormInventorySelect<
     isDisabled?: string;
     helperText?: string;
     labelHelp?: string;
+    isNotConstructedInventory?: boolean;
     additionalControls?: React.ReactNode;
   }>
 ) {
   const { t } = useTranslation();
   const columns = useInventoriesColumns({ disableLinks: true });
   const filters = useInventoriesFilters();
+  const url = props.isNotConstructedInventory
+    ? awxAPI`/inventories/?not__kind=constructed`
+    : awxAPI`/inventories/`;
   return (
     <PageFormSingleSelectAwxResource<Inventory, TFieldValues, TFieldName>
       name={props.name}
@@ -34,7 +38,7 @@ export function PageFormInventorySelect<
       isDisabled={props.isDisabled}
       helperText={props.helperText}
       labelHelp={props.labelHelp}
-      url={awxAPI`/inventories/`}
+      url={url}
       tableColumns={columns}
       toolbarFilters={filters}
       additionalControls={props.additionalControls}

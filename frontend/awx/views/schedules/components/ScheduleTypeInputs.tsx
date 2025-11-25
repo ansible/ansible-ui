@@ -62,6 +62,7 @@ export function ScheduleTypeInputs() {
                     'First, select the inventory to which the desired inventory source belongs.'
                   )}
                   name="resourceInventory"
+                  isNotConstructedInventory
                 />
                 {resourceInventory ? (
                   <PageFormInventorySourceSelect<ScheduleFormWizard>
