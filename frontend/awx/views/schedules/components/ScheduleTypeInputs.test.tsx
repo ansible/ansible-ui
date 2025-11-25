@@ -17,8 +17,19 @@ vi.mock('../../../administration/management-jobs/components/PageFormManagementJo
 }));
 
 vi.mock('../../../resources/inventories/components/PageFormInventorySelect', () => ({
-  PageFormInventorySelect: ({ name }: { name: string }) => (
-    <div data-testid="inventory-select">{name}</div>
+  PageFormInventorySelect: ({
+    name,
+    isNotConstructedInventory,
+  }: {
+    name: string;
+    isNotConstructedInventory?: boolean;
+  }) => (
+    <div
+      data-testid="inventory-select"
+      data-is-not-constructed={isNotConstructedInventory?.toString()}
+    >
+      {name}
+    </div>
   ),
 }));
 
@@ -163,6 +174,17 @@ describe('ScheduleTypeInputs', () => {
 
     expect(screen.getByTestId('inventory-select')).toBeInTheDocument();
     expect(screen.queryByTestId('inventory-source-select')).not.toBeInTheDocument();
+  });
+
+  it('should pass isNotConstructedInventory prop when schedule_type is inventory_source', () => {
+    render(
+      <TestWrapper defaultValues={{ schedule_type: 'inventory_source' }}>
+        <ScheduleTypeInputs />
+      </TestWrapper>
+    );
+
+    const inventorySelect = screen.getByTestId('inventory-select');
+    expect(inventorySelect).toHaveAttribute('data-is-not-constructed', 'true');
   });
 
   it('does not render any resource select when schedule_type is empty', () => {
