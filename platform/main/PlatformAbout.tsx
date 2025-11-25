@@ -1,11 +1,11 @@
-import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { PageSettingsContext, usePageDialog } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { AboutModal, Content } from '@patternfly/react-core';
 import { t } from 'i18next';
-import React from 'react';
+import React, { useContext } from 'react';
 
 export const PlatformAbout: React.FunctionComponent<{
   platformVersion?: string;
@@ -17,6 +17,7 @@ export const PlatformAbout: React.FunctionComponent<{
   const awxVersion = awxInfo.data?.version;
   const hubVersion = hubInfo.data?.galaxy_ng_version;
   const edaVersion = edaInfo.data?.version;
+  const [settings] = useContext(PageSettingsContext);
 
   const [_, setPageDialog] = usePageDialog();
   return (
@@ -28,7 +29,9 @@ export const PlatformAbout: React.FunctionComponent<{
       productName={t('Ansible Automation Platform {{version}}', { version: platformVersion })}
       trademark="Copyright 2025 Red Hat, Inc."
       brandImageAlt={t('Brand Logo')}
-      brandImageSrc={'aap-logo.svg?react'}
+      brandImageSrc={
+        settings?.activeTheme === 'dark' ? '/assets/aap-logo-white.svg' : '/assets/aap-logo.svg'
+      }
     >
       <Content>
         <Content component="dl">
