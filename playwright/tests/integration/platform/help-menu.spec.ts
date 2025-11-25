@@ -159,6 +159,44 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
     );
   });
 
+  test.describe('About Modal: Brand Logo', () => {
+    test('should display brand logo with alt text', { tag: ['@not_mock'] }, async ({ page }) => {
+      await page.locator('#help-menu-menu-toggle').click();
+      await page.locator('[data-testid="masthead-about"]').click();
+
+      const modal = page.getByRole('dialog');
+      const brandLogo = modal.locator('img[alt="Brand Logo"]');
+
+      await expect(brandLogo).toBeVisible();
+      await expect(brandLogo).toHaveAttribute('alt', 'Brand Logo');
+      await expect(brandLogo).toHaveAttribute('src', /aap-logo.*\.svg$/);
+    });
+
+    test('should use white logo for dark theme', { tag: ['@not_mock'] }, async ({ page }) => {
+      const themeButton = page.locator('[data-cy="theme-icon"]');
+      await expect(themeButton).toBeVisible();
+      await themeButton.click();
+
+      await page.locator('#help-menu-menu-toggle').click();
+      await page.locator('[data-testid="masthead-about"]').click();
+
+      const modal = page.getByRole('dialog');
+      const brandLogo = modal.locator('img[alt="Brand Logo"]');
+
+      await expect(brandLogo).toHaveAttribute('src', '/assets/aap-logo-white.svg');
+    });
+
+    test('should use standard logo for light theme', { tag: ['@not_mock'] }, async ({ page }) => {
+      await page.locator('#help-menu-menu-toggle').click();
+      await page.locator('[data-testid="masthead-about"]').click();
+
+      const modal = page.getByRole('dialog');
+      const brandLogo = modal.locator('img[alt="Brand Logo"]');
+
+      await expect(brandLogo).toHaveAttribute('src', '/assets/aap-logo.svg');
+    });
+  });
+
   test.describe('About Modal: User Interactions', () => {
     test('should close using X button', { tag: ['@not_mock'] }, async ({ page }) => {
       // Open about modal
