@@ -9,6 +9,13 @@ const mockJob = {
   ...testFixture,
 };
 const mockNavigate = vi.fn();
+const mockGetPageUrl = vi.fn((route: string, options?: { params?: Record<string, unknown> }) => {
+  if (route === 'awx-job-output' && options?.params) {
+    const { job_type, id } = options.params;
+    return `/jobs/${String(job_type)}/${String(id)}/output`;
+  }
+  return '/';
+});
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof reactRouterDom>('react-router-dom');
@@ -16,6 +23,14 @@ vi.mock('react-router-dom', async () => {
     ...actual,
     usePageNavigate: () => mockNavigate,
     useOutletContext: () => ({ job: mockJob }),
+  };
+});
+
+vi.mock('@ansible/ansible-ui-framework', async () => {
+  const actual = await vi.importActual('@ansible/ansible-ui-framework');
+  return {
+    ...actual,
+    useGetPageUrl: () => mockGetPageUrl,
   };
 });
 describe('JobDetails Component', () => {
@@ -166,5 +181,20 @@ describe('JobDetails Component', () => {
     );
     expect(screen.getByTestId('label-source-control-branch')).toBeInTheDocument();
     expect(screen.getByTestId('source-control-branch')).toHaveTextContent('foo');
+  });
+
+  it('should render project update status with correct navigation link', () => {
+    render(
+      <MemoryRouter>
+        <JobDetails />
+      </MemoryRouter>
+    );
+
+    const projectUpdateStatusContainer = screen.getByTestId('project-update-status');
+    expect(projectUpdateStatusContainer).toBeInTheDocument();
+
+    const projectUpdateStatusLink = projectUpdateStatusContainer.querySelector('a');
+    expect(projectUpdateStatusLink).toBeInTheDocument();
+    expect(projectUpdateStatusLink).toHaveAttribute('href', '/jobs/project/27/output');
   });
 });
