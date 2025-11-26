@@ -103,6 +103,8 @@ export function navigateToBaseView(host_type: string, inventoryName: string) {
     cy.contains(`[role="tablist"] [role="tab"]`, 'Hosts').click();
   } else {
     cy.navigateTo('awx', 'hosts');
+    // Wait for navigation to reach the Hosts page
+    cy.verifyPageTitle('Hosts');
   }
 }
 
