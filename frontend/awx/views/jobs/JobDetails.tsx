@@ -44,7 +44,12 @@ export function JobDetails() {
       >
         <StatusCell
           status={job.summary_fields.project_update?.status}
-          to={`/jobs/project_update/${job.summary_fields.project_update?.id}`}
+          to={getPageUrl(AwxRoute.JobOutput, {
+            params: {
+              job_type: 'project',
+              id: job.summary_fields.project_update?.id,
+            },
+          })}
         />
       </PageDetail>
       <PageDetail isEmpty={!job.scm_revision} label={t('Revision')}>
