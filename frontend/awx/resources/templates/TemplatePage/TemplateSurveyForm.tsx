@@ -32,6 +32,29 @@ type ResourceType = 'job_templates' | 'workflow_job_templates';
 const minDefault = 0;
 const maxDefault = 1024;
 
+const isMultiSelect = (type: string) => type === 'multiselect' || type === 'multiplechoice';
+
+function getFormattedChoices(question: Spec | undefined): ChoiceOption[] | undefined {
+  if (!question || !isMultiSelect(question.type)) return undefined;
+
+  const choices = Array.isArray(question.choices) ? question.choices : question.choices.split('\n');
+
+  let defaults;
+  if (Array.isArray(question.default)) {
+    defaults = question.default;
+  } else if (question.default) {
+    defaults = question.default.toString().split('\n');
+  } else {
+    defaults = null;
+  }
+
+  return choices.map((c, i) => ({
+    name: c,
+    default: defaults?.includes(c) ?? false,
+    id: i.toString(),
+  }));
+}
+
 export function EditTemplateSurveyForm({ resourceType }: { resourceType: ResourceType }) {
   const [searchParams] = useURLSearchParams();
 
@@ -98,8 +121,6 @@ export function TemplateSurveyForm(props: IProps) {
 
   if (mode === 'edit' && !question) return null;
 
-  const isMultiSelect = (type: string) => type === 'multiselect' || type === 'multiplechoice';
-
   const displayDuplicateError = (question: Spec, setError: (error: string) => void) => {
     setError(
       t(`Survey already contains a question with variable named "{{question}}".`, {
@@ -108,26 +129,7 @@ export function TemplateSurveyForm(props: IProps) {
     );
   };
 
-  let formattedChoices;
-  if (question && isMultiSelect(question.type)) {
-    const choices = Array.isArray(question.choices)
-      ? question.choices
-      : question.choices.split('\n');
-    let defaults;
-    if (Array.isArray(question?.default)) {
-      defaults = question.default;
-    } else if (question.default) {
-      defaults = question.default.toString().split('\n');
-    } else {
-      defaults = null;
-    }
-
-    formattedChoices = choices?.map((c, i) => ({
-      name: c,
-      default: defaults?.includes(c) ?? false,
-      id: i.toString(),
-    }));
-  }
+  const formattedChoices = getFormattedChoices(question);
 
   const initialValues: FormSpec = {
     question_name: question?.question_name || '',
