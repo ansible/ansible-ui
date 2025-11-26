@@ -191,6 +191,148 @@ test.describe('Job Templates Surveys', () => {
     );
 
     test(
+      'should show validation error when minimum length exceeds maximum length for text type',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
+
+        // Fill required fields
+        await page.getByTestId('question-name').fill('Test Question');
+        await page.getByTestId('question-variable').fill('test_var');
+
+        // Set minimum length greater than maximum length
+        await page.getByTestId('question-min').fill('100');
+        await page.getByTestId('question-max').fill('50');
+
+        // Click elsewhere to trigger validation
+        await page.getByTestId('question-name').click();
+
+        // Verify validation errors appear
+        await expect(
+          page.getByText('Minimum length must be less than or equal to maximum length.')
+        ).toBeVisible();
+        await expect(
+          page.getByText('Maximum length must be greater than or equal to minimum length.')
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'should show validation error when minimum exceeds maximum for integer type',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
+
+        // Fill required fields
+        await page.getByTestId('question-name').fill('Integer Question');
+        await page.getByTestId('question-variable').fill('int_var');
+
+        // Change answer type to Integer
+        await page.getByTestId('question-type').click();
+        await page.getByRole('option', { name: 'Integer' }).click();
+
+        // Set minimum greater than maximum
+        await page.getByTestId('question-min').fill('100');
+        await page.getByTestId('question-max').fill('50');
+
+        // Click elsewhere to trigger validation
+        await page.getByTestId('question-name').click();
+
+        // Verify validation errors appear (without "length" in the message for numeric types)
+        await expect(
+          page.getByText('Minimum must be less than or equal to maximum.')
+        ).toBeVisible();
+        await expect(
+          page.getByText('Maximum must be greater than or equal to minimum.')
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'should clear validation error when min/max values are corrected',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
+
+        // Fill required fields
+        await page.getByTestId('question-name').fill('Test Question');
+        await page.getByTestId('question-variable').fill('test_var');
+
+        // Set invalid min/max (min > max)
+        await page.getByTestId('question-min').fill('100');
+        await page.getByTestId('question-max').fill('50');
+        await page.getByTestId('question-name').click();
+
+        // Verify error appears
+        await expect(
+          page.getByText('Minimum length must be less than or equal to maximum length.')
+        ).toBeVisible();
+
+        // Fix by increasing max above min
+        await page.getByTestId('question-max').fill('200');
+        await page.getByTestId('question-name').click();
+
+        // Verify error is gone
+        await expect(
+          page.getByText('Minimum length must be less than or equal to maximum length.')
+        ).not.toBeVisible();
+        await expect(
+          page.getByText('Maximum length must be greater than or equal to minimum length.')
+        ).not.toBeVisible();
+      }
+    );
+
+    test(
+      'should validate text answer by length not numeric value (01 is valid for length 2)',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
+
+        // Fill required fields
+        await page.getByTestId('question-name').fill('Text Length Test');
+        await page.getByTestId('question-variable').fill('text_length_var');
+
+        // Set min and max length to 2
+        await page.getByTestId('question-min').fill('2');
+        await page.getByTestId('question-max').fill('2');
+
+        // Enter "01" as default answer - this has length 2 and should be valid
+        // even though numerically it might be interpreted as 1
+        await page.getByTestId('question-default').fill('01');
+        await page.getByTestId('question-name').click();
+
+        // Verify no validation errors for the default answer
+        await expect(page.getByText(/must be less than/i)).not.toBeVisible();
+        await expect(page.getByText(/must be greater/i)).not.toBeVisible();
+        await expect(page.getByText(/cannot be greater than/i)).not.toBeVisible();
+
+        // Verify the Create button is enabled (form is valid)
+        await expect(
+          page.getByRole('button', { name: 'Create survey question', exact: true })
+        ).toBeEnabled();
+
+        // Actually create the survey to confirm it works
+        const createResponsePromise = page.waitForResponse(
+          (response) =>
+            response.url().includes('/survey_spec/') &&
+            response.request().method() === 'POST' &&
+            response.status() === 200
+        );
+        await page.getByRole('button', { name: 'Create survey question', exact: true }).click();
+        await createResponsePromise;
+
+        // Verify we're back on the survey tab with the created question
+        await expect(page.getByTestId('row-0')).toBeVisible();
+        await expect(page.getByText('Text Length Test', { exact: true })).toBeVisible();
+        await expect(page.getByText('01', { exact: true })).toBeVisible();
+      }
+    );
+
+    test(
       'can create multiple surveys, assert order, change order, and assert new order, then bulk delete all surveys',
       { tag: ['@not_mock'] },
       async ({ page }) => {

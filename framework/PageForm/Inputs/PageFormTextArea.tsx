@@ -171,7 +171,7 @@ export function PageFormTextArea<
                   label.toLocaleLowerCase()
                 )} must be less than ${min}.`,
               }
-            : minLength,
+            : min,
 
         max:
           typeof label === 'string' && (typeof max === 'number' || typeof max === 'string')
@@ -181,7 +181,7 @@ export function PageFormTextArea<
                   label.toLocaleLowerCase()
                 )} cannot be greater than ${max}.`,
               }
-            : minLength,
+            : max,
 
         pattern,
       }}

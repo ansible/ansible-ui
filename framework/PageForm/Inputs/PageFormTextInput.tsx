@@ -471,7 +471,7 @@ export function PageFormTextInput<
                   label.toLocaleLowerCase()
                 )} must be greater or equal to ${min}.`,
               }
-            : minLength,
+            : min,
 
         max:
           typeof label === 'string' && (typeof max === 'number' || typeof max === 'string')
