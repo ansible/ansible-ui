@@ -111,7 +111,9 @@ describe('AuthenticatorMappingForm', () => {
 
     const user = userEvent.setup();
     const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
-    const triggerSelect = getByRole('button', { name: 'Select trigger' }) as HTMLInputElement;
+    const triggerSelect = getByRole('button', {
+      name: 'Select rule condition',
+    }) as HTMLInputElement;
     const submitButton = getByRole('button', { name: 'Create mapping' });
 
     await user.type(nameField, 'Always mapping');
@@ -141,7 +143,9 @@ describe('AuthenticatorMappingForm', () => {
 
     const user = userEvent.setup();
     const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
-    const triggerSelect = getByRole('button', { name: 'Select trigger' }) as HTMLInputElement;
+    const triggerSelect = getByRole('button', {
+      name: 'Select rule condition',
+    }) as HTMLInputElement;
     const submitButton = getByRole('button', { name: 'Create mapping' });
 
     await user.type(nameField, 'Never mapping');
@@ -183,7 +187,7 @@ describe('AuthenticatorMappingForm', () => {
     const valueOneField = container.querySelector('[id="attributes-0-value"]') as HTMLInputElement;
     const valueTwoField = container.querySelector('[id="attributes-1-value"]') as HTMLInputElement;
 
-    expect(conditionaField.innerText).toBe('orundefined');
+    expect(conditionaField.innerText).toBe('at least oneundefined');
     expect(nameField.value).toBe('mapping one');
     expect(attributeOneField.value).toBe('attribute one');
     expect(valueOneField.value).toBe('value one');

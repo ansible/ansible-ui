@@ -79,9 +79,9 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
         <PageFormTextInput
           id={`name`}
           name={`name`}
-          label={t('Name')}
+          label={t('Rule name')}
           isRequired
-          placeholder={t('Enter name')}
+          placeholder={t('Enter rule name')}
           labelHelp={t(
             'The rule name is a unique string that identifies the rule, and will appear in the Mapping order step.'
           )}
@@ -89,8 +89,8 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
         <PageFormSelect
           id={`trigger`}
           name={`trigger`}
-          label={t('Trigger')}
-          labelHelp={t('The trigger defines how or when the rule is activated.')}
+          label={t('When to apply the rule')}
+          labelHelp={t('The rule condition defines how or when the rule is activated.')}
           options={[
             {
               value: 'always',
@@ -102,14 +102,14 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
             },
             {
               value: 'groups',
-              label: t('Groups'),
+              label: t('Based on groups'),
             },
             {
               value: 'attributes',
-              label: t('Attributes'),
+              label: t('Based on attributes'),
             },
           ]}
-          placeholderText={t('Select trigger')}
+          placeholderText={t('Select rule condition')}
           isRequired
         />
       </PageFormSection>
@@ -117,10 +117,10 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
         <PageFormGroup label={t('Options')}>
           <PageFormCheckbox
             labelHelp={
-              'Selecting this option prevents matching user groups from being added to this resource.'
+              'Selecting this option prevents non-matching user groups from being added to this resource.'
             }
             name={`revoke`}
-            label={t('Revoke')}
+            label={t('Block non-matching users')}
           />
         </PageFormGroup>
       </PageFormSection>
@@ -128,12 +128,12 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
         <PageFormHidden watch={`trigger`} hidden={(value) => value !== 'groups'}>
           <PageFormSelect
             id={`groups-conditional`}
-            label={t('Operation')}
+            label={t('How to apply the rule')}
             options={[
-              { value: 'or', label: t('or') },
-              { value: 'and', label: t('and') },
+              { value: 'or', label: t('at least one') },
+              { value: 'and', label: t('all') },
             ]}
-            placeholderText={t('Select operation')}
+            placeholderText={t('Select condition type')}
             name={`conditional`}
             isRequired
           />
@@ -151,11 +151,11 @@ export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
             <PageFormSelect
               id={`attributes-conditional`}
               name={`conditional`}
-              label={t('Operation')}
-              placeholderText={t('Select operation')}
+              label={t('How to apply the rule')}
+              placeholderText={t('Select condition type')}
               options={[
-                { value: 'or', label: t('or') },
-                { value: 'and', label: t('and') },
+                { value: 'or', label: t('at least one') },
+                { value: 'and', label: t('all') },
               ]}
               isRequired
             />
