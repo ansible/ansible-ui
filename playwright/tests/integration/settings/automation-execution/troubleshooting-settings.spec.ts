@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { revertAllSettings } from '../settings-utils';
+import { Settings } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
@@ -10,7 +10,7 @@ test.describe('Troubleshooting Settings', () => {
     'should be able to edit troubleshooting settings',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      await revertAllSettings(page, 'Troubleshooting');
+      await Settings.ui.revertAll(page, 'Troubleshooting');
       await expect(page.getByRole('heading', { name: 'Troubleshooting' })).toBeVisible();
 
       const tmpDirCleanupField = page.getByTestId('enable-or-disable-tmp-dir-cleanup');
@@ -28,7 +28,7 @@ test.describe('Troubleshooting Settings', () => {
 
       await expect(tmpDirCleanupField).toContainText('Disabled');
 
-      await revertAllSettings(page, 'Troubleshooting');
+      await Settings.ui.revertAll(page, 'Troubleshooting');
       await expect(tmpDirCleanupField).toContainText('Enabled');
     }
   );

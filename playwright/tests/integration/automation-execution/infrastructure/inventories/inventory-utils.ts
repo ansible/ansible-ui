@@ -1,3 +1,5 @@
+/** @deprecated Use Inventory from '@ansible/playwright/utils' instead */
+
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';

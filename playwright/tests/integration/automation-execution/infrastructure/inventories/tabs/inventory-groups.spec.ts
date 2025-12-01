@@ -9,16 +9,12 @@ import { navigateTo } from '../../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../../commands/runAdHocCommandWizard';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
 import {
-  createOrganization,
-  deleteOrganization,
-} from '../../../../access-management/organizations/organization-utils';
-import { createAwxCredential, deleteAwxCredential } from '../../credentials/credential-utils';
-import {
-  createExecutionEnvironment,
-  deleteExecutionEnvironment,
-} from '../../execution-environments/execution-environment-utils';
-import { createInventory, deleteInventory } from '../inventory-utils';
-import { createInventoryGroup, createInventoryHost } from './inventory-groups-utils';
+  Organization,
+  Credential,
+  ExecutionEnvironment,
+  Inventory,
+  InventoryGroup,
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -28,7 +24,7 @@ test.describe('Inventory Groups - List View', () => {
     'can create group with variables, view details, and delete from list',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const inventoryName = await createInventory({}, page);
+      const inventoryName = await Inventory.ui.create(page);
       const groupName = createE2EName('group');
       const variablesText = 'test: true\ntest2: false';
 
@@ -68,14 +64,14 @@ test.describe('Inventory Groups - List View', () => {
         page.getByText(/There are currently no groups|No results found/i).first()
       ).toBeVisible({ timeout: 10000 });
 
-      await deleteInventory(inventoryName, page);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 
   test('can edit group from details page', { tag: ['@not_mock'] }, async ({ page }) => {
-    const inventoryName = await createInventory({}, page);
-    const groupName = await createInventoryGroup({ inventoryName }, page);
-    await createInventoryHost({ inventoryName }, page);
+    const inventoryName = await Inventory.ui.create(page);
+    const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
+    await InventoryGroup.ui.createHost(page, { inventoryName });
 
     // After createInventoryHost, navigate back to the inventory Groups tab
     await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
@@ -96,14 +92,14 @@ test.describe('Inventory Groups - List View', () => {
       page.getByRole('heading', { name: `${groupName}-changed`, exact: true })
     ).toBeVisible();
 
-    await deleteInventory(inventoryName, page);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test('can bulk delete multiple groups', { tag: ['@not_mock'] }, async ({ page }) => {
-    const inventoryName = await createInventory({}, page);
-    await createInventoryGroup({ inventoryName }, page);
-    await createInventoryGroup({ inventoryName }, page);
-    await createInventoryGroup({ inventoryName }, page);
+    const inventoryName = await Inventory.ui.create(page);
+    await InventoryGroup.ui.createGroup(page, { inventoryName });
+    await InventoryGroup.ui.createGroup(page, { inventoryName });
+    await InventoryGroup.ui.createGroup(page, { inventoryName });
 
     await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
     await clickTableRow({ text: inventoryName }, page);
@@ -124,18 +120,18 @@ test.describe('Inventory Groups - List View', () => {
       page.getByText(/There are currently no groups|No results found/i).first()
     ).toBeVisible({ timeout: 10000 });
 
-    await deleteInventory(inventoryName, page);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test('can run ad-hoc command against group', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(90000);
-    const organizationName = await createOrganization(page);
-    const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
-    const executionEnvironmentName = await createExecutionEnvironment(page, {
+    const organizationName = await Organization.ui.create(page);
+    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
+    const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
       organizationName,
     });
-    const inventoryName = await createInventory({ organizationName }, page);
-    await createInventoryGroup({ inventoryName }, page);
+    const inventoryName = await Inventory.ui.create(page, { organizationName });
+    await InventoryGroup.ui.createGroup(page, { inventoryName });
     await page.getByRole('tab', { name: 'Back to Groups' }).click();
 
     await page.getByRole('button', { name: 'Run command' }).click();
@@ -155,10 +151,10 @@ test.describe('Inventory Groups - List View', () => {
       page
     );
 
-    await deleteInventory(inventoryName, page);
-    await deleteAwxCredential(credentialName, page);
-    await deleteExecutionEnvironment(executionEnvironmentName, page);
-    await deleteOrganization(organizationName, page);
+    await Inventory.ui.delete(page, inventoryName);
+    await Credential.ui.delete(page, credentialName);
+    await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+    await Organization.ui.delete(page, organizationName);
   });
 });
 
@@ -167,8 +163,8 @@ test.describe('Inventory Groups - Related Groups', () => {
     'can create and disassociate new related group',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const inventoryName = await createInventory({}, page);
-      const groupName = await createInventoryGroup({ inventoryName }, page);
+      const inventoryName = await Inventory.ui.create(page);
+      const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
       const relatedGroupName = createE2EName('related-group');
 
       await page.getByRole('tab', { name: 'Related Groups' }).click();
@@ -196,7 +192,7 @@ test.describe('Inventory Groups - Related Groups', () => {
       await expect(
         page.getByRole('heading', { name: 'There are currently no groups related to this group.' })
       ).toBeVisible();
-      await deleteInventory(inventoryName, page);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 
@@ -204,14 +200,14 @@ test.describe('Inventory Groups - Related Groups', () => {
     'can add existing group, edit it, and disassociate',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const inventoryName = await createInventory({}, page);
-      const groupName = await createInventoryGroup({ inventoryName }, page);
+      const inventoryName = await Inventory.ui.create(page);
+      const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
       await page.getByRole('tab', { name: 'Back to Groups' }).click();
 
-      const newGroupName = await createInventoryGroup(
-        { inventoryName, groupName: 'new-group' },
-        page
-      );
+      const newGroupName = await InventoryGroup.ui.createGroup(page, {
+        inventoryName,
+        groupName: 'new-group',
+      });
       await page.getByRole('tab', { name: 'Back to Groups' }).click();
 
       await clickTableRow({ text: groupName }, page);
@@ -257,21 +253,21 @@ test.describe('Inventory Groups - Related Groups', () => {
         page.getByRole('heading', { name: 'There are currently no groups related to this group.' })
       ).toBeVisible();
 
-      await deleteInventory(inventoryName, page);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 
   test('can run ad-hoc command against related group', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(90000);
-    const organizationName = await createOrganization(page);
-    const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
-    const executionEnvironmentName = await createExecutionEnvironment(page, {
+    const organizationName = await Organization.ui.create(page);
+    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
+    const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
       organizationName,
     });
 
     const relatedGroupName = createE2EName('related-group');
-    const inventoryName = await createInventory({ organizationName }, page);
-    const groupName = await createInventoryGroup({ inventoryName }, page);
+    const inventoryName = await Inventory.ui.create(page, { organizationName });
+    const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
 
     await page.getByRole('tab', { name: 'Related Groups' }).click();
     await page.getByRole('button', { name: 'Create group' }).click();
@@ -306,10 +302,10 @@ test.describe('Inventory Groups - Related Groups', () => {
       page
     );
 
-    await deleteInventory(inventoryName, page);
-    await deleteAwxCredential(credentialName, page);
-    await deleteExecutionEnvironment(executionEnvironmentName, page);
-    await deleteOrganization(organizationName, page);
+    await Inventory.ui.delete(page, inventoryName);
+    await Credential.ui.delete(page, credentialName);
+    await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+    await Organization.ui.delete(page, organizationName);
   });
 });
 
@@ -318,8 +314,8 @@ test.describe('Inventory Groups - Hosts Tab', () => {
     'can add existing host, create new host in group, and delete host',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const inventoryName = await createInventory({}, page);
-      const existingHostName = await createInventoryHost({ inventoryName }, page);
+      const inventoryName = await Inventory.ui.create(page);
+      const existingHostName = await InventoryGroup.ui.createHost(page, { inventoryName });
       const groupName = createE2EName('group');
 
       await page.getByRole('tab', { name: 'Back to Hosts' }).click();
@@ -360,14 +356,14 @@ test.describe('Inventory Groups - Hosts Tab', () => {
       await page.getByRole('textbox', { name: 'Type to filter' }).fill(newHostName);
       await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
 
-      await deleteInventory(inventoryName, page);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 
   test('can edit host from group hosts tab', { tag: ['@not_mock'] }, async ({ page }) => {
-    const inventoryName = await createInventory({}, page);
-    const createdHostName = await createInventoryHost({ inventoryName }, page);
-    const groupName = await createInventoryGroup({ inventoryName }, page);
+    const inventoryName = await Inventory.ui.create(page);
+    const createdHostName = await InventoryGroup.ui.createHost(page, { inventoryName });
+    const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
 
     await page.getByRole('tab', { name: 'Back to Groups' }).click();
 
@@ -393,20 +389,20 @@ test.describe('Inventory Groups - Hosts Tab', () => {
       page.getByRole('heading', { name: `${createdHostName}-edited`, exact: true })
     ).toBeVisible();
 
-    await deleteInventory(inventoryName, page);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test('can run ad-hoc command against group hosts', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(90000);
-    const organizationName = await createOrganization(page);
-    const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
-    const executionEnvironmentName = await createExecutionEnvironment(page, {
+    const organizationName = await Organization.ui.create(page);
+    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
+    const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
       organizationName,
     });
 
-    const inventoryName = await createInventory({ organizationName }, page);
-    const hostName = await createInventoryHost({ inventoryName }, page);
-    const groupName = await createInventoryGroup({ inventoryName }, page);
+    const inventoryName = await Inventory.ui.create(page, { organizationName });
+    const hostName = await InventoryGroup.ui.createHost(page, { inventoryName });
+    const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
 
     await page.getByRole('tab', { name: 'Back to Groups' }).click();
     await clickTableRow({ text: groupName }, page);
@@ -436,9 +432,9 @@ test.describe('Inventory Groups - Hosts Tab', () => {
       page
     );
 
-    await deleteInventory(inventoryName, page);
-    await deleteAwxCredential(credentialName, page);
-    await deleteExecutionEnvironment(executionEnvironmentName, page);
-    await deleteOrganization(organizationName, page);
+    await Inventory.ui.delete(page, inventoryName);
+    await Credential.ui.delete(page, credentialName);
+    await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+    await Organization.ui.delete(page, organizationName);
   });
 });

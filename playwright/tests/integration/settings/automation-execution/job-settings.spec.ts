@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { revertAllSettings } from '../settings-utils';
+import { Settings } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
 test.describe('Job Settings', () => {
   test('should be able to edit job settings', { tag: ['@not_mock'] }, async ({ page }) => {
-    await revertAllSettings(page, 'Job');
+    await Settings.ui.revertAll(page, 'Job');
     await expect(page.getByRole('heading', { name: 'Job Settings' })).toBeVisible();
 
     const roleDownloadField = page.getByTestId('enable-role-download');
@@ -25,7 +25,7 @@ test.describe('Job Settings', () => {
 
     await expect(roleDownloadField).toContainText('Disabled');
 
-    await revertAllSettings(page, 'Job');
+    await Settings.ui.revertAll(page, 'Job');
     await expect(roleDownloadField).toContainText('Enabled');
   });
 });

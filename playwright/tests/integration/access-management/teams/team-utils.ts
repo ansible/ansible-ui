@@ -1,3 +1,5 @@
+/** @deprecated Use Team from '@ansible/playwright/utils' instead */
+
 import { expect } from '@playwright/test';
 import { Page } from 'playwright-core';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';

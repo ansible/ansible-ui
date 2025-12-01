@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { revertAllSettings } from '../settings-utils';
+import { Settings } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
 test.describe('Logging Settings', () => {
   test('should be able to edit job settings', { tag: ['@not_mock'] }, async ({ page }) => {
-    await revertAllSettings(page, 'Logging');
+    await Settings.ui.revertAll(page, 'Logging');
     await expect(page.getByRole('heading', { name: 'Logging Settings' })).toBeVisible();
 
     const logSystemField = page.getByTestId('log-system-tracking-facts-individually');
@@ -25,7 +25,7 @@ test.describe('Logging Settings', () => {
 
     await expect(logSystemField).toContainText('Enabled');
 
-    await revertAllSettings(page, 'Logging');
+    await Settings.ui.revertAll(page, 'Logging');
     await expect(logSystemField).toContainText('Disabled');
   });
 });

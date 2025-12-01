@@ -1,8 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
-import { createUser, deleteUser } from '../users/user-utils';
-import { createTeam, deleteTeam } from './team-utils';
+import { Organization, User, Team } from '@ansible/playwright/utils';
 
 test.describe('Platform Teams - Users Tab', () => {
   let organizationName: string;
@@ -12,18 +10,18 @@ test.describe('Platform Teams - Users Tab', () => {
 
   test.beforeEach(setupBefore({ path: '/access/teams' }));
   test.afterEach(async ({ page }) => {
-    await deleteUser(userName1, page).catch(() => {});
-    await deleteUser(userName2, page).catch(() => {});
-    await deleteTeam(teamName, page).catch(() => {});
-    await deleteOrganization(organizationName, page).catch(() => {});
+    await User.ui.delete(page, userName1).catch(() => {});
+    await User.ui.delete(page, userName2).catch(() => {});
+    await Team.ui.delete(page, teamName).catch(() => {});
+    await Organization.ui.delete(page, organizationName).catch(() => {});
   });
   test.afterEach(setupAfter);
 
   test('can bulk assign and remove users to a team', { tag: ['@not_mock'] }, async ({ page }) => {
-    organizationName = await createOrganization(page);
-    userName1 = await createUser({ organizationName }, page);
-    userName2 = await createUser({ organizationName }, page);
-    teamName = await createTeam({ organizationName }, page);
+    organizationName = await Organization.ui.create(page);
+    userName1 = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
+    userName2 = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
+    teamName = await Team.ui.create(page, { organizationName });
 
     // assert team > users table is empty
     await page.getByRole('tab', { name: 'Users', exact: true }).click();

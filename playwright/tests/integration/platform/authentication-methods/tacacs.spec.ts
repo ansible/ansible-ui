@@ -4,7 +4,7 @@ import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAn
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createAuthenticationMethod } from './authentication-utils';
+import { Authentication } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/authenticators' }));
 test.afterEach(setupAfter);
@@ -13,13 +13,10 @@ test(
   'TACACS+ auth form - create, edit, update and delete',
   { tag: ['@not_mock'] },
   async ({ page }) => {
-    const authMethodName = await createAuthenticationMethod(
-      {
-        name: 'e2e-tacacs-auth',
-        type: 'TACACS+',
-      },
-      page
-    );
+    const authMethodName = await Authentication.ui.createMethod(page, {
+      name: 'e2e-tacacs-auth',
+      type: 'TACACS+',
+    });
     await expect(page.locator('#hostname-of-tacacs\\+\\-server')).toContainText(
       'tacacs.example.com'
     );

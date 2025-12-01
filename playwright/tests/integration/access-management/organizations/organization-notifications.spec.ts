@@ -3,11 +3,7 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createSlackNotifier,
-  deleteNotifier,
-} from '../../automation-execution/administration/notifiers/notifier-utils';
-import { createOrganization, deleteOrganization } from './organization-utils';
+import { Organization, Notifier } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
@@ -18,13 +14,13 @@ test.describe('Notifications Tab for Organizations', () => {
   let notifierName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await createOrganization(page);
-    notifierName = await createSlackNotifier(page);
+    organizationName = await Organization.ui.create(page);
+    notifierName = await Notifier.ui.createSlack(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteNotifier(page, notifierName).catch(() => {});
-    await deleteOrganization(organizationName, page).catch(() => {});
+    await Notifier.ui.delete(page, notifierName).catch(() => {});
+    await Organization.ui.delete(page, organizationName).catch(() => {});
   });
 
   test(

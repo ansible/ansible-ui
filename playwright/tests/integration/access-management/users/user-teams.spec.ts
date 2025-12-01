@@ -1,9 +1,7 @@
 import { test } from '@playwright/test';
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
-import { createTeam, deleteTeam } from '../teams/team-utils';
-import { assignTeamToUser, createUser, deleteUser, removeTeamFromUser } from './user-utils';
+import { Organization, Team, User } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/users' }));
 test.afterEach(setupAfter);
@@ -15,34 +13,28 @@ test.describe('Users - Teams and Roles Tab Tests', () => {
     let userName: string | undefined;
 
     try {
-      organizationName = await createOrganization(page);
-      teamName = await createTeam({ organizationName }, page);
+      organizationName = await Organization.ui.create(page);
+      teamName = await Team.ui.create(page, { organizationName });
 
-      const userResult = (await createUser({ userType: 'normal' }, page)) as unknown as {
-        userName: string;
-        password: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-      };
+      const userResult = await User.ui.create(page, { userType: 'normal' });
       userName = userResult.userName;
 
-      await assignTeamToUser(userName, teamName, page);
-      await removeTeamFromUser(userName, teamName, page);
+      await User.ui.assignTeam(page, userName, teamName);
+      await User.ui.removeTeam(page, userName, teamName);
       await clearTableFilters(page);
     } finally {
       try {
-        if (userName) await deleteUser(userName, page);
+        if (userName) await User.ui.delete(page, userName);
       } catch {
         // Ignore cleanup errors
       }
       try {
-        if (teamName) await deleteTeam(teamName, page);
+        if (teamName) await Team.ui.delete(page, teamName);
       } catch {
         // Ignore cleanup errors
       }
       try {
-        if (organizationName) await deleteOrganization(organizationName, page);
+        if (organizationName) await Organization.ui.delete(page, organizationName);
       } catch {
         // Ignore cleanup errors
       }

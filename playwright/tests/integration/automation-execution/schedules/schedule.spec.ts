@@ -5,9 +5,7 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from '@playwright/test';
-import { deleteInventory } from '../infrastructure/inventories/inventory-utils';
-import { deleteJobTemplate } from '../templates/job-template-utils';
-import { createJobTemplateSchedule, deleteSchedule } from './schedule-utils';
+import { Inventory, JobTemplate, Schedule } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/schedules' }));
 test.afterEach(setupAfter);
@@ -15,10 +13,8 @@ test.afterEach(setupAfter);
 test.describe('Schedules - CRUD Operations', () => {
   test('create, edit, and delete', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 20 * 1000);
-    const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-      {},
-      page
-    );
+    const { scheduleName, jobTemplateName, inventoryName } =
+      await Schedule.ui.createJobTemplateSchedule(page, {});
 
     await navigateTo(page, 'Automation Execution', 'Schedules');
     await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
@@ -34,28 +30,26 @@ test.describe('Schedules - CRUD Operations', () => {
       page.getByRole('heading', { name: `${scheduleName}-edited`, exact: true }).first()
     ).toBeVisible();
 
-    await deleteSchedule(`${scheduleName}-edited`, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
+    await Schedule.ui.delete(page, `${scheduleName}-edited`);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test('create with COUNT ending type', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(90000);
-    const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-      {
+    const { scheduleName, jobTemplateName, inventoryName } =
+      await Schedule.ui.createJobTemplateSchedule(page, {
         endingType: 'count',
         countValue: 17,
         timezone: 'Etc/Zulu',
-      },
-      page
-    );
+      });
 
     await expect(page.getByRole('heading', { name: scheduleName, exact: true })).toBeVisible();
     await expect(page.getByTestId('rruleset').getByText(/COUNT=17/)).toBeVisible();
 
-    await deleteSchedule(scheduleName, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
+    await Schedule.ui.delete(page, scheduleName);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test('create with UNTIL ending type', { tag: ['@not_mock'] }, async ({ page }) => {
@@ -64,30 +58,26 @@ test.describe('Schedules - CRUD Operations', () => {
     tomorrow.setDate(tomorrow.getDate() + 2);
     const untilDate = tomorrow.toISOString().split('T')[0];
 
-    const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-      {
+    const { scheduleName, jobTemplateName, inventoryName } =
+      await Schedule.ui.createJobTemplateSchedule(page, {
         endingType: 'until',
         untilDate,
         timezone: 'Etc/Zulu',
-      },
-      page
-    );
+      });
 
     await expect(page.getByRole('heading', { name: scheduleName, exact: true })).toBeVisible({
       timeout: 15000,
     });
 
-    await deleteSchedule(scheduleName, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
+    await Schedule.ui.delete(page, scheduleName);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test('edit with existing RRule', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 20 * 1000);
-    const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-      {},
-      page
-    );
+    const { scheduleName, jobTemplateName, inventoryName } =
+      await Schedule.ui.createJobTemplateSchedule(page, {});
     await navigateTo(page, 'Automation Execution', 'Schedules');
     await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
     await clickPageAction('Edit schedule', page);
@@ -117,16 +107,14 @@ test.describe('Schedules - CRUD Operations', () => {
     await expect(
       page.getByRole('heading', { name: scheduleName, exact: true }).first()
     ).toBeVisible();
-    await deleteSchedule(scheduleName, page);
-    await deleteJobTemplate(jobTemplateName, page).catch(() => {});
-    await deleteInventory(inventoryName, page).catch(() => {});
+    await Schedule.ui.delete(page, scheduleName);
+    await JobTemplate.ui.delete(page, jobTemplateName).catch(() => {});
+    await Inventory.ui.delete(page, inventoryName).catch(() => {});
   });
 
   test('toggle enabled/disabled', { tag: ['@not_mock'] }, async ({ page }) => {
-    const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-      {},
-      page
-    );
+    const { scheduleName, jobTemplateName, inventoryName } =
+      await Schedule.ui.createJobTemplateSchedule(page, {});
 
     await navigateTo(page, 'Automation Execution', 'Schedules');
     await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
@@ -141,9 +129,9 @@ test.describe('Schedules - CRUD Operations', () => {
     await toggleSwitch.click({ force: true });
     await page.waitForTimeout(1000);
 
-    await deleteSchedule(scheduleName, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
+    await Schedule.ui.delete(page, scheduleName);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test(
@@ -210,7 +198,7 @@ test.describe('Schedules - CRUD Operations', () => {
       await expect(page.getByTestId('days-of-data-to-keep')).toHaveText('33');
 
       // Cleanup: Management job templates are system resources, only delete the schedule
-      await deleteSchedule(mgmtScheduleName, page);
+      await Schedule.ui.delete(page, mgmtScheduleName);
     }
   );
 });
@@ -218,10 +206,8 @@ test.describe('Schedules - CRUD Operations', () => {
 test.describe('Schedules - Advanced Edit Operations', () => {
   test('edit to add and remove rules', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 20 * 1000);
-    const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-      {},
-      page
-    );
+    const { scheduleName, jobTemplateName, inventoryName } =
+      await Schedule.ui.createJobTemplateSchedule(page, {});
 
     await navigateTo(page, 'Automation Execution', 'Schedules');
     await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
@@ -268,17 +254,17 @@ test.describe('Schedules - Advanced Edit Operations', () => {
     await page.getByRole('button', { name: 'Finish' }).click();
     await expect(page.getByRole('heading', { name: scheduleName, exact: true })).toBeVisible();
 
-    await deleteSchedule(scheduleName, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
+    await Schedule.ui.delete(page, scheduleName);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
   });
 });
 
 test.describe('Schedules - Complex Workflows', () => {
   test('create with prompts, surveys, and exceptions', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 20 * 1000);
-    const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-      {
+    const { scheduleName, jobTemplateName, inventoryName } =
+      await Schedule.ui.createJobTemplateSchedule(page, {
         withPrompts: true,
         withSurvey: true,
         withExceptions: true,
@@ -287,9 +273,7 @@ test.describe('Schedules - Complex Workflows', () => {
         skipTags: 'e2e_skip_tag',
         extraVars: 'e2e_var: test_value',
         surveyQuestion: 'Variable1',
-      },
-      page
-    );
+      });
 
     await expect(page.getByRole('heading', { name: scheduleName, exact: true })).toBeVisible();
     await expect(page.getByTestId('job-tags')).toContainText('e2e_test_tag');
@@ -302,9 +286,9 @@ test.describe('Schedules - Complex Workflows', () => {
       /"?DTSTART(;TZID=[^:]+)?:\d{8}T\d{6}Z?\s+RRULE:FREQ=YEARLY;INTERVAL=1\s+EXRULE:FREQ=WEEKLY;INTERVAL=200"?/
     );
 
-    await deleteSchedule(scheduleName, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
+    await Schedule.ui.delete(page, scheduleName);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   test(
@@ -312,8 +296,8 @@ test.describe('Schedules - Complex Workflows', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const surveyAnswer = 'TestSurveyValue123';
-      const { scheduleName, jobTemplateName, inventoryName } = await createJobTemplateSchedule(
-        {
+      const { scheduleName, jobTemplateName, inventoryName } =
+        await Schedule.ui.createJobTemplateSchedule(page, {
           withPrompts: true,
           withSurvey: true,
           withExceptions: true,
@@ -321,9 +305,7 @@ test.describe('Schedules - Complex Workflows', () => {
           skipTags: 'skip_tag',
           extraVars: 'test_var: value',
           surveyQuestion: surveyAnswer,
-        },
-        page
-      );
+        });
 
       // Verify schedule was created with survey answer
       await expect(page.getByRole('heading', { name: scheduleName, exact: true })).toBeVisible();
@@ -360,9 +342,9 @@ test.describe('Schedules - Complex Workflows', () => {
       // Our fix works! Cancel the edit since we've validated the core functionality.
       await page.getByRole('button', { name: 'Cancel' }).click();
 
-      await deleteSchedule(scheduleName, page);
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteInventory(inventoryName, page);
+      await Schedule.ui.delete(page, scheduleName);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 });
@@ -370,15 +352,15 @@ test.describe('Schedules - Complex Workflows', () => {
 test.describe('Schedules - Bulk Operations', () => {
   test('bulk deletion', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 20 * 1000);
-    const schedule1 = await createJobTemplateSchedule({}, page);
-    const schedule2 = await createJobTemplateSchedule(
-      { jobTemplateName: schedule1.jobTemplateName, inventoryName: schedule1.inventoryName },
-      page
-    );
-    const schedule3 = await createJobTemplateSchedule(
-      { jobTemplateName: schedule1.jobTemplateName, inventoryName: schedule1.inventoryName },
-      page
-    );
+    const schedule1 = await Schedule.ui.createJobTemplateSchedule(page, {});
+    const schedule2 = await Schedule.ui.createJobTemplateSchedule(page, {
+      jobTemplateName: schedule1.jobTemplateName,
+      inventoryName: schedule1.inventoryName,
+    });
+    const schedule3 = await Schedule.ui.createJobTemplateSchedule(page, {
+      jobTemplateName: schedule1.jobTemplateName,
+      inventoryName: schedule1.inventoryName,
+    });
 
     await bulkDeleteResources(
       {
@@ -389,7 +371,7 @@ test.describe('Schedules - Bulk Operations', () => {
       page
     );
 
-    await deleteJobTemplate(schedule1.jobTemplateName, page);
-    await deleteInventory(schedule1.inventoryName, page);
+    await JobTemplate.ui.delete(page, schedule1.jobTemplateName);
+    await Inventory.ui.delete(page, schedule1.inventoryName);
   });
 });

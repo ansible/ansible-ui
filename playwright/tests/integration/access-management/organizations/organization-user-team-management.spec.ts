@@ -11,13 +11,7 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
-import { createTeam, deleteTeam } from '../teams/team-utils';
-import { createUser, deleteUser } from '../users/user-utils';
-import {
-  addUserToOrganization,
-  createOrganization,
-  deleteOrganization,
-} from './organization-utils';
+import { Organization, User, Team } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
@@ -35,19 +29,23 @@ test.describe('Organization User and Team Management', () => {
     }
 
     // Create test resources
-    organizationName = await createOrganization(page);
-    user1Name = await createUser({}, page);
-    user2Name = await createUser({}, page);
+    organizationName = await Organization.ui.create(page);
+    user1Name = await User.ui
+      .create(page)
+      .then((result) => (typeof result === 'string' ? result : result.userName));
+    user2Name = await User.ui
+      .create(page)
+      .then((result) => (typeof result === 'string' ? result : result.userName));
     // Create team only when needed in specific tests
     // teamName = await createTeam({ organizationName }, page);
   });
 
   test.afterEach(async ({ page }) => {
     // Clean up test resources
-    await deleteUser(user1Name, page).catch(() => {});
-    await deleteUser(user2Name, page).catch(() => {});
+    await User.ui.delete(page, user1Name).catch(() => {});
+    await User.ui.delete(page, user2Name).catch(() => {});
     // Team cleanup is handled in individual tests
-    await deleteOrganization(organizationName, page).catch(() => {});
+    await Organization.ui.delete(page, organizationName);
   });
 
   // User Management Tests (using utility function)
@@ -56,12 +54,9 @@ test.describe('Organization User and Team Management', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // Add user to organization using the helper function
-      await addUserToOrganization(
-        organizationName,
-        user1Name,
-        { roles: ['Organization Member'] },
-        page
-      );
+      await Organization.ui.addUser(page, organizationName, user1Name, {
+        roles: ['Organization Member'],
+      });
 
       // Verify the user appears in the organization's user list
       await filterTable(
@@ -104,12 +99,9 @@ test.describe('Organization User and Team Management', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // Add user to organization with multiple roles
-      await addUserToOrganization(
-        organizationName,
-        user1Name,
-        { roles: ['Organization Member', 'Organization Admin'] },
-        page
-      );
+      await Organization.ui.addUser(page, organizationName, user1Name, {
+        roles: ['Organization Member', 'Organization Admin'],
+      });
 
       // Verify the user appears in the organization's user list
       await filterTable(
@@ -255,12 +247,9 @@ test.describe('Organization User and Team Management', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // First, add the user to the organization
-      await addUserToOrganization(
-        organizationName,
-        user1Name,
-        { roles: ['Organization Member', 'Organization Admin'] },
-        page
-      );
+      await Organization.ui.addUser(page, organizationName, user1Name, {
+        roles: ['Organization Member', 'Organization Admin'],
+      });
 
       // Filter to find the specific user in the organization
       await filterTable(
@@ -357,12 +346,9 @@ test.describe('Organization User and Team Management', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // First, add the user to the organization
-      await addUserToOrganization(
-        organizationName,
-        user1Name,
-        { roles: ['Organization Member'] },
-        page
-      );
+      await Organization.ui.addUser(page, organizationName, user1Name, {
+        roles: ['Organization Member'],
+      });
 
       // Filter to find the specific user in the organization
       await filterTable(
@@ -445,7 +431,7 @@ test.describe('Organization User and Team Management', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // Create team for this test
-      const teamName = await createTeam({ organizationName }, page);
+      const teamName = await Team.ui.create(page, { organizationName });
 
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);
@@ -519,7 +505,7 @@ test.describe('Organization User and Team Management', () => {
       await expect(page.getByText('No roles assigned to this team')).toBeVisible();
 
       // Clean up the team
-      await deleteTeam(teamName, page);
+      await Team.ui.delete(page, teamName);
     }
   );
 
@@ -528,7 +514,7 @@ test.describe('Organization User and Team Management', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // Create team for this test
-      const teamName = await createTeam({ organizationName }, page);
+      const teamName = await Team.ui.create(page, { organizationName });
 
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);
@@ -558,7 +544,7 @@ test.describe('Organization User and Team Management', () => {
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Clean up the team
-      await deleteTeam(teamName, page);
+      await Team.ui.delete(page, teamName);
     }
   );
 

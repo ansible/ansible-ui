@@ -6,37 +6,32 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from '@playwright/test';
 import {
-  createOrganization,
-  deleteOrganization,
-} from '../../access-management/organizations/organization-utils';
-import { createTeam, deleteTeam } from '../../access-management/teams/team-utils';
-import { createUser, deleteUser } from '../../access-management/users/user-utils';
-import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
-import { createJobTemplate, deleteJobTemplate } from '../templates/job-template-utils';
-import {
-  copyAwxProject,
-  createAwxProject,
-  deleteAwxProject,
-  syncAwxProject,
-} from './project-utils';
+  Organization,
+  Team,
+  User,
+  Inventory,
+  JobTemplate,
+  Project,
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/projects' }));
 test.afterEach(setupAfter);
 
 test.describe('Project - Basic Operations', () => {
   test('project - Create, sync, and delete', async ({ page }) => {
-    test.setTimeout(5 * 60 * 1000);
-    const projectName = await createAwxProject({}, page);
-    await syncAwxProject(projectName, page);
-    await deleteAwxProject(projectName, page);
+    const projectName = await Project.ui.create(page, { organizationName: 'Default' });
+    await Project.ui.sync(page, projectName);
+    await Project.ui.delete(page, projectName);
   });
 
   test('project - test user access organization link', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
-    const organizationName = await createOrganization(page, {});
-    const projectName = await createAwxProject({ organizationName: organizationName }, page);
-    const userName = await createUser({}, page);
-    const teamName = await createTeam({ organizationName: organizationName }, page);
+    const organizationName = await Organization.ui.create(page);
+    const projectName = await Project.ui.create(page, { organizationName });
+    const userName = await User.ui
+      .create(page)
+      .then((r) => (typeof r === 'string' ? r : r.userName));
+    const teamName = await Team.ui.create(page, { organizationName });
 
     // Assign user to team
     await page.getByRole('tab', { name: 'Users' }).click();
@@ -80,18 +75,18 @@ test.describe('Project - Basic Operations', () => {
     await expect(page.getByRole('link', { name: organizationName })).toBeVisible();
     await page.getByRole('link', { name: organizationName }).click();
     await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
-    await deleteAwxProject(projectName, page);
-    await deleteUser(userName, page);
-    await deleteTeam(teamName, page);
-    await deleteOrganization(organizationName, page);
+    await Project.ui.delete(page, projectName);
+    await User.ui.delete(page, userName);
+    await Team.ui.delete(page, teamName);
+    await Organization.ui.delete(page, organizationName);
   });
 });
 
 test.describe('Project - Edit, Copy, and Sync', () => {
   test('Project - Edit project name', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
-    const projectName = await createAwxProject({}, page);
-    await syncAwxProject(projectName, page);
+    const projectName = await Project.ui.create(page, { organizationName: 'Default' });
+    await Project.ui.sync(page, projectName);
     const editedName = `${projectName} - edited`;
 
     await navigateTo(page, 'Automation Execution', 'Projects');
@@ -107,7 +102,7 @@ test.describe('Project - Edit, Copy, and Sync', () => {
     await page.getByRole('button', { name: 'Save project', exact: true }).click();
     await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible();
 
-    await deleteAwxProject(editedName, page);
+    await Project.ui.delete(page, editedName);
   });
 
   test(
@@ -115,12 +110,12 @@ test.describe('Project - Edit, Copy, and Sync', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
-      const projectName = await createAwxProject({}, page);
-      await syncAwxProject(projectName, page);
+      const projectName = await Project.ui.create(page, { organizationName: 'Default' });
+      await Project.ui.sync(page, projectName);
 
       // Copy from list row kebab action
-      const copiedName1 = await copyAwxProject(projectName, page);
-      await syncAwxProject(copiedName1, page);
+      const copiedName1 = await Project.ui.copy(page, projectName);
+      await Project.ui.sync(page, copiedName1);
 
       // Copy from details page action
       await navigateTo(page, 'Automation Execution', 'Projects');
@@ -145,19 +140,19 @@ test.describe('Project - Edit, Copy, and Sync', () => {
       await expect(page.getByTestId('alert-toaster')).toContainText('duplicated', {
         timeout: 10000,
       });
-      await syncAwxProject(copiedName2, page);
+      await Project.ui.sync(page, copiedName2);
 
       // Cleanup
-      await deleteAwxProject(projectName, page);
-      await deleteAwxProject(copiedName1, page);
-      await deleteAwxProject(copiedName2, page);
+      await Project.ui.delete(page, projectName);
+      await Project.ui.delete(page, copiedName1);
+      await Project.ui.delete(page, copiedName2);
     }
   );
 
   test('Project - Sync from list and details', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
-    const projectName = await createAwxProject({}, page);
-    await syncAwxProject(projectName, page);
+    const projectName = await Project.ui.create(page, { organizationName: 'Default' });
+    await Project.ui.sync(page, projectName);
 
     // Sync from list row action
     await navigateTo(page, 'Automation Execution', 'Projects');
@@ -166,7 +161,7 @@ test.describe('Project - Edit, Copy, and Sync', () => {
       page
     );
     await expect(page.getByTestId('alert-toaster')).toContainText(`Syncing ${projectName}`);
-    await syncAwxProject(projectName, page);
+    await Project.ui.sync(page, projectName);
 
     // Sync from details page
     await clickTableRow(
@@ -175,9 +170,9 @@ test.describe('Project - Edit, Copy, and Sync', () => {
     );
     await expect(page.getByRole('heading', { name: projectName, exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Sync project' }).click();
-    await syncAwxProject(projectName, page);
+    await Project.ui.sync(page, projectName);
 
-    await deleteAwxProject(projectName, page);
+    await Project.ui.delete(page, projectName);
   });
 });
 
@@ -189,24 +184,21 @@ test.describe('Project - Job Templates', () => {
       test.setTimeout(5 * 60 * 1000);
 
       // Create project and inventory
-      const projectName1 = await createAwxProject({}, page);
-      await syncAwxProject(projectName1, page);
-      const projectName2 = await createAwxProject({}, page);
-      await syncAwxProject(projectName2, page);
-      const inventoryName = await createInventory({}, page);
+      const projectName1 = await Project.ui.create(page, { organizationName: 'Default' });
+      await Project.ui.sync(page, projectName1);
+      const projectName2 = await Project.ui.create(page, { organizationName: 'Default' });
+      await Project.ui.sync(page, projectName2);
+      const inventoryName = await Inventory.ui.create(page);
 
       // Navigate to templates page to clear any stale project page state
       await navigateTo(page, 'Automation Execution', 'Templates');
       await page.waitForTimeout(3000);
 
       // Create job template with first project
-      const jobTemplateName = await createJobTemplate(
-        {
-          inventoryName: inventoryName,
-          projectName: projectName1,
-        },
-        page
-      );
+      const jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName,
+        projectName: projectName1,
+      });
 
       // Edit job template to use second project
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -264,10 +256,10 @@ test.describe('Project - Job Templates', () => {
       await expect(page.getByRole('link', { name: jobTemplateName })).toBeVisible();
 
       // Cleanup
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteInventory(inventoryName, page);
-      await deleteAwxProject(projectName1, page);
-      await deleteAwxProject(projectName2, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, inventoryName);
+      await Project.ui.delete(page, projectName1);
+      await Project.ui.delete(page, projectName2);
     }
   );
 });

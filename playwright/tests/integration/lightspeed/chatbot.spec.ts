@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { mockLightspeedHealthStatus } from './lightspeed-utils';
+import { Lightspeed } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
@@ -10,7 +10,7 @@ test.skip(
   { tag: [] },
   async ({ page }) => {
     test.setTimeout(8 * 60 * 1000);
-    await mockLightspeedHealthStatus(page, 200, {
+    await Lightspeed.mock.healthStatus(page, 200, {
       'chatbot-service': 'ok',
       'streaming-chatbot-service': 'ok',
     });
@@ -37,7 +37,7 @@ test(
   { tag: [] },
   async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
-    await mockLightspeedHealthStatus(page, 200, {
+    await Lightspeed.mock.healthStatus(page, 200, {
       'chatbot-service': 'disabled',
       'streaming-chatbot-service': 'disabled',
     });
@@ -53,7 +53,7 @@ test(
   { tag: [] },
   async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
-    await mockLightspeedHealthStatus(page, 200, {
+    await Lightspeed.mock.healthStatus(page, 200, {
       'chatbot-service': 'an error occurred',
       'streaming-chatbot-service': 'an error occurred',
     });
@@ -70,7 +70,7 @@ test(
   { tag: [] },
   async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
-    await mockLightspeedHealthStatus(page, 404, 'Not found');
+    await Lightspeed.mock.healthStatus(page, 404, 'Not found');
 
     // click platform Overview menu item to make sure the application elements are fully loaded and clickable
     await page.getByRole('link', { name: 'Overview' }).click();
@@ -84,7 +84,7 @@ test(
   { tag: [] },
   async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
-    await mockLightspeedHealthStatus(page, 500, 'An internal server error occurred');
+    await Lightspeed.mock.healthStatus(page, 500, 'An internal server error occurred');
 
     // click platform Overview menu item to make sure the application elements are fully loaded and clickable
     await page.getByRole('link', { name: 'Overview' }).click();

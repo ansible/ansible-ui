@@ -5,15 +5,7 @@ import { clearTableFilters } from '../../../../../../commands/clearTableFilters'
 import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../../../commands/createE2EName';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
-import { createInventory, deleteInventory } from '../inventory-utils';
-import {
-  createInstanceGroup,
-  deleteInstanceGroup,
-} from '../../instance-groups/instance-group-utils';
-import {
-  createOrganization,
-  deleteOrganization,
-} from '../../../../access-management/organizations/organization-utils';
+import { Organization, Inventory, InstanceGroup } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -23,25 +15,22 @@ test.describe('Regular Inventory', () => {
     'can create inventory with all fields and delete from details',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const instanceGroupName = await createInstanceGroup({}, page);
-      const organizationName = await createOrganization(page);
+      const instanceGroupName = await InstanceGroup.ui.create(page);
+      const organizationName = await Organization.ui.create(page);
       const labelName = createE2EName('label');
       const inventoryName = createE2EName('inventory');
 
       try {
-        await createInventory(
-          {
-            name: inventoryName,
-            description: `${inventoryName} description`,
-            organizationName,
-            labelName,
-            instanceGroupName,
-            policyEnforcement: 'test/opa',
-            variables: 'test_var: test_value',
-            preventInstanceGroupFallback: true,
-          },
-          page
-        );
+        await Inventory.ui.create(page, {
+          inventoryName,
+          description: `${inventoryName} description`,
+          organizationName,
+          labelName,
+          instanceGroupName,
+          policyEnforcement: 'test/opa',
+          variables: 'test_var: test_value',
+          preventInstanceGroupFallback: true,
+        });
 
         await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
 
@@ -63,8 +52,8 @@ test.describe('Regular Inventory', () => {
 
         await expect(page.getByRole('heading', { name: 'Inventories', exact: true })).toBeVisible();
       } finally {
-        await deleteInstanceGroup(instanceGroupName, page);
-        await deleteOrganization(organizationName, page);
+        await InstanceGroup.ui.delete(page, instanceGroupName);
+        await Organization.ui.delete(page, organizationName);
       }
     }
   );
@@ -74,8 +63,8 @@ test.describe('Regular Inventory', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const TEST_VAR_EDITED = 'test_var: test_value_edited';
-      const organizationName = await createOrganization(page);
-      const inventoryName = await createInventory({ organizationName }, page);
+      const organizationName = await Organization.ui.create(page);
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
       const editedInventoryName = `edited-${inventoryName}`;
 
       try {
@@ -107,11 +96,11 @@ test.describe('Regular Inventory', () => {
         await expect(page.getByTestId('name')).toHaveText(editedInventoryName);
       } finally {
         try {
-          await deleteInventory(editedInventoryName, page);
+          await Inventory.ui.delete(page, editedInventoryName);
         } catch {
-          await deleteInventory(inventoryName, page);
+          await Inventory.ui.delete(page, inventoryName);
         }
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     }
   );
@@ -120,8 +109,8 @@ test.describe('Regular Inventory', () => {
     'can duplicate inventory from details view and list view',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const organizationName = await createOrganization(page);
-      const inventoryName = await createInventory({ organizationName }, page);
+      const organizationName = await Organization.ui.create(page);
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
 
       try {
         await clickPageAction('Duplicate inventory', page);
@@ -158,7 +147,7 @@ test.describe('Regular Inventory', () => {
         await page.getByRole('menuitem', { name: 'Delete inventories' }).click();
         await confirmAndAssertDeletion(page);
       } finally {
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     }
   );
@@ -167,8 +156,8 @@ test.describe('Regular Inventory', () => {
     'can delete inventory from list via row action kebab menu',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const organizationName = await createOrganization(page);
-      const inventoryName = await createInventory({ organizationName }, page);
+      const organizationName = await Organization.ui.create(page);
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
 
       try {
         await page.getByRole('tab', { name: 'Back to Inventories' }).click();
@@ -183,7 +172,7 @@ test.describe('Regular Inventory', () => {
 
         await confirmAndAssertDeletion(page);
       } finally {
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     }
   );

@@ -1,3 +1,5 @@
+/** @deprecated Use Role and TEST_ROLE_CONFIGS from '@ansible/playwright/utils' instead */
+
 import { Page, expect } from '@playwright/test';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';

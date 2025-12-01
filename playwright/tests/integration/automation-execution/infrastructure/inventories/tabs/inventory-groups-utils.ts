@@ -1,3 +1,5 @@
+/** @deprecated Use InventoryGroup from '@ansible/playwright/utils' instead */
+
 import { Page, expect } from '@playwright/test';
 import { clickTableRow } from '../../../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../../../commands/createE2EName';

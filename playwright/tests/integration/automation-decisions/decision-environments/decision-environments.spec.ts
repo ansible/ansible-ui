@@ -1,16 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createDecisionEnvironment,
-  deleteDecisionEnvironment,
-} from './decision-environments-utils';
+import { DecisionEnvironment } from '@ansible/playwright/utils';
 
 test.describe('Decision Environments - Details Page', () => {
   let decisionEnvironmentName: string;
 
   test.beforeEach(setupBefore({ path: '/decisions/decision-environments' }));
   test.afterEach(async ({ page }) => {
-    await deleteDecisionEnvironment(decisionEnvironmentName, page).catch(() => {});
+    await DecisionEnvironment.ui.delete(page, decisionEnvironmentName).catch(() => {});
   });
   test.afterEach(setupAfter);
 
@@ -19,10 +16,10 @@ test.describe('Decision Environments - Details Page', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const expectedPullPolicy = 'Always';
-      decisionEnvironmentName = await createDecisionEnvironment(
-        { organizationName: 'Default', pullPolicy: expectedPullPolicy },
-        page
-      );
+      decisionEnvironmentName = await DecisionEnvironment.ui.create(page, {
+        organizationName: 'Default',
+        pullPolicy: expectedPullPolicy,
+      });
 
       await expect(
         page.getByRole('heading', { name: decisionEnvironmentName, exact: true })

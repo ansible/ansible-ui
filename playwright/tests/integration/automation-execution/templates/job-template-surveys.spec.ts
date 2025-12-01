@@ -2,21 +2,13 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from '@playwright/test';
 import {
-  createOrganization,
-  deleteOrganization,
-} from '../../access-management/organizations/organization-utils';
-import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
-import { createAwxProject, deleteAwxProject } from '../projects/project-utils';
-import {
-  createMultipleSurveyQuestionsAPI,
-  createSurveyQuestionAPI,
-  enableSurvey,
-  finishSurveyLaunch,
-  launchSurveyWithPrompt,
-  navigateToTemplateSurveyTab,
+  Organization,
+  Inventory,
+  Project,
+  JobTemplate,
+  JobTemplateSurvey,
   type SurveyQuestion,
-} from './job-template-survey-utils';
-import { createJobTemplate, deleteJobTemplate } from './job-template-utils';
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
@@ -29,8 +21,8 @@ test.describe('Job Templates Surveys', () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await setupBefore({ path: '/' })({ page });
-    await createOrganization(page, { organizationName });
-    await createAwxProject({ organizationName, projectName }, page);
+    await Organization.ui.create(page, { organizationName });
+    await Project.ui.create(page, { organizationName, projectName });
     await context.close();
   });
 
@@ -38,8 +30,8 @@ test.describe('Job Templates Surveys', () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await setupBefore({ path: '/' })({ page });
-    await deleteAwxProject(projectName, page);
-    await deleteOrganization(organizationName, page);
+    await Project.ui.delete(page, projectName);
+    await Organization.ui.delete(page, organizationName);
     await context.close();
   });
 
@@ -60,26 +52,23 @@ test.describe('Job Templates Surveys', () => {
     let jobTemplateName: string;
 
     test.beforeEach(async ({ page }) => {
-      inventoryName = await createInventory({ organizationName }, page);
-      jobTemplateName = await createJobTemplate(
-        {
-          inventoryName: inventoryName,
-          projectName: projectName,
-        },
-        page
-      );
+      inventoryName = await Inventory.ui.create(page, { organizationName });
+      jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName: inventoryName,
+        projectName: projectName,
+      });
     });
 
     test.afterEach(async ({ page }) => {
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteInventory(inventoryName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, inventoryName);
     });
 
     test(
       'can create a required survey from surveys tab list of a JT, toggle survey on, and assert info on surveys list view',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         await expect(
           page.getByText('There are currently no survey questions.', { exact: true })
         ).toBeVisible();
@@ -120,8 +109,8 @@ test.describe('Job Templates Surveys', () => {
       'can edit a JT survey from surveys list view and assert info on surveys list view',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await createSurveyQuestionAPI(page, jobTemplateName, question);
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.api.createQuestion(page, jobTemplateName, question);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         const row0 = page.getByTestId('row-0');
         await expect(
           row0.getByTestId('name-column-cell').getByText(question.question_name, { exact: true })
@@ -167,8 +156,8 @@ test.describe('Job Templates Surveys', () => {
       'can delete a JT survey from the surveys list view and assert deletion',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await createSurveyQuestionAPI(page, jobTemplateName, question);
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.api.createQuestion(page, jobTemplateName, question);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         const row0 = page.getByTestId('row-0');
         await expect(row0.getByText(question.question_name, { exact: true })).toBeVisible();
         await expect(row0.getByText(question.default.toString(), { exact: true })).toBeVisible();
@@ -194,7 +183,7 @@ test.describe('Job Templates Surveys', () => {
       'should show validation error when minimum length exceeds maximum length for text type',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -222,7 +211,7 @@ test.describe('Job Templates Surveys', () => {
       'should show validation error when minimum exceeds maximum for integer type',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -254,7 +243,7 @@ test.describe('Job Templates Surveys', () => {
       'should clear validation error when min/max values are corrected',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -289,7 +278,7 @@ test.describe('Job Templates Surveys', () => {
       'should validate text answer by length not numeric value (01 is valid for length 2)',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -371,8 +360,8 @@ test.describe('Job Templates Surveys', () => {
             choices: [],
           },
         ];
-        await createMultipleSurveyQuestionsAPI(page, jobTemplateName, specs);
-        await navigateToTemplateSurveyTab(jobTemplateName, page);
+        await JobTemplateSurvey.api.createMultipleQuestions(page, jobTemplateName, specs);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
         for (let index = 0; index < specs.length; index++) {
           const row = page.getByTestId(`row-${index}`);
           await expect(
@@ -437,19 +426,16 @@ test.describe('Job Templates Surveys', () => {
     let jobTemplateName: string;
 
     test.beforeEach(async ({ page }) => {
-      inventoryName = await createInventory({ organizationName }, page);
-      jobTemplateName = await createJobTemplate(
-        {
-          inventoryName: inventoryName,
-          projectName: projectName,
-        },
-        page
-      );
+      inventoryName = await Inventory.ui.create(page, { organizationName });
+      jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName: inventoryName,
+        projectName: projectName,
+      });
     });
 
     test.afterEach(async ({ page }) => {
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteInventory(inventoryName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, inventoryName);
     });
 
     const surveyTypes: Array<{
@@ -578,14 +564,9 @@ test.describe('Job Templates Surveys', () => {
         { tag: ['@not_mock'] },
         async ({ page }) => {
           test.setTimeout(5 * 60 * 1000);
-          await createSurveyQuestionAPI(
-            page,
-            jobTemplateName,
-            surveyType.question,
-            surveyType.label
-          );
-          await enableSurvey(jobTemplateName, page);
-          await launchSurveyWithPrompt(jobTemplateName, surveyType.question, page);
+          await JobTemplateSurvey.api.createQuestion(page, jobTemplateName, surveyType.question);
+          await JobTemplateSurvey.ui.enableSurvey(page, jobTemplateName);
+          await JobTemplateSurvey.ui.launchWithPrompt(page, jobTemplateName, surveyType.question);
 
           // Verify default value based on survey type
           if (surveyType.type === 'multiselect') {
@@ -600,7 +581,7 @@ test.describe('Job Templates Surveys', () => {
           }
           // For multiplechoice, the question visibility was already verified in launchSurveyWithPrompt
 
-          await finishSurveyLaunch(surveyType.question, page);
+          await JobTemplateSurvey.ui.finishLaunch(page, surveyType.question);
         }
       );
     }

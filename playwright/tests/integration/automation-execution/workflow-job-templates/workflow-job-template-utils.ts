@@ -1,3 +1,5 @@
+/** @deprecated Use WorkflowJobTemplate from '@ansible/playwright/utils' instead */
+
 import { Page, expect } from '@playwright/test';
 import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';

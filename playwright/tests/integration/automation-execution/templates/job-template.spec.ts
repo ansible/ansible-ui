@@ -6,28 +6,18 @@ import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableFilter } from '@ansible/playwright/commands/selectTableFilter';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createAwxCredential,
-  deleteAwxCredential,
-} from '../infrastructure/credentials/credential-utils';
-import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
-import {
-  copyJobTemplate,
-  createJobTemplate,
-  deleteJobTemplate,
-  runJobTemplate,
-} from './job-template-utils';
+import { Inventory, Credential, JobTemplate } from '@ansible/playwright/utils';
 
 test.describe('Job Templates', () => {
   let inventoryName: string;
 
   test.beforeEach(async ({ page }) => {
     await setupBefore({ path: '/' })({ page });
-    inventoryName = await createInventory({}, page);
+    inventoryName = await Inventory.ui.create(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteInventory(inventoryName, page);
+    await Inventory.ui.delete(page, inventoryName);
     await setupAfter({ page });
   });
 
@@ -35,8 +25,8 @@ test.describe('Job Templates', () => {
     page,
   }) => {
     test.setTimeout(2 * 60 * 1000);
-    const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
-    await deleteJobTemplate(jobTemplateName, page);
+    const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
+    await JobTemplate.ui.delete(page, jobTemplateName);
   });
 
   test(
@@ -45,16 +35,18 @@ test.describe('Job Templates', () => {
     async ({ page }) => {
       test.setTimeout(5 * 30 * 1000);
       const label = createE2EName('label-jt');
-      const jobTemplateName = await createJobTemplate(
-        { inventoryName: inventoryName, PromptOnLaunch: true, labels: [label], createLabel: true },
-        page
-      );
-      await runJobTemplate(
-        jobTemplateName,
-        { inventoryName: inventoryName, PromptOnLaunch: true, labels: [label] },
-        page
-      );
-      await deleteJobTemplate(jobTemplateName, page);
+      const jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName: inventoryName,
+        PromptOnLaunch: true,
+        labels: [label],
+        createLabel: true,
+      });
+      await JobTemplate.ui.run(page, jobTemplateName, {
+        inventoryName: inventoryName,
+        PromptOnLaunch: true,
+        labels: [label],
+      });
+      await JobTemplate.ui.delete(page, jobTemplateName);
     }
   );
 
@@ -63,10 +55,10 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(5 * 30 * 1000);
-      const jobTemplateName = await createJobTemplate(
-        { inventoryName: inventoryName, survey: true },
-        page
-      );
+      const jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName: inventoryName,
+        survey: true,
+      });
       await page
         .getByLabel('Global', { exact: true })
         .getByRole('link', { name: 'Templates' })
@@ -84,7 +76,7 @@ test.describe('Job Templates', () => {
       await page.getByRole('button', { name: 'Edit survey question' }).click();
       await expect(page.getByRole('spinbutton', { name: 'Minimum length' })).toHaveValue('5');
       await expect(page.getByRole('spinbutton', { name: 'Maximum length' })).toHaveValue('15');
-      await deleteJobTemplate(jobTemplateName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
     }
   );
 
@@ -93,16 +85,17 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName = await createJobTemplate(
-        { inventoryName: inventoryName, PromptOnLaunch: true },
-        page
-      );
-      await runJobTemplate(
-        jobTemplateName,
-        { inventoryName: inventoryName, PromptOnLaunch: true, view: 'details', doNotWait: false },
-        page
-      );
-      await deleteJobTemplate(jobTemplateName, page);
+      const jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName: inventoryName,
+        PromptOnLaunch: true,
+      });
+      await JobTemplate.ui.run(page, jobTemplateName, {
+        inventoryName: inventoryName,
+        PromptOnLaunch: true,
+        view: 'details',
+        doNotWait: false,
+      });
+      await JobTemplate.ui.delete(page, jobTemplateName);
     }
   );
 
@@ -111,7 +104,7 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
       const editedJobTemplateName = jobTemplateName + ' - edited from row action';
       const editedDescription = 'this is a new description after editing from row action';
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -130,7 +123,7 @@ test.describe('Job Templates', () => {
       await expect(page.getByRole('heading', { name: editedJobTemplateName })).toBeVisible();
       await expect(page.locator('#description')).toContainText(editedDescription);
       // cleanup
-      await deleteJobTemplate(editedJobTemplateName, page);
+      await JobTemplate.ui.delete(page, editedJobTemplateName);
     }
   );
 
@@ -139,7 +132,7 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
       const editedJobTemplateName = jobTemplateName + ' - edited from row action';
       const editedDescription = 'this is a new description after editing from row action';
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -161,7 +154,7 @@ test.describe('Job Templates', () => {
       await expect(page.getByRole('heading', { name: editedJobTemplateName })).toBeVisible();
       await expect(page.locator('#description')).toContainText(editedDescription);
       // cleanup
-      await deleteJobTemplate(editedJobTemplateName, page);
+      await JobTemplate.ui.delete(page, editedJobTemplateName);
     }
   );
 
@@ -171,10 +164,10 @@ test.describe('Job Templates', () => {
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       // create inventory + job template and then delete inventory
-      const inventoryName = await createInventory({}, page);
-      const newInventoryName = await createInventory({}, page);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
-      await deleteInventory(inventoryName, page);
+      const inventoryName = await Inventory.ui.create(page);
+      const newInventoryName = await Inventory.ui.create(page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
+      await Inventory.ui.delete(page, inventoryName);
       // click edit row action
       await navigateTo(page, 'Automation Execution', 'Templates');
       await selectTableFilter('Name', page);
@@ -190,8 +183,8 @@ test.describe('Job Templates', () => {
       await expect(page.locator('#name').getByText(jobTemplateName)).toBeVisible();
       await expect(page.getByRole('link', { name: newInventoryName })).toBeVisible();
       // cleanup
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteInventory(newInventoryName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, newInventoryName);
     }
   );
 
@@ -201,8 +194,8 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const credentialName = await createAwxCredential({}, page);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+      const credentialName = await Credential.ui.create(page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
       const hostConfigKey = createE2EName('host-config-key');
       // navigate to details page
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -245,8 +238,8 @@ test.describe('Job Templates', () => {
       await expect(page.getByLabel('Enable webhook')).not.toBeChecked();
       await expect(page.getByLabel('Provisioning callback')).not.toBeChecked();
       // cleanup
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteAwxCredential(credentialName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 
@@ -256,8 +249,8 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const credentialName = await createAwxCredential({}, page);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+      const credentialName = await Credential.ui.create(page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
       await navigateTo(page, 'Automation Execution', 'Templates');
       // click edit row action
       await selectTableFilter('Name', page);
@@ -296,8 +289,8 @@ test.describe('Job Templates', () => {
         .inputValue();
       expect(originalWebhookKey).not.toEqual(regeneratedWebhookKey);
       // cleanup
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteAwxCredential(credentialName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 
@@ -306,8 +299,8 @@ test.describe('Job Templates', () => {
     { tag: ['@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
-      await deleteJobTemplate(jobTemplateName, page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
+      await JobTemplate.ui.delete(page, jobTemplateName);
     }
   );
 
@@ -316,8 +309,8 @@ test.describe('Job Templates', () => {
     { tag: ['@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
-      await deleteJobTemplate(jobTemplateName, page, 'details');
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
+      await JobTemplate.ui.delete(page, jobTemplateName, 'details');
     }
   );
 
@@ -326,8 +319,8 @@ test.describe('Job Templates', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName1 = await createJobTemplate({ inventoryName: inventoryName }, page);
-      const jobTemplateName2 = await createJobTemplate({ inventoryName: inventoryName }, page);
+      const jobTemplateName1 = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
+      const jobTemplateName2 = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
       await page.getByLabel('Breadcrumb').getByRole('link', { name: 'Templates' }).click();
       await page.getByLabel('table view', { exact: true }).click();
       await filterTable(
@@ -387,7 +380,7 @@ test.describe('Job Templates', () => {
       await expect(page.locator('#project')).toContainText(projectName);
       await expect(page.locator('#playbook')).toContainText('hello_world.yml');
       await expect(page.locator('#policy-enforcement')).toContainText('testpkg/testrule');
-      await deleteJobTemplate(jobTemplateName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
     }
   );
 
@@ -398,8 +391,8 @@ test.describe('Job Templates', () => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = createE2EName('job-template');
       const jobTemplateDescription = 'This is a JT description';
-      const credentialOne = await createAwxCredential({ credentialType: 'Vault' }, page);
-      const credentialTwo = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialOne = await Credential.ui.create(page, { credentialType: 'Vault' });
+      const credentialTwo = await Credential.ui.create(page, { credentialType: 'Machine' });
       await navigateTo(page, 'Automation Execution', 'Templates');
       await expect(
         page.getByRole('heading', { name: 'Automation Templates', exact: true })
@@ -438,7 +431,7 @@ test.describe('Job Templates', () => {
       await expect(page.locator('#project')).toContainText(projectName);
       await expect(page.locator('#playbook')).toContainText('hello_world.yml');
       await expect(page.locator('#credentials')).toContainText(`SSH: ${credentialTwo}`);
-      await deleteJobTemplate(jobTemplateName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
     }
   );
 
@@ -449,10 +442,10 @@ test.describe('Job Templates', () => {
       test.setTimeout(2 * 60 * 1000);
       const surveyQuestion = 'q1';
       const surveyAnswerVar = 'v1';
-      const jobTemplateName = await createJobTemplate(
-        { inventoryName: inventoryName, PromptOnLaunch: true },
-        page
-      );
+      const jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName: inventoryName,
+        PromptOnLaunch: true,
+      });
       await page.getByRole('tab', { name: 'Survey' }).click();
       await page.getByRole('link', { name: 'Create survey question' }).click();
       await page.getByRole('textbox', { name: 'Question' }).fill(surveyQuestion);
@@ -464,17 +457,13 @@ test.describe('Job Templates', () => {
         .locator('span')
         .first()
         .click();
-      await runJobTemplate(
-        jobTemplateName,
-        {
-          inventoryName: inventoryName,
-          PromptOnLaunch: true,
-          view: 'details',
-          survey: { question: surveyQuestion, answerVar: surveyAnswerVar },
-        },
-        page
-      );
-      await deleteJobTemplate(jobTemplateName, page);
+      await JobTemplate.ui.run(page, jobTemplateName, {
+        inventoryName: inventoryName,
+        PromptOnLaunch: true,
+        view: 'details',
+        survey: { question: surveyQuestion, answerVar: surveyAnswerVar },
+      });
+      await JobTemplate.ui.delete(page, jobTemplateName);
     }
   );
 
@@ -662,11 +651,11 @@ test.describe('Job Template - Copy/Duplicate', () => {
 
   test.beforeEach(async ({ page }) => {
     await setupBefore({ path: '/' })({ page });
-    inventoryName = await createInventory({}, page);
+    inventoryName = await Inventory.ui.create(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteInventory(inventoryName, page);
+    await Inventory.ui.delete(page, inventoryName);
     await setupAfter({ page });
   });
 
@@ -675,10 +664,10 @@ test.describe('Job Template - Copy/Duplicate', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
 
       // Copy the job template from list view and get the exact copied name from API
-      const copiedName = await copyJobTemplate(jobTemplateName, page, 'list');
+      const copiedName = await JobTemplate.ui.copy(page, jobTemplateName, 'list');
 
       // Verify the original template exists
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -696,8 +685,8 @@ test.describe('Job Template - Copy/Duplicate', () => {
       await expect(page.getByRole('link', { name: copiedName, exact: true })).toBeVisible();
 
       // Clean up both templates
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteJobTemplate(copiedName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await JobTemplate.ui.delete(page, copiedName);
     }
   );
 
@@ -706,10 +695,10 @@ test.describe('Job Template - Copy/Duplicate', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
-      const jobTemplateName = await createJobTemplate({ inventoryName: inventoryName }, page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
 
       // Copy the job template from details page and get the exact copied name from API
-      const copiedName = await copyJobTemplate(jobTemplateName, page, 'details');
+      const copiedName = await JobTemplate.ui.copy(page, jobTemplateName, 'details');
 
       // Verify the original template exists
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -727,8 +716,8 @@ test.describe('Job Template - Copy/Duplicate', () => {
       await expect(page.getByRole('link', { name: copiedName, exact: true })).toBeVisible();
 
       // Clean up both templates
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteJobTemplate(copiedName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await JobTemplate.ui.delete(page, copiedName);
     }
   );
 });

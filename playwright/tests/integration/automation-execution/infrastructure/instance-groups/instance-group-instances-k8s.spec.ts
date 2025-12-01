@@ -3,15 +3,9 @@ import { setupBefore, setupAfter } from '@ansible/playwright/commands/setup';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
-import {
-  createInstance,
-  createInstanceGroup,
-  createInstanceGroupAPI,
-  deleteInstanceGroup,
-  createInstanceAPI,
-} from './instance-group-utils';
-import { Instance } from '@ansible/awx-ui/interfaces/Instance';
-import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { Instance, InstanceGroup } from '@ansible/playwright/utils';
+import type { Instance as InstanceType } from '@ansible/awx-ui/interfaces/Instance';
+import type { InstanceGroup as InstanceGroupType } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
@@ -44,8 +38,8 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
       const instanceHostname = createE2EName('', { noWhitespace: true });
 
       await test.step('Create instance and instance group', async () => {
-        await createInstance({ hostname: instanceHostname }, page);
-        await createInstanceGroup({ name: instanceGroupName }, page);
+        await Instance.ui.create(page, { hostname: instanceHostname });
+        await InstanceGroup.ui.create(page, { name: instanceGroupName });
       });
 
       await test.step('Navigate to instance group Instances tab', async () => {
@@ -98,7 +92,7 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
       });
 
       await test.step('Delete instance group', async () => {
-        await deleteInstanceGroup(instanceGroupName, page);
+        await InstanceGroup.ui.delete(page, instanceGroupName);
       });
     }
   );
@@ -107,9 +101,9 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
     'can bulk disassociate instances from instance group',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      let instanceGroup: InstanceGroup;
+      let instanceGroup: InstanceGroupType;
       const instanceGroupName = createE2EName('', { noWhitespace: true });
-      const instances: Instance[] = [];
+      const instances: InstanceType[] = [];
 
       await test.step('Create 5 instances', async () => {
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Instances');
@@ -118,13 +112,13 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
           const hostname = createE2EName(`instance-to-disassociate-${i}-${instanceGroupName}`, {
             noWhitespace: true,
           });
-          const instance = await createInstanceAPI(page, hostname);
+          const instance = await Instance.api.create(page, hostname);
           instances.push(instance);
         }
       });
 
       await test.step('Create instance group with associated instances via API', async () => {
-        instanceGroup = await createInstanceGroupAPI(page, {
+        instanceGroup = await InstanceGroup.api.create(page, {
           name: instanceGroupName,
           policy_instance_list: instances.map((instance) => instance.hostname),
         });
@@ -174,18 +168,18 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
   );
 
   test.describe('Health Check', () => {
-    let instance: Instance;
-    let instanceGroup: InstanceGroup;
+    let instance: InstanceType;
+    let instanceGroup: InstanceGroupType;
 
     test.beforeEach('Create instance and instance group', async ({ page }) => {
       // Create and associate an instance to an instance group
-      instance = await createInstanceAPI(
+      instance = await Instance.api.create(
         page,
         createE2EName('', {
           noWhitespace: true,
         })
       );
-      instanceGroup = await createInstanceGroupAPI(page, {
+      instanceGroup = await InstanceGroup.api.create(page, {
         name: createE2EName(),
         policy_instance_list: [instance.hostname],
       });
