@@ -1,12 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createAwxCredential,
-  deleteAwxCredential,
-} from '../../automation-execution/infrastructure/credentials/credential-utils';
-import { createUser, deleteUser } from '../users/user-utils';
-import { createTeam, deleteTeam } from './team-utils';
+import { User, Team, Credential } from '@ansible/playwright/utils';
 
 test.describe('Platform Teams - Roles Tab', () => {
   let credentialName: string;
@@ -16,9 +11,9 @@ test.describe('Platform Teams - Roles Tab', () => {
   test.beforeEach(setupBefore({ path: '/access/teams' }));
 
   test.afterEach(async ({ page }) => {
-    await deleteTeam(teamName, page).catch(() => {});
-    await deleteAwxCredential(credentialName, page).catch(() => {});
-    await deleteUser(userName, page).catch(() => {});
+    await Team.ui.delete(page, teamName).catch(() => {});
+    await Credential.ui.delete(page, credentialName).catch(() => {});
+    await User.ui.delete(page, userName).catch(() => {});
     await setupAfter({ page });
   });
 
@@ -26,8 +21,8 @@ test.describe('Platform Teams - Roles Tab', () => {
     'assign a role to a team and then remove it',
     { tag: ['@team', '@not_mock'] },
     async ({ page }) => {
-      credentialName = await createAwxCredential({}, page);
-      teamName = await createTeam({}, page);
+      credentialName = await Credential.ui.create(page);
+      teamName = await Team.ui.create(page, { organizationName: 'Default' });
 
       await page.getByRole('tab', { name: 'Roles' }).click();
       await expect(page.getByRole('button', { name: 'Assign roles' })).toBeVisible();
@@ -72,9 +67,9 @@ test.describe('Platform Teams - Roles Tab', () => {
       tag: ['@team', '@not_mock'],
     },
     async ({ page }) => {
-      userName = await createUser({}, page);
-      credentialName = await createAwxCredential({}, page);
-      teamName = await createTeam({}, page);
+      userName = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
+      credentialName = await Credential.ui.create(page);
+      teamName = await Team.ui.create(page, { organizationName: 'Default' });
 
       //Assign role to team
       await page.getByRole('tab', { name: 'Roles' }).click();

@@ -5,21 +5,7 @@ import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndA
 import { createE2EName } from '../../../../../../commands/createE2EName';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
-import {
-  createOrganization,
-  deleteOrganization,
-} from '../../../../access-management/organizations/organization-utils';
-import {
-  createSlackNotifier,
-  deleteNotifier,
-} from '../../../administration/notifiers/notifier-utils';
-import {
-  createInventory,
-  createInventorySource,
-  createInventorySourceFromProject,
-  deleteInventory,
-  toggleNotificationForInventorySource,
-} from '../inventory-utils';
+import { Organization, Project, Inventory, Notifier } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -29,19 +15,21 @@ test.describe('Inventory Source List', () => {
     'should create an inventory source from a project with all fields',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const organizationName = await createOrganization(page);
-      const { inventorySourceName, inventoryName } = await createInventorySource(
-        { organizationName, projectName: 'Demo Project' },
-        page
-      );
+      const organizationName = await Organization.ui.create(page);
+      const projectName = await Project.ui.create(page, { organizationName });
+      const { inventorySourceName, inventoryName } = await Inventory.ui.createSource(page, {
+        organizationName,
+        projectName,
+      });
 
       await expect(page.getByTestId('name')).toContainText(inventorySourceName);
       await expect(page.getByTestId('source')).toContainText('Sourced from a Project');
       await expect(page.getByTestId('organization')).toContainText(organizationName);
-      await expect(page.getByTestId('project')).toContainText('Demo Project');
+      await expect(page.getByTestId('project')).toContainText(projectName);
 
-      await deleteInventory(inventoryName, page);
-      await deleteOrganization(organizationName, page);
+      await Inventory.ui.delete(page, inventoryName);
+      await Project.ui.delete(page, projectName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 
@@ -49,16 +37,14 @@ test.describe('Inventory Source List', () => {
     'should edit source from the list view and update info',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const organizationName = await createOrganization(page);
-      const inventoryName = await createInventory({ organizationName }, page);
+      const organizationName = await Organization.ui.create(page);
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
 
-      const inventorySourceName = await createInventorySourceFromProject(
-        {
-          inventoryName,
-          projectName: 'Demo Project',
-        },
-        page
-      );
+      const { inventorySourceName } = await Inventory.ui.createSource(page, {
+        organizationName,
+        inventoryName,
+        projectName: 'Demo Project',
+      });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
       await clickTableRow({ text: inventoryName }, page);
@@ -89,8 +75,8 @@ test.describe('Inventory Source List', () => {
       await expect(page.getByTestId('inventory-file')).toContainText('hello_world.yml');
       await expect(page.getByTestId('enabled-options')).toContainText('Overwrite');
 
-      await deleteInventory(inventoryName, page);
-      await deleteOrganization(organizationName, page);
+      await Inventory.ui.delete(page, inventoryName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 });
@@ -100,18 +86,16 @@ test.describe('Inventory Source Schedules', () => {
     'should create and delete schedule from inventory source',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const organizationName = await createOrganization(page);
-      const inventoryName = await createInventory({ organizationName }, page);
+      const organizationName = await Organization.ui.create(page);
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
       const scheduleName = createE2EName('schedule');
 
-      await createInventorySourceFromProject(
-        {
-          inventoryName,
-          projectName: 'Demo Project',
-          scheduleName,
-        },
-        page
-      );
+      await Inventory.ui.createSource(page, {
+        organizationName,
+        inventoryName,
+        projectName: 'Demo Project',
+        scheduleName,
+      });
 
       await page.getByLabel('kebab dropdown toggle').click();
       await page.getByRole('menuitem', { name: 'Delete schedule' }).click();
@@ -119,56 +103,62 @@ test.describe('Inventory Source Schedules', () => {
 
       await expect(page.getByRole('heading', { name: 'Schedules' })).toBeVisible();
 
-      await deleteInventory(inventoryName, page);
-      await deleteOrganization(organizationName, page);
+      await Inventory.ui.delete(page, inventoryName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 });
 
 test.describe('Inventory Source Notifications', () => {
   const notificationTypes = [
-    { type: 'start' as const, gridcell: 'Click to disable start Click' },
-    { type: 'success' as const, gridcell: 'Click to disable success Click' },
-    { type: 'failure' as const, gridcell: 'Click to disable error Click' },
+    { type: 'start' as const },
+    { type: 'success' as const },
+    { type: 'failure' as const },
   ];
 
-  for (const { type, gridcell } of notificationTypes) {
+  for (const { type } of notificationTypes) {
     test(
       `should enable notification on ${type} for inventory source`,
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const organizationName = await createOrganization(page);
-        const inventoryName = await createInventory({ organizationName }, page);
-        const notifierName = await createSlackNotifier(page);
+        const organizationName = await Organization.ui.create(page);
+        const inventoryName = await Inventory.ui.create(page, { organizationName });
+        const notifierName = await Notifier.ui.createSlack(page);
 
-        const inventorySourceName = await createInventorySourceFromProject(
-          {
-            inventoryName,
-            projectName: 'Demo Project',
-          },
-          page
-        );
+        const { inventorySourceName } = await Inventory.ui.createSource(page, {
+          organizationName,
+          inventoryName,
+          projectName: 'Demo Project',
+        });
 
-        await toggleNotificationForInventorySource(
-          {
-            inventoryName,
-            inventorySourceName,
-            notificationName: notifierName,
-            notificationType: type,
-          },
-          page
-        );
+        // Navigate to notifications tab and enable notification
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+        await clickTableRow({ text: inventoryName }, page);
+        await page.getByRole('tab', { name: 'Sources' }).click();
+        await clickTableRow({ text: inventorySourceName }, page);
+        await page.getByRole('tab', { name: 'Notifications' }).click();
 
-        if (type === 'failure') {
-          const row = page.getByRole('row', { name: notifierName });
-          await expect(row.locator('label').nth(2)).toBeVisible();
-        } else {
-          await expect(page.getByRole('gridcell', { name: gridcell }).first()).toBeVisible();
-        }
+        await expect(page.getByTestId('page-toolbar')).toBeVisible();
 
-        await deleteNotifier(page, notifierName);
-        await deleteInventory(inventoryName, page);
-        await deleteOrganization(organizationName, page);
+        // Enable notification based on type
+        // Find the row by notifier name and click the appropriate toggle
+        const notificationRow = page.getByRole('row').filter({ hasText: notifierName });
+        await expect(notificationRow).toBeVisible();
+
+        // Get all toggle switches in the row (Start, Success, Failure order)
+        const toggleSwitches = notificationRow.getByRole('switch');
+        const switchIndex = type === 'start' ? 0 : type === 'success' ? 1 : 2;
+        const toggleSwitch = toggleSwitches.nth(switchIndex);
+
+        await expect(toggleSwitch).toBeVisible();
+        await toggleSwitch.click();
+
+        // Verify the toggle is now enabled
+        await expect(toggleSwitch).toBeChecked();
+
+        await Notifier.ui.delete(page, notifierName);
+        await Inventory.ui.delete(page, inventoryName);
+        await Organization.ui.delete(page, organizationName);
       }
     );
   }
@@ -179,8 +169,8 @@ test.describe('Inventory Source Type Changes', () => {
     'should create EC2 inventory source and edit basic fields',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const organizationName = await createOrganization(page);
-      const inventoryName = await createInventory({ organizationName }, page);
+      const organizationName = await Organization.ui.create(page);
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
       await clickTableRow({ text: inventoryName }, page);
@@ -198,8 +188,8 @@ test.describe('Inventory Source Type Changes', () => {
       await expect(page.getByTestId('name')).toContainText(sourceName);
       await expect(page.getByTestId('source')).toContainText('Amazon EC2');
 
-      await deleteInventory(inventoryName, page);
-      await deleteOrganization(organizationName, page);
+      await Inventory.ui.delete(page, inventoryName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 });

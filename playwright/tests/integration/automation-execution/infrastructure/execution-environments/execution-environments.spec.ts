@@ -11,14 +11,7 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 import { expect, test } from '@playwright/test';
-import {
-  addUserToOrganization,
-  createOrganization,
-  deleteOrganization,
-} from '../../../access-management/organizations/organization-utils';
-import { createUser, deleteUser } from '../../../access-management/users/user-utils';
-import { createAwxProject, deleteAwxProject } from '../../projects/project-utils';
-import { createInventory } from '../inventories/inventory-utils';
+import { Organization, Project, Inventory, User } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/execution-environments' }));
 test.afterEach(setupAfter);
@@ -29,7 +22,7 @@ test.describe('Execution Environments', () => {
       'can create a new EE associated to a particular org, assert info on details page, then navigate to EE list and delete the EE',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const organizationName = await createOrganization(page);
+        const organizationName = await Organization.ui.create(page);
         const execEnvName = createE2EName('exec-env');
         const image = 'quay.io/ansible/awx-ee:latest';
 
@@ -57,7 +50,7 @@ test.describe('Execution Environments', () => {
         await clickPageAction('Delete execution environment', page);
         await confirmAndAssertDeletion(page);
 
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     );
 
@@ -65,7 +58,7 @@ test.describe('Execution Environments', () => {
       'can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const organizationName = await createOrganization(page);
+        const organizationName = await Organization.ui.create(page);
         const execEnvName = createE2EName('exec-env');
         const image = 'quay.io/ansible/awx-ee:latest';
 
@@ -95,7 +88,7 @@ test.describe('Execution Environments', () => {
         await page.getByRole('menuitem', { name: 'Delete execution environment' }).click();
         await confirmAndAssertDeletion(page);
 
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     );
 
@@ -104,8 +97,8 @@ test.describe('Execution Environments', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(90000);
-        const organizationName = await createOrganization(page);
-        const userInfo = await createUser({ password: 'testPassword123!' }, page);
+        const organizationName = await Organization.ui.create(page);
+        const userInfo = await User.ui.create(page, { password: 'testPassword123!' });
         const execEnvName = createE2EName('exec-env');
         const image = 'quay.io/ansible/awx-ee:latest';
 
@@ -123,12 +116,9 @@ test.describe('Execution Environments', () => {
         await expect(page.getByTestId('image')).toContainText(image);
         await expect(page.locator('#organization')).toContainText(organizationName);
 
-        await addUserToOrganization(
-          organizationName,
-          userInfo.userName,
-          { roles: ['Organization Member'] },
-          page
-        );
+        await Organization.ui.addUser(page, organizationName, userInfo.userName, {
+          roles: ['Organization Member'],
+        });
 
         await logout(page);
         await login(page, platformUI, { username: userInfo.userName, password: userInfo.password });
@@ -148,14 +138,14 @@ test.describe('Execution Environments', () => {
         await logout(page, { username: userInfo.userName });
         await login(page);
 
-        await deleteUser(userInfo.userName, page);
+        await User.ui.delete(page, userInfo.userName);
 
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
         await clickTableRow({ filterLabel: 'Name', text: execEnvName }, page);
         await clickPageAction('Delete execution environment', page);
         await confirmAndAssertDeletion(page);
 
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     );
   });
@@ -165,7 +155,7 @@ test.describe('Execution Environments', () => {
       'can edit an EE from the details view and assert edited information on details page',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const organizationName = await createOrganization(page);
+        const organizationName = await Organization.ui.create(page);
         const execEnvName = createE2EName('exec-env');
         const image = 'executionenvimage';
 
@@ -192,7 +182,7 @@ test.describe('Execution Environments', () => {
 
         await clickPageAction('Delete execution environment', page);
         await confirmAndAssertDeletion(page);
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     );
 
@@ -200,7 +190,7 @@ test.describe('Execution Environments', () => {
       'can edit an EE from the list view and assert edited information',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const organizationName = await createOrganization(page);
+        const organizationName = await Organization.ui.create(page);
         const execEnvName = createE2EName('exec-env');
         const image = 'executionenvimage';
 
@@ -236,7 +226,7 @@ test.describe('Execution Environments', () => {
 
         await clickPageAction('Delete execution environment', page);
         await confirmAndAssertDeletion(page);
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     );
 
@@ -244,7 +234,7 @@ test.describe('Execution Environments', () => {
       'can bulk delete multiple EEs from the list view and assert deletion',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const organizationName = await createOrganization(page);
+        const organizationName = await Organization.ui.create(page);
         const execEnvNames: string[] = [];
 
         for (let i = 0; i < 3; i++) {
@@ -286,7 +276,7 @@ test.describe('Execution Environments', () => {
         await clickPageAction('Delete execution environment', page);
         await confirmAndAssertDeletion(page);
 
-        await deleteOrganization(organizationName, page);
+        await Organization.ui.delete(page, organizationName);
       }
     );
   });
@@ -296,9 +286,9 @@ test.describe('Execution Environments', () => {
       'can create a new JT using the existing EE, visit the templates tab of the EE to view the JT, delete the JT and then delete the EE',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const organizationName = await createOrganization(page);
-        const projectName = await createAwxProject({ organizationName }, page);
-        const inventoryName = await createInventory({ organizationName }, page);
+        const organizationName = await Organization.ui.create(page);
+        const projectName = await Project.ui.create(page, { organizationName });
+        const inventoryName = await Inventory.ui.create(page, { organizationName });
         const execEnvName = createE2EName('exec-env');
         const image = 'quay.io/ansible/awx-ee:latest';
 
@@ -362,8 +352,8 @@ test.describe('Execution Environments', () => {
         await clickPageAction('Delete execution environment', page);
         await confirmAndAssertDeletion(page);
 
-        await deleteAwxProject(projectName, page);
-        await deleteOrganization(organizationName, page);
+        await Project.ui.delete(page, projectName);
+        await Organization.ui.delete(page, organizationName);
       }
     );
   });

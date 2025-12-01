@@ -3,15 +3,7 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createOrganization,
-  deleteOrganization,
-} from '../../../access-management/organizations/organization-utils';
-import { createTeam, deleteTeam } from '../../../access-management/teams/team-utils';
-import {
-  createExecutionEnvironment,
-  deleteExecutionEnvironment,
-} from './execution-environment-utils';
+import { Organization, Team, ExecutionEnvironment } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
@@ -22,9 +14,9 @@ test(
   async ({ page }) => {
     test.setTimeout(2 * 60 * 1000); // 2 minutes timeout for this complex test
     // Create test data
-    const organizationName = await createOrganization(page);
-    const teamName = await createTeam({ organizationName }, page);
-    const executionEnvName = await createExecutionEnvironment(page, { organizationName });
+    const organizationName = await Organization.ui.create(page);
+    const teamName = await Team.ui.create(page, { organizationName });
+    const executionEnvName = await ExecutionEnvironment.ui.create(page, { organizationName });
 
     // Navigate to organization and assign Organization ExecutionEnvironment Admin role to team
     await navigateTo(page, 'Access Management', 'Organizations');
@@ -123,8 +115,8 @@ test(
     await expect(page.getByText('No teams assigned to execution environment')).toBeVisible();
 
     // Cleanup
-    await deleteExecutionEnvironment(executionEnvName, page);
-    await deleteTeam(teamName, page);
-    await deleteOrganization(organizationName, page);
+    await ExecutionEnvironment.ui.delete(page, executionEnvName);
+    await Team.ui.delete(page, teamName);
+    await Organization.ui.delete(page, organizationName);
   }
 );

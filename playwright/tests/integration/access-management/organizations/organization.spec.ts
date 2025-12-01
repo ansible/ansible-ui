@@ -6,14 +6,14 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createOrganization, deleteOrganization } from './organization-utils';
+import { Organization } from '../../../../utils/organization';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
 
 test('organization - create and delete', { tag: [] }, async ({ page }) => {
-  const organizationName = await createOrganization(page);
-  await deleteOrganization(organizationName, page);
+  const organizationName = await Organization.ui.create(page);
+  await Organization.ui.delete(page, organizationName);
 });
 
 test('organization - create/edit', { tag: ['@not_mock'] }, async ({ page }) => {
@@ -51,12 +51,12 @@ test('organization - create/edit', { tag: ['@not_mock'] }, async ({ page }) => {
     page.getByRole('heading', { name: `${organizationName}-edited`, exact: true })
   ).toBeVisible();
   await expect(page.locator('dl')).toContainText(`${opaPolicyPath}-edit`);
-  await deleteOrganization(`${organizationName}-edited`, page);
+  await Organization.ui.delete(page, `${organizationName}-edited`);
 });
 
 test('edits an organization from the list view', { tag: ['@not_mock'] }, async ({ page }) => {
   // Create organization first
-  const organizationName = await createOrganization(page);
+  const organizationName = await Organization.ui.create(page);
   const editedName = `${createE2EName()} from list page`;
 
   await navigateTo(page, 'Access Management', 'Organizations');
@@ -81,12 +81,12 @@ test('edits an organization from the list view', { tag: ['@not_mock'] }, async (
   await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible();
 
   // Clean up
-  await deleteOrganization(editedName, page);
+  await Organization.ui.delete(page, editedName);
 });
 
 test('edits an organization from the details view', { tag: ['@not_mock'] }, async ({ page }) => {
   // Create organization first
-  const organizationName = await createOrganization(page);
+  const organizationName = await Organization.ui.create(page);
   const editedName = `${createE2EName()} from details page`;
 
   await navigateTo(page, 'Access Management', 'Organizations');
@@ -105,7 +105,7 @@ test('edits an organization from the details view', { tag: ['@not_mock'] }, asyn
   await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible();
 
   // Clean up
-  await deleteOrganization(editedName, page);
+  await Organization.ui.delete(page, editedName);
 });
 
 test(
@@ -113,7 +113,7 @@ test(
   { tag: ['@not_mock'] },
   async ({ page }) => {
     // Create organization first
-    const organizationName = await createOrganization(page);
+    const organizationName = await Organization.ui.create(page);
 
     await navigateTo(page, 'Access Management', 'Organizations');
 
@@ -137,8 +137,8 @@ test(
   { tag: ['@not_mock'] },
   async ({ page }) => {
     // Create two organizations first
-    const org1Name = await createOrganization(page);
-    const org2Name = await createOrganization(page);
+    const org1Name = await Organization.ui.create(page);
+    const org2Name = await Organization.ui.create(page);
 
     await navigateTo(page, 'Access Management', 'Organizations');
 

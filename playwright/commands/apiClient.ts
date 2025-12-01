@@ -339,3 +339,4 @@ export const awxAPI = createScopedClient('/api/controller/v2');
 export const edaAPI = createScopedClient('/api/eda/v1');
 export const hubAPI = createScopedClient('/api/galaxy');
 export const gatewayAPI = createScopedClient('/api/gateway/v1');
+export const lightspeedAPI = createScopedClient('/api/lightspeed/v1');

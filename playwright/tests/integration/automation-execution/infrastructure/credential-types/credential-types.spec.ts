@@ -9,7 +9,7 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from 'playwright/test';
-import { bulkDeleteAwxCredentialTypes, createAwxCredentialType } from './credential-types-utils';
+import { CredentialType } from '@ansible/playwright/utils';
 
 test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => {
   test.beforeEach(setupBefore({ path: '/execution/infrastructure/credential-types' }));
@@ -17,7 +17,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
 
   test.describe('Credential Types - Filtering', () => {
     test('can filter credential types by name', { tag: ['@not_mock'] }, async ({ page }) => {
-      const credentialTypeName = await createAwxCredentialType({}, page);
+      const credentialTypeName = await CredentialType.ui.create(page);
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credential Types');
       await filterTable({ filterLabel: 'Name', filterValue: credentialTypeName }, page);
@@ -39,10 +39,9 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
 
     test('can filter credential types by description', { tag: ['@not_mock'] }, async ({ page }) => {
       const testDescription = `Unique Test Description ${Date.now()}`;
-      const credentialTypeName = await createAwxCredentialType(
-        { description: testDescription },
-        page
-      );
+      const credentialTypeName = await CredentialType.ui.create(page, {
+        description: testDescription,
+      });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credential Types');
 
@@ -94,7 +93,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
       'can navigate to credential type details page and view credentials tab',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const credentialTypeName = await createAwxCredentialType({}, page);
+        const credentialTypeName = await CredentialType.ui.create(page);
 
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credential Types');
         await clickTableRow({ filterLabel: 'Name', text: credentialTypeName }, page);
@@ -128,7 +127,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
       'can create a new credential type with no configs',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const credentialTypeName = await createAwxCredentialType({}, page);
+        const credentialTypeName = await CredentialType.ui.create(page);
 
         await expect(
           page.getByRole('heading', { name: credentialTypeName, exact: true })
@@ -164,13 +163,10 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
           },
         });
 
-        const credentialTypeName = await createAwxCredentialType(
-          {
-            inputConfiguration: inputConfig,
-            injectorConfiguration: injectorConfig,
-          },
-          page
-        );
+        const credentialTypeName = await CredentialType.ui.create(page, {
+          inputConfiguration: inputConfig,
+          injectorConfiguration: injectorConfig,
+        });
 
         await expect(
           page.getByRole('heading', { name: credentialTypeName, exact: true })
@@ -216,13 +212,10 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
           },
         });
 
-        const credentialTypeName = await createAwxCredentialType(
-          {
-            inputConfiguration: inputConfig,
-            injectorConfiguration: injectorConfig,
-          },
-          page
-        );
+        const credentialTypeName = await CredentialType.ui.create(page, {
+          inputConfiguration: inputConfig,
+          injectorConfiguration: injectorConfig,
+        });
 
         await expect(
           page.getByRole('heading', { name: credentialTypeName, exact: true })
@@ -247,7 +240,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
       { tag: ['@not_mock'] },
       async ({ page }) => {
         // Create a credential type without configs
-        const credentialTypeName = await createAwxCredentialType({}, page);
+        const credentialTypeName = await CredentialType.ui.create(page);
 
         // Create a credential using this credential type
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
@@ -350,7 +343,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
       'can edit a credential type from the list row action and delete it using the kebab menu',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const credentialTypeName = await createAwxCredentialType({}, page);
+        const credentialTypeName = await CredentialType.ui.create(page);
 
         // Edit the credential type
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credential Types');
@@ -394,7 +387,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
       'can edit and delete a credential type from the details page',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const credentialTypeName = await createAwxCredentialType({}, page);
+        const credentialTypeName = await CredentialType.ui.create(page);
 
         // Navigate to details page
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credential Types');
@@ -453,7 +446,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
       'can delete a credential type from the list row action',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const credentialTypeName = await createAwxCredentialType({}, page);
+        const credentialTypeName = await CredentialType.ui.create(page);
 
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credential Types');
         await clickTableRowAction(
@@ -476,11 +469,11 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
       { tag: ['@not_mock'] },
       async ({ page }) => {
         // Create two credential types
-        const credentialTypeName1 = await createAwxCredentialType({}, page);
-        const credentialTypeName2 = await createAwxCredentialType({}, page);
+        const credentialTypeName1 = await CredentialType.ui.create(page);
+        const credentialTypeName2 = await CredentialType.ui.create(page);
 
         // Bulk delete both (confirmAndAssertDeletion verifies successful deletion)
-        await bulkDeleteAwxCredentialTypes([credentialTypeName1, credentialTypeName2], page);
+        await CredentialType.ui.bulkDelete(page, [credentialTypeName1, credentialTypeName2]);
       }
     );
   });

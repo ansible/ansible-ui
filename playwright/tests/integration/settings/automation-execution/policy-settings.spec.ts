@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { revertAllSettings } from '../settings-utils';
+import { Settings } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
 test.describe('Policy Settings', () => {
   test('should be able to edit job settings', { tag: ['@not_mock'] }, async ({ page }) => {
-    await revertAllSettings(page, 'Policy');
+    await Settings.ui.revertAll(page, 'Policy');
     await expect(page.getByRole('heading', { name: 'Policy Settings' })).toBeVisible();
 
     const opaRetryField = page.getByTestId('opa-request-retry-count');
@@ -23,7 +23,7 @@ test.describe('Policy Settings', () => {
 
     await expect(opaRetryField).toContainText('1');
 
-    await revertAllSettings(page, 'Policy');
+    await Settings.ui.revertAll(page, 'Policy');
     await expect(opaRetryField).toContainText('2');
   });
 });

@@ -6,13 +6,7 @@ import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { getTableRow } from '@ansible/playwright/commands/getTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
-import { createWorkflowJobTemplate } from '../../workflow-visualizer/workflow-visualizer-utils';
-import {
-  addApprovalNode,
-  addLinkedApprovalNode,
-  confirmWorkflowApprovalAction,
-  deleteWorkflowTemplateAPI,
-} from './workflow-approvals-utils';
+import { WorkflowVisualizer, WorkflowApproval } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
@@ -32,17 +26,20 @@ test.describe('Workflow Approvals - Individual Actions', () => {
       let workflowTemplateName: string;
 
       await test.step('Create workflow with 3 linked approval nodes', async () => {
-        workflowTemplateName = await createWorkflowJobTemplate(page);
+        workflowTemplateName = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
 
-        await addApprovalNode(page, { name: firstApproval, description: workflowTemplateName });
+        await WorkflowApproval.ui.addApprovalNode(page, {
+          name: firstApproval,
+          description: workflowTemplateName,
+        });
 
-        await addLinkedApprovalNode(page, firstApproval, {
+        await WorkflowApproval.ui.addLinkedApprovalNode(page, firstApproval, {
           name: secondApproval,
           description: workflowTemplateName,
           runCondition: 'fail',
         });
 
-        await addLinkedApprovalNode(page, secondApproval, {
+        await WorkflowApproval.ui.addLinkedApprovalNode(page, secondApproval, {
           name: thirdApproval,
           description: workflowTemplateName,
           runCondition: 'success',
@@ -67,7 +64,7 @@ test.describe('Workflow Approvals - Individual Actions', () => {
 
         const firstRow = await getTableRow(page, firstApproval);
         await firstRow.getByRole('button', { name: 'Deny' }).click();
-        await confirmWorkflowApprovalAction(page, 'Deny');
+        await WorkflowApproval.ui.confirmAction(page, 'Deny');
 
         await expect(firstRow.getByTestId('status-column-cell')).toContainText('Denied', {
           timeout: 20000,
@@ -75,7 +72,7 @@ test.describe('Workflow Approvals - Individual Actions', () => {
 
         const secondRow = await getTableRow(page, secondApproval);
         await secondRow.getByRole('button', { name: 'Approve' }).click();
-        await confirmWorkflowApprovalAction(page, 'Approve');
+        await WorkflowApproval.ui.confirmAction(page, 'Approve');
         await expect(secondRow.getByTestId('status-column-cell')).toContainText('Approved', {
           timeout: 20000,
         });
@@ -122,7 +119,7 @@ test.describe('Workflow Approvals - Individual Actions', () => {
       });
 
       await test.step('Cleanup workflow template', async () => {
-        await deleteWorkflowTemplateAPI({ workflowTemplateName }, page);
+        await WorkflowApproval.api.deleteWorkflowTemplate(page, workflowTemplateName);
       });
     }
   );
@@ -142,12 +139,15 @@ test.describe('Workflow Approvals - Bulk Approve/Deny Actions', () => {
         const approvalNode = createE2EName();
 
         await test.step('Create concurrent workflow job template with approval node', async () => {
-          await createWorkflowJobTemplate(page, {
+          await WorkflowVisualizer.ui.createWorkflowJobTemplate(page, {
             name: workflowTemplateName,
             enableConcurrentJobs: true,
           });
 
-          await addApprovalNode(page, { name: approvalNode, description: workflowTemplateName });
+          await WorkflowApproval.ui.addApprovalNode(page, {
+            name: approvalNode,
+            description: workflowTemplateName,
+          });
           await page.getByRole('button', { name: 'Save' }).click();
 
           const alertToaster = page.getByTestId('alert-toaster');
@@ -198,7 +198,7 @@ test.describe('Workflow Approvals - Bulk Approve/Deny Actions', () => {
 
           await page.getByRole('checkbox', { name: 'Select all rows' }).click();
           await page.getByTestId('page-toolbar').getByRole('button', { name: action }).click();
-          await confirmWorkflowApprovalAction(page, action);
+          await WorkflowApproval.ui.confirmAction(page, action);
 
           const allApprovalRows = page.locator('tbody tr');
           for (let i = 0; i < 3; i++) {
@@ -238,7 +238,7 @@ test.describe('Workflow Approvals - Bulk Approve/Deny Actions', () => {
         });
 
         await test.step('Cleanup resources', async () => {
-          await deleteWorkflowTemplateAPI({ workflowTemplateName }, page);
+          await WorkflowApproval.api.deleteWorkflowTemplate(page, workflowTemplateName);
         });
       }
     );
@@ -256,8 +256,11 @@ test.describe('Workflow Approvals - Tab Navigation and Approval', () => {
       let workflowTemplateName: string;
 
       await test.step('Setup: Create and launch workflow with approval node', async () => {
-        workflowTemplateName = await createWorkflowJobTemplate(page);
-        await addApprovalNode(page, { name: approvalName, description: workflowTemplateName });
+        workflowTemplateName = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+        await WorkflowApproval.ui.addApprovalNode(page, {
+          name: approvalName,
+          description: workflowTemplateName,
+        });
         await page.getByRole('button', { name: 'Save' }).click();
 
         const alertToaster = page.getByTestId('alert-toaster');
@@ -298,7 +301,7 @@ test.describe('Workflow Approvals - Tab Navigation and Approval', () => {
       });
 
       await test.step('Cleanup workflow template', async () => {
-        await deleteWorkflowTemplateAPI({ workflowTemplateName }, page);
+        await WorkflowApproval.api.deleteWorkflowTemplate(page, workflowTemplateName);
       });
     }
   );

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { SAAS_URL } from '@ansible/playwright/commands/constants';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createEdaCredentialType, deleteEdaCredentialType } from './credential-types-utils';
+import { EdaCredentialType } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credential-types' }));
 test.afterEach(setupAfter);
@@ -16,8 +16,8 @@ test(
     if (buildType === SAAS_URL) {
       test.skip();
     }
-    const credentialTypeOne = await createEdaCredentialType({}, page);
+    const credentialTypeOne = await EdaCredentialType.ui.create(page);
     await expect(page.locator('#name')).toContainText(credentialTypeOne);
-    await deleteEdaCredentialType(credentialTypeOne, page);
+    await EdaCredentialType.ui.delete(page, credentialTypeOne);
   }
 );

@@ -3,63 +3,62 @@ import { bulkDeleteResources } from '@ansible/playwright/commands/bulkDeleteReso
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { deleteResourceFromList } from '@ansible/playwright/commands/deleteResourceFromList';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
-import { createTeam, deleteTeam, editTeam, editTeamFromList } from './team-utils';
+import { Organization, Team } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/teams' }));
 test.afterEach(setupAfter);
 
 test.describe('Platform Teams CRUD', () => {
   test('create team and verify it exists', { tag: ['@not_mock'] }, async ({ page }) => {
-    const organizationName = await createOrganization(page);
-    const teamName = await createTeam({ organizationName }, page);
+    const organizationName = await Organization.ui.create(page);
+    const teamName = await Team.ui.create(page, { organizationName });
 
     try {
       await expect(page.getByRole('heading', { name: teamName, exact: true })).toBeVisible();
     } finally {
-      await deleteTeam(teamName, page);
-      await deleteOrganization(organizationName, page);
+      await Team.ui.delete(page, teamName);
+      await Organization.ui.delete(page, organizationName);
     }
   });
 
   test('edit team from list view', { tag: ['@not_mock'] }, async ({ page }) => {
-    const organizationName = await createOrganization(page);
-    const originalTeamName = await createTeam({ organizationName }, page);
+    const organizationName = await Organization.ui.create(page);
+    const originalTeamName = await Team.ui.create(page, { organizationName });
     const editedTeamName = `edited-${originalTeamName}`;
 
     try {
-      await editTeamFromList(originalTeamName, editedTeamName, page);
+      await Team.ui.editFromList(page, originalTeamName, editedTeamName);
     } finally {
       try {
-        await deleteTeam(editedTeamName, page);
+        await Team.ui.delete(page, editedTeamName);
       } catch {
-        await deleteTeam(originalTeamName, page);
+        await Team.ui.delete(page, originalTeamName);
       }
-      await deleteOrganization(organizationName, page);
+      await Organization.ui.delete(page, organizationName);
     }
   });
 
   test('edit team from details page', { tag: ['@not_mock'] }, async ({ page }) => {
-    const organizationName = await createOrganization(page);
-    const originalTeamName = await createTeam({ organizationName }, page);
+    const organizationName = await Organization.ui.create(page);
+    const originalTeamName = await Team.ui.create(page, { organizationName });
     const editedTeamName = `edited-${originalTeamName}`;
 
     try {
-      await editTeam(originalTeamName, editedTeamName, page);
+      await Team.ui.edit(page, originalTeamName, editedTeamName);
       await expect(page.getByRole('heading', { name: editedTeamName, exact: true })).toBeVisible();
     } finally {
       try {
-        await deleteTeam(editedTeamName, page);
+        await Team.ui.delete(page, editedTeamName);
       } catch {
-        await deleteTeam(originalTeamName, page);
+        await Team.ui.delete(page, originalTeamName);
       }
-      await deleteOrganization(organizationName, page);
+      await Organization.ui.delete(page, organizationName);
     }
   });
 
   test('delete team from list view', { tag: ['@not_mock'] }, async ({ page }) => {
-    const organizationName = await createOrganization(page);
-    const teamName = await createTeam({ organizationName }, page);
+    const organizationName = await Organization.ui.create(page);
+    const teamName = await Team.ui.create(page, { organizationName });
 
     try {
       await deleteResourceFromList(
@@ -75,29 +74,29 @@ test.describe('Platform Teams CRUD', () => {
       await clearTableFilters(page);
       await expect(page.getByRole('row', { name: teamName })).not.toBeVisible();
     } finally {
-      await deleteOrganization(organizationName, page);
+      await Organization.ui.delete(page, organizationName);
     }
   });
 
   test('delete team from details page', { tag: ['@not_mock'] }, async ({ page }) => {
-    const organizationName = await createOrganization(page);
-    const teamName = await createTeam({ organizationName }, page);
+    const organizationName = await Organization.ui.create(page);
+    const teamName = await Team.ui.create(page, { organizationName });
 
     try {
-      await deleteTeam(teamName, page);
+      await Team.ui.delete(page, teamName);
 
       await expect(page).toHaveURL(/\/teams/);
       await clearTableFilters(page);
       await expect(page.getByRole('row', { name: teamName })).not.toBeVisible();
     } finally {
-      await deleteOrganization(organizationName, page);
+      await Organization.ui.delete(page, organizationName);
     }
   });
 
   test('bulk delete teams from toolbar action', { tag: ['@not_mock'] }, async ({ page }) => {
-    const organizationName = await createOrganization(page);
-    const team1Name = await createTeam({ organizationName }, page);
-    const team2Name = await createTeam({ organizationName }, page);
+    const organizationName = await Organization.ui.create(page);
+    const team1Name = await Team.ui.create(page, { organizationName });
+    const team2Name = await Team.ui.create(page, { organizationName });
 
     try {
       await bulkDeleteResources(
@@ -114,7 +113,7 @@ test.describe('Platform Teams CRUD', () => {
       await expect(page.getByRole('row', { name: team1Name })).not.toBeVisible();
       await expect(page.getByRole('row', { name: team2Name })).not.toBeVisible();
     } finally {
-      await deleteOrganization(organizationName, page);
+      await Organization.ui.delete(page, organizationName);
     }
   });
 });

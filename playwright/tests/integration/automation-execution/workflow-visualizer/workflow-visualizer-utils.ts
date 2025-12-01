@@ -1,12 +1,14 @@
+/** @deprecated Use WorkflowVisualizer from '@ansible/playwright/utils' instead */
+
 import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
-import { APIRequestContext, Page, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
+import { awxAPI } from '@ansible/playwright/commands/apiClient';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { platformUI } from '@ansible/playwright/commands/login';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
-import { controllerAPI } from './controller-api';
 interface WFVizMock {
   mockData: PlatformItemsResponse<unknown> /** Object response from API */;
   id: number /** ID of the Workflow Job Template */;
@@ -16,7 +18,7 @@ interface WFVizLink {
   sourceId: number /** ID of the first node */;
   targetId: number /** ID of the second node */;
   type: LinkType;
-  request: APIRequestContext;
+  page: Page;
 }
 
 type LinkType = 'always' | 'success' | 'failure';
@@ -28,30 +30,16 @@ type LinkType = 'always' | 'success' | 'failure';
  *  sourceId: number /** ID of the first node
  *  targetId: number /** ID of the second node
  *  type: LinkType;
- *  request: APIRequestContext;
+ *  page: Page;
  *  }
  * @returns a link between sourceId (id of the source node) and targetId (id of the target node)
  */
 export const createWFVizLink = async (options: WFVizLink) => {
-  const postWFVizLink = async () => {
-    const url =
-      platformUI +
-      controllerAPI(
-        `/workflow_job_template_nodes/${options.sourceId.toString()}/${options.type}_nodes/`
-      );
-    const cookie = (await options.request.storageState()).cookies.find(
-      (cookie) => cookie.name === 'csrftoken'
-    );
-    await options.request.post(url, {
-      data: {
-        id: options.targetId,
-      },
-      headers: {
-        'X-CSRFToken': cookie?.value as string,
-      },
-    });
-  };
-  return await postWFVizLink();
+  await awxAPI.post(
+    options.page,
+    `/workflow_job_template_nodes/${options.sourceId}/${options.type}_nodes/`,
+    { id: options.targetId }
+  );
 };
 
 /**
@@ -259,13 +247,11 @@ export async function removeAllWorkflowVizNodes(page: Page) {
  *  }
  */
 export async function renderWFVizWithMockData(options: WFVizMock) {
-  const url =
-    platformUI + controllerAPI(`workflow-job-template/${options.id.toString()}/visualizer`);
+  const url = `${platformUI}/api/controller/v2/workflow-job-template/${options.id}/visualizer`;
   // Make sure we are on the visualizer page before mocking
   if (await options.page.request.get(url)) {
     await options.page.route(
-      platformUI +
-        controllerAPI(`/workflow_job_templates/${options.id.toString()}/workflow_nodes/*`),
+      `${platformUI}/api/controller/v2/workflow_job_templates/${options.id}/workflow_nodes/*`,
       async (route) => {
         await route.fulfill({
           status: 200,

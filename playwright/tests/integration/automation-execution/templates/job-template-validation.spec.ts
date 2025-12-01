@@ -1,11 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { navigateTo } from '../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../commands/setup';
-import {
-  createAwxCredential,
-  deleteAwxCredential,
-} from '../infrastructure/credentials/credential-utils';
-import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
+import { Credential, Inventory } from '@ansible/playwright/utils';
 
 test.describe('Job Template Form - Validation', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,9 +18,9 @@ test.describe('Job Template Form - Validation', () => {
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
-      const inventoryName = await createInventory({}, page);
-      const machineCredential1 = await createAwxCredential({ credentialType: 'Machine' }, page);
-      const machineCredential2 = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const inventoryName = await Inventory.ui.create(page);
+      const machineCredential1 = await Credential.ui.create(page, { credentialType: 'Machine' });
+      const machineCredential2 = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       await navigateTo(page, 'Automation Execution', 'Templates');
       await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
@@ -61,9 +57,9 @@ test.describe('Job Template Form - Validation', () => {
         )
       ).toBeVisible({ timeout: 10000 });
 
-      await deleteAwxCredential(machineCredential1, page);
-      await deleteAwxCredential(machineCredential2, page);
-      await deleteInventory(inventoryName, page);
+      await Credential.ui.delete(page, machineCredential1);
+      await Credential.ui.delete(page, machineCredential2);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 
@@ -73,21 +69,15 @@ test.describe('Job Template Form - Validation', () => {
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
-      const inventoryName = await createInventory({}, page);
-      const vaultCredential1 = await createAwxCredential(
-        {
-          credentialType: 'Vault',
-          vaultId: 'test-vault-1',
-        },
-        page
-      );
-      const vaultCredential2 = await createAwxCredential(
-        {
-          credentialType: 'Vault',
-          vaultId: 'test-vault-1',
-        },
-        page
-      );
+      const inventoryName = await Inventory.ui.create(page);
+      const vaultCredential1 = await Credential.ui.create(page, {
+        credentialType: 'Vault',
+        vaultId: 'test-vault-1',
+      });
+      const vaultCredential2 = await Credential.ui.create(page, {
+        credentialType: 'Vault',
+        vaultId: 'test-vault-1',
+      });
 
       await navigateTo(page, 'Automation Execution', 'Templates');
       await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
@@ -124,9 +114,9 @@ test.describe('Job Template Form - Validation', () => {
         )
       ).toBeVisible({ timeout: 10000 });
 
-      await deleteAwxCredential(vaultCredential1, page);
-      await deleteAwxCredential(vaultCredential2, page);
-      await deleteInventory(inventoryName, page);
+      await Credential.ui.delete(page, vaultCredential1);
+      await Credential.ui.delete(page, vaultCredential2);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 });

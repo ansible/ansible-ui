@@ -1,4 +1,4 @@
-import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { InstanceGroup as InstanceGroupType } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { ConstructedInventory, RegularInventory } from '@ansible/awx-ui/interfaces/Inventory';
 import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI, gatewayAPI } from '@ansible/playwright/commands/apiClient';
@@ -9,8 +9,7 @@ import { createE2EName } from '../../../../../../commands/createE2EName';
 import { filterTableByText } from '../../../../../../commands/filterTableByText';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
-import { createInstanceGroupAPI } from '../../instance-groups/instance-group-utils';
-import { createConstructedInventory } from '../inventory-utils';
+import { Inventory, InstanceGroup } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -35,7 +34,7 @@ test.describe('Constructed Inventory', () => {
       const verbosityValue = Math.floor(Math.random() * 3);
 
       let organization: Organization | null = null;
-      let instanceGroup: InstanceGroup | null = null;
+      let instanceGroup: InstanceGroupType | null = null;
       let inventory1: RegularInventory | null = null;
       let inventory2: RegularInventory | null = null;
       let constructedInventory: string | null = null;
@@ -47,7 +46,7 @@ test.describe('Constructed Inventory', () => {
         });
 
         // Create instance group via API
-        instanceGroup = await createInstanceGroupAPI(page, { name: instanceGroupName });
+        instanceGroup = await InstanceGroup.api.create(page, { name: instanceGroupName });
 
         // Create two regular inventories via API
         inventory1 = await awxAPI.post<RegularInventory>(page, '/inventories/', {
@@ -61,20 +60,17 @@ test.describe('Constructed Inventory', () => {
         });
 
         // Create constructed inventory via UI with all fields
-        constructedInventory = await createConstructedInventory(
-          {
-            name: constructedInventoryName,
-            description: `Description of "${constructedInventoryName}" created by Playwright`,
-            organizationName,
-            instanceGroupNames: [instanceGroupName],
-            inputInventoryNames: [inventory1Name, inventory2Name],
-            cacheTimeout: cacheTimeoutValue,
-            verbosity: String(verbosityValue),
-            limit: '5',
-            sourceVars: 'plugin: constructed',
-          },
-          page
-        );
+        constructedInventory = await Inventory.ui.createConstructed(page, {
+          name: constructedInventoryName,
+          description: `Description of "${constructedInventoryName}" created by Playwright`,
+          organizationName,
+          instanceGroupNames: [instanceGroupName],
+          inputInventoryNames: [inventory1Name, inventory2Name],
+          cacheTimeout: cacheTimeoutValue,
+          verbosity: String(verbosityValue),
+          limit: '5',
+          sourceVars: 'plugin: constructed',
+        });
 
         // Verify inventory was created and details are displayed
         await expect(
@@ -163,15 +159,12 @@ test.describe('Constructed Inventory', () => {
         });
 
         // Create basic constructed inventory
-        constructedInventory = await createConstructedInventory(
-          {
-            name: constructedInventoryName,
-            organizationName,
-            inputInventoryNames: [inventory1Name],
-            sourceVars: 'plugin: constructed',
-          },
-          page
-        );
+        constructedInventory = await Inventory.ui.createConstructed(page, {
+          name: constructedInventoryName,
+          organizationName,
+          inputInventoryNames: [inventory1Name],
+          sourceVars: 'plugin: constructed',
+        });
 
         // Navigate to edit page
         await clickPageAction('Edit inventory', page);
@@ -271,15 +264,12 @@ test.describe('Constructed Inventory', () => {
         }
 
         // Create constructed inventory via UI with basic source vars
-        constructedInventory = await createConstructedInventory(
-          {
-            name: constructedInventoryName,
-            organizationName,
-            inputInventoryNames: [inputInventoryName],
-            sourceVars: 'plugin: constructed',
-          },
-          page
-        );
+        constructedInventory = await Inventory.ui.createConstructed(page, {
+          name: constructedInventoryName,
+          organizationName,
+          inputInventoryNames: [inputInventoryName],
+          sourceVars: 'plugin: constructed',
+        });
 
         // Edit to add strict mode with bad variables
         await clickPageAction('Edit inventory', page);
@@ -400,15 +390,12 @@ test.describe('Constructed Inventory', () => {
         });
 
         // Create constructed inventory with three input inventories
-        constructedInventory = await createConstructedInventory(
-          {
-            name: constructedInventoryName,
-            organizationName,
-            inputInventoryNames: [inventory1Name, inventory2Name, inventory3Name],
-            sourceVars: 'plugin: constructed',
-          },
-          page
-        );
+        constructedInventory = await Inventory.ui.createConstructed(page, {
+          name: constructedInventoryName,
+          organizationName,
+          inputInventoryNames: [inventory1Name, inventory2Name, inventory3Name],
+          sourceVars: 'plugin: constructed',
+        });
 
         // Get the initial order of input inventories
         await expect(page.getByTestId('input-inventories')).toBeVisible();

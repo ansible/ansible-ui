@@ -4,16 +4,7 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { getTableRow } from '@ansible/playwright/commands/getTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  cancelRoleForm,
-  createRoleWithConfig,
-  deleteRole,
-  editRoleFromDetailsPage,
-  navigateToRolesPage,
-  submitRoleForm,
-  TEST_ROLE_CONFIGS,
-  verifyRoleInList,
-} from './roles-utils';
+import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/roles' }));
 test.afterEach(setupAfter);
@@ -34,7 +25,7 @@ test.describe('Role Editing Tests', () => {
           description: originalDescription,
         };
 
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
 
         // Verify we're on the role details page with original values
         await expect(page.getByRole('heading', { name: originalName })).toBeVisible();
@@ -42,14 +33,14 @@ test.describe('Role Editing Tests', () => {
         await expect(page.locator('#description')).toHaveText(originalDescription);
 
         // Edit both name and description (we're already on the details page)
-        await editRoleFromDetailsPage(page, { name: newName, description: newDescription });
+        await Role.ui.editFromDetailsPage(page, { name: newName, description: newDescription });
 
         // Verify both changes
         await expect(page.getByRole('heading', { name: newName })).toBeVisible();
         await expect(page.locator('#name')).toHaveText(newName);
         await expect(page.locator('#description')).toHaveText(newDescription);
         // Cleanup
-        await deleteRole(newName, page);
+        await Role.ui.delete(page, newName);
       }
     );
   });
@@ -62,23 +53,23 @@ test.describe('Role Editing Tests', () => {
         const roleName = createE2EName();
         const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
 
         // Navigate to edit page
-        await navigateToRolesPage(page);
+        await Role.ui.navigate(page);
         await clickTableRow({ text: roleName }, page);
         await clickPageAction('Edit role', page);
 
         // Clear the name field
         await page.getByRole('textbox', { name: 'Name' }).fill('');
-        await submitRoleForm(page, 'Save role');
+        await Role.ui.submitForm(page, 'Save role');
 
         // Should show validation error
         await expect(page.getByText(/Name is required/)).toBeVisible();
 
         // Cleanup - cancel and delete
-        await cancelRoleForm(page);
-        await deleteRole(roleName, page);
+        await Role.ui.cancelForm(page);
+        await Role.ui.delete(page, roleName);
       }
     );
 
@@ -92,25 +83,25 @@ test.describe('Role Editing Tests', () => {
         const config2 = { ...TEST_ROLE_CONFIGS.namespace, name: secondName };
 
         // Create two roles
-        await createRoleWithConfig(page, config1);
-        await createRoleWithConfig(page, config2);
+        await Role.ui.createWithConfig(page, config1);
+        await Role.ui.createWithConfig(page, config2);
 
         // Try to edit second role to have same name as first
-        await navigateToRolesPage(page);
+        await Role.ui.navigate(page);
         await clickTableRow({ text: secondName }, page);
         await clickPageAction('Edit role', page);
 
         await page.getByRole('textbox', { name: 'Name' }).fill('');
         await page.getByRole('textbox', { name: 'Name' }).fill(firstName);
-        await submitRoleForm(page, 'Save role');
+        await Role.ui.submitForm(page, 'Save role');
 
         // Should show duplicate name error
         await expect(page.getByText(/name.*already exists|duplicate/i)).toBeVisible();
 
         // Cleanup
-        await cancelRoleForm(page);
-        await deleteRole(firstName, page);
-        await deleteRole(secondName, page);
+        await Role.ui.cancelForm(page);
+        await Role.ui.delete(page, firstName);
+        await Role.ui.delete(page, secondName);
       }
     );
   });
@@ -128,24 +119,24 @@ test.describe('Role Editing Tests', () => {
           description: originalDescription,
         };
 
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
 
         // Navigate to edit page
-        await navigateToRolesPage(page);
+        await Role.ui.navigate(page);
         await clickTableRow({ text: roleName }, page);
         await clickPageAction('Edit role', page);
 
         // Make changes but cancel
         await page.getByLabel('Description').fill('');
         await page.getByLabel('Description').fill('Changed description');
-        await cancelRoleForm(page);
+        await Role.ui.cancelForm(page);
 
         // Should return to details page with original data
         await expect(page.getByRole('heading', { name: roleName })).toBeVisible();
         await expect(page.locator('#description')).toHaveText(originalDescription);
 
         // Cleanup
-        await deleteRole(roleName, page);
+        await Role.ui.delete(page, roleName);
       }
     );
 
@@ -156,10 +147,10 @@ test.describe('Role Editing Tests', () => {
         const roleName = createE2EName();
         const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
 
         // Navigate to list and click edit action
-        await navigateToRolesPage(page);
+        await Role.ui.navigate(page);
         const roleRow = await getTableRow(page, roleName);
         await roleRow.getByRole('link', { name: 'Edit role', exact: true }).click();
 
@@ -170,8 +161,8 @@ test.describe('Role Editing Tests', () => {
         await expect(page.getByRole('textbox', { name: 'Name' })).toHaveValue(roleName);
 
         // Cleanup
-        await cancelRoleForm(page);
-        await deleteRole(roleName, page);
+        await Role.ui.cancelForm(page);
+        await Role.ui.delete(page, roleName);
       }
     );
 
@@ -182,7 +173,7 @@ test.describe('Role Editing Tests', () => {
         const roleName = createE2EName();
         const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
 
         // From details page, click edit
         await clickPageAction('Edit role', page);
@@ -194,8 +185,8 @@ test.describe('Role Editing Tests', () => {
         await expect(page.getByRole('textbox', { name: 'Name' })).toHaveValue(roleName);
 
         // Cleanup
-        await cancelRoleForm(page);
-        await deleteRole(roleName, page);
+        await Role.ui.cancelForm(page);
+        await Role.ui.delete(page, roleName);
       }
     );
   });
@@ -207,7 +198,7 @@ test.describe('Role Editing Tests', () => {
       const newDescription = 'Updated description for list verification';
       const config = { ...TEST_ROLE_CONFIGS.namespace, name: originalName };
 
-      await createRoleWithConfig(page, config);
+      await Role.ui.createWithConfig(page, config);
 
       // Verify we're on the original role details page
       await expect(page.getByRole('heading', { name: originalName })).toBeVisible();
@@ -254,7 +245,7 @@ test.describe('Role Editing Tests', () => {
       await expect(page.locator('#permissions')).toContainText('Can delete namespace');
 
       // Navigate to list and verify updates with proper waiting
-      await navigateToRolesPage(page);
+      await Role.ui.navigate(page);
 
       // Wait for the list to be fully loaded
       await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
@@ -263,7 +254,7 @@ test.describe('Role Editing Tests', () => {
       await page.waitForTimeout(2000);
 
       // Verify new role data is visible
-      await verifyRoleInList(page, newName, true);
+      await Role.ui.verifyInList(page, newName, true);
       const newRoleRow = await getTableRow(page, newName);
       await expect(newRoleRow).toContainText(newDescription, { timeout: 10000 });
 
@@ -273,10 +264,10 @@ test.describe('Role Editing Tests', () => {
       await page.getByText('Can delete namespace').click();
 
       // Verify old name is not in list
-      await verifyRoleInList(page, originalName, false);
+      await Role.ui.verifyInList(page, originalName, false);
 
       // Cleanup
-      await deleteRole(newName, page);
+      await Role.ui.delete(page, newName);
     });
   });
 });

@@ -1,3 +1,5 @@
+/** @deprecated Use InventoryHost from '@ansible/playwright/utils' instead */
+
 import { Page, expect } from '@playwright/test';
 import { clickTableRow } from '../../../../../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../../../../../commands/confirmAndAssertDeletion';

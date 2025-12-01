@@ -1,3 +1,5 @@
+/** @deprecated Use WorkflowApproval from '@ansible/playwright/utils' instead */
+
 import { Page, expect, test } from '@playwright/test';
 import { awxAPI } from '@ansible/playwright/commands/apiClient';
 

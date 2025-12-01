@@ -1,20 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  cancelRoleForm,
-  clickCreateRole,
-  createRoleWithConfig,
-  deleteRole,
-  fillRoleBasicInfo,
-  navigateToRolesPage,
-  selectPermissions,
-  selectResourceType,
-  submitRoleForm,
-  TEST_ROLE_CONFIGS,
-  verifyRoleDetails,
-  verifyRoleInList,
-} from './roles-utils';
+import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
@@ -25,17 +12,17 @@ test.describe('Role Creation Tests', () => {
       const roleName = createE2EName();
       const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-      const createdRoleName = await createRoleWithConfig(page, config);
-      await verifyRoleDetails(page, createdRoleName, config);
-      await deleteRole(createdRoleName, page);
+      const createdRoleName = await Role.ui.createWithConfig(page, config);
+      await Role.ui.verifyDetails(page, createdRoleName, config);
+      await Role.ui.delete(page, createdRoleName);
     });
     test('should create a AWX inventory role', { tag: ['@not_mock'] }, async ({ page }) => {
       const roleName = createE2EName();
       const config = { ...TEST_ROLE_CONFIGS.awxInventory, name: roleName };
 
-      const createdRoleName = await createRoleWithConfig(page, config);
-      await verifyRoleDetails(page, createdRoleName, config);
-      await deleteRole(createdRoleName, page);
+      const createdRoleName = await Role.ui.createWithConfig(page, config);
+      await Role.ui.verifyDetails(page, createdRoleName, config);
+      await Role.ui.delete(page, createdRoleName);
     });
   });
 
@@ -44,9 +31,9 @@ test.describe('Role Creation Tests', () => {
       'should show validation error for missing name, description, and resource type',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await submitRoleForm(page);
+        await Role.ui.navigate(page);
+        await Role.ui.clickCreateRole(page);
+        await Role.ui.submitForm(page);
         await expect(page.getByText(/Name is required/)).toBeVisible();
         await expect(page.getByText(/Description is required/)).toBeVisible();
         await expect(page.getByText(/Resource type is required/)).toBeVisible();
@@ -60,11 +47,11 @@ test.describe('Role Creation Tests', () => {
       async ({ page }) => {
         const roleName = createE2EName();
 
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName, 'Test description');
-        await selectResourceType(page, 'Namespace');
-        await submitRoleForm(page);
+        await Role.ui.navigate(page);
+        await Role.ui.clickCreateRole(page);
+        await Role.ui.fillBasicInfo(page, roleName, 'Test description');
+        await Role.ui.selectResourceType(page, 'Namespace');
+        await Role.ui.submitForm(page);
         await expect(page.getByText(/Permissions is required/)).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Create role' })).toBeVisible();
       }
@@ -78,20 +65,20 @@ test.describe('Role Creation Tests', () => {
         const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
         // Create the first role and ensure it exists
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
 
         // Verify the role was actually created by checking it exists in the list
-        await navigateToRolesPage(page);
-        await verifyRoleInList(page, roleName, true);
+        await Role.ui.navigate(page);
+        await Role.ui.verifyInList(page, roleName, true);
 
         // Now try to create a duplicate role
-        await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName, 'Test description');
-        await selectResourceType(page, config.resourceTypeDisplayName);
-        await selectPermissions(page, config.permissionDisplayNames);
+        await Role.ui.clickCreateRole(page);
+        await Role.ui.fillBasicInfo(page, roleName, 'Test description');
+        await Role.ui.selectResourceType(page, config.resourceTypeDisplayName);
+        await Role.ui.selectPermissions(page, config.permissionDisplayNames);
 
         // Submit the form and wait for the response
-        await submitRoleForm(page);
+        await Role.ui.submitForm(page);
 
         // Wait a moment for any async validation to complete
         await page.waitForTimeout(2000);
@@ -144,8 +131,8 @@ test.describe('Role Creation Tests', () => {
         }
 
         // Cleanup: Cancel form and delete the role
-        await cancelRoleForm(page);
-        await deleteRole(roleName, page);
+        await Role.ui.cancelForm(page);
+        await Role.ui.delete(page, roleName);
       }
     );
   });
@@ -157,11 +144,11 @@ test.describe('Role Creation Tests', () => {
       async ({ page }) => {
         const roleName = createE2EName();
 
-        await navigateToRolesPage(page);
-        await clickCreateRole(page);
-        await fillRoleBasicInfo(page, roleName, 'Test description');
-        await selectResourceType(page, 'Namespace');
-        await cancelRoleForm(page);
+        await Role.ui.navigate(page);
+        await Role.ui.clickCreateRole(page);
+        await Role.ui.fillBasicInfo(page, roleName, 'Test description');
+        await Role.ui.selectResourceType(page, 'Namespace');
+        await Role.ui.cancelForm(page);
         await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
         await expect(page.getByRole('row').filter({ hasText: roleName })).not.toBeVisible();
       }
@@ -174,13 +161,13 @@ test.describe('Role Creation Tests', () => {
         const roleName = createE2EName();
         const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
         await page.getByLabel('Breadcrumb').getByRole('link', { name: 'Roles' }).click();
         await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
         await page.getByRole('textbox', { name: 'Type to filter' }).fill(roleName);
         await page.getByRole('button', { name: 'apply filter' }).click();
         await expect(page.getByRole('row').filter({ hasText: roleName })).toBeVisible();
-        await deleteRole(roleName, page);
+        await Role.ui.delete(page, roleName);
       }
     );
   });

@@ -7,17 +7,13 @@ import { expectRowToContain } from '@ansible/playwright/commands/expectRowToCont
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
-  createOrganization,
-  deleteOrganization,
-} from '../../access-management/organizations/organization-utils';
-import { createEdaCredential, deleteEdaCredential } from '../credentials/credentials-utils';
-import {
-  createDecisionEnvironment,
-  deleteDecisionEnvironment,
-} from '../decision-environments/decision-environments-utils';
-import { createEdaEventStream, deleteEdaEventStream } from '../event-streams/event-stream-utils';
-import { createEdaProject, deleteEdaProject } from '../projects/projects-utils';
-import { createRulebookActivation, deleteRulebookActivation } from './rulebook-activations-utils';
+  Organization,
+  EdaCredential,
+  DecisionEnvironment,
+  EventStream,
+  EdaProject,
+  RulebookActivation,
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
@@ -37,20 +33,17 @@ test.describe('Rulebook Activations', () => {
   let decisionEnvironmentName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await createOrganization(page);
-    projectName = await createEdaProject({ organizationName: organizationName }, page);
-    credentialName = await createEdaCredential({ organizationName: organizationName }, page);
-    decisionEnvironmentName = await createDecisionEnvironment(
-      { organizationName: organizationName },
-      page
-    );
+    organizationName = await Organization.ui.create(page);
+    projectName = await EdaProject.ui.create(page, { organizationName });
+    credentialName = await EdaCredential.ui.create(page, { organizationName });
+    decisionEnvironmentName = await DecisionEnvironment.ui.create(page, { organizationName });
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteDecisionEnvironment(decisionEnvironmentName, page);
-    await deleteEdaCredential(credentialName, page);
-    await deleteEdaProject(projectName, page);
-    await deleteOrganization(organizationName, page).catch(() => {});
+    await DecisionEnvironment.ui.delete(page, decisionEnvironmentName);
+    await EdaCredential.ui.delete(page, credentialName);
+    await EdaProject.ui.delete(page, projectName);
+    await Organization.ui.delete(page, organizationName).catch(() => {});
   });
 
   test.describe('Create', () => {
@@ -60,21 +53,18 @@ test.describe('Rulebook Activations', () => {
       async ({ page }) => {
         test.setTimeout(300000);
 
-        const rulebookActivationName = await createRulebookActivation(
-          {
-            projectName: projectName,
-            credentialName: credentialName,
-            decisionEnvironmentName: decisionEnvironmentName,
-            organizationName: organizationName,
-          },
-          page
-        );
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+        });
         await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
         await expect(page.locator('#project')).toContainText(projectName);
         await expect(page.getByLabel('Label group category').getByRole('listitem')).toContainText(
           credentialName
         );
-        await deleteRulebookActivation(rulebookActivationName, page);
+        await RulebookActivation.ui.delete(page, rulebookActivationName);
       }
     );
 
@@ -84,16 +74,13 @@ test.describe('Rulebook Activations', () => {
       async ({ page }) => {
         test.setTimeout(150000);
 
-        const rulebookActivationName = await createRulebookActivation(
-          {
-            projectName: projectName,
-            credentialName: credentialName,
-            organizationName: organizationName,
-            decisionEnvironmentName: decisionEnvironmentName,
-            restartPolicy: 'Always',
-          },
-          page
-        );
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          organizationName,
+          decisionEnvironmentName,
+          restartPolicy: 'Always',
+        });
         await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
         await expect(page.locator('#restart-policy')).toContainText('Always');
         await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
@@ -111,7 +98,7 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('button', { name: 'Restart rulebook activations' }).click();
         await expect(page.getByRole('dialog')).toContainText('Success');
         await page.getByRole('button', { name: 'Close' }).click();
-        await deleteRulebookActivation(rulebookActivationName, page);
+        await RulebookActivation.ui.delete(page, rulebookActivationName);
       }
     );
   });
@@ -122,15 +109,12 @@ test.describe('Rulebook Activations', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(150000);
-        const rulebookActivationName = await createRulebookActivation(
-          {
-            projectName: projectName,
-            credentialName: credentialName,
-            decisionEnvironmentName: decisionEnvironmentName,
-            organizationName: organizationName,
-          },
-          page
-        );
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+        });
         await page.waitForTimeout(1000);
         await page.getByText('Rulebook activation enabled').click();
         await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
@@ -158,7 +142,7 @@ test.describe('Rulebook Activations', () => {
         await expect(page.getByRole('main')).toContainText('Last edited');
         await expect(page.locator('#description')).toContainText('edited description');
         await expect(page.locator('#enabled-option')).toContainText('Skip audit events');
-        await deleteRulebookActivation(rulebookActivationName, page);
+        await RulebookActivation.ui.delete(page, rulebookActivationName);
       }
     );
 
@@ -167,15 +151,12 @@ test.describe('Rulebook Activations', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(150000);
-        const rulebookActivationName = await createRulebookActivation(
-          {
-            projectName: projectName,
-            credentialName: credentialName,
-            decisionEnvironmentName: decisionEnvironmentName,
-            organizationName: organizationName,
-          },
-          page
-        );
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+        });
         await page.waitForTimeout(1000);
         await page.getByText('Rulebook activation enabled').click();
         await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
@@ -194,7 +175,7 @@ test.describe('Rulebook Activations', () => {
         await expect(page.getByRole('main')).toContainText('Last edited');
         await expect(page.locator('#description')).toContainText('edited description');
         await expect(page.locator('#enabled-option')).toContainText('Skip audit events');
-        await deleteRulebookActivation(rulebookActivationName, page);
+        await RulebookActivation.ui.delete(page, rulebookActivationName);
       }
     );
 
@@ -203,24 +184,15 @@ test.describe('Rulebook Activations', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(300000);
-        const eventStreamOne = await createEdaEventStream(
-          { organizationName: organizationName },
-          page
-        );
-        const eventStreamTwo = await createEdaEventStream(
-          { organizationName: organizationName },
-          page
-        );
-        const rulebookActivationName = await createRulebookActivation(
-          {
-            projectName: projectName,
-            credentialName: credentialName,
-            disabled: true,
-            organizationName: organizationName,
-            decisionEnvironmentName: decisionEnvironmentName,
-          },
-          page
-        );
+        const eventStreamOne = await EventStream.ui.create(page, { organizationName });
+        const eventStreamTwo = await EventStream.ui.create(page, { organizationName });
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          disabled: true,
+          organizationName,
+          decisionEnvironmentName,
+        });
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
         await page.getByRole('textbox', { name: 'Description' }).click();
         await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
@@ -251,9 +223,9 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('button', { name: 'Save' }).click();
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
         await expect(page.getByRole('link', { name: eventStreamTwo })).toBeVisible();
-        await deleteRulebookActivation(rulebookActivationName, page);
-        await deleteEdaEventStream(eventStreamOne, page);
-        await deleteEdaEventStream(eventStreamTwo, page);
+        await RulebookActivation.ui.delete(page, rulebookActivationName);
+        await EventStream.ui.delete(page, eventStreamOne);
+        await EventStream.ui.delete(page, eventStreamTwo);
       }
     );
 
@@ -262,20 +234,14 @@ test.describe('Rulebook Activations', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(300000);
-        const eventStreamOne = await createEdaEventStream(
-          { organizationName: organizationName },
-          page
-        );
-        const rulebookActivationName = await createRulebookActivation(
-          {
-            projectName: projectName,
-            credentialName: credentialName,
-            disabled: true,
-            organizationName: organizationName,
-            decisionEnvironmentName: decisionEnvironmentName,
-          },
-          page
-        );
+        const eventStreamOne = await EventStream.ui.create(page, { organizationName });
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          disabled: true,
+          organizationName,
+          decisionEnvironmentName,
+        });
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
         await expect(page.locator('#source-mappings-form-group')).toBeVisible();
 
@@ -331,8 +297,8 @@ test.describe('Rulebook Activations', () => {
         await expect(page.getByRole('button', { name: 'Save rulebook activation' })).toBeVisible();
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
         await expect(page.getByRole('tab', { name: 'Details' })).toBeVisible();
-        await deleteRulebookActivation(rulebookActivationName, page);
-        await deleteEdaEventStream(eventStreamOne, page);
+        await RulebookActivation.ui.delete(page, rulebookActivationName);
+        await EventStream.ui.delete(page, eventStreamOne);
       }
     );
   });
@@ -343,15 +309,12 @@ test.describe('Rulebook Activations', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(150000);
-        const rulebookActivationName = await createRulebookActivation(
-          {
-            projectName: projectName,
-            credentialName: credentialName,
-            organizationName: organizationName,
-            decisionEnvironmentName: decisionEnvironmentName,
-          },
-          page
-        );
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          organizationName,
+          decisionEnvironmentName,
+        });
         await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
         await page.getByRole('button', { name: 'kebab dropdown toggle' }).click();
         await page.getByRole('menuitem', { name: 'Duplicate rulebook activation' }).click();

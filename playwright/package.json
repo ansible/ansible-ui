@@ -19,6 +19,9 @@
     "migration-stats": "tsx scripts/migration-stats.ts"
   },
   "dependencies": {
-    "@ansible/aap-mock": "file:../packages/aap-mock"
+    "@ansible/aap-mock": "file:../packages/aap-mock",
+    "@ansible/awx-ui": "file:../frontend/awx",
+    "@ansible/chatbot": "file:../frontend/chatbot",
+    "@ansible/platform-ui": "file:../platform"
   }
 }

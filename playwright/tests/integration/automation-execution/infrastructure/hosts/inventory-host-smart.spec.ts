@@ -5,18 +5,14 @@ import { navigateTo } from '../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../commands/runAdHocCommandWizard';
 import { setupAfter, setupBefore } from '../../../../../commands/setup';
 import {
-  createOrganization,
-  deleteOrganization,
-} from '../../../access-management/organizations/organization-utils';
-import { createAwxProject, deleteAwxProject } from '../../projects/project-utils';
-import { deleteJobTemplate } from '../../templates/job-template-utils';
-import { createAwxCredential, deleteAwxCredential } from '../credentials/credential-utils';
-import {
-  createExecutionEnvironment,
-  deleteExecutionEnvironment,
-} from '../execution-environments/execution-environment-utils';
-import { createInventory, deleteInventory } from '../inventories/inventory-utils';
-import { createHostInInventory, navigateToInventoryHostsTab } from './inventory-host-regular-utils';
+  Organization,
+  Project,
+  JobTemplate,
+  Credential,
+  ExecutionEnvironment,
+  Inventory,
+  InventoryHost,
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -28,13 +24,15 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
-      const organizationName = await createOrganization(page);
-      const executionEnvironmentName = await createExecutionEnvironment(page, { organizationName });
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const organizationName = await Organization.ui.create(page);
+      const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
+        organizationName,
+      });
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       // Create a regular inventory with hosts first
-      const regularInventoryName = await createInventory({ organizationName }, page);
-      await createHostInInventory(regularInventoryName, {}, page);
+      const regularInventoryName = await Inventory.ui.create(page, { organizationName });
+      await InventoryHost.ui.create(page, regularInventoryName, {});
 
       // Create smart inventory that will include the hosts
       const smartInventoryName = createE2EName('smart-inventory');
@@ -78,11 +76,11 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
       );
 
       // Cleanup
-      await deleteInventory(smartInventoryName, page);
-      await deleteInventory(regularInventoryName, page);
-      await deleteAwxCredential(credentialName, page);
-      await deleteExecutionEnvironment(executionEnvironmentName, page);
-      await deleteOrganization(organizationName, page);
+      await Inventory.ui.delete(page, smartInventoryName);
+      await Inventory.ui.delete(page, regularInventoryName);
+      await Credential.ui.delete(page, credentialName);
+      await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 
@@ -92,11 +90,11 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
-      const organizationName = await createOrganization(page);
-      const projectName = await createAwxProject({ organizationName }, page);
+      const organizationName = await Organization.ui.create(page);
+      const projectName = await Project.ui.create(page, { organizationName });
 
       // Create a regular inventory with a host
-      const regularInventoryName = await createInventory({ organizationName }, page);
+      const regularInventoryName = await Inventory.ui.create(page, { organizationName });
 
       // Create smart inventory
       const smartInventoryName = createE2EName('smart-inventory');
@@ -175,11 +173,11 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
       await expect(page.getByText(jobTemplateName)).toBeVisible();
 
       // Cleanup
-      await deleteJobTemplate(jobTemplateName, page);
-      await deleteInventory(smartInventoryName, page);
-      await deleteInventory(regularInventoryName, page);
-      await deleteAwxProject(projectName, page);
-      await deleteOrganization(organizationName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, smartInventoryName);
+      await Inventory.ui.delete(page, regularInventoryName);
+      await Project.ui.delete(page, projectName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 
@@ -189,11 +187,11 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
-      const organizationName = await createOrganization(page);
+      const organizationName = await Organization.ui.create(page);
 
       // Create a regular inventory with a host
-      const regularInventoryName = await createInventory({ organizationName }, page);
-      await createHostInInventory(regularInventoryName, {}, page);
+      const regularInventoryName = await Inventory.ui.create(page, { organizationName });
+      await InventoryHost.ui.create(page, regularInventoryName, {});
 
       // Create smart inventory
       const smartInventoryName = createE2EName('smart-inventory');
@@ -216,7 +214,7 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
       ).toBeVisible();
 
       // Navigate to hosts tab
-      await navigateToInventoryHostsTab(smartInventoryName, page);
+      await InventoryHost.ui.navigateToInventoryHostsTab(smartInventoryName, page);
 
       // Wait for hosts to appear
       await expect(page.getByRole('row')).toHaveCount(2, { timeout: 10000 }); // header + 1 host
@@ -247,9 +245,9 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
       await expect(page.getByRole('tab', { name: 'Jobs' })).not.toBeVisible();
 
       // Cleanup
-      await deleteInventory(smartInventoryName, page);
-      await deleteInventory(regularInventoryName, page);
-      await deleteOrganization(organizationName, page);
+      await Inventory.ui.delete(page, smartInventoryName);
+      await Inventory.ui.delete(page, regularInventoryName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 });

@@ -6,7 +6,7 @@ import { login } from '@ansible/playwright/commands/login';
 import { logout } from '@ansible/playwright/commands/logout';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createAuthenticationMethod } from './authentication-utils';
+import { Authentication } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/authenticators' }));
 test.afterEach(setupAfter);
@@ -15,13 +15,10 @@ test(
   'Google auth form - create, edit, update and delete',
   { tag: ['@not_mock'] },
   async ({ page }) => {
-    const authMethodName = await createAuthenticationMethod(
-      {
-        name: 'e2e-google-auth',
-        type: 'Google OAuth',
-      },
-      page
-    );
+    const authMethodName = await Authentication.ui.createMethod(page, {
+      name: 'e2e-google-auth',
+      type: 'Google OAuth',
+    });
     await expect(page.locator('#google-oauth2-key')).toContainText('GoogleKey');
     await expect(page.locator('#google-oauth2-secret')).toContainText('$encrypted$');
     await page.getByRole('tab', { name: 'Back to Authentication Methods' }).click();
