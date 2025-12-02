@@ -39,11 +39,7 @@ export function AwxConfigProvider(props: { children: ReactNode; disabled?: boole
 export function AwxConfigProviderInternal(props: { children?: ReactNode }) {
   const response = useSWR<Config>(awxAPI`/config/`, requestGet);
   let serviceDown = false;
-  if (
-    response.error instanceof RequestError &&
-    response.error.statusCode >= 400 &&
-    response.error.statusCode < 500
-  ) {
+  if (response.error instanceof RequestError && response.error.statusCode >= 400) {
     serviceDown = true;
   }
   const value = useMemo(
