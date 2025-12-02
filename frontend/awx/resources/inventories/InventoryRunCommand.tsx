@@ -16,10 +16,12 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
+  RunCommandCredentialPasswordsStep,
   RunCommandCredentialStep,
   RunCommandDetailStep,
   RunCommandExecutionEnvionment,
   RunCommandReviewStep,
+  shouldHideCredentialPasswordsStep,
 } from './components/RunCommandSteps';
 
 export function InventoryRunCommand() {
@@ -43,13 +45,26 @@ export function InventoryRunCommand() {
 
   const handleSubmit = async (data: RunCommandWizard) => {
     const eeId = data.execution_environment;
-    const runCommandObj = {
-      ...data,
+    const runCommandObj: Record<string, unknown> = {
+      module_name: data.module_name,
+      module_args: data.module_args,
       verbosity: data.verbosity,
+      limit: data.limit,
       forks: data.forks,
+      diff_mode: data.diff_mode,
+      become_enabled: data.become_enabled,
+      extra_vars: data.extra_vars,
       credential: data.credential,
       execution_environment: eeId,
     };
+
+    // Include credential passwords at the top level of the request payload
+    if (data.credential_passwords && Object.keys(data.credential_passwords).length > 0) {
+      Object.entries(data.credential_passwords).forEach(([key, value]) => {
+        runCommandObj[key] = value;
+      });
+    }
+
     const result: { id: string } = await postRequest(
       awxAPI`/inventories/${id ?? ''}/ad_hoc_commands/`,
       runCommandObj
@@ -76,6 +91,13 @@ export function InventoryRunCommand() {
       id: 'credential',
       label: t('Credential'),
       inputs: <RunCommandCredentialStep />,
+    },
+    {
+      id: 'credential_passwords',
+      label: t('Credential Passwords'),
+      inputs: <RunCommandCredentialPasswordsStep />,
+      hidden: (wizardData: Partial<RunCommandWizard>) =>
+        shouldHideCredentialPasswordsStep(wizardData),
     },
     {
       id: 'review',
