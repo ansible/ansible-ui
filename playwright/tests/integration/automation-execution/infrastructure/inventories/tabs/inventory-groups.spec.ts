@@ -156,6 +156,54 @@ test.describe('Inventory Groups - List View', () => {
     await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
     await Organization.ui.delete(page, organizationName);
   });
+
+  test(
+    'can run ad-hoc command with credential passwords (Prompt on launch)',
+    { tag: ['@not_mock'] },
+    async ({ page }) => {
+      test.setTimeout(90000);
+      const organizationName = await createOrganization(page);
+
+      // Create credential with "Prompt on launch" enabled for password
+      const credentialName = await createAwxCredential(
+        {
+          credentialType: 'Machine',
+          promptOnLaunchPassword: true,
+        },
+        page
+      );
+      const executionEnvironmentName = await createExecutionEnvironment(page, {
+        organizationName,
+      });
+      const inventoryName = await createInventory({ organizationName }, page);
+      await createInventoryGroup({ inventoryName }, page);
+      await page.getByRole('tab', { name: 'Back to Groups' }).click();
+
+      await page.getByRole('button', { name: 'Run command' }).click();
+
+      // Run ad-hoc command wizard with SSH password
+      await runAdHocCommandWizard(
+        {
+          module: 'shell',
+          moduleArgs: 'echo "Hello World"',
+          verbosity: '0',
+          limit: 'all',
+          forks: 2,
+          showChanges: true,
+          becomeEnabled: true,
+          executionEnvironmentName,
+          credentialName,
+          sshPassword: 'test-password',
+        },
+        page
+      );
+
+      await deleteInventory(inventoryName, page);
+      await deleteAwxCredential(credentialName, page);
+      await deleteExecutionEnvironment(executionEnvironmentName, page);
+      await deleteOrganization(organizationName, page);
+    }
+  );
 });
 
 test.describe('Inventory Groups - Related Groups', () => {

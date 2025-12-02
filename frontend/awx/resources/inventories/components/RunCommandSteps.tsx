@@ -17,6 +17,7 @@ import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { LabelGroup } from '@patternfly/react-core';
+import { useEffect, Dispatch, SetStateAction } from 'react';
 import { useWatch } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -165,6 +166,37 @@ export function RunCommandExecutionEnvionment(props: { orgId: string }) {
 
 export function RunCommandCredentialStep() {
   const { t } = useTranslation();
+  const credentialId = useWatch<RunCommandWizard>({ name: 'credential' });
+  const { setWizardData } = usePageWizard() as {
+    setWizardData: Dispatch<SetStateAction<RunCommandWizard>>;
+  };
+
+  // Fetch credential to check if it needs password prompts
+  const { data: credential } = useGet<Credential>(
+    credentialId ? awxAPI`/credentials/${String(credentialId)}/` : ''
+  );
+
+  // Update wizard data with password requirements when credential changes
+  useEffect(() => {
+    if (credential) {
+      const needsPasswords =
+        credential.inputs?.password === 'ASK' ||
+        credential.inputs?.become_password === 'ASK' ||
+        credential.inputs?.ssh_key_unlock === 'ASK' ||
+        credential.inputs?.vault_password === 'ASK';
+
+      setWizardData((prev) => ({
+        ...prev,
+        credentialNeedsPasswords: needsPasswords,
+      }));
+    } else {
+      setWizardData((prev) => ({
+        ...prev,
+        credentialNeedsPasswords: undefined,
+      }));
+    }
+  }, [credential, setWizardData]);
+
   return (
     <PageFormSection>
       <PageFormCredentialSelect
@@ -180,6 +212,88 @@ export function RunCommandCredentialStep() {
       />
     </PageFormSection>
   );
+}
+
+export function RunCommandCredentialPasswordsStep() {
+  const { t } = useTranslation();
+  const { wizardData } = usePageWizard() as { wizardData: RunCommandWizard };
+  const credentialId = wizardData?.credential;
+
+  const { data: credential, isLoading } = useGet<Credential>(
+    credentialId ? awxAPI`/credentials/${String(credentialId)}/` : ''
+  );
+
+  if (isLoading || !credential) {
+    return <LoadingState />;
+  }
+
+  const showSshPassword = credential.inputs?.password === 'ASK';
+  const showBecomePassword = credential.inputs?.become_password === 'ASK';
+  const showSshKeyUnlock = credential.inputs?.ssh_key_unlock === 'ASK';
+  const showVaultPassword = credential.inputs?.vault_password === 'ASK';
+  const vaultId = credential.inputs?.vault_id?.toString() ?? '';
+
+  return (
+    <PageFormSection singleColumn>
+      {showSshPassword && (
+        <PageFormTextInput
+          id="run-command-ssh-password"
+          label={t('SSH password')}
+          name="credential_passwords.ssh_password"
+          placeholder={t('Enter a password')}
+          type="password"
+          isRequired
+        />
+      )}
+      {showSshKeyUnlock && (
+        <PageFormTextInput
+          id="run-command-private-key-passphrase"
+          label={t('Private key password')}
+          name="credential_passwords.ssh_key_unlock"
+          placeholder={t('Enter a password')}
+          type="password"
+          isRequired
+        />
+      )}
+      {showBecomePassword && (
+        <PageFormTextInput
+          id="run-command-privilege-escalation-password"
+          label={t('Privilege escalation password')}
+          name="credential_passwords.become_password"
+          placeholder={t('Enter a password')}
+          type="password"
+          isRequired
+        />
+      )}
+      {showVaultPassword && (
+        <PageFormTextInput
+          id={`run-command-vault-password-${vaultId}`}
+          label={
+            vaultId === '' ? t('Vault password') : t('Vault password | {{vaultId}}', { vaultId })
+          }
+          name={`credential_passwords.vault_password${vaultId !== '' ? `.${vaultId}` : ''}`}
+          placeholder={t('Enter a password')}
+          type="password"
+          isRequired
+        />
+      )}
+    </PageFormSection>
+  );
+}
+
+export function shouldHideCredentialPasswordsStep(
+  wizardData: Partial<RunCommandWizard> & { credentialNeedsPasswords?: boolean }
+): boolean {
+  // Hide if no credential selected or if credential doesn't need passwords
+  if (!wizardData?.credential) {
+    return true;
+  }
+  // If we haven't fetched the credential data yet, hide the step
+  // (it will appear once the credential data is loaded)
+  if (wizardData.credentialNeedsPasswords === undefined) {
+    return true;
+  }
+  return !wizardData.credentialNeedsPasswords;
 }
 
 export function RunCommandReviewStep() {
@@ -208,46 +322,44 @@ export function RunCommandReviewStep() {
   );
 
   return (
-    <>
-      <PageFormSection title={t('Review')} singleColumn>
-        <PageDetails disablePadding>
-          <PageDetail label={t('Module')}>{module_name}</PageDetail>
-          <PageDetail label={t('Arguments')}>{module_args}</PageDetail>
-          <PageDetail label={t('Verbosity')}>{verbosity}</PageDetail>
-          <PageDetail label={t('Limit')}>{limit}</PageDetail>
-          <PageDetail label={t('Forks')}>{forks}</PageDetail>
-          <PageDetail label={t('Show changes')}>{diff_mode ? t('On') : t('Off')}</PageDetail>
-          <PageDetail label={t('Privilege escalation')}>
-            {become_enabled ? t('On') : t('Off')}
+    <PageFormSection title={t('Review')} singleColumn>
+      <PageDetails disablePadding>
+        <PageDetail label={t('Module')}>{module_name}</PageDetail>
+        <PageDetail label={t('Arguments')}>{module_args}</PageDetail>
+        <PageDetail label={t('Verbosity')}>{verbosity}</PageDetail>
+        <PageDetail label={t('Limit')}>{limit}</PageDetail>
+        <PageDetail label={t('Forks')}>{forks}</PageDetail>
+        <PageDetail label={t('Show changes')}>{diff_mode ? t('On') : t('Off')}</PageDetail>
+        <PageDetail label={t('Privilege escalation')}>
+          {become_enabled ? t('On') : t('Off')}
+        </PageDetail>
+        <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
+        {credential ? (
+          <PageDetail label={t('Credentials')} isEmpty={!credential}>
+            <LabelGroup>
+              <CredentialLabel
+                credential={{
+                  name: credential.name,
+                  id: parseInt(credential.id.toString()),
+                  kind: 'ssh',
+                  cloud: false,
+                  description: credential.name,
+                }}
+                key={credential.id}
+              />
+            </LabelGroup>
           </PageDetail>
-          <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
-          {credential ? (
-            <PageDetail label={t('Credentials')} isEmpty={!credential}>
-              <LabelGroup>
-                <CredentialLabel
-                  credential={{
-                    name: credential.name,
-                    id: parseInt(credential.id.toString()),
-                    kind: 'ssh',
-                    cloud: false,
-                    description: credential.name,
-                  }}
-                  key={credential.id}
-                />
-              </LabelGroup>
-            </PageDetail>
-          ) : null}
-          <PageDetail label={t('Execution environment')}>
-            <Link
-              to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-                params: { id: String(execution_environment) },
-              })}
-            >
-              {fetchedEE?.name}
-            </Link>
-          </PageDetail>
-        </PageDetails>
-      </PageFormSection>
-    </>
+        ) : null}
+        <PageDetail label={t('Execution environment')}>
+          <Link
+            to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
+              params: { id: String(execution_environment) },
+            })}
+          >
+            {fetchedEE?.name}
+          </Link>
+        </PageDetail>
+      </PageDetails>
+    </PageFormSection>
   );
 }
