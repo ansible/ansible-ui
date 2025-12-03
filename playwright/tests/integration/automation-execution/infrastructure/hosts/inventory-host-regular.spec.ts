@@ -7,23 +7,15 @@ import { getTableRow } from '../../../../../commands/getTableRow';
 import { navigateTo } from '../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../commands/runAdHocCommandWizard';
 import { setupAfter, setupBefore } from '../../../../../commands/setup';
-import { createOrganization } from '../../../access-management/organizations/organization-utils';
-import { createAwxProject, deleteAwxProject } from '../../projects/project-utils';
-import { createJobTemplate, deleteJobTemplate } from '../../templates/job-template-utils';
-import { createAwxCredential, deleteAwxCredential } from '../credentials/credential-utils';
 import {
-  createExecutionEnvironment,
-  deleteExecutionEnvironment,
-} from '../execution-environments/execution-environment-utils';
-import { createInventory } from '../inventories/inventory-utils';
-import {
-  bulkDeleteHostsInInventory,
-  createHostInInventory,
-  deleteHostFromListView,
-  navigateToHostDetails,
-  navigateToHostGroupsTab,
-  navigateToInventoryHostsTab,
-} from './inventory-host-regular-utils';
+  Organization,
+  Project,
+  JobTemplate,
+  Credential,
+  ExecutionEnvironment,
+  Inventory,
+  InventoryHost,
+} from '@ansible/playwright/utils';
 
 test.describe('Inventory Host - Regular Inventory Tests', () => {
   let organizationName: string;
@@ -34,11 +26,11 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
 
     // Create shared resources on first test (resource optimization)
     if (!organizationName) {
-      organizationName = await createOrganization(page);
-      inventoryName = await createInventory(
-        { name: createE2EName('inventory'), organizationName },
-        page
-      );
+      organizationName = await Organization.ui.create(page);
+      inventoryName = await Inventory.ui.create(page, {
+        inventoryName: createE2EName('inventory'),
+        organizationName,
+      });
     }
   });
 
@@ -50,11 +42,10 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(4 * 60 * 1000);
 
-      const hostName = await createHostInInventory(
-        inventoryName,
-        { description: 'Test host for groups', variables: 'test: true' },
-        page
-      );
+      const hostName = await InventoryHost.ui.create(page, inventoryName, {
+        description: 'Test host for groups',
+        variables: 'test: true',
+      });
 
       const groupName1 = createE2EName('group');
       const groupName2 = createE2EName('group');
@@ -78,7 +69,7 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(addHostDialog).not.toBeVisible();
 
       // Now navigate to host and edit the group name
-      await navigateToHostGroupsTab(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToGroupsTab(inventoryName, hostName, page);
       const groupRow1 = await getTableRow(page, groupName1);
       await groupRow1.getByLabel('Edit group').click();
       await expect(page.getByRole('heading', { name: `Edit ${groupName1}` })).toBeVisible();
@@ -107,7 +98,7 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(addHostDialog2).not.toBeVisible();
 
       // Verify both groups are associated
-      await navigateToHostGroupsTab(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToGroupsTab(inventoryName, hostName, page);
       await expect(page.locator('tbody')).toContainText(`${groupName1}-changed`);
       await expect(page.locator('tbody')).toContainText(groupName2);
 
@@ -123,7 +114,7 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       ).toBeVisible();
 
       // Re-associate all groups
-      await navigateToHostGroupsTab(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToGroupsTab(inventoryName, hostName, page);
       await page.getByRole('button', { name: 'Associate groups' }).click();
       const associateDialog = page.getByRole('dialog');
       await expect(associateDialog).toBeVisible();
@@ -132,12 +123,12 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(associateDialog).not.toBeVisible();
 
       // Verify both groups are back
-      await navigateToHostGroupsTab(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToGroupsTab(inventoryName, hostName, page);
       await expect(page.locator('tbody')).toContainText(`${groupName1}-changed`);
       await expect(page.locator('tbody')).toContainText(groupName2);
 
       // Disassociate only groupName2
-      await navigateToHostGroupsTab(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToGroupsTab(inventoryName, hostName, page);
       const groupRow2 = await getTableRow(page, groupName2);
       await groupRow2.getByLabel('Select row').check();
       await page.getByRole('button', { name: 'Disassociate groups' }).click();
@@ -148,11 +139,11 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(disassociateDialog2).not.toBeVisible({ timeout: 10000 });
 
       // Verify only groupName1-changed remains
-      await navigateToHostGroupsTab(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToGroupsTab(inventoryName, hostName, page);
       await expect(page.locator('tbody')).toContainText(`${groupName1}-changed`);
       await expect(page.locator('tbody')).not.toContainText(groupName2);
 
-      await bulkDeleteHostsInInventory(inventoryName, page);
+      await InventoryHost.ui.bulkDelete(page, inventoryName);
     }
   );
 
@@ -162,13 +153,12 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
-      const hostName = await createHostInInventory(
-        inventoryName,
-        { description: 'This is the description', variables: 'test: true' },
-        page
-      );
+      const hostName = await InventoryHost.ui.create(page, inventoryName, {
+        description: 'This is the description',
+        variables: 'test: true',
+      });
 
-      await navigateToInventoryHostsTab(inventoryName, page);
+      await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
       const hostRow = await getTableRow(page, hostName);
       await hostRow.getByLabel('Edit host').click();
       await expect(page.getByRole('heading', { name: `Edit ${hostName}` })).toBeVisible();
@@ -180,7 +170,7 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(page.locator('#description')).toContainText('This is the description edited');
       await page.getByRole('tab', { name: 'Back to Hosts' }).click();
 
-      await deleteHostFromListView(inventoryName, hostName, page);
+      await InventoryHost.ui.deleteFromList(page, inventoryName, hostName);
     }
   );
 
@@ -190,13 +180,12 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
-      const hostName = await createHostInInventory(
-        inventoryName,
-        { description: 'This is the description', variables: 'test: true' },
-        page
-      );
+      const hostName = await InventoryHost.ui.create(page, inventoryName, {
+        description: 'This is the description',
+        variables: 'test: true',
+      });
 
-      await navigateToHostDetails(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToDetails(inventoryName, hostName, page);
       await clickPageAction('Edit host', page);
       await expect(page.getByRole('heading', { name: `Edit ${hostName}` })).toBeVisible();
       await page.getByRole('textbox', { name: 'Description', exact: true }).clear();
@@ -219,10 +208,10 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
-      await createHostInInventory(inventoryName, {}, page);
-      await createHostInInventory(inventoryName, {}, page);
+      await InventoryHost.ui.create(page, inventoryName);
+      await InventoryHost.ui.create(page, inventoryName);
 
-      await bulkDeleteHostsInInventory(inventoryName, page);
+      await InventoryHost.ui.bulkDelete(page, inventoryName);
     }
   );
 
@@ -232,10 +221,10 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(4 * 60 * 1000);
 
-      const hostName = await createHostInInventory(inventoryName, {}, page);
+      const hostName = await InventoryHost.ui.create(page, inventoryName);
 
-      const projectName = await createAwxProject({ organizationName }, page);
-      const jobTemplateName = await createJobTemplate({ inventoryName, projectName }, page);
+      const projectName = await Project.ui.create(page, { organizationName });
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName, projectName });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
       await clickTableRow({ text: inventoryName }, page);
@@ -245,15 +234,15 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(page.getByRole('heading', { name: jobTemplateName }).first()).toBeVisible();
       await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible();
 
-      await navigateToHostDetails(inventoryName, hostName, page);
+      await InventoryHost.ui.navigateToDetails(inventoryName, hostName, page);
       await page.getByRole('tab', { name: 'Jobs' }).click();
       await expect(page.locator('tbody')).toContainText(jobTemplateName);
 
-      await deleteJobTemplate(jobTemplateName, page);
+      await JobTemplate.ui.delete(page, jobTemplateName);
 
-      await navigateToInventoryHostsTab(inventoryName, page);
-      await deleteHostFromListView(inventoryName, hostName, page);
-      await deleteAwxProject(projectName, page);
+      await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
+      await InventoryHost.ui.deleteFromList(page, inventoryName, hostName);
+      await Project.ui.delete(page, projectName);
     }
   );
 
@@ -263,12 +252,14 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
-      const executionEnvironmentName = await createExecutionEnvironment(page, { organizationName });
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
+        organizationName,
+      });
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
-      await createHostInInventory(inventoryName, {}, page);
+      await InventoryHost.ui.create(page, inventoryName);
 
-      await navigateToInventoryHostsTab(inventoryName, page);
+      await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
 
       await expect(page.getByRole('button', { name: 'Run command', exact: true })).toBeVisible();
 
@@ -320,11 +311,11 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
         page
       );
 
-      await navigateToInventoryHostsTab(inventoryName, page);
-      await bulkDeleteHostsInInventory(inventoryName, page);
+      await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
+      await InventoryHost.ui.bulkDelete(page, inventoryName);
 
-      await deleteAwxCredential(credentialName, page);
-      await deleteExecutionEnvironment(executionEnvironmentName, page);
+      await Credential.ui.delete(page, credentialName);
+      await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
     }
   );
 });

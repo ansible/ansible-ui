@@ -36,6 +36,11 @@ on:
         required: false
         description: "Parallel Tests"
         default: 4
+      TIMEOUT_MINUTES:
+        type: number
+        required: false
+        description: "Job timeout in minutes (default: 60)"
+        default: 60
       PROJECT:
         type: choice
         description: "Playwright Project"
@@ -64,7 +69,7 @@ jobs:
     
   playwright-currents:
     name: Playwright with Currents
-    if: always()
+    if: ${{ !cancelled() }}
     needs:
       - platform-ui-image
     uses: ./.github/workflows/playwright-currents.yml
@@ -74,7 +79,8 @@ jobs:
       TAGS: ${{ inputs.TAGS }}
       NOT_TAGS: ${{ inputs.NOT_TAGS }}
       PROJECT: ${{ inputs.PROJECT }}
-      PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
+      PARALLEL_TESTS: ${{ format('{0}', inputs.PARALLEL_TESTS) }}
+      TIMEOUT_MINUTES: ${{ format('{0}', inputs.TIMEOUT_MINUTES) }}
     secrets:
       CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
       CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}

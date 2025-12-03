@@ -6,6 +6,9 @@ import { platformUI } from './login';
  * Uses page.request to automatically share authentication cookies with the browser session.
  */
 
+// Origin for CSRF (without trailing slash)
+const origin = platformUI.replace(/\/$/, '');
+
 interface RequestOptions {
   expectStatus?: number;
   headers?: Record<string, string>;
@@ -107,8 +110,10 @@ export async function post<T = unknown>(
     const response = await page.request.post(url, {
       data,
       headers: {
-        'X-CSRFToken': csrfToken,
         'Content-Type': 'application/json',
+        Origin: origin,
+        Referer: platformUI,
+        'X-CSRFToken': csrfToken,
         ...headers,
       },
     });
@@ -163,8 +168,10 @@ export async function put<T = unknown>(
     const response = await page.request.put(url, {
       data,
       headers: {
-        'X-CSRFToken': csrfToken,
         'Content-Type': 'application/json',
+        Origin: origin,
+        Referer: platformUI,
+        'X-CSRFToken': csrfToken,
         ...headers,
       },
     });
@@ -194,8 +201,10 @@ export async function patch<T = unknown>(
     const response = await page.request.patch(url, {
       data,
       headers: {
-        'X-CSRFToken': csrfToken,
         'Content-Type': 'application/json',
+        Origin: origin,
+        Referer: platformUI,
+        'X-CSRFToken': csrfToken,
         ...headers,
       },
     });
@@ -223,6 +232,8 @@ export async function deleteFn<T = unknown>(
 
     const response = await page.request.delete(url, {
       headers: {
+        Origin: origin,
+        Referer: platformUI,
         'X-CSRFToken': csrfToken,
         ...headers,
       },
@@ -339,3 +350,4 @@ export const awxAPI = createScopedClient('/api/controller/v2');
 export const edaAPI = createScopedClient('/api/eda/v1');
 export const hubAPI = createScopedClient('/api/galaxy');
 export const gatewayAPI = createScopedClient('/api/gateway/v1');
+export const lightspeedAPI = createScopedClient('/api/lightspeed/v1');

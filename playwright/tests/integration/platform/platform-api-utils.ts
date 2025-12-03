@@ -1,3 +1,4 @@
+/** @deprecated Use platformAPI from '@ansible/playwright/utils' instead */
 // API helper functions for platform tests
 export function awxAPI(path: string) {
   return '/api/controller/v2' + path;

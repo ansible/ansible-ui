@@ -3,7 +3,7 @@ import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowA
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createAuthenticationMethod } from './authentication-utils';
+import { Authentication } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/authenticators' }));
 test.afterEach(setupAfter);
@@ -12,13 +12,10 @@ test(
   'Create local authenticator in ui, verify details and enable it',
   { tag: ['@not_mock'] },
   async ({ page }) => {
-    const authMethodName = await createAuthenticationMethod(
-      {
-        name: 'e2e-local-auth',
-        type: 'Local',
-      },
-      page
-    );
+    const authMethodName = await Authentication.ui.createMethod(page, {
+      name: 'e2e-local-auth',
+      type: 'Local',
+    });
     await page.getByRole('tab', { name: 'Back to Authentication Methods' }).click();
     await filterTable({ filterValue: authMethodName }, page);
     await page.getByRole('gridcell', { name: 'Click to enable' }).locator('span').first().click();

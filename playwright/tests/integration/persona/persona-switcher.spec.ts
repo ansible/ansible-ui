@@ -4,7 +4,7 @@ import { SAAS_URL } from '@ansible/playwright/commands/constants';
 import { login, platformUI } from '@ansible/playwright/commands/login';
 import { logout } from '@ansible/playwright/commands/logout';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createUser } from '../access-management/users/user-utils';
+import { User } from '@ansible/playwright/utils';
 
 const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
 test.beforeEach(async ({ page }) => {
@@ -75,7 +75,7 @@ test('Persona views for System Administrator', async ({ page }) => {
 
 test('Persona views for Normal User', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
-  const username = await createUser({}, page);
+  const username = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
   await page.locator('#platform-overview').click();
 
   // Logout as administrator

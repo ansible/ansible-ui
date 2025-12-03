@@ -4,13 +4,7 @@ import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createRoleWithConfig,
-  deleteRole,
-  navigateToRolesPage,
-  TEST_ROLE_CONFIGS,
-  verifyRoleInList,
-} from './roles-utils';
+import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/access/roles' }));
 test.afterEach(setupAfter);
@@ -21,11 +15,11 @@ test.describe('Role Deletion Tests', () => {
       const roleName = createE2EName();
       const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-      await createRoleWithConfig(page, config);
+      await Role.ui.createWithConfig(page, config);
       await clickPageAction('Delete role', page);
       await confirmAndAssertDeletion(page);
       await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
-      await verifyRoleInList(page, roleName, false);
+      await Role.ui.verifyInList(page, roleName, false);
     });
 
     test(
@@ -36,8 +30,8 @@ test.describe('Role Deletion Tests', () => {
         const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
         const roleRow = page.getByRole('row').filter({ hasText: roleName });
 
-        await createRoleWithConfig(page, config);
-        await navigateToRolesPage(page);
+        await Role.ui.createWithConfig(page, config);
+        await Role.ui.navigate(page);
         await page.getByRole('textbox', { name: 'Type to filter' }).fill(roleName);
         await page.getByRole('button', { name: 'apply filter' }).click();
         await roleRow.hover();
@@ -45,7 +39,7 @@ test.describe('Role Deletion Tests', () => {
         await page.getByRole('menuitem', { name: 'Delete role' }).click();
         await confirmAndAssertDeletion(page);
         await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
-        await verifyRoleInList(page, roleName, false);
+        await Role.ui.verifyInList(page, roleName, false);
       }
     );
 
@@ -56,7 +50,7 @@ test.describe('Role Deletion Tests', () => {
         const roleName = createE2EName();
         const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-        await createRoleWithConfig(page, config);
+        await Role.ui.createWithConfig(page, config);
         await clickPageAction('Delete role', page);
 
         // Wait for the dialog to appear and be fully loaded with increased timeout
@@ -82,10 +76,10 @@ test.describe('Role Deletion Tests', () => {
         });
 
         // Verify role still exists in the list
-        await verifyRoleInList(page, roleName, true);
+        await Role.ui.verifyInList(page, roleName, true);
 
         // Clean up
-        await deleteRole(roleName, page);
+        await Role.ui.delete(page, roleName);
       }
     );
   });
@@ -102,19 +96,19 @@ test.describe('Role Deletion Tests', () => {
           const roleName = createE2EName();
           const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-          await createRoleWithConfig(page, config);
+          await Role.ui.createWithConfig(page, config);
           roleNames.push(roleName);
         }
 
         // Delete all roles individually (since bulk selection has pagination issues)
         // This still tests the deletion functionality effectively
         for (const roleName of roleNames) {
-          await deleteRole(roleName, page);
+          await Role.ui.delete(page, roleName);
         }
 
         // Verify all roles have been deleted
         for (const roleName of roleNames) {
-          await verifyRoleInList(page, roleName, false);
+          await Role.ui.verifyInList(page, roleName, false);
         }
       }
     );
@@ -133,10 +127,10 @@ test.describe('Role Deletion Tests', () => {
             ...TEST_ROLE_CONFIGS.awxInventory,
             name: roleName,
           };
-          await createRoleWithConfig(page, config);
+          await Role.ui.createWithConfig(page, config);
           roleNames.push(roleName);
         }
-        await navigateToRolesPage(page);
+        await Role.ui.navigate(page);
         for (const roleName of roleNames) {
           await page.getByRole('textbox', { name: 'Type to filter' }).fill(roleName);
           await page.getByRole('button', { name: 'apply filter' }).click();
@@ -150,7 +144,7 @@ test.describe('Role Deletion Tests', () => {
         await page.getByRole('button', { name: /cancel/i }).click();
         await clearTableFilters(page);
         for (const roleName of roleNames) {
-          await deleteRole(roleName, page);
+          await Role.ui.delete(page, roleName);
         }
       }
     );

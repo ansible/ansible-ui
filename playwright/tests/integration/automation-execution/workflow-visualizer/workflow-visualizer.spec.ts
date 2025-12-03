@@ -4,33 +4,15 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { toggleNodeKebab } from '@ansible/playwright/commands/toggleNodeKebab';
 import {
-  createAwxCredential,
-  deleteAwxCredential,
-} from '../infrastructure/credentials/credential-utils';
-import {
-  createExecutionEnvironment,
-  deleteExecutionEnvironment,
-} from '../infrastructure/execution-environments/execution-environment-utils';
-import {
-  createInstanceGroup,
-  deleteInstanceGroup,
-} from '../infrastructure/instance-groups/instance-group-utils';
-import {
-  createInventory,
-  createInventorySource,
-  deleteInventory,
-  deleteInventorySource,
-} from '../infrastructure/inventories/inventory-utils';
-import { createAwxProject, deleteAwxProject } from '../projects/project-utils';
-import { createJobTemplate, deleteJobTemplate } from '../templates/job-template-utils';
-import {
-  createVisualizerStep,
-  createWorkflowJobTemplate,
-  deleteWorkflowJobTemplate,
-  navigateToVisualizer,
-  removeAllWorkflowVizNodes,
-} from './workflow-visualizer-utils';
-import { createOrganization } from '../../access-management/organizations/organization-utils';
+  Organization,
+  Credential,
+  ExecutionEnvironment,
+  InstanceGroup,
+  Inventory,
+  Project,
+  JobTemplate,
+  WorkflowVisualizer,
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -43,17 +25,17 @@ test.describe('Workflow Viz', () => {
       test.setTimeout(8 * 60 * 1000);
 
       // Create a workflow job template
-      const wfjt = await createWorkflowJobTemplate(page);
+      const wfjt = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
 
       // Navigate to the visualizer
-      await navigateToVisualizer(wfjt, page);
+      await WorkflowVisualizer.ui.navigateToVisualizer(page, wfjt);
 
       // Verify the visualizer loads correctly
       await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Add step' }).first()).toBeVisible();
 
       // Clean up
-      await deleteWorkflowJobTemplate(wfjt, page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfjt);
     }
   );
 
@@ -62,7 +44,7 @@ test.describe('Workflow Viz', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
-      const wfJobTemplate = await createWorkflowJobTemplate(page);
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
       await page.getByText('Templates', { exact: true }).click();
       await clickTableRow(
         {
@@ -83,7 +65,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('heading', { name: wfJobTemplate }).click();
       await expect(page.getByLabel('Breadcrumb').getByText(wfJobTemplate)).toBeVisible();
       await expect(page.getByLabel('Breadcrumb').getByText('Details')).toBeVisible();
-      await deleteWorkflowJobTemplate(wfJobTemplate, page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
     }
   );
 
@@ -94,10 +76,10 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectName = createE2EName();
-      const project = await createAwxProject({ projectName }, page);
-      const jobTemplate = await createJobTemplate({}, page);
-      const workflowJobTemplate = await createWorkflowJobTemplate(page);
-      await createVisualizerStep('Project Sync', project, page);
+      const project = await Project.ui.create(page, { projectName, organizationName: 'Default' });
+      const jobTemplate = await JobTemplate.ui.create(page);
+      const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', project);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectName, page);
       await page.getByRole('menuitem', { name: 'Add step and link' }).click();
@@ -117,10 +99,10 @@ test.describe('Workflow Viz', () => {
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
-      await removeAllWorkflowVizNodes(page);
-      await deleteWorkflowJobTemplate(workflowJobTemplate, page);
-      await deleteJobTemplate(jobTemplate, page);
-      await deleteAwxProject(project, page);
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await Project.ui.delete(page, project);
     }
   );
 
@@ -130,10 +112,13 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
-      const projectOne = await createAwxProject({ projectName: projectOneName }, page);
-      const projectTwo = await createAwxProject({}, page);
-      const wfJobTemplate = await createWorkflowJobTemplate(page);
-      await createVisualizerStep('Project Sync', projectOne, page);
+      const projectOne = await Project.ui.create(page, {
+        projectName: projectOneName,
+        organizationName: 'Default',
+      });
+      const projectTwo = await Project.ui.create(page, { organizationName: 'Default' });
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', projectOne);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Edit step' }).click();
@@ -145,10 +130,10 @@ test.describe('Workflow Viz', () => {
       await page.locator('[class*="action-icon__background"]').first().click({ force: true });
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.getByText(projectTwo)).toBeVisible();
-      await removeAllWorkflowVizNodes(page);
-      await deleteWorkflowJobTemplate(wfJobTemplate, page);
-      await deleteAwxProject(projectTwo, page);
-      await deleteAwxProject(projectOne, page);
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await Project.ui.delete(page, projectTwo);
+      await Project.ui.delete(page, projectOne);
     }
   );
 
@@ -159,14 +144,14 @@ test.describe('Workflow Viz', () => {
       test.setTimeout(5 * 60 * 1000);
       const jobTemplateName = createE2EName();
       const projectName = createE2EName();
-      const project = await createAwxProject({ projectName }, page);
-      const inventoryName = await createInventory({}, page);
-      const jobTemplate = await createJobTemplate(
-        { name: jobTemplateName, inventoryName: inventoryName },
-        page
-      );
-      const wfjt = await createWorkflowJobTemplate(page);
-      await createVisualizerStep('Project Sync', project, page);
+      const project = await Project.ui.create(page, { projectName, organizationName: 'Default' });
+      const inventoryName = await Inventory.ui.create(page);
+      const jobTemplate = await JobTemplate.ui.create(page, {
+        name: jobTemplateName,
+        inventoryName,
+      });
+      const wfjt = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', project);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectName, page);
       await page.getByRole('menuitem', { name: 'Add step and link' }).click();
@@ -192,10 +177,10 @@ test.describe('Workflow Viz', () => {
       await page.locator('.pf-topology__node__action-icon > path').click();
       await page.getByRole('menuitem', { name: 'Run on fail' }).click();
       await expect(page.getByText('Run on fail', { exact: true })).toBeVisible();
-      await deleteWorkflowJobTemplate(wfjt, page);
-      await deleteJobTemplate(jobTemplate, page);
-      await deleteAwxProject(project, page);
-      await deleteInventory(inventoryName, page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfjt);
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await Project.ui.delete(page, project);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 
@@ -206,16 +191,16 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const jobTemplateName = createE2EName();
-      const inventoryOne = await createInventory({}, page);
-      const execEnvOne = await createExecutionEnvironment(page);
-      const execEnvTwo = await createExecutionEnvironment(page);
-      const credentialOne = await createAwxCredential({}, page);
-      const instanceGroup = await createInstanceGroup({}, page);
-      const jobTemplate = await createJobTemplate(
-        { PromptOnLaunch: true, name: jobTemplateName },
-        page
-      );
-      const wfJobTemplate = await createWorkflowJobTemplate(page);
+      const inventoryOne = await Inventory.ui.create(page);
+      const execEnvOne = await ExecutionEnvironment.ui.create(page);
+      const execEnvTwo = await ExecutionEnvironment.ui.create(page);
+      const credentialOne = await Credential.ui.create(page);
+      const instanceGroup = await InstanceGroup.ui.create(page);
+      const jobTemplate = await JobTemplate.ui.create(page, {
+        PromptOnLaunch: true,
+        name: jobTemplateName,
+      });
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
       //Add step
       await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
       await page.getByRole('button', { name: 'Add step' }).nth(1).click();
@@ -267,14 +252,14 @@ test.describe('Workflow Viz', () => {
       await page.locator('[class*="topology__node__label"]', { hasText: jobTemplate }).click();
       await expect(page.getByRole('link', { name: execEnvTwo })).toBeVisible();
       //cleanup
-      await removeAllWorkflowVizNodes(page);
-      await deleteJobTemplate(jobTemplate, page);
-      await deleteWorkflowJobTemplate(wfJobTemplate, page);
-      await deleteAwxCredential(credentialOne, page);
-      await deleteExecutionEnvironment(execEnvOne, page);
-      await deleteExecutionEnvironment(execEnvTwo, page);
-      await deleteInstanceGroup(instanceGroup, page);
-      await deleteInventory(inventoryOne, page);
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await Credential.ui.delete(page, credentialOne);
+      await ExecutionEnvironment.ui.delete(page, execEnvOne);
+      await ExecutionEnvironment.ui.delete(page, execEnvTwo);
+      await InstanceGroup.ui.delete(page, instanceGroup);
+      await Inventory.ui.delete(page, inventoryOne);
     }
   );
 
@@ -285,10 +270,16 @@ test.describe('Workflow Viz', () => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
       const projectTwoName = createE2EName();
-      const projectOne = await createAwxProject({ projectName: projectOneName }, page);
-      const projectTwo = await createAwxProject({ projectName: projectTwoName }, page);
-      const wfJobTemplate = await createWorkflowJobTemplate(page);
-      await createVisualizerStep('Project Sync', projectOne, page);
+      const projectOne = await Project.ui.create(page, {
+        projectName: projectOneName,
+        organizationName: 'Default',
+      });
+      const projectTwo = await Project.ui.create(page, {
+        projectName: projectTwoName,
+        organizationName: 'Default',
+      });
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', projectOne);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.getByRole('button', { name: 'Add step' })).toBeVisible();
       await page.getByRole('button', { name: 'Add step' }).click();
@@ -351,9 +342,9 @@ test.describe('Workflow Viz', () => {
         page.getByRole('heading', { name: 'Success alert: Successfully' })
       ).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await deleteWorkflowJobTemplate(wfJobTemplate, page);
-      await deleteAwxProject(projectTwo, page);
-      await deleteAwxProject(projectOne, page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await Project.ui.delete(page, projectTwo);
+      await Project.ui.delete(page, projectOne);
     }
   );
 
@@ -363,16 +354,16 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectName = createE2EName();
-      const project = await createAwxProject({ projectName }, page);
-      const inventoryName = await createInventory({}, page);
-      const jobTemplate = await createJobTemplate({ inventoryName: inventoryName }, page);
-      const workflowJobTemplate = await createWorkflowJobTemplate(page);
-      await createVisualizerStep('Project Sync', project, page);
+      const project = await Project.ui.create(page, { projectName, organizationName: 'Default' });
+      const inventoryName = await Inventory.ui.create(page);
+      const jobTemplate = await JobTemplate.ui.create(page, { inventoryName });
+      const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', project);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
 
-      await removeAllWorkflowVizNodes(page);
-      await navigateToVisualizer(workflowJobTemplate, page);
-      await createVisualizerStep('Project Sync', project, page);
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await WorkflowVisualizer.ui.navigateToVisualizer(page, workflowJobTemplate);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', project);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await toggleNodeKebab(projectName, page);
@@ -394,10 +385,10 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await expect(page.getByRole('dialog')).toBeHidden();
       await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
-      await deleteWorkflowJobTemplate(workflowJobTemplate, page);
-      await deleteJobTemplate(jobTemplate, page);
-      await deleteAwxProject(project, page);
-      await deleteInventory(inventoryName, page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await Project.ui.delete(page, project);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 
@@ -407,13 +398,17 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const sourceName = createE2EName();
-      const organizationName = await createOrganization(page);
-      const { inventoryName, inventorySourceName } = await createInventorySource(
-        { name: sourceName, organizationName },
-        page
+      const organizationName = await Organization.ui.create(page);
+      const { inventoryName, inventorySourceName } = await Inventory.ui.createSource(page, {
+        sourceName,
+        organizationName,
+      });
+      const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(
+        page,
+        'Inventory Source Sync',
+        inventorySourceName
       );
-      const workflowJobTemplate = await createWorkflowJobTemplate(page);
-      await createVisualizerStep('Inventory Source Sync', inventorySourceName, page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await toggleNodeKebab(sourceName, page);
@@ -425,9 +420,9 @@ test.describe('Workflow Viz', () => {
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await expect(page.locator('[class*="action-icon__background"]')).toHaveCount(0);
-      await deleteInventorySource(inventoryName, inventorySourceName, page);
-      await deleteInventory(inventoryName, page);
-      await deleteWorkflowJobTemplate(workflowJobTemplate, page);
+      await Inventory.ui.deleteSource(page, inventoryName, inventorySourceName);
+      await Inventory.ui.delete(page, inventoryName);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
     }
   );
 
@@ -438,10 +433,13 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
-      const projectOne = await createAwxProject({ projectName: projectOneName }, page);
-      const projectTwo = await createAwxProject({}, page);
-      const wfJobTemplate = await createWorkflowJobTemplate(page);
-      await createVisualizerStep('Project Sync', projectOne, page);
+      const projectOne = await Project.ui.create(page, {
+        projectName: projectOneName,
+        organizationName: 'Default',
+      });
+      const projectTwo = await Project.ui.create(page, { organizationName: 'Default' });
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', projectOne);
       await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectOneName, page);
@@ -460,21 +458,22 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Remove step' }).click();
       await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
-      await removeAllWorkflowVizNodes(page);
-      await deleteWorkflowJobTemplate(wfJobTemplate, page);
-      await deleteAwxProject(projectTwo, page);
-      await deleteAwxProject(projectOne, page);
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await Project.ui.delete(page, projectTwo);
+      await Project.ui.delete(page, projectOne);
     }
   );
 
   test('Should update skip tags', { tag: ['@not_mock', '@compare'] }, async ({ page }) => {
     const jtName = createE2EName();
-    const inventoryName = await createInventory({}, page);
-    const jobTemplate = await createJobTemplate(
-      { name: jtName, skipTagsPrompt: true, inventoryName: inventoryName },
-      page
-    );
-    const workflowJobTemplate = await createWorkflowJobTemplate(page);
+    const inventoryName = await Inventory.ui.create(page);
+    const jobTemplate = await JobTemplate.ui.create(page, {
+      name: jtName,
+      skipTagsPrompt: true,
+      inventoryName,
+    });
+    const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
     test.setTimeout(5 * 60 * 1000);
     await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
     await page.getByRole('button', { name: 'Add step' }).nth(1).click();
@@ -515,9 +514,9 @@ test.describe('Workflow Viz', () => {
         .filter({ hasText: /^tag1tag2tag3$/ })
         .first()
     ).toBeVisible();
-    await deleteJobTemplate(jobTemplate, page);
-    await deleteWorkflowJobTemplate(workflowJobTemplate, page);
-    await deleteInventory(inventoryName, page);
+    await JobTemplate.ui.delete(page, jobTemplate);
+    await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
+    await Inventory.ui.delete(page, inventoryName);
   });
 
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
@@ -527,15 +526,16 @@ test.describe('Workflow Viz', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const jobTemplateName = createE2EName();
-      const inventoryOne = await createInventory({}, page);
-      const execEnvOne = await createExecutionEnvironment(page);
-      const credentialOne = await createAwxCredential({}, page);
-      const instanceGroup = await createInstanceGroup({}, page);
-      const jobTemplate = await createJobTemplate(
-        { PromptOnLaunch: true, extraVarsPrompt: true, name: jobTemplateName },
-        page
-      );
-      const wfJobTemplate = await createWorkflowJobTemplate(page);
+      const inventoryOne = await Inventory.ui.create(page);
+      const execEnvOne = await ExecutionEnvironment.ui.create(page);
+      const credentialOne = await Credential.ui.create(page);
+      const instanceGroup = await InstanceGroup.ui.create(page);
+      const jobTemplate = await JobTemplate.ui.create(page, {
+        PromptOnLaunch: true,
+        extraVarsPrompt: true,
+        name: jobTemplateName,
+      });
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
       //Add step
       await page.getByRole('button', { name: 'Add step' }).nth(1).click();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
@@ -607,13 +607,13 @@ test.describe('Workflow Viz', () => {
         page.getByRole('code').locator('div').filter({ hasText: 'newvar: newtest' }).nth(4)
       ).toBeVisible();
       //cleanup
-      await removeAllWorkflowVizNodes(page);
-      await deleteJobTemplate(jobTemplate, page);
-      await deleteWorkflowJobTemplate(wfJobTemplate, page);
-      await deleteAwxCredential(credentialOne, page);
-      await deleteExecutionEnvironment(execEnvOne, page);
-      await deleteInstanceGroup(instanceGroup, page);
-      await deleteInventory(inventoryOne, page);
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await Credential.ui.delete(page, credentialOne);
+      await ExecutionEnvironment.ui.delete(page, execEnvOne);
+      await InstanceGroup.ui.delete(page, instanceGroup);
+      await Inventory.ui.delete(page, inventoryOne);
     }
   );
 
@@ -622,13 +622,14 @@ test.describe('Workflow Viz', () => {
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
-      const inventoryName = await createInventory({}, page);
+      const inventoryName = await Inventory.ui.create(page);
       const jobTemplateName = createE2EName();
-      const jobTemplate = await createJobTemplate(
-        { survey: true, name: jobTemplateName, inventoryName: inventoryName },
-        page
-      );
-      const wfJobTemplate = await createWorkflowJobTemplate(page);
+      const jobTemplate = await JobTemplate.ui.create(page, {
+        survey: true,
+        name: jobTemplateName,
+        inventoryName,
+      });
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
       //Add step
       await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
       await page.getByRole('button', { name: 'Add step' }).nth(1).click();
@@ -650,10 +651,10 @@ test.describe('Workflow Viz', () => {
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       //cleanup
-      await removeAllWorkflowVizNodes(page);
-      await deleteJobTemplate(jobTemplate, page);
-      await deleteWorkflowJobTemplate(wfJobTemplate, page);
-      await deleteInventory(inventoryName, page);
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 });

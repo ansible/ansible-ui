@@ -1,3 +1,5 @@
+/** @deprecated Use JobTemplate from '@ansible/playwright/utils' instead */
+
 import { APIRequestContext, Page, expect } from '@playwright/test';
 import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';

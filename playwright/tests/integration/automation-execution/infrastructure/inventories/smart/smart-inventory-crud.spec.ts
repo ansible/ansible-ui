@@ -3,10 +3,7 @@ import { clickPageAction } from '../../../../../../commands/clickPageAction';
 import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../../../commands/createE2EName';
 import { navigateTo } from '../../../../../../commands/navigateTo';
-import {
-  createOrganization,
-  deleteOrganization,
-} from '../../../../access-management/organizations/organization-utils';
+import { Organization } from '../../../../../../utils/organization';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
@@ -17,7 +14,7 @@ test.describe('Smart Inventory', () => {
     'can create, edit a smart inventory, assert info on details page, and delete inventory',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const organizationName = await createOrganization(page);
+      const organizationName = await Organization.ui.create(page);
       const smartInvName = createE2EName('smart-inventory');
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
@@ -56,7 +53,7 @@ test.describe('Smart Inventory', () => {
       await clickPageAction('Delete inventory', page);
       await confirmAndAssertDeletion(page);
       await expect(page.getByRole('heading', { name: 'Inventories', exact: true })).toBeVisible();
-      await deleteOrganization(organizationName, page);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 });

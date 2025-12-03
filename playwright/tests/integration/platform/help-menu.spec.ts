@@ -2,7 +2,22 @@ import { test, expect } from '@playwright/test';
 import { setupBefore, setupAfter } from '@ansible/playwright/commands/setup';
 import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
-import { awxAPI, hubAPI, edaAPI, AwxConfig, HubConfig, EdaConfig } from './platform-api-utils';
+
+// Type definitions for API responses
+interface AwxConfig {
+  version: string;
+  [key: string]: unknown;
+}
+
+interface HubConfig {
+  galaxy_ng_version: string;
+  [key: string]: unknown;
+}
+
+interface EdaConfig {
+  version: string;
+  [key: string]: unknown;
+}
 
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
@@ -111,11 +126,12 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
         // Set up API intercepts
         const awxConfigPromise = page.waitForResponse(
           (response) =>
-            response.url().includes(awxAPI('/ping/')) && response.request().method() === 'GET'
+            response.url().includes('/api/controller/v2/ping/') &&
+            response.request().method() === 'GET'
         );
         const hubConfigPromise = page.waitForResponse(
           (response) =>
-            response.url().includes(hubAPI('/')) && response.request().method() === 'GET'
+            response.url().includes('/api/galaxy/') && response.request().method() === 'GET'
         );
         // Open help menu and click About
         await page.locator('#help-menu-menu-toggle').click();
@@ -146,7 +162,8 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
         if (buildType !== SAAS_URL) {
           const edaConfigPromise = page.waitForResponse(
             (response) =>
-              response.url().includes(edaAPI('/config/')) && response.request().method() === 'GET'
+              response.url().includes('/api/eda/v1/config/') &&
+              response.request().method() === 'GET'
           );
           const edaResponse = await edaConfigPromise;
           const edaConfig = (await edaResponse.json()) as EdaConfig;

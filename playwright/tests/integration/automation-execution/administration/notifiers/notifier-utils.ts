@@ -1,3 +1,5 @@
+/** @deprecated Use Notifier from '@ansible/playwright/utils' instead */
+
 import { Page, expect } from '@playwright/test';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';

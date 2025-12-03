@@ -3,15 +3,11 @@ import { isEdaAvailable } from '@ansible/playwright/commands/getPlatformApis';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
-  createOrganization,
-  deleteOrganization,
-} from '../../access-management/organizations/organization-utils';
-import {
-  createDecisionEnvironment,
-  deleteDecisionEnvironment,
-} from '../decision-environments/decision-environments-utils';
-import { createEdaProject, deleteEdaProject } from '../projects/projects-utils';
-import { createRulebookActivation, deleteRulebookActivation } from './rulebook-activations-utils';
+  Organization,
+  DecisionEnvironment,
+  EdaProject,
+  RulebookActivation,
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
@@ -30,20 +26,16 @@ test.describe('Rule Audit List', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(180000);
-      const organizationName = await createOrganization(page);
-      const projectName = await createEdaProject({}, page);
-      const decisionEnvironmentName = await createDecisionEnvironment(
-        { organizationName: organizationName },
-        page
-      );
-      const rulebookActivationName = await createRulebookActivation(
-        {
-          projectName: projectName,
-          decisionEnvironmentName: decisionEnvironmentName,
-          organizationName: organizationName,
-        },
-        page
-      );
+      const organizationName = await Organization.ui.create(page);
+      const projectName = await EdaProject.ui.create(page);
+      const decisionEnvironmentName = await DecisionEnvironment.ui.create(page, {
+        organizationName,
+      });
+      const rulebookActivationName = await RulebookActivation.ui.create(page, {
+        projectName,
+        decisionEnvironmentName,
+        organizationName,
+      });
 
       // Wait for the rulebook activation to run and generate audit data
       await page.waitForTimeout(5000);
@@ -76,10 +68,10 @@ test.describe('Rule Audit List', () => {
       await page.getByRole('tab', { name: 'Actions' }).click();
       await expect(page.getByRole('row').filter({ hasText: 'debug' })).toBeVisible();
 
-      await deleteRulebookActivation(rulebookActivationName, page);
-      await deleteEdaProject(projectName, page);
-      await deleteDecisionEnvironment(decisionEnvironmentName, page);
-      await deleteOrganization(organizationName, page);
+      await RulebookActivation.ui.delete(page, rulebookActivationName);
+      await EdaProject.ui.delete(page, projectName);
+      await DecisionEnvironment.ui.delete(page, decisionEnvironmentName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 });

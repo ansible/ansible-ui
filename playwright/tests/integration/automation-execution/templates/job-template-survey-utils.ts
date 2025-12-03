@@ -1,3 +1,5 @@
+/** @deprecated Use JobTemplateSurvey from '@ansible/playwright/utils' instead */
+
 import { Job } from '@ansible/awx-ui/interfaces/Job';
 import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
 import { Survey } from '@ansible/awx-ui/interfaces/Survey';

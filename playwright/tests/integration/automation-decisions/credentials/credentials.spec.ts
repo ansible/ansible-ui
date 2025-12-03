@@ -4,8 +4,7 @@ import { SAAS_URL } from '@ansible/playwright/commands/constants';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { createEdaCredentialType } from '../credential-types/credential-types-utils';
-import { createEdaCredential, deleteEdaCredential } from './credentials-utils';
+import { EdaCredentialType, EdaCredential } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
 test.afterEach(setupAfter);
@@ -22,10 +21,10 @@ test(
   'eda credentials - can create a credential and assert info on the details page',
   { tag: ['@not_mock'] },
   async ({ page }) => {
-    const credentialOne = await createEdaCredential({}, page);
+    const credentialOne = await EdaCredential.ui.create(page);
     await expect(page.locator('#name')).toContainText(credentialOne);
     await expect(page.getByText('Red Hat Ansible Automation')).toBeVisible();
-    await deleteEdaCredential(credentialOne, page);
+    await EdaCredential.ui.delete(page, credentialOne);
   }
 );
 
@@ -42,52 +41,49 @@ test(
     await page.waitForTimeout(2000);
     if (await page.getByRole('heading', { name: 'No results found' }).isVisible()) {
       await page.getByRole('button', { name: 'Clear all filters' }).nth(1).click();
-      await createEdaCredentialType(
-        {
-          credentialTypeName: 'Basic Analytics',
-          inputType: JSON.stringify({
-            fields: [
-              {
-                id: 'auth_type',
-                type: 'string',
-                label: 'Analytics Authentication Type',
-                hidden: true,
-                default: 'basic',
-              },
-              {
-                id: 'username',
-                type: 'string',
-                label: 'Username',
-                help_text: 'The username of REDHAT or SUBSCRIPTIONS',
-              },
-              {
-                id: 'password',
-                type: 'string',
-                label: 'Password',
-                secret: true,
-                help_text: 'The password of REDHAT or SUBSCRIPTIONS',
-              },
-              {
-                id: 'gather_interval',
-                type: 'string',
-                label: 'Analytics Gather Interval',
-                default: '14400',
-                help_text: 'The time interval between each collection (secs)',
-              },
-              {
-                id: 'insights_tracking_state',
-                type: 'boolean',
-                label: 'Insights Tracking State',
-                default: false,
-                help_text:
-                  'Enables the service to gather data on automation and send it to Automation Analytics',
-              },
-            ],
-            required: ['auth_type', 'username', 'password'],
-          }),
-        },
-        page
-      );
+      await EdaCredentialType.ui.create(page, {
+        credentialTypeName: 'Basic Analytics',
+        inputType: JSON.stringify({
+          fields: [
+            {
+              id: 'auth_type',
+              type: 'string',
+              label: 'Analytics Authentication Type',
+              hidden: true,
+              default: 'basic',
+            },
+            {
+              id: 'username',
+              type: 'string',
+              label: 'Username',
+              help_text: 'The username of REDHAT or SUBSCRIPTIONS',
+            },
+            {
+              id: 'password',
+              type: 'string',
+              label: 'Password',
+              secret: true,
+              help_text: 'The password of REDHAT or SUBSCRIPTIONS',
+            },
+            {
+              id: 'gather_interval',
+              type: 'string',
+              label: 'Analytics Gather Interval',
+              default: '14400',
+              help_text: 'The time interval between each collection (secs)',
+            },
+            {
+              id: 'insights_tracking_state',
+              type: 'boolean',
+              label: 'Insights Tracking State',
+              default: false,
+              help_text:
+                'Enables the service to gather data on automation and send it to Automation Analytics',
+            },
+          ],
+          required: ['auth_type', 'username', 'password'],
+        }),
+      });
       await expect(page.locator('#name')).toContainText('Basic Analytics');
     }
     //remove existing credentials, if any
@@ -125,6 +121,6 @@ test(
     await expect(page.locator('#name')).toContainText(credentialName);
     await page.getByRole('button', { name: 'Duplicate credential' }).click();
     await expect(page.getByText('Only one credential is allowed for type')).toBeVisible();
-    await deleteEdaCredential(credentialName, page);
+    await EdaCredential.ui.delete(page, credentialName);
   }
 );

@@ -4,11 +4,8 @@ import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createOrganization,
-  deleteOrganization,
-} from '../../access-management/organizations/organization-utils';
-import { createUser, deleteUser } from '../../access-management/users/user-utils';
+import { Organization } from '@ansible/playwright/utils';
+import { User } from '../../../../utils/user';
 
 test.describe('Organization User Roles', () => {
   let organizationName: string;
@@ -16,13 +13,13 @@ test.describe('Organization User Roles', () => {
 
   test.beforeEach(async ({ page }) => {
     await setupBefore({ path: '/' })({ page });
-    organizationName = await createOrganization(page);
-    username = await createUser({}, page);
+    organizationName = await Organization.ui.create(page);
+    username = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteUser(username, page);
-    await deleteOrganization(organizationName, page);
+    await User.ui.delete(page, username);
+    await Organization.ui.delete(page, organizationName);
     await setupAfter({ page });
   });
 

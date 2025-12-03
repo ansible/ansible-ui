@@ -9,17 +9,15 @@ import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowA
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
-import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
+import { WorkflowJobTemplate as WorkflowJobTemplateType } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
 import {
-  createOrganization,
-  deleteOrganization,
-} from '../../access-management/organizations/organization-utils';
-import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
-import {
-  createWorkflowJobTemplateViaForm,
-  deleteWorkflowJobTemplate,
-  copyWorkflowJobTemplate,
-} from './workflow-job-template-utils';
+  Organization,
+  Inventory,
+  WorkflowJobTemplate,
+  Project,
+  JobTemplate,
+  WorkflowVisualizer,
+} from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -30,15 +28,15 @@ test.describe('Workflow Job Templates: Create', () => {
   let inventoryName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await createOrganization(page);
-    inventoryName = await createInventory({ organizationName }, page);
+    organizationName = await Organization.ui.create(page);
+    inventoryName = await Inventory.ui.create(page, { organizationName });
     // Navigate back to templates page after creating resources
     await navigateTo(page, 'Automation Execution', 'Templates');
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteInventory(inventoryName, page);
-    await deleteOrganization(organizationName, page);
+    await Inventory.ui.delete(page, inventoryName);
+    await Organization.ui.delete(page, organizationName);
   });
 
   test(
@@ -71,7 +69,7 @@ test.describe('Workflow Job Templates: Create', () => {
       await page.getByTestId('Submit').click();
 
       const createResponse = await createResponsePromise;
-      const createdWfjt = (await createResponse.json()) as WorkflowJobTemplate;
+      const createdWfjt = (await createResponse.json()) as WorkflowJobTemplateType;
 
       // Verify we're in the visualizer
       await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible();
@@ -121,7 +119,7 @@ test.describe('Workflow Job Templates: Create', () => {
 
       // Wait for edit response and verify changes
       const editResponse = await editResponsePromise;
-      const editedWfjt = (await editResponse.json()) as WorkflowJobTemplate;
+      const editedWfjt = (await editResponse.json()) as WorkflowJobTemplateType;
 
       expect(editedWfjt.description).toContain('this is a new description');
       expect(editedWfjt.limit).toContain('mock-limit');
@@ -131,7 +129,7 @@ test.describe('Workflow Job Templates: Create', () => {
       await expect(page.getByTestId('description')).toContainText('this is a new description');
 
       // Cleanup
-      await deleteWorkflowJobTemplate(createdWfjt.name, page);
+      await WorkflowJobTemplate.ui.delete(page, createdWfjt.name);
     }
   );
 
@@ -180,13 +178,13 @@ test.describe('Workflow Job Templates: Create', () => {
       await page.getByTestId('Submit').click();
 
       const createResponse = await createResponsePromise;
-      const createdWfjt = (await createResponse.json()) as WorkflowJobTemplate;
+      const createdWfjt = (await createResponse.json()) as WorkflowJobTemplateType;
 
       // Verify we're in the visualizer
       await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible();
 
       // Cleanup
-      await deleteWorkflowJobTemplate(createdWfjt.name, page);
+      await WorkflowJobTemplate.ui.delete(page, createdWfjt.name);
     }
   );
 });
@@ -198,28 +196,25 @@ test.describe('Workflow Job Templates: Edit', () => {
   let workflowJobTemplateName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await createOrganization(page);
-    newOrganizationName = await createOrganization(page);
-    inventoryName = await createInventory({ organizationName }, page);
+    organizationName = await Organization.ui.create(page);
+    newOrganizationName = await Organization.ui.create(page);
+    inventoryName = await Inventory.ui.create(page, { organizationName });
     // Navigate back to templates page after creating resources
     await navigateTo(page, 'Automation Execution', 'Templates');
 
     // Create a workflow job template to edit
-    const result = await createWorkflowJobTemplateViaForm(
-      {
-        organizationName,
-        inventoryName,
-      },
-      page
-    );
+    const result = await WorkflowJobTemplate.ui.create(page, {
+      organizationName,
+      inventoryName,
+    });
     workflowJobTemplateName = result.name;
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteWorkflowJobTemplate(workflowJobTemplateName, page);
-    await deleteInventory(inventoryName, page);
-    await deleteOrganization(newOrganizationName, page);
-    await deleteOrganization(organizationName, page);
+    await WorkflowJobTemplate.ui.delete(page, workflowJobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
+    await Organization.ui.delete(page, newOrganizationName);
+    await Organization.ui.delete(page, organizationName);
   });
 
   test(
@@ -318,26 +313,23 @@ test.describe('Workflow Job Templates: Copy', () => {
   let workflowJobTemplateName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await createOrganization(page);
-    inventoryName = await createInventory({ organizationName }, page);
+    organizationName = await Organization.ui.create(page);
+    inventoryName = await Inventory.ui.create(page, { organizationName });
     // Navigate back to templates page after creating resources
     await navigateTo(page, 'Automation Execution', 'Templates');
 
     // Create a workflow job template to copy
-    const result = await createWorkflowJobTemplateViaForm(
-      {
-        organizationName,
-        inventoryName,
-      },
-      page
-    );
+    const result = await WorkflowJobTemplate.ui.create(page, {
+      organizationName,
+      inventoryName,
+    });
     workflowJobTemplateName = result.name;
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteWorkflowJobTemplate(workflowJobTemplateName, page);
-    await deleteInventory(inventoryName, page);
-    await deleteOrganization(organizationName, page);
+    await WorkflowJobTemplate.ui.delete(page, workflowJobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
+    await Organization.ui.delete(page, organizationName);
   });
 
   test(
@@ -348,9 +340,9 @@ test.describe('Workflow Job Templates: Copy', () => {
       await page.getByTestId('workflow-visualizer-toolbar-close').click();
 
       // Use the copyWorkflowJobTemplate utility which handles duplication and returns the copied name
-      const copiedWorkflowJobTemplateName = await copyWorkflowJobTemplate(
-        workflowJobTemplateName,
-        page
+      const copiedWorkflowJobTemplateName = await WorkflowJobTemplate.ui.copy(
+        page,
+        workflowJobTemplateName
       );
 
       // Verify the copied template exists
@@ -364,7 +356,7 @@ test.describe('Workflow Job Templates: Copy', () => {
       ).toBeVisible();
 
       // Delete the copied template
-      await deleteWorkflowJobTemplate(copiedWorkflowJobTemplateName, page);
+      await WorkflowJobTemplate.ui.delete(page, copiedWorkflowJobTemplateName);
 
       // Verify we're back on the templates list
       await expect(
@@ -400,7 +392,7 @@ test.describe('Workflow Job Templates: Copy', () => {
 
       // Get the copied workflow job template from the API response
       const copyResponse = await copyResponsePromise;
-      const copiedWfjt = (await copyResponse.json()) as WorkflowJobTemplate;
+      const copiedWfjt = (await copyResponse.json()) as WorkflowJobTemplateType;
       expect(copyResponse.status()).toBe(201);
 
       // Verify the copied template exists
@@ -412,7 +404,7 @@ test.describe('Workflow Job Templates: Copy', () => {
       await expect(page.getByRole('link', { name: copiedWfjt.name, exact: true })).toBeVisible();
 
       // Delete the copied template
-      await deleteWorkflowJobTemplate(copiedWfjt.name, page);
+      await WorkflowJobTemplate.ui.delete(page, copiedWfjt.name);
 
       // Verify we're back on the templates list
       await expect(
@@ -428,28 +420,33 @@ test.describe('Workflow Job Templates: Delete', () => {
   let workflowJobTemplateName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await createOrganization(page);
-    inventoryName = await createInventory({ organizationName }, page);
+    organizationName = await Organization.ui.create(page);
+    inventoryName = await Inventory.ui.create(page, { organizationName });
     // Navigate back to templates page after creating resources
     await navigateTo(page, 'Automation Execution', 'Templates');
 
     // Create a workflow job template to delete
-    const result = await createWorkflowJobTemplateViaForm(
-      {
-        organizationName,
-        inventoryName,
-      },
-      page
-    );
+    const result = await WorkflowJobTemplate.ui.create(page, {
+      organizationName,
+      inventoryName,
+    });
     workflowJobTemplateName = result.name;
 
     // Close the visualizer to get back to a clean state
     await page.getByTestId('workflow-visualizer-toolbar-close').click();
+
+    // Wait for navigation to details page after closing visualizer
+    await expect(
+      page.getByRole('heading', { name: workflowJobTemplateName, exact: true })
+    ).toBeVisible();
+
+    // Navigate back to templates list to ensure clean state for tests
+    await navigateTo(page, 'Automation Execution', 'Templates');
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteInventory(inventoryName, page);
-    await deleteOrganization(organizationName, page);
+    await Inventory.ui.delete(page, inventoryName);
+    await Organization.ui.delete(page, organizationName);
   });
 
   test(
@@ -457,7 +454,7 @@ test.describe('Workflow Job Templates: Delete', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // Use the utility function which properly handles deletion
-      await deleteWorkflowJobTemplate(workflowJobTemplateName, page);
+      await WorkflowJobTemplate.ui.delete(page, workflowJobTemplateName);
 
       // Verify we're back on templates list (no cleanup needed as template is deleted)
       await expect(
@@ -498,32 +495,33 @@ test.describe('Workflow Job Templates: Delete', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       // Create a second workflow job template
-      const result2 = await createWorkflowJobTemplateViaForm(
-        {
-          organizationName,
-          inventoryName,
-        },
-        page
-      );
+      const result2 = await WorkflowJobTemplate.ui.create(page, {
+        organizationName,
+        inventoryName,
+      });
       const workflowJobTemplate2Name = result2.name;
 
       // Close the visualizer from creating the second template
       await page.getByTestId('workflow-visualizer-toolbar-close').click();
 
+      // Wait for navigation to details page after closing visualizer
+      await expect(
+        page.getByRole('heading', { name: workflowJobTemplate2Name, exact: true })
+      ).toBeVisible();
+
       await navigateTo(page, 'Automation Execution', 'Templates');
 
-      // Filter for each template individually (clearFilters: false to add to existing filters)
-      await filterTable(
-        { filterLabel: 'Name', filterValue: workflowJobTemplateName, clearFilters: true },
-        page
-      );
-      await filterTable(
-        { filterLabel: 'Name', filterValue: workflowJobTemplate2Name, clearFilters: false },
-        page
-      );
+      // Select first template by filtering and checking
+      await filterTable({ filterLabel: 'Name', filterValue: workflowJobTemplateName }, page);
+      await page.getByRole('checkbox', { name: 'Select row' }).first().check();
 
-      // Select all templates shown after filtering
-      await page.getByRole('checkbox', { name: 'Select all' }).click();
+      // Clear filters, then select second template
+      await page.getByRole('button', { name: 'Clear all filters' }).click();
+      await filterTable({ filterLabel: 'Name', filterValue: workflowJobTemplate2Name }, page);
+      await page.getByRole('checkbox', { name: 'Select row' }).first().check();
+
+      // Clear filters to show both selected templates
+      await page.getByRole('button', { name: 'Clear all filters' }).click();
 
       // Click delete from toolbar kebab
       await page.getByLabel('toolbar actions').click();
@@ -548,37 +546,27 @@ test.describe('Workflow Job Templates: Launch', () => {
   let workflowJobTemplateName: string;
 
   test.beforeEach(async ({ page }) => {
-    const { createAwxProject } = await import('../projects/project-utils');
-    const { createJobTemplate } = await import('../templates/job-template-utils');
-    const { createWorkflowJobTemplate, createVisualizerStep } = await import(
-      '../workflow-visualizer/workflow-visualizer-utils'
-    );
-
-    organizationName = await createOrganization(page);
-    inventoryName = await createInventory({ organizationName }, page);
-    projectName = await createAwxProject({ organizationName }, page);
-    jobTemplateName = await createJobTemplate({ inventoryName, projectName }, page);
+    organizationName = await Organization.ui.create(page);
+    inventoryName = await Inventory.ui.create(page, { organizationName });
+    projectName = await Project.ui.create(page, { organizationName });
+    jobTemplateName = await JobTemplate.ui.create(page, { inventoryName, projectName });
 
     // Create workflow job template with a job template node
-    workflowJobTemplateName = await createWorkflowJobTemplate(page, { inventoryName });
-    await createVisualizerStep('Job Template', jobTemplateName, page);
+    workflowJobTemplateName = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page, {
+      inventoryName,
+    });
+    await WorkflowVisualizer.ui.createVisualizerStep(page, 'Job Template', jobTemplateName);
 
     // Close the visualizer
     await page.getByTestId('workflow-visualizer-toolbar-close').click();
   });
 
   test.afterEach(async ({ page }) => {
-    const { deleteJobTemplate } = await import('../templates/job-template-utils');
-    const { deleteAwxProject } = await import('../projects/project-utils');
-    const { deleteWorkflowJobTemplate: deleteWfjtUtil } = await import(
-      '../workflow-visualizer/workflow-visualizer-utils'
-    );
-
-    await deleteWfjtUtil(workflowJobTemplateName, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
-    await deleteAwxProject(projectName, page);
-    await deleteOrganization(organizationName, page);
+    await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplateName);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
+    await Project.ui.delete(page, projectName);
+    await Organization.ui.delete(page, organizationName);
   });
 
   test(
@@ -618,20 +606,17 @@ test.describe('Workflow Job Templates: Prompt on Launch', () => {
   let workflowJobTemplateName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await createOrganization(page);
-    inventoryName = await createInventory({ organizationName }, page);
+    organizationName = await Organization.ui.create(page);
+    inventoryName = await Inventory.ui.create(page, { organizationName });
     // Navigate back to templates page after creating resources
     await navigateTo(page, 'Automation Execution', 'Templates');
 
     // Create workflow job template with prompt on launch enabled
-    const result = await createWorkflowJobTemplateViaForm(
-      {
-        organizationName,
-        inventoryName,
-        askLimitOnLaunch: true,
-      },
-      page
-    );
+    const result = await WorkflowJobTemplate.ui.create(page, {
+      organizationName,
+      inventoryName,
+      askLimitOnLaunch: true,
+    });
     workflowJobTemplateName = result.name;
 
     // Close the visualizer to get back to a clean state
@@ -639,9 +624,9 @@ test.describe('Workflow Job Templates: Prompt on Launch', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteWorkflowJobTemplate(workflowJobTemplateName, page);
-    await deleteInventory(inventoryName, page);
-    await deleteOrganization(organizationName, page);
+    await WorkflowJobTemplate.ui.delete(page, workflowJobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
+    await Organization.ui.delete(page, organizationName);
   });
 
   test(
@@ -690,37 +675,27 @@ test.describe('Workflow Job Templates: Output and Details Screen', () => {
   let workflowJobTemplateName: string;
 
   test.beforeEach(async ({ page }) => {
-    const { createAwxProject } = await import('../projects/project-utils');
-    const { createJobTemplate } = await import('../templates/job-template-utils');
-    const { createWorkflowJobTemplate, createVisualizerStep } = await import(
-      '../workflow-visualizer/workflow-visualizer-utils'
-    );
-
-    organizationName = await createOrganization(page);
-    projectName = await createAwxProject({ organizationName }, page);
-    inventoryName = await createInventory({ organizationName }, page);
-    jobTemplateName = await createJobTemplate({ inventoryName, projectName }, page);
+    organizationName = await Organization.ui.create(page);
+    projectName = await Project.ui.create(page, { organizationName });
+    inventoryName = await Inventory.ui.create(page, { organizationName });
+    jobTemplateName = await JobTemplate.ui.create(page, { inventoryName, projectName });
 
     // Create workflow job template with nodes
-    workflowJobTemplateName = await createWorkflowJobTemplate(page, { inventoryName });
-    await createVisualizerStep('Job Template', jobTemplateName, page);
+    workflowJobTemplateName = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page, {
+      inventoryName,
+    });
+    await WorkflowVisualizer.ui.createVisualizerStep(page, 'Job Template', jobTemplateName);
 
     // Close visualizer
     await page.getByTestId('workflow-visualizer-toolbar-close').click();
   });
 
   test.afterEach(async ({ page }) => {
-    const { deleteJobTemplate } = await import('../templates/job-template-utils');
-    const { deleteAwxProject } = await import('../projects/project-utils');
-    const { deleteWorkflowJobTemplate: deleteWfjtUtil } = await import(
-      '../workflow-visualizer/workflow-visualizer-utils'
-    );
-
-    await deleteWfjtUtil(workflowJobTemplateName, page);
-    await deleteJobTemplate(jobTemplateName, page);
-    await deleteInventory(inventoryName, page);
-    await deleteAwxProject(projectName, page);
-    await deleteOrganization(organizationName, page);
+    await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplateName);
+    await JobTemplate.ui.delete(page, jobTemplateName);
+    await Inventory.ui.delete(page, inventoryName);
+    await Project.ui.delete(page, projectName);
+    await Organization.ui.delete(page, organizationName);
   });
 
   test(
@@ -755,8 +730,7 @@ test.describe('Workflow Job Templates: Output and Details Screen', () => {
       const workflowJobId = parseInt(match![1], 10);
 
       // Wait for workflow job to complete
-      const { waitForWorkflowJobStatus } = await import('./workflow-job-template-utils');
-      await waitForWorkflowJobStatus(workflowJobId, 'successful', page);
+      await WorkflowJobTemplate.ui.waitForJobStatus(page, workflowJobId, 'successful');
 
       // Verify we're on the output page
       await expect(

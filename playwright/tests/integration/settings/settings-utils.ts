@@ -1,3 +1,5 @@
+/** @deprecated Use Settings from '@ansible/playwright/utils' instead */
+
 import { expect, Page } from '@playwright/test';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 

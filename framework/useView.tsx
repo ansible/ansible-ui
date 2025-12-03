@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import { useIsMountedRef } from './components/useIsMounted';
 import { useURLSearchParams } from './components/useURLSearchParams';
 import { useWindowLocation } from './components/useWindowLocation';
 import { ITableColumn } from './PageTable/PageTableColumn';
@@ -100,8 +99,6 @@ export interface ViewExtendedOptions<T extends object> extends ViewOptions {
 export function useView(options: ViewOptions): IView {
   const { defaultValues, disableQueryString, ignoreQueryStringKeys, filterQueryStringKeys } =
     options;
-
-  const mountedRef = useIsMountedRef();
 
   const [searchParams, setSearchParams] = useURLSearchParams();
 
@@ -210,9 +207,7 @@ export function useView(options: ViewOptions): IView {
       newSearchParams.set(filter, filterState[filter]!.join(','));
     }
 
-    if (mountedRef.current) {
-      setSearchParams(newSearchParams);
-    }
+    setSearchParams(newSearchParams);
   }, [
     sort,
     sortDirection,
@@ -223,7 +218,6 @@ export function useView(options: ViewOptions): IView {
     filterState,
     ignoreQueryStringKeys,
     filterQueryStringKeys,
-    mountedRef,
     searchParams,
     location.location?.search,
   ]);

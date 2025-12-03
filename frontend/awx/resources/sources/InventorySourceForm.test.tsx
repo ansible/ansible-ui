@@ -52,15 +52,28 @@ export const restHandlers = [
   http.get(awxAPI`/credential_types/`, () => {
     return HttpResponse.json(credentialTypes);
   }),
-  http.get('/api/v2/projects/:id', ({ params }) => {
-    const { id } = params;
-    if (id === '123') {
-      return HttpResponse.json(mockProjectWithOverride);
-    } else if (id === '456') {
-      return HttpResponse.json(mockProjectWithoutOverride);
+  http.get(
+    ({ request }) => {
+      const url = new URL(request.url);
+      return (
+        url.pathname.includes('/projects/') &&
+        (url.pathname.endsWith('/123') ||
+          url.pathname.endsWith('/123/') ||
+          url.pathname.endsWith('/456') ||
+          url.pathname.endsWith('/456/'))
+      );
+    },
+    ({ request }) => {
+      const url = new URL(request.url);
+      const id = url.pathname.split('/').filter(Boolean).pop();
+      if (id === '123') {
+        return HttpResponse.json(mockProjectWithOverride);
+      } else if (id === '456') {
+        return HttpResponse.json(mockProjectWithoutOverride);
+      }
+      return new HttpResponse(null, { status: 404 });
     }
-    return new HttpResponse(null, { status: 404 });
-  }),
+  ),
 ];
 
 const mockInventorySource: InventorySource = {

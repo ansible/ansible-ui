@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { useWindowLocation } from './useWindowLocation';
 
 // This hook is used to get and set URLSearchParams in the URL.
@@ -8,7 +8,7 @@ export function useURLSearchParams(): [
   (setSearchParams: URLSearchParams) => void,
 ] {
   const location = useWindowLocation();
-  const pathname = location.location?.pathname || '/';
+  const [pathname] = useState(location.location?.pathname || '/');
   const searchParams = useMemo<URLSearchParams>(() => {
     /** Cypress component tests add a specPath param that must be ignored */
     let search = location.location?.search;
@@ -22,6 +22,10 @@ export function useURLSearchParams(): [
 
   const setSearchParams = useCallback(
     (searchParams: URLSearchParams) => {
+      if (pathname !== (location.location?.pathname || '/')) {
+        // don't change query params if we've navigated away from original page
+        return;
+      }
       const newSearch = searchParams.toString();
       if (newSearch) location.update('?' + newSearch);
       else location.update(pathname); // retain the existing pathname

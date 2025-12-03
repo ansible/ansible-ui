@@ -1,11 +1,11 @@
-import { test, expect } from '@playwright/test';
-import { setupBefore, setupAfter } from '../../../../../commands/setup';
-import { navigateTo } from '../../../../../commands/navigateTo';
-import { clickTableRow } from '../../../../../commands/clickTableRow';
+import { expect, test } from '@playwright/test';
 import { clickPageAction } from '../../../../../commands/clickPageAction';
+import { clickTableRow } from '../../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../../commands/createE2EName';
-import { createAwxCredential, deleteAwxCredential } from './credential-utils';
 import { filterTable } from '../../../../../commands/filterTable';
+import { navigateTo } from '../../../../../commands/navigateTo';
+import { setupAfter, setupBefore } from '../../../../../commands/setup';
+import { Credential } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials' }));
 test.afterEach(setupAfter);
@@ -15,7 +15,7 @@ test.describe('Credentials - List View', () => {
     'can edit machine credential from the list row action',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await filterTable({ filterLabel: 'Name', filterValue: credentialName }, page);
@@ -40,10 +40,10 @@ test.describe('Credentials - List View', () => {
     'can delete machine credential from the list row action',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await deleteAwxCredential(credentialName, page);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 
@@ -51,7 +51,7 @@ test.describe('Credentials - List View', () => {
     'can delete machine credential from the list toolbar',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await filterTable({ filterLabel: 'Name', filterValue: credentialName }, page);
@@ -68,35 +68,60 @@ test.describe('Credentials - List View', () => {
   );
 
   test('copies a credential from the list row action', { tag: ['@not_mock'] }, async ({ page }) => {
-    const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
     await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
     await filterTable({ filterLabel: 'Name', filterValue: credentialName }, page);
     await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
 
+    // Set up API interception before clicking the duplicate button
+    const copyResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/credentials/') &&
+        response.url().includes('/copy/') &&
+        response.status() === 201
+    );
+
     // Click the duplicate credential button
-    const row = page.getByRole('row').filter({ hasText: credentialName });
+    const credentialLink = page.getByRole('link', { name: credentialName, exact: true });
+    const row = page.getByRole('row').filter({ has: credentialLink });
     await row.getByRole('button', { name: 'Duplicate credential' }).click();
 
-    // Wait for duplication to complete
-    await page.waitForTimeout(2000);
+    // Get the exact copied credential name from the API response
+    const copyResponse = await copyResponsePromise;
+    const copiedCredential = (await copyResponse.json()) as { name: string; id: number };
+    const copiedCredentialName = copiedCredential.name;
 
-    // Delete the original credential
-    await deleteAwxCredential(credentialName, page);
+    // Filter for the copied credential
+    await filterTable(
+      { filterLabel: 'Name', filterValue: copiedCredentialName, clearFilters: true },
+      page
+    );
+    await expect(page.getByRole('link', { name: copiedCredentialName, exact: true })).toBeVisible();
 
-    // Filter for the copied credential (which has a name like "credentialName @ HH:MM:SS")
-    await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-    await filterTable({ filterLabel: 'Name', filterValue: `${credentialName} @` }, page);
-    await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
-
-    // Verify exactly one credential is found (the copy)
-    const copiedRow = page.getByRole('row').filter({ hasText: `${credentialName} @` });
-    await expect(copiedRow).toHaveCount(1);
-
-    // Delete the copied credential using the toolbar action
+    // Delete the copied credential
+    const copiedLink = page.getByRole('link', {
+      name: new RegExp(`^${credentialName} @`),
+      exact: false,
+    });
+    const copiedRow = page.getByRole('row').filter({ has: copiedLink });
     await copiedRow.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'toolbar actions' }).click();
     await page.getByRole('menuitem', { name: 'Delete credentials' }).click();
+    await page.locator('#confirm').click();
+    await page.getByRole('button', { name: 'Delete credential' }).click();
+
+    // Filter for the original credential
+    await filterTable(
+      { filterLabel: 'Name', filterValue: credentialName, clearFilters: true },
+      page
+    );
+
+    // Delete the original credential
+    const originalLink = page.getByRole('link', { name: credentialName, exact: true });
+    const originalRow = page.getByRole('row').filter({ has: originalLink });
+    await originalRow.getByRole('button', { name: 'kebab dropdown toggle' }).click();
+    await page.getByRole('menuitem', { name: 'Delete credential' }).click();
     await page.locator('#confirm').click();
     await page.getByRole('button', { name: 'Delete credential' }).click();
     await expect(page.getByRole('heading', { name: 'Credentials' })).toBeVisible();
@@ -105,7 +130,7 @@ test.describe('Credentials - List View', () => {
 
 test.describe('Credentials - Details View', () => {
   test('details page should render boolean field', { tag: ['@not_mock'] }, async ({ page }) => {
-    const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
     await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
     await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
@@ -113,14 +138,14 @@ test.describe('Credentials - Details View', () => {
     await expect(page.getByText('Machine')).toBeVisible();
     await expect(page.getByText('Username').first()).toBeVisible();
     await expect(page.getByText('Encrypted').first()).toBeVisible();
-    await deleteAwxCredential(credentialName, page);
+    await Credential.ui.delete(page, credentialName);
   });
 
   test(
     'can edit machine credential from the details page',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
@@ -132,7 +157,7 @@ test.describe('Credentials - Details View', () => {
       await page.getByRole('textbox', { name: 'Name', exact: true }).fill(editedName);
       await page.getByRole('button', { name: 'Save credential' }).click();
       await expect(page.getByRole('heading', { name: editedName })).toBeVisible();
-      await deleteAwxCredential(editedName, page);
+      await Credential.ui.delete(page, editedName);
     }
   );
 
@@ -140,7 +165,7 @@ test.describe('Credentials - Details View', () => {
     'can delete a machine credential from the details page',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
@@ -176,19 +201,16 @@ test.describe('Credentials Edit - External test modal', () => {
     'can display error toast message when running a test from the edit credential form',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const credentialName = await createAwxCredential(
-        {
-          credentialType: 'Machine',
-        },
-        page
-      );
+      const credentialName = await Credential.ui.create(page, {
+        credentialType: 'Machine',
+      });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
       await page.getByRole('button', { name: 'Edit credential' }).click();
       await expect(page.getByRole('heading', { name: `Edit ${credentialName}` })).toBeVisible();
       await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-      await deleteAwxCredential(credentialName, page);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 });
@@ -265,7 +287,7 @@ test.describe('Credentials - Credential Types Tests', () => {
       await expect(page.getByText('Encrypted').first()).toBeVisible();
       await expect(page.getByTestId('label-description').getByText('Description')).toBeVisible();
       await expect(page.getByTestId('description').getByText('description')).toBeVisible();
-      await deleteAwxCredential(modifiedCredentialName, page);
+      await Credential.ui.delete(page, modifiedCredentialName);
     }
   );
 
@@ -289,6 +311,7 @@ test.describe('Credentials - Credential Types Tests', () => {
       await page.getByRole('checkbox', { name: 'Prompt on launch', exact: true }).first().check();
       await page.getByRole('checkbox', { name: 'Prompt on launch', exact: true }).nth(1).check();
       await page.getByRole('button', { name: 'Save credential' }).click();
+      await expect(page.getByRole('heading', { name: credentialName, exact: true })).toBeVisible();
       await expect(page.getByText('Password', { exact: true })).toBeVisible();
       await expect(page.getByText('Private Key Passphrase')).toBeVisible();
       await expect(page.getByText('Prompt on launch').first()).toBeVisible();
@@ -350,13 +373,13 @@ test.describe('Credentials - Job Templates Tab', () => {
     'can create a job template within the context of credential job template tab',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
       await page.getByRole('tab', { name: 'Job Templates' }).click();
       await expect(page.getByRole('tab', { name: 'Job Templates' })).toBeVisible();
-      await deleteAwxCredential(credentialName, page);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 });
@@ -367,7 +390,7 @@ test.describe('Credentials - Team and User Access', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(120000);
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
       const teamName = createE2EName('team');
 
       await navigateTo(page, 'Access Management', 'Teams');
@@ -405,7 +428,7 @@ test.describe('Credentials - Team and User Access', () => {
       await page.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete team' }).click();
       await expect(page.getByTestId('page-title')).toHaveText('Teams');
-      await deleteAwxCredential(credentialName, page);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 
@@ -414,7 +437,7 @@ test.describe('Credentials - Team and User Access', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(120000);
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
       const userName = `E2E-user-${createE2EName('').replace(/\s+/g, '')}`;
 
       await navigateTo(page, 'Access', 'Users');
@@ -450,7 +473,7 @@ test.describe('Credentials - Team and User Access', () => {
       await page.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete user' }).click();
       await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
-      await deleteAwxCredential(credentialName, page);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 
@@ -459,7 +482,7 @@ test.describe('Credentials - Team and User Access', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(120000);
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
       const teamName = createE2EName('team');
 
       await navigateTo(page, 'Access Management', 'Teams');
@@ -509,7 +532,7 @@ test.describe('Credentials - Team and User Access', () => {
       await page.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete team' }).click();
       await expect(page.getByTestId('page-title')).toHaveText('Teams');
-      await deleteAwxCredential(credentialName, page);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 
@@ -518,7 +541,7 @@ test.describe('Credentials - Team and User Access', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(180000);
-      const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
       const userName = `E2E-user-${createE2EName('').replace(/\s+/g, '')}`;
 
       await navigateTo(page, 'Access', 'Users');
@@ -586,13 +609,13 @@ test.describe('Credentials - Team and User Access', () => {
       await page.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete user' }).click();
       await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
-      await deleteAwxCredential(credentialName, page);
+      await Credential.ui.delete(page, credentialName);
     }
   );
 
   test('can manage user roles from User Access tab', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(180000);
-    const credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
     const userName = `E2E-user-${createE2EName('').replace(/\s+/g, '')}`;
 
     await navigateTo(page, 'Access', 'Users');
@@ -653,6 +676,6 @@ test.describe('Credentials - Team and User Access', () => {
     await page.locator('#confirm').click();
     await page.getByRole('button', { name: 'Delete user' }).click();
     await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
-    await deleteAwxCredential(credentialName, page);
+    await Credential.ui.delete(page, credentialName);
   });
 });

@@ -2,17 +2,7 @@ import { expect, test } from '@playwright/test';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import {
-  createInventory,
-  deleteInventory,
-} from '../../automation-execution/infrastructure/inventories/inventory-utils';
-import {
-  createAwxProject,
-  deleteAwxProject,
-} from '../../automation-execution/projects/project-utils';
-import { createOrganization, deleteOrganization } from '../organizations/organization-utils';
-import { createUser, deleteUser } from '../users/user-utils';
-import { createTeam, deleteTeam } from './team-utils';
+import { User, Team, Organization, Inventory, Project } from '@ansible/playwright/utils';
 
 test.describe('Platform Teams - Role Inheritance', () => {
   let orgName: string;
@@ -24,11 +14,11 @@ test.describe('Platform Teams - Role Inheritance', () => {
   test.beforeEach(setupBefore({ path: '/access/teams' }));
 
   test.afterEach(async ({ page }) => {
-    await deleteTeam(teamName, page).catch(() => {});
-    await deleteInventory(inventoryName, page).catch(() => {});
-    await deleteAwxProject(projectName, page).catch(() => {});
-    await deleteUser(userName, page).catch(() => {});
-    await deleteOrganization(orgName, page).catch(() => {});
+    await Team.ui.delete(page, teamName).catch(() => {});
+    await Inventory.ui.delete(page, inventoryName).catch(() => {});
+    await Project.ui.delete(page, projectName).catch(() => {});
+    await User.ui.delete(page, userName).catch(() => {});
+    await Organization.ui.delete(page, orgName).catch(() => {});
     await setupAfter({ page });
   });
 
@@ -39,11 +29,11 @@ test.describe('Platform Teams - Role Inheritance', () => {
     },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000); // 2 minutes timeout for this specific test
-      orgName = await createOrganization(page);
-      userName = await createUser({ organizationName: orgName }, page);
-      inventoryName = await createInventory({}, page);
-      projectName = await createAwxProject({ organizationName: orgName }, page);
-      teamName = await createTeam({ organizationName: orgName }, page);
+      orgName = await Organization.ui.create(page);
+      userName = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
+      inventoryName = await Inventory.ui.create(page);
+      projectName = await Project.ui.create(page, { organizationName: orgName });
+      teamName = await Team.ui.create(page, { organizationName: orgName });
 
       // Step 1: Assign multiple roles to the team
       await page.getByRole('tab', { name: 'Roles' }).click();
