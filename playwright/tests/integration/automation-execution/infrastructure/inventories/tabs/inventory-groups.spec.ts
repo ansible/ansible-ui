@@ -162,21 +162,18 @@ test.describe('Inventory Groups - List View', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(90000);
-      const organizationName = await createOrganization(page);
+      const organizationName = await Organization.ui.create(page);
 
       // Create credential with "Prompt on launch" enabled for password
-      const credentialName = await createAwxCredential(
-        {
-          credentialType: 'Machine',
-          promptOnLaunchPassword: true,
-        },
-        page
-      );
-      const executionEnvironmentName = await createExecutionEnvironment(page, {
+      const credentialName = await Credential.ui.create(page, {
+        credentialType: 'Machine',
+        promptOnLaunchPassword: true,
+      });
+      const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
         organizationName,
       });
-      const inventoryName = await createInventory({ organizationName }, page);
-      await createInventoryGroup({ inventoryName }, page);
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
+      await InventoryGroup.ui.createGroup(page, { inventoryName });
       await page.getByRole('tab', { name: 'Back to Groups' }).click();
 
       await page.getByRole('button', { name: 'Run command' }).click();
@@ -198,10 +195,10 @@ test.describe('Inventory Groups - List View', () => {
         page
       );
 
-      await deleteInventory(inventoryName, page);
-      await deleteAwxCredential(credentialName, page);
-      await deleteExecutionEnvironment(executionEnvironmentName, page);
-      await deleteOrganization(organizationName, page);
+      await Inventory.ui.delete(page, inventoryName);
+      await Credential.ui.delete(page, credentialName);
+      await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+      await Organization.ui.delete(page, organizationName);
     }
   );
 });
