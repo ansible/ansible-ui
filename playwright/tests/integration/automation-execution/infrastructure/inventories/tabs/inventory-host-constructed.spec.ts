@@ -11,10 +11,8 @@ import { navigateTo } from '../../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../../commands/runAdHocCommandWizard';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
 import { waitForJobStatus } from '../../../../../../commands/waitForJobStatus';
-import { createAwxProject } from '../../../projects/project-utils';
-import { createJobTemplate } from '../../../templates/job-template-utils';
-import { createAwxCredential } from '../../credentials/credential-utils';
-import { createExecutionEnvironment } from '../../execution-environments/execution-environment-utils';
+import { Project, JobTemplate, ExecutionEnvironment } from '@ansible/playwright/utils';
+import { Credential } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -48,12 +46,12 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
 
       try {
         // Create execution environment
-        executionEnvironmentName = await createExecutionEnvironment(page, {
+        executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
           organizationName,
         });
 
         // Create Machine credential for running ad-hoc commands
-        credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+        credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
         // Create regular inventory via AWX API
         regularInventory = await awxAPI.post<RegularInventory>(page, '/inventories/', {
@@ -208,12 +206,12 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
 
       try {
         // Create execution environment
-        executionEnvironmentName = await createExecutionEnvironment(page, {
+        executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
           organizationName,
         });
 
         // Create Machine credential for running ad-hoc commands
-        credentialName = await createAwxCredential({ credentialType: 'Machine' }, page);
+        credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
         // Create regular inventory via AWX API
         regularInventory = await awxAPI.post<RegularInventory>(page, '/inventories/', {
@@ -414,13 +412,13 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
         );
 
         // Create project
-        projectName = await createAwxProject({ organizationName }, page);
+        projectName = await Project.ui.create(page, { organizationName });
 
         // Create job template using constructed inventory
-        jobTemplateName = await createJobTemplate(
-          { inventoryName: constructedInventoryName, projectName },
-          page
-        );
+        jobTemplateName = await JobTemplate.ui.create(page, {
+          inventoryName: constructedInventoryName,
+          projectName,
+        });
 
         // Navigate to constructed inventory and sync
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
