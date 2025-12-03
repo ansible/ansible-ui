@@ -285,6 +285,7 @@ export function EditCredential() {
     if (inputSources) {
       const updatedPluginValues = inputSources.results.map(
         (inputSource: CredentialInputSource) => ({
+          id: inputSource.id, // Preserve the ID to identify existing sources
           input_field_name: inputSource.input_field_name,
           source_credential: inputSource.source_credential,
           target_credential: inputSource.target_credential,
@@ -398,10 +399,14 @@ export function EditCredential() {
         },
       };
     }
-    const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
-      ...credentialInputSource,
-      target_credential: credential?.id,
-    }));
+    // Only POST new credential input sources (those without an id)
+    // Existing sources (with an id) that haven't been modified don't need to be re-created
+    const newCredentialInputSources = accumulatedPluginValues
+      .filter((credentialInputSource) => !credentialInputSource.id)
+      .map((credentialInputSource) => ({
+        ...credentialInputSource,
+        target_credential: credential?.id,
+      }));
 
     if (pluginsToDeletePayload && pluginsToDeletePayload.length > 0) {
       await Promise.all(
@@ -411,7 +416,7 @@ export function EditCredential() {
       ).then(async () => {
         await patch(awxAPI`/credentials/${id.toString()}/`, modifiedCredential);
         await Promise.all(
-          credentialInputSourcePayload.map(async (credentialInputSource) => {
+          newCredentialInputSources.map(async (credentialInputSource) => {
             await postRequest(
               awxAPI`/credential_input_sources/`,
               credentialInputSource as CredentialInputSource
@@ -422,7 +427,7 @@ export function EditCredential() {
     } else {
       await patch(awxAPI`/credentials/${id.toString()}/`, modifiedCredential);
       await Promise.all(
-        credentialInputSourcePayload.map(async (credentialInputSource) => {
+        newCredentialInputSources.map(async (credentialInputSource) => {
           await postRequest(
             awxAPI`/credential_input_sources/`,
             credentialInputSource as CredentialInputSource
@@ -997,6 +1002,7 @@ function CredentialTextInput({
               <Button
                 isDisabled={isDisabled || !!isPromptOnLaunchChecked || isCurrentFieldValueEncrypted}
                 data-cy="secret-management-input"
+                data-testid="secret-management-input"
                 variant="control"
                 icon={
                   <Icon>
