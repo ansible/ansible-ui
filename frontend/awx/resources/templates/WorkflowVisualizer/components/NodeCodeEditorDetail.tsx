@@ -26,7 +26,9 @@ export function NodeCodeEditorDetail({
       overriddenValue={templateExtraVars}
     >
       <CodeBlock id={id}>
-        <CodeBlockCode data-cy={'code-block-value'}>{value}</CodeBlockCode>
+        <CodeBlockCode data-cy={'code-block-value'} data-testid={'code-block-value'}>
+          {value}
+        </CodeBlockCode>
       </CodeBlock>
     </PromptDetail>
   );

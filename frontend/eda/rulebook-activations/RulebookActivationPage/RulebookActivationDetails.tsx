@@ -162,6 +162,7 @@ export function RulebookActivationDetails() {
                   <Label
                     color="blue"
                     data-cy={`mapping-${mapping?.event_stream_id}`}
+                    data-testid={`mapping-${mapping?.event_stream_id}`}
                     key={mapping?.event_stream_id}
                     render={({ className }) => (
                       <Link

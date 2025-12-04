@@ -43,6 +43,7 @@ export function MarkdownEditor(props: IProps) {
           <TextArea
             aria-label="raw-markdown"
             data-cy="raw-markdown"
+            data-testid="raw-markdown"
             value={text}
             onChange={(_, value) => updateText(value)}
             placeholder={placeholder}

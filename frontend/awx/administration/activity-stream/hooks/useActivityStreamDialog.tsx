@@ -28,6 +28,7 @@ export function ActivityStreamDialog({ activity }: ActivityStreamModalProps) {
   return (
     <Modal
       data-cy="activity-stream-event-modal"
+      data-testid="activity-stream-event-modal"
       aria-label={t('Event details')}
       isOpen
       onClose={onClose}

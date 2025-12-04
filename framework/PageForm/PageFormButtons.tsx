@@ -42,7 +42,7 @@ export function PageFormCancelButton(props: { onCancel: () => void; children: Re
   return (
     <Button
       data-cy={'Cancel'}
-      data-testid="cancel"
+      data-testid={'Cancel'}
       type="button"
       variant="link"
       onClick={handleClick}

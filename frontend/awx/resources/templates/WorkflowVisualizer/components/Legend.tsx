@@ -49,11 +49,15 @@ export const Legend = () => {
   };
 
   return (
-    <Panel data-cy="workflow-visualizer-legend" variant="raised">
+    <Panel
+      data-cy="workflow-visualizer-legend"
+      data-testid="workflow-visualizer-legend"
+      variant="raised"
+    >
       <PanelMain>
         <PanelMainBody>
           <DescriptionList>
-            <DescriptionListGroup data-cy="legend-node-types">
+            <DescriptionListGroup data-cy="legend-node-types" data-testid="legend-node-types">
               <DescriptionListTerm>{t('Node types')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <LegendDescription label={t('Job Template')} icon={<ClipboardCheckIcon />} />
@@ -74,7 +78,10 @@ export const Legend = () => {
                 <LegendDescription label={t('System Job')} icon={<CogIcon />} />
               </DescriptionListDescription>
             </DescriptionListGroup>
-            <DescriptionListGroup data-cy="legend-node-status-types">
+            <DescriptionListGroup
+              data-cy="legend-node-status-types"
+              data-testid="legend-node-status-types"
+            >
               <DescriptionListTerm>{t('Node status types')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <LegendDescription
@@ -97,7 +104,10 @@ export const Legend = () => {
                 />
               </DescriptionListDescription>
             </DescriptionListGroup>
-            <DescriptionListGroup data-cy="legend-run-status-types">
+            <DescriptionListGroup
+              data-cy="legend-run-status-types"
+              data-testid="legend-run-status-types"
+            >
               <DescriptionListTerm>{t('Run status types')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <LegendDescription

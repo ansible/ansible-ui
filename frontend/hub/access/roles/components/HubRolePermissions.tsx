@@ -28,12 +28,14 @@ export function HubRolePermissions(props: { role: HubRbacRole }) {
         '2xl': '35ch',
       }}
       data-cy="permissions-description-list"
+      data-testid="permissions-description-list"
     >
       <DescriptionListGroup key={role?.content_type}>
         {
           <>
             <DescriptionListTerm
               data-cy={role.content_type}
+              data-testid={role.content_type}
               style={{ fontWeight: 'normal' }}
               key={role.content_type}
             >
@@ -46,7 +48,7 @@ export function HubRolePermissions(props: { role: HubRbacRole }) {
                 <LabelGroup numLabels={3}>
                   {role?.permissions.map((permission: string) => {
                     return (
-                      <Label key={permission} data-cy={permission}>
+                      <Label key={permission} data-cy={permission} data-testid={permission}>
                         {rolesMetadata.content_types[role.content_type as ContentTypeEnum]
                           ?.permissions[permission] || permission}
                       </Label>

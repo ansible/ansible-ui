@@ -12,7 +12,9 @@ export function InstanceForksSlider(props: { instance: Instance }) {
 
   return (
     <>
-      <div data-cy="number-forks">{t(`${instanceForks} forks`)}</div>
+      <div data-cy="number-forks" data-testid="number-forks">
+        {t(`${instanceForks} forks`)}
+      </div>
       <Slider
         areCustomStepsContinuous
         max={instance.mem_capacity}

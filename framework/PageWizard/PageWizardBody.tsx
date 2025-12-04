@@ -58,6 +58,7 @@ export function PageWizardBody({
         ) : (
           <div
             data-cy={`wizard-section-${activeStep.id}`}
+            data-testid={`wizard-section-${activeStep.id}`}
             style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}
           >
             <PageSection

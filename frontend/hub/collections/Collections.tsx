@@ -62,6 +62,7 @@ export function Collections() {
           >
             <ButtonLink
               data-cy="upload-collection"
+              data-testid="upload-collection"
               icon={<PlusCircleIcon />}
               variant={ButtonVariant.primary}
               href={getPageUrl(HubRoute.UploadCollection)}

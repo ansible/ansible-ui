@@ -72,6 +72,7 @@ export function RevertAllDialog(
   return (
     <Modal
       data-cy="revert-settings-modal"
+      data-testid="revert-settings-modal"
       aria-label={t('Revert settings confirmation dialog')}
       variant={ModalVariant.small}
       isOpen
@@ -86,6 +87,7 @@ export function RevertAllDialog(
       <ModalFooter>
         <Button
           data-cy="delete-group-modal-delete-button"
+          data-testid="delete-group-modal-delete-button"
           ouiaId="delete-group-modal-delete-button"
           key="delete"
           variant="danger"

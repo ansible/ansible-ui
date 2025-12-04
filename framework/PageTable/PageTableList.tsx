@@ -177,6 +177,7 @@ export function useColumnsToDataList<T extends object>(
                 isChecked={isSelected?.(item)}
                 onClick={() => onSelectClick(item)}
                 data-cy={'data-list-check'}
+                data-testid={'data-list-check'}
               />
             )}
             <DataListItemCells
@@ -193,6 +194,7 @@ export function useColumnsToDataList<T extends object>(
                             headingLevel="h2"
                             style={{ marginTop: -4, fontWeight: 'bold' }}
                             data-cy={'data-list-name'}
+                            data-testid={'data-list-name'}
                           >
                             <span id={`data-list-${key}`}>
                               <TableColumnCell column={nameColumn} item={item} />
@@ -304,6 +306,7 @@ export function useColumnsToDataList<T extends object>(
                 aria-label="Actions"
                 style={{ whiteSpace: 'nowrap' }}
                 data-cy={'data-list-action'}
+                data-testid={'data-list-action'}
               >
                 <PageActions
                   actions={rowActions}

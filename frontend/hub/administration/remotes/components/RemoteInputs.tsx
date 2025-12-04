@@ -83,6 +83,7 @@ export function RemoteInputs({
             {isCommunityRemote && signedOnlyInput ? (
               <Alert
                 data-cy="signed-only-warning"
+                data-testid="signed-only-warning"
                 isInline
                 variant="warning"
                 title={t`Community content will never be synced if this setting is enabled`}
@@ -99,6 +100,7 @@ export function RemoteInputs({
         />
         <StyledAlert
           data-cy="external-sync-warning"
+          data-testid="external-sync-warning"
           isInline
           isPlain
           variant="info"

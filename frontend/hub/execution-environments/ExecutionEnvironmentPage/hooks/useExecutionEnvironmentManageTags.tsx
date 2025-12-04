@@ -178,6 +178,7 @@ function ManageTagsModal(props: {
                   type="text"
                   id="add-tag-input"
                   data-cy="add-tag-input"
+                  data-testid="add-tag-input"
                   value={tag}
                   onChange={(val) => {
                     setTag(val?.currentTarget?.value || '');
@@ -207,7 +208,7 @@ function ManageTagsModal(props: {
               <LoadingState />
             ) : (
               <PageFormGroup fieldId="tag" label={t`Current tags`}>
-                <LabelGroup id="tag" data-cy="tag" defaultIsOpen={true}>
+                <LabelGroup id="tag" data-cy="tag" data-testid="tag" defaultIsOpen={true}>
                   {tags.map((tag) => (
                     <TagLabel
                       onClose={() => {

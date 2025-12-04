@@ -90,6 +90,7 @@ export function PageFormAsyncMultiSelect<
             <PageAsyncMultiSelect
               id={id}
               data-cy={id ?? name}
+              data-testid={id ?? name}
               placeholder={props.placeholder}
               queryOptions={props.queryOptions}
               queryPlaceholder={props.queryPlaceholder}

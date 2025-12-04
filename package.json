@@ -74,7 +74,8 @@
     "component:hub": "cypress run --component -q -p 3903 --spec frontend/hub/**/*.cy.ts,frontend/hub/**/*.cy.tsx",
     "component:common": "cypress run --component -q -p 3904 --spec frontend/common/**/*.cy.ts,frontend/common/**/*.cy.tsx",
     "component:framework": "cypress run --component -q -p 3905 --spec framework/**/*.cy.tsx,framework/**/*.cy.tsx",
-    "component:junit-results": "cypress run --component --reporter junit --reporter-options mochaFile=cypress/junit-results/component-junit-result-[hash].xml"
+    "component:junit-results": "cypress run --component --reporter junit --reporter-options mochaFile=cypress/junit-results/component-junit-result-[hash].xml",
+    "migrate:testid": "tsx scripts/migrate-data-cy-to-testid.ts"
   },
   "dependencies": {
     "@ansible/ansible-ai-connect-chatbot": "0.1.6",

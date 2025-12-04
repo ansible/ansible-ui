@@ -89,6 +89,7 @@ export function InstancesList(props: {
                 variant={ButtonVariant.primary}
                 icon={<PlusCircleIcon />}
                 data-cy="associate-instance"
+                data-testid="associate-instance"
                 onClick={() =>
                   openAssociateInstanceModal({
                     onAssociate: associateInstance,
@@ -103,6 +104,7 @@ export function InstancesList(props: {
                 variant={ButtonVariant.primary}
                 icon={<PlusCircleIcon />}
                 data-cy="create-instance"
+                data-testid="create-instance"
                 href={getPageUrl(AwxRoute.AddInstance)}
               >
                 {t('Create instance')}

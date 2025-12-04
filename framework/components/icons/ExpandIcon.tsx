@@ -12,6 +12,7 @@ export function ExpandIcon(props: {
     <Icon size={props.size ?? 'md'}>
       <AngleDownIcon
         data-cy="expandable"
+        data-testid="expandable"
         style={{
           transform: props.isExpanded
             ? 'rotate(0deg)'

@@ -252,6 +252,7 @@ export function PageMultiSelect<
             }
           }}
           data-cy={id}
+          data-testid={id}
           icon={icon}
           isDisabled={!!props.isDisabled}
           isFullWidth
@@ -451,6 +452,7 @@ function PageMultiSelectList(props: {
             hasCheckbox
             isSelected={props.selectedOptions.includes(option)}
             data-cy={optionId}
+            data-testid={optionId}
           >
             {option.label}
           </SelectOption>

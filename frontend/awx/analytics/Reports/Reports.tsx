@@ -60,7 +60,7 @@ export function Reports() {
                 position={TooltipPosition.bottom}
                 content={tag.description}
               >
-                <Label data-cy={tag.name} key={idx}>
+                <Label data-cy={tag.name} data-testid={tag.name} key={idx}>
                   {tag.name}
                 </Label>
               </Tooltip>

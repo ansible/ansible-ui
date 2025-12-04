@@ -29,6 +29,7 @@ export function RulesStep() {
       {!isOpen && hasRules && (
         <Button
           data-cy="add-rule-toolbar-button"
+          data-testid="add-rule-toolbar-button"
           icon={<PlusCircleIcon />}
           onClick={() => {
             setIsOpen(true);

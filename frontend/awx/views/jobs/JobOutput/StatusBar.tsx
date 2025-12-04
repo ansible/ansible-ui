@@ -180,7 +180,7 @@ function StatusBar<T extends object, K extends object>(props: StatusBarProps<T, 
 
   if (noData) {
     return (
-      <BarWrapper data-cy="status-bar">
+      <BarWrapper data-cy="status-bar" data-testid="status-bar">
         <Tooltip content={t`Host status information for this job is unavailable.`}>
           <BarSegment count={1} />
         </Tooltip>
@@ -190,7 +190,9 @@ function StatusBar<T extends object, K extends object>(props: StatusBarProps<T, 
 
   return (
     <>
-      <BarWrapper data-cy="status-bar">{barSegments}</BarWrapper>
+      <BarWrapper data-cy="status-bar" data-testid="status-bar">
+        {barSegments}
+      </BarWrapper>
       <Legend>
         {Object.keys(counts).map((key) => (
           <LegendItem

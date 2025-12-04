@@ -131,6 +131,7 @@ export function DateRange(props: {
         aria-label="Start date"
         placeholder="YYYY-MM-DD"
         data-cy="toolbar-date-picker"
+        data-testid="toolbar-date-picker"
       />
       <div style={{ alignSelf: 'baseline', padding: 6 }}>{t('to')}</div>
       <DatePicker

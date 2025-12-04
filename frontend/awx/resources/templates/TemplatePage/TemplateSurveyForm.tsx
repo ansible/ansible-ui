@@ -352,6 +352,7 @@ function TemplateSurveyInputs() {
         name="type"
         id="question-type"
         data-cy="question-type"
+        data-testid="question-type"
         label={t('Answer type')}
         placeholderText={t('Select answer type')}
         options={[
@@ -371,6 +372,7 @@ function TemplateSurveyInputs() {
         <PageFormCheckbox
           id="question-required"
           data-cy="question-required"
+          data-testid="question-required"
           label={t`Required`}
           name="required"
         />

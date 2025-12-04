@@ -79,6 +79,7 @@ export function Hosts() {
                   variant={ButtonVariant.primary}
                   href={getPageUrl(AwxRoute.CreateHost)}
                   data-cy="create-host"
+                  data-testid="create-host"
                 >
                   {t('Create host')}
                 </ButtonLink>

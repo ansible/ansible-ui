@@ -98,7 +98,12 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
       toggle={Toggle}
       shouldFocusToggleOnSelect
     >
-      <SelectGroup label={t`Workflow statuses`} key="workflow-status" data-cy="workflow-status">
+      <SelectGroup
+        label={t`Workflow statuses`}
+        key="workflow-status"
+        data-cy="workflow-status"
+        data-testid="workflow-status"
+      >
         <SelectList>
           <SelectOption
             value="failed"
@@ -118,7 +123,12 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
           </SelectOption>
         </SelectList>
       </SelectGroup>
-      <SelectGroup label={t`Workflow nodes`} key="workflow-nodes" data-cy="workflow-nodes">
+      <SelectGroup
+        label={t`Workflow nodes`}
+        key="workflow-nodes"
+        data-cy="workflow-nodes"
+        data-testid="workflow-nodes"
+      >
         <SelectList>
           {filteredNodes.map((node: WorkflowJobNode) => (
             <SelectOption

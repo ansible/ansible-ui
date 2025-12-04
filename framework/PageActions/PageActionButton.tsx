@@ -107,6 +107,7 @@ export function PageActionButton<T extends object>(props: {
         <Button
           id={id}
           data-cy={id}
+          data-testid={id}
           variant={variant}
           isDanger={action.isDanger}
           icon={Icon ? <Icon /> : undefined}

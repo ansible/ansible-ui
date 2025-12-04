@@ -19,6 +19,7 @@ export function PageNotificationsIcon() {
   return (
     <NotificationBadge
       data-cy="notification-badge"
+      data-testid="notification-badge"
       variant={unreadCount === 0 ? 'read' : 'unread'}
       count={unreadCount}
       onClick={() => setNotificationsDrawerOpen((open) => !open)}

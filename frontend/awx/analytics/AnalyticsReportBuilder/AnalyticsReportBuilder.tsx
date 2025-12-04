@@ -445,6 +445,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
         <ToggleGroupItem
           key={chartTypeItem}
           data-cy={'chart_type'}
+          data-testid={'chart_type'}
           text={`${capitalize(chartTypeItem)} Chart`}
           buttonId={chartTypeItem}
           isSelected={chartTypeItem === chartType}

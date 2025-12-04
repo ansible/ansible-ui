@@ -39,7 +39,11 @@ export function HubNamespaceDetails() {
           keyColumn={t('Link text')}
           title={t('Useful links')}
           renderValue={(item) => (
-            <ExternalLink data-cy={`item-value-${item.value}`} href={item.value}>
+            <ExternalLink
+              data-cy={`item-value-${item.value}`}
+              data-testid={`item-value-${item.value}`}
+              href={item.value}
+            >
               {item.value}{' '}
             </ExternalLink>
           )}

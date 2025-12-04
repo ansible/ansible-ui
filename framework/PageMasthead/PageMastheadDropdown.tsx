@@ -47,6 +47,7 @@ export function PageMastheadDropdown(props: {
         position: 'right',
       }}
       data-cy={props.id}
+      data-testid={props.id}
     >
       <DropdownList>{children}</DropdownList>
     </Dropdown>

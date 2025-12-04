@@ -242,6 +242,7 @@ export function ImportList({
                             id={collectionImport.id}
                             key={collectionImport.id}
                             data-cy={`row-id-${collectionImport.name}`}
+                            data-testid={`row-id-${collectionImport.name}`}
                           >
                             <DataListItemRow>
                               <DataListItemCells

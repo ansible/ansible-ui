@@ -94,6 +94,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                       params: { id: sourceResourceObj.id, job_type: 'playbook' },
                     })}
                     data-cy="source-resource-detail"
+                    data-testid="source-resource-detail"
                   >
                     {sourceResourceName}
                   </Link>
@@ -108,6 +109,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                       params: { id: sourceResourceObj.id, job_type: 'workflow' },
                     })}
                     data-cy="source-resource-detail"
+                    data-testid="source-resource-detail"
                   >
                     {sourceResourceName}
                   </Link>
@@ -126,6 +128,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                       },
                     })}
                     data-cy="source-resource-detail"
+                    data-testid="source-resource-detail"
                   >
                     {sourceResourceName}
                   </Link>
@@ -138,6 +141,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
               <Link
                 to={getPageUrl(sourceResourceRoute, { params: { id: sourceResourceObj.id } })}
                 data-cy="source-resource-detail"
+                data-testid="source-resource-detail"
               >
                 {sourceResourceName}
               </Link>
@@ -161,6 +165,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                     params: { id: sourceResourceObj.id },
                   })}
                   data-cy="source-resource-detail"
+                  data-testid="source-resource-detail"
                 >
                   {sourceResourceName}
                 </Link>
@@ -176,6 +181,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                     },
                   })}
                   data-cy="target-resource-detail"
+                  data-testid="target-resource-detail"
                 >
                   {targetResourceName}
                 </Link>
@@ -202,6 +208,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                     params: { id: sourceResourceObj.id },
                   })}
                   data-cy="source-resource-detail"
+                  data-testid="source-resource-detail"
                 >
                   {sourceResourceName}
                 </Link>
@@ -217,6 +224,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                     },
                   })}
                   data-cy="target-resource-detail"
+                  data-testid="target-resource-detail"
                 >
                   {targetResourceName}
                 </Link>

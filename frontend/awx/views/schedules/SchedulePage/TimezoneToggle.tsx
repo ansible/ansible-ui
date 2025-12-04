@@ -14,6 +14,7 @@ export function TimezoneToggle(props: {
       <ToggleGroupItem
         id="toggle-local"
         data-cy="toggle-local"
+        data-testid="toggle-local"
         aria-label={t('Toggle to {{localTimezone}}', { timezone: props.localTimezone })}
         isSelected={props.isLocal}
         text={props.localTimezone}
@@ -23,6 +24,7 @@ export function TimezoneToggle(props: {
       <ToggleGroupItem
         id="toggle-utc"
         data-cy="toggle-utc"
+        data-testid="toggle-utc"
         aria-label={t('Toggle to UTC')}
         isSelected={!isLocal}
         text="UTC"

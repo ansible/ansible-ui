@@ -76,7 +76,11 @@ function EdaWarningDialog<T extends object>(props: EdaWarningDialog<T>) {
             {messages && (
               <PageDetails numberOfColumns="single">
                 {messages.map((message) => (
-                  <PageDetail data-cy="warning=prompt" key={message?.toString()}>
+                  <PageDetail
+                    data-cy="warning=prompt"
+                    data-testid="warning=prompt"
+                    key={message?.toString()}
+                  >
                     {message}
                   </PageDetail>
                 ))}

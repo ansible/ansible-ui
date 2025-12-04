@@ -48,6 +48,7 @@ export function HubMasthead() {
               id="about"
               onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/galaxy-logo.svg' })}
               data-cy="masthead-about"
+              data-testid="masthead-about"
             >
               {t('About')}
             </DropdownItem>

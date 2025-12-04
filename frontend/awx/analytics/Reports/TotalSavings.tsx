@@ -25,6 +25,7 @@ export const TotalSavings: FunctionComponent<Props> = ({
       {[t('Total savings'), t('Current page savings')].map((title, index) => (
         <Card
           data-cy={title.toLowerCase().replace(' ', '_').replace(' ', '_')}
+          data-testid={title.toLowerCase().replace(' ', '_').replace(' ', '_')}
           isPlain
           isCompact
           key={title}
@@ -40,7 +41,7 @@ export const TotalSavings: FunctionComponent<Props> = ({
             >
               {isLoading ? (
                 <SpinnerDiv>
-                  <Spinner data-cy={'spinner'} size="lg" />
+                  <Spinner data-cy={'spinner'} data-testid={'spinner'} size="lg" />
                 </SpinnerDiv>
               ) : (
                 currencyFormatter(index === 0 ? totalSavings : currentPageSavings)
