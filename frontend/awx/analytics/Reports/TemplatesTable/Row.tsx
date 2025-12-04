@@ -74,6 +74,7 @@ export const Row: FunctionComponent<Props> = ({ template, readOnly = true, varia
                 }
                 id={'manual-time-' + template.id.toString()}
                 data-cy={'manual-time'}
+                data-testid={'manual-time'}
                 style={{ maxWidth: '150px' }}
                 type="number"
                 aria-label="time run manually"
@@ -88,6 +89,7 @@ export const Row: FunctionComponent<Props> = ({ template, readOnly = true, varia
         </Td>
         <Td
           data-cy={'savings'}
+          data-testid={'savings'}
           style={{
             color: template.enabled ? globalTextColorSuccess.value : globalTextColorDisabled.value,
           }}

@@ -31,7 +31,11 @@ export function SocialAuthLogin(props: SocialAuthLoginProps) {
     <>
       <Stack style={{ width: '100%' }} hasGutter>
         {t('Log in with:')}
-        {helperText && <div data-cy={'social-error'}>{helperText}</div>}
+        {helperText && (
+          <div data-cy={'social-error'} data-testid={'social-error'}>
+            {helperText}
+          </div>
+        )}
         {options.map((option) => (
           <SocialAuthLink key={option.login_url} option={option} />
         ))}

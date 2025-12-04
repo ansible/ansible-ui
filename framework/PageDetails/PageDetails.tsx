@@ -58,6 +58,7 @@ export function PageDetails(props: {
             variant="warning"
             key={i}
             data-cy={alertPrompt}
+            data-testid={alertPrompt}
           />
         ))}
       <div ref={descriptionListRef}>

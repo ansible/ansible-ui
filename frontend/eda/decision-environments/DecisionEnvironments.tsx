@@ -69,6 +69,7 @@ export function DecisionEnvironments() {
                   variant={ButtonVariant.primary}
                   href={getPageUr(EdaRoute.CreateDecisionEnvironment)}
                   data-cy="create-decision-environment"
+                  data-testid="create-decision-environment"
                 >
                   {t('Create decision environment')}
                 </ButtonLink>

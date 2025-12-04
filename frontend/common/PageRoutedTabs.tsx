@@ -72,6 +72,7 @@ export function PageRoutedTabs(props: {
           title={tab.label}
           href={getPageUrl(tab.page, { params: props.params, query: sharedQueryKeysObj })}
           data-cy={tab.dataCy}
+          data-testid={tab.dataCy}
         />
       ) : null
     ) as unknown as TabsChild;
@@ -96,6 +97,7 @@ export function PageRoutedTabs(props: {
               }
               href={getPageUrl(props.backTab.page, { params: props.params, query })}
               data-cy={props.backTab.label.replace(' ', '-').toLocaleLowerCase()}
+              data-testid={props.backTab.label.replace(' ', '-').toLocaleLowerCase()}
             />
           )}
           {tabs}

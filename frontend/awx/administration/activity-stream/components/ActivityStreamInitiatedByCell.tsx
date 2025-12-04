@@ -28,6 +28,7 @@ export const ActivityStreamInitiatedByCell: React.FC<ActivityStreamInitiatedByCe
         to={pageUrl}
         disableLinks={options?.disableLinks}
         data-cy="initiated-by"
+        data-testid="initiated-by"
       />
     );
   } else if (item.summary_fields?.actor) {

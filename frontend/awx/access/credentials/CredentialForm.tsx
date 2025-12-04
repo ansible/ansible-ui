@@ -697,6 +697,7 @@ function CredentialSubForm({
             isInline
             title={t('Input username and password or client ID and client secret.')}
             data-cy="credential-form-insights-alert"
+            data-testid="credential-form-insights-alert"
           >
             <Trans>
               Enter your client ID and client secret to create your Insights credential. See this{' '}
@@ -1015,6 +1016,7 @@ function CredentialTextInput({
             {accumulatedPluginValues.some((cp) => cp.input_field_name === field.id) && (
               <Button
                 data-cy="clear-secret-management-input"
+                data-testid="clear-secret-management-input"
                 variant="control"
                 onClick={clearFieldValue}
               >

@@ -81,6 +81,7 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
         {mappings.map((mapping, i) => (
           <SourceEventMapFields
             data-cy={`source-event-map-field-${mapping.id}`}
+            data-testid={`source-event-map-field-${mapping.id}`}
             key={mapping.id}
             index={i}
             source_mappings={mapping as unknown as EdaSourceEventMapping}
@@ -101,6 +102,7 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
             icon={<PlusCircleIcon />}
             style={{ paddingLeft: 0 }}
             data-cy={'add_event_stream'}
+            data-testid={'add_event_stream'}
             onClick={() => addMapping()}
             isDisabled={getFieldState('mappings').invalid}
           >
@@ -131,6 +133,7 @@ export function SourceEventStreamMappingModal(options: EventStreamMappingProps) 
       aria-label={t('Event streams')}
       ouiaId={'Event streams'}
       data-cy={'event-streams-modal'}
+      data-testid={'event-streams-modal'}
       variant={ModalVariant.large}
       isOpen
       onClose={onClose}

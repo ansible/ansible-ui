@@ -177,11 +177,19 @@ function WorkflowNodeDetailsFooter({ node }: { node: GraphNode }) {
 
   return (
     <PageSection hasBodyWrapper={false} isFilled={false}>
-      <ActionList data-cy="workflow-topology-sidebar-actions">
-        <Button data-cy="edit-node" variant="primary" onClick={handleEdit}>
+      <ActionList
+        data-cy="workflow-topology-sidebar-actions"
+        data-testid="workflow-topology-sidebar-actions"
+      >
+        <Button data-cy="edit-node" data-testid="edit-node" variant="primary" onClick={handleEdit}>
           {t('Edit')}
         </Button>
-        <Button data-cy="remove-node" variant="danger" onClick={handleRemove}>
+        <Button
+          data-cy="remove-node"
+          data-testid="remove-node"
+          variant="danger"
+          onClick={handleRemove}
+        >
           {t('Remove')}
         </Button>
       </ActionList>

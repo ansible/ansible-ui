@@ -36,6 +36,7 @@ export function PageMasthead(props: { brand: ReactNode; children?: ReactNode }) 
         <Toolbar
           id="toolbar"
           data-cy="toolbar"
+          data-testid="toolbar"
           inset={{ default: 'insetNone' }}
           style={{ padding: 0 }}
         >
@@ -53,6 +54,7 @@ export function PageMastheadToggle() {
       <PageToggleButton
         isHamburgerButton
         data-cy={'nav-toggle'}
+        data-testid={'nav-toggle'}
         variant="plain"
         aria-label="Global navigation"
       />

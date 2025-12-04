@@ -175,6 +175,7 @@ export function CredentialInputs(props: {
       <PageFormTextInput<EdaCredentialCreate>
         name="name"
         data-cy="name-form-field"
+        data-testid="name-form-field"
         label={t('Name')}
         placeholder={t('Enter credential name')}
         isRequired
@@ -183,6 +184,7 @@ export function CredentialInputs(props: {
       <PageFormTextArea<EdaCredentialCreate>
         name="description"
         data-cy="description-form-field"
+        data-testid="description-form-field"
         label={t('Description')}
         placeholder={t('Enter description ')}
         maxLength={150}

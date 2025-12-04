@@ -264,6 +264,7 @@ function ReviewExpandableList<
   return (
     <ExpandableSection
       data-cy={`expandable-section-${fieldName}`}
+      data-testid={`expandable-section-${fieldName}`}
       toggleContent={
         <div>
           <span>{labelForSelectedItems}</span>

@@ -19,6 +19,7 @@ export function PageWizardToggle() {
       aria-label={t('Wizard toggle')}
       aria-expanded={isToggleExpanded}
       data-cy="wizard-toggle"
+      data-testid="wizard-toggle"
     >
       <span className={css(styles.wizardToggleList)}>
         <span className={css(styles.wizardToggleListItem)}>

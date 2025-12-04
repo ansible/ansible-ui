@@ -135,6 +135,7 @@ export function PageDashboardCard(props: {
       isCompact={props.isCompact}
       className="page-dashboard-card"
       data-cy={id}
+      data-testid={id}
       // variant="secondary"
     >
       {(props.title || props.linkText) && (
@@ -146,13 +147,19 @@ export function PageDashboardCard(props: {
           >
             <FlexItem grow={{ default: 'grow' }}>
               {props.supertitle && (
-                <Content data-cy="card-main" component="small" style={{ opacity: 0.8 }}>
+                <Content
+                  data-cy="card-main"
+                  data-testid="card-main"
+                  component="small"
+                  style={{ opacity: 0.8 }}
+                >
                   {props.supertitle}
                 </Content>
               )}
               <div>
                 <Title
                   data-cy="card-title"
+                  data-testid="card-title"
                   headingLevel="h3"
                   size="xl"
                   style={{ display: 'inline-block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
@@ -162,14 +169,19 @@ export function PageDashboardCard(props: {
                 <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
               </div>
               {props.subtitle && (
-                <Content data-cy="card-subtitle" component="small" style={{ opacity: 0.8 }}>
+                <Content
+                  data-cy="card-subtitle"
+                  data-testid="card-subtitle"
+                  component="small"
+                  style={{ opacity: 0.8 }}
+                >
                   {props.subtitle}
                 </Content>
               )}
             </FlexItem>
             {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
             <FlexItem>
-              <Content data-cy="card-link-text" component="small">
+              <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
                 {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
               </Content>
             </FlexItem>

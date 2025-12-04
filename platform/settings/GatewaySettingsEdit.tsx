@@ -302,6 +302,7 @@ export function CSRFTrustedOriginsInputs({ name }: { name: string }) {
                     <TextInput
                       id={`link-url-${index}`}
                       data-cy={`link-url-${index}`}
+                      data-testid={`link-url-${index}`}
                       {...rest}
                       type="url"
                       placeholder={t('Enter trusted origin URL')}
@@ -323,6 +324,7 @@ export function CSRFTrustedOriginsInputs({ name }: { name: string }) {
             type="button"
             variant="plain"
             data-cy={`add-trusted-origin-${index}`}
+            data-testid={`add-trusted-origin-${index}`}
             aria-label={t('Add CSRF trusted origin')}
             onClick={() => append('')}
           />
@@ -331,6 +333,7 @@ export function CSRFTrustedOriginsInputs({ name }: { name: string }) {
             type="button"
             variant="plain"
             data-cy={`remove-trusted-origin-${index}`}
+            data-testid={`remove-trusted-origin-${index}`}
             isDisabled={fields.length < 2}
             aria-label={t('Remove trusted origin')}
             onClick={() => remove(index)}

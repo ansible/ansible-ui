@@ -34,6 +34,7 @@ export function SystemJobNodeDetails(props: {
         label={t('Variables')}
         showCopyToClipboard
         data-cy="workflow-node-detail-variables"
+        data-testid="workflow-node-detail-variables"
         value={JSON.stringify(selectedNode.extra_data) || '---'}
       />
     </PageDetails>

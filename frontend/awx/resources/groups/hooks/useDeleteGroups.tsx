@@ -81,6 +81,7 @@ export function DeleteGroupsDialog(props: {
       isOpen
       onClose={props.onClose}
       data-cy="delete-groups-dialog"
+      data-testid="delete-groups-dialog"
     >
       <ModalHeader
         titleIconVariant="danger"
@@ -90,7 +91,11 @@ export function DeleteGroupsDialog(props: {
       />
       <ModalBody>
         <>
-          <HelperText className="pf-v6-u-pb-lg" data-cy="delete-groups-dialog-names">
+          <HelperText
+            className="pf-v6-u-pb-lg"
+            data-cy="delete-groups-dialog-names"
+            data-testid="delete-groups-dialog-names"
+          >
             {props.groups.map((group) => (
               <HelperTextItem variant="error" key={group.name}>
                 {group.name}

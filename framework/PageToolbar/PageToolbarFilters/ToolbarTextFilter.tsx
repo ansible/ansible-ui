@@ -106,6 +106,7 @@ export function ToolbarTextMultiFilter(props: {
           icon={<ArrowRightIcon />}
           variant={value ? 'primary' : 'control'}
           data-cy="apply-filter"
+          data-testid="apply-filter"
           aria-label="apply filter"
           onClick={() => {
             props.addFilter(value);

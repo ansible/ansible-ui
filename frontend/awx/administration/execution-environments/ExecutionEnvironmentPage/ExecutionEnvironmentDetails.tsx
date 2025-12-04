@@ -34,12 +34,20 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
   const execution_env = props.execution_env;
 
   return (
-    <PageDetails data-cy="execution-environment-page-detail">
-      <PageDetail data-cy="execution-environment-name" label={t('Name')}>
+    <PageDetails
+      data-cy="execution-environment-page-detail"
+      data-testid="execution-environment-page-detail"
+    >
+      <PageDetail
+        data-cy="execution-environment-name"
+        data-testid="execution-environment-name"
+        label={t('Name')}
+      >
         {execution_env.name}
       </PageDetail>
       <PageDetail
         data-cy="execution-environment-image"
+        data-testid="execution-environment-image"
         label={t('Image')}
         helpText={
           <span>
@@ -66,11 +74,16 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
       >
         {execution_env.image}
       </PageDetail>
-      <PageDetail data-cy="execution-environment-description" label={t('Description')}>
+      <PageDetail
+        data-cy="execution-environment-description"
+        data-testid="execution-environment-description"
+        label={t('Description')}
+      >
         {execution_env.description}
       </PageDetail>
       <PageDetail
         data-cy="execution-environment-managed"
+        data-testid="execution-environment-managed"
         label={t('Managed')}
       >{`${execution_env.managed}`}</PageDetail>
       <PageDetail data-cy="execution-environment-org" label={t('Organization')}>
@@ -85,17 +98,29 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
           t('Globally Available')
         )}
       </PageDetail>
-      <PageDetail data-cy="execution-environment-pull" label={t('Pull')}>
+      <PageDetail
+        data-cy="execution-environment-pull"
+        data-testid="execution-environment-pull"
+        label={t('Pull')}
+      >
         {execution_env.pull === '' ? t('Missing') : execution_env.pull}
       </PageDetail>
-      <PageDetail data-cy="execution-environment-reg-cred" label={t('Registry Credential')}>
+      <PageDetail
+        data-cy="execution-environment-reg-cred"
+        data-testid="execution-environment-reg-cred"
+        label={t('Registry Credential')}
+      >
         {execution_env?.summary_fields?.credential?.name ? (
           <Label variant="outline" color="blue">
             {execution_env?.summary_fields?.credential?.name}
           </Label>
         ) : undefined}
       </PageDetail>
-      <PageDetail data-cy="execution-environment-created" label={t('Created')}>
+      <PageDetail
+        data-cy="execution-environment-created"
+        data-testid="execution-environment-created"
+        label={t('Created')}
+      >
         <DateTimeCell
           value={execution_env.created}
           author={execution_env?.summary_fields?.created_by?.username}
@@ -108,6 +133,7 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
       </PageDetail>
       <LastModifiedPageDetail
         data-cy="execution-environment-modified"
+        data-testid="execution-environment-modified"
         value={execution_env.modified}
         author={execution_env?.summary_fields?.modified_by?.username}
         onClick={() =>

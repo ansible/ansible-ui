@@ -177,7 +177,7 @@ export function ExecutionEnvironmentActivity() {
   return (
     <PageDetails numberOfColumns="single">
       <PageDetail>
-        <Table data-cy="activities-table">
+        <Table data-cy="activities-table" data-testid="activities-table">
           <Thead>
             <Tr>
               <Th width={15}>{t('Change')}</Th>

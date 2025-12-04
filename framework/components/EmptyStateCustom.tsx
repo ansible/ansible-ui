@@ -27,7 +27,9 @@ export function EmptyStateCustom(props: {
       style={style}
       isFullHeight
     >
-      <EmptyStateBody data-cy={props.description}>{description}</EmptyStateBody>
+      <EmptyStateBody data-cy={props.description} data-testid={props.description}>
+        {description}
+      </EmptyStateBody>
       <EmptyStateFooter>
         {button && <EmptyStateActions>{button}</EmptyStateActions>}
         {image && (

@@ -51,6 +51,7 @@ export function ImportLog({ isLoading, collectionImport, collection, error }: IP
           isInline
           isExpandable
           data-cy="import-error"
+          data-testid="import-error"
         >
           <pre style={{ whiteSpace: 'pre-wrap' }}>{collectionImport?.error?.traceback}</pre>
         </Alert>
@@ -62,6 +63,7 @@ export function ImportLog({ isLoading, collectionImport, collection, error }: IP
           position: 'relative',
         }}
         data-cy="import-console"
+        data-testid="import-console"
       >
         <NavigationArrow
           direction="down"

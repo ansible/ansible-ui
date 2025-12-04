@@ -76,13 +76,17 @@ export const ToolbarHeader = observer(() => {
       <ToolbarItem align={{ default: 'alignStart' }}>
         <Title headingLevel="h1">
           <Flex>
-            <FlexItem data-cy="wf-vzr-title">{t('Workflow Visualizer')}</FlexItem>
+            <FlexItem data-cy="wf-vzr-title" data-testid="wf-vzr-title">
+              {t('Workflow Visualizer')}
+            </FlexItem>
             <Divider
               orientation={{
                 default: 'vertical',
               }}
             />
-            <FlexItem data-cy="wf-vzr-name">{workflowTemplate?.name}</FlexItem>
+            <FlexItem data-cy="wf-vzr-name" data-testid="wf-vzr-name">
+              {workflowTemplate?.name}
+            </FlexItem>
           </Flex>
         </Title>
       </ToolbarItem>
@@ -101,6 +105,7 @@ export const ToolbarHeader = observer(() => {
       </ToolbarItem>
       <Modal
         data-cy="visualizer-unsaved-changes-modal"
+        data-testid="visualizer-unsaved-changes-modal"
         isOpen={showUnsavedChangesModal}
         variant={ModalVariant.small}
         onClose={() => setShowUnsavedChangesModal(false)}
@@ -118,6 +123,7 @@ export const ToolbarHeader = observer(() => {
           <Button
             key="save-and-exit"
             data-cy="save-and-exit"
+            data-testid="save-and-exit"
             variant="primary"
             isLoading={isSubmitting}
             onClick={() => {
@@ -154,6 +160,7 @@ export const ToolbarHeader = observer(() => {
           <Button
             key="exit-without-saving"
             data-cy="exit-without-saving"
+            data-testid="exit-without-saving"
             variant="danger"
             onClick={() => {
               pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
@@ -257,6 +264,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
           >
             <Button
               data-cy="launch-workflow-button"
+              data-testid="launch-workflow-button"
               icon={<RocketIcon />}
               variant={'secondary'}
               label={t('Launch workflow')}
@@ -268,7 +276,10 @@ export const WorkflowVisualizerToolbar = observer(() => {
           </Tooltip>
         )}
       </ToolbarItem>
-      <ToolbarItem data-cy="workflow-visualizer-toolbar-kebab">
+      <ToolbarItem
+        data-cy="workflow-visualizer-toolbar-kebab"
+        data-testid="workflow-visualizer-toolbar-kebab"
+      >
         <Dropdown
           onOpenChange={(isOpen: boolean) => setIsKebabOpen(isOpen)}
           onSelect={() => setIsKebabOpen(!isKebabOpen)}
@@ -288,6 +299,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
             <DropdownItem
               isExternalLink
               data-cy="workflow-documentation"
+              data-testid="workflow-documentation"
               to={useGetDocsUrl(config, 'workflowVisualizer')}
             >
               {t('Documentation')}
@@ -303,6 +315,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
                       : undefined
                   }
                   data-cy="workflow-visualizer-toolbar-remove-all"
+                  data-testid="workflow-visualizer-toolbar-remove-all"
                   onClick={() => removeNodes(nodes)}
                   isDanger
                   icon={<MinusCircleIcon />}
@@ -315,13 +328,17 @@ export const WorkflowVisualizerToolbar = observer(() => {
         </Dropdown>
       </ToolbarItem>
       <ToolbarItem style={{ alignSelf: 'center' }}>
-        <div data-cy="workflow-visualizer-toolbar-total-nodes">
+        <div
+          data-cy="workflow-visualizer-toolbar-total-nodes"
+          data-testid="workflow-visualizer-toolbar-total-nodes"
+        >
           {t('Total nodes')} <Badge isRead>{nodes.length || 0}</Badge>
         </div>
       </ToolbarItem>
       <ToolbarItem align={{ default: 'alignEnd' }}>
         <Button
           data-cy="workflow-visualizer-toolbar-expand-collapse"
+          data-testid="workflow-visualizer-toolbar-expand-collapse"
           variant="plain"
           aria-label={isFullScreen ? t('Collapse') : t('Expand')}
           onClick={toggleFullScreen}
@@ -330,11 +347,13 @@ export const WorkflowVisualizerToolbar = observer(() => {
               {isFullScreen ? (
                 <CompressAltIcon
                   data-cy="workflow-visualizer-toolbar-collapse"
+                  data-testid="workflow-visualizer-toolbar-collapse"
                   aria-label={t('Collapse')}
                 />
               ) : (
                 <ExpandAltIcon
                   data-cy="workflow-visualizer-toolbar-expand"
+                  data-testid="workflow-visualizer-toolbar-expand"
                   aria-label={t('Expand')}
                 />
               )}

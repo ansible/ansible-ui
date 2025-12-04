@@ -81,6 +81,7 @@ export function PageDetailCodeEditor(props: {
               <ToggleGroupItem
                 id="toggle-yaml"
                 data-cy="toggle-yaml"
+                data-testid="toggle-yaml"
                 aria-label={t('Toggle to YAML')}
                 isSelected={language === 'yaml'}
                 text="YAML"
@@ -90,6 +91,7 @@ export function PageDetailCodeEditor(props: {
               <ToggleGroupItem
                 id="toggle-json"
                 data-cy="toggle-json"
+                data-testid="toggle-json"
                 aria-label={t('Toggle to JSON')}
                 isSelected={language === 'json'}
                 text="JSON"

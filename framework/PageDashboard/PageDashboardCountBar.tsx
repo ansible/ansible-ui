@@ -19,6 +19,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
     <PageDashboardCard title={t('Resource Counts')} width="xxl">
       <div
         data-cy="resource-count-bar"
+        data-testid="resource-count-bar"
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -37,6 +38,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
           return (
             <div
               data-cy={id}
+              data-testid={id}
               id={id}
               key={index}
               style={{ display: 'flex', gap: 12, alignItems: 'center' }}

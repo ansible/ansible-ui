@@ -37,6 +37,7 @@ function Breadcrumbs(props: { breadcrumbs?: ICatalogBreadcrumb[]; style?: CSSPro
         return (
           <BreadcrumbItem
             data-cy={breadcrumb.label}
+            data-testid={breadcrumb.label}
             id={breadcrumb.id}
             key={index}
             component={breadcrumb.component}
@@ -46,6 +47,7 @@ function Breadcrumbs(props: { breadcrumbs?: ICatalogBreadcrumb[]; style?: CSSPro
               <a
                 href={breadcrumb.to}
                 data-cy={breadcrumb.label}
+                data-testid={breadcrumb.label}
                 onClick={(e) => {
                   e.preventDefault();
                   if (!breadcrumb.to) return;
@@ -181,7 +183,11 @@ export function PageHeader(props: PageHeaderProps) {
               )
             ) : null}
             {isMdOrLarger && description && (
-              <div data-cy="app-description" style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}>
+              <div
+                data-cy="app-description"
+                data-testid="app-description"
+                style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}
+              >
                 {description}
               </div>
             )}
@@ -189,6 +195,7 @@ export function PageHeader(props: PageHeaderProps) {
           {title && (headerActions || controls) && (
             <Flex
               data-cy="manage-view"
+              data-testid="manage-view"
               direction={{ default: 'column' }}
               spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
               justifyContent={{ default: 'justifyContentCenter' }}

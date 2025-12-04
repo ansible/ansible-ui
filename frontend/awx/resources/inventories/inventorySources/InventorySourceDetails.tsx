@@ -284,6 +284,7 @@ export function InventorySourceDetails(
         helpText={getSourceVarsHelpText(inventorySource.source)}
         showCopyToClipboard
         data-cy="inventory-source-detail-variables"
+        data-testid="inventory-source-detail-variables"
         value={inventorySource.source_vars || '---'}
       />
       <PageDetail label={t`Created`}>

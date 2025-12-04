@@ -10,6 +10,7 @@ export function PageThemeSwitcher() {
       <Button
         icon={<MoonIcon />}
         data-cy="settings-icon"
+        data-testid="settings-icon"
         variant="plain"
         onClick={() => setSettings({ ...settings, theme: 'light' })}
       />
@@ -19,6 +20,7 @@ export function PageThemeSwitcher() {
     <Button
       icon={<SunIcon />}
       data-cy="theme-icon"
+      data-testid="theme-icon"
       variant="plain"
       onClick={() => setSettings({ ...settings, theme: 'dark' })}
     />

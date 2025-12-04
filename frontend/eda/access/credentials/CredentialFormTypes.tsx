@@ -172,6 +172,7 @@ export function CredentialFormMultilineStringInput(props: {
       <div style={{ display: 'flex', justifyContent: 'flex-start', width: 'fit-content' }}>
         <Button
           data-cy="secret-management-input"
+          data-testid="secret-management-input"
           icon={<KeyIcon />}
           variant="control"
           onClick={props.onSecretModalToggle}
@@ -325,6 +326,7 @@ function CredentialFormTextInputWithButton(props: {
             >
               <Button
                 data-cy="secret-management-input"
+                data-testid="secret-management-input"
                 variant="control"
                 icon={<KeyIcon />}
                 onClick={props.onSecretModalToggle}
@@ -333,6 +335,7 @@ function CredentialFormTextInputWithButton(props: {
             {externalCredentialInfo.hasExternalCredential && (
               <Button
                 data-cy="clear-secret-management-input"
+                data-testid="clear-secret-management-input"
                 variant="control"
                 onClick={handleClearField}
               >

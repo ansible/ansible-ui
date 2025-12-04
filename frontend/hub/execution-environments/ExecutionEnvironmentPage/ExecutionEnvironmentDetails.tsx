@@ -95,6 +95,7 @@ export function ExecutionEnvironmentDetails() {
       <PageDetail label={t('Pull this image')}>
         <ClipboardCopy
           data-cy="clipboard-copy"
+          data-testid="clipboard-copy"
           hoverTip={t('Copy to clipboard')}
           clickTip={t('Successfully copied to clipboard!')}
           textAriaLabel={t('Copyable input')}
@@ -127,6 +128,7 @@ export function ExecutionEnvironmentDetails() {
             button={
               <Button
                 data-cy="add-readme"
+                data-testid="add-readme"
                 variant="primary"
                 onClick={() => setMarkdownEditing(true)}
               >
@@ -147,7 +149,7 @@ export function ExecutionEnvironmentDetails() {
         )}
         {markdownEditing && (
           <ControlButtons>
-            <div data-cy="save-readme">
+            <div data-cy="save-readme" data-testid="save-readme">
               <Button
                 variant={'primary'}
                 onClick={() => {

@@ -171,6 +171,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               alertPrompts.map((alertPrompt, i) => (
                 <Alert
                   data-cy="alert-toaster"
+                  data-testid="alert-toaster"
                   isInline
                   title={alertPrompt}
                   variant="warning"

@@ -44,6 +44,7 @@ export const ExternalLink = ({
     <a
       className={className}
       data-cy={dataCy}
+      data-testid={dataCy}
       href={href}
       rel="nofollow noopener noreferrer"
       target="_blank"

@@ -73,6 +73,7 @@ export function Credentials() {
                   variant={ButtonVariant.primary}
                   href={getPageUrl(EdaRoute.CreateCredential)}
                   data-cy="create-credential"
+                  data-testid="create-credential"
                 >
                   {t('Create credential')}
                 </ButtonLink>

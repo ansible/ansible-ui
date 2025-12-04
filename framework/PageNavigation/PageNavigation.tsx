@@ -28,7 +28,7 @@ export function PageNavigation(props: {
     <PageSidebar isSidebarOpen={navBar.isOpen}>
       <PageSidebarBody>
         {props.contextSwitcher}
-        <Nav data-cy="page-navigation" className="side-nav">
+        <Nav data-cy="page-navigation" data-testid="page-navigation" className="side-nav">
           <NavList>
             <PageNavigationItems baseRoute={props.basename ?? ''} items={navigationItems} />
           </NavList>
@@ -107,6 +107,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         onClick={() => (item.href ? window.open(item.href, '_blank') : onClickNavItem(route))}
         target={item.href ? '_blank' : ''}
         data-cy={id}
+        data-testid={id}
         style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column' }}
       >
         <Flex flexWrap={{ default: 'nowrap' }}>

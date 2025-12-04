@@ -33,6 +33,7 @@ export function PageWizardFooter(props: {
             ) : (
               <button
                 data-cy="wizard-next"
+                data-testid="wizard-next"
                 className="pf-v6-c-button pf-m-primary"
                 type="submit"
                 onClick={() => {

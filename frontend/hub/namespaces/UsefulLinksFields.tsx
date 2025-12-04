@@ -48,6 +48,7 @@ export function UsefulLinksFields() {
                   <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     <TextInput
                       data-cy={`link-text-${index}`}
+                      data-testid={`link-text-${index}`}
                       {...field}
                       placeholder={t('Enter link text')}
                     />
@@ -71,6 +72,7 @@ export function UsefulLinksFields() {
                       <TextInput
                         validated={error?.message ? ValidatedOptions.error : undefined}
                         data-cy={`link-url-${index}`}
+                        data-testid={`link-url-${index}`}
                         {...field}
                         type="url"
                         placeholder={t('Enter link URL')}

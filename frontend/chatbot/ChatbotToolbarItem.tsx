@@ -13,6 +13,7 @@ export function ChatbotToolbarItem() {
         <ToolbarItem>
           <Button
             data-cy="chatbot-badge"
+            data-testid="chatbot-badge"
             variant={ButtonVariant.plain}
             onClick={() =>
               setChatbotState(

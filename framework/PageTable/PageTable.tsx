@@ -643,6 +643,7 @@ function TableHead<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="1px"
             data-cy={'selections-column-header'}
+            data-testid={'selections-column-header'}
             style={{ left: expandColumnWidth }}
             ref={checkboxColumnRef as LegacyRef<HTMLTableCellElement>}
             select={{
@@ -678,6 +679,7 @@ function TableHead<T extends object>(props: {
                 width: column.fullWidth ? '100%' : undefined,
               }}
               data-cy={getID(column.header + '-column-header')}
+              data-testid={getID(column.header + '-column-header')}
             >
               {column.header}
             </Th>
@@ -689,6 +691,7 @@ function TableHead<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="1px"
             data-cy={'action-column-header'}
+            data-testid={'action-column-header'}
             ref={actionColumnRef as LegacyRef<HTMLTableCellElement>}
           />
         )}
@@ -788,6 +791,7 @@ function TableRow<T extends object>(props: {
                 : undefined
             }
             data-cy={'expand-column-cell'}
+            data-testid={'expand-column-cell'}
             isStickyColumn
             stickyMinWidth="1px"
             className={expanded && expandedRowContent ? 'expanded' : undefined}
@@ -814,6 +818,7 @@ function TableRow<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="1px"
             data-cy={'checkbox-column-cell'}
+            data-testid={'checkbox-column-cell'}
             style={{ left: expandColumnWidth }}
             className={expandedRow && expanded && expandedRowContent ? 'expanded' : undefined}
           />
@@ -830,6 +835,7 @@ function TableRow<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="1px"
             data-cy={'checkbox-column-cell'}
+            data-testid={'checkbox-column-cell'}
           />
         )}
         <TableCells
@@ -902,6 +908,7 @@ function TableCells<T extends object>(props: {
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           data-cy={'actions-column-cell'}
+          data-testid={'actions-column-cell'}
           className={props.expanded ? 'expanded' : undefined}
         >
           <PageActions

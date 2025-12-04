@@ -46,6 +46,7 @@ export function PageWizardNavigation() {
             <li
               className="pf-v6-c-wizard__nav-item"
               data-cy={`wizard-nav-item-${step.id}`}
+              data-testid={`wizard-nav-item-${step.id}`}
               key={index}
             >
               <button
@@ -109,6 +110,7 @@ function SubstepsNav(props: { step: PageWizardParentStep; activeStepIndex: numbe
           <li
             className="pf-v6-c-wizard__nav-item"
             data-cy={`wizard-nav-item-${substep.id}`}
+            data-testid={`wizard-nav-item-${substep.id}`}
             key={substep.id}
           >
             <button

@@ -110,6 +110,7 @@ export const WorkflowOutputGraph = (props: {
           return (
             <TopologyView
               data-cy="workflow-visualizer-output-graph"
+              data-testid="workflow-visualizer-output-graph"
               controlBar={
                 <TopologyControlBar
                   controlButtons={createTopologyControlButtons({

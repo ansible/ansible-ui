@@ -58,7 +58,9 @@ export function PageDetailCodeBlock(props: {
       fullWidth={fullWidth}
     >
       <CodeBlock id={id} actions={actions}>
-        <CodeBlockCode data-cy={'code-block-value'}>{value}</CodeBlockCode>
+        <CodeBlockCode data-cy={'code-block-value'} data-testid={'code-block-value'}>
+          {value}
+        </CodeBlockCode>
       </CodeBlock>
     </PageDetail>
   );
