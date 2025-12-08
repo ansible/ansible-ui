@@ -6,6 +6,9 @@ import { Instance as InstanceType } from '@ansible/awx-ui/interfaces/Instance';
 
 export interface CreateInstanceOptions {
   hostname?: string;
+  listenerPort?: number;
+  managedByPolicy?: boolean;
+  peersFromControlNodes?: boolean;
 }
 
 export const Instance = {
@@ -13,9 +16,10 @@ export const Instance = {
     /**
      * Creates an instance via API (requires K8s/OpenShift deployment)
      */
-    create: async (page: Page, hostname: string): Promise<InstanceType> => {
+    create: async (page: Page, hostname: string, listenerPort?: number): Promise<InstanceType> => {
       const instance = await awxAPI.post<InstanceType>(page, '/instances/', {
         hostname,
+        listener_port: listenerPort ?? null,
         enabled: true,
         managed_by_policy: true,
         peers_from_control_nodes: false,
@@ -29,11 +33,16 @@ export const Instance = {
 
       return instance;
     },
+    delete: async (page: Page, instanceId: number): Promise<void> => {
+      await awxAPI.patch(page, `/instances/${instanceId}/`, {
+        node_state: 'deprovisioning',
+      });
+    },
   },
 
   ui: {
     create: async (page: Page, options: CreateInstanceOptions = {}): Promise<string> => {
-      const hostname = options.hostname ?? createE2EName();
+      const hostname = options.hostname ?? createE2EName('', { noWhitespace: true });
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Instances');
       await expect(page.getByRole('heading', { name: 'Instances' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Create instance' })).toBeVisible();
