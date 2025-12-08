@@ -26,7 +26,7 @@ export function useCollectionFilters() {
         key: 'keywords',
         label: t('Name'),
         type: ToolbarFilterType.SingleText,
-        query: 'keywords',
+        query: 'name',
         comparison: 'equals',
       },
       {
