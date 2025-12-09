@@ -4,11 +4,17 @@ import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
+import { awxAPI } from '../commands/apiClient';
 
 export const Notifier = {
+  api: {
+    delete: async (page: Page, notifierId: number): Promise<void> => {
+      await awxAPI.delete(page, `notification_templates/${notifierId}/`);
+    },
+  },
   ui: {
     createSlack: async (page: Page): Promise<string> => {
-      const notifierName = createE2EName('notifier');
+      const notifierName = createE2EName('notifier-Slack');
       await navigateTo(page, 'Automation Execution', 'Administration', 'Notifiers');
       await page.getByText('Create notifier', { exact: true }).click();
       await page.getByPlaceholder('Enter notifier name').fill(notifierName);
@@ -16,8 +22,9 @@ export const Notifier = {
       await page.getByRole('option', { name: 'Default' }).click();
       await page.getByLabel('Notification type *').click();
       await page.getByRole('option', { name: 'Slack' }).click();
-      await page.getByPlaceholder('Enter token').fill('abc');
-      await page.getByPlaceholder('Enter destination channels').fill('#abc');
+      await page.getByPlaceholder('Enter token').fill('test-token');
+      await page.getByPlaceholder('Enter destination channels').fill('#test-channel');
+      await page.getByTestId('notification-configuration-hex-color').fill('#3366ff');
       await page.getByRole('button', { name: 'Save notifier' }).click();
       await expect(page.getByRole('heading', { name: notifierName, exact: true })).toBeVisible();
       return notifierName;
@@ -25,7 +32,7 @@ export const Notifier = {
 
     delete: async (page: Page, notifierName: string): Promise<void> => {
       await navigateTo(page, 'Automation Execution', 'Administration', 'Notifiers');
-      await clickTableRow({ filterLabel: 'Name', text: notifierName, clearFilters: false }, page);
+      await clickTableRow({ filterLabel: 'Name', text: notifierName, clearFilters: true }, page);
       await clickPageAction('Delete Notifier', page);
       await confirmAndAssertDeletion(page);
     },
