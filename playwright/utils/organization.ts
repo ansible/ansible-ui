@@ -5,15 +5,7 @@ import { navigateTo } from '../commands/navigateTo';
 import { clickTableRow } from '../commands/clickTableRow';
 import { selectTableRow } from '../commands/selectTableRow';
 import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
-
-export interface OrganizationType {
-  id: number;
-  name: string;
-  description?: string;
-  url: string;
-  created: string;
-  modified: string;
-}
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 
 export interface CreateOrganizationOptions {
   name?: string;
@@ -39,8 +31,8 @@ export const Organization = {
     create: async (
       page: Page,
       options: CreateOrganizationOptions = {}
-    ): Promise<OrganizationType> => {
-      const organization = await gatewayAPI.post<OrganizationType>(page, 'organizations/', {
+    ): Promise<PlatformOrganization> => {
+      const organization = await gatewayAPI.post<PlatformOrganization>(page, 'organizations/', {
         name: options.name ?? createE2EName('Organization'),
         description: options.description ?? 'Created via API for E2E testing',
       });
@@ -56,8 +48,8 @@ export const Organization = {
       await gatewayAPI.delete(page, `organizations/${organizationId}/`);
     },
 
-    get: async (page: Page, organizationId: number): Promise<OrganizationType> => {
-      const organization = await gatewayAPI.get<OrganizationType>(
+    get: async (page: Page, organizationId: number): Promise<PlatformOrganization> => {
+      const organization = await gatewayAPI.get<PlatformOrganization>(
         page,
         `organizations/${organizationId}/`
       );

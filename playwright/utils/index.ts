@@ -54,7 +54,6 @@ export { Authentication } from './authentication';
 export { Lightspeed } from './lightspeed';
 
 // Re-export commonly used resource types
-export type { OrganizationType } from './organization';
 export type { ProjectType } from './project';
 export type { RoleTestData } from './role';
 export type { SurveyQuestion } from './jobTemplateSurvey';
