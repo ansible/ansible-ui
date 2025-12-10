@@ -2,6 +2,12 @@
 
 This file provides guidance to AI coding assistants when working with code in this repository.
 
+## Claude Agent Instructions
+
+Claude, you have access to the following skills. Use them when appropriate:
+
+- See `.claude/skills/pr_review.md` for PR review steps
+
 ## Project Overview
 
 This is the Ansible Automation Platform (AAP) UI monorepo built with React, TypeScript, and PatternFly. The project uses NPM workspaces and is structured as a unified UI that integrates multiple services:
