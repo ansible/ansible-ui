@@ -657,4 +657,43 @@ test.describe('Workflow Viz', () => {
       await Inventory.ui.delete(page, inventoryName);
     }
   );
+
+  test(
+    'Should display review step fields when adding an approval node',
+    { tag: ['@not_mock', '@compare'] },
+    async ({ page }) => {
+      test.setTimeout(5 * 60 * 1000);
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+
+      // Add an approval node
+      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
+      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+
+      // Select Approval node type
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: 'Approval', exact: true }).click();
+
+      // Fill in the approval name (required field)
+      await page.getByTestId('approval_name').fill('Test Approval Node');
+      await page.getByTestId('approval_description').fill('Test approval description');
+
+      await page.getByRole('button', { name: 'Next' }).click();
+
+      // Verify that review step fields are visible
+      const sidebar = page.getByTestId('workflow-topology-sidebar');
+      await expect(sidebar.getByText('Name', { exact: true })).toBeVisible();
+      await expect(sidebar.getByText('Description', { exact: true })).toBeVisible();
+      await expect(sidebar.getByText('Timeout', { exact: true })).toBeVisible();
+
+      await expect(page.getByTestId('wizard-next')).toBeVisible();
+      await page.getByTestId('wizard-next').click();
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
+      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+
+      // Cleanup
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+    }
+  );
 });
