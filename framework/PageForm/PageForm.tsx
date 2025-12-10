@@ -137,7 +137,11 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     <FormProvider {...form}>
       <Form
         onKeyDown={(event) => {
-          if (event.key === 'Enter' && props.disableSubmitOnEnter) {
+          if (
+            event.key === 'Enter' &&
+            props.disableSubmitOnEnter &&
+            !(event.target instanceof HTMLTextAreaElement)
+          ) {
             event.preventDefault();
           }
         }}
