@@ -118,21 +118,14 @@ export function CredentialMultilineInput({
         helperText={handleHelperText(field)}
         isRequired={requiredFields.includes(field.id)}
         isReadOnly={handleIsDisabled(field)}
-        isDisabled={watchedFieldValue?.[field.id] === '$encrypted$'}
-        isClearButtonDisabled={
-          watchedFieldValue?.[field.id] === '$encrypted$' || !watchedFieldValue?.[field.id]
-        }
+        isDisabled={false}
+        isClearButtonDisabled={!watchedFieldValue?.[field.id]}
         allowEditingUploadedText={true}
         icon={
           kind !== 'external' ? (
             field.secret && watchedFieldValue?.[field.id] === '$encrypted$' ? (
               <div style={{ display: 'grid' }}>
-                <Button
-                  icon={<KeyIcon />}
-                  variant="control"
-                  onClick={handleModalToggle}
-                  isDisabled
-                />
+                <Button icon={<KeyIcon />} variant="control" onClick={handleModalToggle} />
                 <Tooltip content={t('Replace')}>
                   <Button icon={<UndoIcon />} variant="control" onClick={clearField} />
                 </Tooltip>
