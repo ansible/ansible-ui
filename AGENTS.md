@@ -130,7 +130,7 @@ PLATFORM_PASSWORD=your_password
 
 ### Test Structure
 
-Always use `describe` blocks:
+Always use at least one top-level `describe` block:
 
 ```typescript
 import { test, expect } from '@playwright/test';

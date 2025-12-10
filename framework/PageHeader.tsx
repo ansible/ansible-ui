@@ -17,6 +17,7 @@ import './PageFramework.css';
 import { usePageBreadcrumbs } from './PageTabs/PageBreadcrumbs';
 import { useBreakpoint } from './components/useBreakPoint';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
+import { usePageTitle } from './PageTitle/PageTitle';
 
 export interface ICatalogBreadcrumb {
   id?: string;
@@ -110,6 +111,7 @@ export function PageHeader(props: PageHeaderProps) {
   const [translations] = useFrameworkTranslations();
 
   const { tabBreadcrumb } = usePageBreadcrumbs();
+  usePageTitle(title);
 
   const pageBreadcrumbs = useMemo(() => {
     const pageBreadcrumbs = [];

@@ -1,7 +1,8 @@
 import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
 import { render, screen, waitFor } from '@testing-library/react';
-import i18n, { t } from 'i18next';
+import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import { beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import * as GatewayUIAuth from './GatewayUIAuth';
@@ -20,34 +21,18 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   ),
 }));
 
-vi.mock('./PlatformMasthead', () => ({
-  PlatformMasthead: () => <div data-testid="platform-masthead">{t`PlatformMasthead`}</div>,
-}));
-
-vi.mock('./persona-view/PersonaViewSwitcher', () => ({
-  PersonaViewSwitcher: () => (
-    <div data-testid="persona-view-switcher">{t`PersonaViewSwitcher`}</div>
-  ),
-}));
-
-vi.mock('../settings/ui-flags/useUIFlag', () => ({
-  useUIFlag: () => ({ enabled: false }),
-}));
-
 // Mock only what's needed to prevent import errors
 vi.mock('./usePlatformNavigation', () => ({
   usePlatformNavigation: () => [],
 }));
 
-vi.mock('../hooks/useUserInteraction', () => ({
-  useUserInteraction: () => ({}),
-}));
-
 const mountPlatformApp = (component: React.ReactNode) => {
   return render(
-    <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
-      <AwxConfigProvider>{component}</AwxConfigProvider>
-    </SWRConfig>
+    <MemoryRouter>
+      <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
+        <AwxConfigProvider>{component}</AwxConfigProvider>
+      </SWRConfig>
+    </MemoryRouter>
   );
 };
 
@@ -72,30 +57,6 @@ describe('Platform Subscription and Session Validation Tests', () => {
       returnNull: false,
       returnEmptyString: false,
     });
-
-    // Mock the t function to handle interpolation
-    vi.spyOn(i18n, 't').mockImplementation(((...args: unknown[]): string => {
-      const [key, ...rest] = args;
-      const keyStr = Array.isArray(key) ? (key[0] as string) : (key as string);
-      if (typeof keyStr !== 'string') return String(keyStr);
-
-      // Handle different argument patterns
-      let options: Record<string, unknown> = {};
-      if (rest.length > 0) {
-        if (typeof rest[0] === 'string') {
-          // [key, defaultValue, options?] pattern
-          options = (rest[1] as Record<string, unknown>) || {};
-        } else {
-          // [key, options] pattern
-          options = (rest[0] as Record<string, unknown>) || {};
-        }
-      }
-
-      // Handle simple interpolation
-      return keyStr.replace(/\{\{(\w+)\}\}/g, (_, prop: string) => {
-        return (options[prop] as string) || `{{${prop}}}`;
-      });
-    }) as unknown as typeof i18n.t);
   });
 
   beforeEach(() => {
