@@ -4,7 +4,7 @@ export interface PluginConfiguration {
   name: string;
   help_text: string;
   required: boolean;
-  default?: string;
+  default?: unknown;
   type: string;
   ui_field_label?: string;
   choices?: { [name: string]: string };
