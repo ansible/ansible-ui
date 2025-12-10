@@ -89,8 +89,14 @@ export function NodeReviewStep() {
     node_days_to_keep,
     survey,
   } = wizardData;
-  const url = getResourceURL(node_type);
-  const { data: resource, isLoading, error } = useGetItem<AllResources>(url, resourceId);
+  // Skip resource fetching for approval nodes since they don't have existing resources
+  const shouldFetchResource = node_type !== RESOURCE_TYPE.workflow_approval && resourceId;
+  const url = shouldFetchResource ? getResourceURL(node_type) : '';
+  const {
+    data: resource,
+    isLoading,
+    error,
+  } = useGetItem<AllResources>(url, shouldFetchResource ? resourceId : undefined);
   const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(resource ?? null));
   useEffect(() => {
     if (!resource) return;
@@ -100,8 +106,12 @@ export function NodeReviewStep() {
   const nodeTypeDetail = useGetNodeTypeDetail(node_type);
   const timeoutString = useGetTimeoutString(approval_timeout);
 
-  if (isLoading || (!error && resource === undefined)) return <LoadingState />;
-  if (error) return <AwxError error={error} />;
+  // For approval nodes, don't wait for resource fetch since there isn't one
+  const isActuallyLoading = shouldFetchResource ? isLoading : false;
+  const isResourceUndefined = shouldFetchResource ? resource === undefined : false;
+
+  if (isActuallyLoading || (!error && isResourceUndefined)) return <LoadingState />;
+  if (error && shouldFetchResource) return <AwxError error={error} />;
 
   const nameDetail = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
   const descriptionDetail = getValueBasedOnJobType(
