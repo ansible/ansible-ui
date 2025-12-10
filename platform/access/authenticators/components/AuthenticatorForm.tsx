@@ -29,7 +29,7 @@ import { authenticatorErrorAdapter } from './authenticatorErrorAdapter';
 import { PageFormAutoMigrateUsersSelect } from './PageFormAutoMigrateUsersSelect';
 import { AuthenticatorSubForm } from './steps/AuthenticatorSubForm';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
-import { useWatch } from 'react-hook-form';
+import { useWatch, useFormContext } from 'react-hook-form';
 import { PlatformPageForm } from '../../../common/PlatformPageForm';
 
 export interface Configuration {
@@ -191,14 +191,43 @@ function AuthenticatorFormInputs(
   }>
 ) {
   const currentType = useWatch<AuthenticatorFormValues, 'type'>({ name: 'type' });
-  const { onTypeChange } = props;
+  const { onTypeChange, plugins, authenticator } = props;
+  const { setValue } = useFormContext<AuthenticatorFormValues>();
 
-  // Update configuration fields when type changes
+  // Update configuration fields and populate defaults when type changes
   useEffect(() => {
     if (currentType) {
       onTypeChange(currentType);
+
+      if (authenticator) {
+        return;
+      }
+
+      const plugin = plugins.authenticators.find((p) => p.type === currentType);
+
+      if (!plugin) {
+        return;
+      }
+
+      plugin.configuration_schema.forEach((field) => {
+        if (field.default !== undefined && field.default !== null) {
+          let formValue: string | boolean;
+          if (field.type === 'URLListField' && Array.isArray(field.default)) {
+            formValue = (field.default as string[]).join(',');
+          } else if (field.type === 'BooleanField') {
+            formValue = Boolean(field.default);
+          } else if (typeof field.default === 'string') {
+            formValue = field.default;
+          } else {
+            formValue = JSON.stringify(field.default);
+          }
+          setValue(`configuration.${field.name}` as keyof AuthenticatorFormValues, formValue, {
+            shouldDirty: false,
+          });
+        }
+      });
     }
-  }, [currentType, onTypeChange]);
+  }, [currentType, onTypeChange, plugins.authenticators, authenticator, setValue]);
 
   return (
     <>
@@ -226,6 +255,15 @@ export function formatConfiguration(values: Configuration, plugin: Authenticator
     const key = definition.name;
     const value = values[key] as string;
     if (!values[key] && definition.type !== 'BooleanField') {
+      // For JSON-like fields, send an empty object/array when cleared so the API knows
+      // the user intentionally wants to remove nested values rather than use the default
+      const dictFieldTypes = ['JSONField', 'DictField', 'LDAPConnectionOptions', 'UserAttrMap'];
+      const listFieldTypes = ['ListField', 'LDAPSearchField'];
+      if (dictFieldTypes.includes(definition.type)) {
+        formatted[key] = {};
+      } else if (listFieldTypes.includes(definition.type)) {
+        formatted[key] = [];
+      }
       return;
     }
     switch (definition.type) {
