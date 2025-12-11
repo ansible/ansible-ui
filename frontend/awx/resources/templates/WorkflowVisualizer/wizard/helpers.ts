@@ -33,6 +33,8 @@ export function getResourceURL(resourceType: string): string {
     case 'system_job':
     case 'management_job_template':
       return awxAPI`/system_job_templates/`;
+    case 'workflow_approval':
+      return ''; // Approval nodes don't fetch existing resources
     default:
       return '';
   }

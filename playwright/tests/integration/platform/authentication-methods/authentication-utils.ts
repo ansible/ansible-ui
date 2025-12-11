@@ -93,11 +93,12 @@ export async function createAuthenticationMap(
 
   await page.getByRole('link', { name: 'Create mapping' }).click();
   await page.getByRole('textbox', { name: 'name' }).fill(mapName);
-  await page.getByRole('button', { name: 'Select trigger' }).click();
+  await page.getByRole('button', { name: 'Select rule condition' }).click();
   await page.getByRole('option', { name: options.trigger ?? 'Always' }).click();
   if (options.trigger === 'Attributes') {
-    await page.getByRole('button', { name: 'Select operation' }).click();
-    await page.getByRole('option', { name: 'or' }).click();
+    await page.getByRole('button', { name: 'Based on attributes' }).click();
+    await page.getByRole('button', { name: 'Select condition type' }).click();
+    await page.getByRole('option', { name: 'at least one' }).click();
     await page.getByRole('textbox', { name: 'Attribute' }).click();
     await page.getByRole('textbox', { name: 'Attribute' }).fill('Attribute one');
     await page.getByRole('button', { name: 'Comparison' }).click();

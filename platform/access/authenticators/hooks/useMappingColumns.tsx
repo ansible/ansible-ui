@@ -24,7 +24,7 @@ export function useMappingColumns(options?: { disableLinks?: boolean }) {
         defaultSort: true,
       },
       {
-        header: t('Name'),
+        header: t('Rule name'),
         cell: (map) => (
           <TextCell
             text={map?.name}
@@ -49,7 +49,7 @@ export function useMappingColumns(options?: { disableLinks?: boolean }) {
         sort: 'map_type',
       },
       {
-        header: t('Trigger'),
+        header: t('When to run the rule'),
         type: 'text',
         value: (map) => {
           if ('always' in map.triggers) {
@@ -59,10 +59,10 @@ export function useMappingColumns(options?: { disableLinks?: boolean }) {
             return t('Never');
           }
           if ('groups' in map.triggers) {
-            return t('Groups');
+            return t('Based on groups');
           }
           if ('attributes' in map.triggers) {
-            return t('Attributes');
+            return t('Based on attributes');
           }
         },
         sort: 'triggers',

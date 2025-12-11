@@ -11,6 +11,12 @@ export interface AdHocCommandOptions {
   becomeEnabled: boolean;
   executionEnvironmentName: string;
   credentialName: string;
+  /** SSH password - required when credential has "Prompt on launch" for password */
+  sshPassword?: string;
+  /** Privilege escalation password - required when credential has "Prompt on launch" for become_password */
+  becomePassword?: string;
+  /** SSH key unlock password - required when credential has "Prompt on launch" for ssh_key_unlock */
+  sshKeyUnlock?: string;
 }
 
 export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: Page) {
@@ -80,8 +86,38 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   await page.getByRole('textbox', { name: 'Search input' }).fill(options.credentialName);
   await page.getByRole('option', { name: options.credentialName }).click();
 
-  // Click Next to go to Review step
+  // Click Next to go to next step (Credential Passwords or Review)
   await page.getByRole('button', { name: 'Next' }).click();
+
+  // Handle Credential Passwords step if password fields need to be filled
+  const hasCredentialPasswords =
+    options.sshPassword || options.becomePassword || options.sshKeyUnlock;
+
+  if (hasCredentialPasswords) {
+    // Fill SSH password if provided
+    if (options.sshPassword) {
+      const sshPasswordField = page.getByTestId('run-command-ssh-password');
+      await expect(sshPasswordField).toBeVisible({ timeout: 10000 });
+      await sshPasswordField.fill(options.sshPassword);
+    }
+
+    // Fill privilege escalation password if provided
+    if (options.becomePassword) {
+      const becomePasswordField = page.getByTestId('run-command-privilege-escalation-password');
+      await expect(becomePasswordField).toBeVisible({ timeout: 10000 });
+      await becomePasswordField.fill(options.becomePassword);
+    }
+
+    // Fill SSH key unlock password if provided
+    if (options.sshKeyUnlock) {
+      const sshKeyUnlockField = page.getByTestId('run-command-private-key-passphrase');
+      await expect(sshKeyUnlockField).toBeVisible({ timeout: 10000 });
+      await sshKeyUnlockField.fill(options.sshKeyUnlock);
+    }
+
+    // Click Next to go to Review step
+    await page.getByRole('button', { name: 'Next' }).click();
+  }
 
   // Wait for Review step and click Finish
   const finishButton = page.getByRole('button', { name: 'Finish' });

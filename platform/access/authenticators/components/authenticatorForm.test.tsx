@@ -5,9 +5,9 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
-import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import { AuthenticatorPlugin, AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { AuthenticatorForm } from './AuthenticatorForm';
+import { AuthenticatorForm, formatConfiguration } from './AuthenticatorForm';
 import authenticator_plugins from './authenticatorPlugins.fixture.json';
 import authenticators from './authenticators.fixture.json';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
@@ -261,4 +261,243 @@ describe('authenticatorForm', () => {
       { timeout: 10000 }
     );
   }, 15000);
+
+  test('should populate default values when selecting SAML authenticator type', async () => {
+    const handleSubmit = vi.fn();
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/create'}
+            element={
+              <AuthenticatorForm
+                plugins={authenticator_plugins as AuthenticatorPlugins}
+                handleSubmit={handleSubmit}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+
+    // Select SAML authenticator type - the button shows the current selection "Local"
+    const typeSelect = container.querySelector(
+      '[id="authentication-type-select-form-group-toggle"]'
+    ) as HTMLButtonElement;
+    await user.click(typeSelect);
+
+    const samlOption = getByRole('option', { name: /saml/i });
+    await user.click(samlOption);
+
+    // Wait for default values to be populated - check SP_ENTITY_ID CharField default
+    await waitFor(() => {
+      const spEntityIdInput = container.querySelector(
+        '[id="configuration-input-SP_ENTITY_ID"]'
+      ) as HTMLInputElement;
+      expect(spEntityIdInput).toHaveValue('aap_gateway');
+    });
+
+    // Check that SP_EXTRA JSONField has default value populated (contains the key)
+    await waitFor(() => {
+      const spExtraEditor = container.querySelector(
+        '[id="configuration-editor-SP_EXTRA"]'
+      ) as HTMLTextAreaElement;
+      expect(spExtraEditor.value).toContain('requestedAuthnContext');
+    });
+  }, 15000);
+});
+
+describe('formatConfiguration', () => {
+  test('should send empty object for cleared JSONField', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.SAML,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'SP_EXTRA',
+          help_text: 'Test field',
+          required: true,
+          default: { requestedAuthnContext: false },
+          type: 'JSONField',
+          ui_field_label: 'SP Extra',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ SP_EXTRA: '' }, plugin);
+    expect(result).toEqual({ SP_EXTRA: {} });
+  });
+
+  test('should send empty object for cleared DictField', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.LDAP,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'CONNECTION_OPTIONS',
+          help_text: 'Test field',
+          required: false,
+          type: 'DictField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ CONNECTION_OPTIONS: '' }, plugin);
+    expect(result).toEqual({ CONNECTION_OPTIONS: {} });
+  });
+
+  test('should send empty array for cleared ListField', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.SAML,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'EXTRA_DATA',
+          help_text: 'Test field',
+          required: true,
+          default: [],
+          type: 'ListField',
+          ui_field_label: 'Extra Data',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ EXTRA_DATA: '' }, plugin);
+    expect(result).toEqual({ EXTRA_DATA: [] });
+  });
+
+  test('should send empty array for cleared LDAPSearchField', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.LDAP,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'USER_SEARCH',
+          help_text: 'Test field',
+          required: false,
+          type: 'LDAPSearchField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ USER_SEARCH: '' }, plugin);
+    expect(result).toEqual({ USER_SEARCH: [] });
+  });
+
+  test('should parse valid JSON for JSONField', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.SAML,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'SP_EXTRA',
+          help_text: 'Test field',
+          required: true,
+          type: 'JSONField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ SP_EXTRA: '{"requestedAuthnContext":null}' }, plugin);
+    expect(result).toEqual({ SP_EXTRA: { requestedAuthnContext: null } });
+  });
+
+  test('should parse empty object JSON for JSONField', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.SAML,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'SP_EXTRA',
+          help_text: 'Test field',
+          required: true,
+          type: 'JSONField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ SP_EXTRA: '{}' }, plugin);
+    expect(result).toEqual({ SP_EXTRA: {} });
+  });
+
+  test('should handle CharField fields normally', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.SAML,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'SP_ENTITY_ID',
+          help_text: 'Test field',
+          required: true,
+          type: 'CharField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ SP_ENTITY_ID: 'my_entity_id' }, plugin);
+    expect(result).toEqual({ SP_ENTITY_ID: 'my_entity_id' });
+  });
+
+  test('should skip empty CharField fields', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.SAML,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'SP_ENTITY_ID',
+          help_text: 'Test field',
+          required: false,
+          type: 'CharField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ SP_ENTITY_ID: '' }, plugin);
+    expect(result).toEqual({});
+  });
+
+  test('should handle BooleanField with false value', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.LDAP,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'START_TLS',
+          help_text: 'Test field',
+          required: false,
+          type: 'BooleanField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration({ START_TLS: false }, plugin);
+    expect(result).toEqual({ START_TLS: false });
+  });
+
+  test('should handle URLListField', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.Keycloak,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'REDIRECT_URIS',
+          help_text: 'Test field',
+          required: true,
+          type: 'URLListField',
+        },
+      ],
+    };
+
+    const result = formatConfiguration(
+      { REDIRECT_URIS: 'https://example.com,https://test.com' },
+      plugin
+    );
+    expect(result).toEqual({ REDIRECT_URIS: ['https://example.com', 'https://test.com'] });
+  });
 });

@@ -14,6 +14,12 @@ export interface CreateCredentialOptions {
   username?: string;
   password?: string;
   vaultId?: string;
+  /** Enable "Prompt on launch" for SSH password */
+  promptOnLaunchPassword?: boolean;
+  /** Enable "Prompt on launch" for privilege escalation password */
+  promptOnLaunchBecomePassword?: boolean;
+  /** Enable "Prompt on launch" for SSH private key passphrase */
+  promptOnLaunchSshKeyUnlock?: boolean;
 }
 
 export const Credential = {
@@ -47,10 +53,30 @@ export const Credential = {
           .fill(options.username || 'username');
 
         await expect(page.locator('#password-form-group')).toBeVisible();
-        await page.getByRole('textbox', { name: 'Password', exact: true }).click();
-        await page
-          .getByRole('textbox', { name: 'Password', exact: true })
-          .fill(options.password || 'pwd');
+
+        // Handle SSH password - either fill it or set "Prompt on launch"
+        if (options.promptOnLaunchPassword) {
+          // Find and check the "Prompt on launch" checkbox for password field
+          const passwordFormGroup = page.locator('#password-form-group');
+          await passwordFormGroup.getByRole('checkbox', { name: 'Prompt on launch' }).check();
+        } else {
+          await page.getByRole('textbox', { name: 'Password', exact: true }).click();
+          await page
+            .getByRole('textbox', { name: 'Password', exact: true })
+            .fill(options.password || 'pwd');
+        }
+
+        // Handle privilege escalation password "Prompt on launch" if requested
+        if (options.promptOnLaunchBecomePassword) {
+          const becomePasswordFormGroup = page.locator('#become_password-form-group');
+          await becomePasswordFormGroup.getByRole('checkbox', { name: 'Prompt on launch' }).check();
+        }
+
+        // Handle SSH private key passphrase "Prompt on launch" if requested
+        if (options.promptOnLaunchSshKeyUnlock) {
+          const sshKeyUnlockFormGroup = page.locator('#ssh_key_unlock-form-group');
+          await sshKeyUnlockFormGroup.getByRole('checkbox', { name: 'Prompt on launch' }).check();
+        }
       } else if (options?.credentialType === 'Centrify Vault Credential Provider Lookup') {
         await page.getByRole('textbox', { name: 'Search input' }).fill('Centrify');
         await page

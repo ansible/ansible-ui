@@ -161,7 +161,7 @@ function AttributesSubsection(props: { mapping: AuthenticatorMap }) {
       <PageDetail fullWidth>
         <Divider />
       </PageDetail>
-      <PageDetail fullWidth label={t('Trigger Details')}>
+      <PageDetail fullWidth label={t('Rule condition details')}>
         {' '}
       </PageDetail>
       {attributeDetails}
@@ -183,7 +183,7 @@ function GroupsSubsection(props: { mapping: AuthenticatorMap }) {
       <PageDetail fullWidth>
         <Divider />
       </PageDetail>
-      <PageDetail fullWidth label={t('Trigger Details')}>
+      <PageDetail fullWidth label={t('Rule condition details')}>
         {' '}
       </PageDetail>
       <PageDetail id={'groups'} label={t('Groups')}>

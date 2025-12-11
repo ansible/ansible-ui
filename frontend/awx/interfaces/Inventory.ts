@@ -76,4 +76,7 @@ export interface RunCommandWizard {
   extra_vars: string;
   credential: number;
   execution_environment: number;
+  credential_passwords?: { [key: string]: string };
+  /** Indicates if the selected credential has "Prompt on Launch" enabled for any password field */
+  credentialNeedsPasswords?: boolean;
 }
