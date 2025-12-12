@@ -20,6 +20,7 @@ export const RulebookActivation = {
     create: async (page: Page, options: CreateRulebookActivationOptions = {}): Promise<string> => {
       const rulebookActivationName = options.name ?? createE2EName('rulebookActivation');
       const projectName = options.projectName ?? 'Demo Project';
+
       await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
       await page.getByText('Create rulebook activation').click();
       await page.getByRole('textbox', { name: 'Name', exact: true }).click();
@@ -76,7 +77,11 @@ export const RulebookActivation = {
           .click({ force: true });
       }
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
-      await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
+
+      await expect(
+        page.getByRole('heading', { name: rulebookActivationName, exact: true })
+      ).toBeVisible();
+
       return rulebookActivationName;
     },
 
