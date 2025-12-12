@@ -165,6 +165,7 @@ export function EdgeContextMenu(props: {
     return (
       <ContextMenuItem
         data-cy={item.key}
+        data-testid={item.key}
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}

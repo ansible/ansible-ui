@@ -13,6 +13,7 @@ export function HelperText(props: {
     <Popover
       aria-label={t`helper text popover`}
       data-cy="helper-text-popover"
+      data-testid="helper-text-popover"
       position={PopoverPosition.top}
       bodyContent={props.content}
       headerContent={props.header}

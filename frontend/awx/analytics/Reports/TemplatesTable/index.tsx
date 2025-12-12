@@ -36,7 +36,12 @@ export const TopTemplates: FunctionComponent<Props> = ({
   const { t } = useTranslation();
 
   return (
-    <Table data-cy={'table'} aria-label="ROI Table" variant={TableVariant.compact}>
+    <Table
+      data-cy={'table'}
+      data-testid={'table'}
+      aria-label="ROI Table"
+      variant={TableVariant.compact}
+    >
       <Thead>
         <Tr>
           <Th />

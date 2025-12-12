@@ -238,6 +238,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
           selectedIds.length > 0 && (
             <TopologySideBar
               data-cy="mesh-viz-sidebar"
+              data-testid="mesh-viz-sidebar"
               aria-label={t('Mesh Topology sidebar')}
               show
               resizable

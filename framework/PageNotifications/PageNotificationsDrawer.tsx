@@ -33,7 +33,7 @@ export function PageNotificationsDrawer() {
   const [isDrawerMenuOpen, setDrawerMenuOpen] = useState(false);
 
   return (
-    <NotificationDrawer data-cy="notifications-drawer">
+    <NotificationDrawer data-cy="notifications-drawer" data-testid="notifications-drawer">
       <NotificationDrawerHeader title={t('Notifications')} onClose={onCloseClick}>
         <Dropdown
           isOpen={isDrawerMenuOpen}

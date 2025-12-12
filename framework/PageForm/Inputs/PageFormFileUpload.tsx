@@ -115,6 +115,7 @@ export function PageFormFileUpload<
                 dropzoneProps={props.dropzoneProps}
                 id={id}
                 data-cy={id}
+                data-testid={id}
                 type={props.type || 'dataURL'}
                 value={value as string}
                 hideDefaultPreview={props.hideDefaultPreview}

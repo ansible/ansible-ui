@@ -94,6 +94,7 @@ export function CollectionImportLog() {
               <div>
                 <CodeBlock
                   data-cy="import-log"
+                  data-testid="import-log"
                   style={
                     {
                       '--pf-v6-c-code-block--BackgroundColor': 'var(--pf-t--color--gray--95)',

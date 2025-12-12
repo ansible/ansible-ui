@@ -81,6 +81,7 @@ export function RepositoryCollectionVersion() {
         >
           <Button
             data-cy="add-collections"
+            data-testid="add-collections"
             icon={<PlusCircleIcon />}
             onClick={() => runAddModal()}
             variant={ButtonVariant.primary}

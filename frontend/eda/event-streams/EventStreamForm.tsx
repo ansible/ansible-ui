@@ -59,6 +59,7 @@ function EventStreamInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="name"
         data-cy="name-form-field"
+        data-testid="name-form-field"
         label={t('Name')}
         placeholder={t('Enter event stream name')}
         isRequired
@@ -70,6 +71,7 @@ function EventStreamInputs() {
         <PageFormTextInput<IEdaEventStreamCreate>
           name="kind"
           data-cy="name-form-field"
+          data-testid="name-form-field"
           label={t('Kind')}
         />
       </PageFormHidden>
@@ -77,6 +79,7 @@ function EventStreamInputs() {
         <PageFormTextInput<IEdaEventStreamCreate>
           name="event_stream_type"
           data-cy="type-form-field"
+          data-testid="type-form-field"
           isRequired
           label={t('Event stream type')}
         />
@@ -91,6 +94,7 @@ function EventStreamInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
+        data-testid="additional_data_headers-form-field"
         label={t('Headers')}
         placeholder={t('Enter headers')}
         labelHelpTitle={t('Headers')}
@@ -124,6 +128,7 @@ function EventStreamEditInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="name"
         data-cy="name-form-field"
+        data-testid="name-form-field"
         label={t('Name')}
         placeholder={t('Enter event stream name')}
         isRequired
@@ -133,6 +138,7 @@ function EventStreamEditInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="event_stream_type"
         data-cy="type-form-field"
+        data-testid="type-form-field"
         isReadOnly
         label={t('Event stream type')}
       />
@@ -144,6 +150,7 @@ function EventStreamEditInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
+        data-testid="additional_data_headers-form-field"
         label={t('Headers')}
         placeholder={t('Enter headers')}
         labelHelpTitle={t('Headers')}

@@ -47,7 +47,7 @@ export const Legend = () => {
   };
 
   return (
-    <Panel data-cy="mesh-viz-legend" variant="raised">
+    <Panel data-cy="mesh-viz-legend" data-testid="mesh-viz-legend" variant="raised">
       <PanelMain tabIndex={0}>
         <PanelMainBody>
           <DescriptionList>

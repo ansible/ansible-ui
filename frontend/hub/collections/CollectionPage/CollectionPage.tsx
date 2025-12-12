@@ -273,6 +273,7 @@ export function CollectionPage() {
         footer={
           <div
             data-cy="browse-collection-version"
+            data-testid="browse-collection-version"
             style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}
           >
             {t('Version')}

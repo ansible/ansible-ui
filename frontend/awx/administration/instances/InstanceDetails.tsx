@@ -72,7 +72,7 @@ export function InstanceDetailsTab(props: {
 
   return (
     <PageDetails numberOfColumns={props.numberOfColumns} disableScroll>
-      <PageDetail label={t('Name')} data-cy="name">
+      <PageDetail label={t('Name')} data-cy="name" data-testid="name">
         <Button
           variant="link"
           isInline
@@ -85,16 +85,20 @@ export function InstanceDetailsTab(props: {
           {instance.hostname}
         </Button>
       </PageDetail>
-      <PageDetail label={t('Node type')} data-cy="node-type">
+      <PageDetail label={t('Node type')} data-cy="node-type" data-testid="node-type">
         <Tooltip content={toolTipMap[instance.node_type]}>
           <Dotted>{`${capitalizeFirstLetter(instance.node_type)}`}</Dotted>
         </Tooltip>
       </PageDetail>
-      <PageDetail label={t('Status')} data-cy="node-status">
+      <PageDetail label={t('Status')} data-cy="node-status" data-testid="node-status">
         <StatusCell status={instance.health_check_pending ? 'running' : instance.node_state} />
       </PageDetail>
       {instanceGroups && instanceGroups.results.length > 0 && (
-        <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
+        <PageDetail
+          label={t(`Instance groups`)}
+          data-cy="instance-groups"
+          data-testid="instance-groups"
+        >
           {instanceGroups.results.map((instance) => (
             <Label
               isClickable
@@ -118,7 +122,11 @@ export function InstanceDetailsTab(props: {
         </PageDetail>
       )}
       {!instance.managed && instance.related?.install_bundle && (
-        <PageDetail label={t`Download bundle`} data-cy="download-bundle">
+        <PageDetail
+          label={t`Download bundle`}
+          data-cy="download-bundle"
+          data-testid="download-bundle"
+        >
           <Button
             icon={<DownloadIcon />}
             size="sm"
@@ -133,11 +141,11 @@ export function InstanceDetailsTab(props: {
         </PageDetail>
       )}
       {instance.listener_port ? (
-        <PageDetail label={t`Listener port`} data-cy="listener-port">
+        <PageDetail label={t`Listener port`} data-cy="listener-port" data-testid="listener-port">
           {instance.listener_port}
         </PageDetail>
       ) : null}
-      <PageDetail label={t('Used capacity')} data-cy="used-capacity">
+      <PageDetail label={t('Used capacity')} data-cy="used-capacity" data-testid="used-capacity">
         {instance.enabled ? (
           <Progress
             value={Math.round(100 - instance.percent_capacity_remaining)}
@@ -147,33 +155,38 @@ export function InstanceDetailsTab(props: {
           <Unavailable>{t('Unavailable')}</Unavailable>
         )}
       </PageDetail>
-      <PageDetail label={t('Running jobs')} data-cy="running-jobs">
+      <PageDetail label={t('Running jobs')} data-cy="running-jobs" data-testid="running-jobs">
         {instance.jobs_running.toString()}
       </PageDetail>
-      <PageDetail label={t('Total jobs')} data-cy="total-jobs">
+      <PageDetail label={t('Total jobs')} data-cy="total-jobs" data-testid="total-jobs">
         {instance.jobs_total.toString()}
       </PageDetail>
-      <PageDetail label={t('Policy type')} data-cy="policy-type">
+      <PageDetail label={t('Policy type')} data-cy="policy-type" data-testid="policy-type">
         {instance.managed_by_policy ? t('Auto') : t('Manual')}
       </PageDetail>
-      <PageDetail label={t('Memory')} data-cy="memory">
+      <PageDetail label={t('Memory')} data-cy="memory" data-testid="memory">
         <BytesCell bytes={instance.memory} />
       </PageDetail>
-      <PageDetail label={t('Last health check')} data-cy="last-health-check">
+      <PageDetail
+        label={t('Last health check')}
+        data-cy="last-health-check"
+        data-testid="last-health-check"
+      >
         {formatDateString(instance.last_health_check)}
       </PageDetail>
-      <PageDetail label={t('Created')} data-cy="created">
+      <PageDetail label={t('Created')} data-cy="created" data-testid="created">
         {formatDateString(instance.created)}
       </PageDetail>
-      <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
+      <LastModifiedPageDetail value={instance.modified} data-cy="modified" data-testid="modified" />
       <PageDetail
         label={t('Forks')}
         data-cy="forks"
+        data-testid="forks"
         isEmpty={instance.node_type === 'hop' || instanceForks <= 0}
       >
         <InstanceForksSlider instance={instance} />
       </PageDetail>
-      <PageDetail label={t('Enabled')} data-cy="enabled">
+      <PageDetail label={t('Enabled')} data-cy="enabled" data-testid="enabled">
         <InstanceSwitch instance={instance} />
       </PageDetail>
       <PageDetailCodeEditor

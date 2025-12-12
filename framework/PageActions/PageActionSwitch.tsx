@@ -52,6 +52,7 @@ export function PageActionSwitch<T extends object>(props: {
     <Wrapper>
       <div
         data-cy="toggle-switch"
+        data-testid="toggle-switch"
         style={{ marginLeft: iconOnly ? 16 : undefined, marginRight: iconOnly ? 16 : undefined }}
       >
         <Tooltip content={tooltipContent} trigger={tooltipContent ? undefined : 'manual'}>

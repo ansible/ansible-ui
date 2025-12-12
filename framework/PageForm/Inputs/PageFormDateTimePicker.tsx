@@ -32,6 +32,7 @@ export function PageFormDateTimePicker<
             {...props}
             id={props.name}
             data-cy="dateTime"
+            data-testid="dateTime"
             dateValue={field?.value?.date as string}
             timeValue={field?.value?.time as string}
             onDateChange={(date: string) => field.onChange({ ...field.value, date })}

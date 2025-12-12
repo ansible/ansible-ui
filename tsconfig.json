@@ -37,6 +37,7 @@
     "packages",
     "platform",
     "playwright",
+    "scripts",
     "webpack/environment.d.ts",
     "fix-coverage-paths.ts",
     "currents.config.ts"

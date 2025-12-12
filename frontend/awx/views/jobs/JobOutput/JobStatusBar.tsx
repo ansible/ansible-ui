@@ -135,6 +135,7 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
             >
               <Label
                 data-cy="waiting-label"
+                data-testid="waiting-label"
                 variant="outline"
                 color={'orange'}
                 icon={<ExclamationCircleIcon />}

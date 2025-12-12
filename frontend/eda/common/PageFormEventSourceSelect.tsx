@@ -71,6 +71,7 @@ export function PageFormEventSourceSelect<
             labelHelpTitle={labelHelpTitle}
             fieldId={id}
             data-cy={'event-stream-form-group'}
+            data-testid={'event-stream-form-group'}
             helperTextInvalid={!isValidating && error?.message}
           >
             <InputGroup data-cy={'event-stream-input-group'}>
@@ -93,6 +94,7 @@ export function PageFormEventSourceSelect<
                           variant="outline"
                           key={item.event_stream_id}
                           data-cy={`event-chip-${item?.event_stream_id}`}
+                          data-testid={`event-chip-${item?.event_stream_id}`}
                           onClose={() => removeMapping(item?.event_stream_name)}
                         >
                           {item.event_stream_name}
@@ -111,6 +113,7 @@ export function PageFormEventSourceSelect<
                   aria-label="Options menu"
                   isDisabled={isDisabled}
                   data-cy={`select-event-stream-button`}
+                  data-testid={`select-event-stream-button`}
                 >
                   <CogIcon />
                 </Button>

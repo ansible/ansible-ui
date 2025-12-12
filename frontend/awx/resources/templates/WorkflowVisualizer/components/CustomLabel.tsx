@@ -79,6 +79,7 @@ export const CustomLabel: FC<
           {iconSize && (
             <path
               data-cy="edge-context-menu_kebab"
+              data-testid="edge-context-menu_kebab"
               onClick={onContextMenu}
               d={`M${
                 width + 2
@@ -86,7 +87,11 @@ export const CustomLabel: FC<
               style={getEdgeStyles(status)}
             />
           )}
-          <g data-cy="node-context-menu_kebab" transform={`translate(${width + 5}, ${height / 4})`}>
+          <g
+            data-cy="node-context-menu_kebab"
+            data-testid="node-context-menu_kebab"
+            transform={`translate(${width + 5}, ${height / 4})`}
+          >
             <EllipsisVIcon style={{ fill: 'white' }} />
           </g>
         </g>

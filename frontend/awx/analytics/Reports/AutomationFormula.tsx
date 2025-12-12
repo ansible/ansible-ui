@@ -122,11 +122,13 @@ export const AutomationFormula: FunctionComponent<Record<string, never>> = () =>
         onClick={() => setIsOpen(true)}
         icon={<InfoCircleIcon />}
         data-cy={'automation_formula_button'}
+        data-testid={'automation_formula_button'}
       >
         {t('Automation formula')}
       </Button>
       <Modal
         data-cy={'automation_formula_modal'}
+        data-testid={'automation_formula_modal'}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         variant={ModalVariant.medium}
@@ -160,6 +162,7 @@ export const AutomationFormula: FunctionComponent<Record<string, never>> = () =>
             variant={ButtonVariant.primary}
             onClick={() => setIsOpen(false)}
             data-cy={'automation_formula_cancel_button'}
+            data-testid={'automation_formula_cancel_button'}
           >
             {t('Close')}
           </Button>

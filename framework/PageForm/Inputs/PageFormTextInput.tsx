@@ -384,7 +384,7 @@ export function PageFormTextInput<
               )}
               {selectTitle && (
                 <Button
-                  icon={<SearchIcon data-cy="lookup-button" />}
+                  icon={<SearchIcon data-cy="lookup-button" data-testid="lookup-button" />}
                   ouiaId={`lookup-${name}-button`}
                   variant="control"
                   onClick={() =>

@@ -59,8 +59,8 @@ test.describe('Rulebook Activations', () => {
           decisionEnvironmentName,
           organizationName,
         });
-        await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
-        await expect(page.locator('#project')).toContainText(projectName);
+        await expect(page.getByTestId('name')).toHaveText(rulebookActivationName);
+        await expect(page.getByTestId('project')).toHaveText(projectName);
         await expect(page.getByLabel('Label group category').getByRole('listitem')).toContainText(
           credentialName
         );
@@ -81,8 +81,8 @@ test.describe('Rulebook Activations', () => {
           decisionEnvironmentName,
           restartPolicy: 'Always',
         });
-        await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
-        await expect(page.locator('#restart-policy')).toContainText('Always');
+        await expect(page.getByTestId('name')).toHaveText(rulebookActivationName);
+        await expect(page.getByTestId('restart-policy')).toHaveText('Always');
         await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
         await page.getByRole('textbox', { name: 'Type to filter' }).fill(rulebookActivationName);
         await page.getByRole('button', { name: 'apply filter' }).click();
@@ -315,7 +315,7 @@ test.describe('Rulebook Activations', () => {
           organizationName,
           decisionEnvironmentName,
         });
-        await expect(page.locator('#name')).toHaveValue(rulebookActivationName);
+        await expect(page.getByTestId('name')).toHaveText(rulebookActivationName);
         await page.getByRole('button', { name: 'kebab dropdown toggle' }).click();
         await page.getByRole('menuitem', { name: 'Duplicate rulebook activation' }).click();
         await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');

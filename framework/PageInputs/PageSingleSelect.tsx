@@ -233,6 +233,7 @@ export function PageSingleSelect<
             }
             variant="control"
             data-cy="reset"
+            data-testid="reset"
             onClick={() => {
               setOpen(false);
               onSelect(null);

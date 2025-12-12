@@ -22,7 +22,11 @@ type KeyValueProps = {
 export function PageDetailKeyValueList(props: KeyValueProps) {
   const { keyValue, title, keyColumn, valueColumn, renderValue } = props;
 
-  const defaultRenderValue = (item: KeyValue) => <div data-cy={`item-value`}>{item.value}</div>;
+  const defaultRenderValue = (item: KeyValue) => (
+    <div data-cy={`item-value`} data-testid={`item-value`}>
+      {item.value}
+    </div>
+  );
 
   const renderFunction = renderValue || defaultRenderValue;
 
@@ -33,6 +37,7 @@ export function PageDetailKeyValueList(props: KeyValueProps) {
           <Content
             component="p"
             data-cy={'key-value-list-title'}
+            data-testid={'key-value-list-title'}
             style={{ fontSize: 'medium-text', fontWeight: 'bold' }}
           >
             {title}
@@ -48,6 +53,7 @@ export function PageDetailKeyValueList(props: KeyValueProps) {
               <DescriptionListTerm
                 style={{ fontWeight: 'normal', whiteSpace: 'pre-wrap', overflow: 'hidden' }}
                 data-cy={`item-key-${index}`}
+                data-testid={`item-key-${index}`}
               >
                 {item.key}
               </DescriptionListTerm>

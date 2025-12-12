@@ -57,6 +57,7 @@ export function PageRefreshIcon() {
         icon={<RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />}
         id="refresh"
         data-cy="refresh"
+        data-testid="refresh"
         onClick={refresh}
         variant="plain"
       />

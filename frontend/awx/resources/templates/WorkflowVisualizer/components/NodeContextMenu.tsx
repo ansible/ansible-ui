@@ -92,6 +92,7 @@ export function NodeContextMenu(props: { element: Node<NodeModel, GraphNodeData>
     return (
       <ContextMenuItem
         data-cy={item.key}
+        data-testid={item.key}
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}

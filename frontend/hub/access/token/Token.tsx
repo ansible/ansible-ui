@@ -48,10 +48,11 @@ export function Token() {
             isInline
             title={t('Copy this token now. This is the only time you will ever see it.')}
             data-cy={'copy_token_warning'}
+            data-testid={'copy_token_warning'}
           />
           <PageSection hasBodyWrapper={false}>
             <div data-cy={'copy_token_cell'}>
-              <CopyCell data-cy={'copy_token_cell'} text={token} />
+              <CopyCell data-cy={'copy_token_cell'} data-testid={'copy_token_cell'} text={token} />
             </div>
           </PageSection>
         </Stack>
@@ -62,6 +63,7 @@ export function Token() {
             isInline
             title={t('Generating a new token will delete your old token.')}
             data-cy={'generate_token_warning'}
+            data-testid={'generate_token_warning'}
           />
           <PageSection hasBodyWrapper={false}>
             <Stack hasGutter>
@@ -71,6 +73,7 @@ export function Token() {
                   onClick={onClick}
                   isDisabled={working}
                   data-cy={'generate_token'}
+                  data-testid={'generate_token'}
                 >
                   {t('Generate token')}
                 </Button>

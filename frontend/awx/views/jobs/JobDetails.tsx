@@ -166,6 +166,7 @@ export function JobDetails() {
           )}
           showCopyToClipboard
           data-cy="inventory-source-detail-variables"
+          data-testid="inventory-source-detail-variables"
           value={filteredExtraVars}
         />
       )}
@@ -174,6 +175,7 @@ export function JobDetails() {
           label={t`Artifacts`}
           showCopyToClipboard
           data-cy="inventory-source-detail-variables"
+          data-testid="inventory-source-detail-variables"
           value={JSON.stringify(job.artifacts)}
         />
       )}

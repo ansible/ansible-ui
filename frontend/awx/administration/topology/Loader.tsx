@@ -24,7 +24,7 @@ export const Loader = ({ className, progress }: { className: string; progress: n
   const { t } = useTranslation();
 
   return (
-    <EmptyState variant="full" className={className} data-cy={className}>
+    <EmptyState variant="full" className={className} data-cy={className} data-testid={className}>
       <TopologyIcon />
       <Progress
         value={progress}

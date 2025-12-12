@@ -19,7 +19,11 @@ export function PageWizardHeader(props: { title: React.ReactNode; onClose?: () =
   return (
     <WizardHeader className={css([styles.wizardHeader])}>
       <div className={css(styles.wizardTitle)}>
-        <h2 data-cy="wizard-title" className={css(styles.wizardTitleText)}>
+        <h2
+          data-cy="wizard-title"
+          data-testid="wizard-title"
+          className={css(styles.wizardTitleText)}
+        >
           {props.title}
         </h2>
       </div>
@@ -28,6 +32,7 @@ export function PageWizardHeader(props: { title: React.ReactNode; onClose?: () =
           <Button
             icon={<TimesIcon aria-hidden="true" />}
             data-cy="wizard-close"
+            data-testid="wizard-close"
             variant="plain"
             aria-label={t('Close wizard')}
             onClick={props.onClose}

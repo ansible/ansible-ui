@@ -211,6 +211,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         isExpanded={isOpen}
         isFullWidth
         data-cy="typeahead-menu-toggle"
+        data-testid="typeahead-menu-toggle"
       >
         <TextInputGroup isPlain isDisabled={isReadOnly || isSubmitting}>
           <TextInputGroupMain
@@ -254,6 +255,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
                     isDisabled={isReadOnly}
                     onClose={handleClose}
                     data-cy="selected-chip"
+                    data-testid="selected-chip"
                   >
                     {v.name}
                   </Label>
@@ -269,6 +271,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
                 onClick={onClearButtonClick}
                 aria-label={t('Clear input value')}
                 data-cy="clear-button"
+                data-testid="clear-button"
               />
             </TextInputGroupUtilities>
           )}
@@ -314,6 +317,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         shouldFocusFirstItemOnOpen={false}
         aria-label={label}
         data-cy={`${id}-typeahead-select`}
+        data-testid={`${id}-typeahead-select`}
       >
         <SelectList id={`${id}-listbox`} data-cy="select-list">
           {selectOptions.map((option, index) => (
@@ -323,6 +327,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
               isFocused={focusedItemIndex === index}
               id={`option-${index}`}
               data-cy={`select-option-${option.value}`}
+              data-testid={`select-option-${option.value}`}
               {...option}
             />
           ))}

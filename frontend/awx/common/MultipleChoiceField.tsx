@@ -112,6 +112,7 @@ export function MultipleChoiceField(props: IProps) {
                 <TextInput
                   id={'add-choice-input'}
                   data-cy={'add-choice-input'}
+                  data-testid={'add-choice-input'}
                   aria-label={t('Add choice input')}
                   {...field}
                   placeholder={t('Enter multiple choice option')}
@@ -139,6 +140,7 @@ export function MultipleChoiceField(props: IProps) {
             variant="plain"
             aria-label={t('Add choice')}
             data-cy={'add-choice'}
+            data-testid={'add-choice'}
             onClick={handleAdd}
             isDisabled={plainChoices.includes(addChoice) || addChoice?.length === 0}
           />
@@ -177,6 +179,7 @@ export function MultipleChoiceField(props: IProps) {
                       validated={error?.message ? ValidatedOptions.error : undefined}
                       id={`choice-option-${index}`}
                       data-cy={`choice-option-${index}`}
+                      data-testid={`choice-option-${index}`}
                       aria-label={t('Choice option')}
                       {...field}
                     />
@@ -201,6 +204,7 @@ export function MultipleChoiceField(props: IProps) {
                   variant="plain"
                   aria-label={t('Remove choice')}
                   data-cy={`remove-choice-${index}`}
+                  data-testid={`remove-choice-${index}`}
                   onClick={() => {
                     remove(index);
                   }}
@@ -216,6 +220,7 @@ export function MultipleChoiceField(props: IProps) {
                         <Radio
                           {...field}
                           data-cy={`choice-radio-${index}`}
+                          data-testid={`choice-radio-${index}`}
                           id={`choice-radio-${index}`}
                           label={defaultOptLabel}
                           onChange={() => {
@@ -237,6 +242,7 @@ export function MultipleChoiceField(props: IProps) {
                         <Checkbox
                           {...field}
                           data-cy={`choice-checkbox-${index}`}
+                          data-testid={`choice-checkbox-${index}`}
                           id={`choice-checkbox-${index}`}
                           label={defaultOptLabel}
                           isChecked={choice.default}

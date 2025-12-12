@@ -261,6 +261,8 @@ This prevents: write test → run test → fix selector → repeat.
 
 ### Common Test Utilities
 
+#### Generic Commands
+
 Located in `/playwright/commands/`:
 
 - `setupBefore()` / `setupAfter()` - Test setup and teardown
@@ -274,6 +276,23 @@ Located in `/playwright/commands/`:
 - `bulkDeleteResources()` - Generic bulk deletion from list view
 - `deleteResourceFromDetailsPage()` - Generic deletion from details page
 - `deleteResourceFromList()` - Generic deletion from list view
+
+#### Resource-Specific Utilities
+
+Located in `/playwright/utils/`
+
+Resource utilities follow the `Resource.api/ui.action()` pattern:
+
+```typescript
+import { Organization } from '@ansible/playwright/utils';
+
+// API-based operations (faster, for test setup/teardown)
+const org = await Organization.api.create(page, { name: 'Test Org' });
+await Organization.api.delete(page, org.id);
+
+// UI-based operations (for testing user workflows)
+await Organization.ui.create(page, { organizationName: 'Test Org' });
+```
 
 ### Test Tags
 

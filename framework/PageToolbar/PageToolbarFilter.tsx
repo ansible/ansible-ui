@@ -107,6 +107,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             filterState={filterState}
             setFilterState={setFilterState}
             data-cy={selectedFilter}
+            data-testid={selectedFilter}
             limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
           />
         </ToolbarItem>
@@ -139,6 +140,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
               filterState={filterState}
               setFilterState={setFilterState}
               data-cy={selectedFilter}
+              data-testid={selectedFilter}
               limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
             />
           </ToolbarItem>

@@ -29,6 +29,7 @@ export function Sidebar() {
     <TopologySideBar
       aria-label={t('Topology sidebar')}
       data-cy="workflow-topology-sidebar"
+      data-testid="workflow-topology-sidebar"
       resizable
       show
     >

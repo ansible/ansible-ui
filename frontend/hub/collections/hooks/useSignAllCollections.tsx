@@ -86,6 +86,7 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
         <Button
           key="sign-all"
           data-cy="modal-sign-button"
+          data-testid="modal-sign-button"
           variant="primary"
           isLoading={isLoading}
           onClick={() => {

@@ -141,7 +141,9 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
       {isFullScreen ? (
         <AppendBody>
           <ViewWrapper>
-            <FullPage data-cy="full-page-visualizer">{children}</FullPage>
+            <FullPage data-cy="full-page-visualizer" data-testid="full-page-visualizer">
+              {children}
+            </FullPage>
           </ViewWrapper>
         </AppendBody>
       ) : (

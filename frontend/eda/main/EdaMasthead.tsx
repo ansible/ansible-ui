@@ -43,6 +43,7 @@ export function EdaMasthead() {
               component="a"
               href="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
               data-cy="masthead-documentation"
+              data-testid="masthead-documentation"
             >
               {t('Documentation')}
             </DropdownItem>
@@ -50,6 +51,7 @@ export function EdaMasthead() {
               id="about"
               onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/eda-logo.svg' })}
               data-cy="masthead-about"
+              data-testid="masthead-about"
             >
               {t('About')}
             </DropdownItem>

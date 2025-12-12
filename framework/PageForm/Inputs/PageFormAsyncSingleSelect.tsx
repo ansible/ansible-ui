@@ -90,6 +90,7 @@ export function PageFormAsyncSingleSelect<
             <PageAsyncSingleSelect
               id={id}
               data-cy={id ?? name}
+              data-testid={id ?? name}
               placeholder={props.placeholder}
               queryOptions={props.queryOptions}
               queryPlaceholder={props.queryPlaceholder}

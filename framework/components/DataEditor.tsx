@@ -180,6 +180,7 @@ export function DataEditor(props: {
       <InnerDiv
         id={id}
         data-cy={id}
+        data-testid={id}
         ref={innerDivEl}
         className="data-editor"
         aria-disabled={ready ? 'false' : 'true'}

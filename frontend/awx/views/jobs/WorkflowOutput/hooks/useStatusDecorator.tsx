@@ -33,6 +33,7 @@ export function useStatusDecorator() {
       <Decorator
         x={x}
         data-cy={`node-decorator-${status}`}
+        data-testid={`node-decorator-${status}`}
         y={y}
         radius={DEFAULT_DECORATOR_RADIUS}
         showBackground
@@ -64,22 +65,42 @@ function getStatusIcon(nodeType: string, centerPoint: { x: number; y: number }) 
   switch (nodeType) {
     case 'success':
     case 'successful':
-      return <CheckCircleIcon data-cy="successful-icon" style={{ fill: pfSuccess }} />;
+      return (
+        <CheckCircleIcon
+          data-cy="successful-icon"
+          data-testid="successful-icon"
+          style={{ fill: pfSuccess }}
+        />
+      );
     case 'running':
       return (
-        <IconWrapper data-cy="running-icon" centerPoint={centerPoint}>
+        <IconWrapper data-cy="running-icon" data-testid="running-icon" centerPoint={centerPoint}>
           <SyncAltIcon style={{ fill: pfInfo }} />
         </IconWrapper>
       );
     case 'fail':
     case 'failed':
     case 'error':
-      return <ExclamationCircleIcon data-cy="failed-icon" style={{ fill: pfDanger }} />;
+      return (
+        <ExclamationCircleIcon
+          data-cy="failed-icon"
+          data-testid="failed-icon"
+          style={{ fill: pfDanger }}
+        />
+      );
     case 'pending':
     case 'waiting':
-      return <ClockIcon sdata-cy="pending-icon" style={{ fill: pfInfo }} />;
+      return (
+        <ClockIcon sdata-cy="pending-icon" data-testid="pending-icon" style={{ fill: pfInfo }} />
+      );
     case 'canceled':
-      return <WarningTriangleIcon data-cy="canceled-icon" style={{ fill: pfWarning }} />;
+      return (
+        <WarningTriangleIcon
+          data-cy="canceled-icon"
+          data-testid="canceled-icon"
+          style={{ fill: pfWarning }}
+        />
+      );
     default:
       return null;
   }

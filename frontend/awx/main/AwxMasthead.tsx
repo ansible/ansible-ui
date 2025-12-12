@@ -52,6 +52,7 @@ export function AwxMasthead() {
               component="a"
               to={useGetDocsUrl(config, 'index')}
               data-cy="masthead-documentation"
+              data-testid="masthead-documentation"
             >
               {t('Documentation')}
             </DropdownItem>
@@ -59,6 +60,7 @@ export function AwxMasthead() {
               id="about"
               onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/awx-logo.svg' })}
               data-cy="masthead-about"
+              data-testid="masthead-about"
             >
               {t('About')}
             </DropdownItem>

@@ -146,6 +146,7 @@ export function MyImports() {
       widths={{ default: 'width_66', xl: 'width_66' }}
       hasNoBorder
       data-cy="import-log-content"
+      data-testid="import-log-content"
     >
       <DrawerHead style={{ padding: '0px' }}>
         {collectionImport && (

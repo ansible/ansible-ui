@@ -69,6 +69,7 @@ export function ExecutionEnvironments() {
                 variant={ButtonVariant.primary}
                 href={getPageUrl(HubRoute.CreateExecutionEnvironment)}
                 data-cy="create-execution-environment"
+                data-testid="create-execution-environment"
               >
                 {t('Create execution environment')}
               </ButtonLink>

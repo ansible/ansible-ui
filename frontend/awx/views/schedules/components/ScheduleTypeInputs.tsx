@@ -32,6 +32,7 @@ export function ScheduleTypeInputs() {
           name="schedule_type"
           id="schedule_type"
           data-cy="schedule-type"
+          data-testid="schedule-type"
           label={t('Resource type')}
           options={[
             { label: t('Job template'), value: 'job_template' },

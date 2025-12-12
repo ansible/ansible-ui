@@ -136,6 +136,7 @@ export function PageFormMarkdown<
               >
                 <DataEditor
                   data-cy={id}
+                  data-testid={id}
                   id={id}
                   name={name}
                   language="markdown"
@@ -185,6 +186,7 @@ function MarkdownActions(props: {
           <ToggleGroupItem
             id="toggle-markdown"
             data-cy="toggle-markdown"
+            data-testid="toggle-markdown"
             aria-label={t('Toggle to Markdown')}
             isSelected={!preview}
             text={t('Markdown')}
@@ -194,6 +196,7 @@ function MarkdownActions(props: {
           <ToggleGroupItem
             id="toggle-preview"
             data-cy="toggle-preview"
+            data-testid="toggle-preview"
             aria-label={t('Toggle to Preview')}
             isSelected={preview}
             text={t('Preview')}

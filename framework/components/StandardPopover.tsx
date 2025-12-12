@@ -29,6 +29,7 @@ function StandardPopover(props: {
       hideOnOutsideClick
       id={id}
       data-cy={id}
+      data-testid={id}
       maxWidth={maxWidth}
       {...rest}
     >

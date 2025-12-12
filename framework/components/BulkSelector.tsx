@@ -91,6 +91,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
             <MenuToggleCheckbox
               id="select-all"
               data-cy="select-all"
+              data-testid="select-all"
               ouiaId={'select-all'}
               key="select-all"
               aria-label={t('Select all')}

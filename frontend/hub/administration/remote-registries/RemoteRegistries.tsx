@@ -61,6 +61,7 @@ export function RemoteRegistries() {
               variant={ButtonVariant.primary}
               href={getPageUrl(HubRoute.CreateRemoteRegistry)}
               data-cy="create-remote-registry"
+              data-testid="create-remote-registry"
             >
               {t('Create remote registry')}
             </ButtonLink>

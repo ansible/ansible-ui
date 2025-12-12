@@ -291,6 +291,7 @@ export function PageFormDataEditor<
                 >
                   <DataEditor
                     data-cy={id}
+                    data-testid={id}
                     id={id}
                     name={name}
                     language={language}
@@ -382,6 +383,7 @@ export function DataEditorButtons(props: {
           <IconButton
             id="copy-button"
             data-cy="copy-button"
+            data-testid="copy-button"
             aria-label={t('Copy to clipboard')}
             type="button"
             onClick={handleCopy}
@@ -397,6 +399,7 @@ export function DataEditorButtons(props: {
           <IconButton
             id="upload-button"
             data-cy="upload-button"
+            data-testid="upload-button"
             aria-label={t('Upload from file')}
             type="button"
             onClick={handleUpload}
@@ -412,6 +415,7 @@ export function DataEditorButtons(props: {
           <IconButton
             id="download-button"
             data-cy="download-button"
+            data-testid="download-button"
             aria-label={t('Download file')}
             type="button"
             onClick={handleDownload}
@@ -449,6 +453,7 @@ export function DataEditorActions(props: {
           <ToggleGroupItem
             id="toggle-yaml"
             data-cy="toggle-yaml"
+            data-testid="toggle-yaml"
             aria-label={t('Toggle to YAML')}
             isSelected={language === 'yaml'}
             text="YAML"
@@ -458,6 +463,7 @@ export function DataEditorActions(props: {
           <ToggleGroupItem
             id="toggle-json"
             data-cy="toggle-json"
+            data-testid="toggle-json"
             aria-label={t('Toggle to JSON')}
             isSelected={language === 'json'}
             text="JSON"

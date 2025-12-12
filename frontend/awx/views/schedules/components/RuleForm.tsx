@@ -428,6 +428,7 @@ export function RuleForm(
         <Button
           variant="secondary"
           data-cy={ruleId ? 'update-rule-button' : 'add-rule-button'}
+          data-testid={ruleId ? 'update-rule-button' : 'add-rule-button'}
           onClick={handleAddItem}
         >
           {ruleId
@@ -436,6 +437,7 @@ export function RuleForm(
         </Button>
         <Button
           data-cy="discard-rule-button"
+          data-testid="discard-rule-button"
           variant="secondary"
           isDanger
           onClick={() => {

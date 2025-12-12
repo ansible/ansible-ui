@@ -197,6 +197,7 @@ function NodeStatusType() {
     <PageFormSelect
       label={t('Status')}
       data-cy="node-status-type"
+      data-testid="node-status-type"
       name="node_status_type"
       isRequired
       options={[
@@ -227,6 +228,7 @@ function NodeTypeInput() {
       label={t('Node type')}
       name="node_type"
       data-cy="node-type"
+      data-testid="node-type"
       options={[
         { label: t('Job Template'), value: RESOURCE_TYPE.job },
         { label: t('Workflow Job Template'), value: RESOURCE_TYPE.workflow_job },
@@ -367,6 +369,7 @@ function TimeoutInputs() {
                       aria-describedby="approval_timeout_minutes-form-group"
                       type="number"
                       data-cy="approval_timeout_minutes"
+                      data-testid="approval_timeout_minutes"
                       min={0}
                     />
                     <InputGroupText>{t('minutes')}</InputGroupText>
@@ -383,6 +386,7 @@ function TimeoutInputs() {
                       aria-describedby="approval_timeout_seconds-form-group"
                       type="number"
                       data-cy="approval_timeout_seconds"
+                      data-testid="approval_timeout_seconds"
                       min={0}
                     />
                     <InputGroupText>{t('seconds')}</InputGroupText>
@@ -406,6 +410,7 @@ function ConvergenceInput() {
       label={t('Convergence')}
       name="node_convergence"
       data-cy="node-convergence"
+      data-testid="node-convergence"
       labelHelpTitle={t('Convergence')}
       labelHelp={
         <>
@@ -447,6 +452,7 @@ function AliasInput() {
       label={t('Node alias')}
       name="node_alias"
       data-cy="node-alias"
+      data-testid="node-alias"
       labelHelpTitle={t('Node alias')}
       labelHelp={t(
         'If specified, this field will be shown on the node instead of the resource name when viewing the workflow'

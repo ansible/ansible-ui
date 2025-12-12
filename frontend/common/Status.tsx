@@ -51,7 +51,13 @@ export function StatusLabel(props: { status?: string; dataCy?: string }) {
   const Icon = getIcon(status);
 
   return (
-    <Label data-cy={dataCy} variant="outline" color={color} icon={Icon ? <Icon /> : null}>
+    <Label
+      data-cy={dataCy}
+      data-testid={dataCy}
+      variant="outline"
+      color={color}
+      icon={Icon ? <Icon /> : null}
+    >
       {label}
     </Label>
   );
