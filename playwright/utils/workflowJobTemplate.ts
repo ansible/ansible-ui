@@ -9,6 +9,7 @@ import { filterTable } from '../commands/filterTable';
 import { navigateTo } from '../commands/navigateTo';
 import { platformUI } from '../commands/login';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
+import { awxAPI } from '../commands/apiClient';
 
 export interface CreateWorkflowJobTemplateOptions {
   name?: string;
@@ -24,6 +25,30 @@ export interface CreateWorkflowJobTemplateOptions {
 }
 
 export const WorkflowJobTemplate = {
+  api: {
+    create: async (
+      page: Page,
+      options?: { name?: string; description?: string }
+    ): Promise<WorkflowJobTemplateType> => {
+      const workflowJobTemplate = await awxAPI.post<WorkflowJobTemplateType>(
+        page,
+        'workflow_job_templates/',
+        {
+          name: options?.name ?? createE2EName('workflow-job-template'),
+          description: options?.description ?? 'Created via API for E2E testing',
+        }
+      );
+
+      if (!workflowJobTemplate) {
+        throw new Error('Failed to create workflow job template');
+      }
+
+      return workflowJobTemplate;
+    },
+    delete: async (page: Page, workflowJobTemplateId: number): Promise<void> => {
+      await awxAPI.delete(page, `workflow_job_templates/${workflowJobTemplateId}/`);
+    },
+  },
   ui: {
     create: async (
       page: Page,

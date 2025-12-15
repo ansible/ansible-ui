@@ -32,4 +32,11 @@ export async function login(
 
   // Click the login button
   await page.click('button[type="submit"]');
+
+  // Verify we are logged in
+  await expect(
+    page
+      .getByTestId('toolbar')
+      .getByRole('button', { name: options?.username ?? process.env.PLATFORM_USERNAME! })
+  ).toBeVisible();
 }

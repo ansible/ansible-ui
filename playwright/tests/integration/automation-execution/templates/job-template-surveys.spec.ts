@@ -1,4 +1,3 @@
-import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from '@playwright/test';
 import {
@@ -6,35 +5,18 @@ import {
   Inventory,
   Project,
   JobTemplate,
-  JobTemplateSurvey,
   type SurveyQuestion,
 } from '@ansible/playwright/utils';
+import { JobTemplateSurvey } from '@ansible/playwright/utils/templateSurvey';
+import { PlatformOrganization as OrganizationType } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { Project as ProjectType } from '@ansible/awx-ui/interfaces/Project';
+import { Inventory as InventoryType } from '@ansible/awx-ui/interfaces/Inventory';
+import { JobTemplate as JobTemplateType } from '@ansible/awx-ui/interfaces/JobTemplate';
 
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
 
 test.describe('Job Templates Surveys', () => {
-  const organizationName = createE2EName('org');
-  const projectName = createE2EName('project');
-
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await setupBefore({ path: '/' })({ page });
-    await Organization.ui.create(page, { organizationName });
-    await Project.ui.create(page, { organizationName, projectName });
-    await context.close();
-  });
-
-  test.afterAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await setupBefore({ path: '/' })({ page });
-    await Project.ui.delete(page, projectName);
-    await Organization.ui.delete(page, organizationName);
-    await context.close();
-  });
-
   test.describe('JT Surveys: Create, Edit and Delete', () => {
     const question: SurveyQuestion = {
       question_name: "Who's that?",
@@ -48,27 +30,35 @@ test.describe('Job Templates Surveys', () => {
       choices: [],
     };
 
-    let inventoryName: string;
-    let jobTemplateName: string;
+    let organization: OrganizationType;
+    let project: ProjectType;
+    let inventory: InventoryType;
+    let jobTemplate: JobTemplateType;
 
     test.beforeEach(async ({ page }) => {
-      inventoryName = await Inventory.ui.create(page, { organizationName });
-      jobTemplateName = await JobTemplate.ui.create(page, {
-        inventoryName: inventoryName,
-        projectName: projectName,
+      organization = await Organization.api.create(page);
+      inventory = await Inventory.api.create(page, { organization: organization.id });
+      project = await Project.api.create(page, { organization: organization.id });
+      await Project.api.sync(page, project.id);
+      jobTemplate = await JobTemplate.api.create(page, {
+        inventoryId: inventory.id,
+        projectId: project.id,
+        playbook: 'hello_world.yml',
       });
     });
 
     test.afterEach(async ({ page }) => {
-      await JobTemplate.ui.delete(page, jobTemplateName);
-      await Inventory.ui.delete(page, inventoryName);
+      await JobTemplate.api.delete(page, jobTemplate.id).catch(() => {});
+      await Inventory.api.delete(page, inventory.id).catch(() => {});
+      await Project.api.delete(page, project.id).catch(() => {});
+      await Organization.api.delete(page, organization.id).catch(() => {});
     });
 
     test(
       'can create a required survey from surveys tab list of a JT, toggle survey on, and assert info on surveys list view',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await expect(
           page.getByText('There are currently no survey questions.', { exact: true })
         ).toBeVisible();
@@ -109,8 +99,8 @@ test.describe('Job Templates Surveys', () => {
       'can edit a JT survey from surveys list view and assert info on surveys list view',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await JobTemplateSurvey.api.createQuestion(page, jobTemplateName, question);
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.api.createQuestion(page, jobTemplate.name, question);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         const row0 = page.getByTestId('row-0');
         await expect(
           row0.getByTestId('name-column-cell').getByText(question.question_name, { exact: true })
@@ -156,8 +146,8 @@ test.describe('Job Templates Surveys', () => {
       'can delete a JT survey from the surveys list view and assert deletion',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await JobTemplateSurvey.api.createQuestion(page, jobTemplateName, question);
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.api.createQuestion(page, jobTemplate.name, question);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         const row0 = page.getByTestId('row-0');
         await expect(row0.getByText(question.question_name, { exact: true })).toBeVisible();
         await expect(row0.getByText(question.default.toString(), { exact: true })).toBeVisible();
@@ -183,7 +173,7 @@ test.describe('Job Templates Surveys', () => {
       'should show validation error when minimum length exceeds maximum length for text type',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -211,7 +201,7 @@ test.describe('Job Templates Surveys', () => {
       'should show validation error when minimum exceeds maximum for integer type',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -243,7 +233,7 @@ test.describe('Job Templates Surveys', () => {
       'should clear validation error when min/max values are corrected',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -278,7 +268,7 @@ test.describe('Job Templates Surveys', () => {
       'should validate text answer by length not numeric value (01 is valid for length 2)',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
 
         // Fill required fields
@@ -360,8 +350,8 @@ test.describe('Job Templates Surveys', () => {
             choices: [],
           },
         ];
-        await JobTemplateSurvey.api.createMultipleQuestions(page, jobTemplateName, specs);
-        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplateName);
+        await JobTemplateSurvey.api.createMultipleQuestions(page, jobTemplate.name, specs);
+        await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         for (let index = 0; index < specs.length; index++) {
           const row = page.getByTestId(`row-${index}`);
           await expect(
@@ -422,20 +412,28 @@ test.describe('Job Templates Surveys', () => {
   });
 
   test.describe('JT Surveys: Launch JT with Survey Enabled', () => {
-    let inventoryName: string;
-    let jobTemplateName: string;
+    let organization: OrganizationType;
+    let project: ProjectType;
+    let inventory: InventoryType;
+    let jobTemplate: JobTemplateType;
 
     test.beforeEach(async ({ page }) => {
-      inventoryName = await Inventory.ui.create(page, { organizationName });
-      jobTemplateName = await JobTemplate.ui.create(page, {
-        inventoryName: inventoryName,
-        projectName: projectName,
+      organization = await Organization.api.create(page);
+      inventory = await Inventory.api.create(page, { organization: organization.id });
+      project = await Project.api.create(page, { organization: organization.id });
+      await Project.api.sync(page, project.id);
+      jobTemplate = await JobTemplate.api.create(page, {
+        inventoryId: inventory.id,
+        projectId: project.id,
+        playbook: 'hello_world.yml',
       });
     });
 
     test.afterEach(async ({ page }) => {
-      await JobTemplate.ui.delete(page, jobTemplateName);
-      await Inventory.ui.delete(page, inventoryName);
+      await JobTemplate.api.delete(page, jobTemplate.id).catch(() => {});
+      await Inventory.api.delete(page, inventory.id).catch(() => {});
+      await Project.api.delete(page, project.id).catch(() => {});
+      await Organization.api.delete(page, organization.id).catch(() => {});
     });
 
     const surveyTypes: Array<{
@@ -564,9 +562,9 @@ test.describe('Job Templates Surveys', () => {
         { tag: ['@not_mock'] },
         async ({ page }) => {
           test.setTimeout(5 * 60 * 1000);
-          await JobTemplateSurvey.api.createQuestion(page, jobTemplateName, surveyType.question);
-          await JobTemplateSurvey.ui.enableSurvey(page, jobTemplateName);
-          await JobTemplateSurvey.ui.launchWithPrompt(page, jobTemplateName, surveyType.question);
+          await JobTemplateSurvey.api.createQuestion(page, jobTemplate.name, surveyType.question);
+          await JobTemplateSurvey.ui.enableSurvey(page, jobTemplate.name);
+          await JobTemplateSurvey.ui.launchWithPrompt(page, jobTemplate.name, surveyType.question);
 
           // Verify default value based on survey type
           if (surveyType.type === 'multiselect') {

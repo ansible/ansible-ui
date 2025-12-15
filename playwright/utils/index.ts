@@ -32,7 +32,6 @@ export { Inventory } from './inventory';
 export { InventoryGroup } from './inventoryGroup';
 export { InventoryHost } from './inventoryHost';
 export { JobTemplate } from './jobTemplate';
-export { JobTemplateSurvey } from './jobTemplateSurvey';
 export { Notifier } from './notifier';
 export { Project } from './project';
 export { Schedule } from './schedule';
@@ -40,6 +39,11 @@ export { Settings } from './settings';
 export { WorkflowApproval } from './workflowApproval';
 export { WorkflowJobTemplate } from './workflowJobTemplate';
 export { WorkflowVisualizer } from './workflowVisualizer';
+export {
+  JobTemplateSurvey,
+  WorkflowJobTemplateSurvey,
+  createTemplateSurveyHelper,
+} from './templateSurvey';
 
 // Resource modules - Automation Decisions (EDA)
 export { DecisionEnvironment } from './decisionEnvironment';
@@ -54,6 +58,5 @@ export { Authentication } from './authentication';
 export { Lightspeed } from './lightspeed';
 
 // Re-export commonly used resource types
-export type { ProjectType } from './project';
 export type { RoleTestData } from './role';
-export type { SurveyQuestion } from './jobTemplateSurvey';
+export type { SurveyQuestion } from './templateSurvey';

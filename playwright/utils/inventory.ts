@@ -71,7 +71,7 @@ export const Inventory = {
     },
 
     delete: async (page: Page, inventoryId: number): Promise<void> => {
-      await awxAPI.delete(page, `inventories/${inventoryId}/`);
+      await awxAPI.delete(page, `inventories/${inventoryId}/`, { expectStatus: 202 });
     },
 
     get: async (page: Page, inventoryId: number): Promise<InventoryType> => {
