@@ -2,37 +2,39 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { ExecutionEnvironment, Organization, Team } from '@ansible/playwright/utils';
+import { ExecutionEnvironment, Organization, User } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
-test.describe('Execution Environment Team Access', () => {
+test.describe('Execution Environment User Access', () => {
   test.beforeEach(setupBefore({ path: '/' }));
   test.afterEach(setupAfter);
 
   test(
-    'should add team role assignment from Team Access tab',
+    'should add user role assignment from User Access tab',
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000); // 2 minutes timeout for this complex test
+
       // Create test data
       const organizationName = await Organization.ui.create(page);
-      const teamName = await Team.ui.create(page, { organizationName });
+      const userInfo = await User.ui.create(page);
+      const userName = userInfo.userName;
       const executionEnvName = await ExecutionEnvironment.ui.create(page, { organizationName });
 
-      // Navigate to organization and assign Organization ExecutionEnvironment Admin role to team
+      // Navigate to organization and assign Organization ExecutionEnvironment Admin role to user
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ filterLabel: 'Name', text: organizationName }, page);
 
-      await page.getByRole('tab', { name: 'Teams' }).click();
-      await page.getByRole('button', { name: 'Assign organization roles' }).click();
-      await expect(page.getByRole('heading', { name: 'Assign organization roles' })).toBeVisible();
+      await page.getByRole('tab', { name: 'Users', exact: true }).click();
+      await page.getByRole('button', { name: 'Assign users' }).click();
+      await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
 
-      // Select team
+      // Select user
       await selectTableRow(
         {
-          pageTitle: 'Select team(s)',
-          filterLabel: 'Name',
-          filterValue: teamName,
+          pageTitle: 'Select user(s)',
+          filterLabel: 'Username',
+          filterValue: userName,
         },
         page
       );
@@ -54,21 +56,21 @@ test.describe('Execution Environment Team Access', () => {
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
 
-      // Navigate to execution environment and assign team with role
+      // Navigate to execution environment and assign user with role
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
       await clickTableRow({ filterLabel: 'Name', text: executionEnvName }, page);
 
-      await page.getByRole('tab', { name: 'Team Access' }).click();
-      await page.getByRole('link', { name: 'Assign teams' }).click();
-      await expect(page.getByRole('heading', { name: 'Assign teams' })).toBeVisible();
+      await page.getByRole('tab', { name: 'User Access' }).click();
+      await page.getByRole('link', { name: 'Assign users' }).click();
+      await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
 
-      // Select team
-      await expect(page.getByRole('heading', { name: 'Select team(s)' })).toBeVisible();
+      // Select user
+      await expect(page.getByRole('heading', { name: 'Select user(s)' })).toBeVisible();
       await selectTableRow(
         {
-          pageTitle: 'Select team(s)',
-          filterLabel: 'Name',
-          filterValue: teamName,
+          pageTitle: 'Select user(s)',
+          filterLabel: 'Username',
+          filterValue: userName,
         },
         page
       );
@@ -86,9 +88,9 @@ test.describe('Execution Environment Team Access', () => {
       );
       await page.getByRole('button', { name: 'Next', exact: true }).click();
 
-      // Review step - verify team and role details
+      // Review step - verify user and role details
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
-      await expect(page.getByRole('region', { name: /^Teams/ })).toContainText(teamName);
+      await expect(page.getByRole('region', { name: /^Users/ })).toContainText(userName);
       await expect(page.getByRole('region', { name: /^Roles/ })).toContainText(
         'ExecutionEnvironment Admin'
       );
@@ -101,23 +103,13 @@ test.describe('Execution Environment Team Access', () => {
       // Verify we're back on the execution environment page
       await expect(page.getByRole('heading', { name: executionEnvName })).toBeVisible();
 
-      // Workaround for AAP-31401: Navigate to Details tab and back to Team Access
+      // Workaround for AAP-31401: Navigate to Details tab and back to User Access
       await page.getByRole('tab', { name: 'Details' }).click();
-      await page.getByRole('tab', { name: 'Team Access' }).click();
-
-      // Remove the role assignment
-      await page.getByRole('checkbox', { name: 'Select all rows' }).check();
-      await page.getByRole('button', { name: 'Remove role' }).click();
-      await expect(page.getByRole('heading', { name: 'Remove role' })).toBeVisible();
-      await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
-      await page.getByRole('button', { name: 'Remove role' }).click();
-
-      // Verify team access was removed
-      await expect(page.getByText('No teams assigned to execution environment')).toBeVisible();
+      await page.getByRole('tab', { name: 'User Access' }).click();
 
       // Cleanup
       await ExecutionEnvironment.ui.delete(page, executionEnvName);
-      await Team.ui.delete(page, teamName);
+      await User.ui.delete(page, userName);
       await Organization.ui.delete(page, organizationName);
     }
   );
