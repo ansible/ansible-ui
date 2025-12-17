@@ -60,28 +60,43 @@ function processCoverageFile(filePath: string): void {
   try {
     const fileContent: string = fs.readFileSync(resolvedCoverageFile, 'utf8');
     const coverageData = JSON.parse(fileContent) as CoverageMap;
+    const fixedCoverageData: CoverageMap = {};
     let pathsFixed = 0;
 
     for (const key in coverageData) {
       if (Object.prototype.hasOwnProperty.call(coverageData, key)) {
         const fileCoverage = coverageData[key];
+        let newKey = key;
+        let pathChanged = false;
 
+        // Fix the key if it's missing leading slash
+        if (!path.isAbsolute(key) && (key.startsWith('home/') || key.startsWith('Users/'))) {
+          newKey = `/${key}`;
+          pathChanged = true;
+        }
+
+        // Fix the path property if it's missing leading slash
         if (
           fileCoverage &&
           typeof fileCoverage.path === 'string' &&
-          !path.isAbsolute(fileCoverage.path)
+          !path.isAbsolute(fileCoverage.path) &&
+          (fileCoverage.path.startsWith('home/') || fileCoverage.path.startsWith('Users/'))
         ) {
-          const originalPath = fileCoverage.path;
-          const newPath = `/${originalPath}`; // Prepend the leading slash
+          fileCoverage.path = `/${fileCoverage.path}`;
+          pathChanged = true;
+        }
 
-          fileCoverage.path = newPath;
+        if (pathChanged) {
           pathsFixed++;
         }
+
+        // Use the corrected key
+        fixedCoverageData[newKey] = fileCoverage;
       }
     }
 
     if (pathsFixed > 0) {
-      fs.writeFileSync(resolvedCoverageFile, JSON.stringify(coverageData, null, 2));
+      fs.writeFileSync(resolvedCoverageFile, JSON.stringify(fixedCoverageData, null, 2));
       console.log(`Fixed ${pathsFixed} path(s) in ${filePath}`);
     } else {
       console.log(`No paths needed fixing in ${filePath}`);

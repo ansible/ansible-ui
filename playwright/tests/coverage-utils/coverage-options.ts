@@ -28,27 +28,32 @@ export const coverageOptions: CoverageReportOptions = {
   sourcePath: (filePath, info) => {
     const __dirname = import.meta.dirname;
     const repoRoot = path.resolve(__dirname, '../../..');
-    let p;
+    let absolutePath;
 
     // Use absolute path if provided in info
     if (info?.distFile && path.isAbsolute(info.distFile)) {
-      p = info.distFile;
+      absolutePath = info.distFile;
     } else {
       // Strip Playwright dev-server prefixes
-      p = filePath.replace(/^\/?localhost:\d+\/@?fs\//, '').replace(/^\/@?fs\//, '');
+      let p = filePath.replace(/^\/?localhost:\d+\/@?fs\//, '').replace(/^\/@?fs\//, '');
 
-      // Prepend leading slash if missing
-      if (!p.startsWith('/')) p = '/' + p;
+      // Fix: if path is missing leading slash but looks like absolute path, add it
+      // This handles cases where monocart passes "home/runner/..." instead of "/home/runner/..."
+      if (!p.startsWith('/') && (p.startsWith('home/') || p.startsWith('Users/'))) {
+        p = '/' + p;
+      }
+
+      // Determine absolute path
+      if (path.isAbsolute(p)) {
+        absolutePath = p;
+      } else {
+        absolutePath = path.resolve(repoRoot, p);
+      }
     }
 
-    // Remove duplicate repoRoot if it exists
-    const idx = p.lastIndexOf(repoRoot);
-    if (idx !== -1) {
-      p = p.slice(idx);
-    } else {
-      p = path.resolve(repoRoot, p.replace(/^\/+/, ''));
-    }
-
-    return p;
+    // CRITICAL: Return ABSOLUTE path for NYC compatibility
+    // NYC merge requires absolute paths as keys in coverage JSON files
+    // NYC report will convert them to relative paths when generating LCOV for SonarQube
+    return absolutePath;
   },
 };
