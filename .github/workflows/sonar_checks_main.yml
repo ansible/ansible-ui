@@ -3,9 +3,6 @@ name: SonarQube Daily Coverage Report (Main)
 on:
   schedule:
     - cron: '0 2 * * *'  # Run daily at 2 AM UTC (always runs on default branch)
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       aap_url:
