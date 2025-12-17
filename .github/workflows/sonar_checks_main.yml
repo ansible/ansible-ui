@@ -1,25 +1,532 @@
-name: SonarQube Static Scans (Main)
+name: SonarQube Daily Coverage Report (Main)
+
 on:
+  schedule:
+    - cron: '0 2 * * *'  # Run daily at 2 AM UTC (always runs on default branch)
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      aap_url:
+        description: 'AAP URL (optional - use pre-deployed instance instead of aap-dev)'
+        required: false
+        type: string
+      aap_username:
+        description: 'AAP username (required if aap_url is provided)'
+        required: false
+        type: string
+        default: 'admin'
+      aap_password:
+        description: 'AAP password (required if aap_url is provided)'
+        required: false
+        type: string
+
 permissions:
   actions: read
   contents: read
+
 jobs:
-  sonarcloud:
-    name: SonarQube Static Scans (Main)
+  vitest-coverage:
+    name: Generate Vitest Coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Run vitest with coverage
+        run: |
+          # Run coverage for each workspace, continue even if tests have cleanup errors
+          # as long as coverage data is generated
+          set +e  # Don't exit on error
+
+          npm --prefix platform run dump-nyc-vitest
+          PLATFORM_EXIT=$?
+
+          npm --prefix frontend/awx run dump-nyc-vitest
+          AWX_EXIT=$?
+
+          npm --prefix frontend/eda run dump-nyc-vitest
+          EDA_EXIT=$?
+
+          npm --prefix frontend/hub run dump-nyc-vitest
+          HUB_EXIT=$?
+
+          npm --prefix frontend/common run dump-nyc-vitest
+          COMMON_EXIT=$?
+
+          npm --prefix framework run dump-nyc-vitest
+          FRAMEWORK_EXIT=$?
+
+          # Merge all coverage reports
+          npm run nyc-report
+          MERGE_EXIT=$?
+
+          # Report results
+          echo ""
+          echo "=== Coverage Generation Results ==="
+          echo "Platform: exit code $PLATFORM_EXIT"
+          echo "AWX: exit code $AWX_EXIT"
+          echo "EDA: exit code $EDA_EXIT"
+          echo "Hub: exit code $HUB_EXIT"
+          echo "Common: exit code $COMMON_EXIT"
+          echo "Framework: exit code $FRAMEWORK_EXIT"
+          echo "Merge: exit code $MERGE_EXIT"
+
+          # Only fail if the merge step failed (coverage wasn't generated)
+          if [ $MERGE_EXIT -ne 0 ]; then
+            echo "ERROR: Failed to merge coverage reports"
+            exit 1
+          fi
+
+          echo "Coverage generation completed successfully"
+          exit 0
+
+      - name: Prepare coverage for SonarQube
+        run: |
+          mkdir -p coverage/vitest
+          cp coverage/combined/lcov.info coverage/vitest/lcov.info
+
+      - name: Upload Vitest coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-coverage
+          path: coverage/vitest/
+          retention-days: 7
+
+  deploy-and-test:
+    name: ${{ inputs.aap_url && 'Test Pre-deployed AAP' || 'Deploy AAP' }} (Shard ${{ matrix.shard }})
+    runs-on: ${{ inputs.aap_url && 'ubuntu-latest' || 'aap-dev' }}
+    timeout-minutes: 120
+    concurrency:
+      group: sonar-main-playwright-shard-${{ matrix.shard }}-${{ github.run_id }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Stagger deployment start to reduce resource contention
+        if: ${{ !inputs.aap_url }}
+        run: sleep $(( (${{ matrix.shard }} - 1) * 45 ))
+
+      - name: Deploy AAP using aap-dev action
+        if: ${{ !inputs.aap_url }}
+        id: deploy
+        uses: ansible/aap-dev/.github/actions/aap_deploy@main
+        with:
+          red_hat_registry_user: ${{ secrets.RED_HAT_REGISTRY_USER }}
+          red_hat_registry_token: ${{ secrets.RED_HAT_REGISTRY_TOKEN }}
+          aap_version: '2.6'
+          aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
+          aap_test_secrets_repo_github_token: ${{ secrets.AAP_TEST_SECRETS_REPO_GITHUB_TOKEN }}
+          quay_registry_user: ${{ secrets.QUAY_AAP_DEV_USERNAME }}
+          quay_registry_token: ${{ secrets.QUAY_AAP_DEV_TOKEN }}
+
+      - name: Display AAP deployment info
+        if: ${{ !inputs.aap_url }}
+        run: |
+          echo "AAP URL: ${{ steps.deploy.outputs.aap_url }}"
+          echo "AAP deployment successful!"
+
+      - name: Set AAP credentials from inputs or deployment
+        id: aap_creds
+        run: |
+          if [ -n "${{ inputs.aap_url }}" ]; then
+            echo "Using pre-deployed AAP instance"
+            echo "aap_url=${{ inputs.aap_url }}" >> $GITHUB_OUTPUT
+            echo "aap_username=${{ inputs.aap_username }}" >> $GITHUB_OUTPUT
+            echo "aap_password=${{ inputs.aap_password }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using aap-dev deployed instance"
+            echo "aap_url=${{ steps.deploy.outputs.aap_url }}" >> $GITHUB_OUTPUT
+            echo "aap_username=admin" >> $GITHUB_OUTPUT
+            echo "aap_password=${{ steps.deploy.outputs.admin_password }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build Platform UI
+        run: |
+          cd platform
+          npm run build
+
+      - name: Set PLATFORM_SERVER for Platform UI proxy
+        run: |
+          if [ -n "${{ inputs.aap_url }}" ]; then
+            # Strip trailing slash from user-provided URL
+            echo "PLATFORM_SERVER=$(echo '${{ inputs.aap_url }}' | sed 's:/*$::')" >> $GITHUB_ENV
+          else
+            # Strip trailing slash from aap-dev URL
+            echo "PLATFORM_SERVER=$(echo '${{ steps.deploy.outputs.aap_url }}' | sed 's:/*$::')" >> $GITHUB_ENV
+          fi
+
+      - name: Start Platform UI
+        run: |
+          cd platform
+          PLATFORM_SERVER=${{ env.PLATFORM_SERVER }} npm start &
+          sleep 15
+
+      - name: Wait for Platform UI
+        run: |
+          timeout 60 bash -c 'until curl -k https://localhost:4100 > /dev/null 2>&1; do sleep 2; done' || exit 1
+
+      - name: List tests in this shard
+        working-directory: playwright
+        run: |
+          echo "=== Tests assigned to shard ${{ matrix.shard }}/4 ==="
+          npx playwright test --list --project="live chromium" --shard=${{ matrix.shard }}/4 || true
+
+      - name: Run Playwright Tests
+        timeout-minutes: 120
+        working-directory: playwright
+        run: |
+          npx playwright test \
+            --project="live chromium" \
+            --shard=${{ matrix.shard }}/4 \
+            --retries=1
         env:
-          SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
+          PLATFORM_UI: https://localhost:4100
+          PLATFORM_USERNAME: ${{ steps.aap_creds.outputs.aap_username }}
+          PLATFORM_PASSWORD: ${{ steps.aap_creds.outputs.aap_password }}
+          AWX_API_PREFIX: /api/controller/v2
+        continue-on-error: true
+
+      - name: Analyze test timing for shard ${{ matrix.shard }}
+        if: always()
+        working-directory: playwright
+        run: |
+          echo "=== Test Timing Analysis for Shard ${{ matrix.shard }} ==="
+          if [ -f "results.json" ]; then
+            echo ""
+            echo "Top 15 slowest tests in this shard:"
+            node -e "
+              const results = require('./results.json');
+              const tests = [];
+              results.suites?.forEach(suite => {
+                suite.specs?.forEach(spec => {
+                  spec.tests?.forEach(test => {
+                    test.results?.forEach(result => {
+                      tests.push({
+                        file: spec.file.replace(process.cwd() + '/', ''),
+                        title: spec.title,
+                        duration: result.duration,
+                        status: result.status
+                      });
+                    });
+                  });
+                });
+              });
+              tests.sort((a, b) => b.duration - a.duration);
+              tests.slice(0, 15).forEach((test, i) => {
+                const durationSec = (test.duration / 1000).toFixed(2);
+                console.log(\`\${i + 1}. [\${test.status}] \${durationSec}s - \${test.file}\`);
+                console.log(\`   \${test.title}\`);
+              });
+              console.log('');
+              const totalDuration = tests.reduce((sum, t) => sum + t.duration, 0);
+              console.log(\`Total test time for shard: \${(totalDuration / 1000 / 60).toFixed(2)} minutes\`);
+              console.log(\`Number of tests: \${tests.length}\`);
+              console.log(\`Average test duration: \${(totalDuration / tests.length / 1000).toFixed(2)}s\`);
+            "
+          else
+            echo "No results.json found - tests may have failed to run"
+          fi
+
+      - name: Generate Coverage Report
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 30
+        working-directory: playwright
+        run: |
+          echo "=== Generating Coverage Report ==="
+          npx playwright test --project="coverage teardown"
+
+      - name: Fix coverage paths in shard
+        if: always()
+        run: |
+          echo "=== Looking for coverage files ==="
+          echo "Contents of playwright/coverage/:"
+          ls -la playwright/coverage/ 2>/dev/null || echo "playwright/coverage/ does not exist"
+          echo ""
+          echo "Looking for all coverage-final.json files:"
+          find playwright/coverage -name "coverage-final.json" -type f 2>/dev/null || echo "No coverage-final.json found"
+          echo ""
+
+          # Copy coverage file to .nyc_output with the naming pattern that fix-coverage-paths expects
+          mkdir -p .nyc_output
+          if [ -f "playwright/coverage/playwright/coverage-final.json" ]; then
+            echo "Found coverage file at expected location"
+            cp playwright/coverage/playwright/coverage-final.json .nyc_output/shard-${{ matrix.shard }}-playwright.json
+            echo "Running fix-coverage-paths on shard ${{ matrix.shard }}"
+            npm run coverage:fix-paths
+            # Copy the fixed file back
+            cp .nyc_output/shard-${{ matrix.shard }}-playwright.json playwright/coverage/playwright/coverage-final.json
+          else
+            echo "No coverage file found at playwright/coverage/playwright/coverage-final.json for shard ${{ matrix.shard }}"
+          fi
+
+      - name: Upload Playwright Coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-coverage-${{ matrix.shard }}
+          path: playwright/coverage/playwright/coverage-final.json
+          retention-days: 7
+
+      - name: Cleanup AAP deployment
+        if: ${{ always() && !inputs.aap_url }}
+        uses: ansible/aap-dev/.github/actions/aap_delete@main
+        with:
+          kube_config: ${{ steps.deploy.outputs.kube_config }}
+          aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
+
+  merge-playwright-coverage:
+    name: Merge Playwright Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [deploy-and-test]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Download all Playwright coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: playwright-coverage-*
+          path: playwright-coverage-artifacts
+
+      - name: Debug downloaded artifacts
+        run: |
+          echo "=== Downloaded artifact directory structure ==="
+          ls -laR playwright-coverage-artifacts/
+          echo ""
+          echo "=== Looking for coverage JSON files ==="
+          find playwright-coverage-artifacts -type f -name "*.json" | head -20
+          echo ""
+          echo "=== Looking for lcov.info files ==="
+          find playwright-coverage-artifacts -type f -name "lcov.info" | head -20
+          echo ""
+          echo "=== Sample coverage file contents from shard 1 ==="
+          FIRST_JSON=$(find playwright-coverage-artifacts/playwright-coverage-1 -type f -name "coverage-final.json" | head -1)
+          if [ -n "$FIRST_JSON" ]; then
+            echo "Found: $FIRST_JSON"
+            ls -lh "$FIRST_JSON"
+            echo "First 100 characters:"
+            head -c 100 "$FIRST_JSON"
+          else
+            echo "No coverage-final.json found in shard 1"
+          fi
+
+      - name: Merge Playwright coverage reports
+        run: |
+          echo "=== Files that nyc will try to merge ==="
+          find playwright-coverage-artifacts -name "coverage-final.json"
+          echo ""
+          echo "=== Preparing coverage files for merge ==="
+          mkdir -p .nyc_input
+          # NYC merge fails when all files have the same name in different subdirectories
+          # Rename files with unique names before merging
+          counter=1
+          for file in playwright-coverage-artifacts/*/coverage-final.json; do
+            if [ -f "$file" ]; then
+              echo "Copying $file to .nyc_input/shard-$counter.json"
+              cp "$file" ".nyc_input/shard-$counter.json"
+              counter=$((counter + 1))
+            fi
+          done
+          echo ""
+          echo "=== Merging coverage files ==="
+          mkdir -p coverage/playwright-merged
+          npx nyc merge .nyc_input coverage/playwright-merged/coverage-final.json
+          echo ""
+          echo "=== Merged file details ==="
+          ls -lh coverage/playwright-merged/coverage-final.json
+          echo "First 500 characters of merged file:"
+          head -c 500 coverage/playwright-merged/coverage-final.json
+          echo ""
+          echo "=== Preparing for NYC report generation ==="
+          mkdir -p .nyc_output
+          cp coverage/playwright-merged/coverage-final.json .nyc_output/merged-playwright.json
+          echo ""
+          echo "=== Fixing coverage paths (if needed) ==="
+          npm run coverage:fix-paths
+          echo ""
+          echo "=== Generating LCOV report ==="
+          npx nyc report --reporter=lcov --report-dir=coverage/playwright-merged
+          echo ""
+          echo "=== Generated LCOV file details ==="
+          ls -lh coverage/playwright-merged/lcov.info
+          head -n 30 coverage/playwright-merged/lcov.info
+
+      - name: Prepare for SonarQube
+        run: |
+          mkdir -p coverage/playwright
+          cp coverage/playwright-merged/lcov.info coverage/playwright/lcov.info
+
+      - name: Upload merged Playwright coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-coverage-merged
+          path: coverage/playwright/
+          retention-days: 7
+
+  sonarqube-scan:
+    name: SonarQube Scan with Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [vitest-coverage, merge-playwright-coverage]
+    if: always()
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Vitest coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: vitest-coverage
+          path: coverage/vitest
+        continue-on-error: true
+
+      - name: Download Playwright coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-coverage-merged
+          path: coverage/playwright
+        continue-on-error: true
+
+      - name: Verify coverage files
+        run: |
+          echo "=== Current Directory ==="
+          pwd
+          echo ""
+          echo "=== All Coverage Files ==="
+          find . -name "*.info" -type f 2>/dev/null || echo "No .info files found"
+          echo ""
+          echo "=== Vitest Coverage ==="
+          if [ -f "coverage/vitest/lcov.info" ]; then
+            ls -lh coverage/vitest/lcov.info
+            echo "File size: $(wc -l < coverage/vitest/lcov.info) lines"
+            echo "First 30 lines:"
+            head -n 30 coverage/vitest/lcov.info
+            echo ""
+            echo "Sample SF (source file) paths from Vitest coverage:"
+            grep "^SF:" coverage/vitest/lcov.info | head -n 10
+          else
+            echo "ERROR: coverage/vitest/lcov.info not found"
+            ls -la coverage/ 2>/dev/null || echo "No coverage directory"
+          fi
+          echo ""
+          echo "=== Playwright Coverage ==="
+          if [ -f "coverage/playwright/lcov.info" ]; then
+            ls -lh coverage/playwright/lcov.info
+            echo "File size: $(wc -l < coverage/playwright/lcov.info) lines"
+            echo "First 30 lines:"
+            head -n 30 coverage/playwright/lcov.info
+            echo ""
+            echo "Sample SF (source file) paths from Playwright coverage:"
+            grep "^SF:" coverage/playwright/lcov.info | head -n 10
+            echo ""
+            echo "Checking if paths are absolute or relative:"
+            if grep -q "^SF:/" coverage/playwright/lcov.info; then
+              echo "Found absolute paths in Playwright coverage"
+              grep "^SF:" coverage/playwright/lcov.info | head -n 3
+            else
+              echo "Paths appear to be relative"
+              grep "^SF:" coverage/playwright/lcov.info | head -n 3
+            fi
+          else
+            echo "ERROR: coverage/playwright/lcov.info not found"
+            ls -la coverage/ 2>/dev/null || echo "No coverage directory"
+          fi
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.AAP_ORG_SONAR_TOKEN_ANSIBLE_CICD_BOT }}
         with:
           args: >
             -Dsonar.scm.revision=${{ github.sha }}
+            -Dsonar.branch.name=main
+            -Dsonar.javascript.lcov.reportPaths=./coverage/vitest/lcov.info,./coverage/playwright/lcov.info
+            -Dsonar.typescript.lcov.reportPaths=./coverage/vitest/lcov.info,./coverage/playwright/lcov.info
