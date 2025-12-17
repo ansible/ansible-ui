@@ -1,0 +1,313 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "host",
+      "url": "/api/controller/v2/hosts/1/",
+      "related": {
+        "created_by": "/api/controller/v2/users/1/",
+        "modified_by": "/api/controller/v2/users/1/",
+        "variable_data": "/api/controller/v2/hosts/1/variable_data/",
+        "groups": "/api/controller/v2/hosts/1/groups/",
+        "all_groups": "/api/controller/v2/hosts/1/all_groups/",
+        "job_events": "/api/controller/v2/hosts/1/job_events/",
+        "job_host_summaries": "/api/controller/v2/hosts/1/job_host_summaries/",
+        "activity_stream": "/api/controller/v2/hosts/1/activity_stream/",
+        "inventory_sources": "/api/controller/v2/hosts/1/inventory_sources/",
+        "smart_inventories": "/api/controller/v2/hosts/1/smart_inventories/",
+        "ad_hoc_commands": "/api/controller/v2/hosts/1/ad_hoc_commands/",
+        "ad_hoc_command_events": "/api/controller/v2/hosts/1/ad_hoc_command_events/",
+        "ansible_facts": "/api/controller/v2/hosts/1/ansible_facts/",
+        "inventory": "/api/controller/v2/inventories/1/",
+        "last_job": "/api/controller/v2/jobs/60/",
+        "last_job_host_summary": "/api/controller/v2/job_host_summaries/21/"
+      },
+      "summary_fields": {
+        "inventory": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 3,
+          "hosts_with_active_failures": 0,
+          "total_groups": 0,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 1,
+          "kind": ""
+        },
+        "last_job": {
+          "id": 60,
+          "name": "e2e-job-template-1765905132142",
+          "description": "",
+          "finished": "2025-12-16T21:02:03.835636Z",
+          "status": "successful",
+          "failed": false,
+          "job_template_id": 11,
+          "job_template_name": "e2e-job-template-1765905132142"
+        },
+        "last_job_host_summary": {
+          "id": 21,
+          "failed": false
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        },
+        "groups": {
+          "count": 0,
+          "results": []
+        },
+        "recent_jobs": [
+          {
+            "id": 60,
+            "name": "e2e-job-template-1765905132142",
+            "type": "job",
+            "status": "successful",
+            "finished": "2025-12-16T21:02:03.835636Z"
+          },
+          {
+            "id": 59,
+            "name": "e2e-job-template-1765905132142",
+            "type": "job",
+            "status": "failed",
+            "finished": "2025-12-16T21:01:14.645607Z"
+          }
+        ]
+      },
+      "created": "2025-12-16T10:53:00.486631Z",
+      "modified": "2025-12-16T10:53:00.486639Z",
+      "name": "localhost",
+      "description": "",
+      "inventory": 1,
+      "enabled": true,
+      "instance_id": "",
+      "variables": "ansible_connection: local\nansible_python_interpreter: '{{ ansible_playbook_python }}'",
+      "has_active_failures": false,
+      "has_inventory_sources": false,
+      "last_job": 60,
+      "last_job_host_summary": 21,
+      "ansible_facts_modified": null
+    },
+    {
+      "id": 22,
+      "type": "host",
+      "url": "/api/controller/v2/hosts/22/",
+      "related": {
+        "created_by": "/api/controller/v2/users/1/",
+        "modified_by": "/api/controller/v2/users/1/",
+        "variable_data": "/api/controller/v2/hosts/22/variable_data/",
+        "groups": "/api/controller/v2/hosts/22/groups/",
+        "all_groups": "/api/controller/v2/hosts/22/all_groups/",
+        "job_events": "/api/controller/v2/hosts/22/job_events/",
+        "job_host_summaries": "/api/controller/v2/hosts/22/job_host_summaries/",
+        "activity_stream": "/api/controller/v2/hosts/22/activity_stream/",
+        "inventory_sources": "/api/controller/v2/hosts/22/inventory_sources/",
+        "smart_inventories": "/api/controller/v2/hosts/22/smart_inventories/",
+        "ad_hoc_commands": "/api/controller/v2/hosts/22/ad_hoc_commands/",
+        "ad_hoc_command_events": "/api/controller/v2/hosts/22/ad_hoc_command_events/",
+        "ansible_facts": "/api/controller/v2/hosts/22/ansible_facts/",
+        "inventory": "/api/controller/v2/inventories/1/",
+        "last_job": "/api/controller/v2/jobs/60/",
+        "last_job_host_summary": "/api/controller/v2/job_host_summaries/23/"
+      },
+      "summary_fields": {
+        "inventory": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 3,
+          "hosts_with_active_failures": 0,
+          "total_groups": 0,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 1,
+          "kind": ""
+        },
+        "last_job": {
+          "id": 60,
+          "name": "e2e-job-template-1765905132142",
+          "description": "",
+          "finished": "2025-12-16T21:02:03.835636Z",
+          "status": "successful",
+          "failed": false,
+          "job_template_id": 11,
+          "job_template_name": "e2e-job-template-1765905132142"
+        },
+        "last_job_host_summary": {
+          "id": 23,
+          "failed": false
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        },
+        "groups": {
+          "count": 0,
+          "results": []
+        },
+        "recent_jobs": [
+          {
+            "id": 60,
+            "name": "e2e-job-template-1765905132142",
+            "type": "job",
+            "status": "successful",
+            "finished": "2025-12-16T21:02:03.835636Z"
+          },
+          {
+            "id": 59,
+            "name": "e2e-job-template-1765905132142",
+            "type": "job",
+            "status": "failed",
+            "finished": "2025-12-16T21:01:14.645607Z"
+          }
+        ]
+      },
+      "created": "2025-12-16T19:17:24.369335Z",
+      "modified": "2025-12-16T21:01:34.682219Z",
+      "name": "mock-host-1",
+      "description": "",
+      "inventory": 1,
+      "enabled": true,
+      "instance_id": "",
+      "variables": "ansible_connection: local",
+      "has_active_failures": false,
+      "has_inventory_sources": false,
+      "last_job": 60,
+      "last_job_host_summary": 23,
+      "ansible_facts_modified": null
+    },
+    {
+      "id": 45,
+      "type": "host",
+      "url": "/api/controller/v2/hosts/45/",
+      "related": {
+        "created_by": "/api/controller/v2/users/1/",
+        "modified_by": "/api/controller/v2/users/1/",
+        "variable_data": "/api/controller/v2/hosts/45/variable_data/",
+        "groups": "/api/controller/v2/hosts/45/groups/",
+        "all_groups": "/api/controller/v2/hosts/45/all_groups/",
+        "job_events": "/api/controller/v2/hosts/45/job_events/",
+        "job_host_summaries": "/api/controller/v2/hosts/45/job_host_summaries/",
+        "activity_stream": "/api/controller/v2/hosts/45/activity_stream/",
+        "inventory_sources": "/api/controller/v2/hosts/45/inventory_sources/",
+        "smart_inventories": "/api/controller/v2/hosts/45/smart_inventories/",
+        "ad_hoc_commands": "/api/controller/v2/hosts/45/ad_hoc_commands/",
+        "ad_hoc_command_events": "/api/controller/v2/hosts/45/ad_hoc_command_events/",
+        "ansible_facts": "/api/controller/v2/hosts/45/ansible_facts/",
+        "inventory": "/api/controller/v2/inventories/1/",
+        "last_job": "/api/controller/v2/jobs/60/",
+        "last_job_host_summary": "/api/controller/v2/job_host_summaries/22/"
+      },
+      "summary_fields": {
+        "inventory": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 3,
+          "hosts_with_active_failures": 0,
+          "total_groups": 0,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 1,
+          "kind": ""
+        },
+        "last_job": {
+          "id": 60,
+          "name": "e2e-job-template-1765905132142",
+          "description": "",
+          "finished": "2025-12-16T21:02:03.835636Z",
+          "status": "successful",
+          "failed": false,
+          "job_template_id": 11,
+          "job_template_name": "e2e-job-template-1765905132142"
+        },
+        "last_job_host_summary": {
+          "id": 22,
+          "failed": false
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        },
+        "groups": {
+          "count": 0,
+          "results": []
+        },
+        "recent_jobs": [
+          {
+            "id": 60,
+            "name": "e2e-job-template-1765905132142",
+            "type": "job",
+            "status": "successful",
+            "finished": "2025-12-16T21:02:03.835636Z"
+          },
+          {
+            "id": 59,
+            "name": "e2e-job-template-1765905132142",
+            "type": "job",
+            "status": "failed",
+            "finished": "2025-12-16T21:01:14.645607Z"
+          }
+        ]
+      },
+      "created": "2025-12-16T20:34:06.410532Z",
+      "modified": "2025-12-16T21:01:40.085436Z",
+      "name": "mock-host-2",
+      "description": "",
+      "inventory": 1,
+      "enabled": true,
+      "instance_id": "",
+      "variables": "ansible_connection: local",
+      "has_active_failures": false,
+      "has_inventory_sources": false,
+      "last_job": 60,
+      "last_job_host_summary": 22,
+      "ansible_facts_modified": null
+    }
+  ]
+}
