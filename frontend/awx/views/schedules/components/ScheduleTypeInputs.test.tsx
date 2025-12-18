@@ -6,16 +6,6 @@ import { ScheduleFormWizard } from '../types';
 
 const { useParams } = vi.hoisted(() => ({ useParams: vi.fn() }));
 
-vi.mock('react-router-dom', () => ({
-  useParams: useParams,
-}));
-
-vi.mock('../../../administration/management-jobs/components/PageFormManagementJobsSelect', () => ({
-  PageFormManagementJobsSelect: ({ name }: { name: string }) => (
-    <div data-testid="management-job-select">{name}</div>
-  ),
-}));
-
 vi.mock('../../../resources/inventories/components/PageFormInventorySelect', () => ({
   PageFormInventorySelect: ({
     name,
@@ -126,15 +116,17 @@ describe('ScheduleTypeInputs', () => {
     expect(screen.getByTestId('project-select')).toHaveTextContent('resourceId');
   });
 
-  it('renders management job template select when schedule_type is management_job_template', () => {
+  it('renders management job template select when schedule_type is system_job_template', () => {
     render(
-      <TestWrapper defaultValues={{ schedule_type: 'management_job_template' }}>
+      <TestWrapper defaultValues={{ schedule_type: 'system_job_template' }}>
         <ScheduleTypeInputs />
       </TestWrapper>
     );
 
-    expect(screen.getByTestId('management-job-select')).toBeInTheDocument();
-    expect(screen.getByTestId('management-job-select')).toHaveTextContent('resourceId');
+    expect(screen.getByTestId('management-job-template-select')).toBeInTheDocument();
+    expect(screen.getByTestId('management-job-template-select')).toHaveTextContent(
+      'Select management job template'
+    );
   });
 
   it('renders inventory select when schedule_type is inventory_source', () => {

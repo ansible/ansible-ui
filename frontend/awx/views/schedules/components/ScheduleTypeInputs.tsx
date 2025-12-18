@@ -39,7 +39,7 @@ export function ScheduleTypeInputs() {
             { label: t('Workflow job template'), value: 'workflow_job_template' },
             { label: t('Inventory source'), value: 'inventory_source' },
             { label: t('Project sync'), value: 'project' },
-            { label: t('Management job template'), value: 'management_job_template' },
+            { label: t('Management job template'), value: 'system_job_template' },
           ]}
           placeholderText={t('Select resource type')}
           onChange={() => {
@@ -75,7 +75,7 @@ export function ScheduleTypeInputs() {
               </>
             ),
             project: <PageFormProjectSelect<ScheduleFormWizard> isRequired name="resourceId" />,
-            management_job_template: (
+            system_job_template: (
               <PageFormManagementJobsSelect<ScheduleFormWizard> isRequired name="resourceId" />
             ),
           }[scheduleType]}

@@ -1,16 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleFormWizard } from '../types';
 import { ScheduleResourceInputs } from './ScheduleResourceInputs';
-
-const { mockRequestGet } = vi.hoisted(() => ({
-  mockRequestGet: vi.fn(),
-}));
-
-vi.mock('@ansible/common-ui/crud/Data', () => ({
-  requestGet: mockRequestGet,
-}));
 
 vi.mock('../hooks/useGetTimezones', () => ({
   useGetTimezones: () => ({
@@ -44,6 +39,12 @@ function TestWrapper({
 }
 
 describe('ScheduleResourceInputs', () => {
+  const server = setupServer();
+
+  beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -116,18 +117,22 @@ describe('ScheduleResourceInputs', () => {
     expect(screen.queryByTestId('schedule_days_to_keep')).not.toBeInTheDocument();
   });
 
-  it('does not render days_to_keep field for other management job template types', async () => {
-    mockRequestGet.mockResolvedValue({
-      id: 3,
-      name: 'Cleanup Expired OAuth 2 Tokens',
-      job_type: 'cleanup_tokens',
-    });
+  it('should render days_to_keep field for cleanup_jobs management job', async () => {
+    server.use(
+      http.get(awxAPI`/system_job_templates/:id/`, () => {
+        return HttpResponse.json({
+          id: 1,
+          name: 'Cleanup Job Details',
+          job_type: 'cleanup_jobs',
+        });
+      })
+    );
 
     render(
       <TestWrapper
         defaultValues={{
-          schedule_type: 'management_job_template',
-          resourceId: 3,
+          schedule_type: 'system_job_template',
+          resourceId: 1,
         }}
       >
         <ScheduleResourceInputs />
@@ -135,10 +140,65 @@ describe('ScheduleResourceInputs', () => {
     );
 
     await waitFor(() => {
-      expect(mockRequestGet).toHaveBeenCalled();
+      expect(screen.getByRole('spinbutton', { name: 'Days of data to keep' })).toBeInTheDocument();
     });
+  });
 
-    expect(screen.queryByTestId('schedule_days_to_keep')).not.toBeInTheDocument();
+  it('should render days_to_keep field for cleanup_activitystream management job', async () => {
+    server.use(
+      http.get(awxAPI`/system_job_templates/:id/`, () => {
+        return HttpResponse.json({
+          id: 2,
+          name: 'Cleanup Activity Stream',
+          job_type: 'cleanup_activitystream',
+        });
+      })
+    );
+
+    render(
+      <TestWrapper
+        defaultValues={{
+          schedule_type: 'system_job_template',
+          resourceId: 2,
+        }}
+      >
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('spinbutton', { name: 'Days of data to keep' })).toBeInTheDocument();
+    });
+  });
+
+  it('should not render days_to_keep field for other management job template types', async () => {
+    server.use(
+      http.get(awxAPI`/system_job_templates/:id/`, () => {
+        return HttpResponse.json({
+          id: 3,
+          name: 'Cleanup Expired OAuth 2 Tokens',
+          job_type: 'cleanup_tokens',
+        });
+      })
+    );
+
+    render(
+      <TestWrapper
+        defaultValues={{
+          schedule_type: 'system_job_template',
+          resourceId: 3,
+        }}
+      >
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    // Wait for API call to complete
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('spinbutton', { name: 'Days of data to keep' })
+      ).not.toBeInTheDocument();
+    });
   });
 
   it('marks schedule name as required', () => {
