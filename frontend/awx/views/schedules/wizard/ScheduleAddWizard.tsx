@@ -111,6 +111,6 @@ function getScheduleType(url = '') {
   if (url.includes('workflow_job_templates')) return 'workflow_job_template';
   if (url.includes('inventory_sources')) return 'inventory_update';
   if (url.includes('projects')) return 'project';
-  if (url.includes('system_job_templates')) return 'management_job_template';
+  if (url.includes('system_job_templates')) return 'system_job_template';
   return '';
 }

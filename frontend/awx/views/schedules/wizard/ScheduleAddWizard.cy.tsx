@@ -194,7 +194,7 @@ describe('ScheduleAddWizard', () => {
         { method: 'GET', url: awxAPI`/system_job_templates/*/` },
         {
           id: 1,
-          type: 'management_job_template',
+          type: 'system_job_template',
           name: 'Cleanup Job Details',
           job_type: 'cleanup_jobs',
         }
@@ -301,7 +301,7 @@ describe('ScheduleAddWizard', () => {
         { method: 'GET', url: awxAPI`/system_job_templates/*/` },
         {
           id: 1,
-          type: 'management_job_template',
+          type: 'system_job_template',
           name: 'Cleanup Job Details',
           job_type: 'cleanup_jobs',
         }

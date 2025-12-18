@@ -115,6 +115,7 @@ npm run build             # Build all workspaces
 - Write unit tests and component tests with Vitest
 - Use Playwright for integration and e2e tests and live testing
 - **CRITICAL: Avoid unnecessary mocks in Vitest tests** - only mock external APIs, browser APIs, or genuinely difficult dependencies. Do NOT mock your own utility functions, hooks, or components. Test real behavior whenever possible.
+- Use msw to mock API endpoints in Vitest, rather than mocking requestGet or other fetching helper functions.
 
 ### Internationalization
 

@@ -18,7 +18,7 @@ const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
   job: AwxRoute.JobTemplateDetails,
   project: AwxRoute.ProjectDetails,
-  management_job_template: AwxRoute.ManagementJobSchedules,
+  system_job_template: AwxRoute.ManagementJobSchedules,
   workflow_approval: AwxRoute.WorkflowApprovalDetails,
   workflow_job: AwxRoute.WorkflowJobTemplateDetails,
 };
@@ -126,7 +126,7 @@ function useGetScheduleTypeDetail(type: string) {
     project_update: t('Project Update'),
     inventory_update: t('Inventory Update'),
     system_job: t('Management Job'),
-    management_job_template: t('Management Job'),
+    system_job_template: t('Management Job'),
   };
   return typeMapping[type];
 }

@@ -4,7 +4,7 @@ import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inp
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useEffect, useState } from 'react';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
@@ -13,18 +13,21 @@ import { ScheduleFormWizard } from '../types';
 
 export function ScheduleResourceInputs() {
   const { t } = useTranslation();
+  const { unregister } = useFormContext<ScheduleFormWizard>();
   const [timezoneMessage, setTimezoneMessage] = useState('');
   const [hasDaysToKeepField, setHasDaysToKeepField] = useState(false);
   const timeZone = useWatch<ScheduleFormWizard, 'timezone'>({ name: 'timezone' });
+
   const resourceId = useWatch<ScheduleFormWizard, 'resourceId'>({
     name: 'resourceId',
   });
+  const resource = useWatch<ScheduleFormWizard, 'resource'>({ name: 'resource' });
   const scheduleType = useWatch<ScheduleFormWizard, 'schedule_type'>({
     name: 'schedule_type',
   });
   useEffect(() => {
     async function getManagementJob() {
-      if (scheduleType === 'management_job_template' && resourceId) {
+      if (scheduleType === 'system_job_template' && resourceId) {
         const managementJob = await requestGet<SystemJobTemplate>(
           awxAPI`/system_job_templates/${resourceId.toString()}/`
         );
@@ -35,11 +38,12 @@ export function ScheduleResourceInputs() {
           setHasDaysToKeepField(true);
         } else {
           setHasDaysToKeepField(false);
+          unregister('schedule_days_to_keep');
         }
       }
     }
     void getManagementJob();
-  }, [scheduleType, resourceId]);
+  }, [scheduleType, resourceId, resource, unregister]);
 
   const { timeZones, links } = useGetTimezones();
 
@@ -84,7 +88,7 @@ export function ScheduleResourceInputs() {
           helperText={timezoneMessage}
           isRequired
         />
-        {hasDaysToKeepField && (
+        {hasDaysToKeepField ? (
           <PageFormTextInput<ScheduleFormWizard>
             name={'schedule_days_to_keep'}
             isRequired
@@ -93,7 +97,7 @@ export function ScheduleResourceInputs() {
             type="number"
             min={1}
           />
-        )}
+        ) : null}
       </PageFormSection>
     </>
   );
