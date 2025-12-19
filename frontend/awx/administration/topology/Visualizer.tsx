@@ -23,7 +23,7 @@ import {
   withSelection,
 } from '@patternfly/react-topology';
 import * as d3 from 'd3';
-import { ComponentType, useEffect, useMemo, useRef, useState } from 'react';
+import { ComponentType, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
@@ -118,7 +118,6 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
     }, 100);
   }
 
-  const getData: Worker = useMemo(() => new Worker(), []);
   function getWidth(selector: string) {
     const selected = d3.select(selector).node();
     return selected ? (selected as HTMLElement).getBoundingClientRect().width : 1200;
@@ -132,36 +131,37 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
   useEffect(() => {
     const width = getWidth('#mesh-topology');
     const height = getHeight('#mesh-topology');
-    if (window.Worker) {
-      getData.postMessage({
-        nodes: mesh.nodes,
-        links: mesh.links,
-        width: width,
-        height: height,
-      });
+    if (!window.Worker) {
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  useEffect(() => {
-    function handleMeshLayout(data: WebWorkerResponse) {
-      setMeshLayout(() => ({ ...data }));
-      // close the worker thread
-      getData.terminate();
-    }
-    if (window.Worker) {
-      getData.onmessage = function handleWorkerEvent(event: { data: WebWorkerResponse }) {
-        switch (event.data.type) {
-          case 'tick':
-            return handleProgress(event.data.progress);
-          case 'end':
-            return handleMeshLayout(event.data);
-          default:
-            return false;
-        }
-      };
-    }
-  }, [getData]);
+    // Create a new worker each time mesh changes
+    const worker = new Worker();
+
+    worker.onmessage = function handleWorkerEvent(event: { data: WebWorkerResponse }) {
+      switch (event.data.type) {
+        case 'tick':
+          handleProgress(event.data.progress);
+          break;
+        case 'end':
+          setMeshLayout(() => ({ ...event.data }));
+          worker.terminate();
+          break;
+      }
+    };
+
+    worker.postMessage({
+      nodes: mesh.nodes,
+      links: mesh.links,
+      width: width,
+      height: height,
+    });
+
+    // Cleanup: terminate worker if component unmounts or mesh changes before worker finishes
+    return () => {
+      worker.terminate();
+    };
+  }, [mesh]);
 
   useEffect(() => {
     const model: Model = {
