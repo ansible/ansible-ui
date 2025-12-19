@@ -1,0 +1,102 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "page_size": 50,
+  "page": 1,
+  "results": [
+    {
+      "name": "project-2",
+      "description": "",
+      "organization_id": 1,
+      "eda_credential_id": null,
+      "signature_validation_credential_id": null,
+      "scm_branch": "",
+      "scm_refspec": "",
+      "verify_ssl": true,
+      "proxy": "",
+      "created_by": {
+        "id": 1,
+        "username": "admin",
+        "first_name": "",
+        "last_name": ""
+      },
+      "modified_by": {
+        "id": 1,
+        "username": "admin",
+        "first_name": "",
+        "last_name": ""
+      },
+      "id": 2,
+      "url": "https://github.com/ansible/ansible-ui",
+      "scm_type": "git",
+      "git_hash": "96dcf0bc903780360e13c5614c35662d75157c05",
+      "import_state": "completed",
+      "import_error": null,
+      "created_at": "2025-12-19T13:49:07.918106Z",
+      "modified_at": "2025-12-19T14:34:24.215292Z"
+    },
+    {
+      "name": "project-1",
+      "description": "",
+      "organization_id": 1,
+      "eda_credential_id": null,
+      "signature_validation_credential_id": null,
+      "scm_branch": "",
+      "scm_refspec": "",
+      "verify_ssl": true,
+      "proxy": "",
+      "created_by": {
+        "id": 1,
+        "username": "admin",
+        "first_name": "",
+        "last_name": ""
+      },
+      "modified_by": {
+        "id": 1,
+        "username": "admin",
+        "first_name": "",
+        "last_name": ""
+      },
+      "id": 23,
+      "url": "https://github.com/ansible/ansible-ui",
+      "scm_type": "git",
+      "git_hash": "96dcf0bc903780360e13c5614c35662d75157c05",
+      "import_state": "completed",
+      "import_error": null,
+      "created_at": "2025-12-19T14:34:12.881524Z",
+      "modified_at": "2025-12-19T14:34:12.881539Z"
+    },
+    {
+      "name": "project-3",
+      "description": "",
+      "organization_id": 1,
+      "eda_credential_id": null,
+      "signature_validation_credential_id": null,
+      "scm_branch": "",
+      "scm_refspec": "",
+      "verify_ssl": true,
+      "proxy": "",
+      "created_by": {
+        "id": 1,
+        "username": "admin",
+        "first_name": "",
+        "last_name": ""
+      },
+      "modified_by": {
+        "id": 1,
+        "username": "admin",
+        "first_name": "",
+        "last_name": ""
+      },
+      "id": 24,
+      "url": "https://github.com/ansible/ansible-ui",
+      "scm_type": "git",
+      "git_hash": "96dcf0bc903780360e13c5614c35662d75157c05",
+      "import_state": "running",
+      "import_error": null,
+      "created_at": "2025-12-19T14:34:32.956207Z",
+      "modified_at": "2025-12-19T14:34:32.956220Z"
+    }
+  ]
+}

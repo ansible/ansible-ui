@@ -1,17 +1,47 @@
 import { Page, expect } from '@playwright/test';
+import { edaAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
+import type { EdaProject as EdaProjectType } from '@ansible/eda-ui/interfaces/EdaProject';
 
 export interface CreateEdaProjectOptions {
   projectName?: string;
   organizationName?: string;
 }
 
+export interface CreateEdaProjectAPIOptions {
+  name?: string;
+  organization: number;
+  url?: string;
+  description?: string;
+}
+
 export const EdaProject = {
+  api: {
+    create: async (page: Page, options: CreateEdaProjectAPIOptions): Promise<EdaProjectType> => {
+      const project = await edaAPI.post<EdaProjectType>(page, 'projects/', {
+        name: options.name ?? createE2EName('project'),
+        organization_id: options.organization,
+        url: options.url ?? 'https://github.com/ansible/ansible-ui',
+        description: options.description ?? 'Created via API for E2E testing',
+      });
+
+      if (!project) {
+        throw new Error('Failed to create EDA project: API returned null');
+      }
+
+      return project;
+    },
+
+    delete: async (page: Page, projectId: number): Promise<void> => {
+      await edaAPI.delete(page, `projects/${projectId}/`);
+    },
+  },
+
   ui: {
     create: async (page: Page, options: CreateEdaProjectOptions = {}): Promise<string> => {
       await navigateTo(page, 'Automation Decisions', 'Projects');
