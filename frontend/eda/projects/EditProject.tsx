@@ -319,6 +319,7 @@ export function CreateProject() {
 export function EditProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
@@ -331,7 +332,7 @@ export function EditProject() {
   const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     await patchRequest(edaAPI`/projects/${id.toString()}/`, project);
-    void navigate(-1);
+    pageNavigate(EdaRoute.ProjectPage, { params: { id: id } });
   };
   const onCancel = () => void navigate(-1);
   const getPageUrl = useGetPageUrl();
