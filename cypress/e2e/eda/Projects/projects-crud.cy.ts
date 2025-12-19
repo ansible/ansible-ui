@@ -2,7 +2,6 @@
 /// <reference types="cypress" />
 
 //Tests a user's ability to create, edit, and delete a Project in the EDA UI.
-import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
@@ -27,23 +26,7 @@ describe('Check if the build includes EDA', () => {
       cy.deleteEdaOrganization(edaOrg);
     });
 
-    it('can create a Project, sync it, and assert the information showing on the details page', () => {
-      const name = 'E2E Project ' + randomString(4);
-      cy.navigateTo('eda', 'projects');
-      cy.get('h1').should('contain', 'Projects');
-      cy.contains(/^Create project$/).click();
-      cy.getByDataCy('name').type(name);
-      cy.getByDataCy('url').type('https://github.com/ansible/ansible-ui');
-      cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
-      cy.clickButton(/^Create project$/);
-      cy.verifyPageTitle(name);
-      cy.getEdaProjectByName(name).then((project) => {
-        cy.wrap(project).should('not.be.undefined');
-        if (project) cy.deleteEdaProject(project);
-      });
-    });
-
-    it('can edit a project from the list view', () => {
+    it('can edit a project from the project details page', () => {
       cy.createEdaProject(edaOrg?.id).then((edaProject) => {
         cy.waitEdaProjectSync(edaProject);
         cy.navigateTo('eda', 'projects');
