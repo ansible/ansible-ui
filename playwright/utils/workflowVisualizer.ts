@@ -7,6 +7,7 @@ import { createE2EName } from '../commands/createE2EName';
 import { platformUI } from '../commands/login';
 import { navigateTo } from '../commands/navigateTo';
 import { awxAPI } from '../commands/apiClient';
+import type { WorkflowNode } from '@ansible/awx-ui/interfaces/WorkflowNode';
 
 export interface CreateWFVizLinkOptions {
   sourceId: number;
@@ -30,13 +31,36 @@ export interface RenderWFVizWithMockDataOptions {
 
 export const WorkflowVisualizer = {
   api: {
+    createNode: async (
+      page: Page,
+      workflowJobTemplateId: number,
+      options: {
+        unifiedJobTemplate: number;
+      }
+    ): Promise<WorkflowNode> => {
+      const response = await awxAPI.post<WorkflowNode>(
+        page,
+        `workflow_job_templates/${workflowJobTemplateId}/workflow_nodes/`,
+        {
+          unified_job_template: options.unifiedJobTemplate,
+        }
+      );
+
+      if (!response) {
+        throw new Error('Failed to create workflow node');
+      }
+
+      return response;
+    },
+
     createLink: async (options: CreateWFVizLinkOptions): Promise<void> => {
       await awxAPI.post(
         options.page,
         `workflow_job_template_nodes/${options.sourceId.toString()}/${options.type}_nodes/`,
         {
           id: options.targetId,
-        }
+        },
+        { expectStatus: 204 }
       );
     },
   },
