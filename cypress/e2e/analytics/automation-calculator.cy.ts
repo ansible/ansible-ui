@@ -3,8 +3,8 @@ import { Job } from '@ansible/awx-ui/interfaces/Job';
 import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
 import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { Project } from '@ansible/awx-ui/interfaces/Project';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { randomE2Ename } from '../../../support/utils';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import { randomE2Ename } from '@ansible/cypress/support/utils';
 
 // Skip until https://issues.redhat.com/browse/AAP-33942 is addressed
 describe.skip('Automation Calculator', () => {
