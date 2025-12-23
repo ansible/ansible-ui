@@ -51,8 +51,16 @@ function useAggregateJobTemplateDetails({
     String(promptValues?.execution_environment?.id)
   );
 
+  // Fix: Check for non-empty arrays, not just truthy values (empty arrays are truthy!)
   const credentials =
-    promptValues?.credentials ?? nodeCredentials?.results ?? templateCredentials?.results;
+    (promptValues?.credentials && promptValues.credentials.length > 0
+      ? promptValues.credentials
+      : undefined) ??
+    (nodeCredentials?.results && nodeCredentials.results.length > 0
+      ? nodeCredentials.results
+      : undefined) ??
+    templateCredentials?.results;
+
   const diffMode = promptValues?.diff_mode ?? nodeValues?.diff_mode ?? template.diff_mode;
   let executionEnvironment: ExecutionEnvironment | undefined;
 
