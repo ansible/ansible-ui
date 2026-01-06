@@ -340,13 +340,14 @@ test.describe('Rulebook Activations', () => {
           .first()
           .click();
         await expect(
-          page.getByRole('dialog', { name: 'Enable rulebook activation' })
+          page.getByRole('dialog', { name: 'Enable rulebook activations' })
         ).toBeVisible();
         await expect(
-          page.getByRole('button', { name: 'Enable rulebook activation' })
+          page.getByRole('button', { name: 'Enable rulebook activations' })
         ).toBeVisible();
         await expect(page.getByText('Note: This warning is')).toBeVisible();
-        await page.getByRole('button', { name: 'Enable rulebook activation' }).click();
+        await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
+        await page.getByRole('button', { name: 'Enable rulebook activations' }).click();
         await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
         await page.getByRole('textbox', { name: 'Type to filter' }).click();
         await page.getByRole('textbox', { name: 'Type to filter' }).fill(rulebookActivationName);
