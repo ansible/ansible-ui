@@ -13,6 +13,7 @@ import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { PersonaViewSwitcher } from './persona-view/PersonaViewSwitcher';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
+import { PageTitleProvider } from '@ansible/ansible-ui-framework/PageTitle/PageTitle';
 
 export function PlatformApp() {
   const navigation = usePlatformNavigation();
@@ -124,19 +125,21 @@ export function PlatformApp() {
   const personaViewSwitcherFlag = useUIFlag(UIFlag.PersonaViewSwitcher);
 
   return (
-    <PageApp
-      masthead={<PlatformMasthead />}
-      navigation={navigation}
-      basename={process.env.ROUTE_PREFIX ?? '/'}
-      defaultRefreshInterval={10}
-      banner={
-        <>
-          {controllerDownBanner}
-          {subscriptionBanner}
-          {sessionBanner}
-        </>
-      }
-      contextSwitcher={personaViewSwitcherFlag?.enabled ? <PersonaViewSwitcher /> : undefined}
-    />
+    <PageTitleProvider navigation={navigation}>
+      <PageApp
+        masthead={<PlatformMasthead />}
+        navigation={navigation}
+        basename={process.env.ROUTE_PREFIX ?? '/'}
+        defaultRefreshInterval={10}
+        banner={
+          <>
+            {controllerDownBanner}
+            {subscriptionBanner}
+            {sessionBanner}
+          </>
+        }
+        contextSwitcher={personaViewSwitcherFlag?.enabled ? <PersonaViewSwitcher /> : undefined}
+      />
+    </PageTitleProvider>
   );
 }
