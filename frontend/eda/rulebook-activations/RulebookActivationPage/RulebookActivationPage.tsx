@@ -27,7 +27,7 @@ import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
-  useEnableRulebookActivationWithWarning,
+  useEnableRulebookActivationsWithWarning,
   useRestartRulebookActivations,
   useRestartRulebookActivationsWithWarning,
 } from '../hooks/useControlRulebookActivations';
@@ -68,35 +68,13 @@ export function RulebookActivationPage() {
   });
 
   const copyRulebookActivation = useCopyRulebookActivation();
-  const enableActivationWithWarning = useEnableRulebookActivationWithWarning(
-    enableActivation,
-    refresh
-  );
+  const enableActivationsWithWarning = useEnableRulebookActivationsWithWarning(refresh);
 
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
     if (deleted.length > 0) {
       pageNavigate(EdaRoute.RulebookActivations);
     }
   });
-
-  function enableActivation(activation: EdaRulebookActivation) {
-    const alert: AlertProps = {
-      variant: 'success',
-      title: `${activation.name} ${t('enabled')}.`,
-      timeout: 5000,
-    };
-    return postRequest(edaAPI`/activations/${activation.id.toString()}/${'enable/'}`, undefined)
-      .then(() => alertToaster.addAlert(alert))
-      .catch((err: Error) => {
-        const errorResults = parseError(err);
-        alertToaster.addAlert({
-          variant: 'danger',
-          title: `${t('Failed to enable')} ${activation.name}`,
-          children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
-          timeout: 5000,
-        });
-      });
-  }
 
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
     useCallback(
@@ -107,7 +85,9 @@ export function RulebookActivationPage() {
           timeout: 5000,
         };
         if (!activation.is_enabled && hasCopyNamePattern(activation?.name)) {
-          enableActivationWithWarning(activation);
+          // Dialog handles enable and refresh via onComplete callback
+          enableActivationsWithWarning([activation]);
+          return;
         } else {
           await postRequest(edaAPI`/activations/${activation.id.toString()}/enable/`, undefined)
             .then(() => alertToaster.addAlert(alert))
@@ -125,7 +105,7 @@ export function RulebookActivationPage() {
           refresh();
         }
       },
-      [t, enableActivationWithWarning, refresh, alertToaster, parseError]
+      [t, enableActivationsWithWarning, refresh, alertToaster, parseError]
     );
 
   const restartActivationsWithWarning = useRestartRulebookActivationsWithWarning(refresh);

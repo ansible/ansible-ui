@@ -48,6 +48,9 @@ export interface BulkConfirmationDialog<T extends object> {
   /** Alert prompts that shows up under the confirmation title. */
   alertPrompts?: string[];
 
+  /** Whether to render alert prompts with plain styling. Defaults to false. */
+  isPlain?: boolean;
+
   /** The items to confirm for the bulk action. */
   items: T[];
 
@@ -81,13 +84,14 @@ export interface BulkConfirmationDialog<T extends object> {
   errorAdapter?: ErrorAdapter;
 }
 
-function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<T>) {
+export function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<T>) {
   const {
     title,
     items,
     keyFn,
     prompt,
     alertPrompts,
+    isPlain = false,
     confirmationColumns,
     isItemNonActionable,
     onConfirm,
@@ -173,6 +177,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
                   data-cy="alert-toaster"
                   data-testid="alert-toaster"
                   isInline
+                  isPlain={isPlain}
                   title={alertPrompt}
                   variant="warning"
                   key={i}

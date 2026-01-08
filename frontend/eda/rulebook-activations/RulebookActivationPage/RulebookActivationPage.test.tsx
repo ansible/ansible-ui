@@ -19,14 +19,10 @@ import {
 } from '../../interfaces/generated/eda-api';
 import { RulebookActivationPage } from './RulebookActivationPage';
 
-vi.mock('../hooks/useControlRulebookActivations', async (importOriginal) => {
-  const originalModule =
-    await importOriginal<typeof import('../hooks/useControlRulebookActivations')>();
-  return {
-    ...originalModule, // Include all original exports
-    useRestartRulebookActivationsWithWarning: vi.fn(() => vi.fn()),
-  };
-});
+const mockBulkAction = vi.fn();
+vi.mock('../../common/useEdaBulkConfirmation', () => ({
+  useEdaBulkConfirmation: () => mockBulkAction,
+}));
 
 const mockActivationOptions = {
   name: 'Activation Instance',
@@ -1122,15 +1118,6 @@ const mockWorkersOfflineActivation: EdaRulebookActivation = {
   },
 };
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  Trans: () => ({
-    t: (key: string) => key,
-  }),
-}));
-
 describe('RulebookActivationPage', () => {
   let server: ReturnType<typeof setupServer>;
 
@@ -1160,9 +1147,6 @@ describe('RulebookActivationPage', () => {
 
   it('should render the activation details when data is loaded', async () => {
     const user = userEvent.setup();
-    const controlModule = await import('../hooks/useControlRulebookActivations');
-    const mockRestartRulebookActivationsWithWarning =
-      vi.mocked(controlModule).useRestartRulebookActivationsWithWarning;
     const { getByRole, getByText } = render(
       <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
         <Routes>
@@ -1183,7 +1167,42 @@ describe('RulebookActivationPage', () => {
     await user.click(restartOption);
 
     await waitFor(() => {
-      expect(mockRestartRulebookActivationsWithWarning).toHaveBeenCalled();
+      expect(mockBulkAction).toHaveBeenCalled();
+    });
+  });
+
+  it('should call enableActivationsWithWarning when enabling an activation with a copy name pattern', async () => {
+    const user = userEvent.setup();
+
+    const copyActivation = {
+      ...mockWorkersOfflineActivation,
+      is_enabled: false,
+      name: 'Activation 1 @ 12:00:00',
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(copyActivation);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: copyActivation.name })).toBeInTheDocument();
+    });
+
+    const switchButton = screen.getByRole('switch', { name: 'Click to enable instance' });
+    await user.click(switchButton);
+
+    await waitFor(() => {
+      expect(mockBulkAction).toHaveBeenCalled();
     });
   });
 });

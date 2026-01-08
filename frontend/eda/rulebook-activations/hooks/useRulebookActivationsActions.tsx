@@ -65,18 +65,18 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
       [alertToaster, parseError, t]
     );
   const enableRulebookActivations = useCallback(
-    (activations: EdaRulebookActivation[]) => {
+    async (activations: EdaRulebookActivation[]) => {
       if (activations.filter((activation) => hasCopyNamePattern(activation?.name)).length > 0) {
         enableActivationsWithWarning(activations);
       } else {
-        for (const activation of activations) {
-          if (!activation.is_enabled) {
-            void enableRulebookActivation(activation);
-          }
-        }
+        const enablePromises = activations
+          .filter((activation) => !activation.is_enabled)
+          .map((activation) => enableRulebookActivation(activation));
+        await Promise.allSettled(enablePromises);
+        view.unselectItemsAndRefresh(activations);
       }
     },
-    [enableActivationsWithWarning, enableRulebookActivation]
+    [enableActivationsWithWarning, enableRulebookActivation, view]
   );
 
   const restartRulebookActivations = useCallback(
