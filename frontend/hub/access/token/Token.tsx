@@ -52,7 +52,7 @@ export function Token() {
           />
           <PageSection hasBodyWrapper={false}>
             <div data-cy={'copy_token_cell'}>
-              <CopyCell data-cy={'copy_token_cell'} data-testid={'copy_token_cell'} text={token} />
+              <CopyCell text={token} testId="copy_token_cell" />
             </div>
           </PageSection>
         </Stack>
