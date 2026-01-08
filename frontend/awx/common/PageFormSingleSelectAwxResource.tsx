@@ -72,7 +72,7 @@ export function PageFormSingleSelectAwxResource<
           }
         }
         if (options.next) urlSearchParams.set('name__gt', options.next.toString());
-        if (options.search) urlSearchParams.set('name__icontains', options.search);
+        if (options.search) urlSearchParams.set('search', options.search);
         const response = await requestGet<AwxItemsResponse<Resource>>(
           baseUrl + '?' + decodeURIComponent(urlSearchParams.toString()),
           options.signal

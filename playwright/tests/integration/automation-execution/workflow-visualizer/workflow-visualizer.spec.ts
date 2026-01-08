@@ -3,6 +3,7 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { toggleNodeKebab } from '@ansible/playwright/commands/toggleNodeKebab';
+import { awxAPI } from '@ansible/playwright/commands/apiClient';
 import {
   Organization,
   Credential,
@@ -694,6 +695,137 @@ test.describe('Workflow Viz', () => {
 
       // Cleanup
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+    }
+  );
+
+  test(
+    'Should save and persist credentials when workflow node has empty credential override',
+    { tag: ['@not_mock', '@compare'] },
+    async ({ page }) => {
+      test.setTimeout(5 * 60 * 1000);
+
+      // Create Machine credential
+      const machineCredentialName = createE2EName();
+      const machineCredential = await Credential.ui.create(page, {
+        credentialType: 'Machine',
+        credentialName: machineCredentialName,
+        username: 'testuser',
+        password: 'testpass',
+      });
+
+      // Create inventory
+      const inventoryName = await Inventory.ui.create(page);
+
+      // Create job template via UI
+      const jobTemplateName = createE2EName();
+      const jobTemplate = await JobTemplate.ui.create(page, {
+        name: jobTemplateName,
+        inventoryName,
+        PromptOnLaunch: true,
+      });
+
+      // Get the job template ID via API to associate the credential
+      const jobTemplateList = (await awxAPI.get(page, `job_templates/?name=${jobTemplate}`)) as {
+        results: { id: number }[];
+      };
+      if (!jobTemplateList || !jobTemplateList.results || jobTemplateList.results.length === 0) {
+        throw new Error('Failed to find created job template');
+      }
+      const jobTemplateId = jobTemplateList.results[0].id;
+
+      // Get credential ID via API
+      const credentialList = (await awxAPI.get(
+        page,
+        `credentials/?name=${machineCredentialName}`
+      )) as {
+        results: { id: number }[];
+      };
+      if (!credentialList || !credentialList.results || credentialList.results.length === 0) {
+        throw new Error('Failed to find created credential');
+      }
+      const credentialId = credentialList.results[0].id;
+
+      // Associate credential with job template via API
+      await awxAPI.post(
+        page,
+        `job_templates/${jobTemplateId}/credentials/`,
+        { id: credentialId },
+        { expectStatus: 204 }
+      );
+
+      // Create workflow job template
+      const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+
+      // Add job template node to workflow
+      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
+      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('button', { name: 'Job template', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(jobTemplate);
+      await page.getByRole('option', { name: jobTemplate }).click();
+      await page.getByRole('button', { name: 'Next' }).click();
+
+      // Go to Prompts step to configure credentials
+      await page.getByRole('button', { name: 'Prompts' }).click();
+
+      // Select inventory in Prompts step
+      await page.getByTestId('inventory').click();
+      await page.getByRole('option', { name: inventoryName }).click();
+
+      // Go to Review step
+      await page.getByRole('button', { name: 'Next' }).click();
+
+      // Finish adding node
+      await page.getByRole('button', { name: 'Finish' }).click();
+
+      // Save workflow and intercept the API call
+      const saveResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/workflow_nodes/') &&
+          response.request().method() === 'POST' &&
+          response.status() === 201
+      );
+
+      const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
+      await expect(saveButton).toBeEnabled();
+      await saveButton.click();
+
+      // Wait for save response to ensure workflow is saved
+      await saveResponsePromise;
+
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      const closeAlert = page.getByRole('button', { name: 'Close Success alert: alert:' });
+      if (await closeAlert.isVisible()) {
+        await closeAlert.click();
+      }
+
+      // Click on the node to view details
+      await page.locator('[class*="topology__node__label"]', { hasText: jobTemplate }).click();
+
+      // Verify credentials are displayed in the sidebar (should show template credentials, not empty)
+      const sidebar = page.getByTestId('workflow-topology-sidebar');
+      await expect(sidebar.getByText('Credentials', { exact: true })).toBeVisible();
+
+      // Verify that template credentials are shown (not hidden due to empty override)
+      // The bug would cause no credentials to be displayed here
+      await expect(sidebar.getByText(machineCredentialName)).toBeVisible();
+
+      // Test persistence: Navigate away and back to verify credentials persist
+      await page.getByTestId('workflow-visualizer-toolbar-close').click();
+      await WorkflowVisualizer.ui.navigateToVisualizer(page, wfJobTemplate);
+      await page.locator('[class*="topology__node__label"]', { hasText: jobTemplate }).click();
+
+      // Re-verify credentials after reload
+      await expect(sidebar.getByText(machineCredentialName)).toBeVisible();
+
+      // Cleanup
+      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await Credential.ui.delete(page, machineCredential);
+      await Inventory.ui.delete(page, inventoryName);
     }
   );
 });

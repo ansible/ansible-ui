@@ -41,11 +41,17 @@ describe('AuthenticatorMappingForm', () => {
     http.get(gatewayAPI`/authenticator_maps//`, () => {
       return HttpResponse.json(authenticatorMapping);
     }),
+    http.get(gatewayAPI`/authenticators/1/authenticator_maps/`, () => {
+      return HttpResponse.json({ count: 0, results: [] });
+    }),
     http.get(gatewayAPI`/role_definitions/`, () => {
       return HttpResponse.json(roleDefinitions);
     }),
     http.post(gatewayAPI`/authenticator_maps/`, () => {
       return HttpResponse.json(authMappingAttributesPayload);
+    }),
+    http.patch(gatewayAPI`/authenticator_maps/3/`, () => {
+      return HttpResponse.json(authenticatorMapping);
     })
   );
 
@@ -157,6 +163,108 @@ describe('AuthenticatorMappingForm', () => {
     await user.click(submitButton);
   });
 
+  test('should set order to 1 when creating first mapping', async () => {
+    const postSpy = vi.fn();
+    server.use(
+      http.get(gatewayAPI`/authenticators/1/authenticator_maps/`, () => {
+        return HttpResponse.json({ count: 0, results: [] });
+      }),
+      http.post(gatewayAPI`/authenticator_maps/`, async ({ request }) => {
+        const body = await request.json();
+        postSpy(body);
+        return HttpResponse.json({ ...authMappingAttributesPayload, id: 10 });
+      })
+    );
+
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/create'}
+            element={<CreateAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
+    const submitButton = getByRole('button', { name: 'Create mapping' });
+
+    await user.type(nameField, 'First mapping');
+    await user.click(
+      getByRole('button', {
+        name: 'Select rule condition',
+      })
+    );
+    await user.click(getByRole('option', { name: 'Always' }));
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(postSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'First mapping',
+          order: 1,
+        })
+      );
+    });
+  });
+
+  test('should set order to count + 1 when creating additional mapping', async () => {
+    const postSpy = vi.fn();
+    server.use(
+      http.get(gatewayAPI`/authenticators/1/authenticator_maps/`, () => {
+        return HttpResponse.json({ count: 5, results: [] });
+      }),
+      http.post(gatewayAPI`/authenticator_maps/`, async ({ request }) => {
+        const body = await request.json();
+        postSpy(body);
+        return HttpResponse.json({ ...authMappingAttributesPayload, id: 11 });
+      })
+    );
+
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/create'}
+            element={<CreateAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
+    const submitButton = getByRole('button', { name: 'Create mapping' });
+
+    await user.type(nameField, 'Sixth mapping');
+    await user.click(
+      getByRole('button', {
+        name: 'Select rule condition',
+      })
+    );
+    await user.click(getByRole('option', { name: 'Always' }));
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(postSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Sixth mapping',
+          order: 6,
+        })
+      );
+    });
+  });
+
   test('should edit a mapping with an "Attributes" trigger', async () => {
     const { container, getByRole } = render(
       <MemoryRouter initialEntries={['/access/authenticators/1/mappings/3/edit']}>
@@ -199,5 +307,44 @@ describe('AuthenticatorMappingForm', () => {
 
     expect(nameField.value).toBe('mapping one modified');
     await user.click(submitButton);
+  });
+
+  test('should not change order when editing mapping', async () => {
+    const patchSpy = vi.fn();
+    server.use(
+      http.patch(gatewayAPI`/authenticator_maps/3/`, async ({ request }) => {
+        const body = await request.json();
+        patchSpy(body);
+        return HttpResponse.json({ ...authenticatorMapping, name: 'mapping one modified' });
+      })
+    );
+
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/3/edit']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/:map_id/edit'}
+            element={<EditAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
+    const submitButton = getByRole('button', { name: 'Save mapping' });
+
+    await user.type(nameField, ' modified');
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalled();
+      const patchPayload = patchSpy.mock.calls[0][0] as object;
+      expect(patchPayload).not.toHaveProperty('order');
+    });
   });
 });

@@ -68,12 +68,17 @@ export function CreateAuthenticatorMapping() {
   const params = useParams<{ id?: string }>();
   const pageNavigate = usePageNavigate();
 
+  const { data: mappingsResponse } = useGet<PlatformItemsResponse<AuthenticatorMap>>(
+    params.id ? gatewayAPI`/authenticators/${params.id}/authenticator_maps/` : '',
+    { page_size: 1 }
+  );
+
   const onSubmit: PageFormSubmitHandler<AuthenticatorMapValues> = async (map) => {
     const data = {
       name: map.name,
       map_type: map.map_type,
       revoke: map.revoke,
-      order: 1,
+      order: mappingsResponse ? mappingsResponse.count + 1 : 1,
       authenticator: params.id,
       triggers: buildTriggers(map),
       organization: ['organization', 'team', 'role'].includes(map.map_type)
@@ -131,7 +136,6 @@ export function EditAuthenticatorMapping() {
       name: map.name,
       map_type: map.map_type,
       revoke: map.revoke,
-      order: 1,
       authenticator: params.id,
       triggers: buildTriggers(map),
       organization: ['organization', 'team', 'role'].includes(map.map_type)
