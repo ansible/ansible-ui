@@ -1,9 +1,11 @@
 import {
   CopyCell,
+  DateTimeCell,
   LoadingPage,
   PFColorE,
   PageDetail,
   PageDetails,
+  TextCell,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
@@ -72,6 +74,17 @@ export function RepositoryDetails() {
               t('None')
             )}
           </>
+        )}
+      </PageDetail>
+      <PageDetail label={t('Last synced')}>
+        {repository.remote ? (
+          repository.last_synced_metadata_time ? (
+            <DateTimeCell value={repository.last_synced_metadata_time} />
+          ) : (
+            <TextCell text={t('Never synced')} />
+          )
+        ) : (
+          <TextCell text={t('No remote')} />
         )}
       </PageDetail>
     </PageDetails>
