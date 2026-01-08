@@ -56,11 +56,11 @@ export function Remotes() {
       <PageHeader
         title={t('Remotes')}
         description={t(
-          'Remotes manage configurations for remote execution environments utilized in Ansible automation tasks.'
+          'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
         )}
         titleHelpTitle={t('Remotes')}
         titleHelp={t(
-          'Remotes manage configurations for remote execution environments utilized in Ansible automation tasks.'
+          'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
         )}
         titleDocLink={useGetDocsUrl(config, 'remotes')}
       />
@@ -71,7 +71,7 @@ export function Remotes() {
           <PageTableEmptyState
             title={t('No remotes yet')}
             description={t(
-              'You can create a remote to manage configurations for remote execution environments.'
+              'You can create a remote to provide a central location for users to search, retrieve, and install Ansible roles and collections.'
             )}
           >
             <ButtonLink
