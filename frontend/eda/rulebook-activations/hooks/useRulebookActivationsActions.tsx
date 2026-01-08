@@ -19,17 +19,27 @@ import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsRespon
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
+  useDisableRulebookActivationsWithWarning,
   useEnableRulebookActivationsWithWarning,
   useRestartRulebookActivations,
   useRestartRulebookActivationsWithWarning,
 } from './useControlRulebookActivations';
-import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import {
+  useDeleteRulebookActivations,
+  useDeleteRulebookActivationsWithWarning,
+} from './useDeleteRulebookActivations';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
-  const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
-  const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
+  const deleteActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
+  const deleteActivationsWithWarning = useDeleteRulebookActivationsWithWarning(
+    view.unselectItemsAndRefresh
+  );
+  const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
+  const disableActivationsWithWarning = useDisableRulebookActivationsWithWarning(
+    view.unselectItemsAndRefresh
+  );
   const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const parseError = useEdaErrorMessageParser();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
@@ -91,6 +101,28 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
       }
     },
     [restartActivations, restartActivationsWithWarning]
+  );
+
+  const disableRulebookActivations = useCallback(
+    (activations: EdaRulebookActivation[]) => {
+      if (activations.some((activation) => activation.status === StatusEnum.WorkersOffline)) {
+        disableActivationsWithWarning(activations);
+      } else {
+        disableActivations(activations);
+      }
+    },
+    [disableActivations, disableActivationsWithWarning]
+  );
+
+  const deleteRulebookActivations = useCallback(
+    (activations: EdaRulebookActivation[]) => {
+      if (activations.some((activation) => activation.status === StatusEnum.WorkersOffline)) {
+        deleteActivationsWithWarning(activations);
+      } else {
+        deleteActivations(activations);
+      }
+    },
+    [deleteActivations, deleteActivationsWithWarning]
   );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {

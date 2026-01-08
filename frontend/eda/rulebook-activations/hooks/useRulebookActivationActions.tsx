@@ -18,19 +18,29 @@ import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
+  useDisableRulebookActivationsWithWarning,
   useEnableRulebookActivationsWithWarning,
   useRestartRulebookActivations,
   useRestartRulebookActivationsWithWarning,
 } from './useControlRulebookActivations';
 import { useCopyRulebookActivation } from './useCopyRulebookactivation';
-import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import {
+  useDeleteRulebookActivations,
+  useDeleteRulebookActivationsWithWarning,
+} from './useDeleteRulebookActivations';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
+  const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
+  const disableActivationsWithWarning = useDisableRulebookActivationsWithWarning(
+    view.unselectItemsAndRefresh
+  );
   const restartRulebookActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
-  const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
+  const deleteActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
+  const deleteActivationsWithWarning = useDeleteRulebookActivationsWithWarning(
+    view.unselectItemsAndRefresh
+  );
   const copyRulebookActivation = useCopyRulebookActivation(view.refresh as () => void);
   const alertToaster = usePageAlertToaster();
   const parseError = useEdaErrorMessageParser();
@@ -71,16 +81,45 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
   );
   const restartActivations = useCallback(
     (activations: EdaRulebookActivation[]) => {
-      if (
-        activations.filter((activation) => activation.status === StatusEnum.WorkersOffline).length >
-        0
-      ) {
+      if (activations.some((activation) => activation.status === StatusEnum.WorkersOffline)) {
         restartActivationsWithWarning(activations);
       } else {
         restartRulebookActivations(activations);
       }
     },
     [restartActivationsWithWarning, restartRulebookActivations]
+  );
+
+  const disableActivations = useCallback(
+    (activations: EdaRulebookActivation[]) => {
+      if (activations.some((activation) => activation.status === StatusEnum.WorkersOffline)) {
+        disableActivationsWithWarning(activations);
+      } else {
+        disableRulebookActivations(activations);
+      }
+    },
+    [disableActivationsWithWarning, disableRulebookActivations]
+  );
+
+  const deleteRulebookActivations = useCallback(
+    (activations: EdaRulebookActivation[]) => {
+      if (activations.some((activation) => activation.status === StatusEnum.WorkersOffline)) {
+        deleteActivationsWithWarning(activations);
+      } else {
+        deleteActivations(activations);
+      }
+    },
+    [deleteActivationsWithWarning, deleteActivations]
+  );
+
+  const handleToggleActivation = useCallback(
+    (activation: EdaRulebookActivation, enabled: boolean) => {
+      const toggleAction = enabled
+        ? enableActivation
+        : (a: EdaRulebookActivation) => disableActivations([a]);
+      toggleAction(activation);
+    },
+    [enableActivation, disableActivations]
   );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
@@ -92,10 +131,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         selection: PageActionSelection.Single,
         isPinned: true,
         label: t('Rulebook activation enabled'),
-        onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
-          if (activate) void enableActivation(activation);
-          else void disableActivations([activation]);
-        },
+        onToggle: handleToggleActivation,
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isHidden: (activation: EdaRulebookActivation) => activation?.status === StatusEnum.Deleting,
         isDisabled: (activation: EdaRulebookActivation) =>
@@ -153,8 +189,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
     return actions;
   }, [
     t,
-    enableActivation,
-    disableActivations,
+    handleToggleActivation,
     restartActivations,
     pageNavigate,
     copyRulebookActivation,

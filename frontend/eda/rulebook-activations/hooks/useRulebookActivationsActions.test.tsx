@@ -52,17 +52,21 @@ const mockEnableActivationsWithWarning = vi.fn();
 const mockRestartActivations = vi.fn();
 const mockRestartActivationsWithWarning = vi.fn();
 const mockDisableRulebookActivations = vi.fn();
+const mockDisableActivationsWithWarning = vi.fn();
 const mockDeleteRulebookActivations = vi.fn();
+const mockDeleteActivationsWithWarning = vi.fn();
 
 vi.mock('./useControlRulebookActivations', () => ({
   useEnableRulebookActivationsWithWarning: () => mockEnableActivationsWithWarning,
   useRestartRulebookActivations: () => mockRestartActivations,
   useRestartRulebookActivationsWithWarning: () => mockRestartActivationsWithWarning,
   useDisableRulebookActivations: () => mockDisableRulebookActivations,
+  useDisableRulebookActivationsWithWarning: () => mockDisableActivationsWithWarning,
 }));
 
 vi.mock('./useDeleteRulebookActivations', () => ({
   useDeleteRulebookActivations: () => mockDeleteRulebookActivations,
+  useDeleteRulebookActivationsWithWarning: () => mockDeleteActivationsWithWarning,
 }));
 
 const server = setupServer();
