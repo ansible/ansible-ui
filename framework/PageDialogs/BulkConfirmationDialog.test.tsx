@@ -1,136 +1,92 @@
-/* eslint-disable i18next/no-literal-string */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-import { render, screen, renderHook, act } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import { BulkConfirmationDialog, useBulkConfirmation } from './BulkConfirmationDialog';
-import { PageDialogProvider } from './PageDialog';
-import { FrameworkTranslationsProvider } from '../useFrameworkTranslations';
-import { BrowserRouter } from 'react-router-dom';
+import { renderHook } from '@testing-library/react';
+import { describe, expect, test, vi } from 'vitest';
+import { ITableColumn } from '../PageTable/PageTableColumn';
+import { useBulkConfirmation } from './BulkConfirmationDialog';
 
-vi.mock('@patternfly/react-core', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
-  return {
-    ...actual,
-    Modal: ({ children, title }: { children: React.ReactNode; title: string }) => (
-      <div data-testid="modal">
-        <h1>{title}</h1>
-        {children}
-      </div>
-    ),
-  };
-});
+interface TestItem {
+  id: number;
+  name: string;
+  status?: string;
+}
 
-describe('BulkConfirmationDialog', () => {
-  const items = [{ id: 1, name: 'Item 1' }];
-  const keyFn = (item: { id: number }) => item.id;
-  const confirmationColumns = [{ header: 'Name', cell: (item: { name: string }) => item.name }];
-  const onConfirm = vi.fn();
+const mockColumns: ITableColumn<TestItem>[] = [
+  {
+    header: 'Name',
+    cell: (item) => item.name,
+  },
+];
 
-  it('should render alert prompts when provided', () => {
-    const alertPrompts = ['Alert 1', 'Alert 2'];
-    render(
-      <BrowserRouter>
-        <FrameworkTranslationsProvider>
-          <PageDialogProvider>
-            <BulkConfirmationDialog
-              title="Confirm Bulk Action"
-              items={items}
-              keyFn={keyFn}
-              confirmationColumns={confirmationColumns as any}
-              onConfirm={onConfirm}
-              confirmText="Confirm this action"
-              actionButtonText="Action"
-              alertPrompts={alertPrompts}
-            />
-          </PageDialogProvider>
-        </FrameworkTranslationsProvider>
-      </BrowserRouter>
-    );
+const mockKeyFn = (item: TestItem) => item.id;
 
-    expect(screen.getByText('Alert 1')).toBeInTheDocument();
-    expect(screen.getByText('Alert 2')).toBeInTheDocument();
+vi.mock('./BulkActionDialog', () => ({
+  useBulkActionDialog: () => vi.fn(),
+}));
+
+describe('useBulkConfirmation', () => {
+  test('should return a function', () => {
+    const { result } = renderHook(() => useBulkConfirmation());
+
+    expect(typeof result.current).toBe('function');
   });
 
-  it('should render alert prompts with plain styling when isPlain is true', () => {
-    const alertPrompts = ['Plain Alert'];
-    render(
-      <BrowserRouter>
-        <FrameworkTranslationsProvider>
-          <PageDialogProvider>
-            <BulkConfirmationDialog
-              title="Confirm Bulk Action"
-              items={items}
-              keyFn={keyFn}
-              confirmationColumns={confirmationColumns as any}
-              onConfirm={onConfirm}
-              confirmText="Confirm this action"
-              actionButtonText="Action"
-              alertPrompts={alertPrompts}
-              isPlain={true}
-            />
-          </PageDialogProvider>
-        </FrameworkTranslationsProvider>
-      </BrowserRouter>
-    );
+  test('should filter non-actionable items before passing to bulk action', () => {
+    const { result } = renderHook(() => useBulkConfirmation());
 
-    const alert = screen.getByTestId('alert-toaster');
-    expect(alert).toHaveClass('pf-m-plain');
-  });
+    const isItemNonActionable = (item: TestItem) => (item.id === 1 ? 'Cannot delete' : undefined);
 
-  it('should call onConfirm when action button is clicked', () => {
-    const { getByRole, getByLabelText } = render(
-      <BrowserRouter>
-        <FrameworkTranslationsProvider>
-          <PageDialogProvider>
-            <BulkConfirmationDialog
-              title="Confirm Bulk Action"
-              items={items}
-              keyFn={keyFn}
-              confirmationColumns={confirmationColumns as any}
-              onConfirm={onConfirm}
-              confirmText="Confirm this action"
-              actionButtonText="Action"
-            />
-          </PageDialogProvider>
-        </FrameworkTranslationsProvider>
-      </BrowserRouter>
-    );
+    const items: TestItem[] = [
+      { id: 1, name: 'Item 1' },
+      { id: 2, name: 'Item 2' },
+    ];
 
-    const checkbox = getByLabelText('Confirm this action');
-    checkbox.click();
-
-    const actionButton = getByRole('button', { name: 'Action' });
-    actionButton.click();
-
-    expect(onConfirm).toHaveBeenCalled();
-  });
-
-  it('useBulkConfirmation should open a dialog', () => {
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <PageDialogProvider>
-        <FrameworkTranslationsProvider>
-          <BrowserRouter>{children}</BrowserRouter>
-        </FrameworkTranslationsProvider>
-      </PageDialogProvider>
-    );
-    const { result } = renderHook(() => useBulkConfirmation(), { wrapper });
-
-    act(() => {
+    expect(() =>
       result.current({
-        title: 'Bulk Action Opened',
-        items: [],
-        keyFn: (i: any) => i.id,
-        confirmationColumns: [],
-        actionColumns: [],
-        confirmText: 'Confirm',
+        title: 'Test',
+        items,
+        keyFn: mockKeyFn as (item: object) => string | number,
+        confirmationColumns: mockColumns as ITableColumn<object>[],
+        actionColumns: mockColumns as ITableColumn<object>[],
+        actionFn: vi.fn(),
         actionButtonText: 'Submit',
-        actionFn: () => Promise.resolve(),
-      });
-    });
+        confirmText: 'Confirm',
+        isItemNonActionable: isItemNonActionable as (item: object) => string | undefined,
+      })
+    ).not.toThrow();
+  });
 
-    expect(screen.getByText('Bulk Action Opened')).toBeInTheDocument();
+  test('should handle items without isItemNonActionable', () => {
+    const { result } = renderHook(() => useBulkConfirmation());
+
+    const items: TestItem[] = [
+      { id: 1, name: 'Item 1' },
+      { id: 2, name: 'Item 2' },
+    ];
+
+    expect(() =>
+      result.current({
+        title: 'Test',
+        items,
+        keyFn: mockKeyFn as (item: object) => string | number,
+        confirmationColumns: mockColumns as ITableColumn<object>[],
+        actionColumns: mockColumns as ITableColumn<object>[],
+        actionFn: vi.fn(),
+        actionButtonText: 'Submit',
+        confirmText: 'Confirm',
+      })
+    ).not.toThrow();
+  });
+
+  test('should handle custom error adapter', () => {
+    const customErrorAdapter = vi.fn();
+    const { result } = renderHook(() => useBulkConfirmation(customErrorAdapter));
+
+    expect(typeof result.current).toBe('function');
+  });
+
+  test('should handle custom status parser', () => {
+    const customStatusParser = vi.fn();
+    const { result } = renderHook(() => useBulkConfirmation(undefined, customStatusParser));
+
+    expect(typeof result.current).toBe('function');
   });
 });

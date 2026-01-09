@@ -1,18 +1,19 @@
 import {
   Alert,
+  AlertGroup,
   Button,
   Checkbox,
   Icon,
-  Tooltip,
   Modal,
-  ModalVariant,
   ModalBody,
-  ModalHeader,
   ModalFooter,
-  AlertGroup,
+  ModalHeader,
+  ModalVariant,
+  Tooltip,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
@@ -27,7 +28,6 @@ import {
   useBulkActionDialog,
 } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
-import { useTranslation } from 'react-i18next';
 
 const ConfirmBoxDiv = styled.div`
   margin-left: 32px;
@@ -201,6 +201,7 @@ export function BulkConfirmationDialog<T extends object>(props: BulkConfirmation
             <ConfirmBoxDiv>
               <Checkbox
                 id="confirm"
+                data-testid="confirm"
                 ouiaId="confirm"
                 label={confirmText}
                 isChecked={confirmed}
@@ -213,6 +214,7 @@ export function BulkConfirmationDialog<T extends object>(props: BulkConfirmation
       <ModalFooter>
         <Button
           id="submit"
+          data-testid="submit"
           key="submit"
           ouiaId="submit"
           variant={isDanger ? 'danger' : 'primary'}
@@ -224,7 +226,7 @@ export function BulkConfirmationDialog<T extends object>(props: BulkConfirmation
         >
           {actionButtonText}
         </Button>
-        <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
+        <Button id="cancel" data-testid="cancel" key="cancel" variant="link" onClick={onClose}>
           {translations.cancelText}
         </Button>
       </ModalFooter>
