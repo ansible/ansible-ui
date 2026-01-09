@@ -1205,4 +1205,154 @@ describe('RulebookActivationPage', () => {
       expect(mockBulkAction).toHaveBeenCalled();
     });
   });
+
+  it('should call disableActivationsWithWarning when disabling an activation with workers offline', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const switchButton = screen.getByRole('switch', { name: 'Click to disable instance' });
+    await user.click(switchButton);
+
+    await waitFor(() => {
+      expect(mockBulkAction).toHaveBeenCalled();
+      const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
+      expect(lastCall.alertPrompts).toBeDefined();
+      expect(lastCall.alertPrompts[0]).toContain('workers offline');
+      expect(lastCall.alertPrompts[0]).toContain('Disabling');
+    });
+  });
+
+  it('should call deleteActivationsWithWarning when deleting an activation with workers offline', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const kebabButton = screen.getByRole('button', { name: 'kebab dropdown toggle' });
+    await user.click(kebabButton);
+    await waitFor(() => {
+      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    const deleteOption = screen.getByText('Delete rulebook activation');
+    await user.click(deleteOption);
+
+    await waitFor(() => {
+      expect(mockBulkAction).toHaveBeenCalled();
+      const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
+      expect(lastCall.alertPrompts).toBeDefined();
+      expect(lastCall.alertPrompts[0]).toContain('workers offline');
+      expect(lastCall.alertPrompts[0]).toContain('Deleting');
+    });
+  });
+
+  it('should call regular disable when disabling an activation without workers offline', async () => {
+    const user = userEvent.setup();
+
+    const runningActivation = {
+      ...mockWorkersOfflineActivation,
+      status: StatusEnum.Running,
+      instances: [
+        {
+          ...mockWorkersOfflineActivation.instances[0],
+          status: StatusEnum.Running,
+        },
+      ],
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(runningActivation);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const switchButton = screen.getByRole('switch', { name: 'Click to disable instance' });
+    await user.click(switchButton);
+
+    await waitFor(() => {
+      expect(mockBulkAction).toHaveBeenCalled();
+      const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
+      expect(lastCall.alertPrompts).toBeUndefined();
+    });
+  });
+
+  it('should call regular delete when deleting an activation without workers offline', async () => {
+    const user = userEvent.setup();
+
+    const runningActivation = {
+      ...mockWorkersOfflineActivation,
+      status: StatusEnum.Running,
+      instances: [
+        {
+          ...mockWorkersOfflineActivation.instances[0],
+          status: StatusEnum.Running,
+        },
+      ],
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(runningActivation);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const kebabButton = screen.getByRole('button', { name: 'kebab dropdown toggle' });
+    await user.click(kebabButton);
+    await waitFor(() => {
+      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    const deleteOption = screen.getByText('Delete rulebook activation');
+    await user.click(deleteOption);
+
+    await waitFor(() => {
+      expect(mockBulkAction).toHaveBeenCalled();
+      const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
+      expect(lastCall.alertPrompts).toBeUndefined();
+    });
+  });
 });

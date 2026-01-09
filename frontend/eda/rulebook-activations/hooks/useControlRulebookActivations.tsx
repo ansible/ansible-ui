@@ -107,6 +107,25 @@ function restartMessages(rulebookActivations: EdaRulebookActivation[], t: TFunct
   return count > 1 ? multiMessage : oneMessage;
 }
 
+function disableMessages(rulebookActivations: EdaRulebookActivation[], t: TFunction): string {
+  const nameList = rulebookActivations
+    .filter((activation) => activation.status === StatusEnum.WorkersOffline)
+    .map((activation) => activation.name)
+    .join(', ');
+
+  const count = rulebookActivations.filter(
+    (activation) => activation.status === StatusEnum.WorkersOffline
+  )?.length;
+
+  const oneMessage: string = t(
+    `${nameList} activation has workers offline. Disabling it might orphan pods and leave the existing activation running. Before disabling, we recommend contacting your admin to recover the offline workers or confirm the previous activation is no longer running.`
+  );
+  const multiMessage: string = t(
+    `${nameList} activations have workers offline. Disabling them might orphan pods and leave the existing activations running. Before disabling, we recommend contacting your admin to recover the offline workers or confirm the previous activations are no longer running.`
+  );
+  return count > 1 ? multiMessage : oneMessage;
+}
+
 export function useRestartRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
 ) {
@@ -247,6 +266,46 @@ export function useRestartRulebookActivationsWithWarning(
         actionFn: (rulebookActivation: EdaRulebookActivation) =>
           postRequest(
             edaAPI`/activations/${rulebookActivation.id.toString()}/restart/?force=true`,
+            undefined
+          ),
+      });
+    },
+    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
+  );
+}
+
+export function useDisableRulebookActivationsWithWarning(
+  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
+) {
+  const { t } = useTranslation();
+  const confirmationColumns = useRulebookActivationColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useEdaBulkConfirmation<EdaRulebookActivation>();
+  const postRequest = usePostRequest<undefined, undefined>();
+
+  return useCallback(
+    (rulebookActivations: EdaRulebookActivation[]) => {
+      const sortedActivations = rulebookActivations;
+      sortedActivations.sort((l, r) => compareStrings(l.name, r.name));
+      bulkAction({
+        title: t('Disable rulebook activations', { count: rulebookActivations.length }),
+        alertPrompts: [disableMessages(rulebookActivations, t)],
+        confirmText: t(
+          'Yes, I confirm that I want to disable these {{count}} rulebook activations.',
+          {
+            count: rulebookActivations.length,
+          }
+        ),
+        actionButtonText: t('Disable rulebook activations', { count: rulebookActivations.length }),
+        items: sortedActivations,
+        keyFn: (item) => item?.id,
+        isDanger: true,
+        confirmationColumns,
+        actionColumns,
+        onComplete,
+        actionFn: (rulebookActivation: EdaRulebookActivation) =>
+          postRequest(
+            edaAPI`/activations/${rulebookActivation.id.toString()}/disable/?force=true`,
             undefined
           ),
       });

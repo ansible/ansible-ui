@@ -27,12 +27,16 @@ import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
+  useDisableRulebookActivationsWithWarning,
   useEnableRulebookActivationsWithWarning,
   useRestartRulebookActivations,
   useRestartRulebookActivationsWithWarning,
 } from '../hooks/useControlRulebookActivations';
 import { useCopyRulebookActivation } from '../hooks/useCopyRulebookactivation';
-import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
+import {
+  useDeleteRulebookActivations,
+  useDeleteRulebookActivationsWithWarning,
+} from '../hooks/useDeleteRulebookActivations';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();
@@ -55,7 +59,13 @@ export function RulebookActivationPage() {
     data?.actions?.['PATCH'] && !rulebookActivation?.is_enabled
   );
 
-  const disableRulebookActivation = useDisableRulebookActivations((disabled) => {
+  const disableActivations = useDisableRulebookActivations((disabled) => {
+    if (disabled.length > 0) {
+      refresh();
+    }
+  });
+
+  const disableActivationsWithWarning = useDisableRulebookActivationsWithWarning((disabled) => {
     if (disabled.length > 0) {
       refresh();
     }
@@ -70,7 +80,13 @@ export function RulebookActivationPage() {
   const copyRulebookActivation = useCopyRulebookActivation();
   const enableActivationsWithWarning = useEnableRulebookActivationsWithWarning(refresh);
 
-  const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
+  const deleteActivations = useDeleteRulebookActivations((deleted) => {
+    if (deleted.length > 0) {
+      pageNavigate(EdaRoute.RulebookActivations);
+    }
+  });
+
+  const deleteActivationsWithWarning = useDeleteRulebookActivationsWithWarning((deleted) => {
     if (deleted.length > 0) {
       pageNavigate(EdaRoute.RulebookActivations);
     }
@@ -121,6 +137,36 @@ export function RulebookActivationPage() {
     [restartActivationsWithWarning, restartActivations]
   );
 
+  const disableRulebookActivation: (activation: EdaRulebookActivation) => void = useCallback(
+    (activation) => {
+      if (activation.status === StatusEnum.WorkersOffline) {
+        disableActivationsWithWarning([activation]);
+      } else {
+        disableActivations([activation]);
+      }
+    },
+    [disableActivationsWithWarning, disableActivations]
+  );
+
+  const handleToggleActivation = useCallback(
+    (activation: EdaRulebookActivation, enabled: boolean) => {
+      const toggleAction = enabled ? enableRulebookActivation : disableRulebookActivation;
+      toggleAction(activation);
+    },
+    [enableRulebookActivation, disableRulebookActivation]
+  );
+
+  const deleteRulebookActivations: (activation: EdaRulebookActivation) => void = useCallback(
+    (activation) => {
+      if (activation.status === StatusEnum.WorkersOffline) {
+        deleteActivationsWithWarning([activation]);
+      } else {
+        deleteActivations([activation]);
+      }
+    },
+    [deleteActivationsWithWarning, deleteActivations]
+  );
+
   const isActionTab = location.href.includes(
     getPageUrl(EdaRoute.RulebookActivationDetails, { params: { id: rulebookActivation?.id } })
   );
@@ -137,10 +183,7 @@ export function RulebookActivationPage() {
             label: rulebookActivation?.is_enabled
               ? t('Rulebook activation enabled')
               : t('Rulebook activation disabled'),
-            onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
-              if (activate) void enableRulebookActivation(activation);
-              else void disableRulebookActivation([activation]);
-            },
+            onToggle: handleToggleActivation,
             isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
             isDisabled: (activation: EdaRulebookActivation) =>
               activation?.status === StatusEnum.Stopping
@@ -190,7 +233,7 @@ export function RulebookActivationPage() {
             icon: TrashIcon,
             label: t('Delete rulebook activation'),
             onClick: (rulebookActivation: EdaRulebookActivation) =>
-              deleteRulebookActivations([rulebookActivation]),
+              deleteRulebookActivations(rulebookActivation),
             isDanger: true,
           },
         ]
@@ -200,8 +243,7 @@ export function RulebookActivationPage() {
     isActionTab,
     rulebookActivation?.is_enabled,
     t,
-    enableRulebookActivation,
-    disableRulebookActivation,
+    handleToggleActivation,
     canEditRulebookActivation,
     pageNavigate,
     restartRulebookActivation,
