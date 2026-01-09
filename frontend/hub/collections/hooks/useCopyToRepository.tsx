@@ -5,10 +5,10 @@ import { useGetRequest } from '@ansible/common-ui/crud/useGet';
 import {
   Button,
   Modal,
-  ModalVariant,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
 } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
@@ -142,52 +142,54 @@ function CopyToRepositoryModal(props: {
       <ModalHeader title={t(`Select repositories`)} />
       <ModalBody>
         {message}
-        <PageTable<AnsibleAnsibleRepositoryResponse>
-          id="hub-copy-to-repository-table"
-          toolbarFilters={toolbarFilters}
-          tableColumns={tableColumns}
-          errorStateTitle={t('Error loading collections')}
-          emptyStateTitle={t('No collections yet')}
-          emptyStateDescription={t('To get started, upload a collection.')}
-          emptyStateButtonText={t('Upload collection')}
-          {...view}
-          defaultTableView="list"
-          defaultSubtitle={t('Repository')}
-          showSelect={true}
-          compact={true}
-          selectedItems={selectedRepositories as AnsibleAnsibleRepositoryResponse[]}
-          isSelectMultiple={true}
-          isSelected={(item) =>
-            selectedRepositories.find((i) => i.name === item.name) ||
-            fixedRepositories.find((i) => i.name === item.name)
-              ? true
-              : false
-          }
-          selectItem={(item) => {
-            const newItems = [...selectedRepositories, item];
-            setSelectedRepositories(newItems);
-          }}
-          selectItems={(items) => {
-            const newItems = [...selectedRepositories];
-            for (const item of items) {
-              if (
-                !selectedRepositories.find((item2) => item.name === item2.name) &&
-                !fixedRepositories.find((item2) => item2.name === item.name)
-              ) {
-                newItems.push(item);
-              }
+        <div data-testid="hub-copy-to-repository-table">
+          <PageTable<AnsibleAnsibleRepositoryResponse>
+            id="hub-copy-to-repository-table"
+            toolbarFilters={toolbarFilters}
+            tableColumns={tableColumns}
+            errorStateTitle={t('Error loading collections')}
+            emptyStateTitle={t('No collections yet')}
+            emptyStateDescription={t('To get started, upload a collection.')}
+            emptyStateButtonText={t('Upload collection')}
+            {...view}
+            defaultTableView="list"
+            defaultSubtitle={t('Repository')}
+            showSelect={true}
+            compact={true}
+            selectedItems={selectedRepositories as AnsibleAnsibleRepositoryResponse[]}
+            isSelectMultiple={true}
+            isSelected={(item) =>
+              selectedRepositories.find((i) => i.name === item.name) ||
+              fixedRepositories.find((i) => i.name === item.name)
+                ? true
+                : false
             }
-            setSelectedRepositories(newItems);
-          }}
-          unselectItem={(item) => {
-            setSelectedRepositories(
-              selectedRepositories.filter((item2) => item2.name !== item.name)
-            );
-          }}
-          unselectAll={() => {
-            setSelectedRepositories([]);
-          }}
-        />
+            selectItem={(item) => {
+              const newItems = [...selectedRepositories, item];
+              setSelectedRepositories(newItems);
+            }}
+            selectItems={(items) => {
+              const newItems = [...selectedRepositories];
+              for (const item of items) {
+                if (
+                  !selectedRepositories.find((item2) => item.name === item2.name) &&
+                  !fixedRepositories.find((item2) => item2.name === item.name)
+                ) {
+                  newItems.push(item);
+                }
+              }
+              setSelectedRepositories(newItems);
+            }}
+            unselectItem={(item) => {
+              setSelectedRepositories(
+                selectedRepositories.filter((item2) => item2.name !== item.name)
+              );
+            }}
+            unselectAll={() => {
+              setSelectedRepositories([]);
+            }}
+          />
+        </div>
         {error && <HubError error={{ name: t('Error'), message: error }}></HubError>}
         {props.displayDefaultError && (
           <HubError error={{ name: t('Error'), message: props.displayDefaultError }}></HubError>

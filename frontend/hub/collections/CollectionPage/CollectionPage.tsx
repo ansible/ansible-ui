@@ -72,35 +72,40 @@ export function CollectionPage() {
 
   useEffect(() => {
     async function getCollectionData() {
-      const version = searchParams.get('version');
-      let queryFilter;
-      if (version) {
-        queryFilter = '&version=' + version;
-      } else if (collection) {
-        queryFilter = '&version=' + collection?.collection_version?.version;
-      } else {
-        queryFilter = '&is_highest=true';
+      try {
+        const version = searchParams.get('version');
+        let queryFilter;
+        if (version) {
+          queryFilter = '&version=' + version;
+        } else if (collection) {
+          queryFilter = '&version=' + collection?.collection_version?.version;
+        } else {
+          queryFilter = '&is_highest=true';
+        }
+
+        const collectionRequest = await getRequest(
+          hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}` +
+            queryFilter
+        );
+
+        const collectionData: null | CollectionVersionSearch =
+          collectionRequest?.data && collectionRequest?.data?.length > 0
+            ? collectionRequest.data[0]
+            : null;
+
+        // only set collection when collection has updated this avoids infinite loop
+        if (
+          !collection ||
+          collection?.collection_version?.version !== collectionData?.collection_version?.version
+        ) {
+          setCollection(collectionData);
+        }
+      } catch (error) {
+        // Error will be handled by useGet hook's error state
+        setCollection(null);
+      } finally {
+        setIsLoading(false);
       }
-
-      const collectionRequest = await getRequest(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}` +
-          queryFilter
-      );
-
-      const collectionData: null | CollectionVersionSearch =
-        collectionRequest?.data && collectionRequest?.data?.length > 0
-          ? collectionRequest.data[0]
-          : null;
-
-      // only set collection when collection has updated this avoids infinite loop
-      if (
-        !collection ||
-        collection?.collection_version?.version !== collectionData?.collection_version?.version
-      ) {
-        setCollection(collectionData);
-      }
-
-      setIsLoading(false);
     }
 
     void getCollectionData();
@@ -278,6 +283,7 @@ export function CollectionPage() {
           >
             {t('Version')}
             <PageAsyncSingleSelect<Partial<CollectionVersionSearch>>
+              id="version-selector"
               isRequired
               queryOptions={queryOptions}
               onSelect={(value) => {
@@ -290,6 +296,7 @@ export function CollectionPage() {
                 <PageSingleSelectContext.Consumer>
                   {(context) => (
                     <Button
+                      data-testid="browse-collection-version-button"
                       variant="link"
                       onClick={() => {
                         context.setOpen(false);

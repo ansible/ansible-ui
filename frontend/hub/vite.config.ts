@@ -79,7 +79,7 @@ export default defineConfig({
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**'],
+      exclude: ['node_modules/**', '**/vitest.setup.ts'],
     },
     css: !process.env.CI,
     environment: 'happy-dom',
@@ -89,5 +89,12 @@ export default defineConfig({
         inline: ['@patternfly/react-styles'],
       },
     },
+    // found at: https://github.com/vitest-dev/vitest/discussions/1806
+    alias: [
+      {
+        find: /^monaco-editor$/,
+        replacement: __dirname + '/../../node_modules/monaco-editor/esm/vs/editor/editor.api',
+      },
+    ],
   },
 });
