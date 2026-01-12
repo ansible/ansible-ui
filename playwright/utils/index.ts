@@ -53,6 +53,9 @@ export { EdaProject } from './edaProject';
 export { EventStream } from './eventStream';
 export { RulebookActivation } from './rulebookActivation';
 
+// Resource modules - Automation Content (Hub)
+export { RemoteRegistry } from './remoteRegistry';
+
 // Resource modules - Platform
 export { Authentication } from './authentication';
 export { Lightspeed } from './lightspeed';
