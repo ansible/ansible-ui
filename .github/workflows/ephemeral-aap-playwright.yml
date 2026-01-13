@@ -44,7 +44,7 @@ jobs:
             // Parse AAP version from comment (e.g., "/run-aap-ui-playwright 2.5-next")
             const commentBody = context.payload.comment.body;
             const versionMatch = commentBody.match(/\/run-aap-ui-playwright\s+(\S+)/);
-            const aapVersion = versionMatch ? versionMatch[1] : '2.6';
+            const aapVersion = versionMatch ? versionMatch[1] : '2.7';
             core.setOutput('aap_version', aapVersion);
 
       - name: Add reaction to comment
