@@ -111,6 +111,7 @@ export const JobTemplate = {
       }
       const projectName = options.projectName ?? 'Demo Project';
       await page.locator('#project-select').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(projectName);
       await page.getByRole('option', { name: projectName }).click();
       await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible();
       await page.getByPlaceholder('Add a project, then select a').click();
