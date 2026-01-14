@@ -421,12 +421,21 @@ test.describe('Hub Collections - Details Page', () => {
           test.skip();
         }
 
-        // Sign the collection using sign-collection action (signs all versions)
-        await clickKebabActionAndConfirm('sign-collection', page);
-
-        // Navigate to detail tab to verify signed state
+        // Navigate to detail tab first so we can observe the signed state update
         await page.getByTestId('collection-detail-tab').click();
-        await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 10000 });
+        await expect(page.getByTestId('signed-state')).toContainText('Unsigned');
+
+        // Sign the collection using direct modal interaction (like multi-version test)
+        await page.getByTestId('actions-dropdown').click();
+        await page.getByTestId('sign-collection').click();
+
+        const modal = page.getByRole('dialog');
+        await modal.waitFor({ state: 'visible' });
+        await modal.getByTestId('confirm').click();
+        await modal.getByTestId('submit').click();
+
+        // Wait for signed state to update (signing is async, use longer timeout)
+        await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 60000 });
       }
     );
 

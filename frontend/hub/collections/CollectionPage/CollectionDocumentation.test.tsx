@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
@@ -36,15 +37,30 @@ const mockDocumentationResponse: CollectionVersionsContent = {
               doc: {
                 short_description: 'A test module that says hello',
                 description: ['This module demonstrates documentation rendering.'],
-                notes: ['This is a note about the module.'],
+                notes: ['This is a note about the module.', 'Another important note.'],
                 author: 'Test Author',
                 filename: 'hello_module.py',
                 collection: 'testnamespace.testcollection',
                 version_added: '1.0.0',
                 version_added_collection: 'testnamespace.testcollection',
+                options: [
+                  {
+                    name: 'name',
+                    description: ['The name to greet'],
+                    type: 'str',
+                    required: true,
+                  },
+                  {
+                    name: 'greeting',
+                    description: ['Custom greeting message'],
+                    type: 'str',
+                    required: false,
+                    default: ['Hello'],
+                  },
+                ],
               },
               return: null,
-              examples: null,
+              examples: '- name: Say hello\n  hello_module:\n    name: World',
               metadata: null,
             },
             readme_file: null,
@@ -55,7 +71,8 @@ const mockDocumentationResponse: CollectionVersionsContent = {
             content_type: 'role',
             doc_strings: null,
             readme_file: null,
-            readme_html: null,
+            readme_html:
+              '<h1>Role Name</h1><h2>Requirements</h2><p>Ansible 2.9+</p><h2>Role Variables</h2><p>See defaults/main.yml</p><h2>Dependencies</h2><p>None</p><h2>Example Playbook</h2><pre>- hosts: all\n  roles:\n    - example_role</pre><h2>License</h2><p>MIT</p><h2>Author Information</h2><p>Test Author</p>' as unknown as null,
           },
         ],
         collection_readme: {
@@ -70,11 +87,12 @@ const mockDocumentationResponse: CollectionVersionsContent = {
 };
 
 // Wrapper component that provides the outlet context
-function TestWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+function TestWrapper({
+  children,
+  initialPath = '/collections/validated/testnamespace/testcollection/documentation',
+}: Readonly<{ children: React.ReactNode; initialPath?: string }>) {
   return (
-    <MemoryRouter
-      initialEntries={['/collections/validated/testnamespace/testcollection/documentation']}
-    >
+    <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
         <Route
           path="/collections/:repository/:namespace/:name"
@@ -295,5 +313,206 @@ describe('CollectionDocumentation', () => {
 
     // Verify role content is listed
     expect(screen.getByText('example_role')).toBeInTheDocument();
+  });
+
+  test('should display module documentation with title and sections when navigating to module', async () => {
+    render(
+      <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/module/hello_module">
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for module title to appear (format: "content_type > content_name")
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { level: 1, name: /module > hello_module/i })
+      ).toBeInTheDocument();
+    });
+
+    // Verify Synopsis section is present (linked from Overview)
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Synopsis' })).toBeInTheDocument();
+    });
+
+    // Verify Parameters section is present
+    expect(screen.getByRole('heading', { level: 2, name: 'Parameters' })).toBeInTheDocument();
+
+    // Verify Notes section is present
+    expect(screen.getByRole('heading', { name: 'Notes' })).toBeInTheDocument();
+
+    // Verify Examples section is present
+    expect(screen.getByRole('heading', { name: 'Examples' })).toBeInTheDocument();
+  });
+
+  test('should display module short description and notes content', async () => {
+    render(
+      <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/module/hello_module">
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for the module content to load
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { level: 1, name: /module > hello_module/i })
+      ).toBeInTheDocument();
+    });
+
+    // Verify short description is displayed
+    expect(screen.getByText('A test module that says hello')).toBeInTheDocument();
+
+    // Verify notes content is displayed
+    expect(screen.getByText('This is a note about the module.')).toBeInTheDocument();
+    expect(screen.getByText('Another important note.')).toBeInTheDocument();
+  });
+
+  test('should display parameters table with parameter names', async () => {
+    render(
+      <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/module/hello_module">
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for Parameters section
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 2, name: 'Parameters' })).toBeInTheDocument();
+    });
+
+    // Verify parameter names are displayed in the table
+    expect(screen.getByText('name')).toBeInTheDocument();
+    expect(screen.getByText('greeting')).toBeInTheDocument();
+
+    // Verify parameter descriptions
+    expect(screen.getByText('The name to greet')).toBeInTheDocument();
+    expect(screen.getByText('Custom greeting message')).toBeInTheDocument();
+  });
+
+  test('should display examples code block', async () => {
+    render(
+      <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/module/hello_module">
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for Examples section
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Examples' })).toBeInTheDocument();
+    });
+
+    // Verify example code is displayed
+    expect(screen.getByText(/Say hello/)).toBeInTheDocument();
+  });
+
+  test('should toggle JSON view when json button is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/module/hello_module">
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for the module content to load
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { level: 1, name: /module > hello_module/i })
+      ).toBeInTheDocument();
+    });
+
+    // Verify toggle group is present with html and json buttons
+    expect(screen.getByRole('button', { name: 'html' })).toBeInTheDocument();
+    const jsonButton = screen.getByRole('button', { name: 'json' });
+    expect(jsonButton).toBeInTheDocument();
+
+    // Click JSON button
+    await user.click(jsonButton);
+
+    // Verify the JSON warning message is displayed
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /This will render content of the documentation in user non friendly format/i
+        )
+      ).toBeInTheDocument();
+    });
+
+    // Verify JSON content is rendered (pre element with content)
+    const preElements = document.querySelectorAll('pre');
+    expect(preElements.length).toBeGreaterThan(0);
+
+    // The JSON should contain the module content
+    const jsonContent = Array.from(preElements).find((pre) =>
+      pre.textContent?.includes('hello_module')
+    );
+    expect(jsonContent).toBeTruthy();
+  });
+
+  test('should display role documentation with readme content when navigating to role', async () => {
+    render(
+      <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/role/example_role">
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for role documentation to load - roles with readme_html render the HTML directly
+    await waitFor(() => {
+      expect(
+        screen.getByText((content, _element) => {
+          return /Role Name/.test(content);
+        })
+      ).toBeInTheDocument();
+    });
+
+    // Verify role readme sections are displayed
+    expect(
+      screen.getByText((content, _element) => /Requirements/.test(content))
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((content, _element) => /Role Variables/.test(content))
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((content, _element) => /Dependencies/.test(content))
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((content, _element) => /Example Playbook/.test(content))
+    ).toBeInTheDocument();
+    expect(screen.getByText((content, _element) => /License/.test(content))).toBeInTheDocument();
+    expect(
+      screen.getByText((content, _element) => /Author Information/.test(content))
+    ).toBeInTheDocument();
+  });
+
+  test('should render clickable module link in navigation panel', async () => {
+    render(
+      <TestWrapper>
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for the navigation to load
+    await waitFor(() => {
+      expect(screen.getByText('hello_module')).toBeInTheDocument();
+    });
+
+    // Verify the module link is a clickable navigation item
+    const moduleNavItem = screen.getByText('hello_module');
+    expect(moduleNavItem.closest('button, a, [role="button"]')).not.toBeNull();
+  });
+
+  test('should render clickable role link in navigation panel', async () => {
+    render(
+      <TestWrapper>
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    // Wait for the navigation to load
+    await waitFor(() => {
+      expect(screen.getByText('example_role')).toBeInTheDocument();
+    });
+
+    // Verify the role link is a clickable navigation item
+    const roleNavItem = screen.getByText('example_role');
+    expect(roleNavItem.closest('button, a, [role="button"]')).not.toBeNull();
   });
 });
