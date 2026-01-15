@@ -54,6 +54,7 @@ export { EventStream } from './eventStream';
 export { RulebookActivation } from './rulebookActivation';
 
 // Resource modules - Automation Content (Hub)
+export { Namespace } from './namespace';
 export { RemoteRegistry } from './remoteRegistry';
 
 // Resource modules - Platform
