@@ -8,18 +8,8 @@ import { expectRowToContain } from '../commands/expectRowToContain';
 import { filterTable } from '../commands/filterTable';
 import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
-
-export interface ProjectType {
-  id: number;
-  name: string;
-  description?: string;
-  organization: number;
-  scm_type?: string;
-  scm_url?: string;
-  url: string;
-  created: string;
-  modified: string;
-}
+import { Project as ProjectType } from '@ansible/awx-ui/interfaces/Project';
+import { waitForJobStatus } from '../commands/waitForJobStatus';
 
 export interface CreateProjectOptions {
   name?: string;
@@ -60,8 +50,8 @@ export const Project = {
         name: options.name ?? createE2EName('Project'),
         description: options.description ?? 'Created via API for E2E testing',
         organization: options.organization,
-        scm_type: options.scm_type ?? '',
-        scm_url: options.scm_url ?? '',
+        scm_type: options.scm_type ?? 'git',
+        scm_url: options.scm_url ?? 'https://github.com/ansible/ansible-tower-samples',
       });
 
       if (!project) {
@@ -83,6 +73,26 @@ export const Project = {
       }
 
       return project;
+    },
+    sync: async (page: Page, projectId: number) => {
+      const projectUpdate = await awxAPI.post<ProjectType>(
+        page,
+        `projects/${projectId}/update`,
+        {},
+        { expectStatus: 202 }
+      );
+
+      if (!projectUpdate) {
+        throw new Error(`Failed to update project: API returned null`);
+      }
+      await waitForJobStatus(
+        {
+          jobType: 'project_updates',
+          jobId: projectUpdate.id,
+          desiredStatus: 'successful',
+        },
+        page
+      );
     },
   },
 

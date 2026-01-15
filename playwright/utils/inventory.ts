@@ -7,6 +7,7 @@ import { createE2EName } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 import type { Inventory as InventoryType } from '@ansible/awx-ui/interfaces/Inventory';
+import type { InventorySource } from '@ansible/awx-ui/interfaces/InventorySource';
 
 export interface CreateInventoryOptions {
   name?: string;
@@ -71,7 +72,7 @@ export const Inventory = {
     },
 
     delete: async (page: Page, inventoryId: number): Promise<void> => {
-      await awxAPI.delete(page, `inventories/${inventoryId}/`);
+      await awxAPI.delete(page, `inventories/${inventoryId}/`, { expectStatus: 202 });
     },
 
     get: async (page: Page, inventoryId: number): Promise<InventoryType> => {
@@ -82,6 +83,34 @@ export const Inventory = {
       }
 
       return inventory;
+    },
+
+    createSource: async (
+      page: Page,
+      inventoryId: number,
+      options: {
+        name: string;
+        source: string;
+        sourceProject?: number;
+        sourcePath?: string;
+      }
+    ): Promise<InventorySource> => {
+      const response = await awxAPI.post<InventorySource>(
+        page,
+        `inventories/${inventoryId}/inventory_sources/`,
+        {
+          name: options.name,
+          source: options.source,
+          source_project: options.sourceProject,
+          source_path: options.sourcePath,
+        }
+      );
+
+      if (!response) {
+        throw new Error('Failed to create inventory source');
+      }
+
+      return response;
     },
   },
 

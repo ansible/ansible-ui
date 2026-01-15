@@ -1,4 +1,4 @@
-import { Page, expect, APIResponse } from '@playwright/test';
+import { APIResponse, Page, expect } from '@playwright/test';
 import { platformUI } from './login';
 
 /**
@@ -349,5 +349,9 @@ export function createScopedClient(apiPrefix: string) {
 export const awxAPI = createScopedClient('/api/controller/v2');
 export const edaAPI = createScopedClient('/api/eda/v1');
 export const hubAPI = createScopedClient('/api/galaxy');
+export const pulpAPI = createScopedClient('/api/galaxy/pulp/api/v3');
 export const gatewayAPI = createScopedClient('/api/gateway/v1');
 export const lightspeedAPI = createScopedClient('/api/lightspeed/v1');
+
+// Export utilities for use in fixtures
+export { constructURL, getCSRFToken, origin };

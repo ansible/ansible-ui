@@ -1,8 +1,10 @@
 import { Page, expect } from '@playwright/test';
+import { awxAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { createE2EName } from '../commands/createE2EName';
 import { getTableRow } from '../commands/getTableRow';
 import { navigateTo } from '../commands/navigateTo';
+import { InventoryGroup as InventoryGroupType } from '@ansible/awx-ui/interfaces/InventoryGroup';
 
 export interface CreateInventoryGroupOptions {
   inventoryName: string;
@@ -22,6 +24,23 @@ export interface DeleteInventoryGroupOptions {
 }
 
 export const InventoryGroup = {
+  api: {
+    create: async (
+      page: Page,
+      options: { name?: string; inventory: number }
+    ): Promise<InventoryGroupType> => {
+      const group = await awxAPI.post<InventoryGroupType>(page, 'groups/', {
+        name: options.name ?? createE2EName('group'),
+        inventory: options.inventory,
+      });
+
+      if (!group) {
+        throw new Error('Failed to create group: API returned null');
+      }
+
+      return group;
+    },
+  },
   ui: {
     createGroup: async (page: Page, options: CreateInventoryGroupOptions): Promise<string> => {
       const groupName = options.groupName ?? createE2EName('group');

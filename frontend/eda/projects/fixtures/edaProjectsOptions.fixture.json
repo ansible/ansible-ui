@@ -1,0 +1,136 @@
+{
+  "name": "Project List",
+  "description": "",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+  "actions": {
+    "GET": {
+      "name": {
+        "type": "string",
+        "label": "Name"
+      },
+      "description": {
+        "type": "string",
+        "label": "Description"
+      },
+      "organization_id": {
+        "type": "field",
+        "label": "Organization id"
+      },
+      "eda_credential_id": {
+        "type": "integer",
+        "label": "Eda credential id"
+      },
+      "signature_validation_credential_id": {
+        "type": "field",
+        "label": "Signature validation credential id"
+      },
+      "scm_branch": {
+        "type": "string",
+        "label": "Scm branch"
+      },
+      "scm_refspec": {
+        "type": "string",
+        "label": "Scm refspec"
+      },
+      "verify_ssl": {
+        "type": "boolean",
+        "label": "Verify ssl"
+      },
+      "proxy": {
+        "type": "field",
+        "label": "Proxy"
+      },
+      "created_by": {
+        "type": "field",
+        "label": "Created by"
+      },
+      "modified_by": {
+        "type": "field",
+        "label": "Modified by"
+      },
+      "id": {
+        "type": "integer",
+        "label": "ID"
+      },
+      "url": {
+        "type": "string",
+        "label": "Url"
+      },
+      "scm_type": {
+        "type": "choice",
+        "label": "Scm type"
+      },
+      "git_hash": {
+        "type": "string",
+        "label": "Git hash"
+      },
+      "import_state": {
+        "type": "choice",
+        "label": "Import state"
+      },
+      "import_error": {
+        "type": "string",
+        "label": "Import error"
+      },
+      "created_at": {
+        "type": "datetime",
+        "label": "Created at"
+      },
+      "modified_at": {
+        "type": "datetime",
+        "label": "Modified at"
+      }
+    },
+    "POST": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "label": "Name",
+        "default": "<class 'rest_framework.fields.empty'>"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "label": "Description",
+        "default": "<class 'rest_framework.fields.empty'>"
+      },
+      "eda_credential_id": {
+        "type": "integer",
+        "required": false,
+        "label": "Eda credential id",
+        "default": "<class 'rest_framework.fields.empty'>"
+      },
+      "scm_branch": {
+        "type": "string",
+        "required": false,
+        "label": "Scm branch",
+        "default": "<class 'rest_framework.fields.empty'>"
+      },
+      "scm_refspec": {
+        "type": "string",
+        "required": false,
+        "label": "Scm refspec",
+        "default": "<class 'rest_framework.fields.empty'>"
+      },
+      "verify_ssl": {
+        "type": "boolean",
+        "required": false,
+        "label": "Verify ssl",
+        "default": "<class 'rest_framework.fields.empty'>"
+      },
+      "created_by": {
+        "type": "field",
+        "required": true,
+        "label": "Created by",
+        "default": "<class 'rest_framework.fields.empty'>"
+      },
+      "modified_by": {
+        "type": "field",
+        "required": true,
+        "label": "Modified by",
+        "default": "<class 'rest_framework.fields.empty'>"
+      }
+    }
+  }
+}

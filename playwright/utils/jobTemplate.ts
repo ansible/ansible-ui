@@ -51,7 +51,7 @@ export const JobTemplate = {
     create: async (
       page: Page,
       options: CreateJobTemplateAPIOptions = {}
-    ): Promise<{ id: number; name: string }> => {
+    ): Promise<JobTemplateType> => {
       const name = options.name ?? `e2e-job-template-${Date.now()}`;
       const playbook = options.playbook ?? 'hello_world.yml';
 
@@ -73,7 +73,7 @@ export const JobTemplate = {
         throw new Error('Failed to create job template: API returned null');
       }
 
-      return { id: jobTemplate.id, name: jobTemplate.name };
+      return jobTemplate;
     },
 
     delete: async (page: Page, id: number): Promise<void> => {

@@ -2,7 +2,7 @@ import { ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useClipboard } from '../hooks/useClipboard';
 
-export function CopyCell(props: { text?: string; minWidth?: number }) {
+export function CopyCell(props: { text?: string; minWidth?: number; testId?: string }) {
   const { writeToClipboard } = useClipboard();
   const { t } = useTranslation();
 
@@ -19,6 +19,7 @@ export function CopyCell(props: { text?: string; minWidth?: number }) {
       onCopy={() => {
         writeToClipboard(props.text ?? '');
       }}
+      data-testid={props.testId}
     >
       {props.text}
     </ClipboardCopy>
