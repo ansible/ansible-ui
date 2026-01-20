@@ -1,9 +1,19 @@
 import { Page, expect } from '@playwright/test';
-import { createE2EName } from '../commands/createE2EName';
+import { gatewayAPI } from '../commands/apiClient';
+import { createE2EName, createE2EUsername } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
 import { clickTableRow } from '../commands/clickTableRow';
 import { clickTableRowAction } from '../commands/clickTableRowAction';
 import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+
+export interface CreateUserAPIOptions {
+  username?: string;
+  password?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+}
 
 export interface CreateUserUIOptions {
   userName?: string;
@@ -16,6 +26,35 @@ export interface CreateUserUIOptions {
 }
 
 export const User = {
+  api: {
+    create: async (page: Page, options: CreateUserAPIOptions = {}): Promise<PlatformUser> => {
+      const username = options.username ?? createE2EUsername('user').toLowerCase();
+      const password = options.password ?? 'pw';
+
+      // Build payload with only defined fields
+      const payload: Record<string, string> = {
+        username,
+        password,
+      };
+
+      if (options.first_name) payload.first_name = options.first_name;
+      if (options.last_name) payload.last_name = options.last_name;
+      if (options.email) payload.email = options.email;
+
+      const user = await gatewayAPI.post<PlatformUser>(page, 'users/', payload);
+
+      if (!user) {
+        throw new Error('Failed to create user: API returned null');
+      }
+
+      return user;
+    },
+
+    delete: async (page: Page, userId: number): Promise<void> => {
+      await gatewayAPI.delete(page, `users/${userId}/`);
+    },
+  },
+
   ui: {
     create: async (
       page: Page,
