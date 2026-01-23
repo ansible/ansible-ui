@@ -17,11 +17,9 @@ export interface CreateTeamAPIOptions {
 export const Team = {
   api: {
     create: async (page: Page, options: CreateTeamAPIOptions): Promise<PlatformTeam> => {
-      const name = options.name ?? createE2EName('team');
-
       const team = await gatewayAPI.post<PlatformTeam>(page, 'teams/', {
-        name,
-        description: options.description,
+        name: options.name ?? createE2EName('team'),
+        description: options.description ?? 'Created via API for E2E testing',
         organization: options.organization,
       });
 

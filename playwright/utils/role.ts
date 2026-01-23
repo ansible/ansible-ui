@@ -4,6 +4,8 @@ import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { getTableRow } from '../commands/getTableRow';
 import { navigateTo } from '../commands/navigateTo';
+import { gatewayAPI } from '../commands/apiClient';
+import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 
 export interface RoleTestData {
   name: string;
@@ -72,7 +74,42 @@ export const TEST_ROLE_CONFIGS: Record<string, RoleTestData> = {
   },
 };
 
+export interface CreateRoleAPIOptions {
+  name: string;
+  description?: string;
+  content_type: string | null;
+  permissions: string[];
+}
+
 export const Role = {
+  api: {
+    create: async (page: Page, options: CreateRoleAPIOptions): Promise<PlatformRole> => {
+      const role = await gatewayAPI.post<PlatformRole>(page, 'role_definitions/', {
+        name: options.name,
+        description: options.description ?? '',
+        content_type: options.content_type,
+        permissions: options.permissions,
+      });
+
+      if (!role) {
+        throw new Error('Failed to create Platform role: API returned null');
+      }
+
+      return role;
+    },
+
+    delete: async (page: Page, roleId: number): Promise<void> => {
+      try {
+        await gatewayAPI.delete(page, `role_definitions/${roleId}/`, { expectStatus: 204 });
+      } catch (error) {
+        // Ignore 404 errors (resource already deleted)
+        if (error instanceof Error && !error.message.includes('404')) {
+          throw error;
+        }
+      }
+    },
+  },
+
   ui: {
     navigate: async (page: Page): Promise<void> => {
       await navigateTo(page, 'Access Management', 'Roles');
