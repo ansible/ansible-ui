@@ -118,7 +118,13 @@ export async function post<T = unknown>(
       },
     });
 
-    expect(response.status()).toBe(expectStatus);
+    if (response.status() !== expectStatus) {
+      const responseBody = await response.text();
+      throw new Error(
+        `Expected status ${expectStatus} but got ${response.status()}. Response: ${responseBody}`
+      );
+    }
+
     const responseBody = await parseResponse<T>(response);
 
     return responseBody;

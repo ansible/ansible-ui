@@ -6,9 +6,32 @@ import { clickTableRow } from '../commands/clickTableRow';
 import { clickTableRowAction } from '../commands/clickTableRowAction';
 import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+
+export interface CreateTeamAPIOptions {
+  name?: string;
+  description?: string;
+  organization: number;
+}
 
 export const Team = {
   api: {
+    create: async (page: Page, options: CreateTeamAPIOptions): Promise<PlatformTeam> => {
+      const name = options.name ?? createE2EName('team');
+
+      const team = await gatewayAPI.post<PlatformTeam>(page, 'teams/', {
+        name,
+        description: options.description,
+        organization: options.organization,
+      });
+
+      if (!team) {
+        throw new Error('Failed to create team: API returned null');
+      }
+
+      return team;
+    },
+
     delete: async (page: Page, teamId: number): Promise<void> => {
       await gatewayAPI.delete(page, `teams/${teamId}/`);
     },

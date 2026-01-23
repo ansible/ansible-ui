@@ -67,7 +67,7 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'live chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], permissions: ['clipboard-read', 'clipboard-write'] },
       dependencies: ['coverage setup'],
 
       // Commenting this out for now to see if it is really needed
@@ -178,7 +178,6 @@ const config: PlaywrightTestConfig = {
       ],
     },
   ],
-
   /* Run your local dev server before starting the tests */
   // webServer: {
   //   command: 'npm run start',
