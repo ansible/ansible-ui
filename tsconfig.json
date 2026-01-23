@@ -38,9 +38,18 @@
     "platform",
     "playwright",
     "scripts",
+    "types",
     "webpack/environment.d.ts",
     "fix-coverage-paths.ts",
     "currents.config.ts"
   ],
-  "exclude": ["**/coverage/**", "**/node_modules/**", "**/dist/**", "**/build/**"]
+  "exclude": [
+    "**/coverage/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/dist-insights/**",
+    "**/build/**",
+    "**/hub/insights/**",
+    "**/hub/insights-tests/**"
+  ]
 }

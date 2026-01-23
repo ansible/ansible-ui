@@ -1,12 +1,29 @@
-import { AwxError } from '@ansible/awx-ui/common/AwxError';
-
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { Button, EmptyState, EmptyStateBody, EmptyStateFooter } from '@patternfly/react-core';
+import { ExclamationCircleIcon, SyncIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-// TODO - before we will agree on common error for all projects, this will serve as wrapper for AwxError
 export function HubError(props: { error?: Error | undefined; handleRefresh?: () => void }) {
   const { t } = useTranslation();
-  return AwxError({
-    error: props.error || new Error(t('NotFound')),
-    handleRefresh: props.handleRefresh,
-  });
+  const error = props.error || new Error(t('NotFound'));
+
+  return (
+    <EmptyState
+      headingLevel="h4"
+      icon={ExclamationCircleIcon}
+      titleText={<>{error?.message}</>}
+      isFullHeight
+    >
+      <EmptyStateFooter>
+        {error instanceof RequestError && error.details && (
+          <EmptyStateBody>{error.details}</EmptyStateBody>
+        )}
+        {props.handleRefresh && (
+          <Button variant="primary" onClick={props.handleRefresh} icon={<SyncIcon />}>
+            {t('Refresh')}
+          </Button>
+        )}
+      </EmptyStateFooter>
+    </EmptyState>
+  );
 }

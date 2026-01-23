@@ -95,6 +95,11 @@ export default defineConfig({
         find: /^monaco-editor$/,
         replacement: __dirname + '/../../node_modules/monaco-editor/esm/vs/editor/editor.api',
       },
+      {
+        // Mock CRC packages that are only available in the insights/ isolated build
+        find: '@redhat-cloud-services/frontend-components/useChrome',
+        replacement: __dirname + '/__mocks__/@redhat-cloud-services/frontend-components/useChrome',
+      },
     ],
   },
 });

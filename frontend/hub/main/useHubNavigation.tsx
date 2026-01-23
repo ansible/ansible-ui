@@ -3,6 +3,7 @@ import { PageNavigationItem } from '@ansible/ansible-ui-framework/PageNavigation
 import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
 import { useTranslation } from 'react-i18next';
+import { isInsightsMode } from '../common/isInsights';
 import { Navigate } from 'react-router-dom';
 import { HubRoles } from '../access/roles/HubRoles';
 import { HubRoleDetails } from '../access/roles/RolePage/HubRoleDetails';
@@ -102,7 +103,8 @@ export function useHubNavigation() {
     {
       id: HubRoute.Namespaces,
       label: t('Namespaces'),
-      path: 'namespaces',
+      // Insights/CRC uses 'partners' path, standalone uses 'namespaces'
+      path: isInsightsMode() ? 'partners' : 'namespaces',
       children: [
         {
           id: HubRoute.CreateNamespace,
@@ -249,90 +251,286 @@ export function useHubNavigation() {
         },
       ],
     },
-    {
-      id: HubRoute.ExecutionEnvironments,
-      label: t('Execution Environments'),
-      path: 'execution-environments',
-      children: [
-        {
-          id: HubRoute.CreateExecutionEnvironment,
-          path: 'create',
-          element: <CreateExecutionEnvironment />,
-        },
-        {
-          id: HubRoute.EditExecutionEnvironment,
-          path: ':id/edit',
-          element: <EditExecutionEnvironment />,
-        },
-        {
-          path: ':id/',
-          id: HubRoute.ExecutionEnvironmentPage,
-          element: <ExecutionEnvironmentPage />,
-          children: [
-            {
-              id: HubRoute.ExecutionEnvironmentDetails,
-              path: 'details',
-              element: <ExecutionEnvironmentDetails />,
-            },
-            {
-              id: HubRoute.ExecutionEnvironmentActivity,
-              path: 'activity',
-              element: <ExecutionEnvironmentActivity />,
-            },
-            {
-              id: HubRoute.ExecutionEnvironmentImages,
-              path: 'images',
-              element: <ExecutionEnvironmentImages />,
-            },
-            {
-              id: HubRoute.ExecutionEnvironmentTeamAccess,
-              path: 'team-access',
-              element: <ExecutionEnvironmentTeamAccess />,
-            },
-            {
-              id: HubRoute.ExecutionEnvironmentUserAccess,
-              path: 'user-access',
-              element: <ExecutionEnvironmentUserAccess />,
-            },
-            {
-              path: '',
-              element: <Navigate to="details" replace />,
-            },
-          ],
-        },
-        {
-          id: HubRoute.ExecutionEnvironmentAssignTeams,
-          path: ':id/team-access/assign',
-          element: <ExecutionEnvironmentAssignTeams />,
-        },
-        {
-          id: HubRoute.ExecutionEnvironmentAddUsers,
-          path: ':id/user-access/add',
-          element: <ExecutionEnvironmentAddUsers />,
-        },
-        {
-          id: HubRoute.ExecutionEnvironmentManageUsers,
-          path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
-          element: <ExecutionEnvironmentManageUsers />,
-        },
-        {
-          id: HubRoute.ExecutionEnvironmentImagePage,
-          path: ':id/images/:tag/',
-          element: <ExecutionEnvironmentImagePage />,
-          children: [
-            {
-              id: HubRoute.ExecutionEnvironmentImageDetails,
-              path: '',
-              element: <ExecutionEnvironmentImageDetails />,
-            },
-          ],
-        },
-        {
-          path: '',
-          element: <ExecutionEnvironments />,
-        },
-      ],
-    },
+    // Execution Environments are NOT available in Insights/CRC mode
+    ...(isInsightsMode()
+      ? []
+      : [
+          {
+            id: HubRoute.ExecutionEnvironments,
+            label: t('Execution Environments'),
+            path: 'execution-environments',
+            children: [
+              {
+                id: HubRoute.CreateExecutionEnvironment,
+                path: 'create',
+                element: <CreateExecutionEnvironment />,
+              },
+              {
+                id: HubRoute.EditExecutionEnvironment,
+                path: ':id/edit',
+                element: <EditExecutionEnvironment />,
+              },
+              {
+                path: ':id/',
+                id: HubRoute.ExecutionEnvironmentPage,
+                element: <ExecutionEnvironmentPage />,
+                children: [
+                  {
+                    id: HubRoute.ExecutionEnvironmentDetails,
+                    path: 'details',
+                    element: <ExecutionEnvironmentDetails />,
+                  },
+                  {
+                    id: HubRoute.ExecutionEnvironmentActivity,
+                    path: 'activity',
+                    element: <ExecutionEnvironmentActivity />,
+                  },
+                  {
+                    id: HubRoute.ExecutionEnvironmentImages,
+                    path: 'images',
+                    element: <ExecutionEnvironmentImages />,
+                  },
+                  {
+                    id: HubRoute.ExecutionEnvironmentTeamAccess,
+                    path: 'team-access',
+                    element: <ExecutionEnvironmentTeamAccess />,
+                  },
+                  {
+                    id: HubRoute.ExecutionEnvironmentUserAccess,
+                    path: 'user-access',
+                    element: <ExecutionEnvironmentUserAccess />,
+                  },
+                  {
+                    path: '',
+                    element: <Navigate to="details" replace />,
+                  },
+                ],
+              },
+              {
+                id: HubRoute.ExecutionEnvironmentAssignTeams,
+                path: ':id/team-access/assign',
+                element: <ExecutionEnvironmentAssignTeams />,
+              },
+              {
+                id: HubRoute.ExecutionEnvironmentAddUsers,
+                path: ':id/user-access/add',
+                element: <ExecutionEnvironmentAddUsers />,
+              },
+              {
+                id: HubRoute.ExecutionEnvironmentManageUsers,
+                path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+                element: <ExecutionEnvironmentManageUsers />,
+              },
+              {
+                id: HubRoute.ExecutionEnvironmentImagePage,
+                path: ':id/images/:tag/',
+                element: <ExecutionEnvironmentImagePage />,
+                children: [
+                  {
+                    id: HubRoute.ExecutionEnvironmentImageDetails,
+                    path: '',
+                    element: <ExecutionEnvironmentImageDetails />,
+                  },
+                ],
+              },
+              {
+                path: '',
+                element: <ExecutionEnvironments />,
+              },
+            ],
+          } as PageNavigationItem,
+        ]),
+    // In Insights mode, these routes are top-level (Chrome expects different paths than aap-ui standalone)
+    ...(isInsightsMode()
+      ? [
+          // /tasks - Task Management
+          {
+            id: HubRoute.Tasks,
+            label: t('Task Management'),
+            path: 'tasks',
+            children: [
+              {
+                id: HubRoute.TaskPage,
+                path: ':id/',
+                element: <TaskDetails />,
+              },
+              {
+                path: '',
+                element: <Tasks />,
+              },
+            ],
+          } as PageNavigationItem,
+          // /approval-dashboard - Collection Approvals
+          {
+            id: HubRoute.Approvals,
+            label: t('Collection Approvals'),
+            path: 'approval-dashboard',
+            children: [
+              {
+                path: '',
+                element: <Approvals />,
+              },
+            ],
+          } as PageNavigationItem,
+          // /signature-keys - Signature Keys
+          {
+            id: HubRoute.SignatureKeys,
+            label: t('Signature Keys'),
+            path: 'signature-keys',
+            children: [
+              {
+                path: '',
+                element: <SignatureKeys />,
+              },
+            ],
+          } as PageNavigationItem,
+          // /ansible/repositories and /ansible/remotes - wrapped under 'ansible' path
+          {
+            path: 'ansible',
+            children: [
+              {
+                id: HubRoute.Repositories,
+                label: t('Repositories'),
+                path: 'repositories',
+                children: [
+                  {
+                    path: '',
+                    element: <Repositories />,
+                  },
+                  {
+                    path: 'create',
+                    id: HubRoute.CreateRepository,
+                    element: <RepositoryForm />,
+                  },
+                  {
+                    path: 'edit/:id',
+                    id: HubRoute.EditRepository,
+                    element: <RepositoryForm />,
+                  },
+                  {
+                    path: ':id/',
+                    id: HubRoute.RepositoryPage,
+                    element: <RepositoryPage />,
+                    children: [
+                      {
+                        path: 'details',
+                        id: HubRoute.RepositoryDetails,
+                        element: <RepositoryDetails />,
+                      },
+                      {
+                        path: 'team-access',
+                        id: HubRoute.RepositoryTeamAccess,
+                        element: <RepositoryTeamAccess />,
+                      },
+                      {
+                        path: 'user-access',
+                        id: HubRoute.RepositoryUserAccess,
+                        element: <RepositoryUserAccess />,
+                      },
+                      {
+                        path: 'collection-version',
+                        id: HubRoute.RepositoryCollectionVersion,
+                        element: <RepositoryCollectionVersion />,
+                      },
+                      {
+                        path: 'versions',
+                        id: HubRoute.RepositoryVersions,
+                        element: <RepositoryVersions />,
+                      },
+                      {
+                        path: 'distributions',
+                        id: HubRoute.RepositoryDistributions,
+                        element: <RepositoryDistributions />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
+                  {
+                    id: HubRoute.RepositoryAssignTeams,
+                    path: ':id/team-access/assign',
+                    element: <RepositoryAssignTeams />,
+                  },
+                  {
+                    id: HubRoute.RepositoryAddUsers,
+                    path: ':id/users-access/add',
+                    element: <RepositoryAddUsers />,
+                  },
+                  {
+                    id: HubRoute.RepositoryManageUsers,
+                    path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+                    element: <RepositoryManageUsers />,
+                  },
+                ],
+              },
+              {
+                id: HubRoute.Remotes,
+                label: t('Remotes'),
+                path: 'remotes',
+                children: [
+                  {
+                    id: HubRoute.CreateRemote,
+                    path: 'create',
+                    element: <CreateRemote />,
+                  },
+                  {
+                    id: HubRoute.EditRemote,
+                    path: ':id/edit',
+                    element: <EditRemote />,
+                  },
+                  {
+                    path: ':id/',
+                    id: HubRoute.RemotePage,
+                    element: <RemotePage />,
+                    children: [
+                      {
+                        path: 'details',
+                        id: HubRoute.RemoteDetails,
+                        element: <RemoteDetails />,
+                      },
+                      {
+                        path: 'user-access',
+                        id: HubRoute.RemoteUserAccess,
+                        element: <RemoteUserAccess />,
+                      },
+                      {
+                        path: 'team-access',
+                        id: HubRoute.RemoteTeamAccess,
+                        element: <RemoteTeamAccess />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
+                  {
+                    id: HubRoute.RemoteAddUsers,
+                    path: ':id/user-access/add',
+                    element: <RemoteAddUsers />,
+                  },
+                  {
+                    id: HubRoute.RemoteManageUsers,
+                    path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+                    element: <RemoteManageUsers />,
+                  },
+                  {
+                    id: HubRoute.RemoteAssignTeams,
+                    path: ':id/team-access/assign',
+                    element: <RemoteAssignTeams />,
+                  },
+                  {
+                    path: '',
+                    element: <Remotes />,
+                  },
+                ],
+              },
+            ],
+          } as PageNavigationItem,
+        ]
+      : []),
     {
       label: t('Administration'),
       path: 'administration',
@@ -577,7 +775,8 @@ export function useHubNavigation() {
     {
       id: HubRoute.APIToken,
       label: t('API Token'),
-      path: 'api-token',
+      // Insights/CRC uses 'token' path, standalone uses 'api-token'
+      path: isInsightsMode() ? 'token' : 'api-token',
       element: <Token />,
     },
     {

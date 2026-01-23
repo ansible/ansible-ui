@@ -1,4 +1,11 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*", "../cypress/support/**/*", "../frontend/hub/**/*", "vite.config.ts"]
+  "include": [
+    "**/*",
+    "../cypress/support/**/*",
+    "../frontend/hub/**/*",
+    "../types/*.d.ts",
+    "vite.config.ts"
+  ],
+  "exclude": ["../frontend/hub/insights/**", "../frontend/hub/dist-insights/**"]
 }
