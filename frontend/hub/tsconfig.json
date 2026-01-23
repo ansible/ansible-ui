@@ -1,4 +1,5 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["**/*", "../../cypress/support/**/*"]
+  "include": ["**/*", "../../cypress/support/**/*", "../../types/*.d.ts"],
+  "exclude": ["insights", "dist-insights"]
 }

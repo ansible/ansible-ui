@@ -14,6 +14,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { serverlessURL } from './api/hub-api-utils';
 import { url2keys } from './api/query-string';
+import { isInsightsMode } from './isInsights';
 
 export interface HubItemsResponse<T extends object> {
   meta: {
@@ -105,7 +106,8 @@ export function useHubView<T extends object>({
       sortDirection: defaultSortDirection,
       filterState: defaultFilters,
     },
-    disableQueryString,
+    // Disable query string in Insights mode to avoid URL path conflicts with Chrome's router
+    disableQueryString: disableQueryString || isInsightsMode(),
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 

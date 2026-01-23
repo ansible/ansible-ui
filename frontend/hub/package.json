@@ -16,11 +16,16 @@
     "serve": "concurrently --kill-others-on-fail npm:preview npm:build:watch -c auto",
     "test": "concurrently npm:eslint npm:prettier npm:tsc npm:vitest -c auto",
     "tsc": "tsc --noEmit",
-    "eslint": "eslint --max-warnings=0 .",
-    "eslint:fix": "eslint --fix .",
+    "eslint": "eslint --max-warnings=0 --ignore-pattern 'insights/' --ignore-pattern 'dist-insights/' .",
+    "eslint:fix": "eslint --fix --ignore-pattern 'insights/' --ignore-pattern 'dist-insights/' .",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
-    "vitest": "vitest --run"
+    "vitest": "vitest --run",
+    "insights:install": "cd insights && npm install --legacy-peer-deps",
+    "insights:serve": "cd insights && npm run serve",
+    "insights:build": "cd insights && npm run build",
+    "insights:tsc": "cd insights && npm run tsc",
+    "insights:eslint": "cd insights && npm run eslint"
   }
 }
