@@ -6,7 +6,18 @@ This file provides guidance to AI coding assistants when working with code in th
 
 Claude, you have access to the following skills. Use them when appropriate:
 
+- **`/migrate-test`** - Comprehensive workflow for migrating Cypress tests to Playwright (see `.claude/commands/migrate-test.md`)
 - See `.claude/skills/pr_review.md` for PR review steps
+
+### Cypress to Playwright Migration
+
+When migrating Cypress tests to Playwright, use the `/migrate-test` skill. Key principles:
+
+1. **Always branch from `main`** for migrations
+2. **Migrate in batches of 3-4 tests** using parallel Task agents
+3. **Follow the Common Pitfalls guide** to avoid strict mode violations, API errors, and TypeScript issues
+4. **Run tests immediately** after writing (`--max-failures=1 --retries=0`)
+5. **Commit once all tests pass** with concise commit messages
 
 ## Project Overview
 
