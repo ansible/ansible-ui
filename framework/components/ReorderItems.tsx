@@ -187,7 +187,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
       {!hideColumnHeaders && (
         <Thead>
           <Tr>
-            <Th />
+            <Th screenReaderText={t`Sort`} />
             {isSelectableWithCheckbox && (
               <Th
                 select={{
