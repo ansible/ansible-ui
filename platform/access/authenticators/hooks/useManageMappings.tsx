@@ -22,7 +22,7 @@ export function useManageMappings(authenticatorId: number, refresh: () => unknow
   );
 
   const { data } = useGet<{ results: AuthenticatorMap[] }>(
-    gatewayAPI`/authenticators/${authenticatorId.toString()}/authenticator_maps/?order_by=order`
+    gatewayAPI`/authenticators/${authenticatorId.toString()}/authenticator_maps/?order_by=order&page_size=500`
   );
   const { openManageItems: openManageMappingOrder } = useManageItems({
     id: `authenticator-map-reorder-${params.id}`,
