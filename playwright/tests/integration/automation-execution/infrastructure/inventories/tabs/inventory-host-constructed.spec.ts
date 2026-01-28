@@ -1,8 +1,12 @@
-import { AwxHost } from '@ansible/awx-ui/interfaces/AwxHost';
-import { ConstructedInventory, RegularInventory } from '@ansible/awx-ui/interfaces/Inventory';
-import { InventoryGroup } from '@ansible/awx-ui/interfaces/InventoryGroup';
-import { Organization } from '@ansible/awx-ui/interfaces/Organization';
-import { awxAPI, gatewayAPI } from '@ansible/playwright/commands/apiClient';
+import {
+  Credential,
+  Inventory,
+  InventoryGroup,
+  InventoryHost,
+  JobTemplate,
+  Organization,
+  Project,
+} from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 import { clickTableRow } from '../../../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../../../commands/createE2EName';
@@ -11,8 +15,6 @@ import { navigateTo } from '../../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../../commands/runAdHocCommandWizard';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
 import { waitForJobStatus } from '../../../../../../commands/waitForJobStatus';
-import { Project, JobTemplate, ExecutionEnvironment } from '@ansible/playwright/utils';
-import { Credential } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -24,68 +26,27 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
-      // Wait for login to complete before making API calls
-      await page.waitForResponse(
-        (response) => response.url().includes('/controller/v2/me') && response.status() === 200,
-        { timeout: 10000 }
-      );
-
-      const organizationName = createE2EName('organization');
-      const regularInventoryName = createE2EName('inventory');
-      const constructedInventoryName = createE2EName('constructed-inventory');
-      const hostName = createE2EName('host');
-
-      const organization = await gatewayAPI.post<Organization>(page, '/organizations/', {
-        name: organizationName,
+      // Create API resources first (before any UI navigation)
+      const organization = await Organization.api.create(page);
+      const regularInventory = await Inventory.api.create(page, {
+        name: createE2EName('inventory'),
+        organization: organization.id,
       });
+      const host = await InventoryHost.api.create(page, { inventory: regularInventory.id });
+      const constructedInventory = await Inventory.api.createConstructed(page, {
+        organization: organization.id,
+      });
+      await Inventory.api.addInputInventory(page, constructedInventory.id, regularInventory.id);
 
-      let regularInventory: RegularInventory | null = null;
-      let constructedInventory: ConstructedInventory | null = null;
-      let executionEnvironmentName: string | null = null;
-      let credentialName: string | null = null;
+      // Create credential via UI (needs navigation)
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       try {
-        // Create execution environment
-        executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
-          organizationName,
-        });
-
-        // Create Machine credential for running ad-hoc commands
-        credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-
-        // Create regular inventory via AWX API
-        regularInventory = await awxAPI.post<RegularInventory>(page, '/inventories/', {
-          name: regularInventoryName,
-          organization: organization?.id,
-        });
-
-        // Create host in regular inventory
-        await awxAPI.post<AwxHost>(page, '/hosts/', {
-          name: hostName,
-          inventory: regularInventory!.id,
-        });
-
-        // Create constructed inventory via AWX API
-        constructedInventory = await awxAPI.post<ConstructedInventory>(page, '/inventories/', {
-          name: constructedInventoryName,
-          organization: organization?.id,
-          kind: 'constructed',
-          source_vars: 'plugin: constructed',
-        });
-
-        // Add regular inventory as input to constructed inventory
-        await awxAPI.post(
-          page,
-          `/inventories/${constructedInventory!.id}/input_inventories/`,
-          { id: regularInventory!.id },
-          { expectStatus: 204 }
-        );
-
         // Navigate to constructed inventory details page
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-        await clickTableRow({ text: constructedInventoryName }, page);
+        await clickTableRow({ text: constructedInventory.name }, page);
         await expect(
-          page.getByRole('heading', { name: constructedInventoryName, exact: true })
+          page.getByRole('heading', { name: constructedInventory.name, exact: true })
         ).toBeVisible();
 
         // Sync the constructed inventory
@@ -116,12 +77,12 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
         await page.getByRole('tab', { name: 'Hosts' }).click();
 
         // Wait for host to appear (sometimes takes a moment after sync)
-        await expect(page.locator('tbody')).toContainText(hostName, { timeout: 15000 });
+        await expect(page.locator('tbody')).toContainText(host.name, { timeout: 15000 });
 
         // Click Run command button
         await page.getByRole('button', { name: 'Run command', exact: true }).click();
 
-        // Run ad-hoc command wizard
+        // Run ad-hoc command wizard using default execution environment
         await runAdHocCommandWizard(
           {
             module: 'shell',
@@ -131,46 +92,16 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
             forks: 2,
             showChanges: true,
             becomeEnabled: true,
-            executionEnvironmentName,
+            executionEnvironmentName: 'Control Plane Execution',
             credentialName,
           },
           page
         );
       } finally {
-        // Cleanup in reverse order of creation (use API to avoid navigation issues)
-        if (constructedInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${constructedInventory.id}/`).catch(() => {});
-        }
-        if (regularInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${regularInventory.id}/`).catch(() => {});
-        }
-        if (credentialName) {
-          // Look up credential ID by name and delete via API
-          const credList = await awxAPI
-            .get<{
-              results: Array<{ id: number; name: string }>;
-            }>(page, `/credentials/?name=${encodeURIComponent(credentialName)}`)
-            .catch(() => null);
-          if (credList?.results?.[0]?.id) {
-            await awxAPI.delete(page, `/credentials/${credList.results[0].id}/`).catch(() => {});
-          }
-        }
-        if (executionEnvironmentName) {
-          // Look up execution environment ID by name and delete via API
-          const eeList = await awxAPI
-            .get<{
-              results: Array<{ id: number; name: string }>;
-            }>(page, `/execution_environments/?name=${executionEnvironmentName}`)
-            .catch(() => null);
-          if (eeList?.results?.[0]?.id) {
-            await awxAPI
-              .delete(page, `/execution_environments/${eeList.results[0].id}/`)
-              .catch(() => {});
-          }
-        }
-        if (organization?.id) {
-          await gatewayAPI.delete(page, `/organizations/${organization.id}/`).catch(() => {});
-        }
+        // Cleanup using utilities
+        await Inventory.api.delete(page, constructedInventory.id).catch(() => {});
+        await Credential.api.deleteByName(page, credentialName);
+        await Organization.api.deleteByName(page, organization.name);
       }
     }
   );
@@ -181,85 +112,34 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
-      // Wait for login to complete before making API calls
-      await page.waitForResponse(
-        (response) => response.url().includes('/controller/v2/me') && response.status() === 200,
-        { timeout: 10000 }
-      );
-
-      const organizationName = createE2EName('organization');
-      const regularInventoryName = createE2EName('inventory');
-      const constructedInventoryName = createE2EName('constructed-inventory');
       const groupName = createE2EName('group');
-      const hostName = createE2EName('host');
 
-      const organization = await gatewayAPI.post<Organization>(page, '/organizations/', {
-        name: organizationName,
+      // Create API resources first (before any UI navigation)
+      const organization = await Organization.api.create(page);
+      const regularInventory = await Inventory.api.create(page, {
+        name: createE2EName('inventory'),
+        organization: organization.id,
       });
+      const group = await InventoryGroup.api.create(page, {
+        name: groupName,
+        inventory: regularInventory.id,
+      });
+      const host = await InventoryHost.api.create(page, { inventory: regularInventory.id });
+      await InventoryGroup.api.addHost(page, group.id, host.id);
+      const constructedInventory = await Inventory.api.createConstructed(page, {
+        organization: organization.id,
+      });
+      await Inventory.api.addInputInventory(page, constructedInventory.id, regularInventory.id);
 
-      let regularInventory: RegularInventory | null = null;
-      let constructedInventory: ConstructedInventory | null = null;
-      let group: InventoryGroup | null = null;
-      let host: AwxHost | null = null;
-      let executionEnvironmentName: string | null = null;
-      let credentialName: string | null = null;
+      // Create credential via UI (needs navigation)
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
       try {
-        // Create execution environment
-        executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
-          organizationName,
-        });
-
-        // Create Machine credential for running ad-hoc commands
-        credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-
-        // Create regular inventory via AWX API
-        regularInventory = await awxAPI.post<RegularInventory>(page, '/inventories/', {
-          name: regularInventoryName,
-          organization: organization?.id,
-        });
-
-        // Create group in regular inventory
-        group = await awxAPI.post<InventoryGroup>(page, '/groups/', {
-          name: groupName,
-          inventory: regularInventory!.id,
-        });
-
-        // Create host in regular inventory
-        host = await awxAPI.post<AwxHost>(page, '/hosts/', {
-          name: hostName,
-          inventory: regularInventory!.id,
-        });
-
-        // Add host to group
-        await awxAPI.post(
-          page,
-          `/groups/${group!.id}/hosts/`,
-          { id: host!.id },
-          { expectStatus: 204 }
-        );
-
-        // Create constructed inventory via AWX API
-        constructedInventory = await awxAPI.post<ConstructedInventory>(page, '/inventories/', {
-          name: constructedInventoryName,
-          organization: organization?.id,
-          kind: 'constructed',
-          source_vars: 'plugin: constructed',
-        });
-
-        // Add regular inventory as input to constructed inventory
-        await awxAPI.post(
-          page,
-          `/inventories/${constructedInventory!.id}/input_inventories/`,
-          { id: regularInventory!.id },
-          { expectStatus: 204 }
-        );
-
         // Navigate to constructed inventory and sync
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-        await clickTableRow({ text: constructedInventoryName }, page);
+        await clickTableRow({ text: constructedInventory.name }, page);
         await expect(
-          page.getByRole('heading', { name: constructedInventoryName, exact: true })
+          page.getByRole('heading', { name: constructedInventory.name, exact: true })
         ).toBeVisible();
 
         // Trigger sync
@@ -299,12 +179,12 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
         await page.getByRole('tab', { name: 'Hosts' }).click();
 
         // Wait for host to appear
-        await expect(page.locator('tbody')).toContainText(hostName, { timeout: 15000 });
+        await expect(page.locator('tbody')).toContainText(host.name, { timeout: 15000 });
 
         // Click Run command button
         await page.getByRole('button', { name: 'Run command', exact: true }).click();
 
-        // Run ad-hoc command wizard
+        // Run ad-hoc command wizard using default execution environment
         await runAdHocCommandWizard(
           {
             module: 'shell',
@@ -314,43 +194,16 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
             forks: 2,
             showChanges: true,
             becomeEnabled: true,
-            executionEnvironmentName,
+            executionEnvironmentName: 'Control Plane Execution',
             credentialName,
           },
           page
         );
       } finally {
-        // Cleanup in reverse order of creation (use API to avoid navigation issues)
-        if (constructedInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${constructedInventory.id}/`).catch(() => {});
-        }
-        if (regularInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${regularInventory.id}/`).catch(() => {});
-        }
-        if (credentialName) {
-          // Look up credential ID by name and delete via API
-          const credList = await awxAPI
-            .get<{
-              results: Array<{ id: number; name: string }>;
-            }>(page, `/credentials/?name=${encodeURIComponent(credentialName)}`)
-            .catch(() => null);
-          if (credList?.results?.[0]?.id) {
-            await awxAPI.delete(page, `/credentials/${credList.results[0].id}/`).catch(() => {});
-          }
-        }
-        if (executionEnvironmentName) {
-          // Look up execution environment ID by name and delete via API
-          const eeList = await awxAPI
-            .get<{
-              results: Array<{ id: number; name: string }>;
-            }>(page, `/execution_environments/?name=${executionEnvironmentName}`)
-            .catch(() => null);
-          if (eeList?.results?.[0]?.id) {
-            await awxAPI
-              .delete(page, `/execution_environments/${eeList.results[0].id}/`)
-              .catch(() => {});
-          }
-        }
+        // Cleanup using utilities
+        await Inventory.api.delete(page, constructedInventory.id).catch(() => {});
+        await Credential.api.deleteByName(page, credentialName);
+        await Organization.api.deleteByName(page, organization.name);
       }
     }
   );
@@ -361,70 +214,41 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
-      // Wait for login to complete before making API calls
-      await page.waitForResponse(
-        (response) => response.url().includes('/controller/v2/me') && response.status() === 200,
-        { timeout: 10000 }
-      );
+      // Create resources using utilities
+      const organization = await Organization.api.create(page);
 
-      const organizationName = createE2EName('organization');
-      const regularInventoryName = createE2EName('inventory');
-      const constructedInventoryName = createE2EName('constructed-inventory');
-      const hostName = createE2EName('host');
-
-      const organization = await gatewayAPI.post<Organization>(page, '/organizations/', {
-        name: organizationName,
+      const regularInventory = await Inventory.api.create(page, {
+        name: createE2EName('inventory'),
+        organization: organization.id,
       });
 
-      let regularInventory: RegularInventory | null = null;
-      let constructedInventory: ConstructedInventory | null = null;
-      let projectName: string | null = null;
-      let jobTemplateName: string | null = null;
+      await InventoryHost.api.create(page, { inventory: regularInventory.id });
+
+      // Create constructed inventory
+      const constructedInventory = await Inventory.api.createConstructed(page, {
+        organization: organization.id,
+      });
+
+      // Add regular inventory as input to constructed inventory
+      await Inventory.api.addInputInventory(page, constructedInventory.id, regularInventory.id);
+
+      // Create project
+      const projectName = await Project.ui.create(page, { organizationName: organization.name });
+
+      // Create job template using constructed inventory
+      const jobTemplateName = await JobTemplate.ui.create(page, {
+        inventoryName: constructedInventory.name,
+        projectName,
+      });
+
       let jobId: number | null = null;
 
       try {
-        // Create regular inventory via AWX API
-        regularInventory = await awxAPI.post<RegularInventory>(page, '/inventories/', {
-          name: regularInventoryName,
-          organization: organization?.id,
-        });
-
-        // Create host in regular inventory
-        await awxAPI.post<AwxHost>(page, '/hosts/', {
-          name: hostName,
-          inventory: regularInventory!.id,
-        });
-
-        // Create constructed inventory via AWX API
-        constructedInventory = await awxAPI.post<ConstructedInventory>(page, '/inventories/', {
-          name: constructedInventoryName,
-          organization: organization?.id,
-          kind: 'constructed',
-          source_vars: 'plugin: constructed',
-        });
-
-        // Add regular inventory as input to constructed inventory
-        await awxAPI.post(
-          page,
-          `/inventories/${constructedInventory!.id}/input_inventories/`,
-          { id: regularInventory!.id },
-          { expectStatus: 204 }
-        );
-
-        // Create project
-        projectName = await Project.ui.create(page, { organizationName });
-
-        // Create job template using constructed inventory
-        jobTemplateName = await JobTemplate.ui.create(page, {
-          inventoryName: constructedInventoryName,
-          projectName,
-        });
-
         // Navigate to constructed inventory and sync
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-        await clickTableRow({ text: constructedInventoryName }, page);
+        await clickTableRow({ text: constructedInventory.name }, page);
         await expect(
-          page.getByRole('heading', { name: constructedInventoryName, exact: true })
+          page.getByRole('heading', { name: constructedInventory.name, exact: true })
         ).toBeVisible();
 
         // Trigger sync
@@ -466,46 +290,17 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
         // Verify job launched successfully
         await expect(page.getByRole('heading', { name: jobTemplateName }).first()).toBeVisible();
         await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible();
-
-        // Note: Jobs tab is not available for hosts in constructed inventories
-        // since constructed inventory hosts are read-only
       } finally {
         // Cancel the job if it's still running to allow cleanup
         if (jobId) {
-          await awxAPI.post(page, `/jobs/${jobId}/cancel/`, {}).catch(() => {
-            // Job might have already completed or failed, or cancellation not allowed
-          });
+          await JobTemplate.api.cancelJob(page, jobId);
         }
 
-        // Cleanup in reverse order of creation (use API to avoid navigation issues)
-        if (jobTemplateName) {
-          // Look up job template ID by name and delete via API
-          const jtList = await awxAPI
-            .get<{
-              results: Array<{ id: number; name: string }>;
-            }>(page, `/job_templates/?name=${jobTemplateName}`)
-            .catch(() => null);
-          if (jtList?.results?.[0]?.id) {
-            await awxAPI.delete(page, `/job_templates/${jtList.results[0].id}/`).catch(() => {});
-          }
-        }
-        if (projectName) {
-          // Look up project ID by name and delete via API
-          const projectList = await awxAPI
-            .get<{
-              results: Array<{ id: number; name: string }>;
-            }>(page, `/projects/?name=${projectName}`)
-            .catch(() => null);
-          if (projectList?.results?.[0]?.id) {
-            await awxAPI.delete(page, `/projects/${projectList.results[0].id}/`).catch(() => {});
-          }
-        }
-        if (constructedInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${constructedInventory.id}/`).catch(() => {});
-        }
-        if (regularInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${regularInventory.id}/`).catch(() => {});
-        }
+        // Cleanup using utilities
+        await JobTemplate.api.deleteByName(page, jobTemplateName);
+        await Project.api.deleteByName(page, projectName);
+        await Inventory.api.delete(page, constructedInventory.id).catch(() => {});
+        await Organization.api.deleteByName(page, organization.name);
       }
     }
   );
@@ -516,57 +311,30 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(4 * 60 * 1000);
 
-      // Wait for login to complete before making API calls
-      await page.waitForResponse(
-        (response) => response.url().includes('/controller/v2/me') && response.status() === 200,
-        { timeout: 10000 }
-      );
+      // Create resources using utilities
+      const organization = await Organization.api.create(page);
 
-      const organizationName = createE2EName('organization');
-      const organization = await gatewayAPI.post<Organization>(page, '/organizations/', {
-        name: organizationName,
+      const regularInventory = await Inventory.api.create(page, {
+        name: createE2EName('inventory'),
+        organization: organization.id,
       });
-      const regularInventoryName = createE2EName('inventory');
-      const constructedInventoryName = createE2EName('constructed-inventory');
-      const hostName = createE2EName('host');
 
-      let regularInventory: RegularInventory | null = null;
-      let constructedInventory: ConstructedInventory | null = null;
+      const host = await InventoryHost.api.create(page, { inventory: regularInventory.id });
+
+      // Create constructed inventory
+      const constructedInventory = await Inventory.api.createConstructed(page, {
+        organization: organization.id,
+      });
+
+      // Add regular inventory as input to constructed inventory
+      await Inventory.api.addInputInventory(page, constructedInventory.id, regularInventory.id);
 
       try {
-        // Create regular inventory via AWX API
-        regularInventory = await awxAPI.post<RegularInventory>(page, '/inventories/', {
-          name: regularInventoryName,
-          organization: organization?.id,
-        });
-
-        // Create host in regular inventory
-        await awxAPI.post<AwxHost>(page, '/hosts/', {
-          name: hostName,
-          inventory: regularInventory!.id,
-        });
-
-        // Create constructed inventory via AWX API
-        constructedInventory = await awxAPI.post<ConstructedInventory>(page, '/inventories/', {
-          name: constructedInventoryName,
-          organization: organization?.id,
-          kind: 'constructed',
-          source_vars: 'plugin: constructed',
-        });
-
-        // Add regular inventory as input to constructed inventory
-        await awxAPI.post(
-          page,
-          `/inventories/${constructedInventory!.id}/input_inventories/`,
-          { id: regularInventory!.id },
-          { expectStatus: 204 }
-        );
-
         // Navigate to constructed inventory and sync
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-        await clickTableRow({ text: constructedInventoryName }, page);
+        await clickTableRow({ text: constructedInventory.name }, page);
         await expect(
-          page.getByRole('heading', { name: constructedInventoryName, exact: true })
+          page.getByRole('heading', { name: constructedInventory.name, exact: true })
         ).toBeVisible();
 
         // Trigger sync
@@ -596,41 +364,37 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
         await page.getByRole('tab', { name: 'Hosts' }).click();
 
         // Wait for host to appear
-        await expect(page.locator('tbody')).toContainText(hostName, { timeout: 15000 });
+        await expect(page.locator('tbody')).toContainText(host.name, { timeout: 15000 });
 
         // Click on the host to go to details page
-        await clickTableRow({ text: hostName }, page);
-        await expect(page.getByRole('heading', { name: hostName, exact: true })).toBeVisible();
+        await clickTableRow({ text: host.name }, page);
+        await expect(page.getByRole('heading', { name: host.name, exact: true })).toBeVisible();
 
         // Verify edit button is not visible on host details page
         await expect(page.getByTestId('edit-host')).not.toBeVisible();
 
         // Navigate back to hosts list to check actions dropdown
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-        await clickTableRow({ text: constructedInventoryName }, page);
+        await clickTableRow({ text: constructedInventory.name }, page);
         await page.getByRole('tab', { name: 'Hosts' }).click();
 
         // Wait for host to appear
-        await expect(page.locator('tbody')).toContainText(hostName, { timeout: 15000 });
+        await expect(page.locator('tbody')).toContainText(host.name, { timeout: 15000 });
 
         // Verify actions dropdown is not visible in the table row
-        const hostRow = await getTableRow(page, hostName);
+        const hostRow = await getTableRow(page, host.name);
         await expect(hostRow.locator('[data-testid="actions-dropdown"]')).not.toBeVisible();
 
         // Go back to host details to check Facts tab
-        await clickTableRow({ text: hostName }, page);
-        await expect(page.getByRole('heading', { name: hostName, exact: true })).toBeVisible();
+        await clickTableRow({ text: host.name }, page);
+        await expect(page.getByRole('heading', { name: host.name, exact: true })).toBeVisible();
 
         // Verify Facts tab is not visible
         await expect(page.getByRole('tab', { name: 'Facts' })).not.toBeVisible();
       } finally {
-        // Cleanup in reverse order of creation
-        if (constructedInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${constructedInventory.id}/`).catch(() => {});
-        }
-        if (regularInventory?.id) {
-          await awxAPI.delete(page, `/inventories/${regularInventory.id}/`).catch(() => {});
-        }
+        // Cleanup using utilities
+        await Inventory.api.delete(page, constructedInventory.id).catch(() => {});
+        await Organization.api.deleteByName(page, organization.name);
       }
     }
   );

@@ -156,9 +156,9 @@ test.describe('Inventory Source Notifications', () => {
         // Verify the toggle is now enabled
         await expect(toggleSwitch).toBeChecked();
 
-        await Notifier.ui.delete(page, notifierName);
-        await Inventory.ui.delete(page, inventoryName);
-        await Organization.ui.delete(page, organizationName);
+        // Use API-based cleanup to cancel running jobs and avoid timeout
+        await Notifier.api.deleteByName(page, notifierName);
+        await Organization.api.deleteByName(page, organizationName);
       }
     );
   }

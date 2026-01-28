@@ -11,6 +11,17 @@ export const Notifier = {
     delete: async (page: Page, notifierId: number): Promise<void> => {
       await awxAPI.delete(page, `notification_templates/${notifierId}/`);
     },
+
+    deleteByName: async (page: Page, notifierName: string): Promise<void> => {
+      const notifiers = await awxAPI.get<{ results: { id: number; name: string }[] }>(
+        page,
+        '/notification_templates/',
+        { params: { name: notifierName } }
+      );
+      if (notifiers?.results?.[0]?.id) {
+        await awxAPI.delete(page, `notification_templates/${notifiers.results[0].id}/`);
+      }
+    },
   },
   ui: {
     createSlack: async (page: Page): Promise<string> => {

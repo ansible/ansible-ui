@@ -10,11 +10,12 @@ test.afterEach(setupAfter);
 test(
   'eda credential types - can create a credential type and assert the info on the details page',
   { tag: ['@not_mock'] },
-  async ({ page, request }) => {
+  async ({ page }) => {
     // Skip this test if running on SaaS deployment
-    const buildType = await checkBuildType(request);
+    const buildType = await checkBuildType(page);
     if (buildType === SAAS_URL) {
       test.skip();
+      return;
     }
     const credentialTypeOne = await EdaCredentialType.ui.create(page);
     await expect(page.locator('#name')).toContainText(credentialTypeOne);

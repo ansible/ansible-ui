@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import { awxAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
@@ -23,6 +24,18 @@ export interface CreateCredentialOptions {
 }
 
 export const Credential = {
+  api: {
+    deleteByName: async (page: Page, credentialName: string): Promise<void> => {
+      const url = `/credentials/?name=${encodeURIComponent(credentialName)}`;
+      const list = await awxAPI
+        .get<{ results: Array<{ id: number }> }>(page, url)
+        .catch(() => null);
+      if (list?.results?.[0]?.id) {
+        await awxAPI.delete(page, `/credentials/${list.results[0].id}/`).catch(() => {});
+      }
+    },
+  },
+
   ui: {
     create: async (page: Page, options: CreateCredentialOptions = {}): Promise<string> => {
       const testToken = createE2EName('test-token');

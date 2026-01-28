@@ -23,8 +23,9 @@ test.describe('Jobs: Relaunch', () => {
   });
 
   test.afterEach(async ({ page }) => {
+    // Use API-based deletion to properly cancel running jobs before cleanup
     try {
-      await JobTemplate.ui.delete(page, jobTemplateName);
+      await JobTemplate.api.deleteByName(page, jobTemplateName);
     } catch {
       // Ignore cleanup errors
     }
@@ -73,8 +74,9 @@ test.describe('Jobs: Delete', () => {
   });
 
   test.afterEach(async ({ page }) => {
+    // Use API-based deletion to properly cancel running jobs before cleanup
     try {
-      await JobTemplate.ui.delete(page, jobTemplateName);
+      await JobTemplate.api.deleteByName(page, jobTemplateName);
     } catch {
       // Ignore cleanup errors
     }

@@ -1,4 +1,3 @@
-import { expect, test } from '@playwright/test';
 import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
@@ -11,7 +10,8 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
-import { Organization, User, Team } from '@ansible/playwright/utils';
+import { Organization, Team, User } from '@ansible/playwright/utils';
+import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
@@ -21,13 +21,18 @@ test.describe('Organization User and Team Management', () => {
   let user1Name: string;
   let user2Name: string;
 
-  test.beforeEach(async ({ page, request }) => {
-    // Check build type and skip for SaaS/Azure
-    const buildType = await checkBuildType(request);
+  // Check build type and skip for SaaS/Azure - must be in beforeAll for skip to work
+  test.beforeAll(async ({ browser }) => {
+    const page = await browser.newPage();
+    const buildType = await checkBuildType(page);
+    await page.close();
+
     if (buildType === SAAS_URL || buildType === AZURE_URL) {
       test.skip(true, 'Test should not run on SaaS/Azure deployment');
     }
+  });
 
+  test.beforeEach(async ({ page }) => {
     // Create test resources
     organizationName = await Organization.ui.create(page);
     user1Name = await User.ui

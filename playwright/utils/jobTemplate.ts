@@ -1,11 +1,11 @@
-import { Page, expect } from '@playwright/test';
 import { JobTemplate as JobTemplateType } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Page, expect } from '@playwright/test';
+import { awxAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { filterTable } from '../commands/filterTable';
 import { navigateTo } from '../commands/navigateTo';
-import { awxAPI } from '../commands/apiClient';
 
 export interface CreateJobTemplateOptions {
   name?: string;
@@ -78,6 +78,73 @@ export const JobTemplate = {
 
     delete: async (page: Page, id: number): Promise<void> => {
       await awxAPI.delete(page, `job_templates/${id}/`);
+    },
+
+    cancelJob: async (page: Page, jobId: number): Promise<void> => {
+      await awxAPI.post(page, `/jobs/${jobId}/cancel/`, {}).catch(() => {});
+    },
+
+    /**
+     * Deletes a job template by name, canceling any running jobs first.
+     * This is useful for cleanup when jobs may still be running.
+     */
+    deleteByName: async (page: Page, jobTemplateName: string): Promise<void> => {
+      const templates = await awxAPI.get<{ results: { id: number; name: string }[] }>(
+        page,
+        '/job_templates/',
+        { params: { name: jobTemplateName } }
+      );
+
+      if (!templates || templates.results.length === 0) {
+        return; // Template doesn't exist, nothing to delete
+      }
+
+      const templateId = templates.results[0].id;
+
+      // Find all jobs for this template
+      const jobs = await awxAPI.get<{
+        results: { id: number; status: string; job_template: number }[];
+      }>(page, '/jobs/', {
+        params: { job_template: templateId },
+      });
+
+      if (jobs && jobs.results.length > 0) {
+        // Cancel any running jobs
+        for (const job of jobs.results) {
+          const isRunning = !['successful', 'failed', 'error', 'canceled'].includes(job.status);
+          if (isRunning) {
+            await awxAPI
+              .post(page, `/jobs/${job.id}/cancel/`, undefined, {
+                expectStatus: 202,
+              })
+              .catch(() => {
+                // Job may have already completed or cancellation not allowed
+              });
+          }
+        }
+
+        // Wait for jobs to reach terminal status
+        const maxAttempts = 30;
+        for (const job of jobs.results) {
+          let attempts = 0;
+          let jobStatus = job.status;
+
+          while (
+            attempts < maxAttempts &&
+            !['successful', 'failed', 'error', 'canceled'].includes(jobStatus)
+          ) {
+            await page.waitForTimeout(1000);
+            const updatedJob = await awxAPI.get<{ status: string }>(page, `/jobs/${job.id}/`);
+            if (updatedJob) {
+              jobStatus = updatedJob.status;
+            }
+            attempts++;
+          }
+        }
+      }
+
+      // Now delete the template
+      await awxAPI.delete(page, `/job_templates/${templateId}/`);
     },
   },
 

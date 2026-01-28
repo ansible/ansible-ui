@@ -1,12 +1,12 @@
-import { expect, test } from '@playwright/test';
+import type { EdaProject as EdaProjectType } from '@ansible/eda-ui/interfaces/EdaProject';
+import type { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { bulkDeleteResources } from '@ansible/playwright/commands/bulkDeleteResources';
 import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { getTableRow } from '@ansible/playwright/commands/getTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { EdaProject, Organization } from '@ansible/playwright/utils';
-import type { EdaProject as EdaProjectType } from '@ansible/eda-ui/interfaces/EdaProject';
-import type { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/projects' }));
 test.afterEach(setupAfter);
@@ -73,7 +73,8 @@ test.describe('EDA Projects List', () => {
     await page.getByRole('textbox', { name: 'Name', exact: true }).fill(editedName);
     await page.getByRole('button', { name: 'Save project', exact: true }).click();
 
-    await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible();
+    // Wait for navigation to complete and page to load with updated name
+    await expect(page.getByTestId('page-title')).toHaveText(editedName);
     await expect(page.getByTestId('name')).toHaveText(editedName);
 
     await EdaProject.api.delete(page, edaProject.id);

@@ -19,12 +19,13 @@ test.describe('Hub Collections - List View', () => {
     test(
       'should sign collection from list view',
       { tag: ['@not_mock'] },
-      async ({ page, request, collection }) => {
+      async ({ page, collection }) => {
         test.setTimeout(180000);
 
-        const buildType = await checkBuildType(request);
+        const buildType = await checkBuildType(page);
         if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
           test.skip();
+          return;
         }
 
         const namespace = 'e2esignlist';
@@ -88,12 +89,13 @@ test.describe('Hub Collections - List View', () => {
     test(
       'should copy version to repository from list view',
       { tag: ['@not_mock'] },
-      async ({ page, request, collection }) => {
+      async ({ page, collection }) => {
         test.setTimeout(180000);
 
-        const buildType = await checkBuildType(request);
+        const buildType = await checkBuildType(page);
         if ([OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
           test.skip();
+          return;
         }
 
         const namespace = 'e2ecopylist';
