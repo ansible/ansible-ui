@@ -24,6 +24,8 @@ export interface CreateWorkflowJobTemplateOptions {
   askLimitOnLaunch?: boolean;
 }
 
+const TERMINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+
 export const WorkflowJobTemplate = {
   api: {
     create: async (
@@ -45,8 +47,56 @@ export const WorkflowJobTemplate = {
 
       return workflowJobTemplate;
     },
+
     delete: async (page: Page, workflowJobTemplateId: number): Promise<void> => {
       await awxAPI.delete(page, `workflow_job_templates/${workflowJobTemplateId}/`);
+    },
+
+    /**
+     * Deletes a workflow job template by name, canceling any running jobs first.
+     */
+    deleteByName: async (page: Page, workflowJobTemplateName: string): Promise<void> => {
+      const templates = await awxAPI.get<{ results: { id: number; name: string }[] }>(
+        page,
+        '/workflow_job_templates/',
+        { params: { name: workflowJobTemplateName } }
+      );
+
+      if (!templates?.results?.[0]) return;
+
+      const templateId = templates.results[0].id;
+
+      // Find and cancel running workflow jobs
+      const jobs = await awxAPI
+        .get<{ results: { id: number; status: string }[] }>(page, '/workflow_jobs/', {
+          params: { workflow_job_template: templateId },
+        })
+        .catch(() => null);
+
+      if (jobs?.results) {
+        // Cancel running jobs
+        for (const job of jobs.results) {
+          if (!TERMINAL_STATUSES.has(job.status)) {
+            await awxAPI
+              .post(page, `/workflow_jobs/${job.id}/cancel/`, undefined, { expectStatus: 202 })
+              .catch(() => {});
+          }
+        }
+
+        // Wait for jobs to reach terminal status
+        for (const job of jobs.results) {
+          let status = job.status;
+          for (let i = 0; i < 30 && !TERMINAL_STATUSES.has(status); i++) {
+            await page.waitForTimeout(1000);
+            const updated = await awxAPI
+              .get<{ status: string }>(page, `/workflow_jobs/${job.id}/`)
+              .catch(() => null);
+            if (updated) status = updated.status;
+          }
+        }
+      }
+
+      await awxAPI.delete(page, `workflow_job_templates/${templateId}/`).catch(() => {});
     },
   },
   ui: {

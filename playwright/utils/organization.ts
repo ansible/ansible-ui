@@ -1,11 +1,44 @@
-import { Page, expect } from '@playwright/test';
-import { gatewayAPI } from '../commands/apiClient';
-import { createE2EName } from '../commands/createE2EName';
-import { navigateTo } from '../commands/navigateTo';
-import { clickTableRow } from '../commands/clickTableRow';
-import { selectTableRow } from '../commands/selectTableRow';
-import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { Page, expect } from '@playwright/test';
+import { awxAPI, gatewayAPI } from '../commands/apiClient';
+import { clickTableRow } from '../commands/clickTableRow';
+import { createE2EName } from '../commands/createE2EName';
+import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
+import { navigateTo } from '../commands/navigateTo';
+import { selectTableRow } from '../commands/selectTableRow';
+
+const TERMINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+
+async function cancelInventoryJobs(page: Page, inventoryId: number): Promise<void> {
+  const jobs = await awxAPI
+    .get<{ results: { id: number; status: string }[] }>(page, '/inventory_updates/', {
+      params: { inventory: inventoryId },
+    })
+    .catch(() => null);
+
+  if (!jobs?.results) return;
+
+  // Cancel running jobs
+  for (const job of jobs.results) {
+    if (!TERMINAL_STATUSES.has(job.status)) {
+      await awxAPI
+        .post(page, `/inventory_updates/${job.id}/cancel/`, undefined, { expectStatus: 202 })
+        .catch(() => {});
+    }
+  }
+
+  // Wait for jobs to reach terminal status
+  for (const job of jobs.results) {
+    let status = job.status;
+    for (let i = 0; i < 30 && !TERMINAL_STATUSES.has(status); i++) {
+      await page.waitForTimeout(1000);
+      const updated = await awxAPI
+        .get<{ status: string }>(page, `/inventory_updates/${job.id}/`)
+        .catch(() => null);
+      if (updated) status = updated.status;
+    }
+  }
+}
 
 export interface CreateOrganizationOptions {
   name?: string;
@@ -41,11 +74,60 @@ export const Organization = {
         throw new Error('Failed to create organization: API returned null');
       }
 
+      // Wait for organization to sync to AWX (gateway -> controller sync)
+      // Look up by name since Gateway and AWX IDs may differ
+      const maxAttempts = 20;
+      for (let i = 0; i < maxAttempts; i++) {
+        const awxOrgs = await awxAPI
+          .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
+            params: { name: organization.name },
+          })
+          .catch(() => null);
+        if (awxOrgs?.results?.[0]) {
+          // Return organization with AWX ID for use with AWX APIs
+          return { ...organization, id: awxOrgs.results[0].id };
+        }
+        await page.waitForTimeout(1000);
+      }
+
+      // If sync didn't complete, return original (may cause issues)
       return organization;
     },
 
     delete: async (page: Page, organizationId: number): Promise<void> => {
       await gatewayAPI.delete(page, `organizations/${organizationId}/`);
+    },
+
+    /**
+     * Deletes an organization by name, canceling any running jobs first.
+     * This handles dependent resources that might block deletion.
+     */
+    deleteByName: async (page: Page, organizationName: string): Promise<void> => {
+      const orgs = await gatewayAPI.get<{ results: { id: number; name: string }[] }>(
+        page,
+        '/organizations/',
+        { params: { name: organizationName } }
+      );
+
+      if (!orgs || orgs.results.length === 0) {
+        return;
+      }
+
+      const orgId = orgs.results[0].id;
+
+      // Cancel running inventory jobs and delete inventories
+      const inventories = await awxAPI
+        .get<{ results: { id: number }[] }>(page, '/inventories/', {
+          params: { organization: orgId },
+        })
+        .catch(() => null);
+
+      for (const inventory of inventories?.results ?? []) {
+        await cancelInventoryJobs(page, inventory.id);
+        await awxAPI.delete(page, `/inventories/${inventory.id}/`).catch(() => {});
+      }
+
+      await gatewayAPI.delete(page, `organizations/${orgId}/`).catch(() => {});
     },
 
     get: async (page: Page, organizationId: number): Promise<PlatformOrganization> => {

@@ -562,11 +562,10 @@ test.describe('Workflow Job Templates: Launch', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplateName);
-    await JobTemplate.ui.delete(page, jobTemplateName);
-    await Inventory.ui.delete(page, inventoryName);
-    await Project.ui.delete(page, projectName);
-    await Organization.ui.delete(page, organizationName);
+    // Use API-based cleanup to cancel running jobs and avoid timeout
+    await WorkflowJobTemplate.api.deleteByName(page, workflowJobTemplateName);
+    await JobTemplate.api.deleteByName(page, jobTemplateName);
+    await Organization.api.deleteByName(page, organizationName);
   });
 
   test(
@@ -624,9 +623,9 @@ test.describe('Workflow Job Templates: Prompt on Launch', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await WorkflowJobTemplate.ui.delete(page, workflowJobTemplateName);
-    await Inventory.ui.delete(page, inventoryName);
-    await Organization.ui.delete(page, organizationName);
+    // Use API-based cleanup to cancel running jobs and avoid timeout
+    await WorkflowJobTemplate.api.deleteByName(page, workflowJobTemplateName);
+    await Organization.api.deleteByName(page, organizationName);
   });
 
   test(
@@ -691,11 +690,10 @@ test.describe('Workflow Job Templates: Output and Details Screen', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplateName);
-    await JobTemplate.ui.delete(page, jobTemplateName);
-    await Inventory.ui.delete(page, inventoryName);
-    await Project.ui.delete(page, projectName);
-    await Organization.ui.delete(page, organizationName);
+    // Use API-based cleanup to cancel running jobs and avoid timeout
+    await WorkflowJobTemplate.api.deleteByName(page, workflowJobTemplateName);
+    await JobTemplate.api.deleteByName(page, jobTemplateName);
+    await Organization.api.deleteByName(page, organizationName);
   });
 
   test(

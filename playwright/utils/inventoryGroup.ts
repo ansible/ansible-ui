@@ -40,6 +40,10 @@ export const InventoryGroup = {
 
       return group;
     },
+
+    addHost: async (page: Page, groupId: number, hostId: number): Promise<void> => {
+      await awxAPI.post(page, `groups/${groupId}/hosts/`, { id: hostId }, { expectStatus: 204 });
+    },
   },
   ui: {
     createGroup: async (page: Page, options: CreateInventoryGroupOptions): Promise<string> => {

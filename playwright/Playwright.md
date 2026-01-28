@@ -178,7 +178,52 @@ Follow the best practices suggested [here](https://docs.cypress.io/guides/refere
 10. **Be User-Centric**
 
 Avoid relying on technical aspects such as element IDs or class names for interactions.
-Prioritize tests that reflect the user’s journey and behavior.
+Prioritize tests that reflect the user's journey and behavior.
+
+11. **Skipping Tests Correctly**
+
+`test.skip()` must be called in the correct context to work properly. Calling it inside `test.beforeEach()` does **NOT** work as expected.
+
+**❌ Wrong - Skip in beforeEach (doesn't work):**
+
+```js
+test.beforeEach(async ({ page }) => {
+  const buildType = await checkBuildType(page);
+  if (buildType === SAAS_URL) {
+    test.skip(true, 'Not available on SaaS'); // This won't skip the test!
+    return;
+  }
+});
+```
+
+**✅ Correct - Skip in beforeAll (skips all tests in describe block):**
+
+```js
+test.beforeAll(async ({ browser }) => {
+  const page = await browser.newPage();
+  const buildType = await checkBuildType(page);
+  await page.close();
+
+  if (buildType === SAAS_URL || buildType === AZURE_URL) {
+    test.skip(true, 'Not available on SaaS/Azure deployments');
+  }
+});
+```
+
+**✅ Correct - Skip at the start of individual tests:**
+
+```js
+test('my test', async ({ page }) => {
+  const buildType = await checkBuildType(page);
+  if (buildType === SAAS_URL) {
+    test.skip();
+    return;
+  }
+  // ... test code
+});
+```
+
+Use `beforeAll` when you want to skip all tests in a describe block based on a condition. Use the per-test approach when only specific tests need to be skipped.
 
 ## Feature Flags
 

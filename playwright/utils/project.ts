@@ -65,6 +65,16 @@ export const Project = {
       await awxAPI.delete(page, `projects/${projectId}/`);
     },
 
+    deleteByName: async (page: Page, projectName: string): Promise<void> => {
+      const url = `/projects/?name=${encodeURIComponent(projectName)}`;
+      const list = await awxAPI
+        .get<{ results: Array<{ id: number }> }>(page, url)
+        .catch(() => null);
+      if (list?.results?.[0]?.id) {
+        await awxAPI.delete(page, `/projects/${list.results[0].id}/`).catch(() => {});
+      }
+    },
+
     get: async (page: Page, projectId: number): Promise<ProjectType> => {
       const project = await awxAPI.get<ProjectType>(page, `projects/${projectId}/`);
 

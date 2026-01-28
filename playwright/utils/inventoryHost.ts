@@ -1,4 +1,6 @@
+import { AwxHost } from '@ansible/awx-ui/interfaces/AwxHost';
 import { Page, expect } from '@playwright/test';
+import { awxAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
@@ -11,7 +13,35 @@ export interface CreateHostInInventoryOptions {
   variables?: string;
 }
 
+export interface CreateHostApiOptions {
+  name?: string;
+  description?: string;
+  variables?: string;
+  inventory: number;
+}
+
 export const InventoryHost = {
+  api: {
+    create: async (page: Page, options: CreateHostApiOptions): Promise<AwxHost> => {
+      const host = await awxAPI.post<AwxHost>(page, '/hosts/', {
+        name: options.name ?? createE2EName('host'),
+        description: options.description,
+        variables: options.variables,
+        inventory: options.inventory,
+      });
+
+      if (!host) {
+        throw new Error('Failed to create host: API returned null');
+      }
+
+      return host;
+    },
+
+    delete: async (page: Page, hostId: number): Promise<void> => {
+      await awxAPI.delete(page, `/hosts/${hostId}/`).catch(() => {});
+    },
+  },
+
   ui: {
     navigateToInventoryHostsTab: async (inventoryName: string, page: Page): Promise<void> => {
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
@@ -104,4 +134,4 @@ export const InventoryHost = {
       ).toBeVisible({ timeout: 15000 });
     },
   },
-} as const;
+};

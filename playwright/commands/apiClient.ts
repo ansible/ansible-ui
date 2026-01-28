@@ -119,12 +119,11 @@ export async function post<T = unknown>(
     });
 
     if (response.status() !== expectStatus) {
-      const responseBody = await response.text();
+      const bodyText = await response.text();
       throw new Error(
-        `Expected status ${expectStatus} but got ${response.status()}. Response: ${responseBody}`
+        `POST ${path} failed: expected status ${expectStatus} but got ${response.status()}. Response: ${bodyText.substring(0, 500)}`
       );
     }
-
     const responseBody = await parseResponse<T>(response);
 
     return responseBody;

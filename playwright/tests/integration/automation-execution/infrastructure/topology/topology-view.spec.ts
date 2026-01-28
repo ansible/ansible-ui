@@ -104,6 +104,7 @@ test.describe('Topology View', () => {
       const isK8s = await isK8sDeployment(page);
       if (!isK8s) {
         test.skip(true, 'Test requires K8s/OpenShift deployment for instance groups in topology');
+        return;
       }
 
       await test.step('Navigate to Topology View and wait for data', async () => {
@@ -140,6 +141,7 @@ test.describe('Topology View', () => {
         // Skip if this node has no associated instance groups
         if (instanceGroupsData.results.length === 0) {
           test.skip(true, 'Selected node has no associated instance groups to test navigation');
+          return;
         }
 
         const firstInstanceGroup = instanceGroupsData.results[0];
@@ -214,6 +216,7 @@ test.describe('Topology View', () => {
       const isK8s = await isK8sDeployment(page);
       if (!isK8s) {
         test.skip(true, 'Test requires K8s/OpenShift deployment for instance creation');
+        return;
       }
 
       const instanceHostname = createE2EName('instance', { noWhitespace: true });
