@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { setupBefore, setupAfter } from '@ansible/playwright/commands/setup';
 import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { expect, test } from '@playwright/test';
 
 // Type definitions for API responses
 interface AwxConfig {
@@ -72,8 +72,8 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
     test(
       'should conditionally display based on build type',
       { tag: ['@not_mock'] },
-      async ({ page, request }) => {
-        const buildType = await checkBuildType(request);
+      async ({ page }) => {
+        const buildType = await checkBuildType(page);
         // Open help menu
         await page.locator('#help-menu-menu-toggle').click();
         if (buildType === SAAS_URL || buildType === AZURE_URL) {
@@ -91,11 +91,12 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
     test(
       'should navigate to quick starts page and close menu',
       { tag: ['@not_mock'] },
-      async ({ page, request }) => {
-        const buildType = await checkBuildType(request);
+      async ({ page }) => {
+        const buildType = await checkBuildType(page);
         // Skip for SaaS/Azure
         if (buildType === SAAS_URL || buildType === AZURE_URL) {
           test.skip();
+          return;
         }
         // Open help menu
         const helpMenuToggle = page.locator('#help-menu-menu-toggle');
@@ -121,8 +122,8 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
     test(
       'should display complete content with versions from APIs',
       { tag: ['@not_mock'] },
-      async ({ page, request }) => {
-        const buildType = await checkBuildType(request);
+      async ({ page }) => {
+        const buildType = await checkBuildType(page);
         // Set up API intercepts
         const awxConfigPromise = page.waitForResponse(
           (response) =>

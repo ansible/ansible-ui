@@ -16,9 +16,9 @@ test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
 test.describe('License Compliance', () => {
-  test.beforeEach(async ({ request }) => {
+  test.beforeEach(async ({ page }) => {
     // Check build type and skip for SaaS/Azure
-    const buildType = await checkBuildType(request);
+    const buildType = await checkBuildType(page);
     if (buildType === SAAS_URL || buildType === AZURE_URL) {
       test.skip(true, 'Test should not run on SaaS/Azure deployment');
     }
@@ -38,10 +38,11 @@ test.describe('License Compliance', () => {
     // Check if license_info exists, if not, skip the test
     if (!config.license_info) {
       test.skip(true, 'license_info not available in config response');
+      return; // Stop execution if skipping
     }
 
     // TypeScript knows licenseInfo is defined after the skip check above
-    const licenseInfo = config.license_info!;
+    const licenseInfo = config.license_info;
 
     if (!licenseInfo.compliant) {
       // License is not compliant - check for banner and edit subscription flow

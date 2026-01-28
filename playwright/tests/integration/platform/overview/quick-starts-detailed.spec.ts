@@ -1,19 +1,31 @@
-import { expect, test } from '@playwright/test';
 import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { platformUI } from '@ansible/playwright/commands/login';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { expect, test } from '@playwright/test';
 
-test.beforeEach(async ({ request }) => {
-  const buildType = await checkBuildType(request);
-  if (buildType === SAAS_URL || buildType === AZURE_URL) {
-    test.skip();
-  }
-});
-
-test.beforeEach(setupBefore({ path: '/quickstarts' }));
 test.afterEach(setupAfter);
 
+// Quick starts are not available on SaaS/Azure deployments
 test.describe('Overview - Quick Starts - Detailed Workflow Tests', () => {
+  // Skip entire describe block if SaaS/Azure (checked once)
+  test.beforeAll(async ({ browser }) => {
+    const page = await browser.newPage();
+    await setupBefore()({ page });
+    const buildType = await checkBuildType(page);
+    await page.close();
+
+    if (buildType === SAAS_URL || buildType === AZURE_URL) {
+      test.skip(true, 'Quick starts not available on SaaS/Azure deployments');
+    }
+  });
+
+  // Login and navigate for each test (only runs if not skipped)
+  test.beforeEach(async ({ page }) => {
+    await setupBefore()({ page });
+    await page.goto(`${platformUI}/quickstarts`);
+  });
+
   test.describe('Finding Content in Ansible Automation Platform - Complete Walkthrough', () => {
     test(
       'validates all titles, descriptions, and prerequisites',

@@ -243,12 +243,13 @@ test.describe('Hub Collections - Details Page', () => {
     test(
       'should copy a version to repositories',
       { tag: ['@not_mock'] },
-      async ({ page, request, collection }) => {
+      async ({ page, collection }) => {
         test.setTimeout(180000);
 
-        const buildType = await checkBuildType(request);
+        const buildType = await checkBuildType(page);
         if ([OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
           test.skip();
+          return;
         }
 
         await collection.createNamespace({ name: 'ibm' });
@@ -351,50 +352,45 @@ test.describe('Hub Collections - Details Page', () => {
   });
 
   test.describe('Signing Operations', () => {
-    test(
-      'should sign a collection',
-      { tag: ['@not_mock'] },
-      async ({ page, request, collection }) => {
-        const buildType = await checkBuildType(request);
-        if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
-          test.skip();
-        }
-
-        await collection.createNamespace({ name: 'ibm' });
-        const uploaded = await collection.upload({
-          repository: 'staging',
-          tarballPath: COLLECTION_TARBALLS.zosmf,
-        });
-
-        await collection.approveCollection({
-          namespace: uploaded.namespace,
-          name: uploaded.name,
-          version: uploaded.version,
-        });
-
-        await navigateToCollectionDetails(page, uploaded);
-
-        // Check if signing is available in this environment
-        if (!(await isSigningAvailable(page))) {
-          test.skip();
-        }
-
-        await clickKebabActionAndConfirm('sign-collection', page);
-
-        await page.getByTestId('collection-detail-tab').click();
-        await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 10000 });
+    // Skip all signing tests on environments where signing is not available
+    test.beforeEach(async ({ page }) => {
+      const buildType = await checkBuildType(page);
+      if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
+        test.skip(true, 'Signing not available on this environment');
       }
-    );
+    });
+
+    test('should sign a collection', { tag: ['@not_mock'] }, async ({ page, collection }) => {
+      await collection.createNamespace({ name: 'ibm' });
+      const uploaded = await collection.upload({
+        repository: 'staging',
+        tarballPath: COLLECTION_TARBALLS.zosmf,
+      });
+
+      await collection.approveCollection({
+        namespace: uploaded.namespace,
+        name: uploaded.name,
+        version: uploaded.version,
+      });
+
+      await navigateToCollectionDetails(page, uploaded);
+
+      // Check if signing is available in this environment
+      if (!(await isSigningAvailable(page))) {
+        test.skip();
+        return;
+      }
+
+      await clickKebabActionAndConfirm('sign-collection', page);
+
+      await page.getByTestId('collection-detail-tab').click();
+      await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 10000 });
+    });
 
     test(
       'should sign a selected version of a collection',
       { tag: ['@not_mock'] },
-      async ({ page, request, collection }) => {
-        const buildType = await checkBuildType(request);
-        if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
-          test.skip();
-        }
-
+      async ({ page, collection }) => {
         const namespace = 'e2esignver';
         const name = 'signvertest';
 
@@ -419,6 +415,7 @@ test.describe('Hub Collections - Details Page', () => {
         // Check if signing is available in this environment
         if (!(await isSigningAvailable(page))) {
           test.skip();
+          return;
         }
 
         // Navigate to detail tab first so we can observe the signed state update
@@ -443,13 +440,8 @@ test.describe('Hub Collections - Details Page', () => {
     test(
       'should sign only one version leaving other versions unsigned',
       { tag: ['@not_mock'] },
-      async ({ page, request, collection }) => {
+      async ({ page, collection }) => {
         test.setTimeout(180000);
-
-        const buildType = await checkBuildType(request);
-        if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
-          test.skip();
-        }
 
         // Check if can_upload_signatures is enabled - if so, sign-version requires file upload (different workflow)
         const featureFlagsResponse = await page.request.get(
@@ -459,6 +451,7 @@ test.describe('Hub Collections - Details Page', () => {
           const flags = (await featureFlagsResponse.json()) as { can_upload_signatures?: boolean };
           if (flags.can_upload_signatures) {
             test.skip();
+            return;
           }
         }
 
@@ -522,6 +515,7 @@ test.describe('Hub Collections - Details Page', () => {
         // Check if signing is available in this environment
         if (!(await isSigningAvailable(page))) {
           test.skip();
+          return;
         }
 
         // Switch to v1 and verify it's unsigned

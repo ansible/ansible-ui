@@ -1,6 +1,9 @@
-import { APIRequestContext } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { AAP_DEV_LOCALHOST_URL, AZURE_URL, OCP_A_URL, SAAS_URL } from './constants';
 import { platformUI } from './login';
+
+// Re-export constants for convenience
+export { AAP_DEV_LOCALHOST_URL, AZURE_URL, OCP_A_URL, SAAS_URL } from './constants';
 
 interface Settings {
   TOWER_URL_BASE: string;
@@ -49,29 +52,40 @@ function getBuildTypeFromUrl(url: string): string {
 }
 
 /**
- * Checks the build type by first trying to get it from the API,
- * then checking if platformUI is localhost (AAP dev environment).
+ * Checks the build type by first checking the platformUI URL pattern (no auth needed),
+ * then trying the API for TOWER_URL_BASE (requires page to be logged in),
+ * and falling back to localhost detection.
  *
- * @param request - The Playwright API request context
+ * @param page - The Playwright Page object (must be logged in for API call to work)
  * @returns Promise<string> - Returns the build type URL or empty string
  */
-export async function checkBuildType(request: APIRequestContext): Promise<string> {
-  // First, check if platformUI is localhost - this indicates AAP dev environment
+export async function checkBuildType(page: Page): Promise<string> {
+  // First, check if platformUI itself contains known build type patterns (no auth needed)
+  const platformBuildType = getBuildTypeFromUrl(platformUI);
+  if (platformBuildType) {
+    return platformBuildType;
+  }
+
+  // Second, try to get the build type from the API (uses page.request which shares auth cookies)
+  try {
+    const response = await page.request.get(`${platformUI}/api/controller/v2/settings/system/`);
+
+    if (response.ok()) {
+      const data = (await response.json()) as Settings;
+      const baseUrl = data.TOWER_URL_BASE;
+      const buildType = getBuildTypeFromUrl(baseUrl);
+      if (buildType) {
+        return buildType;
+      }
+    }
+  } catch {
+    // API call failed, continue to fallback
+  }
+
+  // Fallback: check if platformUI is localhost - this indicates AAP dev environment
   // (e.g., ephemeral AAP deployments use localhost:4100 as the UI endpoint)
   if (isLocalhostUrl(platformUI)) {
     return AAP_DEV_LOCALHOST_URL;
-  }
-
-  // Second, try to get the build type from the API
-  const response = await request.get(`${platformUI}/api/v2/settings/system/`);
-
-  if (response.ok()) {
-    const data = (await response.json()) as Settings;
-    const baseUrl = data.TOWER_URL_BASE;
-    const buildType = getBuildTypeFromUrl(baseUrl);
-    if (buildType) {
-      return buildType;
-    }
   }
 
   return '';

@@ -1,3 +1,8 @@
+import type {
+  ConstructedInventory,
+  Inventory as InventoryType,
+} from '@ansible/awx-ui/interfaces/Inventory';
+import type { InventorySource } from '@ansible/awx-ui/interfaces/InventorySource';
 import { Page, expect } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
@@ -6,13 +11,18 @@ import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
-import type { Inventory as InventoryType } from '@ansible/awx-ui/interfaces/Inventory';
-import type { InventorySource } from '@ansible/awx-ui/interfaces/InventorySource';
 
 export interface CreateInventoryOptions {
   name?: string;
   description?: string;
   organization: number;
+}
+
+export interface CreateConstructedInventoryOptions {
+  name?: string;
+  description?: string;
+  organization: number;
+  sourceVars?: string;
 }
 
 export interface CreateInventoryUIOptions {
@@ -83,6 +93,43 @@ export const Inventory = {
       }
 
       return inventory;
+    },
+
+    createConstructed: async (
+      page: Page,
+      options: CreateConstructedInventoryOptions
+    ): Promise<ConstructedInventory> => {
+      const payload: Record<string, unknown> = {
+        name: options.name ?? createE2EName('constructed-inventory'),
+        organization: options.organization,
+        kind: 'constructed',
+        source_vars: options.sourceVars ?? 'plugin: constructed',
+      };
+
+      if (options.description) {
+        payload.description = options.description;
+      }
+
+      const inventory = await awxAPI.post<ConstructedInventory>(page, 'inventories/', payload);
+
+      if (!inventory) {
+        throw new Error('Failed to create constructed inventory: API returned null');
+      }
+
+      return inventory;
+    },
+
+    addInputInventory: async (
+      page: Page,
+      constructedInventoryId: number,
+      inputInventoryId: number
+    ): Promise<void> => {
+      await awxAPI.post(
+        page,
+        `inventories/${constructedInventoryId}/input_inventories/`,
+        { id: inputInventoryId },
+        { expectStatus: 204 }
+      );
     },
 
     createSource: async (

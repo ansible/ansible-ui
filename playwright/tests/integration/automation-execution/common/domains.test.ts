@@ -1,8 +1,8 @@
-import { expect, test } from '@playwright/test';
-import { randomString } from '../../../../../framework/utils/random-string';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Inventory, JobTemplate } from '@ansible/playwright/utils';
+import { expect, test } from '@playwright/test';
+import { randomString } from '../../../../../framework/utils/random-string';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -100,8 +100,8 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
   // Clear Active Domains
   await page.getByRole('button', { name: 'Clear Active Domains' }).click();
 
-  // Clean up Job Templates
-  await JobTemplate.ui.delete(page, jobTemplateAName);
-  await JobTemplate.ui.delete(page, jobTemplateBName);
+  // Clean up Job Templates (use API to cancel running jobs first)
+  await JobTemplate.api.deleteByName(page, jobTemplateAName);
+  await JobTemplate.api.deleteByName(page, jobTemplateBName);
   await Inventory.ui.delete(page, inventoryName);
 });
