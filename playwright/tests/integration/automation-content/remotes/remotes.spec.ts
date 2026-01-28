@@ -25,7 +25,7 @@ test.describe('Hub - Remotes', () => {
 
   test.beforeEach(async ({ page }) => {
     await setupBefore()({ page });
-    await page.goto(`${platformUI}/administration/remotes`);
+    await page.goto(`${platformUI}/content/administration/remotes`);
   });
   test('should bulk delete remotes', { tag: ['@not_mock'] }, async ({ page }) => {
     const remoteNames: string[] = [];
