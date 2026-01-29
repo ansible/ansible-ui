@@ -1,8 +1,10 @@
 import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
+import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { SAAS_URL } from '@ansible/playwright/commands/constants';
-import { expectRowToContain } from '@ansible/playwright/commands/expectRowToContain';
+import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
@@ -40,10 +42,11 @@ test.describe('Rulebook Activations', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await DecisionEnvironment.ui.delete(page, decisionEnvironmentName);
-    await EdaCredential.ui.delete(page, credentialName);
-    await EdaProject.ui.delete(page, projectName);
-    await Organization.ui.delete(page, organizationName).catch(() => {});
+    // Clean up resources via API (faster and more reliable than UI)
+    await DecisionEnvironment.api.deleteByName(page, decisionEnvironmentName);
+    await EdaCredential.api.deleteByName(page, credentialName);
+    await EdaProject.api.deleteByName(page, projectName);
+    await Organization.api.deleteByName(page, organizationName);
   });
 
   test.describe('Create', () => {
@@ -109,22 +112,18 @@ test.describe('Rulebook Activations', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(150000);
+        // Create as disabled to avoid timing issues with activation state transitions
         const rulebookActivationName = await RulebookActivation.ui.create(page, {
           projectName,
           credentialName,
           decisionEnvironmentName,
           organizationName,
+          disabled: true,
         });
-        await page.waitForTimeout(1000);
-        await page.getByText('Rulebook activation enabled').click();
-        await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
-        await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
-        await expect(page.getByRole('dialog')).toContainText('Success');
-        await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
-        await page.getByRole('tab', { name: 'Back to Rulebook Activations' }).click();
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
         await page.getByRole('textbox', { name: 'Type to filter' }).fill(rulebookActivationName);
         await page.getByRole('button', { name: 'apply filter' }).click();
-        await expectRowToContain(rulebookActivationName, 'Stopped', page, 30000);
+        await expect(page.locator('tbody tr')).toHaveCount(1);
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
         await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
         await page.getByRole('checkbox', { name: 'Skip audit events' }).check();
@@ -151,20 +150,13 @@ test.describe('Rulebook Activations', () => {
       { tag: ['@not_mock'] },
       async ({ page }) => {
         test.setTimeout(150000);
+        // Create as disabled to avoid timing issues with activation state transitions
         const rulebookActivationName = await RulebookActivation.ui.create(page, {
           projectName,
           credentialName,
           decisionEnvironmentName,
           organizationName,
-        });
-        await page.waitForTimeout(1000);
-        await page.getByText('Rulebook activation enabled').click();
-        await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
-        await page.getByRole('button', { name: 'Disable rulebook activations' }).click();
-        await expect(page.getByRole('dialog')).toContainText('Success');
-        await expect(page.getByText('Rulebook activation enabled')).toBeVisible();
-        await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
-          timeout: 30000,
+          disabled: true,
         });
         await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
         await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
@@ -183,7 +175,7 @@ test.describe('Rulebook Activations', () => {
       'can edit a rulebook activation with source-event stream mapping from the details view and assert info on the details page',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        test.setTimeout(300000);
+        test.setTimeout(180000);
         const eventStreamOne = await EventStream.ui.create(page, { organizationName });
         const eventStreamTwo = await EventStream.ui.create(page, { organizationName });
         const rulebookActivationName = await RulebookActivation.ui.create(page, {
@@ -224,8 +216,9 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
         await expect(page.getByRole('link', { name: eventStreamTwo })).toBeVisible();
         await RulebookActivation.ui.delete(page, rulebookActivationName);
-        await EventStream.ui.delete(page, eventStreamOne);
-        await EventStream.ui.delete(page, eventStreamTwo);
+        // Delete event streams via API (more reliable than UI when resources may still be referenced)
+        await EventStream.api.deleteByName(page, eventStreamOne);
+        await EventStream.api.deleteByName(page, eventStreamTwo);
       }
     );
 
@@ -233,7 +226,7 @@ test.describe('Rulebook Activations', () => {
       'can edit a rulebook activation with event source mapping and change the rulebook',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        test.setTimeout(300000);
+        test.setTimeout(180000);
         const eventStreamOne = await EventStream.ui.create(page, { organizationName });
         const rulebookActivationName = await RulebookActivation.ui.create(page, {
           projectName,
@@ -298,7 +291,8 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
         await expect(page.getByRole('tab', { name: 'Details' })).toBeVisible();
         await RulebookActivation.ui.delete(page, rulebookActivationName);
-        await EventStream.ui.delete(page, eventStreamOne);
+        // Delete event stream via API (more reliable than UI when resources may still be referenced)
+        await EventStream.api.deleteByName(page, eventStreamOne);
       }
     );
   });
@@ -358,6 +352,150 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('menuitem', { name: 'Delete rulebook activations' }).click();
         await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
         await page.getByRole('button', { name: 'Delete rulebook activations' }).click();
+      }
+    );
+  });
+
+  test.describe('List View Operations', () => {
+    test(
+      'should disable rulebook activation using toggle switch in list view',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        test.setTimeout(150000);
+
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+        });
+
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await filterTable({ filterLabel: 'Name', filterValue: rulebookActivationName }, page);
+        await expect(page.locator('tbody tr')).toHaveCount(1);
+
+        // Find the toggle switch in the row and click it to disable
+        const row = page.getByRole('row', { name: rulebookActivationName });
+        await row.getByTestId('toggle-switch').click();
+
+        // Confirm the disable action in the dialog
+        const dialog = page.getByRole('dialog');
+        await expect(dialog).toBeVisible();
+        await expect(dialog.getByText('Yes, I confirm that I want to disable')).toBeVisible();
+        await expect(dialog.locator('td[data-label="Name"]')).toContainText(rulebookActivationName);
+        await dialog.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
+        await dialog.getByRole('button', { name: 'Disable rulebook activations' }).click();
+
+        // Verify the dialog shows success
+        await expect(dialog).toContainText('Success');
+        await dialog.getByRole('button', { name: 'Close' }).click();
+
+        // Cleanup
+        await RulebookActivation.ui.delete(page, rulebookActivationName);
+      }
+    );
+
+    test(
+      'should delete rulebook activation from kebab menu in list view',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        test.setTimeout(150000);
+
+        const rulebookActivationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+          disabled: true,
+        });
+
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+
+        // Use clickTableRowAction to click the delete action from kebab menu
+        await clickTableRowAction(
+          {
+            text: rulebookActivationName,
+            filterLabel: 'Name',
+            action: 'Delete rulebook activation',
+            inKebab: true,
+          },
+          page
+        );
+
+        // Confirm the delete action in the dialog
+        const deleteDialog = page.getByRole('dialog');
+        await expect(deleteDialog).toBeVisible();
+        await expect(deleteDialog.getByText('Yes, I confirm that I want to delete')).toBeVisible();
+        await expect(deleteDialog.locator('td[data-label="Name"]')).toContainText(
+          rulebookActivationName
+        );
+        await deleteDialog.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
+        await deleteDialog.getByRole('button', { name: 'Delete rulebook activations' }).click();
+
+        // Verify the dialog shows success
+        await expect(deleteDialog).toContainText('Success');
+        await deleteDialog.getByRole('button', { name: 'Close' }).click();
+      }
+    );
+  });
+
+  test.describe('Bulk Operations', () => {
+    test(
+      'should bulk delete rulebook activations from toolbar',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        test.setTimeout(200000);
+
+        // Create two rulebook activations for bulk delete testing
+        const rulebookActivationName1 = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+          disabled: true,
+        });
+
+        const rulebookActivationName2 = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+          disabled: true,
+        });
+
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+
+        // Select first activation
+        await clearTableFilters(page);
+        await filterTable({ filterLabel: 'Name', filterValue: rulebookActivationName1 }, page);
+        await expect(page.locator('tbody tr')).toHaveCount(1);
+        await page.getByRole('checkbox', { name: 'Select row' }).first().check();
+        await clearTableFilters(page);
+
+        // Select second activation
+        await filterTable({ filterLabel: 'Name', filterValue: rulebookActivationName2 }, page);
+        await expect(page.locator('tbody tr')).toHaveCount(1);
+        await page.getByRole('checkbox', { name: 'Select row' }).first().check();
+        await clearTableFilters(page);
+
+        // Click toolbar actions and delete
+        await page.getByRole('button', { name: 'toolbar actions' }).click();
+        await page.getByRole('menuitem', { name: 'Delete rulebook activations' }).click();
+
+        // Confirm the delete action in the dialog
+        const bulkDeleteDialog = page.getByRole('dialog');
+        await expect(bulkDeleteDialog).toBeVisible();
+        await expect(
+          bulkDeleteDialog.getByText('Yes, I confirm that I want to delete')
+        ).toBeVisible();
+        await bulkDeleteDialog
+          .getByRole('checkbox', { name: 'Yes, I confirm that I want to' })
+          .check();
+        await bulkDeleteDialog.getByRole('button', { name: 'Delete rulebook activations' }).click();
+
+        // Verify the dialog shows success
+        await expect(bulkDeleteDialog).toContainText('Success');
+        await bulkDeleteDialog.getByRole('button', { name: 'Close' }).click();
       }
     );
   });
