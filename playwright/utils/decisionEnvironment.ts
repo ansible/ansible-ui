@@ -1,4 +1,6 @@
+import type { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
 import { Page, expect } from '@playwright/test';
+import { edaAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
@@ -13,6 +15,26 @@ export interface CreateDecisionEnvironmentOptions {
 }
 
 export const DecisionEnvironment = {
+  api: {
+    delete: async (page: Page, decisionEnvironmentId: number): Promise<void> => {
+      await edaAPI.delete(page, `decision-environments/${decisionEnvironmentId}/`);
+    },
+
+    deleteByName: async (page: Page, decisionEnvironmentName: string): Promise<void> => {
+      try {
+        const environments = await edaAPI.get<{ results: EdaDecisionEnvironment[] }>(
+          page,
+          `decision-environments/?name=${encodeURIComponent(decisionEnvironmentName)}`
+        );
+        if (environments?.results && environments.results.length > 0) {
+          await edaAPI.delete(page, `decision-environments/${environments.results[0].id}/`);
+        }
+      } catch {
+        // Already deleted or not found
+      }
+    },
+  },
+
   ui: {
     create: async (page: Page, options: CreateDecisionEnvironmentOptions = {}): Promise<string> => {
       await navigateTo(page, 'Automation Decisions', 'Decision Environments');

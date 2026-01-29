@@ -1,4 +1,6 @@
+import type { EdaCredential as EdaCredentialInterface } from '@ansible/eda-ui/interfaces/EdaCredential';
 import { Page, expect } from '@playwright/test';
+import { edaAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
@@ -12,6 +14,26 @@ export interface CreateEdaCredentialOptions {
 }
 
 export const EdaCredential = {
+  api: {
+    delete: async (page: Page, credentialId: number): Promise<void> => {
+      await edaAPI.delete(page, `eda-credentials/${credentialId}/`);
+    },
+
+    deleteByName: async (page: Page, credentialName: string): Promise<void> => {
+      try {
+        const credentials = await edaAPI.get<{ results: EdaCredentialInterface[] }>(
+          page,
+          `eda-credentials/?name=${encodeURIComponent(credentialName)}`
+        );
+        if (credentials?.results && credentials.results.length > 0) {
+          await edaAPI.delete(page, `eda-credentials/${credentials.results[0].id}/`);
+        }
+      } catch {
+        // Already deleted or not found
+      }
+    },
+  },
+
   ui: {
     create: async (page: Page, options: CreateEdaCredentialOptions = {}): Promise<string> => {
       await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');

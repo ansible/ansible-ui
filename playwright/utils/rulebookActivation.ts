@@ -1,4 +1,6 @@
+import type { EdaRulebookActivation as EdaRulebookActivationType } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
 import { expect, Page } from '@playwright/test';
+import { edaAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
@@ -15,7 +17,67 @@ export interface CreateRulebookActivationOptions {
   restartPolicy?: 'Always' | 'On failure' | 'Never';
 }
 
+export interface CreateRulebookActivationAPIOptions {
+  name?: string;
+  rulebookId: number;
+  decisionEnvironmentId: number;
+  organizationId: number;
+  description?: string;
+  isEnabled?: boolean;
+  restartPolicy?: 'always' | 'on-failure' | 'never';
+  logLevel?: 'error' | 'info' | 'debug';
+}
+
 export const RulebookActivation = {
+  api: {
+    create: async (
+      page: Page,
+      options: CreateRulebookActivationAPIOptions
+    ): Promise<EdaRulebookActivationType> => {
+      const activation = await edaAPI.post<EdaRulebookActivationType>(page, 'activations/', {
+        name: options.name ?? createE2EName('rulebookActivation'),
+        rulebook_id: options.rulebookId,
+        decision_environment_id: options.decisionEnvironmentId,
+        organization_id: options.organizationId,
+        description: options.description ?? 'Created via API for E2E testing',
+        is_enabled: options.isEnabled ?? false,
+        restart_policy: options.restartPolicy ?? 'on-failure',
+        log_level: options.logLevel ?? 'error',
+      });
+
+      if (!activation) {
+        throw new Error('Failed to create rulebook activation: API returned null');
+      }
+
+      return activation;
+    },
+
+    delete: async (page: Page, activationId: number): Promise<void> => {
+      await edaAPI.delete(page, `activations/${activationId}/`);
+    },
+
+    get: async (page: Page, activationId: number): Promise<EdaRulebookActivationType> => {
+      const activation = await edaAPI.get<EdaRulebookActivationType>(
+        page,
+        `activations/${activationId}/`
+      );
+
+      if (!activation) {
+        throw new Error(`Rulebook activation ${activationId} not found`);
+      }
+
+      return activation;
+    },
+
+    disable: async (page: Page, activationId: number): Promise<void> => {
+      await edaAPI.post(page, `activations/${activationId}/disable/`, {});
+    },
+
+    enable: async (page: Page, activationId: number): Promise<void> => {
+      await edaAPI.post(page, `activations/${activationId}/enable/`, {});
+    },
+  },
+
   ui: {
     create: async (page: Page, options: CreateRulebookActivationOptions = {}): Promise<string> => {
       const rulebookActivationName = options.name ?? createE2EName('rulebookActivation');

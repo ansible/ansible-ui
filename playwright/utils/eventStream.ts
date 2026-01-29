@@ -1,4 +1,6 @@
+import type { EventStreamOut } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { Page, expect } from '@playwright/test';
+import { edaAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { createE2EName } from '../commands/createE2EName';
@@ -11,6 +13,26 @@ export interface CreateEventStreamOptions {
 }
 
 export const EventStream = {
+  api: {
+    delete: async (page: Page, eventStreamId: number): Promise<void> => {
+      await edaAPI.delete(page, `event-streams/${eventStreamId}/`);
+    },
+
+    deleteByName: async (page: Page, eventStreamName: string): Promise<void> => {
+      try {
+        const eventStreams = await edaAPI.get<{ results: EventStreamOut[] }>(
+          page,
+          `event-streams/?name=${encodeURIComponent(eventStreamName)}`
+        );
+        if (eventStreams?.results && eventStreams.results.length > 0) {
+          await edaAPI.delete(page, `event-streams/${eventStreams.results[0].id}/`);
+        }
+      } catch {
+        // Already deleted or not found
+      }
+    },
+  },
+
   ui: {
     create: async (page: Page, options: CreateEventStreamOptions = {}): Promise<string> => {
       await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');

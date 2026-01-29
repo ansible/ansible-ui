@@ -1,3 +1,4 @@
+import type { EdaProject as EdaProjectType } from '@ansible/eda-ui/interfaces/EdaProject';
 import { Page, expect } from '@playwright/test';
 import { edaAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
@@ -6,7 +7,6 @@ import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
-import type { EdaProject as EdaProjectType } from '@ansible/eda-ui/interfaces/EdaProject';
 
 export interface CreateEdaProjectOptions {
   projectName?: string;
@@ -39,6 +39,20 @@ export const EdaProject = {
 
     delete: async (page: Page, projectId: number): Promise<void> => {
       await edaAPI.delete(page, `projects/${projectId}/`);
+    },
+
+    deleteByName: async (page: Page, projectName: string): Promise<void> => {
+      try {
+        const projects = await edaAPI.get<{ results: EdaProjectType[] }>(
+          page,
+          `projects/?name=${encodeURIComponent(projectName)}`
+        );
+        if (projects?.results && projects.results.length > 0) {
+          await edaAPI.delete(page, `projects/${projects.results[0].id}/`);
+        }
+      } catch {
+        // Already deleted or not found
+      }
     },
   },
 
