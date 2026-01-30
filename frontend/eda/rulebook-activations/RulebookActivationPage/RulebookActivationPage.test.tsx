@@ -1355,4 +1355,24 @@ describe('RulebookActivationPage', () => {
       expect(lastCall.alertPrompts).toBeUndefined();
     });
   });
+
+  it('should render all navigation tabs including History', async () => {
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/*" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    // Verify all expected tabs are rendered
+    expect(screen.getByRole('tab', { name: 'Details' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'History' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Team Access' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'User Access' })).toBeInTheDocument();
+  });
 });
