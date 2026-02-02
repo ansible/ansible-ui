@@ -153,7 +153,7 @@
     "react-i18next": "15.4.0",
     "react-markdown": "9.0.3",
     "react-refresh": "0.16.0",
-    "react-router-dom": "^7.8.1",
+    "react-router-dom": "^7.12.0",
     "react-use-websocket": "4.13.0",
     "remark-gfm": "4.0.0",
     "rollup": "4.46.2",
