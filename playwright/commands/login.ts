@@ -8,6 +8,8 @@ if (!platformUI) {
     platformUI = 'https://localhost:4100';
   }
 }
+// Remove trailing slash to prevent double slashes when constructing URLs like `${platformUI}/path`
+platformUI = platformUI.replace(/\/+$/, '');
 export const platformURL = new URL(platformUI);
 
 /**
