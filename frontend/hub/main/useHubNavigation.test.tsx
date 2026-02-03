@@ -203,6 +203,15 @@ vi.mock('../administration/remotes/RemotePage/RemoteAssignTeam', () => ({
 vi.mock('../administration/remotes/RemotePage/RemoteManageUser', () => ({
   RemoteManageUsers: () => null,
 }));
+vi.mock('../administration/remotes/RemotePage/InsightsRemoteAccess', () => ({
+  InsightsRemoteAccess: () => null,
+}));
+vi.mock('../administration/repositories/RepositoryPage/InsightsRepositoryAccess', () => ({
+  InsightsRepositoryAccess: () => null,
+}));
+vi.mock('../namespaces/HubNamespacePage/InsightsNamespaceAccess', () => ({
+  InsightsNamespaceAccess: () => null,
+}));
 vi.mock('../administration/remote-registries/RemoteRegistries', () => ({
   RemoteRegistries: () => null,
 }));
@@ -390,6 +399,48 @@ describe('useHubNavigation', () => {
       // Should not have top-level tasks (that's only in Insights mode)
       expect(topLevelTasks).toBeUndefined();
     });
+
+    it('should include team-access and user-access routes for Namespaces in standalone mode', () => {
+      const { result } = renderUseHubNavigation();
+      const namespaceTeamAccess = findNavItemById(result.current, HubRoute.NamespaceTeamAccess);
+      const namespaceUserAccess = findNavItemById(result.current, HubRoute.NamespaceUserAccess);
+      expect(namespaceTeamAccess).toBeDefined();
+      expect(namespaceUserAccess).toBeDefined();
+    });
+
+    it('should NOT include Insights access route for Namespaces in standalone mode', () => {
+      const { result } = renderUseHubNavigation();
+      const namespaceAccess = findNavItemById(result.current, HubRoute.NamespaceAccess);
+      expect(namespaceAccess).toBeUndefined();
+    });
+
+    it('should include team-access and user-access routes for Remotes in standalone mode', () => {
+      const { result } = renderUseHubNavigation();
+      const remoteTeamAccess = findNavItemById(result.current, HubRoute.RemoteTeamAccess);
+      const remoteUserAccess = findNavItemById(result.current, HubRoute.RemoteUserAccess);
+      expect(remoteTeamAccess).toBeDefined();
+      expect(remoteUserAccess).toBeDefined();
+    });
+
+    it('should NOT include Insights access route for Remotes in standalone mode', () => {
+      const { result } = renderUseHubNavigation();
+      const remoteAccess = findNavItemById(result.current, HubRoute.RemoteAccess);
+      expect(remoteAccess).toBeUndefined();
+    });
+
+    it('should include team-access and user-access routes for Repositories in standalone mode', () => {
+      const { result } = renderUseHubNavigation();
+      const repositoryTeamAccess = findNavItemById(result.current, HubRoute.RepositoryTeamAccess);
+      const repositoryUserAccess = findNavItemById(result.current, HubRoute.RepositoryUserAccess);
+      expect(repositoryTeamAccess).toBeDefined();
+      expect(repositoryUserAccess).toBeDefined();
+    });
+
+    it('should NOT include Insights access route for Repositories in standalone mode', () => {
+      const { result } = renderUseHubNavigation();
+      const repositoryAccess = findNavItemById(result.current, HubRoute.RepositoryAccess);
+      expect(repositoryAccess).toBeUndefined();
+    });
   });
 
   describe('in Insights mode', () => {
@@ -464,6 +515,51 @@ describe('useHubNavigation', () => {
         expect(remotes).toBeDefined();
       }
     });
+
+    it('should include Insights access route for Namespaces in Insights mode', () => {
+      const { result } = renderUseHubNavigation();
+      const namespaceAccess = findNavItemById(result.current, HubRoute.NamespaceAccess);
+      expect(namespaceAccess).toBeDefined();
+      expect(namespaceAccess?.path).toBe('access');
+    });
+
+    it('should NOT include team-access and user-access routes for Namespaces in Insights mode', () => {
+      const { result } = renderUseHubNavigation();
+      const namespaceTeamAccess = findNavItemById(result.current, HubRoute.NamespaceTeamAccess);
+      const namespaceUserAccess = findNavItemById(result.current, HubRoute.NamespaceUserAccess);
+      expect(namespaceTeamAccess).toBeUndefined();
+      expect(namespaceUserAccess).toBeUndefined();
+    });
+
+    it('should include Insights access route for Remotes in Insights mode', () => {
+      const { result } = renderUseHubNavigation();
+      const remoteAccess = findNavItemById(result.current, HubRoute.RemoteAccess);
+      expect(remoteAccess).toBeDefined();
+      expect(remoteAccess?.path).toBe('access');
+    });
+
+    it('should NOT include team-access and user-access routes for Remotes in Insights mode', () => {
+      const { result } = renderUseHubNavigation();
+      const remoteTeamAccess = findNavItemById(result.current, HubRoute.RemoteTeamAccess);
+      const remoteUserAccess = findNavItemById(result.current, HubRoute.RemoteUserAccess);
+      expect(remoteTeamAccess).toBeUndefined();
+      expect(remoteUserAccess).toBeUndefined();
+    });
+
+    it('should include Insights access route for Repositories in Insights mode', () => {
+      const { result } = renderUseHubNavigation();
+      const repositoryAccess = findNavItemById(result.current, HubRoute.RepositoryAccess);
+      expect(repositoryAccess).toBeDefined();
+      expect(repositoryAccess?.path).toBe('access');
+    });
+
+    it('should NOT include team-access and user-access routes for Repositories in Insights mode', () => {
+      const { result } = renderUseHubNavigation();
+      const repositoryTeamAccess = findNavItemById(result.current, HubRoute.RepositoryTeamAccess);
+      const repositoryUserAccess = findNavItemById(result.current, HubRoute.RepositoryUserAccess);
+      expect(repositoryTeamAccess).toBeUndefined();
+      expect(repositoryUserAccess).toBeUndefined();
+    });
   });
 
   describe('navigation structure', () => {
@@ -509,12 +605,13 @@ describe('useHubNavigation', () => {
       expect(repoPage).toBeDefined();
       expect(repoPage && hasChildren(repoPage)).toBe(true);
 
-      // Check child routes
+      // Check child routes - RepositoryDetails is always present
       if (repoPage && hasChildren(repoPage)) {
         const childIds = repoPage.children.map(
           (c: ReturnType<typeof useHubNavigation>[number]) => c.id
         );
         expect(childIds).toContain(HubRoute.RepositoryDetails);
+        // team-access and user-access are only in standalone mode (default for this test)
         expect(childIds).toContain(HubRoute.RepositoryTeamAccess);
         expect(childIds).toContain(HubRoute.RepositoryUserAccess);
       }

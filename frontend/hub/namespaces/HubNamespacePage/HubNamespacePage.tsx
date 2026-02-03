@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
+import { isInsightsMode } from '../../common/isInsights';
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
@@ -85,8 +86,14 @@ export function HubNamespacePage() {
             page: HubRoute.NamespaceCLI,
             dataCy: 'namespace-cli-tab',
           },
-          { label: t('Team Access'), page: HubRoute.NamespaceTeamAccess },
-          { label: t('User Access'), page: HubRoute.NamespaceUserAccess },
+          // In Insights mode, show a single "Access" tab using namespace-embedded data
+          // In platform mode, show separate Team/User Access tabs using Gateway API
+          ...(isInsightsMode()
+            ? [{ label: t('Access'), page: HubRoute.NamespaceAccess }]
+            : [
+                { label: t('Team Access'), page: HubRoute.NamespaceTeamAccess },
+                { label: t('User Access'), page: HubRoute.NamespaceUserAccess },
+              ]),
         ]}
         params={{ id: namespace?.name }}
       />

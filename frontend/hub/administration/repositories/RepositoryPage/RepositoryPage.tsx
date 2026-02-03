@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { isInsightsMode } from '../../../common/isInsights';
 import { PulpItemsResponse } from '../../../common/useHubView';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
@@ -82,14 +83,25 @@ export function RepositoryPage() {
             label: t('Distributions'),
             page: HubRoute.RepositoryDistributions,
           },
-          {
-            label: t('Team Access'),
-            page: HubRoute.RepositoryTeamAccess,
-          },
-          {
-            label: t('User Access'),
-            page: HubRoute.RepositoryUserAccess,
-          },
+          // In Insights mode, show a single "Access" tab using direct Pulp API
+          // In standalone mode, show separate Team/User Access tabs using Gateway API
+          ...(isInsightsMode()
+            ? [
+                {
+                  label: t('Access'),
+                  page: HubRoute.RepositoryAccess,
+                },
+              ]
+            : [
+                {
+                  label: t('Team Access'),
+                  page: HubRoute.RepositoryTeamAccess,
+                },
+                {
+                  label: t('User Access'),
+                  page: HubRoute.RepositoryUserAccess,
+                },
+              ]),
         ]}
         params={{ id: params.id, repo_id: repo_id }}
         componentParams={{ id: params.id, repo_id: repo_id, repository: repository }}
