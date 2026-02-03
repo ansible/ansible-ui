@@ -27,6 +27,7 @@ import { RemoteAddUsers } from '../administration/remotes/RemotePage/RemoteAddUs
 import { RemoteAssignTeams } from '../administration/remotes/RemotePage/RemoteAssignTeam';
 import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
 import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
+import { InsightsRemoteAccess } from '../administration/remotes/RemotePage/InsightsRemoteAccess';
 import { RemoteTeamAccess } from '../administration/remotes/RemotePage/RemoteTeamAccess';
 import { RemoteUserAccess } from '../administration/remotes/RemotePage/RemoteUserAccess';
 import { Remotes } from '../administration/remotes/Remotes';
@@ -38,6 +39,7 @@ import { RepositoryCollectionVersion } from '../administration/repositories/Repo
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
 import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
 import { RepositoryPage } from '../administration/repositories/RepositoryPage/RepositoryPage';
+import { InsightsRepositoryAccess } from '../administration/repositories/RepositoryPage/InsightsRepositoryAccess';
 import { RepositoryTeamAccess } from '../administration/repositories/RepositoryPage/RepositoryTeamAccess';
 import { RepositoryUserAccess } from '../administration/repositories/RepositoryPage/RepositoryUserAccess';
 import { RepositoryVersions } from '../administration/repositories/RepositoryPage/RepositoryVersions';
@@ -81,6 +83,7 @@ import { HubNamespaceDetails } from '../namespaces/HubNamespacePage/HubNamespace
 import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePage';
 import { HubNamespaceTeamAccess } from '../namespaces/HubNamespacePage/HubNamespaceTeamAccess';
 import { HubNamespaceUserAccess } from '../namespaces/HubNamespacePage/HubNamespaceUserAccess';
+import { InsightsNamespaceAccess } from '../namespaces/HubNamespacePage/InsightsNamespaceAccess';
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
 import { HubNamespaceAssignTeams } from '../namespaces/components/HubNamespaceAssignTeams';
@@ -136,38 +139,53 @@ export function useHubNavigation() {
               path: 'cli',
               element: <HubNamespaceCLI />,
             },
-            {
-              id: HubRoute.NamespaceTeamAccess,
-              path: 'team-access',
-              element: <HubNamespaceTeamAccess />,
-            },
-            {
-              id: HubRoute.NamespaceUserAccess,
-              path: 'user-access',
-              element: <HubNamespaceUserAccess />,
-            },
+            // Access tabs: Platform has team/user access, Insights has unified access
+            ...(isInsightsMode()
+              ? [
+                  {
+                    id: HubRoute.NamespaceAccess,
+                    path: 'access',
+                    element: <InsightsNamespaceAccess />,
+                  },
+                ]
+              : [
+                  {
+                    id: HubRoute.NamespaceTeamAccess,
+                    path: 'team-access',
+                    element: <HubNamespaceTeamAccess />,
+                  },
+                  {
+                    id: HubRoute.NamespaceUserAccess,
+                    path: 'user-access',
+                    element: <HubNamespaceUserAccess />,
+                  },
+                ]),
             {
               path: '',
               element: <Navigate to="details" replace />,
             },
           ],
         },
-        {
-          id: HubRoute.NamespaceAddUsers,
-          path: ':id/user-access/add',
-          element: <HubNamespaceAddUsers />,
-        },
-        {
-          id: HubRoute.NamespaceManageUsers,
-          path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
-          // eslint-disable-next-line react/jsx-no-undef
-          element: <HubNamespaceManageUsers />,
-        },
-        {
-          id: HubRoute.NamespaceAssignTeams,
-          path: ':id/team-access/assign',
-          element: <HubNamespaceAssignTeams />,
-        },
+        // Platform-only team/user access management routes
+        ...(isInsightsMode()
+          ? []
+          : [
+              {
+                id: HubRoute.NamespaceAddUsers,
+                path: ':id/user-access/add',
+                element: <HubNamespaceAddUsers />,
+              },
+              {
+                id: HubRoute.NamespaceManageUsers,
+                path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
+                element: <HubNamespaceManageUsers />,
+              },
+              {
+                id: HubRoute.NamespaceAssignTeams,
+                path: ':id/team-access/assign',
+                element: <HubNamespaceAssignTeams />,
+              },
+            ]),
         {
           path: '',
           element: <Namespaces />,
@@ -417,6 +435,130 @@ export function useHubNavigation() {
                         id: HubRoute.RepositoryDetails,
                         element: <RepositoryDetails />,
                       },
+                      // Insights mode only has the unified access tab
+                      {
+                        path: 'access',
+                        id: HubRoute.RepositoryAccess,
+                        element: <InsightsRepositoryAccess />,
+                      },
+                      {
+                        path: 'collection-version',
+                        id: HubRoute.RepositoryCollectionVersion,
+                        element: <RepositoryCollectionVersion />,
+                      },
+                      {
+                        path: 'versions',
+                        id: HubRoute.RepositoryVersions,
+                        element: <RepositoryVersions />,
+                      },
+                      {
+                        path: 'distributions',
+                        id: HubRoute.RepositoryDistributions,
+                        element: <RepositoryDistributions />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: HubRoute.Remotes,
+                label: t('Remotes'),
+                path: 'remotes',
+                children: [
+                  {
+                    id: HubRoute.CreateRemote,
+                    path: 'create',
+                    element: <CreateRemote />,
+                  },
+                  {
+                    id: HubRoute.EditRemote,
+                    path: ':id/edit',
+                    element: <EditRemote />,
+                  },
+                  {
+                    path: ':id/',
+                    id: HubRoute.RemotePage,
+                    element: <RemotePage />,
+                    children: [
+                      {
+                        path: 'details',
+                        id: HubRoute.RemoteDetails,
+                        element: <RemoteDetails />,
+                      },
+                      // Insights mode only has the unified access tab
+                      {
+                        path: 'access',
+                        id: HubRoute.RemoteAccess,
+                        element: <InsightsRemoteAccess />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
+                  {
+                    path: '',
+                    element: <Remotes />,
+                  },
+                ],
+              },
+            ],
+          } as PageNavigationItem,
+        ]
+      : []),
+    // Administration section - Platform only (CRC/Insights uses top-level routes instead)
+    ...(isInsightsMode()
+      ? []
+      : [
+          {
+            label: t('Administration'),
+            path: 'administration',
+            children: [
+              {
+                id: HubRoute.SignatureKeys,
+                label: t('Signature Keys'),
+                path: 'signature-keys',
+                children: [
+                  {
+                    path: '',
+                    element: <SignatureKeys />,
+                  },
+                ],
+              },
+              {
+                id: HubRoute.Repositories,
+                label: t('Repositories'),
+                path: 'repositories',
+                children: [
+                  {
+                    path: '',
+                    element: <Repositories />,
+                  },
+                  {
+                    path: 'create',
+                    id: HubRoute.CreateRepository,
+                    element: <RepositoryForm />,
+                  },
+                  {
+                    path: 'edit/:id',
+                    id: HubRoute.EditRepository,
+                    element: <RepositoryForm />,
+                  },
+                  {
+                    path: ':id/',
+                    id: HubRoute.RepositoryPage,
+                    element: <RepositoryPage />,
+                    children: [
+                      {
+                        path: 'details',
+                        id: HubRoute.RepositoryDetails,
+                        element: <RepositoryDetails />,
+                      },
                       {
                         path: 'team-access',
                         id: HubRoute.RepositoryTeamAccess,
@@ -462,6 +604,91 @@ export function useHubNavigation() {
                     id: HubRoute.RepositoryManageUsers,
                     path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
                     element: <RepositoryManageUsers />,
+                  },
+                  {
+                    path: ':id/versions-details/:version/',
+                    id: HubRoute.RepositoryVersionPage,
+                    element: <RepositoryVersionPage />,
+                    children: [
+                      {
+                        path: 'details',
+                        id: HubRoute.RepositoryVersionDetails,
+                        element: <RepositoryVersionDetails />,
+                      },
+                      {
+                        path: 'collections',
+                        id: HubRoute.RepositoryVersionCollections,
+                        element: <RepositoryVersionCollections />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: HubRoute.RemoteRegistries,
+                label: t('Remote Registries'),
+                path: 'remote-registries',
+                children: [
+                  {
+                    path: '',
+                    element: <RemoteRegistries />,
+                  },
+                  {
+                    path: 'create',
+                    id: HubRoute.CreateRemoteRegistry,
+                    element: <CreateRemoteRegistry />,
+                  },
+                  {
+                    path: ':id/edit',
+                    id: HubRoute.EditRemoteRegistry,
+                    element: <EditRemoteRegistry />,
+                  },
+                  {
+                    path: ':id',
+                    id: HubRoute.RemoteRegistryPage,
+                    element: <RemoteRegistryPage />,
+                    children: [
+                      {
+                        id: HubRoute.RemoteRegistryDetails,
+                        path: 'details',
+                        element: <RemoteRegistryDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: HubRoute.Tasks,
+                label: t('Task Management'),
+                path: 'tasks',
+                children: [
+                  {
+                    id: HubRoute.TaskPage,
+                    path: ':id/',
+                    element: <TaskDetails />,
+                  },
+                  {
+                    path: '',
+                    element: <Tasks />,
+                  },
+                ],
+              },
+              {
+                id: HubRoute.Approvals,
+                label: t('Collection Approvals'),
+                path: 'approvals',
+                children: [
+                  {
+                    path: '',
+                    element: <Approvals />,
                   },
                 ],
               },
@@ -528,250 +755,8 @@ export function useHubNavigation() {
                 ],
               },
             ],
-          } as PageNavigationItem,
-        ]
-      : []),
-    {
-      label: t('Administration'),
-      path: 'administration',
-      children: [
-        {
-          id: HubRoute.SignatureKeys,
-          label: t('Signature Keys'),
-          path: 'signature-keys',
-          children: [
-            {
-              path: '',
-              element: <SignatureKeys />,
-            },
-          ],
-        },
-        {
-          id: HubRoute.Repositories,
-          label: t('Repositories'),
-          path: 'repositories',
-          children: [
-            {
-              path: '',
-              element: <Repositories />,
-            },
-            {
-              path: 'create',
-              id: HubRoute.CreateRepository,
-              element: <RepositoryForm />,
-            },
-            {
-              path: 'edit/:id',
-              id: HubRoute.EditRepository,
-              element: <RepositoryForm />,
-            },
-            {
-              path: ':id/',
-              id: HubRoute.RepositoryPage,
-              element: <RepositoryPage />,
-              children: [
-                {
-                  path: 'details',
-                  id: HubRoute.RepositoryDetails,
-                  element: <RepositoryDetails />,
-                },
-                {
-                  path: 'team-access',
-                  id: HubRoute.RepositoryTeamAccess,
-                  element: <RepositoryTeamAccess />,
-                },
-                {
-                  path: 'user-access',
-                  id: HubRoute.RepositoryUserAccess,
-                  element: <RepositoryUserAccess />,
-                },
-                {
-                  path: 'collection-version',
-                  id: HubRoute.RepositoryCollectionVersion,
-                  element: <RepositoryCollectionVersion />,
-                },
-                {
-                  path: 'versions',
-                  id: HubRoute.RepositoryVersions,
-                  element: <RepositoryVersions />,
-                },
-                {
-                  path: 'distributions',
-                  id: HubRoute.RepositoryDistributions,
-                  element: <RepositoryDistributions />,
-                },
-                {
-                  path: '',
-                  element: <Navigate to="details" replace />,
-                },
-              ],
-            },
-            {
-              id: HubRoute.RepositoryAssignTeams,
-              path: ':id/team-access/assign',
-              element: <RepositoryAssignTeams />,
-            },
-            {
-              id: HubRoute.RepositoryAddUsers,
-              path: ':id/users-access/add',
-              element: <RepositoryAddUsers />,
-            },
-            {
-              id: HubRoute.RepositoryManageUsers,
-              path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
-              element: <RepositoryManageUsers />,
-            },
-            {
-              path: ':id/versions-details/:version/',
-              id: HubRoute.RepositoryVersionPage,
-              element: <RepositoryVersionPage />,
-              children: [
-                {
-                  path: 'details',
-                  id: HubRoute.RepositoryVersionDetails,
-                  element: <RepositoryVersionDetails />,
-                },
-                {
-                  path: 'collections',
-                  id: HubRoute.RepositoryVersionCollections,
-                  element: <RepositoryVersionCollections />,
-                },
-                {
-                  path: '',
-                  element: <Navigate to="details" replace />,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: HubRoute.RemoteRegistries,
-          label: t('Remote Registries'),
-          path: 'remote-registries',
-          children: [
-            {
-              path: '',
-              element: <RemoteRegistries />,
-            },
-            {
-              path: 'create',
-              id: HubRoute.CreateRemoteRegistry,
-              element: <CreateRemoteRegistry />,
-            },
-            {
-              path: ':id/edit',
-              id: HubRoute.EditRemoteRegistry,
-              element: <EditRemoteRegistry />,
-            },
-            {
-              path: ':id',
-              id: HubRoute.RemoteRegistryPage,
-              element: <RemoteRegistryPage />,
-              children: [
-                {
-                  id: HubRoute.RemoteRegistryDetails,
-                  path: 'details',
-                  element: <RemoteRegistryDetails />,
-                },
-                {
-                  path: '',
-                  element: <Navigate to="details" replace />,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: HubRoute.Tasks,
-          label: t('Task Management'),
-          path: 'tasks',
-          children: [
-            {
-              id: HubRoute.TaskPage,
-              path: ':id/',
-              element: <TaskDetails />,
-            },
-            {
-              path: '',
-              element: <Tasks />,
-            },
-          ],
-        },
-        {
-          id: HubRoute.Approvals,
-          label: t('Collection Approvals'),
-          path: 'approvals',
-          children: [
-            {
-              path: '',
-              element: <Approvals />,
-            },
-          ],
-        },
-        {
-          id: HubRoute.Remotes,
-          label: t('Remotes'),
-          path: 'remotes',
-          children: [
-            {
-              id: HubRoute.CreateRemote,
-              path: 'create',
-              element: <CreateRemote />,
-            },
-            {
-              id: HubRoute.EditRemote,
-              path: ':id/edit',
-              element: <EditRemote />,
-            },
-            {
-              path: ':id/',
-              id: HubRoute.RemotePage,
-              element: <RemotePage />,
-              children: [
-                {
-                  path: 'details',
-                  id: HubRoute.RemoteDetails,
-                  element: <RemoteDetails />,
-                },
-                {
-                  path: 'user-access',
-                  id: HubRoute.RemoteUserAccess,
-                  element: <RemoteUserAccess />,
-                },
-                {
-                  path: 'team-access',
-                  id: HubRoute.RemoteTeamAccess,
-                  element: <RemoteTeamAccess />,
-                },
-                {
-                  path: '',
-                  element: <Navigate to="details" replace />,
-                },
-              ],
-            },
-            {
-              id: HubRoute.RemoteAddUsers,
-              path: ':id/user-access/add',
-              element: <RemoteAddUsers />,
-            },
-            {
-              id: HubRoute.RemoteManageUsers,
-              path: ':id/:resource_id/user-access/:resource_type/:user_id/manage',
-              element: <RemoteManageUsers />,
-            },
-            {
-              id: HubRoute.RemoteAssignTeams,
-              path: ':id/team-access/assign',
-              element: <RemoteAssignTeams />,
-            },
-            {
-              path: '',
-              element: <Remotes />,
-            },
-          ],
-        },
-      ],
-    },
+          },
+        ]),
     {
       id: HubRoute.APIToken,
       label: t('API Token'),
@@ -779,118 +764,123 @@ export function useHubNavigation() {
       path: isInsightsMode() ? 'token' : 'api-token',
       element: <Token />,
     },
-    {
-      id: HubRoute.Access,
-      label: t('Access Management'),
-      path: 'access',
-      children: [
-        {
-          id: HubRoute.Organizations,
-          label: t('Organizations'),
-          path: 'organizations',
-          element: <PageNotImplemented />,
-        },
-        {
-          id: HubRoute.Teams,
-          label: t('Teams'),
-          path: 'teams',
-          children: [
-            {
-              id: HubRoute.TeamPage,
-              path: ':id',
-              children: [
-                {
-                  id: HubRoute.TeamDetails,
-                  path: 'details',
-                  element: <PageNotImplemented />,
-                },
-                {
-                  id: HubRoute.TeamRoles,
-                  path: 'roles',
-                  element: <HubTeamRoles />,
-                },
-              ],
-            },
-            {
-              id: HubRoute.TeamAddRoles,
-              path: ':id/roles/add-roles',
-              element: <HubAddTeamRoles />,
-            },
-          ],
-        },
-        {
-          id: HubRoute.Users,
-          label: t('Users'),
-          path: 'users',
-          children: [
-            {
-              id: HubRoute.UserPage,
-              path: ':id',
-              children: [
-                {
-                  id: HubRoute.UserDetails,
-                  path: 'details',
-                  element: <PageNotImplemented />,
-                },
-                {
-                  id: HubRoute.UserRoles,
-                  path: 'roles',
-                  element: <HubUserRoles />,
-                },
-              ],
-            },
-            {
-              id: HubRoute.UserAddRoles,
-              path: ':id/roles/add-roles',
-              element: <HubAddUserRoles />,
-            },
-          ],
-        },
-        {
-          id: HubRoute.Roles,
-          label: t('Roles'),
-          path: 'roles',
-          children: [
-            {
-              id: HubRoute.CreateRole,
-              path: 'create',
-              element: <CreateRole />,
-            },
-            {
-              id: HubRoute.EditRole,
-              path: ':id/edit',
-              element: <EditRole />,
-            },
-            {
-              id: HubRoute.RolePage,
-              path: ':id/',
-              element: <HubRolePage />,
-              children: [
-                {
-                  id: HubRoute.RoleDetails,
-                  path: 'details',
-                  element: <HubRoleDetails />,
-                },
-                {
-                  path: '',
-                  element: <Navigate to="details" replace />,
-                },
-              ],
-            },
-            {
-              path: '',
-              element: <HubRoles />,
-            },
-          ],
-        },
-        {
-          id: HubRoute.APIToken,
-          label: t('API Token'),
-          path: 'api-token',
-          element: <Token />,
-        },
-      ],
-    },
+    // Access Management section - Platform only (uses Gateway API)
+    ...(isInsightsMode()
+      ? []
+      : [
+          {
+            id: HubRoute.Access,
+            label: t('Access Management'),
+            path: 'access',
+            children: [
+              {
+                id: HubRoute.Organizations,
+                label: t('Organizations'),
+                path: 'organizations',
+                element: <PageNotImplemented />,
+              },
+              {
+                id: HubRoute.Teams,
+                label: t('Teams'),
+                path: 'teams',
+                children: [
+                  {
+                    id: HubRoute.TeamPage,
+                    path: ':id',
+                    children: [
+                      {
+                        id: HubRoute.TeamDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: HubRoute.TeamRoles,
+                        path: 'roles',
+                        element: <HubTeamRoles />,
+                      },
+                    ],
+                  },
+                  {
+                    id: HubRoute.TeamAddRoles,
+                    path: ':id/roles/add-roles',
+                    element: <HubAddTeamRoles />,
+                  },
+                ],
+              },
+              {
+                id: HubRoute.Users,
+                label: t('Users'),
+                path: 'users',
+                children: [
+                  {
+                    id: HubRoute.UserPage,
+                    path: ':id',
+                    children: [
+                      {
+                        id: HubRoute.UserDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: HubRoute.UserRoles,
+                        path: 'roles',
+                        element: <HubUserRoles />,
+                      },
+                    ],
+                  },
+                  {
+                    id: HubRoute.UserAddRoles,
+                    path: ':id/roles/add-roles',
+                    element: <HubAddUserRoles />,
+                  },
+                ],
+              },
+              {
+                id: HubRoute.Roles,
+                label: t('Roles'),
+                path: 'roles',
+                children: [
+                  {
+                    id: HubRoute.CreateRole,
+                    path: 'create',
+                    element: <CreateRole />,
+                  },
+                  {
+                    id: HubRoute.EditRole,
+                    path: ':id/edit',
+                    element: <EditRole />,
+                  },
+                  {
+                    id: HubRoute.RolePage,
+                    path: ':id/',
+                    element: <HubRolePage />,
+                    children: [
+                      {
+                        id: HubRoute.RoleDetails,
+                        path: 'details',
+                        element: <HubRoleDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
+                  {
+                    path: '',
+                    element: <HubRoles />,
+                  },
+                ],
+              },
+              {
+                id: HubRoute.APIToken,
+                label: t('API Token'),
+                path: 'api-token',
+                element: <Token />,
+              },
+            ],
+          },
+        ]),
     {
       id: HubRoute.MyImports,
       label: t('My imports'),
@@ -898,28 +888,33 @@ export function useHubNavigation() {
       element: <MyImports />,
       hidden: true,
     },
-    {
-      id: HubRoute.Settings,
-      label: t('Settings'),
-      path: 'settings',
-      children: [
-        {
-          id: HubRoute.SettingsPreferences,
-          label: t('User Preferences'),
-          path: 'preferences',
-          children: [
-            {
-              path: 'edit',
-              element: <PageSettingsForm />,
-            },
-            {
-              path: '',
-              element: <PageSettingsDetails />,
-            },
-          ],
-        },
-      ],
-    },
+    // Settings section - Platform only
+    ...(isInsightsMode()
+      ? []
+      : [
+          {
+            id: HubRoute.Settings,
+            label: t('Settings'),
+            path: 'settings',
+            children: [
+              {
+                id: HubRoute.SettingsPreferences,
+                label: t('User Preferences'),
+                path: 'preferences',
+                children: [
+                  {
+                    path: 'edit',
+                    element: <PageSettingsForm />,
+                  },
+                  {
+                    path: '',
+                    element: <PageSettingsDetails />,
+                  },
+                ],
+              },
+            ],
+          },
+        ]),
     {
       path: '',
       element: <Navigate to={'./overview'} replace />,

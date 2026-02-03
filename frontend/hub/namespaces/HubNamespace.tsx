@@ -1,3 +1,14 @@
+export interface HubNamespaceGroup {
+  id: number;
+  name: string;
+  object_roles: string[];
+}
+
+export interface HubNamespaceUser {
+  username: string;
+  object_roles: string[];
+}
+
 export interface HubNamespace {
   pulp_href: string;
   id: number;
@@ -10,13 +21,10 @@ export interface HubNamespace {
     name: string;
     url: string;
   }[];
-  groups: [
-    {
-      id: number;
-      name: string;
-      object_roles: string[];
-    },
-  ];
-  related_fields: object;
+  groups: HubNamespaceGroup[];
+  users?: HubNamespaceUser[];
+  related_fields: {
+    my_permissions?: string[];
+  };
   resources: string;
 }

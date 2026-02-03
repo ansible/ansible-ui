@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
+import { isInsightsMode } from '../../../common/isInsights';
 import { PulpItemsResponse } from '../../../common/useHubView';
 import { HubRoute } from '../../../main/HubRoutes';
 import { HubRemote } from './../Remotes';
@@ -73,14 +74,25 @@ export function RemotePage() {
               label: t('Details'),
               page: HubRoute.RemoteDetails,
             },
-            {
-              label: t('Team Access'),
-              page: HubRoute.RemoteTeamAccess,
-            },
-            {
-              label: t('User Access'),
-              page: HubRoute.RemoteUserAccess,
-            },
+            // In Insights mode, show a single "Access" tab using direct Pulp API
+            // In standalone mode, show separate Team/User Access tabs using Gateway API
+            ...(isInsightsMode()
+              ? [
+                  {
+                    label: t('Access'),
+                    page: HubRoute.RemoteAccess,
+                  },
+                ]
+              : [
+                  {
+                    label: t('Team Access'),
+                    page: HubRoute.RemoteTeamAccess,
+                  },
+                  {
+                    label: t('User Access'),
+                    page: HubRoute.RemoteUserAccess,
+                  },
+                ]),
           ]}
           params={{ id: params.id }}
           componentParams={{ id: params.id, remote: remote }}

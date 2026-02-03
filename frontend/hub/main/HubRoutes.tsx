@@ -13,6 +13,7 @@ export enum HubRoute {
   NamespaceCLI = 'hub-namespace-cli',
   NamespaceTeamAccess = 'hub-namespace-team-access',
   NamespaceUserAccess = 'hub-namespace-user-access',
+  NamespaceAccess = 'hub-namespace-access',
   NamespaceAddUsers = 'hub-namespace-add-users',
   NamespaceManageUsers = 'hub-namespace-manage-users',
   NamespaceAssignTeams = 'hub-namespace-assign-teams',
@@ -64,6 +65,7 @@ export enum HubRoute {
   RepositoryManageUsers = 'hub-repository-manage-users',
   RepositoryTeamAccess = 'hub-repository-team-access',
   RepositoryUserAccess = 'hub-repository-user-access',
+  RepositoryAccess = 'hub-repository-access',
 
   RemoteRegistries = 'hub-remote-registries',
   CreateRemoteRegistry = 'hub-create-remote-registry',
@@ -86,6 +88,7 @@ export enum HubRoute {
   RemoteManageUsers = 'hub-remote-manage-users',
   RemoteTeamAccess = 'hub-remote-add-team-access',
   RemoteUserAccess = 'hub-remote-user-access',
+  RemoteAccess = 'hub-remote-access',
 
   // Access
   Access = 'hub-access',
