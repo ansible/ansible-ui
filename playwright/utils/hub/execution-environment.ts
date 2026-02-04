@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 import { hubAPI } from '../../commands/apiClient';
 import { createE2EName } from '../../commands/createE2EName';
+import { waitForHubTask } from './task-utils';
 
 export interface HubExecutionEnvironment {
   id: string;
@@ -22,11 +23,13 @@ export const ExecutionEnvironment = {
       page: Page,
       options: CreateExecutionEnvironmentOptions = {}
     ): Promise<HubExecutionEnvironment> => {
+      const name = options.name ?? createE2EName('ee', { noWhitespace: true }).toLowerCase();
+
       const executionEnv = await hubAPI.post<HubExecutionEnvironment>(
         page,
         '/_ui/v1/execution-environments/remotes/',
         {
-          name: options.name ?? createE2EName('ExecutionEnv'),
+          name,
           upstream_name: options.upstream_name ?? 'pulp/pulp-fixtures',
           include_tags: options.include_tags ?? ['latest'],
           registry: options.registry ?? '',
@@ -43,7 +46,10 @@ export const ExecutionEnvironment = {
     delete: async (page: Page, executionEnvironmentName: string): Promise<void> => {
       await hubAPI.delete(
         page,
-        `/v3/plugin/execution-environments/repositories/${executionEnvironmentName}/`
+        `/v3/plugin/execution-environments/repositories/${executionEnvironmentName}/`,
+        {
+          expectStatus: 202,
+        }
       );
     },
 
@@ -59,7 +65,21 @@ export const ExecutionEnvironment = {
 
       return executionEnv;
     },
-  },
+    sync: async (page: Page, executionEnvironmentName: string): Promise<void> => {
+      const response = await hubAPI.post<{ task: string }>(
+        page,
+        `v3/plugin/execution-environments/repositories/${executionEnvironmentName}/_content/sync/`,
+        {},
+        { expectStatus: 202 }
+      );
 
+      if (!response?.task) {
+        throw new Error('Failed to sync execution environment: no task returned');
+      }
+
+      // Wait for the sync task to complete with extended timeout (syncing can take a while)
+      await waitForHubTask(page, response.task, { timeout: 120000 });
+    },
+  },
   ui: {},
 } as const;
