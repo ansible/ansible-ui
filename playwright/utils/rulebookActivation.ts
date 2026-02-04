@@ -76,6 +76,132 @@ export const RulebookActivation = {
     enable: async (page: Page, activationId: number): Promise<void> => {
       await edaAPI.post(page, `activations/${activationId}/enable/`, {});
     },
+
+    /**
+     * Checks if EDA workers are available by monitoring if an activation
+     * transitions from "pending" status within a reasonable time (30s).
+     *
+     * Returns:
+     * - true: Workers available (activation moved past "pending")
+     * - false: Workers unavailable (status is "workers offline" OR stuck in "pending")
+     *
+     * @param page - Playwright page object
+     * @param activationId - ID of the activation to monitor
+     * @returns Promise<boolean> - true if workers available, false otherwise
+     */
+    checkWorkersAvailable: async (page: Page, activationId: number): Promise<boolean> => {
+      const maxPendingTime = 30000; // 30 seconds
+      const checkInterval = 2000; // 2 seconds
+      const startTime = Date.now();
+
+      while (Date.now() - startTime < maxPendingTime) {
+        const activation = await RulebookActivation.api.get(page, activationId);
+        const statusString = String(activation.status || '');
+
+        // Explicit "workers offline" status
+        if (statusString === 'workers offline') {
+          return false;
+        }
+
+        // If activation has moved past "pending", workers are processing
+        if (statusString && statusString !== 'pending') {
+          return true;
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      // Stuck in "pending" for 30s - likely no workers
+      return false;
+    },
+
+    /**
+     * Waits for an activation to reach the expected status with enhanced worker detection.
+     *
+     * Improvements over basic polling:
+     * 1. Detects "workers offline" status explicitly
+     * 2. Fails fast if stuck in "pending" for too long (30s)
+     * 3. Provides actionable error messages
+     *
+     * @param page - Playwright page object
+     * @param activationId - ID of activation to monitor
+     * @param expectedStatus - Expected final status (e.g., "completed", "failed")
+     * @param timeout - Maximum time to wait in milliseconds (default: 200000)
+     * @returns Promise<void>
+     * @throws Error if activation doesn't reach expected status or workers are offline
+     */
+    waitForStatus: async (
+      page: Page,
+      activationId: number,
+      expectedStatus: string,
+      timeout: number = 200000
+    ): Promise<void> => {
+      const startTime = Date.now();
+      const checkInterval = 2000;
+      let pendingStartTime: number | null = null;
+      const maxPendingTime = 30000;
+
+      while (Date.now() - startTime < timeout) {
+        const activation = await RulebookActivation.api.get(page, activationId);
+        const currentStatus = String(activation.status || '');
+
+        // Success: reached expected status
+        if (currentStatus && currentStatus === expectedStatus) {
+          return;
+        }
+
+        // Workers explicitly offline
+        if (currentStatus === 'workers offline') {
+          throw new Error(
+            `EDA workers are offline. Activation ${activationId} cannot be processed. ` +
+              `Current status: "${currentStatus}". Expected status: "${expectedStatus}". ` +
+              `Hint: Ensure EDA workers are running on the server.`
+          );
+        }
+
+        // Track how long we've been in "pending"
+        if (currentStatus === 'pending') {
+          if (pendingStartTime === null) {
+            pendingStartTime = Date.now();
+          } else if (Date.now() - pendingStartTime > maxPendingTime) {
+            throw new Error(
+              `Activation ${activationId} stuck in "pending" for ${maxPendingTime}ms. ` +
+                `This likely means no EDA workers are available to process the activation. ` +
+                `Expected status: "${expectedStatus}". ` +
+                `Hint: Check if EDA workers are running and healthy.`
+            );
+          }
+        } else {
+          // Reset pending timer if we moved to a different status
+          pendingStartTime = null;
+        }
+
+        // Terminal failure states
+        const terminalStates = ['failed', 'error', 'stopped', 'unresponsive'];
+        if (currentStatus && terminalStates.includes(currentStatus)) {
+          // For tests expecting "failed", this might be success
+          if (currentStatus === expectedStatus) {
+            return;
+          }
+          throw new Error(
+            `Activation ${activationId} reached terminal status "${currentStatus}" ` +
+              `instead of expected "${expectedStatus}"`
+          );
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      // Timeout reached
+      const finalActivation = await RulebookActivation.api.get(page, activationId);
+      const finalStatus = String(finalActivation.status || '');
+
+      throw new Error(
+        `Activation ${activationId} did not reach "${expectedStatus}" status within ${timeout}ms. ` +
+          `Final status: "${finalStatus}". ` +
+          `Hint: ${finalStatus === 'pending' ? 'Workers may be offline or overloaded.' : 'Check activation logs for errors.'}`
+      );
+    },
   },
 
   ui: {
