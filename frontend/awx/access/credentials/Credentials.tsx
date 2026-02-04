@@ -9,7 +9,7 @@ import { CredentialsList } from './CredentialsList';
 
 export function Credentials() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = process.env.PRODUCT ?? t('Automation controller');
   usePersistentFilters('credentials');
   const config = useAwxConfig();
 

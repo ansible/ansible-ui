@@ -59,7 +59,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
     handleWebSocketMessage as (data: unknown) => void
   );
 
-  const brand: string = process.env.BRAND ?? 'AWX';
+  const brand: string = process.env.BRAND ?? t('Automation controller');
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const signatureValidationHelpText = t`Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.`;
   const playbookDirectoryHelpText = t`Select from the list of directories found in the project base path. Together the base path and the playbook directory provide the full path used to locate playbooks.`;

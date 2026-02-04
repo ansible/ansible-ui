@@ -24,7 +24,7 @@ import { useProjectsFilters } from './hooks/useProjectsFilters';
 
 export function Projects() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = process.env.PRODUCT ?? t('Automation controller');
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useProjectsFilters();
   const tableColumns = useProjectsColumns();

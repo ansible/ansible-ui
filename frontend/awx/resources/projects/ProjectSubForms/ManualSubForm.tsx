@@ -17,7 +17,7 @@ export function ManualSubForm(props: { localPath?: string }) {
   const { data: config } = useSWR<IConfigData>(awxAPI`/config/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
-  const brand: string = process.env.BRAND ?? 'AWX';
+  const brand: string = process.env.BRAND ?? t('Automation controller');
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const basePathHelpBlock = (
     <Trans i18nKey="basePathHelpBlockKey">
