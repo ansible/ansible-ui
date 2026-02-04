@@ -21,7 +21,7 @@ import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
 
 export function Hosts() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = process.env.PRODUCT ?? t('Automation controller');
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();

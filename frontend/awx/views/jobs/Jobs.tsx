@@ -10,7 +10,7 @@ import { JobsList } from './JobsList';
 
 export function Jobs() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('automation controller');
+  const product: string = process.env.PRODUCT ?? t('Automation controller');
   const tableColumns = useJobsColumns();
 
   usePersistentFilters('jobs');

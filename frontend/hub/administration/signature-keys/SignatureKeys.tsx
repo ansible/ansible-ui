@@ -26,6 +26,7 @@ import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('Automation Hub');
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
   const view = useHubView<SignatureKey>({
@@ -56,10 +57,12 @@ export function SignatureKeys() {
         title={t('Signature Keys')}
         titleHelpTitle={t('Signature Keys')}
         titleHelp={t(
-          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on Ansible Galaxy.'
+          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on {{product}}.',
+          { product }
         )}
         description={t(
-          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on Ansible Galaxy.'
+          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on {{product}}.',
+          { product }
         )}
         titleDocLink={useGetDocsUrl(config, 'signatureKeys')}
       />
