@@ -12,6 +12,7 @@ import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
 import { HubTeamRoles } from '../access/teams/TeamPage/TeamUserRole';
 import { HubAddTeamRoles } from '../access/teams/components/HubAddTeamRoles';
 import { Token } from '../access/token/Token';
+import { TokenInsights } from '../access/token/TokenInsights';
 import { HubUserRoles } from '../access/users/UserPage/HubUserRoles';
 import { HubAddUserRoles } from '../access/users/components/HubAddUserRoles';
 import { Approvals } from '../administration/collection-approvals/Approvals';
@@ -759,10 +760,10 @@ export function useHubNavigation() {
         ]),
     {
       id: HubRoute.APIToken,
-      label: t('API Token'),
+      label: isInsightsMode() ? t('Connect to Hub') : t('API Token'),
       // Insights/CRC uses 'token' path, standalone uses 'api-token'
       path: isInsightsMode() ? 'token' : 'api-token',
-      element: <Token />,
+      element: isInsightsMode() ? <TokenInsights /> : <Token />,
     },
     // Access Management section - Platform only (uses Gateway API)
     ...(isInsightsMode()
