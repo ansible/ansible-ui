@@ -71,6 +71,14 @@ export const RemoteRegistry = {
 
       return response.data[0];
     },
+    sync: async (page: Page, remoteRegistryId: string): Promise<void> => {
+      await hubAPI.post(
+        page,
+        `_ui/v1/execution-environments/registries/${remoteRegistryId}/sync/`,
+        {},
+        { expectStatus: 202 }
+      );
+    },
   },
 
   ui: {
