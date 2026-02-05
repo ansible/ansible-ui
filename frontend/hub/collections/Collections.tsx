@@ -1,4 +1,8 @@
-import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  PageTable,
+  useGetPageUrl,
+  PageLayoutWithUnauthorized,
+} from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -7,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../common/api/formatPath';
 import { collectionKeyFn } from '../common/api/hub-api-utils';
 import { useHubView } from '../common/useHubView';
+import { isAccessDeniedError } from '../common/utils/errorUtils';
 import { HubRoute } from '../main/HubRoutes';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
@@ -34,20 +39,23 @@ export function Collections() {
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
   const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
 
-  return (
-    <PageLayout>
-      <PageHeader
-        title={t('Collections')}
-        description={t(
-          'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
-        )}
-        titleHelpTitle={t('Collections')}
-        titleHelp={t(
-          'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
-        )}
-        titleDocLink="https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/developing_automation_content/devtools-develop-collections_develop-automation-content"
-      />
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
 
+  const description = t(
+    'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
+  );
+
+  return (
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Collections')}
+      title={t('Collections')}
+      description={description}
+      titleHelpTitle={t('Collections')}
+      titleHelp={description}
+      titleDocLink="https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/developing_automation_content/devtools-develop-collections_develop-automation-content"
+    >
       <PageTable<CollectionVersionSearch>
         id="hub-collection-version-search-table"
         toolbarFilters={toolbarFilters}
@@ -75,6 +83,6 @@ export function Collections() {
         defaultSubtitle={t('Collection')}
         {...view}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }

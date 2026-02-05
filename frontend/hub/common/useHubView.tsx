@@ -34,6 +34,7 @@ export interface PulpItemsResponse<T extends object> {
 
 export type IHubView<T extends object> = IView &
   ISelected<T> & {
+    error: Error | undefined;
     itemCount: number | undefined;
     pageItems: T[] | undefined;
     refresh: () => Promise<void>;

@@ -1,21 +1,24 @@
-import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { PageTable, PageLayoutWithUnauthorized } from '@ansible/ansible-ui-framework';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { useTranslation } from 'react-i18next';
 import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
+import { useHubConfig } from '../../common/useHubConfig';
 import { useHubView } from '../../common/useHubView';
+import { isAccessDeniedError } from '../../common/utils/errorUtils';
 import { Task } from './Task';
 import { useTasksColumns } from './hooks/useTasksColumns';
 import { useTasksFilters } from './hooks/useTasksFilters';
 import { useTasksRowActions } from './hooks/useTasksRowActions';
 import { useTasksToolbarActions } from './hooks/useTasksToolbarActions';
-import { useHubConfig } from '../../common/useHubConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Tasks() {
   const { t } = useTranslation();
   const toolbarFilters = useTasksFilters();
   const tableColumns = useTasksColumns();
   const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'taskManagement');
+
   const view = useHubView<Task>({
     url: pulpAPI`/tasks/`,
     keyFn: pulpHrefKeyFn,
@@ -26,19 +29,23 @@ export function Tasks() {
   const toolbarActions = useTasksToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useTasksRowActions(view.unselectItemsAndRefresh);
 
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  const description = t(
+    'Task management facilitates organizing, scheduling, and monitoring automation tasks for efficient workflow management.'
+  );
+
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Task Management')}
-        description={t(
-          'Task management facilitates organizing, scheduling, and monitoring automation tasks for efficient workflow management.'
-        )}
-        titleHelpTitle={t('Task Management')}
-        titleHelp={t(
-          'Task management facilitates organizing, scheduling, and monitoring automation tasks for efficient workflow management.'
-        )}
-        titleDocLink={useGetDocsUrl(config, 'taskManagement')}
-      />
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Task Management')}
+      title={t('Task Management')}
+      description={description}
+      titleHelpTitle={t('Task Management')}
+      titleHelp={description}
+      titleDocLink={docsUrl}
+    >
       <PageTable<Task>
         id="hub-tasks-table"
         toolbarFilters={toolbarFilters}
@@ -50,6 +57,6 @@ export function Tasks() {
         rowActions={rowActions}
         toolbarActions={toolbarActions}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }

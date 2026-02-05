@@ -47,6 +47,7 @@ export * from './PageFramework';
 export * from './PageHeader';
 export * from './PageInputs/PageSelectOption';
 export * from './PageLayout';
+export * from './components/PageLayoutWithUnauthorized';
 export * from './PageMasthead/PageMasthead';
 export * from './PageMasthead/PageNotificationsIcon';
 export * from './PageMasthead/PageThemeSwitcher';

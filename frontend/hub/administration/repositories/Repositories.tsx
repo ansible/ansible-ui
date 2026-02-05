@@ -1,20 +1,25 @@
-import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  PageTable,
+  useGetPageUrl,
+  PageLayoutWithUnauthorized,
+} from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
+import { useHubConfig } from '../../common/useHubConfig';
 import { useHubView } from '../../common/useHubView';
+import { isAccessDeniedError } from '../../common/utils/errorUtils';
 import { HubRoute } from '../../main/HubRoutes';
 import { Repository } from './Repository';
 import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
 import { useRepositoryActions } from './hooks/useRepositoryActions';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
 import { useRepositoryToolbarActions } from './hooks/useRepositoryToolbarActions';
-import { useHubConfig } from '../../common/useHubConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Repositories() {
   const { t } = useTranslation();
@@ -22,6 +27,7 @@ export function Repositories() {
   const tableColumns = useRepositoriesColumns();
   const getPageUrl = useGetPageUrl();
   const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'repositories');
 
   const view = useHubView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -33,19 +39,23 @@ export function Repositories() {
   const toolbarActions = useRepositoryToolbarActions(view);
   const rowActions = useRepositoryActions({ onRepositoriesDeleted: view.unselectItemsAndRefresh });
 
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  const description = t(
+    'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
+  );
+
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Repositories')}
-        titleHelpTitle={t('Repositories')}
-        titleHelp={t(
-          'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
-        )}
-        description={t(
-          'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
-        )}
-        titleDocLink={useGetDocsUrl(config, 'repositories')}
-      />
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Repositories')}
+      title={t('Repositories')}
+      titleHelpTitle={t('Repositories')}
+      titleHelp={description}
+      description={description}
+      titleDocLink={docsUrl}
+    >
       <PageTable<Repository>
         id="hub-repositories-table"
         defaultSubtitle={t('Repository')}
@@ -70,6 +80,6 @@ export function Repositories() {
         toolbarFilters={toolbarFilters}
         {...view}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }

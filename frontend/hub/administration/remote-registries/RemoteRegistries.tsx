@@ -1,51 +1,64 @@
-import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  PageTable,
+  useGetPageUrl,
+  PageLayoutWithUnauthorized,
+} from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
+import { useHubConfig } from '../../common/useHubConfig';
 import { useHubView } from '../../common/useHubView';
+import { isAccessDeniedError } from '../../common/utils/errorUtils';
 import { HubRoute } from '../../main/HubRoutes';
 import { RemoteRegistry } from './RemoteRegistry';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistriesToolbarActions } from './hooks/useRemoteRegistriesToolbarActions';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
-import { useHubConfig } from '../../common/useHubConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteRegistryFilters();
   const tableColumns = useRemoteRegistriesColumns();
   const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'remoteRegistries');
+  const getPageUrl = useGetPageUrl();
+
   const view = useHubView<RemoteRegistry>({
     url: hubAPI`/_ui/v1/execution-environments/registries/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,
     tableColumns,
   });
-  const getPageUrl = useGetPageUrl();
+
   const toolbarActions = useRemoteRegistriesToolbarActions(view);
   const rowActions = useRemoteRegistryActions({
     onRemoteRegistryDeleted: view.unselectItemsAndRefresh,
     refresh: view.refresh,
   });
+
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  const description = t(
+    'Remote registries manage configurations for remote execution environments utilized in Ansible automation tasks.'
+  );
+
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Remote Registries')}
-        titleHelpTitle={t('Remote Registries')}
-        titleHelp={t(
-          'Remote registries manage configurations for remote execution environments utilized in Ansible automation tasks.'
-        )}
-        description={t(
-          'Remote registries manage configurations for remote execution environments utilized in Ansible automation tasks.'
-        )}
-        titleDocLink={useGetDocsUrl(config, 'remoteRegistries')}
-      />
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Remote Registries')}
+      title={t('Remote Registries')}
+      titleHelpTitle={t('Remote Registries')}
+      titleHelp={description}
+      description={description}
+      titleDocLink={docsUrl}
+    >
       <PageTable<RemoteRegistry>
         id="hub-remote-registries-table"
         defaultSubtitle={t('Remote Registry')}
@@ -74,6 +87,6 @@ export function RemoteRegistries() {
         toolbarFilters={toolbarFilters}
         {...view}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }

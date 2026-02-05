@@ -6,6 +6,7 @@ import {
   PageTabs,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { EmptyStateUnauthorized } from '@ansible/ansible-ui-framework/components/EmptyStateUnauthorized';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
@@ -14,6 +15,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubView } from '../common/useHubView';
+import { isAccessDeniedError } from '../common/utils/errorUtils';
 import { HubRoute } from '../main/HubRoutes';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
@@ -71,6 +73,20 @@ export function CommonNamespaces({ url }: { url: string }) {
   const rowActions = useHubNamespaceActions({
     onHubNamespacesDeleted: view.unselectItemsAndRefresh,
   });
+
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  // Show unauthorized state for 403 errors
+  if (isUnauthorized) {
+    return (
+      <EmptyStateUnauthorized
+        title={t('You do not have access to Namespaces')}
+        adminMessage={t('Contact your organization administrator for more information.')}
+      />
+    );
+  }
+
   return (
     <PageTable<HubNamespace>
       id="hub-namespaces-table"

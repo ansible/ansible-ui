@@ -3,10 +3,10 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { hubAPI } from '../../common/api/formatPath';
-import { Approvals } from './Approvals';
+import { hubAPI } from '../common/api/formatPath';
+import { Collections } from './Collections';
 
-const mockApprovalsResponse = {
+const mockCollectionsResponse = {
   meta: {
     count: 2,
   },
@@ -20,11 +20,8 @@ const mockApprovalsResponse = {
         pulp_href: '/api/galaxy/pulp/api/v3/content/ansible/collection_versions/123/',
       },
       repository: {
-        name: 'staging',
+        name: 'published',
         pulp_href: '/api/galaxy/pulp/api/v3/repositories/ansible/ansible/456/',
-        pulp_labels: {
-          pipeline: 'staging',
-        },
       },
       is_signed: false,
       is_highest: true,
@@ -39,11 +36,8 @@ const mockApprovalsResponse = {
         pulp_href: '/api/galaxy/pulp/api/v3/content/ansible/collection_versions/789/',
       },
       repository: {
-        name: 'staging',
+        name: 'published',
         pulp_href: '/api/galaxy/pulp/api/v3/repositories/ansible/ansible/012/',
-        pulp_labels: {
-          pipeline: 'staging',
-        },
       },
       is_signed: false,
       is_highest: true,
@@ -59,7 +53,7 @@ const mockEmptyResponse = {
   data: [],
 };
 
-describe('Approvals Component', () => {
+describe('Collections Component', () => {
   let server: ReturnType<typeof setupServer>;
 
   beforeAll(() => {
@@ -74,7 +68,7 @@ describe('Approvals Component', () => {
     beforeEach(() => {
       server.use(
         http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
-          HttpResponse.json(mockApprovalsResponse)
+          HttpResponse.json(mockCollectionsResponse)
         )
       );
     });
@@ -82,32 +76,16 @@ describe('Approvals Component', () => {
     it('should render page title and description', async () => {
       render(
         <MemoryRouter>
-          <Approvals />
+          <Collections />
         </MemoryRouter>
       );
 
-      expect(
-        await screen.findByRole('heading', { name: 'Collection Approvals' })
-      ).toBeInTheDocument();
+      expect(await screen.findByRole('heading', { name: 'Collections' })).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
+          'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
         )
       ).toBeInTheDocument();
-    });
-
-    it('should render correct column headers', async () => {
-      render(
-        <MemoryRouter>
-          <Approvals />
-        </MemoryRouter>
-      );
-
-      await screen.findByRole('heading', { name: 'Collection Approvals' });
-
-      expect(screen.getByRole('columnheader', { name: 'Namespace' })).toBeInTheDocument();
-      expect(screen.getByRole('columnheader', { name: 'Collection' })).toBeInTheDocument();
-      expect(screen.getByRole('columnheader', { name: 'Version' })).toBeInTheDocument();
     });
   });
 
@@ -115,7 +93,7 @@ describe('Approvals Component', () => {
     beforeEach(() => {
       server.use(
         http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
-          HttpResponse.json(mockApprovalsResponse)
+          HttpResponse.json(mockCollectionsResponse)
         )
       );
     });
@@ -123,17 +101,14 @@ describe('Approvals Component', () => {
     it('should render collections from API response', async () => {
       render(
         <MemoryRouter>
-          <Approvals />
+          <Collections />
         </MemoryRouter>
       );
 
-      await screen.findByRole('heading', { name: 'Collection Approvals' });
+      await screen.findByRole('heading', { name: 'Collections' });
 
-      // Verify fixture collections are rendered
       expect(await screen.findByText('test_collection')).toBeInTheDocument();
-      expect(screen.getByText('test_namespace')).toBeInTheDocument();
       expect(screen.getByText('another_collection')).toBeInTheDocument();
-      expect(screen.getByText('another_namespace')).toBeInTheDocument();
     });
   });
 
@@ -146,23 +121,19 @@ describe('Approvals Component', () => {
       );
     });
 
-    it('should show empty state when no approvals exist', async () => {
+    it('should show empty state when no collections exist', async () => {
       render(
         <MemoryRouter>
-          <Approvals />
+          <Collections />
         </MemoryRouter>
       );
 
-      await screen.findByRole('heading', { name: 'Collection Approvals' });
+      await screen.findByRole('heading', { name: 'Collections' });
 
-      // The component applies default filters (pipeline=staging),
-      // so it shows the filtered empty state instead of the true empty state
       await waitFor(() => {
-        expect(screen.getByText('No results found')).toBeInTheDocument();
+        expect(screen.getByText('No collections yet')).toBeInTheDocument();
       });
-      expect(
-        screen.getByText('No results match this filter criteria. Clear all filters and try again.')
-      ).toBeInTheDocument();
+      expect(screen.getByText('To get started, upload a collection.')).toBeInTheDocument();
     });
   });
 
@@ -176,18 +147,16 @@ describe('Approvals Component', () => {
 
       render(
         <MemoryRouter>
-          <Approvals />
+          <Collections />
         </MemoryRouter>
       );
 
       await waitFor(() => {
-        expect(
-          screen.getByText('You do not have access to Collection Approvals')
-        ).toBeInTheDocument();
+        expect(screen.getByText('You do not have access to Collections')).toBeInTheDocument();
       });
     });
 
-    it('should render PageTable for non-403 errors', async () => {
+    it('should render error state for non-403 errors', async () => {
       server.use(
         http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
           HttpResponse.json({ detail: 'Internal Server Error' }, { status: 500 })
@@ -196,15 +165,14 @@ describe('Approvals Component', () => {
 
       render(
         <MemoryRouter>
-          <Approvals />
+          <Collections />
         </MemoryRouter>
       );
 
-      await screen.findByRole('heading', { name: 'Collection Approvals' });
+      await screen.findByRole('heading', { name: 'Collections' });
 
-      // For non-403 errors, the PageTable should still render with an error state
       await waitFor(() => {
-        expect(screen.getByText('Error loading approvals')).toBeInTheDocument();
+        expect(screen.getByText('Error loading collections')).toBeInTheDocument();
       });
     });
   });
