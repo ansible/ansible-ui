@@ -20,6 +20,8 @@ import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
@@ -48,6 +50,19 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
   const { data: credentialResponse } = useGet<AwxItemsResponse<Credential>>(
     awxAPI`/schedules/${params.schedule_id || ''}/credentials/`
   );
+
+  // Fetch the unified job template to get scm_branch when it's set on the template
+  // but not on the schedule (i.e., when prompt on launch is not enabled)
+  const unifiedJobType = schedule?.summary_fields?.unified_job_template?.unified_job_type;
+  const templateId = schedule?.summary_fields?.unified_job_template?.id;
+  const shouldFetchTemplate =
+    (unifiedJobType === 'job' || unifiedJobType === 'workflow_job') && templateId;
+  const templateUrl = shouldFetchTemplate
+    ? unifiedJobType === 'job'
+      ? awxAPI`/job_templates/${templateId.toString()}/`
+      : awxAPI`/workflow_job_templates/${templateId.toString()}/`
+    : undefined;
+  const { data: template } = useGet<JobTemplate | WorkflowJobTemplate>(templateUrl);
   const jobTags =
     typeof schedule?.job_tags === 'string'
       ? parseStringToTagArray(schedule?.job_tags)
@@ -122,6 +137,9 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
         <PageDetail label={t('Inventory')}>{schedule.summary_fields.inventory?.name}</PageDetail>
         <PageDetail label={t('Execution Envionment')}>
           {schedule.summary_fields.execution_environment?.name}
+        </PageDetail>
+        <PageDetail label={t('Source control branch')}>
+          {schedule.scm_branch || template?.scm_branch}
         </PageDetail>
         <PageDetail label={t('Job type')}>{schedule.job_type}</PageDetail>
         <PageDetail label={t('Limit')}>{schedule.limit}</PageDetail>
