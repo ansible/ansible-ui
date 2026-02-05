@@ -98,6 +98,11 @@ export function ScheduleReviewStep() {
 
           <PageDetail label={t('Local time zone')}>{timezone}</PageDetail>
           <PageDetail label={t('Days of data to keep')}>{schedule_days_to_keep}</PageDetail>
+          {!hasPromptDetails && (
+            <PageDetail label={t('Source control branch')}>
+              {resource && 'scm_branch' in resource ? resource.scm_branch : undefined}
+            </PageDetail>
+          )}
           {hasPromptDetails ? <PromptReviewDetails /> : null}
         </PageDetails>
         <PageDetail fullWidth label={t('Toggle timezone')}>
