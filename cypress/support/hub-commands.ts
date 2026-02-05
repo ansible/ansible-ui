@@ -18,12 +18,16 @@ import { HubDistribution } from '@ansible/hub-ui/interfaces/expanded/HubDistribu
 import { HubRbacRole } from '@ansible/hub-ui/interfaces/expanded/HubRbacRole';
 import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { SetRequired } from 'type-fest';
-import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
+
+const ExecutionEnvironments = {
+  title: 'Execution Environments',
+  url: 'execution-environments',
+};
 
 export interface HubRequestOptions {
   method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
