@@ -1,21 +1,23 @@
-import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { PageTable, PageLayoutWithUnauthorized } from '@ansible/ansible-ui-framework';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
+import { useHubConfig } from '../../common/useHubConfig';
 import { useHubView } from '../../common/useHubView';
+import { isAccessDeniedError } from '../../common/utils/errorUtils';
 import { CollectionVersionSearch } from './Approval';
 import { useApprovalActions } from './hooks/useApprovalActions';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsActions } from './hooks/useApprovalsActions';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
-import { useHubConfig } from '../../common/useHubConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Approvals() {
   const { t } = useTranslation();
   const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
   const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'collectionApprovals');
 
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
@@ -28,19 +30,23 @@ export function Approvals() {
   const rowActions = useApprovalActions(view.unselectItemsAndRefresh);
   const toolbarActions = useApprovalsActions(view.unselectItemsAndRefresh);
 
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  const description = t(
+    'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
+  );
+
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Collection Approvals')}
-        description={t(
-          'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
-        )}
-        titleHelpTitle={t('Collection Approvals')}
-        titleHelp={t(
-          'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
-        )}
-        titleDocLink={useGetDocsUrl(config, 'collectionApprovals')}
-      />
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Collection Approvals')}
+      title={t('Collection Approvals')}
+      description={description}
+      titleHelpTitle={t('Collection Approvals')}
+      titleHelp={description}
+      titleDocLink={docsUrl}
+    >
       <PageTable<CollectionVersionSearch>
         id="hub-collection-version-search-table"
         toolbarFilters={toolbarFilters}
@@ -52,6 +58,6 @@ export function Approvals() {
         {...view}
         defaultSubtitle={t('Collection Approval')}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }

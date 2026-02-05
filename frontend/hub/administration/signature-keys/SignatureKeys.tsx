@@ -6,36 +6,38 @@ import {
   IToolbarFilter,
   PageActionSelection,
   PageActionType,
-  PageHeader,
-  PageLayout,
   PageTable,
   TextCell,
   ToolbarFilterType,
+  PageLayoutWithUnauthorized,
 } from '@ansible/ansible-ui-framework';
 import { downloadTextFile } from '@ansible/ansible-ui-framework/utils/download-file';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
-import { useHubView } from '../../common/useHubView';
-import { SignatureKey } from './SignatureKey';
 import { useHubConfig } from '../../common/useHubConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
+import { useHubView } from '../../common/useHubView';
+import { isAccessDeniedError } from '../../common/utils/errorUtils';
+import { SignatureKey } from './SignatureKey';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('Automation Hub');
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
+  const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'signatureKeys');
+
   const view = useHubView<SignatureKey>({
     url: pulpAPI`/signing-services/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,
     tableColumns,
   });
-  const config = useHubConfig();
 
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
@@ -51,21 +53,25 @@ export function SignatureKeys() {
     ],
     [t]
   );
+
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  const description = t(
+    'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on {{product}}.',
+    { product }
+  );
+
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Signature Keys')}
-        titleHelpTitle={t('Signature Keys')}
-        titleHelp={t(
-          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on {{product}}.',
-          { product }
-        )}
-        description={t(
-          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on {{product}}.',
-          { product }
-        )}
-        titleDocLink={useGetDocsUrl(config, 'signatureKeys')}
-      />
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Signature Keys')}
+      title={t('Signature Keys')}
+      titleHelpTitle={t('Signature Keys')}
+      titleHelp={description}
+      description={description}
+      titleDocLink={docsUrl}
+    >
       <PageTable<SignatureKey>
         id="hub-signature-keys-table"
         toolbarFilters={toolbarFilters}
@@ -78,7 +84,7 @@ export function SignatureKeys() {
         )}
         {...view}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }
 

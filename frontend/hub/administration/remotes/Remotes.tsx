@@ -1,19 +1,24 @@
-import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  PageTable,
+  useGetPageUrl,
+  PageLayoutWithUnauthorized,
+} from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
+import { useHubConfig } from '../../common/useHubConfig';
 import { useHubView } from '../../common/useHubView';
+import { isAccessDeniedError } from '../../common/utils/errorUtils';
 import { HubRoute } from '../../main/HubRoutes';
 import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
 import { useRemoteToolbarActions } from './hooks/useRemoteToolbarActions';
-import { useHubConfig } from '../../common/useHubConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export interface HubRemote {
   auth_url?: string | null;
@@ -42,6 +47,8 @@ export function Remotes() {
   const tableColumns = useRemoteColumns();
   const getPageUrl = useGetPageUrl();
   const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'remotes');
+
   const view = useHubView<HubRemote>({
     url: pulpAPI`/remotes/ansible/collection/`,
     keyFn: pulpHrefKeyFn,
@@ -51,19 +58,23 @@ export function Remotes() {
   const toolbarActions = useRemoteToolbarActions(view);
   const rowActions = useRemoteActions({ onRemotesDeleted: view.unselectItemsAndRefresh });
 
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  const description = t(
+    'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+  );
+
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Remotes')}
-        description={t(
-          'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
-        )}
-        titleHelpTitle={t('Remotes')}
-        titleHelp={t(
-          'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
-        )}
-        titleDocLink={useGetDocsUrl(config, 'remotes')}
-      />
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Remotes')}
+      title={t('Remotes')}
+      description={description}
+      titleHelpTitle={t('Remotes')}
+      titleHelp={description}
+      titleDocLink={docsUrl}
+    >
       <PageTable<HubRemote>
         id="hub-remotes-table"
         defaultSubtitle={t('Remote')}
@@ -90,6 +101,6 @@ export function Remotes() {
         toolbarFilters={toolbarFilters}
         {...view}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }

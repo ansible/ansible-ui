@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { pulpAPI } from '../../common/api/formatPath';
 import { HubRemote, Remotes } from './Remotes';
 
 const mockRemotes: HubRemote[] = [
@@ -30,161 +31,192 @@ const mockRemotesResponse = {
   results: mockRemotes,
 };
 
-vi.mock('@ansible/ansible-ui-framework', async () => {
-  const actual = await vi.importActual('@ansible/ansible-ui-framework');
-  return {
-    ...actual,
-    usePageNavigate: () => vi.fn(),
-    useGetPageUrl: () => (route: string) => `/mock-url/${route}`,
-  };
-});
+const mockEmptyResponse = {
+  count: 0,
+  results: [],
+};
 
-vi.mock('../../common/useHubContext', () => ({
-  useHubContext: () => ({
-    featureFlags: {},
-    settings: {},
-    user: null,
-    hasPermission: () => true,
-  }),
-}));
+describe('Remotes Component', () => {
+  let server: ReturnType<typeof setupServer>;
 
-vi.mock('../../common/useHubConfig', () => ({
-  useHubConfig: () => ({
-    server: {},
-  }),
-}));
+  beforeAll(() => {
+    server = setupServer();
+    server.listen({ onUnhandledRequest: 'bypass' });
+  });
 
-vi.mock('./hooks/useRemoteActions', () => ({
-  useRemoteActions: () => [],
-}));
-
-vi.mock('./hooks/useRemoteToolbarActions', () => ({
-  useRemoteToolbarActions: () => [],
-}));
-
-describe('Remotes', () => {
-  const server = setupServer(
-    http.get(
-      ({ request }) => {
-        return request.url.includes('/remotes/ansible/collection/');
-      },
-      () => {
-        return HttpResponse.json(mockRemotesResponse);
-      }
-    )
-  );
-
-  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
-  afterAll(() => server.close());
   afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
 
-  test('should render remotes in table view', async () => {
-    const user = userEvent.setup();
-    render(
-      <MemoryRouter>
-        <Remotes />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('test-remote')).toBeInTheDocument();
+  describe('Page Structure', () => {
+    beforeEach(() => {
+      server.use(
+        http.get(pulpAPI`/remotes/ansible/collection/`, () =>
+          HttpResponse.json(mockRemotesResponse)
+        )
+      );
     });
 
-    const tableViewButton = screen.getByTestId('table-view');
-    await user.click(tableViewButton);
+    it('should render page title and description', async () => {
+      render(
+        <MemoryRouter>
+          <Remotes />
+        </MemoryRouter>
+      );
 
-    await waitFor(() => {
-      expect(screen.getByRole('row', { name: /test-remote/i })).toBeInTheDocument();
-    });
-  });
-
-  test('should switch between table, card, and list views', async () => {
-    const user = userEvent.setup();
-    render(
-      <MemoryRouter>
-        <Remotes />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('test-remote')).toBeInTheDocument();
-    });
-
-    // Switch to table view
-    const tableViewButton = screen.getByTestId('table-view');
-    await user.click(tableViewButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('test-remote')).toBeInTheDocument();
-    });
-
-    // Switch to card view (default view)
-    const cardViewButton = screen.getByTestId('card-view');
-    await user.click(cardViewButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('test-remote')).toBeInTheDocument();
-    });
-
-    // Switch to list view
-    const listViewButton = screen.getByTestId('list-view');
-    await user.click(listViewButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('test-remote')).toBeInTheDocument();
+      expect(await screen.findByRole('heading', { name: 'Remotes' })).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+        )
+      ).toBeInTheDocument();
     });
   });
 
-  test('should render empty state when no remotes', async () => {
-    server.use(
-      http.get(
-        ({ request }) => {
-          return request.url.includes('/remotes/ansible/collection/');
-        },
-        () => {
-          return HttpResponse.json({ count: 0, results: [] });
-        }
-      )
-    );
-
-    render(
-      <MemoryRouter>
-        <Remotes />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('No remotes yet')).toBeInTheDocument();
+  describe('Remotes Rendering', () => {
+    beforeEach(() => {
+      server.use(
+        http.get(pulpAPI`/remotes/ansible/collection/`, () =>
+          HttpResponse.json(mockRemotesResponse)
+        )
+      );
     });
 
-    expect(
-      screen.getByText(
-        'You can create a remote to provide a central location for users to search, retrieve, and install Ansible roles and collections.'
-      )
-    ).toBeInTheDocument();
-    expect(screen.getByText('Create remote')).toBeInTheDocument();
+    it('should render remotes in table view', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <Remotes />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('test-remote')).toBeInTheDocument();
+      });
+
+      const tableViewButton = screen.getByTestId('table-view');
+      await user.click(tableViewButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('row', { name: /test-remote/i })).toBeInTheDocument();
+      });
+    });
+
+    it('should switch between table, card, and list views', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <Remotes />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('test-remote')).toBeInTheDocument();
+      });
+
+      // Switch to table view
+      const tableViewButton = screen.getByTestId('table-view');
+      await user.click(tableViewButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('test-remote')).toBeInTheDocument();
+      });
+
+      // Switch to card view (default view)
+      const cardViewButton = screen.getByTestId('card-view');
+      await user.click(cardViewButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('test-remote')).toBeInTheDocument();
+      });
+
+      // Switch to list view
+      const listViewButton = screen.getByTestId('list-view');
+      await user.click(listViewButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('test-remote')).toBeInTheDocument();
+      });
+    });
   });
 
-  test('should handle error state', async () => {
-    server.use(
-      http.get(
-        ({ request }) => {
-          return request.url.includes('/remotes/ansible/collection/');
-        },
-        () => {
-          return HttpResponse.error();
-        }
-      )
-    );
+  describe('Empty State', () => {
+    beforeEach(() => {
+      server.use(
+        http.get(pulpAPI`/remotes/ansible/collection/`, () => HttpResponse.json(mockEmptyResponse))
+      );
+    });
 
-    render(
-      <MemoryRouter>
-        <Remotes />
-      </MemoryRouter>
-    );
+    it('should render empty state when no remotes', async () => {
+      render(
+        <MemoryRouter>
+          <Remotes />
+        </MemoryRouter>
+      );
 
-    await waitFor(() => {
-      expect(screen.getByText('Error loading remotes')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('No remotes yet')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'You can create a remote to provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+        )
+      ).toBeInTheDocument();
+      expect(screen.getByText('Create remote')).toBeInTheDocument();
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle error state', async () => {
+      server.use(http.get(pulpAPI`/remotes/ansible/collection/`, () => HttpResponse.error()));
+
+      render(
+        <MemoryRouter>
+          <Remotes />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Error loading remotes')).toBeInTheDocument();
+      });
+    });
+
+    it('should render unauthorized state for 403 error', async () => {
+      server.use(
+        http.get(pulpAPI`/remotes/ansible/collection/`, () =>
+          HttpResponse.json({ detail: 'Forbidden' }, { status: 403 })
+        )
+      );
+
+      render(
+        <MemoryRouter>
+          <Remotes />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('You do not have access to Remotes')).toBeInTheDocument();
+      });
+    });
+
+    it('should render error state for non-403 errors', async () => {
+      server.use(
+        http.get(pulpAPI`/remotes/ansible/collection/`, () =>
+          HttpResponse.json({ detail: 'Internal Server Error' }, { status: 500 })
+        )
+      );
+
+      render(
+        <MemoryRouter>
+          <Remotes />
+        </MemoryRouter>
+      );
+
+      await screen.findByRole('heading', { name: 'Remotes' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Error loading remotes')).toBeInTheDocument();
+      });
     });
   });
 });

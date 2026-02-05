@@ -1,12 +1,19 @@
-import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  PageTable,
+  useGetPageUrl,
+  PageLayoutWithUnauthorized,
+} from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { Button, ButtonVariant, Flex } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../common/api/formatPath';
+import { useHubConfig } from '../common/useHubConfig';
 import { useHubView } from '../common/useHubView';
+import { isAccessDeniedError } from '../common/utils/errorUtils';
 import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
@@ -16,8 +23,6 @@ import {
   useExecutionEnvironmentsActions,
 } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
-import { useHubConfig } from '../common/useHubConfig';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -26,6 +31,7 @@ export function ExecutionEnvironments() {
   const getPageUrl = useGetPageUrl();
   const eePush = useEEPush();
   const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'hubExecutionEnvironments');
 
   const view = useHubView<ExecutionEnvironment>({
     url: hubAPI`/v3/plugin/execution-environments/repositories/`,
@@ -37,20 +43,23 @@ export function ExecutionEnvironments() {
   const toolbarActions = useExecutionEnvironmentsActions(view.unselectItemsAndRefresh);
   const rowActions = useExecutionEnvironmentActions(view.unselectItemsAndRefresh);
 
-  return (
-    <PageLayout>
-      <PageHeader
-        title={t('Execution Environments')}
-        titleHelpTitle={t('Execution Environments')}
-        titleHelp={t(
-          'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
-        )}
-        description={t(
-          'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
-        )}
-        titleDocLink={useGetDocsUrl(config, 'hubExecutionEnvironments')}
-      />
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
 
+  const description = t(
+    'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
+  );
+
+  return (
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Execution Environments')}
+      title={t('Execution Environments')}
+      titleHelpTitle={t('Execution Environments')}
+      titleHelp={description}
+      description={description}
+      titleDocLink={docsUrl}
+    >
       <PageTable<ExecutionEnvironment>
         id="hub-execution-environments-table"
         toolbarFilters={toolbarFilters}
@@ -81,6 +90,6 @@ export function ExecutionEnvironments() {
         }
         {...view}
       />
-    </PageLayout>
+    </PageLayoutWithUnauthorized>
   );
 }
