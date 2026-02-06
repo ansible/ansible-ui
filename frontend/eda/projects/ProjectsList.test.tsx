@@ -142,6 +142,9 @@ describe('Projects List Component', () => {
 
       await screen.findByRole('heading', { name: 'Projects' });
 
+      // Wait for empty state (no POST) so cached data from previous tests is not shown
+      await screen.findByText('You do not have permission to create a project.');
+
       // Verify no projects are shown
       expect(screen.queryByText('project-1')).not.toBeInTheDocument();
       expect(screen.queryByText('project-2')).not.toBeInTheDocument();
