@@ -34,6 +34,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('Automation controller');
   const module = useWatch<RunCommandWizard>({
     name: 'module_name',
   });
@@ -64,7 +65,9 @@ export function RunCommandDetailStep() {
         label={t('Module')}
         options={moduleOptions}
         labelHelpTitle={t('Module')}
-        labelHelp={t(`These are the modules that AWX supports running commands against.`)}
+        labelHelp={t(`These are the modules that {{product}} supports running commands against.`, {
+          product,
+        })}
       />
       <PageFormTextInput
         name="module_args"
@@ -137,7 +140,8 @@ export function RunCommandDetailStep() {
         label={t('Privilege escalation')}
         labelHelpTitle={t('Privilege escalation')}
         labelHelp={t(
-          `Enables creation of a provisioning callback URL. Using the URL a host can contact AWX and request a configuration update using this job template --become option to the  ansible command`
+          `Enables creation of a provisioning callback URL. Using the URL a host can contact {{product}} and request a configuration update using this job template --become option to the ansible command`,
+          { product }
         )}
       />
       <PageFormDataEditor
