@@ -21,7 +21,7 @@ test.describe('Organization User and Team Management', () => {
   let user1Name: string;
   let user2Name: string;
 
-  // Check build type and skip for SaaS/Azure - must be in beforeAll for skip to work
+  // Check build type and skip for SaaS/Azure - must be in beforeAll for skip to work (backported from fix-playwright-skip-logic)
   test.beforeAll(async ({ browser }) => {
     const page = await browser.newPage();
     const buildType = await checkBuildType(page);

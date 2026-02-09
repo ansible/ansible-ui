@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(setupAfter);
 
-// Persona switcher is not available on SaaS deployments
+// Persona switcher is not available on SaaS deployments (skip logic backported from fix-playwright-skip-logic)
 test.describe('Persona Switcher', () => {
   // Skip all tests in this describe block on SaaS
   test.beforeEach(async ({ page }) => {

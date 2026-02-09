@@ -20,7 +20,7 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
 
-// Rulebook activations are not available on SaaS deployments
+// Rulebook activations are not available on SaaS deployments (skip logic backported from fix-playwright-skip-logic)
 test.describe('Rulebook Activations', () => {
   let organizationName: string;
   let projectName: string;

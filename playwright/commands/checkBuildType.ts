@@ -1,34 +1,14 @@
 import { Page } from '@playwright/test';
-import { AAP_DEV_LOCALHOST_URL, AZURE_URL, OCP_A_URL, SAAS_URL } from './constants';
+import { AZURE_URL, OCP_A_URL, SAAS_URL } from './constants';
 import { platformUI } from './login';
 
 // Re-export constants for convenience
+// Note: AAP_DEV_LOCALHOST_URL is exported for backwards compatibility but checkBuildType()
+// no longer returns it because we can't reliably distinguish dev localhost from RPM builds
 export { AAP_DEV_LOCALHOST_URL, AZURE_URL, OCP_A_URL, SAAS_URL } from './constants';
 
 interface Settings {
   TOWER_URL_BASE: string;
-}
-
-/**
- * Helper function to check if a URL is a localhost URL (AAP dev environment)
- */
-function isLocalhostUrl(url: string): boolean {
-  try {
-    const parsedUrl = new URL(url);
-    return (
-      parsedUrl.hostname === 'localhost' ||
-      parsedUrl.hostname === '127.0.0.1' ||
-      parsedUrl.hostname === '::1'
-    );
-  } catch {
-    // If URL parsing fails, fall back to string matching
-    return (
-      url.includes('localhost:') ||
-      url.includes('127.0.0.1:') ||
-      url.includes('localhost/') ||
-      url.includes('127.0.0.1/')
-    );
-  }
 }
 
 /**
@@ -53,8 +33,10 @@ function getBuildTypeFromUrl(url: string): string {
 
 /**
  * Checks the build type by first checking the platformUI URL pattern (no auth needed),
- * then trying the API for TOWER_URL_BASE (requires page to be logged in),
- * and falling back to localhost detection.
+ * then trying the API for TOWER_URL_BASE (requires page to be logged in).
+ *
+ * Only returns a value for known cloud deployments (SAAS, AZURE, OCP).
+ * Returns empty string for RPM, containerized, and local dev builds.
  *
  * @param page - The Playwright Page object (must be logged in for API call to work)
  * @returns Promise<string> - Returns the build type URL or empty string
@@ -82,11 +64,8 @@ export async function checkBuildType(page: Page): Promise<string> {
     // API call failed, continue to fallback
   }
 
-  // Fallback: check if platformUI is localhost - this indicates AAP dev environment
-  // (e.g., ephemeral AAP deployments use localhost:4100 as the UI endpoint)
-  if (isLocalhostUrl(platformUI)) {
-    return AAP_DEV_LOCALHOST_URL;
-  }
-
+  // No known build type detected - return empty string
+  // Note: We intentionally don't detect localhost as AAP_DEV_LOCALHOST because
+  // RPM/containerized builds also use localhost when PLATFORM_UI is not set
   return '';
 }
