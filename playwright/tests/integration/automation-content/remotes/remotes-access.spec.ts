@@ -14,7 +14,7 @@ import { PlatformTeam as TeamType } from '@ansible/platform-ui/interfaces/Platfo
 import { PlatformUser as UserType } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { PlatformRole as RoleType } from '@ansible/platform-ui/interfaces/PlatformRole';
 
-test.beforeEach(setupBefore());
+test.beforeEach(setupBefore({ path: '/content/administration/remotes' }));
 test.afterEach(setupAfter);
 
 test.describe('Hub - Remotes Access', () => {

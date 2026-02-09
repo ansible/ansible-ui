@@ -2,19 +2,18 @@ import { AZURE_URL, checkBuildType, SAAS_URL } from '@ansible/playwright/command
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
-import { platformUI } from '@ansible/playwright/commands/login';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Remote, type HubRemote } from '@ansible/playwright/utils/hub';
 import { expect, test } from '@playwright/test';
 import { promises as fs } from 'node:fs';
 
+test.beforeEach(setupBefore({ path: '/content/administration/remotes' }));
 test.afterEach(setupAfter);
 
 test.describe('Hub - Remotes', () => {
   test.beforeAll(async ({ browser }) => {
     const page = await browser.newPage();
-    await setupBefore()({ page });
     const buildType = await checkBuildType(page);
     await page.close();
 
@@ -23,10 +22,6 @@ test.describe('Hub - Remotes', () => {
     }
   });
 
-  test.beforeEach(async ({ page }) => {
-    await setupBefore()({ page });
-    await page.goto(`${platformUI}/administration/remotes`);
-  });
   test('should bulk delete remotes', { tag: ['@not_mock'] }, async ({ page }) => {
     const remoteNames: string[] = [];
     const testSignature = createE2EName().replace('E2E ', '');
