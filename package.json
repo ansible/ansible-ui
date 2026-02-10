@@ -78,7 +78,7 @@
     "migrate:testid": "tsx scripts/migrate-data-cy-to-testid.ts"
   },
   "dependencies": {
-    "@ansible/ansible-ai-connect-chatbot": "0.1.7",
+    "@ansible/ansible-ai-connect-chatbot": "0.1.8",
     "@ansible/react-json-chart-builder": "3.0.0",
     "@babel/core": "7.26.7",
     "@babel/plugin-proposal-object-rest-spread": "7.20.7",
