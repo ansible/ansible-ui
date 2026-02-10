@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -131,7 +132,6 @@ describe('Create Decision Environment Form', () => {
     expect(screen.getByRole('button', { name: /Pull/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Credential/i })).toBeInTheDocument();
 
-    // Required fields
     expect(within(screen.getByTestId('name-form-group')).getByText('*')).toBeInTheDocument();
     expect(within(screen.getByTestId('image-url-form-group')).getByText('*')).toBeInTheDocument();
     expect(

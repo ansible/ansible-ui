@@ -122,6 +122,10 @@ describe('Projects List Component', () => {
       results: [],
     };
 
+    beforeEach(() => {
+      server.resetHandlers();
+    });
+
     it('should show empty state without create button when no POST permission', async () => {
       server.use(
         http.options(edaAPI`/projects/`, () =>
@@ -146,11 +150,11 @@ describe('Projects List Component', () => {
       await screen.findByText('You do not have permission to create a project.');
 
       // Verify no projects are shown
-      expect(screen.queryByText('project-1')).not.toBeInTheDocument();
-      expect(screen.queryByText('project-2')).not.toBeInTheDocument();
+      expect(screen.queryByText('project-1')).toBeNull();
+      expect(screen.queryByText('project-2')).toBeNull();
 
       // Verify no create button is present
-      expect(screen.queryByRole('link', { name: /Create project/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: /Create project/i })).toBeNull();
     });
 
     it('should show empty state with create button when has POST permission', async () => {
