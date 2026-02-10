@@ -143,7 +143,7 @@ jobs:
         with:
           red_hat_registry_user: ${{ secrets.RED_HAT_REGISTRY_USER }}
           red_hat_registry_token: ${{ secrets.RED_HAT_REGISTRY_TOKEN }}
-          aap_version: '2.6'
+          aap_version: '2.7'
           aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
           aap_test_secrets_repo_github_token: ${{ secrets.AAP_TEST_SECRETS_REPO_GITHUB_TOKEN }}
           quay_registry_user: ${{ secrets.QUAY_AAP_DEV_USERNAME }}
