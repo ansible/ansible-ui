@@ -1,5 +1,5 @@
 import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -148,9 +148,14 @@ describe('OAuthApplicationForm', () => {
 
   beforeAll(() => {
     server.listen();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
+    // Flush all pending timers to prevent async cleanup errors from debounce
+    act(() => {
+      vi.runAllTimers();
+    });
     server.resetHandlers();
     vi.clearAllMocks();
     mockPushDialog.mockClear();
@@ -158,6 +163,7 @@ describe('OAuthApplicationForm', () => {
   });
 
   afterAll(() => {
+    vi.useRealTimers();
     server.close();
   });
 

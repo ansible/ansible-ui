@@ -1,12 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import { GatewaySettingsDetails } from './GatewaySettingsDetails';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { GatewaySettingsDetails } from './GatewaySettingsDetails';
 
-// Mock react-router-dom
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
@@ -17,14 +14,12 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mock useTranslation
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),
 }));
 
-// Mock useGatewaySettingsCategories
 vi.mock('./GatewaySettingsCategories', () => ({
   useGatewaySettingsCategories: vi.fn(),
 }));
@@ -38,11 +33,8 @@ describe('GatewaySettingsDetails Component', () => {
     const routerModule = await import('react-router-dom');
     vi.mocked(routerModule).useOutletContext = mockUseOutletContext;
 
-    // Get the mocked function
     const categoriesModule = await import('./GatewaySettingsCategories');
     mockUseGatewaySettingsCategories = vi.mocked(categoriesModule).useGatewaySettingsCategories;
-
-    // Default mock for useGatewaySettingsCategories
     mockUseGatewaySettingsCategories.mockReturnValue([
       {
         id: 'test-category',
@@ -104,7 +96,7 @@ describe('GatewaySettingsDetails Component', () => {
   };
 
   describe('Admin User (hasWritePermissions: true)', () => {
-    it('shows edit button for admin user', () => {
+    it('should show edit button for admin user', () => {
       renderWithContext();
 
       const editButton = screen.getByRole('button', { name: 'Edit platform gateway settings' });
@@ -112,19 +104,15 @@ describe('GatewaySettingsDetails Component', () => {
       expect(editButton).toHaveTextContent('Edit platform gateway settings');
     });
 
-    it('edit button is clickable for admin user', () => {
+    it('should have clickable edit button for admin user', () => {
       renderWithContext();
 
       const editButton = screen.getByRole('button', { name: 'Edit platform gateway settings' });
-
-      // Click the edit button - should not throw an error
       expect(() => editButton.click()).not.toThrow();
-
-      // Verify the button is enabled and clickable
       expect(editButton).not.toBeDisabled();
     });
 
-    it('navigates to edit page when edit button is clicked', () => {
+    it('should navigate to edit page when edit button is clicked', () => {
       renderWithContext();
 
       const editButton = screen.getByRole('button', { name: 'Edit platform gateway settings' });
@@ -151,7 +139,7 @@ describe('GatewaySettingsDetails Component', () => {
       hasWritePermissions: boolean;
     };
 
-    it('does not show edit button for platform auditor', () => {
+    it('should not show edit button for platform auditor', () => {
       renderWithContext(auditorContext);
 
       const editButton = screen.queryByRole('button', { name: 'Edit platform gateway settings' });

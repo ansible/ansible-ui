@@ -117,11 +117,6 @@ jobs:
       matrix:
         directory:
           - frontend/awx
-          - frontend/eda
-          - frontend/hub
-          - frontend/common
-          - framework
-          - platform
     uses: ./.github/workflows/component.yml
     with:
       directory: ${{ matrix.directory }}
@@ -202,6 +197,13 @@ jobs:
       - name: Success Check
         if: ${{ needs.checks.result == 'success' && needs.vitest-coverage.result == 'success' && needs.component.result == 'success' && needs.hub-insights.result == 'success' }}
         run: echo "All jobs succeeded"
+      - name: Log dependency results
+        if: ${{ needs.checks.result != 'success' || needs.vitest-coverage.result != 'success' || needs.component.result != 'success' || needs.hub-insights.result != 'success' }}
+        run: |
+          echo "checks: ${{ needs.checks.result }}"
+          echo "vitest-coverage: ${{ needs.vitest-coverage.result }}"
+          echo "component: ${{ needs.component.result }}"
+          echo "hub-insights: ${{ needs.hub-insights.result }}"
       - name: Failure or Cancelled
         if: ${{ needs.checks.result != 'success' || needs.vitest-coverage.result != 'success' || needs.component.result != 'success' || needs.hub-insights.result != 'success' }}
         run: |

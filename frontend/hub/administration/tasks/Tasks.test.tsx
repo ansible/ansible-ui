@@ -1,16 +1,24 @@
-import { render, screen, waitFor } from '@testing-library/react';
+/* eslint-disable i18next/no-literal-string */
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { pulpAPI } from '../../common/api/formatPath';
 import { Tasks } from './Tasks';
+
+// Mock useHubContext
+vi.mock('../../common/useHubContext', () => ({
+  useHubContext: () => ({
+    hasPermission: () => true,
+  }),
+}));
 
 const mockTasksResponse = {
   count: 2,
   results: [
     {
-      name: 'test-task',
+      name: 'pulp_ansible.app.tasks.copy.move_collection',
       pulp_href: '/api/galaxy/pulp/api/v3/tasks/123/',
       pulp_created: '2024-01-01T00:00:00.000000Z',
       created_by: 'admin',
@@ -27,12 +35,12 @@ const mockTasksResponse = {
       reserved_resources_record: [],
     },
     {
-      name: 'another-task',
+      name: 'galaxy_ng.app.tasks.namespaces._create_pulp_namespace',
       pulp_href: '/api/galaxy/pulp/api/v3/tasks/456/',
       pulp_created: '2024-01-02T00:00:00.000000Z',
       created_by: 'admin',
       started_at: '2024-01-02T00:00:00.000000Z',
-      finished_at: '2024-01-02T00:01:00.000000Z',
+      finished_at: null,
       state: 'running' as const,
       worker: 'worker-2',
       logging_cid: 'cid-2',
@@ -109,8 +117,12 @@ describe('Tasks Component', () => {
 
       await screen.findByRole('heading', { name: 'Task Management' });
 
-      expect(await screen.findByText('test-task')).toBeInTheDocument();
-      expect(screen.getByText('another-task')).toBeInTheDocument();
+      expect(
+        await screen.findByText('pulp_ansible.app.tasks.copy.move_collection')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('galaxy_ng.app.tasks.namespaces._create_pulp_namespace')
+      ).toBeInTheDocument();
     });
   });
 
@@ -171,6 +183,54 @@ describe('Tasks Component', () => {
       await waitFor(() => {
         expect(screen.getByText('Error loading tasks')).toBeInTheDocument();
       });
+    });
+  });
+
+  describe('Stop Action', () => {
+    beforeEach(() => {
+      server.use(http.get(pulpAPI`/tasks/`, () => HttpResponse.json(mockTasksResponse)));
+    });
+
+    it('should disable stop action for completed tasks', async () => {
+      render(
+        <MemoryRouter>
+          <Tasks />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('pulp_ansible.app.tasks.copy.move_collection')).toBeInTheDocument();
+      });
+
+      const completedRow = screen
+        .getByText('pulp_ansible.app.tasks.copy.move_collection')
+        .closest('tr');
+      expect(completedRow).toBeInTheDocument();
+
+      const stopButton = within(completedRow as HTMLElement).getByTestId('stop-task');
+      expect(stopButton).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('should enable stop action for running tasks', async () => {
+      render(
+        <MemoryRouter>
+          <Tasks />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('galaxy_ng.app.tasks.namespaces._create_pulp_namespace')
+        ).toBeInTheDocument();
+      });
+
+      const runningRow = screen
+        .getByText('galaxy_ng.app.tasks.namespaces._create_pulp_namespace')
+        .closest('tr');
+      expect(runningRow).toBeInTheDocument();
+
+      const stopButton = within(runningRow as HTMLElement).getByTestId('stop-task');
+      expect(stopButton).not.toHaveAttribute('aria-disabled', 'true');
     });
   });
 });

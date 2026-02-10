@@ -1,11 +1,10 @@
+import { edaAPI, setEdaApiPath } from '@ansible/eda-ui/common/eda-utils';
 import { render, screen, waitFor, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi, beforeAll, afterEach, afterAll } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { MemoryRouter } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { EdaRuleAuditCard } from './EdaRuleAuditCard';
-import { setEdaApiPath } from '@ansible/eda-ui/common/eda-utils';
 
 describe('EdaRuleAuditCard', () => {
   const server = setupServer();
@@ -112,6 +111,7 @@ describe('EdaRuleAuditCard', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Rule Audit')).toBeInTheDocument();
+      expect(screen.getByText('Error loading rule audit records')).toBeInTheDocument();
     });
   });
 });
