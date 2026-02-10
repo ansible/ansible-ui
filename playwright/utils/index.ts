@@ -57,6 +57,8 @@ export { RulebookActivation } from './rulebookActivation';
 export { Namespace } from './namespace';
 export { RemoteRegistry } from './remoteRegistry';
 export { Remote, type HubRemote, type CreateRemoteOptions } from './hub';
+export { ExecutionEnvironment as HubExecutionEnvironment } from './hub';
+export type { CreateExecutionEnvironmentOptions } from './hub';
 
 // Resource modules - Platform
 export { Authentication } from './authentication';
