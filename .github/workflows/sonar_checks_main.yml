@@ -118,14 +118,14 @@ jobs:
   deploy-and-test:
     name: ${{ inputs.aap_url && 'Test Pre-deployed AAP' || 'Deploy AAP' }} (Shard ${{ matrix.shard }})
     runs-on: ${{ inputs.aap_url && 'ubuntu-latest' || 'aap-dev' }}
-    timeout-minutes: 120
+    timeout-minutes: 180
     concurrency:
       group: sonar-main-playwright-shard-${{ matrix.shard }}-${{ github.run_id }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -222,16 +222,16 @@ jobs:
       - name: List tests in this shard
         working-directory: playwright
         run: |
-          echo "=== Tests assigned to shard ${{ matrix.shard }}/4 ==="
-          npx playwright test --list --project="live chromium" --shard=${{ matrix.shard }}/4 || true
+          echo "=== Tests assigned to shard ${{ matrix.shard }}/5 ==="
+          npx playwright test --list --project="live chromium" --shard=${{ matrix.shard }}/5 || true
 
       - name: Run Playwright Tests
-        timeout-minutes: 120
+        timeout-minutes: 180
         working-directory: playwright
         run: |
           npx playwright test \
             --project="live chromium" \
-            --shard=${{ matrix.shard }}/4 \
+            --shard=${{ matrix.shard }}/5 \
             --retries=1
         env:
           PLATFORM_UI: https://localhost:4100
