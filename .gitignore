@@ -27,3 +27,7 @@
 /storybook-static
 results.xml
 /playwright/playwright/html-report/
+
+# Ignore generated migration spec files (keep the template)
+migration-specs/**/*.yaml
+!migration-specs/templates/*.yaml

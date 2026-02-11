@@ -1,0 +1,258 @@
+# Migration Specification Template
+# Copy this file to create new migration specs
+
+meta:
+  service: eda|hub|awx|platform  # Which service
+  category: roles|credentials|inventories|etc  # Feature category
+  priority: high|medium|low  # Migration priority
+  jira_ticket: AAP-XXXXX  # Optional: Associated Jira ticket
+  estimated_tests: 0  # Total number of test cases (it() blocks)
+  created_by: your-name  # Optional: Who created this spec
+  created_date: YYYY-MM-DD  # Optional: When created
+
+# List of test files to migrate
+tests:
+  - source: cypress/e2e/[service]/[category]/test-file.cy.ts
+    target: playwright/tests/integration/automation-[execution|decisions|content]/[category]/test-file.spec.ts
+    describe_block: "Main describe block name"
+    test_cases:
+      - name: "exact test name from it() block"
+        complexity: simple  # simple|medium|complex
+        vitest_candidate: false  # true if this should be a Vitest component test instead
+      - name: "another test name"
+        complexity: medium
+        vitest_candidate: false
+
+  # Add more test files as needed
+  - source: cypress/e2e/[service]/[category]/another-test.cy.ts
+    target: playwright/tests/integration/automation-[execution|decisions|content]/[category]/another-test.spec.ts
+    describe_block: "Another describe block"
+    test_cases:
+      - name: "test case 1"
+        complexity: simple
+        vitest_candidate: false
+
+  # Example: Test that should be converted to Vitest component test
+  - source: cypress/e2e/[service]/[category]/component-test.cy.ts
+    target: frontend/[service]/[category]/Component.test.tsx  # Vitest component test location
+    vitest_component_test: true  # This entire file should be a Vitest component test
+    component_path: frontend/[service]/[category]/Component.tsx
+    describe_block: "Component Name"
+    test_cases:
+      - name: "renders component correctly"
+        complexity: simple
+        vitest_candidate: true
+
+# API Resources used by these tests
+# Format: ResourceName: /api/endpoint/pattern/
+resources:
+  Organization: /api/gateway/v1/organizations/
+  # Add more resources as needed
+
+# Utilities available and needed
+utilities:
+  # List utilities that already exist in playwright/utils/ and playwright/commands/
+  available:
+    - clickTableRow
+    - getTableRow
+    - navigateTo
+    - confirmAndAssertDeletion
+    # List resource utilities: ResourceName.api.create, ResourceName.api.delete
+    - Organization.api.create
+    - Organization.api.delete
+
+  # List utilities that need to be created for this migration
+  needed:
+    - MyResource.api.create
+    - MyResource.api.delete
+    - MyResource.ui.create
+
+# Important notes, gotchas, and special considerations
+notes: |
+  Add any important information here:
+  - Special API payload requirements
+  - Unique selector patterns
+  - Workflow dependencies
+  - Known issues or workarounds
+  - data-testid availability (or lack thereof)
+  - Complex form interactions
+  - Pagination considerations
+  - Timing issues
+
+  ## CRITICAL: Follow Existing Playwright Patterns and Conventions
+
+  **ALWAYS look at existing Playwright tests before writing new code.**
+
+  **Search for patterns first:**
+  ```bash
+  # Search for how other tests handle similar scenarios
+  grep -r "kebab" playwright/tests --include="*.spec.ts" -B 2 -A 2
+  grep -r "card view" playwright/tests --include="*.spec.ts" -B 2 -A 2
+  grep -r "bulk delete" playwright/tests --include="*.spec.ts" -B 2 -A 2
+  ```
+
+  **Golden Rules:**
+  1. ✅ **DO**: Copy patterns from existing Playwright tests
+  2. ✅ **DO**: Use existing utilities from `playwright/commands/` and `playwright/utils/`
+  3. ✅ **DO**: Use semantic selectors (`getByRole`, `getByLabel`, `getByTestId`)
+  4. ❌ **DON'T**: Use `data-cy` selectors in Playwright tests - use `data-testid` or semantic selectors
+  5. ❌ **DON'T**: Invent new patterns when existing ones exist
+  6. ❌ **DON'T**: Write direct API calls when utilities exist
+
+  **Common Patterns to Follow:**
+  - Kebab menus: `page.getByLabel('kebab dropdown toggle')` or `row.getByLabel('kebab dropdown toggle')`
+  - Table rows: Use `clickTableRow()` or `getTableRow()` utilities - never manual filtering
+  - Bulk delete: Use `bulkDeleteResources()` utility
+  - Page actions: Use `clickPageAction()` utility
+  - Navigation: Use `navigateTo()` utility
+  - Filtering: Use `filterTable()` utility
+  - Deletion confirmation: Use `confirmAndAssertDeletion()` utility
+
+  **When in doubt:**
+  1. Search existing tests for similar workflows
+  2. Check `playwright/commands/` for available utilities
+  3. Check `playwright/utils/` for resource-specific utilities
+  4. Copy the pattern exactly as used in other tests
+  5. Never write custom code if a utility exists
+
+  ## CRITICAL: Follow Established Resource Patterns
+
+  **ALL resource interactions MUST use utilities from playwright/utils/**
+
+  - ✅ DO: `const resources = await Resource.api.getAll(page);`
+  - ❌ DON'T: `const resources = await edaAPI.get(page, '/resources/');`
+
+  **Pattern to follow:**
+  1. Check playwright/utils/ for existing resource utilities
+  2. Use Resource.api.* for API operations (create, delete, get, etc.)
+  3. Use Resource.ui.* for UI workflows (navigate, create via UI, edit, etc.)
+  4. If methods don't exist, add them to the utilities (list in "needed" section)
+
+  **Benefits:**
+  - Consistency across all tests
+  - Maintainability (one place to update API patterns)
+  - Type safety with proper TypeScript interfaces
+  - Reusability across test files
+
+  ## Selector Migration: data-cy → data-testid
+
+  **CRITICAL RULE: NEVER use `data-cy` selectors in Playwright tests!**
+
+  **Replace `data-cy` with `data-testid` or semantic selectors - don't add new test IDs where none exist.**
+
+  **Migration pattern:**
+  - Cypress: `cy.get('[data-cy="field-name"]')`
+  - Playwright: `page.getByTestId('field-name')` (if data-cy exists on component)
+  - Playwright: Use semantic selectors if data-cy doesn't exist
+
+  **Why no data-cy in Playwright:**
+  - `data-cy` is Cypress-specific convention
+  - `data-testid` is framework-agnostic
+  - Playwright prefers semantic selectors over test IDs
+  - Mixing `data-cy` and `data-testid` creates confusion
+
+  **If data-cy exists on the component:**
+  1. Add `data-testid` prop alongside existing `data-cy`
+  2. Keep both during migration (remove data-cy after all Cypress tests migrated)
+  3. Example:
+     ```tsx
+     // Before
+     <TextInput data-cy="username" />
+
+     // After - add data-testid alongside data-cy
+     <TextInput data-cy="username" data-testid="username" />
+     ```
+
+  **If data-cy does NOT exist:**
+  - Use semantic selectors instead (don't add new data-testid)
+  - Role-based: `page.getByRole('textbox', { name: 'Username', exact: true })`
+  - Label-based: `page.getByLabel('Username', { exact: true })`
+  - Placeholder: `page.getByPlaceholder('Enter username')`
+  - Text content: `page.getByText('Submit', { exact: true })`
+
+  **Component changes:**
+  - Only modify components that already have data-cy attributes
+  - Include component changes in the same commit as test migration
+  - Document modified components in commit message
+
+  ## Vitest vs Playwright Decision Guide
+
+  **Convert to Vitest Component Test if:**
+  - Test focuses on component rendering and UI state with mocked API data
+  - Test checks form validation logic (e.g., required field errors) without submitting
+  - Test validates list/table rendering and filtering with mocked API responses
+  - Test can use MSW (Mock Service Worker) to mock API endpoints
+  - Test doesn't require actual data persistence or backend state changes
+  - Test is isolated to a single page component or component tree
+  - Navigation can be mocked (doesn't need to verify routing changes)
+
+  **Examples of Vitest candidates:**
+  - "renders the page and verifies list items display" → Mock API list response
+  - "filters table by name" → Mock API responses with different filter params
+  - "cannot create without required fields" → Test form validation, no API call
+  - "displays error for invalid input" → Form validation only
+  - "shows/hides elements based on state" → Component state logic
+
+  **Keep as Playwright Integration Test if:**
+  - Test requires actual data persistence (create → verify it exists in DB)
+  - Test validates state changes that affect the backend (toggle switches that PATCH)
+  - Test checks actual API constraints beyond frontend validation
+  - Test checks RBAC/permissions with real backend authorization
+  - Test validates end-to-end workflows where backend state matters
+  - Test requires authentication flow with real session management
+  - Test involves DELETE operations and verifies resource is actually removed
+
+  **Examples of Playwright tests:**
+  - "can create a resource and view it on details page" → Needs real POST and persistence
+  - "can toggle resource state" → PATCH request, backend state change
+  - "can delete resource" → DELETE request, verify removal
+  - "cannot delete if resource is in use" → Real API constraint validation
+  - "can edit and save changes" → PATCH/PUT request, verify persistence
+
+  **Key Question:** "Does this test need to verify backend state changes, or just UI behavior?"
+  - UI behavior only (with mocked APIs) → Vitest
+  - Backend state changes/persistence → Playwright
+
+  **Migration Action:**
+  Mark test_cases with `vitest_candidate: true` if they should be Vitest tests.
+  AI will create both the Playwright test AND the Vitest component test as part of migration work.
+
+# Vitest component test configuration (if applicable)
+vitest_tests:
+  # List component tests to create alongside Playwright tests
+  # Example:
+  # - component: frontend/awx/access/roles/RoleForm.tsx
+  #   test_file: frontend/awx/access/roles/RoleForm.test.tsx
+  #   test_cases:
+  #     - "validates required fields"
+  #     - "displays error messages"
+
+# Optional: Browser validation requirements
+browser_validation:
+  required: false  # true if manual browser validation recommended
+  reason: |
+    Explain why browser validation is/isn't needed:
+    - Strong utilities exist for full workflow
+    - Complex UI interactions not well documented
+    - Unclear selector patterns in Cypress test
+
+# Optional: Dependencies
+dependencies:
+  # List specs that should be completed first
+  prerequisites: []
+  # List specs that depend on this one
+  blocks: []
+
+# Optional: Success criteria beyond standard checks
+success_criteria:
+  - All Playwright tests pass with --max-failures=1 --retries=0
+  - All Vitest component tests pass (npm run vitest)
+  - No linting errors (npm run eslint)
+  - No TypeScript errors (npm run tsc)
+  - Original Cypress tests deleted
+  - Vitest component tests created for tests marked with vitest_candidate: true
+  - Vitest tests located in frontend/[service]/[category]/ alongside components
+  - NO data-cy selectors used in Playwright tests (only data-testid or semantic selectors)
+  - Tests follow existing Playwright patterns (checked by reviewing similar tests)
+  - All utilities from playwright/commands/ and playwright/utils/ used correctly
+  # Add custom criteria as needed

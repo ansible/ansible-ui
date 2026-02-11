@@ -1,0 +1,435 @@
+# EDA Roles Migration Specification
+
+meta:
+  service: eda
+  category: roles
+  priority: high
+  jira_ticket: TBD  # Add ticket number when created
+  estimated_tests: 5
+  created_by: migration-team
+  created_date: 2026-02-04
+
+# Test files to migrate
+tests:
+  - source: cypress/e2e/eda/Roles/custom-roles-crud.cy.ts
+    target: playwright/tests/integration/automation-decisions/roles/custom-roles-crud.spec.ts
+    describe_block: "EDA Custom Roles - Create"
+    test_cases:
+      - name: "can create a custom role"
+        complexity: medium
+        vitest_candidate: false  # Full workflow with API and navigation
+        notes: |
+          Cypress selectors used:
+          - [data-cy="name"]
+          - [data-cy="description"]
+          - [data-cy="content-type-form-group"]
+          - [id="activation"]
+          - [data-cy="permissions"]
+          - [data-cy="view-activation"] input
+
+      - name: "can edit a custom role"
+        complexity: simple
+        vitest_candidate: false  # Full edit workflow with navigation
+        notes: |
+          Cypress selectors used:
+          - [data-cy="description"]
+
+      - name: "can delete a custom role"
+        complexity: simple
+        vitest_candidate: false  # Full delete workflow with modal confirmation
+
+  - source: cypress/e2e/eda/Roles/eda-role-details.cy.ts
+    target: playwright/tests/integration/automation-decisions/roles/role-details.spec.ts
+    describe_block: "EDA Role Details"
+    test_cases:
+      - name: "role details pages should display role name, description, and permissions"
+        complexity: complex
+        vitest_candidate: false  # Requires API + navigation through system roles
+        notes: |
+          Iterates through ALL system roles (not test-created)
+          Cypress selectors used:
+          - [data-cy="name"]
+          - [data-cy="description"]
+          - [data-cy="permissions-description-list"] button
+          - [data-cy="${permission_code}"] (dynamic)
+
+  - source: cypress/e2e/eda/Roles/eda-roles-list.cy.ts
+    target: playwright/tests/integration/automation-decisions/roles/roles-list.spec.ts
+    describe_block: "EDA Roles List"
+    test_cases:
+      - name: "can render the Roles list view and utilize the Roles links to view details"
+        complexity: medium
+        vitest_candidate: false  # Requires API + navigation workflow
+        notes: |
+          Iterates through ALL system roles (not test-created)
+          Uses #description element (ID selector, not data-cy)
+
+# API Resources
+resources:
+  RoleDefinition: /api/gateway/v1/role_definitions/  # Platform/Gateway API for CRUD
+  EdaRoles: /api/eda/v1/role_definitions/  # EDA-specific list endpoint (query params: content_type__model, managed, page_size)
+  EdaRoleDetail: /api/eda/v1/role_definitions/{id}/  # EDA-specific detail endpoint
+
+# Utilities
+utilities:
+  available:
+    # Generic commands (playwright/commands/)
+    - clickTableRow
+    - getTableRow
+    - navigateTo
+    - confirmAndAssertDeletion
+    - clickPageAction
+    - createE2EName
+
+    # Role utilities (playwright/utils/role.ts)
+    - Role.api.create  # Creates role via gatewayAPI
+    - Role.api.delete  # Deletes role via gatewayAPI
+    - Role.ui.navigate  # Navigate to Access Management > Roles
+    - Role.ui.create  # Full create workflow via UI
+    - Role.ui.createWithConfig  # Create with RoleTestData config
+    - Role.ui.delete  # Delete via UI with confirmation
+    - Role.ui.edit  # Edit role via UI
+    - Role.ui.verifyDetails  # Verify role details page
+    - Role.ui.verifyInList  # Verify role appears in list
+
+    # Existing role configs (playwright/utils/role.ts)
+    - TEST_ROLE_CONFIGS.edaRulebook
+    - TEST_ROLE_CONFIGS.edaProject
+
+  needed:
+    # Add to playwright/utils/role.ts:
+    - TEST_ROLE_CONFIGS.edaActivation  # Config for "activation" content type
+    - Role.api.getAll  # Fetch all roles (wrapper for /role_definitions/)
+    - Role.api.getDetail  # Fetch role detail by ID (wrapper for /role_definitions/{id}/)
+
+# Important notes, gotchas, and special considerations
+notes: |
+  ## CRITICAL: Follow Established Resource Patterns
+
+  **ALL resource interactions MUST use utilities from playwright/utils/**
+
+  - ✅ DO: `const roles = await Role.api.getAll(page);`
+  - ❌ DON'T: `const roles = await edaAPI.get(page, '/role_definitions/');`
+
+  ## Selector Migration: data-cy → data-testid
+
+  **CRITICAL RULE:** Replace `data-cy` with `data-testid` - don't add new test IDs where none exist.
+
+  **Components requiring data-testid addition** (already have data-cy):
+  - Name field: `[data-cy="name"]` → add `data-testid="name"`
+  - Description field: `[data-cy="description"]` → add `data-testid="description"`
+  - Content type dropdown: `[data-cy="content-type-form-group"]` → add `data-testid="content-type-form-group"`
+  - Permissions dropdown: `[data-cy="permissions"]` → add `data-testid="permissions"`
+  - View activation permission: `[data-cy="view-activation"]` → add `data-testid="view-activation"`
+  - Permissions description list: `[data-cy="permissions-description-list"]` → add `data-testid="permissions-description-list"`
+  - Dynamic permission items: `[data-cy="${permission}"]` → add `data-testid="${permission}"`
+
+  **Migration pattern:**
+  ```tsx
+  // Before
+  <TextInput data-cy="name" />
+
+  // After - add data-testid alongside data-cy
+  <TextInput data-cy="name" data-testid="name" />
+  ```
+
+  **Playwright test usage:**
+  ```typescript
+  await page.getByTestId('name').fill('value');
+  ```
+
+  ## Utilities to Add to playwright/utils/role.ts
+
+  ### 1. TEST_ROLE_CONFIGS.edaActivation
+  Add to the TEST_ROLE_CONFIGS object:
+  ```typescript
+  edaActivation: {
+    name: '',
+    description: 'Test role for EDA activation management',
+    resourceType: 'eda.activation',
+    resourceTypeDisplayName: 'Activation',
+    permissions: ['eda.view_activation'],
+    permissionDisplayNames: ['Can view activation'],
+    expectedComponent: 'Automation Decisions',
+  }
+  ```
+
+  ### 2. Role.api.getAll()
+  Add to the Role.api object:
+  ```typescript
+  getAll: async (page: Page, queryParams?: {
+    content_type__model?: string;
+    managed?: boolean;
+  }): Promise<PlatformRole[]> => {
+    let url = 'role_definitions/?page_size=200';
+    if (queryParams?.content_type__model) {
+      url += `&content_type__model=${queryParams.content_type__model}`;
+    }
+    if (queryParams?.managed !== undefined) {
+      url += `&managed=${queryParams.managed}`;
+    }
+
+    const response = await gatewayAPI.get<{ results: PlatformRole[] }>(page, url);
+    return response.results;
+  }
+  ```
+
+  ### 3. Role.api.getDetail()
+  Add to the Role.api object:
+  ```typescript
+  getDetail: async (page: Page, roleId: number): Promise<PlatformRole> => {
+    return await gatewayAPI.get<PlatformRole>(page, `role_definitions/${roleId}/`);
+  }
+  ```
+
+  ## Key Cypress Patterns and Playwright Migration
+
+  ### 1. Custom Role CRUD (custom-roles-crud.cy.ts)
+
+  **Cypress create pattern:**
+  ```javascript
+  cy.navigateTo('eda', 'roles');
+  cy.get('[id="create-role"]').click();
+  cy.get('[data-cy="name"]').type(name);
+  cy.get('[data-cy="description"]').type('This is a Custom Role.');
+  cy.get('[data-cy="content-type-form-group"]').click();
+  cy.get('[id="activation"]').click();
+  cy.get('[data-cy="permissions"]').click();
+  cy.get('[data-cy="view-activation"] input').click();
+  cy.clickButton(/^Create role$/);
+  ```
+
+  **Playwright migration using utilities:**
+  ```typescript
+  import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
+  import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+
+  const roleName = await Role.ui.createWithConfig(page, {
+    ...TEST_ROLE_CONFIGS.edaActivation,
+    name: createE2EName(),
+    description: 'This is a Custom Role.',
+  });
+  ```
+
+  **Cypress edit pattern:**
+  ```javascript
+  cy.clickTableRow(name, true);
+  cy.clickButton(/^Edit role$/);
+  cy.get('[data-cy="description"]').clear().type('this custom role has been changed');
+  cy.clickButton(/^Save role$/);
+  ```
+
+  **Playwright migration using utilities:**
+  ```typescript
+  await Role.ui.edit(page, roleName, {
+    description: 'this custom role has been changed',
+  });
+  ```
+
+  **Cypress delete pattern:**
+  ```javascript
+  cy.clickTableRow(name);
+  cy.clickPageAction('delete-role');
+  cy.clickModalConfirmCheckbox();
+  cy.clickModalButton('Delete role');
+  ```
+
+  **Playwright migration using utilities:**
+  ```typescript
+  await Role.ui.delete(page, roleName);
+  ```
+
+  ### 2. Role Details Validation (eda-role-details.cy.ts)
+
+  **Cypress pattern:**
+  ```javascript
+  cy.getEdaRoles().then((roles) => {
+    roles.forEach((role) => {
+      cy.navigateTo('eda', 'roles');
+      cy.clickTableRow(role.name, true);
+      cy.get('[data-cy=name]').should('have.text', role.name);
+      cy.get('[data-cy=description]').should('have.text', role.description);
+      cy.getEdaRoleDetail(role.id.toString()).then((roleDetail) => {
+        if (roleDetail.permissions.length > 3) {
+          cy.get('[data-cy="permissions-description-list"] button').click();
+        }
+        for (const detail of roleDetail.permissions) {
+          cy.get(`[data-cy="${detail}"]`).should('be.visible');
+        }
+      });
+    });
+  });
+  ```
+
+  **Playwright migration using utilities:**
+  ```typescript
+  import { Role } from '@ansible/playwright/utils';
+  import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+
+  const roles = await Role.api.getAll(page);
+
+  for (const role of roles) {
+    await Role.ui.navigate(page);
+    await clickTableRow({ filterLabel: 'Name', text: role.name }, page);
+
+    await expect(page.getByTestId('name')).toHaveText(role.name);
+    await expect(page.getByTestId('description')).toHaveText(role.description);
+
+    const roleDetail = await Role.api.getDetail(page, role.id);
+
+    if (roleDetail.permissions && roleDetail.permissions.length > 3) {
+      await page.getByTestId('permissions-description-list').getByRole('button').click();
+    }
+
+    if (roleDetail.permissions) {
+      for (const permission of roleDetail.permissions) {
+        await expect(page.getByTestId(permission)).toBeVisible();
+      }
+    }
+  }
+  ```
+
+  ### 3. Roles List Navigation (eda-roles-list.cy.ts)
+
+  **Cypress pattern:**
+  ```javascript
+  cy.getEdaRoles().then((roles) => {
+    cy.setTablePageSize('50');
+    cy.get('tbody').find('tr').should('have.length', roles.length);
+    roles.forEach((role) => {
+      cy.verifyPageTitle('Roles');
+      cy.clickTableRow(role.name, true);
+      cy.verifyPageTitle(role.name);
+      cy.get('#description').should('contain', role.description);
+      cy.clickLink(/^Roles$/);
+    });
+  });
+  ```
+
+  **Playwright migration using utilities:**
+  ```typescript
+  import { Role } from '@ansible/playwright/utils';
+  import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+
+  const roles = await Role.api.getAll(page);
+
+  await Role.ui.navigate(page);
+
+  // Set page size
+  await page.getByRole('button', { name: 'Items per page' }).click();
+  await page.getByRole('option', { name: '50' }).click();
+
+  // Verify row count
+  const rows = page.locator('tbody tr');
+  await expect(rows).toHaveCount(roles.length);
+
+  // Navigate through each role
+  for (const role of roles) {
+    await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
+    await clickTableRow({ filterLabel: 'Name', text: role.name }, page);
+    await expect(page.getByRole('heading', { name: role.name })).toBeVisible();
+    await expect(page.locator('#description')).toContainText(role.description);
+    await page.getByRole('link', { name: 'Roles', exact: true }).click();
+  }
+  ```
+
+  ## Component Changes Required
+
+  Search for components with data-cy attributes:
+  ```bash
+  grep -r 'data-cy="name"' frontend/ | grep -i role
+  grep -r 'data-cy="description"' frontend/ | grep -i role
+  grep -r 'data-cy="permissions"' frontend/
+  grep -r 'data-cy="content-type' frontend/
+  ```
+
+  Add data-testid alongside existing data-cy attributes in these components.
+
+  ## Special Considerations
+
+  ### Test Tags
+  - `custom-roles-crud.spec.ts`: No tag (creates/deletes test data)
+  - `role-details.spec.ts`: `{ tag: ['@not_mock'] }` (requires real EDA system roles)
+  - `roles-list.spec.ts`: `{ tag: ['@not_mock'] }` (requires real EDA system roles)
+
+  ### Cleanup Pattern
+  For custom-roles-crud, use API cleanup in finally block:
+  ```typescript
+  let roleId: number | undefined;
+
+  try {
+    await test.step('Create role', async () => {
+      const role = await Role.api.create(page, {
+        name: createE2EName(),
+        description: 'Test role',
+        content_type: 'eda.activation',
+        permissions: ['eda.view_activation'],
+      });
+      roleId = role.id;
+    });
+
+    // Test steps...
+
+  } finally {
+    if (roleId) {
+      await Role.api.delete(page, roleId);
+    }
+  }
+  ```
+
+  ### Browser Validation
+  Recommended to verify:
+  1. "Activation" appears in content type dropdown
+  2. "view-activation" appears in permissions list
+  3. Permissions expansion button when >3 permissions
+  4. Verify data-testid exists or needs to be added
+
+  ## Vitest vs Playwright Decision
+
+  **All tests are Playwright integration tests** - they require live APIs, navigation, and end-to-end workflows.
+
+# Vitest component test configuration
+vitest_tests:
+  # No Vitest tests for this migration
+
+# Browser validation requirements
+browser_validation:
+  required: true
+  reason: |
+    Verify selectors and workflow for:
+    1. Content type "Activation" selection in dropdown
+    2. Permission "view-activation" checkbox
+    3. Permissions expansion button behavior
+    4. Confirm data-testid attributes exist or need addition
+
+    Steps:
+    1. Navigate to https://localhost:4100
+    2. Login with /playwright/.env credentials
+    3. Go to EDA → Access Management → Roles → Create role
+    4. Use browser_snapshot to capture form selectors
+    5. Test dropdown interactions
+
+# Dependencies
+dependencies:
+  prerequisites: []
+  blocks:
+    - eda/user-access.yaml  # May assign roles
+    - eda/team-access.yaml  # May assign roles
+    - eda/rbac-e2e.yaml  # RBAC tests depend on roles
+
+# Success criteria
+success_criteria:
+  - All 5 Playwright tests pass with --max-failures=1 --retries=0
+  - No linting errors (npm run eslint)
+  - No TypeScript errors (npm run tsc)
+  - Original 3 Cypress test files deleted
+  - Single commit with migrations, utility additions, and component changes
+  - data-testid added alongside data-cy in components
+  - Tests use getByTestId for migrated selectors
+  - TEST_ROLE_CONFIGS.edaActivation added to playwright/utils/role.ts
+  - Role.api.getAll() added to playwright/utils/role.ts
+  - Role.api.getDetail() added to playwright/utils/role.ts
+  - ALL resource interactions use Role.api.* or Role.ui.* utilities
+  - Tests tagged with @not_mock where appropriate
+  - Cleanup in finally blocks with proper error handling
+  - Commit message documents all modified files (tests, utils, components)
