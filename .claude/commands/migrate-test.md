@@ -1,6 +1,105 @@
-# Migrate Cypress Test to Playwright
+# Migrate Cypress Test to Playwright (Spec-Driven)
 
-You are migrating a Cypress test to Playwright. Follow this workflow exactly to ensure accuracy and completeness.
+You are migrating Cypress tests to Playwright using a migration specification. Follow this workflow exactly to ensure accuracy and completeness.
+
+**Key Requirements:**
+- Migration specs are REQUIRED (created from `migration-specs/templates/migration-spec-template.yaml`)
+- Multiple tests (2+) MUST be migrated in parallel using a single message with multiple Task tool calls
+- Single tests can be migrated sequentially
+
+## Step 0: Migration Specification (REQUIRED)
+
+**CRITICAL:** You MUST create or use a migration spec before migrating tests.
+
+### Verify Template Exists
+
+First, verify the migration spec template exists:
+```bash
+test -f migration-specs/templates/migration-spec-template.yaml && echo "Template exists" || echo "Template missing"
+```
+
+**If template does NOT exist:** Stop and notify the user. Do not proceed with migration.
+
+**If template exists:** Continue with spec generation.
+
+### Check for Existing Spec
+
+Check if a migration spec already exists for this category:
+```bash
+ls migration-specs/[service]/[category].yaml 2>/dev/null
+```
+
+If a spec exists:
+- Read it completely
+- Use it to guide the migration (utilities, patterns, test structure)
+- Skip to Step 1 (Read and Analyze Cypress Test)
+
+### Generate New Spec (Required if None Exists)
+
+If no spec exists, you MUST create one using the template before migrating tests:
+
+1. **Read Template:**
+   Read: `migration-specs/templates/migration-spec-template.yaml`
+
+   This template contains all required fields and comprehensive guidelines.
+
+2. **Analyze Cypress Tests:**
+   - Find all Cypress test files to migrate:
+     ```bash
+     find cypress/e2e/[service]/[category] -name "*.cy.ts"
+     ```
+   - Read each test file completely
+   - Extract:
+     - Test structure: `describe()` blocks and `it()` test cases
+     - Test names (exact text from `it()` blocks)
+     - Resources used (Organizations, Teams, Credentials, etc.)
+     - API calls and payloads
+     - Selectors (data-cy, contains, get, etc.)
+     - Cypress custom commands used
+
+3. **Check Existing Utilities:**
+   ```bash
+   # Check if resource utilities exist
+   ls playwright/utils/[resource].ts 2>/dev/null
+
+   # Check available methods
+   grep -n "export const [Resource] =" playwright/utils/[resource].ts -A 50
+   ```
+
+   List available utilities and identify what needs to be created.
+
+4. **Search for Similar Playwright Tests:**
+   ```bash
+   grep -r "pattern" playwright/tests --include="*.spec.ts" -B 2 -A 2
+   ```
+
+   Document reusable patterns.
+
+5. **Create Spec File from Template:**
+   Create: `migration-specs/[service]/[category].yaml`
+
+   Copy structure from template and fill in all sections based on your analysis:
+   - `meta`: Service, category, priority, estimated test count, created date
+   - `tests[]`: All test files with complete test case details
+   - `resources`: API endpoints identified
+   - `utilities.available`: Existing utilities found
+   - `utilities.needed`: Utilities to create
+   - `notes`: Follow template structure, add specific findings
+   - `vitest_tests`: Component tests to create (if applicable)
+   - `browser_validation.required`: true/false based on complexity
+
+6. **Display Spec Summary:**
+   Show user:
+   - Service and category
+   - Number of test files to migrate
+   - Total test cases
+   - Utilities needed vs available
+   - Vitest component tests planned
+
+7. **Ask User to Confirm:**
+   Get user approval of the spec before proceeding with migration.
+
+---
 
 ## CRITICAL: Branch from Main
 
@@ -16,9 +115,22 @@ This ensures:
 - Clean commit history
 - Proper base for pull requests
 
-## Parallel Migration Strategy
+## Parallel Migration Strategy (REQUIRED for Multiple Tests)
 
-When migrating multiple related tests:
+**CRITICAL:** When migrating 2 or more test files, you MUST migrate them in parallel.
+
+### When to Use Parallel Migration
+
+- **2+ test files** in the same category/feature: ALWAYS use parallel migration
+- **Single test file**: Proceed with sequential steps (no parallel agents needed)
+
+### Prerequisites for Parallel Migration
+
+1. **Create migration spec first** (Step 0) - REQUIRED before launching parallel agents
+2. **Create needed utilities** (Step 4) - Complete before launching agents
+3. **Verify template exists** - Ensure `migration-specs/templates/migration-spec-template.yaml` exists
+
+### Batch Size Guidelines
 
 **Optimal batch size: 3-4 tests at once**
 - Balances speed with manageability
@@ -26,24 +138,74 @@ When migrating multiple related tests:
 - Avoids overwhelming the system
 
 **For larger batches:**
-- 5 tests: Run 3, then 2
-- 6-8 tests: Run 3-4, then the remainder
-- 9+ tests: Run in groups of 3-4
+- **2-4 tests**: Migrate all in parallel in one batch
+- **5 tests**: Batch 1 (3 tests), then Batch 2 (2 tests)
+- **6-8 tests**: Batch 1 (3-4 tests), then Batch 2 (remainder)
+- **9+ tests**: Batches of 3-4 each
 
-**Process:**
-1. Launch parallel Task agents (one per test file)
-2. Each agent completes full migration workflow
-3. Verify all tests pass together before committing
-4. Commit all migrations in a single commit
+### How to Launch Parallel Migration
+
+**CRITICAL:** Launch parallel agents in a **single message** with multiple Task tool calls.
+
+Example for 3 test files:
+```
+Send ONE message with THREE Task tool calls:
+- Task 1: Migrate test-file-1.cy.ts
+- Task 2: Migrate test-file-2.cy.ts
+- Task 3: Migrate test-file-3.cy.ts
+```
+
+Each Task agent should receive:
+- Spec file path: `migration-specs/[service]/[category].yaml`
+- Specific test file from spec to migrate
+- Instructions to follow Steps 1-9 (read Cypress test → write Playwright test → validate)
+
+### Parallel Migration Process
+
+1. **Create migration spec** documenting all tests (Step 0)
+   - Analyze all Cypress test files
+   - Document utilities needed
+   - Get user approval of spec
+
+2. **Create needed utilities** from spec (Step 4)
+   - Build all utilities in `utilities.needed`
+   - Validate with `npm run tsc`
+
+3. **Launch parallel Task agents** (one per test file in batch)
+   - **MUST use single message with multiple Task tool calls**
+   - Each agent migrates one test file independently
+   - Each agent follows full migration workflow (Steps 1-9)
+
+4. **Monitor agent progress**
+   - Wait for all agents to complete
+   - Verify each reports: test created, test passing, no errors
+
+5. **Run all tests together**
+   ```bash
+   cd playwright && npx playwright test [all-targets] --project 'live chromium' --max-failures=1 --retries=0
+   ```
+   - Ensure no conflicts between tests
+
+6. **Repeat for next batch** (if more tests remain)
+
+7. **Commit all migrations** in a single commit
+   - Include all Playwright tests
+   - Include all Vitest tests (if applicable)
+   - Include utility changes
+   - Delete all Cypress tests
 
 ## Step 1: Read and Analyze Cypress Test
 
-Read the Cypress test file provided by the user. Analyze:
-- What feature is being tested
-- What API resources are needed (org, team, user, inventory, etc.)
-- What UI interactions are performed
-- What assertions are made
-- What cleanup is needed
+**If using a migration spec:** Reference the spec's `tests[]` section for this test file.
+
+Read the Cypress test file. The spec should already document:
+- Feature being tested (from spec `describe_block`)
+- API resources needed (from spec `resources`)
+- Test complexity (from spec `test_cases[].complexity`)
+- Required utilities (from spec `utilities.needed`)
+- Important patterns (from spec `notes`)
+
+Verify the spec is accurate and note any discrepancies.
 
 ## Step 2: Determine Target Location
 
@@ -57,12 +219,16 @@ Create the target directory if it doesn't exist.
 
 ## Step 3: Browser Validation (When Needed)
 
+**If using a migration spec:** Check `browser_validation.required` in the spec.
+
 **When to use browser validation:**
+- Spec says `browser_validation.required: true`
 - You're unfamiliar with the UI workflow
 - Strong utility functions (e.g., `EdaCredential.ui.create()`) do NOT exist
 - The Cypress test uses complex or unclear selectors
 
 **When to skip browser validation:**
+- Spec says `browser_validation.required: false`
 - Strong utility functions exist that handle the entire workflow
 - The test primarily uses API-based setup/teardown
 - You've already migrated similar tests in the same area
@@ -81,16 +247,50 @@ Create the target directory if it doesn't exist.
 5. Document the exact selector patterns found
 6. Verify the complete workflow works manually
 
-## Step 4: Identify Required Utilities
+## Step 4: Identify and Create Required Utilities
 
-Check if utilities exist in `playwright/utils/`:
-- Resource utilities (Organization, Team, User, Inventory, etc.)
-- Command utilities in `playwright/commands/` (clickTableRow, filterTable, etc.)
-- If utilities are missing, note what needs to be created
+**If using a migration spec:** Reference the spec's `utilities` section.
+
+The spec should list:
+- `utilities.available`: Utilities that already exist
+- `utilities.needed`: Utilities to create before migration
+
+### Create Missing Utilities
+
+For each utility in `utilities.needed`:
+
+1. **Check similar resources** for patterns:
+   ```bash
+   grep -n "api: {" playwright/utils/*.ts -A 20
+   grep -n "ui: {" playwright/utils/*.ts -A 30
+   ```
+
+2. **Create utilities** following existing patterns:
+   - API methods: create, delete, get, etc.
+   - UI methods: create, edit, delete workflows
+   - Use TypeScript interfaces
+   - Include proper error handling
+
+3. **Validate utilities** work:
+   ```bash
+   npm run tsc
+   ```
+
+**If not using a spec:** Manually check `playwright/utils/` and `playwright/commands/` for available utilities.
 
 ## Step 5: Write Playwright Test
 
-Using the verified selectors from Step 3, write the Playwright test following these patterns:
+**IMPORTANT:**
+- **If migrating 2+ tests**: Use parallel Task agents (see "Parallel Migration Strategy" section) - DO NOT write tests directly
+- **If migrating 1 test**: Write the test directly following patterns below
+
+**If using a migration spec:**
+- Follow patterns documented in spec `notes` section
+- Use utilities from spec `utilities.available`
+- Reference spec `test_cases` for complexity and test names
+- Check spec for selector migration guidance (data-cy → data-testid)
+
+Write the Playwright test following these patterns:
 
 ### Required Structure
 
