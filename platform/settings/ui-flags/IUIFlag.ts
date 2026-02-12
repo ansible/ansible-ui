@@ -1,5 +1,6 @@
 export enum UIFlag {
   PersonaViewSwitcher = 'persona-view-switcher',
+  AutomationDashboard = 'automation-dashboard',
 }
 
 export interface IUIFlag {

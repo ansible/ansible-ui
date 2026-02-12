@@ -11,13 +11,9 @@ const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1
 test.beforeEach(async ({ page }) => {
   // The feature flag for Persona View Switcher is off by default and needs to be turned on for the tests
   await setupBefore({ path: '/settings/dev/flags' })({ page });
-  await page
-    .getByRole('row')
-    .filter({ hasText: 'View Switcher' })
-    .getByRole('gridcell', { name: 'Disabled' })
-    .locator('span')
-    .click();
-  await expect(page.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Enabled');
+  const row = page.getByRole('row').filter({ hasText: 'View Switcher' });
+  await row.getByRole('gridcell', { name: 'Disabled' }).locator('span').click();
+  await expect(row.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Enabled');
 });
 
 test.afterEach(setupAfter);
@@ -67,13 +63,12 @@ test.describe('Persona Switcher', () => {
     await expect(page.locator('#awx-settings')).toBeHidden();
     // Turn off the feature flag for Persona View Switcher
     await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
-    await page
-      .getByRole('row')
-      .filter({ hasText: 'View Switcher' })
-      .getByRole('gridcell', { name: 'Enabled' })
-      .locator('span')
-      .click();
-    await expect(page.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Disabled');
+    const viewSwitcherRow = page.getByRole('row').filter({ hasText: 'View Switcher' });
+    await viewSwitcherRow.getByRole('gridcell', { name: 'Enabled' }).locator('span').click();
+    await expect(viewSwitcherRow.locator('input[type="checkbox"]')).toHaveAttribute(
+      'aria-label',
+      'Disabled'
+    );
   });
 
   test('Persona views for Normal User', async ({ page }) => {
@@ -128,13 +123,12 @@ test.describe('Persona Switcher', () => {
     await expect(page.locator('#awx-settings')).toBeHidden();
     // Turn off the feature flag for Persona View Switcher
     await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
-    await page
-      .getByRole('row')
-      .filter({ hasText: 'View Switcher' })
-      .getByRole('gridcell', { name: 'Enabled' })
-      .locator('span')
-      .click();
-    await expect(page.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Disabled');
+    const viewSwitcherRow = page.getByRole('row').filter({ hasText: 'View Switcher' });
+    await viewSwitcherRow.getByRole('gridcell', { name: 'Enabled' }).locator('span').click();
+    await expect(viewSwitcherRow.locator('input[type="checkbox"]')).toHaveAttribute(
+      'aria-label',
+      'Disabled'
+    );
     // Logout as normal user
     await logout(page, { username });
   });

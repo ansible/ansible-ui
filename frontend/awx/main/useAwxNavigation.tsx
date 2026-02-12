@@ -39,6 +39,10 @@ import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 
+import { UIFlag } from '@ansible/platform-ui/settings/ui-flags/IUIFlag';
+import { useUIFlag } from '@ansible/platform-ui/settings/ui-flags/useUIFlag';
+import { AutomationDashboard } from '../analytics/automation-dashboard/AutomationDashboard';
+
 export function useAwxNavigation() {
   const { t } = useTranslation();
   const awxInventoryRoutes = useAwxInventoryRoutes();
@@ -60,6 +64,7 @@ export function useAwxNavigation() {
   const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
   const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
   const { activeAwxUser } = useAwxActiveUser();
+  const automationDashboardFlag = useUIFlag(UIFlag.AutomationDashboard);
 
   const overview: PageNavigationItem[] = [
     {
@@ -97,12 +102,25 @@ export function useAwxNavigation() {
           ],
     },
   ];
+
+  const automationDashboardItem: PageNavigationItem[] = automationDashboardFlag?.enabled
+    ? [
+        {
+          id: AwxRoute.AutomationDashboard,
+          label: t('Automation Dashboard'),
+          path: 'automation-dashboard',
+          element: <AutomationDashboard />,
+        },
+      ]
+    : [];
+
   const analyticsItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Analytics,
       label: t('Analytics'),
       path: 'analytics',
       children: [
+        ...automationDashboardItem,
         {
           id: AwxRoute.AutomationCalculator,
           label: t('Automation Calculator'),
@@ -124,6 +142,7 @@ export function useAwxNavigation() {
       ],
     },
   ];
+
   const administrationItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Administration,
