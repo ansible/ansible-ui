@@ -1,47 +1,15 @@
-import { expect, test, Page } from '@playwright/test';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { isEdaAvailable } from '@ansible/playwright/commands/getPlatformApis';
+import { getTableRow } from '@ansible/playwright/commands/getTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
-  Organization,
   DecisionEnvironment,
   EdaProject,
+  Organization,
   RulebookActivation,
 } from '@ansible/playwright/utils';
-import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
-import { edaAPI } from '@ansible/playwright/commands/apiClient';
-import { getTableRow } from '@ansible/playwright/commands/getTableRow';
-
-const ACTIVATION_POLL_TIMEOUT = 200000;
-const ACTIVATION_POLL_INTERVAL = 2000;
-
-async function waitForActivationStatus(
-  page: Page,
-  activationId: number,
-  expectedStatus: string
-): Promise<void> {
-  const startTime = Date.now();
-
-  while (Date.now() - startTime < ACTIVATION_POLL_TIMEOUT) {
-    const activation = await edaAPI.get<{ status: string }>(page, `/activations/${activationId}/`);
-
-    if (activation?.status === expectedStatus) {
-      return;
-    }
-
-    if (['failed', 'error', 'canceled'].includes(activation?.status || '')) {
-      throw new Error(
-        `Rulebook activation ${activationId} reached status '${activation?.status}' instead of '${expectedStatus}'`
-      );
-    }
-
-    await page.waitForTimeout(ACTIVATION_POLL_INTERVAL);
-  }
-
-  throw new Error(
-    `Rulebook activation ${activationId} did not reach '${expectedStatus}' status within ${ACTIVATION_POLL_TIMEOUT}ms`
-  );
-}
+import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
@@ -82,7 +50,17 @@ test.describe('Rule Audit List', () => {
       const rulebookActivationResponse = await rulebookActivationResponsePromise;
       const rulebookActivation = (await rulebookActivationResponse.json()) as { id: number };
 
-      await waitForActivationStatus(page, rulebookActivation.id, 'completed');
+      // Check if workers are available before waiting for completion
+      const workersAvailable = await RulebookActivation.api.checkWorkersAvailable(
+        page,
+        rulebookActivation.id
+      );
+      if (!workersAvailable) {
+        test.skip(true, 'EDA workers are not available - skipping test');
+        return;
+      }
+
+      await RulebookActivation.api.waitForStatus(page, rulebookActivation.id, 'completed');
 
       await navigateTo(page, 'Automation Decisions', 'Rule Audit');
       await expect(page.getByRole('heading', { name: 'Rule Audit', exact: true })).toBeVisible();

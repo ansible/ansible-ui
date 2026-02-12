@@ -13,8 +13,50 @@ export interface CreateEdaCredentialOptions {
   organizationName?: string;
 }
 
+export interface CreateEdaCredentialAPIOptions {
+  name: string;
+  organizationName?: string;
+  credentialTypeName: string;
+  description?: string;
+  inputs?: Record<string, unknown>;
+}
+
 export const EdaCredential = {
   api: {
+    create: async (
+      page: Page,
+      options: CreateEdaCredentialAPIOptions
+    ): Promise<EdaCredentialInterface> => {
+      const organizationName = options.organizationName ?? 'Default';
+      const organizations = await edaAPI.get<{ results: { id: number; name: string }[] }>(
+        page,
+        `organizations/?name=${encodeURIComponent(organizationName)}`
+      );
+      if (!organizations?.results || organizations.results.length === 0) {
+        throw new Error(`Organization '${organizationName}' not found`);
+      }
+      const organizationId = organizations.results[0].id;
+
+      const credentialTypes = await edaAPI.get<{ results: { id: number; name: string }[] }>(
+        page,
+        `credential-types/?name=${encodeURIComponent(options.credentialTypeName)}`
+      );
+      if (!credentialTypes?.results || credentialTypes.results.length === 0) {
+        throw new Error(`Credential type '${options.credentialTypeName}' not found`);
+      }
+      const credentialTypeId = credentialTypes.results[0].id;
+
+      const credential = (await edaAPI.post(page, '/eda-credentials/', {
+        name: options.name,
+        organization_id: organizationId,
+        credential_type_id: credentialTypeId,
+        description: options.description,
+        inputs: options.inputs || {},
+      })) as EdaCredentialInterface;
+
+      return credential;
+    },
+
     delete: async (page: Page, credentialId: number): Promise<void> => {
       await edaAPI.delete(page, `eda-credentials/${credentialId}/`);
     },
