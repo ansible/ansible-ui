@@ -15,8 +15,12 @@ import {
 } from '@ansible/playwright/commands/hub/collectionHelpers';
 import { navigateToCollectionDetails } from '@ansible/playwright/commands/hub/navigateToCollectionDetails';
 import { platformUI } from '@ansible/playwright/commands/login';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { COLLECTION_TARBALLS, test } from '@ansible/playwright/fixtures/hub/collection.fixture';
+import { Distribution } from '@ansible/playwright/utils/hub/distribution';
+import { Remote } from '@ansible/playwright/utils/hub/remote';
+import { Repository } from '@ansible/playwright/utils/hub/repository';
 import { expect, Page } from '@playwright/test';
 
 // Helper to check if signing is available by checking the kebab menu
@@ -552,6 +556,124 @@ test.describe('Hub Collections - Details Page', () => {
         await expect(page.getByTestId('version')).toContainText('2.0.0');
 
         await expect(page.getByTestId('signed-state')).toContainText('Unsigned');
+      }
+    );
+  });
+
+  test.describe('Distribution Display', () => {
+    test(
+      'should display distribution information from collection detail page',
+      { tag: ['@not_mock'] },
+      async ({ page, collection }) => {
+        const namespace = await collection.createNamespace();
+        const collectionName = 'testdist';
+
+        // Create remote, repository, and distribution
+        const remote = await Remote.api.create(page);
+        const repository = await Repository.api.create(page, {
+          remote: remote.pulp_href,
+          retain_repo_versions: 1,
+        });
+        const distribution = await Distribution.api.create(page, {
+          name: repository.name,
+          repository: repository.pulp_href,
+        });
+
+        try {
+          // Upload collection
+          await collection.uploadVersion({
+            namespace,
+            name: collectionName,
+            version: '1.0.0',
+            repository: 'staging',
+          });
+
+          // Navigate to Repositories page and add collection to repository
+          await page.goto(`${platformUI}/content/administration/repositories`);
+
+          // Filter for the repository
+          await filterTableByText({ filterValue: repository.name }, page);
+
+          await page.getByRole('link', { name: repository.name, exact: true }).click();
+
+          await page.getByRole('tab', { name: 'Collection Versions' }).click();
+          await page.getByRole('button', { name: 'Add collections', exact: true }).click();
+
+          const modal = page.getByRole('dialog');
+          await modal.waitFor({ state: 'visible' });
+
+          // Filter for the namespace and select the collection
+          // Click the filter dropdown (defaults to "Keywords")
+          await modal.getByRole('button', { name: 'Keywords' }).click();
+
+          // Select "Namespace" from the dropdown menu
+          await page.getByRole('option', { name: 'Namespace' }).click();
+
+          // Fill in the namespace filter
+          await modal.getByRole('textbox', { name: 'Type to filter' }).fill(namespace);
+          await modal.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
+
+          // Wait for filter to apply
+          await page.waitForTimeout(2000);
+
+          const collectionCheckbox = modal
+            .getByRole('row')
+            .filter({ hasText: collectionName })
+            .getByRole('checkbox');
+          await collectionCheckbox.check();
+
+          await modal.getByRole('button', { name: 'Select' }).click();
+          await modal.waitFor({ state: 'hidden' });
+
+          // Verify collection appears in the repository
+          await page.getByTestId('table-view').click();
+          await expect(page.getByRole('row').filter({ hasText: collectionName })).toBeVisible();
+
+          // Navigate to collection detail page
+          await navigateTo(page, 'Automation Content', 'Collections');
+          await page.getByTestId('table-view').click();
+
+          await filterTableByText({ filterValue: collectionName }, page);
+
+          // Click on the collection in the correct repository
+          const collectionLink = page
+            .getByRole('row')
+            .filter({ hasText: repository.name })
+            .filter({ hasText: collectionName })
+            .getByRole('link', { name: collectionName, exact: true });
+          await collectionLink.click();
+
+          // Click Distributions tab
+          await page.getByRole('tab', { name: 'Distributions' }).click();
+
+          // Verify upload button is present
+          await expect(page.getByTestId('upload-new-version')).toBeVisible();
+
+          // Get the distribution row from the table
+          const distributionRow = page
+            .getByRole('row')
+            .filter({ hasText: distribution.name })
+            .filter({ hasText: distribution.base_path });
+
+          // Verify distribution information is displayed in the table
+          await expect(distributionRow).toBeVisible();
+
+          // Verify copy button exists in the row
+          await expect(distributionRow.locator('[id*=copy-button]')).toBeVisible();
+
+          // Test copy button functionality
+          await distributionRow.locator('[id*=copy-button]').click();
+          await expect(page.getByTestId('alert-toaster')).toBeVisible();
+
+          // Close the alert
+          await page.getByTestId('alert-toaster').getByRole('button').click();
+          await expect(page.getByTestId('alert-toaster')).toBeHidden();
+        } finally {
+          // Cleanup in reverse order
+          await Distribution.api.delete(page, distribution.pulp_href);
+          await Repository.api.delete(page, repository.pulp_href);
+          await Remote.api.delete(page, remote.pulp_href);
+        }
       }
     );
   });
