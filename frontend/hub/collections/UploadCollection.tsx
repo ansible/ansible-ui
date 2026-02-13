@@ -23,6 +23,7 @@ import { useRepositories } from '../administration/repositories/hooks/useReposit
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI, pulpAPI } from '../common/api/formatPath';
+import { isInsightsMode } from '../common/isInsights';
 import { hubPostRequestFile } from '../common/api/request';
 import { HubItemsResponse, PulpItemsResponse, useHubView } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
@@ -61,12 +62,212 @@ export function UploadCollection() {
           { label: t('Upload collection') },
         ]}
       />
-      <UploadCollectionByFile />
+      {isInsightsMode() ? <InsightsUploadCollectionByFile /> : <PlatformUploadCollectionByFile />}
     </PageLayout>
   );
 }
 
-export function UploadCollectionByFile() {
+/**
+ * Insights mode upload component - file upload with repository selector.
+ * Namespace is derived from the collection filename (namespace-collection-version.tar.gz)
+ * and validated against my-namespaces API for upload permission.
+ */
+function InsightsUploadCollectionByFile() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const [searchParams] = useURLSearchParams();
+  const namespaceParams = searchParams.get('namespace');
+  const onCancel = () => void navigate(-1);
+  const [error, setError] = useState<string>('');
+  const [onlyStaging, setOnlyStaging] = useState(true);
+  const [selectedRepo, setSelectedRepo] = useState<{ name: string; pulp_href: string } | null>(
+    null
+  );
+  const distroGetRequest = useGetRequest<PulpItemsResponse<Distribution>>();
+  const toolbarFilters = useRepoFilters();
+  const tableColumns = useRepositoriesColumns();
+
+  // Repository list view - filters by staging or non-pipeline repos
+  const view = useHubView<Repository>({
+    url: pulpAPI`/repositories/ansible/ansible/`,
+    keyFn: nameKeyFn,
+    toolbarFilters,
+    tableColumns,
+    queryParams: onlyStaging
+      ? {
+          pulp_label_select: 'pipeline=staging',
+        }
+      : {
+          pulp_label_select: '!pipeline',
+        },
+  });
+
+  // Auto-select staging repo when in staging mode
+  useEffect(() => {
+    if (selectedRepo) {
+      return;
+    }
+
+    const item = view.pageItems?.find((item) => item.name === 'staging');
+    if (item) {
+      setSelectedRepo({ name: 'staging', pulp_href: item.pulp_href });
+      view.selectItem(item);
+    }
+  }, [view.pageItems, selectedRepo, view]);
+
+  async function submitData(data: UploadData) {
+    setError('');
+
+    if (!data.file) {
+      setError(t('Please select the file to be uploaded.'));
+      return;
+    }
+
+    if (!selectedRepo) {
+      setError(t('Please select a repository.'));
+      return;
+    }
+
+    const namespaceName = data.file.name.split('-')[0] ?? '';
+
+    // Validate namespace matches URL param if coming from namespace detail page
+    if (namespaceParams && namespaceName !== namespaceParams) {
+      setError(
+        t('Namespace "{{namespaceName}}" does not match namespace "{{namespaceParams}}".', {
+          namespaceName,
+          namespaceParams,
+        })
+      );
+      return;
+    }
+
+    let lastError = '';
+    try {
+      // Validate namespace exists and user has upload permission
+      lastError = t('Error checking namespace "{{namespaceName}}".', { namespaceName });
+      const namespaceResponse = await requestGet<HubItemsResponse<HubNamespace>>(
+        hubAPI`/_ui/v1/my-namespaces/?limit=1&name=${namespaceName}&include_related=my_permissions`
+      );
+
+      if (namespaceResponse.data.length === 0) {
+        setError(
+          t(
+            'Namespace "{{namespaceName}}" not found or you do not have permission to upload to it.',
+            { namespaceName }
+          )
+        );
+        return;
+      }
+
+      const namespace = namespaceResponse.data[0];
+      if (!namespace.related_fields?.my_permissions?.includes('galaxy.upload_to_namespace')) {
+        setError(
+          t('You do not have permission to upload to namespace "{{namespaceName}}".', {
+            namespaceName,
+          })
+        );
+        return;
+      }
+
+      lastError = t('Can not find distribution for selected repository.');
+      const list = await distroGetRequest(
+        pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo.pulp_href}`
+      );
+      const base_path = list?.results?.[0]?.base_path;
+
+      if (!base_path) {
+        setError(lastError);
+        return;
+      }
+
+      lastError = t('Error occurred during collection upload.');
+      await hubPostRequestFile(
+        hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
+        data.file as Blob
+      );
+
+      if (onlyStaging) {
+        pageNavigate(HubRoute.Approvals);
+      } else {
+        pageNavigate(HubRoute.Collections);
+      }
+    } catch (err) {
+      setError(lastError + (err instanceof Error ? err.message : String(err)));
+    }
+  }
+
+  function renderRepoSelector() {
+    return (
+      <>
+        <Radio
+          isChecked={onlyStaging}
+          name="radio-staging"
+          onChange={(_event, val) => {
+            setOnlyStaging(val);
+            setSelectedRepo(null);
+          }}
+          label={t`Staging Repos`}
+          id="radio-staging"
+        />
+        <Radio
+          isChecked={!onlyStaging}
+          name="radio-all"
+          onChange={(_event, val) => {
+            setOnlyStaging(!val);
+            setSelectedRepo(null);
+          }}
+          label={t`All Repos`}
+          id="radio-all"
+        />
+        <div>
+          {!onlyStaging && (
+            <>
+              {t`Please note that these repositories are not filtered by permissions. Upload may fail without the right permissions.`}
+            </>
+          )}
+        </div>
+
+        <PageTable<Repository>
+          id="hub-repositories-table"
+          onSelect={(repo) => {
+            setSelectedRepo({ name: repo.name, pulp_href: repo.pulp_href });
+          }}
+          disableListView={true}
+          disableCardView={true}
+          tableColumns={tableColumns}
+          compact={true}
+          toolbarFilters={toolbarFilters}
+          errorStateTitle={t('Error loading repositories')}
+          emptyStateTitle={t('No repositories yet')}
+          emptyStateDescription={t('To get started, create a repository.')}
+          defaultTableView="table"
+          {...view}
+        />
+      </>
+    );
+  }
+
+  return (
+    <HubPageForm<UploadData>
+      submitText={t('Upload collection')}
+      cancelText={t('Cancel')}
+      onCancel={onCancel}
+      onSubmit={submitData}
+      disableSubmitOnEnter={true}
+      singleColumn={true}
+    >
+      <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+      {error && <HubError error={{ name: '', message: error }} />}
+      {renderRepoSelector()}
+    </HubPageForm>
+  );
+}
+
+/**
+ * Platform mode upload component - shows repository selector (existing behavior)
+ */
+function PlatformUploadCollectionByFile() {
   const { t } = useTranslation();
 
   const [searchParams] = useURLSearchParams();
@@ -165,13 +366,9 @@ export function UploadCollectionByFile() {
     );
   }
 
-  function getNamespaceNameFromFile(file?: File) {
-    return file?.name.split('-')[0] ?? '';
-  }
-
   async function submitData(data: UploadData) {
     setError('');
-    const namespaceName = getNamespaceNameFromFile(data.file);
+    const namespaceName = data.file?.name.split('-')[0] ?? '';
     if (namespaceParams && namespaceName !== namespaceParams) {
       setError(
         t(`Namespace "{{namespaceName}}" do not match namespace "{{namespaceParams}}."`, {
@@ -185,8 +382,8 @@ export function UploadCollectionByFile() {
     let lastError = '';
     try {
       if (!data.file) {
-        lastError = t('Please select the file to be uploaded.');
-        throw new Error('');
+        setError(t('Please select the file to be uploaded.'));
+        return;
       }
 
       lastError = t('Error in loading namespace {{namespaceName}}.', { namespaceName });
@@ -194,8 +391,8 @@ export function UploadCollectionByFile() {
         hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
       );
       if (namespace.data.length === 0) {
-        lastError = t('Can not find namespace {{namespaceName}}.', { namespaceName });
-        throw new Error('');
+        setError(t('Can not find namespace {{namespaceName}}.', { namespaceName }));
+        return;
       }
 
       lastError = t('Can not find distribution for selected repository.');
@@ -206,7 +403,8 @@ export function UploadCollectionByFile() {
       const base_path = list?.results[0]?.base_path;
 
       if (!base_path) {
-        throw new Error('');
+        setError(t('Can not find distribution for selected repository.'));
+        return;
       }
 
       lastError = t(`Error occurred during collection upload.`);
@@ -227,22 +425,20 @@ export function UploadCollectionByFile() {
   }
 
   return (
-    <>
-      <HubPageForm<UploadData>
-        submitText={t('Upload collection')}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        onSubmit={(data) => {
-          return submitData(data);
-        }}
-        disableSubmitOnEnter={true}
-        singleColumn={true}
-      >
-        <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
-        {error && <HubError error={{ name: '', message: error }}></HubError>}
-        {renderRepoSelector()}
-      </HubPageForm>
-    </>
+    <HubPageForm<UploadData>
+      submitText={t('Upload collection')}
+      cancelText={t('Cancel')}
+      onCancel={onCancel}
+      onSubmit={(data) => {
+        return submitData(data);
+      }}
+      disableSubmitOnEnter={true}
+      singleColumn={true}
+    >
+      <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+      {error && <HubError error={{ name: '', message: error }}></HubError>}
+      {renderRepoSelector()}
+    </HubPageForm>
   );
 }
 

@@ -15,7 +15,10 @@ import { useDeleteCollections } from './useDeleteCollections';
 import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 
-export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
+export function useCollectionsActions(
+  callback: (collections: CollectionVersionSearch[]) => void,
+  namespace?: string
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
@@ -33,7 +36,8 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Upload collection'),
-        onClick: () => pageNavigate(HubRoute.UploadCollection),
+        onClick: () =>
+          pageNavigate(HubRoute.UploadCollection, namespace ? { query: { namespace } } : undefined),
       },
       {
         type: PageActionType.Button,
@@ -79,6 +83,14 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         isDanger: true,
       },
     ],
-    [t, pageNavigate, deprecateOrUndeprecateCollections, signCollection, canSign, deleteCollections]
+    [
+      t,
+      pageNavigate,
+      namespace,
+      deprecateOrUndeprecateCollections,
+      signCollection,
+      canSign,
+      deleteCollections,
+    ]
   );
 }

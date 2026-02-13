@@ -2,10 +2,22 @@ export interface HubNamespaceGroup {
   id: number;
   name: string;
   object_roles: string[];
+  pulp_href?: string;
 }
 
 export interface HubNamespaceUser {
-  username: string;
+  id?: number;
+  /** User name - used by Insights/CRC API (GET response) */
+  name?: string;
+  /** Username - used by Platform API and Insights PUT payload */
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  groups?: { id: number; name: string }[];
+  date_joined?: string;
+  is_superuser?: boolean;
+  auth_provider?: string[];
   object_roles: string[];
 }
 
