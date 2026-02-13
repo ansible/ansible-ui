@@ -14,6 +14,8 @@ export enum HubRoute {
   NamespaceTeamAccess = 'hub-namespace-team-access',
   NamespaceUserAccess = 'hub-namespace-user-access',
   NamespaceAccess = 'hub-namespace-access',
+  NamespaceGroupAccess = 'hub-namespace-group-access',
+  NamespaceUserAccessDetail = 'hub-namespace-user-access-detail',
   NamespaceAddUsers = 'hub-namespace-add-users',
   NamespaceManageUsers = 'hub-namespace-manage-users',
   NamespaceAssignTeams = 'hub-namespace-assign-teams',

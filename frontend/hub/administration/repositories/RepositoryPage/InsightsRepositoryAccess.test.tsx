@@ -3,13 +3,14 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { InsightsRepositoryAccess } from './InsightsRepositoryAccess';
 
-// Mock the LoadingPage component
+// Mock the LoadingPage component and usePageAlertToaster
 vi.mock('@ansible/ansible-ui-framework', () => ({
   LoadingPage: () => <div data-testid="loading-page">Loading...</div>,
+  usePageAlertToaster: () => vi.fn(),
 }));
 
 // Mock InsightsAccessTab to verify it receives correct props
-vi.mock('../../../common/InsightsAccessTab', () => ({
+vi.mock('../../../common/components/InsightsAccessTab', () => ({
   InsightsAccessTab: ({
     users,
     groups,
@@ -48,7 +49,8 @@ const mockRepository = {
 };
 
 // Mock useGet hook
-const mockUseGet = vi.fn<() => { data?: unknown; error?: Error; refresh: () => void }>();
+const mockUseGet =
+  vi.fn<() => { data?: unknown; error?: Error; isLoading: boolean; refresh: () => void }>();
 vi.mock('@ansible/common-ui/crud/useGet', () => ({
   useGet: () => mockUseGet(),
 }));
@@ -74,6 +76,7 @@ describe('InsightsRepositoryAccess', () => {
     mockUseGet.mockReturnValue({
       data: undefined,
       error: undefined,
+      isLoading: true,
       refresh: vi.fn(),
     });
 
@@ -86,6 +89,7 @@ describe('InsightsRepositoryAccess', () => {
     mockUseGet.mockReturnValue({
       data: undefined,
       error: new Error('Network error'),
+      isLoading: false,
       refresh: vi.fn(),
     });
 
@@ -98,6 +102,7 @@ describe('InsightsRepositoryAccess', () => {
     mockUseGet.mockReturnValue({
       data: { results: [{ ...mockRepository, pulp_href: '' }] },
       error: undefined,
+      isLoading: false,
       refresh: vi.fn(),
     });
 
@@ -110,6 +115,7 @@ describe('InsightsRepositoryAccess', () => {
     mockUseGet.mockReturnValue({
       data: { results: [mockRepository] },
       error: undefined,
+      isLoading: false,
       refresh: vi.fn(),
     });
 
@@ -136,6 +142,7 @@ describe('InsightsRepositoryAccess', () => {
     mockUseGet.mockReturnValue({
       data: { results: [mockRepository] },
       error: undefined,
+      isLoading: false,
       refresh: vi.fn(),
     });
 

@@ -2,14 +2,17 @@ import {
   PageTable,
   useGetPageUrl,
   PageLayoutWithUnauthorized,
+  PageActionSelection,
 } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../common/api/formatPath';
 import { collectionKeyFn } from '../common/api/hub-api-utils';
+import { isInsightsMode } from '../common/isInsights';
 import { useHubView } from '../common/useHubView';
 import { isAccessDeniedError } from '../common/utils/errorUtils';
 import { HubRoute } from '../main/HubRoutes';
@@ -36,7 +39,7 @@ export function Collections() {
     defaultSort: 'name',
   });
 
-  const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
+  const allToolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
   const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
 
   // Check if the error is a 403 access denied error
@@ -44,6 +47,43 @@ export function Collections() {
 
   const description = t(
     'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
+  );
+
+  // In Insights mode, hide the upload button from the collections list page
+  // Upload is only available from the namespace detail page in Insights deployments
+  const toolbarActions = useMemo(() => {
+    if (isInsightsMode()) {
+      return allToolbarActions.filter(
+        (action) =>
+          !('selection' in action) ||
+          action.selection !== PageActionSelection.None ||
+          !('label' in action) ||
+          action.label !== t('Upload collection')
+      );
+    }
+    return allToolbarActions;
+  }, [allToolbarActions, t]);
+
+  const emptyState = isInsightsMode() ? (
+    <PageTableEmptyState
+      title={t('No collections yet')}
+      description={t('To upload a collection, navigate to a namespace you have access to.')}
+    />
+  ) : (
+    <PageTableEmptyState
+      title={t('No collections yet')}
+      description={t('To get started, upload a collection.')}
+    >
+      <ButtonLink
+        data-cy="upload-collection"
+        data-testid="upload-collection"
+        icon={<PlusCircleIcon />}
+        variant={ButtonVariant.primary}
+        href={getPageUrl(HubRoute.UploadCollection)}
+      >
+        {t('Upload collection')}
+      </ButtonLink>
+    </PageTableEmptyState>
   );
 
   return (
@@ -63,22 +103,7 @@ export function Collections() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading collections')}
-        emptyState={
-          <PageTableEmptyState
-            title={t('No collections yet')}
-            description={t('To get started, upload a collection.')}
-          >
-            <ButtonLink
-              data-cy="upload-collection"
-              data-testid="upload-collection"
-              icon={<PlusCircleIcon />}
-              variant={ButtonVariant.primary}
-              href={getPageUrl(HubRoute.UploadCollection)}
-            >
-              {t('Upload collection')}
-            </ButtonLink>
-          </PageTableEmptyState>
-        }
+        emptyState={emptyState}
         defaultTableView="list"
         defaultSubtitle={t('Collection')}
         {...view}

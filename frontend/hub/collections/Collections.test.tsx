@@ -1,10 +1,18 @@
+/* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { hubAPI } from '../common/api/formatPath';
 import { Collections } from './Collections';
+
+// Mock isInsightsMode
+vi.mock('../common/isInsights', () => ({
+  isInsightsMode: vi.fn(() => false),
+}));
+
+import { isInsightsMode } from '../common/isInsights';
 
 const mockCollectionsResponse = {
   meta: {
@@ -61,11 +69,16 @@ describe('Collections Component', () => {
     server.listen({ onUnhandledRequest: 'bypass' });
   });
 
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    vi.clearAllMocks();
+  });
+
   afterAll(() => server.close());
 
   describe('Page Structure', () => {
     beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
       server.use(
         http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
           HttpResponse.json(mockCollectionsResponse)
@@ -91,6 +104,7 @@ describe('Collections Component', () => {
 
   describe('Collections Rendering', () => {
     beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
       server.use(
         http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
           HttpResponse.json(mockCollectionsResponse)
@@ -113,31 +127,148 @@ describe('Collections Component', () => {
   });
 
   describe('Empty State', () => {
-    beforeEach(() => {
-      server.use(
-        http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
-          HttpResponse.json(mockEmptyResponse)
-        )
-      );
+    describe('in Platform mode (non-Insights)', () => {
+      beforeEach(() => {
+        vi.mocked(isInsightsMode).mockReturnValue(false);
+        server.use(
+          http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
+            HttpResponse.json(mockEmptyResponse)
+          )
+        );
+      });
+
+      it('should show empty state when no collections exist', async () => {
+        render(
+          <MemoryRouter>
+            <Collections />
+          </MemoryRouter>
+        );
+
+        await screen.findByRole('heading', { name: 'Collections' });
+
+        await waitFor(() => {
+          expect(screen.getByText('No collections yet')).toBeInTheDocument();
+        });
+        expect(screen.getByText('To get started, upload a collection.')).toBeInTheDocument();
+      });
+
+      it('should show upload button in empty state', async () => {
+        render(
+          <MemoryRouter>
+            <Collections />
+          </MemoryRouter>
+        );
+
+        await screen.findByRole('heading', { name: 'Collections' });
+
+        await waitFor(() => {
+          expect(screen.getByText('No collections yet')).toBeInTheDocument();
+        });
+        expect(screen.getByTestId('upload-collection')).toBeInTheDocument();
+      });
     });
 
-    it('should show empty state when no collections exist', async () => {
-      render(
-        <MemoryRouter>
-          <Collections />
-        </MemoryRouter>
-      );
-
-      await screen.findByRole('heading', { name: 'Collections' });
-
-      await waitFor(() => {
-        expect(screen.getByText('No collections yet')).toBeInTheDocument();
+    describe('in Insights mode', () => {
+      beforeEach(() => {
+        vi.mocked(isInsightsMode).mockReturnValue(true);
+        server.use(
+          http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
+            HttpResponse.json(mockEmptyResponse)
+          )
+        );
       });
-      expect(screen.getByText('To get started, upload a collection.')).toBeInTheDocument();
+
+      it('should show Insights-specific empty state description', async () => {
+        render(
+          <MemoryRouter>
+            <Collections />
+          </MemoryRouter>
+        );
+
+        await screen.findByRole('heading', { name: 'Collections' });
+
+        await waitFor(() => {
+          expect(screen.getByText('No collections yet')).toBeInTheDocument();
+        });
+        expect(
+          screen.getByText('To upload a collection, navigate to a namespace you have access to.')
+        ).toBeInTheDocument();
+      });
+
+      it('should not show upload button in empty state', async () => {
+        render(
+          <MemoryRouter>
+            <Collections />
+          </MemoryRouter>
+        );
+
+        await screen.findByRole('heading', { name: 'Collections' });
+
+        await waitFor(() => {
+          expect(screen.getByText('No collections yet')).toBeInTheDocument();
+        });
+        expect(screen.queryByTestId('upload-collection')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Toolbar Actions', () => {
+    describe('in Platform mode (non-Insights)', () => {
+      beforeEach(() => {
+        vi.mocked(isInsightsMode).mockReturnValue(false);
+        server.use(
+          http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
+            HttpResponse.json(mockCollectionsResponse)
+          )
+        );
+      });
+
+      it('should show upload collection button in toolbar', async () => {
+        render(
+          <MemoryRouter>
+            <Collections />
+          </MemoryRouter>
+        );
+
+        await screen.findByRole('heading', { name: 'Collections' });
+        await screen.findByText('test_collection');
+
+        expect(screen.getByRole('button', { name: /upload collection/i })).toBeInTheDocument();
+      });
+    });
+
+    describe('in Insights mode', () => {
+      beforeEach(() => {
+        vi.mocked(isInsightsMode).mockReturnValue(true);
+        server.use(
+          http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>
+            HttpResponse.json(mockCollectionsResponse)
+          )
+        );
+      });
+
+      it('should not show upload collection button in toolbar', async () => {
+        render(
+          <MemoryRouter>
+            <Collections />
+          </MemoryRouter>
+        );
+
+        await screen.findByRole('heading', { name: 'Collections' });
+        await screen.findByText('test_collection');
+
+        expect(
+          screen.queryByRole('button', { name: /upload collection/i })
+        ).not.toBeInTheDocument();
+      });
     });
   });
 
   describe('Error Handling', () => {
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
+    });
+
     it('should render unauthorized state for 403 error', async () => {
       server.use(
         http.get(hubAPI`/v3/plugin/ansible/search/collection-versions/`, () =>

@@ -237,7 +237,22 @@ const awxStub = resolve(__dirname, 'awx-stub.ts');
 // - Suppress "Critical dependency" warning from @rhds/elements
 filteredPlugins.push(
   new MonacoWebpackPlugin({
-    languages: ['yaml'],
+    // Include all languages used by Hub forms:
+    // - yaml: for YAML editors (variables, etc.)
+    // - json: for JSON editors
+    // - markdown: for PageFormMarkdown (used in namespace forms)
+    languages: ['yaml', 'json', 'markdown'],
+    // Configure monaco-yaml worker (must match main webpack config)
+    customLanguages: [
+      {
+        label: 'yaml',
+        entry: 'monaco-yaml',
+        worker: {
+          id: 'monaco-yaml/yamlWorker',
+          entry: 'monaco-yaml/yaml.worker',
+        },
+      },
+    ],
   }),
   new webpack.NormalModuleReplacementPlugin(/@ansible\/awx-ui/, awxStub),
   new webpack.DefinePlugin({

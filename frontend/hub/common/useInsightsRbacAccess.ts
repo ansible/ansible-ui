@@ -13,14 +13,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { PulpRbacApi, assignRoles, UserWithRoles, GroupWithRoles } from './api/pulp-rbac';
 import { parsePulpIDFromURL } from './api/hub-api-utils';
+import { PulpItemsResponse } from './useHubView';
 
-interface PulpResource {
+export interface PulpResource {
   pulp_href?: string;
   name?: string;
-}
-
-interface PulpItemsResponse<T> {
-  results?: T[];
 }
 
 export interface InsightsRbacAccessResult {

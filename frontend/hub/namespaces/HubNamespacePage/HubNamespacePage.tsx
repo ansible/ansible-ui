@@ -1,4 +1,5 @@
 import {
+  IPageAction,
   LoadingPage,
   PageActions,
   PageHeader,
@@ -8,6 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
@@ -30,8 +32,17 @@ export function HubNamespacePage() {
   if (data && data.data.length > 0) {
     namespace = data.data[0];
   }
+
+  // In Insights mode, check if user has access to this namespace via my-namespaces API
+  // If the namespace is not in my-namespaces (404), the user cannot edit/delete it
+  // Skip this API call in Platform mode since it's not needed there
+  const { data: myNamespace } = useGet<HubNamespace>(
+    isInsightsMode() && params?.id ? hubAPI`/_ui/v1/my-namespaces/${params.id}/` : ''
+  );
+  const showControls = !!myNamespace;
+
   const getPageUrl = useGetPageUrl();
-  const pageActions = useHubNamespaceActions({
+  const allPageActions = useHubNamespaceActions({
     onHubNamespacesDeleted: () => pageNavigate(HubRoute.Namespaces),
     onHubNamespacesSignAllCollections: () =>
       pageNavigate(HubRoute.NamespaceCollections, {
@@ -39,6 +50,15 @@ export function HubNamespacePage() {
       }),
     isDetailsPageAction: true,
   });
+
+  // In Insights mode, hide namespace actions if user doesn't have access to this namespace
+  // This matches the legacy ansible-hub-ui behavior
+  const pageActions = useMemo<IPageAction<HubNamespace>[]>(() => {
+    if (isInsightsMode() && !showControls) {
+      return [];
+    }
+    return allPageActions;
+  }, [allPageActions, showControls]);
 
   if (!data && !error) {
     return <LoadingPage />;
