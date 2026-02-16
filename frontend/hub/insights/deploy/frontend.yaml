@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/RedHatInsights/frontend-components/refs/heads/master/packages/config-utils/src/feo/spec/frontend-crd.schema.json
+apiVersion: v1
+kind: Template
+metadata:
+  name: aap-ui-hub-frontend
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: Frontend
+    metadata:
+      name: automation-hub
+    spec:
+      feoConfigEnabled: true
+      envName: ${ENV_NAME}
+      title: automation-hub
+      deploymentRepo: https://github.com/ansible-automation-platform/aap-ui
+      API:
+        versions:
+          - v1
+      frontend:
+        paths:
+          - /apps/automation-hub
+      image: ${IMAGE}:${IMAGE_TAG}
+      bundleSegments:
+        - segmentId: ansible-automation-hub-segment
+          bundleId: ansible
+          position: 300
+          navItems:
+            - id: ansible-automation-hub-expandable
+              title: 'Automation Hub'
+              expandable: true
+              routes:
+                - id: 'collections'
+                  title: 'Collections'
+                  href: '/ansible/automation-hub/'
+                  icon: 'AnsibleIcon'
+                  product: 'Ansible Automation Hub'
+                - id: 'partners'
+                  title: 'Partners'
+                  href: '/ansible/automation-hub/partners'
+                  product: 'Ansible Automation Hub'
+                - id: 'taskManagement'
+                  title: 'Task Management'
+                  href: '/ansible/automation-hub/tasks'
+                  product: 'Ansible Automation Hub'
+                - id: 'connectToHub'
+                  title: 'Connect to Hub'
+                  href: '/ansible/automation-hub/token'
+                  product: 'Ansible Automation Hub'
+      serviceTiles:
+        - id: ansible-automation-hub
+          section: automation
+          group: ansible
+          title: 'Automation Hub'
+          href: '/ansible/automation-hub/'
+          description: 'Find and download Ansible Content Collections from Red Hat and partners.'
+          icon: AnsibleIcon
+      module:
+        manifestLocation: '/apps/automation-hub/fed-mods.json'
+        modules:
+          - id: 'ansible-automation-hub'
+            module: './RootApp'
+            routes:
+              - pathname: /ansible/automation-hub
+
+parameters:
+  - name: ENV_NAME
+    required: true
+  - name: IMAGE_TAG
+    required: true
+  - name: IMAGE
+    value: quay.io/redhat-services-prod/ansible-automationhu-tenant/automation-hub-main/aap-ui-hub-frontend
