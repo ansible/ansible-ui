@@ -94,7 +94,11 @@ export default defineConfig({
     setupFiles: ['vitest.setup.ts'],
     server: {
       deps: {
-        inline: ['@patternfly/react-styles'],
+        inline: [
+          '@patternfly/react-styles',
+          '@patternfly/react-icons',
+          '@patternfly/react-topology',
+        ],
       },
     },
     // found at: https://github.com/vitest-dev/vitest/discussions/1806

@@ -2,13 +2,11 @@ import {
   ComponentFactory,
   DefaultGroup,
   EdgeModel,
-  EdgeStyle,
   GraphComponent,
   Model,
   ModelKind,
   NodeModel,
   NodeShape,
-  NodeStatus,
   TopologyView as PFTopologyView,
   SELECTION_EVENT,
   TopologyControlBar,
@@ -27,6 +25,7 @@ import { ComponentType, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
+import { getEdgeStatus, getEdgeStyle } from './edgeUtils';
 import { Legend } from './Legend';
 import { Loader } from './Loader';
 import { InstanceDetailSidebar } from './Sidebar';
@@ -48,47 +47,31 @@ const TopologyView = styled(PFTopologyView)`
   }
 `;
 const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
-  switch (type) {
-    case 'group':
-      return DefaultGroup;
-    default:
-      switch (kind) {
-        case ModelKind.graph:
-          return withPanZoom()(GraphComponent);
-        case ModelKind.node:
-          return withSelection()(MeshNode as ComponentType);
-        case ModelKind.edge:
-          return MeshEdge;
-        default:
-          return undefined;
-      }
+  if (type === 'group') {
+    return DefaultGroup;
   }
+  if (kind === ModelKind.graph) {
+    return withPanZoom()(GraphComponent);
+  }
+  if (kind === ModelKind.node) {
+    return withSelection()(MeshNode as ComponentType);
+  }
+  if (kind === ModelKind.edge) {
+    return MeshEdge;
+  }
+  return undefined;
 };
 
 const NODE_DIAMETER = 50;
 
-function getEdgeStyle(edge: string) {
-  switch (edge) {
-    case 'established':
-      return EdgeStyle.default;
-    case 'adding':
-    case 'removing':
-      return EdgeStyle.dashed;
-    default:
-      return EdgeStyle.default;
-  }
+function getWidth(selector: string) {
+  const selected = d3.select(selector).node();
+  return selected ? (selected as HTMLElement).getBoundingClientRect().width : 1200;
 }
-function getEdgeStatus(edge: string) {
-  switch (edge) {
-    case 'established':
-      return NodeStatus.default;
-    case 'adding':
-      return NodeStatus.success;
-    case 'removing':
-      return NodeStatus.danger;
-    default:
-      return NodeStatus.default;
-  }
+
+function getHeight(selector: string) {
+  const selected = d3.select(selector).node();
+  return selected ? (selected as HTMLElement).getBoundingClientRect().height : 800;
 }
 
 export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
@@ -118,20 +101,10 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
     }, 100);
   }
 
-  function getWidth(selector: string) {
-    const selected = d3.select(selector).node();
-    return selected ? (selected as HTMLElement).getBoundingClientRect().width : 1200;
-  }
-
-  function getHeight(selector: string) {
-    const selected = d3.select(selector).node();
-    return selected ? (selected as HTMLElement).getBoundingClientRect().height : 800;
-  }
-
   useEffect(() => {
     const width = getWidth('#mesh-topology');
     const height = getHeight('#mesh-topology');
-    if (!window.Worker) {
+    if (!globalThis.Worker) {
       return;
     }
 

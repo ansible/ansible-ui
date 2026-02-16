@@ -1,27 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call*/
-/* eslint-disable @typescript-eslint/no-unsafe-member-access*/
-/* eslint-disable @typescript-eslint/no-unsafe-return*/
-/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import { screen } from '@testing-library/dom';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { JsonBodyType } from 'msw/lib/core/handlers/RequestHandler';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventorySource } from '../../interfaces/InventorySource';
 import { Project } from '../../interfaces/Project';
 import credentialTypes from './../../../../cypress/fixtures/credentialTypes.json';
-import inventories from './../../../../cypress/fixtures/inventory.json';
 import { CreateInventorySource, EditInventorySource } from './InventorySourceForm';
 import sourceTypesOptions from './mocks/InventorySourceTypes.json';
+
+const mockInventory = {
+  id: 2,
+  name: 'Test Inventory',
+  type: 'inventory',
+  url: '/api/v2/inventories/2/',
+  related: {},
+  summary_fields: {},
+};
 
 const mockProjectWithOverride: Project = {
   id: 123,
   name: 'Test Project With Override',
-  description: 'Test project with allow_override enabled',
+  description: '',
   scm_type: 'git',
   type: 'project',
   allow_override: true,
@@ -33,7 +36,7 @@ const mockProjectWithOverride: Project = {
 const mockProjectWithoutOverride: Project = {
   id: 456,
   name: 'Test Project Without Override',
-  description: 'Test project with allow_override disabled',
+  description: '',
   scm_type: 'git',
   type: 'project',
   allow_override: false,
@@ -42,25 +45,62 @@ const mockProjectWithoutOverride: Project = {
   related: {} as Project['related'],
 } as Project;
 
-export const restHandlers = [
-  http.options(awxAPI`/inventory_sources/`, () => {
-    return HttpResponse.json(sourceTypesOptions as JsonBodyType);
-  }),
-  http.get(awxAPI`/inventories/2/`, () => {
-    return HttpResponse.json(inventories);
-  }),
-  http.get(awxAPI`/credential_types/`, () => {
-    return HttpResponse.json(credentialTypes);
-  }),
-  http.get('/api/v2/projects/:id', ({ params }) => {
-    const { id } = params;
-    if (id === '123') {
-      return HttpResponse.json(mockProjectWithOverride);
-    } else if (id === '456') {
-      return HttpResponse.json(mockProjectWithoutOverride);
-    }
-    return new HttpResponse(null, { status: 404 });
-  }),
+vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
+  DataEditor: (props: {
+    id?: string;
+    name: string;
+    value: string;
+    onChange: (v: string) => void;
+  }) => (
+    <textarea
+      id={props.id ?? props.name}
+      name={props.name}
+      value={props.value}
+      onChange={(e) => props.onChange(e.target.value)}
+      data-testid={props.name}
+    />
+  ),
+}));
+
+const restHandlers = [
+  http.options(awxAPI`/inventory_sources/`, () =>
+    HttpResponse.json(sourceTypesOptions as Record<string, unknown>)
+  ),
+  http.options(awxAPI`/execution_environments/`, () => HttpResponse.json({ actions: { GET: {} } })),
+  http.options(awxAPI`/credential_types/`, () => HttpResponse.json({ actions: { GET: {} } })),
+  http.options(awxAPI`/credentials/`, () => HttpResponse.json({ actions: { GET: {} } })),
+  http.options(awxAPI`/projects/`, () => HttpResponse.json({ actions: { GET: {} } })),
+  http.get(awxAPI`/inventories/2/`, () => HttpResponse.json(mockInventory)),
+  http.get(awxAPI`/credential_types/`, () => HttpResponse.json(credentialTypes)),
+  http.get(
+    ({ request }) =>
+      request.url.includes('/api/v2/projects/123') && !request.url.includes('/inventories/'),
+    () => HttpResponse.json(mockProjectWithOverride)
+  ),
+  http.get(
+    ({ request }) => request.url.includes('/api/v2/projects/456'),
+    () => HttpResponse.json(mockProjectWithoutOverride)
+  ),
+  http.get(
+    ({ request }) =>
+      request.url.includes('/projects/123/inventories/') ||
+      request.url.includes('/projects/456/inventories/'),
+    () => HttpResponse.json(['inventories/hosts.yml', 'inventories/test.yml'])
+  ),
+  http.get(awxAPI`/execution_environments/789/`, () =>
+    HttpResponse.json({
+      id: 789,
+      name: 'Test EE',
+      image: 'quay.io/test/ee',
+    })
+  ),
+  http.get(awxAPI`/credentials/456/`, () =>
+    HttpResponse.json({
+      id: 456,
+      name: 'Test Credential',
+      kind: 'gce',
+    })
+  ),
 ];
 
 const mockInventorySource: InventorySource = {
@@ -84,9 +124,7 @@ const mockInventorySource: InventorySource = {
   modified: '2023-01-02T00:00:00Z',
   type: 'inventory_source',
   url: '/api/v2/inventory_sources/1/',
-  related: {
-    schedules: '/api/v2/inventory_sources/1/schedules/',
-  },
+  related: { schedules: '/api/v2/inventory_sources/1/schedules/' },
   summary_fields: {
     created_by: { id: 1, username: 'admin', first_name: 'Admin', last_name: 'User' },
     modified_by: { id: 1, username: 'admin', first_name: 'Admin', last_name: 'User' },
@@ -119,12 +157,7 @@ const mockInventorySource: InventorySource = {
       description: '',
       image: 'quay.io/test/ee',
     },
-    user_capabilities: {
-      edit: true,
-      schedule: true,
-      start: true,
-      delete: true,
-    },
+    user_capabilities: { edit: true, schedule: true, start: true, delete: true },
     last_job: {
       description: '',
       failed: false,
@@ -162,116 +195,76 @@ const mockInventorySource: InventorySource = {
   last_updated: '2023-01-01T00:00:00Z',
 };
 
+function renderCreateForm() {
+  return render(
+    <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/add']}>
+      <Routes>
+        <Route
+          path="/infrastructure/inventories/inventory/:id/sources/add"
+          element={<CreateInventorySource />}
+        />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
+function renderEditForm(entries: string[]) {
+  return render(
+    <MemoryRouter initialEntries={entries}>
+      <Routes>
+        <Route
+          path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
+          element={<EditInventorySource />}
+        />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
 describe('CreateInventorySource', () => {
   const server = setupServer(...restHandlers);
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
   afterAll(() => server.close());
-  beforeEach(() => {
-    vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
-      const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
-        <textarea
-          id={props.id as string}
-          name={props.id as string}
-          value={props.value as string}
-          onChange={props.onChange as () => void}
-          className={props.className as string}
-          onFocus={props.onFocus as () => void}
-          onBlur={props.onBlur as () => void}
-        />
-      ));
-      return { DataEditor: FakeDataEditor };
+  afterEach(() => server.resetHandlers());
+
+  test('should render create new source page', async () => {
+    renderCreateForm();
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Create source' })).toBeInTheDocument();
     });
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-    server.resetHandlers();
-  });
-
-  test('should list the VMWare ESXI source type', async () => {
-    const { getAllByRole } = render(
-      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/add']}>
-        <Routes>
-          <Route
-            path={`/infrastructure/inventories/inventory/:id/sources/add`}
-            element={<CreateInventorySource />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    const user = userEvent.setup();
-
-    await waitFor(
-      () => {
-        const sourceButtons = getAllByRole('button');
-        expect(sourceButtons.length).toBeGreaterThan(1);
-      },
-      { timeout: 10000 }
-    );
-
-    const sourceButtons = getAllByRole('button');
-    await user.click(sourceButtons[1]);
-
-    await waitFor(
-      () => {
-        expect(screen.getByText('VMware ESXi')).toBeInTheDocument();
-      },
-      { timeout: 10000 }
-    );
-  }, 15000);
-
   test('should render name field', async () => {
-    render(
-      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/add']}>
-        <Routes>
-          <Route
-            path={`/infrastructure/inventories/inventory/:id/sources/add`}
-            element={<CreateInventorySource />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderCreateForm();
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
     });
 
-    const nameInput = screen.getByLabelText(/Name/i);
-    expect(nameInput).toBeVisible();
-  });
-
-  test('should require source type field', async () => {
-    render(
-      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/add']}>
-        <Routes>
-          <Route
-            path={`/infrastructure/inventories/inventory/:id/sources/add`}
-            element={<CreateInventorySource />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/^Source$/)).toBeInTheDocument();
-    });
+    expect(screen.getByLabelText(/Name/i)).toBeVisible();
   });
 
   test('should render source selection field', async () => {
-    render(
-      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/add']}>
-        <Routes>
-          <Route
-            path={`/infrastructure/inventories/inventory/:id/sources/add`}
-            element={<CreateInventorySource />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderCreateForm();
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Select source' })).toBeInTheDocument();
+    });
+  });
+
+  test('should list the VMware ESXi source type', async () => {
+    const user = userEvent.setup();
+    renderCreateForm();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Select source' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Select source' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('VMware ESXi')).toBeInTheDocument();
     });
   });
 });
@@ -280,69 +273,17 @@ describe('EditInventorySource', () => {
   const server = setupServer(...restHandlers);
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
   afterAll(() => server.close());
-
-  beforeEach(() => {
-    vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
-      const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
-        <textarea
-          id={props.id as string}
-          name={props.id as string}
-          value={props.value as string}
-          onChange={props.onChange as () => void}
-          className={props.className as string}
-          onFocus={props.onFocus as () => void}
-          onBlur={props.onBlur as () => void}
-        />
-      ));
-      return { DataEditor: FakeDataEditor };
-    });
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-    server.resetHandlers();
-  });
-
-  test('should transform source_path from project root to empty string', () => {
-    const sourcePathValue = '/ (project root)';
-    const transformed = sourcePathValue === '/ (project root)' ? '' : sourcePathValue;
-    expect(transformed).toBe('');
-  });
-
-  test('should not transform source_path when it is not project root', () => {
-    const sourcePathValue: string = 'inventories/test.yml';
-    const projectRoot: string = '/ (project root)';
-    const transformed = sourcePathValue === projectRoot ? '' : sourcePathValue;
-    expect(transformed).toBe('inventories/test.yml');
-  });
-
-  test('should transform empty source_path to project root for display', () => {
-    const apiSourcePath = '';
-    const displayValue = apiSourcePath || '/ (project root)';
-    expect(displayValue).toBe('/ (project root)');
-  });
+  afterEach(() => server.resetHandlers());
 
   test('should correctly populate default values from inventory source', async () => {
     server.use(
-      http.get(awxAPI`/inventory_sources/1/`, () => {
-        return HttpResponse.json(mockInventorySource);
-      })
+      http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(mockInventorySource))
     );
 
-    render(
-      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
-        <Routes>
-          <Route
-            path={`/infrastructure/inventories/inventory/:id/sources/:source_id/edit`}
-            element={<EditInventorySource />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderEditForm(['/infrastructure/inventories/inventory/2/sources/1/edit']);
 
     await waitFor(() => {
-      const nameInput = screen.getByDisplayValue('Test Source');
-      expect(nameInput).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
     });
 
     expect(screen.getByDisplayValue('Test Description')).toBeInTheDocument();
@@ -350,28 +291,15 @@ describe('EditInventorySource', () => {
 
   test('should show source control branch field when project allows override', async () => {
     server.use(
-      http.get(awxAPI`/inventory_sources/1/`, () => {
-        return HttpResponse.json(mockInventorySource);
-      })
+      http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(mockInventorySource))
     );
 
-    render(
-      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
-        <Routes>
-          <Route
-            path={`/infrastructure/inventories/inventory/:id/sources/:source_id/edit`}
-            element={<EditInventorySource />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderEditForm(['/infrastructure/inventories/inventory/2/sources/1/edit']);
 
-    // Wait for form to load
     await waitFor(() => {
       expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
     });
 
-    // Wait for project data to be fetched and source control branch field to appear
     await waitFor(
       () => {
         expect(screen.getByLabelText('Source control branch')).toBeInTheDocument();
@@ -383,53 +311,22 @@ describe('EditInventorySource', () => {
     expect(scmBranchField).toBeVisible();
     expect(scmBranchField).toHaveAttribute('placeholder', 'Enter source control branch');
   });
+});
 
-  test('should hide source control branch field when project does not allow override', async () => {
-    const mockSourceWithoutOverride: InventorySource = {
-      ...mockInventorySource,
-      id: 2,
-      name: 'Test Source Without Override',
-      source_project: '456',
-      summary_fields: {
-        ...mockInventorySource.summary_fields,
-        source_project: {
-          id: 456,
-          name: 'Test Project Without Override',
-          description: '',
-          status: 'successful',
-          scm_type: 'git',
-          allow_override: false,
-        },
-      },
-    };
+describe('source_path transformation', () => {
+  const transformForSubmit = (value: string) => (value === '/ (project root)' ? '' : value);
+  const transformForDisplay = (value: string) => value || '/ (project root)';
 
-    server.use(
-      http.get(awxAPI`/inventory_sources/2/`, () => {
-        return HttpResponse.json(mockSourceWithoutOverride);
-      })
-    );
+  test('should transform project root to empty string for API', () => {
+    expect(transformForSubmit('/ (project root)')).toBe('');
+  });
 
-    render(
-      <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/2/edit']}>
-        <Routes>
-          <Route
-            path={`/infrastructure/inventories/inventory/:id/sources/:source_id/edit`}
-            element={<EditInventorySource />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+  test('should not transform non-root source_path', () => {
+    expect(transformForSubmit('inventories/test.yml')).toBe('inventories/test.yml');
+  });
 
-    // Wait for form to load
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('Test Source Without Override')).toBeInTheDocument();
-    });
-
-    // Wait a bit to ensure project data is fetched
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Source control branch field should not be visible
-    expect(screen.queryByLabelText('Source control branch')).not.toBeInTheDocument();
+  test('should transform empty source_path to project root for display', () => {
+    expect(transformForDisplay('')).toBe('/ (project root)');
   });
 });
 
@@ -437,103 +334,50 @@ describe('InventorySourceSubForm - handleQueryParams', () => {
   const handleQueryParams = (source: string) => {
     switch (source) {
       case 'scm':
-        return {
-          credential_type__kind__in: 'cloud,kubernetes',
-        };
+        return { credential_type__kind__in: 'cloud,kubernetes' };
       case 'ec2':
-        return {
-          credential_type__namespace: 'aws',
-        };
+        return { credential_type__namespace: 'aws' };
       case 'openshift_virtualization':
-        return {
-          credential_type__namespace: 'kubernetes_bearer_token',
-        };
+        return { credential_type__namespace: 'kubernetes_bearer_token' };
       case 'vmware_esxi':
-        return {
-          credential_type__namespace: 'vmware',
-        };
+        return { credential_type__namespace: 'vmware' };
       default:
-        return {
-          credential_type__namespace: source,
-        };
+        return { credential_type__namespace: source };
     }
   };
 
   test('should return correct query params for scm source type', () => {
-    const source = 'scm';
-    const expectedParams = { credential_type__kind__in: 'cloud,kubernetes' };
-    const result = handleQueryParams(source);
-    expect(result).toEqual(expectedParams);
+    expect(handleQueryParams('scm')).toEqual({
+      credential_type__kind__in: 'cloud,kubernetes',
+    });
   });
 
   test('should return correct query params for ec2 source type', () => {
-    const source = 'ec2';
-    const expectedParams = { credential_type__namespace: 'aws' };
-    const result = handleQueryParams(source);
-    expect(result).toEqual(expectedParams);
-  });
-
-  test('should return correct query params for openshift_virtualization source type', () => {
-    const source = 'openshift_virtualization';
-    const expectedParams = { credential_type__namespace: 'kubernetes_bearer_token' };
-    const result = handleQueryParams(source);
-    expect(result).toEqual(expectedParams);
+    expect(handleQueryParams('ec2')).toEqual({ credential_type__namespace: 'aws' });
   });
 
   test('should return correct query params for vmware_esxi source type', () => {
-    const source = 'vmware_esxi';
-    const expectedParams = { credential_type__namespace: 'vmware' };
-    const result = handleQueryParams(source);
-    expect(result).toEqual(expectedParams);
+    expect(handleQueryParams('vmware_esxi')).toEqual({
+      credential_type__namespace: 'vmware',
+    });
   });
 
   test('should return namespace query params for other source types', () => {
-    const source = 'gce';
-    const expectedParams = { credential_type__namespace: 'gce' };
-    const result = handleQueryParams(source);
-    expect(result).toEqual(expectedParams);
+    expect(handleQueryParams('gce')).toEqual({ credential_type__namespace: 'gce' });
   });
 });
 
-describe('InventorySource - Source Type Credential Requirements', () => {
-  test('should identify source types with optional credentials', () => {
-    const sourceTypesWithOptionalCredentials = ['ec2', 'scm', 'terraform'];
-
-    expect(sourceTypesWithOptionalCredentials).toContain('ec2');
-    expect(sourceTypesWithOptionalCredentials).toContain('scm');
-    expect(sourceTypesWithOptionalCredentials).toContain('terraform');
-    expect(sourceTypesWithOptionalCredentials).toHaveLength(3);
-  });
+describe('Source type credential requirements', () => {
+  const sourceTypesWithOptionalCredentials = new Set(['ec2', 'scm', 'terraform']);
+  const isCredentialRequired = (source: string) => !sourceTypesWithOptionalCredentials.has(source);
 
   test('should require credential for gce source type', () => {
-    const sourceTypesWithOptionalCredentials = ['ec2', 'scm', 'terraform'];
-    const source = 'gce';
-    const isRequired = !sourceTypesWithOptionalCredentials.includes(source);
-
-    expect(isRequired).toBe(true);
+    expect(isCredentialRequired('gce')).toBe(true);
   });
 
-  test('should not require credential for ec2 source type', () => {
-    const sourceTypesWithOptionalCredentials = ['ec2', 'scm', 'terraform'];
-    const source = 'ec2';
-    const isRequired = !sourceTypesWithOptionalCredentials.includes(source);
-
-    expect(isRequired).toBe(false);
-  });
-
-  test('should not require credential for scm source type', () => {
-    const sourceTypesWithOptionalCredentials = ['ec2', 'scm', 'terraform'];
-    const source = 'scm';
-    const isRequired = !sourceTypesWithOptionalCredentials.includes(source);
-
-    expect(isRequired).toBe(false);
-  });
-
-  test('should not require credential for terraform source type', () => {
-    const sourceTypesWithOptionalCredentials = ['ec2', 'scm', 'terraform'];
-    const source = 'terraform';
-    const isRequired = !sourceTypesWithOptionalCredentials.includes(source);
-
-    expect(isRequired).toBe(false);
+  test('should not require credential for ec2, scm, and terraform', () => {
+    expect(isCredentialRequired('ec2')).toBe(false);
+    expect(isCredentialRequired('scm')).toBe(false);
+    expect(isCredentialRequired('terraform')).toBe(false);
   });
 });

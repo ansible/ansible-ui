@@ -2,11 +2,20 @@ import { render, screen, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { edaAPI } from '../common/eda-utils';
 import { Projects } from './Projects';
 import mockProjects from './fixtures/edaProjects.fixture.json';
 import mockProjectsOptions from './fixtures/edaProjectsOptions.fixture.json';
+
+function TestWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </SWRConfig>
+  );
+}
 
 describe('Projects List Component', () => {
   let server: ReturnType<typeof setupServer>;
@@ -29,9 +38,9 @@ describe('Projects List Component', () => {
 
     it('should render page title and description', async () => {
       render(
-        <MemoryRouter>
+        <TestWrapper>
           <Projects />
-        </MemoryRouter>
+        </TestWrapper>
       );
 
       expect(await screen.findByRole('heading', { name: 'Projects' })).toBeInTheDocument();
@@ -42,9 +51,9 @@ describe('Projects List Component', () => {
 
     it('should render correct column headers', async () => {
       render(
-        <MemoryRouter>
+        <TestWrapper>
           <Projects />
-        </MemoryRouter>
+        </TestWrapper>
       );
 
       await screen.findByRole('heading', { name: 'Projects' });
@@ -65,9 +74,9 @@ describe('Projects List Component', () => {
 
     it('should render all projects from API response', async () => {
       render(
-        <MemoryRouter>
+        <TestWrapper>
           <Projects />
-        </MemoryRouter>
+        </TestWrapper>
       );
 
       await screen.findByRole('heading', { name: 'Projects' });
@@ -80,9 +89,9 @@ describe('Projects List Component', () => {
 
     it('should render correct number of rows', async () => {
       render(
-        <MemoryRouter>
+        <TestWrapper>
           <Projects />
-        </MemoryRouter>
+        </TestWrapper>
       );
 
       await screen.findByRole('heading', { name: 'Projects' });
@@ -98,9 +107,9 @@ describe('Projects List Component', () => {
 
     it('should display different import states', async () => {
       render(
-        <MemoryRouter>
+        <TestWrapper>
           <Projects />
-        </MemoryRouter>
+        </TestWrapper>
       );
 
       await screen.findByRole('heading', { name: 'Projects' });
@@ -139,14 +148,11 @@ describe('Projects List Component', () => {
       );
 
       render(
-        <MemoryRouter>
+        <TestWrapper>
           <Projects />
-        </MemoryRouter>
+        </TestWrapper>
       );
 
-      await screen.findByRole('heading', { name: 'Projects' });
-
-      // Wait for empty state (no POST) so cached data from previous tests is not shown
       await screen.findByText('You do not have permission to create a project.');
 
       // Verify no projects are shown
@@ -164,9 +170,9 @@ describe('Projects List Component', () => {
       );
 
       render(
-        <MemoryRouter>
+        <TestWrapper>
           <Projects />
-        </MemoryRouter>
+        </TestWrapper>
       );
 
       // Verify empty state message
