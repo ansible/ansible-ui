@@ -1,4 +1,4 @@
-name: Nightly Component Tests Workflow
+name: Nightly Vitest Workflow
 
 on:
   workflow_dispatch:
@@ -28,9 +28,7 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
+          path: ./node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -51,9 +49,7 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
+          path: ./node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -61,65 +57,50 @@ jobs:
       - name: Checks
         run: npm run checks
 
-  awx-component:
-    name: AWX Component
+  vitest-awx:
+    name: Vitest (awx)
     needs: packages
-    uses: ./.github/workflows/component.yml
+    uses: ./.github/workflows/vitest.yml
     with:
       directory: frontend/awx
-      generate_junit_results: true
+      artifact-prefix: awx
 
-  eda-component:
-    name: EDA Component
+  vitest:
+    name: Vitest (${{ matrix.name }})
+    runs-on: ubuntu-latest
     needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: frontend/eda
-      generate_junit_results: true
-
-
-  hub-component:
-    name: HUB Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: frontend/hub
-      generate_junit_results: true
-
-  common-component:
-    name: Common Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: frontend/common
-      generate_junit_results: true
-
-  framework-component:
-    name: Framework Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: framework
-      generate_junit_results: true
-
-  platform-component:
-    name: Platform Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: platform
-      generate_junit_results: true
-
-  upload-test-results:
-    name: Upload jUnit test results
-    needs:
-        - checks
-        - awx-component
-        - eda-component
-        - hub-component
-        - common-component
-        - framework-component
-        - platform-component
-    uses: ./.github/workflows/junit-results.yml
-    secrets:
-      PDE_ORG_RESULTS_UPLOAD_PASSWORD: ${{ secrets.PDE_ORG_RESULTS_UPLOAD_PASSWORD }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - directory: frontend/eda
+            name: eda
+          - directory: frontend/hub
+            name: hub
+          - directory: frontend/common
+            name: common
+          - directory: frontend/chatbot
+            name: chatbot
+          - directory: framework
+            name: framework
+          - directory: platform
+            name: platform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Run vitest
+        working-directory: ${{ matrix.directory }}
+        run: npx vitest run

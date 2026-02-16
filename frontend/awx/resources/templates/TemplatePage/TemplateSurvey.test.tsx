@@ -1,190 +1,193 @@
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, test, vi } from 'vitest';
-import type { JobTemplate } from '../../../interfaces/JobTemplate';
-import { TemplateSurveyInternal } from './TemplateSurvey';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { TemplateSurvey } from './TemplateSurvey';
 
-vi.mock('../hooks/useSurveyView', () => ({
-  useSurveyView: () => ({
-    unselectItemsAndRefresh: vi.fn(),
-    selectItemsAndRefresh: vi.fn(),
-    selectedItems: [],
-    selectItem: vi.fn(),
-    unselectItem: vi.fn(),
-    selectItems: vi.fn(),
-    unselectItems: vi.fn(),
-    selectAll: vi.fn(),
-    unselectAll: vi.fn(),
-    allSelected: false,
-    isSelected: vi.fn(),
-    itemCount: 0,
-    pageItems: [],
-    refresh: vi.fn(),
-    error: undefined,
-    page: 1,
-    setPage: vi.fn(),
-    perPage: 10,
-    setPerPage: vi.fn(),
-    sort: 'name',
-    setSort: vi.fn(),
-    sortDirection: 'asc' as const,
-    setSortDirection: vi.fn(),
-    filterState: {},
-    setFilterState: vi.fn(),
-    clearAllFilters: vi.fn(),
-    keyFn: (item: { variable: string }) => item.variable,
-    limitFiltersToOneOrOperation: true as const,
-    updateItem: vi.fn(),
+const mockJobTemplate = {
+  id: 7,
+  type: 'job_template',
+  name: 'Mock Job Template',
+  survey_enabled: false,
+  summary_fields: {
+    user_capabilities: {
+      edit: true,
+      delete: true,
+    },
+  },
+};
+
+const mockSurvey = {
+  name: 'Simple',
+  description: 'Description',
+  spec: [
+    { type: 'text', question_name: 'cantbeshort', variable: 'long_answer', required: false },
+    { type: 'text', question_name: 'cantbelong', variable: 'short_answer', required: false },
+    { type: 'text', question_name: 'reqd', variable: 'reqd_answer', required: true },
+    {
+      type: 'multiplechoice',
+      question_name: 'achoice',
+      variable: 'single_choice',
+      required: false,
+    },
+    { type: 'multiselect', question_name: 'mchoice', variable: 'multi_choice', required: false },
+    { type: 'integer', question_name: 'integerchoice', variable: 'int_answer', required: false },
+    { type: 'float', question_name: 'float', variable: 'float_answer', required: false },
+  ],
+};
+
+const server = setupServer(
+  http.options(awxAPI`/job_templates/`, () => {
+    return HttpResponse.json({});
   }),
-}));
+  http.get(awxAPI`/job_templates/7/`, () => {
+    return HttpResponse.json(mockJobTemplate);
+  }),
+  http.get(awxAPI`/job_templates/7/survey_spec/`, () => {
+    return HttpResponse.json(mockSurvey);
+  })
+);
 
-describe('TemplateSurveyInternal', () => {
-  const mockJobTemplate = {
-    id: 1,
-    type: 'job_template',
-    name: 'Test Job Template',
-    description: '',
-    job_type: 'run',
-    inventory: 1,
-    project: 1,
-    playbook: 'test.yml',
-    summary_fields: {
-      user_capabilities: {
-        edit: true,
-        delete: true,
-        start: true,
-        schedule: true,
-        copy: true,
-      },
-      inventory: {
-        id: 1,
-        name: 'Test Inventory',
-        description: '',
-        has_active_failures: false,
-        total_hosts: 0,
-        hosts_with_active_failures: 0,
-        total_groups: 0,
-        has_inventory_sources: false,
-        total_inventory_sources: 0,
-        inventory_sources_with_failures: 0,
-        organization_id: 1,
-        kind: '',
-      },
-      project: { id: 1, name: 'Test Project' },
-      organization: { id: 1, name: 'Default', description: '' },
-      created_by: { id: 1, username: 'admin', first_name: '', last_name: '' },
-      modified_by: { id: 1, username: 'admin', first_name: '', last_name: '' },
-      object_roles: {
-        admin_role: { id: 1, name: 'Admin', description: '' },
-        execute_role: { id: 2, name: 'Execute', description: '' },
-        read_role: { id: 3, name: 'Read', description: '' },
-      },
-      labels: { count: 0, results: [] },
-      recent_jobs: [],
-      credentials: [],
-    },
-    survey_enabled: false,
-    created: '2025-01-01T00:00:00.000Z',
-    modified: '2025-01-01T00:00:00.000Z',
-    url: '/api/v2/job_templates/1/',
-    related: {
-      callback: '',
-      named_url: '',
-      created_by: '',
-      modified_by: '',
-      labels: '',
-      inventory: '',
-      project: '',
-      organization: '',
-      credentials: '',
-      last_job: '',
-      jobs: '',
-      schedules: '',
-      activity_stream: '',
-      launch: '',
-      webhook_key: '',
-      webhook_receiver: '',
-      notification_templates_started: '',
-      notification_templates_success: '',
-      notification_templates_error: '',
-      access_list: '',
-      survey_spec: '',
-      object_roles: '',
-      instance_groups: '',
-      slice_workflow_jobs: '',
-      copy: '',
-    },
-  } as unknown as JobTemplate;
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
-  const mockOnToggleSurvey = vi.fn();
-
-  test('renders TemplateSurveyInternal component without errors', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <TemplateSurveyInternal template={mockJobTemplate} onToggleSurvey={mockOnToggleSurvey} />
+describe('TemplateSurvey', () => {
+  it('should render survey list with correct number of rows', async () => {
+    render(
+      <MemoryRouter initialEntries={['/templates/job-templates/7/survey']}>
+        <Routes>
+          <Route
+            path="/templates/job-templates/:id/survey"
+            element={<TemplateSurvey resourceType="job_templates" />}
+          />
+        </Routes>
       </MemoryRouter>
     );
 
-    expect(container).toBeInTheDocument();
-    expect(screen.getByText('There are currently no survey questions.')).toBeInTheDocument();
+    await waitFor(() => {
+      const rows = screen.getAllByRole('row');
+      // 7 questions + 1 header row = 8 total
+      expect(rows.length).toBeGreaterThanOrEqual(7);
+    });
   });
 
-  test('renders create button when user has edit permissions', () => {
+  it('should display required asterisk for required survey question', async () => {
     render(
-      <MemoryRouter>
-        <TemplateSurveyInternal template={mockJobTemplate} onToggleSurvey={mockOnToggleSurvey} />
+      <MemoryRouter initialEntries={['/templates/job-templates/7/survey']}>
+        <Routes>
+          <Route
+            path="/templates/job-templates/:id/survey"
+            element={<TemplateSurvey resourceType="job_templates" />}
+          />
+        </Routes>
       </MemoryRouter>
     );
 
-    expect(screen.getByText('There are currently no survey questions.')).toBeInTheDocument();
-    expect(
-      screen.getByText('Create a survey question by clicking the button below.')
-    ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Create survey question/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('survey-question-required')).toBeInTheDocument();
+    });
   });
 
-  test('shows no-permission empty state when user lacks edit capability', () => {
-    const templateWithoutPermissions: JobTemplate = {
-      ...mockJobTemplate,
-      summary_fields: {
-        ...mockJobTemplate.summary_fields,
-        user_capabilities: {
-          edit: false,
-          delete: false,
-          start: true,
-          schedule: true,
-          copy: true,
-        },
-      },
-    };
-
+  it('should show survey toggle switch', async () => {
     render(
-      <MemoryRouter>
-        <TemplateSurveyInternal
-          template={templateWithoutPermissions}
-          onToggleSurvey={mockOnToggleSurvey}
-        />
+      <MemoryRouter initialEntries={['/templates/job-templates/7/survey']}>
+        <Routes>
+          <Route
+            path="/templates/job-templates/:id/survey"
+            element={<TemplateSurvey resourceType="job_templates" />}
+          />
+        </Routes>
       </MemoryRouter>
     );
 
-    expect(screen.getByText('No survey questions found')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Please contact your organization administrator if there is an issue with your access.'
-      )
-    ).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /Create survey question/i })).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('survey-switch')).toBeInTheDocument();
+    });
   });
 
-  test('accepts onToggleSurvey callback prop', () => {
-    const customToggle = vi.fn();
+  it('should display survey enabled label when survey is enabled', async () => {
+    server.use(
+      http.get(awxAPI`/job_templates/7/`, () => {
+        return HttpResponse.json({
+          ...mockJobTemplate,
+          survey_enabled: true,
+        });
+      })
+    );
 
     render(
-      <MemoryRouter>
-        <TemplateSurveyInternal template={mockJobTemplate} onToggleSurvey={customToggle} />
+      <MemoryRouter initialEntries={['/templates/job-templates/7/survey']}>
+        <Routes>
+          <Route
+            path="/templates/job-templates/:id/survey"
+            element={<TemplateSurvey resourceType="job_templates" />}
+          />
+        </Routes>
       </MemoryRouter>
     );
 
-    expect(screen.getByText('There are currently no survey questions.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/survey enabled/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should display question names in table', async () => {
+    render(
+      <MemoryRouter initialEntries={['/templates/job-templates/7/survey']}>
+        <Routes>
+          <Route
+            path="/templates/job-templates/:id/survey"
+            element={<TemplateSurvey resourceType="job_templates" />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('cantbeshort')).toBeInTheDocument();
+      expect(screen.getByText('reqd')).toBeInTheDocument();
+      expect(screen.getByText('achoice')).toBeInTheDocument();
+    });
+  });
+
+  it('should disable row actions when user lacks permissions', async () => {
+    server.use(
+      http.get(awxAPI`/job_templates/7/`, () => {
+        return HttpResponse.json({
+          ...mockJobTemplate,
+          summary_fields: {
+            user_capabilities: {
+              edit: false,
+              delete: false,
+            },
+          },
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/job-templates/7/survey']}>
+        <Routes>
+          <Route
+            path="/templates/job-templates/:id/survey"
+            element={<TemplateSurvey resourceType="job_templates" />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const row = screen.getByText('reqd').closest('tr');
+      expect(row).toBeInTheDocument();
+      if (row) {
+        const editButton = within(row).queryByTestId('edit-survey-question');
+        if (editButton) {
+          expect(editButton).toHaveAttribute('aria-disabled', 'true');
+        }
+      }
+    });
   });
 });

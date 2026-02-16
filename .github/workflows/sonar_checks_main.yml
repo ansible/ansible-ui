@@ -46,9 +46,7 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
+          path: ./node_modules
           key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
@@ -182,9 +180,7 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
+          path: ./node_modules
           key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
@@ -353,9 +349,7 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
+          path: ./node_modules
           key: modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
@@ -400,13 +394,11 @@ jobs:
           # NYC merge fails when all files have the same name in different subdirectories
           # Rename files with unique names before merging
           counter=1
-          for file in playwright-coverage-artifacts/*/coverage-final.json; do
-            if [ -f "$file" ]; then
-              echo "Copying $file to .nyc_input/shard-$counter.json"
-              cp "$file" ".nyc_input/shard-$counter.json"
-              counter=$((counter + 1))
-            fi
-          done
+          while IFS= read -r file; do
+            echo "Copying $file to .nyc_input/shard-$counter.json"
+            cp "$file" ".nyc_input/shard-$counter.json"
+            counter=$((counter + 1))
+          done < <(find playwright-coverage-artifacts -name "coverage-final.json" -type f)
           echo ""
           echo "=== Merging coverage files ==="
           mkdir -p coverage/playwright-merged
