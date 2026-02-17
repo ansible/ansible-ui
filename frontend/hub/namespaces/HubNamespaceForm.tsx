@@ -38,7 +38,10 @@ export function CreateHubNamespace() {
     }
 
     const createdNamespace = await postRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
-    pageNavigate(HubRoute.NamespacePage, { params: { id: createdNamespace.name } });
+    // Use the created namespace name if available, fallback to submitted name
+    // This handles cases where the API response might not include all fields
+    const namespaceName = createdNamespace?.name ?? namespace.name;
+    pageNavigate(HubRoute.NamespacePage, { params: { id: namespaceName } });
   };
   const getPageUrl = useGetPageUrl();
 

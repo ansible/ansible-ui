@@ -1,10 +1,17 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
-import { CollectionDependencies } from './CollectionDependencies';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { CollectionDependencies, useCollectionFilters } from './CollectionDependencies';
+
+// Mock isInsightsMode
+vi.mock('../../common/isInsights', () => ({
+  isInsightsMode: vi.fn(() => false),
+}));
+
+import { isInsightsMode } from '../../common/isInsights';
 
 // Mock collection data with no dependencies
 const mockCollectionNoDeps = {
@@ -365,5 +372,43 @@ describe('CollectionDependencies', () => {
 
     // The table should have a Name filter
     expect(screen.getByRole('button', { name: /name/i })).toBeInTheDocument();
+  });
+});
+
+describe('useCollectionFilters', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('in platform mode', () => {
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
+    });
+
+    test('should use "keywords" query for Name filter', () => {
+      const { result } = renderHook(() => useCollectionFilters(), {
+        wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+      });
+      const nameFilter = result.current.find((filter) => filter.key === 'name__icontains');
+      expect(nameFilter).toBeDefined();
+      expect(nameFilter?.query).toBe('keywords');
+      expect((nameFilter as { comparison?: string })?.comparison).toBe('contains');
+    });
+  });
+
+  describe('in insights mode', () => {
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(true);
+    });
+
+    test('should use "name__icontains" query for Name filter', () => {
+      const { result } = renderHook(() => useCollectionFilters(), {
+        wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+      });
+      const nameFilter = result.current.find((filter) => filter.key === 'name__icontains');
+      expect(nameFilter).toBeDefined();
+      expect(nameFilter?.query).toBe('name__icontains');
+      expect((nameFilter as { comparison?: string })?.comparison).toBe('contains');
+    });
   });
 });

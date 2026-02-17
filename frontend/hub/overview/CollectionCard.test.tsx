@@ -104,4 +104,56 @@ describe('CollectionCard', () => {
 
     expect(screen.queryByText('Signed')).not.toBeInTheDocument();
   });
+
+  it('renders "Provided by" using namespaceTitle with company name when available', () => {
+    const collectionWithCompany = {
+      ...mockCollection,
+      namespace_metadata: {
+        ...mockCollection.namespace_metadata!,
+        company: 'Red Hat',
+      },
+    };
+
+    render(
+      <MemoryRouter>
+        <CollectionCard collection={collectionWithCompany} />
+      </MemoryRouter>
+    );
+
+    // In non-insights mode, namespaceTitle returns namespace name (not company)
+    expect(screen.getByText(/Provided by redhat/)).toBeInTheDocument();
+  });
+
+  it('renders "Provided by" using namespace name when company is empty', () => {
+    const collectionNoCompany = {
+      ...mockCollection,
+      namespace_metadata: {
+        ...mockCollection.namespace_metadata!,
+        company: '',
+      },
+    };
+
+    render(
+      <MemoryRouter>
+        <CollectionCard collection={collectionNoCompany} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Provided by redhat/)).toBeInTheDocument();
+  });
+
+  it('renders "Provided by" using namespace name when namespace_metadata is undefined', () => {
+    const collectionNoMetadata = {
+      ...mockCollection,
+      namespace_metadata: undefined,
+    };
+
+    render(
+      <MemoryRouter>
+        <CollectionCard collection={collectionNoMetadata} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Provided by redhat/)).toBeInTheDocument();
+  });
 });

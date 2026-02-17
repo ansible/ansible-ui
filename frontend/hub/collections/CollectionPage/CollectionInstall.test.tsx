@@ -3,9 +3,16 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CollectionVersionsContent } from './CollectionDocumentation';
 import { CollectionInstall } from './CollectionInstall';
+
+// Mock isInsightsMode
+vi.mock('../../common/isInsights', () => ({
+  isInsightsMode: vi.fn(() => false),
+}));
+
+import { isInsightsMode } from '../../common/isInsights';
 
 // Mock collection data for outlet context - unsigned collection
 const mockCollection = {
@@ -307,6 +314,54 @@ describe('CollectionInstall', () => {
 
     await waitFor(() => {
       expect(screen.getByText('A test collection for install tab testing')).toBeInTheDocument();
+    });
+  });
+
+  describe('Insights mode - download URL conversion', () => {
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(true);
+    });
+
+    afterEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
+    });
+
+    test('should render install page in insights mode', async () => {
+      render(
+        <TestWrapper>
+          <CollectionInstall />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Install' })).toBeInTheDocument();
+      });
+    });
+
+    test('should show download tarball button in insights mode', async () => {
+      render(
+        <TestWrapper>
+          <CollectionInstall />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /download tarball/i })).toBeInTheDocument();
+      });
+    });
+
+    test('should render install command in insights mode', async () => {
+      render(
+        <TestWrapper>
+          <CollectionInstall />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('ansible-galaxy collection install testnamespace.testcollection')
+        ).toBeInTheDocument();
+      });
     });
   });
 });

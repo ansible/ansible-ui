@@ -10,6 +10,8 @@ import { useCollectionColumns } from '../../../collections/hooks/useCollectionCo
 import { deleteCollectionFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 import { hubAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';
+import { isInsightsMode } from '../../../common/isInsights';
+import { useHubContext } from '../../../common/useHubContext';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useHubView } from '../../../common/useHubView';
 import { useAddCollections } from '../hooks/useAddCollections';
@@ -32,7 +34,6 @@ export function RepositoryCollectionVersion() {
     keyFn: collectionKeyFn,
     defaultSort: 'name',
     queryParams: {
-      is_deprecated: 'false',
       repository: repo_id,
     },
     toolbarFilters,
@@ -51,50 +52,65 @@ export function RepositoryCollectionVersion() {
     setSelectedCollections([]);
   });
 
+  // In Insights mode, require ansible.modify_ansible_repo_content for add/remove buttons
+  const { hasPermission, user } = useHubContext();
+  const isInsights = isInsightsMode();
+  const canModifyRepoContent =
+    !isInsights || hasPermission('ansible.modify_ansible_repo_content') || !!user?.is_superuser;
+
   return (
     <PageTable<CollectionVersionSearch>
       id="hub-collection-versions-search-table"
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       toolbarContent={
-        <>
-          <Button
-            onClick={() =>
-              dialog([selectedCollections], () =>
-                deleteCollectionFromRepository(repository, selectedCollections, true)
-              )
-            }
-            isDisabled={selectedCollections.length === 0}
-          >
-            {t('Remove collections')}
-          </Button>
-          &nbsp;&nbsp;
-          <Button onClick={() => runAddModal()}>{t('Add collections')}</Button>
-        </>
+        canModifyRepoContent ? (
+          <>
+            <Button
+              onClick={() =>
+                dialog([selectedCollections], () =>
+                  deleteCollectionFromRepository(repository, selectedCollections, true)
+                )
+              }
+              isDisabled={selectedCollections.length === 0}
+            >
+              {t('Remove collections')}
+            </Button>
+            &nbsp;&nbsp;
+            <Button onClick={() => runAddModal()}>{t('Add collections')}</Button>
+          </>
+        ) : undefined
       }
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
       emptyState={
-        <PageTableEmptyState
-          title={t('No collection versions yet')}
-          description={t('Collection versions will appear once the repository is modified.')}
-        >
-          <Button
-            data-cy="add-collections"
-            data-testid="add-collections"
-            icon={<PlusCircleIcon />}
-            onClick={() => runAddModal()}
-            variant={ButtonVariant.primary}
+        canModifyRepoContent ? (
+          <PageTableEmptyState
+            title={t('No collection versions yet')}
+            description={t('Collection versions will appear once the repository is modified.')}
           >
-            {t('Add collections')}
-          </Button>
-        </PageTableEmptyState>
+            <Button
+              data-cy="add-collections"
+              data-testid="add-collections"
+              icon={<PlusCircleIcon />}
+              onClick={() => runAddModal()}
+              variant={ButtonVariant.primary}
+            >
+              {t('Add collections')}
+            </Button>
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            title={t('No collection versions yet')}
+            description={t('Collection versions will appear once the repository is modified.')}
+          />
+        )
       }
       {...view}
       defaultTableView="list"
       defaultSubtitle={t('Collection')}
       compact={true}
-      showSelect={true}
+      showSelect={canModifyRepoContent}
       selectedItems={selectedCollections}
       isSelectMultiple={true}
       isSelected={(item) =>

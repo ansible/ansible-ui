@@ -14,6 +14,8 @@ import { CollectionVersionSearch } from '../../../collections/Collection';
 import { useDeleteCollectionsFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 import { getRepositoryBasePath, getRepoURL } from '../../../common/api/hub-api-utils';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
+import { isInsightsMode } from '../../../common/isInsights';
+import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
@@ -118,6 +120,12 @@ export function useCollectionVersionsActionsRemove(
     true,
     false
   );
+  const { hasPermission, user } = useHubContext();
+
+  // In Insights mode, require ansible.modify_ansible_repo_content to remove from repository
+  const isInsights = isInsightsMode();
+  const canModifyRepoContent =
+    !isInsights || hasPermission('ansible.modify_ansible_repo_content') || !!user?.is_superuser;
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -129,8 +137,9 @@ export function useCollectionVersionsActionsRemove(
         type: PageActionType.Button,
         isDanger: true,
         isPinned: true,
+        isHidden: () => !canModifyRepoContent,
       },
     ],
-    [t, deleteCollectionsVersionsFromRepository]
+    [t, deleteCollectionsVersionsFromRepository, canModifyRepoContent]
   );
 }

@@ -10,6 +10,7 @@ import { ImportIcon, KeyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSignAllCollections } from '../../collections/hooks/useSignAllCollections';
+import { isInsightsMode } from '../../common/isInsights';
 import { useHubContext } from '../../common/useHubContext';
 import { useCanSignNamespace } from '../../common/utils/canSign';
 import { HubRoute } from '../../main/HubRoutes';
@@ -25,7 +26,7 @@ export function useHubNamespaceActions(options?: {
     options = { onHubNamespacesDeleted: () => {}, onHubNamespacesSignAllCollections: () => {} };
   }
   const { t } = useTranslation();
-  const { settings, featureFlags } = useHubContext();
+  const { settings, featureFlags, hasPermission, user } = useHubContext();
   const signing_service = settings.GALAXY_COLLECTION_SIGNING_SERVICE;
   const can_upload_signatures = featureFlags.can_upload_signatures;
   const pageNavigate = usePageNavigate();
@@ -78,7 +79,8 @@ export function useHubNamespaceActions(options?: {
             signing_service: signing_service ?? '',
           }),
         isDisabled: () => (isRepoSelected() ? '' : t('Select a repository filter')),
-        isHidden: () => !(options.isDetailsPageAction && canSignAllCollections()),
+        isHidden: () =>
+          isInsightsMode() || !(options.isDetailsPageAction && canSignAllCollections()),
       },
 
       {
@@ -91,6 +93,15 @@ export function useHubNamespaceActions(options?: {
         label: t('Delete namespace'),
         onClick: (namespace) => deleteHubNamespaces([namespace]),
         isDanger: true,
+        isHidden: (namespace) => {
+          if (!isInsightsMode()) return false;
+          const permission = 'galaxy.delete_namespace';
+          return !(
+            hasPermission(permission) ||
+            namespace?.related_fields?.my_permissions?.includes(permission) ||
+            user?.is_superuser
+          );
+        },
       },
     ];
     return actions;
@@ -105,5 +116,7 @@ export function useHubNamespaceActions(options?: {
     options.isDetailsPageAction,
     signing_service,
     deleteHubNamespaces,
+    hasPermission,
+    user,
   ]);
 }

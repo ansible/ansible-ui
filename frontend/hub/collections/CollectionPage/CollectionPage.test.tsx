@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CollectionVersionSearch } from '../Collection';
 import { CollectionPage } from './CollectionPage';
 
@@ -63,6 +63,13 @@ vi.mock('../../common/useHubContext', () => ({
     hasPermission: () => false,
   }),
 }));
+
+// Mock isInsightsMode
+vi.mock('../../common/isInsights', () => ({
+  isInsightsMode: vi.fn(() => false),
+}));
+
+import { isInsightsMode } from '../../common/isInsights';
 
 vi.mock('../hooks/useCollectionActions', () => ({
   useCollectionActions: () => [],
@@ -225,6 +232,127 @@ describe('CollectionPage', () => {
     await waitFor(() => {
       const refreshButton = screen.queryByRole('button', { name: /refresh/i });
       expect(refreshButton).toBeTruthy();
+    });
+  });
+
+  describe('Insights mode - external links', () => {
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(true);
+    });
+
+    afterEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
+    });
+
+    test('should display external links when content metadata is available in insights mode', async () => {
+      // Mock content API to return metadata with URLs
+      server.use(
+        http.get(
+          ({ request }) => request.url.includes('/content/ansible/collection_versions/'),
+          () =>
+            HttpResponse.json({
+              count: 1,
+              results: [
+                {
+                  documentation: 'https://docs.example.com',
+                  homepage: 'https://example.com',
+                  issues: 'https://github.com/example/issues',
+                  origin_repository: 'https://github.com/example/repo',
+                  docs_blob: {
+                    contents: [],
+                    collection_readme: { html: '', name: '' },
+                    documentation_files: [],
+                  },
+                  license: ['MIT'],
+                },
+              ],
+            })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+          <CollectionPage />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+        ).toBeInTheDocument();
+      });
+
+      // Check for external links in insights mode
+      await waitFor(() => {
+        expect(screen.getByText('Docs site')).toBeInTheDocument();
+        expect(screen.getByText('Website')).toBeInTheDocument();
+        expect(screen.getByText('Issue tracker')).toBeInTheDocument();
+        expect(screen.getByText('Repo')).toBeInTheDocument();
+        expect(screen.getByText('Create issue')).toBeInTheDocument();
+      });
+    });
+
+    test('should show Create issue link even without metadata URLs', async () => {
+      server.use(
+        http.get(
+          ({ request }) => request.url.includes('/content/ansible/collection_versions/'),
+          () =>
+            HttpResponse.json({
+              count: 1,
+              results: [
+                {
+                  docs_blob: {
+                    contents: [],
+                    collection_readme: { html: '', name: '' },
+                    documentation_files: [],
+                  },
+                  license: ['MIT'],
+                },
+              ],
+            })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+          <CollectionPage />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+        ).toBeInTheDocument();
+      });
+
+      // Create issue link should always appear in insights mode
+      await waitFor(() => {
+        expect(screen.getByText('Create issue')).toBeInTheDocument();
+      });
+
+      // Other links should not appear without content data
+      expect(screen.queryByText('Docs site')).not.toBeInTheDocument();
+      expect(screen.queryByText('Website')).not.toBeInTheDocument();
+    });
+
+    test('should not display external links when not in insights mode', async () => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
+
+      render(
+        <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+          <CollectionPage />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+        ).toBeInTheDocument();
+      });
+
+      // External links should not appear in platform mode
+      expect(screen.queryByText('Docs site')).not.toBeInTheDocument();
+      expect(screen.queryByText('Create issue')).not.toBeInTheDocument();
     });
   });
 });

@@ -10,13 +10,12 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
+import { isInsightsMode } from '../../common/isInsights';
 import { useHubView } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionFilters } from './useCollectionFilters';
 
-// TODO: If deployment mode is INSIGHTS, CERTIFIED_REPO should be set to 'published'. This needs to be updated
-// in the future when we are able to identify INSIGHTS mode
-const CERTIFIED_REPO = 'rh-certified';
+const CERTIFIED_REPO = isInsightsMode() ? 'published' : 'rh-certified';
 
 function CertifiedIcon() {
   return <i className="fas fa-certificate"></i>;

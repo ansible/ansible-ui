@@ -17,6 +17,7 @@ import { useOutletContext } from 'react-router-dom';
 import styled from 'styled-components';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
+import { isInsightsMode } from '../../common/isInsights';
 import { HubItemsResponse, useHubView } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
@@ -99,7 +100,7 @@ function UsedByDependenciesTable(props: { collection: CollectionVersionSearch })
   const version = props.collection.collection_version;
   const { t } = useTranslation();
   const tableColumns = useCollectionColumns();
-  const filters = useCollectionFilters();
+  const toolbarFilters = useCollectionFilters();
 
   const view = useHubView<UsedByDependenciesTableType>({
     url: hubAPI`/_ui/v1/collection-versions/`,
@@ -107,13 +108,14 @@ function UsedByDependenciesTable(props: { collection: CollectionVersionSearch })
     queryParams: {
       dependency: `${version?.namespace}.${version?.name}`,
     },
+    toolbarFilters,
   });
 
   return (
     <PageTable<UsedByDependenciesTableType>
       id="hub-used-by-dependencies-table"
       tableColumns={tableColumns}
-      toolbarFilters={filters}
+      toolbarFilters={toolbarFilters}
       errorStateTitle={t('Error loading used by dependencies')}
       emptyStateTitle={t('No dependencies')}
       compact={true}
@@ -169,7 +171,9 @@ export function useCollectionFilters() {
         key: 'name__icontains',
         label: t('Name'),
         type: ToolbarFilterType.SingleText,
-        query: 'keywords',
+        // Insights mode uses /_ui/v1/collection-versions/ API which requires name__icontains
+        // Platform mode uses keywords parameter
+        query: isInsightsMode() ? 'name__icontains' : 'keywords',
         comparison: 'contains',
       },
     ];

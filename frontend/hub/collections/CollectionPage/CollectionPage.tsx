@@ -20,20 +20,24 @@ import { singleSelectBrowseAdapter } from '@ansible/ansible-ui-framework/PageToo
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet, useGetRequest } from '@ansible/common-ui/crud/useGet';
-import { Button } from '@patternfly/react-core';
+import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { ExternalLink } from '../../common/ExternalLink';
 import { HubError } from '../../common/HubError';
-import { hubAPI } from '../../common/api/formatPath';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { isInsightsMode } from '../../common/isInsights';
 import { useHubContext } from '../../common/useHubContext';
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
+import { HubNamespace } from '../../namespaces/HubNamespace';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
 import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
+import { CollectionVersionsContent } from './CollectionDocumentation';
 
 export function CollectionPage() {
   const { t } = useTranslation();
@@ -48,6 +52,24 @@ export function CollectionPage() {
   const pageNavigate = usePageNavigate();
 
   const { display_signatures } = context.featureFlags;
+
+  // In Insights mode, fetch namespace via my-namespaces API for object-level permission checks
+  // This determines what collection actions (sign, deprecate, delete, etc.) the user can see
+  const { data: myNamespace } = useGet<HubNamespace>(
+    isInsightsMode() && namespace ? hubAPI`/_ui/v1/my-namespaces/${namespace}/` : ''
+  );
+
+  // Fetch collection content data for metadata URLs (insights mode links)
+  const { data: contentResults } = useGet<CollectionVersionsContent>(
+    collection?.collection_version
+      ? pulpAPI`/content/ansible/collection_versions/?namespace=${
+          collection?.collection_version?.namespace || ''
+        }&name=${collection?.collection_version?.name || ''}&version=${
+          collection?.collection_version?.version || ''
+        }&offset=0&limit=1`
+      : ''
+  );
+  const content = contentResults?.results?.[0];
 
   const singleSelector = useSelectCollectionVersionSingle({
     collection: name || '',
@@ -124,15 +146,19 @@ export function CollectionPage() {
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}${queryFilter}`
   );
 
-  const itemActions = useCollectionActions((collections) => {
-    async function getCollectionData() {
-      const collectionRequest = await getRequest(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}&version=${collections[0]?.collection_version?.version}`
-      );
-      setCollection(collectionRequest?.data[0]);
-    }
-    void getCollectionData();
-  }, true);
+  const itemActions = useCollectionActions(
+    (collections) => {
+      async function getCollectionData() {
+        const collectionRequest = await getRequest(
+          hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}&version=${collections[0]?.collection_version?.version}`
+        );
+        setCollection(collectionRequest?.data[0]);
+      }
+      void getCollectionData();
+    },
+    true,
+    myNamespace ?? undefined
+  );
 
   function setVersionParams(collection: Partial<CollectionVersionSearch> | null) {
     if (!collection) {
@@ -267,11 +293,48 @@ export function CollectionPage() {
         ]}
         headerActions={
           collection && (
-            <PageActions<Partial<CollectionVersionSearch>>
-              actions={itemActions as IPageAction<Partial<CollectionVersionSearch>>[]}
-              position={'right'}
-              selectedItem={collection}
-            />
+            <Flex>
+              {isInsightsMode() && (
+                <>
+                  {content?.documentation && (
+                    <FlexItem>
+                      <ExternalLink href={content.documentation}>{t('Docs site')}</ExternalLink>
+                    </FlexItem>
+                  )}
+                  {content?.homepage && (
+                    <FlexItem>
+                      <ExternalLink href={content.homepage}>{t('Website')}</ExternalLink>
+                    </FlexItem>
+                  )}
+                  {content?.issues && (
+                    <FlexItem>
+                      <ExternalLink href={content.issues}>{t('Issue tracker')}</ExternalLink>
+                    </FlexItem>
+                  )}
+                  {content?.origin_repository && (
+                    <FlexItem>
+                      <ExternalLink href={content.origin_repository}>{t('Repo')}</ExternalLink>
+                    </FlexItem>
+                  )}
+                  <FlexItem>
+                    <ExternalLink
+                      href={`https://access.redhat.com/support/cases/#/case/new/open-case/describe-issue/recommendations?caseCreate=true&product=Ansible%20Automation%20Hub&version=Online&summary=${encodeURIComponent(
+                        `${collection.collection_version?.namespace}-${collection.collection_version?.name}-${collection.collection_version?.version}`
+                      )}`}
+                    >
+                      {t('Create issue')}
+                    </ExternalLink>
+                  </FlexItem>
+                </>
+              )}
+              <FlexItem>
+                <PageActions<Partial<CollectionVersionSearch>>
+                  actions={itemActions as IPageAction<Partial<CollectionVersionSearch>>[]}
+                  position={'right'}
+                  selectedItem={collection}
+                />
+              </FlexItem>
+            </Flex>
           )
         }
         description={t('Repository: ') + collection?.repository?.name}

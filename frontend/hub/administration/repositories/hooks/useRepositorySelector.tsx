@@ -12,6 +12,7 @@ import {
   useAsyncSingleSelectFilterBuilder,
 } from '../../../common/ToolbarAsyncSelectFilterBuilder';
 import { pulpAPI } from '../../../common/api/formatPath';
+import { isInsightsMode } from '../../../common/isInsights';
 import { useHubView } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { MultiDialogs } from './useAddCollections';
@@ -78,8 +79,10 @@ export function useRepositoryFilters() {
         key: 'keywords',
         label: t('Name'),
         type: ToolbarFilterType.SingleText,
-        query: 'name',
-        comparison: 'equals',
+        // Insights mode requires name__icontains for case-insensitive partial matching
+        // Platform mode uses name for exact matching
+        query: isInsightsMode() ? 'name__icontains' : 'name',
+        comparison: isInsightsMode() ? 'contains' : 'equals',
       },
       {
         key: 'pipeline',

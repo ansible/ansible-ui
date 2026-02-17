@@ -20,6 +20,7 @@ import { useRepoQueryOptions } from './useRepoQueryOptions';
 
 import { TextCell } from '@ansible/ansible-ui-framework';
 import { CollectionLogo } from '../../../common/Logo';
+import { namespaceTitle } from '../../../common/namespaceTitle';
 
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { Button } from '@patternfly/react-core';
@@ -285,7 +286,12 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         header: t('Provided by'),
         type: 'text',
         value: (collection) =>
-          t(`Provided by {{namespace}}`, { namespace: collection.collection_version?.namespace }),
+          t(`Provided by {{namespace}}`, {
+            namespace: namespaceTitle({
+              name: collection.collection_version?.namespace || '',
+              company: collection.namespace_metadata?.company,
+            }),
+          }),
         card: 'subtitle',
         list: 'subtitle',
         table: 'hidden',

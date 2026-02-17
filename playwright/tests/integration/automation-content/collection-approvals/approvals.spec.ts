@@ -89,7 +89,7 @@ test.describe('Hub - Collection Approvals', () => {
           filterLabel: 'Namespace',
           filterValue: namespaceName,
           text: namespaceName,
-          action: 'Approve and sign collection',
+          action: 'Approve collection',
           inKebab: false,
         },
         page
