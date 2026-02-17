@@ -1,12 +1,13 @@
 import { TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EdaEventStreamCell(props: { event_stream_id?: number | null }) {
   const getPageUrl = useGetPageUrl();
   const { data } = useGet<EdaEventStream>(
-    props.event_stream_id ? `/api/eda/v1/event-streams/${props.event_stream_id}/` : undefined,
+    props.event_stream_id ? edaAPI`/event-streams/${props.event_stream_id}/` : undefined,
     { dedupingInterval: 10 * 1000 }
   );
   if (!data) {

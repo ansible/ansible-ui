@@ -1,12 +1,13 @@
 import { TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaOrganization } from '../../../interfaces/EdaOrganization';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function EdaOrganizationCell(props: { organization_id?: number | null }) {
   const getPageUrl = useGetPageUrl();
   const { data } = useGet<EdaOrganization>(
-    props.organization_id ? `/api/eda/v1/organizations/${props.organization_id}/` : undefined,
+    props.organization_id ? edaAPI`/organizations/${props.organization_id}/` : undefined,
     { dedupingInterval: 10 * 1000 }
   );
   if (!data) {

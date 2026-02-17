@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useAuthenticatorPageActions } from '../hooks/useAuthenticatorActions';
 
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
@@ -22,7 +23,7 @@ export function AuthenticatorPage() {
     error,
     data: authenticator,
     refresh,
-  } = useGetItem<Authenticator>(`/api/gateway/v1/authenticators`, params.id);
+  } = useGetItem<Authenticator>(gatewayAPI`/authenticators/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const actions = useAuthenticatorPageActions(
