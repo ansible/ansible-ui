@@ -34,6 +34,37 @@ vi.mock('../../main/HubRoutes', () => ({
   },
 }));
 
+// Mock isInsightsMode
+vi.mock('../../common/isInsights', () => ({
+  isInsightsMode: vi.fn(() => false),
+}));
+
+import { isInsightsMode } from '../../common/isInsights';
+
+// Mock canSign
+vi.mock('../../common/utils/canSign', () => ({
+  useCanSignNamespace: vi.fn(() => true),
+}));
+
+import { useCanSignNamespace } from '../../common/utils/canSign';
+
+// Mock useHubContext with configurable values
+const mockFeatureFlags = {
+  can_upload_signatures: false,
+};
+
+let mockUser: Record<string, unknown> | null = null;
+let mockHasPermission: (perm: string) => boolean = () => false;
+
+vi.mock('../../common/useHubContext', () => ({
+  useHubContext: () => ({
+    featureFlags: mockFeatureFlags,
+    settings: {},
+    user: mockUser,
+    hasPermission: mockHasPermission,
+  }),
+}));
+
 function renderUseCollectionsActions(namespace?: string) {
   const callback = vi.fn();
   return renderHook(() => useCollectionsActions(callback, namespace), {
@@ -41,9 +72,25 @@ function renderUseCollectionsActions(namespace?: string) {
   });
 }
 
+function getAction(actions: ReturnType<typeof useCollectionsActions>, label: string) {
+  return actions.find((action) => 'label' in action && action.label === label);
+}
+
+function isActionHidden(action: ReturnType<typeof getAction>) {
+  if (action && 'isHidden' in action && typeof action.isHidden === 'function') {
+    return (action.isHidden as () => boolean)();
+  }
+  return undefined;
+}
+
 describe('useCollectionsActions', () => {
   beforeEach(() => {
     mockPageNavigate.mockClear();
+    vi.mocked(isInsightsMode).mockReturnValue(false);
+    vi.mocked(useCanSignNamespace).mockReturnValue(true);
+    mockUser = null;
+    mockHasPermission = () => false;
+    mockFeatureFlags.can_upload_signatures = false;
   });
 
   afterEach(() => {
@@ -58,22 +105,15 @@ describe('useCollectionsActions', () => {
 
   it('should include Upload collection action', () => {
     const { result } = renderUseCollectionsActions();
-    const uploadAction = result.current.find(
-      (action) => 'label' in action && action.label === 'Upload collection'
-    );
-    expect(uploadAction).toBeDefined();
+    expect(getAction(result.current, 'Upload collection')).toBeDefined();
   });
 
   describe('Upload collection action', () => {
     it('should navigate to upload page without query when no namespace provided', () => {
       const { result } = renderUseCollectionsActions();
-      const uploadAction = result.current.find(
-        (action) => 'label' in action && action.label === 'Upload collection'
-      );
-
+      const uploadAction = getAction(result.current, 'Upload collection');
       expect(uploadAction).toBeDefined();
       if (uploadAction && 'onClick' in uploadAction && typeof uploadAction.onClick === 'function') {
-        // PageActionSelection.None actions have onClick with no required arguments
         (uploadAction.onClick as () => void)();
         expect(mockPageNavigate).toHaveBeenCalledWith('UploadCollection', undefined);
       }
@@ -81,13 +121,9 @@ describe('useCollectionsActions', () => {
 
     it('should navigate to upload page with namespace query when namespace provided', () => {
       const { result } = renderUseCollectionsActions('my-namespace');
-      const uploadAction = result.current.find(
-        (action) => 'label' in action && action.label === 'Upload collection'
-      );
-
+      const uploadAction = getAction(result.current, 'Upload collection');
       expect(uploadAction).toBeDefined();
       if (uploadAction && 'onClick' in uploadAction && typeof uploadAction.onClick === 'function') {
-        // PageActionSelection.None actions have onClick with no required arguments
         (uploadAction.onClick as () => void)();
         expect(mockPageNavigate).toHaveBeenCalledWith('UploadCollection', {
           query: { namespace: 'my-namespace' },
@@ -98,25 +134,137 @@ describe('useCollectionsActions', () => {
 
   it('should include deprecate/undeprecate action', () => {
     const { result } = renderUseCollectionsActions();
-    const deprecateAction = result.current.find(
-      (action) => 'label' in action && action.label === 'Deprecate collections'
-    );
-    expect(deprecateAction).toBeDefined();
+    expect(getAction(result.current, 'Deprecate collections')).toBeDefined();
   });
 
   it('should include sign action when signing is enabled', () => {
     const { result } = renderUseCollectionsActions();
-    const signAction = result.current.find(
-      (action) => 'label' in action && action.label === 'Sign collections'
-    );
-    expect(signAction).toBeDefined();
+    expect(getAction(result.current, 'Sign collections')).toBeDefined();
   });
 
   it('should include delete action', () => {
     const { result } = renderUseCollectionsActions();
-    const deleteAction = result.current.find(
-      (action) => 'label' in action && action.label === 'Delete collections'
-    );
-    expect(deleteAction).toBeDefined();
+    expect(getAction(result.current, 'Delete collections')).toBeDefined();
+  });
+
+  describe('Platform mode (non-Insights)', () => {
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(false);
+    });
+
+    it('should show all actions regardless of permissions', () => {
+      const { result } = renderUseCollectionsActions();
+      expect(isActionHidden(getAction(result.current, 'Upload collection'))).toBe(false);
+      expect(isActionHidden(getAction(result.current, 'Sign collections'))).toBe(false);
+      expect(isActionHidden(getAction(result.current, 'Deprecate collections'))).toBe(false);
+      expect(isActionHidden(getAction(result.current, 'Delete collections'))).toBe(false);
+    });
+  });
+
+  describe('Insights mode', () => {
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(true);
+    });
+
+    describe('without permissions', () => {
+      beforeEach(() => {
+        mockHasPermission = () => false;
+        mockUser = null;
+      });
+
+      it('should hide Upload collection', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Upload collection'))).toBe(true);
+      });
+
+      it('should hide Sign collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Sign collections'))).toBe(true);
+      });
+
+      it('should hide Deprecate collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Deprecate collections'))).toBe(true);
+      });
+
+      it('should hide Delete collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Delete collections'))).toBe(true);
+      });
+    });
+
+    describe('with galaxy.upload_to_namespace permission', () => {
+      beforeEach(() => {
+        mockHasPermission = (perm: string) => perm === 'galaxy.upload_to_namespace';
+      });
+
+      it('should show Upload collection', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Upload collection'))).toBe(false);
+      });
+
+      it('should still hide Delete collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Delete collections'))).toBe(true);
+      });
+    });
+
+    describe('with galaxy.change_namespace permission', () => {
+      beforeEach(() => {
+        mockHasPermission = (perm: string) => perm === 'galaxy.change_namespace';
+      });
+
+      it('should show Deprecate collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Deprecate collections'))).toBe(false);
+      });
+
+      it('should show Delete collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Delete collections'))).toBe(false);
+      });
+
+      it('should show Sign collections when feature flag is enabled', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Sign collections'))).toBe(false);
+      });
+
+      it('should hide Sign collections when can_upload_signatures is true', () => {
+        mockFeatureFlags.can_upload_signatures = true;
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Sign collections'))).toBe(true);
+      });
+    });
+
+    describe('with ansible.delete_collection permission', () => {
+      beforeEach(() => {
+        mockHasPermission = (perm: string) => perm === 'ansible.delete_collection';
+      });
+
+      it('should show Delete collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Delete collections'))).toBe(false);
+      });
+
+      it('should still hide Deprecate collections', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Deprecate collections'))).toBe(true);
+      });
+    });
+
+    describe('with superuser', () => {
+      beforeEach(() => {
+        mockUser = { is_superuser: true };
+        mockHasPermission = () => false;
+      });
+
+      it('should show all actions', () => {
+        const { result } = renderUseCollectionsActions();
+        expect(isActionHidden(getAction(result.current, 'Upload collection'))).toBe(false);
+        expect(isActionHidden(getAction(result.current, 'Sign collections'))).toBe(false);
+        expect(isActionHidden(getAction(result.current, 'Deprecate collections'))).toBe(false);
+        expect(isActionHidden(getAction(result.current, 'Delete collections'))).toBe(false);
+      });
+    });
   });
 });

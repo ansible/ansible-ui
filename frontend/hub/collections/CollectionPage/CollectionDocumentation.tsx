@@ -242,6 +242,11 @@ export type CollectionVersionContentItem = {
     documentation_files: { name: string; html: string }[];
   };
   license: string[];
+  // Collection metadata URLs
+  documentation?: string;
+  homepage?: string;
+  issues?: string;
+  origin_repository?: string;
 };
 
 export type CollectionVersionsContent = {

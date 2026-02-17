@@ -1,7 +1,7 @@
 import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { Alert, CodeBlock, Stack, StackItem } from '@patternfly/react-core';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
@@ -57,11 +57,13 @@ export function ImportLog({ isLoading, collectionImport, collection, error }: IP
         </Alert>
       )}
       <CodeBlock
-        style={{
-          marginTop: '10px',
-          backgroundColor: 'var(--pf-t--global--background--color--secondary--default)',
-          position: 'relative',
-        }}
+        style={
+          {
+            marginTop: '10px',
+            '--pf-v6-c-code-block--BackgroundColor': 'var(--pf-t--color--gray--95)',
+            position: 'relative',
+          } as React.CSSProperties
+        }
         data-cy="import-console"
         data-testid="import-console"
       >

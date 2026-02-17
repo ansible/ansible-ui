@@ -15,6 +15,7 @@ import { Link, useOutletContext } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { useRepositoryBasePath } from '../../common/api/hub-api-utils';
+import { isInsightsMode } from '../../common/isInsights';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { CollectionVersionsContent } from './CollectionDocumentation';
@@ -70,7 +71,21 @@ export function CollectionInstall() {
       }/`
     );
     if (downloadLinkRef.current) {
-      downloadLinkRef.current.href = downloadURL.download_url;
+      let url = downloadURL.download_url;
+
+      // In Insights mode, the API returns an absolute URL (e.g., https://console.redhat.com/api/...)
+      // Direct browser navigation to this URL bypasses the proxy and fails authentication.
+      // Convert to a relative URL so the request goes through the same origin with cookies.
+      if (isInsightsMode() && url.startsWith('http')) {
+        try {
+          const parsedUrl = new URL(url);
+          url = parsedUrl.pathname + parsedUrl.search;
+        } catch {
+          // If URL parsing fails, use the original URL
+        }
+      }
+
+      downloadLinkRef.current.href = url;
       downloadLinkRef.current.click();
     }
   }

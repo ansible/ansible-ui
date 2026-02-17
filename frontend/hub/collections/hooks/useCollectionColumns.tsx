@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { CollectionLogo } from '../../common/Logo';
+import { namespaceTitle } from '../../common/namespaceTitle';
 import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
@@ -62,7 +63,12 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         header: t('Provided by'),
         type: 'text',
         value: (collection) =>
-          t(`Provided by {{namespace}}`, { namespace: collection.collection_version?.namespace }),
+          t(`Provided by {{namespace}}`, {
+            namespace: namespaceTitle({
+              name: collection.collection_version?.namespace || '',
+              company: collection.namespace_metadata?.company,
+            }),
+          }),
         card: 'subtitle',
         list: 'subtitle',
         table: 'hidden',

@@ -8,6 +8,8 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { BanIcon, KeyIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isInsightsMode } from '../../common/isInsights';
+import { useHubContext } from '../../common/useHubContext';
 import { useCanSignNamespace } from '../../common/utils/canSign';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
@@ -25,7 +27,26 @@ export function useCollectionsActions(
   const deprecateOrUndeprecateCollections = useDeprecateOrUndeprecateCollections(callback);
   const signCollection = useSignCollection(false, callback);
 
-  const canSign = useCanSignNamespace();
+  const canSignFeatureFlag = useCanSignNamespace();
+  const { hasPermission, user, featureFlags } = useHubContext();
+  const { can_upload_signatures } = featureFlags;
+
+  // In Insights mode, check model-level permissions for toolbar (bulk) actions
+  // Object-level permissions are not available here since toolbar actions span multiple namespaces
+  const isInsights = isInsightsMode();
+  const canDelete =
+    !isInsights ||
+    hasPermission('ansible.delete_collection') ||
+    hasPermission('galaxy.change_namespace') ||
+    !!user?.is_superuser;
+  const canDeprecate =
+    !isInsights || hasPermission('galaxy.change_namespace') || !!user?.is_superuser;
+  const canUpload =
+    !isInsights || hasPermission('galaxy.upload_to_namespace') || !!user?.is_superuser;
+  const canSign =
+    canSignFeatureFlag &&
+    !can_upload_signatures &&
+    (!isInsights || hasPermission('galaxy.change_namespace') || !!user?.is_superuser);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -38,6 +59,7 @@ export function useCollectionsActions(
         label: t('Upload collection'),
         onClick: () =>
           pageNavigate(HubRoute.UploadCollection, namespace ? { query: { namespace } } : undefined),
+        isHidden: () => !canUpload,
       },
       {
         type: PageActionType.Button,
@@ -47,8 +69,9 @@ export function useCollectionsActions(
         onClick: (collections) => {
           signCollection(collections);
         },
+        isHidden: () => !canSign,
         isDisabled: () =>
-          !canSign ? t('You do not have the rights for this operation') : undefined,
+          canSignFeatureFlag ? undefined : t('You do not have the rights for this operation'),
       },
       {
         type: PageActionType.Button,
@@ -58,6 +81,7 @@ export function useCollectionsActions(
         onClick: (collections) => {
           deprecateOrUndeprecateCollections(collections, 'deprecate');
         },
+        isHidden: () => !canDeprecate,
       },
       { type: PageActionType.Seperator },
       {
@@ -81,6 +105,7 @@ export function useCollectionsActions(
           deleteCollections(newCollections);
         },
         isDanger: true,
+        isHidden: () => !canDelete,
       },
     ],
     [
@@ -90,6 +115,10 @@ export function useCollectionsActions(
       deprecateOrUndeprecateCollections,
       signCollection,
       canSign,
+      canSignFeatureFlag,
+      canDelete,
+      canDeprecate,
+      canUpload,
       deleteCollections,
     ]
   );

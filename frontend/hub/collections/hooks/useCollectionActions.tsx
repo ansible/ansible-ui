@@ -8,8 +8,10 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { BanIcon, CopyIcon, KeyIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isInsightsMode } from '../../common/isInsights';
 import { useHubContext } from '../../common/useHubContext';
-import { useCanSignNamespace } from '../../common/utils/canSign';
+import { useCanSignNamespace, useCollectionPermissionCheck } from '../../common/utils/canSign';
+import { HubNamespace } from '../../namespaces/HubNamespace';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCopyToRepository } from './useCopyToRepository';
@@ -17,12 +19,12 @@ import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
-import { useUploadSignature } from './useUploadSignature';
 
 export function useCollectionActions(
   callback: (collections: CollectionVersionSearch[]) => void,
   // determine if the menu item is rendered in list or in detail, which defines its redirections
-  detail?: boolean
+  detail?: boolean,
+  namespace?: HubNamespace
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -45,13 +47,27 @@ export function useCollectionActions(
   const copyToRepository = useCopyToRepository(callback);
   const signCollectionVersion = useSignCollection(true, callback);
   const signCollection = useSignCollection(false, callback);
-  const uploadSignature = useUploadSignature();
 
-  const { featureFlags } = useHubContext();
+  const { featureFlags, user } = useHubContext();
 
-  const { can_upload_signatures } = featureFlags;
+  const { can_upload_signatures, display_repositories } = featureFlags;
 
-  const canSign = useCanSignNamespace();
+  const canSignFeatureFlag = useCanSignNamespace();
+  const hasPerm = useCollectionPermissionCheck(namespace);
+
+  // Permission checks matching ansible-hub-ui's CollectionDropdown
+  // In Insights mode, require specific permissions; in Platform mode, always allow
+  const isInsights = isInsightsMode();
+  const canDelete =
+    !isInsights || hasPerm('ansible.delete_collection') || hasPerm('galaxy.change_namespace');
+  const canDeprecate = !isInsights || hasPerm('galaxy.change_namespace');
+  const canRemove = canDelete && !!display_repositories;
+  const canSign =
+    canSignFeatureFlag &&
+    !can_upload_signatures &&
+    (!isInsights || (hasPerm('galaxy.change_namespace') && hasPerm('galaxy.upload_to_namespace')));
+  const canUpload = !isInsights || hasPerm('galaxy.upload_to_namespace');
+  const canCopy = !!display_repositories && !user?.is_anonymous;
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -70,16 +86,9 @@ export function useCollectionActions(
         selection: PageActionSelection.Single,
         icon: KeyIcon,
         label: t('Sign version'),
-        isHidden: () => (detail && canSign ? false : true),
+        isHidden: () => !detail || !canSign,
         onClick: (collection) => {
-          if (can_upload_signatures) {
-            // upload signature - it works only in insights, but we can leave it here for now
-            // because insights will be next
-            uploadSignature(collection);
-          } else {
-            // sign version
-            signCollectionVersion([collection]);
-          }
+          signCollectionVersion([collection]);
         },
       },
       {
@@ -91,7 +100,8 @@ export function useCollectionActions(
           deprecateOrUndeprecateCollections([collection], 'deprecate');
         },
         isHidden: (collection) => {
-          return collection?.is_deprecated ? true : false;
+          if (!canDeprecate) return true;
+          return !!collection?.is_deprecated;
         },
       },
       {
@@ -103,7 +113,8 @@ export function useCollectionActions(
           deprecateOrUndeprecateCollections([collection], 'undeprecate');
         },
         isHidden: (collection) => {
-          return collection?.is_deprecated ? false : true;
+          if (!canDeprecate) return true;
+          return !collection?.is_deprecated;
         },
       },
       {
@@ -114,6 +125,7 @@ export function useCollectionActions(
         onClick: (collection) => {
           copyToRepository(collection, 'copy');
         },
+        isHidden: () => !canCopy,
       },
       {
         type: PageActionType.Button,
@@ -123,6 +135,7 @@ export function useCollectionActions(
         isPinned: true,
         label: t('Upload new version'),
         onClick: () => pageNavigate(HubRoute.UploadCollection),
+        isHidden: () => !canUpload,
       },
       { type: PageActionType.Seperator },
       {
@@ -134,7 +147,7 @@ export function useCollectionActions(
         onClick: (collection) => {
           deleteCollectionsVersions([collection]);
         },
-        isHidden: () => (detail ? false : true),
+        isHidden: () => !detail || !canDelete,
       },
       {
         type: PageActionType.Button,
@@ -145,7 +158,7 @@ export function useCollectionActions(
         onClick: (collection) => {
           deleteCollectionsVersionsFromRepository([collection]);
         },
-        isHidden: () => (detail ? false : true),
+        isHidden: () => !detail || !canRemove,
       },
       {
         type: PageActionType.Button,
@@ -154,6 +167,7 @@ export function useCollectionActions(
         label: t('Delete entire collection from repository'),
         onClick: (collection) => deleteCollectionsFromRepository([collection]),
         isDanger: true,
+        isHidden: () => !canRemove,
       },
       {
         type: PageActionType.Button,
@@ -162,16 +176,20 @@ export function useCollectionActions(
         label: t('Delete entire collection from system'),
         onClick: (collection) => deleteCollections([collection]),
         isDanger: true,
+        isHidden: () => !canDelete,
       },
     ],
     [
       t,
       canSign,
+      canDelete,
+      canDeprecate,
+      canRemove,
+      canCopy,
+      canUpload,
       signCollection,
       deprecateOrUndeprecateCollections,
       detail,
-      can_upload_signatures,
-      uploadSignature,
       signCollectionVersion,
       copyToRepository,
       pageNavigate,

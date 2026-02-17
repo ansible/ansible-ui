@@ -11,7 +11,9 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { CSSProperties } from 'styled-components';
 import { CollectionVersionSearch } from '../collections/Collection';
+import { isInsightsMode } from '../common/isInsights';
 import { CollectionLogo } from '../common/Logo';
+import { namespaceTitle } from '../common/namespaceTitle';
 import { HubRoute } from '../main/HubRoutes';
 
 export const ColumnsDiv = styled.div`
@@ -20,9 +22,7 @@ export const ColumnsDiv = styled.div`
   align-items: baseline;
 `;
 
-// TODO: If deployment mode is INSIGHTS, CERTIFIED_REPO should be set to 'published'. This needs to be updated
-// in the future when we are able to identify INSIGHTS mode
-const CERTIFIED_REPO = 'rh-certified';
+const CERTIFIED_REPO = isInsightsMode() ? 'published' : 'rh-certified';
 
 type Labels =
   | {
@@ -108,7 +108,10 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           subtitle: (
             <TextCell
               text={t('Provided by {{provider}}', {
-                provider: item.collection_version?.namespace,
+                provider: namespaceTitle({
+                  name: item.collection_version?.namespace || '',
+                  company: item.namespace_metadata?.company,
+                }),
               })}
             />
           ),

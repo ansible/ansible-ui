@@ -16,6 +16,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { TFunction } from 'i18next';
 import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
+import { isInsightsMode } from '../../../common/isInsights';
 import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Approval';
@@ -28,11 +29,16 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
   const params = useParams();
   const rejectCollections = useRejectCollections(callback);
   const approveCollectionsFrameworkModal = useApproveCollectionsFrameworkModal(callback);
-  const { featureFlags } = useHubContext();
+  const { featureFlags, hasPermission, user } = useHubContext();
   const { collection_auto_sign, require_upload_signatures, can_upload_signatures } = featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
 
   const copyToRepository = useCopyToRepository(callback);
+
+  // In Insights mode, require ansible.modify_ansible_repo_content for approve/reject actions
+  const isInsights = isInsightsMode();
+  const canModifyRepoContent =
+    !isInsights || hasPermission('ansible.modify_ansible_repo_content') || !!user?.is_superuser;
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -55,19 +61,17 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
           });
         },
         isDanger: false,
-        // is hidden for now because it works only for insights
-        isHidden: () => true,
+        isHidden: (collection) =>
+          !canModifyRepoContent || !can_upload_signatures || !!collection?.is_signed,
         isDisabled: (collection) =>
-          can_upload_signatures || collection.is_signed
-            ? t('You do not have rights to this operation')
-            : undefined,
+          collection?.is_signed ? t('Collection is already signed') : undefined,
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: ThumbsUpIcon,
-        label: autoSign ? t('Approve and sign collection') : t('Approve and sign collection'),
+        label: autoSign ? t('Approve and sign collection') : t('Approve collection'),
         onClick: (collection) =>
           approveCollection(
             [collection],
@@ -77,6 +81,7 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
             t
           ),
         isDanger: false,
+        isHidden: () => !canModifyRepoContent,
         isDisabled: (collection) =>
           collection?.repository?.pulp_labels?.pipeline === 'approved'
             ? t`Collection is already approved`
@@ -108,6 +113,7 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
         label: t('Reject collection'),
         onClick: (collection) => rejectCollections([collection]),
         isDanger: true,
+        isHidden: () => !canModifyRepoContent,
         isDisabled: (collection) =>
           collection?.repository?.pulp_labels?.pipeline === 'rejected'
             ? t`Collection is already rejected`
@@ -121,6 +127,7 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
       autoSign,
       can_upload_signatures,
       require_upload_signatures,
+      canModifyRepoContent,
       pageNavigate,
       params,
       copyToRepository,

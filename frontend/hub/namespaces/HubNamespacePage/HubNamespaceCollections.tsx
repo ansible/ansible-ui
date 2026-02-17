@@ -65,7 +65,11 @@ export function HubNamespaceCollections() {
     return allToolbarActions;
   }, [allToolbarActions, showControls, t]);
 
-  const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
+  const rowActions = useCollectionActions(
+    view.unselectItemsAndRefresh,
+    false,
+    myNamespace ?? undefined
+  );
 
   // In Insights mode, only show upload button in empty state if user has access
   // In Platform mode, always show the upload button

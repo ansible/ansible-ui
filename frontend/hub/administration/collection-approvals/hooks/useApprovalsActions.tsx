@@ -3,6 +3,8 @@ import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
+import { isInsightsMode } from '../../../common/isInsights';
+import { useHubContext } from '../../../common/useHubContext';
 import { CollectionVersionSearch } from '../Approval';
 import { approveCollection } from './useApprovalActions';
 import { useApproveCollectionsFrameworkModal } from './useApproveCollections';
@@ -14,6 +16,12 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
 
   const copyToRepository = useCopyToRepository(callback);
   const approveCollectionsFrameworkModal = useApproveCollectionsFrameworkModal(callback);
+  const { hasPermission, user } = useHubContext();
+
+  // In Insights mode, require ansible.modify_ansible_repo_content for approve/reject toolbar actions
+  const isInsights = isInsightsMode();
+  const canModifyRepoContent =
+    !isInsights || hasPermission('ansible.modify_ansible_repo_content') || !!user?.is_superuser;
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -25,6 +33,7 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
         onClick: (items) =>
           approveCollection(items, copyToRepository, approveCollectionsFrameworkModal, true, t),
         isDanger: false,
+        isHidden: () => !canModifyRepoContent,
       },
       { type: PageActionType.Seperator },
       {
@@ -34,8 +43,9 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
         label: t('Reject collections'),
         onClick: rejectCollections,
         isDanger: true,
+        isHidden: () => !canModifyRepoContent,
       },
     ],
-    [t, rejectCollections, approveCollectionsFrameworkModal, copyToRepository]
+    [t, rejectCollections, approveCollectionsFrameworkModal, copyToRepository, canModifyRepoContent]
   );
 }

@@ -29,6 +29,13 @@ vi.mock('../common/useHubActiveUser', () => ({
   ),
 }));
 
+// Mock HubContextProvider
+vi.mock('../common/useHubContext', () => ({
+  HubContextProvider: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="hub-context-provider">{children}</div>
+  ),
+}));
+
 // Mock HubInsightsApp
 vi.mock('../insights/HubInsightsApp', () => ({
   HubInsightsApp: () => <div data-testid="hub-insights-app">HubInsightsApp</div>,
@@ -61,7 +68,7 @@ describe('HubRoot', () => {
   // via the graceful handling tests below, which verify the component doesn't
   // crash when Chrome methods are undefined (optional chaining behavior).
 
-  it('should wrap HubInsightsApp in HubActiveUserProvider', () => {
+  it('should wrap HubInsightsApp in HubActiveUserProvider and HubContextProvider', () => {
     render(
       <MemoryRouter>
         <HubRoot />
@@ -69,10 +76,13 @@ describe('HubRoot', () => {
     );
 
     const provider = screen.getByTestId('hub-active-user-provider');
+    const contextProvider = screen.getByTestId('hub-context-provider');
     const app = screen.getByTestId('hub-insights-app');
 
-    // Verify HubInsightsApp is inside HubActiveUserProvider
-    expect(provider).toContainElement(app);
+    // Verify HubInsightsApp is inside HubContextProvider
+    expect(contextProvider).toContainElement(app);
+    // Verify HubContextProvider is inside HubActiveUserProvider
+    expect(provider).toContainElement(contextProvider);
   });
 
   it('should wrap everything in PageFramework', () => {
@@ -87,6 +97,51 @@ describe('HubRoot', () => {
 
     // Verify HubActiveUserProvider is inside PageFramework
     expect(framework).toContainElement(provider);
+  });
+
+  it('should render HubContextProvider in component tree', () => {
+    render(
+      <MemoryRouter>
+        <HubRoot />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('hub-context-provider')).toBeInTheDocument();
+  });
+});
+
+describe('useForceLight', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+    document.documentElement.classList.remove('pf-v6-theme-dark');
+  });
+
+  it('should remove pf-v6-theme-dark class on render', () => {
+    document.documentElement.classList.add('pf-v6-theme-dark');
+
+    render(
+      <MemoryRouter>
+        <HubRoot />
+      </MemoryRouter>
+    );
+
+    expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
+  });
+
+  it('should revert dark mode class if re-added', async () => {
+    render(
+      <MemoryRouter>
+        <HubRoot />
+      </MemoryRouter>
+    );
+
+    // Simulate PageSettingsProvider re-adding dark class
+    document.documentElement.classList.add('pf-v6-theme-dark');
+
+    // MutationObserver should revert it
+    // Give it a tick for the observer to fire
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
   });
 });
 

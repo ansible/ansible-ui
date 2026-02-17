@@ -23,6 +23,7 @@ import { useRepositories } from '../administration/repositories/hooks/useReposit
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI, pulpAPI } from '../common/api/formatPath';
+import { getRepositoryBasePath } from '../common/api/hub-api-utils';
 import { isInsightsMode } from '../common/isInsights';
 import { hubPostRequestFile } from '../common/api/request';
 import { HubItemsResponse, PulpItemsResponse, useHubView } from '../common/useHubView';
@@ -84,7 +85,6 @@ function InsightsUploadCollectionByFile() {
   const [selectedRepo, setSelectedRepo] = useState<{ name: string; pulp_href: string } | null>(
     null
   );
-  const distroGetRequest = useGetRequest<PulpItemsResponse<Distribution>>();
   const toolbarFilters = useRepoFilters();
   const tableColumns = useRepositoriesColumns();
 
@@ -170,11 +170,11 @@ function InsightsUploadCollectionByFile() {
         return;
       }
 
+      // In Insights mode, use getRepositoryBasePath which first tries to find a distribution
+      // with the same name as the repository (e.g., "staging"), avoiding synclist distributions
+      // that may be returned first when querying by repository pulp_href alone
       lastError = t('Can not find distribution for selected repository.');
-      const list = await distroGetRequest(
-        pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo.pulp_href}`
-      );
-      const base_path = list?.results?.[0]?.base_path;
+      const base_path = await getRepositoryBasePath(selectedRepo.name, selectedRepo.pulp_href, t);
 
       if (!base_path) {
         setError(lastError);
