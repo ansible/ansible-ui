@@ -150,7 +150,7 @@ export function RulebookActivationInputs() {
     edaAPI`/event-streams/?test_mode=false`
   );
 
-  const { data: config } = useGet<{ deployment_type?: string }>(`/api/eda/v1/config/`);
+  const { data: config } = useGet<{ deployment_type?: string }>(edaAPI`/config/`);
 
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },

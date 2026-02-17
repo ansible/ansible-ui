@@ -1,10 +1,11 @@
 import { TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EdaProjectCell(props: { id?: number | null; disableLink?: boolean }) {
-  const { data } = useGet<EdaProject>(props.id ? `/api/eda/v1/projects/${props.id}/` : undefined, {
+  const { data } = useGet<EdaProject>(props.id ? edaAPI`/projects/${props.id}/` : undefined, {
     dedupingInterval: 10 * 1000,
   });
   const getPageUrl = useGetPageUrl();
