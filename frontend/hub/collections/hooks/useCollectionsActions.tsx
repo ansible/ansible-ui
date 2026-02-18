@@ -10,7 +10,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isInsightsMode } from '../../common/isInsights';
 import { useHubContext } from '../../common/useHubContext';
-import { useCanSignNamespace } from '../../common/utils/canSign';
+import { useCanSignNamespace, useCollectionPermissionCheck } from '../../common/utils/canSign';
+import { HubNamespace } from '../../namespaces/HubNamespace';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
@@ -19,7 +20,8 @@ import { useSignCollection } from './useSignCollection';
 
 export function useCollectionsActions(
   callback: (collections: CollectionVersionSearch[]) => void,
-  namespace?: string
+  namespace?: string,
+  namespaceObj?: HubNamespace
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -28,86 +30,89 @@ export function useCollectionsActions(
   const signCollection = useSignCollection(false, callback);
 
   const canSignFeatureFlag = useCanSignNamespace();
-  const { hasPermission, user, featureFlags } = useHubContext();
+  const { featureFlags } = useHubContext();
   const { can_upload_signatures } = featureFlags;
 
-  // In Insights mode, check model-level permissions for toolbar (bulk) actions
-  // Object-level permissions are not available here since toolbar actions span multiple namespaces
+  // When a namespace object is provided (e.g., on the namespace detail page),
+  // use hasPerm which checks model-level + object-level + superuser permissions,
+  // matching ansible-hub-ui's hasPerm pattern.
+  // When no namespace is provided (e.g., main collections list), fall back to model-level only.
+  const hasPerm = useCollectionPermissionCheck(namespaceObj);
   const isInsights = isInsightsMode();
   const canDelete =
-    !isInsights ||
-    hasPermission('ansible.delete_collection') ||
-    hasPermission('galaxy.change_namespace') ||
-    !!user?.is_superuser;
-  const canDeprecate =
-    !isInsights || hasPermission('galaxy.change_namespace') || !!user?.is_superuser;
-  const canUpload =
-    !isInsights || hasPermission('galaxy.upload_to_namespace') || !!user?.is_superuser;
+    !isInsights || hasPerm('ansible.delete_collection') || hasPerm('galaxy.change_namespace');
+  const canDeprecate = !isInsights || hasPerm('galaxy.change_namespace');
+  const canUpload = !isInsights || hasPerm('galaxy.upload_to_namespace');
   const canSign =
     canSignFeatureFlag &&
     !can_upload_signatures &&
-    (!isInsights || hasPermission('galaxy.change_namespace') || !!user?.is_superuser);
+    (!isInsights || (hasPerm('galaxy.change_namespace') && hasPerm('galaxy.upload_to_namespace')));
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        icon: UploadIcon,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        label: t('Upload collection'),
-        onClick: () =>
-          pageNavigate(HubRoute.UploadCollection, namespace ? { query: { namespace } } : undefined),
-        isHidden: () => !canUpload,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: KeyIcon,
-        label: t('Sign collections'),
-        onClick: (collections) => {
-          signCollection(collections);
-        },
-        isHidden: () => !canSign,
-        isDisabled: () =>
-          canSignFeatureFlag ? undefined : t('You do not have the rights for this operation'),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: BanIcon,
-        label: t('Deprecate collections'),
-        onClick: (collections) => {
-          deprecateOrUndeprecateCollections(collections, 'deprecate');
-        },
-        isHidden: () => !canDeprecate,
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete collections'),
-        onClick: (collections: CollectionVersionSearch[]) => {
-          // filter them
-          const foundCollections: string[] = [];
-          const newCollections: CollectionVersionSearch[] = [];
-          collections.forEach((collection) => {
-            if (foundCollections.includes(collection.collection_version?.name || '')) {
-              return;
+    () =>
+      [
+        canUpload
+          ? {
+              type: PageActionType.Button as const,
+              selection: PageActionSelection.None as const,
+              icon: UploadIcon,
+              variant: ButtonVariant.primary,
+              isPinned: true,
+              label: t('Upload collection'),
+              onClick: () =>
+                pageNavigate(
+                  HubRoute.UploadCollection,
+                  namespace ? { query: { namespace } } : undefined
+                ),
             }
+          : null,
+        canSign
+          ? {
+              type: PageActionType.Button as const,
+              selection: PageActionSelection.Multiple as const,
+              icon: KeyIcon,
+              label: t('Sign collections'),
+              onClick: (collections: CollectionVersionSearch[]) => {
+                signCollection(collections);
+              },
+            }
+          : null,
+        canDeprecate
+          ? {
+              type: PageActionType.Button as const,
+              selection: PageActionSelection.Multiple as const,
+              icon: BanIcon,
+              label: t('Deprecate collections'),
+              onClick: (collections: CollectionVersionSearch[]) => {
+                deprecateOrUndeprecateCollections(collections, 'deprecate');
+              },
+            }
+          : null,
+        canDelete ? ({ type: PageActionType.Seperator } as const) : null,
+        canDelete
+          ? {
+              type: PageActionType.Button as const,
+              selection: PageActionSelection.Multiple as const,
+              icon: TrashIcon,
+              label: t('Delete collections'),
+              onClick: (collections: CollectionVersionSearch[]) => {
+                const foundCollections: string[] = [];
+                const newCollections: CollectionVersionSearch[] = [];
+                collections.forEach((collection) => {
+                  if (foundCollections.includes(collection.collection_version?.name || '')) {
+                    return;
+                  }
 
-            foundCollections.push(collection.collection_version?.name || '');
-            newCollections.push(collection);
-          });
+                  foundCollections.push(collection.collection_version?.name || '');
+                  newCollections.push(collection);
+                });
 
-          deleteCollections(newCollections);
-        },
-        isDanger: true,
-        isHidden: () => !canDelete,
-      },
-    ],
+                deleteCollections(newCollections);
+              },
+              isDanger: true,
+            }
+          : null,
+      ].filter(Boolean) as IPageAction<CollectionVersionSearch>[],
     [
       t,
       pageNavigate,
@@ -115,7 +120,6 @@ export function useCollectionsActions(
       deprecateOrUndeprecateCollections,
       signCollection,
       canSign,
-      canSignFeatureFlag,
       canDelete,
       canDeprecate,
       canUpload,

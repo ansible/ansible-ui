@@ -56,7 +56,9 @@ export function CollectionPage() {
   // In Insights mode, fetch namespace via my-namespaces API for object-level permission checks
   // This determines what collection actions (sign, deprecate, delete, etc.) the user can see
   const { data: myNamespace } = useGet<HubNamespace>(
-    isInsightsMode() && namespace ? hubAPI`/_ui/v1/my-namespaces/${namespace}/` : ''
+    isInsightsMode() && namespace
+      ? hubAPI`/_ui/v1/my-namespaces/${namespace}/` + '?include_related=my_permissions'
+      : ''
   );
 
   // Fetch collection content data for metadata URLs (insights mode links)
