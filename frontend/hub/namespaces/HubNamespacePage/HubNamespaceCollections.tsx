@@ -45,11 +45,17 @@ export function HubNamespaceCollections() {
   // If the namespace is not in my-namespaces (404), the user cannot upload to it
   // Skip this API call in Platform mode since it's not needed there
   const { data: myNamespace } = useGet<HubNamespace>(
-    isInsightsMode() && params?.id ? hubAPI`/_ui/v1/my-namespaces/${params.id}/` : ''
+    isInsightsMode() && params?.id
+      ? hubAPI`/_ui/v1/my-namespaces/${params.id}/` + '?include_related=my_permissions'
+      : ''
   );
   const showControls = !!myNamespace;
 
-  const allToolbarActions = useCollectionsActions(view.unselectItemsAndRefresh, params?.id);
+  const allToolbarActions = useCollectionsActions(
+    view.unselectItemsAndRefresh,
+    params?.id,
+    myNamespace ?? undefined
+  );
 
   // In Insights mode, filter out upload button if user doesn't have access to this namespace
   const toolbarActions = useMemo(() => {
