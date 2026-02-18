@@ -14,8 +14,29 @@ export interface CreateEventStreamOptions {
 
 export const EventStream = {
   api: {
+    create: async (
+      page: Page,
+      options: {
+        organization_id: number;
+        enabled: boolean;
+        name: string;
+        eda_credential_id: number;
+        event_stream_type: string;
+      }
+    ): Promise<EventStreamOut> => {
+      const eventStream = await edaAPI.post<EventStreamOut>(page, `event-streams/`, options);
+      if (!eventStream) {
+        throw new Error('Failed to create event stream: API returned null');
+      }
+      return eventStream;
+    },
+
     delete: async (page: Page, eventStreamId: number): Promise<void> => {
-      await edaAPI.delete(page, `event-streams/${eventStreamId}/`);
+      try {
+        await edaAPI.delete(page, `event-streams/${eventStreamId}/`);
+      } catch {
+        // Already deleted or not found
+      }
     },
 
     deleteByName: async (page: Page, eventStreamName: string): Promise<void> => {
