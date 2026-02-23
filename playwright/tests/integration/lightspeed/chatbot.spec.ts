@@ -2,7 +2,6 @@ import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Lightspeed } from '@ansible/playwright/utils';
 
-test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
 test.setTimeout(2 * 60 * 1000);
 test.skip(
@@ -15,6 +14,7 @@ test.skip(
       'streaming-chatbot-service': 'ok',
     });
 
+    await setupBefore({ path: '/' })({ page });
     const chatbotBadge = page.locator('[data-cy="chatbot-badge"]');
     await expect(chatbotBadge).toBeVisible();
     // display the chatbot
@@ -42,6 +42,7 @@ test(
       'streaming-chatbot-service': 'disabled',
     });
     // click platform Overview menu item to make sure the application elements are fully loaded and clickable
+    await setupBefore({ path: '/' })({ page });
     await page.getByRole('link', { name: 'Overview' }).click();
     const chatbotBadge = page.locator('[data-cy="chatbot-badge"]');
     await expect(chatbotBadge).not.toBeVisible();
@@ -59,6 +60,7 @@ test(
     });
 
     // click platform Overview menu item to make sure the application elements are fully loaded and clickable
+    await setupBefore({ path: '/' })({ page });
     await page.getByRole('link', { name: 'Overview' }).click();
     const chatbotBadge = page.locator('[data-cy="chatbot-badge"]');
     await expect(chatbotBadge).not.toBeVisible();
@@ -73,6 +75,7 @@ test(
     await Lightspeed.mock.healthStatus(page, 404, 'Not found');
 
     // click platform Overview menu item to make sure the application elements are fully loaded and clickable
+    await setupBefore({ path: '/' })({ page });
     await page.getByRole('link', { name: 'Overview' }).click();
     const chatbotBadge = page.locator('[data-cy="chatbot-badge"]');
     await expect(chatbotBadge).not.toBeVisible();
@@ -87,6 +90,7 @@ test(
     await Lightspeed.mock.healthStatus(page, 500, 'An internal server error occurred');
 
     // click platform Overview menu item to make sure the application elements are fully loaded and clickable
+    await setupBefore({ path: '/' })({ page });
     await page.getByRole('link', { name: 'Overview' }).click();
     const chatbotBadge = page.locator('[data-cy="chatbot-badge"]');
     await expect(chatbotBadge).not.toBeVisible();
