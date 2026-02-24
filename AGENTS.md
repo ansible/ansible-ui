@@ -121,18 +121,337 @@ npm run build             # Build all workspaces
 - SWR for server state management
 - Zustand for global state when needed
 
+### Component Development Guidelines
+
+**CRITICAL: Follow the component hierarchy to maximize code reuse and consistency.**
+
+Before writing any new UI code, follow this checklist:
+
+1. **Check for Existing Components (in priority order)**
+   - **First**: Search `/framework` for shared framework components (PageForm, PageTable, PageHeader, PageLayout, etc.)
+   - **Second**: Check PatternFly 6 documentation at [patternfly.org/components](https://www.patternfly.org/components/all-components) for available components
+   - **Third**: Search workspace-specific components (`/frontend/awx/components/`, `/frontend/eda/components/`, etc.)
+   - **Last Resort**: Create a new component only if nothing exists
+
+2. **Component Location Strategy**
+   - **Framework-level reusable components** → `/framework/` (PageForm, PageTable, PageDetails, etc.)
+   - **Workspace-specific components** → `/frontend/{workspace}/components/` (AWX-only, EDA-only, etc.)
+   - **Cross-workspace shared utilities** → `/frontend/common/`
+   - **Always use PatternFly 6 components** from `@patternfly/react-core` as the foundation
+
+3. **Building New Components**
+   - **ALWAYS use PatternFly 6 components** as the foundation - never recreate PF components
+   - Build accessible components following PatternFly patterns and design system
+   - Include comprehensive Vitest tests (see existing `.test.tsx` files)
+   - For workspace-specific needs, place in workspace's component directory
+   - For cross-workspace needs, consider adding to `/framework` or `/frontend/common`
+
+4. **Custom Hooks**
+   - Extract reusable logic into custom hooks
+   - Place hooks in workspace's hooks directory (e.g., `/frontend/awx/hooks/`)
+   - For cross-workspace hooks, place in `/frontend/common/hooks/`
+   - Follow naming convention: `useXxx`
+   - Include proper TypeScript types
+
+**Example Workflow:**
+
+```text
+User Request: "Add a data table for displaying users"
+Step 1: Check /framework for PageTable ✓ (exists)
+Step 2: Use PageTable from framework with column configuration
+Result: Reuse existing PageTable instead of creating new table component
+```
+
+```text
+User Request: "Add a confirmation dialog"
+Step 1: Check /framework for confirmation components ✓ (may have modal utilities)
+Step 2: Check PatternFly 6 for Modal component ✓ (exists)
+Step 3: Use PatternFly Modal or framework helper
+Result: Use PF Modal component, not a custom dialog
+```
+
+### Code Abstraction Patterns
+
+**CRITICAL: Actively identify and eliminate code duplication to improve maintainability.**
+
+#### Pattern Recognition Checklist
+
+| Pattern Detected                      | Action Required                                       |
+| ------------------------------------- | ----------------------------------------------------- |
+| **Repeated JSX structure** (2+ times) | → Create a **Component** in appropriate location      |
+| **Repeated logic/state** (2+ times)   | → Create a **Custom Hook**                            |
+| **Repeated utility functions**        | → Create a **shared utility** in `/frontend/common`   |
+| **Similar components with variants**  | → Extend existing component with props/variants       |
+
+#### JSX Repetition → Component
+
+**Signs you need a component:**
+- Same JSX structure appears in multiple files across workspaces
+- Copy-pasted markup with minor variations (button groups, empty states, status badges)
+- Similar styling patterns repeated
+
+```tsx
+// ❌ BAD: Repeated JSX pattern across multiple pages
+<EmptyState>
+  <EmptyStateIcon icon={CubesIcon} />
+  <Title headingLevel="h4">No {resourceType} found</Title>
+  <EmptyStateBody>Create a {resourceType} to get started.</EmptyStateBody>
+</EmptyState>
+
+// ✅ GOOD: Extract to reusable component
+<ResourceEmptyState resourceType={resourceType} onCreate={handleCreate} />
+```
+
+#### Logic Repetition → Hook
+
+**Signs you need a hook:**
+- Same useState + useEffect pattern repeated across components
+- Identical data fetching logic with SWR
+- Common form validation patterns
+- Repeated RBAC permission checks
+
+```tsx
+// ❌ BAD: Repeated logic in multiple components
+const [selected, setSelected] = useState<Resource[]>([])
+const handleSelect = (resource: Resource, isSelecting: boolean) =>
+  setSelected((prev) =>
+    isSelecting ? [...prev, resource] : prev.filter((r) => r.id !== resource.id)
+  )
+
+// ✅ GOOD: Extract to hook
+const { selected, handleSelect, clearSelection } = useTableSelection<Resource>()
+```
+
+#### When to Extract to Shared Locations
+
+**For detailed code review questions about component reuse and abstraction patterns, see `.claude/skills/pr_review.md` section 3.**
+
+**Extract to `/framework`:**
+- Component used across 2+ workspaces (AWX + EDA, or AWX + Hub, etc.)
+- Follows PatternFly patterns and is domain-agnostic
+- Provides core UI framework functionality (tables, forms, layouts, navigation)
+
+**Extract to `/frontend/common`:**
+- Utility functions or hooks used across multiple workspaces
+- Type definitions shared across workspaces
+- API helpers or error handling utilities
+
+**Keep in workspace:**
+- Component specific to one service (AWX-only concepts, EDA-only workflows)
+- Business logic tied to specific domain
+
 ### Testing
+
+#### Core Principles
 
 - Write unit tests and component tests with Vitest
 - Use Playwright for integration and e2e tests and live testing
 - **CRITICAL: Avoid unnecessary mocks in Vitest tests** - only mock external APIs, browser APIs, or genuinely difficult dependencies. Do NOT mock your own utility functions, hooks, or components. Test real behavior whenever possible.
 - Use msw to mock API endpoints in Vitest, rather than mocking requestGet or other fetching helper functions.
 
-### Internationalization
+#### AAA Pattern (Arrange-Act-Assert)
 
-- Use `useTranslation` hook from react-i18next
-- Mark strings for translation with `t('String to translate')`
+**Structure every test with three clear phases:**
+
+```typescript
+import { render, screen } from '@testing-library/react'
+import { userEvent } from '@testing-library/user-event'
+import { expect, test } from 'vitest'
+
+test('should increment counter when button clicked', async () => {
+  // Arrange - Set up test data and render component
+  const user = userEvent.setup()
+  render(<Counter initialValue={0} />)
+
+  // Act - Perform the user action
+  await user.click(screen.getByRole('button', { name: 'Increment' }))
+
+  // Assert - Verify the expected outcome
+  expect(screen.getByText('Count: 1')).toBeInTheDocument()
+})
+```
+
+**Why AAA Pattern:**
+- Makes tests easier to read and understand
+- Clearly separates setup, action, and verification
+- Helps identify what the test is actually testing
+- Standard pattern used across the industry
+
+#### What to Test
+
+| Type          | Focus On                                                | Example                                    |
+| ------------- | ------------------------------------------------------- | ------------------------------------------ |
+| **Component** | User interactions, conditional rendering, accessibility | Button clicks, form submissions, ARIA      |
+| **Hook**      | Return values, state transitions, callback invocations  | `useTableSelection`, `usePageDialog`       |
+| **Utility**   | Input → output transformations, edge cases              | `formatDate`, `parseJobStatus`             |
+| **Form**      | Validation logic, field interactions                    | Required fields, format validation         |
+
+#### What NOT to Test
+
+- **Implementation details** - Internal state, private methods, how something works internally
+- **Third-party library behavior** - PatternFly components, React Router, i18next
+- **Static content** - Hardcoded text that never changes
+- **Framework behavior** - React rendering, hook lifecycle
+
+```typescript
+// ❌ BAD: Testing implementation details
+test('should update internal state', () => {
+  const { result } = renderHook(() => useCounter())
+  expect(result.current.internalState).toBe(0) // Don't test private state
+})
+
+// ✅ GOOD: Testing behavior
+test('should display incremented count', async () => {
+  render(<Counter />)
+  await user.click(screen.getByRole('button', { name: 'Increment' }))
+  expect(screen.getByText('Count: 1')).toBeInTheDocument()
+})
+```
+
+#### Test Coverage Guidance
+
+**Aim for meaningful coverage of critical paths:**
+
+- **Happy path** - Test the most common user flow
+- **Error cases** - Test error handling and validation
+- **Edge cases** - Test boundary conditions (empty lists, max values, null handling)
+- **User interactions** - Test all clickable elements, forms, navigation
+
+**Example - Minimum coverage for a component:**
+
+```typescript
+describe('ResourceListPage', () => {
+  test('should display resources in table', () => {}) // Happy path
+  test('should handle empty state when no resources', () => {}) // Edge case
+  test('should delete resource when delete clicked', async () => {}) // Interaction
+  test('should display error message on API failure', () => {}) // Error case
+})
+```
+
+### Internationalization (i18n)
+
+**CRITICAL: Never use user-facing translatable strings in conditional logic or comparisons.**
+
+User-facing strings that will be translated should **only be used for display purposes**. Using them in logic creates bugs when the application is localized to other languages.
+
+#### Basic Usage
+
+- Use `useTranslation` hook from react-i18next: `const { t } = useTranslation()`
+- Mark strings for translation: `t('String to translate')`
 - Run `npm run i18n` to extract translation keys
+
+#### Anti-Pattern: Comparing Display Strings
+
+**Never compare translated strings - they break in other languages.**
+
+```typescript
+// ❌ BAD: Comparing translated text
+if (t('Active') === 'Active') { ... }           // Breaks in Spanish/French/etc.
+if (jobType === t('Playbook run')) { ... }      // Breaks when localized
+if (t(status) === 'Running') { ... }            // Never matches in other languages
+```
+
+#### Correct Patterns
+
+##### 1. Compare Raw/Internal Values (from API)
+
+```typescript
+// ✅ GOOD: Check the raw API value, translate only for display
+if (resource.status === 'active') {
+  // 'active' is from API contract, not a display string
+  setVariant('success')
+}
+return <Label variant={variant}>{t(resource.status)}</Label>
+
+// ✅ GOOD: Use API enum values for logic
+if (job.type === 'playbook') {
+  // 'playbook' is the API value
+  return <PlaybookIcon />
+}
+```
+
+##### 2. Use TypeScript Enums or Constants
+
+```typescript
+// ✅ GOOD: Define internal constants separate from display
+const ExecutionStatus = {
+  PENDING: 'pending',
+  RUNNING: 'running',
+  SUCCESS: 'successful',
+  FAILED: 'failed',
+} as const
+
+// Compare internal values
+if (execution.status === ExecutionStatus.RUNNING) {
+  return 'info'
+}
+
+// Map to display strings separately
+const statusLabels: Record<string, string> = {
+  pending: t('Pending'),
+  running: t('Running'),
+  successful: t('Success'),
+  failed: t('Failed'),
+}
+```
+
+##### 3. Use Value-to-Variant Mapping
+
+```typescript
+// ✅ GOOD: Separate logic values from display labels
+const statusConfig: Record<string, { variant: 'success' | 'danger' | 'warning' }> = {
+  successful: { variant: 'success' },
+  failed: { variant: 'danger' },
+  running: { variant: 'warning' },
+}
+
+const config = statusConfig[execution.status] // Use API value
+return <Label variant={config.variant}>{t(execution.status)}</Label>
+```
+
+#### Allowed String Comparisons
+
+These types of strings are **safe** to use in logic (they won't be translated):
+
+- **API response values**: `status === 'successful'`, `type === 'job_template'`, `kind === 'playbook'`
+- **Route paths**: `pathname === '/organizations'`, `path.includes('/settings')`
+- **Internal constants**: `mode === 'edit'`, `view === 'list'`
+- **Technical identifiers**: `file.endsWith('.yaml')`, `name.startsWith('demo_')`
+
+#### Quick Checklist
+
+Before writing conditional logic with strings:
+
+1. ✅ Is this string from an API response? → **Safe to use in logic**
+2. ✅ Is this an internal constant/route/identifier? → **Safe to use in logic**
+3. ❌ Is this string shown to users in the UI via `t()`? → **Do NOT use in logic**
+4. ❌ Would this string be translated to other languages? → **Do NOT use in logic**
+
+#### Example: Status Badge Component
+
+```typescript
+// ✅ GOOD: Complete example of proper i18n usage
+interface StatusBadgeProps {
+  status: 'pending' | 'running' | 'successful' | 'failed' // API values
+}
+
+const STATUS_CONFIG = {
+  pending: { variant: 'warning' as const, label: 'Pending' },
+  running: { variant: 'info' as const, label: 'Running' },
+  successful: { variant: 'success' as const, label: 'Success' },
+  failed: { variant: 'danger' as const, label: 'Failed' },
+}
+
+function StatusBadge({ status }: StatusBadgeProps) {
+  const { t } = useTranslation()
+  const config = STATUS_CONFIG[status] // Use API value for lookup
+
+  return <Label variant={config.variant}>{t(config.label)}</Label> // Translate for display
+}
+
+// Usage with API response
+<StatusBadge status={job.status} /> // job.status is 'successful' from API
+```
 
 ## Playwright Testing
 
