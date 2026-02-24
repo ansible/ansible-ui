@@ -13,7 +13,8 @@ import { useState } from 'react';
 import { AutomationDashboardDateRangeFilterPresets } from './constants';
 import { useAutomationDashboardToolbar } from './components';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { DashboardValueCard } from './components';
+import { DashboardTableCard, DashboardValueCard } from './components';
+import { DashboardTableItem } from './interfaces';
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
@@ -28,6 +29,15 @@ export function AutomationDashboard() {
   );
 
   const downloadPdf = () => {};
+
+  /* Sample data for top projects */
+  const topProjects: DashboardTableItem[] = [
+    { name: 'Project Alpha', value: 1000 },
+    { name: 'Project Beta', value: 800 },
+    { name: 'Project Gamma', value: 600 },
+    { name: 'Project Delta', value: 400 },
+    { name: 'Project Epsilon', value: 200 },
+  ];
 
   return (
     <PageLayout>
@@ -84,6 +94,28 @@ export function AutomationDashboard() {
           value={2}
           valueSuffix="h"
         ></DashboardValueCard>
+        <DashboardTableCard
+          id="top-projects-card"
+          title={t('Top 5 projects')}
+          help={t(
+            'This section lists the top five automation projects based on the number of jobs executed.'
+          )}
+          firstColumnHeader={t('Project name')}
+          emptyStateTitle={t('No projects')}
+          errorStateTitle={t('Error loading projects')}
+          items={topProjects}
+        ></DashboardTableCard>
+        <DashboardTableCard
+          id="top-users-card"
+          title={t('Top 5 users')}
+          help={t(
+            'This section lists the top five users of Ansible Automation Platform, with a breakdown of the total number of jobs run by each user.'
+          )}
+          firstColumnHeader={t('User name')}
+          emptyStateTitle={t('No users')}
+          errorStateTitle={t('Error loading users')}
+          items={[]}
+        ></DashboardTableCard>
       </PageDashboard>
     </PageLayout>
   );

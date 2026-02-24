@@ -66,4 +66,13 @@ test.describe('Automation Dashboard', () => {
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs in AAP' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
   });
+
+  test('Should display table cards on automation dashboard', async ({ page }) => {
+    await expect(
+      page.getByTestId('top-projects-card').filter({ hasText: 'Top 5 Projects' })
+    ).toBeVisible();
+    await expect(
+      page.getByTestId('top-users-card').filter({ hasText: 'Top 5 Users' })
+    ).toBeVisible();
+  });
 });
