@@ -1,3 +1,5 @@
+import { DashboardTableItem } from '../interfaces';
+
 type DashboardCommonCardProps = {
   id: string;
   title: string;
@@ -9,4 +11,12 @@ export type DashboardValueCardProps = DashboardCommonCardProps & {
   valueSuffix?: string;
   linkText?: string;
   to?: string;
+};
+
+export type DashboardTableCardProps = DashboardCommonCardProps & {
+  firstColumnHeader: string;
+  items: DashboardTableItem[];
+  emptyStateTitle: string;
+  errorStateTitle: string;
+  error?: Error;
 };
