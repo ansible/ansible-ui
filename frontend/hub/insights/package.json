@@ -8,7 +8,7 @@
   },
   "scripts": {
     "install-deps": "npm install --legacy-peer-deps",
-    "build": "webpack --config webpack.config.cjs --mode production",
+    "build": "NODE_ENV=production node build.cjs",
     "build:dev": "webpack --config webpack.config.cjs --mode development",
     "serve": "webpack serve --config webpack.config.cjs --mode development",
     "start": "npm run serve",
