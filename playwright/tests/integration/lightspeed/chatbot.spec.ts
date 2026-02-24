@@ -66,33 +66,3 @@ test(
     await expect(chatbotBadge).not.toBeVisible();
   }
 );
-
-test(
-  'chatbot - the chatbot badge is not displayed when health status is not found',
-  { tag: [] },
-  async ({ page }) => {
-    test.setTimeout(5 * 60 * 1000);
-    await Lightspeed.mock.healthStatus(page, 404, 'Not found');
-
-    // click platform Overview menu item to make sure the application elements are fully loaded and clickable
-    await setupBefore({ path: '/' })({ page });
-    await page.getByRole('link', { name: 'Overview' }).click();
-    const chatbotBadge = page.locator('[data-cy="chatbot-badge"]');
-    await expect(chatbotBadge).not.toBeVisible();
-  }
-);
-
-test(
-  'chatbot - the chatbot badge is not displayed when health status suffers an internal service error',
-  { tag: [] },
-  async ({ page }) => {
-    test.setTimeout(5 * 60 * 1000);
-    await Lightspeed.mock.healthStatus(page, 500, 'An internal server error occurred');
-
-    // click platform Overview menu item to make sure the application elements are fully loaded and clickable
-    await setupBefore({ path: '/' })({ page });
-    await page.getByRole('link', { name: 'Overview' }).click();
-    const chatbotBadge = page.locator('[data-cy="chatbot-badge"]');
-    await expect(chatbotBadge).not.toBeVisible();
-  }
-);

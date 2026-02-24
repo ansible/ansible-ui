@@ -53,6 +53,18 @@ export const User = {
     delete: async (page: Page, userId: number): Promise<void> => {
       await gatewayAPI.delete(page, `users/${userId}/`);
     },
+
+    deleteByName: async (page: Page, userName: string): Promise<void> => {
+      if (!userName) return;
+      const list = await gatewayAPI
+        .get<{ results: Array<{ id: number }> }>(page, `users/`, {
+          params: { username: userName },
+        })
+        .catch(() => null);
+      const id = list?.results?.[0]?.id;
+      if (!id) return;
+      await gatewayAPI.delete(page, `users/${id}/`).catch(() => {});
+    },
   },
 
   ui: {

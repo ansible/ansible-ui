@@ -28,6 +28,7 @@ test.describe('Job Template Form - Validation', () => {
 
       await page.getByPlaceholder('Enter job template name').fill('Test Job Template');
       await page.getByRole('button', { name: 'Inventory' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
       await page.getByRole('option', { name: inventoryName, exact: true }).click();
 
       const projectName = 'Demo Project';
@@ -85,6 +86,7 @@ test.describe('Job Template Form - Validation', () => {
 
       await page.getByPlaceholder('Enter job template name').fill('Test Job Template');
       await page.getByRole('button', { name: 'Inventory' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
       await page.getByRole('option', { name: inventoryName, exact: true }).click();
 
       const projectName = 'Demo Project';

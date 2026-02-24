@@ -264,6 +264,7 @@ export const JobTemplate = {
           timeout: 30000,
         });
         await page.getByRole('button', { name: 'Inventory' }).click();
+        await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
         await page.getByRole('option', { name: inventoryName, exact: true }).click();
         await page.getByLabel('Execution environment').click();
         await page.getByRole('option', { name: 'Control Plane Execution' }).click();

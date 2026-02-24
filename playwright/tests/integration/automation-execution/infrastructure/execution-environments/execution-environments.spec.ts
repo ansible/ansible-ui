@@ -339,16 +339,17 @@ test.describe('Execution Environments', () => {
         await expect(page.getByTestId('image')).toContainText(image);
 
         await page.getByRole('tab', { name: 'Templates' }).click();
-        await filterTable({ filterLabel: 'Name', filterValue: jtName }, page);
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
+        await filterTable({ filterLabel: 'Name', filterValue: jtName, clearFilters: true }, page);
         await expect(page.locator('tbody')).toContainText(jtName);
 
-        const kebabButton = page.locator('tbody tr').first().locator('button.toggle-kebab').first();
-        await kebabButton.click();
-        await page.waitForTimeout(500);
-        await page.getByRole('menuitem', { name: 'Delete template' }).click({ force: true });
+        const jtRow = page.getByRole('row', { name: jtName });
+        await jtRow.getByLabel('kebab dropdown toggle').click();
+        await page.getByRole('menuitem', { name: 'Delete template' }).click();
         await confirmAndAssertDeletion(page);
 
-        await page.getByRole('tab', { name: 'Details' }).click();
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
+        await clickTableRow({ filterLabel: 'Name', text: execEnvName }, page);
         await clickPageAction('Delete execution environment', page);
         await confirmAndAssertDeletion(page);
 

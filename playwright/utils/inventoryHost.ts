@@ -126,7 +126,7 @@ export const InventoryHost = {
       await page.getByRole('button', { name: 'Delete hosts', exact: true }).click();
 
       // Wait for dialog to close and page to update
-      await expect(dialog).not.toBeVisible({ timeout: 10000 });
+      await expect(dialog).not.toBeVisible({ timeout: 30000 });
 
       // Wait for the empty state message to appear
       await expect(

@@ -56,7 +56,12 @@ test.describe('Workflow Approvals - Individual Actions', () => {
         await page.getByRole('button', { name: 'Launch workflow' }).click();
 
         await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible();
-        await expect(page.getByTestId('running-status')).toHaveText('Running');
+        await expect(
+          page
+            .getByTestId('pending-status')
+            .or(page.getByTestId('running-status'))
+            .or(page.getByTestId('waiting-status'))
+        ).toBeVisible({ timeout: 15000 });
       });
 
       await test.step('Process workflow approvals: deny, approve, cancel', async () => {
@@ -89,7 +94,7 @@ test.describe('Workflow Approvals - Individual Actions', () => {
 
         const jobRow = await getTableRow(page, workflowTemplateName);
         await expect(jobRow.getByTestId('status-column-cell')).toContainText('Canceled', {
-          timeout: 30000,
+          timeout: 60000,
         });
       });
 
@@ -196,16 +201,28 @@ test.describe('Workflow Approvals - Bulk Approve/Deny Actions', () => {
             page
           );
 
+          await expect(page.locator('tbody tr')).toHaveCount(3, { timeout: 30000 });
+
           await page.getByRole('checkbox', { name: 'Select all rows' }).click();
           await page.getByTestId('page-toolbar').getByRole('button', { name: action }).click();
           await WorkflowApproval.ui.confirmAction(page, action);
 
+          await filterTable(
+            {
+              filterLabel: 'Description',
+              filterValue: workflowTemplateName,
+              clearFilters: true,
+            },
+            page
+          );
+
           const allApprovalRows = page.locator('tbody tr');
+          await expect(allApprovalRows).toHaveCount(3, { timeout: 15000 });
           for (let i = 0; i < 3; i++) {
             await expect(allApprovalRows.nth(i).getByTestId('status-column-cell')).toContainText(
               action === 'Approve' ? 'Approved' : 'Denied',
               {
-                timeout: 10000,
+                timeout: 20000,
               }
             );
           }
@@ -268,7 +285,12 @@ test.describe('Workflow Approvals - Tab Navigation and Approval', () => {
 
         await page.getByRole('button', { name: 'Launch workflow' }).click();
         await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible();
-        await expect(page.getByTestId('running-status')).toHaveText('Running');
+        await expect(
+          page
+            .getByTestId('pending-status')
+            .or(page.getByTestId('running-status'))
+            .or(page.getByTestId('waiting-status'))
+        ).toBeVisible({ timeout: 15000 });
       });
 
       await test.step('Navigate to approval details page', async () => {

@@ -65,10 +65,12 @@ test.describe('Constructed Inventory', () => {
         await clickPageAction('Delete inventory', page);
         await confirmAndAssertDeletion(page);
 
-        // Verify deletion - search for inventory and confirm no results
-        await expect(page.getByRole('heading', { name: 'Inventories', exact: true })).toBeVisible();
-        await filterTableByText({ filterValue: constructedInventoryName }, page);
-        await expect(page.getByText('No results found')).toBeVisible();
+        // AWX inventory deletion is async (returns 202). Poll list until removal is confirmed.
+        await expect(async () => {
+          await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+          await filterTableByText({ filterValue: constructedInventoryName }, page);
+          await expect(page.getByText('No results found')).toBeVisible();
+        }).toPass({ timeout: 60000 });
 
         constructedInventory = null; // Mark as deleted
       } finally {
@@ -137,7 +139,7 @@ test.describe('Constructed Inventory', () => {
 
         // Wait for sync to complete and verify success status
         await expect(page.getByTestId('last-job-status')).toContainText('Success', {
-          timeout: 30000,
+          timeout: 60000,
         });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories
@@ -281,7 +283,7 @@ test.describe('Constructed Inventory', () => {
 
         // Re-add it (it will be added to the end)
         await page.getByLabel('Search input').fill(firstInventoryName);
-        await page.getByLabel(firstInventoryName).check();
+        await page.getByRole('checkbox', { name: firstInventoryName }).click();
 
         // Save the inventory
         await page.getByRole('button', { name: 'Save inventory' }).click();

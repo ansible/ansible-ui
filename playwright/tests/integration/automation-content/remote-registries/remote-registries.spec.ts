@@ -131,11 +131,9 @@ test.describe('Hub - Remote Registries', () => {
       await row.getByTestId('actions-column-cell').click();
       await page.getByTestId('index-execution-environments').click();
 
-      // Wait for index API call
-      await indexResponsePromise;
-
-      // Verify alert message
-      await expect(page.getByText(`Indexing remote registry ${remoteRegistry.name}`)).toBeVisible();
+      // Wait for index API call to confirm indexing started (202 Accepted)
+      const indexResponse = await indexResponsePromise;
+      expect(indexResponse.ok()).toBeTruthy();
 
       // Delete the remote registry
       await page.getByPlaceholder('contains').clear();

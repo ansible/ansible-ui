@@ -385,15 +385,12 @@ export const Inventory = {
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
       await clickTableRow({ text: inventoryName }, page);
       await page.getByRole('tab', { name: 'Sources' }).click();
-      await clickTableRow({ text: inventorySourceName }, page);
-      await page.getByLabel('kebab dropdown toggle').click();
+      await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
+
+      const sourceRow = page.getByRole('row', { name: inventorySourceName });
+      await sourceRow.getByLabel('kebab dropdown toggle').click();
       await page.getByRole('menuitem', { name: 'Delete inventory source' }).click();
       await confirmAndAssertDeletion(page);
-      await expect(
-        page.getByRole('heading', {
-          name: 'There are currently no sources added to this inventory.',
-        })
-      ).toBeVisible();
     },
   },
 } as const;

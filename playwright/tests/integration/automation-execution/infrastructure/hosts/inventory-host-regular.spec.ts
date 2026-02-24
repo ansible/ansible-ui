@@ -236,7 +236,7 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
 
       await InventoryHost.ui.navigateToDetails(inventoryName, hostName, page);
       await page.getByRole('tab', { name: 'Jobs' }).click();
-      await expect(page.locator('tbody')).toContainText(jobTemplateName);
+      await expect(page.locator('tbody')).toContainText(jobTemplateName, { timeout: 30000 });
 
       await JobTemplate.ui.delete(page, jobTemplateName);
 
