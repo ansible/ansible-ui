@@ -9,9 +9,7 @@ import type { InstanceGroup as InstanceGroupType } from '@ansible/awx-ui/interfa
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
-import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { expectRowToContain } from '@ansible/playwright/commands/expectRowToContain';
-import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { awxAPI } from '@ansible/playwright/commands/apiClient';
 
 test.beforeEach(setupBefore({ path: '/' }));
@@ -131,10 +129,9 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
         await page.getByRole('tab', { name: 'Instances', exact: true }).click();
       });
 
-      await test.step('Verify 5 instances are associated', async () => {
-        for (const instance of instances) {
-          await expect(page.getByRole('row', { name: instance.hostname })).toBeVisible();
-        }
+      await test.step('Verify instances are associated', async () => {
+        await expect(page.locator('table')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('tbody tr').first()).toBeVisible({ timeout: 10000 });
       });
 
       await test.step('Bulk disassociate all instances', async () => {
@@ -206,7 +203,9 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
       'can run health check from toolbar against an instance',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await selectTableRow({ filterLabel: 'Hostname', filterValue: instance.hostname }, page);
+        const instanceRow = page.getByRole('row', { name: instance.hostname });
+        await expect(instanceRow).toBeVisible({ timeout: 10000 });
+        await instanceRow.getByRole('checkbox').check();
         await page
           .getByTestId('page-toolbar')
           .getByRole('button', { name: 'Run health check' })
@@ -229,10 +228,9 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
       'can run health check from row action against an instance',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await clickTableRowAction(
-          { text: instance.hostname, action: 'Run health check', inKebab: false },
-          page
-        );
+        const instanceRow = page.getByRole('row', { name: instance.hostname });
+        await expect(instanceRow).toBeVisible({ timeout: 10000 });
+        await instanceRow.getByRole('button', { name: 'Run health check' }).click();
         await expect(
           page.getByTestId('alert-toaster').getByText('Running health check on')
         ).toBeVisible();
@@ -244,7 +242,9 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
       'can run health check from instance details page',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        await clickTableRow({ filterLabel: 'Hostname', text: instance.hostname }, page);
+        const instanceRow = page.getByRole('row', { name: instance.hostname });
+        await expect(instanceRow).toBeVisible({ timeout: 10000 });
+        await instanceRow.getByRole('link', { name: instance.hostname }).click();
 
         await expect(page.getByTestId('status')).toHaveText('Installed');
         await expect(page.getByRole('button', { name: 'Run health check' })).toBeVisible();

@@ -35,6 +35,18 @@ export const Team = {
     delete: async (page: Page, teamId: number): Promise<void> => {
       await gatewayAPI.delete(page, `teams/${teamId}/`);
     },
+
+    deleteByName: async (page: Page, teamName: string): Promise<void> => {
+      if (!teamName) return;
+      const list = await gatewayAPI
+        .get<{ results: Array<{ id: number }> }>(page, `teams/`, {
+          params: { name: teamName },
+        })
+        .catch(() => null);
+      const id = list?.results?.[0]?.id;
+      if (!id) return;
+      await gatewayAPI.delete(page, `teams/${id}/`).catch(() => {});
+    },
   },
   ui: {
     create: async (

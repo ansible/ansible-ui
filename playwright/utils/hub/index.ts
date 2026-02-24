@@ -13,5 +13,6 @@ export type { HubRemoteRegistry, CreateRemoteRegistryOptions } from './remote-re
 export { ExecutionEnvironment } from './execution-environment';
 export type {
   HubExecutionEnvironment,
+  ExecutionEnvironmentImage,
   CreateExecutionEnvironmentOptions,
 } from './execution-environment';

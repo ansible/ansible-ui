@@ -177,6 +177,7 @@ test.describe('Job Templates', () => {
       await page.getByLabel('Edit template').click();
       // add new inventory
       await page.getByRole('button', { name: 'Inventory' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(newInventoryName);
       await page.getByRole('option', { name: newInventoryName }).click();
       await page.getByRole('button', { name: 'Save job template' }).click();
       // assert edited values
@@ -362,6 +363,7 @@ test.describe('Job Templates', () => {
       await expect(page.getByLabel('Policy enforcement')).toBeVisible();
       await page.getByLabel('Policy enforcement').fill('testpkg/testrule');
       await page.getByLabel('Inventory').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
       await page.getByRole('option', { name: inventoryName, exact: true }).click();
       const projectName = 'Demo Project';
       await page.locator('#project-select').click();

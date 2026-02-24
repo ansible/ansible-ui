@@ -772,6 +772,7 @@ test.describe('Workflow Viz', () => {
 
       // Select inventory in Prompts step
       await page.getByTestId('inventory').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
       await page.getByRole('option', { name: inventoryName }).click();
 
       // Go to Review step

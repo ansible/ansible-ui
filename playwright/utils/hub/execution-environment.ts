@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 import { hubAPI } from '../../commands/apiClient';
 import { createE2EName } from '../../commands/createE2EName';
+import { HubItemsResponse } from '../remoteRegistry';
 import { waitForHubTask } from './task-utils';
 
 export interface HubExecutionEnvironment {
@@ -8,6 +9,13 @@ export interface HubExecutionEnvironment {
   name: string;
   registry: string;
   include_tags: string[];
+}
+
+export interface ExecutionEnvironmentImage {
+  digest: string;
+  tags: string[];
+  updated_at: string;
+  layers: Array<{ size: number }>;
 }
 
 export interface CreateExecutionEnvironmentOptions {
@@ -19,6 +27,29 @@ export interface CreateExecutionEnvironmentOptions {
 
 export const ExecutionEnvironment = {
   api: {
+    list: async (
+      page: Page,
+      options: { limit?: number } = {}
+    ): Promise<HubItemsResponse<HubExecutionEnvironment> | null> => {
+      return hubAPI.get<HubItemsResponse<HubExecutionEnvironment>>(
+        page,
+        `v3/plugin/execution-environments/repositories/`,
+        { params: { limit: options.limit ?? 10 } }
+      );
+    },
+
+    listImages: async (
+      page: Page,
+      executionEnvironmentName: string,
+      options: { limit?: number } = {}
+    ): Promise<HubItemsResponse<ExecutionEnvironmentImage> | null> => {
+      return hubAPI.get<HubItemsResponse<ExecutionEnvironmentImage>>(
+        page,
+        `v3/plugin/execution-environments/repositories/${encodeURIComponent(executionEnvironmentName)}/_content/images/`,
+        { params: { exclude_child_manifests: 'true', offset: 0, limit: options.limit ?? 10 } }
+      );
+    },
+
     create: async (
       page: Page,
       options: CreateExecutionEnvironmentOptions = {}
@@ -46,7 +77,7 @@ export const ExecutionEnvironment = {
     delete: async (page: Page, executionEnvironmentName: string): Promise<void> => {
       await hubAPI.delete(
         page,
-        `/v3/plugin/execution-environments/repositories/${executionEnvironmentName}/`,
+        `/v3/plugin/execution-environments/repositories/${encodeURIComponent(executionEnvironmentName)}/`,
         {
           expectStatus: 202,
         }
@@ -56,7 +87,7 @@ export const ExecutionEnvironment = {
     get: async (page: Page, executionEnvironmentName: string): Promise<HubExecutionEnvironment> => {
       const executionEnv = await hubAPI.get<HubExecutionEnvironment>(
         page,
-        `/_ui/v1/execution-environments/remotes/${executionEnvironmentName}/`
+        `/_ui/v1/execution-environments/remotes/${encodeURIComponent(executionEnvironmentName)}/`
       );
 
       if (!executionEnv) {
@@ -68,7 +99,7 @@ export const ExecutionEnvironment = {
     sync: async (page: Page, executionEnvironmentName: string): Promise<void> => {
       const response = await hubAPI.post<{ task: string }>(
         page,
-        `v3/plugin/execution-environments/repositories/${executionEnvironmentName}/_content/sync/`,
+        `v3/plugin/execution-environments/repositories/${encodeURIComponent(executionEnvironmentName)}/_content/sync/`,
         {},
         { expectStatus: 202 }
       );
