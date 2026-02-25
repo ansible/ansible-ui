@@ -70,6 +70,49 @@ export const EdaProject = {
       return projectName;
     },
 
+    edit: async (
+      page: Page,
+      projectName: string,
+      updates: {
+        name?: string;
+        description?: string;
+        url?: string;
+      }
+    ): Promise<void> => {
+      await navigateTo(page, 'Automation Decisions', 'Projects');
+      await clickTableRow(
+        {
+          text: projectName,
+          pageTitle: 'Projects',
+          filterLabel: 'Name',
+          filterValue: projectName,
+          clearFilters: true,
+        },
+        page
+      );
+
+      await clickPageAction('Edit project', page);
+      await expect(page.getByRole('heading', { name: `Edit ${projectName}` })).toBeVisible();
+
+      if (updates.name) {
+        await page.getByRole('textbox', { name: 'Name', exact: true }).clear();
+        await page.getByRole('textbox', { name: 'Name', exact: true }).fill(updates.name);
+      }
+
+      if (updates.description) {
+        await page.getByRole('textbox', { name: 'Description' }).clear();
+        await page.getByRole('textbox', { name: 'Description' }).fill(updates.description);
+      }
+
+      if (updates.url) {
+        await page.getByLabel('Source Control URL').clear();
+        await page.getByLabel('Source Control URL').fill(updates.url);
+      }
+
+      await page.getByRole('button', { name: 'Save project', exact: true }).click();
+      await expect(page.getByTestId('page-title')).toHaveText(updates.name || projectName);
+    },
+
     delete: async (page: Page, projectName: string): Promise<void> => {
       await navigateTo(page, 'Automation Decisions', 'Projects');
       await clickTableRow(
