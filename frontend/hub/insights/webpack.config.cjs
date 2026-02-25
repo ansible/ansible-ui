@@ -178,52 +178,24 @@ const filteredPlugins = plugins.filter(
   (plugin) => plugin.constructor.name !== 'ForkTsCheckerWebpackPlugin'
 );
 
-// Add StripQueryPlugin to handle Vite-style ?inline imports
-filteredPlugins.push(new StripQueryPlugin());
-
-// Use DynamicRemotePlugin from @openshift/dynamic-plugin-sdk-webpack
-// This is what scalprum/Chrome expects for federated modules
-const { DynamicRemotePlugin } = require('@openshift/dynamic-plugin-sdk-webpack');
-
-// The module name must match what Chrome/scalprum expects
-const FEDERATION_NAME = 'automationHub';
-
-// Use fixed filename in dev mode for easier debugging (no cache issues)
-const federationFilename = isBuild
-  ? `${FEDERATION_NAME}.[contenthash].js`
-  : `${FEDERATION_NAME}.js`;
-
+// StripQueryPlugin: handle Vite-style ?inline imports
+// federatedModules: Module Federation + fed-mods.json manifest for Chrome/scalprum
+//   Uses same approach as ansible-hub-ui: FEC's federatedModules wrapper around DynamicRemotePlugin.
+//   Since insights/package.json has no runtime dependencies (monorepo), shared deps are explicit.
 filteredPlugins.push(
-  new DynamicRemotePlugin({
-    extensions: [],
-    sharedModules: {
-      react: { singleton: true, eager: false, import: false, requiredVersion: '*' },
-      'react-dom': { singleton: true, eager: false, import: false, requiredVersion: '*' },
-      'react-router-dom': { singleton: true, requiredVersion: '*' },
-      '@patternfly/react-core': { singleton: true, requiredVersion: '*' },
-      '@patternfly/react-table': { singleton: true, requiredVersion: '*' },
-      '@patternfly/react-icons': { singleton: true, requiredVersion: '*' },
-      '@scalprum/react-core': {
-        singleton: true,
-        eager: false,
-        import: false,
-        requiredVersion: '*',
-      },
-      '@scalprum/core': { singleton: true, eager: false, import: false, requiredVersion: '*' },
+  new StripQueryPlugin(),
+  require('@redhat-cloud-services/frontend-components-config-utilities/federated-modules')({
+    root: rootFolder,
+    exposes: {
+      './RootApp': appEntry,
     },
-    entryScriptFilename: federationFilename,
-    pluginManifestFilename: 'fed-mods.json',
-    moduleFederationSettings: {
-      libraryType: 'jsonp',
-    },
-    pluginMetadata: {
-      name: FEDERATION_NAME,
-      version: '1.0.0',
-      extensions: [],
-      exposedModules: {
-        './RootApp': appEntry,
-      },
-    },
+    shared: [
+      { 'react-router-dom': { singleton: true, eager: false, import: false, version: '*' } },
+      { react: { singleton: true, eager: false, import: false, version: '*' } },
+      { 'react-dom': { singleton: true, eager: false, import: false, version: '*' } },
+      { '@scalprum/react-core': { singleton: true, eager: false, import: false, version: '*' } },
+      { '@scalprum/core': { singleton: true, eager: false, import: false, version: '*' } },
+    ],
   })
 );
 

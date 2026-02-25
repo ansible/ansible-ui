@@ -15,8 +15,11 @@
     "tsc": "tsc --noEmit 2>&1 | grep '\\.tsx\\?(' | grep -v '^\\.\\.' && exit 1 || exit 0",
     "eslint": "eslint --max-warnings=0 ."
   },
+  "dependencies": {
+    "@patternfly/react-core": "^6.0.0",
+    "@patternfly/react-icons": "^6.0.0"
+  },
   "devDependencies": {
-    "@openshift/dynamic-plugin-sdk-webpack": "^3.0.1",
     "@redhat-cloud-services/frontend-components": "^7.0.24",
     "@redhat-cloud-services/frontend-components-config": "^6.4.11",
     "@redhat-cloud-services/frontend-components-config-utilities": "^3.0.9",
