@@ -58,7 +58,11 @@ export const EdaCredential = {
     },
 
     delete: async (page: Page, credentialId: number): Promise<void> => {
-      await edaAPI.delete(page, `eda-credentials/${credentialId}/`);
+      try {
+        await edaAPI.delete(page, `eda-credentials/${credentialId}/`);
+      } catch {
+        // Already deleted or not found
+      }
     },
 
     deleteByName: async (page: Page, credentialName: string): Promise<void> => {
