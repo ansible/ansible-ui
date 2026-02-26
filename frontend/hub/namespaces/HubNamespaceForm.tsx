@@ -21,12 +21,13 @@ import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI } from '../common/api/formatPath';
 import { HubRoute } from '../main/HubRoutes';
 import { HubNamespace } from './HubNamespace';
-import { HubNamespacePage } from './HubNamespacePage/HubNamespacePage';
+import { isInsightsMode } from '../common/isInsights';
 import { UsefulLinksFields } from './UsefulLinksFields';
 import { HubNamespaceErrorAdapter } from './components/HubNamespaceErrorAdapter';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
+  const insights = isInsightsMode();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubNamespace>();
@@ -48,14 +49,17 @@ export function CreateHubNamespace() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create namespace')}
+        title={insights ? t('Create') : t('Create namespace')}
         breadcrumbs={[
-          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
-          { label: t('Create namespace') },
+          {
+            label: insights ? t('Partners') : t('Namespaces'),
+            to: getPageUrl(HubRoute.Namespaces),
+          },
+          { label: insights ? t('Create') : t('Create namespace') },
         ]}
       />
       <HubPageForm<HubNamespace>
-        submitText={t('Create namespace')}
+        submitText={insights ? t('Create') : t('Create namespace')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={{ groups: [], links: [{ name: '', url: '' }] }}
@@ -70,6 +74,7 @@ export function CreateHubNamespace() {
 
 export function EditHubNamespace() {
   const { t } = useTranslation();
+  const insights = isInsightsMode();
   const navigate = useNavigate();
   const { clearCacheByKey } = useClearCache();
   const params = useParams<{ id?: string }>();
@@ -105,11 +110,14 @@ export function EditHubNamespace() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Edit Namespace')}
+          title={insights ? t('Edit Partner') : t('Edit Namespace')}
           breadcrumbs={[
-            { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+            {
+              label: insights ? t('Partners') : t('Namespaces'),
+              to: getPageUrl(HubRoute.Namespaces),
+            },
             { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
-            { label: t('Edit Namespace') },
+            { label: insights ? t('Edit Partner') : t('Edit Namespace') },
           ]}
         />
       </PageLayout>
@@ -120,26 +128,26 @@ export function EditHubNamespace() {
     namespace.links = [{ name: '', url: '' }];
   }
 
+  const fallbackLabel = insights ? t('Partner') : t('Namespace');
+  const editTitle = namespace.name
+    ? t('Edit {{namespaceName}}', { namespaceName: namespace.name })
+    : fallbackLabel;
+
   return (
     <PageLayout>
       <PageHeader
-        title={
-          HubNamespacePage?.name
-            ? t('Edit {{namespaceName}}', { namespaceName: namespace?.name })
-            : t('Namespace')
-        }
+        title={editTitle}
         breadcrumbs={[
-          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
           {
-            label: HubNamespacePage?.name
-              ? t('Edit {{namespaceName}}', { namespaceName: namespace?.name })
-              : t('Namespace'),
+            label: insights ? t('Partners') : t('Namespaces'),
+            to: getPageUrl(HubRoute.Namespaces),
           },
+          { label: editTitle },
         ]}
       />
 
       <HubPageForm<HubNamespace>
-        submitText={t('Save namespace')}
+        submitText={insights ? t('Save') : t('Save namespace')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={namespace}

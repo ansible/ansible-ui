@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
 import { filterInsightsBulkActions } from '../../common/isInsights';
+import { isInsightsMode } from '../../common/isInsights';
 import { useHubConfig } from '../../common/useHubConfig';
+import { useHubContext } from '../../common/useHubContext';
 import { useHubView } from '../../common/useHubView';
 import { isAccessDeniedError } from '../../common/utils/errorUtils';
 import { CollectionVersionSearch } from './Approval';
@@ -20,9 +22,14 @@ export function Approvals() {
   const tableColumns = useApprovalsColumns();
   const config = useHubConfig();
   const docsUrl = useGetDocsUrl(config, 'collectionApprovals');
+  const { hasPermission, user } = useHubContext();
+
+  const isInsights = isInsightsMode();
+  const canModifyRepoContent =
+    !isInsights || hasPermission('ansible.modify_ansible_repo_content') || !!user?.is_superuser;
 
   const view = useHubView<CollectionVersionSearch>({
-    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
+    url: canModifyRepoContent ? hubAPI`/v3/plugin/ansible/search/collection-versions/` : '',
     keyFn: collectionKeyFn,
     tableColumns,
     toolbarFilters,
@@ -36,8 +43,7 @@ export function Approvals() {
     [allToolbarActions]
   );
 
-  // Check if the error is a 403 access denied error
-  const isUnauthorized = isAccessDeniedError(view.error);
+  const isUnauthorized = !canModifyRepoContent || isAccessDeniedError(view.error);
 
   const description = t(
     'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'

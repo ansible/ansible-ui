@@ -2,9 +2,27 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { hubAPI } from '../../common/api/formatPath';
 import { Approvals } from './Approvals';
+
+vi.mock('../../common/isInsights', () => ({
+  isInsightsMode: vi.fn(() => false),
+  filterInsightsBulkActions: vi.fn((actions: unknown[]) => actions),
+}));
+import { isInsightsMode } from '../../common/isInsights';
+
+let mockHasPermission: (perm: string) => boolean = () => false;
+let mockUser: Record<string, unknown> | null = null;
+
+vi.mock('../../common/useHubContext', () => ({
+  useHubContext: () => ({
+    featureFlags: {},
+    settings: {},
+    user: mockUser,
+    hasPermission: mockHasPermission,
+  }),
+}));
 
 const mockApprovalsResponse = {
   meta: {
@@ -206,6 +224,30 @@ describe('Approvals Component', () => {
       await waitFor(() => {
         expect(screen.getByText('Error loading approvals')).toBeInTheDocument();
       });
+    });
+  });
+});
+
+describe('Approvals Component – Insights mode permission check', () => {
+  beforeEach(() => {
+    vi.mocked(isInsightsMode).mockReturnValue(true);
+    mockUser = { is_superuser: false, is_anonymous: false };
+    mockHasPermission = () => false;
+  });
+
+  afterEach(() => vi.clearAllMocks());
+
+  it('should show unauthorized state when user lacks modify_ansible_repo_content', async () => {
+    render(
+      <MemoryRouter>
+        <Approvals />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('You do not have access to Collection Approvals')
+      ).toBeInTheDocument();
     });
   });
 });

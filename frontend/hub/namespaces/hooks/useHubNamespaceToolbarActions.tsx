@@ -29,7 +29,7 @@ export function useHubNamespaceToolbarActions(view: IHubView<HubNamespace>) {
         isPinned: true,
         variant: ButtonVariant.primary,
         icon: PlusCircleIcon,
-        label: t('Create namespace'),
+        label: isInsightsMode() ? t('Create') : t('Create namespace'),
         href: getPageUrl(HubRoute.CreateNamespace),
       },
       { type: PageActionType.Seperator },

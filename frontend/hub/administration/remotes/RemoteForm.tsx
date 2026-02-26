@@ -71,7 +71,7 @@ export function CreateRemote() {
     });
 
     clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
-    pageNavigate(HubRoute.RemotePage, { params: { id: createdRemote?.name } });
+    pageNavigate(HubRoute.RemotePage, { params: { id: createdRemote?.name ?? remote.name } });
   };
 
   return (

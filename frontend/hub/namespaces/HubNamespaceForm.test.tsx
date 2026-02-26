@@ -6,6 +6,13 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { CreateHubNamespace, EditHubNamespace } from './HubNamespaceForm';
 
+// Mock isInsightsMode
+vi.mock('../common/isInsights', () => ({
+  isInsightsMode: vi.fn(() => false),
+}));
+
+import { isInsightsMode } from '../common/isInsights';
+
 // Mock PageFormMarkdown due to monaco editor issues in tests
 vi.mock('@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMarkdown', () => ({
   PageFormMarkdown: ({ label }: { label: string }) => (
@@ -134,5 +141,58 @@ describe('EditHubNamespace', () => {
 
     // Should eventually show the edit form with Save button
     expect(await screen.findByText('Save namespace', {}, { timeout: 3000 })).toBeInTheDocument();
+  });
+});
+
+describe('CreateHubNamespace in Insights mode', () => {
+  beforeAll(() => vi.mocked(isInsightsMode).mockReturnValue(true));
+  afterAll(() => vi.mocked(isInsightsMode).mockReturnValue(false));
+
+  it('should use partner terminology', () => {
+    render(
+      <MemoryRouter>
+        <CreateHubNamespace />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('heading', { name: 'Create' })).toBeInTheDocument();
+    expect(screen.getByText('Partners')).toBeInTheDocument();
+  });
+});
+
+describe('EditHubNamespace in Insights mode', () => {
+  const server = setupServer(
+    http.get('*/_ui/v1/my-namespaces/existing-namespace/', () =>
+      HttpResponse.json({
+        name: 'existing-namespace',
+        description: 'An existing namespace',
+        company: 'Test Corp',
+        avatar_url: '',
+        links: [{ name: 'website', url: 'https://example.com' }],
+        resources: '',
+      })
+    )
+  );
+
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: 'bypass' });
+    vi.mocked(isInsightsMode).mockReturnValue(true);
+  });
+  afterEach(() => server.resetHandlers());
+  afterAll(() => {
+    server.close();
+    vi.mocked(isInsightsMode).mockReturnValue(false);
+  });
+
+  it('should use partner terminology', async () => {
+    render(
+      <MemoryRouter initialEntries={['/namespaces/existing-namespace/edit']}>
+        <Routes>
+          <Route path="/namespaces/:id/edit" element={<EditHubNamespace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Save', {}, { timeout: 3000 })).toBeInTheDocument();
   });
 });

@@ -57,9 +57,7 @@ function AddCollectionToRepositoryModal(props: {
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: collectionKeyFn,
     defaultSort: 'name',
-    queryParams: {
-      is_deprecated: 'false',
-    },
+    queryParams: {},
     toolbarFilters,
   });
 

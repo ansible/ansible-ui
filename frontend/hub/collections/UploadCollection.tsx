@@ -188,7 +188,9 @@ function InsightsUploadCollectionByFile() {
       );
 
       if (onlyStaging) {
-        pageNavigate(HubRoute.Approvals);
+        pageNavigate(HubRoute.MyImports, {
+          query: { namespace: namespaceName },
+        });
       } else {
         pageNavigate(HubRoute.Collections);
       }

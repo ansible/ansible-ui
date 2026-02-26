@@ -58,9 +58,26 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
     PageLayout: ({ children }: { children: React.ReactNode }) => (
       <div data-testid="page-layout">{children}</div>
     ),
-    PageHeader: ({ title, headerActions }: { title: string; headerActions: React.ReactNode }) => (
+    PageHeader: ({
+      title,
+      headerActions,
+      breadcrumbs,
+    }: {
+      title: string;
+      headerActions: React.ReactNode;
+      breadcrumbs?: Array<{ label?: string }>;
+    }) => (
       <div data-testid="page-header">
         <h1>{title}</h1>
+        {breadcrumbs && (
+          <nav data-testid="breadcrumbs">
+            {breadcrumbs.map((bc, i) => (
+              <span key={bc.label ?? `breadcrumb-${i}`} data-testid={`breadcrumb-${i}`}>
+                {bc.label}
+              </span>
+            ))}
+          </nav>
+        )}
         <div data-testid="header-actions">{headerActions}</div>
       </div>
     ),
@@ -79,8 +96,15 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
 });
 
 vi.mock('@ansible/common-ui/PageRoutedTabs', () => ({
-  PageRoutedTabs: ({ tabs }: { tabs: Array<{ label: string; page: string }> }) => (
+  PageRoutedTabs: ({
+    tabs,
+    backTab,
+  }: {
+    tabs: Array<{ label: string; page: string }>;
+    backTab?: { label: string };
+  }) => (
     <div data-testid="page-tabs">
+      {backTab && <div data-testid="back-tab">{backTab.label}</div>}
       {tabs.map((tab) => (
         <div key={tab.label} data-testid={`tab-${tab.label.toLowerCase().replaceAll(/\s+/g, '-')}`}>
           {tab.label}
@@ -145,6 +169,16 @@ describe('HubNamespacePage', () => {
       renderHubNamespacePage();
       expect(screen.queryByTestId('tab-access')).not.toBeInTheDocument();
     });
+
+    it('should show "Namespaces" in breadcrumbs', () => {
+      renderHubNamespacePage();
+      expect(screen.getByTestId('breadcrumb-0')).toHaveTextContent('Namespaces');
+    });
+
+    it('should show "Back to Namespaces" back tab', () => {
+      renderHubNamespacePage();
+      expect(screen.getByTestId('back-tab')).toHaveTextContent('Back to Namespaces');
+    });
   });
 
   describe('in Insights mode', () => {
@@ -181,6 +215,16 @@ describe('HubNamespacePage', () => {
       expect(screen.getByTestId('tab-access')).toBeInTheDocument();
       expect(screen.queryByTestId('tab-team-access')).not.toBeInTheDocument();
       expect(screen.queryByTestId('tab-user-access')).not.toBeInTheDocument();
+    });
+
+    it('should show "Partners" in breadcrumbs instead of "Namespaces"', () => {
+      renderHubNamespacePage();
+      expect(screen.getByTestId('breadcrumb-0')).toHaveTextContent('Partners');
+    });
+
+    it('should show "Back to Partners" back tab instead of "Back to Namespaces"', () => {
+      renderHubNamespacePage();
+      expect(screen.getByTestId('back-tab')).toHaveTextContent('Back to Partners');
     });
   });
 

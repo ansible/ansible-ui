@@ -73,7 +73,10 @@ export function HubNamespacePage() {
       <PageHeader
         title={namespace?.name}
         breadcrumbs={[
-          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+          {
+            label: isInsightsMode() ? t('Partners') : t('Namespaces'),
+            to: getPageUrl(HubRoute.Namespaces),
+          },
           { label: namespace?.name },
         ]}
         headerActions={
@@ -86,7 +89,7 @@ export function HubNamespacePage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Namespaces'),
+          label: isInsightsMode() ? t('Back to Partners') : t('Back to Namespaces'),
           page: HubRoute.Namespaces,
           persistentFilterKey: 'name', // TODO add correct filters
         }}
