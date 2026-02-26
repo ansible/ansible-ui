@@ -12,7 +12,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../common/api/formatPath';
 import { collectionKeyFn } from '../common/api/hub-api-utils';
-import { isInsightsMode } from '../common/isInsights';
+import { filterInsightsBulkActions, isInsightsMode } from '../common/isInsights';
 import { useHubView } from '../common/useHubView';
 import { isAccessDeniedError } from '../common/utils/errorUtils';
 import { HubRoute } from '../main/HubRoutes';
@@ -49,11 +49,11 @@ export function Collections() {
     'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
   );
 
-  // In Insights mode, hide the upload button from the collections list page
+  // In Insights mode, hide the upload button and all bulk actions from the collections list page
   // Upload is only available from the namespace detail page in Insights deployments
   const toolbarActions = useMemo(() => {
     if (isInsightsMode()) {
-      return allToolbarActions.filter(
+      return filterInsightsBulkActions(allToolbarActions).filter(
         (action) =>
           !('selection' in action) ||
           action.selection !== PageActionSelection.None ||

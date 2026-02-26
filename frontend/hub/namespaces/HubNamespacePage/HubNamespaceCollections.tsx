@@ -19,7 +19,7 @@ import { useCollectionFilters } from '../../collections/hooks/useCollectionFilte
 import { useCollectionsActions } from '../../collections/hooks/useCollectionsActions';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
-import { isInsightsMode } from '../../common/isInsights';
+import { filterInsightsBulkActions, isInsightsMode } from '../../common/isInsights';
 import { useHubView } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
@@ -57,16 +57,20 @@ export function HubNamespaceCollections() {
     myNamespace ?? undefined
   );
 
-  // In Insights mode, filter out upload button if user doesn't have access to this namespace
+  // In Insights mode, filter out bulk actions and upload button (if user doesn't have access)
   const toolbarActions = useMemo(() => {
-    if (isInsightsMode() && !showControls) {
-      return allToolbarActions.filter(
-        (action) =>
-          !('selection' in action) ||
-          action.selection !== PageActionSelection.None ||
-          !('label' in action) ||
-          action.label !== t('Upload collection')
-      );
+    if (isInsightsMode()) {
+      let filtered = filterInsightsBulkActions(allToolbarActions);
+      if (!showControls) {
+        filtered = filtered.filter(
+          (action) =>
+            !('selection' in action) ||
+            action.selection !== PageActionSelection.None ||
+            !('label' in action) ||
+            action.label !== t('Upload collection')
+        );
+      }
+      return filtered;
     }
     return allToolbarActions;
   }, [allToolbarActions, showControls, t]);

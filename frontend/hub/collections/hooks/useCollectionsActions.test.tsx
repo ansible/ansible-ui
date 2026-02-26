@@ -37,6 +37,7 @@ vi.mock('../../main/HubRoutes', () => ({
 // Mock isInsightsMode
 vi.mock('../../common/isInsights', () => ({
   isInsightsMode: vi.fn(() => false),
+  filterInsightsBulkActions: vi.fn((actions: unknown[]) => actions),
 }));
 
 import { isInsightsMode } from '../../common/isInsights';

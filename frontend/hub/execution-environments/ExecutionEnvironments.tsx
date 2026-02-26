@@ -9,8 +9,10 @@ import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { Button, ButtonVariant, Flex } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../common/api/formatPath';
+import { filterInsightsBulkActions } from '../common/isInsights';
 import { useHubConfig } from '../common/useHubConfig';
 import { useHubView } from '../common/useHubView';
 import { isAccessDeniedError } from '../common/utils/errorUtils';
@@ -40,7 +42,11 @@ export function ExecutionEnvironments() {
     tableColumns,
   });
 
-  const toolbarActions = useExecutionEnvironmentsActions(view.unselectItemsAndRefresh);
+  const allToolbarActions = useExecutionEnvironmentsActions(view.unselectItemsAndRefresh);
+  const toolbarActions = useMemo(
+    () => filterInsightsBulkActions(allToolbarActions),
+    [allToolbarActions]
+  );
   const rowActions = useExecutionEnvironmentActions(view.unselectItemsAndRefresh);
 
   // Check if the error is a 403 access denied error
