@@ -6,9 +6,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { hubAPI } from '../common/api/formatPath';
 import { AllNamespaces, CommonNamespaces, MyNamespaces, Namespaces } from './HubNamespaces';
 
-// Mock isInsightsMode
+// Mock isInsightsMode and filterInsightsBulkActions
 vi.mock('../common/isInsights', () => ({
   isInsightsMode: vi.fn(() => false),
+  filterInsightsBulkActions: vi.fn((actions: unknown[]) => actions),
 }));
 
 import { isInsightsMode } from '../common/isInsights';

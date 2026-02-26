@@ -1,8 +1,10 @@
 import { PageTable, PageLayoutWithUnauthorized } from '@ansible/ansible-ui-framework';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
+import { filterInsightsBulkActions } from '../../common/isInsights';
 import { useHubConfig } from '../../common/useHubConfig';
 import { useHubView } from '../../common/useHubView';
 import { isAccessDeniedError } from '../../common/utils/errorUtils';
@@ -28,7 +30,11 @@ export function Approvals() {
   });
 
   const rowActions = useApprovalActions(view.unselectItemsAndRefresh);
-  const toolbarActions = useApprovalsActions(view.unselectItemsAndRefresh);
+  const allToolbarActions = useApprovalsActions(view.unselectItemsAndRefresh);
+  const toolbarActions = useMemo(
+    () => filterInsightsBulkActions(allToolbarActions),
+    [allToolbarActions]
+  );
 
   // Check if the error is a 403 access denied error
   const isUnauthorized = isAccessDeniedError(view.error);

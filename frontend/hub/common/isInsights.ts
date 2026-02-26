@@ -1,3 +1,5 @@
+import { IPageAction, PageActionSelection } from '@ansible/ansible-ui-framework';
+
 /**
  * Check if we're running in Insights mode (console.redhat.com)
  *
@@ -11,4 +13,17 @@
 export function isInsightsMode(): boolean {
   const value = process.env.IS_INSIGHTS as unknown;
   return value === true || value === 'true';
+}
+
+/**
+ * Filter out bulk (multi-select) toolbar actions in Insights mode.
+ * Bulk operations are not supported in the Insights deployment.
+ */
+export function filterInsightsBulkActions<T extends object>(
+  actions: IPageAction<T>[]
+): IPageAction<T>[] {
+  if (!isInsightsMode()) return actions;
+  return actions.filter(
+    (action) => !('selection' in action) || action.selection !== PageActionSelection.Multiple
+  );
 }

@@ -8,7 +8,9 @@ import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink'
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { filterInsightsBulkActions } from '../../common/isInsights';
 import { hubAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { useHubConfig } from '../../common/useHubConfig';
@@ -36,7 +38,11 @@ export function RemoteRegistries() {
     tableColumns,
   });
 
-  const toolbarActions = useRemoteRegistriesToolbarActions(view);
+  const allToolbarActions = useRemoteRegistriesToolbarActions(view);
+  const toolbarActions = useMemo(
+    () => filterInsightsBulkActions(allToolbarActions),
+    [allToolbarActions]
+  );
   const rowActions = useRemoteRegistryActions({
     onRemoteRegistryDeleted: view.unselectItemsAndRefresh,
     refresh: view.refresh,

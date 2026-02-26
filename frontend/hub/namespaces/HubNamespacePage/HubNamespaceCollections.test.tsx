@@ -5,9 +5,10 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { HubNamespaceCollections } from './HubNamespaceCollections';
 
-// Mock isInsightsMode
+// Mock isInsightsMode and filterInsightsBulkActions
 vi.mock('../../common/isInsights', () => ({
   isInsightsMode: vi.fn(() => false),
+  filterInsightsBulkActions: vi.fn((actions: unknown[]) => actions),
 }));
 
 import { isInsightsMode } from '../../common/isInsights';
@@ -232,7 +233,6 @@ describe('HubNamespaceCollections', () => {
       it('should not show upload collection button in toolbar', () => {
         renderHubNamespaceCollections();
         const toolbarActions = screen.getAllByTestId('toolbar-action');
-        // The filter removes the "Upload collection" button
         expect(toolbarActions.some((el) => el.textContent === 'Upload collection')).toBe(false);
       });
 

@@ -1,8 +1,10 @@
 import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { Alert } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
+import { filterInsightsBulkActions } from '../../common/isInsights';
 import { useHubActiveUser } from '../../common/useHubActiveUser';
 import { useHubView } from '../../common/useHubView';
 import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
@@ -51,7 +53,11 @@ export function HubRolesTable() {
     },
   });
 
-  const toolbarActions = useRoleToolbarActions(view.unselectItemsAndRefresh);
+  const allToolbarActions = useRoleToolbarActions(view.unselectItemsAndRefresh);
+  const toolbarActions = useMemo(
+    () => filterInsightsBulkActions(allToolbarActions),
+    [allToolbarActions]
+  );
   const rowActions = useRoleRowActions(view.unselectItemsAndRefresh);
 
   return (

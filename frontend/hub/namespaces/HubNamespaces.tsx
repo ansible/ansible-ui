@@ -17,7 +17,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../common/api/formatPath';
-import { isInsightsMode } from '../common/isInsights';
+import { filterInsightsBulkActions, isInsightsMode } from '../common/isInsights';
 import { HubItemsResponse, useHubView } from '../common/useHubView';
 import { isAccessDeniedError } from '../common/utils/errorUtils';
 import { HubRoute } from '../main/HubRoutes';
@@ -92,7 +92,11 @@ export function CommonNamespaces({
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
   const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
-  const toolbarActions = useHubNamespaceToolbarActions(view);
+  const allToolbarActions = useHubNamespaceToolbarActions(view);
+  const toolbarActions = useMemo(
+    () => filterInsightsBulkActions(allToolbarActions),
+    [allToolbarActions]
+  );
 
   // In Insights mode on "All Namespaces" tab, fetch owned namespaces to check ownership
   // This allows us to hide actions for namespaces the user doesn't own
