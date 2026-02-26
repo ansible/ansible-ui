@@ -463,6 +463,27 @@ export function useHubNavigation() {
                       },
                     ],
                   },
+                  {
+                    path: ':id/versions-details/:version/',
+                    id: HubRoute.RepositoryVersionPage,
+                    element: <RepositoryVersionPage />,
+                    children: [
+                      {
+                        path: 'details',
+                        id: HubRoute.RepositoryVersionDetails,
+                        element: <RepositoryVersionDetails />,
+                      },
+                      {
+                        path: 'collections',
+                        id: HubRoute.RepositoryVersionCollections,
+                        element: <RepositoryVersionCollections />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" replace />,
+                      },
+                    ],
+                  },
                 ],
               },
               {
