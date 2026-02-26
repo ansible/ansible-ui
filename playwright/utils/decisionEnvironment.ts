@@ -16,6 +16,34 @@ export interface CreateDecisionEnvironmentOptions {
 
 export const DecisionEnvironment = {
   api: {
+    create: async (
+      page: Page,
+      options: {
+        name?: string;
+        organizationId?: number;
+        imageUrl?: string;
+        description?: string;
+      } = {}
+    ): Promise<EdaDecisionEnvironment> => {
+      const name = options.name ?? createE2EName('decision-environment');
+      const payload = {
+        name,
+        organization_id: options.organizationId ?? 1, // Default organization
+        image_url: options.imageUrl ?? 'quay.io/ansible/ansible-rulebook:main',
+        ...(options.description && { description: options.description }),
+      };
+
+      const result = await edaAPI.post<EdaDecisionEnvironment>(
+        page,
+        'decision-environments/',
+        payload
+      );
+      if (!result) {
+        throw new Error('Failed to create decision environment');
+      }
+      return result;
+    },
+
     delete: async (page: Page, decisionEnvironmentId: number): Promise<void> => {
       await edaAPI.delete(page, `decision-environments/${decisionEnvironmentId}/`);
     },
@@ -75,6 +103,51 @@ export const DecisionEnvironment = {
       );
       await clickPageAction('Delete decision environment', page);
       await confirmAndAssertDeletion(page);
+    },
+
+    edit: async (
+      page: Page,
+      decisionEnvironmentName: string,
+      updates: {
+        name?: string;
+        description?: string;
+        imageUrl?: string;
+      }
+    ): Promise<void> => {
+      await navigateTo(page, 'Automation Decisions', 'Decision Environments');
+      await page.getByRole('button', { name: 'table view' }).click();
+      await clickTableRow(
+        {
+          text: decisionEnvironmentName,
+          pageTitle: 'Decision Environments',
+          filterLabel: 'Name',
+          filterValue: decisionEnvironmentName,
+          clearFilters: true,
+        },
+        page
+      );
+
+      await clickPageAction('Edit decision environment', page);
+
+      if (updates.name) {
+        await page.getByRole('textbox', { name: 'Name', exact: true }).clear();
+        await page.getByRole('textbox', { name: 'Name', exact: true }).fill(updates.name);
+      }
+
+      if (updates.description) {
+        await page.getByRole('textbox', { name: 'Description' }).clear();
+        await page.getByRole('textbox', { name: 'Description' }).fill(updates.description);
+      }
+
+      if (updates.imageUrl) {
+        await page.getByLabel('Image').clear();
+        await page.getByLabel('Image').fill(updates.imageUrl);
+      }
+
+      await page.getByRole('button', { name: 'Save decision environment', exact: true }).click();
+
+      const updatedName = updates.name ?? decisionEnvironmentName;
+      await expect(page.getByRole('heading', { name: updatedName, exact: true })).toBeVisible();
     },
   },
 } as const;
