@@ -88,6 +88,7 @@ export function CommonNamespaces({
   isMyNamespaces: boolean;
 }) {
   const { t } = useTranslation();
+  const insights = isInsightsMode();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
@@ -145,7 +146,11 @@ export function CommonNamespaces({
   if (isUnauthorized) {
     return (
       <EmptyStateUnauthorized
-        title={t('You do not have access to Namespaces')}
+        title={
+          insights
+            ? t('You do not have access to Partners')
+            : t('You do not have access to Namespaces')
+        }
         adminMessage={t('Contact your organization administrator for more information.')}
       />
     );
@@ -158,22 +163,26 @@ export function CommonNamespaces({
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}
       rowActions={rowActions}
-      errorStateTitle={t('Error loading namespaces')}
+      errorStateTitle={insights ? t('Error loading partners') : t('Error loading namespaces')}
       emptyState={
         <PageTableEmptyState
-          title={t('No namespaces yet')}
-          description={t('To get started, create an namespace.')}
+          title={insights ? t('No partners yet') : t('No namespaces yet')}
+          description={
+            insights
+              ? t('To get started, create a partner.')
+              : t('To get started, create a namespace.')
+          }
         >
           <ButtonLink
             icon={<PlusCircleIcon />}
             variant={ButtonVariant.primary}
             href={getPageUrl(HubRoute.CreateNamespace)}
           >
-            {t('Create namespace')}
+            {insights ? t('Create') : t('Create namespace')}
           </ButtonLink>
         </PageTableEmptyState>
       }
-      defaultSubtitle={t('Namespace')}
+      defaultSubtitle={insights ? t('Partner') : t('Namespace')}
       defaultTableView="cards"
       {...view}
     />
