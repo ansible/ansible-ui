@@ -1,6 +1,7 @@
 import { usePageDialog } from '@ansible/ansible-ui-framework';
 import { PageTable } from '@ansible/ansible-ui-framework/PageTable/PageTable';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useGetRequest } from '@ansible/common-ui/crud/useGet';
 import {
   Button,
@@ -67,7 +68,7 @@ function CopyToRepositoryModal(props: {
   const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string | { message: string; details?: string }>('');
   const [message, setMessage] = useState<string>('');
 
   const operation = props.operation;
@@ -81,10 +82,15 @@ function CopyToRepositoryModal(props: {
       setIsLoading(false);
       props.onClose();
     } catch (error) {
-      setError(
-        (error as { details: string })?.details ||
-          t`Error while copying/approving collection to repositories`
-      );
+      setError({
+        message: t('Failed to copy collection version.'),
+        details:
+          error instanceof RequestError && error.details
+            ? error.details
+            : error instanceof Error
+              ? error.message
+              : undefined,
+      });
       setIsLoading(false);
     }
   };
@@ -190,7 +196,15 @@ function CopyToRepositoryModal(props: {
             }}
           />
         </div>
-        {error && <HubError error={{ name: t('Error'), message: error }}></HubError>}
+        {error && (
+          <HubError
+            error={
+              typeof error === 'string'
+                ? { name: t('Error'), message: error }
+                : new RequestError(error.message, error.details, 0, undefined, undefined)
+            }
+          ></HubError>
+        )}
         {props.displayDefaultError && (
           <HubError error={{ name: t('Error'), message: props.displayDefaultError }}></HubError>
         )}
@@ -254,7 +268,7 @@ export async function copyToRepositoryAction(
   if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
     const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
     const signingServiceList = await requestGet<PulpItemsResponse<SigningServiceResponse>>(url);
-    signingService = signingServiceList?.results?.[0].pulp_href;
+    signingService = signingServiceList?.results?.[0]?.pulp_href;
   }
 
   const repoHrefs: string[] = [];
@@ -276,6 +290,11 @@ export async function copyToRepositoryAction(
 
   if (signingService) {
     params.signing_service = signingService;
+  } else if (
+    signingServiceName &&
+    ((operation === 'approve' && autoSign) || operation === 'copy')
+  ) {
+    throw new Error(t(`Signing service ${signingServiceName} not found`));
   }
 
   const api_op = operation === 'approve' ? 'move_collection_version' : 'copy_collection_version';
