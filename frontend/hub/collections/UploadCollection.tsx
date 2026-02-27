@@ -142,60 +142,52 @@ function InsightsUploadCollectionByFile() {
       return;
     }
 
-    let lastError = '';
-    try {
-      // Validate namespace exists and user has upload permission
-      lastError = t('Error checking namespace "{{namespaceName}}".', { namespaceName });
-      const namespaceResponse = await requestGet<HubItemsResponse<HubNamespace>>(
-        hubAPI`/_ui/v1/my-namespaces/?limit=1&name=${namespaceName}&include_related=my_permissions`
+    // Validate namespace exists and user has upload permission
+    const namespaceResponse = await requestGet<HubItemsResponse<HubNamespace>>(
+      hubAPI`/_ui/v1/my-namespaces/?limit=1&name=${namespaceName}&include_related=my_permissions`
+    );
+
+    if (namespaceResponse.data.length === 0) {
+      setError(
+        t(
+          'Namespace "{{namespaceName}}" not found or you do not have permission to upload to it.',
+          { namespaceName }
+        )
       );
+      return;
+    }
 
-      if (namespaceResponse.data.length === 0) {
-        setError(
-          t(
-            'Namespace "{{namespaceName}}" not found or you do not have permission to upload to it.',
-            { namespaceName }
-          )
-        );
-        return;
-      }
-
-      const namespace = namespaceResponse.data[0];
-      if (!namespace.related_fields?.my_permissions?.includes('galaxy.upload_to_namespace')) {
-        setError(
-          t('You do not have permission to upload to namespace "{{namespaceName}}".', {
-            namespaceName,
-          })
-        );
-        return;
-      }
-
-      // In Insights mode, use getRepositoryBasePath which first tries to find a distribution
-      // with the same name as the repository (e.g., "staging"), avoiding synclist distributions
-      // that may be returned first when querying by repository pulp_href alone
-      lastError = t('Can not find distribution for selected repository.');
-      const base_path = await getRepositoryBasePath(selectedRepo.name, selectedRepo.pulp_href, t);
-
-      if (!base_path) {
-        setError(lastError);
-        return;
-      }
-
-      lastError = t('Error occurred during collection upload.');
-      await hubPostRequestFile(
-        hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
-        data.file as Blob
+    const namespace = namespaceResponse.data[0];
+    if (!namespace.related_fields?.my_permissions?.includes('galaxy.upload_to_namespace')) {
+      setError(
+        t('You do not have permission to upload to namespace "{{namespaceName}}".', {
+          namespaceName,
+        })
       );
+      return;
+    }
 
-      if (onlyStaging) {
-        pageNavigate(HubRoute.MyImports, {
-          query: { namespace: namespaceName },
-        });
-      } else {
-        pageNavigate(HubRoute.Collections);
-      }
-    } catch (err) {
-      setError(lastError + (err instanceof Error ? err.message : String(err)));
+    // In Insights mode, use getRepositoryBasePath which first tries to find a distribution
+    // with the same name as the repository (e.g., "staging"), avoiding synclist distributions
+    // that may be returned first when querying by repository pulp_href alone
+    const base_path = await getRepositoryBasePath(selectedRepo.name, selectedRepo.pulp_href, t);
+
+    if (!base_path) {
+      setError(t('Can not find distribution for selected repository.'));
+      return;
+    }
+
+    await hubPostRequestFile(
+      hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
+      data.file as Blob
+    );
+
+    if (onlyStaging) {
+      pageNavigate(HubRoute.MyImports, {
+        query: { namespace: namespaceName },
+      });
+    } else {
+      pageNavigate(HubRoute.Collections);
     }
   }
 

@@ -1,8 +1,28 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, renderHook } from '@testing-library/react';
+import { render, screen, renderHook, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { UploadCollection, useRepositoriesColumns, useRepoFilters } from './UploadCollection';
+
+const {
+  mockPageNavigate,
+  mockRequestGet,
+  mockGetRepositoryBasePath,
+  mockHubPostRequestFile,
+  mockSearchParams,
+  mockUseHubView,
+  submitRef,
+} = vi.hoisted(() => ({
+  mockPageNavigate: vi.fn(),
+  mockRequestGet: vi.fn(),
+  mockGetRepositoryBasePath: vi.fn(),
+  mockHubPostRequestFile: vi.fn(),
+  mockSearchParams: { current: new URLSearchParams() },
+  mockUseHubView: vi.fn(),
+  submitRef: {
+    current: null as ((data: { file: File }) => Promise<void> | void) | null,
+  },
+}));
 
 // Mock isInsightsMode
 vi.mock('../common/isInsights', () => ({
@@ -23,21 +43,7 @@ vi.mock('../administration/repositories/hooks/useRepositories', () => ({
 
 // Mock useHubView
 vi.mock('../common/useHubView', () => ({
-  useHubView: () => ({
-    pageItems: [
-      { name: 'staging', pulp_href: '/pulp/api/v3/repos/staging/' },
-      { name: 'published', pulp_href: '/pulp/api/v3/repos/published/' },
-    ],
-    itemCount: 2,
-    isLoading: false,
-    error: null,
-    unselectItemsAndRefresh: vi.fn(),
-    refresh: vi.fn(),
-    selectItem: vi.fn(),
-    unselectItem: vi.fn(),
-    isSelected: vi.fn(),
-    selectedItems: [],
-  }),
+  useHubView: (...args: unknown[]): unknown => mockUseHubView(...args),
 }));
 
 // Mock useGet and useGetRequest
@@ -47,19 +53,17 @@ vi.mock('@ansible/common-ui/crud/useGet', () => ({
 
 // Mock requestGet
 vi.mock('@ansible/common-ui/crud/Data', () => ({
-  requestGet: vi.fn().mockResolvedValue({
-    data: [
-      {
-        name: 'test-namespace',
-        related_fields: { my_permissions: ['galaxy.upload_to_namespace'] },
-      },
-    ],
-  }),
+  requestGet: (...args: unknown[]): unknown => mockRequestGet(...args),
 }));
 
 // Mock hubPostRequestFile
 vi.mock('../common/api/request', () => ({
-  hubPostRequestFile: vi.fn().mockResolvedValue({}),
+  hubPostRequestFile: (...args: unknown[]): unknown => mockHubPostRequestFile(...args),
+}));
+
+// Mock getRepositoryBasePath
+vi.mock('../common/api/hub-api-utils', () => ({
+  getRepositoryBasePath: (...args: unknown[]): unknown => mockGetRepositoryBasePath(...args),
 }));
 
 // Mock the framework components
@@ -95,7 +99,7 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
       </div>
     ),
     useGetPageUrl: () => (route: string) => `/hub/${route}`,
-    usePageNavigate: () => vi.fn(),
+    usePageNavigate: () => mockPageNavigate,
     TextCell: ({ text }: { text: string }) => <span>{text}</span>,
     LoadingPage: () => <div data-testid="loading-page">Loading...</div>,
   };
@@ -111,7 +115,7 @@ vi.mock('@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload', () =
 }));
 
 vi.mock('@ansible/ansible-ui-framework/components/useURLSearchParams', () => ({
-  useURLSearchParams: () => [new URLSearchParams()],
+  useURLSearchParams: () => [mockSearchParams.current],
 }));
 
 vi.mock('../common/HubPageForm', () => ({
@@ -119,21 +123,26 @@ vi.mock('../common/HubPageForm', () => ({
     children,
     submitText,
     cancelText,
+    onSubmit,
   }: {
     children: React.ReactNode;
     submitText: string;
     cancelText: string;
-  }) => (
-    <form data-testid="hub-page-form">
-      {children}
-      <button type="submit" data-testid="submit-button">
-        {submitText}
-      </button>
-      <button type="button" data-testid="cancel-button">
-        {cancelText}
-      </button>
-    </form>
-  ),
+    onSubmit: (data: { file: File }) => Promise<void>;
+  }) => {
+    submitRef.current = onSubmit;
+    return (
+      <form data-testid="hub-page-form">
+        {children}
+        <button type="submit" data-testid="submit-button">
+          {submitText}
+        </button>
+        <button type="button" data-testid="cancel-button">
+          {cancelText}
+        </button>
+      </form>
+    );
+  },
 }));
 
 vi.mock('../common/HubError', () => ({
@@ -170,6 +179,24 @@ vi.mock('@patternfly/react-core', async () => {
   };
 });
 
+function defaultUseHubViewReturn() {
+  return {
+    pageItems: [
+      { name: 'staging', pulp_href: '/pulp/api/v3/repos/staging/' },
+      { name: 'published', pulp_href: '/pulp/api/v3/repos/published/' },
+    ],
+    itemCount: 2,
+    isLoading: false,
+    error: null,
+    unselectItemsAndRefresh: vi.fn(),
+    refresh: vi.fn(),
+    selectItem: vi.fn(),
+    unselectItem: vi.fn(),
+    isSelected: vi.fn(),
+    selectedItems: [],
+  };
+}
+
 function renderUploadCollection() {
   return render(
     <MemoryRouter>
@@ -181,6 +208,19 @@ function renderUploadCollection() {
 describe('UploadCollection', () => {
   beforeEach(() => {
     vi.mocked(isInsightsMode).mockReturnValue(false);
+    mockUseHubView.mockReturnValue(defaultUseHubViewReturn());
+    mockRequestGet.mockResolvedValue({
+      data: [
+        {
+          name: 'test-namespace',
+          related_fields: { my_permissions: ['galaxy.upload_to_namespace'] },
+        },
+      ],
+    });
+    mockGetRepositoryBasePath.mockResolvedValue('staging');
+    mockHubPostRequestFile.mockResolvedValue({});
+    mockSearchParams.current = new URLSearchParams();
+    submitRef.current = null;
   });
 
   afterEach(() => {
@@ -220,7 +260,6 @@ describe('UploadCollection', () => {
 
     it('should render PlatformUploadCollectionByFile component', () => {
       renderUploadCollection();
-      // Platform mode shows "Staging repos" label
       expect(screen.getByText('Staging repos')).toBeInTheDocument();
     });
 
@@ -242,7 +281,6 @@ describe('UploadCollection', () => {
 
     it('should render InsightsUploadCollectionByFile component', () => {
       renderUploadCollection();
-      // Insights mode shows "Staging Repos" label (capital R)
       expect(screen.getByText('Staging Repos')).toBeInTheDocument();
     });
 
@@ -254,6 +292,148 @@ describe('UploadCollection', () => {
     it('should render all repos radio button', () => {
       renderUploadCollection();
       expect(screen.getByTestId('radio-all')).toBeInTheDocument();
+    });
+  });
+
+  describe('InsightsUploadCollectionByFile submit logic', () => {
+    const mockFile = new File(['content'], 'testnamespace-testcollection-1.0.0.tar.gz', {
+      type: 'application/gzip',
+    });
+
+    beforeEach(() => {
+      vi.mocked(isInsightsMode).mockReturnValue(true);
+    });
+
+    it('should show error when no file is selected', async () => {
+      renderUploadCollection();
+      await act(async () => {
+        await submitRef.current?.({} as { file: File });
+      });
+      expect(screen.getByTestId('hub-error')).toHaveTextContent(
+        'Please select the file to be uploaded.'
+      );
+    });
+
+    it('should show error when no repository is selected', async () => {
+      mockUseHubView.mockReturnValue({
+        ...defaultUseHubViewReturn(),
+        pageItems: [{ name: 'published', pulp_href: '/pulp/api/v3/repos/published/' }],
+      });
+      renderUploadCollection();
+      await act(async () => {
+        await submitRef.current?.({ file: mockFile });
+      });
+      expect(screen.getByTestId('hub-error')).toHaveTextContent('Please select a repository.');
+    });
+
+    it('should show error when namespace does not match URL param', async () => {
+      mockSearchParams.current = new URLSearchParams('namespace=differentnamespace');
+      renderUploadCollection();
+      await act(async () => {
+        await submitRef.current?.({ file: mockFile });
+      });
+      expect(screen.getByTestId('hub-error')).toHaveTextContent(
+        'Namespace "testnamespace" does not match namespace "differentnamespace".'
+      );
+    });
+
+    it('should show error when namespace is not found', async () => {
+      mockRequestGet.mockResolvedValue({ data: [] });
+      renderUploadCollection();
+      await act(async () => {
+        await submitRef.current?.({ file: mockFile });
+      });
+      expect(screen.getByTestId('hub-error')).toHaveTextContent(
+        'Namespace "testnamespace" not found or you do not have permission to upload to it.'
+      );
+    });
+
+    it('should show error when user lacks upload permission', async () => {
+      mockRequestGet.mockResolvedValue({
+        data: [
+          {
+            name: 'testnamespace',
+            related_fields: { my_permissions: ['galaxy.view_namespace'] },
+          },
+        ],
+      });
+      renderUploadCollection();
+      await act(async () => {
+        await submitRef.current?.({ file: mockFile });
+      });
+      expect(screen.getByTestId('hub-error')).toHaveTextContent(
+        'You do not have permission to upload to namespace "testnamespace".'
+      );
+    });
+
+    it('should show error when distribution base_path is not found', async () => {
+      mockGetRepositoryBasePath.mockResolvedValue(undefined);
+      renderUploadCollection();
+      await act(async () => {
+        await submitRef.current?.({ file: mockFile });
+      });
+      expect(screen.getByTestId('hub-error')).toHaveTextContent(
+        'Can not find distribution for selected repository.'
+      );
+    });
+
+    it('should navigate to My Imports on successful staging upload', async () => {
+      renderUploadCollection();
+      await act(async () => {
+        await submitRef.current?.({ file: mockFile });
+      });
+      expect(mockHubPostRequestFile).toHaveBeenCalledWith(
+        expect.stringContaining('/collections/artifacts/'),
+        mockFile
+      );
+      expect(mockPageNavigate).toHaveBeenCalledWith('hub-my-imports', {
+        query: { namespace: 'testnamespace' },
+      });
+    });
+
+    it('should let API errors from requestGet propagate', async () => {
+      const apiError = new Error('Network error');
+      mockRequestGet.mockRejectedValue(apiError);
+      renderUploadCollection();
+      let thrownError: unknown;
+      await act(async () => {
+        try {
+          await submitRef.current?.({ file: mockFile });
+        } catch (err) {
+          thrownError = err;
+        }
+      });
+      expect(thrownError).toBe(apiError);
+    });
+
+    it('should let API errors from getRepositoryBasePath propagate', async () => {
+      const apiError = new Error('Distribution lookup failed');
+      mockGetRepositoryBasePath.mockRejectedValue(apiError);
+      renderUploadCollection();
+      let thrownError: unknown;
+      await act(async () => {
+        try {
+          await submitRef.current?.({ file: mockFile });
+        } catch (err) {
+          thrownError = err;
+        }
+      });
+      expect(thrownError).toBe(apiError);
+    });
+
+    it('should let API errors from hubPostRequestFile propagate', async () => {
+      const apiError = new Error('Upload failed');
+      mockHubPostRequestFile.mockRejectedValue(apiError);
+      renderUploadCollection();
+      let thrownError: unknown;
+      await act(async () => {
+        try {
+          await submitRef.current?.({ file: mockFile });
+        } catch (err) {
+          thrownError = err;
+        }
+      });
+      expect(thrownError).toBe(apiError);
     });
   });
 });
