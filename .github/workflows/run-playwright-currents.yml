@@ -39,8 +39,8 @@ on:
       TIMEOUT_MINUTES:
         type: number
         required: false
-        description: "Job timeout in minutes (default: 60)"
-        default: 60
+        description: "Job timeout in minutes (default: 90)"
+        default: 90
       PROJECT:
         type: choice
         description: "Playwright Project"
