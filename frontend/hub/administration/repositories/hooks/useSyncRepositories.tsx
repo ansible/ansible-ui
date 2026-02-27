@@ -1,16 +1,20 @@
 import {
   PageFormSwitch,
-  errorToAlertProps,
+  useGetPageUrl,
   usePageAlertToaster,
   usePageDialog,
 } from '@ansible/ansible-ui-framework';
 import { Modal, ModalVariant, ModalHeader, ModalBody } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { HubPageForm } from '../../../common/HubPageForm';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { postHubRequest } from '../../../common/api/request';
+import { extractErrorDescription } from '../../../common/utils/errorUtils';
+import { HubRoute } from '../../../main/HubRoutes';
+import { TaskResponse } from '../../tasks/Task';
 import { Repository } from '../Repository';
 
 interface SyncFormProps {
@@ -23,6 +27,7 @@ export function useSyncRepositories() {
   const [_, setDialog] = usePageDialog();
   const alertToaster = usePageAlertToaster();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const getPageUrl = useGetPageUrl();
   const syncFormValues: SyncFormProps = {
     mirror: true,
     optimize: true,
@@ -49,15 +54,36 @@ export function useSyncRepositories() {
                 }/sync/`,
                 values
               )
-                .then(() => {
+                .then(({ response, statusCode }) => {
+                  const taskId =
+                    statusCode === 202
+                      ? parsePulpIDFromURL((response as TaskResponse)?.task)
+                      : null;
                   alertToaster.addAlert({
                     variant: 'info',
                     title: t(`Sync started for repository "${repository.name}".`),
+                    children: (
+                      <span>
+                        {t('See the task management ')}
+                        {taskId ? (
+                          <Link to={getPageUrl(HubRoute.TaskPage, { params: { id: taskId } })}>
+                            {t('detail page')}
+                          </Link>
+                        ) : (
+                          t('detail page')
+                        )}
+                        {t(' for the status of this task.')}
+                      </span>
+                    ),
                   });
                   onClose();
                 })
-                .catch((error) => {
-                  alertToaster.addAlert(errorToAlertProps(error));
+                .catch((error: unknown) => {
+                  alertToaster.addAlert({
+                    variant: 'danger',
+                    title: t(`Failed to sync repository "${repository.name}"`),
+                    children: extractErrorDescription(error),
+                  });
                   onClose();
                 });
             }}

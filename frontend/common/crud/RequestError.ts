@@ -1,7 +1,21 @@
 import { stringify } from 'yaml';
 
+const HTTP_STATUS_TEXT: Record<number, string> = {
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not Found',
+  405: 'Method Not Allowed',
+  408: 'Request Timeout',
+  409: 'Conflict',
+  429: 'Too Many Requests',
+  500: 'Internal Server Error',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+  504: 'Gateway Timeout',
+};
+
 export async function createRequestError(response: Response) {
-  const message: string = response.statusText;
   let details: string | undefined = undefined;
   let body: string | object | undefined = undefined;
   let json: object | undefined = undefined;
@@ -17,6 +31,11 @@ export async function createRequestError(response: Response) {
     json = body;
     details = stringify(body);
   }
+
+  // response.statusText is always empty under HTTP/2, so fall back to the
+  // standard reason phrase for the status code.
+  const message: string =
+    response.statusText || HTTP_STATUS_TEXT[response.status] || `Error ${response.status}`;
 
   return new RequestError(message, details, response.status, body, json);
 }
