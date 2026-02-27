@@ -22,8 +22,14 @@ void i18n
   })
   .use(backend)
   .use(detector)
-  .use(initReactI18next) // passes i18n down to react-i18next
+  .use(initReactI18next)
   .init({
+    backend: {
+      loadPath:
+        (process.env.IS_INSIGHTS as unknown) === true || process.env.IS_INSIGHTS === 'true'
+          ? '/apps/automation-hub/locales/{{lng}}/{{ns}}.json'
+          : '/locales/{{lng}}/{{ns}}.json',
+    },
     detection: {
       order: [
         'querystring',

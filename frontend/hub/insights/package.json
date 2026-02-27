@@ -24,6 +24,7 @@
     "@redhat-cloud-services/frontend-components-config": "^6.4.11",
     "@redhat-cloud-services/frontend-components-config-utilities": "^3.0.9",
     "@svgr/webpack": "^8.1.0",
+    "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^6.10.0",
     "mini-css-extract-plugin": "^2.8.0",
     "monaco-editor-webpack-plugin": "^7.1.0",
