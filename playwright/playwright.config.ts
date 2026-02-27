@@ -15,6 +15,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
  */
 // Use verbose configuration by default for better debugging
 const isCI = !!process.env.CI;
+const jobTimeoutMinutes = Number(process.env.TIMEOUT_MINUTES) || 60;
 const config: PlaywrightTestConfig = {
   testDir: '.',
   fullyParallel: false,
@@ -22,6 +23,7 @@ const config: PlaywrightTestConfig = {
   // Enable retries by default to catch flaky tests
   retries: 2,
   timeout: 60000,
+  globalTimeout: isCI && jobTimeoutMinutes > 5 ? (jobTimeoutMinutes - 5) * 60 * 1000 : undefined,
   expect: {
     // timeout: 60 * 1000, // default of playwright is 5s
   },
