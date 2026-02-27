@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
-import { isAccessDeniedError } from './errorUtils';
+import { extractErrorDescription, isAccessDeniedError } from './errorUtils';
 
 describe('isAccessDeniedError', () => {
   it('should return false for undefined error', () => {
@@ -56,5 +56,45 @@ describe('isAccessDeniedError', () => {
   it('should return false for Error with empty message', () => {
     const error = new Error('');
     expect(isAccessDeniedError(error)).toBe(false);
+  });
+});
+
+describe('extractErrorDescription', () => {
+  it('should return Error.message for a non-RequestError', () => {
+    expect(extractErrorDescription(new Error('something broke'))).toBe('something broke');
+  });
+
+  it('should extract Galaxy-style errors array', () => {
+    const json = { errors: [{ detail: 'Collection not found', title: 'Not Found' }] };
+    const error = new RequestError('Not Found', undefined, 404, json, json);
+    expect(extractErrorDescription(error)).toBe('Error 404 - Not Found: Collection not found');
+  });
+
+  it('should extract Pulp-style detail string', () => {
+    const json = { detail: 'Remote not configured' };
+    const error = new RequestError('Bad Request', undefined, 400, json, json);
+    expect(extractErrorDescription(error)).toBe('Error 400 - Bad Request: Remote not configured');
+  });
+
+  it('should extract Django REST non_field_errors', () => {
+    const json = { non_field_errors: ['Invalid input', 'Duplicate entry'] };
+    const error = new RequestError('Bad Request', undefined, 400, json, json);
+    expect(extractErrorDescription(error)).toBe(
+      'Error 400 - Bad Request: Invalid input Duplicate entry'
+    );
+  });
+
+  it('should fall back to stringifying values for unknown error shapes', () => {
+    const json = { name: ['This field is required.'], url: ['Enter a valid URL.'] };
+    const error = new RequestError('Bad Request', undefined, 400, json, json);
+    expect(extractErrorDescription(error)).toBe(
+      'Error 400 - Bad Request: This field is required. Enter a valid URL.'
+    );
+  });
+
+  it('should return only the prefix when detail is empty', () => {
+    const json = { errors: [] };
+    const error = new RequestError('Bad Request', undefined, 400, json, json);
+    expect(extractErrorDescription(error)).toBe('Error 400 - Bad Request');
   });
 });

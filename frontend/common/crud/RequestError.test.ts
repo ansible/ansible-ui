@@ -42,4 +42,58 @@ describe('createRequestError', () => {
     expect(error.json).toEqual({ error: 'Parsed Error' });
     expect(error.body).toEqual({ error: 'Parsed Error' });
   });
+
+  it('should use statusText when available', async () => {
+    const response = new Response('', {
+      status: 403,
+      statusText: 'Forbidden',
+      headers: { 'Content-Type': 'text/plain' },
+    });
+
+    const error = await createRequestError(response);
+    expect(error.message).toBe('Forbidden');
+    expect(error.statusCode).toBe(403);
+  });
+
+  it('should fall back to HTTP_STATUS_TEXT when statusText is empty (HTTP/2)', async () => {
+    const response = new Response('', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain' },
+    });
+
+    const error = await createRequestError(response);
+    expect(error.message).toBe('Not Found');
+    expect(error.statusCode).toBe(404);
+  });
+
+  it.each([
+    [400, 'Bad Request'],
+    [401, 'Unauthorized'],
+    [403, 'Forbidden'],
+    [404, 'Not Found'],
+    [405, 'Method Not Allowed'],
+    [408, 'Request Timeout'],
+    [409, 'Conflict'],
+    [429, 'Too Many Requests'],
+    [500, 'Internal Server Error'],
+    [502, 'Bad Gateway'],
+    [503, 'Service Unavailable'],
+    [504, 'Gateway Timeout'],
+  ])(
+    'should map status %i to "%s" when statusText is empty',
+    async (status: number, expectedText: string) => {
+      const response = new Response(null, { status });
+
+      const error = await createRequestError(response);
+      expect(error.message).toBe(expectedText);
+    }
+  );
+
+  it('should fall back to "Error <code>" for unmapped status codes with empty statusText', async () => {
+    const response = new Response(null, { status: 418 });
+
+    const error = await createRequestError(response);
+    expect(error.message).toBe('Error 418');
+    expect(error.statusCode).toBe(418);
+  });
 });
