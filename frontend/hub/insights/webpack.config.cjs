@@ -12,6 +12,7 @@
  */
 const { resolve } = require('node:path');
 const config = require('@redhat-cloud-services/frontend-components-config');
+const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const webpack = require('webpack');
@@ -246,6 +247,9 @@ filteredPlugins.push(
   new webpack.ContextReplacementPlugin(/@rhds\/elements/, (data) => {
     delete data.dependencies[0].critical;
     return data;
+  }),
+  new CopyPlugin({
+    patterns: [{ from: resolve(repoRoot, 'locales'), to: 'locales' }],
   })
 );
 
