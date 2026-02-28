@@ -1,12 +1,12 @@
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { Page, expect } from '@playwright/test';
 import { gatewayAPI } from '../commands/apiClient';
-import { createE2EName } from '../commands/createE2EName';
-import { navigateTo } from '../commands/navigateTo';
 import { clickTableRow } from '../commands/clickTableRow';
 import { clickTableRowAction } from '../commands/clickTableRowAction';
+import { createE2EName } from '../commands/createE2EName';
 import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
+import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
-import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 
 export interface CreateTeamAPIOptions {
   name?: string;
@@ -46,6 +46,16 @@ export const Team = {
       const id = list?.results?.[0]?.id;
       if (!id) return;
       await gatewayAPI.delete(page, `teams/${id}/`).catch(() => {});
+    },
+    associateUsers: async (page: Page, teamId: number, userIds: number[]): Promise<void> => {
+      await gatewayAPI.post(
+        page,
+        `teams/${teamId}/users/associate/`,
+        {
+          instances: userIds,
+        },
+        { expectStatus: 204 }
+      );
     },
   },
   ui: {
