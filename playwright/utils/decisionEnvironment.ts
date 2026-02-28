@@ -23,6 +23,7 @@ export const DecisionEnvironment = {
         organizationId?: number;
         imageUrl?: string;
         description?: string;
+        credentialId?: number;
       } = {}
     ): Promise<EdaDecisionEnvironment> => {
       const name = options.name ?? createE2EName('decision-environment');
@@ -31,6 +32,7 @@ export const DecisionEnvironment = {
         organization_id: options.organizationId ?? 1, // Default organization
         image_url: options.imageUrl ?? 'quay.io/ansible/ansible-rulebook:main',
         ...(options.description && { description: options.description }),
+        ...(options.credentialId && { eda_credential_id: options.credentialId }),
       };
 
       const result = await edaAPI.post<EdaDecisionEnvironment>(

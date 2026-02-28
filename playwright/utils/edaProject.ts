@@ -54,6 +54,39 @@ export const EdaProject = {
         // Already deleted or not found
       }
     },
+
+    get: async (page: Page, projectId: number): Promise<EdaProjectType> => {
+      const project = await edaAPI.get<EdaProjectType>(page, `projects/${projectId}/`);
+      if (!project) {
+        throw new Error(`EDA project ${projectId} not found`);
+      }
+      return project;
+    },
+
+    waitForSync: async (
+      page: Page,
+      projectId: number,
+      timeout: number = 120000
+    ): Promise<EdaProjectType> => {
+      const startTime = Date.now();
+      const checkInterval = 2000;
+
+      while (Date.now() - startTime < timeout) {
+        const project = await EdaProject.api.get(page, projectId);
+
+        if (project.import_state === ('completed' as EdaProjectType['import_state'])) {
+          return project;
+        }
+
+        if (project.import_state === ('failed' as EdaProjectType['import_state'])) {
+          throw new Error(`Project ${projectId} sync failed`);
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      throw new Error(`Project ${projectId} sync did not complete within ${timeout}ms timeout`);
+    },
   },
 
   ui: {

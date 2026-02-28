@@ -234,6 +234,10 @@ export function RulebookActivationPage() {
             label: t('Delete rulebook activation'),
             onClick: (rulebookActivation: EdaRulebookActivation) =>
               deleteRulebookActivations(rulebookActivation),
+            isDisabled: () =>
+              canPatchActivation
+                ? ''
+                : t(`The rulebook activation cannot be deleted due to insufficient permission`),
             isDanger: true,
           },
         ]

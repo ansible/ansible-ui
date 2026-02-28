@@ -49,7 +49,9 @@ export {
 export { DecisionEnvironment } from './decisionEnvironment';
 export { EdaCredential } from './edaCredential';
 export { EdaCredentialType } from './edaCredentialType';
+export { EdaOrganization } from './edaOrganization';
 export { EdaProject } from './edaProject';
+export { EdaRulebook } from './edaRulebook';
 export { EventStream } from './eventStream';
 export { RulebookActivation } from './rulebookActivation';
 
