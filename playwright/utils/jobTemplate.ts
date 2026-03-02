@@ -6,6 +6,7 @@ import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { filterTable } from '../commands/filterTable';
 import { navigateTo } from '../commands/navigateTo';
+import { waitForJobStatus } from '../commands/waitForJobStatus';
 
 export interface CreateJobTemplateOptions {
   name?: string;
@@ -82,6 +83,35 @@ export const JobTemplate = {
 
     cancelJob: async (page: Page, jobId: number): Promise<void> => {
       await awxAPI.post(page, `/jobs/${jobId}/cancel/`, {}).catch(() => {});
+    },
+
+    launch: async (
+      page: Page,
+      jobTemplateId: number,
+      options: { waitForStatus?: string | string[] } = {}
+    ): Promise<{ id: number; status: string }> => {
+      const job = await awxAPI.post<{ id: number; status: string }>(
+        page,
+        `/job_templates/${jobTemplateId}/launch/`,
+        {}
+      );
+
+      if (!job) {
+        throw new Error('Failed to launch job template: API returned null');
+      }
+
+      const desiredStatus = options.waitForStatus ?? ['successful', 'failed', 'error', 'canceled'];
+      const completedJob = await waitForJobStatus<{ id: number; status: string }>(
+        {
+          jobType: 'jobs',
+          jobId: job.id,
+          desiredStatus,
+          throwOnFailure: false,
+        },
+        page
+      );
+
+      return { id: completedJob.id, status: completedJob.status };
     },
 
     /**
