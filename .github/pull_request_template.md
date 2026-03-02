@@ -1,58 +1,46 @@
-## Description
+## Summary
 
-Jira issue # <!-- Link JIRA issue -->
+Jira: <!-- AAP-XXXXX -->
 
-<!-- Include a summary of the changes and the related issue. List any dependencies that are required for this change. -->
-
-<!-- For backports, include a link to the original PR.  -->
+<!-- What changed and why? For backports, link the original PR. -->
 
 ## Type of Change
 
 - [ ] Bug fix
-- [ ] New feature/ enhancement
-- [ ] Documentation update
+- [ ] Enhancement
 - [ ] Tests
+- [ ] Documentation
 - [ ] Other (please specify)
 
-## Required Backend Work (if applicable):
+## Dependencies
 
-<!-- Briefly describe any required backend changes (e.g., API updates, database migrations, service integrations). -->
-
-## Feature Flags (if applicable):
-
-<!-- List any feature flags related to this change. Include the flag name(s), instructions for enabling/disabling them, and any notes on when to toggle these flags. -->
+<!-- List any dependent PRs, required backend changes, or manual setup steps. Remove this section if none. -->
 
 ## Testing
 
-#### • E2E Run:
+### Ephemeral E2E Tests
 
-<!-- Please run both Cypress and Playwright E2E tests to help us maintain quality and avoid regressions. Share your results via GitHub Actions links or local test output. -->
+Trigger tests by posting a comment on this PR. The command depends on the base branch:
 
-- [ ] **Cypress Tests:** E2E tests completed successfully (npm run e2e:run)
-  <!-- Share GitHub Actions E2E run link or local test results/screenshots -->
+| Base branch | Playwright | Cypress |
+|---|---|---|
+| `main` | `/run-aap-ui-playwright` | `/run-aap-ui-cypress` |
+| `stable-2.6` | `/run-aap-ui-playwright 2.6-next` | `/run-aap-ui-cypress 2.6-next` |
+| `release/2.5-lts` | — | `/run-aap-ui-cypress 2.5-next` |
 
-- [ ] **Playwright Tests:** E2E tests completed successfully (cd playwright && npm run live)
-  <!-- Share GitHub Actions E2E run link or local test results/screenshots -->
+> Tests run against a fresh AAP instance (version based on branch). See ephemeral docs for [Playwright](https://github.com/ansible-automation-platform/aap-ui/blob/main/docs/test/automating-e2e/ephemeral-aap-playwright.md) and [Cypress](https://github.com/ansible-automation-platform/aap-ui/blob/main/docs/test/automating-e2e/ephemeral-aap-cypress.md).
 
-<!-- 
-💡 If you encounter any test failures:
-• Please list them here and let us know if they're related to your changes
-• If they are related to your changes, we'd appreciate fixing them before merging
-• This helps us maintain stability - if regressions are introduced, we may need to collaborate on reverting or fixing them quickly
+### External Server E2E Runs
+
+<!-- If applicable, attach run(s) from an external server using the GitHub Actions below. Mention the deployment type of the environment used.
+- [Run Playwright with Currents](https://github.com/ansible-automation-platform/aap-ui/actions/workflows/run-playwright-currents.yml)
+- [Run E2E](https://github.com/ansible-automation-platform/aap-ui/actions/workflows/run-e2e.yml)
 -->
 
-#### • Manual testing instructions:
+### Manual Testing
 
-<!-- List any relevant steps needed for testing this PR (if it is not obvious from the JIRA issue). -->
+<!-- Steps to verify this change, if not obvious from the Jira issue. -->
 
-#### • Screenshots (if applicable):
+### Screenshots
 
-<!-- Include screenshots if applicable. -->
-
-#### • Test coverage
-
-- [ ] Component/unit/integration test added/updated to cover the changes introduced in this PR.
-
-## Additional Notes
-
-<!-- Provide any additional information or context that is relevant to the PR. -->
+<!-- If applicable. Any visual/UI changes MUST include before and after screenshots. -->
