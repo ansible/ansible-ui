@@ -22,6 +22,7 @@ jobs:
       pr_sha: ${{ steps.pr.outputs.sha }}
       pr_ref: ${{ steps.pr.outputs.ref }}
       aap_version: ${{ steps.pr.outputs.aap_version }}
+      author_association: ${{ github.event.comment.author_association }}
     steps:
       - name: Check trigger comment
         id: check
@@ -247,6 +248,8 @@ jobs:
           PLATFORM_UI: https://localhost:4100
           PLATFORM_USERNAME: admin
           PLATFORM_PASSWORD: ${{ steps.deploy.outputs.admin_password }}
+          ANALYTICS_USER: ${{ contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), needs.check-comment.outputs.author_association) && secrets.ANALYTICS_USER || '' }}
+          ANALYTICS_PASSWORD: ${{ contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), needs.check-comment.outputs.author_association) && secrets.ANALYTICS_PASSWORD || '' }}
           AWX_API_PREFIX: /api/controller/v2
           CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
           CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}

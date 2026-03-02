@@ -86,3 +86,5 @@ jobs:
       CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
       PLATFORM_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       PLATFORM_USERNAME: ${{ secrets.E2E_USER }}
+      ANALYTICS_USER: ${{ secrets.ANALYTICS_USER }}
+      ANALYTICS_PASSWORD: ${{ secrets.ANALYTICS_PASSWORD }}
