@@ -11,9 +11,9 @@ test.describe('Platform Teams - Roles Tab', () => {
   test.beforeEach(setupBefore({ path: '/access/teams' }));
 
   test.afterEach(async ({ page }) => {
-    await Team.ui.delete(page, teamName).catch(() => {});
-    await Credential.ui.delete(page, credentialName).catch(() => {});
-    await User.ui.delete(page, userName).catch(() => {});
+    await Team.api.deleteByName(page, teamName).catch(() => {});
+    await Credential.api.deleteByName(page, credentialName).catch(() => {});
+    await User.api.deleteByName(page, userName).catch(() => {});
     await setupAfter({ page });
   });
 

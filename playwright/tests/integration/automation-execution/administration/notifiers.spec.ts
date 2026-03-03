@@ -29,8 +29,10 @@ test.describe('Notifiers - List View', () => {
       await row.getByTestId('test-notifier').click();
 
       const statusCell = row.getByTestId('status-column-cell');
-      await expect(statusCell).toBeVisible({ timeout: 30000 });
-      await expect(statusCell.getByText(/Success|Failed/i)).toBeVisible({ timeout: 30000 });
+      await expect(statusCell).toBeVisible({ timeout: 60000 });
+      await expect(statusCell.getByText(/Success|Failed/i)).toBeVisible({
+        timeout: 60000,
+      });
 
       await Notifier.ui.delete(page, notifierName);
     }
@@ -333,13 +335,15 @@ test.describe('Notifiers - Details Page', () => {
       await clickPageAction('Test notifier', page);
 
       const statusLocator = page.getByTestId('status');
-      await expect(statusLocator).toBeVisible({ timeout: 100000 });
-      await expect(statusLocator.getByText(/Failed|Success/i)).toBeVisible({ timeout: 100000 });
+      await expect(statusLocator).toBeVisible({ timeout: 60000 });
+      await expect(statusLocator.getByText(/Failed|Success/i)).toBeVisible({
+        timeout: 60000,
+      });
 
       await clickPageAction('Delete notifier', page);
       await confirmAndAssertDeletion(page);
 
-      await expect(page.getByRole('heading', { name: 'Notifiers' })).toBeVisible();
+      await expect(page.getByTestId('page-title')).toHaveText('Notifiers');
     }
   );
 

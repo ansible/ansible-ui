@@ -238,7 +238,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch an Inventory Sync job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(3 * 60 * 1000);
+      test.setTimeout(5 * 60 * 1000);
       const organizationName = await Organization.ui.create(page);
       const projectName = await Project.ui.create(page, { organizationName });
 

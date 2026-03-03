@@ -1,22 +1,9 @@
-import { expect, test } from '@playwright/test';
-import { hubAPI } from '@ansible/playwright/commands/apiClient';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { formatBytes, sumLayers } from '@ansible/playwright/commands/formatters';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-
-interface HubItemsResponse<T> {
-  data: T[];
-  meta: {
-    count: number;
-  };
-}
-
-interface ExecutionEnvironmentImage {
-  digest: string;
-  tags: string[];
-  updated_at: string;
-  layers: Array<{ size: number }>;
-}
+import { HubExecutionEnvironment } from '@ansible/playwright/utils';
+import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
@@ -26,42 +13,52 @@ test.describe('Hub - Execution Environment - Images Tab', () => {
     'should display images tab for existing execution environment with metadata verification',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      let executionEnvironmentName: string | undefined;
+      let executionEnvironmentName!: string;
 
-      await test.step('Navigate to execution environments and find one with images', async () => {
+      await test.step('Find an execution environment with images via API', async () => {
+        const eeList = await HubExecutionEnvironment.api.list(page, { limit: 10 });
+
+        if (!eeList?.data?.length) {
+          test.skip(true, 'No execution environments found on this deployment');
+          return;
+        }
+
+        let foundEEWithImages: string | undefined;
+
+        for (const ee of eeList.data) {
+          const imageData = await HubExecutionEnvironment.api.listImages(page, ee.name, {
+            limit: 1,
+          });
+          if (imageData?.data?.length) {
+            foundEEWithImages = ee.name;
+            break;
+          }
+        }
+
+        if (!foundEEWithImages) {
+          test.skip(true, 'No execution environments with images found');
+          return;
+        }
+
+        executionEnvironmentName = foundEEWithImages;
+      });
+
+      await test.step('Navigate to execution environment details', async () => {
         await navigateTo(page, 'Automation Content', 'Execution Environments');
         await expect(page.getByTestId('page-title')).toHaveText('Execution Environments');
 
-        const rows = page.getByRole('row');
-        const rowCount = await rows.count();
-
-        if (rowCount <= 1) {
-          test.skip(true, 'No execution environments found on this deployment');
-        }
-
-        const firstEELink = rows.nth(1).getByRole('link').first();
-        executionEnvironmentName = (await firstEELink.textContent()) ?? undefined;
-        await firstEELink.click();
+        await clickTableRow({ filterLabel: 'Name', text: executionEnvironmentName }, page);
       });
 
       await test.step('Navigate to images tab', async () => {
-        await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-
         await page.getByTestId('execution-environment-images-tab').click();
-      });
 
-      await test.step('Verify images tab shows at least one image', async () => {
         await page.waitForResponse(
           (response) => response.url().includes('/_content/images/') && response.status() === 200,
           { timeout: 15000 }
         );
 
-        const rows = page.getByRole('row');
-        const rowCount = await rows.count();
-
-        if (rowCount <= 1) {
-          test.skip(true, 'No images found for this execution environment');
-        }
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
       });
 
       await test.step('Test copy to clipboard functionality', async () => {
@@ -74,9 +71,9 @@ test.describe('Hub - Execution Environment - Images Tab', () => {
       });
 
       await test.step('Verify image details from API data', async () => {
-        const imageData = await hubAPI.get<HubItemsResponse<ExecutionEnvironmentImage>>(
+        const imageData = await HubExecutionEnvironment.api.listImages(
           page,
-          `v3/plugin/execution-environments/repositories/${executionEnvironmentName}/_content/images/?exclude_child_manifests=true&offset=0&limit=10`
+          executionEnvironmentName
         );
 
         expect(imageData).toBeTruthy();
@@ -92,25 +89,21 @@ test.describe('Hub - Execution Environment - Images Tab', () => {
           }
         }
 
-        // Verify published date
         const createdDate = new Date(updated_at);
         const formattedDateTime = `${createdDate.toLocaleDateString()}, ${createdDate.toLocaleTimeString()}`;
         const publishedCell = page.getByTestId('published-column-cell').first();
         await expect(publishedCell).toContainText(formattedDateTime);
 
-        // Verify layer count
         const layersCell = page.getByTestId('layers-column-cell').first();
         const layerCountText = await layersCell.innerText();
         expect(layerCountText.trim()).toBe(layers.length.toString());
 
-        // Verify size
         const sizeCell = page.getByTestId('size-column-cell').first();
         const totalSize = sumLayers(layers);
         const formattedSize = formatBytes(totalSize);
         const sizeText = await sizeCell.innerText();
         expect(sizeText.trim()).toBe(formattedSize);
 
-        // Verify digest link
         const digestCell = page.getByTestId('digest-column-cell').first();
         const digestLink = digestCell.getByRole('link');
 

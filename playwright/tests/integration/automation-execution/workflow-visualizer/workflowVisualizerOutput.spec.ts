@@ -327,16 +327,16 @@ test.describe('Workflow Visualizer - Job Output', () => {
         const launchResponse = await launchResponsePromise;
         const workflowJob = (await launchResponse.json()) as { id: number; name: string };
 
-        await test.step('Verify navigation to output page and wait for nodes', async () => {
+        await test.step('Verify navigation to output page and wait for completion', async () => {
           await expect(page).toHaveURL(new RegExp(`/jobs/workflow/${workflowJob.id}/output`), {
             timeout: 10000,
           });
           await expect(page.getByTestId('page-title')).toContainText(workflowJob.name);
 
-          // Wait for workflow nodes to load
-          await page.waitForResponse((response) =>
-            response.url().includes(`/workflow_jobs/${workflowJob.id}/workflow_nodes/`)
-          );
+          await WorkflowJobTemplate.ui.waitForJobStatus(page, workflowJob.id, 'successful');
+
+          await page.getByRole('button', { name: 'Fit to Screen' }).click();
+          await page.getByRole('button', { name: 'Zoom out' }).click();
         });
 
         await test.step('Click on project node to view details', async () => {

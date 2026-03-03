@@ -66,7 +66,9 @@ test.describe('Host Jobs Tab', () => {
           'true'
         );
 
-        await expect(page.getByTestId('running-status')).toContainText(/(Running|Successful)/);
+        await expect(
+          page.getByTestId('running-status').or(page.getByTestId('success-status'))
+        ).toBeVisible({ timeout: 15000 });
       });
 
       await test.step('Relaunch job from host jobs tab', async () => {
