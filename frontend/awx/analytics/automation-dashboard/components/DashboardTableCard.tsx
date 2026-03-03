@@ -25,7 +25,7 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
   ];
 
   return (
-    <PageDashboardCard id={id} title={title} helpTitle={title} help={help} width="xl" height="md">
+    <PageDashboardCard id={id} title={title} helpTitle={title} help={help} width="lg" height="md">
       <PageTable
         autoHidePagination={true}
         disableBodyPadding={true}

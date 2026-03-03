@@ -13,8 +13,9 @@ import { useState } from 'react';
 import { AutomationDashboardDateRangeFilterPresets } from './constants';
 import { useAutomationDashboardToolbar } from './components';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { DashboardTableCard, DashboardValueCard } from './components';
+import { DashboardChartCard, DashboardTableCard, DashboardValueCard } from './components';
 import { DashboardTableItem } from './interfaces';
+import { DashboardChartValueProps } from './types';
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
@@ -38,6 +39,16 @@ export function AutomationDashboard() {
     { name: 'Project Delta', value: 400 },
     { name: 'Project Epsilon', value: 200 },
   ];
+
+  /* Sample data for chart values */
+  const chartValues: DashboardChartValueProps[] = [];
+  /** Generating dummy data for the chart */
+  for (let i = 0; i < 12; i++) {
+    chartValues.push({
+      label: `2025-${(i + 1).toString().padStart(2, '0')}`,
+      value: Math.floor(Math.random() * 100) + 1,
+    });
+  }
 
   return (
     <PageLayout>
@@ -81,7 +92,7 @@ export function AutomationDashboard() {
         ></DashboardValueCard>
         <DashboardValueCard
           id="unique-hosts-card"
-          title={t('Total number of unique hosts automated')}
+          title={t('All unique hosts automated')}
           help={t('This is the number of Controller inventory records you have automated.')}
           value={2}
         ></DashboardValueCard>
@@ -116,6 +127,22 @@ export function AutomationDashboard() {
           errorStateTitle={t('Error loading users')}
           items={[]}
         ></DashboardTableCard>
+        <DashboardChartCard
+          id="host-chart-card"
+          title={t('Number of hosts jobs are running on')}
+          help={t('This is the total number of hosts that jobs are executed upon.')}
+          summaryValue={12015}
+          values={chartValues}
+          variant={'lineChart'}
+        ></DashboardChartCard>
+        <DashboardChartCard
+          id="job-chart-card"
+          title={t('Number of times jobs are running')}
+          help={t('This is the total number of individual job executions.')}
+          variant={'barChart'}
+          summaryValue={0}
+          values={[]}
+        ></DashboardChartCard>
       </PageDashboard>
     </PageLayout>
   );

@@ -1,6 +1,7 @@
 import { PageDashboardCard } from '@ansible/ansible-ui-framework';
-import { Flex } from '@patternfly/react-core';
+import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { DashboardValueCardProps } from '../types';
+import { Link } from 'react-router-dom';
 
 export function DashboardValueCard(props: DashboardValueCardProps) {
   const { id, title, help, value, linkText, to, valueSuffix } = props;
@@ -11,12 +12,24 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
       title={title}
       helpTitle={help ? title : undefined}
       help={help}
-      width="md"
+      width="sm"
       height="xs"
-      linkText={linkText}
-      to={to}
     >
-      <Flex style={{ height: '100%' }}>
+      <Flex
+        style={{ height: '100%' }}
+        spaceItems={{ default: 'spaceItemsLg' }}
+        alignItems={{ default: 'alignItemsFlexStart' }}
+        justifyContent={{ default: 'justifyContentFlexStart' }}
+        direction={{ default: 'column' }}
+      >
+        {linkText && to && (
+          <FlexItem>
+            <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
+              <Link to={to}>{linkText}</Link>
+            </Content>
+          </FlexItem>
+        )}
+
         <span
           style={{ fontSize: 'xxx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}
         >
