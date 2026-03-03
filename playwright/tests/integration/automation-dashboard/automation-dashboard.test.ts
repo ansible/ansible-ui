@@ -43,9 +43,7 @@ test.describe('Automation Dashboard', () => {
       page.getByTestId('failed-jobs-card').filter({ hasText: 'Total number of failed jobs' })
     ).toBeVisible();
     await expect(
-      page
-        .getByTestId('unique-hosts-card')
-        .filter({ hasText: 'Total number of unique hosts automated' })
+      page.getByTestId('unique-hosts-card').filter({ hasText: 'All unique hosts automated' })
     ).toBeVisible();
     await expect(
       page.getByTestId('automation-hours-card').filter({ hasText: 'Total hours of automation' })
@@ -73,6 +71,15 @@ test.describe('Automation Dashboard', () => {
     ).toBeVisible();
     await expect(
       page.getByTestId('top-users-card').filter({ hasText: 'Top 5 Users' })
+    ).toBeVisible();
+  });
+
+  test('Should display chart cards on automation dashboard', async ({ page }) => {
+    await expect(
+      page.getByTestId('host-chart-card').filter({ hasText: 'Number of hosts jobs are running on' })
+    ).toBeVisible();
+    await expect(
+      page.getByTestId('job-chart-card').filter({ hasText: 'Number of times jobs are running' })
     ).toBeVisible();
   });
 });

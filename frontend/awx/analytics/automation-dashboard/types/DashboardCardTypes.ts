@@ -20,3 +20,14 @@ export type DashboardTableCardProps = DashboardCommonCardProps & {
   errorStateTitle: string;
   error?: Error;
 };
+
+export type DashboardChartValueProps = {
+  label: string;
+  value: number;
+};
+
+export type DashboardChartCardProps = DashboardCommonCardProps & {
+  variant: 'barChart' | 'lineChart';
+  summaryValue?: number;
+  values?: DashboardChartValueProps[];
+};
