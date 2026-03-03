@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import { edaAPI } from '../commands/apiClient';
 import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
@@ -10,7 +11,73 @@ export interface CreateEdaCredentialTypeOptions {
   inputType?: string;
 }
 
+export interface CreateEdaCredentialTypeAPIOptions {
+  name?: string;
+  description?: string;
+  inputs?: Record<string, unknown>;
+  injectors?: Record<string, unknown>;
+}
+
+export interface EdaCredentialTypeResponse {
+  id: number;
+  name: string;
+  description?: string;
+  inputs?: Record<string, unknown>;
+  injectors?: Record<string, unknown>;
+  managed?: boolean;
+}
+
 export const EdaCredentialType = {
+  api: {
+    create: async (
+      page: Page,
+      options: CreateEdaCredentialTypeAPIOptions = {}
+    ): Promise<EdaCredentialTypeResponse> => {
+      const name = options.name ?? createE2EName('credential_type');
+      const credentialType = (await edaAPI.post(page, '/credential-types/', {
+        name,
+        description: options.description ?? '',
+        inputs: options.inputs ?? {
+          fields: [
+            {
+              id: 'username',
+              type: 'string',
+              label: 'Username',
+            },
+          ],
+        },
+        injectors: options.injectors ?? {},
+      })) as EdaCredentialTypeResponse;
+      return credentialType;
+    },
+
+    delete: async (page: Page, credentialTypeId: number): Promise<void> => {
+      try {
+        await edaAPI.delete(page, `credential-types/${credentialTypeId}/`);
+      } catch (error) {
+        if (error instanceof Error && !error.message.includes('404')) {
+          throw error;
+        }
+      }
+    },
+
+    deleteByName: async (page: Page, credentialTypeName: string): Promise<void> => {
+      try {
+        const credentialTypes = await edaAPI.get<{ results: EdaCredentialTypeResponse[] }>(
+          page,
+          `credential-types/?name=${encodeURIComponent(credentialTypeName)}`
+        );
+        if (credentialTypes?.results && credentialTypes.results.length > 0) {
+          await edaAPI.delete(page, `credential-types/${credentialTypes.results[0].id}/`);
+        }
+      } catch (error) {
+        if (error instanceof Error && !error.message.includes('404')) {
+          throw error;
+        }
+      }
+    },
+  },
+
   ui: {
     create: async (page: Page, options: CreateEdaCredentialTypeOptions = {}): Promise<string> => {
       await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credential Types');
@@ -71,4 +138,4 @@ export const EdaCredentialType = {
       await confirmAndAssertDeletion(page);
     },
   },
-} as const;
+};
