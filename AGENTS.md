@@ -257,8 +257,10 @@ This prevents: write test → run test → fix selector → repeat.
 **Browser setup for AAP:**
 
 1. Navigate to `https://localhost:4100` (use HTTPS)
-2. Handle SSL warning: Click "Advanced" → "Proceed to localhost (unsafe)"
+2. Handle SSL warning: Type `thisisunsafe` on the warning page to bypass (or click "Advanced" → "Proceed to localhost (unsafe)")
 3. Login with credentials from `/playwright/.env` (default: admin / Admin!Password!Gw)
+
+**Important for Playwright MCP:** The Playwright MCP browser automation tool will encounter the SSL certificate warning page when navigating to `https://localhost:4100`. You must bypass this warning by typing `thisisunsafe` on the warning page before the MCP can interact with the AAP UI.
 
 ### Common Test Utilities
 

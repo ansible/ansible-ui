@@ -36,6 +36,7 @@ export { Notifier } from './notifier';
 export { Project } from './project';
 export { Schedule } from './schedule';
 export { Settings } from './settings';
+export type { SystemSettings } from './settings';
 export { WorkflowApproval } from './workflowApproval';
 export { WorkflowJobTemplate } from './workflowJobTemplate';
 export { WorkflowVisualizer } from './workflowVisualizer';

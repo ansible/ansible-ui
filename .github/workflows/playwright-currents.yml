@@ -44,6 +44,10 @@ on:
         required: false
       PLATFORM_PASSWORD:
         required: false
+      ANALYTICS_USER:
+        required: false
+      ANALYTICS_PASSWORD:
+        required: false
       CURRENTS_PROJECT_ID:
         required: true
       CURRENTS_RECORD_KEY:
@@ -111,6 +115,8 @@ jobs:
         echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}" >> $GITHUB_ENV
         echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME }}" >> $GITHUB_ENV
         echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}" >> $GITHUB_ENV
+        echo "ANALYTICS_USER=${{ secrets.ANALYTICS_USER }}" >> $GITHUB_ENV
+        echo "ANALYTICS_PASSWORD=${{ secrets.ANALYTICS_PASSWORD }}" >> $GITHUB_ENV
         echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
         echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
         # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
