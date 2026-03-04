@@ -96,6 +96,16 @@ describe('ApiTokenForm', () => {
     http.get(gatewayAPI`/tokens/1`, () => {
       return HttpResponse.json(mockToken);
     }),
+    http.get(gatewayAPI`/applications/1/`, () => {
+      return HttpResponse.json({
+        id: 1,
+        name: 'Test Application',
+        client_id: 'test-client-id',
+      });
+    }),
+    http.options('/api/v2/applications/', () => {
+      return new HttpResponse(null, { status: 200 });
+    }),
     http.post(gatewayAPI`/tokens/`, async ({ request }) => {
       const body = (await request.json()) as Record<string, unknown>;
       return HttpResponse.json({

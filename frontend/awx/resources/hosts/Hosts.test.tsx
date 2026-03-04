@@ -89,7 +89,10 @@ describe('InventoryHosts - Regular Inventory Route', () => {
     server.use(
       http.get(awxAPI`/inventories/1/`, () => HttpResponse.json(mockInventory)),
       http.get(awxAPI`/inventories/1/hosts/`, () => HttpResponse.json(mockHosts)),
-      http.options(awxAPI`/hosts/`, () => HttpResponse.json(mockHostsOptions))
+      http.options(awxAPI`/hosts/`, () => HttpResponse.json(mockHostsOptions)),
+      http.options(awxAPI`/inventories/1/ad_hoc_commands/`, () =>
+        HttpResponse.json({ actions: { POST: {} } })
+      )
     );
   });
 
@@ -162,7 +165,10 @@ describe.each([
     server.use(
       http.get(awxAPI`/inventories/1/`, () => HttpResponse.json(mockInventory)),
       http.get(awxAPI`/inventories/1/hosts/`, () => HttpResponse.json(mockHosts)),
-      http.options(awxAPI`/hosts/`, () => HttpResponse.json(mockHostsOptions))
+      http.options(awxAPI`/hosts/`, () => HttpResponse.json(mockHostsOptions)),
+      http.options(awxAPI`/inventories/1/ad_hoc_commands/`, () =>
+        HttpResponse.json({ actions: { POST: {} } })
+      )
     );
   });
 

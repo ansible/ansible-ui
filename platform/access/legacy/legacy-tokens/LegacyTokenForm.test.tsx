@@ -90,6 +90,16 @@ describe('LegacyTokenForm', () => {
     http.get(awxAPI`/tokens/1`, () => {
       return HttpResponse.json(mockToken);
     }),
+    http.get(awxAPI`/applications/1/`, () => {
+      return HttpResponse.json({
+        id: 1,
+        name: 'Legacy Test Application',
+        client_id: 'test-client-id',
+      });
+    }),
+    http.options('/api/v2/applications/', () => {
+      return new HttpResponse(null, { status: 200 });
+    }),
     http.post(awxAPI`/tokens/`, async ({ request }) => {
       const body = (await request.json()) as Record<string, unknown>;
       return HttpResponse.json({

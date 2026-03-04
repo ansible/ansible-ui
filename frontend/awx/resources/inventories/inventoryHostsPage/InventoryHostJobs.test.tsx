@@ -60,6 +60,12 @@ describe('InventoryHostJobs Component', () => {
         previous: null,
         results: [mockRunningJob],
       });
+    }),
+    http.options(awxAPI`/unified_jobs/`, () => {
+      return HttpResponse.json({ actions: { GET: {} } });
+    }),
+    http.options(awxAPI`/inventory_sources/`, () => {
+      return HttpResponse.json({ actions: { GET: {} } });
     })
   );
 

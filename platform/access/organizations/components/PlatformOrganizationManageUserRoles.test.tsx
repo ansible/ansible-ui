@@ -76,6 +76,11 @@ describe('PlatformOrganizationManageUserRoles', () => {
     // Service index role types endpoint
     http.get(gatewayAPI`/service-index/role-types/`, () => {
       return HttpResponse.json({ results: [] });
+    }),
+
+    // Role permissions (usePlatformRoleColumns)
+    http.get(gatewayAPI`/service-index/role-permissions/`, () => {
+      return HttpResponse.json({ results: [] });
     })
   );
 

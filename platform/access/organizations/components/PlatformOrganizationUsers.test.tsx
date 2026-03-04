@@ -16,11 +16,20 @@ describe('PlatformOrganizationUsers', () => {
     http.get(gatewayAPI`/role_user_access/shared.organization/1/*`, () => {
       return HttpResponse.json(mockUsers);
     }),
+    http.get(gatewayAPI`/role_user_access/shared.organization//*`, () => {
+      return HttpResponse.json(mockUsers);
+    }),
     http.get(gatewayAPI`/organizations/1/`, () => {
       return HttpResponse.json(mockOrganization);
     }),
     http.options(gatewayAPI`/organizations/1/`, () => {
       return HttpResponse.json(mockOrganizationOptions);
+    }),
+    http.options(gatewayAPI`/organizations//`, () => {
+      return HttpResponse.json(mockOrganizationOptions);
+    }),
+    http.get(gatewayAPI`/role_definitions/`, () => {
+      return HttpResponse.json({ count: 0, results: [] });
     })
   );
 

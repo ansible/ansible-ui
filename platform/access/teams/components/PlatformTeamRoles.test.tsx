@@ -163,6 +163,26 @@ describe('PlatformTeamRoles', () => {
       });
     }),
 
+    // Teams options endpoint (fallback for empty ID)
+    http.options(gatewayAPI`/teams//`, () => {
+      return HttpResponse.json({ actions: { GET: true } });
+    }),
+
+    // AWX project endpoint
+    http.get('/api/v2/projects/:id/', () => {
+      return HttpResponse.json({ id: 1, name: 'Test AWX Project' });
+    }),
+
+    // EDA project endpoint (undefined prefix fallback)
+    http.get('/undefined/projects/:id/', () => {
+      return HttpResponse.json({ id: 2, name: 'Test EDA Project' });
+    }),
+
+    // Hub namespace endpoint (undefined prefix fallback)
+    http.get('/undefined/pulp/api/v3/pulp_ansible/namespaces/:id/', () => {
+      return HttpResponse.json({ id: 3, name: 'Test Galaxy Namespace' });
+    }),
+
     // Resource types endpoint
     http.get(gatewayAPI`/resource_types/`, () => {
       return HttpResponse.json(mockResourceTypes);
