@@ -85,13 +85,22 @@ describe('ActivationInstanceDetails', () => {
         </Routes>
       </MemoryRouter>
     );
-    await waitFor(async () => {
-      const searchInput = getByRole('textbox');
-      await userEvent.type(searchInput, 'Pulling image quay.io/ansible/ansible-rulebook:main');
-      // waiting for debounce network request to fire
-      await timeout(500);
+
+    // Wait for initial grid to render
+    await waitFor(() => {
       const grid = container.querySelector('.output-grid');
       expect(grid).toBeInTheDocument();
+    });
+
+    // Find and type in search input
+    const searchInput = getByRole('textbox');
+    await userEvent.type(searchInput, 'Pulling image quay.io/ansible/ansible-rulebook:main');
+
+    // Wait for debounce and filtered results
+    await timeout(500);
+
+    await waitFor(() => {
+      const grid = container.querySelector('.output-grid');
       const rows = grid?.querySelectorAll('.output-grid-row');
       expect(rows?.length).toBe(1);
       if (rows?.length === 1) {

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnsibleLogin } from './AnsibleLogin';
 
 const mockLocationReplace = vi.fn();
-Object.defineProperty(window, 'location', {
+Object.defineProperty(globalThis, 'location', {
   value: { replace: mockLocationReplace },
   writable: true,
 });
@@ -94,6 +94,24 @@ describe('AnsibleLogin', () => {
       const usernameInput = container.querySelector('#pf-login-username-id') as HTMLInputElement;
       expect(usernameInput).toBeInTheDocument();
       expect(usernameInput).toHaveAttribute('autocomplete', 'off');
+    });
+  });
+
+  describe('social auth error handling', () => {
+    it('should render error message when auth_failed url param present', () => {
+      render(
+        <MemoryRouter initialEntries={['/?auth_failed']}>
+          <AnsibleLogin
+            {...defaultProps}
+            authOptions={[{ login_url: 'bar', type: 'foo' }]}
+            loginTitle="Log in"
+          />
+        </MemoryRouter>
+      );
+
+      expect(screen.getByTestId('social-error')).toHaveTextContent(
+        'Unable to complete social auth login'
+      );
     });
   });
 

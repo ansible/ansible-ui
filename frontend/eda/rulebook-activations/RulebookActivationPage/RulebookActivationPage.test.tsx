@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call*/
-/* eslint-disable @typescript-eslint/no-unsafe-member-access*/
-/* eslint-disable @typescript-eslint/no-unsafe-return*/
-/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
+import '@testing-library/jest-dom/vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -19,7 +16,10 @@ import {
 } from '../../interfaces/generated/eda-api';
 import { RulebookActivationPage } from './RulebookActivationPage';
 
-const mockBulkAction = vi.fn();
+/** Shape of the options object passed to the bulk confirmation (we only assert on alertPrompts). */
+type BulkActionOptions = { alertPrompts?: string[] };
+
+const mockBulkAction = vi.fn<(options: BulkActionOptions) => void>();
 vi.mock('../../common/useEdaBulkConfirmation', () => ({
   useEdaBulkConfirmation: () => mockBulkAction,
 }));
@@ -1227,9 +1227,10 @@ describe('RulebookActivationPage', () => {
     await waitFor(() => {
       expect(mockBulkAction).toHaveBeenCalled();
       const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
-      expect(lastCall.alertPrompts).toBeDefined();
-      expect(lastCall.alertPrompts[0]).toContain('workers offline');
-      expect(lastCall.alertPrompts[0]).toContain('Disabling');
+      expect(lastCall?.alertPrompts).toBeDefined();
+      const prompts = lastCall!.alertPrompts!;
+      expect(prompts[0]).toContain('workers offline');
+      expect(prompts[0]).toContain('Disabling');
     });
   });
 
@@ -1260,9 +1261,10 @@ describe('RulebookActivationPage', () => {
     await waitFor(() => {
       expect(mockBulkAction).toHaveBeenCalled();
       const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
-      expect(lastCall.alertPrompts).toBeDefined();
-      expect(lastCall.alertPrompts[0]).toContain('workers offline');
-      expect(lastCall.alertPrompts[0]).toContain('Deleting');
+      expect(lastCall?.alertPrompts).toBeDefined();
+      const prompts = lastCall!.alertPrompts!;
+      expect(prompts[0]).toContain('workers offline');
+      expect(prompts[0]).toContain('Deleting');
     });
   });
 
@@ -1304,7 +1306,7 @@ describe('RulebookActivationPage', () => {
     await waitFor(() => {
       expect(mockBulkAction).toHaveBeenCalled();
       const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
-      expect(lastCall.alertPrompts).toBeUndefined();
+      expect(lastCall?.alertPrompts).toBeUndefined();
     });
   });
 
@@ -1352,7 +1354,7 @@ describe('RulebookActivationPage', () => {
     await waitFor(() => {
       expect(mockBulkAction).toHaveBeenCalled();
       const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
-      expect(lastCall.alertPrompts).toBeUndefined();
+      expect(lastCall?.alertPrompts).toBeUndefined();
     });
   });
 
