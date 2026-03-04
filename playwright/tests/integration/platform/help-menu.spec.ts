@@ -187,7 +187,7 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
 
       await expect(brandLogo).toBeVisible();
       await expect(brandLogo).toHaveAttribute('alt', 'Brand Logo');
-      await expect(brandLogo).toHaveAttribute('src', /aap-logo.*\.svg$/);
+      await expect(brandLogo).toHaveAttribute('src', /platform-logo.*\.svg$/);
     });
 
     test('should use white logo for dark theme', { tag: ['@not_mock'] }, async ({ page }) => {
@@ -201,7 +201,7 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
       const modal = page.getByRole('dialog');
       const brandLogo = modal.locator('img[alt="Brand Logo"]');
 
-      await expect(brandLogo).toHaveAttribute('src', '/assets/aap-logo-white.svg');
+      await expect(brandLogo).toHaveAttribute('src', '/assets/platform-logo-white.svg');
     });
 
     test('should use standard logo for light theme', { tag: ['@not_mock'] }, async ({ page }) => {
@@ -211,7 +211,7 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
       const modal = page.getByRole('dialog');
       const brandLogo = modal.locator('img[alt="Brand Logo"]');
 
-      await expect(brandLogo).toHaveAttribute('src', '/assets/aap-logo.svg');
+      await expect(brandLogo).toHaveAttribute('src', '/assets/platform-logo.svg');
     });
   });
 

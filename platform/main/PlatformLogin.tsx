@@ -4,7 +4,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
-import AAPLogo from '../assets/aap-logo.svg?react';
+import PlatformLogo from '../assets/platform-logo.svg?react';
 import { UIAuth } from '../interfaces/UIAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
@@ -16,7 +16,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
   const brandImg = options?.custom_logo ? (
     <img src={options.custom_logo} alt={t('Custom logo')} style={{ height: 64 }} />
   ) : (
-    <AAPLogo style={{ height: 64, color: 'white' }} />
+    <PlatformLogo style={{ height: 64, color: 'white' }} />
   );
 
   if (activePlatformUser === undefined || options === undefined) {
