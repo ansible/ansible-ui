@@ -20,8 +20,8 @@ import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core'
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import AAPLogo from '../assets/aap-logo.svg?react';
-import RedHatIcon from '../assets/redhat-icon.svg?react';
+import PlatformLogo from '../assets/platform-logo.svg?react';
+import PlatformIcon from '../assets/platform-icon.svg?react';
 import { useRssNotifications } from '../notifications/useRssNotifications';
 import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';
 import { gatewayAPI } from '../utils/gateway-api-utils';
@@ -70,17 +70,17 @@ export function PlatformMasthead() {
     <PageMasthead
       brand={
         <div style={{ marginTop: -6 }}>
-          <AAPLogo style={{ height: 48 }} />
+          <PlatformLogo style={{ height: 48 }} />
         </div>
       }
     >
       <ToolbarItem style={{ flexGrow: 1 }}>
-        {!isSmOrLarger && <RedHatIcon style={{ height: 38, width: 38 }} />}
+        {!isSmOrLarger && <PlatformIcon style={{ height: 38, width: 38 }} />}
       </ToolbarItem>
       <ToolbarGroup
         variant="action-group-plain"
         // This fixes displaying the toolbar items on the right side of the masthead
-        // on small screens with the AAP logo
+        // on small screens with the platform logo
         style={{ marginLeft: -24 }}
       >
         <ToolbarItem>

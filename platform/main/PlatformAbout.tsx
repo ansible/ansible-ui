@@ -30,7 +30,9 @@ export const PlatformAbout: React.FunctionComponent<{
       trademark="Copyright 2025 Red Hat, Inc."
       brandImageAlt={t('Brand Logo')}
       brandImageSrc={
-        settings?.activeTheme === 'dark' ? '/assets/aap-logo-white.svg' : '/assets/aap-logo.svg'
+        settings?.activeTheme === 'dark'
+          ? '/assets/platform-logo-white.svg'
+          : '/assets/platform-logo.svg'
       }
     >
       <Content>
