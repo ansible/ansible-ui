@@ -58,6 +58,15 @@ const server = setupServer(
       results: [],
     });
   }),
+  http.get(awxAPI`/job_templates/1/`, () => {
+    return HttpResponse.json({
+      id: 1,
+      name: 'Test Job Template',
+      description: 'Test Description',
+      unified_job_type: 'job',
+      job_type: 'run',
+    });
+  }),
   http.post(awxAPI`/schedules/preview/`, () => {
     return HttpResponse.json({
       local: ['2023-05-09T10:57:05-04:00'],

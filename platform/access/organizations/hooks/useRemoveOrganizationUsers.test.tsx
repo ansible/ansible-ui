@@ -120,6 +120,22 @@ describe('useRemoveOrganizationUsers - Behavior Tests', () => {
       return HttpResponse.json(mockOrganization);
     }),
 
+    // Role definitions (used by useOrganizationUserColumns for confirmation columns)
+    http.get(gatewayAPI`/role_definitions/`, () => {
+      return HttpResponse.json({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [
+          {
+            id: 2,
+            name: 'Organization Admin',
+            url: '/api/gateway/v1/role_definitions/2/',
+          },
+        ],
+      });
+    }),
+
     // Role user assignments GET endpoint with spy - handle query parameters
     http.get(/\/role_user_assignments\//, ({ request }) => {
       getRoleAssignmentsSpy(request.url); // TRACK: GET request made

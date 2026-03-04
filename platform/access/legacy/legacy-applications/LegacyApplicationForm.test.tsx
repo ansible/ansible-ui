@@ -7,6 +7,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { EditLegacyApplication } from './LegacyApplicationForm';
 
 // Mock usePageNavigate and related hooks
@@ -24,16 +25,6 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
       pushDialog: vi.fn(),
       popDialog: vi.fn(),
     }),
-  };
-});
-
-// Mock react-router navigate
-const mockNavigate = vi.fn();
-vi.mock('react-router', async () => {
-  const actual = await vi.importActual('react-router');
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
   };
 });
 
@@ -109,6 +100,18 @@ describe('LegacyApplicationForm', () => {
     http.get(awxAPI`/organizations/1/`, () => {
       return HttpResponse.json(mockOrganization);
     }),
+    http.get(gatewayAPI`/organizations/1/`, () => {
+      return HttpResponse.json(mockOrganization);
+    }),
+    // Organizations list (PageFormPlatformOrganizationSelect options + AsyncQueryLabel)
+    http.get(gatewayAPI`/organizations/`, () => {
+      return HttpResponse.json({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [mockOrganization],
+      });
+    }),
     http.get(awxAPI`/applications/1/`, () => {
       return HttpResponse.json(mockApplication);
     }),
@@ -134,7 +137,7 @@ describe('LegacyApplicationForm', () => {
   );
 
   beforeAll(() => {
-    server.listen();
+    server.listen({ onUnhandledRequest: 'error' });
   });
 
   afterEach(() => {
