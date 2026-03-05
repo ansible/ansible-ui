@@ -38,6 +38,17 @@ describe('AnsibleLogin', () => {
     expect(screen.getByText('Log in to your account')).toBeInTheDocument();
   });
 
+  it('should not render show password toggle button', () => {
+    render(
+      <MemoryRouter initialEntries={['/dashboard']}>
+        <AnsibleLogin {...defaultProps} />
+      </MemoryRouter>
+    );
+
+    const showPasswordButton = screen.queryByRole('button', { name: /show password/i });
+    expect(showPasswordButton).not.toBeInTheDocument();
+  });
+
   describe('when externalLoginUrl is provided', () => {
     it('should redirect to external url', () => {
       const externalUrl = 'https://sso.example.com/login';
