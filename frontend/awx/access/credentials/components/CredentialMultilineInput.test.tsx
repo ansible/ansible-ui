@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -34,9 +33,8 @@ vi.mock('@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload', () =
         onClick={props.onClearClick}
         disabled={props.isClearButtonDisabled}
         data-testid={`clear-${props.name}`}
-      >
-        Clear
-      </button>
+        aria-label="Clear"
+      />
       {props.icon && <div data-testid={`icon-${props.name}`}>{props.icon}</div>}
     </div>
   ));

@@ -95,6 +95,7 @@ export function CredentialsExternalTestModal(
       position="default"
       isOpen
       onClose={() => props.popDialog()}
+      disableFocusTrap={process.env.NODE_ENV === 'test'}
     >
       <ModalHeader title={t`Test external credential`} />
       <ModalBody>
