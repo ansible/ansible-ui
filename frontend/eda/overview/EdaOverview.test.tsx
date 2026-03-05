@@ -3,9 +3,18 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { setEdaApiPath } from '../common/eda-utils';
+import { edaAPI, setEdaApiPath } from '../common/eda-utils';
 import { EdaOverview } from './EdaOverview';
+
+function TestWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </SWRConfig>
+  );
+}
 
 describe('EdaOverview', () => {
   const server = setupServer();
@@ -19,16 +28,16 @@ describe('EdaOverview', () => {
 
   const mockEmptyResponses = () => {
     server.use(
-      http.get('/api/eda/v1/projects/', () => {
+      http.get(edaAPI`/projects/`, () => {
         return HttpResponse.json({ count: 0, results: [], next: null, previous: null });
       }),
-      http.get('/api/eda/v1/activations/', () => {
+      http.get(edaAPI`/activations/`, () => {
         return HttpResponse.json({ count: 0, results: [], next: null, previous: null });
       }),
-      http.get('/api/eda/v1/decision-environments/', () => {
+      http.get(edaAPI`/decision-environments/`, () => {
         return HttpResponse.json({ count: 0, results: [], next: null, previous: null });
       }),
-      http.get('/api/eda/v1/audit-rules/', () => {
+      http.get(edaAPI`/audit-rules/`, () => {
         return HttpResponse.json({ count: 0, results: [], next: null, previous: null });
       }),
       http.get('*/users/me/awx-tokens/*', () => {
@@ -41,9 +50,9 @@ describe('EdaOverview', () => {
     mockEmptyResponses();
 
     render(
-      <MemoryRouter>
+      <TestWrapper>
         <EdaOverview />
-      </MemoryRouter>
+      </TestWrapper>
     );
 
     await waitFor(() => {
@@ -57,9 +66,9 @@ describe('EdaOverview', () => {
     mockEmptyResponses();
 
     render(
-      <MemoryRouter>
+      <TestWrapper>
         <EdaOverview />
-      </MemoryRouter>
+      </TestWrapper>
     );
 
     await waitFor(() => {
@@ -81,9 +90,9 @@ describe('EdaOverview', () => {
     mockEmptyResponses();
 
     render(
-      <MemoryRouter>
+      <TestWrapper>
         <EdaOverview />
-      </MemoryRouter>
+      </TestWrapper>
     );
 
     await waitFor(() => {
@@ -101,7 +110,7 @@ describe('EdaOverview', () => {
 
   it('should hide Getting Started card when projects and rulebook activations exist', async () => {
     server.use(
-      http.get('/api/eda/v1/projects/', () => {
+      http.get(edaAPI`/projects/`, () => {
         return HttpResponse.json({
           count: 1,
           results: [
@@ -117,7 +126,7 @@ describe('EdaOverview', () => {
           previous: null,
         });
       }),
-      http.get('/api/eda/v1/activations/', () => {
+      http.get(edaAPI`/activations/`, () => {
         return HttpResponse.json({
           count: 1,
           results: [
@@ -134,10 +143,10 @@ describe('EdaOverview', () => {
           previous: null,
         });
       }),
-      http.get('/api/eda/v1/decision-environments/', () => {
+      http.get(edaAPI`/decision-environments/`, () => {
         return HttpResponse.json({ count: 0, results: [], next: null, previous: null });
       }),
-      http.get('/api/eda/v1/audit-rules/', () => {
+      http.get(edaAPI`/audit-rules/`, () => {
         return HttpResponse.json({ count: 0, results: [], next: null, previous: null });
       }),
       http.get('*/users/me/awx-tokens/*', () => {
@@ -146,23 +155,21 @@ describe('EdaOverview', () => {
     );
 
     render(
-      <MemoryRouter>
+      <TestWrapper>
         <EdaOverview />
-      </MemoryRouter>
+      </TestWrapper>
     );
 
-    // Wait for data to load - empty states should not be visible
+    // Wait for actual mocked data to appear (positive assertion ensures handlers worked)
     await waitFor(
       () => {
-        expect(screen.queryByText('There are currently no projects')).not.toBeInTheDocument();
-        expect(
-          screen.queryByText('There are currently no rulebook activations')
-        ).not.toBeInTheDocument();
+        expect(screen.getByText('Test Project')).toBeInTheDocument();
+        expect(screen.getByText('Test Activation')).toBeInTheDocument();
       },
       { timeout: 3000 }
     );
 
-    // Now verify Getting Started card is not present since we have data
+    // Verify Getting Started card is not present since we have data
     expect(screen.queryByText('Getting Started')).not.toBeInTheDocument();
   });
 });
