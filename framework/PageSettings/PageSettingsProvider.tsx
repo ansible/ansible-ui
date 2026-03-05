@@ -85,7 +85,10 @@ export function PageSettingsProvider(props: {
 
   return (
     <SWRConfig
-      value={{ refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0 }}
+      value={{
+        dedupingInterval: 200,
+        refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
+      }}
     >
       <PageSettingsContext.Provider value={[settings, setSettings]}>
         {props.children}
