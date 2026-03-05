@@ -9,7 +9,7 @@ export function HubApp() {
       masthead={<HubMasthead />}
       navigation={navigation}
       basename={process.env.ROUTE_PREFIX}
-      defaultRefreshInterval={10}
+      defaultRefreshInterval={30}
     />
   );
 }
