@@ -311,8 +311,8 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
         page
       );
 
-      await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
-      await InventoryHost.ui.bulkDelete(page, inventoryName);
+      // Clean up hosts via API with retry - hosts may still be in use by running jobs
+      await InventoryHost.api.deleteAllByInventoryName(page, inventoryName);
 
       await Credential.ui.delete(page, credentialName);
       await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
