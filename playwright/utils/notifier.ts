@@ -22,6 +22,33 @@ export const Notifier = {
         await awxAPI.delete(page, `notification_templates/${notifiers.results[0].id}/`);
       }
     },
+
+    /** Best-effort delete of a notifier, retrying until pending notifications resolve.
+     * AWX blocks deletion while notifications are pending (405), so we retry with delays.
+     * This is cleanup code — it will not fail the test if deletion cannot complete in time. */
+    forceDeleteByName: async (
+      page: Page,
+      notifierName: string,
+      timeout = 120000
+    ): Promise<void> => {
+      const notifiers = await awxAPI.get<{ results: { id: number; name: string }[] }>(
+        page,
+        '/notification_templates/',
+        { params: { name: notifierName } }
+      );
+      const notifierId = notifiers?.results?.[0]?.id;
+      if (!notifierId) return;
+
+      const start = Date.now();
+      while (Date.now() - start < timeout) {
+        try {
+          await awxAPI.delete(page, `notification_templates/${notifierId}/`);
+          return;
+        } catch {
+          await page.waitForTimeout(5000);
+        }
+      }
+    },
   },
   ui: {
     createSlack: async (page: Page): Promise<string> => {

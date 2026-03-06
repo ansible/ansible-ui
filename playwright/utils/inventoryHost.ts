@@ -40,6 +40,39 @@ export const InventoryHost = {
     delete: async (page: Page, hostId: number): Promise<void> => {
       await awxAPI.delete(page, `/hosts/${hostId}/`).catch(() => {});
     },
+
+    /** Delete all hosts in an inventory via API, retrying if hosts are still in use by running jobs. */
+    deleteAllByInventoryName: async (page: Page, inventoryName: string): Promise<void> => {
+      const inventories = (await awxAPI.get(page, '/inventories/', {
+        params: { name: inventoryName },
+      })) as { results: { id: number }[] };
+      const inventoryId = inventories.results[0]?.id;
+      if (!inventoryId) return;
+
+      const hosts = (await awxAPI.get(page, `/inventories/${inventoryId}/hosts/`)) as {
+        results: { id: number }[];
+      };
+
+      for (const host of hosts.results) {
+        await expect
+          .poll(
+            async () => {
+              try {
+                await awxAPI.delete(page, `/hosts/${host.id}/`);
+                return true;
+              } catch {
+                return false;
+              }
+            },
+            {
+              message: `Host ${host.id} still in use by running job`,
+              timeout: 60000,
+              intervals: [2000, 3000, 5000],
+            }
+          )
+          .toBe(true);
+      }
+    },
   },
 
   ui: {
