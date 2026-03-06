@@ -26,8 +26,7 @@ export function AwxActiveUserProvider(props: { children: ReactNode; disabled?: b
 }
 export function AwxActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<AwxItemsResponse<AwxUser>>(awxAPI`/me/`, requestGet, {
-    dedupingInterval: 0,
-    refreshInterval: 10 * 1000,
+    refreshInterval: 30 * 1000,
   });
 
   const [activeAwxUser, setActiveAwxUser] = useState<AwxUser | undefined | null>(undefined);

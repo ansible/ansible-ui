@@ -26,8 +26,7 @@ export function EdaActiveUserProvider(props: { children: ReactNode; disabled?: b
 
 export function EdaActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<EdaUser>(edaAPI`/users/me/`, requestGet, {
-    dedupingInterval: 0,
-    refreshInterval: 10 * 1000,
+    refreshInterval: 30 * 1000,
   });
 
   const [activeEdaUser, setActiveEdaUser] = useState<EdaUser | undefined | null>(undefined);
