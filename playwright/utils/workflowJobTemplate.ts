@@ -98,6 +98,116 @@ export const WorkflowJobTemplate = {
 
       await awxAPI.delete(page, `workflow_job_templates/${templateId}/`).catch(() => {});
     },
+
+    /**
+     * Checks if workflow job infrastructure is ready by verifying job moves to running state.
+     *
+     * Returns:
+     * - true: Job reached "running" or "waiting" state (infrastructure processing)
+     * - false: Job stuck in "pending" for 30s or entered error state
+     *
+     * @param page - Playwright page object
+     * @param jobId - ID of the workflow job to monitor
+     * @returns Promise<boolean> - true if infrastructure ready, false otherwise
+     */
+    /**
+     * Polls until workflow job reaches a terminal state.
+     *
+     * Returns:
+     * - true: Job reached terminal state (successful, failed, canceled, error)
+     * - false: Job still running after maxWaitTime
+     */
+    checkWorkflowJobTerminalState: async (
+      page: Page,
+      jobId: number,
+      maxWaitTime = 45000
+    ): Promise<boolean> => {
+      const checkInterval = 2000;
+      const startTime = Date.now();
+      let pollCount = 0;
+
+      while (Date.now() - startTime < maxWaitTime) {
+        pollCount++;
+
+        try {
+          const job = await awxAPI.get<{ status: string }>(page, `/workflow_jobs/${jobId}/`);
+
+          if (!job) {
+            return false;
+          }
+
+          const status = String(job.status || '');
+
+          if (TERMINAL_STATUSES.has(status)) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `Workflow job ${jobId} reached terminal state "${status}" after ${pollCount} polls (${Date.now() - startTime}ms)`
+            );
+            return true;
+          }
+        } catch {
+          return false;
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      const totalTime = Date.now() - startTime;
+      // eslint-disable-next-line no-console
+      console.log(
+        `Workflow job ${jobId} not in terminal state after ${pollCount} polls in ${totalTime}ms (max: ${maxWaitTime}ms)`
+      );
+      return false;
+    },
+
+    checkJobInfrastructureReady: async (page: Page, jobId: number): Promise<boolean> => {
+      const maxPendingTime = 30000; // 30 seconds
+      const checkInterval = 2000; // 2 seconds
+      const startTime = Date.now();
+      let pollCount = 0;
+
+      while (Date.now() - startTime < maxPendingTime) {
+        pollCount++;
+
+        try {
+          const job = await awxAPI.get<{ status: string }>(page, `/workflow_jobs/${jobId}/`);
+
+          if (!job) {
+            return false;
+          }
+
+          const status = String(job.status || '');
+
+          // Job failed to start
+          if (status === 'error' || status === 'failed' || status === 'canceled') {
+            const elapsed = Date.now() - startTime;
+            // eslint-disable-next-line no-console
+            console.log(
+              `Workflow job ${jobId} in error state "${status}" after ${pollCount} polls (${elapsed}ms)`
+            );
+            return false;
+          }
+
+          // Job infrastructure active (moved past pending) or already completed
+          if (status === 'running' || status === 'waiting' || status === 'successful') {
+            return true;
+          }
+        } catch {
+          // API error (404, network issue, etc.) - job not accessible
+          return false;
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      // Stuck in pending for 30s - likely infrastructure issue
+      const totalTime = Date.now() - startTime;
+      // eslint-disable-next-line no-console
+      console.log(
+        `Workflow job ${jobId} not ready after ${pollCount} polls in ${totalTime}ms (max: ${maxPendingTime}ms)`
+      );
+      return false;
+    },
   },
   ui: {
     create: async (
