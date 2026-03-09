@@ -14,6 +14,175 @@ export interface AddLinkedApprovalNodeOptions {
 
 export const WorkflowApproval = {
   api: {
+    /**
+     * Checks if a workflow approval is actionable (pending/waiting state).
+     *
+     * In chained approval workflows, downstream nodes may take time to transition
+     * from 'new' to 'pending'/'waiting' after upstream actions complete.
+     *
+     * Returns:
+     * - true: Approval is in pending/waiting state (ready for approve/deny/cancel)
+     * - false: Approval not actionable after maxWaitTime
+     */
+    checkApprovalActionable: async (
+      page: Page,
+      approvalName: string,
+      maxWaitTime = 30000
+    ): Promise<boolean> => {
+      const checkInterval = 2000;
+      const startTime = Date.now();
+      let pollCount = 0;
+
+      while (Date.now() - startTime < maxWaitTime) {
+        pollCount++;
+
+        try {
+          const approvals = await awxAPI.get<{
+            results: Array<{ id: number; name: string; status: string }>;
+          }>(page, '/workflow_approvals/', { params: { name: approvalName } });
+
+          if (!approvals?.results?.[0]) {
+            await page.waitForTimeout(checkInterval);
+            continue;
+          }
+
+          const approval = approvals.results[0];
+          const status = String(approval.status || '');
+
+          if (status === 'pending' || status === 'waiting') {
+            // eslint-disable-next-line no-console
+            console.log(
+              `Approval "${approvalName}" actionable (status: "${status}") after ${pollCount} polls (${Date.now() - startTime}ms)`
+            );
+            return true;
+          }
+
+          if (['successful', 'failed', 'error', 'canceled'].includes(status)) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `Approval "${approvalName}" already in terminal state "${status}" after ${pollCount} polls`
+            );
+            return false;
+          }
+        } catch {
+          return false;
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      const totalTime = Date.now() - startTime;
+      // eslint-disable-next-line no-console
+      console.log(
+        `Approval "${approvalName}" not actionable after ${pollCount} polls in ${totalTime}ms (max: ${maxWaitTime}ms)`
+      );
+      return false;
+    },
+
+    /**
+     * Polls the API until a workflow approval reaches the expected status.
+     * Use this before UI assertions to avoid long UI polling timeouts.
+     *
+     * Returns true if the expected status was reached, false if timed out.
+     */
+    waitForApprovalStatus: async (
+      page: Page,
+      approvalName: string,
+      expectedStatus: string,
+      maxWaitTime = 20000
+    ): Promise<boolean> => {
+      const checkInterval = 2000;
+      const startTime = Date.now();
+
+      while (Date.now() - startTime < maxWaitTime) {
+        try {
+          const approvals = await awxAPI.get<{
+            results: Array<{ id: number; name: string; status: string }>;
+          }>(page, '/workflow_approvals/', { params: { name: approvalName } });
+
+          if (approvals?.results?.[0]?.status === expectedStatus) {
+            return true;
+          }
+        } catch {
+          // Continue polling on transient errors
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      return false;
+    },
+
+    /**
+     * Polls the API until all workflow approvals matching a description reach the expected status.
+     * Useful for bulk approve/deny scenarios where multiple approvals share the same description.
+     */
+    waitForAllApprovalsStatus: async (
+      page: Page,
+      description: string,
+      expectedStatus: string,
+      expectedCount: number,
+      maxWaitTime = 20000
+    ): Promise<boolean> => {
+      const checkInterval = 2000;
+      const startTime = Date.now();
+
+      while (Date.now() - startTime < maxWaitTime) {
+        try {
+          const approvals = await awxAPI.get<{
+            results: Array<{ id: number; name: string; status: string; description: string }>;
+          }>(page, '/workflow_approvals/', { params: { description } });
+
+          const results = approvals?.results;
+          if (
+            results &&
+            results.length >= expectedCount &&
+            results.slice(0, expectedCount).every((a) => a.status === expectedStatus)
+          ) {
+            return true;
+          }
+        } catch {
+          // Continue polling on transient errors
+        }
+
+        await page.waitForTimeout(checkInterval);
+      }
+
+      return false;
+    },
+
+    /**
+     * Fetches a workflow approval by name and returns its ID.
+     * Throws if the approval is not found.
+     */
+    getApprovalId: async (page: Page, approvalName: string): Promise<number> => {
+      const approvals = await awxAPI.get<{
+        results: Array<{ id: number; name: string }>;
+      }>(page, '/workflow_approvals/', { params: { name: approvalName } });
+
+      if (!approvals?.results?.[0]?.id) {
+        throw new Error(`Could not find workflow approval: ${approvalName}`);
+      }
+
+      return approvals.results[0].id;
+    },
+
+    /**
+     * Fetches the workflow job ID associated with a workflow approval.
+     * Returns the job ID, or undefined if not found.
+     */
+    getWorkflowJobId: async (page: Page, approvalName: string): Promise<number | undefined> => {
+      const approvals = await awxAPI.get<{
+        results: Array<{
+          id: number;
+          name: string;
+          summary_fields: { workflow_job: { id: number } };
+        }>;
+      }>(page, '/workflow_approvals/', { params: { name: approvalName } });
+
+      return approvals?.results?.[0]?.summary_fields?.workflow_job?.id;
+    },
+
     deleteWorkflowTemplate: async (page: Page, workflowTemplateName: string): Promise<void> => {
       await test.step(`Delete workflow job template via API: ${workflowTemplateName}`, async () => {
         const workflows = await awxAPI.get<{ results: { id: number; name: string }[] }>(
