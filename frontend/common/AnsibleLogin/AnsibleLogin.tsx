@@ -225,9 +225,7 @@ export function AnsibleLogin(props: {
                 setPassword(password);
               }}
               isValidPassword={!helperText || !!password}
-              isShowPasswordEnabled
-              showPasswordAriaLabel={t('Show password')}
-              hidePasswordAriaLabel={t('Hide password')}
+              isShowPasswordEnabled={false}
               loginButtonLabel={t('Log in')}
               onLoginButtonClick={(event) => {
                 event.preventDefault();
