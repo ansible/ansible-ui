@@ -49,6 +49,7 @@ describe('useAwxConfig', () => {
       });
 
       expect(result.current.serviceDown).toBe(false);
+      expect(result.current.serviceDownStatusCode).toBeUndefined();
       expect(result.current.awxConfigError).toBeUndefined();
     });
 
@@ -82,6 +83,7 @@ describe('useAwxConfig', () => {
       });
 
       expect(result.current.serviceDown).toBe(true);
+      expect(result.current.serviceDownStatusCode).toBe(401);
     });
 
     test('should set serviceDown to true for 403 Forbidden error', async () => {
@@ -146,6 +148,7 @@ describe('useAwxConfig', () => {
       });
 
       expect(result.current.serviceDown).toBe(true);
+      expect(result.current.serviceDownStatusCode).toBe(502);
     });
 
     test('should set serviceDown to true for 503 Service Unavailable error', async () => {
@@ -162,6 +165,7 @@ describe('useAwxConfig', () => {
       });
 
       expect(result.current.serviceDown).toBe(true);
+      expect(result.current.serviceDownStatusCode).toBe(503);
     });
 
     test('should set serviceDown to true for 504 Gateway Timeout error', async () => {
@@ -178,6 +182,7 @@ describe('useAwxConfig', () => {
       });
 
       expect(result.current.serviceDown).toBe(true);
+      expect(result.current.serviceDownStatusCode).toBe(504);
     });
   });
 });
