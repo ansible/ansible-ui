@@ -66,7 +66,7 @@ export function PlatformApp() {
     });
   });
 
-  const { awxConfig, serviceDown } = useAwxConfigState();
+  const { awxConfig, serviceDown, serviceDownStatusCode } = useAwxConfigState();
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const subscriptionBanner = useMemo(() => {
     if (!awxConfig?.license_info || managedCloudInstall) return null;
@@ -112,15 +112,44 @@ export function PlatformApp() {
   }, [awxConfig, managedCloudInstall]);
 
   const controllerDownBanner = useMemo(() => {
-    if (serviceDown) {
-      return (
-        <Banner data-cy="controller-down-banner" data-testid="controller-down-banner" color="red">
-          {t('Error connecting to Controller API')}
-        </Banner>
-      );
+    if (!serviceDown) return null;
+
+    let message: string;
+    switch (serviceDownStatusCode) {
+      case 401:
+        message = t(
+          'HTTP {{statusCode}}: Error connecting to Controller API. This may indicate a misconfigured JWT key or service key between the Gateway and Controller. Check Controller logs for details.',
+          { statusCode: serviceDownStatusCode }
+        );
+        break;
+      case 502:
+      case 503:
+        message = t(
+          'HTTP {{statusCode}}: Error connecting to Controller API. The Controller service appears to be unavailable.',
+          { statusCode: serviceDownStatusCode }
+        );
+        break;
+      case 504:
+        message = t(
+          'HTTP {{statusCode}}: Error connecting to Controller API. The Controller service is not responding.',
+          { statusCode: serviceDownStatusCode }
+        );
+        break;
+      default:
+        message = serviceDownStatusCode
+          ? t('HTTP {{statusCode}}: Error connecting to Controller API.', {
+              statusCode: serviceDownStatusCode,
+            })
+          : t('Error connecting to Controller API');
+        break;
     }
-    return null;
-  }, [serviceDown]);
+
+    return (
+      <Banner data-cy="controller-down-banner" data-testid="controller-down-banner" color="red">
+        {message}
+      </Banner>
+    );
+  }, [serviceDown, serviceDownStatusCode]);
 
   const personaViewSwitcherFlag = useUIFlag(UIFlag.PersonaViewSwitcher);
 

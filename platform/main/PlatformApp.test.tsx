@@ -280,6 +280,99 @@ describe('Platform Subscription and Session Validation Tests', () => {
     });
   });
 
+  describe('Controller Down Banner', () => {
+    const mockErrorFetch = (configStatus: number) => {
+      fetchMock.mockImplementation((url: string | URL) => {
+        const urlString = url.toString();
+
+        if (
+          urlString.includes('/config/') &&
+          (urlString.includes('/api/controller/v2/') || urlString.includes('/api/v2/'))
+        ) {
+          return Promise.resolve({
+            ok: false,
+            status: configStatus,
+            statusText: 'Error',
+            headers: new Headers({ 'content-type': 'application/json' }),
+            json: () => Promise.resolve({ detail: 'Error detail from server' }),
+          } as Response);
+        }
+
+        if (urlString.includes('/api/gateway/v1/session/')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ expires_in_seconds: 3600 }),
+          } as Response);
+        }
+
+        return Promise.reject(new Error(`Unmocked URL: ${urlString}`));
+      });
+    };
+
+    it('should display JWT/service key hint for 401 errors', async () => {
+      mockErrorFetch(401);
+      mountPlatformApp(<PlatformApp />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('controller-down-banner')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(/HTTP 401:.*misconfigured JWT key or service key/)
+      ).toBeInTheDocument();
+    });
+
+    it('should display unavailable message for 502 errors', async () => {
+      mockErrorFetch(502);
+      mountPlatformApp(<PlatformApp />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('controller-down-banner')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(/HTTP 502:.*Controller service appears to be unavailable/)
+      ).toBeInTheDocument();
+    });
+
+    it('should display unavailable message for 503 errors', async () => {
+      mockErrorFetch(503);
+      mountPlatformApp(<PlatformApp />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('controller-down-banner')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(/HTTP 503:.*Controller service appears to be unavailable/)
+      ).toBeInTheDocument();
+    });
+
+    it('should display not responding message for 504 errors', async () => {
+      mockErrorFetch(504);
+      mountPlatformApp(<PlatformApp />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('controller-down-banner')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(/HTTP 504:.*Controller service is not responding/)
+      ).toBeInTheDocument();
+    });
+
+    it('should display generic message for other error status codes', async () => {
+      mockErrorFetch(500);
+      mountPlatformApp(<PlatformApp />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('controller-down-banner')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText(/HTTP 500:.*Error connecting to Controller API/)).toBeInTheDocument();
+    });
+  });
+
   describe('Session Banner', () => {
     it('should fetch the session data and display the session expiry warning', async () => {
       // Override the session intercept for this test
