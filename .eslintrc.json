@@ -69,6 +69,47 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      "files": ["frontend/**/*.ts", "frontend/**/*.tsx", "platform/**/*.ts", "platform/**/*.tsx"],
+      "excludedFiles": ["**/*.test.*", "**/*.cy.*", "**/*.fixture.*", "**/generated/**", "**/vite.config.*", "**/awx-utils.tsx", "**/eda-utils.tsx", "**/formatPath.tsx", "**/gateway-api-utils.tsx"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Feda\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/eda/v1' paths. Use the edaAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Feda\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/eda/v1' paths. Use the edaAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Fgateway\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/gateway/v1' paths. Use the gatewayAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Fgateway\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/gateway/v1' paths. Use the gatewayAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Fcontroller\\x2Fv2\\x2F?/]",
+            "message": "Don't hardcode '/api/controller/v2' paths. Use the awxAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Fcontroller\\x2Fv2\\x2F?/]",
+            "message": "Don't hardcode '/api/controller/v2' paths. Use the awxAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Fgalaxy\\x2F?/]",
+            "message": "Don't hardcode '/api/galaxy' paths. Use the hubAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Fgalaxy\\x2F?/]",
+            "message": "Don't hardcode '/api/galaxy' paths. Use the hubAPI`/path/` tagged template helper instead."
+          }
+        ]
+      }
     }
   ]
 }
