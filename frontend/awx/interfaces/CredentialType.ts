@@ -11,6 +11,7 @@ export interface CredentialInputField {
   multiline?: boolean;
   default?: boolean | string;
   ask_at_runtime?: boolean;
+  internal?: boolean;
 }
 
 export interface CredentialType
