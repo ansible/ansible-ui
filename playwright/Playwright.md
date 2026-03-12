@@ -53,7 +53,14 @@ Solution
    > Playwright runs against a UI that might not be the same as the API server. Having a new variable PLATFORM_UI keeps existing developers from running into issues with PLATFORM_SERVER which is pointed at the server API.
    >
    > For nightly runs PLATFORM_UI will be pointed at a PLATFORM_SERVER to run tests.
+   
+   Additionally, for Ansible Lightspeed UI testing, the environment variable "LIGHTSPEED_SERVER" is required,
+   In case the environment LIGHTSPEED_SERVER is not supplied the related tests are skipped. 
 
+   ```bash
+   LIGHTSPEED_SERVER=https://localhost:8447
+   ```
+ 
 4. **Run the Platform UI**
 
    When running against a local UI, you need to have the local UI running.
