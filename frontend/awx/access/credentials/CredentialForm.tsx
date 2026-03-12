@@ -26,6 +26,7 @@ import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { useAwxGetAllPages } from '../../common/useAwxGetAllPages';
+import { useFeatureFlag } from '../../common/useFeatureFlags';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 import { CredentialInputField, CredentialType } from '../../interfaces/CredentialType';
@@ -34,6 +35,7 @@ import { PageFormSelectOrganization } from '../organizations/components/PageForm
 import { BecomeMethodField } from './components/BecomeMethodField';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
 import { GCEUploadField } from './components/GCEUploadField';
+import { HashiCorpVaultOidcInfoSection } from './components/HashiCorpVaultOidcInfoSection';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 import {
   CredentialPluginsInputSource,
@@ -72,6 +74,7 @@ export function CreateCredential() {
   const navigate = useNavigate();
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<CredentialForm | CredentialInputSource, Credential>();
+
   const getPageUrl = useGetPageUrl();
   const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
   const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
@@ -644,6 +647,7 @@ function CredentialSubForm({
   initialValues?: InitialValues;
 }) {
   const { t } = useTranslation();
+  const oidcFeatureEnabled = useFeatureFlag('FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED');
   const openCredentialPluginsModal = useCredentialPluginsModal();
   const requiredFields = credentialType?.inputs?.required || [];
   const requiredFieldsInSubForm = credentialType?.inputs?.fields?.filter((field) =>
@@ -675,16 +679,15 @@ function CredentialSubForm({
     return null;
   }
 
-  const stringFields =
-    credentialType?.inputs?.fields?.filter(
-      (field) => field.type === 'string' && !field?.choices?.length
-    ) || [];
+  const visibleFields = credentialType?.inputs?.fields?.filter((field) => !field.internal) || [];
 
-  const choiceFields =
-    credentialType?.inputs?.fields?.filter((field) => (field?.choices?.length ?? 0) > 0) || [];
+  const stringFields = visibleFields.filter(
+    (field) => field.type === 'string' && !field?.choices?.length
+  );
 
-  const booleanFields =
-    credentialType?.inputs?.fields?.filter((field) => field.type === 'boolean') || [];
+  const choiceFields = visibleFields.filter((field) => (field?.choices?.length ?? 0) > 0);
+
+  const booleanFields = visibleFields.filter((field) => field.type === 'boolean');
 
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
 
@@ -708,6 +711,9 @@ function CredentialSubForm({
             </Trans>
           </Alert>
         )}
+        {(credentialType?.namespace === 'hashivault-kv-oidc' ||
+          credentialType?.namespace === 'hashivault-ssh-oidc') &&
+          oidcFeatureEnabled && <HashiCorpVaultOidcInfoSection key={credentialType.namespace} />}
       </PageFormSection>
       {credentialType?.namespace === 'gce' && <GCEUploadField />}
       {stringFields.length > 0 &&
@@ -986,6 +992,7 @@ function CredentialTextInput({
       name={field.id}
       label={field.label}
       placeholder={(field?.default || t('Enter value')).toString()}
+      defaultValue={field?.default?.toString()}
       type={inputType}
       isRequired={handleIsRequired()}
       isDisabled={isDisabled || !!isPromptOnLaunchChecked || isCurrentFieldValueEncrypted}

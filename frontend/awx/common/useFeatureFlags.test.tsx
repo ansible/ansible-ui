@@ -6,7 +6,12 @@ import { awxAPI } from './api/awx-utils';
 import { useFeatureFlag, useFeatureFlags } from './useFeatureFlags';
 
 const server = setupServer(
-  http.get(awxAPI`/feature_flags_state/`, () => HttpResponse.json({ TEST_FEATURE_ENABLED: true }))
+  http.get(awxAPI`/feature_flags_state/`, () =>
+    HttpResponse.json({
+      TEST_FEATURE_ENABLED: true,
+      FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED: true,
+    })
+  )
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -26,6 +31,13 @@ describe('useFeatureFlags', () => {
 describe('useFeatureFlag', () => {
   it('returns flag value for TEST_FEATURE_ENABLED', async () => {
     const { result } = renderHook(() => useFeatureFlag('TEST_FEATURE_ENABLED'));
+    await waitFor(() => {
+      expect(result.current).toBe(true);
+    });
+  });
+
+  it('returns flag value for FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED', async () => {
+    const { result } = renderHook(() => useFeatureFlag('FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED'));
     await waitFor(() => {
       expect(result.current).toBe(true);
     });

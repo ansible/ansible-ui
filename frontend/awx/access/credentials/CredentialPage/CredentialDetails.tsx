@@ -106,14 +106,16 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
       </PageDetail>
       {inputSourcesMap &&
         credentialInputs &&
-        (credentialType?.inputs.fields || []).map((field, i) => (
-          <CredentialTypeDetail
-            key={`${field.id}+ ${i}`}
-            inputs={credentialInputs}
-            field={field}
-            inputSources={inputSourcesMap}
-          />
-        ))}
+        (credentialType?.inputs.fields || [])
+          .filter((field) => !field.internal)
+          .map((field, i) => (
+            <CredentialTypeDetail
+              key={`${field.id}+ ${i}`}
+              inputs={credentialInputs}
+              field={field}
+              inputSources={inputSourcesMap}
+            />
+          ))}
       <PageDetail label={t('Created')}>
         <DateTimeCell
           value={credential.created}

@@ -24,7 +24,7 @@ export function PageFormSelectCredentialType<
   return (
     <PageFormSingleSelectAwxResource<CredentialType, TFieldValues, TFieldName>
       name={props.name}
-      id="credential_type"
+      id="credential-type"
       label={t('Credential type')}
       placeholder={t('Select credential type')}
       queryPlaceholder={t('Loading credential types...')}

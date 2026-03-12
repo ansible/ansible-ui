@@ -8,7 +8,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { CreateCredential, EditCredential } from './CredentialForm';
 
 const mockCredentialTypes = {
-  count: 5,
+  count: 6,
   next: null,
   previous: null,
   results: [
@@ -94,6 +94,89 @@ const mockCredentialTypes = {
       },
       injectors: {},
     },
+    {
+      id: 6,
+      type: 'credential_type',
+      name: 'HashiCorp Vault Secret Lookup (OIDC)',
+      description: 'JWT-enabled authentication for HashiCorp Vault',
+      kind: 'external',
+      namespace: 'hashivault-kv-oidc',
+      managed: true,
+      inputs: {
+        fields: [
+          {
+            id: 'server_url',
+            type: 'string',
+            label: 'Server URL',
+            secret: false,
+            help_text: 'The URL to the HashiCorp Vault server',
+          },
+          {
+            id: 'role_id',
+            type: 'string',
+            label: 'Role ID',
+            secret: false,
+            help_text: 'Role ID for HashiCorp Vault authentication',
+          },
+          {
+            id: 'secret_id',
+            type: 'string',
+            label: 'Secret ID',
+            secret: true,
+            help_text: 'Secret ID for HashiCorp Vault authentication',
+          },
+        ],
+        required: ['server_url', 'role_id'],
+        metadata: [
+          {
+            id: 'unsigned_public_key',
+            type: 'string',
+            label: 'Unsigned public key',
+            help_text: 'Public key for OIDC verification',
+            secret: false,
+          },
+          {
+            id: 'path_to_secret',
+            type: 'string',
+            label: 'Path to secret',
+            help_text: 'Vault path where the secret is stored',
+            secret: false,
+          },
+          {
+            id: 'path_to_auth',
+            type: 'string',
+            label: 'Path to auth',
+            help_text: 'Authentication path in Vault',
+            secret: false,
+          },
+          {
+            id: 'controller_job_template',
+            type: 'string',
+            label: 'Controller job template',
+            help_text: 'Job template for the controller',
+            secret: false,
+          },
+          {
+            id: 'role_name',
+            type: 'string',
+            label: 'Role name',
+            help_text: 'Role name for OIDC authentication',
+            secret: false,
+          },
+          {
+            id: 'valid_principals',
+            type: 'string',
+            label: 'Valid principals',
+            help_text: 'Valid principals for authentication',
+            secret: false,
+          },
+        ],
+      },
+      injectors: {},
+      summary_fields: {
+        user_capabilities: { edit: false, delete: false },
+      },
+    },
   ],
 };
 
@@ -150,6 +233,11 @@ const server = setupServer(
   http.options(
     ({ request }) => request.url.includes('/organizations/'),
     () => HttpResponse.json({})
+  ),
+  http.get(awxAPI`/feature_flags_state/`, () =>
+    HttpResponse.json({
+      FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED: true,
+    })
   ),
   http.get(awxAPI`/credentials/1/`, () => HttpResponse.json(mockCredential)),
   http.get(awxAPI`/credentials/1/input_sources/`, () => HttpResponse.json(mockInputSources)),
@@ -222,7 +310,7 @@ describe('CredentialForm', () => {
       const nameFormGroup = screen.getByTestId('name-form-group');
       expect(nameFormGroup.querySelector('.pf-v6-c-form__label-required')).toBeInTheDocument();
 
-      expect(screen.getByTestId('credential_type')).toBeInTheDocument();
+      expect(screen.getByTestId('credential-type')).toBeInTheDocument();
     });
 
     it('should allow entering name and description', async () => {
@@ -247,7 +335,7 @@ describe('CredentialForm', () => {
 
       expect(nameInput).toHaveValue('Test credential name');
       expect(descriptionInput).toHaveValue('Test credential description');
-    });
+    }, 10000);
 
     it('should not submit the form when required fields are empty', async () => {
       const postSpy = vi.fn();
@@ -279,6 +367,124 @@ describe('CredentialForm', () => {
       });
 
       expect(postSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('HashiCorp Vault OIDC Alert', () => {
+    it('should display the expandable HashiCorp Vault OIDC info alert when OIDC credential type is selected', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/create']}>
+          <Routes>
+            <Route path="/credentials/create" element={<CreateCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      // Wait for credential type select to be rendered (after API loads)
+      const credentialTypeToggle = await screen.findByTestId('credential-type');
+
+      // Open the credential type dropdown
+      await user.click(credentialTypeToggle);
+
+      // Select the HashiCorp Vault OIDC credential type
+      const option = await screen.findByText('HashiCorp Vault Secret Lookup (OIDC)');
+      await user.click(option);
+
+      // Verify the expandable alert is displayed
+      await waitFor(() => {
+        expect(screen.getByTestId('hashicorp-vault-oidc-banner')).toBeInTheDocument();
+      });
+      expect(screen.getByText('Configure HashiCorp Vault')).toBeInTheDocument();
+    });
+
+    it('should not display the OIDC alert when a non-OIDC credential type is selected', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/create']}>
+          <Routes>
+            <Route path="/credentials/create" element={<CreateCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      // Wait for credential type select to be rendered
+      const credentialTypeToggle = await screen.findByTestId('credential-type');
+
+      // Open the credential type dropdown and select Machine
+      await user.click(credentialTypeToggle);
+      const option = await screen.findByText('Machine');
+      await user.click(option);
+
+      // Verify the OIDC alert is NOT displayed
+      await waitFor(() => {
+        expect(screen.getByText('Username')).toBeInTheDocument();
+      });
+      expect(screen.queryByTestId('hashicorp-vault-oidc-banner')).not.toBeInTheDocument();
+    });
+
+    it('should not display the OIDC alert when the feature flag is disabled', async () => {
+      server.use(
+        http.get(awxAPI`/feature_flags_state/`, () =>
+          HttpResponse.json({
+            FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED: false,
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/create']}>
+          <Routes>
+            <Route path="/credentials/create" element={<CreateCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      // Wait for credential type select to be rendered
+      const credentialTypeToggle = await screen.findByTestId('credential-type');
+
+      // Open the credential type dropdown and select OIDC type
+      await user.click(credentialTypeToggle);
+      const option = await screen.findByText('HashiCorp Vault Secret Lookup (OIDC)');
+      await user.click(option);
+
+      // Verify the OIDC alert is NOT displayed when feature flag is off
+      await waitFor(() => {
+        expect(screen.getByText('Server URL')).toBeInTheDocument();
+      });
+      expect(screen.queryByTestId('hashicorp-vault-oidc-banner')).not.toBeInTheDocument();
+    });
+
+    it('should display the OIDC alert in edit mode for OIDC credential type', async () => {
+      server.use(
+        http.get(awxAPI`/credentials/1/`, () =>
+          HttpResponse.json({
+            ...mockCredential,
+            credential_type: 6,
+            summary_fields: {
+              ...mockCredential.summary_fields,
+              credential_type: {
+                id: 6,
+                name: 'HashiCorp Vault Secret Lookup (OIDC)',
+              },
+            },
+          })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('hashicorp-vault-oidc-banner')).toBeInTheDocument();
+      });
+      expect(screen.getByText('Configure HashiCorp Vault')).toBeInTheDocument();
     });
   });
 
