@@ -25,14 +25,6 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { ApiTokenForm } from '../access/api-tokens/ApiTokenForm';
 import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
 import { ApiTokensPage } from '../access/api-tokens/ApiTokensPage';
-import { LegacyApplication } from '../access/legacy/legacy-applications/LegacyApplication';
-import { LegacyApplicationDetails } from '../access/legacy/legacy-applications/LegacyApplicationDetails';
-import { EditLegacyApplication } from '../access/legacy/legacy-applications/LegacyApplicationForm';
-import { LegacyApplications } from '../access/legacy/legacy-applications/LegacyApplications';
-import { LegacyTokenForm } from '../access/legacy/legacy-tokens/LegacyTokenForm';
-import { LegacyTokenPage } from '../access/legacy/legacy-tokens/LegacyTokenPage';
-import { LegacyTokensPage } from '../access/legacy/legacy-tokens/LegacyTokensPage';
-import { LegacyTokensTable } from '../access/legacy/legacy-tokens/LegacyTokensTable';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
 import { useGetPlatformApplicationsRoutes } from '../routes/useGetPlatformApplicationsRoutes';
@@ -385,71 +377,6 @@ function usePlatformAccessNavigation(): PageNavigationItem {
       {
         path: '',
         element: <ApiTokensPage />,
-      },
-    ],
-  });
-
-  platformAccessRouteChildren.push({
-    label: t('Legacy Access'),
-    path: 'legacy-access',
-    children: [
-      {
-        id: PlatformRoute.LegacyApplications,
-        label: t('Legacy Applications'),
-        path: 'legacy-applications',
-        children: [
-          {
-            id: PlatformRoute.EditLegacyApplication,
-            path: ':applicationId/edit',
-            element: <EditLegacyApplication />,
-          },
-          {
-            id: PlatformRoute.LegacyApplicationPage,
-            element: <LegacyApplication />,
-            path: ':applicationId',
-            children: [
-              {
-                id: PlatformRoute.LegacyApplicationDetails,
-                path: 'details',
-                element: <LegacyApplicationDetails />,
-              },
-              {
-                id: PlatformRoute.LegacyApplicationTokens,
-                path: 'tokens',
-                element: <LegacyTokensTable />,
-              },
-              {
-                path: '',
-                element: <Navigate to="details" />,
-              },
-            ],
-          },
-          {
-            path: '',
-            element: <LegacyApplications />,
-          },
-        ],
-      },
-      {
-        id: PlatformRoute.LegacyTokens,
-        label: t('Legacy Tokens'),
-        path: 'legacy-tokens',
-        children: [
-          {
-            id: PlatformRoute.EditLegacyToken,
-            path: ':tokenid/edit',
-            element: <LegacyTokenForm />,
-          },
-          {
-            id: PlatformRoute.LegacyTokenPage,
-            path: ':tokenid',
-            element: <LegacyTokenPage />,
-          },
-          {
-            path: '',
-            element: <LegacyTokensPage />,
-          },
-        ],
       },
     ],
   });
