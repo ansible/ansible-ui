@@ -24,6 +24,7 @@ test.describe('Overview - Quick Starts - Smoke Tests', () => {
   test.beforeEach(async ({ page }) => {
     await setupBefore()({ page });
     await page.goto(`${platformUI}/quickstarts`);
+    await page.locator('[class*="catalog-item"]').first().waitFor({ timeout: 30000 });
   });
 
   interface QuickStartInfo {
@@ -188,6 +189,8 @@ test.describe('Overview - Quick Starts - Smoke Tests', () => {
         const catalogTitles = page.locator(
           '[class*="catalog-item"] [class*="card__title-text"] [data-test="title"]'
         );
+
+        await expect(catalogTitles.first()).toBeVisible();
         const titleCount = await catalogTitles.count();
         expect(titleCount).toBeGreaterThanOrEqual(22);
       }

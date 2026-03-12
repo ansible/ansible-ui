@@ -24,6 +24,7 @@ test.describe('Overview - Quick Starts - Detailed Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
     await setupBefore()({ page });
     await page.goto(`${platformUI}/quickstarts`);
+    await page.locator('[class*="catalog-item"]').first().waitFor({ timeout: 30000 });
   });
 
   test.describe('Finding Content in Ansible Automation Platform - Complete Walkthrough', () => {
@@ -84,6 +85,8 @@ test.describe('Overview - Quick Starts - Detailed Workflow Tests', () => {
         const catalogTitles = page.locator(
           '[class*="catalog-item"] [class*="card__title-text"] [data-test="title"]'
         );
+
+        await expect(catalogTitles.first()).toBeVisible();
         await expect(catalogTitles).toHaveCount(quickstartTitles.length);
 
         for (let i = 0; i < quickstartTitles.length; i++) {
