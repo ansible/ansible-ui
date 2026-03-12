@@ -11,9 +11,14 @@ import { Button } from '@patternfly/react-core';
 import { getItemKey } from '../../../common/crud/Data';
 import { useState } from 'react';
 import { AutomationDashboardDateRangeFilterPresets } from './constants';
-import { useAutomationDashboardToolbar } from './components';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { DashboardChartCard, DashboardTableCard, DashboardValueCard } from './components';
+import {
+  DashboardChartCard,
+  DashboardMainTableCard,
+  DashboardTableCard,
+  DashboardValueCard,
+  useAutomationDashboardToolbar,
+} from './components';
 import { DashboardTableItem } from './interfaces';
 import { DashboardChartValueProps } from './types';
 
@@ -143,6 +148,7 @@ export function AutomationDashboard() {
           summaryValue={0}
           values={[]}
         ></DashboardChartCard>
+        <DashboardMainTableCard></DashboardMainTableCard>
       </PageDashboard>
     </PageLayout>
   );

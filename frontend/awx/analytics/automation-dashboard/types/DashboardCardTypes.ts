@@ -1,4 +1,5 @@
-import { DashboardTableItem } from '../interfaces';
+import { DashboardTableItem, ITemplateOptions } from '../interfaces';
+import { Dispatch, SetStateAction } from 'react';
 
 type DashboardCommonCardProps = {
   id: string;
@@ -30,4 +31,24 @@ export type DashboardChartCardProps = DashboardCommonCardProps & {
   variant: 'barChart' | 'lineChart';
   summaryValue?: number;
   values?: DashboardChartValueProps[];
+};
+
+export type DashboardTableInputFieldProps = {
+  id: string;
+  currentValue: number | undefined;
+  onBlur: (value: number) => void;
+  type?: 'number' | 'integer';
+  min?: number;
+  max?: number;
+  label?: string;
+  labelHelp?: string;
+  fullWidth?: boolean;
+};
+
+export type DashboardTableToolbarProps = {
+  isLoading: boolean;
+  itemCount: number;
+  toolbarState: ITemplateOptions;
+  setToolbarState: Dispatch<SetStateAction<ITemplateOptions>>;
+  onExportCsv?: () => void;
 };

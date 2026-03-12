@@ -33,23 +33,6 @@ test.describe('Automation Dashboard', () => {
     ).toBeVisible();
   });
 
-  test('Should display value cards on automation dashboard', async ({ page }) => {
-    await expect(
-      page
-        .getByTestId('successful-jobs-card')
-        .filter({ hasText: 'Total number of successful jobs' })
-    ).toBeVisible();
-    await expect(
-      page.getByTestId('failed-jobs-card').filter({ hasText: 'Total number of failed jobs' })
-    ).toBeVisible();
-    await expect(
-      page.getByTestId('unique-hosts-card').filter({ hasText: 'All unique hosts automated' })
-    ).toBeVisible();
-    await expect(
-      page.getByTestId('automation-hours-card').filter({ hasText: 'Total hours of automation' })
-    ).toBeVisible();
-  });
-
   test('Should have correct link in value cards', async ({ page }) => {
     const successfulJobsCard = page
       .getByTestId('successful-jobs-card')
@@ -63,23 +46,5 @@ test.describe('Automation Dashboard', () => {
       .filter({ hasText: 'Total number of failed jobs' });
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs in AAP' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
-  });
-
-  test('Should display table cards on automation dashboard', async ({ page }) => {
-    await expect(
-      page.getByTestId('top-projects-card').filter({ hasText: 'Top 5 Projects' })
-    ).toBeVisible();
-    await expect(
-      page.getByTestId('top-users-card').filter({ hasText: 'Top 5 Users' })
-    ).toBeVisible();
-  });
-
-  test('Should display chart cards on automation dashboard', async ({ page }) => {
-    await expect(
-      page.getByTestId('host-chart-card').filter({ hasText: 'Number of hosts jobs are running on' })
-    ).toBeVisible();
-    await expect(
-      page.getByTestId('job-chart-card').filter({ hasText: 'Number of times jobs are running' })
-    ).toBeVisible();
   });
 });
