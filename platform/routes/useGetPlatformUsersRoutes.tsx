@@ -8,9 +8,6 @@ import { Navigate } from 'react-router-dom';
 import { ApiTokenForm } from '../access/api-tokens/ApiTokenForm';
 import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
 import { ApiTokensTable } from '../access/api-tokens/ApiTokensTable';
-import { LegacyTokenForm } from '../access/legacy/legacy-tokens/LegacyTokenForm';
-import { LegacyTokenPage } from '../access/legacy/legacy-tokens/LegacyTokenPage';
-import { LegacyTokensTable } from '../access/legacy/legacy-tokens/LegacyTokensTable';
 import { PlatformAwxUserIdLookup } from '../access/users/components/PlatformAwxUserIdLookup';
 import { PlatformEdaUserIdLookup } from '../access/users/components/PlatformEdaUserIdLookup';
 import { PlatformHubUserIdLookup } from '../access/users/components/PlatformHubUserIdLookup';
@@ -57,16 +54,6 @@ export function useGetPlatformUsersRoutes() {
           element: <ApiTokenPage />,
         },
         {
-          id: PlatformRoute.EditUserLegacyToken,
-          path: ':id/legacy-tokens/:tokenid/edit',
-          element: <LegacyTokenForm />,
-        },
-        {
-          id: PlatformRoute.UserLegacyTokenPage,
-          path: ':id/legacy-tokens/:tokenid',
-          element: <LegacyTokenPage />,
-        },
-        {
           id: PlatformRoute.UserPage,
           path: ':id',
           element: <PlatformUserPage />,
@@ -90,11 +77,6 @@ export function useGetPlatformUsersRoutes() {
               id: PlatformRoute.UserApiTokens,
               path: 'api-tokens',
               element: <ApiTokensTable />,
-            },
-            {
-              id: PlatformRoute.UserLegacyTokens,
-              path: 'legacy-tokens',
-              element: <LegacyTokensTable />,
             },
             {
               path: '',
