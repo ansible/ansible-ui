@@ -5,6 +5,7 @@ import { PageThemeSwitcher } from '@ansible/ansible-ui-framework/PageMasthead/Pa
 import { usePageNotifications } from '@ansible/ansible-ui-framework/PageNotifications/usePageNotifications';
 import { useAnsibleAboutModal } from '@ansible/common-ui/AboutModal';
 import { PageRefreshIcon } from '@ansible/common-ui/PageRefreshIcon';
+import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { DropdownItem, Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
@@ -28,7 +29,11 @@ export function AwxMasthead() {
   const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
   useAwxNotifications();
   const logout = useCallback(async () => {
-    await fetch('/api/logout/');
+    try {
+      await postRequest('/api/logout/', {});
+    } catch {
+      // do nothing
+    }
     refreshActiveAwxUser?.();
     pageNavigate(AwxRoute.Login);
   }, [pageNavigate, refreshActiveAwxUser]);
