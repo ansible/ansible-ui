@@ -24,12 +24,15 @@ test.describe('License Compliance', () => {
     }
   });
   test('checks license compliance status', { tag: ['@not_mock'] }, async ({ page }) => {
-    // Wait for the config API response instead of intercepting
+    // Set up response promise before triggering the request
     const configResponsePromise = page.waitForResponse(
       (response) =>
         response.url().includes('/api/controller/v2/config') && response.status() === 200,
       { timeout: 10000 }
     );
+
+    // Reload to trigger the config API call
+    await page.reload();
 
     // Wait for the config API response
     const configResponse = await configResponsePromise;
