@@ -25,6 +25,7 @@ test(
     await filterTable({ filterValue: authMethodName }, page);
     await page.getByRole('gridcell', { name: 'Click to enable' }).locator('span').first().click();
     await logout(page);
+    await page.reload();
     await expect(page.getByRole('link', { name: `${authMethodName}` })).toBeVisible({
       timeout: 10000,
     });
