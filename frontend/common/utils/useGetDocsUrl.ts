@@ -64,40 +64,11 @@ export function useGetDocsUrl(
     if (licenseType && licenseType !== 'open') {
       return `https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/${version}/${downstreamPaths[doc]}`;
     } else {
-      return `https://ansible.readthedocs.io/projects/awx/en/latest/${upstreamPaths[doc]}`;
+      // For upstream/community, always return the community docs homepage
+      return 'https://docs.ansible.com/';
     }
   }
 }
-
-const upstreamPaths: DocPathDictionary = {
-  credentialTypes: 'userguide/credential_types.html',
-  credentials: 'userguide/credentials.html',
-  organizations: 'userguide/organizations.html',
-  teams: 'userguide/teams.html',
-  users: 'userguide/users.html',
-  activityStream: 'userguide/main_menu.html#activity-stream',
-  applications: 'userguide/applications_auth.html',
-  executionEnvironments: 'userguide/execution_environments.html',
-  managementJobs: 'userguide/management_jobs.html',
-  notifiers: 'userguide/notifications.html',
-  topology: 'userguide/topology_viewer.html',
-  workflows: 'userguide/workflows.html',
-  jobTemplateSurveys: 'userguide/job_templates.html#surveys',
-  index: 'userguide/index.html',
-  hosts: 'userguide/hosts.html',
-  inventories: 'userguide/inventories.html',
-  constructedInventories: 'userguide/inventories.html#constructed-inventories',
-  managePlaybooksSC: 'userguide/projects.html#manage-playbooks-using-source-control',
-  projects: 'userguide/projects.html',
-  templates: 'userguide/job_templates.html',
-  workflowVisualizer: 'userguide/workflow_templates.html#ug-wf-editor',
-  workflowVisBuild: 'userguide/workflow_templates.html#converge-node',
-  jobs: 'userguide/jobs.html',
-  schedules: 'userguide/scheduling.html',
-  instanceGroups: 'userguide/instance_groups.html',
-  instances: 'administration/instances.html',
-  configureAnalytics: 'userguide/analytics.html',
-};
 
 export const downstreamPaths: DocPathDictionary = {
   // Platform documentation routes
