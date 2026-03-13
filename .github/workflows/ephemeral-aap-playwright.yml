@@ -110,6 +110,7 @@ jobs:
       - matrix-setup
     if: needs.check-comment.outputs.triggered == 'true'
     runs-on: aap-dev
+    timeout-minutes: 150
     outputs:
       currents_run_url: ${{ steps.playwright-tests.outputs.currents_run_url }}
     concurrency:
@@ -254,6 +255,7 @@ jobs:
           CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
           CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
           CURRENTS_CI_BUILD_ID: pr-${{ needs.check-comment.outputs.pr_number }}-${{ github.run_id }}-${{ github.run_attempt }}
+          TIMEOUT_MINUTES: '120'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Playwright Test Results
