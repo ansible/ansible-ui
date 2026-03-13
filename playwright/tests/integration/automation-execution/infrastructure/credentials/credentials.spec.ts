@@ -401,7 +401,9 @@ test.describe('Credentials - External Credential Plugins (AAP-44813)', () => {
       await page.getByRole('button', { name: 'Credential type' }).click();
       await expect(page.getByRole('textbox', { name: 'Search input' })).toBeVisible();
       await page.getByRole('textbox', { name: 'Search input' }).fill('HashiCorp Vault Secret');
-      await page.getByRole('option', { name: 'HashiCorp Vault Secret Lookup' }).click();
+      await page
+        .getByRole('option', { name: 'HashiCorp Vault Secret Lookup', exact: true })
+        .click();
 
       await expect(page.getByRole('textbox', { name: 'Server URL' })).toBeVisible();
       await page
@@ -514,7 +516,9 @@ test.describe('Credentials - External Credential Plugins (AAP-44813)', () => {
 
       await page.getByRole('button', { name: 'Credential type' }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill('HashiCorp Vault Secret');
-      await page.getByRole('option', { name: 'HashiCorp Vault Secret Lookup' }).click();
+      await page
+        .getByRole('option', { name: 'HashiCorp Vault Secret Lookup', exact: true })
+        .click();
 
       await expect(page.getByRole('textbox', { name: 'Server URL' })).toBeVisible();
       await page

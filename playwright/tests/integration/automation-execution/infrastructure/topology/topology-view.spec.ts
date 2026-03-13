@@ -29,24 +29,20 @@ test.describe('Topology View', () => {
     'should render all nodes from mesh_visualizer endpoint',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      await test.step('Navigate to Topology View and capture mesh data', async () => {
+      const meshData = await awxAPI.get<MeshVisualizer>(page, '/mesh_visualizer/');
+
+      await test.step('Navigate to Topology View', async () => {
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Topology View');
         await expect(page.getByRole('heading', { name: 'Topology View' })).toBeVisible();
       });
 
       await test.step('Verify all nodes from API are rendered in topology', async () => {
-        const meshResponse = await page.waitForResponse(
-          (response) => response.url().includes('/mesh_visualizer/') && response.status() === 200,
-          { timeout: 10000 }
-        );
-        const meshData = (await meshResponse.json()) as MeshVisualizer;
-
-        // Verify we have nodes to test
-        expect(meshData.nodes.length).toBeGreaterThan(0);
+        expect(meshData).not.toBeNull();
+        expect(meshData!.nodes.length).toBeGreaterThan(0);
 
         // Verify each node is rendered in the topology by checking for the SVG element with data-id
         // Note: We use data-id because the UI may truncate long hostnames in the visible text
-        for (const node of meshData.nodes) {
+        for (const node of meshData!.nodes) {
           await expect(page.locator(`[data-id="${node.id}"]`)).toBeVisible({
             timeout: 5000,
           });
@@ -59,32 +55,22 @@ test.describe('Topology View', () => {
     'should navigate to instance detail when instance is clicked from sidebar',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      const meshData = await awxAPI.get<MeshVisualizer>(page, '/mesh_visualizer/');
+      expect(meshData).not.toBeNull();
+      expect(meshData!.nodes.length).toBeGreaterThan(0);
+      const firstNode = meshData!.nodes[0];
+
       await test.step('Navigate to Topology View and wait for data', async () => {
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Topology View');
         await expect(page.getByRole('heading', { name: 'Topology View' })).toBeVisible();
       });
 
       await test.step('Click on first node and verify sidebar appears', async () => {
-        const meshResponse = await page.waitForResponse(
-          (response) => response.url().includes('/mesh_visualizer/') && response.status() === 200,
-          { timeout: 10000 }
-        );
-        const meshData = (await meshResponse.json()) as MeshVisualizer;
-
-        expect(meshData.nodes.length).toBeGreaterThan(0);
-
-        const firstNode = meshData.nodes[0];
         await page.locator(`[data-id="${firstNode.id}"]`).click();
         await expect(page.getByTestId('mesh-viz-sidebar')).toBeVisible();
       });
 
       await test.step('Click instance name to navigate to instance details', async () => {
-        const meshResponse = await page.waitForResponse(
-          (response) => response.url().includes('/mesh_visualizer/') && response.status() === 200
-        );
-        const meshData = (await meshResponse.json()) as MeshVisualizer;
-        const firstNode = meshData.nodes[0];
-
         await page
           .getByTestId('mesh-viz-sidebar')
           .getByTestId('name')
@@ -174,7 +160,7 @@ test.describe('Topology View', () => {
         links: [],
       };
 
-      await test.step('Intercept mesh_visualizer endpoint with large dataset', async () => {
+      await test.step('Intercept mesh_visualizer endpoint with large dataset and reload', async () => {
         await page.route('**/api/controller/v2/mesh_visualizer/', async (route) => {
           await route.fulfill({
             status: 200,
@@ -182,10 +168,8 @@ test.describe('Topology View', () => {
             body: JSON.stringify(instanceNodesFixture),
           });
         });
-      });
 
-      await test.step('Navigate to Topology View and verify page loads', async () => {
-        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Topology View');
+        await page.reload();
         await expect(page.getByRole('heading', { name: 'Topology View' })).toBeVisible();
       });
 

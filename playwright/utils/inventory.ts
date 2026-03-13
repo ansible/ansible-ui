@@ -85,6 +85,17 @@ export const Inventory = {
       await awxAPI.delete(page, `inventories/${inventoryId}/`, { expectStatus: 202 });
     },
 
+    deleteByName: async (page: Page, inventoryName: string): Promise<void> => {
+      if (!inventoryName) return;
+      const url = `/inventories/?name=${encodeURIComponent(inventoryName)}`;
+      const inventories = await awxAPI.get<{ results: { id: number }[] }>(page, url);
+      if (inventories?.results?.length) {
+        await awxAPI.delete(page, `inventories/${inventories.results[0].id}/`, {
+          expectStatus: 202,
+        });
+      }
+    },
+
     get: async (page: Page, inventoryId: number): Promise<InventoryType> => {
       const inventory = await awxAPI.get<InventoryType>(page, `inventories/${inventoryId}/`);
 
