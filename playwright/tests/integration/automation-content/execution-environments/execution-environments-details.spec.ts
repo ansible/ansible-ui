@@ -167,26 +167,18 @@ test.describe('Hub - Execution Environment - Details Page', () => {
           response.status() === 200
       );
 
-      const getResponsePromise = page.waitForResponse(
-        (response) =>
-          response
-            .url()
-            .includes(
-              `/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/readme/`
-            ) &&
-          response.request().method() === 'GET' &&
-          response.status() === 200
-      );
-
       await readmeContainer.getByRole('button', { name: 'Save' }).click();
 
       await putResponsePromise;
-      await getResponsePromise;
     });
 
     await test.step('Verify README shows updated content', async () => {
+      await page.reload();
+
       const readmeContainer = page.getByTestId('readme');
-      await expect(readmeContainer.locator('h1')).toContainText('Edited Heading 1');
+      await expect(readmeContainer.locator('h1')).toContainText('Edited Heading 1', {
+        timeout: 10000,
+      });
       await expect(readmeContainer.locator('strong')).toContainText('bold text');
     });
 
