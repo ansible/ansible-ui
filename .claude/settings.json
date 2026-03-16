@@ -20,10 +20,13 @@
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_type",
-      "mcp__playwright__browser_wait_for"
+      "mcp__playwright__browser_wait_for",
+      "Bash(npx tsc --noEmit --project playwright/tsconfig.json)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["playwright"]
+  "enabledMcpjsonServers": [
+    "playwright"
+  ]
 }
