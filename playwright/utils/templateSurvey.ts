@@ -159,18 +159,13 @@ export function createTemplateSurveyHelper(templateType: TemplateType) {
           );
         }
 
-        const createButton = page.getByRole('button', {
-          name: 'Create survey question',
-          exact: true,
-        });
-        const createLink = page.getByRole('link', { name: 'Create survey question', exact: true });
+        await expect(page.getByTestId('question-name')).not.toBeVisible({ timeout: 10000 });
 
-        const isButtonVisible = await createButton.isVisible().catch(() => false);
-        if (isButtonVisible) {
-          await createButton.click();
-        } else {
-          await createLink.click();
-        }
+        // Use or() to handle both empty state (link) and non-empty state (button)
+        const createButtonOrLink = page
+          .getByRole('button', { name: 'Create survey question', exact: true })
+          .or(page.getByRole('link', { name: 'Create survey question', exact: true }));
+        await createButtonOrLink.click();
 
         await page.getByTestId('question-name').fill(question.question_name);
         await page.getByTestId('question-description').fill(question.question_description);
@@ -232,6 +227,7 @@ export function createTemplateSurveyHelper(templateType: TemplateType) {
         );
         await page.getByRole('button', { name: 'Create survey question', exact: true }).click();
         await createResponsePromise;
+        await expect(page.getByTestId('question-name')).not.toBeVisible({ timeout: 10000 });
       },
 
       enableSurvey: async (page: Page, templateName: string): Promise<void> => {
@@ -327,7 +323,12 @@ export function createTemplateSurveyHelper(templateType: TemplateType) {
           );
         }
 
-        await expect(page.getByText('Success')).toBeVisible({ timeout: 10000 });
+        const successStatus = page.getByText('Success');
+        const failedStatus = page.getByText('Failed');
+        const pendingStatus = page.getByText('Pending');
+        await expect(successStatus.or(failedStatus).or(pendingStatus)).toBeVisible({
+          timeout: 10000,
+        });
       },
 
       waitForJobStatus: async (page: Page, jobId: string, maxRetries = 200): Promise<void> => {

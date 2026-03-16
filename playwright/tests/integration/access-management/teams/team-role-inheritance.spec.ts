@@ -14,11 +14,11 @@ test.describe('Platform Teams - Role Inheritance', () => {
   test.beforeEach(setupBefore({ path: '/access/teams' }));
 
   test.afterEach(async ({ page }) => {
-    await Team.ui.delete(page, teamName).catch(() => {});
-    await Inventory.ui.delete(page, inventoryName).catch(() => {});
-    await Project.ui.delete(page, projectName).catch(() => {});
-    await User.ui.delete(page, userName).catch(() => {});
-    await Organization.ui.delete(page, orgName).catch(() => {});
+    await Team.api.deleteByName(page, teamName).catch(() => {});
+    await Inventory.api.deleteByName(page, inventoryName).catch(() => {});
+    await Project.api.deleteByName(page, projectName).catch(() => {});
+    await User.api.deleteByName(page, userName).catch(() => {});
+    await Organization.api.deleteByName(page, orgName).catch(() => {});
     await setupAfter({ page });
   });
 
@@ -102,7 +102,7 @@ test.describe('Platform Teams - Role Inheritance', () => {
       await page.getByRole('button', { name: 'Assign users' }).click();
 
       // Step 3: Verify role inheritance on user's roles tab
-      await clickTableRow({ text: userName }, page);
+      await clickTableRow({ text: userName, filterLabel: 'Username' }, page);
       await page.getByRole('tab', { name: 'Roles' }).click();
 
       // Verify team inheritance shows up in user roles

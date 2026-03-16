@@ -110,7 +110,7 @@ test.describe('Platform Teams - Roles Tab', () => {
       await page.getByRole('checkbox', { name: 'Select all rows' }).check();
       await page.getByRole('button', { name: 'Assign users' }).click();
 
-      await clickTableRow({ text: userName }, page);
+      await clickTableRow({ text: userName, filterLabel: 'Username' }, page);
       await page.getByRole('tab', { name: 'Roles' }).click();
       const row = page.locator('table tr', { hasText: teamName });
 
