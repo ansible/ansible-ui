@@ -159,7 +159,7 @@ export function PlatformApp() {
         masthead={<PlatformMasthead />}
         navigation={navigation}
         basename={process.env.ROUTE_PREFIX ?? '/'}
-        defaultRefreshInterval={30}
+        defaultRefreshInterval={10}
         banner={
           <>
             {controllerDownBanner}

@@ -72,7 +72,7 @@ function HubRoot() {
 
   // Note: No BrowserRouter here - Chrome provides the router context
   return (
-    <PageFramework defaultRefreshInterval={30}>
+    <PageFramework defaultRefreshInterval={10}>
       <HubActiveUserProvider>
         <HubContextProvider>
           <HubInsightsApp />

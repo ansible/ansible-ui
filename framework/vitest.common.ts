@@ -1,7 +1,6 @@
 import { vi, beforeEach } from 'vitest';
 import { cleanup, screen, Screen } from '@testing-library/react';
 import { debug } from 'vitest-preview';
-import { defaultConfig } from 'swr/_internal';
 import '@patternfly/patternfly/patternfly-addons.css';
 import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
@@ -42,7 +41,6 @@ export function mockI18n() {
 type ScreenWithPreview = Screen & { preview: () => void };
 export function enablePreview() {
   (screen as ScreenWithPreview).preview = debug;
-  defaultConfig.dedupingInterval = 0;
 
   beforeEach((ctx) => {
     ctx.onTestFinished(({ task }) => {
