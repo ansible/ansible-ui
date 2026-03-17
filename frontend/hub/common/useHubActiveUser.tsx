@@ -26,7 +26,8 @@ export function HubActiveUserProvider(props: { children: ReactNode; disabled?: b
 
 export function HubActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<HubUser>(hubAPI`/_ui/v1/me/`, requestGet, {
-    refreshInterval: 30 * 1000,
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
   });
 
   const [activeHubUser, setActiveHubUser] = useState<HubUser | undefined | null>(undefined);

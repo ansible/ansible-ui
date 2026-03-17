@@ -8,7 +8,7 @@ import {
   QueryParams,
   buildQueryString,
 } from '@ansible/ansible-ui-framework';
-import { swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
@@ -133,7 +133,9 @@ export function useHubView<T extends object>({
   }
 
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(url, fetcher, swrOptions);
+  const response = useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(url, fetcher, {
+    dedupingInterval: 0,
+  });
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate();
@@ -142,7 +144,9 @@ export function useHubView<T extends object>({
   const { count, next, pageItems } = deconstruct<T>(data);
 
   const nextPage = serverlessURL(next);
-  useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(nextPage, fetcher, swrOptions);
+  useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(nextPage, fetcher, {
+    dedupingInterval: 0,
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;

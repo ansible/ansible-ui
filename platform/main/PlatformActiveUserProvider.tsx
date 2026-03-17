@@ -18,7 +18,8 @@ export function usePlatformActiveUser() {
 
 export function PlatformActiveUserProvider(props: { children: ReactNode }) {
   const response = useSWR<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/me/`, requestGet, {
-    refreshInterval: 30 * 1000,
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
   });
 
   const [activePlatformUser, setActivePlatformUser] = useState<PlatformUser | undefined | null>(
