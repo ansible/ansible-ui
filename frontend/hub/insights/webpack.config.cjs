@@ -19,6 +19,7 @@ const webpack = require('webpack');
 
 const isBuild = process.env.NODE_ENV === 'production';
 const cloudBeta = process.env.HUB_CLOUD_BETA; // "true" | "false" | undefined (=default)
+const isCloudDev = !!process.env.CLOUDOT_ENV;
 
 // Plugin to handle Vite-style ?inline imports by stripping the query
 class StripQueryPlugin {
@@ -80,8 +81,8 @@ const { config: webpackConfig, plugins } = config({
   rootFolder,
   definePlugin: globals,
   debug: customConfigs.UI_DEBUG,
-  https: customConfigs.UI_USE_HTTPS,
-  port: customConfigs.UI_PORT,
+  https: isCloudDev || customConfigs.UI_USE_HTTPS,
+  port: isCloudDev ? 1337 : customConfigs.UI_PORT,
 
   // Don't bundle PatternFly - Chrome shell provides it
   bundlePfModules: false,
@@ -91,6 +92,22 @@ const { config: webpackConfig, plugins } = config({
 
   // Insights production deployment
   deployment: cloudBeta === 'true' ? 'beta/apps' : 'apps',
+
+  // Proxy mode: when CLOUDOT_ENV is set (via fec dev --clouddotEnv), enable the
+  // CRC proxy so the local dev server routes API and Chrome requests to the
+  // specified environment (stage/prod).
+  ...(isCloudDev
+    ? {
+        useProxy: true,
+        env: `${process.env.CLOUDOT_ENV}-stable`,
+        appUrl: ['/ansible/automation-hub/', '/ansible/automation-hub'],
+        routes: {
+          '/apps/chrome': {
+            target: `http://${process.env.FEC_CHROME_HOST}:${process.env.FEC_CHROME_PORT}`,
+          },
+        },
+      }
+    : {}),
 });
 
 // Override sections of the webpack config to work with TypeScript

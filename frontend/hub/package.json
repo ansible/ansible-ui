@@ -24,6 +24,8 @@
     "vitest": "vitest --run",
     "insights:install": "cd insights && npm install --legacy-peer-deps",
     "insights:serve": "cd insights && npm run serve",
+    "insights:cloud": "cd insights && npm run start:cloud",
+    "insights:cloud:prod": "cd insights && npm run start:cloud:prod",
     "insights:build": "cd insights && npm run build",
     "insights:tsc": "cd insights && npm run tsc",
     "insights:eslint": "cd insights && npm run eslint"
