@@ -13,6 +13,8 @@ export interface CreateUserAPIOptions {
   first_name?: string;
   last_name?: string;
   email?: string;
+  is_superuser?: boolean;
+  is_platform_auditor?: boolean;
 }
 
 export interface CreateUserUIOptions {
@@ -32,7 +34,7 @@ export const User = {
       const password = options.password ?? 'pw';
 
       // Build payload with only defined fields
-      const payload: Record<string, string> = {
+      const payload: Record<string, string | boolean> = {
         username,
         password,
       };
@@ -40,11 +42,30 @@ export const User = {
       if (options.first_name) payload.first_name = options.first_name;
       if (options.last_name) payload.last_name = options.last_name;
       if (options.email) payload.email = options.email;
+      if (options.is_superuser !== undefined) payload.is_superuser = options.is_superuser;
 
       const user = await gatewayAPI.post<PlatformUser>(page, 'users/', payload);
 
       if (!user) {
         throw new Error('Failed to create user: API returned null');
+      }
+
+      // Platform Auditor is a role assignment, not a user field
+      if (options.is_platform_auditor) {
+        const roleData = await gatewayAPI.get<{ results: Array<{ id: number }> }>(
+          page,
+          'role_definitions/',
+          { params: { name: 'Platform Auditor' } }
+        );
+        const roleId = roleData?.results?.[0]?.id;
+        if (!roleId) {
+          throw new Error('Failed to find Platform Auditor role definition');
+        }
+        await gatewayAPI.post(page, 'role_user_assignments/', {
+          user: user.id,
+          role_definition: roleId,
+          object_id: null,
+        });
       }
 
       return user;

@@ -95,6 +95,7 @@ export enum PlatformRoute {
   SubscriptionWizard = 'platform-subscription-wizard',
   SubscriptionDetails = 'platform-subscription-details',
   GatewaySettings = 'platform-gateway-settings',
+  RuntimeFeatureFlags = 'platform-runtime-feature-flags',
   UIFlags = 'platform-ui-flags',
   DeveloperSettings = 'platform-developer-settings',
   ApplicationLinks = 'platform-application-links',
