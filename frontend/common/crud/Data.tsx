@@ -107,4 +107,6 @@ export function getItemKey(item: { id: number | string }) {
   return item?.id.toString();
 }
 
-export const swrOptions: SWRConfiguration = {};
+export const swrOptions: SWRConfiguration = {
+  dedupingInterval: 0,
+};

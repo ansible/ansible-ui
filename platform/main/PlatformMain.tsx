@@ -42,7 +42,7 @@ export default function PlatformMain() {
           </Bullseye>
         }
       >
-        <PageFramework defaultRefreshInterval={30}>
+        <PageFramework defaultRefreshInterval={10}>
           <PlatformActiveUserProvider>
             <AwxActiveUserProvider>
               <HubActiveUserProvider>

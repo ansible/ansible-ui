@@ -12,7 +12,7 @@ import { HubLogin } from './HubLogin';
 export default function HubMain() {
   return (
     <BrowserRouter>
-      <PageFramework defaultRefreshInterval={30}>
+      <PageFramework defaultRefreshInterval={10}>
         <HubActiveUserProvider>
           <HubLogin>
             <HubApp />
