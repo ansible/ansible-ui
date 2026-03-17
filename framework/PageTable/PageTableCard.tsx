@@ -335,15 +335,26 @@ export function useColumnsToTableCardFn<T extends object>(
       }
       const cardTitle = value?.(item) ?? '';
 
+      const titleUrl = to?.(item);
+      const titleContent =
+        typeof cardTitle === 'string'
+          ? cardTitle.split('/').map((part, i) => (
+              <span key={`${i}-${part}`}>
+                {i > 0 && <br />}
+                {part}
+              </span>
+            ))
+          : cardTitle;
+
       const pageTableCard: IPageTableCard = {
         id: keyFn(item),
         icon: nameColumn?.icon?.(item),
-        title: (
-          <Link to={to?.(item) ?? ''} style={{ whiteSpace: 'normal', textWrap: 'balance' }}>
-            {typeof cardTitle === 'string'
-              ? cardTitle.split('/').map((part, i) => <div key={i}>{part}</div>)
-              : (value?.(item) ?? '')}
+        title: titleUrl ? (
+          <Link to={titleUrl} style={{ whiteSpace: 'normal', textWrap: 'balance' }}>
+            {titleContent}
           </Link>
+        ) : (
+          <span style={{ whiteSpace: 'normal', textWrap: 'balance' }}>{titleContent}</span>
         ),
         subtitle: subtitleColumn && (!subtitleColumn.value || subtitleColumn.value(item)) && (
           <TableColumnCell column={subtitleColumn} item={item} />

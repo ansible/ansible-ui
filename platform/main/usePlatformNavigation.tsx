@@ -39,6 +39,8 @@ import { GatewaySettingsDetails } from '../settings/GatewaySettingsDetails';
 import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
+import { FeatureFlagsPage } from '../settings/runtime-feature-flags/FeatureFlagsPage';
+import { useRuntimeFeatureFlagsEnabled } from '../settings/runtime-feature-flags/useRuntimeFeatureFlagsEnabled';
 import { UIFlag } from '../settings/ui-flags/IUIFlag';
 import { UIFlagsPage } from '../settings/ui-flags/UIFlagsPage';
 import { useUIFlag } from '../settings/ui-flags/useUIFlag';
@@ -394,6 +396,7 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
   const settingsNav: PageNavigationItem[] = [];
   const { activePlatformUser } = usePlatformActiveUser();
   const awxService = useHasAwxService();
+  const { isEnabled: runtimeFeatureFlagsEnabled } = useRuntimeFeatureFlagsEnabled();
   const navigate = useNavigate();
 
   settingsNav.push({
@@ -432,6 +435,16 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
       },
     ],
     hidden: !activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor,
+  });
+
+  settingsNav.push({
+    id: PlatformRoute.RuntimeFeatureFlags,
+    label: t('Feature Flags'),
+    path: 'feature-flags',
+    element: <FeatureFlagsPage />,
+    hidden:
+      !runtimeFeatureFlagsEnabled ||
+      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
   });
 
   const userPreferences = {

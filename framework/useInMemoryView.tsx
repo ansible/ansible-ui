@@ -61,10 +61,22 @@ export function useInMemoryView<T extends object>(options: {
           const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
           if (toolbarFilter) {
             const value = getValue(item, toolbarFilter.query) as unknown;
-            if (typeof value === 'string') {
-              const filterValues = filterState[key];
-              if (filterValues && filterValues.length !== 0) {
-                if (!filterValues.includes(value)) {
+            const filterValues = filterState[key];
+            if (filterValues && filterValues.length !== 0) {
+              if (Array.isArray(value)) {
+                if (!filterValues.some((fv) => value.includes(fv))) {
+                  return false;
+                }
+              } else if (typeof value === 'string') {
+                const comparison =
+                  'comparison' in toolbarFilter
+                    ? (toolbarFilter as { comparison: string }).comparison
+                    : undefined;
+                if (comparison === 'contains') {
+                  if (!filterValues.some((fv) => value.toLowerCase().includes(fv.toLowerCase()))) {
+                    return false;
+                  }
+                } else if (!filterValues.includes(value)) {
                   return false;
                 }
               }
