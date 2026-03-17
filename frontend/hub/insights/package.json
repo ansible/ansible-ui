@@ -12,6 +12,8 @@
     "build:dev": "webpack --config webpack.config.cjs --mode development",
     "serve": "webpack serve --config webpack.config.cjs --mode development",
     "start": "npm run serve",
+    "start:cloud": "FEC_CONFIG_PATH=$PWD/fec.config.js npx fec dev --clouddotEnv=stage --webpackConfig=webpack.config.cjs",
+    "start:cloud:prod": "FEC_CONFIG_PATH=$PWD/fec.config.js npx fec dev --clouddotEnv=prod --webpackConfig=webpack.config.cjs",
     "tsc": "tsc --noEmit 2>&1 | grep '\\.tsx\\?(' | grep -v '^\\.\\.' && exit 1 || exit 0",
     "eslint": "eslint --max-warnings=0 ."
   },
@@ -32,6 +34,7 @@
     "sass-loader": "^14.1.0",
     "source-map-loader": "^5.0.0",
     "terser-webpack-plugin": "^5.3.10",
+    "typescript": "^5.9.3",
     "webpack": "^5.90.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.0"

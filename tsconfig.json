@@ -37,6 +37,7 @@
     "packages",
     "platform",
     "playwright",
+    "playwright-insights",
     "scripts",
     "types",
     "webpack/environment.d.ts",
