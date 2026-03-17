@@ -124,7 +124,7 @@ export function PageHeader(props: PageHeaderProps) {
   }, [props.breadcrumbs, tabBreadcrumb]);
 
   return (
-    <PageSection hasBodyWrapper={false} style={{ paddingBlock: isXl ? 16 : 12 }}>
+    <PageSection hasBodyWrapper={false} style={{ paddingBlock: isXl ? 16 : 12, paddingInline: 24 }}>
       <Stack hasGutter>
         <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
           <FlexItem grow={{ default: 'grow' }}>

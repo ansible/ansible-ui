@@ -167,7 +167,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         }}
       >
         {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
-        <Scrollable>
+        <Scrollable marginLeft={24}>
           <FormContainer
             isFilled
             isWidthLimited
