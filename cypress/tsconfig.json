@@ -1,5 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "include": ["**/*", "../frontend/hub/**/*", "../types/*.d.ts"],
-  "exclude": ["../frontend/hub/insights/**", "../frontend/hub/dist-insights/**"]
-}

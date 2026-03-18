@@ -3,9 +3,50 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import mockBuiltInRole from '@ansible/cypress/fixtures/awxBuiltInRoleDefinition.json';
-import mockCustomRole from '@ansible/cypress/fixtures/awxCustomRoleDefinition.json';
 import { AwxRoleDetails } from './AwxRoleDetails';
+
+const mockBuiltInRole = {
+  id: 1,
+  url: '/api/v2/role_definitions/1/',
+  related: {
+    team_assignments: '/api/v2/role_definitions/1/team_assignments/',
+    user_assignments: '/api/v2/role_definitions/1/user_assignments/',
+  },
+  summary_fields: {},
+  permissions: [
+    'awx.change_credential',
+    'awx.delete_credential',
+    'awx.use_credential',
+    'awx.view_credential',
+  ],
+  content_type: 'awx.credential',
+  modified: '2024-05-26T07:19:20.200581Z',
+  created: '2024-05-26T07:19:20.200562Z',
+  name: 'Credential Admin',
+  description: 'Has all permissions to a single credential',
+  managed: true,
+  modified_by: null,
+  created_by: null,
+};
+
+const mockCustomRole = {
+  id: 33,
+  url: '/api/v2/role_definitions/33/',
+  related: {
+    team_assignments: '/api/v2/role_definitions/33/team_assignments/',
+    user_assignments: '/api/v2/role_definitions/33/user_assignments/',
+  },
+  summary_fields: {},
+  permissions: ['awx.view_inventory'],
+  content_type: 'awx.inventory',
+  modified: '2024-05-27T14:58:40.652901Z',
+  created: '2024-05-27T14:58:40.652942Z',
+  name: 'Inventory Read Compat',
+  description: 'Has Read permission to Inventory for backwards API compatibility',
+  managed: false,
+  modified_by: null,
+  created_by: null,
+};
 
 const server = setupServer(
   http.get(

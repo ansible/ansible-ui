@@ -8,9 +8,36 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vite
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventorySource } from '../../interfaces/InventorySource';
 import { Project } from '../../interfaces/Project';
-import credentialTypes from './../../../../cypress/fixtures/credentialTypes.json';
 import { CreateInventorySource, EditInventorySource } from './InventorySourceForm';
 import sourceTypesOptions from './mocks/InventorySourceTypes.json';
+
+const credentialTypes = {
+  count: 2,
+  next: null,
+  previous: null,
+  results: [
+    {
+      id: 5,
+      type: 'credential_type',
+      url: '/api/v2/credential_types/5/',
+      name: 'Amazon Web Services',
+      description: '',
+      kind: 'cloud',
+      namespace: 'aws',
+      managed: true,
+    },
+    {
+      id: 20,
+      type: 'credential_type',
+      url: '/api/v2/credential_types/20/',
+      name: 'Google Compute Engine',
+      description: '',
+      kind: 'cloud',
+      namespace: 'gce',
+      managed: true,
+    },
+  ],
+};
 
 const mockInventory = {
   id: 2,
