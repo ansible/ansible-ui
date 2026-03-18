@@ -8,6 +8,7 @@ import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { EdaCredential, EventStream, Organization } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/event-streams' }));
@@ -24,6 +25,12 @@ test.describe('EDA Event Streams - List Operations', () => {
 
   test.beforeEach(async ({ page }) => {
     organization = await Organization.api.create(page);
+    const ansibleId = organization.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error('Platform organization missing ansible_id');
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+
     credentialName = createE2EName('event-stream-credential');
     eventStream1Name = createE2EName('event-stream');
     eventStream2Name = createE2EName('event-stream');
@@ -45,7 +52,7 @@ test.describe('EDA Event Streams - List Operations', () => {
       name: eventStream1Name,
       event_stream_type: 'basic',
       eda_credential_id: credentialId,
-      organization_id: organization.id,
+      organization_id: edaOrganization.id,
     })) as { id: number };
     eventStream1Id = eventStream1.id;
 
@@ -54,7 +61,7 @@ test.describe('EDA Event Streams - List Operations', () => {
       name: eventStream2Name,
       event_stream_type: 'basic',
       eda_credential_id: credentialId,
-      organization_id: organization.id,
+      organization_id: edaOrganization.id,
     })) as { id: number };
     eventStream2Id = eventStream2.id;
   });

@@ -12,6 +12,7 @@ import {
   Organization,
   RulebookActivation,
 } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 import type { EdaCredential as EdaCredentialType } from '@ansible/eda-ui/interfaces/EdaCredential';
 import type { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
 import type { EventStreamOut } from '@ansible/eda-ui/interfaces/generated/eda-api';
@@ -23,6 +24,7 @@ test.afterEach(setupAfter);
 
 test.describe('Event Stream and Rulebook Activation Integration', () => {
   let organization: PlatformOrganization;
+  let edaOrgId: number;
   let projectName: string;
   let credential: EdaCredentialType;
   let decisionEnvironment: EdaDecisionEnvironment;
@@ -38,6 +40,14 @@ test.describe('Event Stream and Rulebook Activation Integration', () => {
 
     // Create organization via API (fast)
     organization = await Organization.api.create(page);
+
+    // Get the corresponding EDA organization
+    const ansibleId = organization.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error('Platform organization missing ansible_id');
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+    edaOrgId = edaOrganization.id;
 
     // Create project via UI (handles sync automatically)
     projectName = await EdaProject.ui.create(page, { organizationName: organization.name });
@@ -55,7 +65,7 @@ test.describe('Event Stream and Rulebook Activation Integration', () => {
     });
 
     decisionEnvironment = await DecisionEnvironment.api.create(page, {
-      organizationId: organization.id,
+      organizationId: edaOrgId,
     });
 
     // Create event stream credential (Basic Event Stream type)
@@ -74,7 +84,7 @@ test.describe('Event Stream and Rulebook Activation Integration', () => {
       name: createE2EName('event-stream'),
       event_stream_type: 'basic',
       eda_credential_id: eventStreamCredential.id,
-      organization_id: organization.id,
+      organization_id: edaOrgId,
     })) as EventStreamOut;
   });
 

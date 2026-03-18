@@ -6,6 +6,7 @@ import { getTableRow } from '@ansible/playwright/commands/getTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { EdaProject, Organization } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/projects' }));
@@ -13,9 +14,16 @@ test.afterEach(setupAfter);
 
 test.describe('EDA Projects List', () => {
   let organization: PlatformOrganization;
+  let edaOrgId: number;
 
   test.beforeEach(async ({ page }) => {
     organization = await Organization.api.create(page);
+    const ansibleId = organization.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error('Platform organization missing ansible_id');
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+    edaOrgId = edaOrganization.id;
   });
 
   test.afterEach(async ({ page }) => {
@@ -55,7 +63,7 @@ test.describe('EDA Projects List', () => {
 
   test('should edit project name from row action', { tag: ['@not_mock'] }, async ({ page }) => {
     const edaProject: EdaProjectType = await EdaProject.api.create(page, {
-      organization: organization.id,
+      organization: edaOrgId,
     });
     const editedName = `${edaProject.name} - edited`;
 
@@ -82,10 +90,10 @@ test.describe('EDA Projects List', () => {
 
   test('should bulk delete multiple projects', { tag: ['@not_mock'] }, async ({ page }) => {
     const edaProject1 = await EdaProject.api.create(page, {
-      organization: organization.id,
+      organization: edaOrgId,
     });
     const edaProject2 = await EdaProject.api.create(page, {
-      organization: organization.id,
+      organization: edaOrgId,
     });
 
     await bulkDeleteResources(
@@ -104,7 +112,7 @@ test.describe('EDA Projects List', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const edaProject: EdaProjectType = await EdaProject.api.create(page, {
-        organization: organization.id,
+        organization: edaOrgId,
       });
 
       await navigateTo(page, 'Automation Decisions', 'Projects');
