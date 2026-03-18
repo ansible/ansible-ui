@@ -5,14 +5,148 @@ import { Credential } from '../../../interfaces/Credential';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Label } from '../../../interfaces/Label';
 import * as Data from '@ansible/common-ui/crud/Data';
-
-import credentials from '@ansible/cypress/fixtures/credentials.json';
-import instanceGroups from '@ansible/cypress/fixtures/instance_groups.json';
-import labels from '@ansible/cypress/fixtures/labels.json';
-import survey from '@ansible/cypress/fixtures/survey.json';
-import templateLaunch from '@ansible/cypress/fixtures/jobTemplateLaunch.json';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import schedule from '@ansible/cypress/fixtures/schedule.json';
+import { Survey, Spec } from '../../../interfaces/Survey';
+
+const credentials = {
+  count: 15,
+  results: Array.from({ length: 15 }, (_, i) => ({
+    id: i + 1,
+    type: 'credential',
+    name: `Credential ${i + 1}`,
+    credential_type: i + 1,
+    kind: 'ssh',
+  })),
+};
+
+const instanceGroups = {
+  count: 3,
+  results: [
+    { id: 1, name: 'controlplane', type: 'instance_group' },
+    { id: 2, name: 'default', type: 'instance_group' },
+    { id: 3, name: 'Container Group 01', type: 'instance_group', is_container_group: true },
+  ],
+};
+
+const labels = {
+  count: 4,
+  results: [
+    { id: 1, type: 'label', name: 'alex label', organization: 1 },
+    { id: 111, type: 'label', name: 'L_10o0', organization: 2 },
+    { id: 112, type: 'label', name: 'L_11o0', organization: 2 },
+    { id: 113, type: 'label', name: 'L_12o0', organization: 2 },
+  ],
+};
+
+const survey: Survey = {
+  name: 'Simple',
+  description: 'Description',
+  spec: [
+    {
+      type: 'text',
+      question_name: 'cantbeshort',
+      question_description: 'What is a long answer',
+      variable: 'long_answer',
+      required: false,
+      default: 'Leeloo Minai Lekarariba-Laminai-Tchai Ekbat De Sebat',
+      choices: '',
+      min: 5,
+      max: 0,
+      new_question: false,
+    },
+    {
+      type: 'text',
+      question_name: 'reqd',
+      question_description: 'I should be required',
+      variable: 'reqd_answer',
+      required: true,
+      default: 'NOT OPTIONAL',
+      choices: '',
+      min: 0,
+      max: 0,
+      new_question: false,
+    },
+  ],
+};
+
+const templateLaunch: LaunchConfiguration = {
+  can_start_without_user_input: true,
+  passwords_needed_to_start: [],
+  variables_needed_to_start: [],
+  credential_needed_to_start: false,
+  inventory_needed_to_start: false,
+  ask_scm_branch_on_launch: false,
+  ask_variables_on_launch: false,
+  ask_tags_on_launch: false,
+  ask_diff_mode_on_launch: false,
+  ask_skip_tags_on_launch: false,
+  ask_job_type_on_launch: false,
+  ask_limit_on_launch: false,
+  ask_verbosity_on_launch: false,
+  ask_inventory_on_launch: false,
+  ask_credential_on_launch: false,
+  ask_execution_environment_on_launch: false,
+  ask_labels_on_launch: false,
+  ask_forks_on_launch: false,
+  ask_job_slice_count_on_launch: false,
+  ask_timeout_on_launch: false,
+  ask_instance_groups_on_launch: false,
+  survey_enabled: false,
+  credential_passwords: {
+    ssh_password: '',
+    become_password: '',
+    ssh_key_unlock: '',
+    vault_password: '',
+  },
+  unified_job_template_object: {
+    name: 'JT with Default Cred',
+    id: 7,
+    description: '',
+    survey_enabled: false,
+  },
+  job_template_data: {
+    name: 'JT with Default Cred',
+    id: 7,
+    description: '',
+  },
+  defaults: {
+    inventory: { name: 'Demo Inventory', id: 1 },
+    limit: '',
+    scm_branch: '',
+    labels: [{ id: 1, name: 'alex label' }],
+    job_tags: '',
+    skip_tags: '',
+    extra_vars: '---',
+    diff_mode: false,
+    job_type: 'run',
+    verbosity: 0,
+    credentials: [{ id: 1, name: 'Demo Credential', credential_type: 1, passwords_needed: [] }],
+    execution_environment: {},
+    forks: 0,
+    job_slice_count: 1,
+    timeout: 0,
+    instance_groups: [],
+  },
+};
+
+const schedule = {
+  id: 2,
+  name: 'Cleanup Activity Schedule',
+  description: 'Automatically Generated Schedule',
+  created: '2023-05-08T14:57:05.224768Z',
+  modified: '2023-05-15T15:41:29.376525Z',
+  enabled: true,
+  dtstart: '2023-05-09T14:57:05Z',
+  extra_data: { days: '355' },
+  summary_fields: {
+    modified_by: { id: 1, username: 'admin', first_name: '', last_name: '' },
+    unified_job_template: {
+      id: 2,
+      name: 'Cleanup Activity Stream',
+      description: 'Remove activity stream history',
+    },
+  },
+};
 
 // Mock dependencies
 vi.mock('@ansible/common-ui/crud/Data');
@@ -41,15 +175,11 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        {
-          ...templateLaunch,
-          defaults: { ...templateLaunch.defaults, extra_vars: 'alex: corey' },
-        } as LaunchConfiguration,
-        [],
-        [],
-        []
-      );
+      const testConfig: LaunchConfiguration = {
+        ...templateLaunch,
+        defaults: { ...templateLaunch.defaults, extra_vars: 'alex: corey' },
+      };
+      const promptValues = await hookFunction(testConfig, [], [], []);
 
       expect(promptValues.extra_vars).toEqual(
         JSON.stringify({
@@ -63,21 +193,15 @@ describe('useGetSchedulePromptValues', () => {
         ...schedule,
         extra_data: { custom_var: 'non_survey_value' },
       });
-      const customSurvey = {
+      const customSurvey: Survey = {
         ...survey,
-        spec: survey.spec.map((spec) => ({ ...spec, new_question: false, max: 100, min: 1 })),
+        spec: survey.spec.map((spec: Spec) => ({ ...spec, new_question: false, max: 100, min: 1 })),
       };
 
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        templateLaunch as LaunchConfiguration,
-        [],
-        [],
-        [],
-        customSurvey
-      );
+      const promptValues = await hookFunction(templateLaunch, [], [], [], customSurvey);
       // Should only contain non-survey variables
       expect(promptValues.extra_vars).toEqual(JSON.stringify({ custom_var: 'non_survey_value' }));
       expect(JSON.parse(promptValues.extra_vars)).not.toHaveProperty('test_var');
@@ -91,15 +215,11 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        {
-          ...templateLaunch,
-          ask_labels_on_launch: true,
-        } as LaunchConfiguration,
-        [],
-        [],
-        []
-      );
+      const testConfig: LaunchConfiguration = {
+        ...templateLaunch,
+        ask_labels_on_launch: true,
+      };
+      const promptValues = await hookFunction(testConfig, [], [], []);
 
       // Should fall back to provided schedule labels (empty array)
       expect(promptValues.labels).toEqual([{ id: 1, name: 'alex label' }]);
@@ -118,15 +238,11 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        {
-          ...templateLaunch,
-          ask_execution_environment_on_launch: true,
-        } as LaunchConfiguration,
-        [],
-        [],
-        []
-      );
+      const testConfig: LaunchConfiguration = {
+        ...templateLaunch,
+        ask_execution_environment_on_launch: true,
+      };
+      const promptValues = await hookFunction(testConfig, [], [], []);
 
       expect(promptValues.execution_environment).toEqual({ id: 1, name: 'Default EE' });
     });
@@ -137,9 +253,7 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      await expect(hookFunction(templateLaunch as LaunchConfiguration, [], [], [])).rejects.toThrow(
-        'API Error'
-      );
+      await expect(hookFunction(templateLaunch, [], [], [])).rejects.toThrow('API Error');
     });
   });
 
@@ -150,7 +264,7 @@ describe('useGetSchedulePromptValues', () => {
     });
 
     it('should return template defaults when no schedule_id exists', async () => {
-      const templateWithPrompts = {
+      const templateWithPrompts: LaunchConfiguration = {
         ...templateLaunch,
         ask_variables_on_launch: true,
         ask_tags_on_launch: true,
@@ -164,12 +278,7 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        templateWithPrompts as LaunchConfiguration,
-        [],
-        [],
-        []
-      );
+      const promptValues = await hookFunction(templateWithPrompts, [], [], []);
 
       // Should use all defaults from template launch config
       expect(promptValues.extra_vars).toBe(templateLaunch.defaults.extra_vars);
@@ -194,7 +303,7 @@ describe('useGetSchedulePromptValues', () => {
     });
 
     it('should not make any API calls when creating new schedule', async () => {
-      const templateWithPrompts = {
+      const templateWithPrompts: LaunchConfiguration = {
         ...templateLaunch,
         ask_variables_on_launch: true,
       };
@@ -202,14 +311,14 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      await hookFunction(templateWithPrompts as LaunchConfiguration, [], [], []);
+      await hookFunction(templateWithPrompts, [], [], []);
 
       // Verify no API calls were made
       expect(mockRequestGet).not.toHaveBeenCalled();
     });
 
     it('should properly merge provided credentials with template defaults during creation', async () => {
-      const templateWithCredentialPrompt = {
+      const templateWithCredentialPrompt: LaunchConfiguration = {
         ...templateLaunch,
         ask_credential_on_launch: true,
       };
@@ -218,7 +327,7 @@ describe('useGetSchedulePromptValues', () => {
       const hookFunction = result.current;
 
       const promptValues = await hookFunction(
-        templateWithCredentialPrompt as LaunchConfiguration,
+        templateWithCredentialPrompt,
         credentials.results as unknown as Credential[],
         [],
         []
@@ -230,7 +339,7 @@ describe('useGetSchedulePromptValues', () => {
     });
 
     it('should use provided instance groups when creating new schedule', async () => {
-      const templateWithInstanceGroupPrompt = {
+      const templateWithInstanceGroupPrompt: LaunchConfiguration = {
         ...templateLaunch,
         ask_instance_groups_on_launch: true,
       };
@@ -239,7 +348,7 @@ describe('useGetSchedulePromptValues', () => {
       const hookFunction = result.current;
 
       const promptValues = await hookFunction(
-        templateWithInstanceGroupPrompt as LaunchConfiguration,
+        templateWithInstanceGroupPrompt,
         [],
         instanceGroups.results as unknown as InstanceGroup[],
         []
@@ -251,7 +360,7 @@ describe('useGetSchedulePromptValues', () => {
     });
 
     it('should use provided labels when creating new schedule', async () => {
-      const templateWithLabelsPrompt = {
+      const templateWithLabelsPrompt: LaunchConfiguration = {
         ...templateLaunch,
         ask_labels_on_launch: true,
       };
@@ -260,7 +369,7 @@ describe('useGetSchedulePromptValues', () => {
       const hookFunction = result.current;
 
       const promptValues = await hookFunction(
-        templateWithLabelsPrompt as LaunchConfiguration,
+        templateWithLabelsPrompt,
         [],
         [],
         labels.results as unknown as Label[]
@@ -272,7 +381,7 @@ describe('useGetSchedulePromptValues', () => {
     });
 
     it('should handle string tag parsing from template defaults during creation', async () => {
-      const customTemplate = {
+      const customTemplate: LaunchConfiguration = {
         ...templateLaunch,
         ask_tags_on_launch: true,
         ask_skip_tags_on_launch: true,
@@ -286,7 +395,7 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(customTemplate as LaunchConfiguration, [], [], []);
+      const promptValues = await hookFunction(customTemplate, [], [], []);
 
       // Should parse string tags into tag arrays
       expect(promptValues.job_tags).toEqual([
@@ -301,41 +410,36 @@ describe('useGetSchedulePromptValues', () => {
     });
 
     it('should handle survey spec parameter during creation (should be ignored)', async () => {
-      const customTemplate = {
+      const customTemplate: LaunchConfiguration = {
         ...templateLaunch,
         defaults: {
           ...templateLaunch.defaults,
           extra_vars: '{"custom_var": "value", "test_var": "survey_value"}',
         },
       };
-      const customSurvey = {
+      const customSurvey: Survey = {
         ...survey,
-        spec: survey.spec.map((spec) => ({ ...spec, new_question: false, max: 100, min: 1 })),
+        spec: survey.spec.map((spec: Spec) => ({ ...spec, new_question: false, max: 100, min: 1 })),
       };
 
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        customTemplate as LaunchConfiguration,
-        [],
-        [],
-        [],
-        customSurvey
-      );
+      const promptValues = await hookFunction(customTemplate, [], [], [], customSurvey);
 
       // Should use template defaults for extra_vars (survey filtering doesn't apply during creation)
       expect(promptValues.extra_vars).toBe(customTemplate.defaults.extra_vars);
     });
 
     it('should handle empty template defaults gracefully during creation', async () => {
-      const emptyTemplate = {
+      const emptyTemplate: LaunchConfiguration = {
         ...templateLaunch,
         defaults: {
+          ...templateLaunch.defaults,
           extra_vars: '',
           job_tags: '',
           skip_tags: '',
-          inventory: null,
+          inventory: null as unknown as { name: string; id: number },
           credentials: [],
           instance_groups: [],
           labels: [],
@@ -345,12 +449,7 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        emptyTemplate as unknown as LaunchConfiguration,
-        [],
-        [],
-        []
-      );
+      const promptValues = await hookFunction(emptyTemplate, [], [], []);
 
       // Should handle empty defaults gracefully
       expect(promptValues.extra_vars).toBe('');
@@ -363,7 +462,7 @@ describe('useGetSchedulePromptValues', () => {
     });
 
     it('should handle all populated launch configuration defaults during creation', async () => {
-      const fullyPopulatedTemplate = {
+      const fullyPopulatedTemplate: LaunchConfiguration = {
         ...templateLaunch,
         // Enable prompts for all fields we're testing
         ask_scm_branch_on_launch: true,
@@ -416,14 +515,13 @@ describe('useGetSchedulePromptValues', () => {
           execution_environment: {
             id: 25,
             name: 'Custom EE',
-            image: 'registry.example.com/custom-ee:latest',
           },
           forks: 10,
           job_slice_count: 4,
           timeout: 3600,
           instance_groups: [
-            { id: 50, name: 'Production Cluster' },
-            { id: 51, name: 'High Memory Nodes' },
+            { id: 50, name: 'Production Cluster' } as unknown as InstanceGroup,
+            { id: 51, name: 'High Memory Nodes' } as unknown as InstanceGroup,
           ],
         },
       };
@@ -431,12 +529,7 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        fullyPopulatedTemplate as unknown as LaunchConfiguration,
-        [],
-        [],
-        []
-      );
+      const promptValues = await hookFunction(fullyPopulatedTemplate, [], [], []);
 
       // Verify all fields are properly set from template defaults
       expect(promptValues.inventory).toEqual({
@@ -484,7 +577,6 @@ describe('useGetSchedulePromptValues', () => {
       expect(promptValues.execution_environment).toEqual({
         id: 25,
         name: 'Custom EE',
-        image: 'registry.example.com/custom-ee:latest',
       });
 
       expect(promptValues.forks).toBe(10);
@@ -516,16 +608,17 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
+      const testConfig: LaunchConfiguration = {
+        ...templateLaunch,
+        ask_tags_on_launch: true,
+        ask_verbosity_on_launch: true,
+        ask_inventory_on_launch: true,
+        ask_credential_on_launch: true,
+        ask_instance_groups_on_launch: true,
+        ask_labels_on_launch: true,
+      };
       const promptValues = await hookFunction(
-        {
-          ...templateLaunch,
-          ask_tags_on_launch: true,
-          ask_verbosity_on_launch: true,
-          ask_inventory_on_launch: true,
-          ask_credential_on_launch: true,
-          ask_instance_groups_on_launch: true,
-          ask_labels_on_launch: true,
-        } as LaunchConfiguration,
+        testConfig,
         credentials.results as unknown as Credential[],
         instanceGroups.results as unknown as InstanceGroup[],
         labels.results as unknown as Label[]
@@ -566,20 +659,16 @@ describe('useGetSchedulePromptValues', () => {
       const { result } = renderHook(() => useGetSchedulePromptValues());
       const hookFunction = result.current;
 
-      const promptValues = await hookFunction(
-        {
-          ...templateLaunch,
-          ask_tags_on_launch: true,
-          ask_skip_tags_on_launch: true,
-          ask_limit_on_launch: true,
-          ask_forks_on_launch: true,
-          ask_verbosity_on_launch: true,
-          ask_inventory_on_launch: true,
-        } as LaunchConfiguration,
-        [],
-        [],
-        []
-      );
+      const testConfig: LaunchConfiguration = {
+        ...templateLaunch,
+        ask_tags_on_launch: true,
+        ask_skip_tags_on_launch: true,
+        ask_limit_on_launch: true,
+        ask_forks_on_launch: true,
+        ask_verbosity_on_launch: true,
+        ask_inventory_on_launch: true,
+      };
+      const promptValues = await hookFunction(testConfig, [], [], []);
 
       // Should use all defaults
       expect(promptValues.inventory).toEqual({ name: 'Default Inventory', id: 1 });

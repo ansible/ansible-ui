@@ -1,7 +1,0 @@
-{
-  "name": "E2E GitHub Authenticator",
-  "callbackUrl": "https://yourapp.com/oauth/callback",
-  "oauth2Key": "GitHubKey",
-  "oauth2Secret": "GitHubSecret",
-  "additionalFields": "E2E Test GitHub Data"
-}
