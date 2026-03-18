@@ -9,6 +9,7 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { RulebookActivation } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
@@ -17,6 +18,7 @@ test.afterEach(setupAfter);
 test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () => {
   let organizationName: string;
   let platformOrgId: number;
+  let edaOrgId: number;
   let edaProject: EdaProjectType;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRulebook: EdaRulebook;
@@ -34,10 +36,18 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
 
     platformOrgId = platformOrg.id;
 
+    // Get the corresponding EDA organization
+    const ansibleId = platformOrg.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error('Platform organization missing ansible_id');
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+    edaOrgId = edaOrganization.id;
+
     const projectName = createE2EName('project');
     edaProject = (await edaAPI.post(page, 'projects/', {
       name: projectName,
-      organization_id: platformOrgId,
+      organization_id: edaOrgId,
       url: 'https://github.com/ansible/ansible-ui',
     })) as EdaProjectType;
 
@@ -56,7 +66,7 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
     const deName = createE2EName('decision-environment');
     edaDecisionEnvironment = (await edaAPI.post(page, 'decision-environments/', {
       name: deName,
-      organization_id: platformOrgId,
+      organization_id: edaOrgId,
       image_url: 'quay.io/ansible/ansible-rulebook:main',
     })) as EdaDecisionEnvironment;
   });

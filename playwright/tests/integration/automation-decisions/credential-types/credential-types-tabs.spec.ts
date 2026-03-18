@@ -7,15 +7,23 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { EdaCredentialType, Organization } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credential-types' }));
 test.afterEach(setupAfter);
 
 test.describe('EDA Credentials Type - Tabs', () => {
   let organization: PlatformOrganization;
+  let edaOrgId: number;
 
   test.beforeEach(async ({ page }) => {
     organization = await Organization.api.create(page);
+    const ansibleId = organization.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error('Platform organization missing ansible_id');
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+    edaOrgId = edaOrganization.id;
   });
 
   test.afterEach(async ({ page }) => {
@@ -43,7 +51,7 @@ test.describe('EDA Credentials Type - Tabs', () => {
           // Create credential via API
           const credential = (await edaAPI.post(page, '/eda-credentials/', {
             name: credentialName,
-            organization_id: organization.id,
+            organization_id: edaOrgId,
             credential_type_id: credType.id,
             description: 'This is a Credential with custom credential type',
             inputs: {

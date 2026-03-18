@@ -6,15 +6,23 @@ import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAn
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { EdaProject, Organization } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 
 test.beforeEach(setupBefore({ path: '/decisions/projects' }));
 test.afterEach(setupAfter);
 
 test.describe('EDA Projects CRUD', () => {
   let organization: PlatformOrganization;
+  let edaOrgId: number;
 
   test.beforeEach(async ({ page }) => {
     organization = await Organization.api.create(page);
+    const ansibleId = organization.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error('Platform organization missing ansible_id');
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+    edaOrgId = edaOrganization.id;
   });
 
   test.afterEach(async ({ page }) => {
@@ -26,7 +34,7 @@ test.describe('EDA Projects CRUD', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
-        organization: organization.id,
+        organization: edaOrgId,
       });
 
       try {
@@ -73,7 +81,7 @@ test.describe('EDA Projects CRUD', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
-        organization: organization.id,
+        organization: edaOrgId,
       });
       let projectDeleted = false;
 
