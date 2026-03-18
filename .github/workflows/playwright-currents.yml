@@ -145,7 +145,6 @@ jobs:
           --key="${CURRENTS_RECORD_KEY}" \
           --project-id="${CURRENTS_PROJECT_ID}" \
           --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
-          --pwc-cancel-after-failures=10 \
           -- \
           --shard=${SHARD} \
           --project="${PROJECT}"
