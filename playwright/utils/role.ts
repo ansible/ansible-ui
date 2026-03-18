@@ -108,6 +108,40 @@ export const Role = {
         }
       }
     },
+
+    assignToUser: async (
+      page: Page,
+      options: {
+        resourceId: string;
+        resourceType: string; // e.g., 'eda.activation', 'eda.project'
+        roleId: number;
+        userId: number;
+      }
+    ): Promise<void> => {
+      await gatewayAPI.post(page, 'role_user_assignments/', {
+        object_id: options.resourceId,
+        content_type: options.resourceType,
+        role_definition: options.roleId,
+        user: options.userId,
+      });
+    },
+
+    assignToTeam: async (
+      page: Page,
+      options: {
+        resourceId: string;
+        resourceType: string; // e.g., 'eda.project'
+        roleId: number;
+        teamId: number;
+      }
+    ): Promise<void> => {
+      await gatewayAPI.post(page, 'role_team_assignments/', {
+        object_id: options.resourceId,
+        content_type: options.resourceType,
+        role_definition: options.roleId,
+        team: options.teamId,
+      });
+    },
   },
 
   ui: {
