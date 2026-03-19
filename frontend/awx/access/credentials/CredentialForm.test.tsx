@@ -342,11 +342,13 @@ describe('CredentialForm', () => {
         expect(screen.getByTestId('name')).toHaveValue('Test Credential');
       });
 
-      expect(screen.getByText('Username')).toBeInTheDocument();
-      expect(screen.getByText('Password')).toBeInTheDocument();
-      expect(screen.getByText('SSH Private Key')).toBeInTheDocument();
-      expect(screen.getByText('Privilege Escalation Method')).toBeInTheDocument();
-      expect(screen.getByText('Privilege Escalation Username')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Username')).toBeInTheDocument();
+        expect(screen.getByText('Password')).toBeInTheDocument();
+        expect(screen.getByText('SSH Private Key')).toBeInTheDocument();
+        expect(screen.getByText('Privilege Escalation Method')).toBeInTheDocument();
+        expect(screen.getByText('Privilege Escalation Username')).toBeInTheDocument();
+      });
     });
 
     it('should render AWS credential type sub-form fields', async () => {
@@ -375,9 +377,11 @@ describe('CredentialForm', () => {
         expect(screen.getByTestId('name')).toHaveValue('Test Credential');
       });
 
-      expect(screen.getByText('Access Key')).toBeInTheDocument();
-      expect(screen.getByText('Secret Key')).toBeInTheDocument();
-      expect(screen.getByText('STS Token')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Access Key')).toBeInTheDocument();
+        expect(screen.getByText('Secret Key')).toBeInTheDocument();
+        expect(screen.getByText('STS Token')).toBeInTheDocument();
+      });
     });
 
     it('should render Source Control credential type sub-form fields', async () => {
@@ -406,10 +410,12 @@ describe('CredentialForm', () => {
         expect(screen.getByTestId('name')).toHaveValue('Test Credential');
       });
 
-      expect(screen.getByText('Username')).toBeInTheDocument();
-      expect(screen.getByText('Password')).toBeInTheDocument();
-      expect(screen.getByText('SCM Private Key')).toBeInTheDocument();
-      expect(screen.getByText('Private Key Passphrase')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Username')).toBeInTheDocument();
+        expect(screen.getByText('Password')).toBeInTheDocument();
+        expect(screen.getByText('SCM Private Key')).toBeInTheDocument();
+        expect(screen.getByText('Private Key Passphrase')).toBeInTheDocument();
+      });
     });
 
     it('should render VMware vCenter credential type sub-form fields with required indicators', async () => {
@@ -438,9 +444,11 @@ describe('CredentialForm', () => {
         expect(screen.getByTestId('name')).toHaveValue('Test Credential');
       });
 
-      expect(screen.getByText('VCenter Host')).toBeInTheDocument();
-      expect(screen.getByText('Username')).toBeInTheDocument();
-      expect(screen.getByText('Password')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('VCenter Host')).toBeInTheDocument();
+        expect(screen.getByText('Username')).toBeInTheDocument();
+        expect(screen.getByText('Password')).toBeInTheDocument();
+      });
 
       // Verify required indicators on VMware fields
       const hostFormGroup = screen.getByTestId('host-form-group');

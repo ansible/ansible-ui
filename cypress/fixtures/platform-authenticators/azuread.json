@@ -1,7 +1,0 @@
-{
-  "name": "E2E Azure AD Authenticator",
-  "callbackUrl": "https://yourapp.com/oauth/callback",
-  "oidcKey": "testKey",
-  "oidcSecret": "testSecret",
-  "additionalFields": "E2E Azure AD Data"
-}
