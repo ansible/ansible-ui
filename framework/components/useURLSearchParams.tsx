@@ -27,6 +27,10 @@ export function useURLSearchParams(): [
         return;
       }
       const newSearch = searchParams.toString();
+      const currentSearch = location.location?.search?.replace(/^\?/, '') ?? '';
+      // Skip update if the search string hasn't changed to avoid
+      // excessive history.replaceState calls (Firefox rate-limits these)
+      if (newSearch === currentSearch) return;
       if (newSearch) location.update('?' + newSearch);
       else location.update(pathname); // retain the existing pathname
     },

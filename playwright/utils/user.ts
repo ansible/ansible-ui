@@ -37,18 +37,39 @@ export const User = {
       const lastName = options.lastName ?? `LastName${Math.random().toString(36).substring(2, 4)}`;
       const email = options.email ?? `user${Math.random().toString(36).substring(2, 5)}@email.com`;
 
-      const user = await gatewayAPI.post<PlatformUser>(page, 'users/', {
+      // Build payload with only defined fields
+      const payload: Record<string, string | boolean> = {
         username,
         password,
         first_name: firstName,
         last_name: lastName,
         email,
-        is_superuser: options.isSuperuser ?? false,
-        is_platform_auditor: options.isPlatformAuditor ?? false,
-      });
+      };
+
+      if (options.isSuperuser !== undefined) payload.is_superuser = options.isSuperuser;
+
+      const user = await gatewayAPI.post<PlatformUser>(page, 'users/', payload);
 
       if (!user) {
         throw new Error('Failed to create user: API returned null');
+      }
+
+      // Platform Auditor is a role assignment, not a user field
+      if (options.isPlatformAuditor) {
+        const roleData = await gatewayAPI.get<{ results: Array<{ id: number }> }>(
+          page,
+          'role_definitions/',
+          { params: { name: 'Platform Auditor' } }
+        );
+        const roleId = roleData?.results?.[0]?.id;
+        if (!roleId) {
+          throw new Error('Failed to find Platform Auditor role definition');
+        }
+        await gatewayAPI.post(page, 'role_user_assignments/', {
+          user: user.id,
+          role_definition: roleId,
+          object_id: null,
+        });
       }
 
       return user;

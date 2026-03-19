@@ -65,7 +65,9 @@ export type { CreateExecutionEnvironmentOptions } from './hub';
 
 // Resource modules - Platform
 export { Authentication } from './authentication';
+export { FeatureFlags } from './featureFlags';
 export { Lightspeed } from './lightspeed';
+export { SettingsFeatureFlags } from './settingsFeatureFlags';
 
 // Re-export commonly used resource types
 export type { RoleTestData } from './role';
