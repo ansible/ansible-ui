@@ -509,6 +509,28 @@ jobs:
             ls -la coverage/ 2>/dev/null || echo "No coverage directory"
           fi
 
+      - name: Upload unit test coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          url: https://codecov-codecov.apps.rosa.konflux-qe.zmr9.p3.openshiftapps.com
+          slug: ansible-automation-platform/aap-ui
+          files: ./coverage/vitest/lcov.info
+          flags: unit-tests
+          disable_search: true
+          fail_ci_if_error: false
+
+      - name: Upload e2e test coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          url: https://codecov-codecov.apps.rosa.konflux-qe.zmr9.p3.openshiftapps.com
+          slug: ansible-automation-platform/aap-ui
+          files: ./coverage/playwright/lcov.info
+          flags: e2e-tests
+          disable_search: true
+          fail_ci_if_error: false
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
