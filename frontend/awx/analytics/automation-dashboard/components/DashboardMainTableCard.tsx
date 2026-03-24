@@ -164,6 +164,9 @@ export function DashboardMainTableCard() {
   const timeTakenCreateAutomationColumn: ITableColumn<IJobTemplate> = {
     id: 'time_taken_create_automation',
     header: t('Time taken to create automation (min)'),
+    helpText: t(
+      'Time taken to create the automation for the job template. This is used to calculate the total time spent on automation, which includes both the time taken to create the automation and the time taken to execute it.'
+    ),
     cell: (item) => tableInputField('time_taken_create_automation_minutes', item),
   };
 
@@ -225,27 +228,25 @@ export function DashboardMainTableCard() {
         <DashboardValueCard
           id="cost-manual-automation-card"
           title={t('Cost of manual automation')}
-          help={t(
-            'Manual time of automation (minutes) * Host executions * Average cost of an employee minute'
-          )}
+          help={t('Total cost if all jobs were run manually')}
           value={'$0.00'}
         ></DashboardValueCard>
         <DashboardValueCard
           id="cost-automated-execution-card"
           title={t('Cost of automated execution')}
-          help={t('Running time (s) / 60 * Cost per minute of AAP')}
+          help={t('Total cost of running jobs on AAP')}
           value={'$0.00'}
         ></DashboardValueCard>
         <DashboardValueCard
           id="total-savings-card"
           title={t('Total savings/cost avoided')}
-          help={t('Cost of manual automation - Cost of automated execution')}
+          help={t('Difference between manual and automated cost')}
           value={'$0.00'}
         ></DashboardValueCard>
         <DashboardValueCard
           id="total-hours-saved-card"
           title={t('Total hours saved/avoided')}
-          help={t('Manual time of automation (minutes) * Host executions - Running time (s) / 60.')}
+          help={t('Time saved by automation vs manual execution')}
           value={'0.00h'}
         ></DashboardValueCard>
       </div>

@@ -81,31 +81,37 @@ export function AutomationDashboard() {
       <PageDashboard>
         <DashboardValueCard
           id="successful-jobs-card"
-          title={t('Total number of successful jobs')}
-          help={t('This indicates the number of automation jobs that were completed successfully.')}
+          title={t('Successful jobs')}
+          help={t(
+            'Number of job runs that completed without error in the selected period. Use the ratio between successful and failed jobs to track automation health and reliability over time.'
+          )}
           linkText={t('See all successful jobs in AAP')}
           to={getPageUrl(AwxRoute.Jobs) + '?status=successful'}
           value={15}
         ></DashboardValueCard>
         <DashboardValueCard
           id="failed-jobs-card"
-          title={t('Total number of failed jobs')}
-          help={t('This indicates the number of automation jobs that were completed successfully.')}
+          title={t('Failed jobs')}
+          help={t(
+            'Number of job runs that ended in failure in the selected period. Review failed jobs to fix playbooks, credentials, or inventory issues and improve success rates.'
+          )}
           linkText={t('See all failed jobs in AAP')}
           to={getPageUrl(AwxRoute.Jobs) + '?status=failed'}
           value={5}
         ></DashboardValueCard>
         <DashboardValueCard
           id="unique-hosts-card"
-          title={t('All unique hosts automated')}
-          help={t('This is the number of Controller inventory records you have automated.')}
+          title={t('Hosts automated')}
+          help={t(
+            'Number of hosts that executed at least one automation job in the selected period. Indicates how much of your inventory is actively automated and can help with license or capacity planning.'
+          )}
           value={2}
         ></DashboardValueCard>
         <DashboardValueCard
           id="automation-hours-card"
-          title={t('Total hours of automation')}
+          title={t('Hours of automation')}
           help={t(
-            'This represents the cumulative time that Ansible Automation Platform spent executing jobs.'
+            'Sum of all job runtimes in the selected period. Reflects total automation workload and can inform capacity planning and resource allocation.'
           )}
           value={2}
           valueSuffix="h"
@@ -114,7 +120,7 @@ export function AutomationDashboard() {
           id="top-projects-card"
           title={t('Top 5 projects')}
           help={t(
-            'This section lists the top five automation projects based on the number of jobs executed.'
+            'Projects ranked by total job count in the selected period. Helps identify which projects are driving the most automation activity.'
           )}
           firstColumnHeader={t('Project name')}
           emptyStateTitle={t('No projects')}
@@ -125,7 +131,7 @@ export function AutomationDashboard() {
           id="top-users-card"
           title={t('Top 5 users')}
           help={t(
-            'This section lists the top five users of Ansible Automation Platform, with a breakdown of the total number of jobs run by each user.'
+            'Users ranked by automation runs they triggered or that ran in their context in the selected period. Shows individual adoption and activity.'
           )}
           firstColumnHeader={t('User name')}
           emptyStateTitle={t('No users')}
@@ -135,15 +141,19 @@ export function AutomationDashboard() {
         <DashboardChartCard
           id="host-chart-card"
           title={t('Number of hosts jobs are running on')}
-          help={t('This is the total number of hosts that jobs are executed upon.')}
+          help={t(
+            'Number of hosts that ran at least one job in the selected period. Complements run count by showing how broadly automation is applied across your inventory.'
+          )}
           summaryValue={12015}
           values={chartValues}
           variant={'lineChart'}
         ></DashboardChartCard>
         <DashboardChartCard
           id="job-chart-card"
-          title={t('Number of times jobs are running')}
-          help={t('This is the total number of individual job executions.')}
+          title={t('Number of times jobs were run')}
+          help={t(
+            'Total number of job executions in the selected period, regardless of success or failure. Use this to understand automation volume, trends, and adoption over time.'
+          )}
           variant={'barChart'}
           summaryValue={0}
           values={[]}
