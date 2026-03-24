@@ -31,9 +31,9 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
     >
       <FlexItem>
         <DashboardTableInputField
-          label={t('Average cost of per hour to manually run the job')}
+          label={t('Hourly rate for manually running the job')}
           labelHelp={t(
-            'Please enter an average cost per hour for the engineer manually running jobs'
+            'The hourly labor cost used to estimate what it would cost to run these jobs manually. Used to calculate manual cost and savings in the table below.'
           )}
           id={`cost_manual_automation_input`}
           currentValue={toolbarState?.manual_cost_automation_per_hour}
@@ -44,9 +44,9 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
       </FlexItem>
       <FlexItem>
         <DashboardTableInputField
-          label={t('Average cost per minute of running on AAP')}
+          label={t('Monthly AAP cost')}
           labelHelp={t(
-            'Please enter an average cost per minute of running a job in the Ansible Automation Platform'
+            'Monthly cost of running the Ansible Automation Platform. This value includes license, labor and infrastructure costs to run AAP. It is used to calculate the automation savings'
           )}
           id={`cost_automated_execution`}
           currentValue={toolbarState?.automated_process_cost_per_minute}

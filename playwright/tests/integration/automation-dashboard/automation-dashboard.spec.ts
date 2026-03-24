@@ -36,14 +36,12 @@ test.describe('Automation Dashboard', () => {
   test('Should have correct link in value cards', async ({ page }) => {
     const successfulJobsCard = page
       .getByTestId('successful-jobs-card')
-      .filter({ hasText: 'Total number of successful jobs' });
+      .filter({ hasText: 'Successful jobs' });
     await successfulJobsCard.getByRole('link', { name: 'See all successful jobs in AAP' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=successful$'));
 
     await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
-    const failedJobsCard = page
-      .getByTestId('failed-jobs-card')
-      .filter({ hasText: 'Total number of failed jobs' });
+    const failedJobsCard = page.getByTestId('failed-jobs-card').filter({ hasText: 'Failed jobs' });
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs in AAP' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
   });

@@ -26,10 +26,10 @@ describe('AutomationDashboard', () => {
   });
 
   test.each([
-    { label: 'Total number of successful jobs' },
-    { label: 'Total number of failed jobs' },
-    { label: 'All unique hosts automated' },
-    { label: 'Total hours of automation' },
+    { label: 'Successful jobs' },
+    { label: 'Failed jobs' },
+    { label: 'Hosts automated' },
+    { label: 'Hours of automation' },
   ])('render dashboard value card $label', ({ label }) => {
     const { getByText } = render(testWrapper());
     expect(getByText(label)).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe('AutomationDashboard', () => {
 
   test.each([
     { title: 'Number of hosts jobs are running on' },
-    { title: 'Number of times jobs are running' },
+    { title: 'Number of times jobs were run' },
   ])('renders dashboard chart card $title', ({ title }) => {
     const { getByText } = render(testWrapper());
     expect(getByText(title)).toBeInTheDocument();
@@ -56,8 +56,8 @@ describe('AutomationDashboard', () => {
     { title: 'Cost of automated execution' },
     { title: 'Total savings/cost avoided' },
     { title: 'Total hours saved/avoided' },
-    { title: 'Average cost of per hour to manually run the job' },
-    { title: 'Average cost per minute of running on AAP' },
+    { title: 'Hourly rate for manually running the job' },
+    { title: 'Monthly AAP cost' },
     { title: 'Include time taken to create automation into calculation' },
     { title: 'Template Name' },
     { title: 'Number of job executions' },

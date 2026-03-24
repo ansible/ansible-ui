@@ -38,8 +38,8 @@ describe('DashboardTableToolbarRow', () => {
 
   test('renders input fields and switch with correct values', () => {
     render(testWrapper({ ...defaultProps, itemCount: 1 }));
-    expect(screen.getByLabelText(/Average cost of per hour/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Average cost per minute/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Hourly rate for manually running the job/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Monthly AAP cost/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Include time taken to create automation/i)).toBeInTheDocument();
     expect(screen.getByTestId('btn-export-csv')).toBeEnabled();
   });
