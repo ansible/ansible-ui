@@ -1,29 +1,29 @@
-import { test, expect } from '@playwright/test';
-import { setupBefore, setupAfter } from '@ansible/playwright/commands/setup';
-import { login, platformUI } from '@ansible/playwright/commands/login';
-import { logout } from '@ansible/playwright/commands/logout';
-import { navigateTo } from '@ansible/playwright/commands/navigateTo';
-import { getTableRow } from '@ansible/playwright/commands/getTableRow';
-import {
-  Organization,
-  User,
-  Team,
-  EdaCredential,
-  EdaOrganization,
-  EdaProject,
-  EdaRulebook,
-  DecisionEnvironment,
-  RulebookActivation,
-} from '@ansible/playwright/utils';
-import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
-import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { EdaCredential as EdaCredentialType } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
 import { EdaOrganization as EdaOrganizationType } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaProject as EdaProjectType } from '@ansible/eda-ui/interfaces/EdaProject';
 import { EdaRulebook as EdaRulebookType } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
-import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
-import { EdaCredential as EdaCredentialType } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { getTableRow } from '@ansible/playwright/commands/getTableRow';
+import { login, platformUI } from '@ansible/playwright/commands/login';
+import { logout } from '@ansible/playwright/commands/logout';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import {
+  DecisionEnvironment,
+  EdaCredential,
+  EdaOrganization,
+  EdaProject,
+  EdaRulebook,
+  Organization,
+  RulebookActivation,
+  Team,
+  User,
+} from '@ansible/playwright/utils';
+import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
@@ -445,9 +445,8 @@ test.describe('EDA - RBAC - User and Team Permissions', () => {
 
       await test.step('Verify user2 cannot access projects', async () => {
         await navigateTo(page, 'Automation Decisions', 'Projects');
-        await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 
-        // Verify empty state is visible
         await expect(page.locator('.pf-v6-c-empty-state')).toBeVisible();
       });
 
