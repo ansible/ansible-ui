@@ -129,6 +129,166 @@ test.describe('Feature Flags - Toggle', () => {
   });
 });
 
+test.describe('Feature Flags - Private Flag Visibility', () => {
+  const createMockFlag = (overrides: Record<string, unknown> & { id: number }) => ({
+    url: `/api/gateway/v1/feature_flags/${String(overrides.id)}/`,
+    related: {
+      activity_stream: '/api/gateway/v1/activitystream/?content_type=29&object_id=1',
+      created_by: '/api/gateway/v1/users/1/',
+      modified_by: '/api/gateway/v1/users/1/',
+    },
+    summary_fields: {
+      modified_by: { id: 1, username: '_system', first_name: '', last_name: '' },
+      created_by: { id: 1, username: '_system', first_name: '', last_name: '' },
+      resource: { ansible_id: 'test-id', resource_type: 'shared.aapflag' },
+    },
+    created: '2026-03-10T14:00:05.323834Z',
+    created_by: 1,
+    modified: '2026-03-10T14:00:05.323834Z',
+    modified_by: 1,
+    name: 'FEATURE_TEST',
+    ui_name: 'Test Feature',
+    condition: 'boolean',
+    value: 'False',
+    required: false,
+    support_level: 'TECHNOLOGY_PREVIEW',
+    visibility: true,
+    toggle_type: 'run-time',
+    description: 'A test feature flag.',
+    support_url: '',
+    labels: [],
+    state: false,
+    ...overrides,
+  });
+
+  const mockFlags = [
+    createMockFlag({
+      id: 1,
+      name: 'FEATURE_PUBLIC_ENABLED_RUNTIME',
+      ui_name: 'Public Enabled Runtime Flag',
+      visibility: true,
+      state: true,
+      value: 'True',
+    }),
+    createMockFlag({
+      id: 2,
+      name: 'FEATURE_PRIVATE_DISABLED_RUNTIME',
+      ui_name: 'Private Disabled Runtime Flag',
+      visibility: false,
+      state: false,
+      value: 'False',
+    }),
+    createMockFlag({
+      id: 3,
+      name: 'FEATURE_PRIVATE_ENABLED_RUNTIME',
+      ui_name: 'Private Enabled Runtime Flag',
+      visibility: false,
+      state: true,
+      value: 'True',
+      support_level: 'DEVELOPER_PREVIEW',
+    }),
+    createMockFlag({
+      id: 4,
+      name: 'FEATURE_PRIVATE_ENABLED_INSTALL_TIME',
+      ui_name: 'Private Enabled Install Flag',
+      visibility: false,
+      state: true,
+      value: 'True',
+      toggle_type: 'install-time',
+    }),
+  ];
+
+  test('should hide private disabled flags and show private enabled flags regardless of toggle type', async ({
+    page,
+  }) => {
+    await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
+
+    // Stateful list mock: after PATCH disables flag 3, subsequent GETs reflect the change
+    let flag3Disabled = false;
+    await page.route('**/api/gateway/v1/feature_flags/', async (route) => {
+      const results = mockFlags.map((flag) => {
+        if (flag.id === 3 && flag3Disabled) {
+          return { ...flag, value: 'False', state: false };
+        }
+        return flag;
+      });
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ count: results.length, next: null, previous: null, results }),
+      });
+    });
+
+    // Mock the PATCH endpoint for toggling
+    await page.route(/\/api\/gateway\/v1\/feature_flags\/\d+\//, async (route) => {
+      if (route.request().method() === 'PATCH') {
+        flag3Disabled = true;
+        const flag = mockFlags.find((f) => f.id === 3)!;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ ...flag, value: 'False', state: false }),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await login(page, platformUIWithoutSlash + '/settings/feature-flags');
+    await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
+
+    // Public enabled flag should be visible
+    await expect(
+      page.getByRole('row').filter({ hasText: 'Public Enabled Runtime Flag' })
+    ).toBeVisible();
+
+    // Private disabled flag should NOT be visible
+    await expect(
+      page.getByRole('row').filter({ hasText: 'Private Disabled Runtime Flag' })
+    ).toBeHidden();
+
+    // Private enabled runtime flag should be visible with "Private" badge and an enabled toggle
+    const privateRuntimeRow = page
+      .getByRole('row')
+      .filter({ hasText: 'Private Enabled Runtime Flag' });
+    await expect(privateRuntimeRow).toBeVisible();
+    await expect(privateRuntimeRow.getByText('Private')).toBeVisible();
+    const runtimeToggle = privateRuntimeRow.getByTestId('toggle-switch').locator('input');
+    await expect(runtimeToggle).toBeEnabled();
+
+    // Private enabled install-time flag should be visible with a disabled toggle
+    const privateInstallRow = page
+      .getByRole('row')
+      .filter({ hasText: 'Private Enabled Install Flag' });
+    await expect(privateInstallRow).toBeVisible();
+    await expect(privateInstallRow.getByText('Private')).toBeVisible();
+    const installToggle = privateInstallRow.getByTestId('toggle-switch').locator('input');
+    await expect(installToggle).toBeDisabled();
+
+    // Disable the private enabled runtime flag
+    await privateRuntimeRow.getByTestId('toggle-switch').click();
+
+    const dialog = page.locator('dialog, [role="dialog"]').first();
+    await expect(dialog).toBeVisible();
+    await dialog.getByTestId('confirm').click();
+    await dialog.getByTestId('submit').click();
+    await expect(dialog).toBeHidden({ timeout: 5000 });
+
+    // After disabling, the private runtime flag should disappear from the table
+    await expect(
+      page.getByRole('row').filter({ hasText: 'Private Enabled Runtime Flag' })
+    ).toBeHidden();
+
+    // Public flag and private install-time flag should still be visible
+    await expect(
+      page.getByRole('row').filter({ hasText: 'Public Enabled Runtime Flag' })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ hasText: 'Private Enabled Install Flag' })
+    ).toBeVisible();
+  });
+});
+
 test.describe('Feature Flags - Access Control', () => {
   let normalUser: PlatformUser;
   let auditorUser: PlatformUser;
