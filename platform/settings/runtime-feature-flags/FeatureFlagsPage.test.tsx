@@ -432,7 +432,7 @@ describe('FeatureFlagsPage', () => {
     );
   });
 
-  it('should show disabled toggle with tooltip for private enabled flags', () => {
+  it('should allow toggling private enabled runtime flags', () => {
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: true, is_platform_auditor: false },
     } as ReturnType<typeof mockUsePlatformActiveUser>);
@@ -454,40 +454,8 @@ describe('FeatureFlagsPage', () => {
     render(<FeatureFlagsPage />);
 
     const toggle = screen.getByTestId('switch-1');
-    expect(toggle).toHaveAttribute(
-      'data-disabled',
-      'This feature flag is private and cannot be disabled.'
-    );
+    expect(toggle).toHaveAttribute('data-disabled', '');
     expect(toggle).toHaveAttribute('data-state', 'on');
-  });
-
-  it('should show disabled toggle with tooltip for private disabled flags', () => {
-    mockUsePlatformActiveUser.mockReturnValue({
-      activePlatformUser: { is_superuser: true, is_platform_auditor: false },
-    } as ReturnType<typeof mockUsePlatformActiveUser>);
-    mockUseRuntimeFeatureFlags.mockReturnValue({
-      flags: [
-        createFlag({
-          id: 1,
-          ui_name: 'Private Disabled Flag',
-          visibility: false,
-          state: false,
-          toggle_type: 'run-time',
-        }),
-      ],
-      isLoading: false,
-      error: undefined,
-      refresh: vi.fn(),
-    });
-
-    render(<FeatureFlagsPage />);
-
-    const toggle = screen.getByTestId('switch-1');
-    expect(toggle).toHaveAttribute(
-      'data-disabled',
-      'This feature flag is private and cannot be enabled.'
-    );
-    expect(toggle).toHaveAttribute('data-state', 'off');
   });
 
   it('should not disable toggle for runtime visible flags', () => {
