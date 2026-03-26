@@ -4,7 +4,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
-import PlatformLogo from '../assets/platform-logo.svg?react';
+import PlatformLogo from '../assets/platform-logo-login.svg?react';
 import { UIAuth } from '../interfaces/UIAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
