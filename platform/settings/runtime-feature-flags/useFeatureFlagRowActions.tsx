@@ -25,10 +25,6 @@ export function useFeatureFlagRowActions(options: {
         isDisabled: (flag) => {
           if (flag.toggle_type === 'install-time')
             return t('This is an install-time flag and cannot be toggled at runtime.');
-          if (!flag.visibility)
-            return flag.state
-              ? t('This feature flag is private and cannot be disabled.')
-              : t('This feature flag is private and cannot be enabled.');
           return undefined;
         },
         ariaLabel: (isEnabled: boolean) => (isEnabled ? t('Enabled') : t('Disabled')),

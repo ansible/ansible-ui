@@ -82,7 +82,7 @@ describe('useRuntimeFeatureFlags', () => {
     expect(result.current.error).toBeUndefined();
   });
 
-  it('should display private flags in read-only state', async () => {
+  it('should filter out private disabled flags', async () => {
     const flags = [
       createFlag({ id: 1, ui_name: 'Visible Flag', visibility: true, state: true }),
       createFlag({ id: 2, ui_name: 'Private Disabled Flag', visibility: false, state: false }),
@@ -94,8 +94,8 @@ describe('useRuntimeFeatureFlags', () => {
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    expect(result.current.flags).toHaveLength(2);
-    expect(result.current.flags[1].ui_name).toBe('Private Disabled Flag');
+    expect(result.current.flags).toHaveLength(1);
+    expect(result.current.flags[0].ui_name).toBe('Visible Flag');
   });
 
   it('should include flags with visibility=false and state=true', async () => {

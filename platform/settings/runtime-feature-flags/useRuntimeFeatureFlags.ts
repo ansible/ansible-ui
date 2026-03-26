@@ -16,7 +16,7 @@ export function useRuntimeFeatureFlags() {
 
   const flags = useMemo(() => {
     if (!response.data?.results) return [];
-    return response.data.results;
+    return response.data.results.filter((flag) => flag.visibility || flag.state);
   }, [response.data?.results]);
 
   return {
