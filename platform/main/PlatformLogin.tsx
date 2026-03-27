@@ -8,6 +8,17 @@ import PlatformLogo from '../assets/platform-logo-login.svg?react';
 import { UIAuth } from '../interfaces/UIAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
+import styled from 'styled-components';
+
+const Logo = styled(PlatformLogo)`
+  width: 420px;
+  color: white;
+
+  @media (max-width: 1199px) {
+    height: 64px;
+    width: auto;
+  }
+`;
 
 export function PlatformLogin(props: { children: ReactNode }) {
   const { activePlatformUser } = usePlatformActiveUser();
@@ -16,7 +27,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
   const brandImg = options?.custom_logo ? (
     <img src={options.custom_logo} alt={t('Custom logo')} style={{ height: 64 }} />
   ) : (
-    <PlatformLogo style={{ height: 64, color: 'white' }} />
+    <Logo />
   );
 
   if (activePlatformUser === undefined || options === undefined) {
