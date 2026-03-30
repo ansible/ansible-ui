@@ -1,9 +1,9 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
-import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/constants';
+import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
@@ -21,13 +21,9 @@ test.describe('Organization User and Team Management', () => {
   let user1Name: string;
   let user2Name: string;
 
-  // Check build type and skip for SaaS/Azure - must be in beforeAll for skip to work
-  test.beforeAll(async ({ browser }) => {
-    const page = await browser.newPage();
-    const buildType = await checkBuildType(page);
-    await page.close();
-
-    if (buildType === SAAS_URL || buildType === AZURE_URL) {
+  // Check topology type and skip for SaaS/Azure
+  test.beforeAll(() => {
+    if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
       test.skip(true, 'Test should not run on SaaS/Azure deployment');
     }
   });

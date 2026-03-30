@@ -1,7 +1,6 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -18,8 +17,7 @@ test.describe('EDA Event Streams - CRUD Operations', () => {
     'should create an event stream and assert the information on details page',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const buildType = await checkBuildType(page);
-      if (buildType === SAAS_URL) {
+      if (isSaaS()) {
         test.skip();
         return;
       }
@@ -101,8 +99,7 @@ test.describe('EDA Event Streams - CRUD Operations', () => {
   );
 
   test('should edit an event stream', { tag: ['@not_mock'] }, async ({ page }) => {
-    const buildType = await checkBuildType(page);
-    if (buildType === SAAS_URL) {
+    if (isSaaS()) {
       test.skip();
       return;
     }
@@ -191,8 +188,7 @@ test.describe('EDA Event Streams - CRUD Operations', () => {
   });
 
   test('should delete an event stream', { tag: ['@not_mock'] }, async ({ page }) => {
-    const buildType = await checkBuildType(page);
-    if (buildType === SAAS_URL) {
+    if (isSaaS()) {
       test.skip();
       return;
     }

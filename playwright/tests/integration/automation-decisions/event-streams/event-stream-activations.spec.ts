@@ -1,7 +1,6 @@
 import { edaAPI } from '@ansible/playwright/commands/apiClient';
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -23,6 +22,12 @@ test.beforeEach(setupBefore({ path: '/decisions/event-streams' }));
 test.afterEach(setupAfter);
 
 test.describe('Event Stream and Rulebook Activation Integration', () => {
+  test.beforeAll(() => {
+    if (isSaaS()) {
+      test.skip(true, 'Event streams not available on SaaS deployments');
+    }
+  });
+
   let organization: PlatformOrganization;
   let edaOrgId: number;
   let projectName: string;
@@ -32,12 +37,6 @@ test.describe('Event Stream and Rulebook Activation Integration', () => {
   let eventStream: EventStreamOut;
 
   test.beforeEach(async ({ page }) => {
-    const buildType = await checkBuildType(page);
-    if (buildType === SAAS_URL) {
-      test.skip(true, 'Event streams not available on SaaS deployments');
-      return;
-    }
-
     // Create organization via API (fast)
     organization = await Organization.api.create(page);
 

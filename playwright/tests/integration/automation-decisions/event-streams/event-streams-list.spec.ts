@@ -1,8 +1,7 @@
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { edaAPI } from '@ansible/playwright/commands/apiClient';
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
@@ -15,6 +14,12 @@ test.beforeEach(setupBefore({ path: '/decisions/event-streams' }));
 test.afterEach(setupAfter);
 
 test.describe('EDA Event Streams - List Operations', () => {
+  test.beforeAll(() => {
+    if (isSaaS()) {
+      test.skip(true, 'Event streams not available on SaaS deployments');
+    }
+  });
+
   let credentialId: number | undefined;
   let credentialName: string;
   let eventStream1Name: string;
@@ -83,12 +88,6 @@ test.describe('EDA Event Streams - List Operations', () => {
     'should render the Event Streams page and filter',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const buildType = await checkBuildType(page);
-      if (buildType === SAAS_URL) {
-        test.skip();
-        return;
-      }
-
       await test.step('Verify page title', async () => {
         await navigateTo(page, 'Automation Decisions', 'Event Streams');
         await expect(
@@ -113,8 +112,7 @@ test.describe('EDA Event Streams - List Operations', () => {
     'should toggle event stream test mode from list view',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const buildType = await checkBuildType(page);
-      if (buildType === SAAS_URL) {
+      if (isSaaS()) {
         test.skip();
         return;
       }
@@ -160,8 +158,7 @@ test.describe('EDA Event Streams - List Operations', () => {
     'should bulk delete event streams from list view',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      const buildType = await checkBuildType(page);
-      if (buildType === SAAS_URL) {
+      if (isSaaS()) {
         test.skip();
         return;
       }

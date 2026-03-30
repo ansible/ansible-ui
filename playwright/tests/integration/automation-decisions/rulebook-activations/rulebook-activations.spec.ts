@@ -1,9 +1,8 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -22,19 +21,19 @@ test.afterEach(setupAfter);
 
 // Rulebook activations are not available on SaaS deployments
 test.describe('Rulebook Activations', () => {
+  test.beforeAll(() => {
+    if (isSaaS()) {
+      test.skip(true, 'Rulebook activations not available on SaaS deployments');
+    }
+  });
+
   let organizationName: string;
   let projectName: string;
   let credentialName: string;
   let decisionEnvironmentName: string;
 
-  // Skip all tests in this describe block on SaaS, then create test resources
+  // Create test resources
   test.beforeEach(async ({ page }) => {
-    const buildType = await checkBuildType(page);
-    if (buildType === SAAS_URL) {
-      test.skip(true, 'Rulebook activations not available on SaaS deployments');
-      return; // Don't create resources if skipping
-    }
-
     organizationName = await Organization.ui.create(page);
     projectName = await EdaProject.ui.create(page, { organizationName });
     credentialName = await EdaCredential.ui.create(page, { organizationName });

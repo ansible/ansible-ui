@@ -1,4 +1,5 @@
-import { AZURE_URL, checkBuildType, SAAS_URL } from '@ansible/playwright/commands/checkBuildType';
+import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/constants';
+import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
@@ -12,12 +13,8 @@ test.beforeEach(setupBefore({ path: '/content/administration/remotes' }));
 test.afterEach(setupAfter);
 
 test.describe('Hub - Remotes', () => {
-  test.beforeAll(async ({ browser }) => {
-    const page = await browser.newPage();
-    const buildType = await checkBuildType(page);
-    await page.close();
-
-    if (buildType === SAAS_URL || buildType === AZURE_URL) {
+  test.beforeAll(() => {
+    if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
       test.skip(true, 'Remotes not available on SaaS/Azure deployments');
     }
   });

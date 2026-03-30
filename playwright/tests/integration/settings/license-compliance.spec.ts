@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
-import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/constants';
+import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
@@ -16,10 +16,9 @@ test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
 test.describe('License Compliance', () => {
-  test.beforeEach(async ({ page }) => {
-    // Check build type and skip for SaaS/Azure
-    const buildType = await checkBuildType(page);
-    if (buildType === SAAS_URL || buildType === AZURE_URL) {
+  test.beforeEach(() => {
+    // Check topology type and skip for SaaS/Azure
+    if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
       test.skip(true, 'Test should not run on SaaS/Azure deployment');
     }
   });

@@ -1,5 +1,5 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
-import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/constants';
+import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { platformUI } from '@ansible/playwright/commands/login';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from '@playwright/test';
@@ -8,14 +8,9 @@ test.afterEach(setupAfter);
 
 // Quick starts are not available on SaaS/Azure deployments
 test.describe('Overview - Quick Starts - State Management and Interactions', () => {
-  // Skip entire describe block if SaaS/Azure (checked once)
-  test.beforeAll(async ({ browser }) => {
-    const page = await browser.newPage();
-    await setupBefore()({ page });
-    const buildType = await checkBuildType(page);
-    await page.close();
-
-    if (buildType === SAAS_URL || buildType === AZURE_URL) {
+  // Skip entire describe block if SaaS/Azure
+  test.beforeAll(() => {
+    if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
       test.skip(true, 'Quick starts not available on SaaS/Azure deployments');
     }
   });
