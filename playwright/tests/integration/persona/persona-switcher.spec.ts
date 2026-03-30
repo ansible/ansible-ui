@@ -1,5 +1,5 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
-import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/constants';
+import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { login, platformUI } from '@ansible/playwright/commands/login';
 import { logout } from '@ansible/playwright/commands/logout';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -18,15 +18,13 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(setupAfter);
 
-// Persona switcher is not available on SaaS deployments
+// Persona switcher is not available on SaaS or Azure deployments
 test.describe('Persona Switcher', () => {
-  // Skip all tests in this describe block on SaaS
-  test.beforeEach(async ({ page }) => {
-    const buildType = await checkBuildType(page);
-    if (buildType === SAAS_URL || buildType === AZURE_URL) {
-      test.skip(true, 'Persona switcher not available on SaaS deployments');
-    }
-  });
+  // Skip entire suite on SaaS or Azure
+  test.skip(
+    isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE),
+    'Persona switcher not available on SaaS or Azure deployments'
+  );
 
   test('Persona views for System Administrator', async ({ page }) => {
     // Administration View

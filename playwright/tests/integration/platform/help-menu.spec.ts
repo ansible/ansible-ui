@@ -1,5 +1,5 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
-import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/constants';
+import { isTopology, isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from '@playwright/test';
 
@@ -70,17 +70,16 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
 
   test.describe('Quick Starts', () => {
     test(
-      'should conditionally display based on build type',
+      'should conditionally display based on topology type',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const buildType = await checkBuildType(page);
         // Open help menu
         await page.locator('#help-menu-menu-toggle').click();
-        if (buildType === SAAS_URL || buildType === AZURE_URL) {
-          // Quick starts should NOT exist in SaaS/Azure builds
+        if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
+          // Quick starts should NOT exist in SaaS/Azure deployments
           await expect(page.locator('[data-testid="masthead-quickstarts"]')).not.toBeVisible();
         } else {
-          // Quick starts should exist in other builds
+          // Quick starts should exist in other deployments
           const quickStartsItem = page.locator('[data-testid="masthead-quickstarts"]');
           await expect(quickStartsItem).toBeVisible();
           await expect(quickStartsItem).toContainText('Quick starts');
@@ -92,9 +91,8 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
       'should navigate to quick starts page and close menu',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const buildType = await checkBuildType(page);
         // Skip for SaaS/Azure
-        if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
           test.skip();
           return;
         }
@@ -123,7 +121,6 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
       'should display complete content with versions from APIs',
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        const buildType = await checkBuildType(page);
         // Set up API intercepts
         const awxConfigPromise = page.waitForResponse(
           (response) =>
@@ -159,8 +156,8 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
         if (hubConfig.galaxy_ng_version) {
           await expect(modal.getByText(hubConfig.galaxy_ng_version, { exact: true })).toBeVisible();
         }
-        // For non-SaaS builds, verify EDA version
-        if (buildType !== SAAS_URL) {
+        // For non-SaaS deployments, verify EDA version
+        if (!isSaaS()) {
           const edaConfigPromise = page.waitForResponse(
             (response) =>
               response.url().includes('/api/eda/v1/config/') &&

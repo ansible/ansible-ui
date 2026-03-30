@@ -1,10 +1,10 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import {
   AAP_DEV_LOCALHOST_URL,
-  AZURE_URL,
-  OCP_A_URL,
-  SAAS_URL,
+  TOPOLOGY_AZURE,
+  TOPOLOGY_OCP_A,
+  TOPOLOGY_SAAS,
 } from '@ansible/playwright/commands/constants';
+import { isOcpA, isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { filterTableByText } from '@ansible/playwright/commands/filterTableByText';
 import { clickKebabActionAndConfirm } from '@ansible/playwright/commands/hub/clickKebabActionAndConfirm';
 import {
@@ -250,8 +250,7 @@ test.describe('Hub Collections - Details Page', () => {
       async ({ page, collection }) => {
         test.setTimeout(180000);
 
-        const buildType = await checkBuildType(page);
-        if ([OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
+        if (isOcpA() || platformUI.includes(AAP_DEV_LOCALHOST_URL)) {
           test.skip();
           return;
         }
@@ -357,12 +356,11 @@ test.describe('Hub Collections - Details Page', () => {
 
   test.describe('Signing Operations', () => {
     // Skip all signing tests on environments where signing is not available
-    test.beforeEach(async ({ page }) => {
-      const buildType = await checkBuildType(page);
-      if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
-        test.skip(true, 'Signing not available on this environment');
-      }
-    });
+    test.skip(
+      isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE, TOPOLOGY_OCP_A) ||
+        platformUI.includes(AAP_DEV_LOCALHOST_URL),
+      'Signing not available on this environment'
+    );
 
     test('should sign a collection', { tag: ['@not_mock'] }, async ({ page, collection }) => {
       await collection.createNamespace({ name: 'ibm' });

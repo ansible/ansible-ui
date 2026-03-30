@@ -38,6 +38,11 @@ on:
         type: string
         required: false
         default: '90'
+      AAP_TOPOLOGY_TYPE:
+        description: 'AAP topology type (saas, ocp-a, azure, or empty)'
+        type: string
+        required: false
+        default: ''
 
     secrets:
       PLATFORM_USERNAME:
@@ -122,6 +127,7 @@ jobs:
         # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
         # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
         echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}" >> $GITHUB_ENV
+        echo "AAP_TOPOLOGY_TYPE=${{ inputs.AAP_TOPOLOGY_TYPE }}" >> $GITHUB_ENV
 
     - name: Setup coverage directory
       working-directory: ./playwright

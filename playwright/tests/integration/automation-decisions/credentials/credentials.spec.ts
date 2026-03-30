@@ -1,5 +1,4 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -12,9 +11,8 @@ test.afterEach(setupAfter);
 // EDA credentials are not available on SaaS deployments
 test.describe('EDA Credentials', () => {
   // Skip all tests in this describe block on SaaS
-  test.beforeEach(async ({ page }) => {
-    const buildType = await checkBuildType(page);
-    if (buildType === SAAS_URL) {
+  test.beforeEach(() => {
+    if (isSaaS()) {
       test.skip(true, 'EDA credentials not available on SaaS deployments');
     }
   });

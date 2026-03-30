@@ -1,10 +1,10 @@
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import {
   AAP_DEV_LOCALHOST_URL,
-  AZURE_URL,
-  OCP_A_URL,
-  SAAS_URL,
+  TOPOLOGY_AZURE,
+  TOPOLOGY_OCP_A,
+  TOPOLOGY_SAAS,
 } from '@ansible/playwright/commands/constants';
+import { isOcpA, isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { filterTableByText } from '@ansible/playwright/commands/filterTableByText';
 import { platformUI } from '@ansible/playwright/commands/login';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -22,8 +22,10 @@ test.describe('Hub Collections - List View', () => {
       async ({ page, collection }) => {
         test.setTimeout(180000);
 
-        const buildType = await checkBuildType(page);
-        if ([SAAS_URL, AZURE_URL, OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
+        if (
+          isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE, TOPOLOGY_OCP_A) ||
+          platformUI.includes(AAP_DEV_LOCALHOST_URL)
+        ) {
           test.skip();
           return;
         }
@@ -92,8 +94,7 @@ test.describe('Hub Collections - List View', () => {
       async ({ page, collection }) => {
         test.setTimeout(180000);
 
-        const buildType = await checkBuildType(page);
-        if ([OCP_A_URL, AAP_DEV_LOCALHOST_URL].includes(buildType)) {
+        if (isOcpA() || platformUI.includes(AAP_DEV_LOCALHOST_URL)) {
           test.skip();
           return;
         }
