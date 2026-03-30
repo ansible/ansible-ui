@@ -22,8 +22,6 @@ async function login(page: Page, user: string, password: string): Promise<void> 
     'Proxy config incorrect — got a lockdown page instead of SSO'
   ).toHaveCount(0);
 
-  await disableCookiePrompt(page);
-
   await page.getByLabel('Red Hat login').first().fill(user);
   await page.getByRole('button', { name: 'Next' }).click();
 
@@ -36,6 +34,7 @@ async function login(page: Page, user: string, password: string): Promise<void> 
 }
 
 async function loginAndNavigateToHub(page: Page) {
+  await disableCookiePrompt(page);
   await page.goto(`https://${APP_HOST}`, { waitUntil: 'load', timeout: 60_000 });
 
   const onSSOPage = await page
