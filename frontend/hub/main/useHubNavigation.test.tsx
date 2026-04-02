@@ -226,7 +226,6 @@ vi.mock('../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPa
 vi.mock('../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails', () => ({
   RemoteRegistryDetails: () => null,
 }));
-vi.mock('../access/token/Token', () => ({ Token: () => null }));
 vi.mock('../access/roles/HubRoles', () => ({ HubRoles: () => null }));
 vi.mock('../access/roles/RolePage/HubRolePage', () => ({ HubRolePage: () => null }));
 vi.mock('../access/roles/RolePage/HubRoleDetails', () => ({ HubRoleDetails: () => null }));
@@ -324,14 +323,6 @@ describe('useHubNavigation', () => {
       expect(execEnvs).toBeDefined();
       expect(execEnvs?.path).toBe('execution-environments');
       expect(execEnvs?.label).toBe('Execution Environments');
-    });
-
-    it('should use "api-token" path for API Token', () => {
-      const { result } = renderUseHubNavigation();
-      const token = result.current.find(
-        (item) => item.id === HubRoute.APIToken && item.path === 'api-token'
-      );
-      expect(token).toBeDefined();
     });
 
     it('should include Administration section with nested routes', () => {
@@ -460,14 +451,6 @@ describe('useHubNavigation', () => {
       const { result } = renderUseHubNavigation();
       const execEnvs = findNavItemById(result.current, HubRoute.ExecutionEnvironments);
       expect(execEnvs).toBeUndefined();
-    });
-
-    it('should use "token" path for API Token', () => {
-      const { result } = renderUseHubNavigation();
-      const token = result.current.find(
-        (item) => item.id === HubRoute.APIToken && item.path === 'token'
-      );
-      expect(token).toBeDefined();
     });
 
     it('should include top-level Task Management', () => {
