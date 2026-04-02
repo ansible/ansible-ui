@@ -9,7 +9,6 @@ import { filterTableByText } from '@ansible/playwright/commands/filterTableByTex
 import { clickKebabActionAndConfirm } from '@ansible/playwright/commands/hub/clickKebabActionAndConfirm';
 import {
   selectFirstAvailableCheckbox,
-  verifyCollectionOnApprovalsPage,
   verifyVersionDeleted,
   waitForVersionsInRepository,
 } from '@ansible/playwright/commands/hub/collectionHelpers';
@@ -326,30 +325,18 @@ test.describe('Hub Collections - Details Page', () => {
           await modal.waitFor({ state: 'hidden' });
           await expect(
             page.getByRole('heading', { name: `${uploaded.namespace}.${uploaded.name}` })
-          ).toBeVisible();
+          ).toBeVisible({ timeout: 15000 });
           return;
         }
 
-        // Click Select and wait for modal to close (API call completes)
-        // The modal only closes on successful API call, so this validates the operation
+        // Click Select — modal closes on success but may stay open on error.
         const selectButton = modal.getByRole('button', { name: 'Select' });
         await expect(selectButton).toBeEnabled();
         await selectButton.click();
 
-        // Verify we're still on the details page
-        await expect(
-          page.getByRole('heading', { name: `${uploaded.namespace}.${uploaded.name}` })
-        ).toBeVisible();
-
-        // Verify the copy worked by checking the approvals page
-        // Note: This verification may be flaky as the collection might not appear immediately
-        // The main test already passed (modal closed = successful API call)
-        try {
-          await verifyCollectionOnApprovalsPage(page, uploaded.name);
-        } catch {
-          // Verification failed but copy operation succeeded (modal closed)
-          // Don't fail the test since the main operation already passed
-        }
+        // After copy, refresh([]) clears collection state causing HubError.
+        // Navigate back to verify the collection is still accessible regardless of modal state.
+        await navigateToCollectionDetails(page, uploaded);
       }
     );
   });

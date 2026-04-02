@@ -263,7 +263,7 @@ export const Inventory = {
             .locator('#instance-group-select-search')
             .getByLabel('Search input')
             .fill(instanceGroupName);
-          await page.getByLabel(instanceGroupName).check();
+          await page.getByRole('menuitem', { name: instanceGroupName }).click();
         }
       }
 
@@ -275,7 +275,7 @@ export const Inventory = {
             .locator('#inventories-search')
             .getByLabel('Search input')
             .fill(inputInventoryName);
-          await page.getByLabel(inputInventoryName).check();
+          await page.getByRole('menuitem', { name: inputInventoryName }).click();
         }
       }
 

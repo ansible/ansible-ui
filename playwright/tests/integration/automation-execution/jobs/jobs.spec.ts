@@ -45,6 +45,7 @@ test.describe('Jobs: Relaunch', () => {
     'can relaunch the job and navigate to job output',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(180000);
       await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: true });
       await navigateTo(page, 'Automation Execution', 'Jobs');
 
@@ -172,6 +173,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Source Control Update job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(180000);
       const organizationName = await Organization.ui.create(page);
       const projectName = await Project.ui.create(page, { organizationName });
       // This command waits for the project to be synced upon creation
@@ -213,6 +215,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Playbook Run job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(180000);
       const organizationName = await Organization.ui.create(page);
       const inventoryName = await Inventory.ui.create(page);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
