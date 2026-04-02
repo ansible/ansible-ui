@@ -14,6 +14,8 @@ export function PageFormJobTemplateSelect<
   isRequired?: boolean;
   jobTemplatePath?: string;
   templateType?: 'job_templates' | 'workflow_job_templates';
+  label?: string;
+  id?: string;
 }) {
   const { t } = useTranslation();
   const { templateType = 'job_templates' } = props;
@@ -29,11 +31,12 @@ export function PageFormJobTemplateSelect<
           ? awxAPI`/job_templates/`
           : awxAPI`/workflow_job_templates/`
       }
-      id="job-template-select"
+      id={props.id ?? 'job-template-select'}
       label={
-        props.templateType === 'workflow_job_templates'
+        props.label ||
+        (props.templateType === 'workflow_job_templates'
           ? t('Workflow job template')
-          : t('Job template')
+          : t('Job template'))
       }
       placeholder={
         props.templateType === 'workflow_job_templates'
