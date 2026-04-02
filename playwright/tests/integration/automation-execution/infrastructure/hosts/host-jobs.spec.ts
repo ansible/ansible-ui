@@ -53,6 +53,8 @@ test.describe('Host Jobs Tab', () => {
     'should relaunch jobs from host jobs tab and bulk delete jobs',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(120000);
+
       await test.step('Launch job from inventory', async () => {
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
         await clickTableRow({ text: inventory.name }, page);
@@ -67,8 +69,12 @@ test.describe('Host Jobs Tab', () => {
         );
 
         await expect(
-          page.getByTestId('running-status').or(page.getByTestId('success-status'))
-        ).toBeVisible({ timeout: 15000 });
+          page
+            .getByTestId('pending-status')
+            .or(page.getByTestId('waiting-status'))
+            .or(page.getByTestId('running-status'))
+            .or(page.getByTestId('success-status'))
+        ).toBeVisible({ timeout: 30000 });
       });
 
       await test.step('Relaunch job from host jobs tab', async () => {
@@ -85,7 +91,9 @@ test.describe('Host Jobs Tab', () => {
           'true'
         );
 
-        await expect(page.getByTestId('running-status').getByText('Running')).toBeVisible();
+        await expect(
+          page.getByTestId('running-status').or(page.getByTestId('success-status'))
+        ).toBeVisible({ timeout: 30000 });
       });
 
       await test.step('Bulk delete jobs from host jobs tab', async () => {

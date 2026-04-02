@@ -90,6 +90,10 @@ test.describe('EDA User Access Tab - Add User', () => {
         await test.step('Navigate to resource', async () => {
           await navigateTo(page, ...resource.path);
 
+          if (resource.name === 'decision-environments') {
+            await page.getByRole('button', { name: 'table view' }).click();
+          }
+
           await clickTableRow(
             {
               filterLabel: 'Name',
