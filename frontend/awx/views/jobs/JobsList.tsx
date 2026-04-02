@@ -1,9 +1,10 @@
 import { ITableColumn, PageTable } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon } from '@patternfly/react-icons';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
+import { createThrottle } from '../../common/util/createThrottle';
 import { useDomainsStore } from '../../common/domains/useDomains';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
@@ -35,25 +36,30 @@ export function JobsList(props: {
   usePersistentFilters('jobs');
 
   const { refresh } = view;
+  const throttledRefresh = useMemo(
+    () =>
+      createThrottle(() => {
+        refresh().catch(() => {});
+      }, 5000),
+    [refresh]
+  );
+  useEffect(() => () => throttledRefresh.cancel(), [throttledRefresh]);
+
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
       switch (message?.group_name) {
         case 'jobs':
           switch (message?.type) {
             case 'job':
-              void refresh();
-              break;
             case 'workflow_job':
-              void refresh();
-              break;
             case 'project_update':
-              void refresh();
+              throttledRefresh();
               break;
           }
           break;
       }
     },
-    [refresh]
+    [throttledRefresh]
   );
   useAwxWebSocketSubscription(
     { control: ['limit_reached_1'], jobs: ['status_changed'], schedules: ['changed'] },
