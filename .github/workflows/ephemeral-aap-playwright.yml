@@ -325,9 +325,14 @@ jobs:
 
       - name: Merge Playwright coverage reports
         run: |
-          mkdir -p coverage/playwright-merged
-          # Use nyc to merge all coverage-final.json files from each shard
-          npx nyc merge playwright-coverage-artifacts coverage/playwright-merged/coverage-final.json
+          mkdir -p coverage/playwright-merged coverage/playwright-to-merge
+          # download-artifact with pattern puts each artifact in its own subdir (playwright-coverage-1/, etc.).
+          # nyc merge only reads JSON files from the given directory, not subdirs. Flatten into one dir first.
+          for f in playwright-coverage-artifacts/*/coverage-final.json; do
+            [ -f "$f" ] || continue
+            cp "$f" "coverage/playwright-to-merge/$(basename "$(dirname "$f")").json"
+          done
+          npx nyc merge coverage/playwright-to-merge coverage/playwright-merged/coverage-final.json
           # Create temp directory for nyc
           mkdir -p .nyc_output
           # Copy merged coverage to nyc temp dir
