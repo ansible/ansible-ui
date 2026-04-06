@@ -1,0 +1,14 @@
+coverage:
+  ignore:
+    - "**/*.test.ts"
+    - "**/*.test.tsx"
+    - "**/*.spec.ts"
+    - "**/*.spec.tsx"
+    - "**/vitest.setup.ts"
+    - "**/webpack.config.cjs"
+    - "**/vite.config.ts"
+    - "**/interfaces/generated/**"
+    - "**/interfaces/generated-from-swagger/**"
+    - "**/swagger.json"
+    - "**/openapi.json"
+    - "**/package-lock.json"
