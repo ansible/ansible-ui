@@ -30,15 +30,15 @@ interface CoverageMap {
 }
 
 /**
- * Finds all Playwright coverage files and normalizes the `path` property within them.
+ * Finds all coverage files (vitest and playwright) and normalizes the `path` property within them.
  */
 function fixAllCoveragePaths(): void {
-  const searchPattern = '.nyc_output/*-playwright.json';
+  const searchPattern = '.nyc_output/*.json';
 
   const coverageFiles = globSync(searchPattern, { ignore: '**/node_modules/**' });
 
   if (coverageFiles.length === 0) {
-    console.log('No Playwright coverage files found to process.');
+    console.log('No coverage files found to process.');
     return;
   }
 
