@@ -1,0 +1,81 @@
+name: PR Risk Analysis
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  check-risk-analysis:
+    name: Risk Analysis Required
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check risk level is selected
+        id: check
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          HIGH=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*High\*\*' || true)
+          MEDIUM=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Medium\*\*' || true)
+          LOW=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Low\*\*' || true)
+
+          TOTAL=$((HIGH + MEDIUM + LOW))
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "result=missing" >> "$GITHUB_OUTPUT"
+            echo "message=Risk Analysis is required. Please select a risk level (High, Medium, or Low) in the PR description under **Risk Analysis - REQUIRED**." >> "$GITHUB_OUTPUT"
+          elif [ "$TOTAL" -gt 1 ]; then
+            echo "result=multiple" >> "$GITHUB_OUTPUT"
+            echo "message=Please select only **one** risk level (High, Medium, or Low)." >> "$GITHUB_OUTPUT"
+          else
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+            if [ "$HIGH" -eq 1 ]; then
+              echo "Risk level: HIGH"
+            elif [ "$MEDIUM" -eq 1 ]; then
+              echo "Risk level: MEDIUM"
+            else
+              echo "Risk level: LOW"
+            fi
+          fi
+
+      - name: Request changes if risk level is missing
+        if: steps.check.outputs.result != 'pass'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          MESSAGE: ${{ steps.check.outputs.message }}
+        run: |
+          # Only post a new review if the bot doesn't already have one
+          EXISTING=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | length')
+          if [ "$EXISTING" -eq 0 ]; then
+            gh pr review "$PR_NUMBER" --repo "$REPO" --request-changes --body "$MESSAGE"
+          fi
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "missing-risk-analysis"
+
+      - name: Dismiss review and remove label on success
+        if: steps.check.outputs.result == 'pass'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Find and dismiss any previous "request changes" review from the bot
+          REVIEW_ID=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | last | .id // empty')
+          if [ -n "$REVIEW_ID" ]; then
+            gh api -X PUT "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals" \
+              -f message="Risk analysis provided." \
+              -f event="DISMISS"
+          fi
+
+          # Remove label if present
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "missing-risk-analysis" 2>/dev/null || true
+
+      - name: Fail check if risk level is missing
+        if: steps.check.outputs.result != 'pass'
+        run: |
+          echo "::error::${{ steps.check.outputs.message }}"
+          exit 1
