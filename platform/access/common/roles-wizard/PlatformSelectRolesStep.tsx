@@ -92,7 +92,11 @@ export function PlatformSelectRolesStep() {
     const params: QueryParams = {};
 
     if (resourceType && typeof resourceType === 'string') {
-      params['content_type__api_slug'] = resourceType;
+      if (resourceType === 'system') {
+        params['content_type__isnull'] = 'true';
+      } else {
+        params['content_type__api_slug'] = resourceType;
+      }
     }
 
     return params;

@@ -70,6 +70,7 @@ export function PlatformTeamAssignRoles() {
       id: 'resources',
       label: t('Select resources'),
       inputs: <PlatformSelectResourcesStep userOrTeamName={team.name} />,
+      hidden: (wizardData: object) => (wizardData as WizardFormValues).resourceType === 'system',
       validate: (formData, _) => {
         const { resources } = formData as { resources: { id: string; name: string }[] };
         if (!resources?.length) {
@@ -98,10 +99,17 @@ export function PlatformTeamAssignRoles() {
   const onSubmit = (data: WizardFormValues): Promise<void> => {
     const { resources, platformRoles, resourceType } = data;
     const items: ResourceRolePair[] = [];
+    const isSystemRole = resourceType === 'system';
 
-    for (const resource of resources) {
+    if (isSystemRole) {
       for (const role of platformRoles) {
-        items.push({ resource, role });
+        items.push({ resource: { id: '', name: '' }, role });
+      }
+    } else {
+      for (const resource of resources) {
+        for (const role of platformRoles) {
+          items.push({ resource, role });
+        }
       }
     }
 
@@ -119,15 +127,24 @@ export function PlatformTeamAssignRoles() {
         keyFn: ({ resource, role }) => `${resource.id}_${role.id}`,
         items,
         actionColumns: [
-          { header: t('Resource name'), cell: ({ resource }) => resource.name },
-          { header: t('Role'), cell: ({ role }) => role.name },
+          ...(isSystemRole
+            ? []
+            : [
+                {
+                  header: t('Resource name'),
+                  cell: ({ resource }: ResourceRolePair) => resource.name,
+                },
+              ]),
+          { header: t('Role'), cell: ({ role }: ResourceRolePair) => role.name },
         ],
         actionFn: ({ resource, role }, signal) => {
-          const requestData = {
+          const requestData: Record<string, unknown> = {
             team: team.id,
             role_definition: role.id,
-            object_id: objectIdForResource(resourceType, resource),
           };
+          if (!isSystemRole) {
+            requestData.object_id = objectIdForResource(resourceType, resource);
+          }
           return postRequest(gatewayAPI`/role_team_assignments/`, requestData, signal);
         },
         onComplete: () => {
