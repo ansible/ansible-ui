@@ -180,6 +180,85 @@ describe('PlatformSelectResourceTypeStep', () => {
     });
   });
 
+  describe('System Resource Type', () => {
+    it('should display System option in the dropdown', () => {
+      const mockOptions = [
+        {
+          value: 'galaxy.namespace',
+          label: 'Namespace',
+          group: 'Automation Content',
+        },
+        {
+          value: 'system',
+          label: 'System',
+          group: 'Automation Content',
+        },
+      ];
+
+      mockUseResourceTypeOptions.mockReturnValue({
+        options: mockOptions,
+        isLoading: false,
+        error: undefined,
+      });
+
+      render(<PlatformSelectResourceTypeStep />);
+
+      const typeahead = screen.getByRole('textbox');
+      fireEvent.click(typeahead);
+
+      expect(screen.getByText('System')).toBeInTheDocument();
+    });
+
+    it('should call handleResourceTypeSelection with system when System is selected', () => {
+      const mockOptions = [
+        {
+          value: 'system',
+          label: 'System',
+          group: 'Automation Content',
+        },
+      ];
+
+      mockUseResourceTypeOptions.mockReturnValue({
+        options: mockOptions,
+        isLoading: false,
+        error: undefined,
+      });
+
+      render(<PlatformSelectResourceTypeStep />);
+
+      const typeahead = screen.getByRole('textbox');
+      fireEvent.click(typeahead);
+      fireEvent.click(screen.getByText('System'));
+
+      expect(mockHandleResourceTypeSelection).toHaveBeenCalledWith('system');
+    });
+
+    it('should display System as selected value when resourceType is system', () => {
+      mockUseResourceTypeOptions.mockReturnValue({
+        options: [
+          {
+            value: 'system',
+            label: 'System',
+            group: 'Automation Content',
+          },
+        ],
+        isLoading: false,
+        error: undefined,
+      });
+
+      mockUseResourceTypeWizard.mockReturnValue({
+        resourceType: 'system',
+        handleResourceTypeSelection: mockHandleResourceTypeSelection,
+        handleClearSelection: mockHandleClearSelection,
+      });
+
+      render(<PlatformSelectResourceTypeStep />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveValue('System');
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle empty options array', () => {
       mockUseResourceTypeOptions.mockReturnValue({

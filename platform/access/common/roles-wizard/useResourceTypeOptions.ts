@@ -67,14 +67,22 @@ export function useResourceTypeOptions() {
       return [];
     }
 
-    return roleTypes.results
-      .filter(isAllowedRoleType)
-      .map((roleType) => ({
-        value: roleType.api_slug,
-        label: mapContentTypeToDisplayName(roleType.model, { isTitleCase: true }),
-        group: getServiceDisplayName(roleType.service),
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label));
+    const apiOptions = roleTypes.results.filter(isAllowedRoleType).map((roleType) => ({
+      value: roleType.api_slug,
+      label: mapContentTypeToDisplayName(roleType.model, { isTitleCase: true }),
+      group: getServiceDisplayName(roleType.service),
+    }));
+
+    // Add hardcoded "System" option under Automation Content group
+    // The backend does not include system roles in the role-types endpoint
+    // because system roles have content_type=null which the api_slug CharField cannot represent
+    apiOptions.push({
+      value: 'system',
+      label: mapContentTypeToDisplayName('system', { isTitleCase: true }),
+      group: getServiceDisplayName('galaxy'),
+    });
+
+    return apiOptions.sort((a, b) => a.label.localeCompare(b.label));
   }, [roleTypes?.results, mapContentTypeToDisplayName]);
 
   return {
