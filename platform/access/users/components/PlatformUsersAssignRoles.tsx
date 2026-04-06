@@ -55,6 +55,7 @@ export function PlatformUsersAssignRoles(props: { id?: string; userRolesRoute?: 
       id: 'resources',
       label: t('Select resources'),
       inputs: <PlatformSelectResourcesStep userOrTeamName={user.username} />,
+      hidden: (wizardData: object) => (wizardData as WizardFormValues).resourceType === 'system',
       validate: (formData, _) => {
         const { resources } = formData as { resources: AwxResourceType[] };
         if (!resources?.length) {
@@ -83,10 +84,17 @@ export function PlatformUsersAssignRoles(props: { id?: string; userRolesRoute?: 
   const onSubmit = (data: WizardFormValues): Promise<void> => {
     const { resources, platformRoles, resourceType } = data;
     const items: ResourceRolePair[] = [];
+    const isSystemRole = resourceType === 'system';
 
-    for (const resource of resources) {
+    if (isSystemRole) {
       for (const role of platformRoles) {
-        items.push({ resource, role });
+        items.push({ resource: { id: '', name: '' }, role });
+      }
+    } else {
+      for (const resource of resources) {
+        for (const role of platformRoles) {
+          items.push({ resource, role });
+        }
       }
     }
 
@@ -104,16 +112,25 @@ export function PlatformUsersAssignRoles(props: { id?: string; userRolesRoute?: 
         keyFn: ({ resource, role }) => `${resource.id}_${role.id}`,
         items,
         actionColumns: [
-          { header: t('Resource name'), cell: ({ resource }) => resource.name },
-          { header: t('Role'), cell: ({ role }) => role.name },
+          ...(isSystemRole
+            ? []
+            : [
+                {
+                  header: t('Resource name'),
+                  cell: ({ resource }: ResourceRolePair) => resource.name,
+                },
+              ]),
+          { header: t('Role'), cell: ({ role }: ResourceRolePair) => role.name },
         ],
         actionFn: ({ resource, role }, signal) => {
-          const requestData = {
+          const requestData: Record<string, unknown> = {
             user: user.id,
             role_definition: role.id,
-            object_id: objectIdForResource(resourceType, resource),
-            content_type: resourceType,
           };
+          if (!isSystemRole) {
+            requestData.object_id = objectIdForResource(resourceType, resource);
+            requestData.content_type = resourceType;
+          }
           return postRequest(gatewayAPI`/role_user_assignments/`, requestData, signal);
         },
         onComplete: () => {

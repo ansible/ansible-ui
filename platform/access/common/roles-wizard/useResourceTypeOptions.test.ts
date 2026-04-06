@@ -124,6 +124,7 @@ describe('useResourceTypeOptions', () => {
           project: 'Project',
           namespace: 'Namespace',
           organization: 'Organization',
+          system: 'System',
         };
         return mappings[model] || model;
       });
@@ -132,7 +133,7 @@ describe('useResourceTypeOptions', () => {
     it('should process and return correctly formatted options', () => {
       const { result } = renderHook(() => useResourceTypeOptions());
 
-      expect(result.current.options).toHaveLength(4); // Excluding shared service
+      expect(result.current.options).toHaveLength(5); // Excluding shared service, plus hardcoded System
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBe(undefined);
 
@@ -175,6 +176,15 @@ describe('useResourceTypeOptions', () => {
       expect(labels).toEqual(sortedLabels);
     });
 
+    it('should include hardcoded System option under Automation Content group', () => {
+      const { result } = renderHook(() => useResourceTypeOptions());
+
+      const systemOption = result.current.options.find((option) => option.value === 'system');
+      expect(systemOption).toBeDefined();
+      expect(systemOption?.label).toBe('System');
+      expect(systemOption?.group).toBe('Automation Content');
+    });
+
     it('should map services to correct display names', () => {
       const { result } = renderHook(() => useResourceTypeOptions());
 
@@ -191,7 +201,7 @@ describe('useResourceTypeOptions', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty results array', () => {
+    it('should include hardcoded System option even with empty results array', () => {
       mockUseGet.mockReturnValue({
         data: { results: [] },
         isLoading: false,
@@ -199,9 +209,16 @@ describe('useResourceTypeOptions', () => {
         refresh: vi.fn(),
       });
 
+      mockMapContentTypeToDisplayName.mockReturnValue('System');
+
       const { result } = renderHook(() => useResourceTypeOptions());
 
-      expect(result.current.options).toEqual([]);
+      expect(result.current.options).toHaveLength(1);
+      expect(result.current.options[0]).toEqual({
+        value: 'system',
+        label: 'System',
+        group: 'Automation Content',
+      });
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBe(undefined);
     });
@@ -242,8 +259,9 @@ describe('useResourceTypeOptions', () => {
 
       const { result } = renderHook(() => useResourceTypeOptions());
 
-      expect(result.current.options).toHaveLength(1);
-      expect(result.current.options[0].group).toBe('unknown'); // Falls back to service name
+      expect(result.current.options).toHaveLength(2); // unknown + hardcoded System
+      const unknownOption = result.current.options.find((o) => o.value === 'unknown.resource');
+      expect(unknownOption?.group).toBe('unknown'); // Falls back to service name
     });
   });
 });
