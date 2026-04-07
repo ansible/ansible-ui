@@ -180,7 +180,11 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         {props.footer ? (
           props.footer
         ) : (
-          <FormFooter {...FormFooterProps}>
+          <FormFooter
+            isWidthLimited
+            style={{ maxWidth: multipleColumns ? undefined : 880, marginLeft: 24 }}
+            {...FormFooterProps}
+          >
             <FormActionGroup>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.additionalActions}

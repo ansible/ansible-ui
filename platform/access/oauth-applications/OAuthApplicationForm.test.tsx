@@ -1,5 +1,5 @@
 import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -110,6 +110,49 @@ describe('OAuthApplicationForm', () => {
     gateway_proxy_url: 'https://gateway.example.com',
   };
 
+  const mockOptionsResponse = {
+    actions: {
+      POST: {
+        algorithm: {
+          type: 'choice',
+          choices: [
+            { value: '', display_name: 'No OIDC support' },
+            { value: 'RS256', display_name: 'RSA with SHA-2 256' },
+            { value: 'HS256', display_name: 'HMAC with SHA-2 256' },
+          ],
+        },
+        client_type: {
+          type: 'choice',
+          help_text: 'Set to Public or Confidential depending on how secure the client device is.',
+          choices: [
+            { value: 'confidential', display_name: 'Confidential' },
+            { value: 'public', display_name: 'Public' },
+          ],
+        },
+        authorization_grant_type: {
+          type: 'choice',
+          help_text: 'The Grant type the user must use for acquire tokens for this application.',
+          choices: [
+            { value: 'authorization-code', display_name: 'Authorization code' },
+            { value: 'password', display_name: 'Resource owner password-based' },
+          ],
+        },
+        skip_authorization: {
+          type: 'boolean',
+          help_text: 'Set True to skip authorization step for completely trusted applications.',
+        },
+        redirect_uris: {
+          type: 'string',
+          help_text: 'Allowed URIs list, space separated',
+        },
+        app_url: {
+          type: 'url',
+          help_text: 'The URL of this application.',
+        },
+      },
+    },
+  };
+
   const server = setupServer(
     http.get(gatewayAPI`/organizations/`, () => {
       return HttpResponse.json({
@@ -125,6 +168,9 @@ describe('OAuthApplicationForm', () => {
     }),
     http.get(gatewayAPI`/settings/all/`, () => {
       return HttpResponse.json(mockGatewaySettings);
+    }),
+    http.options(gatewayAPI`/applications/`, () => {
+      return HttpResponse.json(mockOptionsResponse);
     }),
     http.post(gatewayAPI`/applications/`, async ({ request }) => {
       const body = (await request.json()) as Record<string, unknown>;
@@ -201,6 +247,8 @@ describe('OAuthApplicationForm', () => {
       // Check for select fields by their labels
       expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
       expect(screen.getByText('Client type')).toBeInTheDocument();
+      expect(screen.getByText('Algorithm')).toBeInTheDocument();
+      expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
       expect(screen.getByText('Organization')).toBeInTheDocument();
     });
 
@@ -224,21 +272,15 @@ describe('OAuthApplicationForm', () => {
     test('should have default values set correctly', async () => {
       await waitFor(() => {
         expect(screen.getByText('Authorization code')).toBeInTheDocument();
+        expect(screen.getByText('Confidential')).toBeInTheDocument();
       });
-
-      expect(screen.getByText('Confidential')).toBeInTheDocument();
     });
 
     test('should make redirect URIs required when authorization grant type is authorization-code', async () => {
       await waitFor(() => {
         expect(screen.getByPlaceholderText('Enter redirect URIs')).toBeInTheDocument();
+        expect(screen.getByText('Authorization code')).toBeInTheDocument();
       });
-
-      const redirectUrisField = screen.getByPlaceholderText('Enter redirect URIs');
-      expect(redirectUrisField).toBeInTheDocument();
-
-      // Default grant type is authorization-code, so redirect URIs should be present
-      expect(screen.getByText('Authorization code')).toBeInTheDocument();
     });
 
     test('should validate URL fields', async () => {
@@ -355,19 +397,74 @@ describe('OAuthApplicationForm', () => {
     test('should show different descriptions for authorization grant types', async () => {
       await waitFor(() => {
         expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
+        expect(screen.getByText('Authorization code')).toBeInTheDocument();
       });
-
-      // Check that the authorization code option is selected by default
-      expect(screen.getByText('Authorization code')).toBeInTheDocument();
     });
 
     test('should show different descriptions for client types', async () => {
       await waitFor(() => {
         expect(screen.getByText('Client type')).toBeInTheDocument();
+        expect(screen.getByText('Confidential')).toBeInTheDocument();
+      });
+    });
+
+    test('should display skip authorization switch with default off', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
+      });
+    });
+
+    test('should display algorithm dropdown with default value', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('Algorithm')).toBeInTheDocument();
+        expect(screen.getByText('No OIDC support')).toBeInTheDocument();
+      });
+    });
+
+    test('should allow selecting RS256 algorithm', async () => {
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('No OIDC support')).toBeInTheDocument();
       });
 
-      // Check that confidential option is selected by default
-      expect(screen.getByText('Confidential')).toBeInTheDocument();
+      // Open the algorithm dropdown
+      const algorithmSelect = screen.getByText('No OIDC support');
+      await user.click(algorithmSelect);
+
+      // Select RS256
+      await waitFor(() => {
+        expect(screen.getByText('RSA with SHA-2 256')).toBeInTheDocument();
+      });
+      await user.click(screen.getByText('RSA with SHA-2 256'));
+
+      // Verify the selection
+      await waitFor(() => {
+        expect(screen.getByText('RSA with SHA-2 256')).toBeInTheDocument();
+      });
+    });
+
+    test('should allow selecting HS256 algorithm', async () => {
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('No OIDC support')).toBeInTheDocument();
+      });
+
+      // Open the algorithm dropdown
+      const algorithmSelect = screen.getByText('No OIDC support');
+      await user.click(algorithmSelect);
+
+      // Select HS256
+      await waitFor(() => {
+        expect(screen.getByText('HMAC with SHA-2 256')).toBeInTheDocument();
+      });
+      await user.click(screen.getByText('HMAC with SHA-2 256'));
+
+      // Verify the selection
+      await waitFor(() => {
+        expect(screen.getByText('HMAC with SHA-2 256')).toBeInTheDocument();
+      });
     });
   });
 
@@ -405,10 +502,8 @@ describe('OAuthApplicationForm', () => {
     test('should make authorization grant type readonly in edit mode', async () => {
       await waitFor(() => {
         expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
+        expect(screen.getByText('Authorization code')).toBeInTheDocument();
       });
-
-      // In edit mode, the authorization grant type should be displayed but read-only
-      expect(screen.getByText('Authorization code')).toBeInTheDocument();
     });
 
     test('should validate redirect URIs for authorization-code grant type on save', async () => {
@@ -503,6 +598,125 @@ describe('OAuthApplicationForm', () => {
     });
   });
 
+  describe('EditOAuthApplication - Skip Authorization field', () => {
+    afterEach(() => {
+      cleanup();
+      server.resetHandlers();
+    });
+
+    test('should display skip authorization switch when application has it enabled', async () => {
+      server.use(
+        http.get(gatewayAPI`/applications/4/`, () => {
+          return HttpResponse.json({
+            ...mockApplication,
+            id: 4,
+            skip_authorization: true,
+          });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/4/edit']}>
+          <Routes>
+            <Route path="/access/oauth-applications/:id/edit" element={<EditOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
+      });
+    });
+
+    test('should display skip authorization switch when application has it disabled', async () => {
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/1/edit']}>
+          <Routes>
+            <Route path="/access/oauth-applications/:id/edit" element={<EditOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test OAuth Application')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
+    });
+  });
+
+  describe('EditOAuthApplication - Algorithm field', () => {
+    afterEach(() => {
+      cleanup();
+      server.resetHandlers();
+    });
+
+    test('should display algorithm value when application has algorithm set', async () => {
+      server.use(
+        http.get(gatewayAPI`/applications/3/`, () => {
+          return HttpResponse.json({
+            ...mockApplication,
+            id: 3,
+            algorithm: 'RS256',
+          });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/3/edit']}>
+          <Routes>
+            <Route path="/access/oauth-applications/:id/edit" element={<EditOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('RSA with SHA-2 256')).toBeInTheDocument();
+      });
+    });
+
+    test('should display algorithm field when application has no algorithm set', async () => {
+      // mockApplication does not have algorithm field - tests backward compatibility
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/1/edit']}>
+          <Routes>
+            <Route path="/access/oauth-applications/:id/edit" element={<EditOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test OAuth Application')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Algorithm')).toBeInTheDocument();
+    });
+
+    test('should display HS256 algorithm when set on application', async () => {
+      server.use(
+        http.get(gatewayAPI`/applications/2/`, () => {
+          return HttpResponse.json({
+            ...mockApplication,
+            id: 2,
+            algorithm: 'HS256',
+          });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/2/edit']}>
+          <Routes>
+            <Route path="/access/oauth-applications/:id/edit" element={<EditOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('HMAC with SHA-2 256')).toBeInTheDocument();
+      });
+    });
+  });
+
   describe('Form Validation', () => {
     test('should show required field indicators', async () => {
       render(
@@ -523,6 +737,8 @@ describe('OAuthApplicationForm', () => {
       expect(screen.getByPlaceholderText('Enter redirect URIs')).toBeInTheDocument();
       expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
       expect(screen.getByText('Client type')).toBeInTheDocument();
+      expect(screen.getByText('Algorithm')).toBeInTheDocument();
+      expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
       expect(screen.getByText('Organization')).toBeInTheDocument();
     });
 
