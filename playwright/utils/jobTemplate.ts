@@ -126,10 +126,14 @@ export const JobTemplate = {
       );
 
       if (!templates || templates.results.length === 0) {
-        return; // Template doesn't exist, nothing to delete
+        return;
       }
 
-      const templateId = templates.results[0].id;
+      const match = templates.results.find((t) => t.name === jobTemplateName);
+      if (!match) {
+        return;
+      }
+      const templateId = match.id;
 
       // Find all jobs for this template
       const jobs = await awxAPI.get<{

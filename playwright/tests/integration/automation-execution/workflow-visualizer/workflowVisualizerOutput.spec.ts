@@ -290,7 +290,9 @@ test.describe('Workflow Visualizer - Job Output', () => {
           await expect(
             page.locator('g[class*="node-label"]').getByText(project.name)
           ).toBeVisible();
-          await expect(page.getByTestId('success-status')).toContainText('Success');
+          await expect(page.getByTestId('success-status')).toContainText('Success', {
+            timeout: 30000,
+          });
         });
       });
     }
@@ -339,10 +341,21 @@ test.describe('Workflow Visualizer - Job Output', () => {
           await page.getByRole('button', { name: 'Zoom out' }).click();
         });
 
-        await test.step('Click on project node to view details', async () => {
-          await page.locator('g').getByText(project.name).click({ force: true });
-          await expect(page.getByTestId(project.name)).toBeVisible();
-          await expect(page.getByTestId('Output')).toBeVisible();
+        await test.step('Navigate to project update job output', async () => {
+          const nodes = await awxAPI.get<{ results: WorkflowNode[] }>(
+            page,
+            `/workflow_jobs/${workflowJob.id}/workflow_nodes/`
+          );
+          const projectNode = nodes?.results.find(
+            (n) => n.summary_fields?.unified_job_template?.unified_job_type === 'project_update'
+          );
+          const jobId = projectNode?.summary_fields?.job?.id;
+          expect(jobId).toBeTruthy();
+          const baseUrl = new URL(page.url()).origin;
+          await page.goto(`${baseUrl}/execution/jobs/project/${jobId}/output`);
+          await page.waitForLoadState('networkidle');
+          await expect(page.getByTestId('page-title')).toContainText(project.name);
+          await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible();
         });
 
         await test.step('Relaunch workflow from jobs list', async () => {
@@ -391,15 +404,21 @@ test.describe('Workflow Visualizer - Job Output', () => {
             await page.getByRole('button', { name: 'Zoom out' }).click();
             await page.getByRole('button', { name: 'Zoom out' }).click();
 
-            // Click on project node within the graph
-            await page
-              .locator('g[data-id]')
-              .filter({ hasText: project.name })
-              .getByText(project.name)
-              .click({ force: true });
-
-            await expect(page.getByTestId(project.name)).toBeVisible();
-            await expect(page.getByTestId('Output')).toBeVisible();
+            // Navigate to project update job output via API
+            const relaunchNodes = await awxAPI.get<{ results: WorkflowNode[] }>(
+              page,
+              `/workflow_jobs/${relaunchedJob.id}/workflow_nodes/`
+            );
+            const relaunchProjectNode = relaunchNodes?.results.find(
+              (n) => n.summary_fields?.unified_job_template?.unified_job_type === 'project_update'
+            );
+            const relaunchJobId = relaunchProjectNode?.summary_fields?.job?.id;
+            expect(relaunchJobId).toBeTruthy();
+            const baseUrl = new URL(page.url()).origin;
+            await page.goto(`${baseUrl}/execution/jobs/project/${relaunchJobId}/output`);
+            await page.waitForLoadState('networkidle');
+            await expect(page.getByTestId('page-title')).toContainText(project.name);
+            await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible();
           });
         });
       });

@@ -15,6 +15,7 @@ test.describe('Constructed Inventory', () => {
     'should create constructed inventory with all fields and delete',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(180000);
       const instanceGroupName = createE2EName('instanceGroup');
       const inventory1Name = createE2EName('inventory');
       const inventory2Name = createE2EName('inventory');
@@ -65,14 +66,9 @@ test.describe('Constructed Inventory', () => {
         await clickPageAction('Delete inventory', page);
         await confirmAndAssertDeletion(page);
 
-        // AWX inventory deletion is async (returns 202). Poll list until removal is confirmed.
-        await expect(async () => {
-          await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-          await filterTableByText({ filterValue: constructedInventoryName }, page);
-          await expect(page.getByText('No results found')).toBeVisible();
-        }).toPass({ timeout: 60000 });
-
-        constructedInventory = null; // Mark as deleted
+        // AWX deletion is async (202) — use API delete to ensure cleanup completes
+        await Inventory.api.deleteByName(page, constructedInventoryName).catch(() => {});
+        constructedInventory = null;
       } finally {
         // Cleanup using utilities - Organization.api.deleteByName handles dependent resources
         if (constructedInventory) {

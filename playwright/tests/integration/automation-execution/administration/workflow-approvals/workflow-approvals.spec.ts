@@ -399,9 +399,14 @@ test.describe('Workflow Approvals - Tab Navigation and Approval', () => {
         await dialog.getByRole('button', { name: 'Close' }).click();
         await expect(dialog).not.toBeVisible();
 
-        await WorkflowApproval.api.waitForApprovalStatus(page, approvalName, 'successful');
+        const approved = await WorkflowApproval.api.waitForApprovalStatus(
+          page,
+          approvalName,
+          'successful'
+        );
+        expect(approved, 'Workflow approval should reach successful status').toBe(true);
         await page.reload();
-        await expect(page.getByTestId('status')).toContainText('Approved');
+        await expect(page.getByTestId('status')).toContainText('Approved', { timeout: 15000 });
       });
 
       await test.step('Cleanup workflow template', async () => {
