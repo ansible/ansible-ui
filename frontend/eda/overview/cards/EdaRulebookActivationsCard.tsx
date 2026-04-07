@@ -12,6 +12,7 @@ import { EdaRoute } from '../../main/EdaRoutes';
 import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
 
 export function EdaRulebookActivationsCard() {
+  // Use provided view or create a new one if not provided
   const view = useEdaView<EdaRulebookActivation>({
     url: edaAPI`/activations/`,
     queryParams: { page: '1', page_size: '10' },

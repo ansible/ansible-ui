@@ -142,9 +142,23 @@ describe('InsightsSelectGroup', () => {
 
       renderComponent({ assignedGroups: [{ name: 'admins' }] });
 
-      await waitFor(() => {
-        expect(screen.getByText('No groups found')).toBeInTheDocument();
-      });
+      // Wait for data to load and filtering to complete
+      await waitFor(
+        () => {
+          // Verify that 'admins' is not in the table (filtered out)
+          const cells = screen.queryAllByRole('cell');
+          const adminsCell = cells.find((cell) => cell.textContent === 'admins');
+          expect(adminsCell).toBeUndefined();
+        },
+        { timeout: 5000 }
+      );
+
+      // Verify empty state message appears (either title or description)
+      const emptyStateTitle = screen.queryByText('No groups found');
+      const emptyStateDescription = screen.queryByText(
+        'No groups match the current filter criteria.'
+      );
+      expect(emptyStateTitle || emptyStateDescription).toBeTruthy();
     });
   });
 

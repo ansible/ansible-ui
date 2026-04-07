@@ -65,7 +65,7 @@ describe('useControlRulebookActivations hooks', () => {
 
   const onComplete = vi.fn();
   const activations: EdaRulebookActivation[] = [
-    { id: 1, name: 'Activation 1', is_enabled: true } as EdaRulebookActivation,
+    { id: 1, name: 'Activation 1', is_enabled: true, project_id: 1 } as EdaRulebookActivation,
   ];
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -295,14 +295,17 @@ describe('useControlRulebookActivations hooks', () => {
 
   it('useRestartRulebookActivations should call actionFn on confirm', async () => {
     server.use(
+      http.get(edaAPI`/projects/1/`, () => {
+        return HttpResponse.json({ id: 1, name: 'Test Project', update_revision_on_launch: false });
+      }),
       http.post(edaAPI`/activations/1/restart/`, () => {
         return HttpResponse.json({});
       })
     );
 
     const { result } = renderHook(() => useRestartRulebookActivations(onComplete), { wrapper });
-    act(() => {
-      result.current(activations);
+    await act(async () => {
+      await result.current(activations);
     });
 
     const checkbox = screen.getByRole('checkbox');

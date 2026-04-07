@@ -2,50 +2,26 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  usePageAlertToaster,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { postRequest } from '@ansible/common-ui/crud/Data';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { edaAPI } from '../../common/eda-utils';
-import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteProjects } from './useDeleteProjects';
+import { useSyncProject } from './useSyncProject';
 
 export function useProjectActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const parseError = useEdaErrorMessageParser();
+  const syncProject = useSyncProject(view.unselectItemsAndRefresh);
+
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
-  const alertToaster = usePageAlertToaster();
-  const syncProject = useCallback(
-    (project: EdaProject) =>
-      postRequest(edaAPI`/projects/${project.id.toString()}/sync/`, undefined)
-        .then(() => {
-          alertToaster.addAlert({
-            title: `${t('Syncing')} ${project?.name || t('project')}`,
-            variant: 'success',
-            timeout: 5000,
-          });
-          view.unselectItemsAndRefresh([project]);
-        })
-        .catch((err: Error) => {
-          const errorResults = parseError(err);
-          alertToaster.addAlert({
-            variant: 'danger',
-            title: `${t('Failed to sync')} ${project.name}`,
-            children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
-            timeout: 5000,
-          });
-        }),
-    [alertToaster, view, parseError, t]
-  );
+
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
@@ -58,7 +34,7 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
           project?.import_state === ImportStateEnum.Pending ||
           project?.import_state === ImportStateEnum.Running,
         label: t('Sync project'),
-        onClick: (project: EdaProject) => syncProject(project),
+        onClick: (project: EdaProject) => syncProject([project]),
       },
       {
         type: PageActionType.Button,

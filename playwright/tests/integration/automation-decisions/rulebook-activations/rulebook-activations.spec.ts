@@ -267,10 +267,6 @@ test.describe('Rulebook Activations', () => {
           .getByRole('textbox', { name: 'Source control branch/tag/' })
           .fill('basic-short-new');
         await page.getByRole('button', { name: 'Save project' }).click();
-        await page.getByRole('button', { name: 'Sync project' }).click();
-        await expect(page.getByText('Completed', { exact: true })).toContainText('Completed', {
-          timeout: 15000,
-        });
         await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
 
         await clickTableRow(

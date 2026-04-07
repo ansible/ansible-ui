@@ -126,16 +126,17 @@ export function RulebookActivationPage() {
 
   const restartActivationsWithWarning = useRestartRulebookActivationsWithWarning(refresh);
 
-  const restartRulebookActivation: (activation: EdaRulebookActivation) => void = useCallback(
-    (activation) => {
-      if (activation.status === StatusEnum.WorkersOffline) {
-        restartActivationsWithWarning([activation]);
-      } else {
-        restartActivations([activation]);
-      }
-    },
-    [restartActivationsWithWarning, restartActivations]
-  );
+  const restartRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
+    useCallback(
+      async (activation: EdaRulebookActivation) => {
+        if (activation.status === StatusEnum.WorkersOffline) {
+          restartActivationsWithWarning([activation]);
+        } else {
+          await restartActivations([activation]);
+        }
+      },
+      [restartActivationsWithWarning, restartActivations]
+    );
 
   const disableRulebookActivation: (activation: EdaRulebookActivation) => void = useCallback(
     (activation) => {

@@ -11,7 +11,12 @@ import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strin
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
+import {
+  Content,
+  ContentVariants,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
@@ -101,8 +106,22 @@ export function ProjectDetails() {
       <PageDetail label={t('Source control branch/tag/commit')}>
         {project?.scm_branch || ''}
       </PageDetail>
+      <PageDetail
+        label={t('Cache timeout')}
+        helpText={t`Time in seconds to consider a project
+  to be current. During job runs and callbacks the task
+  system will evaluate the timestamp of the latest project
+  update. If it is older than cache timeout, it is not
+  considered current, and a new project update will be
+  performed.`}
+      >
+        {`${project.scm_update_cache_timeout} seconds`}
+      </PageDetail>
       <PageDetail label={t('Source control refspec')}>{project?.scm_refspec || ''}</PageDetail>
       <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
+      <PageDetail label={t('Last sync')}>
+        <DateTimeCell value={project.last_synced_at} />
+      </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell value={project.created_at} author={project?.created_by?.username} />
       </PageDetail>
@@ -110,19 +129,38 @@ export function ProjectDetails() {
         value={project?.modified_at ? project.modified_at : ''}
         author={project?.modified_by?.username}
       />
-      {!!project?.verify_ssl && (
-        <PageDetail label={t('Enabled option')}>
-          <DescriptionListGroup>
-            <DescriptionListTerm style={{ opacity: 0.6 }}>
-              {t('Verify SSL')}
-              <StandardPopover
-                header={t('Verify SSL')}
-                content={t('Verifies the SSL with HTTPS when the project is imported.')}
-              />
-            </DescriptionListTerm>
-          </DescriptionListGroup>
-        </PageDetail>
-      )}
+      <PageDetail label={t('Enabled option')}>
+        <Content component={ContentVariants.ul}>
+          {!!project?.verify_ssl && (
+            <Content component={ContentVariants.li}>
+              <DescriptionListGroup>
+                <DescriptionListTerm style={{ opacity: 0.6 }}>
+                  {t('Verify SSL')}
+                  <StandardPopover
+                    header={t('Verify SSL')}
+                    content={t('Verifies the SSL with HTTPS when the project is imported.')}
+                  />
+                </DescriptionListTerm>
+              </DescriptionListGroup>
+            </Content>
+          )}
+          {!!project.update_revision_on_launch && (
+            <Content component={ContentVariants.li}>
+              <DescriptionListGroup>
+                <DescriptionListTerm style={{ opacity: 0.6 }}>
+                  {t('Update revision on launch')}
+                  <StandardPopover
+                    header={t('Update revision on launch')}
+                    content={t(
+                      'Prior to starting or restarting a rulebook activation this project will be updated.'
+                    )}
+                  />
+                </DescriptionListTerm>
+              </DescriptionListGroup>
+            </Content>
+          )}
+        </Content>
+      </PageDetail>
     </PageDetails>
   );
 }

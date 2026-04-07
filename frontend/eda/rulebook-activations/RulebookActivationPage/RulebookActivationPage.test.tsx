@@ -39,6 +39,8 @@ const mockWorkersOfflineActivation: EdaRulebookActivation = {
   },
   status: StatusEnum.WorkersOffline,
   git_hash: '96dcf0bc903780360e13c5614c35662d75157c05',
+  project_id: 11,
+  restart_on_project_update: false,
   project: {
     id: 11,
     git_hash: '96dcf0bc903780360e13c5614c35662d75157c05',
@@ -47,6 +49,7 @@ const mockWorkersOfflineActivation: EdaRulebookActivation = {
     name: 'P1',
     description: '',
     organization_id: 1,
+    update_revision_on_launch: false,
   },
   rulebook: {
     id: 97,

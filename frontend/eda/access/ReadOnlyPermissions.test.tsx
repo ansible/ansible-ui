@@ -35,6 +35,8 @@ const mockRulebookActivation: EdaRulebookActivation = {
   },
   status: StatusEnum.Running,
   git_hash: '96dcf0bc903780360e13c5614c35662d75157c05',
+  project_id: 1,
+  restart_on_project_update: false,
   project: {
     id: 1,
     git_hash: '96dcf0bc903780360e13c5614c35662d75157c05',
@@ -43,6 +45,7 @@ const mockRulebookActivation: EdaRulebookActivation = {
     name: 'Test Project',
     description: '',
     organization_id: 1,
+    update_revision_on_launch: false,
   },
   rulebook: {
     id: 1,
@@ -97,6 +100,8 @@ const mockProject: EdaProject = {
   description: 'Test project for read-only permissions',
   url: 'https://github.com/test/repo',
   scm_type: ScmTypeEnum.Git,
+  update_revision_on_launch: false,
+  scm_update_cache_timeout: 0,
   organization_id: 1,
   signature_validation_credential_id: null,
   proxy: '',

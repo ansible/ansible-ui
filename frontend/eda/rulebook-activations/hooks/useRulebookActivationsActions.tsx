@@ -90,14 +90,14 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   );
 
   const restartRulebookActivations = useCallback(
-    (activations: EdaRulebookActivation[]) => {
+    async (activations: EdaRulebookActivation[]) => {
       if (
         activations.filter((activation) => activation.status === StatusEnum.WorkersOffline).length >
         0
       ) {
         restartActivationsWithWarning(activations);
       } else {
-        restartActivations(activations);
+        await restartActivations(activations);
       }
     },
     [restartActivations, restartActivationsWithWarning]
