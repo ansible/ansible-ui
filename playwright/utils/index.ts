@@ -63,6 +63,7 @@ export { ExecutionEnvironment as HubExecutionEnvironment } from './hub';
 export type { CreateExecutionEnvironmentOptions } from './hub';
 
 // Resource modules - Platform
+export { OAuthApplication } from './oauthApplication';
 export { Authentication } from './authentication';
 export { FeatureFlags } from './featureFlags';
 export { Lightspeed } from './lightspeed';

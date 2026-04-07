@@ -5,6 +5,7 @@ export interface Application {
   url: string;
   app_url?: string;
   client_type: 'confidential' | 'public';
+  algorithm?: '' | 'RS256' | 'HS256';
   redirect_uris?: string;
   organization: number;
   type: 'o_auth2_application';

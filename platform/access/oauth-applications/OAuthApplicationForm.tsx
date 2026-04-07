@@ -3,6 +3,7 @@ import {
   CopyCell,
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormSwitch,
   PageFormTextArea,
   PageHeader,
   PageLayout,
@@ -16,6 +17,7 @@ import { validateUrl } from '@ansible/awx-ui/administration/notifiers/NotifierFo
 import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { Alert, Content } from '@patternfly/react-core';
@@ -27,6 +29,26 @@ import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationSelect } from '../organizations/components/PageFormPlatformOrganizationSelect';
 import { OAuthApplicationSecretModal } from './OAuthApplicationSecretModal';
+
+interface FieldChoice {
+  value: string;
+  display_name: string;
+}
+
+interface ApplicationFieldMeta {
+  type: string;
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text?: string;
+  choices?: FieldChoice[];
+}
+
+interface ApplicationOptionsResponse {
+  actions?: {
+    POST?: Record<string, ApplicationFieldMeta>;
+  };
+}
 
 export function CreateOAuthApplication() {
   const { t } = useTranslation();
@@ -72,6 +94,8 @@ export function CreateOAuthApplication() {
         defaultValue={{
           authorization_grant_type: 'authorization-code',
           client_type: 'confidential',
+          algorithm: '',
+          skip_authorization: false,
         }}
       >
         <OAuthApplicationInputs mode="create" />
@@ -164,6 +188,13 @@ export function EditOAuthApplication() {
   );
 }
 
+function choicesToOptions(choices?: FieldChoice[]) {
+  return (choices ?? []).map((choice) => ({
+    label: choice.display_name,
+    value: choice.value,
+  }));
+}
+
 function OAuthApplicationInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
@@ -175,6 +206,9 @@ function OAuthApplicationInputs(props: { mode: 'create' | 'edit' }) {
     requestGet,
     swrOptions
   );
+  const { data: options } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
+  const fields = options?.actions?.POST;
+
   return (
     <>
       <PageFormSection singleColumn>
@@ -220,12 +254,12 @@ function OAuthApplicationInputs(props: { mode: 'create' | 'edit' }) {
               </li>
               <li>
                 {t(
-                  'Configure the redirect URIs that will handle responses after successful authentication. Redirect URIs are endpoints in your application that will handle the authorization server’s response after the user logs in. You must register these URIs with the external service.'
+                  "Configure the redirect URIs that will handle responses after successful authentication. Redirect URIs are endpoints in your application that will handle the authorization server's response after the user logs in. You must register these URIs with the external service."
                 )}
               </li>
               <li>
                 {t(
-                  'Select the appropriate authorization grant type and client type based on your application’s security needs and interaction with the external service.'
+                  "Select the appropriate authorization grant type and client type based on your application's security needs and interaction with the external service."
                 )}
               </li>
             </ol>
@@ -248,9 +282,7 @@ function OAuthApplicationInputs(props: { mode: 'create' | 'edit' }) {
       <PageFormTextInput<Application>
         name="app_url"
         label={t('URL')}
-        labelHelp={t(
-          'The URL of the client application. This is used to add a link to the application in the main navigation.'
-        )}
+        labelHelp={fields?.app_url?.help_text ?? t('The URL of this application.')}
         placeholder={t('Enter OAuth application URL')}
         validate={(value) => validateUrl(value, t)}
         fullWidth
@@ -265,60 +297,44 @@ function OAuthApplicationInputs(props: { mode: 'create' | 'edit' }) {
         name="authorization_grant_type"
         label={t('Authorization grant type')}
         placeholderText={t('Select authorization grant type')}
-        options={[
-          {
-            label: t('Authorization code'),
-            value: 'authorization-code',
-            description: t(
-              'Use this for server-side applications that can securely store a client secret. This grant type is more secure because it requires user authorization and an authorization code exchange.'
-            ),
-          },
-          {
-            label: t('Password'),
-            value: 'password',
-            description: t(
-              'Use this for trusted first-party clients only. The user provides their username and password directly to the client, which exchanges them for an access token.'
-            ),
-          },
-        ]}
+        options={choicesToOptions(fields?.authorization_grant_type?.choices)}
         isRequired
         defaultValue={'authorization-code'}
-        labelHelp={t(
-          'Defines the method by which the client application will obtain the access token. The grant type determines the security level and the interaction between the client, user, and authorization server.'
-        )}
+        labelHelp={fields?.authorization_grant_type?.help_text}
       />
       <PageFormSelect<Application>
         name="client_type"
         label={t('Client type')}
         placeholderText={t('Select client type')}
-        options={[
-          {
-            label: t('Confidential'),
-            value: 'confidential',
-            description:
-              'Select this if the client can securely store a client secret (e.g., server-side applications).',
-          },
-          {
-            label: t('Public'),
-            value: 'public',
-            description:
-              'Select this if the client cannot securely store a client secret (e.g., single-page applications, mobile apps).',
-          },
-        ]}
+        options={choicesToOptions(fields?.client_type?.choices)}
         isRequired
         defaultValue={'confidential'}
-        labelHelp={t(
-          'Defines the security level of the client application based on whether it can securely store sensitive information like a client secret.'
-        )}
+        labelHelp={fields?.client_type?.help_text}
+      />
+      <PageFormSelect<Application>
+        name="algorithm"
+        label={t('Algorithm')}
+        placeholderText={t('Select algorithm')}
+        options={choicesToOptions(fields?.algorithm?.choices)}
+        defaultValue={''}
+        labelHelp={
+          fields?.algorithm?.help_text ??
+          t(
+            'The algorithm used to sign OpenID Connect ID tokens. Select "No OIDC support" if this application does not use OpenID Connect.'
+          )
+        }
+      />
+      <PageFormSwitch<Application>
+        name="skip_authorization"
+        label={t('Skip Authorization')}
+        labelHelp={fields?.skip_authorization?.help_text}
       />
       <PageFormTextInput<Application>
         name="redirect_uris"
         label={t('Redirect URIs')}
         placeholder={t('Enter redirect URIs')}
         isRequired={Boolean(authorizationGrantType === 'authorization-code')}
-        labelHelp={t(
-          'Provide one or more URIs where the authorization server will send the user after successful authentication. These URIs must be registered with the authorization server.'
-        )}
+        labelHelp={fields?.redirect_uris?.help_text}
         validate={(value) => validateUrl(value, t)}
         fullWidth
       />
