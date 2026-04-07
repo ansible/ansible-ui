@@ -8,65 +8,41 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageAlertToaster,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
-import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
-import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { ImportStateEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteProjects } from '../hooks/useDeleteProjects';
+import { useSyncProject } from '../hooks/useSyncProject';
 
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const parseError = useEdaErrorMessageParser();
-  const alertToaster = usePageAlertToaster();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/projects/${params.id ?? ''}/`
   );
   const canEditProject = Boolean(data && data.actions && data.actions['PATCH']);
 
   const { data: project, refresh } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
-  const syncProject = useCallback(
-    (project: EdaProject) =>
-      postRequest(edaAPI`/projects/${project.id.toString()}/sync/`, undefined)
-        .then(() => {
-          alertToaster.addAlert({
-            title: `${t('Syncing')} ${project?.name || t('project')}`,
-            variant: 'success',
-            timeout: 5000,
-          });
-        })
-        .catch((err: Error) => {
-          const errorResults = parseError(err);
-          alertToaster.addAlert({
-            variant: 'danger',
-            title: `${t('Failed to sync')} ${project.name}`,
-            children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
-            timeout: 5000,
-          });
-        })
-        .finally(() => refresh()),
-    [alertToaster, refresh, parseError, t]
-  );
   const deleteProjects = useDeleteProjects((deleted) => {
     if (deleted.length > 0) {
       pageNavigate(EdaRoute.Projects);
     }
   });
+
+  const syncProject = useSyncProject(refresh);
 
   const itemActions = useMemo<IPageAction<EdaProject>[]>(
     () => [
@@ -83,7 +59,7 @@ export function ProjectPage() {
             project?.import_state === ImportStateEnum.Running
           );
         },
-        onClick: (project: EdaProject) => syncProject(project),
+        onClick: (project: EdaProject) => syncProject([project]),
       },
       {
         type: PageActionType.Button,

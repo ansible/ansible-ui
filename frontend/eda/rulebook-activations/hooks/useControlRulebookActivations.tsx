@@ -10,6 +10,8 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 import { TFunction } from 'i18next';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { EdaItemsResponse } from '../../common/EdaItemsResponse';
 
 const COPY_MARKER_LENGTH = ' @ hh:mm:ss'.length;
 
@@ -125,7 +127,43 @@ function disableMessages(rulebookActivations: EdaRulebookActivation[], t: TFunct
   );
   return count > 1 ? multiMessage : oneMessage;
 }
+const bulkRestartRulebookAlert = (t: TFunction) =>
+  t`Restarting these rulebook activations could have cascading impacts by causing projects to update, and, possibly cause other rulebook activations to restart if they are configured to do so.`;
 
+async function fetchRulebookActivationsWithSharedProject(
+  rulebookActivation: EdaRulebookActivation,
+  t: TFunction
+): Promise<string> {
+  // Get project_id from the project object since ActivationRead doesn't have project_id field
+  const projectId = rulebookActivation.project?.id;
+  if (!projectId) {
+    return '';
+  }
+
+  // Fetch the full project details since ProjectRef doesn't include update_revision_on_launch
+  const project = await requestGet<{ update_revision_on_launch?: boolean; name: string }>(
+    edaAPI`/projects/${projectId}/`
+  );
+
+  if (!project?.update_revision_on_launch) {
+    return '';
+  }
+
+  const { results } = await requestGet<EdaItemsResponse<EdaRulebookActivation>>(
+    edaAPI`/activations/?project_id=${projectId}`
+  );
+
+  const rulebooks = results.sort((l, r) => compareStrings(l.name, r.name)).map((rb) => rb.name);
+
+  const message = t(
+    'Project {{projectName}} is assigned to this rulebook activation. It is configured to update on rulebook activation restart, which may impact the following rulebook activations: {{ruleBooks}}',
+    {
+      projectName: project.name,
+      ruleBooks: rulebooks.join(', '),
+    }
+  );
+  return message;
+}
 export function useRestartRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
 ) {
@@ -134,29 +172,53 @@ export function useRestartRulebookActivations(
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useEdaBulkConfirmation<EdaRulebookActivation>();
   const postRequest = usePostRequest<undefined, undefined>();
+  const alertToast = usePageAlertToaster();
   return useCallback(
-    (rulebookActivations: EdaRulebookActivation[]) => {
-      const sortedActivations = rulebookActivations;
-      sortedActivations.sort((l, r) => compareStrings(l.name, r.name));
-      bulkAction({
-        title: t('Restart rulebook activations', { count: rulebookActivations.length }),
-        confirmText: t(
-          'Yes, I confirm that I want to restart these {{count}} rulebook activations.',
-          {
+    async (rulebookActivations: EdaRulebookActivation[]) => {
+      try {
+        const sortedActivations = [...rulebookActivations].sort((l, r) =>
+          compareStrings(l.name, r.name)
+        );
+
+        const projectRelatedAlertPrompts =
+          rulebookActivations.length > 1
+            ? bulkRestartRulebookAlert(t)
+            : await fetchRulebookActivationsWithSharedProject(rulebookActivations[0], t);
+
+        bulkAction({
+          title: t('Restart rulebook activations', { count: rulebookActivations.length }),
+          confirmText: t(
+            'Yes, I confirm that I want to restart these {{count}} rulebook activations.',
+            {
+              count: rulebookActivations.length,
+            }
+          ),
+          actionButtonText: t('Restart rulebook activations', {
             count: rulebookActivations.length,
-          }
-        ),
-        actionButtonText: t('Restart rulebook activations', { count: rulebookActivations.length }),
-        items: sortedActivations,
-        keyFn: (item) => item?.id,
-        confirmationColumns,
-        actionColumns,
-        onComplete,
-        actionFn: (rulebookActivation: EdaRulebookActivation) =>
-          postRequest(edaAPI`/activations/${rulebookActivation.id.toString()}/restart/`, undefined),
-      });
+          }),
+          items: sortedActivations,
+          keyFn: (item: EdaRulebookActivation) => item?.id,
+          confirmationColumns,
+          actionColumns,
+          onComplete,
+          actionFn: (rulebookActivation: EdaRulebookActivation) =>
+            postRequest(
+              edaAPI`/activations/${rulebookActivation.id.toString()}/restart/`,
+              undefined
+            ),
+          ...(projectRelatedAlertPrompts.length && {
+            alertPrompts: [projectRelatedAlertPrompts],
+          }),
+        });
+      } catch (err) {
+        alertToast.addAlert({
+          variant: 'danger',
+          title: t('Something went wrong.'),
+          children: err instanceof Error && err.message,
+        });
+      }
     },
-    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
+    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t, alertToast]
   );
 }
 
@@ -250,7 +312,7 @@ export function useRestartRulebookActivationsWithWarning(
       sortedActivations.sort((l, r) => compareStrings(l.name, r.name));
       bulkAction({
         title: t('Restart rulebook activations', { count: rulebookActivations.length }),
-        alertPrompts: [restartMessages(rulebookActivations, t)],
+        alertPrompts: [restartMessages(rulebookActivations, t), bulkRestartRulebookAlert(t)],
         confirmText: t(
           'Yes, I confirm that I want to restart these {{count}} rulebook activations.',
           {

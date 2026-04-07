@@ -26,6 +26,7 @@ export interface CreateRulebookActivationAPIOptions {
   isEnabled?: boolean;
   restartPolicy?: 'always' | 'on-failure' | 'never';
   logLevel?: 'error' | 'info' | 'debug';
+  restartOnProjectUpdate?: boolean;
 }
 
 export const RulebookActivation = {
@@ -43,6 +44,7 @@ export const RulebookActivation = {
         is_enabled: options.isEnabled ?? false,
         restart_policy: options.restartPolicy ?? 'on-failure',
         log_level: options.logLevel ?? 'error',
+        restart_on_project_update: options.restartOnProjectUpdate ?? false,
       });
 
       if (!activation) {

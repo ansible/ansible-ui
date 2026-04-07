@@ -30,6 +30,7 @@ import { EdaResult } from '../interfaces/EdaResult';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { EdaRoute } from '../main/EdaRoutes';
 import { ProjectDetails } from './ProjectPage/ProjectDetails';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -137,6 +138,15 @@ function ProjectCreateInputs() {
       <PageFormSection singleColumn>
         <PageFormGroup label={t('Options')}>
           <PageFormCheckbox<EdaProjectCreate>
+            id="option-scm-update-on-launch"
+            label={t('Update revision on launch')}
+            labelHelpTitle={t('Update revision on launch')}
+            labelHelp={t(
+              'Prior to starting or restarting a rulebook activation this project will be updated.'
+            )}
+            name="update_revision_on_launch"
+          />
+          <PageFormCheckbox<EdaProjectCreate>
             label={t`Verify SSL`}
             labelHelpTitle={t('Verify SSL')}
             labelHelp={t(
@@ -146,6 +156,23 @@ function ProjectCreateInputs() {
           />
         </PageFormGroup>
       </PageFormSection>
+      <PageFormHidden
+        watch="update_revision_on_launch"
+        hidden={(scmUpdateOnLaunch?: boolean) => !scmUpdateOnLaunch}
+      >
+        <PageFormSection title={t('Option Details')}>
+          <PageFormTextInput<EdaProject>
+            name="scm_update_cache_timeout"
+            type="number"
+            labelHelp={t(
+              'Time in seconds to consider a project to be current. During job runs and callbacks the task system will evaluate the timestamp of the latest project update. If it is older than Cache Timeout, it is not considered current, and a new project update will be performed.'
+            )}
+            label={t('Cache Timeout')}
+            min="0"
+            placeholder={t('Enter cache timeout')}
+          />
+        </PageFormSection>
+      </PageFormHidden>
     </>
   );
 }
@@ -258,6 +285,15 @@ function ProjectEditInputs() {
       </PageFormSection>
       <PageFormSection singleColumn>
         <PageFormGroup label={t('Options')}>
+          <PageFormCheckbox<EdaProject>
+            id="option-scm-update-on-launch"
+            label={t('Update revision on launch')}
+            labelHelpTitle={t('Update revision on launch')}
+            labelHelp={t(
+              'Each time a job runs using this project, update the revision of the project prior to starting the job.'
+            )}
+            name="update_revision_on_launch"
+          />
           <PageFormCheckbox
             label={t`Verify SSL`}
             labelHelp={t(
@@ -267,6 +303,23 @@ function ProjectEditInputs() {
           />
         </PageFormGroup>
       </PageFormSection>
+      <PageFormHidden
+        watch="update_revision_on_launch"
+        hidden={(scmUpdateOnLaunch?: boolean) => !scmUpdateOnLaunch}
+      >
+        <PageFormSection title={t('Option Details')}>
+          <PageFormTextInput<EdaProject>
+            name="scm_update_cache_timeout"
+            type="number"
+            labelHelp={t(
+              'Time in seconds to consider a project to be current. During job runs and callbacks the task system will evaluate the timestamp of the latest project update. If it is older than Cache Timeout, it is not considered current, and a new project update will be performed.'
+            )}
+            label={t('Cache Timeout')}
+            min="0"
+            placeholder={t('Enter cache timeout')}
+          />
+        </PageFormSection>
+      </PageFormHidden>
     </>
   );
 }
@@ -308,7 +361,12 @@ export function CreateProject() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ verify_ssl: true, organization_id: defaultOrganization?.id }}
+        defaultValue={{
+          verify_ssl: true,
+          organization_id: defaultOrganization?.id,
+          update_revision_on_launch: false,
+          scm_update_cache_timeout: 0,
+        }}
       >
         <ProjectCreateInputs />
       </EdaPageForm>
@@ -383,6 +441,7 @@ export function EditProject() {
             onCancel={onCancel}
             defaultValue={{
               ...project,
+              scm_update_cache_timeout: project?.scm_update_cache_timeout || 0,
               eda_credential_id: project?.eda_credential?.id,
               organization_id: project?.organization?.id,
             }}

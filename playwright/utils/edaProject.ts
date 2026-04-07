@@ -18,6 +18,7 @@ export interface CreateEdaProjectAPIOptions {
   organization: number;
   url?: string;
   description?: string;
+  update_revision_on_launch?: boolean;
 }
 
 export const EdaProject = {
@@ -28,6 +29,7 @@ export const EdaProject = {
         organization_id: options.organization,
         url: options.url ?? 'https://github.com/ansible/ansible-ui',
         description: options.description ?? 'Created via API for E2E testing',
+        update_revision_on_launch: options.update_revision_on_launch || false,
       });
 
       if (!project) {

@@ -80,11 +80,11 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
     view.unselectItemsAndRefresh
   );
   const restartActivations = useCallback(
-    (activations: EdaRulebookActivation[]) => {
+    async (activations: EdaRulebookActivation[]) => {
       if (activations.some((activation) => activation.status === StatusEnum.WorkersOffline)) {
         restartActivationsWithWarning(activations);
       } else {
-        restartRulebookActivations(activations);
+        await restartRulebookActivations(activations);
       }
     },
     [restartActivationsWithWarning, restartRulebookActivations]

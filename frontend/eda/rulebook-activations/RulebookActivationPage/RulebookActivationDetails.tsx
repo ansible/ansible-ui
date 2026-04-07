@@ -15,6 +15,8 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import {
   Alert,
+  Content,
+  ContentVariants,
   DescriptionListGroup,
   DescriptionListTerm,
   Divider,
@@ -262,24 +264,41 @@ export function RulebookActivationDetails() {
           />
         </PageDetails>
       )}
-      {!!rulebookActivation?.skip_audit_events && (
-        <PageDetails numberOfColumns={'single'} disableScroll={true}>
-          <PageDetail label={t('Enabled option')}>
-            <DescriptionListGroup>
-              <DescriptionListTerm style={{ opacity: 0.6 }}>
-                {t('Skip audit events')}
-                <StandardPopover
-                  header={t('Skip audit events')}
-                  content={t(
-                    'Skipping audit events will prevent you from seeing your events in the Rule Audit, ' +
-                      'its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
-                  )}
-                />
-              </DescriptionListTerm>
-            </DescriptionListGroup>
-          </PageDetail>
-        </PageDetails>
-      )}
+      <PageDetails>
+        <PageDetail label={t('Enabled option')}>
+          <Content component={ContentVariants.ul}>
+            {!!rulebookActivation?.skip_audit_events && (
+              <Content component={ContentVariants.li}>
+                <DescriptionListGroup>
+                  <DescriptionListTerm style={{ opacity: 0.6 }}>
+                    {t('Skip audit events')}
+                    <StandardPopover
+                      header={t('Skip audit events')}
+                      content={t(
+                        'Skipping audit events will prevent you from seeing your events in the Rule Audit, ' +
+                          'its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
+                      )}
+                    />
+                  </DescriptionListTerm>
+                </DescriptionListGroup>
+              </Content>
+            )}
+            {!!rulebookActivation.restart_on_project_update && (
+              <Content component={ContentVariants.li}>
+                <DescriptionListTerm style={{ opacity: 0.6 }}>
+                  {t('Auto-restart on project update')}
+                  <StandardPopover
+                    header={t('Auto-restart on project update')}
+                    content={t(
+                      'When enabled, this rulebook activation automatically restarts when its associated project resyncs, so it runs with the latest project content.'
+                    )}
+                  />
+                </DescriptionListTerm>
+              </Content>
+            )}
+          </Content>
+        </PageDetail>
+      </PageDetails>
     </Scrollable>
   );
 }

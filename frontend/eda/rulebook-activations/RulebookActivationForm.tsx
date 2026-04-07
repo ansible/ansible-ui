@@ -301,10 +301,19 @@ export function RulebookActivationInputs() {
         <PageFormGroup label={t('Options')}>
           <PageFormCheckbox<IEdaRulebookActivationInputs>
             label={t`Skip audit events`}
+            labelHelpTitle={t`Skip audit events`}
             labelHelp={t(
               'Skipping audit events will prevent you from seeing your events in the Rule Audit, its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
             )}
             name="skip_audit_events"
+          />
+          <PageFormCheckbox<IEdaRulebookActivationInputs>
+            label={t`Auto-restart on project update`}
+            labelHelpTitle={t('Auto-restart on project update')}
+            labelHelp={t(
+              'When enabled, this rulebook activation automatically restarts when its associated project resyncs, so it runs with the latest project content.'
+            )}
+            name="restart_on_project_update"
           />
         </PageFormGroup>
       </PageFormSection>
@@ -414,4 +423,5 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   project_id: string;
   eda_credentials?: number[] | EdaCredential[] | null;
   source_mappings: EdaSourceEventMapping[];
+  restart_on_project_update: boolean;
 };
