@@ -361,6 +361,20 @@ jobs:
           path: coverage/playwright-merged/
           retention-days: 7
 
+      - name: Upload e2e coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          url: https://codecov-codecov.apps.rosa.konflux-qe.zmr9.p3.openshiftapps.com
+          slug: ansible-automation-platform/aap-ui
+          files: ./coverage/playwright-merged/lcov.info
+          flags: e2e-tests
+          override_commit: ${{ needs.check-comment.outputs.pr_sha }}
+          override_branch: ${{ needs.check-comment.outputs.pr_ref }}
+          override_pr: ${{ needs.check-comment.outputs.pr_number }}
+          disable_search: true
+          fail_ci_if_error: false
+
   report-results:
     name: Report Test Results
     needs:
