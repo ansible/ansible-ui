@@ -1,133 +1,59 @@
-import { render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import React, { useEffect } from 'react';
+/* eslint-disable i18next/no-literal-string */
+import { renderHook } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
 import { useAutomationDashboardToolbar } from './Toolbar';
-import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { IToolbarSingleSelectFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 
-function TestToolbarComponent({ onFilters }: { onFilters?: (filters: IToolbarFilter[]) => void }) {
-  const filters = useAutomationDashboardToolbar();
-  useEffect(() => {
-    if (onFilters) onFilters(filters);
-  }, [filters, onFilters]);
-  return (
-    <div>
-      {filters.map((filter) => (
-        <div key={filter.key} data-testid={`filter-${filter.key}`}>
-          {filter.label}
-        </div>
-      ))}
-    </div>
-  );
+type PeriodFilter = IToolbarSingleSelectFilter;
+
+function getPeriodFilter(filters: ReturnType<typeof useAutomationDashboardToolbar>): PeriodFilter {
+  const period = filters.find((f): f is PeriodFilter => f.key === 'period');
+  expect(period).toBeDefined();
+  return period!;
 }
 
 describe('useAutomationDashboardToolbar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  test('should return exactly 5 filters', () => {
+    const { result } = renderHook(() => useAutomationDashboardToolbar());
+    expect(result.current).toHaveLength(5);
   });
 
-  afterEach(() => {
-    vi.resetAllMocks();
+  test('should include all expected filter keys', () => {
+    const { result } = renderHook(() => useAutomationDashboardToolbar());
+    const keys = result.current.map((f) => f.key);
+    expect(keys).toContain('template');
+    expect(keys).toContain('label');
+    expect(keys).toContain('organization');
+    expect(keys).toContain('project');
+    expect(keys).toContain('period');
   });
 
-  test('returns all expected filters including period', () => {
-    render(<TestToolbarComponent />);
-    expect(screen.getByTestId('filter-template')).toHaveTextContent('Template');
-    expect(screen.getByTestId('filter-label')).toHaveTextContent('Label');
-    expect(screen.getByTestId('filter-organization')).toHaveTextContent('Organization');
-    expect(screen.getByTestId('filter-project')).toHaveTextContent('Project');
-    expect(screen.getByTestId('filter-period')).toHaveTextContent('Period');
+  test('should have period filter with correct type and query', () => {
+    const { result } = renderHook(() => useAutomationDashboardToolbar());
+    const period = getPeriodFilter(result.current);
+    expect(period.type).toBe(ToolbarFilterType.SingleSelect);
+    expect(period.label).toBe('Period');
+    expect(period.query).toBe('period');
   });
 
-  test('period filter has correct properties', async () => {
-    let filters: IToolbarFilter[] = [];
-    render(
-      <TestToolbarComponent
-        onFilters={(f) => {
-          filters = f;
-        }}
-      />
-    );
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    const period = filters.find((f) => f.key === 'period');
-    expect(period).toBeDefined();
-    if (period) {
-      expect(period.type).toBe(ToolbarFilterType.SingleSelect);
-      if ('isPinned' in period) expect(period.isPinned).toBe(true);
-      if ('isRequired' in period) expect(period.isRequired).toBe(true);
-      if ('disableSortOptions' in period) expect(period.disableSortOptions).toBe(true);
-      if ('defaultValue' in period) expect(period.defaultValue).toBe('month_to_date');
-      if ('options' in period) {
-        expect(Array.isArray(period.options)).toBe(true);
-        expect((period.options as unknown[]).length).toBeGreaterThan(0);
-      }
-    }
+  test('should have period filter pinned, required, and with sort disabled', () => {
+    const { result } = renderHook(() => useAutomationDashboardToolbar());
+    const period = getPeriodFilter(result.current);
+    expect(period.isPinned).toBe(true);
+    expect(period.isRequired).toBe(true);
+    expect(period.disableSortOptions).toBe(true);
   });
 
-  test('returns correct number of filters', async () => {
-    let filters: IToolbarFilter[] = [];
-    render(
-      <TestToolbarComponent
-        onFilters={(f) => {
-          filters = f;
-        }}
-      />
-    );
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(filters.length).toBe(5);
-  });
-
-  test('handles empty filter list', async () => {
-    const mod = await import('./Toolbar');
-    const spy = vi.spyOn(mod, 'useAutomationDashboardToolbar').mockReturnValue([]);
-    let filters: IToolbarFilter[] = [];
-    render(
-      <TestToolbarComponent
-        onFilters={(f) => {
-          filters = f;
-        }}
-      />
-    );
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(filters.length).toBe(0);
-    spy.mockRestore();
-  });
-
-  test('handles unknown filter key gracefully', async () => {
-    const mod = await import('./Toolbar');
-    const spy = vi
-      .spyOn(mod, 'useAutomationDashboardToolbar')
-      .mockReturnValue([
-        { key: 'unknown', label: 'Unknown', type: ToolbarFilterType.Search, query: '' },
-      ]);
-    let filters: IToolbarFilter[] = [];
-    render(
-      <TestToolbarComponent
-        onFilters={(f) => {
-          filters = f;
-        }}
-      />
-    );
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(filters[0].key).toBe('unknown');
-    spy.mockRestore();
-  });
-
-  test('handles duplicate filter keys', async () => {
-    const mod = await import('./Toolbar');
-    const spy = vi.spyOn(mod, 'useAutomationDashboardToolbar').mockReturnValue([
-      { key: 'label', label: 'Label', type: ToolbarFilterType.Search, query: '' },
-      { key: 'label', label: 'Label', type: ToolbarFilterType.Search, query: '' },
-    ]);
-    let filters: IToolbarFilter[] = [];
-    render(
-      <TestToolbarComponent
-        onFilters={(f) => {
-          filters = f;
-        }}
-      />
-    );
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(filters.filter((f) => f.key === 'label').length).toBeGreaterThan(1);
-    spy.mockRestore();
+  test('should have period filter with all 5 date range options', () => {
+    const { result } = renderHook(() => useAutomationDashboardToolbar());
+    const period = getPeriodFilter(result.current);
+    expect(period.options).toHaveLength(5);
+    const values = period.options.map((o) => o.value);
+    expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_7_days);
+    expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_14_days);
+    expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_30_days);
+    expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_60_days);
+    expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_90_days);
   });
 });

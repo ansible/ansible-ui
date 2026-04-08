@@ -1,163 +1,125 @@
-import { ITableColumn, PageDashboardCard, PageTable } from '@ansible/ansible-ui-framework';
-import { Flex } from '@patternfly/react-core';
-import { DashboardValueCard } from './DashboardValueCard';
+import {
+  ITableColumn,
+  PageDashboardCard,
+  PageTable,
+  usePageAlertToaster,
+} from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { IJobTemplate, ITemplateOptions } from '../interfaces';
-import React, { useState } from 'react';
+import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
+import { DashboardValueCard } from './DashboardValueCard';
+import { usePutRequest } from '../../../../common/crud/usePutRequest';
+import { useState } from 'react';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import { metricsAPI } from '../../../common/api/metrics-utils';
 
-export function DashboardMainTableCard() {
+interface IJobTemplateModify {
+  time_taken_manually_execute_minutes: number;
+  time_taken_create_automation_minutes: number;
+}
+
+export function DashboardMainTableCard(props: IAutomationDashboardView) {
+  const {
+    mainTableView,
+    details,
+    costState,
+    setCostState,
+    refresh,
+    exportCsv,
+    loading,
+    detailsError,
+  } = props;
   const { t } = useTranslation();
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [toolbarState, setToolbarState] = useState<ITemplateOptions>({
-    automated_process_cost_per_minute: 1,
-    manual_cost_automation_per_hour: 10,
-    enable_template_creation_time: true,
-  });
-  const keyFn = (item: IJobTemplate) => item.id;
-  const onTableInputBlur = (
-    _item: IJobTemplate,
-    _columnKey: keyof IJobTemplate,
-    _value: number
+
+  const putRequest = usePutRequest<IJobTemplateModify, IJobTemplateModify>();
+  const alertToaster = usePageAlertToaster();
+
+  const [errors, setErrors] = useState<Record<
+    number,
+    Partial<Record<keyof IJobTemplateModify, string>>
+  > | null>(null);
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  const onTableInputChange = async (
+    item: IJobTemplate,
+    columnKey: keyof IJobTemplateModify,
+    value: number
   ) => {
-    // TODO: Implement logic to update the value in the backend or state management
+    setIsSaving(true);
+    setErrors(null);
+    const templateName = item.template_name;
+    const data = {
+      time_taken_manually_execute_minutes: item.time_taken_manually_execute_minutes,
+      time_taken_create_automation_minutes: item.time_taken_create_automation_minutes,
+      [columnKey]: value,
+    };
+    try {
+      let updatedData: IJobTemplateModify;
+      try {
+        updatedData = await putRequest(
+          metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`,
+          data as IJobTemplateModify
+        );
+      } catch (err) {
+        const { genericErrors, fieldErrors } = awxErrorAdapter(err);
+        alertToaster.addAlert({
+          variant: 'danger',
+          title: t('Failed to update template metadata for {{templateName}}.', { templateName }),
+          children: (
+            <>
+              {genericErrors.map((e) => (
+                <div key={String(e.message)}>{e.message}</div>
+              ))}
+            </>
+          ),
+          timeout: 5000,
+        });
+        setErrors({
+          [item.id]: fieldErrors.reduce<Partial<Record<keyof IJobTemplateModify, string>>>(
+            (acc, e) => ({ ...acc, [e.name]: String(e.message) }),
+            {}
+          ),
+        });
+        return;
+      }
+
+      mainTableView.updateItem({ ...item, ...updatedData });
+
+      alertToaster.addAlert({
+        variant: 'success',
+        title: t('Template metadata for {{templateName}} updated successfully.', { templateName }),
+        timeout: 5000,
+      });
+
+      // Refresh: a failure here does not undo the save.
+      try {
+        await refresh();
+      } catch {
+        alertToaster.addAlert({
+          variant: 'warning',
+          title: t('Update saved but failed to refresh view.'),
+          timeout: 5000,
+        });
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // TODO: Replace with actual data fetching logic
-  const items: IJobTemplate[] = [
-    {
-      id: 1,
-      name: 'Job Template 1',
-      runs: 10,
-      num_hosts: 5,
-      time_taken_manually_execute_minutes: 30,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '00:15:00',
-      automated_costs: 10,
-      manual_costs: 110,
-      savings: 100,
-    },
-    {
-      id: 2,
-      name: 'Job Template 2',
-      runs: 20,
-      num_hosts: 10,
-      time_taken_manually_execute_minutes: 45,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '01:15:27',
-      automated_costs: 20,
-      manual_costs: 120,
-      savings: 100,
-    },
-    {
-      id: 3,
-      name: 'Job Template 1',
-      runs: 10,
-      num_hosts: 5,
-      time_taken_manually_execute_minutes: 30,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '00:15:00',
-      automated_costs: 30,
-      manual_costs: 130,
-      savings: 100,
-    },
-    {
-      id: 4,
-      name: 'Job Template 2',
-      runs: 20,
-      num_hosts: 10,
-      time_taken_manually_execute_minutes: 45,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '01:15:27',
-      automated_costs: 40,
-      manual_costs: 140,
-      savings: 100,
-    },
-    {
-      id: 5,
-      name: 'Job Template 1',
-      runs: 10,
-      num_hosts: 5,
-      time_taken_manually_execute_minutes: 30,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '00:15:00',
-      automated_costs: 50,
-      manual_costs: 150,
-      savings: 100,
-    },
-    {
-      id: 6,
-      name: 'Job Template 2',
-      runs: 20,
-      num_hosts: 10,
-      time_taken_manually_execute_minutes: 45,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '01:15:27',
-      automated_costs: 60,
-      manual_costs: 160,
-      savings: 100,
-    },
-    {
-      id: 7,
-      name: 'Job Template 1',
-      runs: 10,
-      num_hosts: 5,
-      time_taken_manually_execute_minutes: 30,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '00:15:00',
-      automated_costs: 70,
-      manual_costs: 170,
-      savings: 100,
-    },
-    {
-      id: 8,
-      name: 'Job Template 2',
-      runs: 20,
-      num_hosts: 10,
-      time_taken_manually_execute_minutes: 45,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '01:15:27',
-      automated_costs: 80,
-      manual_costs: 180,
-      savings: 100,
-    },
-    {
-      id: 9,
-      name: 'Job Template 1',
-      runs: 10,
-      num_hosts: 5,
-      time_taken_manually_execute_minutes: 30,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '00:15:00',
-      automated_costs: 90,
-      manual_costs: 190,
-      savings: 100,
-    },
-    {
-      id: 10,
-      name: 'Job Template 2',
-      runs: 20,
-      num_hosts: 10,
-      time_taken_manually_execute_minutes: 45,
-      time_taken_create_automation_minutes: 60,
-      elapsed: '01:15:27',
-      automated_costs: 100,
-      manual_costs: 200,
-      savings: 100,
-    },
-  ]; // Replace with actual data fetching logic
-
-  const tableInputField = (columnKey: keyof IJobTemplate, item: IJobTemplate) => (
+  const tableInputField = (columnKey: keyof IJobTemplateModify, item: IJobTemplate) => (
     <DashboardTableInputField
       id={`${columnKey}_${item.id}`}
       min={1}
       max={1000000}
       type={'integer'}
-      currentValue={item.time_taken_manually_execute_minutes}
-      onBlur={(value: number) => onTableInputBlur(item, columnKey, value)}
+      value={item[columnKey]}
+      onChange={(value: number) => void onTableInputChange(item, columnKey, value)}
+      // TODO: Remove `|| true` once template metadata editing is implemented on the BE.
+      readOnly={loading || isSaving || true}
+      error={errors?.[item.id]?.[columnKey]}
     />
   );
 
@@ -174,38 +136,48 @@ export function DashboardMainTableCard() {
     {
       id: 'template_name',
       header: t('Template Name'),
-      cell: (item) => item.name,
+      cell: (item) => item.template_name,
+      defaultSort: true,
+      defaultSortDirection: 'asc',
+      sort: 'template_name',
     },
     {
       id: 'num_job_executions',
       header: t('Number of job executions'),
       cell: (item) => item.runs,
+      sort: 'runs',
     },
     {
       id: 'time_taken_manually_execute',
       header: t('Time taken to manually execute (min)'),
       cell: (item) => tableInputField('time_taken_manually_execute_minutes', item),
     },
-    ...(toolbarState.enable_template_creation_time ? [timeTakenCreateAutomationColumn] : []),
+    ...(costState?.include_template_creation_time_in_costs
+      ? [timeTakenCreateAutomationColumn]
+      : []),
     {
       id: 'elapsed',
       header: t('Running time'),
       cell: (item) => item.elapsed,
+      sort: 'elapsed',
     },
     {
       id: 'automated_costs',
       header: t('Automated cost'),
-      cell: (item) => item.automated_costs.toFixed(2),
+      cell: (item) => item.automated_costs,
+      sort: 'automated_costs',
     },
     {
       id: 'manual_costs',
       header: t('Manual cost'),
-      cell: (item) => item.manual_costs.toFixed(2),
+      cell: (item) => item.manual_costs,
+      sort: 'manual_costs',
     },
     {
       id: 'savings',
       header: t('Savings'),
-      cell: (item) => item.savings.toFixed(2),
+      cell: (item) => item.savings,
+      sort: 'savings',
     },
   ];
 
@@ -213,9 +185,8 @@ export function DashboardMainTableCard() {
     <PageDashboardCard
       id={'ad-main-table-card'}
       width="xxl"
-      height="xs"
-      style={{ gridColumn: 'span 24', maxHeight: 'unset', height: '100%' }}
-      isCompact={true}
+      style={{ gridColumn: 'span 24', maxHeight: 'unset', height: 'fit-content' }}
+      isCompact={false}
       canCollapse={false}
     >
       <div
@@ -229,54 +200,56 @@ export function DashboardMainTableCard() {
           id="cost-manual-automation-card"
           title={t('Cost of manual automation')}
           help={t('Total cost if all jobs were run manually')}
-          value={'$0.00'}
+          value={details?.cost_of_manual_automation ?? '-'}
+          error={detailsError}
+          errorStateTitle={t('Error loading manual automation cost')}
         ></DashboardValueCard>
         <DashboardValueCard
           id="cost-automated-execution-card"
           title={t('Cost of automated execution')}
           help={t('Total cost of running jobs on AAP')}
-          value={'$0.00'}
+          value={details?.cost_of_automated_execution ?? '-'}
+          error={detailsError}
+          errorStateTitle={t('Error loading automated execution cost')}
         ></DashboardValueCard>
         <DashboardValueCard
           id="total-savings-card"
           title={t('Total savings/cost avoided')}
           help={t('Difference between manual and automated cost')}
-          value={'$0.00'}
+          value={details?.total_saving ?? '-'}
+          error={detailsError}
+          errorStateTitle={t('Error loading total savings')}
         ></DashboardValueCard>
         <DashboardValueCard
           id="total-hours-saved-card"
           title={t('Total hours saved/avoided')}
           help={t('Time saved by automation vs manual execution')}
-          value={'0.00h'}
+          value={details?.total_time_saving ?? '-'}
+          valueSuffix="h"
+          error={detailsError}
+          errorStateTitle={t('Error loading total hours saved')}
         ></DashboardValueCard>
       </div>
       <DashboardTableToolbarRow
-        isLoading={false}
-        itemCount={items.length}
-        toolbarState={toolbarState}
-        setToolbarState={setToolbarState}
+        isLoading={loading}
+        itemCount={mainTableView?.itemCount ?? 0}
+        costState={costState}
+        setCostState={setCostState}
+        refresh={refresh}
+        onExportCsv={() => void exportCsv()}
       ></DashboardTableToolbarRow>
-
-      <Flex direction={{ default: 'column' }} style={{ marginTop: 'auto' }}>
-        <PageTable
-          autoHidePagination={true}
-          disableBodyPadding={true}
-          pageItems={items}
-          tableColumns={tableColumns}
-          errorStateTitle={t('Error loading data.')}
-          itemCount={items.length}
-          compact
-          keyFn={keyFn}
-          page={page}
-          perPage={perPage}
-          setPage={setPage}
-          setPerPage={setPerPage}
-          emptyStateIcon={PlusCircleIcon}
-          emptyStateTitle={t('No data')}
-          emptyStateDescription={t('There is currently no data available.')}
-          disableLastRowBorder
-        ></PageTable>
-      </Flex>
+      <PageTable
+        autoHidePagination={true}
+        disableBodyPadding={true}
+        tableColumns={tableColumns}
+        errorStateTitle={t('Error loading data.')}
+        compact
+        emptyStateIcon={PlusCircleIcon}
+        emptyStateTitle={t('No data')}
+        emptyStateDescription={t('There is currently no data available.')}
+        disableLastRowBorder
+        {...mainTableView}
+      />
     </PageDashboardCard>
   );
 }

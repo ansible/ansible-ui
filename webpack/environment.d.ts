@@ -12,6 +12,7 @@ declare module 'config' {
   export const HUB_PASSWORD: string;
   export const HUB_SERVER: string;
   export const HUB_USERNAME: string;
+  export const METRICS_API_PREFIX: string;
   export const ROUTE_PREFIX: string;
   export const E2E_MODE: string;
 }

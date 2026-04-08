@@ -23,6 +23,7 @@ const environment: Record<string, string> = {
   AWX_WEBSOCKET_PREFIX,
   EDA_API_PREFIX: '/api/eda/v1',
   HUB_API_PREFIX: '/api/galaxy',
+  METRICS_API_PREFIX: '/api/metrics/v1',
   DEV_SERVER_PROTOCOL,
 };
 console.log('Environment', environment);

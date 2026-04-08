@@ -2,10 +2,43 @@ import { PageDashboardCard } from '@ansible/ansible-ui-framework';
 import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { DashboardValueCardProps } from '../types';
 import { Link } from 'react-router-dom';
+import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
 
 export function DashboardValueCard(props: DashboardValueCardProps) {
-  const { id, title, help, value, linkText, to, valueSuffix } = props;
+  const { id, title, help, value, linkText, to, valueSuffix, error, errorStateTitle } = props;
 
+  const contentValue =
+    typeof value === 'number' ? (
+      <span style={{ fontSize: 'xxx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
+        {value.toLocaleString()}
+        {valueSuffix ? ` ${valueSuffix}` : ''}
+      </span>
+    ) : (
+      <span style={{ fontSize: 'large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
+        {value}
+        {valueSuffix ? ` ${valueSuffix}` : ''}
+      </span>
+    );
+
+  const content = (
+    <Flex
+      style={{ height: '100%' }}
+      spaceItems={{ default: 'spaceItemsLg' }}
+      alignItems={{ default: 'alignItemsFlexStart' }}
+      justifyContent={{ default: 'justifyContentFlexStart' }}
+      direction={{ default: 'column' }}
+    >
+      {linkText && to && (
+        <FlexItem>
+          <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
+            <Link to={to}>{linkText}</Link>
+          </Content>
+        </FlexItem>
+      )}
+
+      {contentValue}
+    </Flex>
+  );
   return (
     <PageDashboardCard
       id={id}
@@ -15,28 +48,7 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
       width="sm"
       height="xs"
     >
-      <Flex
-        style={{ height: '100%' }}
-        spaceItems={{ default: 'spaceItemsLg' }}
-        alignItems={{ default: 'alignItemsFlexStart' }}
-        justifyContent={{ default: 'justifyContentFlexStart' }}
-        direction={{ default: 'column' }}
-      >
-        {linkText && to && (
-          <FlexItem>
-            <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
-              <Link to={to}>{linkText}</Link>
-            </Content>
-          </FlexItem>
-        )}
-
-        <span
-          style={{ fontSize: 'xxx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}
-        >
-          {!isNaN(value as number) ? value.toLocaleString() : value}
-          {valueSuffix ? ` ${valueSuffix}` : ''}
-        </span>
-      </Flex>
+      {error ? <EmptyStateError titleProp={errorStateTitle} message={error.message} /> : content}
     </PageDashboardCard>
   );
 }
