@@ -15,6 +15,7 @@ const {
   EDA_API_PREFIX,
   HUB_API_PREFIX,
   HUB_SERVER,
+  METRICS_API_PREFIX,
   ROUTE_PREFIX,
 } = require('./environment.cjs');
 
@@ -120,6 +121,7 @@ module.exports = function (env, argv) {
         'process.env.EDA_API_PREFIX': JSON.stringify(EDA_API_PREFIX),
         'process.env.HUB_API_PREFIX': JSON.stringify(HUB_API_PREFIX),
         'process.env.HUB_SERVER': JSON.stringify(HUB_SERVER),
+        'process.env.METRICS_API_PREFIX': JSON.stringify(METRICS_API_PREFIX),
         'process.env.ROUTE_PREFIX': JSON.stringify(ROUTE_PREFIX),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),

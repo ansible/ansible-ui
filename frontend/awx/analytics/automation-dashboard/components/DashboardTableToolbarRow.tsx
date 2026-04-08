@@ -1,27 +1,98 @@
 import { Button, Flex, FlexItem, Switch } from '@patternfly/react-core';
-import React from 'react';
-import { DashboardTableInputField } from './DashboardTableInputField';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { useTranslation } from 'react-i18next';
-import { DashboardTableToolbarProps } from '../types';
-import { ITemplateOptions } from '../interfaces';
+import { DashboardTableInputField } from './DashboardTableInputField';
+import { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { usePageAlertToaster } from '../../../../../framework';
+import { useState } from 'react';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import { metricsAPI } from '../../../common/api/metrics-utils';
+
+const SWITCH_ID = 'switch-time-taken-automation';
 
 export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
-  const { toolbarState, setToolbarState, isLoading, itemCount, onExportCsv } = props;
+  const { costState, isLoading, itemCount, setCostState, refresh, onExportCsv } = props;
   const { t } = useTranslation();
-  const switchID = 'switch-time-taken-automation';
+  const alertToaster = usePageAlertToaster();
+  const postRequest = usePostRequest<ISubscriptionCosts, ISubscriptionCosts>();
 
-  const toolbarChangeHandler = <K extends keyof ITemplateOptions>(
-    value: ITemplateOptions[K],
+  const [errors, setErrors] = useState<Partial<Record<keyof ISubscriptionCosts, string>> | null>(
+    null
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // TODO: Remove `|| true` once subscription costs editing is implemented on the BE.
+  const controlsDisabled = isLoading || isSubmitting || !costState || true;
+
+  const toolbarChangeHandler = async <K extends keyof ISubscriptionCosts>(
+    value: ISubscriptionCosts[K],
     key: K
-  ): void => {
-    setToolbarState((currentData: ITemplateOptions) => ({
-      ...currentData,
-      [key]: value,
-    }));
-  };
+  ): Promise<void> => {
+    if (controlsDisabled) {
+      return;
+    }
 
-  const exportCSV = () => onExportCsv?.();
+    const updatedCostState = {
+      ...costState,
+      [key]: value,
+    } as ISubscriptionCosts;
+    setIsSubmitting(true);
+    setErrors(null);
+    try {
+      // Save: report failure only when the POST itself rejects.
+      try {
+        const savedState = await postRequest(
+          metricsAPI`/dashboard_reports/subscription_costs/`,
+          updatedCostState
+        );
+        if (setCostState) {
+          setCostState(savedState);
+        }
+      } catch (err) {
+        const { genericErrors, fieldErrors } = awxErrorAdapter(err);
+        alertToaster.addAlert({
+          variant: 'danger',
+          title: t('Failed to update subscription costs.'),
+          children: (
+            <>
+              {genericErrors.map((e) => (
+                <div key={String(e.message)}>{e.message}</div>
+              ))}
+            </>
+          ),
+          timeout: 5000,
+        });
+
+        setErrors(
+          fieldErrors.reduce<Partial<Record<keyof ISubscriptionCosts, string>>>(
+            (acc, e) => ({ ...acc, [e.name]: String(e.message) }),
+            {}
+          )
+        );
+        return;
+      }
+
+      // POST succeeded — show success before attempting the refresh.
+      alertToaster.addAlert({
+        variant: 'success',
+        title: t('Subscription costs updated successfully.'),
+        timeout: 5000,
+      });
+
+      // Refresh: a failure here does not undo the save.
+      try {
+        await refresh();
+      } catch {
+        alertToaster.addAlert({
+          variant: 'warning',
+          title: t('Update saved but failed to refresh view.'),
+          timeout: 5000,
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Flex
@@ -35,12 +106,16 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
           labelHelp={t(
             'The hourly labor cost used to estimate what it would cost to run these jobs manually. Used to calculate manual cost and savings in the table below.'
           )}
-          id={`cost_manual_automation_input`}
-          currentValue={toolbarState?.manual_cost_automation_per_hour}
+          id="engineer_avg_hourly_rate"
+          value={costState?.engineer_avg_hourly_rate}
           min={1}
           max={1000000}
-          onBlur={(value: number) => toolbarChangeHandler(value, 'manual_cost_automation_per_hour')}
-        ></DashboardTableInputField>
+          onChange={(value) => {
+            void toolbarChangeHandler(value, 'engineer_avg_hourly_rate');
+          }}
+          readOnly={controlsDisabled}
+          error={errors?.engineer_avg_hourly_rate}
+        />
       </FlexItem>
       <FlexItem>
         <DashboardTableInputField
@@ -48,37 +123,42 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
           labelHelp={t(
             'Monthly cost of running the Ansible Automation Platform. This value includes license, labor and infrastructure costs to run AAP. It is used to calculate the automation savings'
           )}
-          id={`cost_automated_execution`}
-          currentValue={toolbarState?.automated_process_cost_per_minute}
+          id="monthly_subscription_cost"
+          value={costState?.monthly_subscription_cost}
           min={1}
           max={1000000}
-          onBlur={(value: number) =>
-            toolbarChangeHandler(value, 'automated_process_cost_per_minute')
-          }
-        ></DashboardTableInputField>
+          onChange={(value) => {
+            void toolbarChangeHandler(value, 'monthly_subscription_cost');
+          }}
+          readOnly={controlsDisabled}
+          error={errors?.monthly_subscription_cost}
+        />
       </FlexItem>
       <FlexItem>
         <PageFormGroup
-          fieldId={switchID}
-          data-testid={switchID + '-form-group'}
+          fieldId={SWITCH_ID}
+          data-testid={SWITCH_ID + '-form-group'}
           label={t('Include time taken to create automation into calculation')}
         >
           <Switch
-            id={switchID + '-toggle'}
-            data-testid={switchID + '-toggle'}
+            id={SWITCH_ID + '-toggle'}
+            data-testid={SWITCH_ID + '-toggle'}
             aria-label={t('Include time taken to create automation into calculation')}
-            isChecked={toolbarState?.enable_template_creation_time === true}
-            onChange={(_e, value) => toolbarChangeHandler(value, 'enable_template_creation_time')}
+            isChecked={costState?.include_template_creation_time_in_costs === true}
+            onChange={(_e, value) => {
+              void toolbarChangeHandler(value, 'include_template_creation_time_in_costs');
+            }}
+            isDisabled={controlsDisabled}
           />
         </PageFormGroup>
       </FlexItem>
       <FlexItem style={{ alignSelf: 'flex-end', marginLeft: 'auto' }}>
         <Button
-          id={'btn-export-csv'}
-          data-testid={'btn-export-csv'}
+          id="btn-export-csv"
+          data-testid="btn-export-csv"
           variant="secondary"
-          onClick={exportCSV}
-          isDisabled={isLoading || itemCount === 0 || !onExportCsv}
+          onClick={onExportCsv}
+          isDisabled={controlsDisabled || (itemCount ?? 0) === 0 || !onExportCsv}
         >
           {t('Export as CSV')}
         </Button>

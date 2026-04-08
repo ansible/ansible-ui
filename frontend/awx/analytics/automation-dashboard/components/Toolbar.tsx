@@ -13,24 +13,25 @@ export function useAutomationDashboardToolbar() {
       label: t('Period'),
       query: 'period',
       options: [
-        { label: t('Month to date'), value: AutomationDashboardDateRangeFilterPresets.monthToDate },
-        { label: t('Past month'), value: AutomationDashboardDateRangeFilterPresets.pastMonth },
+        { label: t('Last 7 days'), value: AutomationDashboardDateRangeFilterPresets.last_7_days },
+        { label: t('Last 14 days'), value: AutomationDashboardDateRangeFilterPresets.last_14_days },
         {
-          label: t('Quarter to date'),
-          value: AutomationDashboardDateRangeFilterPresets.quarterToDate,
+          label: t('Last 30 days'),
+          value: AutomationDashboardDateRangeFilterPresets.last_30_days,
         },
-        { label: t('Past 3 months'), value: AutomationDashboardDateRangeFilterPresets.past3Months },
-        { label: t('Past 6 months'), value: AutomationDashboardDateRangeFilterPresets.past6Months },
-        { label: t('Year to date'), value: AutomationDashboardDateRangeFilterPresets.yearToDate },
-        { label: t('Past year'), value: AutomationDashboardDateRangeFilterPresets.pastYear },
-        { label: t('Past 2 years'), value: AutomationDashboardDateRangeFilterPresets.past2Years },
-        { label: t('Past 3 years'), value: AutomationDashboardDateRangeFilterPresets.past3Years },
+        {
+          label: t('Last 60 days'),
+          value: AutomationDashboardDateRangeFilterPresets.last_60_days,
+        },
+        {
+          label: t('Last 90 days'),
+          value: AutomationDashboardDateRangeFilterPresets.last_90_days,
+        },
       ],
       placeholder: t('Filter by period'),
       isPinned: true,
       isRequired: true,
       disableSortOptions: true,
-      defaultValue: 'month_to_date',
     }),
     [t]
   );

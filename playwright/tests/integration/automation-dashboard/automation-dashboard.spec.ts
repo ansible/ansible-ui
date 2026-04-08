@@ -5,6 +5,131 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 
 const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
 
+async function mockReportRoute(
+  page: import('playwright').Page,
+  status: number = 200
+): Promise<void> {
+  await page.route(`**/api/metrics/v1/dashboard_reports/report/**`, async (route) => {
+    await route.fulfill({
+      status: status,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [
+          {
+            template_name: 'test-template',
+            id: 10,
+            time_taken_manually_execute_minutes: 212,
+            time_taken_create_automation_minutes: 29,
+            runs: 3,
+            successful_runs: 0,
+            failed_runs: 3,
+            elapsed: '65.00',
+            elapsed_str: '1min 5sec',
+            automated_costs: '100.00',
+            manual_costs: '5000.00',
+            time_savings: '1740.00',
+            time_savings_str: '29min 0sec',
+            savings: '4900.00',
+          },
+        ],
+      }),
+    });
+  });
+}
+
+async function mockReportDetailRoute(
+  page: import('playwright').Page,
+  status: number = 200
+): Promise<void> {
+  await page.route(`**/api/metrics/v1/dashboard_reports/report/details`, async (route) => {
+    await route.fulfill({
+      status: status,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        total_number_of_job_runs: 34,
+        total_number_of_successful_jobs: 31,
+        total_number_of_failed_jobs: 3,
+        total_number_of_host_job_runs: 611,
+        total_hours_of_automation: 9.72,
+        cost_of_automated_execution: 87725.66,
+        cost_of_manual_automation: 7006057.8,
+        total_saving: 6918332.14,
+        total_time_saving: 556.36,
+        total_number_of_unique_hosts: 31,
+        top_users: [
+          {
+            id: 1,
+            name: 'Test user',
+            execution_count: 14,
+          },
+        ],
+        top_projects: [
+          {
+            id: 15,
+            name: 'Test Project 1',
+            execution_count: 20,
+          },
+          {
+            id: 9,
+            name: 'Test Project 2',
+            execution_count: 9,
+          },
+          {
+            id: 8,
+            name: 'Test Project 3',
+            execution_count: 2,
+          },
+        ],
+        job_chart: {
+          kind: 'month',
+          items: [
+            {
+              label: '2026-01-01T00:00:00Z',
+              value: 0,
+            },
+            {
+              label: '2026-02-01T00:00:00Z',
+              value: 34,
+            },
+            {
+              label: '2026-03-01T00:00:00Z',
+              value: 0,
+            },
+            {
+              label: '2026-04-01T00:00:00Z',
+              value: 0,
+            },
+          ],
+        },
+        host_chart: {
+          kind: 'month',
+          items: [
+            {
+              label: '2026-01-01T00:00:00Z',
+              value: 0,
+            },
+            {
+              label: '2026-02-01T00:00:00Z',
+              value: 611,
+            },
+            {
+              label: '2026-03-01T00:00:00Z',
+              value: 0,
+            },
+            {
+              label: '2026-04-01T00:00:00Z',
+              value: 0,
+            },
+          ],
+        },
+      }),
+    });
+  });
+}
+
 test.beforeEach(async ({ page }) => {
   // The feature flag for Automation Dashboard is off by default and
   // needs to be turned on for the tests
@@ -34,6 +159,8 @@ test.describe('Automation Dashboard', () => {
   });
 
   test('Should have correct link in value cards', async ({ page }) => {
+    await mockReportRoute(page);
+    await mockReportDetailRoute(page);
     const successfulJobsCard = page
       .getByTestId('successful-jobs-card')
       .filter({ hasText: 'Successful jobs' });

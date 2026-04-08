@@ -29,6 +29,8 @@ const HUB_USERNAME = process.env.HUB_USERNAME || process.env.CYPRESS_HUB_USERNAM
 const HUB_PASSWORD = process.env.HUB_PASSWORD || process.env.CYPRESS_HUB_PASSWORD || 'password';
 const HUB_API_PREFIX = process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/galaxy';
 
+const METRICS_API_PREFIX = process.env.METRICS_API_PREFIX || '/api/metrics/v1';
+
 const ROUTE_PREFIX = process.env.ROUTE_PREFIX || '/';
 const E2E_MODE = process.env.E2E_MODE || '';
 
@@ -48,6 +50,7 @@ module.exports = {
   HUB_PASSWORD,
   HUB_SERVER,
   HUB_USERNAME,
+  METRICS_API_PREFIX,
   ROUTE_PREFIX,
   E2E_MODE,
 };

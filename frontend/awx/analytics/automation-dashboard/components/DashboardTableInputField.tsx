@@ -6,41 +6,55 @@ import {
   HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DashboardTableInputFieldProps } from '../types';
 import { Help } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
+import debounce from 'debounce';
 
 export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
-  const { id, currentValue, min, max, label, labelHelp, fullWidth, type } = props;
+  const {
+    id,
+    min,
+    max,
+    label,
+    labelHelp,
+    fullWidth,
+    type,
+    readOnly,
+    error: errorMsg,
+    onChange,
+  } = props;
   const { t } = useTranslation();
-  const [localeValue, setLocaleValue] = useState<string | number | null | undefined>(currentValue);
+  const [value, setValue] = useState<string | number | undefined>('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLocaleValue(currentValue);
+    setValue(props.value);
     setError(null);
-  }, [currentValue]);
+  }, [props.value]);
 
-  const onChangeHandler = (value: string) => {
+  const setValueDebounced = useMemo(
+    () =>
+      debounce((newValue: number | undefined) => {
+        if (newValue !== undefined) {
+          onChange(newValue);
+        }
+      }, 600),
+    [onChange]
+  );
+
+  useEffect(() => () => setValueDebounced.clear(), [setValueDebounced]);
+
+  const onChangeHandler = (newValue: string) => {
+    // Cancel any previously scheduled save by replacing it with undefined.
+    // If the debounce fires with undefined, onChange is not called (see setValueDebounced above).
+    // A new valid save is rescheduled at the bottom if validation passes.
+    setValueDebounced(undefined);
     setError(null);
-    let numberValue = Number(value);
-    if (value === '' || Number.isNaN(numberValue)) {
-      setLocaleValue(null);
-      return;
-    }
-    if (max !== undefined && numberValue > Number(max)) {
-      numberValue = Number(max);
-    }
-    if (min !== undefined && numberValue < Number(min)) {
-      numberValue = Number(min);
-    }
-    setLocaleValue(numberValue);
-  };
-
-  const onBlurHandler = () => {
-    const numberValue = Number(localeValue);
-    if (localeValue === null || Number.isNaN(numberValue)) {
+    setValue(newValue);
+    const numberValue = Number(newValue);
+    if (newValue === '' || Number.isNaN(numberValue)) {
       setError(t('Please enter a valid number.'));
       return;
     }
@@ -48,9 +62,15 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
       setError(t('Please enter a valid integer.'));
       return;
     }
-    if (numberValue !== currentValue) {
-      props.onBlur(numberValue);
+    if (max !== undefined && numberValue > max) {
+      setError(t('Value must be less than or equal to {{max}}.', { max }));
+      return;
     }
+    if (min !== undefined && numberValue < min) {
+      setError(t('Value must be greater than or equal to {{min}}.', { min }));
+      return;
+    }
+    setValueDebounced(numberValue);
   };
 
   return (
@@ -67,19 +87,19 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
           id={id}
           name={id}
           onChange={(_event, value: string) => onChangeHandler(value)}
-          onBlur={onBlurHandler}
-          value={localeValue ?? ''}
+          value={value ?? ''}
           aria-describedby={id ? `${id}-form-group` : undefined}
           type={'number'}
           min={min}
           max={max}
           autoComplete={'off'}
           data-testid={id}
+          isDisabled={readOnly === true}
         />
-        {error && (
+        {(error || errorMsg) && (
           <FormHelperText>
             <HelperText>
-              <HelperTextItem variant={'error'}>{error}</HelperTextItem>
+              <HelperTextItem variant={'error'}>{error ?? errorMsg}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         )}

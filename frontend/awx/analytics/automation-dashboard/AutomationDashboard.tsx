@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import {
-  IFilterState,
   PageDashboard,
   PageHeader,
   PageLayout,
@@ -8,9 +7,7 @@ import {
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { Button } from '@patternfly/react-core';
-import { getItemKey } from '../../../common/crud/Data';
 import { useState } from 'react';
-import { AutomationDashboardDateRangeFilterPresets } from './constants';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
   DashboardChartCard,
@@ -19,41 +16,54 @@ import {
   DashboardValueCard,
   useAutomationDashboardToolbar,
 } from './components';
-import { DashboardTableItem } from './interfaces';
-import { DashboardChartValueProps } from './types';
+
+import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
   const toolbarFilters = useAutomationDashboardToolbar();
-  const [filterState, setFilterState] = useState<IFilterState>({
-    period: [AutomationDashboardDateRangeFilterPresets.monthToDate],
-  });
   const getPageUrl = useGetPageUrl();
 
   const description = t(
     'Discover the significant cost and time savings achieved by automating Ansible jobs with the Ansible Automation Platform. Explore how automation reduces manual effort, enhances efficiency, and optimizes IT operations across your organization.'
   );
 
-  const downloadPdf = () => {};
+  const view = useAutomationDashboardView({ toolbarFilters });
+  const { details, exportPdf, loading } = view;
+  const {
+    filterState,
+    setFilterState,
+    clearAllFilters,
+    page,
+    perPage,
+    setPage,
+    setPerPage,
+    sort,
+    setSort,
+    sortDirection,
+    setSortDirection,
+    itemCount,
+    selectedItems,
+    selectItem,
+    selectItems,
+    unselectItem,
+    unselectAll,
+    isSelected,
+    keyFn,
+    limitFiltersToOneOrOperation,
+  } = view.mainTableView;
+  const [exporting, setExporting] = useState(false);
 
-  /* Sample data for top projects */
-  const topProjects: DashboardTableItem[] = [
-    { name: 'Project Alpha', value: 1000 },
-    { name: 'Project Beta', value: 800 },
-    { name: 'Project Gamma', value: 600 },
-    { name: 'Project Delta', value: 400 },
-    { name: 'Project Epsilon', value: 200 },
-  ];
+  const handleExportPdf = async () => {
+    setExporting(true);
+    try {
+      await exportPdf();
+    } finally {
+      setExporting(false);
+    }
+  };
 
-  /* Sample data for chart values */
-  const chartValues: DashboardChartValueProps[] = [];
-  /** Generating dummy data for the chart */
-  for (let i = 0; i < 12; i++) {
-    chartValues.push({
-      label: `2025-${(i + 1).toString().padStart(2, '0')}`,
-      value: Math.floor(Math.random() * 100) + 1,
-    });
-  }
+  const noDataString = t('No jobs have been run.');
 
   return (
     <PageLayout>
@@ -63,20 +73,43 @@ export function AutomationDashboard() {
         titleHelp={description}
         description={description}
         controls={
-          <Button variant="secondary" onClick={downloadPdf}>
+          <Button
+            data-testid="save-as-pdf-button"
+            // TODO: Remove `|| true` once PDF export is implemented on the BE.
+            isDisabled={loading || exporting || !view?.mainTableView?.itemCount || true}
+            variant="secondary"
+            onClick={() => void handleExportPdf()}
+          >
             {t('Save as PDF')}
           </Button>
         }
       />
       <PageToolbar
-        keyFn={getItemKey}
-        itemCount={0}
         toolbarFilters={toolbarFilters}
-        setFilterState={setFilterState}
-        filterState={filterState}
         disableCardView
         disableListView
         disableTableView
+        viewType={'table'}
+        keyFn={keyFn}
+        itemCount={itemCount}
+        filterState={filterState}
+        setFilterState={setFilterState}
+        clearAllFilters={clearAllFilters}
+        page={page}
+        perPage={perPage}
+        setPage={setPage}
+        setPerPage={setPerPage}
+        sort={sort}
+        setSort={setSort}
+        sortDirection={sortDirection}
+        setSortDirection={setSortDirection}
+        selectedItems={selectedItems}
+        selectItem={selectItem}
+        selectItems={selectItems}
+        unselectItem={unselectItem}
+        unselectAll={unselectAll}
+        isSelected={isSelected}
+        limitFiltersToOneOrOperation={limitFiltersToOneOrOperation}
       />
       <PageDashboard>
         <DashboardValueCard
@@ -87,7 +120,9 @@ export function AutomationDashboard() {
           )}
           linkText={t('See all successful jobs in AAP')}
           to={getPageUrl(AwxRoute.Jobs) + '?status=successful'}
-          value={15}
+          value={details?.total_number_of_successful_jobs ?? noDataString}
+          error={view.detailsError}
+          errorStateTitle={t('Error loading successful jobs')}
         ></DashboardValueCard>
         <DashboardValueCard
           id="failed-jobs-card"
@@ -97,7 +132,9 @@ export function AutomationDashboard() {
           )}
           linkText={t('See all failed jobs in AAP')}
           to={getPageUrl(AwxRoute.Jobs) + '?status=failed'}
-          value={5}
+          value={details?.total_number_of_failed_jobs ?? noDataString}
+          error={view.detailsError}
+          errorStateTitle={t('Error loading failed jobs')}
         ></DashboardValueCard>
         <DashboardValueCard
           id="unique-hosts-card"
@@ -105,7 +142,9 @@ export function AutomationDashboard() {
           help={t(
             'Number of hosts that executed at least one automation job in the selected period. Indicates how much of your inventory is actively automated and can help with license or capacity planning.'
           )}
-          value={2}
+          value={details?.total_number_of_unique_hosts ?? noDataString}
+          error={view.detailsError}
+          errorStateTitle={t('Error loading unique hosts')}
         ></DashboardValueCard>
         <DashboardValueCard
           id="automation-hours-card"
@@ -113,9 +152,12 @@ export function AutomationDashboard() {
           help={t(
             'Sum of all job runtimes in the selected period. Reflects total automation workload and can inform capacity planning and resource allocation.'
           )}
-          value={2}
+          value={details?.total_hours_of_automation ?? noDataString}
           valueSuffix="h"
+          error={view.detailsError}
+          errorStateTitle={t('Error loading hours of automation')}
         ></DashboardValueCard>
+
         <DashboardTableCard
           id="top-projects-card"
           title={t('Top 5 projects')}
@@ -125,7 +167,9 @@ export function AutomationDashboard() {
           firstColumnHeader={t('Project name')}
           emptyStateTitle={t('No projects')}
           errorStateTitle={t('Error loading projects')}
-          items={topProjects}
+          items={details?.top_projects ?? []}
+          error={view.detailsError}
+          loading={view.detailsLoading}
         ></DashboardTableCard>
         <DashboardTableCard
           id="top-users-card"
@@ -136,7 +180,9 @@ export function AutomationDashboard() {
           firstColumnHeader={t('User name')}
           emptyStateTitle={t('No users')}
           errorStateTitle={t('Error loading users')}
-          items={[]}
+          items={details?.top_users ?? []}
+          error={view.detailsError}
+          loading={view.detailsLoading}
         ></DashboardTableCard>
         <DashboardChartCard
           id="host-chart-card"
@@ -144,9 +190,11 @@ export function AutomationDashboard() {
           help={t(
             'Number of hosts that ran at least one job in the selected period. Complements run count by showing how broadly automation is applied across your inventory.'
           )}
-          summaryValue={12015}
-          values={chartValues}
+          summaryValue={details?.total_number_of_host_job_runs ?? 0}
+          data={details?.host_chart ?? { kind: 'day', items: [] }}
           variant={'lineChart'}
+          error={view.detailsError}
+          errorStateTitle={t('Error loading host chart')}
         ></DashboardChartCard>
         <DashboardChartCard
           id="job-chart-card"
@@ -155,10 +203,13 @@ export function AutomationDashboard() {
             'Total number of job executions in the selected period, regardless of success or failure. Use this to understand automation volume, trends, and adoption over time.'
           )}
           variant={'barChart'}
-          summaryValue={0}
-          values={[]}
+          summaryValue={details?.total_number_of_job_runs ?? 0}
+          data={details?.job_chart ?? { kind: 'day', items: [] }}
+          errorStateTitle={t('Error loading job chart')}
+          error={view.detailsError}
         ></DashboardChartCard>
-        <DashboardMainTableCard></DashboardMainTableCard>
+
+        <DashboardMainTableCard {...view}></DashboardMainTableCard>
       </PageDashboard>
     </PageLayout>
   );

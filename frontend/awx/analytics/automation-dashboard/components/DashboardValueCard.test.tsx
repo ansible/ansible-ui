@@ -13,56 +13,86 @@ const defaultProps: DashboardValueCardProps = {
   linkText: 'Details',
   to: '/execution/jobs',
   valueSuffix: 'EUR',
+  errorStateTitle: 'Card Error',
 };
 
 describe('DashboardValueCard', () => {
-  test('renders title, value, and suffix', () => {
+  test('should render title, value, and suffix', () => {
     render(
       <MemoryRouter>
         <DashboardValueCard {...defaultProps} />
       </MemoryRouter>
     );
-    expect(screen.getByText('Test Title')).toBeTruthy();
-    expect(screen.getByText(/12.345/)).toBeTruthy();
-    expect(screen.queryByText(/EUR/)).toBeTruthy();
+    expect(screen.getByText('Test Title')).toBeInTheDocument();
+    expect(screen.getByText(/12[.,]345/)).toBeInTheDocument();
+    expect(screen.getByText(/EUR/)).toBeInTheDocument();
   });
 
-  test('renders help text if provided', async () => {
+  test('should render help text when help button is clicked', async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
         <DashboardValueCard {...defaultProps} />
       </MemoryRouter>
     );
-    const helpButton = screen.getByRole('button');
-    await user.click(helpButton);
-    expect(screen.getByText('Help text')).toBeTruthy();
+    await user.click(screen.getByRole('button'));
+    expect(screen.getByText('Help text')).toBeInTheDocument();
   });
 
-  test('renders link text if provided', () => {
+  test('should not render helpTitle when help is not provided', () => {
+    render(
+      <MemoryRouter>
+        <DashboardValueCard {...defaultProps} help={undefined} />
+      </MemoryRouter>
+    );
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  test('should render link text when linkText and to are provided', () => {
     render(
       <MemoryRouter>
         <DashboardValueCard {...defaultProps} />
       </MemoryRouter>
     );
-    expect(screen.getByText('Details')).toBeTruthy();
+    expect(screen.getByText('Details')).toBeInTheDocument();
   });
 
-  test('renders value as string if not a number', () => {
+  test('should render value as string when value is not a number', () => {
     render(
       <MemoryRouter>
         <DashboardValueCard {...defaultProps} value="Test value" valueSuffix={undefined} />
       </MemoryRouter>
     );
-    expect(screen.getByText('Test value')).toBeTruthy();
+    expect(screen.getByText('Test value')).toBeInTheDocument();
   });
 
-  test('does not render valueSuffix if not provided', () => {
+  test('should not render valueSuffix when valueSuffix is not provided', () => {
     render(
       <MemoryRouter>
         <DashboardValueCard {...defaultProps} valueSuffix={undefined} />
       </MemoryRouter>
     );
-    expect(screen.queryByText(/EUR/)).toBeNull();
+    expect(screen.queryByText(/EUR/)).not.toBeInTheDocument();
+  });
+
+  test('should render error state with errorStateTitle and error message when error is provided', () => {
+    render(
+      <MemoryRouter>
+        <DashboardValueCard {...defaultProps} error={new Error('Something failed')} />
+      </MemoryRouter>
+    );
+    expect(screen.getByText('Card Error')).toBeInTheDocument();
+    expect(screen.getByText('Something failed')).toBeInTheDocument();
+    expect(screen.queryByText(/12[.,]345/)).not.toBeInTheDocument();
+  });
+
+  test('should not render error state when error is not provided', () => {
+    render(
+      <MemoryRouter>
+        <DashboardValueCard {...defaultProps} />
+      </MemoryRouter>
+    );
+    expect(screen.queryByText('Card Error')).not.toBeInTheDocument();
+    expect(screen.getByText(/12[.,]345/)).toBeInTheDocument();
   });
 });
