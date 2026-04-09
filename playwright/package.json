@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -rf coverage test-results blob-report results.xml",
     "mock": "playwright test --project 'mock chromium' --grep-invert @not_mock",
-    "live": "playwright test --project 'live chromium' --grep-invert @not_live",
+    "live": "playwright test --project 'live chromium'",
     "compare": "playwright test --project 'live chromium' --grep @compare",
     "coverage": "open coverage/index.html",
     "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",

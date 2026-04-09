@@ -636,7 +636,6 @@ await Organization.ui.create(page, { organizationName: 'Test Org' });
 ### Test Tags
 
 - `@not_mock` - Don't run against mocked data
-- `@not_live` - Don't run against live server
 
 ### Debugging
 

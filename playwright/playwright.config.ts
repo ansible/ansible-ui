@@ -78,7 +78,6 @@ const config: PlaywrightTestConfig = {
       // If you have a test that needs more time, you can set the timeout for that test only in the test (i.e. test.setTimeout(5 * 60 * 1000);)
 
       grepInvert: [
-        /@not_live/, // We should not run tests that are marked to not run againt a live
         /@upgrade/, // We should not run upgrade tests in this project
       ],
     },
@@ -95,7 +94,6 @@ const config: PlaywrightTestConfig = {
       name: 'live firefox',
       use: { ...devices['Desktop Firefox'] },
       grepInvert: [
-        /@not_live/, // We should not run tests that are marked to not run againt a live
         /@upgrade/, // We should not run upgrade tests in this project
       ],
     },
@@ -111,7 +109,6 @@ const config: PlaywrightTestConfig = {
       name: 'live webkit',
       use: { ...devices['Desktop Safari'] },
       grepInvert: [
-        /@not_live/, // We should not run tests that are marked to not run againt a live
         /@upgrade/, // We should not run upgrade tests in this project
       ],
     },
