@@ -99,7 +99,6 @@ Tests should be tagged based on their capabilities. Tags are built into playwrig
 |       Tag | Description                                                          |
 | --------: | -------------------------------------------------------------------- |
 | @not_mock | This test should not run when testing against the mock API           |
-| @not_live | This test should not run when testing against a live API             |
 |  @upgrade | This test should only run against a server that is setup for upgrade |
 
 ### Developer Experience
