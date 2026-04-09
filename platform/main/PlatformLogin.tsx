@@ -27,7 +27,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
   const brandImg = options?.custom_logo ? (
     <img src={options.custom_logo} alt={t('Custom logo')} style={{ height: 64 }} />
   ) : (
-    <Logo />
+    <Logo style={{ color: 'white' }} />
   );
 
   if (activePlatformUser === undefined || options === undefined) {
