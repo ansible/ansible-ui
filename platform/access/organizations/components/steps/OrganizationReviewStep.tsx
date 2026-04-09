@@ -18,7 +18,17 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
+
+const ReviewContent = styled(Content)`
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  margin-left: var(--pf-t--global--spacer--lg);
+`;
+
+const ReviewAlert = styled(Alert)`
+  margin-left: var(--pf-t--global--spacer--lg);
+`;
 
 export function OrganizationReviewStep(props: { controllerOrganization?: ControllerOrganization }) {
   const { t } = useTranslation();
@@ -48,12 +58,12 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
 
   return (
     <>
-      <Content style={{ marginBottom: 25 }}>
+      <ReviewContent>
         <Content component={ContentVariants.h2}>{t('Review')}</Content>
-      </Content>
+      </ReviewContent>
       {controllerOrganization ? null : (
         <PageSection padding={{ default: 'noPadding' }}>
-          <Alert
+          <ReviewAlert
             variant="info"
             isInline
             isPlain
@@ -61,7 +71,7 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
           />
         </PageSection>
       )}
-      <PageDetails numberOfColumns="multiple" disablePadding>
+      <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{organization.name}</PageDetail>
         <PageDetail label={t('Description')}>{organization?.description}</PageDetail>
         {fetchedEE && fetchedEE.name !== undefined && (
