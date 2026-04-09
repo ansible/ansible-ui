@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import { beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import * as GatewayUIAuth from './GatewayUIAuth';
+import * as PlatformActiveUserModule from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 
 // Mock fetch globally
@@ -42,6 +43,7 @@ interface ManagedCloudStub {
 
 describe('Platform Subscription and Session Validation Tests', () => {
   let useIsManagedCloudStub: MockInstance & ManagedCloudStub;
+  let usePlatformActiveUserStub: MockInstance;
   let fetchMock: MockInstance;
 
   beforeAll(async () => {
@@ -72,6 +74,11 @@ describe('Platform Subscription and Session Validation Tests', () => {
       useIsManagedCloudStub.mockReturnValue(value);
       return useIsManagedCloudStub;
     };
+
+    // Default to superuser so existing tests see banners (AAPRFE-2823)
+    usePlatformActiveUserStub = vi
+      .spyOn(PlatformActiveUserModule, 'usePlatformActiveUser')
+      .mockReturnValue({ activePlatformUser: { is_superuser: true } as never });
 
     // Default intercepts matching the original Cypress test
     fetchMock.mockImplementation((url: string | URL) => {
@@ -276,6 +283,145 @@ describe('Platform Subscription and Session Validation Tests', () => {
       // Check that no subscription banners are displayed when managed cloud is enabled
       await waitFor(() => {
         expect(screen.queryByRole('banner')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should not display compliance banners for non-admin users (AAPRFE-2823)', async () => {
+      // Arrange: Set user as non-superuser
+      usePlatformActiveUserStub.mockReturnValue({
+        activePlatformUser: { is_superuser: false },
+      });
+
+      // Override the config intercept to return non-compliant license
+      fetchMock.mockImplementation((url: string | URL) => {
+        const urlString = url.toString();
+
+        if (
+          urlString.includes('/config/') &&
+          (urlString.includes('/api/controller/v2/') || urlString.includes('/api/v2/'))
+        ) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                license_info: {
+                  compliant: false,
+                  grace_period_remaining: 2 * 24 * 60 * 60,
+                },
+              }),
+          } as Response);
+        }
+
+        if (urlString.includes('/api/gateway/v1/session/')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ expires_in_seconds: 3600 }),
+          } as Response);
+        }
+
+        return Promise.reject(new Error(`Unmocked URL: ${urlString}`));
+      });
+
+      // Act
+      mountPlatformApp(<PlatformApp />);
+
+      // Assert: No compliance banner should be shown to non-admin users
+      await waitFor(() => {
+        expect(
+          screen.queryByText(/Your subscription is out of compliance/)
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it('should display compliance banners only for admin users (AAPRFE-2823)', async () => {
+      // Arrange: Set user as superuser
+      usePlatformActiveUserStub.mockReturnValue({
+        activePlatformUser: { is_superuser: true },
+      });
+
+      // Override the config intercept to return non-compliant license
+      fetchMock.mockImplementation((url: string | URL) => {
+        const urlString = url.toString();
+
+        if (
+          urlString.includes('/config/') &&
+          (urlString.includes('/api/controller/v2/') || urlString.includes('/api/v2/'))
+        ) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                license_info: {
+                  compliant: false,
+                  grace_period_remaining: 2 * 24 * 60 * 60,
+                },
+              }),
+          } as Response);
+        }
+
+        if (urlString.includes('/api/gateway/v1/session/')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ expires_in_seconds: 3600 }),
+          } as Response);
+        }
+
+        return Promise.reject(new Error(`Unmocked URL: ${urlString}`));
+      });
+
+      // Act
+      mountPlatformApp(<PlatformApp />);
+
+      // Assert: Compliance banner should be shown to admin users
+      await waitFor(() => {
+        expect(
+          screen.getByText('Your subscription is out of compliance. 2 days grace period remaining.')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('should not display subscription expiry banners for non-admin users (AAPRFE-2823)', async () => {
+      // Arrange: Set user as non-superuser
+      usePlatformActiveUserStub.mockReturnValue({
+        activePlatformUser: { is_superuser: false },
+      });
+
+      // Override the config intercept to return expiring subscription
+      fetchMock.mockImplementation((url: string | URL) => {
+        const urlString = url.toString();
+
+        if (
+          urlString.includes('/config/') &&
+          (urlString.includes('/api/controller/v2/') || urlString.includes('/api/v2/'))
+        ) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                license_info: {
+                  compliant: true,
+                  time_remaining: 14 * 24 * 60 * 60,
+                },
+              }),
+          } as Response);
+        }
+
+        if (urlString.includes('/api/gateway/v1/session/')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ expires_in_seconds: 3600 }),
+          } as Response);
+        }
+
+        return Promise.reject(new Error(`Unmocked URL: ${urlString}`));
+      });
+
+      // Act
+      mountPlatformApp(<PlatformApp />);
+
+      // Assert: No expiry banner should be shown to non-admin users
+      await waitFor(() => {
+        expect(screen.queryByText(/Your subscription will expire/)).not.toBeInTheDocument();
       });
     });
   });
