@@ -5,7 +5,7 @@ on:
     types: [created]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
   issues: write
   actions: read
@@ -21,6 +21,7 @@ jobs:
       pr_sha: ${{ steps.pr.outputs.sha }}
       pr_ref: ${{ steps.pr.outputs.ref }}
       aap_version: ${{ steps.pr.outputs.aap_version }}
+      update_snapshots: ${{ steps.pr.outputs.update_snapshots }}
       author_association: ${{ github.event.comment.author_association }}
     steps:
       - name: Check trigger comment
@@ -41,9 +42,17 @@ jobs:
             core.setOutput('sha', pr.data.head.sha);
             core.setOutput('ref', pr.data.head.ref);
 
-            // Parse AAP version from comment (e.g., "/run-aap-ui-playwright 2.5-next")
+            // Parse flags from comment
             const commentBody = context.payload.comment.body;
-            const versionMatch = commentBody.match(/\/run-aap-ui-playwright\s+(\S+)/);
+
+            // Check for --update-snapshots flag
+            const updateSnapshots = commentBody.includes('--update-snapshots');
+            core.setOutput('update_snapshots', updateSnapshots.toString());
+
+            // Parse AAP version from comment (e.g., "/run-aap-ui-playwright 2.5-next")
+            // Exclude flags (--) when matching version
+            const stripped = commentBody.replace(/--\S+/g, '');
+            const versionMatch = stripped.match(/\/run-aap-ui-playwright\s+(\S+)/);
             const aapVersion = versionMatch ? versionMatch[1] : '2.6';
             core.setOutput('aap_version', aapVersion);
 
@@ -201,7 +210,7 @@ jobs:
             --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
             -- \
             --project="live chromium" \
-            --shard=${{ matrix.container }}/4 2>&1 | tee output.log
+            --shard=${{ matrix.container }}/4 ${{ needs.check-comment.outputs.update_snapshots == 'true' && '--update-snapshots' || '' }} 2>&1 | tee output.log
           PWC_EXIT_CODE=$?
           set -e
 
@@ -254,12 +263,77 @@ jobs:
           path: coverage/playwright/
           retention-days: 7
 
+      - name: Upload Visual Test Snapshots
+        if: failure() || needs.check-comment.outputs.update_snapshots == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-snapshots-${{ matrix.container }}
+          path: playwright/tests/visual/**/*-snapshots/
+          retention-days: 30
+          if-no-files-found: ignore
+
       - name: Cleanup AAP deployment
         if: always()
         uses: ansible/aap-dev/.github/actions/aap_delete@main
         with:
           kube_config: ${{ steps.deploy.outputs.kube_config }}
           aap_dev_repo_github_token: ${{ secrets.GH_TOKEN }}
+
+  commit-snapshots:
+    name: Commit Updated Snapshots
+    needs:
+      - check-comment
+      - deploy-and-test
+    if: always() && needs.check-comment.outputs.update_snapshots == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-comment.outputs.pr_ref }}
+          fetch-depth: 1
+
+      - name: Download all snapshot artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: playwright-snapshots-*
+          path: snapshot-artifacts
+
+      - name: Copy snapshots into repo
+        run: |
+          # Each artifact contains the snapshot directory structure
+          # e.g., snapshot-artifacts/playwright-snapshots-1/tests/visual/...-snapshots/*.png
+          for dir in snapshot-artifacts/playwright-snapshots-*/; do
+            [ -d "$dir" ] || continue
+            # Copy all snapshot files, preserving directory structure relative to playwright/
+            if [ -d "${dir}tests" ]; then
+              cp -r "${dir}tests/" playwright/tests/
+            fi
+          done
+          rm -rf snapshot-artifacts
+
+      - name: Commit and push updated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add playwright/tests/visual/**/*-snapshots/*.png
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit"
+          else
+            git commit -m "Update visual test baselines from CI [skip ci]"
+            git push origin HEAD:${{ needs.check-comment.outputs.pr_ref }}
+          fi
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.check-comment.outputs.pr_number }},
+              body: '📸 Visual test baselines have been updated and committed to this branch.'
+            });
 
   report-results:
     name: Report Test Results
