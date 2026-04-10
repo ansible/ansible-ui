@@ -7,15 +7,13 @@
 #   PACKAGING_REPO_DISPATCH_TOKEN — PAT with permission to create repository_dispatch on the packaging repo
 #   PACKAGING_GITHUB_REPOSITORY   — packaging repo slug, e.g. org/private-aap-ui-packaging (not visible in this YAML)
 
-name: Trigger packaging Quay builds
+name: Trigger packaging builds
 
 on:
   push:
     branches:
       - main
       - devel
-      - 'release/*'
-      - 'stable-*'
     tags:
       - '*'
 

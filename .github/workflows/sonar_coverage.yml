@@ -166,6 +166,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
         with:
           args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
             -Dsonar.scm.revision=${{ steps.pr_details.outputs.pr_sha }}
             -Dsonar.pullrequest.key=${{ steps.get_pr_info.outputs.pr_number || github.event.inputs.pr_number }}
             -Dsonar.pullrequest.branch=${{ steps.pr_details.outputs.pr_head }}

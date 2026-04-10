@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><svg id="uuid-779f2a79-7bc3-4651-aa90-e0120e255ae0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38"><title>Red Hat Ansible Automation Platform icon</title>
+<?xml version="1.0" encoding="UTF-8"?><svg id="uuid-779f2a79-7bc3-4651-aa90-e0120e255ae0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38"><title>Ansible icon</title>
 <desc>Management, edge</desc>
 <metadata><?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 8.0-c001 1.000000, 0000/00/00-00:00:00        ">
@@ -24,7 +24,7 @@
          <xmp:rhcc-notify-portal-subscribers-on-change>yes</xmp:rhcc-notify-portal-subscribers-on-change>
          <xmp:rhcc-product>
             <rdf:Bag>
-               <rdf:li>rhcc-product:red-hat-ansible-automation-platform</rdf:li>
+               <rdf:li>rhcc-product:ansible-platform</rdf:li>
             </rdf:Bag>
          </xmp:rhcc-product>
          <xmp:brand-subtype>
@@ -36,7 +36,7 @@
          <dc:modified>2024-05-10T14:04:00.014Z</dc:modified>
          <dc:title>
             <rdf:Alt>
-               <rdf:li xml:lang="x-default">Red Hat Ansible Automation Platform icon</rdf:li>
+               <rdf:li xml:lang="x-default">Ansible icon</rdf:li>
             </rdf:Alt>
          </dc:title>
          <dc:description>
