@@ -117,8 +117,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       type={'integer'}
       value={item[columnKey]}
       onChange={(value: number) => void onTableInputChange(item, columnKey, value)}
-      // TODO: Remove `|| true` once template metadata editing is implemented on the BE.
-      readOnly={loading || isSaving || true}
+      readOnly={loading || isSaving}
       error={errors?.[item.id]?.[columnKey]}
     />
   );

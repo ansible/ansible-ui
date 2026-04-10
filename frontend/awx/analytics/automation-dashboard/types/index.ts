@@ -34,6 +34,7 @@ export interface IJobTemplate {
 }
 
 export interface ISubscriptionCosts {
+  id: number;
   monthly_subscription_cost: number;
   engineer_avg_hourly_rate: number;
   include_template_creation_time_in_costs: boolean;

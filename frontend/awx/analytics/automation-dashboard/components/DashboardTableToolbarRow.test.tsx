@@ -14,7 +14,7 @@ import type { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
 const server = setupServer(
-  http.post(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
+  http.put(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -24,6 +24,7 @@ afterAll(() => server.close());
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const defaultCostState: ISubscriptionCosts = {
+  id: 1,
   monthly_subscription_cost: 100,
   engineer_avg_hourly_rate: 50,
   include_template_creation_time_in_costs: false,
@@ -142,14 +143,6 @@ describe('DashboardTableToolbarRow', () => {
   });
 
   // --- Inputs disabled ---
-
-  test('should disable all inputs and switch while BE is not yet implemented', () => {
-    renderRow();
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-    expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
-  });
-
   test('should disable inputs when isLoading is true', () => {
     renderRow(buildProps({ isLoading: true }));
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
@@ -159,7 +152,7 @@ describe('DashboardTableToolbarRow', () => {
   // --- toolbarChangeHandler: success ---
   // TODO: Re-enable the following tests once `|| true` is removed from controlsDisabled.
 
-  test.skip('should show success alert, call setCostState and refresh on engineer_avg_hourly_rate change', async () => {
+  test('should show success alert, call setCostState and refresh on engineer_avg_hourly_rate change', async () => {
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
     await waitFor(() =>
@@ -169,7 +162,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockRefresh).toHaveBeenCalled();
   });
 
-  test.skip('should show success alert on monthly_subscription_cost change', async () => {
+  test('should show success alert on monthly_subscription_cost change', async () => {
     renderRow();
     await triggerInputChange('monthly_subscription_cost', '200');
     await waitFor(() =>
@@ -178,7 +171,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockRefresh).toHaveBeenCalled();
   });
 
-  test.skip('should show success alert when switch is toggled', async () => {
+  test('should show success alert when switch is toggled', async () => {
     const user = userEvent.setup();
     renderRow();
     await user.click(screen.getByTestId('switch-time-taken-automation-toggle'));
@@ -188,7 +181,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockSetCostState).toHaveBeenCalled();
   });
 
-  test.skip('should skip setCostState call when setCostState is undefined', async () => {
+  test('should skip setCostState call when setCostState is undefined', async () => {
     renderRow(buildProps({ setCostState: undefined }));
     await triggerInputChange('engineer_avg_hourly_rate', '75');
     await waitFor(() =>
@@ -199,8 +192,8 @@ describe('DashboardTableToolbarRow', () => {
 
   // --- toolbarChangeHandler: network error ---
 
-  test.skip('should show danger alert and not call refresh on network error', async () => {
-    server.use(http.post(/subscription_costs/, () => HttpResponse.error()));
+  test('should show danger alert and not call refresh on network error', async () => {
+    server.use(http.put(/subscription_costs/, () => HttpResponse.error()));
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
     await waitFor(() =>
@@ -209,7 +202,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockRefresh).not.toHaveBeenCalled();
   });
 
-  test.skip('should show warning alert when refresh fails after successful post', async () => {
+  test('should show warning alert when refresh fails after successful post', async () => {
     mockRefresh.mockRejectedValueOnce(new Error('Network error'));
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
@@ -220,9 +213,9 @@ describe('DashboardTableToolbarRow', () => {
 
   // --- toolbarChangeHandler: 422 field error ---
 
-  test.skip('should display field error in input on 422 response', async () => {
+  test('should display field error in input on 422 response', async () => {
     server.use(
-      http.post('*/subscription_costs/', () =>
+      http.put(/subscription_costs/, () =>
         HttpResponse.json(
           { engineer_avg_hourly_rate: ['Value must be positive.'] },
           { status: 422 }
@@ -234,9 +227,9 @@ describe('DashboardTableToolbarRow', () => {
     await waitFor(() => expect(screen.getByText('Value must be positive.')).toBeInTheDocument());
   });
 
-  test.skip('should clear field error on next successful request', async () => {
+  test('should clear field error on next successful request', async () => {
     server.use(
-      http.post(
+      http.put(
         /subscription_costs/,
         () => HttpResponse.json({ engineer_avg_hourly_rate: ['Too high'] }, { status: 422 }),
         { once: true }

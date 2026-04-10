@@ -119,6 +119,7 @@ const mockView: IAutomationDashboardView = {
   detailsError: undefined,
   detailsLoading: false,
   costState: {
+    id: 1,
     monthly_subscription_cost: 100,
     engineer_avg_hourly_rate: 50,
     include_template_creation_time_in_costs: true,

@@ -3,11 +3,11 @@ import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/Pag
 import { useTranslation } from 'react-i18next';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { usePageAlertToaster } from '../../../../../framework';
 import { useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
+import { usePutRequest } from '../../../../common/crud/usePutRequest';
 
 const SWITCH_ID = 'switch-time-taken-automation';
 
@@ -15,14 +15,14 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
   const { costState, isLoading, itemCount, setCostState, refresh, onExportCsv } = props;
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
-  const postRequest = usePostRequest<ISubscriptionCosts, ISubscriptionCosts>();
+  const putRequest = usePutRequest<ISubscriptionCosts, ISubscriptionCosts>();
 
   const [errors, setErrors] = useState<Partial<Record<keyof ISubscriptionCosts, string>> | null>(
     null
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // TODO: Remove `|| true` once subscription costs editing is implemented on the BE.
-  const controlsDisabled = isLoading || isSubmitting || !costState || true;
+
+  const controlsDisabled = isLoading || isSubmitting || !costState;
 
   const toolbarChangeHandler = async <K extends keyof ISubscriptionCosts>(
     value: ISubscriptionCosts[K],
@@ -39,10 +39,11 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
     setIsSubmitting(true);
     setErrors(null);
     try {
-      // Save: report failure only when the POST itself rejects.
+      // Save: report failure only when the PUT itself rejects.
+      const id = costState.id;
       try {
-        const savedState = await postRequest(
-          metricsAPI`/dashboard_reports/subscription_costs/`,
+        const savedState = await putRequest(
+          metricsAPI`/dashboard_reports/subscription_costs/${id}/`,
           updatedCostState
         );
         if (setCostState) {
@@ -72,7 +73,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
         return;
       }
 
-      // POST succeeded — show success before attempting the refresh.
+      // PUT succeeded — show success before attempting the refresh.
       alertToaster.addAlert({
         variant: 'success',
         title: t('Subscription costs updated successfully.'),
@@ -158,7 +159,8 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
           data-testid="btn-export-csv"
           variant="secondary"
           onClick={onExportCsv}
-          isDisabled={controlsDisabled || (itemCount ?? 0) === 0 || !onExportCsv}
+          // TODO: Remove `|| true` once CSV export is implemented on the BE.
+          isDisabled={controlsDisabled || (itemCount ?? 0) === 0 || !onExportCsv || true}
         >
           {t('Export as CSV')}
         </Button>
