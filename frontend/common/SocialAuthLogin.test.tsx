@@ -174,6 +174,62 @@ describe('SocialAuthLogin', () => {
     expect(screen.getByTestId('social-auth-google-oauth2')).toBeInTheDocument();
   });
 
+  it('should store next param value when on root page with next query parameter', () => {
+    window.location.pathname = '/';
+    window.location.search =
+      '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26redirect_uri%3Dhttps%3A%2F%2Frhdh.example.com%2Fcallback%26client_id%3Dxxx';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
+      '/o/authorize/?response_type=code&redirect_uri=https://rhdh.example.com/callback&client_id=xxx'
+    );
+  });
+
+  it('should store next param value when on login page with next query parameter', () => {
+    window.location.pathname = '/login';
+    window.location.search = '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26client_id%3Dxxx';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
+      '/o/authorize/?response_type=code&client_id=xxx'
+    );
+  });
+
+  it('should reject unsafe next param and fall through to regular logic', () => {
+    window.location.pathname = '/';
+    window.location.search = '?next=https://malicious-url.com';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    // validateUrlPath rejects absolute URL, falls through to store pathname + search
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
+      '/?next=https://malicious-url.com'
+    );
+  });
+
   it('should handle complex paths with query parameters', () => {
     // Mock a complex path
     window.location.pathname = '/platform/users';
@@ -304,21 +360,28 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
       '/automation/collections?page=3&filter=name'
     );
 
-    // Now test login page scenario
+    // Now test login page scenario with next param
     sessionStorage.clear();
     mockLocation.pathname = '/login';
     mockLocation.search = '?next=/some/path';
 
-    const loginPagePath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+    const loginQueryParams = new URLSearchParams(mockLocation.search);
+    const nextParam = loginQueryParams.get('next');
+    let loginRedirectUrl: string | null = null;
 
-    if (loginPagePath) {
-      sessionStorage.setItem('social_auth_redirect_url', loginPagePath);
+    if (nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//')) {
+      loginRedirectUrl = nextParam;
     }
 
-    // Should not store anything for login page
-    expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
+    if (!loginRedirectUrl && mockLocation.pathname !== '/login') {
+      loginRedirectUrl = mockLocation.pathname + mockLocation.search;
+    }
+
+    if (loginRedirectUrl) {
+      sessionStorage.setItem('social_auth_redirect_url', loginRedirectUrl);
+    }
+
+    // Should store the next param value, not the login page URL
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe('/some/path');
   });
 });

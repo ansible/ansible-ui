@@ -2,6 +2,7 @@ import { Button as PFButton, Stack } from '@patternfly/react-core';
 import { AzureIcon, GithubIcon, GoogleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { validateUrlPath } from './AnsibleLogin/validateUrlPath';
 
 const Button = styled(PFButton)`
   overflow: hidden;
@@ -78,14 +79,21 @@ function SocialAuthLink(props: { option: AuthOption }) {
   const Icon = icons[option.type] ?? UserCircleIcon;
 
   const handleSocialAuthClick = () => {
-    const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+    const queryParams = new URLSearchParams(window.location.search);
+    const nextParam = queryParams.get('next');
 
-    if (currentPath) {
-      // Store the redirect URL in sessionStorage
-      sessionStorage.setItem('social_auth_redirect_url', currentPath);
+    let redirectUrl: string | null = null;
+
+    if (nextParam) {
+      redirectUrl = validateUrlPath(nextParam);
+    }
+
+    if (!redirectUrl && window.location.pathname !== '/login') {
+      redirectUrl = window.location.pathname + window.location.search;
+    }
+
+    if (redirectUrl) {
+      sessionStorage.setItem('social_auth_redirect_url', redirectUrl);
     }
   };
 
