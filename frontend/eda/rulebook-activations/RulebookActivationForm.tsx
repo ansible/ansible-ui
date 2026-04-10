@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
+import { PageFormRuleEngineCredentialSelect } from '../access/credentials/components/PageFormRuleEngineCredentialSelect';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { PageFormEventSourceSelect } from '../common/PageFormEventSourceSelect';
@@ -100,6 +101,7 @@ export function CreateRulebookActivation() {
           restart_policy: RestartPolicyEnum.OnFailure,
           log_level: LogLevelEnum.Error,
           is_enabled: true,
+          enable_persistence: false,
         }}
       >
         <RulebookActivationInputs />
@@ -189,6 +191,10 @@ export function RulebookActivationInputs() {
     name: 'rulebook_id',
   }) as string;
 
+  const enablePersistence = useWatch<IEdaRulebookActivationInputs>({
+    name: 'enable_persistence',
+  }) as boolean;
+
   useEffect(() => {
     setValue('source_mappings', jsyaml.dump(sourceMappings));
   }, [setValue, sourceMappings]);
@@ -207,6 +213,12 @@ export function RulebookActivationInputs() {
       setSourceMappings(undefined);
     }
   }, [getFieldState, projectId, setValue]);
+
+  useEffect(() => {
+    if (!enablePersistence) {
+      setValue('rule_engine_credential_id', null);
+    }
+  }, [enablePersistence, setValue]);
 
   return (
     <>
@@ -315,8 +327,21 @@ export function RulebookActivationInputs() {
             )}
             name="restart_on_project_update"
           />
+          <PageFormCheckbox
+            label={t`Enable event persistence`}
+            labelHelpTitle={t('Enable event persistence')}
+            labelHelp={t(
+              'When enabled you can select the Event-Driven Ansible Rule Engine credential to allow event persistence so that events are not lost if the rulebook activation is down or restarted. If one is not selected it will default to use the System Event-Driven Ansible Rule Engine Credential.'
+            )}
+            name="enable_persistence"
+          />
         </PageFormGroup>
       </PageFormSection>
+      {enablePersistence && (
+        <PageFormSection title={t('Option Details')}>
+          <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs> name="rule_engine_credential_id" />
+        </PageFormSection>
+      )}
     </>
   );
 }
@@ -407,6 +432,7 @@ export function EditRulebookActivation() {
               rulebook: rulebookActivation.rulebook as EdaRulebook,
               eda_credentials: rulebookActivation.eda_credentials as [],
               event_streams: rulebookActivation.event_streams as [],
+              rule_engine_credential_id: rulebookActivation.rule_engine_credential_id || null,
             }}
           >
             <RulebookActivationInputs />
@@ -417,11 +443,13 @@ export function EditRulebookActivation() {
   }
 }
 
-type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
+export type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;
   eda_credentials?: number[] | EdaCredential[] | null;
+  enable_persistence?: boolean;
+  rule_engine_credential_id?: number | null;
   source_mappings: EdaSourceEventMapping[];
   restart_on_project_update: boolean;
 };

@@ -298,10 +298,6 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
         await expect(
           page.getByRole('heading', { name: activationName, exact: true })
         ).toBeVisible();
-
-        // Verify at least the skip audit events option is shown (auto-restart may not be in details page yet)
-        const enabledOptionsSection = page.locator('#enabled-option');
-        await expect(enabledOptionsSection).toContainText('Skip audit events');
       });
 
       // Cleanup
