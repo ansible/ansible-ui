@@ -26,10 +26,11 @@ jobs:
       build-directory: platform
       build-script: build
       docker-context: platform
-      docker-file: platform/Dockerfile
+      docker-file: _packaging/docker/platform/Dockerfile
       docker-target: platform-ui
       docker-image: platform-ui
       upload-artifact: true
+    secrets: inherit
 
   platform-e2e:
     name: Platform E2E
