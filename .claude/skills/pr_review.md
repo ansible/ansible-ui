@@ -14,9 +14,9 @@ Before reviewing the PR, read:
 
 **Branch Strategy:**
 
-- Base branch: `main` (unless specified otherwise)
-- Review diff: `git diff main...HEAD` or `main` → current branch
-- Focus on changes introduced by the current branch, not existing code in `main`
+- Base branch: `devel` (unless specified otherwise)
+- Review diff: `git diff devel...HEAD` or `devel` → current branch
+- Focus on changes introduced by the current branch, not existing code in `devel`
 
 ---
 

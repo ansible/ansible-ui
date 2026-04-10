@@ -42,7 +42,7 @@ If a valid risk level is selected:
 4. Bot comment explaining exactly what to do
 
 ### Post-merge setup (manual, documented in PR)
-Add **"Risk Analysis Required"** as a required status check in branch protection rules for `main` to block merging.
+Add **"Risk Analysis Required"** as a required status check in branch protection rules for `devel` to block merging.
 
 ## Verification
 - Open a test PR without checking any risk box → expect: check fails, "Changes requested" review posted, label added

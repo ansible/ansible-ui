@@ -101,12 +101,12 @@ If no spec exists, you MUST create one using the template before migrating tests
 
 ---
 
-## CRITICAL: Branch from Main
+## CRITICAL: Branch from Devel
 
-**ALWAYS create your migration branch from `main`, never from backport or feature branches.**
+**ALWAYS create your migration branch from `devel`, never from backport or feature branches.**
 
 ```bash
-git checkout main
+git checkout devel
 git checkout -b migrate-[feature]-tests
 ```
 

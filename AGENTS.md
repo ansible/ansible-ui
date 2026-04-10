@@ -13,7 +13,7 @@ Claude, you have access to the following skills. Use them when appropriate:
 
 When migrating Cypress tests to Playwright, use the `/migrate-test` skill. Key principles:
 
-1. **Always branch from `main`** for migrations
+1. **Always branch from `devel`** for migrations
 2. **Migrate in batches of 3-4 tests** using parallel Task agents
 3. **Follow the Common Pitfalls guide** to avoid strict mode violations, API errors, and TypeScript issues
 4. **Run tests immediately** after writing (`--max-failures=1 --retries=0`)

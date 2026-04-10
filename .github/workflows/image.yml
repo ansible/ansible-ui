@@ -36,7 +36,7 @@ on:
       packaging-ref:
         description: 'Git ref to checkout for packaging repo'
         type: string
-        default: main
+        default: devel
     secrets:
       QUAY_USERNAME:
         required: false
@@ -114,7 +114,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
             type=raw,value={{branch}}
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/devel' }}
 
       - name: Build and Push Image
         if: ${{ inputs.docker-publish }}
