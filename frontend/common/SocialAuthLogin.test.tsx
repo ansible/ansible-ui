@@ -273,9 +273,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
   it('should store current path in sessionStorage for non-login pages', () => {
     // Simulate the logic from SocialAuthLogin
     const currentPath =
-      globalThis.location.pathname !== '/login'
-        ? globalThis.location.pathname + globalThis.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -293,9 +293,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
 
     // Simulate the logic from SocialAuthLogin
     const currentPath =
-      globalThis.location.pathname !== '/login'
-        ? globalThis.location.pathname + globalThis.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -309,9 +309,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     mockLocation.search = '?tab=access&filter=active';
 
     const currentPath =
-      globalThis.location.pathname !== '/login'
-        ? globalThis.location.pathname + globalThis.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -327,9 +327,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     mockLocation.search = '';
 
     const currentPath =
-      globalThis.location.pathname !== '/login'
-        ? globalThis.location.pathname + globalThis.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -348,9 +348,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
 
     // Execute the same logic as in SocialAuthLogin.tsx
     const currentPath =
-      globalThis.location.pathname !== '/login'
-        ? globalThis.location.pathname + globalThis.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
