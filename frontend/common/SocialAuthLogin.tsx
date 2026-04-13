@@ -79,7 +79,7 @@ function SocialAuthLink(props: { option: AuthOption }) {
   const Icon = icons[option.type] ?? UserCircleIcon;
 
   const handleSocialAuthClick = () => {
-    const queryParams = new URLSearchParams(window.location.search);
+    const queryParams = new URLSearchParams(globalThis.location.search);
     const nextParam = queryParams.get('next');
 
     let redirectUrl: string | null = null;
@@ -88,8 +88,8 @@ function SocialAuthLink(props: { option: AuthOption }) {
       redirectUrl = validateUrlPath(nextParam);
     }
 
-    if (!redirectUrl && window.location.pathname !== '/login') {
-      redirectUrl = window.location.pathname + window.location.search;
+    if (!redirectUrl && globalThis.location.pathname !== '/login') {
+      redirectUrl = globalThis.location.pathname + globalThis.location.search;
     }
 
     if (redirectUrl) {

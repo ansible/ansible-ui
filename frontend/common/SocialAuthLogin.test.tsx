@@ -4,14 +4,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 
-// Mock window.location
+// Mock globalThis.location
 const mockWindowLocation = {
   pathname: '/execution/projects',
   search: '?page=1&perPage=10&sort=name',
   href: 'http://localhost:4100/execution/projects?page=1&perPage=10&sort=name',
 };
 
-Object.defineProperty(window, 'location', {
+Object.defineProperty(globalThis, 'location', {
   value: mockWindowLocation,
   configurable: true,
 });
@@ -112,8 +112,8 @@ describe('SocialAuthLogin', () => {
 
   it('should not store sessionStorage when on login page', () => {
     // Mock being on login page
-    window.location.pathname = '/login';
-    window.location.search = '';
+    globalThis.location.pathname = '/login';
+    globalThis.location.search = '';
 
     render(
       <MemoryRouter>
@@ -175,8 +175,8 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should store next param value when on root page with next query parameter', () => {
-    window.location.pathname = '/';
-    window.location.search =
+    globalThis.location.pathname = '/';
+    globalThis.location.search =
       '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26redirect_uri%3Dhttps%3A%2F%2Frhdh.example.com%2Fcallback%26client_id%3Dxxx';
 
     render(
@@ -194,8 +194,9 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should store next param value when on login page with next query parameter', () => {
-    window.location.pathname = '/login';
-    window.location.search = '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26client_id%3Dxxx';
+    globalThis.location.pathname = '/login';
+    globalThis.location.search =
+      '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26client_id%3Dxxx';
 
     render(
       <MemoryRouter>
@@ -212,8 +213,8 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should reject unsafe next param and fall through to regular logic', () => {
-    window.location.pathname = '/';
-    window.location.search = '?next=https://malicious-url.com';
+    globalThis.location.pathname = '/';
+    globalThis.location.search = '?next=https://malicious-url.com';
 
     render(
       <MemoryRouter>
@@ -232,8 +233,8 @@ describe('SocialAuthLogin', () => {
 
   it('should handle complex paths with query parameters', () => {
     // Mock a complex path
-    window.location.pathname = '/platform/users';
-    window.location.search = '?page=2&sort=username&filter=active';
+    globalThis.location.pathname = '/platform/users';
+    globalThis.location.search = '?page=2&sort=username&filter=active';
 
     render(
       <MemoryRouter>
@@ -261,8 +262,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     sessionStorage.clear();
     vi.clearAllMocks();
 
-    // Mock window.location for these specific tests
-    Object.defineProperty(window, 'location', {
+    // Mock globalThis.location for these specific tests
+    Object.defineProperty(globalThis, 'location', {
       value: mockLocation,
       writable: true,
       configurable: true,
@@ -272,8 +273,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
   it('should store current path in sessionStorage for non-login pages', () => {
     // Simulate the logic from SocialAuthLogin
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
+      globalThis.location.pathname !== '/login'
+        ? globalThis.location.pathname + globalThis.location.search
         : null;
 
     if (currentPath) {
@@ -292,8 +293,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
 
     // Simulate the logic from SocialAuthLogin
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
+      globalThis.location.pathname !== '/login'
+        ? globalThis.location.pathname + globalThis.location.search
         : null;
 
     if (currentPath) {
@@ -308,8 +309,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     mockLocation.search = '?tab=access&filter=active';
 
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
+      globalThis.location.pathname !== '/login'
+        ? globalThis.location.pathname + globalThis.location.search
         : null;
 
     if (currentPath) {
@@ -326,8 +327,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     mockLocation.search = '';
 
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
+      globalThis.location.pathname !== '/login'
+        ? globalThis.location.pathname + globalThis.location.search
         : null;
 
     if (currentPath) {
@@ -347,8 +348,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
 
     // Execute the same logic as in SocialAuthLogin.tsx
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
+      globalThis.location.pathname !== '/login'
+        ? globalThis.location.pathname + globalThis.location.search
         : null;
 
     if (currentPath) {
