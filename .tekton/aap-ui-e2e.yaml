@@ -1,0 +1,66 @@
+---
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: aap-ui-e2e-pull-request
+  annotations:
+    build.appstudio.openshift.io/repo: https://github.com/{{repo_owner}}/{{repo_name}}?rev={{revision}}
+    build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
+    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-comment: "^/run-playwright$"
+    pipelinesascode.tekton.dev/target-namespace: ansible-ci-tenant
+  labels:
+    appstudio.openshift.io/application: '{{repo_owner}}'
+    appstudio.openshift.io/component: '{{repo_owner}}-{{repo_name}}'
+    pipelines.appstudio.openshift.io/type: build
+spec:
+  timeouts:
+    pipeline: "8h"
+    tasks: "7h"
+    finally: "1h"
+  pipelineRef:
+    resolver: bundles
+    params:
+      - name: name
+        value: aap-ui-tests
+      - name: bundle
+        value: quay.io/aap-ci/tekton-catalog/pipeline/test/aap-ui-tests:0.1@sha256:3f33afdc613ed92ac6af72a9b85c277a9c11491abd5fe8197dc7781bea412e33
+      - name: kind
+        value: pipeline
+      - name: secret
+        value: quay-aap-ci-viewer
+
+  taskRunTemplate:
+    serviceAccountName: konflux-integration-runner
+
+  params:
+    - name: git-url
+      value: '{{source_url}}'
+    - name: pipeline-pr-number
+      value: '{{pull_request_number}}'
+    - name: pipeline-github-org
+      value: '{{repo_owner}}'
+    - name: pipeline-github-repo
+      value: '{{repo_name}}'
+    - name: pipeline-target-branch
+      value: '{{target_branch}}'
+    - name: pipeline-sender
+      value: '{{sender}}'
+    - name: revision
+      value: '{{revision}}'
+
+  workspaces:
+    - name: workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+    - name: git-auth
+      secret:
+        secretName: '{{ git_auth_secret }}'
