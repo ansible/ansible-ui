@@ -12,11 +12,6 @@ on:
         type: string
         required: true
         default: '16'
-      UPDATE_SERVER:
-        type: boolean
-        required: true
-        default: false
-        description: 'Update server on success'
 
 jobs:
   platform-ui-image:
@@ -40,21 +35,4 @@ jobs:
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
       PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
-    secrets:
-      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-  platform-update-server:
-    name: Platform Update Server
-    if: ${{ inputs.UPDATE_SERVER == 'true' }}
-    needs:
-      - platform-e2e
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update Server Variable
-        run: |
-          curl -f -L -X PATCH -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/variables/PLATFORM_SERVER" \
-          -d '{"name":"PLATFORM_SERVER","value":"${{ inputs.PLATFORM_SERVER }}"}'
+    secrets: inherit

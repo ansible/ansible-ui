@@ -16,8 +16,6 @@ on:
     secrets:
       PLATFORM_PASSWORD:
         required: true
-      GH_TOKEN:
-        required: false
 
 jobs:
   matrix-setup:
@@ -109,6 +107,14 @@ jobs:
             mv currents.config.ts foo.config.ts.backup
           fi
 
+      - name: Generate a token
+        if: ${{ !inputs.SKIP_JOB }}
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_APP_ID }}
+          private-key: ${{ secrets.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY }}
+
       - name: Run Cypress E2E Tests
         if: ${{ !inputs.SKIP_JOB }}
         run: |
@@ -125,7 +131,7 @@ jobs:
           PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
           CYPRESS_AWX_API_PREFIX: /api/controller/v2
           CYPRESS_EDA_API_PREFIX: /api/eda/v1
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           CYPRESS_LABELS: '!upstream'
 
