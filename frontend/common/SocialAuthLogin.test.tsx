@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { validateUrlPath } from './AnsibleLogin/validateUrlPath';
 import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 
 // Mock globalThis.location
@@ -370,8 +371,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     const nextParam = loginQueryParams.get('next');
     let loginRedirectUrl: string | null = null;
 
-    if (nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//')) {
-      loginRedirectUrl = nextParam;
+    if (nextParam) {
+      loginRedirectUrl = validateUrlPath(nextParam);
     }
 
     if (!loginRedirectUrl && mockLocation.pathname !== '/login') {
