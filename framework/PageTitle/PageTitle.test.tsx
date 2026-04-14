@@ -24,7 +24,7 @@ describe('PageTitle', () => {
       );
 
       const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Home | Ansible Automation Platform');
+      expect(titleElement?.textContent).toBe('Home | Ansible');
     });
 
     it('should render title with nested navigation items', () => {
@@ -53,7 +53,7 @@ describe('PageTitle', () => {
       );
 
       const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Profile - Settings | Ansible Automation Platform');
+      expect(titleElement?.textContent).toBe('Profile - Settings | Ansible');
     });
   });
 
@@ -89,9 +89,7 @@ describe('PageTitle', () => {
 
       await waitFor(() => {
         const titleElement = document.querySelector('title');
-        expect(titleElement?.textContent).toBe(
-          'My Custom Inventory - Inventories | Ansible Automation Platform'
-        );
+        expect(titleElement?.textContent).toBe('My Custom Inventory - Inventories | Ansible');
       });
     });
 
@@ -114,7 +112,7 @@ describe('PageTitle', () => {
       );
 
       const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Home | Ansible Automation Platform');
+      expect(titleElement?.textContent).toBe('Home | Ansible');
     });
 
     it('should handle undefined title', () => {
@@ -136,7 +134,7 @@ describe('PageTitle', () => {
       );
 
       const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Home | Ansible Automation Platform');
+      expect(titleElement?.textContent).toBe('Home | Ansible');
     });
 
     it('should use custom title when first item has no label', async () => {
@@ -170,9 +168,7 @@ describe('PageTitle', () => {
 
       await waitFor(() => {
         const titleElement = document.querySelector('title');
-        expect(titleElement?.textContent).toBe(
-          'Inventory #123 - Inventories | Ansible Automation Platform'
-        );
+        expect(titleElement?.textContent).toBe('Inventory #123 - Inventories | Ansible');
       });
     });
   });
@@ -192,7 +188,7 @@ describe('PageTitle', () => {
       );
 
       const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe(' | Ansible Automation Platform');
+      expect(titleElement?.textContent).toBe(' | Ansible');
     });
   });
 });
