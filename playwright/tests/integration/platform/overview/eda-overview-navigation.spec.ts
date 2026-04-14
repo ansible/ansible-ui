@@ -9,9 +9,7 @@ test.describe('Platform EDA Overview - Navigation', () => {
     'user can navigate to resource pages using View all links from Platform Dashboard',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      await expect(page.getByTestId('page-title')).toContainText(
-        'Welcome to the Ansible Automation Platform'
-      );
+      await expect(page.getByTestId('page-title')).toContainText('Welcome to Ansible');
 
       // Test navigation to Decision Environments
       const decisionEnvironmentsLink = page.getByRole('link', {
@@ -27,9 +25,7 @@ test.describe('Platform EDA Overview - Navigation', () => {
 
       // Navigate back to platform overview
       await page.locator('#platform-overview').click();
-      await expect(page.getByTestId('page-title')).toContainText(
-        'Welcome to the Ansible Automation Platform'
-      );
+      await expect(page.getByTestId('page-title')).toContainText('Welcome to Ansible');
 
       // Test navigation to Rulebook Activations
       const rulebookActivationsLink = page.getByRole('link', {
@@ -45,9 +41,7 @@ test.describe('Platform EDA Overview - Navigation', () => {
 
       // Navigate back to platform overview
       await page.locator('#platform-overview').click();
-      await expect(page.getByTestId('page-title')).toContainText(
-        'Welcome to the Ansible Automation Platform'
-      );
+      await expect(page.getByTestId('page-title')).toContainText('Welcome to Ansible');
 
       // Test navigation to Rule Audit
       const ruleAuditLink = page.getByRole('link', {

@@ -13,7 +13,7 @@ platformUI = platformUI.replace(/\/+$/, '');
 export const platformURL = new URL(platformUI);
 
 /**
- * Logs into the Ansible Automation Platform UI.
+ * Logs into Ansible UI.
  */
 export async function login(
   page: Page,
@@ -24,7 +24,7 @@ export async function login(
   await page.goto(url);
 
   // Wait for the login form to be ready
-  await expect(page).toHaveTitle(/Ansible Automation Platform/, { timeout: 10000 });
+  await expect(page).toHaveTitle(/Ansible/, { timeout: 10000 });
 
   // Enter the username
   await page.fill('#pf-login-username-id', options?.username ?? process.env.PLATFORM_USERNAME!);

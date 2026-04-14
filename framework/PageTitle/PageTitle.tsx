@@ -48,7 +48,7 @@ export function PageTitleProvider(
   return (
     <TitleContext.Provider value={value}>
       <title>
-        {pageTitle} | {t`Ansible Automation Platform`}
+        {pageTitle} | {t`Ansible`}
       </title>
       {props.children}
     </TitleContext.Provider>

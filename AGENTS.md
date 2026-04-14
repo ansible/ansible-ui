@@ -21,10 +21,10 @@ When migrating Cypress tests to Playwright, use the `/migrate-test` skill. Key p
 
 ## Project Overview
 
-This is the Ansible Automation Platform (AAP) UI monorepo built with React, TypeScript, and PatternFly. The project uses NPM workspaces and is structured as a unified UI that integrates multiple services:
+This is the Ansible UI monorepo built with React, TypeScript, and PatternFly. The project uses NPM workspaces and is structured as a unified UI that integrates multiple services:
 
 - **Platform** - Unified gateway UI for AAP (main entry point)
-- **AWX** - Ansible Controller UI
+- **AWX** - AWX UI
 - **EDA** - Event-Driven Ansible UI
 - **Hub** - Automation Hub UI
 - **Chatbot** - Ansible Virtual Assistant UI
@@ -128,18 +128,21 @@ npm run build             # Build all workspaces
 Before writing any new UI code, follow this checklist:
 
 1. **Check for Existing Components (in priority order)**
+
    - **First**: Search `/framework` for shared framework components (PageForm, PageTable, PageHeader, PageLayout, etc.)
    - **Second**: Check PatternFly 6 documentation at [patternfly.org/components](https://www.patternfly.org/components/all-components) for available components
    - **Third**: Search workspace-specific components (`/frontend/awx/components/`, `/frontend/eda/components/`, etc.)
    - **Last Resort**: Create a new component only if nothing exists
 
 2. **Component Location Strategy**
+
    - **Framework-level reusable components** → `/framework/` (PageForm, PageTable, PageDetails, etc.)
    - **Workspace-specific components** → `/frontend/{workspace}/components/` (AWX-only, EDA-only, etc.)
    - **Cross-workspace shared utilities** → `/frontend/common/`
    - **Always use PatternFly 6 components** from `@patternfly/react-core` as the foundation
 
 3. **Building New Components**
+
    - **ALWAYS use PatternFly 6 components** as the foundation - never recreate PF components
    - Build accessible components following PatternFly patterns and design system
    - Include comprehensive Vitest tests (see existing `.test.tsx` files)
@@ -176,16 +179,17 @@ Result: Use PF Modal component, not a custom dialog
 
 #### Pattern Recognition Checklist
 
-| Pattern Detected                      | Action Required                                       |
-| ------------------------------------- | ----------------------------------------------------- |
-| **Repeated JSX structure** (2+ times) | → Create a **Component** in appropriate location      |
-| **Repeated logic/state** (2+ times)   | → Create a **Custom Hook**                            |
-| **Repeated utility functions**        | → Create a **shared utility** in `/frontend/common`   |
-| **Similar components with variants**  | → Extend existing component with props/variants       |
+| Pattern Detected                      | Action Required                                     |
+| ------------------------------------- | --------------------------------------------------- |
+| **Repeated JSX structure** (2+ times) | → Create a **Component** in appropriate location    |
+| **Repeated logic/state** (2+ times)   | → Create a **Custom Hook**                          |
+| **Repeated utility functions**        | → Create a **shared utility** in `/frontend/common` |
+| **Similar components with variants**  | → Extend existing component with props/variants     |
 
 #### JSX Repetition → Component
 
 **Signs you need a component:**
+
 - Same JSX structure appears in multiple files across workspaces
 - Copy-pasted markup with minor variations (button groups, empty states, status badges)
 - Similar styling patterns repeated
@@ -205,6 +209,7 @@ Result: Use PF Modal component, not a custom dialog
 #### Logic Repetition → Hook
 
 **Signs you need a hook:**
+
 - Same useState + useEffect pattern repeated across components
 - Identical data fetching logic with SWR
 - Common form validation patterns
@@ -212,14 +217,14 @@ Result: Use PF Modal component, not a custom dialog
 
 ```tsx
 // ❌ BAD: Repeated logic in multiple components
-const [selected, setSelected] = useState<Resource[]>([])
+const [selected, setSelected] = useState<Resource[]>([]);
 const handleSelect = (resource: Resource, isSelecting: boolean) =>
   setSelected((prev) =>
     isSelecting ? [...prev, resource] : prev.filter((r) => r.id !== resource.id)
-  )
+  );
 
 // ✅ GOOD: Extract to hook
-const { selected, handleSelect, clearSelection } = useTableSelection<Resource>()
+const { selected, handleSelect, clearSelection } = useTableSelection<Resource>();
 ```
 
 #### When to Extract to Shared Locations
@@ -227,16 +232,19 @@ const { selected, handleSelect, clearSelection } = useTableSelection<Resource>()
 **For detailed code review questions about component reuse and abstraction patterns, see `.claude/skills/pr_review.md` section 3.**
 
 **Extract to `/framework`:**
+
 - Component used across 2+ workspaces (AWX + EDA, or AWX + Hub, etc.)
 - Follows PatternFly patterns and is domain-agnostic
 - Provides core UI framework functionality (tables, forms, layouts, navigation)
 
 **Extract to `/frontend/common`:**
+
 - Utility functions or hooks used across multiple workspaces
 - Type definitions shared across workspaces
 - API helpers or error handling utilities
 
 **Keep in workspace:**
+
 - Component specific to one service (AWX-only concepts, EDA-only workflows)
 - Business logic tied to specific domain
 
@@ -272,6 +280,7 @@ test('should increment counter when button clicked', async () => {
 ```
 
 **Why AAA Pattern:**
+
 - Makes tests easier to read and understand
 - Clearly separates setup, action, and verification
 - Helps identify what the test is actually testing
@@ -279,12 +288,12 @@ test('should increment counter when button clicked', async () => {
 
 #### What to Test
 
-| Type          | Focus On                                                | Example                                    |
-| ------------- | ------------------------------------------------------- | ------------------------------------------ |
-| **Component** | User interactions, conditional rendering, accessibility | Button clicks, form submissions, ARIA      |
-| **Hook**      | Return values, state transitions, callback invocations  | `useTableSelection`, `usePageDialog`       |
-| **Utility**   | Input → output transformations, edge cases              | `formatDate`, `parseJobStatus`             |
-| **Form**      | Validation logic, field interactions                    | Required fields, format validation         |
+| Type          | Focus On                                                | Example                               |
+| ------------- | ------------------------------------------------------- | ------------------------------------- |
+| **Component** | User interactions, conditional rendering, accessibility | Button clicks, form submissions, ARIA |
+| **Hook**      | Return values, state transitions, callback invocations  | `useTableSelection`, `usePageDialog`  |
+| **Utility**   | Input → output transformations, edge cases              | `formatDate`, `parseJobStatus`        |
+| **Form**      | Validation logic, field interactions                    | Required fields, format validation    |
 
 #### What NOT to Test
 
@@ -321,11 +330,11 @@ test('should display incremented count', async () => {
 
 ```typescript
 describe('ResourceListPage', () => {
-  test('should display resources in table', () => {}) // Happy path
-  test('should handle empty state when no resources', () => {}) // Edge case
-  test('should delete resource when delete clicked', async () => {}) // Interaction
-  test('should display error message on API failure', () => {}) // Error case
-})
+  test('should display resources in table', () => {}); // Happy path
+  test('should handle empty state when no resources', () => {}); // Edge case
+  test('should delete resource when delete clicked', async () => {}); // Interaction
+  test('should display error message on API failure', () => {}); // Error case
+});
 ```
 
 ### Internationalization (i18n)
@@ -379,11 +388,11 @@ const ExecutionStatus = {
   RUNNING: 'running',
   SUCCESS: 'successful',
   FAILED: 'failed',
-} as const
+} as const;
 
 // Compare internal values
 if (execution.status === ExecutionStatus.RUNNING) {
-  return 'info'
+  return 'info';
 }
 
 // Map to display strings separately
@@ -392,7 +401,7 @@ const statusLabels: Record<string, string> = {
   running: t('Running'),
   successful: t('Success'),
   failed: t('Failed'),
-}
+};
 ```
 
 ##### 3. Use Value-to-Variant Mapping

@@ -39,10 +39,8 @@ export function PlatformOverview() {
   return (
     <PageLayout>
       <PageHeader
-        title={t(`Welcome to the Ansible Automation Platform`)}
-        description={t(
-          'Empower, automate, connect: Unleash possibilities with the Ansible Automation Platform.'
-        )}
+        title={t(`Welcome to Ansible`)}
+        description={t('Empower, automate, connect: Unleash possibilities with Ansible.')}
         controls={
           <Button icon={<CogIcon />} variant="link" onClick={openManageDashboard}>
             Manage view

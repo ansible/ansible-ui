@@ -65,11 +65,9 @@ describe('PlatformOverview', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Welcome to the Ansible Automation Platform')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Ansible')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Empower, automate, connect: Unleash possibilities with the Ansible Automation Platform.'
-      )
+      screen.getByText('Empower, automate, connect: Unleash possibilities with Ansible.')
     ).toBeInTheDocument();
     expect(screen.getByText('Manage view')).toBeInTheDocument();
   });
@@ -130,7 +128,7 @@ describe('PlatformOverview', () => {
 
     // Should not redirect for empty string
     expect(mockLocationHref).not.toHaveBeenCalled();
-    expect(screen.getByText('Welcome to the Ansible Automation Platform')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Ansible')).toBeInTheDocument();
   });
 
   it('should not clear sessionStorage for empty redirect URLs (correct behavior)', () => {
@@ -145,7 +143,7 @@ describe('PlatformOverview', () => {
     // Should not redirect for empty string and should leave sessionStorage as-is
     expect(mockLocationHref).not.toHaveBeenCalled();
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBe('');
-    expect(screen.getByText('Welcome to the Ansible Automation Platform')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Ansible')).toBeInTheDocument();
   });
 
   it('should only redirect once - not on re-renders', () => {

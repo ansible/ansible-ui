@@ -173,7 +173,7 @@ export function AnsibleLogin(props: {
   // SEE: https://github.com/patternfly/patternfly-react/blob/main/packages/react-core/src/components/LoginPage/LoginPage.tsx
   return (
     <ErrorBoundary message={translations.errorText}>
-      <title>{t`Login | Ansible Automation Platform`}</title>
+      <title>{t`Login | Ansible`}</title>
       {props.backgroundImgSrc && <BackgroundImage src={props.backgroundImgSrc} />}
       <Login
         header={

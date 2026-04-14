@@ -1,11 +1,5 @@
 # Global code owners for the entire repository
-@jamestalton
 @vidyanambiar
 @keithjgrant
-@AlexSCorey
 @lgalis
 @marshmalien
-@kialam
-
-# Code owners for the cypress/support directory
-cypress/support/ @nixocio @akus062381 @AlexSCorey @vidyanambiar @keithjgrant @lgalis @marshmalien @kialam
