@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 
 const SWITCH_ID = 'switch-time-taken-automation';
 
@@ -16,13 +17,13 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const putRequest = usePutRequest<ISubscriptionCosts, ISubscriptionCosts>();
-
+  const { activeAwxUser } = useAwxActiveUser();
   const [errors, setErrors] = useState<Partial<Record<keyof ISubscriptionCosts, string>> | null>(
     null
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const controlsDisabled = isLoading || isSubmitting || !costState;
+  const controlsDisabled = isLoading || isSubmitting || !costState || !activeAwxUser?.is_superuser;
 
   const toolbarChangeHandler = async <K extends keyof ISubscriptionCosts>(
     value: ISubscriptionCosts[K],

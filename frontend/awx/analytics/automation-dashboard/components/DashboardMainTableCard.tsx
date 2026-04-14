@@ -14,6 +14,7 @@ import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 
 interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
@@ -32,7 +33,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     detailsError,
   } = props;
   const { t } = useTranslation();
-
+  const { activeAwxUser } = useAwxActiveUser();
   const putRequest = usePutRequest<IJobTemplateModify, IJobTemplateModify>();
   const alertToaster = usePageAlertToaster();
 
@@ -128,7 +129,10 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     helpText: t(
       'Time taken to create the automation for the job template. This is used to calculate the total time spent on automation, which includes both the time taken to create the automation and the time taken to execute it.'
     ),
-    cell: (item) => tableInputField('time_taken_create_automation_minutes', item),
+    cell: (item) =>
+      activeAwxUser?.is_superuser
+        ? tableInputField('time_taken_create_automation_minutes', item)
+        : item.time_taken_create_automation_minutes,
   };
 
   const tableColumns: ITableColumn<IJobTemplate>[] = [
@@ -149,7 +153,10 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     {
       id: 'time_taken_manually_execute',
       header: t('Time taken to manually execute (min)'),
-      cell: (item) => tableInputField('time_taken_manually_execute_minutes', item),
+      cell: (item) =>
+        activeAwxUser?.is_superuser
+          ? tableInputField('time_taken_manually_execute_minutes', item)
+          : item.time_taken_manually_execute_minutes,
     },
     ...(costState?.include_template_creation_time_in_costs
       ? [timeTakenCreateAutomationColumn]

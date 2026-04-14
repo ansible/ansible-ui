@@ -11,6 +11,16 @@ import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { DashboardMainTableCard } from './DashboardMainTableCard';
 import type { IAutomationDashboardView, IDashboardDetails, IJobTemplate } from '../types';
 
+// ─── Hoisted mocks ────────────────────────────────────────────────────────────
+
+const { mockUseAwxActiveUser } = vi.hoisted(() => ({
+  mockUseAwxActiveUser: vi.fn(),
+}));
+
+vi.mock('../../../common/useAwxActiveUser', () => ({
+  useAwxActiveUser: mockUseAwxActiveUser,
+}));
+
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
 const server = setupServer(
@@ -153,6 +163,7 @@ describe('DashboardMainTableCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRefresh.mockResolvedValue(undefined);
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
   });
 
   // --- Value cards ---
@@ -314,6 +325,31 @@ describe('DashboardMainTableCard', () => {
       })
     );
     expect(screen.getByTestId('time_taken_create_automation_minutes_1')).toBeInTheDocument();
+  });
+
+  // --- Superuser vs non-superuser cell rendering ---
+
+  test('should show plain value for time_taken_manually_execute_minutes when not superuser', () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    renderCard();
+    expect(screen.queryByTestId('time_taken_manually_execute_minutes_1')).not.toBeInTheDocument();
+    expect(screen.getByText('30')).toBeInTheDocument();
+  });
+
+  test('should show plain value for time_taken_create_automation_minutes when not superuser and column is visible', () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    renderCard(
+      buildProps({
+        costState: {
+          id: 1,
+          monthly_subscription_cost: 100,
+          engineer_avg_hourly_rate: 50,
+          include_template_creation_time_in_costs: true,
+        },
+      })
+    );
+    expect(screen.queryByTestId('time_taken_create_automation_minutes_1')).not.toBeInTheDocument();
+    expect(screen.getByText('60')).toBeInTheDocument();
   });
 
   // --- Input readOnly ---

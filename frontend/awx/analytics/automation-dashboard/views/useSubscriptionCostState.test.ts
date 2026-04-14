@@ -95,4 +95,25 @@ describe('useSubscriptionCostState', () => {
 
     await waitFor(() => expect(result.current.costState).toEqual(confirmed));
   });
+
+  test('should clear costState when subscriptionCosts becomes an empty array', async () => {
+    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
+    const { result, rerender } = renderHook(() => useSubscriptionCostState());
+    await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
+
+    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: [] });
+    rerender();
+
+    await waitFor(() => expect(result.current.costState).toBeUndefined());
+  });
+
+  test('should clear costState when subscriptionCosts becomes an empty array even after a local edit', async () => {
+    const { result, rerender } = await setupWithUserEdit();
+
+    // Server returns empty array — local edit must be overwritten.
+    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: [] });
+    rerender();
+
+    await waitFor(() => expect(result.current.costState).toBeUndefined());
+  });
 });

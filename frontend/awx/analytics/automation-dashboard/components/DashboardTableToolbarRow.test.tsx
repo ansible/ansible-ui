@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -10,6 +10,16 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import type { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
+
+// ─── Hoisted mocks ────────────────────────────────────────────────────────────
+
+const { mockUseAwxActiveUser } = vi.hoisted(() => ({
+  mockUseAwxActiveUser: vi.fn(),
+}));
+
+vi.mock('../../../common/useAwxActiveUser', () => ({
+  useAwxActiveUser: mockUseAwxActiveUser,
+}));
 
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
@@ -78,6 +88,7 @@ describe('DashboardTableToolbarRow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRefresh.mockResolvedValue(undefined);
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
   });
 
   // --- Rendering ---
@@ -147,6 +158,39 @@ describe('DashboardTableToolbarRow', () => {
     renderRow(buildProps({ isLoading: true }));
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
+  });
+
+  test('should disable all controls when not superuser', () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    renderRow();
+    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
+    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
+    expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
+    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+  });
+
+  test('should not call put when not superuser', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    let putCalled = false;
+    server.use(
+      http.put(/subscription_costs/, () => {
+        putCalled = true;
+        return HttpResponse.json({});
+      })
+    );
+    renderRow();
+    const input = screen.getByTestId('engineer_avg_hourly_rate');
+
+    // Dispatch a change event directly on the disabled input, bypassing the
+    // browser-level disabled guard.  The debounce fires after 600 ms and calls
+    // toolbarChangeHandler, which must return early because controlsDisabled is
+    // true (is_superuser: false).  This proves the in-component guard — not
+    // merely the disabled attribute — is what prevents the PUT.
+    fireEvent.change(input, { target: { value: '75' } });
+
+    // Wait beyond the debounce (600 ms) to let any scheduled PUT fire.
+    await new Promise((r) => setTimeout(r, 700));
+    expect(putCalled).toBe(false);
   });
 
   // --- toolbarChangeHandler: success ---

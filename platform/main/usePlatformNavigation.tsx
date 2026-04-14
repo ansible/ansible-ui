@@ -279,7 +279,7 @@ function useAutomationDecisionsNavigation(): PageNavigationItem {
   };
 }
 
-function useAutomationAnalytics(): PageNavigationItem {
+export function useAutomationAnalytics(): PageNavigationItem {
   const awxNav = useAwxNavigation();
   const { t } = useTranslation();
   const awxService = useHasAwxService();
@@ -291,7 +291,20 @@ function useAutomationAnalytics(): PageNavigationItem {
     if (managedCloudInstall) {
       removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage);
     }
-    analytics.hidden = !awxService || !activePlatformUser?.is_superuser;
+
+    if (!activePlatformUser?.is_superuser) {
+      const automationDashboardId = 'awx-automation-dashboard';
+      analytics.children
+        .filter((c) => c.id !== automationDashboardId)
+        .forEach((item) => {
+          if (item.id) removeNavigationItemById(analytics.children, item.id);
+        });
+    }
+
+    analytics.hidden =
+      !awxService ||
+      !(activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) ||
+      !analytics.children.length;
   }
   return analytics;
 }
