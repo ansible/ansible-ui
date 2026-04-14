@@ -159,7 +159,8 @@
     "zustand": "^5.0.1"
   },
   "overrides": {
-    "nanoid": "3.3.11"
+    "nanoid": "3.3.11",
+    "minimatch@^9.0.0": "^9.0.6"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.0",
