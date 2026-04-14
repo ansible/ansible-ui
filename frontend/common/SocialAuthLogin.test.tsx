@@ -131,6 +131,27 @@ describe('SocialAuthLogin', () => {
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
   });
 
+  it('should remove stale sessionStorage value when redirectUrl is falsy', () => {
+    // Pre-seed sessionStorage with a stale value from a previous click
+    sessionStorage.setItem('social_auth_redirect_url', '/old/stale/path');
+
+    // Mock being on login page with no next param
+    globalThis.location.pathname = '/login';
+    globalThis.location.search = '';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    // Verify stale sessionStorage value was removed
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
+  });
+
   it('should have correct href attributes pointing to OAuth URLs', () => {
     render(
       <MemoryRouter>

@@ -94,6 +94,8 @@ function SocialAuthLink(props: { option: AuthOption }) {
 
     if (redirectUrl) {
       sessionStorage.setItem('social_auth_redirect_url', redirectUrl);
+    } else {
+      sessionStorage.removeItem('social_auth_redirect_url');
     }
   };
 
