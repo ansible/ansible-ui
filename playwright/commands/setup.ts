@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
 import { existsSync, mkdirSync, appendFileSync } from 'fs';
 import { join } from 'path';
-import { mock } from '@ansible/playwright/mock/mock';
 import { login, platformUI } from './login';
 
 // Use worker ID for unique files per worker
@@ -22,7 +21,6 @@ export function setupBefore(options?: { path?: string }) {
       // eslint-disable-next-line no-console
       console.log('[Coverage] SKIP_COVERAGE is set, skipping coverage collection');
     }
-    await mock(page);
     const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
     await login(page, options?.path ? platformUIWithoutSlash + options.path : undefined);
   };
