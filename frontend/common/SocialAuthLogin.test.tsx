@@ -247,10 +247,8 @@ describe('SocialAuthLogin', () => {
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
     fireEvent.click(samlButton);
 
-    // validateUrlPath rejects absolute URL, falls through to store pathname + search
-    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
-      '/?next=https://malicious-url.com'
-    );
+    // validateUrlPath rejects absolute URL, falls through to store pathname without unsafe next param
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe('/');
   });
 
   it('should handle complex paths with query parameters', () => {

@@ -86,10 +86,14 @@ function SocialAuthLink(props: { option: AuthOption }) {
 
     if (nextParam) {
       redirectUrl = validateUrlPath(nextParam);
+      if (!redirectUrl) {
+        queryParams.delete('next');
+      }
     }
 
     if (!redirectUrl && globalThis.location.pathname !== '/login') {
-      redirectUrl = globalThis.location.pathname + globalThis.location.search;
+      const fallbackSearch = queryParams.toString();
+      redirectUrl = `${globalThis.location.pathname}${fallbackSearch ? `?${fallbackSearch}` : ''}`;
     }
 
     if (redirectUrl) {
