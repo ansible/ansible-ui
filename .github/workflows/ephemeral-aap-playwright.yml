@@ -321,30 +321,31 @@ jobs:
 
       - name: Copy snapshots into repo
         run: |
-          # Each artifact contains the snapshot directory structure
-          # e.g., snapshot-artifacts/playwright-snapshots-1/tests/visual/...-snapshots/*.png
           for dir in snapshot-artifacts/playwright-snapshots-*/; do
             [ -d "$dir" ] || continue
-            # Copy all snapshot files, preserving directory structure relative to playwright/
-            if [ -d "${dir}tests" ]; then
-              cp -r "${dir}tests/" playwright/tests/
-            fi
+            # Not every shard produces snapshots, so check before copying
+            ls "${dir}"*-snapshots/ > /dev/null 2>&1 || continue
+            cp -r "${dir}"*-snapshots/ playwright/tests/visual/
           done
           rm -rf snapshot-artifacts
 
       - name: Commit and push updated snapshots
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add playwright/tests/visual/**/*-snapshots/*.png
+          git add playwright/tests/visual/
           if git diff --cached --quiet; then
             echo "No snapshot changes to commit"
+            echo "committed=false" >> $GITHUB_OUTPUT
           else
             git commit -m "Update visual test baselines from CI [skip ci]"
             git push origin HEAD:${{ needs.check-comment.outputs.pr_ref }}
+            echo "committed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Comment on PR
+        if: steps.commit.outputs.committed == 'true'
         uses: actions/github-script@v7
         with:
           script: |
