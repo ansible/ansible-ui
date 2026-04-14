@@ -93,7 +93,8 @@ function SocialAuthLink(props: { option: AuthOption }) {
 
     if (!redirectUrl && globalThis.location.pathname !== '/login') {
       const fallbackSearch = queryParams.toString();
-      redirectUrl = `${globalThis.location.pathname}${fallbackSearch ? `?${fallbackSearch}` : ''}`;
+      const queryString = fallbackSearch ? `?${fallbackSearch}` : '';
+      redirectUrl = `${globalThis.location.pathname}${queryString}`;
     }
 
     if (redirectUrl) {
