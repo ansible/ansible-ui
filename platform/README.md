@@ -14,6 +14,7 @@ flowchart TD
 ## Getting Started
 
 1. Prerequisites
+
    - Node 18.x (recommended)
    - NPM 8.x (recommended)
 
