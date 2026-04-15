@@ -9,9 +9,7 @@ test(
   { tag: ['@visual', '@not_mock'] },
   async ({ page }) => {
     // Wait for the page to fully render
-    await expect(page.locator('h1').first()).toContainText(
-      'Welcome to the Ansible Automation Platform'
-    );
+    await expect(page.locator('h1').first()).toContainText('Welcome to Ansible');
 
     // Main content area screenshot (excludes sidebar to avoid layout shift flakiness)
     const mainContent = page.locator('.pf-v6-c-page__main');
@@ -30,9 +28,7 @@ test(
   'overview resource counts card has no visual regressions',
   { tag: ['@visual', '@not_mock'] },
   async ({ page }) => {
-    await expect(page.locator('h1').first()).toContainText(
-      'Welcome to the Ansible Automation Platform'
-    );
+    await expect(page.locator('h1').first()).toContainText('Welcome to Ansible');
 
     const resourceCounts = page.locator('#resource-counts');
     await expect(resourceCounts).toBeVisible();
