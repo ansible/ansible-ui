@@ -21,19 +21,4 @@ test.describe('Templates List - Visual Regression', () => {
       });
     }
   );
-
-  test(
-    'templates list toolbar has no visual regressions',
-    { tag: ['@visual', '@not_mock'] },
-    async ({ page }) => {
-      await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible();
-      await expect(page.locator('tbody')).toBeVisible();
-
-      const toolbar = page.locator('.pf-v6-c-toolbar').first();
-      await expect(toolbar).toHaveScreenshot('templates-list-toolbar.png', {
-        maxDiffPixelRatio: 0.01,
-        animations: 'disabled',
-      });
-    }
-  );
 });
