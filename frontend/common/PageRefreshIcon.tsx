@@ -1,9 +1,11 @@
 import { Button, Tooltip } from '@patternfly/react-core';
 import { RedoAltIcon } from '@patternfly/react-icons';
 import { useCallback, useLayoutEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
 
 export function PageRefreshIcon() {
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(() => {
     setRefreshing(true);
@@ -52,7 +54,7 @@ export function PageRefreshIcon() {
   }, [refreshing]);
 
   return (
-    <Tooltip content="Refresh" position="bottom" entryDelay={1000}>
+    <Tooltip content={t`Refresh`} position="bottom">
       <Button
         icon={<RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />}
         id="refresh"
