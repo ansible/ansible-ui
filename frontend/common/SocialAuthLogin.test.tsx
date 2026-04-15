@@ -2,16 +2,17 @@ import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { validateUrlPath } from './AnsibleLogin/validateUrlPath';
 import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 
-// Mock window.location
+// Mock globalThis.location
 const mockWindowLocation = {
   pathname: '/execution/projects',
   search: '?page=1&perPage=10&sort=name',
   href: 'http://localhost:4100/execution/projects?page=1&perPage=10&sort=name',
 };
 
-Object.defineProperty(window, 'location', {
+Object.defineProperty(globalThis, 'location', {
   value: mockWindowLocation,
   configurable: true,
 });
@@ -112,8 +113,8 @@ describe('SocialAuthLogin', () => {
 
   it('should not store sessionStorage when on login page', () => {
     // Mock being on login page
-    window.location.pathname = '/login';
-    window.location.search = '';
+    globalThis.location.pathname = '/login';
+    globalThis.location.search = '';
 
     render(
       <MemoryRouter>
@@ -127,6 +128,27 @@ describe('SocialAuthLogin', () => {
     fireEvent.click(samlButton);
 
     // Verify sessionStorage was NOT set since we're on login page
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
+  });
+
+  it('should remove stale sessionStorage value when redirectUrl is falsy', () => {
+    // Pre-seed sessionStorage with a stale value from a previous click
+    sessionStorage.setItem('social_auth_redirect_url', '/old/stale/path');
+
+    // Mock being on login page with no next param
+    globalThis.location.pathname = '/login';
+    globalThis.location.search = '';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    // Verify stale sessionStorage value was removed
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
   });
 
@@ -174,10 +196,65 @@ describe('SocialAuthLogin', () => {
     expect(screen.getByTestId('social-auth-google-oauth2')).toBeInTheDocument();
   });
 
+  it('should store next param value when on root page with next query parameter', () => {
+    globalThis.location.pathname = '/';
+    globalThis.location.search =
+      '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26redirect_uri%3Dhttps%3A%2F%2Frhdh.example.com%2Fcallback%26client_id%3Dxxx';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
+      '/o/authorize/?response_type=code&redirect_uri=https://rhdh.example.com/callback&client_id=xxx'
+    );
+  });
+
+  it('should store next param value when on login page with next query parameter', () => {
+    globalThis.location.pathname = '/login';
+    globalThis.location.search =
+      '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26client_id%3Dxxx';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
+      '/o/authorize/?response_type=code&client_id=xxx'
+    );
+  });
+
+  it('should reject unsafe next param and fall through to regular logic', () => {
+    globalThis.location.pathname = '/';
+    globalThis.location.search = '?next=https://malicious-url.com';
+
+    render(
+      <MemoryRouter>
+        <SocialAuthLogin options={mockSocialAuthOptions} />
+      </MemoryRouter>
+    );
+
+    const samlButton = screen.getByRole('link', { name: /SAML Test/i });
+    fireEvent.click(samlButton);
+
+    // validateUrlPath rejects absolute URL, falls through to store pathname without unsafe next param
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe('/');
+  });
+
   it('should handle complex paths with query parameters', () => {
     // Mock a complex path
-    window.location.pathname = '/platform/users';
-    window.location.search = '?page=2&sort=username&filter=active';
+    globalThis.location.pathname = '/platform/users';
+    globalThis.location.search = '?page=2&sort=username&filter=active';
 
     render(
       <MemoryRouter>
@@ -205,8 +282,8 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     sessionStorage.clear();
     vi.clearAllMocks();
 
-    // Mock window.location for these specific tests
-    Object.defineProperty(window, 'location', {
+    // Mock globalThis.location for these specific tests
+    Object.defineProperty(globalThis, 'location', {
       value: mockLocation,
       writable: true,
       configurable: true,
@@ -216,9 +293,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
   it('should store current path in sessionStorage for non-login pages', () => {
     // Simulate the logic from SocialAuthLogin
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -236,9 +313,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
 
     // Simulate the logic from SocialAuthLogin
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -252,9 +329,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     mockLocation.search = '?tab=access&filter=active';
 
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -270,9 +347,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
     mockLocation.search = '';
 
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -291,9 +368,9 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
 
     // Execute the same logic as in SocialAuthLogin.tsx
     const currentPath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+      globalThis.location.pathname === '/login'
+        ? null
+        : globalThis.location.pathname + globalThis.location.search;
 
     if (currentPath) {
       sessionStorage.setItem('social_auth_redirect_url', currentPath);
@@ -304,21 +381,28 @@ describe('SocialAuthLogin SessionStorage Logic Tests', () => {
       '/automation/collections?page=3&filter=name'
     );
 
-    // Now test login page scenario
+    // Now test login page scenario with next param
     sessionStorage.clear();
     mockLocation.pathname = '/login';
     mockLocation.search = '?next=/some/path';
 
-    const loginPagePath =
-      window.location.pathname !== '/login'
-        ? window.location.pathname + window.location.search
-        : null;
+    const loginQueryParams = new URLSearchParams(mockLocation.search);
+    const nextParam = loginQueryParams.get('next');
+    let loginRedirectUrl: string | null = null;
 
-    if (loginPagePath) {
-      sessionStorage.setItem('social_auth_redirect_url', loginPagePath);
+    if (nextParam) {
+      loginRedirectUrl = validateUrlPath(nextParam);
     }
 
-    // Should not store anything for login page
-    expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
+    if (!loginRedirectUrl && mockLocation.pathname !== '/login') {
+      loginRedirectUrl = mockLocation.pathname + mockLocation.search;
+    }
+
+    if (loginRedirectUrl) {
+      sessionStorage.setItem('social_auth_redirect_url', loginRedirectUrl);
+    }
+
+    // Should store the next param value, not the login page URL
+    expect(sessionStorage.getItem('social_auth_redirect_url')).toBe('/some/path');
   });
 });
