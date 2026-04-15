@@ -1,6 +1,6 @@
-# Welcome to the contributing guide
+# Contributing
 
-Thank you for investing your time in contributing to our project!
+Refer to the [Ansible community guide](https://docs.ansible.com/projects/ansible/latest/community/index.html).
 
 To get an overview of the project, read the [README](README.md).
 
@@ -25,13 +25,8 @@ The i18next library provides various React helpers for dealing with both marking
 - import the `useTranslation` react hook from the `react-i18next`.
 - wrap your string using the following format: `t('String to be translated')`
 
-**Note:** If you have a variable string with text that needs translating, you must wrap it in ``t(`${variable} string`)`` where it is defined.
+#### Notes about strings
 
-**Note:** Pluralization can be complicated so it is best to allow i18next handle cases where we have a string that may need to be pluralized based on number of items, or count. In that case i18next we will still use the `useTranslation` hook from above, but this time we will pass in a count variable. For example `t('Count of item to be translation', {count})`.
-
-**Node:**
-If an element does not have a string to be rendered on the screen then `aria-label` with string marked for translation should be included.
-
-### Text Casing
-
-For information about text casing (ie. when to use sentence casing and when to use other casing types) see our [CAPITALIZATION](docs/CAPITALIZATION.md) documentation
+- If you have a variable string with text that needs translating, you must wrap it in ``t(`${variable} string`)`` where it is defined.
+- Pluralization can be complicated so it is best to allow i18next handle cases where we have a string that may need to be pluralized based on number of items, or count. In that case i18next we will still use the `useTranslation` hook from above, but this time we will pass in a count variable. For example `t('Count of item to be translation', {count})`.
+- If an element does not have a string to be rendered on the screen then `aria-label` with string marked for translation should be included.
