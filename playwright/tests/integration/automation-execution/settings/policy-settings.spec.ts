@@ -3,6 +3,8 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { interceptRequest } from '@ansible/playwright/tests/util/interceptRequest';
 
+type PolicySettings = Record<string, string | number | boolean>;
+
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 test.setTimeout(2 * 60 * 1000);
@@ -10,19 +12,9 @@ test.describe('Policy setting details', () => {
   test('should display details', { tag: [] }, async ({ page }) => {
     await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
 
-    let settings: Record<string, string | number | boolean | object>;
-    if (page.mock.enabled) {
-      settings = (
-        page.mock.data.api.controller.v2.settings as {
-          policyascode: Record<string, string | number | boolean | object>;
-        }
-      ).policyascode;
-      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
-    } else {
-      const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
-      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
-      settings = (await settingsRequest) as Record<string, string | number | boolean>;
-    }
+    const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
+    await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
+    const settings = (await settingsRequest) as PolicySettings;
     if (settings.OPA_HOST) {
       await expect(page.locator('#opa-server-hostname')).toContainText(settings.OPA_HOST as string);
     }
@@ -43,19 +35,9 @@ test.describe('Policy setting details', () => {
 
 test.describe('Policy settings form', () => {
   test('should render correct information', { tag: [] }, async ({ page }) => {
-    let settings: Record<string, string | number | boolean | object>;
-    if (page.mock.enabled) {
-      settings = (
-        page.mock.data.api.controller.v2.settings as {
-          policyascode: Record<string, string | number | boolean | object>;
-        }
-      ).policyascode;
-      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
-    } else {
-      const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
-      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
-      settings = (await settingsRequest) as Record<string, string | number | boolean>;
-    }
+    const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
+    await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
+    const settings = (await settingsRequest) as PolicySettings;
     await page.getByRole('button', { name: 'Edit' }).click();
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Policy Settings' })).toBeVisible();
@@ -79,19 +61,9 @@ test.describe('Policy settings form', () => {
   });
 
   test('should save edited values when submitted', { tag: [] }, async ({ page }) => {
-    let settings: Record<string, string | number | boolean | object>;
-    if (page.mock.enabled) {
-      settings = (
-        page.mock.data.api.controller.v2.settings as {
-          policyascode: Record<string, string | number | boolean | object>;
-        }
-      ).policyascode;
-      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
-    } else {
-      const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
-      await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
-      settings = (await settingsRequest) as Record<string, string | number | boolean>;
-    }
+    const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
+    await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
+    const settings = (await settingsRequest) as PolicySettings;
     await page.getByRole('button', { name: 'Edit' }).click();
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Policy Settings' })).toBeVisible();
@@ -127,10 +99,6 @@ test.describe('Policy settings form', () => {
     // assert that values have been saved
     await expect(page.locator('#opa-request-timeout')).toContainText('2');
     await expect(page.locator('#opa-request-retry-count')).toContainText('3');
-    if (page.mock.enabled) {
-      await expect(page.locator('#opa-authentication-token')).toContainText('abc123');
-    } else {
-      await expect(page.locator('#opa-authentication-token')).toContainText('$encrypted$');
-    }
+    await expect(page.locator('#opa-authentication-token')).toContainText('$encrypted$');
   });
 });

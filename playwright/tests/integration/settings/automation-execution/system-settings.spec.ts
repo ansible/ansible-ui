@@ -14,11 +14,5 @@ test('system settings edit- can add client id/secret for analytics', async ({ pa
     .fill('testAnalyticsSecret');
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.locator('#red-hat-client-id-for-analytics')).toContainText('testAnalyticsId');
-  if (page.mock.enabled) {
-    await expect(page.locator('#red-hat-client-secret-for-analytics')).toContainText(
-      'testAnalyticsSecret'
-    );
-  } else {
-    await expect(page.locator('#red-hat-client-secret-for-analytics')).toContainText('$encrypted$');
-  }
+  await expect(page.locator('#red-hat-client-secret-for-analytics')).toContainText('$encrypted$');
 });
