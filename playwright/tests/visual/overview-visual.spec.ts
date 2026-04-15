@@ -9,7 +9,7 @@ test(
   { tag: ['@visual', '@not_mock'] },
   async ({ page }) => {
     // Wait for the page to fully render
-    await expect(page.locator('h1').first()).toHaveText('Welcome to Ansible');
+    await expect(page.getByRole('heading', { name: 'Welcome to Ansible', level: 1 })).toBeVisible();
 
     // Main content area screenshot (excludes sidebar to avoid layout shift flakiness)
     const mainContent = page.locator('.pf-v6-c-page__main');
