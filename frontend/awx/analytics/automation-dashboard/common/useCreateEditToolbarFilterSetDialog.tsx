@@ -42,15 +42,15 @@ function CreateEditToolbarFilterSetDialog(props: {
     let response: IDashboardFilterSet;
     let successMessage: string;
 
-    if (filterSet.id) {
+    if (filterSet.id === undefined) {
+      const url = metricsAPI`/dashboard_reports/filter_sets/`;
+      successMessage = t('Report {{name}} successfully created.', { name: data.name });
+      response = await postRequest(url, payload);
+    } else {
       const url = metricsAPI`/dashboard_reports/filter_sets/${filterSet.id}/`;
       successMessage = t('Report {{name}} updated successfully.', { name: data.name });
       const putResponse = await putRequest(url, payload);
       response = putResponse ?? { ...filterSet, ...payload };
-    } else {
-      const url = metricsAPI`/dashboard_reports/filter_sets/`;
-      successMessage = t('Report {{name}} successfully created.', { name: data.name });
-      response = await postRequest(url, payload);
     }
 
     onComplete(response);
@@ -102,9 +102,8 @@ export function useCreateEditToolbarFilterSetDialog(
 
   return useCallback(
     (filterState: IFilterState, filterSet: IDashboardFilterSet) => {
-      if (!filterState) return;
       const newFilterSet = { ...filterSet, filters: JSON.stringify(filterState) };
-      const title = filterSet.id ? t('Edit report') : t('Create report');
+      const title = filterSet.id === undefined ? t('Create report') : t('Edit report');
       setDialog(
         <CreateEditToolbarFilterSetDialog
           title={title}

@@ -57,8 +57,7 @@ const filterSet: IDashboardFilterSet = {
 };
 
 const mockOnDelete = vi.fn();
-const mockOnCreate = vi.fn();
-const mockOnUpdate = vi.fn();
+const mockOnSave = vi.fn();
 
 function renderActions(
   filterState: IFilterState | undefined,
@@ -69,10 +68,18 @@ function renderActions(
       filterState,
       selectedFilterSet,
       onDelete: mockOnDelete,
-      onCreate: mockOnCreate,
-      onUpdate: mockOnUpdate,
+      onSave: mockOnSave,
     })
   ).result.current;
+}
+
+function getDropdownSubAction(action: Dropdown, label: string): IPageActionButton {
+  expect(action.type).toBe(PageActionType.Dropdown);
+  const sub = action.actions.find(
+    (a): a is IPageActionButton => a.type !== PageActionType.Seperator && a.label === label
+  );
+  expect(sub).toBeDefined();
+  return sub!;
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -160,166 +167,91 @@ describe('useAutomationDashboardToolbarActions', () => {
 
     test('should disable "Create new report" when filter state equals the default', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Create new report'
-        );
-        expect(sub?.isDisabled).toBeTruthy();
-      }
+      const subAction = getDropdownSubAction(action, 'Create new report');
+      expect(subAction?.isDisabled).toBeTruthy();
     });
 
     test('should disable "Edit current report" when filter state equals the default', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Edit current report'
-        );
-        expect(sub?.isDisabled).toBeTruthy();
-      }
+      const subAction = getDropdownSubAction(action, 'Edit current report');
+      expect(subAction?.isDisabled).toBeTruthy();
     });
 
     test('should enable "Create new report" when filter state differs from the default', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Create new report'
-        );
-        expect(sub?.isDisabled).toBeFalsy();
-      }
+      const subAction = getDropdownSubAction(action, 'Create new report');
+      expect(subAction?.isDisabled).toBeFalsy();
     });
 
     test('should enable "Edit current report" when filter state differs from the default', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Edit current report'
-        );
-        expect(sub?.isDisabled).toBeFalsy();
-      }
+      const subAction = getDropdownSubAction(action, 'Edit current report');
+      expect(subAction?.isDisabled).toBeFalsy();
     });
 
     test('should disable "Delete current report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
-
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Delete current report'
-        );
-        expect(sub?.isDisabled).toBe('Only administrators can delete reports');
-      }
+      const subAction = getDropdownSubAction(action, 'Delete current report');
+      expect(subAction?.isDisabled).toBe('Only administrators can delete reports');
     });
 
     test('should enable "Delete current report" for superusers', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Delete current report'
-        );
-        expect(sub?.isDisabled).toBeFalsy();
-      }
+      const subAction = getDropdownSubAction(action, 'Delete current report');
+      expect(subAction?.isDisabled).toBeFalsy();
     });
 
     test('should disable "Create new report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
-
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Create new report'
-        );
-        expect(sub?.isDisabled).toBe('Only administrators can save reports');
-      }
+      const subAction = getDropdownSubAction(action, 'Create new report');
+      expect(subAction?.isDisabled).toBe('Only administrators can save reports');
     });
 
     test('should disable "Edit current report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
-
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Edit current report'
-        );
-        expect(sub?.isDisabled).toBe('Only administrators can save reports');
-      }
+      const subAction = getDropdownSubAction(action, 'Edit current report');
+      expect(subAction?.isDisabled).toBe('Only administrators can save reports');
     });
 
     test('should contain exactly 3 sub-actions', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        expect(action.actions).toHaveLength(3);
-      }
+      expect(action.type).toBe(PageActionType.Dropdown);
+      expect(action.actions).toHaveLength(3);
     });
 
     test('should include "Create new report", "Edit current report", "Delete current report" sub-actions', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
+      expect(action.type).toBe(PageActionType.Dropdown);
 
-      if (action.type === PageActionType.Dropdown) {
-        const labels = action.actions.flatMap((a) =>
-          a.type === PageActionType.Seperator ? [] : [a.label]
-        );
-        expect(labels).toContain('Create new report');
-        expect(labels).toContain('Edit current report');
-        expect(labels).toContain('Delete current report');
-      }
+      const labels = action.actions.flatMap((a) =>
+        a.type === PageActionType.Seperator ? [] : [a.label]
+      );
+      expect(labels).toContain('Create new report');
+      expect(labels).toContain('Edit current report');
+      expect(labels).toContain('Delete current report');
     });
 
     test('should call createToolbarFilterSet when "Create new report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Create new report'
-        );
-        sub?.onClick();
-      }
-
+      const subAction = getDropdownSubAction(action, 'Create new report');
+      subAction?.onClick();
       expect(mockCreateFn).toHaveBeenCalledWith(nonDefaultFilterState);
     });
 
     test('should call updateToolbarFilterSet when "Edit current report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Edit current report'
-        );
-        sub?.onClick();
-      }
-
+      const subAction = getDropdownSubAction(action, 'Edit current report');
+      subAction?.onClick();
       expect(mockUpdateFn).toHaveBeenCalledWith(filterSet, nonDefaultFilterState);
     });
 
     test('should call removeToolbarFilterSet when "Delete current report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-
-      if (action.type === PageActionType.Dropdown) {
-        const sub = action.actions.find(
-          (a): a is IPageActionButton =>
-            a.type !== PageActionType.Seperator && a.label === 'Delete current report'
-        );
-        sub?.onClick();
-      }
-
+      const subAction = getDropdownSubAction(action, 'Delete current report');
+      subAction?.onClick();
       expect(mockRemoveFn).toHaveBeenCalledWith(filterSet);
     });
   });

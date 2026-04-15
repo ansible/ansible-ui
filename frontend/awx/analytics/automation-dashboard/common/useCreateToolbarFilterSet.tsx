@@ -8,11 +8,11 @@ export function useCreateToolbarFilterSet(onComplete: (filterSet: IDashboardFilt
   return useCallback(
     (filterState: IFilterState) => {
       const filterSet = {
-        id: 0,
+        id: undefined,
         name: '',
         is_default: false,
         filters: '{}',
-      } as IDashboardFilterSet;
+      } as IDashboardFilterSet & { id: undefined };
       createFilters(filterState, filterSet);
     },
     [createFilters]

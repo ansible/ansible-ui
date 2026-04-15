@@ -54,18 +54,10 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     [setSelectedFilterSet, setFilterState]
   );
 
-  const onCreate = useCallback(
+  const onSave = useCallback(
     (newFilterSet: IDashboardFilterSet) => {
       upsertFilterSet(newFilterSet);
       applyFilterSet(newFilterSet);
-    },
-    [upsertFilterSet, applyFilterSet]
-  );
-
-  const onUpdate = useCallback(
-    (filterSet: IDashboardFilterSet) => {
-      upsertFilterSet(filterSet);
-      applyFilterSet(filterSet);
     },
     [upsertFilterSet, applyFilterSet]
   );
@@ -82,8 +74,7 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     filterState,
     selectedFilterSet,
     onDelete: onFilterSetDelete,
-    onUpdate,
-    onCreate,
+    onSave,
   });
 
   const onSelect = useCallback(
@@ -107,8 +98,16 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
   );
 
   return (
-    <Flex alignItems={{ default: 'alignItemsFlexStart' }} style={{ marginLeft: '1.5rem' }}>
-      <FlexItem style={{ marginRight: '-1rem', paddingBottom: '1rem', minWidth: '180px' }}>
+    <Flex
+      alignItems={{ default: 'alignItemsFlexStart' }}
+      gap={{ default: 'gapSm' }}
+      style={{ marginLeft: 'var(--pf-t--global--spacer--lg)' }}
+    >
+      <FlexItem
+        style={{
+          minWidth: '180px',
+        }}
+      >
         <PageAsyncSingleSelect
           key={String(version)}
           id={'filterset-select'}

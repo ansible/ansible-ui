@@ -15,9 +15,6 @@ export function useFilterSetView() {
     undefined
   );
 
-  // Refs allow queryOptions (stable useCallback) to always read the latest values
-  const filterSetsRef = useRef(filterSets);
-  filterSetsRef.current = filterSets;
   const getRequest = useGetRequest<AwxItemsResponse<IDashboardFilterSet>>();
   const getRequestRef = useRef(getRequest);
   getRequestRef.current = getRequest;
@@ -30,7 +27,7 @@ export function useFilterSetView() {
     const data = await getRequestRef.current(metricsAPI`/dashboard_reports/filter_sets/`, query);
 
     const hasMore = data.results.length > 0 && !!data.next;
-    const remaining = hasMore ? data.count - page * PAGE_SIZE : 0;
+    const remaining = hasMore ? Math.max(0, data.count - page * PAGE_SIZE) : 0;
     const nextPage = hasMore ? String(page + 1) : '';
 
     const validResults = data.results.filter(

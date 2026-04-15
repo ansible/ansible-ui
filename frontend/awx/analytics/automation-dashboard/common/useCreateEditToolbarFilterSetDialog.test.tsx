@@ -20,12 +20,12 @@ afterAll(() => server.close());
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
-const newFilterSet: IDashboardFilterSet = {
-  id: 0,
+const newFilterSet = {
+  id: undefined,
   name: '',
   filters: '{"period":["last_30_days"]}',
   is_default: false,
-};
+} as IDashboardFilterSet & { id: undefined };
 
 const existingFilterSet: IDashboardFilterSet = {
   id: 5,
@@ -216,14 +216,12 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
   describe('editing an existing filter set (PUT)', () => {
     test('should PUT to the filter set endpoint on submit', async () => {
       let capturedBody: unknown;
+      const id = existingFilterSet.id;
       server.use(
-        http.put(
-          metricsAPI`/dashboard_reports/filter_sets/${existingFilterSet.id}/`,
-          async ({ request }) => {
-            capturedBody = await request.json();
-            return HttpResponse.json({ ...existingFilterSet, name: 'Updated' });
-          }
-        )
+        http.put(metricsAPI`/dashboard_reports/filter_sets/${id}/`, async ({ request }) => {
+          capturedBody = await request.json();
+          return HttpResponse.json({ ...existingFilterSet, name: 'Updated' });
+        })
       );
 
       const user = userEvent.setup();
@@ -242,8 +240,9 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
 
     test('should call onComplete after a successful PUT', async () => {
       const updated = { ...existingFilterSet, name: 'Updated' };
+      const id = existingFilterSet.id;
       server.use(
-        http.put(metricsAPI`/dashboard_reports/filter_sets/${existingFilterSet.id}/`, () =>
+        http.put(metricsAPI`/dashboard_reports/filter_sets/${id}/`, () =>
           HttpResponse.json(updated)
         )
       );

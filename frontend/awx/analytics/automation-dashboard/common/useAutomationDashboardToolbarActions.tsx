@@ -33,14 +33,13 @@ export function useAutomationDashboardToolbarActions(props: {
   filterState?: IFilterState;
   selectedFilterSet?: IDashboardFilterSet;
   onDelete: (deletedFilterSet: IDashboardFilterSet) => void;
-  onCreate: (newFilterSet: IDashboardFilterSet) => void;
-  onUpdate: (filterSet: IDashboardFilterSet) => void;
+  onSave: (filterSet: IDashboardFilterSet) => void;
 }) {
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const { filterState, selectedFilterSet, onDelete, onCreate, onUpdate } = props;
-  const createToolbarFilterSet = useCreateToolbarFilterSet(onCreate);
-  const updateToolbarFilterSet = useUpdateToolbarFilterSet(onUpdate);
+  const { filterState, selectedFilterSet, onDelete, onSave } = props;
+  const createToolbarFilterSet = useCreateToolbarFilterSet(onSave);
+  const updateToolbarFilterSet = useUpdateToolbarFilterSet(onSave);
   const removeToolbarFilterSet = useRemoveToolbarFilterSet((deleted) => {
     if (deleted.length > 0) onDelete(deleted[0]);
   });
