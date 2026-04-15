@@ -33,7 +33,7 @@ test.describe('Inventory Details - Visual Regression', () => {
         mask: [
           page.locator('h1'),
           page.locator('.pf-v6-c-breadcrumb'),
-          page.locator('time'),
+          page.locator('.date-time'),
           page.getByTestId('name'),
           page.getByTestId('description'),
         ],
@@ -54,7 +54,11 @@ test.describe('Inventory Details - Visual Regression', () => {
       await expect(detailsPanel).toHaveScreenshot('inventory-details-panel.png', {
         maxDiffPixelRatio: 0.01,
         animations: 'disabled',
-        mask: [page.locator('time'), page.getByTestId('name'), page.getByTestId('description')],
+        mask: [
+          page.locator('.date-time'),
+          page.getByTestId('name'),
+          page.getByTestId('description'),
+        ],
       });
     }
   );
