@@ -48,6 +48,10 @@ function mountAbout(settings: IPageSettings) {
   );
 }
 
+async function expectAboutDialogAbsent() {
+  await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+}
+
 describe('PlatformAbout', () => {
   const server = setupServer(
     http.get(awxAPI`/ping/`, () => HttpResponse.json({ version: '4.5.0' })),
@@ -59,53 +63,41 @@ describe('PlatformAbout', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it('should display brand logo with alt text and default logo src', async () => {
-    mountAbout({ activeTheme: 'light' });
-
-    const dialog = await screen.findByRole('dialog');
-    expect(within(dialog).getByRole('img', { name: 'Brand Logo' })).toHaveAttribute(
-      'src',
-      '/assets/platform-logo.svg'
-    );
-  });
-
-  it('should use white logo when active theme is dark', async () => {
-    mountAbout({ activeTheme: 'dark' });
-
-    const dialog = await screen.findByRole('dialog');
-    expect(within(dialog).getByRole('img', { name: 'Brand Logo' })).toHaveAttribute(
-      'src',
-      '/assets/platform-logo-white.svg'
-    );
-  });
-
-  it('should use standard logo when active theme is light', async () => {
-    mountAbout({ activeTheme: 'light' });
-
-    const dialog = await screen.findByRole('dialog');
-    expect(within(dialog).getByRole('img', { name: 'Brand Logo' })).toHaveAttribute(
-      'src',
-      '/assets/platform-logo.svg'
-    );
-  });
+  it.each([
+    {
+      activeTheme: 'light' as const,
+      expectedSrc: '/assets/platform-logo.svg',
+    },
+    {
+      activeTheme: 'dark' as const,
+      expectedSrc: '/assets/platform-logo-white.svg',
+    },
+  ])(
+    'should set brand image src to $expectedSrc when theme is $activeTheme',
+    async ({ activeTheme, expectedSrc }) => {
+      mountAbout({ activeTheme });
+      const dialog = await screen.findByRole('dialog');
+      expect(within(dialog).getByRole('img', { name: 'Brand Logo' })).toHaveAttribute(
+        'src',
+        expectedSrc
+      );
+    }
+  );
 
   it('should close when the close button is activated', async () => {
     const user = userEvent.setup();
     mountAbout({ activeTheme: 'light' });
-
-    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    await screen.findByRole('dialog');
     await user.click(screen.getByRole('button', { name: /close/i }));
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    await expectAboutDialogAbsent();
   });
 
   it('should close when Escape is pressed', async () => {
     const user = userEvent.setup();
     mountAbout({ activeTheme: 'light' });
-
     const dialog = await screen.findByRole('dialog');
-    expect(dialog).toBeInTheDocument();
     dialog.focus();
     await user.keyboard('{Escape}');
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    await expectAboutDialogAbsent();
   });
 });
