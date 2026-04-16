@@ -71,7 +71,7 @@ function Toggle({
   tooltipPosition,
   onToggle,
   toggleRef,
-}: {
+}: Readonly<{
   icon: ReactNode;
   id: string;
   isOpen: boolean;
@@ -82,7 +82,7 @@ function Toggle({
   tooltipPosition?: TooltipProps['position'];
   onToggle: () => void;
   toggleRef: Ref<MenuToggleElement>;
-}) {
+}>) {
   const showLabel = useBreakpoint('md');
 
   const toggle = (
@@ -101,7 +101,7 @@ function Toggle({
   if (!tooltipContent) return toggle;
 
   return (
-    <Tooltip content={tooltipContent} position={tooltipPosition}>
+    <Tooltip content={tooltipContent} position={tooltipPosition} trigger="mouseenter focus click">
       {toggle}
     </Tooltip>
   );
