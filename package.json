@@ -106,7 +106,7 @@
     "d3": "7.9.0",
     "dagre": "0.8.5",
     "debounce": "2.2.0",
-    "dompurify": "^3.2.6",
+    "dompurify": "^3.4.0",
     "get-value": "3.0.1",
     "html-webpack-plugin": "5.6.3",
     "i18next": "24.2.2",
