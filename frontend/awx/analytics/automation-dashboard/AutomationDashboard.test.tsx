@@ -36,19 +36,24 @@ vi.mock('./views/useAutomationDashboardView', () => ({
   useAutomationDashboardView: vi.fn(() => mockView),
 }));
 
-vi.mock('@ansible/ansible-ui-framework', () => ({
-  PageAlertToasterProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  PageLayout: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  PageDashboard: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  PageToolbar: () => null,
-  PageHeader: ({ title, controls }: { title: string; controls?: React.ReactNode }) => (
-    <div>
-      <h1>{title}</h1>
-      <div>{controls}</div>
-    </div>
-  ),
-  useGetPageUrl: vi.fn(() => (route: string) => `/mock/${route}`),
-}));
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    PageLayout: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    PageDashboard: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    PageToolbar: () => null,
+    PageHeader: ({ title, controls }: { title: string; controls?: React.ReactNode }) => (
+      <div>
+        <h1>{title}</h1>
+        <div>{controls}</div>
+      </div>
+    ),
+    useGetPageUrl: vi.fn(() => (route: string) => `/mock/${route}`),
+    usePageDialog: vi.fn(() => [undefined, vi.fn()]),
+    usePageAlertToaster: vi.fn(() => ({ addAlert: vi.fn() })),
+  };
+});
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 

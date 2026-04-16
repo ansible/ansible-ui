@@ -3,7 +3,6 @@ import {
   PageDashboard,
   PageHeader,
   PageLayout,
-  PageToolbar,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { Button } from '@patternfly/react-core';
@@ -18,6 +17,7 @@ import {
 } from './components';
 
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
+import { DashboardToolbar } from './components/DashboardToolbar';
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
@@ -30,28 +30,6 @@ export function AutomationDashboard() {
 
   const view = useAutomationDashboardView({ toolbarFilters });
   const { details, exportPdf, loading } = view;
-  const {
-    filterState,
-    setFilterState,
-    clearAllFilters,
-    page,
-    perPage,
-    setPage,
-    setPerPage,
-    sort,
-    setSort,
-    sortDirection,
-    setSortDirection,
-    itemCount,
-    selectedItems,
-    selectItem,
-    selectItems,
-    unselectItem,
-    unselectAll,
-    isSelected,
-    keyFn,
-    limitFiltersToOneOrOperation,
-  } = view.mainTableView;
   const [exporting, setExporting] = useState(false);
 
   const handleExportPdf = async () => {
@@ -84,33 +62,7 @@ export function AutomationDashboard() {
           </Button>
         }
       />
-      <PageToolbar
-        toolbarFilters={toolbarFilters}
-        disableCardView
-        disableListView
-        disableTableView
-        viewType={'table'}
-        keyFn={keyFn}
-        itemCount={itemCount}
-        filterState={filterState}
-        setFilterState={setFilterState}
-        clearAllFilters={clearAllFilters}
-        page={page}
-        perPage={perPage}
-        setPage={setPage}
-        setPerPage={setPerPage}
-        sort={sort}
-        setSort={setSort}
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        selectedItems={selectedItems}
-        selectItem={selectItem}
-        selectItems={selectItems}
-        unselectItem={unselectItem}
-        unselectAll={unselectAll}
-        isSelected={isSelected}
-        limitFiltersToOneOrOperation={limitFiltersToOneOrOperation}
-      />
+      <DashboardToolbar toolbarFilters={toolbarFilters} {...view.mainTableView} />
       <PageDashboard>
         <DashboardValueCard
           id="successful-jobs-card"
