@@ -8,6 +8,7 @@ export interface AnsibleAboutModalProps {
   onClose?: () => void;
 }
 
+// this is the about modal for the ansible ui
 function AnsibleAboutModal(props: AnsibleAboutModalProps) {
   const [_dialog, setDialog] = usePageDialog();
   const { t } = useTranslation();
