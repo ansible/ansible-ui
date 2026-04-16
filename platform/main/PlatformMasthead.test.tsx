@@ -99,6 +99,14 @@ function mountMasthead(settings?: IPageSettings) {
   );
 }
 
+function getHelpMenuToggle(): HTMLElement {
+  const el = document.getElementById('help-menu-menu-toggle');
+  if (!el) {
+    throw new Error('Expected #help-menu-menu-toggle to be in the document');
+  }
+  return el;
+}
+
 describe('PlatformMasthead help menu', () => {
   beforeEach(() => {
     mockPageNavigate.mockClear();
@@ -113,16 +121,15 @@ describe('PlatformMasthead help menu', () => {
     const user = userEvent.setup();
     mountMasthead();
 
-    const helpToggle = document.getElementById('help-menu-menu-toggle');
-    expect(helpToggle).toBeTruthy();
+    const helpToggle = getHelpMenuToggle();
     expect(helpToggle).toHaveAttribute('aria-expanded', 'false');
 
-    await user.click(helpToggle!);
+    await user.click(helpToggle);
     expect(helpToggle).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByTestId('masthead-documentation')).toBeVisible();
     expect(screen.getByTestId('masthead-about')).toBeVisible();
 
-    await user.click(helpToggle!);
+    await user.click(helpToggle);
     expect(helpToggle).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByTestId('masthead-documentation')).not.toBeInTheDocument();
   });
@@ -131,7 +138,7 @@ describe('PlatformMasthead help menu', () => {
     const user = userEvent.setup();
     mountMasthead();
 
-    await user.click(document.getElementById('help-menu-menu-toggle')!);
+    await user.click(getHelpMenuToggle());
     const docItem = screen.getByTestId('masthead-documentation');
     expect(within(docItem).getByRole('menuitem', { name: 'Documentation' })).toHaveAttribute(
       'href',
@@ -143,7 +150,7 @@ describe('PlatformMasthead help menu', () => {
     const user = userEvent.setup();
     mountMasthead();
 
-    await user.click(document.getElementById('help-menu-menu-toggle')!);
+    await user.click(getHelpMenuToggle());
     await user.click(screen.getByRole('menuitem', { name: 'Quick starts' }));
     expect(mockPageNavigate).toHaveBeenCalledWith(PlatformRoute.QuickStarts);
   });
@@ -152,7 +159,7 @@ describe('PlatformMasthead help menu', () => {
     const user = userEvent.setup();
     mountMasthead();
 
-    const helpToggle = document.getElementById('help-menu-menu-toggle')!;
+    const helpToggle = getHelpMenuToggle();
     helpToggle.focus();
     expect(helpToggle).toHaveFocus();
 
@@ -176,7 +183,7 @@ describe('PlatformMasthead help menu', () => {
     mockUseBreakpoint.mockImplementation((size: WindowSize) => size === 'sm');
     mountMasthead();
 
-    const helpToggle = document.getElementById('help-menu-menu-toggle')!;
+    const helpToggle = getHelpMenuToggle();
     expect(helpToggle).toBeVisible();
     await user.click(helpToggle);
     expect(screen.getByTestId('masthead-documentation')).toBeVisible();

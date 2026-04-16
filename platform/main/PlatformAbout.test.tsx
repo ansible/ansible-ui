@@ -52,6 +52,13 @@ async function expectAboutDialogAbsent() {
   await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
 }
 
+async function setupLightAboutDialog() {
+  const user = userEvent.setup();
+  mountAbout({ activeTheme: 'light' });
+  const dialog = await screen.findByRole('dialog');
+  return { user, dialog };
+}
+
 describe('PlatformAbout', () => {
   const server = setupServer(
     http.get(awxAPI`/ping/`, () => HttpResponse.json({ version: '4.5.0' })),
@@ -65,37 +72,32 @@ describe('PlatformAbout', () => {
 
   it.each([
     {
+      label: 'light',
       activeTheme: 'light' as const,
       expectedSrc: '/assets/platform-logo.svg',
     },
     {
+      label: 'dark',
       activeTheme: 'dark' as const,
       expectedSrc: '/assets/platform-logo-white.svg',
     },
-  ])(
-    'should set brand image src to $expectedSrc when theme is $activeTheme',
-    async ({ activeTheme, expectedSrc }) => {
-      mountAbout({ activeTheme });
-      const dialog = await screen.findByRole('dialog');
-      expect(within(dialog).getByRole('img', { name: 'Brand Logo' })).toHaveAttribute(
-        'src',
-        expectedSrc
-      );
-    }
-  );
+  ])('should set brand image src for %# $label theme', async ({ activeTheme, expectedSrc }) => {
+    mountAbout({ activeTheme });
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByRole('img', { name: 'Brand Logo' })).toHaveAttribute(
+      'src',
+      expectedSrc
+    );
+  });
 
   it('should close when the close button is activated', async () => {
-    const user = userEvent.setup();
-    mountAbout({ activeTheme: 'light' });
-    await screen.findByRole('dialog');
+    const { user } = await setupLightAboutDialog();
     await user.click(screen.getByRole('button', { name: /close/i }));
     await expectAboutDialogAbsent();
   });
 
   it('should close when Escape is pressed', async () => {
-    const user = userEvent.setup();
-    mountAbout({ activeTheme: 'light' });
-    const dialog = await screen.findByRole('dialog');
+    const { user, dialog } = await setupLightAboutDialog();
     dialog.focus();
     await user.keyboard('{Escape}');
     await expectAboutDialogAbsent();
