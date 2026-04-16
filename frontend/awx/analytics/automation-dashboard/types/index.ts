@@ -57,6 +57,13 @@ export interface IDashboardDetails {
   host_chart: IDashboardChart;
 }
 
+export interface IDashboardFilterSet {
+  id: number;
+  name: string;
+  filters: string;
+  is_default: boolean;
+}
+
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
 
 export interface AutomationDashboardToolbarFiltersProps {
