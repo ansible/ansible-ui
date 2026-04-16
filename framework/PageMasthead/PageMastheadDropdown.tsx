@@ -6,6 +6,7 @@ import {
   Icon,
   MenuToggle,
   MenuToggleElement,
+  Tooltip,
 } from '@patternfly/react-core';
 import { ReactNode, Ref, useCallback, useState } from 'react';
 import { useBreakpoint } from '../components/useBreakPoint';
@@ -14,6 +15,7 @@ export function PageMastheadDropdown(props: {
   id: string;
   icon: ReactNode;
   label?: string;
+  tooltip?: ReactNode;
   children: ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,6 +36,7 @@ export function PageMastheadDropdown(props: {
           id={`${props.id}-menu-toggle`}
           isOpen={isOpen}
           label={props.label}
+          tooltip={props.tooltip}
           onToggle={onToggle}
           toggleRef={toggleRef}
         />
@@ -59,22 +62,25 @@ interface ToggleProps {
   id: string;
   isOpen: boolean;
   label?: string;
+  tooltip?: ReactNode;
   onToggle: () => void;
   toggleRef: Ref<MenuToggleElement>;
 }
 
-function Toggle({ icon, id, isOpen, label, onToggle, toggleRef }: ToggleProps) {
+function Toggle({ icon, id, isOpen, label, tooltip, onToggle, toggleRef }: ToggleProps) {
   const showLabel = useBreakpoint('md');
   return (
-    <MenuToggle id={id} isExpanded={isOpen} onClick={onToggle} ref={toggleRef} variant="plain">
-      <Flex
-        alignItems={{ default: 'alignItemsCenter' }}
-        flexWrap={{ default: 'nowrap' }}
-        spaceItems={{ default: 'spaceItemsSm' }}
-      >
-        <FlexItem>{<Icon>{icon}</Icon>}</FlexItem>
-        {showLabel && label && <FlexItem wrap="nowrap">{label}</FlexItem>}
-      </Flex>
-    </MenuToggle>
+    <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+      <MenuToggle id={id} isExpanded={isOpen} onClick={onToggle} ref={toggleRef} variant="plain">
+        <Flex
+          alignItems={{ default: 'alignItemsCenter' }}
+          flexWrap={{ default: 'nowrap' }}
+          spaceItems={{ default: 'spaceItemsSm' }}
+        >
+          <FlexItem>{<Icon>{icon}</Icon>}</FlexItem>
+          {showLabel && label && <FlexItem wrap="nowrap">{label}</FlexItem>}
+        </Flex>
+      </MenuToggle>
+    </Tooltip>
   );
 }
