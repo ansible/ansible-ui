@@ -34,6 +34,7 @@ export interface IJobTemplate {
 }
 
 export interface ISubscriptionCosts {
+  id: number;
   monthly_subscription_cost: number;
   engineer_avg_hourly_rate: number;
   include_template_creation_time_in_costs: boolean;
@@ -61,6 +62,12 @@ export interface IDashboardFilterSet {
   name: string;
   filters: string;
   is_default: boolean;
+}
+
+export interface IAutomationDashboardCollectionStatus {
+  enabled: boolean | null;
+  next_run: Date | null;
+  initial_collection_status: string | null;
 }
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────

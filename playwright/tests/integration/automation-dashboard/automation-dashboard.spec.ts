@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { platformUI } from '@ansible/playwright/commands/login';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
-
-const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
 
 async function mockReportRoute(
   page: import('playwright').Page,
@@ -131,22 +128,16 @@ async function mockReportDetailRoute(
 }
 
 test.beforeEach(async ({ page }) => {
-  // The feature flag for Automation Dashboard is off by default and
-  // needs to be turned on for the tests
-  await setupBefore({ path: '/settings/dev/flags' })({ page });
-  const row = page.getByRole('row').filter({ hasText: 'Automation Dashboard' });
-  await row.getByRole('gridcell', { name: 'Disabled' }).locator('span').click();
-  await expect(row.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Enabled');
-  await page.getByRole('button', { name: 'Automation Analytics' }).click();
-  await page.getByTestId('awx-automation-dashboard').isVisible();
+  await setupBefore()({ page });
+  // Mock the collection status API to enable the Automation Dashboard
+  await page.route(`**/api/metrics/v1/dashboard_reports/collection_status/`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ enabled: true, next_run: null, initial_collection_status: null }),
+    });
+  });
   await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
-});
-
-test.afterEach(async ({ page }) => {
-  await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
-  const row = page.getByRole('row').filter({ hasText: 'Automation Dashboard' });
-  await row.getByRole('gridcell', { name: 'Enabled' }).locator('span').click();
-  await expect(row.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Disabled');
 });
 
 test.afterEach(setupAfter);

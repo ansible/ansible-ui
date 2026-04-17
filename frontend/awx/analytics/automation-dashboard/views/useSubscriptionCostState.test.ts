@@ -15,11 +15,14 @@ vi.mock('./useGetReportSubscriptionCosts', () => ({
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
-const fixture: ISubscriptionCosts = {
-  monthly_subscription_cost: 100,
-  engineer_avg_hourly_rate: 50,
-  include_template_creation_time_in_costs: false,
-};
+const fixture: ISubscriptionCosts[] = [
+  {
+    id: 1,
+    monthly_subscription_cost: 100,
+    engineer_avg_hourly_rate: 50,
+    include_template_creation_time_in_costs: false,
+  },
+];
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
@@ -28,9 +31,9 @@ const fixture: ISubscriptionCosts = {
 async function setupWithUserEdit() {
   mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
   const { result, rerender } = renderHook(() => useSubscriptionCostState());
-  await waitFor(() => expect(result.current.costState).toEqual(fixture));
+  await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
 
-  const userEdit: ISubscriptionCosts = { ...fixture, engineer_avg_hourly_rate: 75 };
+  const userEdit: ISubscriptionCosts = { ...fixture[0], engineer_avg_hourly_rate: 75 };
   act(() => {
     result.current.setCostState(userEdit);
   });
@@ -58,19 +61,19 @@ describe('useSubscriptionCostState', () => {
     mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
     rerender();
 
-    await waitFor(() => expect(result.current.costState).toEqual(fixture));
+    await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
   });
 
   test('should not overwrite costState when subscriptionCosts becomes undefined', async () => {
     mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
     const { result, rerender } = renderHook(() => useSubscriptionCostState());
 
-    await waitFor(() => expect(result.current.costState).toEqual(fixture));
+    await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
 
     mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: undefined });
     rerender();
 
-    expect(result.current.costState).toEqual(fixture);
+    expect(result.current.costState).toEqual(fixture[0]);
   });
 
   test('should preserve local costState edit when subscriptionCosts is unchanged (isPristine = false)', async () => {
@@ -86,10 +89,31 @@ describe('useSubscriptionCostState', () => {
     const { result, rerender } = await setupWithUserEdit();
 
     // Server confirms the save — subscriptionCosts changes to the saved value.
-    const confirmed: ISubscriptionCosts = { ...fixture, engineer_avg_hourly_rate: 75 };
-    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: confirmed });
+    const confirmed: ISubscriptionCosts = { ...fixture[0], engineer_avg_hourly_rate: 75 };
+    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: [confirmed] });
     rerender();
 
     await waitFor(() => expect(result.current.costState).toEqual(confirmed));
+  });
+
+  test('should clear costState when subscriptionCosts becomes an empty array', async () => {
+    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
+    const { result, rerender } = renderHook(() => useSubscriptionCostState());
+    await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
+
+    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: [] });
+    rerender();
+
+    await waitFor(() => expect(result.current.costState).toBeUndefined());
+  });
+
+  test('should clear costState when subscriptionCosts becomes an empty array even after a local edit', async () => {
+    const { result, rerender } = await setupWithUserEdit();
+
+    // Server returns empty array — local edit must be overwritten.
+    mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: [] });
+    rerender();
+
+    await waitFor(() => expect(result.current.costState).toBeUndefined());
   });
 });

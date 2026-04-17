@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -11,10 +11,20 @@ import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import type { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
 
+// ─── Hoisted mocks ────────────────────────────────────────────────────────────
+
+const { mockUseAwxActiveUser } = vi.hoisted(() => ({
+  mockUseAwxActiveUser: vi.fn(),
+}));
+
+vi.mock('../../../common/useAwxActiveUser', () => ({
+  useAwxActiveUser: mockUseAwxActiveUser,
+}));
+
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
 const server = setupServer(
-  http.post(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
+  http.put(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -24,6 +34,7 @@ afterAll(() => server.close());
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const defaultCostState: ISubscriptionCosts = {
+  id: 1,
   monthly_subscription_cost: 100,
   engineer_avg_hourly_rate: 50,
   include_template_creation_time_in_costs: false,
@@ -77,6 +88,7 @@ describe('DashboardTableToolbarRow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRefresh.mockResolvedValue(undefined);
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
   });
 
   // --- Rendering ---
@@ -142,24 +154,49 @@ describe('DashboardTableToolbarRow', () => {
   });
 
   // --- Inputs disabled ---
-
-  test('should disable all inputs and switch while BE is not yet implemented', () => {
-    renderRow();
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-    expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
-  });
-
   test('should disable inputs when isLoading is true', () => {
     renderRow(buildProps({ isLoading: true }));
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
   });
 
+  test('should disable all controls when not superuser', () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    renderRow();
+    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
+    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
+    expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
+    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+  });
+
+  test('should not call put when not superuser', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    let putCalled = false;
+    server.use(
+      http.put(/subscription_costs/, () => {
+        putCalled = true;
+        return HttpResponse.json({});
+      })
+    );
+    renderRow();
+    const input = screen.getByTestId('engineer_avg_hourly_rate');
+
+    // Dispatch a change event directly on the disabled input, bypassing the
+    // browser-level disabled guard.  The debounce fires after 600 ms and calls
+    // toolbarChangeHandler, which must return early because controlsDisabled is
+    // true (is_superuser: false).  This proves the in-component guard — not
+    // merely the disabled attribute — is what prevents the PUT.
+    fireEvent.change(input, { target: { value: '75' } });
+
+    // Wait beyond the debounce (600 ms) to let any scheduled PUT fire.
+    await new Promise((r) => setTimeout(r, 700));
+    expect(putCalled).toBe(false);
+  });
+
   // --- toolbarChangeHandler: success ---
   // TODO: Re-enable the following tests once `|| true` is removed from controlsDisabled.
 
-  test.skip('should show success alert, call setCostState and refresh on engineer_avg_hourly_rate change', async () => {
+  test('should show success alert, call setCostState and refresh on engineer_avg_hourly_rate change', async () => {
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
     await waitFor(() =>
@@ -169,7 +206,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockRefresh).toHaveBeenCalled();
   });
 
-  test.skip('should show success alert on monthly_subscription_cost change', async () => {
+  test('should show success alert on monthly_subscription_cost change', async () => {
     renderRow();
     await triggerInputChange('monthly_subscription_cost', '200');
     await waitFor(() =>
@@ -178,7 +215,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockRefresh).toHaveBeenCalled();
   });
 
-  test.skip('should show success alert when switch is toggled', async () => {
+  test('should show success alert when switch is toggled', async () => {
     const user = userEvent.setup();
     renderRow();
     await user.click(screen.getByTestId('switch-time-taken-automation-toggle'));
@@ -188,7 +225,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockSetCostState).toHaveBeenCalled();
   });
 
-  test.skip('should skip setCostState call when setCostState is undefined', async () => {
+  test('should skip setCostState call when setCostState is undefined', async () => {
     renderRow(buildProps({ setCostState: undefined }));
     await triggerInputChange('engineer_avg_hourly_rate', '75');
     await waitFor(() =>
@@ -199,8 +236,8 @@ describe('DashboardTableToolbarRow', () => {
 
   // --- toolbarChangeHandler: network error ---
 
-  test.skip('should show danger alert and not call refresh on network error', async () => {
-    server.use(http.post(/subscription_costs/, () => HttpResponse.error()));
+  test('should show danger alert and not call refresh on network error', async () => {
+    server.use(http.put(/subscription_costs/, () => HttpResponse.error()));
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
     await waitFor(() =>
@@ -209,7 +246,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(mockRefresh).not.toHaveBeenCalled();
   });
 
-  test.skip('should show warning alert when refresh fails after successful post', async () => {
+  test('should show warning alert when refresh fails after successful post', async () => {
     mockRefresh.mockRejectedValueOnce(new Error('Network error'));
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
@@ -220,9 +257,9 @@ describe('DashboardTableToolbarRow', () => {
 
   // --- toolbarChangeHandler: 422 field error ---
 
-  test.skip('should display field error in input on 422 response', async () => {
+  test('should display field error in input on 422 response', async () => {
     server.use(
-      http.post('*/subscription_costs/', () =>
+      http.put(/subscription_costs/, () =>
         HttpResponse.json(
           { engineer_avg_hourly_rate: ['Value must be positive.'] },
           { status: 422 }
@@ -234,9 +271,9 @@ describe('DashboardTableToolbarRow', () => {
     await waitFor(() => expect(screen.getByText('Value must be positive.')).toBeInTheDocument());
   });
 
-  test.skip('should clear field error on next successful request', async () => {
+  test('should clear field error on next successful request', async () => {
     server.use(
-      http.post(
+      http.put(
         /subscription_costs/,
         () => HttpResponse.json({ engineer_avg_hourly_rate: ['Too high'] }, { status: 422 }),
         { once: true }

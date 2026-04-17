@@ -160,7 +160,6 @@ export function AutomationDashboard() {
           errorStateTitle={t('Error loading job chart')}
           error={view.detailsError}
         ></DashboardChartCard>
-
         <DashboardMainTableCard {...view}></DashboardMainTableCard>
       </PageDashboard>
     </PageLayout>

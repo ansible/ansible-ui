@@ -10,11 +10,14 @@ import { metricsAPI } from '../../../common/api/metrics-utils';
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
-const subscriptionCostsFixture: ISubscriptionCosts = {
-  monthly_subscription_cost: 100,
-  engineer_avg_hourly_rate: 50,
-  include_template_creation_time_in_costs: false,
-};
+const subscriptionCostsFixture: ISubscriptionCosts[] = [
+  {
+    id: 1,
+    monthly_subscription_cost: 100,
+    engineer_avg_hourly_rate: 50,
+    include_template_creation_time_in_costs: false,
+  },
+];
 
 // ─── Wrapper ──────────────────────────────────────────────────────────────────
 

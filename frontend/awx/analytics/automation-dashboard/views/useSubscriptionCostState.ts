@@ -38,7 +38,7 @@ export function useSubscriptionCostState(): ISubscriptionCostState {
   // Seed / resync only when pristine (no uncommitted local edits).
   useEffect(() => {
     if (subscriptionCosts !== undefined && isPristine) {
-      setCostState(subscriptionCosts);
+      setCostState(subscriptionCosts[0]);
     }
   }, [subscriptionCosts, isPristine]);
 

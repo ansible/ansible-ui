@@ -11,6 +11,16 @@ import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { DashboardMainTableCard } from './DashboardMainTableCard';
 import type { IAutomationDashboardView, IDashboardDetails, IJobTemplate } from '../types';
 
+// ─── Hoisted mocks ────────────────────────────────────────────────────────────
+
+const { mockUseAwxActiveUser } = vi.hoisted(() => ({
+  mockUseAwxActiveUser: vi.fn(),
+}));
+
+vi.mock('../../../common/useAwxActiveUser', () => ({
+  useAwxActiveUser: mockUseAwxActiveUser,
+}));
+
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
 const server = setupServer(
@@ -20,7 +30,7 @@ const server = setupServer(
       time_taken_create_automation_minutes: 60,
     })
   ),
-  http.post(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
+  http.put(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -104,6 +114,7 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     detailsError: undefined,
     detailsLoading: false,
     costState: {
+      id: 1,
       monthly_subscription_cost: 100,
       engineer_avg_hourly_rate: 50,
       include_template_creation_time_in_costs: false,
@@ -152,6 +163,7 @@ describe('DashboardMainTableCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRefresh.mockResolvedValue(undefined);
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
   });
 
   // --- Value cards ---
@@ -235,6 +247,7 @@ describe('DashboardMainTableCard', () => {
     renderCard(
       buildProps({
         costState: {
+          id: 1,
           monthly_subscription_cost: 100,
           engineer_avg_hourly_rate: 50,
           include_template_creation_time_in_costs: true,
@@ -304,6 +317,7 @@ describe('DashboardMainTableCard', () => {
     renderCard(
       buildProps({
         costState: {
+          id: 1,
           monthly_subscription_cost: 100,
           engineer_avg_hourly_rate: 50,
           include_template_creation_time_in_costs: true,
@@ -311,6 +325,31 @@ describe('DashboardMainTableCard', () => {
       })
     );
     expect(screen.getByTestId('time_taken_create_automation_minutes_1')).toBeInTheDocument();
+  });
+
+  // --- Superuser vs non-superuser cell rendering ---
+
+  test('should show plain value for time_taken_manually_execute_minutes when not superuser', () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    renderCard();
+    expect(screen.queryByTestId('time_taken_manually_execute_minutes_1')).not.toBeInTheDocument();
+    expect(screen.getByText('30')).toBeInTheDocument();
+  });
+
+  test('should show plain value for time_taken_create_automation_minutes when not superuser and column is visible', () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    renderCard(
+      buildProps({
+        costState: {
+          id: 1,
+          monthly_subscription_cost: 100,
+          engineer_avg_hourly_rate: 50,
+          include_template_creation_time_in_costs: true,
+        },
+      })
+    );
+    expect(screen.queryByTestId('time_taken_create_automation_minutes_1')).not.toBeInTheDocument();
+    expect(screen.getByText('60')).toBeInTheDocument();
   });
 
   // --- Input readOnly ---
@@ -321,12 +360,6 @@ describe('DashboardMainTableCard', () => {
     );
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-  });
-
-  // TODO: Update to `not.toBeDisabled()` once `|| true` is removed from readOnly in DashboardMainTableCard.
-  test('should disable table inputs while BE is not yet implemented', () => {
-    renderCard();
-    expect(screen.getByTestId('time_taken_manually_execute_minutes_1')).toBeDisabled();
   });
 
   test('should disable export CSV button when loading is true', () => {
@@ -373,9 +406,8 @@ describe('DashboardMainTableCard', () => {
   });
 
   // --- onTableInputChange: success ---
-  // TODO: Re-enable the following tests once `|| true` is removed from readOnly in DashboardMainTableCard.
 
-  test.skip('should show success alert after successful save', async () => {
+  test('should show success alert after successful save', async () => {
     await triggerInputSave();
     await waitFor(() =>
       expect(
@@ -384,12 +416,12 @@ describe('DashboardMainTableCard', () => {
     );
   });
 
-  test.skip('should call refresh after successful put', async () => {
+  test('should call refresh after successful put', async () => {
     await triggerInputSave();
     await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
   });
 
-  test.skip('should show warning alert when refresh fails after successful put', async () => {
+  test('should show warning alert when refresh fails after successful put', async () => {
     mockRefresh.mockRejectedValueOnce(new Error('Network error'));
     await triggerInputSave();
     await waitFor(() =>
@@ -418,7 +450,7 @@ describe('DashboardMainTableCard', () => {
 
   // --- onTableInputChange: network error ---
 
-  test.skip('should show danger alert on network error', async () => {
+  test('should show danger alert on network error', async () => {
     server.use(http.put(/template_metadata\/1\//, () => HttpResponse.error()));
     await triggerInputSave();
     await waitFor(() =>
@@ -431,7 +463,7 @@ describe('DashboardMainTableCard', () => {
 
   // --- onTableInputChange: validation error (RequestError 422) ---
 
-  test.skip('should show danger alert and render field error on 422 response', async () => {
+  test('should show danger alert and render field error on 422 response', async () => {
     server.use(
       http.put(/template_metadata\/1\//, () =>
         HttpResponse.json(
@@ -449,7 +481,7 @@ describe('DashboardMainTableCard', () => {
     await waitFor(() => expect(screen.getByText('Value too large.')).toBeInTheDocument());
   });
 
-  test.skip('should clear field error on next successful save after 422', async () => {
+  test('should clear field error on next successful save after 422', async () => {
     server.use(
       http.put(
         /template_metadata\/1\//,
