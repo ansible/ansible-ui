@@ -13,7 +13,7 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
   test.describe('Quick Starts', () => {
     test(
       'should conditionally display based on topology type',
-      { tag: ['@not_mock', '@pre_merge'] },
+      { tag: ['@not_mock'] },
       async ({ page }) => {
         await page.locator('#help-menu-menu-toggle').click();
         if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
@@ -30,7 +30,7 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
   test.describe('About Modal: Content Display', () => {
     test(
       'should display complete content with versions from APIs',
-      { tag: ['@not_mock', '@tier1'] },
+      { tag: ['@not_mock'] },
       async ({ page }) => {
         const awxConfigPromise = page.waitForResponse(
           (response) =>
