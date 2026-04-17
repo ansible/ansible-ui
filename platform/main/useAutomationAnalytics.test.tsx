@@ -12,11 +12,13 @@ const {
   mockUseHasAwxService,
   mockUseIsManagedCloudInstall,
   mockUsePlatformActiveUser,
+  mockUseAutomationDashboardCollectionStatus,
 } = vi.hoisted(() => ({
   mockUseAwxNavigation: vi.fn(),
   mockUseHasAwxService: vi.fn(),
   mockUseIsManagedCloudInstall: vi.fn(),
   mockUsePlatformActiveUser: vi.fn(),
+  mockUseAutomationDashboardCollectionStatus: vi.fn(),
 }));
 
 vi.mock('@ansible/awx-ui/main/useAwxNavigation', () => ({
@@ -37,6 +39,13 @@ vi.mock('./GatewayUIAuth', () => ({
 vi.mock('./PlatformActiveUserProvider', () => ({
   usePlatformActiveUser: mockUsePlatformActiveUser,
 }));
+
+vi.mock(
+  '../../frontend/awx/analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus',
+  () => ({
+    useAutomationDashboardCollectionStatus: mockUseAutomationDashboardCollectionStatus,
+  })
+);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -89,6 +98,8 @@ describe('useAutomationAnalytics', () => {
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: true, is_platform_auditor: false },
     });
+    // Dashboard feature enabled by default
+    mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: true });
   });
 
   // --- Label ---
@@ -107,9 +118,6 @@ describe('useAutomationAnalytics', () => {
   });
 
   test('should be visible for superuser with AWX service', () => {
-    mockUsePlatformActiveUser.mockReturnValue({
-      activePlatformUser: { is_superuser: true, is_platform_auditor: false },
-    });
     const { result } = renderHook(() => useAutomationAnalytics());
     expect(result.current.hidden).toBe(false);
   });
@@ -132,9 +140,12 @@ describe('useAutomationAnalytics', () => {
 
   test('should be hidden when AWX service is unavailable even for superuser', () => {
     mockUseHasAwxService.mockReturnValue(false);
-    mockUsePlatformActiveUser.mockReturnValue({
-      activePlatformUser: { is_superuser: true, is_platform_auditor: false },
-    });
+    const { result } = renderHook(() => useAutomationAnalytics());
+    expect(result.current.hidden).toBe(true);
+  });
+
+  test('should be hidden when activePlatformUser is null', () => {
+    mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: null });
     const { result } = renderHook(() => useAutomationAnalytics());
     expect(result.current.hidden).toBe(true);
   });
@@ -149,58 +160,114 @@ describe('useAutomationAnalytics', () => {
   });
 
   test('should keep SubscriptionUsage in children when not managed cloud install', () => {
-    mockUseIsManagedCloudInstall.mockReturnValue(false);
     const { result } = renderHook(() => useAutomationAnalytics());
     const { children } = asGroup(result.current);
     expect(children.find((c) => c.id === AwxRoute.SubscriptionUsage)).toBeDefined();
   });
 
-  // --- non-superuser children filtering ---
+  // --- automationDashboardEnabled = true ---
 
-  test('should preserve all children for superuser', () => {
-    // Arrange: 3 children (dashboard + subscription-usage + calculator), is_superuser = true
-    const { result } = renderHook(() => useAutomationAnalytics());
-    const { children } = asGroup(result.current);
-    expect(children).toHaveLength(3);
-    expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationDashboard);
-    expect(children.map((c) => c.id)).toContain(AwxRoute.SubscriptionUsage);
-    expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationCalculator);
-  });
-
-  test('should keep only automation dashboard for non-superuser', () => {
-    mockUsePlatformActiveUser.mockReturnValue({
-      activePlatformUser: { is_superuser: false, is_platform_auditor: true },
+  describe('when automationDashboardEnabled is true', () => {
+    test('should preserve all children for superuser', () => {
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children).toHaveLength(3);
+      expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationDashboard);
+      expect(children.map((c) => c.id)).toContain(AwxRoute.SubscriptionUsage);
+      expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationCalculator);
     });
-    const { result } = renderHook(() => useAutomationAnalytics());
-    const { children } = asGroup(result.current);
-    expect(children).toHaveLength(1);
-    expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
-  });
 
-  test('should keep only automation dashboard for non-superuser non-auditor', () => {
-    mockUsePlatformActiveUser.mockReturnValue({
-      activePlatformUser: { is_superuser: false, is_platform_auditor: false },
+    test('should keep only automation dashboard for non-superuser auditor', () => {
+      mockUsePlatformActiveUser.mockReturnValue({
+        activePlatformUser: { is_superuser: false, is_platform_auditor: true },
+      });
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children).toHaveLength(1);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
     });
-    const { result } = renderHook(() => useAutomationAnalytics());
-    const { children } = asGroup(result.current);
-    expect(children).toHaveLength(1);
-    expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
-  });
 
-  test('should keep only automation dashboard for non-superuser even when managed cloud removes subscription usage first', () => {
-    mockUseIsManagedCloudInstall.mockReturnValue(true);
-    mockUsePlatformActiveUser.mockReturnValue({
-      activePlatformUser: { is_superuser: false, is_platform_auditor: true },
+    test('should keep only automation dashboard for non-superuser non-auditor', () => {
+      mockUsePlatformActiveUser.mockReturnValue({
+        activePlatformUser: { is_superuser: false, is_platform_auditor: false },
+      });
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children).toHaveLength(1);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
     });
-    // Arrange: managed cloud removes subscription-usage first (2 children left),
-    // then non-superuser filter removes everything except the dashboard (1 child).
-    const { result } = renderHook(() => useAutomationAnalytics());
-    const { children } = asGroup(result.current);
-    expect(children).toHaveLength(1);
-    expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+
+    test('should keep only automation dashboard when activePlatformUser is null', () => {
+      mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: null });
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children).toHaveLength(1);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+    });
+
+    test('should keep only automation dashboard for non-superuser when managed cloud removes subscription usage first', () => {
+      mockUseIsManagedCloudInstall.mockReturnValue(true);
+      mockUsePlatformActiveUser.mockReturnValue({
+        activePlatformUser: { is_superuser: false, is_platform_auditor: true },
+      });
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children).toHaveLength(1);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+    });
   });
 
-  // --- !analytics.children.length condition ---
+  // --- automationDashboardEnabled = false ---
+
+  describe('when automationDashboardEnabled is false', () => {
+    beforeEach(() => {
+      mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: false });
+    });
+
+    test('should remove automation dashboard from children for superuser', () => {
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeUndefined();
+    });
+
+    test('should keep other children for superuser when dashboard is disabled', () => {
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children.map((c) => c.id)).toContain(AwxRoute.SubscriptionUsage);
+      expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationCalculator);
+    });
+
+    test('should be hidden when dashboard disabled and no other children remain', () => {
+      // Only automation dashboard in the nav → after removal children.length = 0
+      mockUseAwxNavigation.mockImplementation(() => [
+        {
+          id: AwxRoute.Analytics,
+          label: 'Analytics',
+          path: 'analytics',
+          children: [
+            {
+              id: AwxRoute.AutomationDashboard,
+              label: 'Automation Dashboard',
+              path: 'automation-dashboard',
+              element: <></>,
+            },
+          ],
+        },
+      ]);
+      const { result } = renderHook(() => useAutomationAnalytics());
+      expect(result.current.hidden).toBe(true);
+    });
+
+    test('should not remove automation dashboard from children for superuser when dashboard is enabled', () => {
+      // Sanity: switching back to enabled keeps the dashboard
+      mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: true });
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeDefined();
+    });
+  });
+
+  // --- empty children guard ---
 
   test('should be hidden when analytics group has no children even for superuser', () => {
     mockUseAwxNavigation.mockImplementation(() => [
@@ -211,31 +278,94 @@ describe('useAutomationAnalytics', () => {
         children: [],
       },
     ]);
-    // superuser + awxService pass the first two hidden guards,
-    // but !analytics.children.length must still hide the item
     const { result } = renderHook(() => useAutomationAnalytics());
     expect(result.current.hidden).toBe(true);
   });
 
-  test('should not be hidden when analytics group has children for superuser', () => {
-    // Sanity-check: a non-empty children list does not trigger the length guard
+  // --- analytics item not present in nav ---
+
+  test('should return undefined when analytics item is not found in nav', () => {
+    // Nav has no AwxRoute.Analytics node → removeNavigationItemById returns undefined
+    mockUseAwxNavigation.mockImplementation(() => [
+      { id: 'some-other-id', label: 'Other', path: 'other', element: <></> },
+    ]);
     const { result } = renderHook(() => useAutomationAnalytics());
-    expect(result.current.hidden).toBe(false);
+    // The if-block is skipped, the raw (undefined) value is returned
+    expect(result.current).toBeUndefined();
   });
 
-  // --- activePlatformUser null / undefined ---
+  // --- analytics is a leaf item (no children) ---
 
-  test('should be hidden when activePlatformUser is null', () => {
-    mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: null });
+  test('should return item unchanged when analytics node has no children property', () => {
+    const leafItem: PageNavigationItem = {
+      id: AwxRoute.Analytics,
+      label: 'Analytics',
+      path: 'analytics',
+      element: <></>,
+    };
+    mockUseAwxNavigation.mockImplementation(() => [leafItem]);
     const { result } = renderHook(() => useAutomationAnalytics());
-    expect(result.current.hidden).toBe(true);
+    // if-block is skipped, no label/hidden mutation
+    expect(result.current.label).toBe('Analytics');
+    expect((result.current as { hidden?: boolean }).hidden).toBeUndefined();
   });
 
-  test('should keep only automation dashboard when activePlatformUser is null', () => {
-    mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: null });
+  // --- child without id in the filtering loop ---
+
+  test('should skip children without id when enabled and user is non-superuser', () => {
+    mockUsePlatformActiveUser.mockReturnValue({
+      activePlatformUser: { is_superuser: false, is_platform_auditor: true },
+    });
+    mockUseAwxNavigation.mockImplementation(() => [
+      {
+        id: AwxRoute.Analytics,
+        label: 'Analytics',
+        path: 'analytics',
+        children: [
+          {
+            id: AwxRoute.AutomationDashboard,
+            label: 'Automation Dashboard',
+            path: 'automation-dashboard',
+            element: <></>,
+          },
+          {
+            // No id — the `if (item.id)` guard should protect against this
+            label: 'No-id item',
+            path: 'no-id',
+            element: <></>,
+          },
+          {
+            id: AwxRoute.AutomationCalculator,
+            label: 'Automation Calculator',
+            path: 'automation-calculator',
+            element: <></>,
+          },
+        ],
+      },
+    ]);
     const { result } = renderHook(() => useAutomationAnalytics());
     const { children } = asGroup(result.current);
-    expect(children).toHaveLength(1);
-    expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+    // AutomationDashboard kept; AutomationCalculator removed; no-id item stays (not removed)
+    expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeDefined();
+    expect(children.find((c) => c.id === AwxRoute.AutomationCalculator)).toBeUndefined();
+    expect(children.find((c) => !c.id)).toBeDefined();
+  });
+
+  // --- useIsManagedCloudInstall returns null (coalesces to false) ---
+
+  test('should treat null managed cloud install as false and keep SubscriptionUsage', () => {
+    mockUseIsManagedCloudInstall.mockReturnValue(null);
+    const { result } = renderHook(() => useAutomationAnalytics());
+    const { children } = asGroup(result.current);
+    expect(children.find((c) => c.id === AwxRoute.SubscriptionUsage)).toBeDefined();
+  });
+
+  // --- automationDashboardEnabled = null (falsy, same branch as false) ---
+
+  test('should remove automation dashboard when enabled is null', () => {
+    mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: null });
+    const { result } = renderHook(() => useAutomationAnalytics());
+    const { children } = asGroup(result.current);
+    expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeUndefined();
   });
 });

@@ -64,6 +64,12 @@ export interface IDashboardFilterSet {
   is_default: boolean;
 }
 
+export interface IAutomationDashboardCollectionStatus {
+  enabled: boolean | null;
+  next_run: Date | null;
+  initial_collection_status: string | null;
+}
+
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
 
 export interface AutomationDashboardToolbarFiltersProps {
