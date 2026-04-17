@@ -23,13 +23,13 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
         (response) =>
           response.url().includes('/api/galaxy/') && response.request().method() === 'GET'
       );
-      const edaConfigPromise = !isSaaS()
-        ? page.waitForResponse(
+      const edaConfigPromise = isSaaS()
+        ? null
+        : page.waitForResponse(
             (response) =>
               response.url().includes('/api/eda/v1/config/') &&
               response.request().method() === 'GET'
-          )
-        : null;
+          );
 
       await page.locator('#help-menu-menu-toggle').click();
 
@@ -58,7 +58,7 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
       if (hubConfig.galaxy_ng_version) {
         await expect(modal.getByText(hubConfig.galaxy_ng_version, { exact: true })).toBeVisible();
       }
-      if (!isSaaS() && edaConfigPromise) {
+      if (edaConfigPromise) {
         const edaResponse = await edaConfigPromise;
         const edaConfig = (await edaResponse.json()) as ServiceVersionJson;
         await expect(modal.getByText('Event-Driven Ansible Version')).toBeVisible();
