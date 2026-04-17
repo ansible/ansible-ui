@@ -51,6 +51,7 @@ import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
+import { useAutomationDashboardCollectionStatus } from '../../frontend/awx/analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -286,19 +287,24 @@ export function useAutomationAnalytics(): PageNavigationItem {
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
   const { activePlatformUser } = usePlatformActiveUser();
+  const { enabled: automationDashboardEnabled } = useAutomationDashboardCollectionStatus();
+
   if (analytics && 'children' in analytics) {
     analytics.label = t('Automation Analytics');
     if (managedCloudInstall) {
       removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage);
     }
-
-    if (!activePlatformUser?.is_superuser) {
-      const automationDashboardId = 'awx-automation-dashboard';
-      analytics.children
-        .filter((c) => c.id !== automationDashboardId)
-        .forEach((item) => {
-          if (item.id) removeNavigationItemById(analytics.children, item.id);
-        });
+    const automationDashboardId = 'awx-automation-dashboard';
+    if (automationDashboardEnabled) {
+      if (!activePlatformUser?.is_superuser) {
+        analytics.children
+          .filter((c) => c.id !== automationDashboardId)
+          .forEach((item) => {
+            if (item.id) removeNavigationItemById(analytics.children, item.id);
+          });
+      }
+    } else {
+      removeNavigationItemById(analytics.children, automationDashboardId);
     }
 
     analytics.hidden =
