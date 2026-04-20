@@ -10,7 +10,7 @@ test.afterEach(setupAfter);
 
 test(
   'Create local authenticator in ui, verify details and enable it',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@tier1'] },
   async ({ page }) => {
     const authMethodName = await Authentication.ui.createMethod(page, {
       name: 'e2e-local-auth',
