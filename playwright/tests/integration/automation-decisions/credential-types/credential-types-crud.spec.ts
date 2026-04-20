@@ -1,6 +1,5 @@
 import type { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
@@ -8,15 +7,14 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { EdaCredentialType, Organization } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credential-types' }));
-test.afterEach(setupAfter);
-
-test.beforeEach(async ({ page }) => {
-  const buildType = await checkBuildType(page);
-  if (buildType === SAAS_URL) {
-    test.skip();
+test.beforeAll(() => {
+  if (isSaaS()) {
+    test.skip(true, 'EDA credential types not available on SaaS deployments');
   }
 });
+
+test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credential-types' }));
+test.afterEach(setupAfter);
 
 test.describe('EDA Credential Types - CRUD Operations', () => {
   test('should create and edit a credential type', { tag: ['@not_mock'] }, async ({ page }) => {

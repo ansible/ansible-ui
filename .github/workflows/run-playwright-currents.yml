@@ -23,11 +23,11 @@ on:
         type: string
         required: false
         description: "Password"
-      TAGS: 
+      TAGS:
         type: string
         required: false
         description: "Include Tags"
-      NOT_TAGS: 
+      NOT_TAGS:
         type: string
         required: false
         description: "Exclude Tags"
@@ -39,8 +39,18 @@ on:
       TIMEOUT_MINUTES:
         type: number
         required: false
-        description: "Job timeout in minutes (default: 60)"
-        default: 60
+        description: "Job timeout in minutes (default: 90)"
+        default: 90
+      AAP_TOPOLOGY_TYPE:
+        type: choice
+        required: false
+        description: "AAP topology type for test skip logic"
+        default: ""
+        options:
+          - ""
+          - "saas"
+          - "ocp-a"
+          - "azure"
       PROJECT:
         type: choice
         description: "Playwright Project"
@@ -66,7 +76,7 @@ jobs:
       docker-target: platform-ui
       docker-image: platform-ui
       upload-artifact: true
-    
+
   playwright-currents:
     name: Playwright with Currents
     if: ${{ !cancelled() }}
@@ -81,6 +91,7 @@ jobs:
       PROJECT: ${{ inputs.PROJECT }}
       PARALLEL_TESTS: ${{ format('{0}', inputs.PARALLEL_TESTS) }}
       TIMEOUT_MINUTES: ${{ format('{0}', inputs.TIMEOUT_MINUTES) }}
+      AAP_TOPOLOGY_TYPE: ${{ inputs.AAP_TOPOLOGY_TYPE }}
     secrets:
       CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
       CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}

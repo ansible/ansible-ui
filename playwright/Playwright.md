@@ -194,8 +194,7 @@ Prioritize tests that reflect the user's journey and behavior.
 
 ```js
 test.beforeEach(async ({ page }) => {
-  const buildType = await checkBuildType(page);
-  if (buildType === SAAS_URL) {
+  if (getTopologyType() === TOPOLOGY_SAAS) {
     test.skip(true, 'Not available on SaaS'); // This won't skip the test!
     return;
   }
@@ -205,12 +204,8 @@ test.beforeEach(async ({ page }) => {
 **✅ Correct - Skip in beforeAll (skips all tests in describe block):**
 
 ```js
-test.beforeAll(async ({ browser }) => {
-  const page = await browser.newPage();
-  const buildType = await checkBuildType(page);
-  await page.close();
-
-  if (buildType === SAAS_URL || buildType === AZURE_URL) {
+test.beforeAll(() => {
+  if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
     test.skip(true, 'Not available on SaaS/Azure deployments');
   }
 });
@@ -220,8 +215,7 @@ test.beforeAll(async ({ browser }) => {
 
 ```js
 test('my test', async ({ page }) => {
-  const buildType = await checkBuildType(page);
-  if (buildType === SAAS_URL) {
+  if (isSaaS()) {
     test.skip();
     return;
   }
@@ -230,6 +224,59 @@ test('my test', async ({ page }) => {
 ```
 
 Use `beforeAll` when you want to skip all tests in a describe block based on a condition. Use the per-test approach when only specific tests need to be skipped.
+
+## Topology Detection
+
+AAP Playwright tests support different deployment topologies (SaaS, Azure, OCP-A, etc.). Use the `AAP_TOPOLOGY_TYPE` environment variable to specify the deployment type.
+
+### Environment Variable
+
+Set `AAP_TOPOLOGY_TYPE` in `/playwright/.env`:
+
+```bash
+# Valid values: 'saas', 'azure', 'ocp-a'
+# This is set by the CI/CD pipeline
+AAP_TOPOLOGY_TYPE=saas
+```
+
+### Usage in Tests
+
+```typescript
+import { TOPOLOGY_SAAS, TOPOLOGY_AZURE } from '@ansible/playwright/commands/constants';
+import { getTopologyType, isTopology, isSaaS, isAzure, isOcpA } from '@ansible/playwright/commands/getTopologyType';
+
+// Skip for specific topology
+test.beforeAll(() => {
+  if (getTopologyType() === TOPOLOGY_SAAS) {
+    test.skip(true, 'Not available on SaaS');
+  }
+});
+
+// Skip for multiple topologies (using helper)
+test.beforeAll(() => {
+  if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
+    test.skip(true, 'Not available on SaaS or Azure');
+  }
+});
+
+// Individual helper functions
+if (isSaaS()) { /* Skip on SaaS */ }
+if (isAzure()) { /* Skip on Azure */ }
+if (isOcpA()) { /* Skip on OCP-A */ }
+```
+
+**Available constants:**
+- `TOPOLOGY_SAAS` - AWS SaaS deployment (`'saas'`)
+- `TOPOLOGY_AZURE` - Azure cloud deployment (`'azure'`)
+- `TOPOLOGY_OCP_A` - OpenShift deployment (`'ocp-a'`)
+- `TOPOLOGY_UNKNOWN` - Unknown or local/RPM deployment (`''`)
+
+**Helper functions:**
+- `getTopologyType()` - Returns the current topology type string
+- `isSaaS()` - Returns true if topology is SaaS
+- `isAzure()` - Returns true if topology is Azure
+- `isOcpA()` - Returns true if topology is OCP-A
+- `isTopology(...types)` - Returns true if topology matches any of the provided types
 
 ## Feature Flags
 

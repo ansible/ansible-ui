@@ -1,9 +1,8 @@
 import { edaAPI } from '@ansible/playwright/commands/apiClient';
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -11,16 +10,15 @@ import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectBy
 import { EdaCredential } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
-test.afterEach(setupAfter);
-
 // Skip all tests if running on SaaS deployment
-test.beforeEach(async ({ page }) => {
-  const buildType = await checkBuildType(page);
-  if (buildType === SAAS_URL) {
-    test.skip();
+test.beforeAll(() => {
+  if (isSaaS()) {
+    test.skip(true, 'EDA credentials not available on SaaS deployments');
   }
 });
+
+test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
+test.afterEach(setupAfter);
 
 test.describe('EDA Credentials - CRUD Operations', () => {
   test(

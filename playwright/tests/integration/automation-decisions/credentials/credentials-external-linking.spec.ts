@@ -1,7 +1,6 @@
 import type { EdaCredential as EdaCredentialInterface } from '@ansible/eda-ui/interfaces/EdaCredential';
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
 import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
-import { SAAS_URL } from '@ansible/playwright/commands/constants';
+import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -12,9 +11,8 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
 test.afterEach(setupAfter);
 
-test.beforeEach(async ({ page }) => {
-  const buildType = await checkBuildType(page);
-  if (buildType === SAAS_URL) {
+test.beforeEach(() => {
+  if (isSaaS()) {
     test.skip();
   }
 });

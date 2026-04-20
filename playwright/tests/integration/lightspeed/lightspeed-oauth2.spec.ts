@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { checkBuildType } from '@ansible/playwright/commands/checkBuildType';
-import { AZURE_URL, SAAS_URL } from '@ansible/playwright/commands/constants';
+import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/constants';
+import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { setupAfter } from '@ansible/playwright/commands/setup';
 
 const userName = process.env.PLATFORM_USERNAME ?? '';
@@ -17,10 +17,8 @@ test.describe('Ansible Lightspeed oauth2', () => {
       test.skip(!lightspeedServer, 'LIGHTSPEED_SERVER not supplied');
       test.skip(!userName, 'PLATFORM_USERNAME not supplied');
       test.skip(!userPassword, 'PLATFORM_PASSWORD not supplied');
-
-      const buildType = await checkBuildType(page);
       test.skip(
-        buildType === SAAS_URL || buildType === AZURE_URL,
+        isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE),
         'Test should not run on SaaS/Azure deployment'
       );
 

@@ -1,4 +1,6 @@
+// Topology type constants (match AAP_TOPOLOGY_TYPE env var values)
 export const AAP_DEV_LOCALHOST_URL: string = 'localhost:44926';
-export const SAAS_URL: string = 'aws.ansiblecloud.com';
-export const AZURE_URL: string = 'az.ansiblecloud.com';
-export const OCP_A_URL: string = 'ocp4.testing.ansible.com';
+export const TOPOLOGY_SAAS = 'saas';
+export const TOPOLOGY_OCP_A = 'ocp-a';
+export const TOPOLOGY_AZURE = 'azure';
+export const TOPOLOGY_UNKNOWN = '';
