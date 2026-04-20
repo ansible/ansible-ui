@@ -10,7 +10,7 @@ export function useHubUserFilters() {
         key: 'username',
         label: t('Username'),
         type: ToolbarFilterType.MultiText,
-        query: 'username__contains',
+        query: 'username__icontains',
         comparison: 'contains',
       },
     ],

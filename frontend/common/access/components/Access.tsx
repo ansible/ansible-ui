@@ -152,7 +152,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         key: 'role_definition__name',
         label: t('Role name'),
         type: ToolbarFilterType.SingleText,
-        query: 'role_definition__name__contains',
+        query: 'role_definition__name__icontains',
         comparison: 'contains',
       },
       ...(props.additionalTableFilters ? props.additionalTableFilters : []),
