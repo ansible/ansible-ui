@@ -5,7 +5,7 @@ import { Authentication } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/authenticators' }));
 test.afterEach(setupAfter);
 
-test.describe('Authenticator mappings', () => {
+test.describe('Authenticator mappings', { tag: ['@tier1'] }, () => {
   test('can reorder mappings', async ({ page }) => {
     const authenticatorName = await Authentication.ui.createMethod(page, {});
     const mapName1 = await Authentication.ui.createMap(page, {

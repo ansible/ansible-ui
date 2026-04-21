@@ -13,7 +13,7 @@ test.afterEach(setupAfter);
 test.setTimeout(2 * 60 * 1000);
 test(
   'Azure AD Authentication form - create, edit, update and delete',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@tier1'] },
   async ({ page }) => {
     const authMethodName = await Authentication.ui.createMethod(page, {
       name: 'e2e-azure-ad-auth',
