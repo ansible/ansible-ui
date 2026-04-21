@@ -38,7 +38,6 @@ export function Domains() {
         marginRight: 'var(--pf-t--global--spacer--xs)',
         marginBottom: 'var(--pf-t--global--spacer--md)',
         borderRadius: 'var(--pf-t--global--border--radius--medium)',
-        paddingLeft: 'var(--pf-t--global--spacer--md)',
       }}
     >
       <Flex spaceItems={{ default: 'spaceItemsSm' }}>

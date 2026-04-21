@@ -68,6 +68,7 @@
     "@patternfly/react-charts": "8.3.1",
     "@patternfly/react-core": "6.3.1",
     "@patternfly/react-icons": "6.3.1",
+    "@patternfly/react-styles": "6.3.1",
     "@patternfly/react-table": "6.3.1",
     "@patternfly/react-templates": "6.3.1",
     "@patternfly/react-topology": "6.3.0",
@@ -160,7 +161,8 @@
   },
   "overrides": {
     "nanoid": "3.3.11",
-    "minimatch@^9.0.0": "^9.0.6"
+    "minimatch@^9.0.0": "^9.0.6",
+    "@patternfly/react-styles": "6.3.1"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.0",
