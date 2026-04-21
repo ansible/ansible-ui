@@ -1,4 +1,4 @@
-import { IToolbarFilter, usePageDialog, useSelectDialog } from '@ansible/ansible-ui-framework';
+import { IToolbarFilter, usePageDialog } from '@ansible/ansible-ui-framework';
 import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,54 +29,6 @@ const useToolbarFilters = () => {
   );
   return toolbarFilters;
 };
-
-/** @deprecated */
-export function useMultiSelectCredential(
-  isLookup: boolean,
-  credentialType?: number,
-  acceptableCredentialKinds?: string[]
-) {
-  const { t } = useTranslation();
-  const tableColumns = useCredentialsColumns({ disableLinks: true });
-  const toolbarFilters = useToolbarFilters();
-  const columns = useMemo(
-    () =>
-      isLookup
-        ? tableColumns.filter((item) => item?.id && ['name', 'credential_type'].includes(item?.id))
-        : tableColumns,
-    [isLookup, tableColumns]
-  );
-  const view = useAwxView<Credential>({
-    url: awxAPI`/credentials/`,
-    toolbarFilters,
-    tableColumns: columns,
-    disableQueryString: true,
-    ...(credentialType && {
-      queryParams: {
-        credential_type: credentialType.toString(),
-      },
-    }),
-    ...(acceptableCredentialKinds &&
-      acceptableCredentialKinds?.length > 0 && {
-        queryParams: {
-          credential_type__kind__in:
-            acceptableCredentialKinds.length === 1
-              ? acceptableCredentialKinds[0]
-              : acceptableCredentialKinds.join(','),
-        },
-      }),
-  });
-
-  return useSelectDialog<Credential, true>({
-    toolbarFilters,
-    tableColumns: columns,
-    view,
-    confirm: t('Confirm'),
-    cancel: t('Cancel'),
-    selected: t('Selected'),
-    isMultiple: true,
-  });
-}
 
 export function useSingleSelectCredential(
   credentialType?: number,
