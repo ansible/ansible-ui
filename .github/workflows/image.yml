@@ -36,7 +36,7 @@ on:
       packaging-ref:
         description: 'Git ref to checkout for packaging repo'
         type: string
-        default: devel
+        default: main
     secrets:
       QUAY_USERNAME:
         required: false
