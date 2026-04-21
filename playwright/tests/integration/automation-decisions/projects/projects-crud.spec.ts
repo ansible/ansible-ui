@@ -71,6 +71,8 @@ test.describe('EDA Projects CRUD', () => {
           await expect(page.getByTestId('name')).toHaveText(editedName);
         });
       } finally {
+        // Ensure sync is idle before DELETE; the API may return 409 while sync is pending/running.
+        await EdaProject.api.waitForSync(page, edaProject.id);
         await EdaProject.api.delete(page, edaProject.id);
       }
     }
