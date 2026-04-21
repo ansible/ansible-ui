@@ -93,6 +93,8 @@ test.describe('EDA Projects List', () => {
     await expect(page.getByTestId('page-title')).toHaveText(editedName);
     await expect(page.getByTestId('name')).toHaveText(editedName);
 
+    // Ensure sync is idle before DELETE; the API may return 409 while sync is pending/running.
+    await EdaProject.api.waitForSync(page, edaProject.id);
     await EdaProject.api.delete(page, edaProject.id);
   });
 
