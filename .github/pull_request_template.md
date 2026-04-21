@@ -1,8 +1,6 @@
 ## Summary
 
-Jira: <!-- AAP-XXXXX -->
-
-<!-- What changed and why? For backports, link the original PR. -->
+<!-- What changed and why? -->
 
 ## Type of Change
 
@@ -28,7 +26,7 @@ Jira: <!-- AAP-XXXXX -->
 
 ### Ephemeral E2E Tests
 
-Trigger tests by posting a comment `/run-aap-ui-playwright` on this PR.
+Once PR is ready and preliminary checks pass, trigger tests by posting a comment `/run-playwright` on this PR.
 
 > Tests run against a fresh AAP instance (version based on branch).
 
