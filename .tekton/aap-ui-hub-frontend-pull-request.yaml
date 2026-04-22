@@ -15,13 +15,13 @@ metadata:
       || "build-tools/Dockerfile".pathChanged() || "package.json".pathChanged()
       || "package-lock.json".pathChanged() || "playwright-insights/***".pathChanged() )
     pipelinesascode.tekton.dev/pipeline: https://raw.githubusercontent.com/RedHatInsights/konflux-pipelines/refs/heads/main/pipelines/platform-ui/docker-build-run-all-tests.yaml
+    pipelinesascode.tekton.dev/target-namespace: ansible-automationhu-tenant
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: automation-hub-main
     appstudio.openshift.io/component: aap-ui-hub-frontend
     pipelines.appstudio.openshift.io/type: build
   name: aap-ui-hub-frontend-on-pull-request
-  namespace: ansible-automationhu-tenant
 spec:
   params:
     - name: git-url

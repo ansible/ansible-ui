@@ -13,13 +13,13 @@ metadata:
       || "framework/***".pathChanged() || ".tekton/aap-ui-hub-frontend-push.yaml".pathChanged()
       || "build-tools/Dockerfile".pathChanged() || "package.json".pathChanged()
       || "package-lock.json".pathChanged() )
+    pipelinesascode.tekton.dev/target-namespace: ansible-automationhu-tenant
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: automation-hub-main
     appstudio.openshift.io/component: aap-ui-hub-frontend
     pipelines.appstudio.openshift.io/type: build
   name: aap-ui-hub-frontend-on-push
-  namespace: ansible-automationhu-tenant
 spec:
   params:
     - name: git-url
