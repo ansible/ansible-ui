@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InsightsSelectGroup } from './InsightsSelectGroup';
 
@@ -52,9 +53,12 @@ describe('InsightsSelectGroup', () => {
 
   const renderComponent = (props = {}) => {
     return render(
-      <MemoryRouter>
-        <InsightsSelectGroup {...defaultProps} {...props} />
-      </MemoryRouter>
+      // Fresh SWRConfig per test prevents cache from previous tests polluting responses
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter>
+          <InsightsSelectGroup {...defaultProps} {...props} />
+        </MemoryRouter>
+      </SWRConfig>
     );
   };
 
@@ -142,23 +146,23 @@ describe('InsightsSelectGroup', () => {
 
       renderComponent({ assignedGroups: [{ name: 'admins' }] });
 
-      // Wait for data to load and filtering to complete
+      // Wait for data to load, filtering to complete, and empty state to appear.
+      // All assertions must be inside waitFor so retries continue until the
+      // empty state renders — checking outside would race against the loading state.
       await waitFor(
         () => {
-          // Verify that 'admins' is not in the table (filtered out)
           const cells = screen.queryAllByRole('cell');
           const adminsCell = cells.find((cell) => cell.textContent === 'admins');
           expect(adminsCell).toBeUndefined();
+
+          const emptyStateTitle = screen.queryByText('No groups found');
+          const emptyStateDescription = screen.queryByText(
+            'No groups match the current filter criteria.'
+          );
+          expect(emptyStateTitle || emptyStateDescription).toBeTruthy();
         },
         { timeout: 5000 }
       );
-
-      // Verify empty state message appears (either title or description)
-      const emptyStateTitle = screen.queryByText('No groups found');
-      const emptyStateDescription = screen.queryByText(
-        'No groups match the current filter criteria.'
-      );
-      expect(emptyStateTitle || emptyStateDescription).toBeTruthy();
     });
   });
 
