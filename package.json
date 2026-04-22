@@ -121,7 +121,7 @@
     "monaco-editor-webpack-plugin": "7.1.0",
     "monaco-yaml": "5.2.3",
     "msw": "^2.7.3",
-    "nx": "^20.4.0",
+    "nx": "22.6.5",
     "p-debounce": "4.0.0",
     "p-limit": "6.2.0",
     "path-to-regexp": "8.2.0",
