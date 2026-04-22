@@ -1,3 +1,4 @@
+# Insights Hub PR pipeline - builds test image and runs E2E tests against CRC
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
