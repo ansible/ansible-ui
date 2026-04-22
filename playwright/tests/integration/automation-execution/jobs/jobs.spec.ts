@@ -243,7 +243,10 @@ test.describe('Jobs: Launch and Verify Output', () => {
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const organizationName = await Organization.ui.create(page);
-      const projectName = await Project.ui.create(page, { organizationName });
+      const projectName = await Project.ui.create(page, {
+        organizationName,
+        scmUrl: 'https://github.com/ansible/test-playbooks',
+      });
 
       // Wait for project to sync before creating inventory source
       await Project.ui.sync(page, projectName);
@@ -266,7 +269,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
 
       // Wait for job to complete
       await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 300_000,
+        timeout: 120000,
       });
       // Cleanup
       await Inventory.ui.deleteSource(page, inventoryName, inventorySourceName);
