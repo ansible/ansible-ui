@@ -266,7 +266,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
 
       // Wait for job to complete
       await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
+        timeout: 180000,
       });
       // Cleanup
       await Inventory.ui.deleteSource(page, inventoryName, inventorySourceName);

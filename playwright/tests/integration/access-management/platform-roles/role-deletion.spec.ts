@@ -5,6 +5,7 @@ import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAn
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
+import { isAzure } from '@ansible/playwright/commands/getTopologyType';
 
 test.beforeEach(setupBefore({ path: '/access/roles' }));
 test.afterEach(setupAfter);
@@ -117,6 +118,8 @@ test.describe('Role Deletion Tests', () => {
       'should show correct count in bulk delete confirmation',
       { tag: ['@not_mock'] },
       async ({ page }) => {
+        test.slow(isAzure());
+
         const roleNames: string[] = [];
         const roleCount = 3;
         const modalBox = page.getByRole('dialog', { name: 'Permanently delete roles' });
