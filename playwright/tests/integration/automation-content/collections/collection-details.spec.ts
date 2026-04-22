@@ -673,6 +673,46 @@ test.describe('Hub Collections - Details Page', () => {
     );
   });
 
+  test.describe('Documentation Tab', () => {
+    test(
+      'should render documentation content without error',
+      { tag: ['@not_mock'] },
+      async ({ page, collection }) => {
+        const namespace = 'e2edocs';
+        const name = 'docstab';
+
+        await collection.createNamespace({ name: namespace });
+        const uploaded = await collection.uploadVersion({
+          namespace,
+          name,
+          version: '1.0.0',
+          repository: 'staging',
+        });
+
+        await collection.approveCollection({
+          namespace: uploaded.namespace,
+          name: uploaded.name,
+          version: uploaded.version,
+        });
+
+        await navigateToCollectionDetails(page, uploaded);
+
+        // Click on the Documentation tab
+        await page.getByRole('tab', { name: 'Documentation' }).click();
+
+        // Verify documentation content renders (not an error state)
+        await expect(page.getByRole('heading', { name: 'Page not found' })).not.toBeVisible();
+
+        // Verify the page does not show a generic error boundary
+        const mainContent = page.locator('main');
+        await expect(mainContent).not.toContainText('Error', { timeout: 10000 });
+
+        // Verify documentation structure rendered (drawer with navigation panel)
+        await expect(page.getByPlaceholder('Find content')).toBeVisible({ timeout: 10000 });
+      }
+    );
+  });
+
   test.describe('Deprecation', () => {
     test(
       'should deprecate and undeprecate a collection from detail page',
