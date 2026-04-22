@@ -9,7 +9,7 @@ metadata:
     pipelinesascode.tekton.dev/max-keep-runs: '3'
     pipelinesascode.tekton.dev/on-cel-expression:
       event == "push" && target_branch
-      == "main" && ( "frontend/hub/***".pathChanged() || "frontend/common/***".pathChanged()
+      == "devel" && ( "frontend/hub/***".pathChanged() || "frontend/common/***".pathChanged()
       || "framework/***".pathChanged() || ".tekton/aap-ui-hub-frontend-push.yaml".pathChanged()
       || "build-tools/Dockerfile".pathChanged() || "package.json".pathChanged()
       || "package-lock.json".pathChanged() )
