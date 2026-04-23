@@ -6,6 +6,8 @@ import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { AboutModal, Content } from '@patternfly/react-core';
 import { t } from 'i18next';
 import React, { useContext } from 'react';
+import aapLogo from '../assets/aap-logo.svg?url';
+import aapLogoWhite from '../assets/aap-logo-white.svg?url';
 
 export const PlatformAbout: React.FunctionComponent<{
   platformVersion?: string;
@@ -29,9 +31,7 @@ export const PlatformAbout: React.FunctionComponent<{
       productName={t('Ansible Automation Platform {{version}}', { version: platformVersion })}
       trademark="Copyright 2025 Red Hat, Inc."
       brandImageAlt={t('Brand Logo')}
-      brandImageSrc={
-        settings?.activeTheme === 'dark' ? '/assets/aap-logo-white.svg' : '/assets/aap-logo.svg'
-      }
+      brandImageSrc={settings?.activeTheme === 'dark' ? aapLogoWhite : aapLogo}
     >
       <Content>
         <Content component="dl">

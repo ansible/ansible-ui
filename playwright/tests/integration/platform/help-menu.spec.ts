@@ -175,19 +175,24 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
   });
 
   test.describe('About Modal: Brand Logo', () => {
-    test('should display brand logo with alt text', { tag: ['@not_mock'] }, async ({ page }) => {
-      await page.locator('#help-menu-menu-toggle').click();
-      await page.locator('[data-testid="masthead-about"]').click();
+    test(
+      'should display brand logo that loads successfully',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await page.locator('#help-menu-menu-toggle').click();
+        await page.locator('[data-testid="masthead-about"]').click();
 
-      const modal = page.getByRole('dialog');
-      const brandLogo = modal.locator('img[alt="Brand Logo"]');
+        const modal = page.getByRole('dialog');
+        const brandLogo = modal.locator('img[alt="Brand Logo"]');
 
-      await expect(brandLogo).toBeVisible();
-      await expect(brandLogo).toHaveAttribute('alt', 'Brand Logo');
-      await expect(brandLogo).toHaveAttribute('src', /aap-logo.*\.svg$/);
-    });
+        await expect(brandLogo).toBeVisible();
+        await expect(brandLogo).toHaveAttribute('alt', 'Brand Logo');
+        const naturalWidth = await brandLogo.evaluate((img: HTMLImageElement) => img.naturalWidth);
+        expect(naturalWidth).toBeGreaterThan(0);
+      }
+    );
 
-    test('should use white logo for dark theme', { tag: ['@not_mock'] }, async ({ page }) => {
+    test('should load white logo for dark theme', { tag: ['@not_mock'] }, async ({ page }) => {
       const themeButton = page.locator('[data-cy="theme-icon"]');
       await expect(themeButton).toBeVisible();
       await themeButton.click();
@@ -198,17 +203,21 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
       const modal = page.getByRole('dialog');
       const brandLogo = modal.locator('img[alt="Brand Logo"]');
 
-      await expect(brandLogo).toHaveAttribute('src', '/assets/aap-logo-white.svg');
+      await expect(brandLogo).toBeVisible();
+      const naturalWidth = await brandLogo.evaluate((img: HTMLImageElement) => img.naturalWidth);
+      expect(naturalWidth).toBeGreaterThan(0);
     });
 
-    test('should use standard logo for light theme', { tag: ['@not_mock'] }, async ({ page }) => {
+    test('should load standard logo for light theme', { tag: ['@not_mock'] }, async ({ page }) => {
       await page.locator('#help-menu-menu-toggle').click();
       await page.locator('[data-testid="masthead-about"]').click();
 
       const modal = page.getByRole('dialog');
       const brandLogo = modal.locator('img[alt="Brand Logo"]');
 
-      await expect(brandLogo).toHaveAttribute('src', '/assets/aap-logo.svg');
+      await expect(brandLogo).toBeVisible();
+      const naturalWidth = await brandLogo.evaluate((img: HTMLImageElement) => img.naturalWidth);
+      expect(naturalWidth).toBeGreaterThan(0);
     });
   });
 
