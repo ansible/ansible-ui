@@ -118,6 +118,70 @@ describe('CollectionInstall', () => {
   afterAll(() => server.close());
   afterEach(() => server.resetHandlers());
 
+  test('should request docs_blob by including exclude_fields in API URL', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(
+        ({ request }) => {
+          return request.url.includes('/content/ansible/collection_versions/');
+        },
+        ({ request }) => {
+          capturedUrl = request.url;
+          return HttpResponse.json(mockContentResponse);
+        }
+      )
+    );
+
+    render(
+      <TestWrapper>
+        <CollectionInstall />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(capturedUrl).toContain('exclude_fields=');
+    });
+
+    const url = new URL(capturedUrl);
+    const excludeFields = url.searchParams.get('exclude_fields');
+    expect(excludeFields).toBeTruthy();
+    expect(excludeFields).toContain('files');
+    expect(excludeFields).toContain('manifest');
+    expect(excludeFields).toContain('contents');
+    expect(excludeFields).not.toContain('docs_blob');
+  });
+
+  test('should handle missing docs_blob gracefully', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/content/ansible/collection_versions/'),
+        () =>
+          HttpResponse.json({
+            count: 1,
+            next: '',
+            previous: '',
+            results: [
+              {
+                license: ['MIT'],
+              },
+            ],
+          })
+      )
+    );
+
+    render(
+      <TestWrapper>
+        <CollectionInstall />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Install' })).toBeInTheDocument();
+    });
+
+    expect(screen.queryByRole('link', { name: /go to documentation/i })).not.toBeInTheDocument();
+  });
+
   test('should render install information with license', async () => {
     render(
       <TestWrapper>
