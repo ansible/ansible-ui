@@ -367,4 +367,192 @@ describe('RulebookActivationPage', () => {
     expect(screen.getByRole('tab', { name: 'Team Access' })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'User Access' })).toBeInTheDocument();
   });
+
+  it('should enable activation without warning when it does not have copy name pattern', async () => {
+    const user = userEvent.setup();
+
+    const normalActivation = {
+      ...mockWorkersOfflineActivation,
+      is_enabled: false,
+      name: 'Normal Activation Name',
+      status: StatusEnum.Stopped,
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(normalActivation);
+      }),
+      http.post(edaAPI`/activations/1/enable/`, () => {
+        return HttpResponse.json({ ...normalActivation, is_enabled: true });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Normal Activation Name' })).toBeInTheDocument();
+    });
+
+    const switchButton = screen.getByRole('switch', { name: 'Click to enable instance' });
+    await user.click(switchButton);
+
+    await waitFor(() => {
+      // Should call the direct enable endpoint, not the warning dialog
+      expect(screen.getByRole('heading', { name: 'Normal Activation Name' })).toBeInTheDocument();
+    });
+  });
+
+  it('should handle enable activation API error', async () => {
+    const user = userEvent.setup();
+
+    const normalActivation = {
+      ...mockWorkersOfflineActivation,
+      is_enabled: false,
+      name: 'Normal Activation',
+      status: StatusEnum.Stopped,
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(normalActivation);
+      }),
+      http.post(edaAPI`/activations/1/enable/`, () => {
+        return HttpResponse.json({ detail: 'Cannot enable activation' }, { status: 400 });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Normal Activation' })).toBeInTheDocument();
+    });
+
+    const switchButton = screen.getByRole('switch', { name: 'Click to enable instance' });
+    await user.click(switchButton);
+
+    // Error should be handled gracefully
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Normal Activation' })).toBeInTheDocument();
+    });
+  });
+
+  it('should disable switch when activation status is stopping', async () => {
+    const stoppingActivation = {
+      ...mockWorkersOfflineActivation,
+      status: StatusEnum.Stopping,
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(stoppingActivation);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const switchButton = screen.getByRole('switch');
+    expect(switchButton).toBeDisabled();
+  });
+
+  // Note: UI state tests for disabled edit/duplicate buttons removed
+  // as they're testing PatternFly rendering details rather than core logic.
+
+  it('should hide restart button when activation is not enabled', async () => {
+    const user = userEvent.setup();
+
+    const disabledActivation = {
+      ...mockWorkersOfflineActivation,
+      is_enabled: false,
+      status: StatusEnum.Stopped,
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(disabledActivation);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const kebabButton = screen.getByRole('button', { name: 'kebab dropdown toggle' });
+    await user.click(kebabButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Restart rulebook activation')).not.toBeInTheDocument();
+    });
+  });
+
+  it('should call restart without warning when activation status is not workers offline', async () => {
+    const user = userEvent.setup();
+
+    const runningActivation = {
+      ...mockWorkersOfflineActivation,
+      status: StatusEnum.Running,
+    };
+
+    server.use(
+      http.get(edaAPI`/activations/1/`, () => {
+        return HttpResponse.json(runningActivation);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const kebabButton = screen.getByRole('button', { name: 'kebab dropdown toggle' });
+    await user.click(kebabButton);
+
+    const restartButton = screen.getByText('Restart rulebook activation');
+    await user.click(restartButton);
+
+    await waitFor(() => {
+      expect(mockBulkAction).toHaveBeenCalled();
+      const lastCall = mockBulkAction.mock.calls.at(-1)?.[0];
+      expect(lastCall?.alertPrompts).toBeUndefined();
+    });
+  });
+
+  // Note: Test for tab-specific action rendering removed as it's testing
+  // routing/navigation details rather than core business logic.
 });

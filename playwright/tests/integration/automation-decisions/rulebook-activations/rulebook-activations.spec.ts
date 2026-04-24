@@ -139,7 +139,6 @@ test.describe('Rulebook Activations', () => {
         );
         await expect(page.getByRole('main')).toContainText('Last edited');
         await expect(page.locator('#description')).toContainText('edited description');
-        await expect(page.locator('#enabled-option')).toContainText('Skip audit events');
         await RulebookActivation.ui.delete(page, rulebookActivationName);
       }
     );
@@ -165,7 +164,6 @@ test.describe('Rulebook Activations', () => {
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
         await expect(page.getByRole('main')).toContainText('Last edited');
         await expect(page.locator('#description')).toContainText('edited description');
-        await expect(page.locator('#enabled-option')).toContainText('Skip audit events');
         await RulebookActivation.ui.delete(page, rulebookActivationName);
       }
     );

@@ -17,8 +17,6 @@ import {
   Alert,
   Content,
   ContentVariants,
-  DescriptionListGroup,
-  DescriptionListTerm,
   Divider,
   Label,
   LabelGroup,
@@ -196,6 +194,19 @@ export function RulebookActivationDetails() {
             </LabelGroup>
           </PageDetail>
         )}
+        {rulebookActivation.rule_engine_credential && (
+          <PageDetail
+            label={t('Event persistence credential')}
+            helpText={t('The credential used for event persistence')}
+          >
+            <Label
+              key={rulebookActivation.rule_engine_credential?.id}
+              data-testid="rule-engine-credential"
+            >
+              {rulebookActivation.rule_engine_credential?.name}
+            </Label>
+          </PageDetail>
+        )}
         <PageDetail
           label={t('Decision environment')}
           helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
@@ -252,9 +263,7 @@ export function RulebookActivationDetails() {
           value={rulebookActivation?.modified_at ? rulebookActivation?.modified_at : ''}
           author={rulebookActivation?.modified_by?.username}
         />
-      </PageDetails>
-      {rulebookActivation?.extra_var && (
-        <PageDetails disableScroll={true} numberOfColumns={SelectVariant.single}>
+        {rulebookActivation?.extra_var && (
           <EdaExtraVarsCell
             label={t('Variables')}
             helpText={t(
@@ -262,30 +271,26 @@ export function RulebookActivationDetails() {
             )}
             text={rulebookActivation.extra_var}
           />
-        </PageDetails>
-      )}
-      <PageDetails>
-        <PageDetail label={t('Enabled option')}>
-          <Content component={ContentVariants.ul}>
-            {!!rulebookActivation?.skip_audit_events && (
-              <Content component={ContentVariants.li}>
-                <DescriptionListGroup>
-                  <DescriptionListTerm style={{ opacity: 0.6 }}>
-                    {t('Skip audit events')}
-                    <StandardPopover
-                      header={t('Skip audit events')}
-                      content={t(
-                        'Skipping audit events will prevent you from seeing your events in the Rule Audit, ' +
-                          'its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
-                      )}
-                    />
-                  </DescriptionListTerm>
-                </DescriptionListGroup>
-              </Content>
-            )}
-            {!!rulebookActivation.restart_on_project_update && (
-              <Content component={ContentVariants.li}>
-                <DescriptionListTerm style={{ opacity: 0.6 }}>
+        )}
+        {(!!rulebookActivation?.skip_audit_events ||
+          !!rulebookActivation.restart_on_project_update ||
+          !!rulebookActivation?.enable_persistence) && (
+          <PageDetail label={t('Enabled options')} id="enabled-option">
+            <Content component={ContentVariants.ul}>
+              {!!rulebookActivation?.skip_audit_events && (
+                <Content component={ContentVariants.li}>
+                  {t('Skip audit events')}
+                  <StandardPopover
+                    header={t('Skip audit events')}
+                    content={t(
+                      'Skipping audit events will prevent you from seeing your events in the Rule Audit, ' +
+                        'its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
+                    )}
+                  />
+                </Content>
+              )}
+              {!!rulebookActivation.restart_on_project_update && (
+                <Content component={ContentVariants.li}>
                   {t('Auto-restart on project update')}
                   <StandardPopover
                     header={t('Auto-restart on project update')}
@@ -293,11 +298,22 @@ export function RulebookActivationDetails() {
                       'When enabled, this rulebook activation automatically restarts when its associated project resyncs, so it runs with the latest project content.'
                     )}
                   />
-                </DescriptionListTerm>
-              </Content>
-            )}
-          </Content>
-        </PageDetail>
+                </Content>
+              )}
+              {!!rulebookActivation?.enable_persistence && (
+                <Content component={ContentVariants.li} data-testid="enable-persistence">
+                  {t('Enable event persistence')}
+                  <StandardPopover
+                    header={t('Enable event persistence')}
+                    content={t(
+                      'When enabled you can select the Event-Driven Ansible Rule Engine credential to allow event persistence so that events are not lost if the rulebook activation is down or restarted. If one is not selected it will default to use the System Event-Driven Ansible Rule Engine Credential.'
+                    )}
+                  />
+                </Content>
+              )}
+            </Content>
+          </PageDetail>
+        )}
       </PageDetails>
     </Scrollable>
   );
