@@ -1,6 +1,8 @@
 name: Platform PR
 
 on:
+  push:
+    branches: [main, devel]
   pull_request:
 
 env:
@@ -117,6 +119,8 @@ jobs:
     name: Vitest Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      id-token: write
     needs:
       - vitest-awx
       - vitest
@@ -157,8 +161,18 @@ jobs:
           path: coverage/combined
           retention-days: 7
           if-no-files-found: error
-      - name: Upload unit test coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload unit test coverage to Codecov (OIDC)
+        if: ${{ !vars.CODECOV_URL }}
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: ./coverage/combined/lcov.info
+          flags: unit-tests
+          disable_search: true
+          fail_ci_if_error: false
+      - name: Upload unit test coverage to Codecov (Token)
+        if: ${{ vars.CODECOV_URL }}
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           url: ${{ vars.CODECOV_URL }}
@@ -168,8 +182,10 @@ jobs:
           disable_search: true
           fail_ci_if_error: false
       - name: Save off PR Number
+        if: github.event_name == 'pull_request'
         run: echo "PR ${{ github.event.number }}" > pr_number.txt
       - name: Upload PR Number
+        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: pr_number
@@ -221,7 +237,8 @@ jobs:
           path: coverage/combined
         continue-on-error: true
 
-      - name: SonarQube Scan
+      - name: SonarQube Scan (PR)
+        if: github.event_name == 'pull_request'
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
@@ -233,6 +250,17 @@ jobs:
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
             -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+
+      - name: SonarQube Scan (Branch)
+        if: github.event_name == 'push'
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.branch.name=${{ github.ref_name }}
 
   success:
     name: Success

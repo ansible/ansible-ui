@@ -121,7 +121,7 @@
     "monaco-editor-webpack-plugin": "7.1.0",
     "monaco-yaml": "5.2.3",
     "msw": "^2.7.3",
-    "nx": "^20.4.0",
+    "nx": "22.6.5",
     "p-debounce": "4.0.0",
     "p-limit": "6.2.0",
     "path-to-regexp": "8.2.0",
@@ -161,7 +161,8 @@
   },
   "overrides": {
     "nanoid": "3.3.11",
-    "@patternfly/react-styles": "6.3.1"
+    "@patternfly/react-styles": "6.3.1",
+    "minimatch@>=9.0.0 <10.0.0": "9.0.7"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.0",

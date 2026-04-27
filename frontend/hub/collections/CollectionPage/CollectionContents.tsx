@@ -32,7 +32,7 @@ export function CollectionContents() {
       collection.collection_version?.name || ''
     }&namespace=${collection.collection_version?.namespace || ''}&version=${
       collection.collection_version?.version || ''
-    }`
+    }&exclude_fields=files,manifest,docs_blob`
   );
 
   const tableColumns = useTableColumns(collection);

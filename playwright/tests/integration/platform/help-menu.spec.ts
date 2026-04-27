@@ -68,4 +68,99 @@ test.describe('Platform Header Toolbar - Help Menu', () => {
       }
     }
   );
+
+  test.describe('About Modal: Brand Logo', () => {
+    test(
+      'should display brand logo that loads successfully',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await page.locator('#help-menu-menu-toggle').click();
+        await page.locator('[data-testid="masthead-about"]').click();
+
+        const modal = page.getByRole('dialog');
+        const brandLogo = modal.locator('img[alt="Brand Logo"]');
+
+        await expect(brandLogo).toBeVisible();
+        await expect(brandLogo).toHaveAttribute('alt', 'Brand Logo');
+        const naturalWidth = await brandLogo.evaluate((img: HTMLImageElement) => img.naturalWidth);
+        expect(naturalWidth).toBeGreaterThan(0);
+      }
+    );
+
+    test('should load white logo for dark theme', { tag: ['@not_mock'] }, async ({ page }) => {
+      const themeButton = page.locator('[data-cy="theme-icon"]');
+      await expect(themeButton).toBeVisible();
+      await themeButton.click();
+
+      await page.locator('#help-menu-menu-toggle').click();
+      await page.locator('[data-testid="masthead-about"]').click();
+
+      const modal = page.getByRole('dialog');
+      const brandLogo = modal.locator('img[alt="Brand Logo"]');
+
+      await expect(brandLogo).toBeVisible();
+      const naturalWidth = await brandLogo.evaluate((img: HTMLImageElement) => img.naturalWidth);
+      expect(naturalWidth).toBeGreaterThan(0);
+    });
+
+    test('should load standard logo for light theme', { tag: ['@not_mock'] }, async ({ page }) => {
+      await page.locator('#help-menu-menu-toggle').click();
+      await page.locator('[data-testid="masthead-about"]').click();
+
+      const modal = page.getByRole('dialog');
+      const brandLogo = modal.locator('img[alt="Brand Logo"]');
+
+      await expect(brandLogo).toBeVisible();
+      const naturalWidth = await brandLogo.evaluate((img: HTMLImageElement) => img.naturalWidth);
+      expect(naturalWidth).toBeGreaterThan(0);
+    });
+  });
+
+  test.describe('About Modal: User Interactions', () => {
+    test('should close using X button', { tag: ['@not_mock'] }, async ({ page }) => {
+      await page.locator('#help-menu-menu-toggle').click();
+      await page.locator('[data-testid="masthead-about"]').click();
+      const modal = page.getByRole('dialog');
+      await expect(modal).toBeVisible();
+      await modal.locator('button[aria-label*="Close"]').first().click();
+      await expect(modal).not.toBeVisible();
+    });
+
+    test('should close using ESC key', { tag: ['@not_mock'] }, async ({ page }) => {
+      await page.locator('#help-menu-menu-toggle').click();
+      await page.locator('[data-testid="masthead-about"]').click();
+      const modal = page.getByRole('dialog');
+      await expect(modal).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(modal).not.toBeVisible();
+    });
+  });
+
+  test.describe('Accessibility', () => {
+    test('should be keyboard navigable', { tag: ['@not_mock'] }, async ({ page }) => {
+      const helpMenuToggle = page.locator('#help-menu-menu-toggle');
+      await helpMenuToggle.focus();
+      await expect(helpMenuToggle).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(helpMenuToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.locator('[data-testid="masthead-documentation"]')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(helpMenuToggle).toHaveAttribute('aria-expanded', 'false');
+      await helpMenuToggle.focus();
+      await page.keyboard.press('Space');
+      await expect(helpMenuToggle).toHaveAttribute('aria-expanded', 'true');
+      await page.keyboard.press('Escape');
+    });
+  });
+
+  test.describe('Responsive Design', () => {
+    test('should work on tablet viewport', { tag: ['@not_mock'] }, async ({ page }) => {
+      await page.setViewportSize({ width: 768, height: 1024 });
+      const helpMenuToggle = page.locator('#help-menu-menu-toggle');
+      await expect(helpMenuToggle).toBeVisible();
+      await helpMenuToggle.click();
+      await expect(page.locator('[data-testid="masthead-documentation"]')).toBeVisible();
+      await expect(page.locator('[data-testid="masthead-about"]')).toBeVisible();
+    });
+  });
 });
