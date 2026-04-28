@@ -4,7 +4,6 @@ import { gatewayAPI } from '../../utils/gateway-api-utils';
 
 interface FeatureFlagsSettings {
   RUNTIME_FEATURE_FLAGS: boolean;
-  RUNTIME_FEATURE_FLAGS_UI: boolean;
 }
 
 export function useRuntimeFeatureFlagsEnabled() {
