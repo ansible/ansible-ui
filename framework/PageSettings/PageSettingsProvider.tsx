@@ -97,7 +97,17 @@ export function PageSettingsProvider(props: {
           // Use SWR's default retry logic for other errors
           // (exponential backoff with max 3 retries)
           if (retryCount >= 3) return false;
-          void setTimeout(() => void revalidate({ retryCount }), Math.pow(2, retryCount) * 1000);
+          setTimeout(
+            () => {
+              const result = revalidate({ retryCount });
+              if (result && typeof result.catch === 'function') {
+                result.catch(() => {
+                  // Ignore revalidation errors during retry
+                });
+              }
+            },
+            Math.pow(2, retryCount) * 1000
+          );
         },
       }}
     >
