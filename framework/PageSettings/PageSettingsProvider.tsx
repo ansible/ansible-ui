@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react';
 import { SWRConfig } from 'swr';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 
 export interface IPageSettings {
   refreshInterval?: number;
@@ -85,7 +86,20 @@ export function PageSettingsProvider(props: {
 
   return (
     <SWRConfig
-      value={{ refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0 }}
+      value={{
+        refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
+        onErrorRetry: (error: RequestError, key, config, revalidate, { retryCount }) => {
+          // Stop retrying on 401 Unauthorized - let session polling handle login redirect
+          if (error?.statusCode === 401) {
+            return false;
+          }
+
+          // Use SWR's default retry logic for other errors
+          // (exponential backoff with max 3 retries)
+          if (retryCount >= 3) return false;
+          void setTimeout(() => void revalidate({ retryCount }), Math.pow(2, retryCount) * 1000);
+        },
+      }}
     >
       <PageSettingsContext.Provider value={[settings, setSettings]}>
         {props.children}
