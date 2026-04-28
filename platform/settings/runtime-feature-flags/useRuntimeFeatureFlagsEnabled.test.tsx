@@ -23,7 +23,6 @@ describe('useRuntimeFeatureFlagsEnabled', () => {
       http.get('/api/gateway/v1/settings/feature_flags/', () =>
         HttpResponse.json({
           RUNTIME_FEATURE_FLAGS: true,
-          RUNTIME_FEATURE_FLAGS_UI: false,
         })
       )
     );
@@ -41,7 +40,6 @@ describe('useRuntimeFeatureFlagsEnabled', () => {
       http.get('/api/gateway/v1/settings/feature_flags/', () =>
         HttpResponse.json({
           RUNTIME_FEATURE_FLAGS: false,
-          RUNTIME_FEATURE_FLAGS_UI: false,
         })
       )
     );
