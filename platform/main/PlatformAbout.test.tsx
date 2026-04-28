@@ -72,6 +72,27 @@ describe('PlatformAbout', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
+  it('should display complete content with versions from APIs', async () => {
+    mountAbout({ activeTheme: 'light' });
+    const dialog = await screen.findByRole('dialog');
+
+    expect(within(dialog).getByText(/Ansible Automation Platform/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/Copyright.*Red Hat/)).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(within(dialog).getByText('Automation Controller Version')).toBeInTheDocument();
+      expect(within(dialog).getByText('4.5.0')).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(within(dialog).getByText('Event-Driven Ansible Version')).toBeInTheDocument();
+      expect(within(dialog).getByText('1.2.0')).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(within(dialog).getByText('Automation Hub Version')).toBeInTheDocument();
+      expect(within(dialog).getByText('4.9.0')).toBeInTheDocument();
+    });
+  });
+
   it.each([
     {
       label: 'light',
