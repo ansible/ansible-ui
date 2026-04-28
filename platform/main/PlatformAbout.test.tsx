@@ -15,6 +15,8 @@ import type { ComponentProps } from 'react';
 import { useEffect } from 'react';
 import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import platformLogo from '../assets/platform-logo.svg?url';
+import platformLogoWhite from '../assets/platform-logo-white.svg?url';
 import { PlatformAbout } from './PlatformAbout';
 
 vi.mock('@patternfly/react-core', async (importOriginal) => {
@@ -74,12 +76,12 @@ describe('PlatformAbout', () => {
     {
       label: 'light',
       activeTheme: 'light' as const,
-      expectedSrc: '/assets/platform-logo.svg',
+      expectedSrc: platformLogo,
     },
     {
       label: 'dark',
       activeTheme: 'dark' as const,
-      expectedSrc: '/assets/platform-logo-white.svg',
+      expectedSrc: platformLogoWhite,
     },
   ])('should set brand image src for %# $label theme', async ({ activeTheme, expectedSrc }) => {
     mountAbout({ activeTheme });
