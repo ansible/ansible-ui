@@ -72,7 +72,6 @@ export function PlatformApp() {
   const { activePlatformUser } = usePlatformActiveUser();
   const subscriptionBanner = useMemo(() => {
     // Hide compliance banners for non-admin users - they cannot act on compliance issues
-    // See AAPRFE-2823: https://issues.redhat.com/browse/AAPRFE-2823
     if (!activePlatformUser?.is_superuser) return null;
     if (!awxConfig?.license_info || managedCloudInstall) return null;
     if (!awxConfig.license_info.compliant) {

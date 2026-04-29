@@ -75,7 +75,7 @@ describe('Platform Subscription and Session Validation Tests', () => {
       return useIsManagedCloudStub;
     };
 
-    // Default to superuser so existing tests see banners (AAPRFE-2823)
+    // Default to superuser so existing tests see banners
     usePlatformActiveUserStub = vi
       .spyOn(PlatformActiveUserModule, 'usePlatformActiveUser')
       .mockReturnValue({ activePlatformUser: { is_superuser: true } as never });
@@ -286,7 +286,7 @@ describe('Platform Subscription and Session Validation Tests', () => {
       });
     });
 
-    it('should not display compliance banners for non-admin users (AAPRFE-2823)', async () => {
+    it('should not display compliance banners for non-admin users', async () => {
       // Arrange: Set user as non-superuser
       usePlatformActiveUserStub.mockReturnValue({
         activePlatformUser: { is_superuser: false },
@@ -333,7 +333,7 @@ describe('Platform Subscription and Session Validation Tests', () => {
       });
     });
 
-    it('should display compliance banners only for admin users (AAPRFE-2823)', async () => {
+    it('should display compliance banners only for admin users', async () => {
       // Arrange: Set user as superuser
       usePlatformActiveUserStub.mockReturnValue({
         activePlatformUser: { is_superuser: true },
@@ -380,7 +380,7 @@ describe('Platform Subscription and Session Validation Tests', () => {
       });
     });
 
-    it('should not display subscription expiry banners for non-admin users (AAPRFE-2823)', async () => {
+    it('should not display subscription expiry banners for non-admin users', async () => {
       // Arrange: Set user as non-superuser
       usePlatformActiveUserStub.mockReturnValue({
         activePlatformUser: { is_superuser: false },
