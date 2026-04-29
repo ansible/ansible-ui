@@ -47,7 +47,6 @@ export function PageMastheadDropdown(props: {
         />
       )}
       isOpen={isOpen}
-      isPlain
       popperProps={{
         appendTo: () => document.body,
         preventOverflow: true,
@@ -84,9 +83,20 @@ function Toggle({
   toggleRef: Ref<MenuToggleElement>;
 }>) {
   const showLabel = useBreakpoint('md');
+  const [isHovered, setIsHovered] = useState(false);
 
   const toggle = (
-    <MenuToggle id={id} isExpanded={isOpen} onClick={onToggle} ref={toggleRef} variant="plain">
+    <MenuToggle
+      id={id}
+      isExpanded={isOpen}
+      onClick={onToggle}
+      ref={toggleRef}
+      variant="plain"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
+    >
       <Flex
         alignItems={{ default: 'alignItemsCenter' }}
         flexWrap={{ default: 'nowrap' }}
@@ -101,7 +111,12 @@ function Toggle({
   if (!tooltipContent) return toggle;
 
   return (
-    <Tooltip content={tooltipContent} position={tooltipPosition} trigger="mouseenter focus click">
+    <Tooltip
+      content={tooltipContent}
+      position={tooltipPosition}
+      trigger="manual"
+      isVisible={isHovered && !isOpen}
+    >
       {toggle}
     </Tooltip>
   );
