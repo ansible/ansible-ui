@@ -14,6 +14,7 @@ export function ChatbotButton() {
   return (
     <Tooltip content={t`Chat`} position="bottom">
       <Button
+        aria-label={t`Chat`}
         data-cy="chatbot-badge"
         data-testid="chatbot-badge"
         variant={ButtonVariant.plain}
