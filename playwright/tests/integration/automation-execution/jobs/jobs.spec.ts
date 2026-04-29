@@ -242,8 +242,12 @@ test.describe('Jobs: Launch and Verify Output', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
+      test.slow();
       const organizationName = await Organization.ui.create(page);
-      const projectName = await Project.ui.create(page, { organizationName });
+      const projectName = await Project.ui.create(page, {
+        organizationName,
+        scmUrl: 'https://github.com/ansible/test-playbooks',
+      });
 
       // Wait for project to sync before creating inventory source
       await Project.ui.sync(page, projectName);
