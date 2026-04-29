@@ -124,7 +124,9 @@ export const Project = {
       await singleSelectByLabel('Organization', options.organizationName ?? 'Default', page);
       await page.getByRole('button', { name: 'Select source control type' }).click();
       await page.getByRole('option', { name: 'Git' }).click();
-      await page.getByLabel('Source Control URL').fill('https://github.com/ansible/ansible-ui');
+      await page
+        .getByLabel('Source Control URL')
+        .fill(options.scmUrl ?? 'https://github.com/ansible/ansible-ui');
 
       await page.getByRole('button', { name: 'Create project', exact: true }).click();
       await expect(page.getByRole('heading', { name: projectName, exact: true })).toBeVisible();

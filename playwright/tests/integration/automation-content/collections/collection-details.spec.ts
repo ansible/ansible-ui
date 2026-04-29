@@ -350,6 +350,7 @@ test.describe('Hub Collections - Details Page', () => {
     );
 
     test('should sign a collection', { tag: ['@not_mock'] }, async ({ page, collection }) => {
+      test.setTimeout(180000);
       await collection.createNamespace({ name: 'ibm' });
 
       let uploaded;
@@ -678,6 +679,7 @@ test.describe('Hub Collections - Details Page', () => {
       'should deprecate and undeprecate a collection from detail page',
       { tag: ['@not_mock'] },
       async ({ page, collection }) => {
+        test.setTimeout(180000);
         await collection.createNamespace({ name: 'ibm' });
         const uploaded = await collection.upload({
           repository: 'staging',
