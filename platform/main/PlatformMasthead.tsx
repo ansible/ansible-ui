@@ -107,7 +107,7 @@ export function PlatformMasthead() {
             </DropdownItem>
             {!managedCloudInstall && quickStarts.length > 0 ? (
               <DropdownItem
-                id="about"
+                id="quickstarts"
                 onClick={() => pageNavigate(PlatformRoute.QuickStarts)}
                 data-cy="masthead-quickstarts"
                 data-testid="masthead-quickstarts"
