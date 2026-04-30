@@ -6,6 +6,8 @@ import {
   Icon,
   MenuToggle,
   MenuToggleElement,
+  Tooltip,
+  type TooltipProps,
 } from '@patternfly/react-core';
 import { ReactNode, Ref, useCallback, useState } from 'react';
 import { useBreakpoint } from '../components/useBreakPoint';
@@ -14,6 +16,10 @@ export function PageMastheadDropdown(props: {
   id: string;
   icon: ReactNode;
   label?: string;
+  /** Optional tooltip content used to render a tooltip around the dropdown */
+  tooltipContent?: TooltipProps['content'];
+  /** Optional tooltip position. Has no effect if no `tooltipContent` prop is supplied */
+  tooltipPosition?: TooltipProps['position'];
   children: ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,12 +40,13 @@ export function PageMastheadDropdown(props: {
           id={`${props.id}-menu-toggle`}
           isOpen={isOpen}
           label={props.label}
+          tooltipContent={props.tooltipContent}
+          tooltipPosition={props.tooltipPosition}
           onToggle={onToggle}
           toggleRef={toggleRef}
         />
       )}
       isOpen={isOpen}
-      isPlain
       popperProps={{
         appendTo: () => document.body,
         preventOverflow: true,
@@ -54,19 +61,42 @@ export function PageMastheadDropdown(props: {
   );
 }
 
-interface ToggleProps {
+function Toggle({
+  icon,
+  id,
+  isOpen,
+  label,
+  tooltipContent,
+  tooltipPosition,
+  onToggle,
+  toggleRef,
+}: {
   icon: ReactNode;
   id: string;
   isOpen: boolean;
   label?: string;
+  /** Optional tooltip content used to render a tooltip around the dropdown */
+  tooltipContent?: TooltipProps['content'];
+  /** Optional tooltip position. Has no effect if no `tooltipContent` prop is supplied */
+  tooltipPosition?: TooltipProps['position'];
   onToggle: () => void;
   toggleRef: Ref<MenuToggleElement>;
-}
-
-function Toggle({ icon, id, isOpen, label, onToggle, toggleRef }: ToggleProps) {
+}) {
   const showLabel = useBreakpoint('md');
-  return (
-    <MenuToggle id={id} isExpanded={isOpen} onClick={onToggle} ref={toggleRef} variant="plain">
+  const [isHovered, setIsHovered] = useState(false);
+
+  const toggle = (
+    <MenuToggle
+      id={id}
+      isExpanded={isOpen}
+      onClick={onToggle}
+      ref={toggleRef}
+      variant="plain"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
+    >
       <Flex
         alignItems={{ default: 'alignItemsCenter' }}
         flexWrap={{ default: 'nowrap' }}
@@ -76,5 +106,18 @@ function Toggle({ icon, id, isOpen, label, onToggle, toggleRef }: ToggleProps) {
         {showLabel && label && <FlexItem wrap="nowrap">{label}</FlexItem>}
       </Flex>
     </MenuToggle>
+  );
+
+  if (!tooltipContent) return toggle;
+
+  return (
+    <Tooltip
+      content={tooltipContent}
+      position={tooltipPosition}
+      trigger="manual"
+      isVisible={isHovered && !isOpen}
+    >
+      {toggle}
+    </Tooltip>
   );
 }
