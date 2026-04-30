@@ -6,6 +6,11 @@ Fetch SonarCloud issues, analyze and group them, suggest fixes, and create focus
 
 ## Setup
 
+### Prerequisites
+
+- **`gh`** (GitHub CLI) — must be installed and authenticated (`gh auth login`). Used by `/sonarcloud-fix` to create PRs and post e2e trigger comments.
+- **`curl`** — used for SonarCloud API calls.
+
 ### Required Environment Variables
 
 | Variable | Required | Purpose |
