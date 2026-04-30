@@ -70,7 +70,7 @@ function Toggle({
   tooltipPosition,
   onToggle,
   toggleRef,
-}: Readonly<{
+}: {
   icon: ReactNode;
   id: string;
   isOpen: boolean;
@@ -81,7 +81,7 @@ function Toggle({
   tooltipPosition?: TooltipProps['position'];
   onToggle: () => void;
   toggleRef: Ref<MenuToggleElement>;
-}>) {
+}) {
   const showLabel = useBreakpoint('md');
   const [isHovered, setIsHovered] = useState(false);
 
