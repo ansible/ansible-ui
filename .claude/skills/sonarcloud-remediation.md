@@ -143,6 +143,8 @@ For each group, estimate the lines of code that will change:
 
 Display one table per category. Include total issue count in the heading.
 
+**CRITICAL: Use a single continuous numbering sequence across all categories.** The group `#` is the ID that `/sonarcloud-fix` uses to select groups. It must be globally unique, not reset per category. All rows — including security hotspots — must use the same table format with the rule or category identifier in parentheses.
+
 ```
 ## Maintainability (847 issues)
 
@@ -155,12 +157,25 @@ Display one table per category. Include total issue count in the heading.
 ...
 
 ## Reliability (42 issues)
+
+| # | Group                              | Workspace | Count | Severity | Est. LOC | Note      |
+|---|------------------------------------|-----------|-------|----------|----------|-----------|
+| 5 | Constant nullishness (typescript:S6638) | AWX   |   2   | Major    |    ~4    |           |
 ...
 
 ## Security (5 issues)
+
+| # | Group                              | Workspace | Count | Severity | Est. LOC | Note      |
+|---|------------------------------------|-----------|-------|----------|----------|-----------|
+| 8 | SQL injection (typescript:S2077)    | Hub       |   1   | Blocker  |    ~5    |           |
 ...
 
 ## Security Hotspots (18 issues)
+
+| # | Group                              | Workspace | Count | Severity | Est. LOC | Note      |
+|---|------------------------------------|-----------|-------|----------|----------|-----------|
+|11 | Weak cryptography (weak-cryptography) | AWX     |   3   | Medium   |    ~6    |           |
+|12 | Data encryption (encrypt-data)     | AWX       |   1   | Low      |    ~2    |           |
 ...
 
 ## Duplication
@@ -169,6 +184,13 @@ Duplicated lines density: 3.2%  |  Duplicated blocks: 47  |  Duplicated files: 1
 ```
 
 Flag any group where Est. LOC > 200 with "Will split" in the Note column.
+
+At the end of the report, suggest low-risk starting groups for `/sonarcloud-fix` using their group numbers:
+```
+Good starting groups for `/sonarcloud-fix`:
+  /sonarcloud-fix 1   — Unused imports (45 issues, ~45 LOC, Low risk)
+  /sonarcloud-fix 2   — Dead stores (23 issues, ~35 LOC, Low risk)
+```
 
 ### Optional Filters
 
@@ -185,7 +207,13 @@ Invoked via `/sonarcloud-fix`. The engineer selects groups from the analyze outp
 
 ### Step 1: Select Groups
 
-Ask the engineer which group(s) to fix. Accept by number from the analyze table or by name. Multiple groups can be selected at once.
+If the user provided a group number or name as an argument, use that.
+
+If no group was specified, prompt interactively:
+1. If no `/sonarcloud-analyze` was run in this session, run it first to generate the group table
+2. Display the available groups (or remind the user of the table)
+3. Ask which group(s) to fix — accept by number from the analyze table, by rule key, or by name
+4. Multiple groups can be selected at once
 
 ### Step 2: Read Affected Files
 
@@ -215,21 +243,12 @@ Display:
 **Risk Assessment:** Low — removing unused imports has no runtime effect.
 ```
 
-### Step 4: Get Approval
+### Step 4: Get Fix Approval
 
 Ask the engineer to:
 - **Approve all** — apply every fix in the group
 - **Exclude specific files** — list file numbers to skip
 - **Reject** — skip this group entirely
-
-### Step 5: Apply Fixes
-
-Apply all approved fixes using the Edit tool.
-
-**CRITICAL: Cap at ~200 LOC per PR.** If the group exceeds 200 LOC of changes:
-- Split into batches by file or logical grouping
-- Each batch becomes its own branch and PR
-- Inform the engineer: "This group will produce N PRs of ~X LOC each."
 
 ### TypeScript/React Fix Strategies
 
@@ -243,7 +262,16 @@ Apply all approved fixes using the Edit tool.
 | Type safety (`any`) | Replace with proper TypeScript types | Use existing interfaces from the workspace; check framework types first |
 | Cognitive complexity | Extract nested logic into helper functions | Ensure extracted functions are testable and well-named |
 
-### Step 6: Validate — Hard Gate
+### Step 5: Apply Fixes and Validate
+
+Apply all approved fixes using the Edit tool.
+
+**CRITICAL: Cap at ~200 LOC per PR.** If the group exceeds 200 LOC of changes:
+- Split into batches by file or logical grouping
+- Each batch becomes its own branch
+- Inform the engineer: "This group will produce N branches of ~X LOC each."
+
+**Validation — Hard Gate:**
 
 After applying fixes, the validation commands **must pass before proceeding**:
 
@@ -257,9 +285,9 @@ If validation fails:
 2. Diagnose whether the fix introduced the failure
 3. Correct the fix
 4. Re-run validation
-5. Do not proceed to branch/PR creation until both pass
+5. Do not proceed to branch creation until validation passes
 
-### Step 7: Create Branch and Commit
+### Step 6: Create Branch and Commit (Approval 1)
 
 **Branch** off the configured default branch:
 ```bash
@@ -277,7 +305,39 @@ Addresses 23 typescript:S1854 violations in frontend/awx/.
 SonarCloud issue keys: AZxx1, AZxx2, ...
 ```
 
-### Step 8: Create PR
+**CRITICAL: Pause here.** Inform the engineer:
+
+```
+Branch `sonar/S1854-awx` is ready with N commits.
+
+You can now:
+  - Review the diff: git diff origin/devel...HEAD
+  - Run additional tests locally
+  - Make manual adjustments and commit them to this branch
+
+When you're satisfied, let me know and I'll create the PR.
+```
+
+**Wait for the engineer's explicit go-ahead before proceeding to PR creation.** Do NOT create the PR automatically.
+
+### Step 7: Create PR (Approval 2)
+
+Before creating any PRs, present a summary:
+
+```
+Ready to create PR(s):
+
+| # | Branch                  | Files | LOC changed | Target     |
+|---|-------------------------|-------|-------------|------------|
+| 1 | sonar/S1854-awx         |   12  |    ~46      | devel      |
+| 2 | sonar/S1854-awx-batch2  |    8  |    ~38      | devel      |
+
+Total: 2 PR(s) targeting `devel`.
+
+Proceed with PR creation?
+```
+
+**Wait for explicit approval.** Then for each PR:
 
 Follow `.github/pull_request_template.md` exactly:
 
@@ -310,9 +370,9 @@ Adjust **Type of Change** and **Risk Analysis** based on the fix category:
 - Cognitive complexity refactoring → **Medium**
 - Security/reliability fixes → **Medium** to **High**
 
-### Step 9: Trigger E2E and Continue
+### Step 8: Trigger E2E and Continue
 
-1. Post the e2e trigger comment on the newly created PR:
+1. Post the e2e trigger comment on each newly created PR:
    ```bash
    E2E_COMMENT="${SONAR_E2E_TRIGGER_COMMENT:-/run-playwright}"
    gh pr comment <PR_NUMBER> --body "$E2E_COMMENT"
