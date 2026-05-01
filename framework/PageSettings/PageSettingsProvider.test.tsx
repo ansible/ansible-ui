@@ -2,7 +2,12 @@
 import { ReactNode } from 'react';
 import { render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { PageSettingsProvider, usePageSettings, PageSettingsContext } from './PageSettingsProvider';
+import {
+  PageSettingsProvider,
+  usePageSettings,
+  PageSettingsContext,
+  createSWRErrorRetryHandler,
+} from './PageSettingsProvider';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 
 // Mock globalThis.matchMedia
@@ -250,42 +255,18 @@ describe('PageSettingsProvider', () => {
   });
 
   describe('SWR Error Retry Logic (Polling Changes)', () => {
-    // Test the onErrorRetry logic by simulating the function behavior
-    // Since the function is inline in the SWR config, we'll test the expected behavior patterns
+    // Test the actual extracted onErrorRetry handler for better coverage
 
     test('should not retry on 401 Unauthorized errors', () => {
       vi.useFakeTimers();
 
       const revalidate = vi.fn();
       const error401 = new RequestError('Unauthorized', undefined, 401, undefined, undefined);
-
-      // Simulate the onErrorRetry logic from PageSettingsProvider
-      const onErrorRetry = (
-        error: Error,
-        key: string,
-        config: unknown,
-        revalidateFn: (opts: { retryCount: number }) => void,
-        opts: { retryCount: number }
-      ) => {
-        // This mirrors the logic in PageSettingsProvider.tsx
-        if (
-          error instanceof RequestError &&
-          (error.statusCode === 401 || error.statusCode === 403)
-        ) {
-          return; // Stop retrying
-        }
-
-        if (opts.retryCount >= 3) return;
-
-        const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
-        setTimeout(() => {
-          revalidateFn(opts);
-        }, timeout);
-      };
+      const onErrorRetry = createSWRErrorRetryHandler();
 
       onErrorRetry(error401, '/api/test', {}, revalidate, { retryCount: 0 });
 
-      // Advance timers - should not have scheduled any retry
+      // Should not have scheduled any retry for 401 errors
       vi.advanceTimersByTime(5000);
       expect(revalidate).not.toHaveBeenCalled();
 
@@ -297,31 +278,11 @@ describe('PageSettingsProvider', () => {
 
       const revalidate = vi.fn();
       const error403 = new RequestError('Forbidden', undefined, 403, undefined, undefined);
-
-      const onErrorRetry = (
-        error: Error,
-        key: string,
-        config: unknown,
-        revalidateFn: (opts: { retryCount: number }) => void,
-        opts: { retryCount: number }
-      ) => {
-        if (
-          error instanceof RequestError &&
-          (error.statusCode === 401 || error.statusCode === 403)
-        ) {
-          return;
-        }
-
-        if (opts.retryCount >= 3) return;
-
-        const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
-        setTimeout(() => {
-          revalidateFn(opts);
-        }, timeout);
-      };
+      const onErrorRetry = createSWRErrorRetryHandler();
 
       onErrorRetry(error403, '/api/test', {}, revalidate, { retryCount: 0 });
 
+      // Should not have scheduled any retry for 403 errors
       vi.advanceTimersByTime(5000);
       expect(revalidate).not.toHaveBeenCalled();
 
@@ -331,38 +292,24 @@ describe('PageSettingsProvider', () => {
     test('should retry with exponential backoff on 500 errors', () => {
       vi.useFakeTimers();
 
-      const revalidate = vi.fn().mockResolvedValue(undefined);
+      // Mock Math.random to have predictable jitter for testing (avoids SonarCloud warning)
+      const originalMathRandom = Math.random;
+      Math.random = vi.fn(() => 0.5); // Fixed value for deterministic testing
+
+      const revalidate = vi.fn();
       const error500 = new RequestError('Server Error', undefined, 500, undefined, undefined);
-
-      const onErrorRetry = (
-        error: Error,
-        key: string,
-        config: unknown,
-        revalidateFn: (opts: { retryCount: number }) => void,
-        opts: { retryCount: number }
-      ) => {
-        if (
-          error instanceof RequestError &&
-          (error.statusCode === 401 || error.statusCode === 403)
-        ) {
-          return;
-        }
-
-        if (opts.retryCount >= 3) return;
-
-        const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
-        setTimeout(() => {
-          revalidateFn(opts);
-        }, timeout);
-      };
+      const onErrorRetry = createSWRErrorRetryHandler();
 
       onErrorRetry(error500, '/api/test', {}, revalidate, { retryCount: 0 });
 
-      // Should schedule a retry (jitter makes it between 500-1500ms)
-      vi.advanceTimersByTime(2000);
+      // With our mocked Math.random (0.5), timeout should be exactly 1000ms for retryCount=0
+      // timeout = ~~((0.5 + 0.5) * (1 << 0)) * 1000 = ~~(1 * 1) * 1000 = 1000
+      vi.advanceTimersByTime(1000);
       expect(revalidate).toHaveBeenCalledTimes(1);
       expect(revalidate).toHaveBeenCalledWith({ retryCount: 0 });
 
+      // Restore original Math.random
+      Math.random = originalMathRandom;
       vi.useRealTimers();
     });
 
@@ -371,29 +318,9 @@ describe('PageSettingsProvider', () => {
 
       const revalidate = vi.fn();
       const error500 = new RequestError('Server Error', undefined, 500, undefined, undefined);
+      const onErrorRetry = createSWRErrorRetryHandler();
 
-      const onErrorRetry = (
-        error: Error,
-        key: string,
-        config: unknown,
-        revalidateFn: (opts: { retryCount: number }) => void,
-        opts: { retryCount: number }
-      ) => {
-        if (
-          error instanceof RequestError &&
-          (error.statusCode === 401 || error.statusCode === 403)
-        ) {
-          return;
-        }
-
-        if (opts.retryCount >= 3) return;
-
-        const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
-        setTimeout(() => {
-          revalidateFn(opts);
-        }, timeout);
-      };
-
+      // Test with retryCount >= 3 (should not retry)
       onErrorRetry(error500, '/api/test', {}, revalidate, { retryCount: 3 });
 
       vi.advanceTimersByTime(10000);
@@ -405,38 +332,47 @@ describe('PageSettingsProvider', () => {
     test('should retry on non-RequestError failures like network errors', () => {
       vi.useFakeTimers();
 
-      const revalidate = vi.fn().mockResolvedValue(undefined);
+      // Mock Math.random for deterministic testing
+      const originalMathRandom = Math.random;
+      Math.random = vi.fn(() => 0.5);
+
+      const revalidate = vi.fn();
       const networkError = new TypeError('Failed to fetch');
-
-      const onErrorRetry = (
-        error: Error,
-        key: string,
-        config: unknown,
-        revalidateFn: (opts: { retryCount: number }) => void,
-        opts: { retryCount: number }
-      ) => {
-        if (
-          error instanceof RequestError &&
-          (error.statusCode === 401 || error.statusCode === 403)
-        ) {
-          return;
-        }
-
-        if (opts.retryCount >= 3) return;
-
-        const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
-        setTimeout(() => {
-          revalidateFn(opts);
-        }, timeout);
-      };
+      const onErrorRetry = createSWRErrorRetryHandler();
 
       onErrorRetry(networkError, '/api/test', {}, revalidate, { retryCount: 0 });
 
       // Should retry non-RequestError errors like network failures
-      vi.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(1000);
       expect(revalidate).toHaveBeenCalledTimes(1);
       expect(revalidate).toHaveBeenCalledWith({ retryCount: 0 });
 
+      // Restore original Math.random
+      Math.random = originalMathRandom;
+      vi.useRealTimers();
+    });
+
+    test('should retry other HTTP errors (not 401/403)', () => {
+      vi.useFakeTimers();
+
+      // Mock Math.random for deterministic testing
+      const originalMathRandom = Math.random;
+      Math.random = vi.fn(() => 0.25); // Different value to test jitter calculation
+
+      const revalidate = vi.fn();
+      const error404 = new RequestError('Not Found', undefined, 404, undefined, undefined);
+      const onErrorRetry = createSWRErrorRetryHandler();
+
+      onErrorRetry(error404, '/api/test', {}, revalidate, { retryCount: 1 });
+
+      // With Math.random=0.25, retryCount=1:
+      // timeout = ~~((0.25 + 0.5) * (1 << 1)) * 1000 = ~~(0.75 * 2) * 1000 = ~~1.5 * 1000 = 1000
+      vi.advanceTimersByTime(1000);
+      expect(revalidate).toHaveBeenCalledTimes(1);
+      expect(revalidate).toHaveBeenCalledWith({ retryCount: 1 });
+
+      // Restore original Math.random
+      Math.random = originalMathRandom;
       vi.useRealTimers();
     });
   });

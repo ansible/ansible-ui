@@ -11,6 +11,32 @@ import {
 import { SWRConfig } from 'swr';
 import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 
+// Exported for testing
+export function createSWRErrorRetryHandler() {
+  return (
+    error: Error,
+    key: string,
+    config: unknown,
+    revalidate: (opts: { retryCount: number; [key: string]: unknown }) => void,
+    opts: { retryCount: number; [key: string]: unknown }
+  ) => {
+    // Stop retrying on 401 Unauthorized and 403 Forbidden - let session polling handle login redirect
+    if (isRequestError(error) && (error.statusCode === 401 || error.statusCode === 403)) {
+      return;
+    }
+
+    // Custom retry: exponential backoff with jitter (max 3 retries)
+    if (opts.retryCount >= 3) return;
+
+    // Add jitter to prevent thundering herd
+    const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
+
+    setTimeout(() => {
+      void revalidate(opts);
+    }, timeout);
+  };
+}
+
 export interface IPageSettings {
   refreshInterval?: number;
   theme?: 'system' | 'light' | 'dark';
@@ -88,22 +114,7 @@ export function PageSettingsProvider(props: {
     <SWRConfig
       value={{
         refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
-        onErrorRetry: (error, key, config, revalidate, opts) => {
-          // Stop retrying on 401 Unauthorized and 403 Forbidden - let session polling handle login redirect
-          if (isRequestError(error) && (error.statusCode === 401 || error.statusCode === 403)) {
-            return;
-          }
-
-          // Custom retry: exponential backoff with jitter (max 3 retries)
-          if (opts.retryCount >= 3) return;
-
-          // Add jitter to prevent thundering herd
-          const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
-
-          setTimeout(() => {
-            void revalidate(opts);
-          }, timeout);
-        },
+        onErrorRetry: createSWRErrorRetryHandler(),
       }}
     >
       <PageSettingsContext.Provider value={[settings, setSettings]}>
