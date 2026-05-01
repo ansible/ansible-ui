@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import { SWRConfig } from 'swr';
-import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 
 export interface IPageSettings {
   refreshInterval?: number;
@@ -88,26 +88,21 @@ export function PageSettingsProvider(props: {
     <SWRConfig
       value={{
         refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
-        onErrorRetry: (error: RequestError, key, config, revalidate, { retryCount }) => {
-          // Stop retrying on 401 Unauthorized - let session polling handle login redirect
-          if (error?.statusCode === 401) {
-            return false;
+        onErrorRetry: (error, key, config, revalidate, opts) => {
+          // Stop retrying on 401 Unauthorized and 403 Forbidden - let session polling handle login redirect
+          if (isRequestError(error) && (error.statusCode === 401 || error.statusCode === 403)) {
+            return;
           }
 
-          // Use SWR's default retry logic for other errors
-          // (exponential backoff with max 3 retries)
-          if (retryCount >= 3) return false;
-          setTimeout(
-            () => {
-              const result = revalidate({ retryCount });
-              if (result && typeof result.catch === 'function') {
-                result.catch(() => {
-                  // Ignore revalidation errors during retry
-                });
-              }
-            },
-            Math.pow(2, retryCount) * 1000
-          );
+          // Custom retry: exponential backoff with jitter (max 3 retries)
+          if (opts.retryCount >= 3) return;
+
+          // Add jitter to prevent thundering herd
+          const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
+
+          setTimeout(() => {
+            void revalidate(opts);
+          }, timeout);
         },
       }}
     >
