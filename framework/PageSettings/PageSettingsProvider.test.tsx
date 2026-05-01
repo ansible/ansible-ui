@@ -4,8 +4,8 @@ import { render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PageSettingsProvider, usePageSettings, PageSettingsContext } from './PageSettingsProvider';
 
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+// Mock globalThis.matchMedia
+Object.defineProperty(globalThis, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({
     matches: query === '(prefers-color-scheme: dark)',
@@ -146,7 +146,7 @@ describe('PageSettingsProvider', () => {
   describe('Theme Management', () => {
     test('should detect system dark theme', async () => {
       // Mock dark theme preference
-      vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+      vi.mocked(globalThis.matchMedia).mockImplementation((query: string) => ({
         matches: query === '(prefers-color-scheme: dark)',
         media: query,
         onchange: null,
@@ -173,7 +173,7 @@ describe('PageSettingsProvider', () => {
 
     test('should detect system light theme', async () => {
       // Mock light theme preference
-      vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+      vi.mocked(globalThis.matchMedia).mockImplementation((query: string) => ({
         matches: false, // No dark theme preference
         media: query,
         onchange: null,
@@ -270,7 +270,7 @@ describe('PageSettingsProvider', () => {
 
     test('should initialize with system theme detection', () => {
       // Ensure dark theme is detected for this test
-      vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+      vi.mocked(globalThis.matchMedia).mockImplementation((query: string) => ({
         matches: query === '(prefers-color-scheme: dark)',
         media: query,
         onchange: null,
