@@ -14,6 +14,13 @@ Direct SonarCloud API integration via `curl` in skill markdown — no custom API
 
 ---
 
+## Prerequisites
+
+- **`gh`** (GitHub CLI) — must be installed and authenticated (`gh auth login`). Used by `/sonarcloud-fix` to create PRs and post e2e trigger comments.
+- **`curl`** — used for SonarCloud API calls.
+
+---
+
 ## File Structure
 
 ```
@@ -50,6 +57,8 @@ The skill validates `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` at runtime with
 
 ### Phase A — Analyze (`/sonarcloud-analyze`)
 
+Both commands support a `--help` flag that displays usage information and exits without performing any action.
+
 1. **Validate environment** — check `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` are set
 2. **Fetch issues** from SonarCloud API (`/api/issues/search`) with pagination (max 500/page); also fetch hotspots via `/api/hotspots/search`
 3. **Categorize by the 5 SonarCloud categories**:
@@ -69,7 +78,7 @@ The skill validates `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` at runtime with
    7. Cognitive complexity refactoring
    8. Security hotspot remediation
    9. Reliability bug fixes
-6. **Present a prioritized summary table** per category:
+6. **Present a prioritized summary table** per category, using **continuous group numbering across all categories** (the group `#` is globally unique, not reset per category — this is the ID that `/sonarcloud-fix` uses to select groups):
    ```
    ## Maintainability (847 issues)
 
@@ -84,6 +93,8 @@ The skill validates `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` at runtime with
 8. **Support optional flags**: `--severity <level>` to filter by severity, `--workspace <name>` to filter by workspace
 
 ### Phase B — Fix (`/sonarcloud-fix`)
+
+The fix workflow uses a **2-step approval process** to give engineers full control:
 
 1. **Engineer selects one or more groups** from the analyze output (by number or name)
 2. **Read all affected files** for the selected group(s); analyze each issue in its code context
@@ -108,13 +119,16 @@ The skill validates `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` at runtime with
    Addresses 23 typescript:S1854 violations in frontend/awx/.
    SonarCloud keys: AZxx1, AZxx2, ...
    ```
-9. **Create PR** following `.github/pull_request_template.md`:
-   - **Summary**: Which SonarCloud rule was fixed, which workspace, issue count, link to SonarCloud dashboard
-   - **Type of Change**: Bug fix or Enhancement (depending on category)
-   - **Risk Analysis (required)**: Low for dead code/unused imports; Medium for code smell refactors touching shared paths; High for security/reliability fixes in shared components
-   - **Testing**: Validation pass confirmed pre-PR. E2E trigger comment posted after PR creation.
-10. **Post `SONAR_E2E_TRIGGER_COMMENT`** (default: `/run-playwright`) comment on the PR to trigger e2e tests
-11. **Offer to continue** — return to group selection for the next batch
+9. **Approval 1 — Apply & Test**: Pause and inform the engineer the branch is ready for local testing. They can review the diff, run additional tests, or commit manual adjustments. **Wait for explicit go-ahead before proceeding to PR creation.**
+10. **Approval 2 — Create PR(s)**: Present a summary of how many PRs will be created, LOC per PR, and target branch. Wait for explicit approval, then create PR(s):
+    - **PR title** must use the format: `SonarCloud Fix: <description> (<rule key>, <workspace>)` (e.g., `SonarCloud Fix: Remove dead stores (S1854, AWX)`). For batched PRs, append `[batch 1/N]`.
+    - **PR body** follows `.github/pull_request_template.md`:
+      - **Summary**: Which SonarCloud rule was fixed, which workspace, issue count, link to SonarCloud dashboard
+      - **Type of Change**: Bug fix or Enhancement (depending on category)
+      - **Risk Analysis (required)**: Low for dead code/unused imports; Medium for code smell refactors touching shared paths; High for security/reliability fixes in shared components
+      - **Testing**: Validation pass confirmed pre-PR. E2E trigger comment posted after PR creation.
+11. **Post `SONAR_E2E_TRIGGER_COMMENT`** (default: `/run-playwright`) comment on the PR to trigger e2e tests
+12. **Offer to continue** — return to group selection for the next batch
 
 ---
 
@@ -189,10 +203,14 @@ The skill is designed for adoption beyond aap-ui:
 ## Verification
 
 1. Set env vars: `SONAR_ORGANIZATION=<your-org>`, `SONAR_PROJECT_KEY=<your-project-key>`
-2. Run `/sonarcloud-analyze` — verify it fetches issues, groups by 5 categories, sorts by priority, shows summary table
-3. Run `/sonarcloud-fix` — select a small group (e.g., unused imports in one workspace), verify group-level approval flow, LOC cap, branch creation, validation gates, PR creation
-4. Confirm validation commands pass before PR
-5. Verify PR follows `.github/pull_request_template.md` format with risk analysis
+2. Run `/sonarcloud-analyze --help` and `/sonarcloud-fix --help` — verify usage information is displayed
+3. Run `/sonarcloud-analyze` — verify it fetches issues, groups by 5 categories, sorts by priority, shows summary table with continuous group numbering
+4. Run `/sonarcloud-fix` — select a small group (e.g., unused imports in one workspace), verify group-level approval flow, LOC cap, branch creation, validation gates
+5. Confirm validation commands pass before PR
+6. Verify Approval 1 pauses for engineer review before PR creation
+7. Verify Approval 2 presents PR summary and waits for explicit go-ahead
+8. Verify PR title uses `SonarCloud Fix:` prefix format
+9. Verify PR body follows `.github/pull_request_template.md` format with risk analysis
 
 ---
 
