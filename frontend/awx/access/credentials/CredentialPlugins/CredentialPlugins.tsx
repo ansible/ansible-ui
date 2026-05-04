@@ -45,16 +45,18 @@ export function CredentialPlugins({
     const watchedCredentialTypeId = useWatch<{ source_credential: number }>({
       name: 'source_credential',
     });
-    const useCredentialFields = (credentialId: number) => {
-      const { data } = useGetItem<Credential>(awxAPI`/credentials/`, credentialId);
-      const { data: credentialType } = useGetItem<CredentialType>(
-        awxAPI`/credential_types/`,
-        data?.summary_fields?.credential_type?.id
-      );
-      return credentialType as CredentialType;
-    };
 
-    const credentialType = useCredentialFields(watchedCredentialTypeId);
+    // Fetch credential data
+    const { data: credentialData } = useGetItem<Credential>(
+      awxAPI`/credentials/`,
+      watchedCredentialTypeId
+    );
+
+    // Fetch credential type data
+    const { data: credentialType } = useGetItem<CredentialType>(
+      awxAPI`/credential_types/`,
+      credentialData?.summary_fields?.credential_type?.id
+    );
 
     // Check if this is an OIDC credential type
     const isOidcCredential =

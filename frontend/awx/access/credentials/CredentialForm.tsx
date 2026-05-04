@@ -650,8 +650,8 @@ function CredentialSubForm({
   const oidcFeatureEnabled = useFeatureFlag('FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED');
   const openCredentialPluginsModal = useCredentialPluginsModal();
   const requiredFields = credentialType?.inputs?.required || [];
-  const requiredFieldsInSubForm = credentialType?.inputs?.fields?.filter((field) =>
-    requiredFields.includes(field.id)
+  const requiredFieldsInSubForm = credentialType?.inputs?.fields?.filter(
+    (field) => !field.internal && requiredFields.includes(field.id)
   );
   const subFormFields = credentialType?.inputs?.fields?.map((field) => field.id);
 
