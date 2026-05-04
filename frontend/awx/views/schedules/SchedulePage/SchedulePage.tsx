@@ -63,7 +63,9 @@ export function SchedulePage(props: {
     urlId = { id: pageId, params };
   }
   const itemActions = useSchedulesActions({
-    onScheduleDeleteCompleted: () => void navigate(getPageUrl(urlId.id, { params: urlId.params })),
+    onScheduleDeleteCompleted: () => {
+      Promise.resolve(navigate(getPageUrl(urlId.id, { params: urlId.params }))).catch(() => {});
+    },
     onScheduleToggleCompleted: refresh,
   });
 

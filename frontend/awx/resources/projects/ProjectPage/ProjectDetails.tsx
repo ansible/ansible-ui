@@ -46,7 +46,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
             case 'job':
             case 'workflow_job':
             case 'project_update':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
           }
           break;

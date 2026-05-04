@@ -37,7 +37,7 @@ export function useAwxGetAllPages<T extends object>(url: string, queryParams?: Q
   }, [data]);
 
   const refresh = useCallback(() => {
-    void mutate();
+    Promise.resolve(mutate()).catch(() => {});
   }, [mutate]);
   return { results, error, isLoading, refresh };
 }

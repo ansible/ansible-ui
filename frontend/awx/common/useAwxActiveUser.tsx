@@ -52,7 +52,12 @@ export function AwxActiveUserProviderInternal(props: { children: ReactNode }) {
 
   const mutate = response.mutate;
   const state = useMemo<ActiveUserState>(() => {
-    return { activeAwxUser, refreshActiveAwxUser: () => void mutate(undefined) };
+    return {
+      activeAwxUser,
+      refreshActiveAwxUser: () => {
+        Promise.resolve(mutate(undefined)).catch(() => {});
+      },
+    };
   }, [activeAwxUser, mutate]);
 
   return (

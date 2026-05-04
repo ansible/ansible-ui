@@ -23,7 +23,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   const pageNavigate = usePageNavigate();
   const onDelete = () => {
     view.unselectAll();
-    void view.refresh();
+    Promise.resolve(view.refresh()).catch(() => {});
   };
   const deleteGroups = useDeleteGroups(onDelete);
   const params = useParams<{ id: string; inventory_type: string }>();

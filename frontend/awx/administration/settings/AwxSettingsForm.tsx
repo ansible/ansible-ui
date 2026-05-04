@@ -126,7 +126,7 @@ export function AwxSettingsForm(props: {
         }
       }
       await patch(awxAPI`/settings/all/`, patchData);
-      void navigate('..');
+      Promise.resolve(navigate('..')).catch(() => {});
     },
     [navigate, patch, props.options]
   );
@@ -196,7 +196,9 @@ export function AwxSettingsForm(props: {
     <AwxPageForm
       defaultValue={props.data}
       submitText={t('Save')}
-      onCancel={() => void navigate('..')}
+      onCancel={() => {
+        Promise.resolve(navigate('..')).catch(() => {});
+      }}
       onSubmit={onSubmit}
       additionalActions={
         <Button
@@ -205,7 +207,9 @@ export function AwxSettingsForm(props: {
             e.preventDefault();
             openRevertAllSettingsModal({
               categorySlugs: getCategorySlugs(options),
-              onComplete: () => void navigate('..'),
+              onComplete: () => {
+                Promise.resolve(navigate('..')).catch(() => {});
+              },
             });
           }}
         >

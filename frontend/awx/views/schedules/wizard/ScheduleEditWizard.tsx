@@ -64,7 +64,9 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
     }
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
   const steps = useScheduleSteps();
 
   if (!schedule) return;

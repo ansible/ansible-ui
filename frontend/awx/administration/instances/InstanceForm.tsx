@@ -31,7 +31,9 @@ export function AddInstance() {
     pageNavigate(AwxRoute.InstanceDetails, { params: { id: newInstance.id } });
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -77,7 +79,9 @@ export function EditInstance() {
     pageNavigate(AwxRoute.InstanceDetails, { params: { id } });
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
   const getPageUrl = useGetPageUrl();
 
   if (instance) {

@@ -89,7 +89,7 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
             relaunchJob = await postRequest(relaunchEndpoint(job), {} as ProjectUpdateView);
             break;
         }
-        void navigate(getJobOutputUrl(relaunchJob as UnifiedJob));
+        Promise.resolve(navigate(getJobOutputUrl(relaunchJob as UnifiedJob))).catch(() => {});
       }
     } catch (error) {
       alertToaster.addAlert({

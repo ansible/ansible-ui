@@ -76,7 +76,9 @@ export function CreateProject() {
       <AwxPageForm
         submitText={t('Create project')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => {
+          Promise.resolve(navigate(-1)).catch(() => {});
+        }}
         defaultValue={defaultValues as Project}
       >
         <ProjectInputs />
@@ -144,7 +146,9 @@ export function EditProject() {
       <AwxPageForm<Project>
         submitText={t('Save project')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => {
+          Promise.resolve(navigate(-1)).catch(() => {});
+        }}
         defaultValue={project}
       >
         <ProjectInputs project={project} />

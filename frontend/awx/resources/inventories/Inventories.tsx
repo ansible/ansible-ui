@@ -64,7 +64,7 @@ export function Inventories() {
         case 'inventories':
           switch (message?.status) {
             case 'deleted':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
           }
           break;
@@ -86,7 +86,7 @@ export function Inventories() {
                   break;
                 }
               }
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
           }
           break;

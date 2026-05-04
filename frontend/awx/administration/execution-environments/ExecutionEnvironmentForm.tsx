@@ -34,7 +34,9 @@ export function CreateExecutionEnvironment() {
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: newExecutionEnv.id } });
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
   const getPageUrl = useGetPageUrl();
 
   const defaultValue: Partial<ExecutionEnvironment> = {
@@ -83,7 +85,9 @@ export function EditExecutionEnvironment() {
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: editedExecutionEnv.id } });
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
   const getPageUrl = useGetPageUrl();
 
   if (!execution_env) {

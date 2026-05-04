@@ -59,7 +59,7 @@ export function useSurveyView(options: { url: string }): ISurveyView {
   const selectItemsAndRefresh = useCallback(
     (items: Spec[]) => {
       selection.selectItems(items);
-      void refresh();
+      Promise.resolve(refresh()).catch(() => {});
     },
     [refresh, selection]
   );
@@ -67,7 +67,7 @@ export function useSurveyView(options: { url: string }): ISurveyView {
   const unselectItemsAndRefresh = useCallback(
     (items: Spec[]) => {
       selection.unselectItems(items);
-      void refresh();
+      Promise.resolve(refresh()).catch(() => {});
     },
     [refresh, selection]
   );

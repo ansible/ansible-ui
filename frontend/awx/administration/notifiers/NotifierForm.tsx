@@ -212,7 +212,9 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         submitText={t('Save notifier')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => {
+          Promise.resolve(navigate(-1)).catch(() => {});
+        }}
         defaultValue={defaultValue}
       >
         <PageFormSection>

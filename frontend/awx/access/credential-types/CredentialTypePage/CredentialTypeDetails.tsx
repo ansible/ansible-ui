@@ -63,29 +63,33 @@ export function CredentialTypeDetailInner(props: { credentialType: CredentialTyp
         <DateTimeCell
           value={props.credentialType.created}
           author={props.credentialType.summary_fields?.created_by?.username}
-          onClick={() =>
-            void navigate(
-              getPageUrl(AwxRoute.UserDetails, {
-                params: {
-                  id: (props.credentialType.summary_fields?.created_by?.id ?? 0).toString(),
-                },
-              })
-            )
-          }
+          onClick={() => {
+            Promise.resolve(
+              navigate(
+                getPageUrl(AwxRoute.UserDetails, {
+                  params: {
+                    id: (props.credentialType.summary_fields?.created_by?.id ?? 0).toString(),
+                  },
+                })
+              )
+            ).catch(() => {});
+          }}
         />
       </PageDetail>
       <LastModifiedPageDetail
         value={props.credentialType.modified}
         author={props.credentialType.summary_fields?.modified_by?.username}
-        onClick={() =>
-          void navigate(
-            getPageUrl(AwxRoute.UserDetails, {
-              params: {
-                id: (props.credentialType.summary_fields?.modified_by?.id ?? 0).toString(),
-              },
-            })
-          )
-        }
+        onClick={() => {
+          Promise.resolve(
+            navigate(
+              getPageUrl(AwxRoute.UserDetails, {
+                params: {
+                  id: (props.credentialType.summary_fields?.modified_by?.id ?? 0).toString(),
+                },
+              })
+            )
+          ).catch(() => {});
+        }}
       />
     </PageDetails>
   );

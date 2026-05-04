@@ -34,7 +34,7 @@ export function useLaunchTemplate() {
 
       if (canLaunchWithoutPrompt(launchConfig)) {
         const launchJob = await postRequest(launchEndpoint, {});
-        void navigate(getJobOutputUrl(launchJob));
+        Promise.resolve(navigate(getJobOutputUrl(launchJob))).catch(() => {});
       } else {
         const awxRoute =
           template.type === 'workflow_job_template'

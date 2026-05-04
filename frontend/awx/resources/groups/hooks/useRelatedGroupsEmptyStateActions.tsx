@@ -40,7 +40,9 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
         try {
           await postRequest(awxAPI`/groups/${params.group_id as string}/children/`, {
             id: group.id,
-          }).then(() => void view.refresh());
+          }).then(() => {
+            Promise.resolve(view.refresh()).catch(() => {});
+          });
         } catch (err) {
           alertToaster.addAlert({
             variant: 'danger',

@@ -90,7 +90,13 @@ export function AwxMasthead() {
             >
               {t('User details')}
             </DropdownItem>
-            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
+            <DropdownItem
+              id="logout"
+              label={t('Logout')}
+              onClick={() => {
+                Promise.resolve(logout()).catch(() => {});
+              }}
+            >
               {t('Logout')}
             </DropdownItem>
           </PageMastheadDropdown>
@@ -115,7 +121,7 @@ export function useAwxNotifications() {
         case 'jobs':
           switch (message?.type) {
             case 'workflow_approval':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
           }
           break;

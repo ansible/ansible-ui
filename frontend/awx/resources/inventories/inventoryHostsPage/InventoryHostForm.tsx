@@ -78,7 +78,9 @@ export function CreateHost() {
     }
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
 
   const inventoryResponse = useGetInventory(params.id, params.inventory_type);
 
@@ -222,7 +224,9 @@ export function EditHost() {
     }
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
 
   if (!host) {
     return (

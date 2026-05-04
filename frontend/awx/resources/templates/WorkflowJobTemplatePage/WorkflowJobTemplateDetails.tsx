@@ -156,13 +156,15 @@ export function WorkflowJobTemplateDetails(props: {
       <LastModifiedPageDetail
         value={template.modified}
         author={template.summary_fields.modified_by?.username}
-        onClick={() =>
-          void navigate(
-            getPageUrl(AwxRoute.UserDetails, {
-              params: { id: (template.summary_fields?.modified_by?.id ?? 0).toString() },
-            })
-          )
-        }
+        onClick={() => {
+          Promise.resolve(
+            navigate(
+              getPageUrl(AwxRoute.UserDetails, {
+                params: { id: (template.summary_fields?.modified_by?.id ?? 0).toString() },
+              })
+            )
+          ).catch(() => {});
+        }}
       />
       <PageDetail
         label={t('Labels')}

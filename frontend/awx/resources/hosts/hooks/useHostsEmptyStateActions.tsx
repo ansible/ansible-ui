@@ -43,7 +43,9 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
         try {
           await postRequest(awxAPI`/groups/${params.group_id as string}/hosts/`, {
             id: host.id,
-          }).then(() => void view.refresh());
+          }).then(() => {
+            Promise.resolve(view.refresh()).catch(() => {});
+          });
         } catch (err) {
           alertToaster.addAlert({
             variant: 'danger',

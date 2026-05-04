@@ -67,7 +67,9 @@ export function ScheduleAddWizard(props: {
     }
   };
 
-  const onCancel = () => void navigate(location.pathname.replace('create', ''));
+  const onCancel = () => {
+    Promise.resolve(navigate(location.pathname.replace('create', ''))).catch(() => {});
+  };
 
   const initialValues: { [stepId: string]: Partial<ScheduleFormWizard> } = {
     details: {

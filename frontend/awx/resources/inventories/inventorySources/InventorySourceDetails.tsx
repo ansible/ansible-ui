@@ -61,7 +61,7 @@ export function InventorySourceDetails(
             case 'workflow_job':
             case 'project_update':
             case 'inventory_update':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
           }
           break;

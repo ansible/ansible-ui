@@ -49,13 +49,13 @@ export function Projects() {
         case 'jobs':
           switch (message?.type) {
             case 'job':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
             case 'workflow_job':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
             case 'project_update':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
           }
           break;

@@ -28,8 +28,12 @@ export function CredentialsList(props: { url: string }) {
   });
   const toolbarActions = useCredentialToolbarActions(view);
   const rowActions = useCredentialActions({
-    onDeleted: () => void view.refresh(),
-    onCredentialCopied: () => void view.refresh(),
+    onDeleted: () => {
+      Promise.resolve(view.refresh()).catch(() => {});
+    },
+    onCredentialCopied: () => {
+      Promise.resolve(view.refresh()).catch(() => {});
+    },
   });
 
   return (

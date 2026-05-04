@@ -109,7 +109,9 @@ export function CreateInventorySource() {
       <AwxPageForm
         submitText={t('Create source')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => {
+          Promise.resolve(navigate(-1)).catch(() => {});
+        }}
         defaultValue={{
           name: '',
           description: '',
@@ -217,7 +219,9 @@ export function EditInventorySource() {
       <AwxPageForm
         submitText={t('Save source')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => {
+          Promise.resolve(navigate(-1)).catch(() => {});
+        }}
         defaultValue={defaultValue}
       >
         <InventorySourceInputs />

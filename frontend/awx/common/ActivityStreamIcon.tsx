@@ -24,15 +24,17 @@ export const ActivityStreamIcon: React.FC<ActivityStreamIconProps> = ({
         marginLeft: 8,
         verticalAlign: 'top',
       }}
-      onClick={() =>
-        void navigate(
-          getPageUrl(AwxRoute.ActivityStream, {
-            query: {
-              type: type,
-            },
-          })
-        )
-      }
+      onClick={() => {
+        Promise.resolve(
+          navigate(
+            getPageUrl(AwxRoute.ActivityStream, {
+              query: {
+                type: type,
+              },
+            })
+          )
+        ).catch(() => {});
+      }}
     ></Button>
   );
 };

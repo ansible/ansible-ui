@@ -36,7 +36,7 @@ export function WorkflowApprovals() {
         case 'jobs':
           switch (message?.type) {
             case 'workflow_approval':
-              void refresh();
+              Promise.resolve(refresh()).catch(() => {});
               break;
           }
           break;

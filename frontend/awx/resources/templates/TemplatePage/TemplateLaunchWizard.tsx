@@ -188,7 +188,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
 
         const job = await postRequest(awxAPI`/${jobType}/${resourceId}/launch/`, payload);
         if (job) {
-          void navigate(getJobOutputUrl(job));
+          Promise.resolve(navigate(getJobOutputUrl(job))).catch(() => {});
         }
       } catch (err) {
         alertToaster.addAlert({

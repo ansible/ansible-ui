@@ -59,7 +59,9 @@ export function GroupCreate() {
     }
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
   return (
     <AwxPageForm<InventoryGroupCreate>
       submitText={t('Create group')}

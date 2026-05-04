@@ -32,9 +32,11 @@ export function EditInstance() {
       (editedInstance.capacity_adjustment as unknown as number) * 100
     ) / 100) as unknown as string;
     await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, editedInstance);
-    void navigate(-1);
+    Promise.resolve(navigate(-1)).catch(() => {});
   };
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
 
   const getPageUrl = useGetPageUrl();
 

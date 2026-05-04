@@ -40,7 +40,9 @@ export function CreateTeam() {
       <AwxPageForm
         submitText={t('Create team')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => {
+          Promise.resolve(navigate(-1)).catch(() => {});
+        }}
       >
         <TeamInputs />
       </AwxPageForm>
@@ -57,7 +59,7 @@ export function EditTeam() {
   const patchRequest = usePatchRequest<Team, Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     await patchRequest(awxAPI`/teams/${id.toString()}/`, team);
-    void navigate(-1);
+    Promise.resolve(navigate(-1)).catch(() => {});
   };
   const getPageUrl = useGetPageUrl();
   if (!team) {
@@ -84,7 +86,9 @@ export function EditTeam() {
       <AwxPageForm
         submitText={t('Save team')}
         onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
+        onCancel={() => {
+          Promise.resolve(navigate(-1)).catch(() => {});
+        }}
         defaultValue={team}
       >
         <TeamInputs />

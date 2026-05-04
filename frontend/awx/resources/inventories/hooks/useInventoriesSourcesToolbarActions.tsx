@@ -120,7 +120,7 @@ function useSyncAll(inventory_id: string, refresh: () => Promise<void>): () => v
     void (async () => {
       try {
         await postRequest(url, {});
-        void refresh();
+        Promise.resolve(refresh()).catch(() => {});
       } catch (error) {
         alertToaster.addAlert({
           variant: 'danger',

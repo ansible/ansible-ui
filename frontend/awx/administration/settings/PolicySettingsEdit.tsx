@@ -81,7 +81,7 @@ export function PolicySettingsForm(props: {
         }
       }
       await patch(awxAPI`/settings/policyascode/`, patchData);
-      void navigate('..');
+      Promise.resolve(navigate('..')).catch(() => {});
     },
     [navigate, patch, props.options]
   );
@@ -149,7 +149,9 @@ export function PolicySettingsForm(props: {
     <AwxPageForm
       defaultValue={props.data}
       submitText={t('Save')}
-      onCancel={() => void navigate('..')}
+      onCancel={() => {
+        Promise.resolve(navigate('..')).catch(() => {});
+      }}
       onSubmit={onSubmit}
       additionalActions={
         <Button
@@ -158,7 +160,9 @@ export function PolicySettingsForm(props: {
             e.preventDefault();
             openRevertAllSettingsModal({
               categorySlugs: getCategorySlugs(props.options),
-              onComplete: () => void navigate('..'),
+              onComplete: () => {
+                Promise.resolve(navigate('..')).catch(() => {});
+              },
             });
           }}
         >

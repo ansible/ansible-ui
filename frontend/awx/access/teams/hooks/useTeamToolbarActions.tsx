@@ -55,7 +55,9 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         selection: PageActionSelection.None,
         icon: SyncIcon,
         label: t('Refresh'),
-        onClick: () => void view.refresh(),
+        onClick: () => {
+          Promise.resolve(view.refresh()).catch(() => {});
+        },
       },
       { type: PageActionType.Seperator },
       {

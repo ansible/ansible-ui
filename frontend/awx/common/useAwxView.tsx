@@ -102,7 +102,7 @@ export function useAwxView<T extends { id: number }>(options: {
   const selectItemsAndRefresh = useCallback(
     (items: T[]) => {
       selection.selectItems(items);
-      void refresh();
+      Promise.resolve(refresh()).catch(() => {});
     },
     [refresh, selection]
   );
@@ -110,7 +110,7 @@ export function useAwxView<T extends { id: number }>(options: {
   const unselectItemsAndRefresh = useCallback(
     (items: T[]) => {
       selection.unselectItems(items);
-      void refresh();
+      Promise.resolve(refresh()).catch(() => {});
     },
     [refresh, selection]
   );

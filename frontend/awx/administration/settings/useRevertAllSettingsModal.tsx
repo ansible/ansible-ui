@@ -91,7 +91,9 @@ export function RevertAllDialog(
           ouiaId="delete-group-modal-delete-button"
           key="delete"
           variant="danger"
-          onClick={() => void onRevertAll()}
+          onClick={() => {
+            Promise.resolve(onRevertAll()).catch(() => {});
+          }}
           aria-label={t`Confirm revert all`}
         >
           {t('Revert all')}

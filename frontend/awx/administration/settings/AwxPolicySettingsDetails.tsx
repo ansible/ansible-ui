@@ -80,7 +80,9 @@ export function AwxPolicySettingsDetailsPage() {
         variant: ButtonVariant.primary,
         icon: PencilAltIcon,
         label: t('Edit'),
-        onClick: () => void navigate('./edit', { replace: true }),
+        onClick: () => {
+          Promise.resolve(navigate('./edit', { replace: true })).catch(() => {});
+        },
         isPinned: true,
       },
     ],

@@ -56,7 +56,7 @@ export function RelaunchTemplate() {
       try {
         const job = await postRequest(awxAPI`/jobs/${params?.id || ''}/relaunch/`, formValues);
         if (job) {
-          void navigate(getJobOutputUrl(job));
+          Promise.resolve(navigate(getJobOutputUrl(job))).catch(() => {});
         }
       } catch (err) {
         alertToaster.addAlert({

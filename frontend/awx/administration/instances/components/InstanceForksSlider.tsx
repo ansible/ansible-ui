@@ -20,9 +20,9 @@ export function InstanceForksSlider(props: { instance: Instance }) {
         max={instance.mem_capacity}
         min={instance.cpu_capacity}
         value={instanceForks}
-        onChange={(_event: SliderOnChangeEvent, value: number) =>
-          void handleInstanceForksSlider(value)
-        }
+        onChange={(_event: SliderOnChangeEvent, value: number) => {
+          Promise.resolve(handleInstanceForksSlider(value)).catch(() => {});
+        }}
         isDisabled={
           !(
             (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) &&

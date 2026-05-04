@@ -51,7 +51,7 @@ export function AwxLogin(props: {
         loginApiUrl={props.loginApiUrl ? props.loginApiUrl : '/api/login/'}
         onSuccess={() => {
           refreshActiveAwxUser?.();
-          void mutate(() => true);
+          Promise.resolve(mutate(() => true)).catch(() => {});
         }}
         brandImg={props.brandImg ? props.brandImg : '/assets/awx-logo.svg'}
         brandImgAlt={process.env.PRODUCT as unknown as string}

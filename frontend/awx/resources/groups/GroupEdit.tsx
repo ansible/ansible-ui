@@ -50,7 +50,9 @@ export function GroupEdit() {
     });
   };
 
-  const onCancel = () => void navigate(-1);
+  const onCancel = () => {
+    Promise.resolve(navigate(-1)).catch(() => {});
+  };
   if (!group) {
     return null;
   }

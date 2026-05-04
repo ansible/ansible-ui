@@ -39,7 +39,7 @@ export function Notifiers() {
   const rowActions = useNotifiersRowActions({
     onComplete: view.unselectItemsAndRefresh,
     onNotifierCopied: () => {
-      void view.refresh();
+      Promise.resolve(view.refresh()).catch(() => {});
     },
     onNotifierStartTest,
     type: 'list',

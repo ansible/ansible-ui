@@ -63,14 +63,14 @@ export function InventorySources() {
         case 'inventories':
           switch (message?.status) {
             case 'deleted':
-              void view.refresh();
+              Promise.resolve(view.refresh()).catch(() => {});
               break;
           }
           break;
         case 'jobs':
           switch (message?.type) {
             case 'inventory_update':
-              void view.refresh();
+              Promise.resolve(view.refresh()).catch(() => {});
               break;
           }
           break;
