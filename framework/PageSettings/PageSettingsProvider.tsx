@@ -29,7 +29,7 @@ export function createSWRErrorRetryHandler() {
     if (opts.retryCount >= 3) return;
 
     // Add jitter to prevent thundering herd
-    const timeout = ~~((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
+    const timeout = Math.trunc((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
 
     setTimeout(() => {
       void revalidate(opts);

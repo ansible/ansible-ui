@@ -303,7 +303,7 @@ describe('PageSettingsProvider', () => {
       onErrorRetry(error500, '/api/test', {}, revalidate, { retryCount: 0 });
 
       // With our mocked Math.random (0.5), timeout should be exactly 1000ms for retryCount=0
-      // timeout = ~~((0.5 + 0.5) * (1 << 0)) * 1000 = ~~(1 * 1) * 1000 = 1000
+      // timeout = Math.trunc((0.5 + 0.5) * (1 << 0)) * 1000 = Math.trunc(1 * 1) * 1000 = 1000
       vi.advanceTimersByTime(1000);
       expect(revalidate).toHaveBeenCalledTimes(1);
       expect(revalidate).toHaveBeenCalledWith({ retryCount: 0 });
@@ -366,7 +366,7 @@ describe('PageSettingsProvider', () => {
       onErrorRetry(error404, '/api/test', {}, revalidate, { retryCount: 1 });
 
       // With Math.random=0.25, retryCount=1:
-      // timeout = ~~((0.25 + 0.5) * (1 << 1)) * 1000 = ~~(0.75 * 2) * 1000 = ~~1.5 * 1000 = 1000
+      // timeout = Math.trunc((0.25 + 0.5) * (1 << 1)) * 1000 = Math.trunc(0.75 * 2) * 1000 = 1000
       vi.advanceTimersByTime(1000);
       expect(revalidate).toHaveBeenCalledTimes(1);
       expect(revalidate).toHaveBeenCalledWith({ retryCount: 1 });
