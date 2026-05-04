@@ -42,9 +42,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/groups/`
   ).data;
-  const canCreateGroup = Boolean(
-    groupOptions && groupOptions.actions && groupOptions.actions['POST']
-  );
+  const canCreateGroup = Boolean(groupOptions?.actions?.['POST']);
 
   const onSelectedGroups = useCallback(
     async (selectedGroups: InventoryGroup[]) => {

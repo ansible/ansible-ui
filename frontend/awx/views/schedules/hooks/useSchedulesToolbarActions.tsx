@@ -17,7 +17,7 @@ export function useScheduleToolbarActions(
 ) {
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
-  const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateSchedule = Boolean(data?.actions?.['POST']);
 
   const deleteSchedules = useDeleteSchedules(onComplete);
 

@@ -23,7 +23,7 @@ export function useHostsToolbarActions(view: IAwxView<AwxHost>) {
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`);
-  const canCreateHost = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateHost = Boolean(data?.actions?.['POST']);
 
   return useMemo<IPageAction<AwxHost>[]>(
     () => [

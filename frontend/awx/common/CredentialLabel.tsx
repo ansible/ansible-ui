@@ -26,9 +26,7 @@ function CredentialLabel(props: { credential: Credential | SummaryFieldCredentia
     type = toTitleCase(credential.kind || '');
   }
   const vault_id =
-    credential.kind === 'vault' &&
-    (credential as Credential).inputs &&
-    (credential as Credential).inputs?.vault_id
+    credential.kind === 'vault' && (credential as Credential).inputs?.vault_id
       ? (credential as Credential).inputs?.vault_id
       : undefined;
 

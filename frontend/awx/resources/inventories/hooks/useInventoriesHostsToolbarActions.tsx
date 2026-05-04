@@ -34,7 +34,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
   });
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
-  const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
+  const canCreateHost = Boolean(hostOptions?.actions?.['POST']);
 
   return useMemo<IPageAction<AwxHost>[]>(() => {
     const actions: IPageAction<AwxHost>[] = [];

@@ -27,7 +27,7 @@ export function AwxRecentProjectsCard() {
   const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/projects/`
   );
-  const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateProject = Boolean(data?.actions?.['POST']);
 
   let columns = useProjectsColumns();
   columns = useDashboardColumns(columns);

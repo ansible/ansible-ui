@@ -63,7 +63,7 @@ export function Users() {
   const { data, isLoading: isLoadingUserOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/users/`
   );
-  const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateUser = Boolean(data?.actions?.['POST']);
 
   const toolbarActions = useMemo<IPageAction<AwxUser>[]>(
     () => [

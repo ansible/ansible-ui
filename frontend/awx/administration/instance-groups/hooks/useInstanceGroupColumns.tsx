@@ -11,7 +11,7 @@ export function useInstanceGroupsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
-  const disableLinks = options && options.disableLinks;
+  const disableLinks = options?.disableLinks;
   const getPageUrl = useGetPageUrl();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);

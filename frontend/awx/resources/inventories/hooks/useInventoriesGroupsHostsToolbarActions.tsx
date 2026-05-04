@@ -37,7 +37,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
   });
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
-  const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
+  const canCreateHost = Boolean(hostOptions?.actions?.['POST']);
 
   const onSelectedHosts = useCallback(
     async (selectedHosts: AwxHost[]) => {

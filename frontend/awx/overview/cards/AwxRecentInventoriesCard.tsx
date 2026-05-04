@@ -21,7 +21,7 @@ export function AwxRecentInventoriesCard() {
   const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/`
   );
-  const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateInventory = Boolean(data?.actions?.['POST']);
 
   const view = useAwxView<Inventory>({
     url: awxAPI`/inventories/`,

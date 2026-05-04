@@ -31,7 +31,7 @@ export function Teams() {
   const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/teams/`
   );
-  const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateTeam = Boolean(data?.actions?.['POST']);
   usePersistentFilters('teams');
   const config = useAwxConfig();
 

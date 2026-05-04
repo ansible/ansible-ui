@@ -29,11 +29,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const inventorySourceChoices = useMemo(
     () =>
-      data &&
-      data.actions &&
-      data.actions['GET'] &&
-      data.actions['GET'].source &&
-      Array.isArray(data.actions['GET'].source.choices)
+      Array.isArray(data?.actions?.['GET']?.source?.choices)
         ? data.actions['GET'].source.choices
         : [],
     [data]

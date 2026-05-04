@@ -32,7 +32,7 @@ export function GroupHosts() {
   const { data: hostOptions, isLoading: isLoadingHostOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(awxAPI`/hosts/`);
-  const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
+  const canCreateHost = Boolean(hostOptions?.actions?.['POST']);
 
   usePersistentFilters('inventories');
 

@@ -26,7 +26,7 @@ export function useSchedulesActions(options: {
   const { t } = useTranslation();
   const deleteSchedule = useDeleteSchedules(options?.onScheduleDeleteCompleted);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
-  const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateSchedule = Boolean(data?.actions?.['POST']);
   const handleToggleSchedule: (schedule: Schedule, enabled: boolean) => Promise<void> = useCallback(
     async (schedule, enabled) => {
       const patchedSchedule = await requestPatch<Schedule>(

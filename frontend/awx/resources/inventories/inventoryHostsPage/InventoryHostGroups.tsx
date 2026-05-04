@@ -49,9 +49,7 @@ export function InventoryHostGroups(props: { page: string }) {
   const { data: groupOptions, isLoading: isLoadingGroupOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(awxAPI`/groups/`);
-  const canCreateGroup = Boolean(
-    groupOptions && groupOptions.actions && groupOptions.actions['POST']
-  );
+  const canCreateGroup = Boolean(groupOptions?.actions?.['POST']);
 
   usePersistentFilters('inventories');
 

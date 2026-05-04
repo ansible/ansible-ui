@@ -14,7 +14,7 @@ export function CredentialTypeDetail(props: {
   const { inputs, field, inputSources } = props;
   const { t } = useTranslation();
   const { id, label, type, ask_at_runtime, help_text = '' } = field;
-  if (id && inputSources && inputSources[id]) {
+  if (id && inputSources?.[id]) {
     return (
       <React.Fragment key={id}>
         <PageDetail helpText={help_text} label={label + ' *'}>

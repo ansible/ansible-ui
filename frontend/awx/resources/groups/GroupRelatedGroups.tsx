@@ -33,9 +33,7 @@ export function GroupRelatedGroups() {
   const { data: groupsOptions, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/groups/`
   );
-  const canCreateGroup = Boolean(
-    groupsOptions && groupsOptions.actions && groupsOptions.actions['POST']
-  );
+  const canCreateGroup = Boolean(groupsOptions?.actions?.['POST']);
 
   const isConstructed = params.inventory_type === 'constructed_inventory';
 

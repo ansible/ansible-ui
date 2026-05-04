@@ -45,8 +45,7 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
         !instance.peers?.includes(receptor.id) &&
         !(instance.id === receptor.instance) &&
         !receptor.is_internal &&
-        instances &&
-        instances.some((instance) => instance.id === receptor.instance)
+        instances?.some((instance) => instance.id === receptor.instance)
     );
 
     peeredReceptorIds = filteredReceptors.map((receptor) => String(receptor.instance));

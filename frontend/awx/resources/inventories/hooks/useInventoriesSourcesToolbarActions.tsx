@@ -34,9 +34,7 @@ export function useInventoriesSourcesToolbarActions(
     awxAPI`/inventory_sources/`
   ).data;
 
-  const canCreateSource = Boolean(
-    sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']
-  );
+  const canCreateSource = Boolean(sourceOptions?.actions?.['POST']);
 
   const { activeAwxUser } = useAwxActiveUser();
 

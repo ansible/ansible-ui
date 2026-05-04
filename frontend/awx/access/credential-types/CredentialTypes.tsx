@@ -41,7 +41,7 @@ export function CredentialTypes() {
     awxAPI`/credential_types/`
   );
 
-  const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateCredentialType = Boolean(data?.actions?.['POST']);
 
   return (
     <PageLayout>

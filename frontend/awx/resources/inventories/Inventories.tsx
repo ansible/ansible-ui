@@ -38,7 +38,7 @@ export function Inventories() {
   const { data, isLoading: isLoadingInventoryOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(awxAPI`/inventories/`);
-  const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateInventory = Boolean(data?.actions?.['POST']);
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
   const view = useAwxView<Inventory>({

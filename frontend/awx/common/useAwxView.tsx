@@ -55,7 +55,7 @@ export function useAwxView<T extends { id: number }>(options: {
   let defaultSortDirection: 'asc' | 'desc' | undefined = options.defaultSortDirection;
 
   // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
-  if (tableColumns && tableColumns.length) {
+  if (tableColumns?.length) {
     const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0];
     defaultSort = defaultSortColumn?.sort;
     defaultSortDirection = defaultSortColumn?.defaultSortDirection;

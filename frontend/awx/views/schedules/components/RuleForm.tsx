@@ -54,7 +54,7 @@ export function RuleForm(
     timezone = 'America/New_York',
     startDateTime: { date, time },
   } = wizardData as ScheduleFormWizard;
-  const isRulesStep = activeStep && activeStep.id === 'rules';
+  const isRulesStep = activeStep?.id === 'rules';
   const weekdayOptions = useGetWeekdayOptions();
   const frequencyOptions = useGetFrequencyOptions();
   const monthOptions = useGetMonthOptions();

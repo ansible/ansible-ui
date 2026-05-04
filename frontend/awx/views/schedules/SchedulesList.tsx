@@ -81,7 +81,7 @@ export function SchedulesList(props: {
   const { data, isLoading: isLoadingScheduleOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(apiEndPoint ?? awxAPI`/schedules/`);
-  const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateSchedule = Boolean(data?.actions?.['POST']);
 
   const toolbarActions = useScheduleToolbarActions(
     view.unselectItemsAndRefresh,
