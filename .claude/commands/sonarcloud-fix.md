@@ -51,6 +51,7 @@ Add to `.claude/settings.json` to avoid permission prompts:
 5. **Approval 2 — Create PR(s):**
    - Present a summary: number of PRs to be created, LOC per PR, target branch
    - Wait for explicit approval before creating any PR
-   - Create PR(s) following `.github/pull_request_template.md`
+   - Create PR(s) with title prefixed `SonarCloud Fix:` (e.g., `SonarCloud Fix: Remove dead stores (S1854, AWX)`)
+   - PR body follows `.github/pull_request_template.md`
    - Post e2e trigger comment on each PR
 6. Offer to continue with the next group

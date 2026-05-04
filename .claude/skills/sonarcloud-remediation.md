@@ -344,7 +344,25 @@ Proceed with PR creation?
 
 **Wait for explicit approval.** Then for each PR:
 
-Follow `.github/pull_request_template.md` exactly:
+**PR Title — REQUIRED format:**
+
+All PR titles **must** start with the prefix `SonarCloud Fix:` followed by a short description of the issue area being addressed. Use this pattern:
+
+```
+SonarCloud Fix: <brief description of fix> (<rule key>, <workspace>)
+```
+
+Examples:
+- `SonarCloud Fix: Remove unused imports (S1128, AWX)`
+- `SonarCloud Fix: Remove dead stores (S1854, Framework)`
+- `SonarCloud Fix: Extract duplicate string literals (S1192, Hub)`
+- `SonarCloud Fix: Reduce cognitive complexity (S3776, EDA)`
+- `SonarCloud Fix: Remove commented-out code (S125, Platform)`
+
+For batched PRs, append the batch number:
+- `SonarCloud Fix: Remove dead stores (S1854, AWX) [batch 1/2]`
+
+Follow `.github/pull_request_template.md` for the PR body:
 
 ```markdown
 ## Summary
