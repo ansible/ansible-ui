@@ -96,6 +96,7 @@ Both commands support a `--help` flag that displays usage information and exits 
 
 The fix workflow uses a **2-step approval process** to give engineers full control:
 
+0. **Configuration pre-check** — Before doing any work, display all environment variables (values, defaults, and descriptions) in a table and prompt the engineer to confirm they are correct. This prevents teams from accidentally running with wrong defaults (e.g., `npm run tsc && npm run vitest` when their project uses `make lint && make test`). Skipped if already confirmed in the same session.
 1. **Engineer selects one or more groups** from the analyze output (by number or name)
 2. **Read all affected files** for the selected group(s); analyze each issue in its code context
 3. **Present fixes as a group for human approval** — not individually. Display:

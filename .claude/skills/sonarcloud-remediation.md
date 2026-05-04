@@ -210,6 +210,36 @@ If the user provides flags, apply them before grouping:
 
 Invoked via `/sonarcloud-fix`. The engineer selects groups from the analyze output and the skill applies fixes with approval.
 
+### Step 0: Configuration Pre-Check
+
+**Before doing any work**, display all non-sensitive configuration values so the engineer can verify them. Use the AskUserQuestion tool to confirm.
+
+Display:
+
+```
+## Configuration
+
+| Variable                  | Value                          | Source  | Description                                        |
+|---------------------------|--------------------------------|---------|----------------------------------------------------|
+| SONAR_ORGANIZATION        | your-org                       | env     | SonarCloud organization slug                       |
+| SONAR_PROJECT_KEY         | your-project-key               | env     | SonarCloud project key                             |
+| SONARCLOUD_TOKEN          | (set)                          | env     | API token for private projects                     |
+| SONAR_DEFAULT_BRANCH      | devel                          | default | Branch that fix PRs will target                    |
+| SONAR_VALIDATE_COMMANDS   | npm run tsc && npm run vitest  | default | Commands that must pass before a PR can be created |
+| SONAR_E2E_TRIGGER_COMMENT | /run-playwright                | default | Comment posted on PR to trigger e2e test pipeline  |
+```
+
+- Show `(set)` or `(not set)` for `SONARCLOUD_TOKEN` — never display the actual value
+- Show `env` in the Source column if the variable is explicitly set, `default` if using the built-in default
+- **Highlight any variables using defaults** so they stand out
+
+Then ask: "Do these settings look correct? If any need updating, set the environment variables and re-run the command."
+
+- If the engineer confirms → proceed to Step 1
+- If the engineer says values need updating → stop and let them update env vars before retrying
+
+**Skip this pre-check** if it was already confirmed earlier in the same session.
+
 ### Step 1: Select Groups
 
 If the user provided a group number or name as an argument, use that.

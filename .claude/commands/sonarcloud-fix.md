@@ -40,18 +40,19 @@ Add to `.claude/settings.json` to avoid permission prompts:
 
 ### Workflow
 
-1. If no analysis exists in this session, run `/sonarcloud-analyze` first
-2. If no group argument provided, display available groups and prompt for selection
-3. Read affected files, present fixes as a group for review
-4. **Approval 1 — Apply fixes:**
+1. **Configuration pre-check**: Display all environment variables (with values, defaults, and descriptions) and prompt for confirmation before proceeding. Skipped if already confirmed in the current session.
+2. If no analysis exists in this session, run `/sonarcloud-analyze` first
+3. If no group argument provided, display available groups and prompt for selection
+4. Read affected files, present fixes as a group for review
+5. **Approval 1 — Apply fixes:**
    - Apply approved fixes (cap ~200 LOC per batch, auto-split larger groups)
    - Run validation commands (hard gate — must pass)
    - Create branch and commit changes
    - **Pause**: Inform the engineer the branch is ready for local testing. They can review the diff, run additional tests, or commit manual adjustments. Wait for explicit go-ahead.
-5. **Approval 2 — Create PR(s):**
+6. **Approval 2 — Create PR(s):**
    - Present a summary: number of PRs to be created, LOC per PR, target branch
    - Wait for explicit approval before creating any PR
    - Create PR(s) with title prefixed `SonarCloud Fix:` (e.g., `SonarCloud Fix: Remove dead stores (S1854, AWX)`)
    - PR body follows `.github/pull_request_template.md`
    - Post e2e trigger comment on each PR
-6. Offer to continue with the next group
+7. Offer to continue with the next group
