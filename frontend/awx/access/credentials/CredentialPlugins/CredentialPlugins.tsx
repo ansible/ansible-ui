@@ -16,10 +16,12 @@ import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialsTestButton } from '../utils/CredentialsTestButton';
 import { PageFormExternalCredentialSelect } from './components/PageFormExternalCredentialSelect';
+import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
 
 export interface CredentialPluginsForm {
   source_credential: number;
-  [key: string]: string | number;
+  job_template_id?: number;
+  [key: string]: string | number | undefined;
 }
 
 export interface CredentialsRetainInput {
@@ -53,6 +55,11 @@ export function CredentialPlugins({
     };
 
     const credentialType = useCredentialFields(watchedCredentialTypeId);
+
+    // Check if this is an OIDC credential type
+    const isOidcCredential =
+      credentialType?.namespace === 'hashivault-kv-oidc' ||
+      credentialType?.namespace === 'hashivault-ssh-oidc';
 
     if (!credentialType) {
       return null;
@@ -102,6 +109,17 @@ export function CredentialPlugins({
             );
           }
         })}
+
+        {/* Add job template selector for OIDC credentials */}
+        {isOidcCredential && (
+          <PageFormJobTemplateSelect
+            key="job_template_id"
+            name="job_template_id"
+            id="job-template-select"
+            label={t('Controller Job Template')}
+            isRequired
+          />
+        )}
       </PageFormSection>
     ) : null;
   };
