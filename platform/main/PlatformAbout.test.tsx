@@ -77,7 +77,10 @@ describe('PlatformAbout', () => {
     const dialog = await screen.findByRole('dialog');
 
     expect(within(dialog).getByText(/Ansible Automation Platform/)).toBeInTheDocument();
-    expect(within(dialog).getByText(/Copyright.*Red Hat/)).toBeInTheDocument();
+    const currentYear = new Date().getFullYear().toString();
+    expect(
+      within(dialog).getByText(new RegExp(`Copyright ${currentYear} Red Hat`))
+    ).toBeInTheDocument();
 
     await waitFor(() => {
       expect(within(dialog).getByText('Automation Controller Version')).toBeInTheDocument();
