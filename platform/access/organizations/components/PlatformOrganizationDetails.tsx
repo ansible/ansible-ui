@@ -52,7 +52,9 @@ export function PlatformOrganizationDetails() {
   );
 }
 
-function ControllerOrganizationDetails(props: { platformOrganization: PlatformOrganization }) {
+function ControllerOrganizationDetails(
+  props: Readonly<{ platformOrganization: PlatformOrganization }>
+) {
   const { t } = useTranslation();
   const { platformOrganization } = props;
   const getPageUrl = useGetPageUrl();

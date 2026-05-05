@@ -14,7 +14,7 @@ export function PageFormPlatformTeamNameSelect<
     TFieldValues,
     number
   >,
->(props: { name: TFieldName; isRequired?: boolean }) {
+>(props: Readonly<{ name: TFieldName; isRequired?: boolean }>) {
   const { t } = useTranslation();
   const queryOptions = useQueryPlatformOptions<PlatformTeam, 'name', 'name'>({
     url: gatewayAPI`/teams/`,

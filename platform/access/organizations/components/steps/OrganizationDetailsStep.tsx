@@ -43,7 +43,9 @@ export function OrganizationDetailsStep(props: {
   );
 }
 
-function ControllerOrganizationDetails(props: { controllerOrganization?: ControllerOrganization }) {
+function ControllerOrganizationDetails(
+  props: Readonly<{ controllerOrganization?: ControllerOrganization }>
+) {
   const { t } = useTranslation();
   const controllerOrganization = props.controllerOrganization;
   const config = useAwxConfig();

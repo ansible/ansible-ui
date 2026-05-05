@@ -17,7 +17,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
  * looks this team up in the gateway API to get its ansible_id and uses the ansible_id to
  * look the team up in AWX. It then renders the child component passing the AWX team ID to it as a prop.
  */
-export function PlatformAwxTeamIdLookup(props: { children: ReactNode }) {
+export function PlatformAwxTeamIdLookup(props: Readonly<{ children: ReactNode }>) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams/`, params.id);

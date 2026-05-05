@@ -195,7 +195,7 @@ function choicesToOptions(choices?: FieldChoice[]) {
   }));
 }
 
-function OAuthApplicationInputs(props: { mode: 'create' | 'edit' }) {
+function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
   const { mode } = props;
   const { t } = useTranslation();
   const authorizationGrantType = useWatch<Application>({

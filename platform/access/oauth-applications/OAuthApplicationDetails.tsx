@@ -35,7 +35,7 @@ export function OAuthApplicationDetails() {
   return application ? <ApplicationDetailInner application={application} /> : null;
 }
 
-export function ApplicationDetailInner(props: { application: Application }) {
+export function ApplicationDetailInner(props: Readonly<{ application: Application }>) {
   const { t } = useTranslation();
   const { data: options } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
   const fields = options?.actions?.POST;

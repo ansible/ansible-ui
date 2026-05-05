@@ -14,7 +14,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 
-export function ViewAwxOrgUserRoles(props: { item: UserAssignment }) {
+export function ViewAwxOrgUserRoles(props: Readonly<{ item: UserAssignment }>) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);

@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
 import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
 
-export function AuthenticatorTypeStep(props: {
-  plugins: AuthenticatorPlugins;
-  isDisabled?: boolean;
-}) {
+export function AuthenticatorTypeStep(
+  props: Readonly<{
+    plugins: AuthenticatorPlugins;
+    isDisabled?: boolean;
+  }>
+) {
   const { t } = useTranslation();
 
   // Users cannot create new authenticators using legacy plugins, but can modify those created by the system.
