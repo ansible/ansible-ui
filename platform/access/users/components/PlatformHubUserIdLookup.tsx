@@ -11,7 +11,7 @@ import { useHubResource } from '../../../hooks/useHubResource';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
-export function PlatformHubUserIdLookup(props: { children: ReactNode }) {
+export function PlatformHubUserIdLookup(props: Readonly<{ children: ReactNode }>) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { data: user } = useGetItem<PlatformUser>(gatewayAPI`/users/`, params.id);

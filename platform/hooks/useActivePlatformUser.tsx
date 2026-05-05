@@ -14,7 +14,7 @@ export function useActivePlatformUser() {
   return useContext(ActivePlatformUserContext) as PlatformUser;
 }
 
-export function ActivePlatformUserProvider(props: { children?: ReactNode }) {
+export function ActivePlatformUserProvider(props: Readonly<{ children?: ReactNode }>) {
   const [activeUser, setActiveUser] = useState<PlatformUser | null | undefined>(undefined);
   const userResponse = useGet<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/me/`);
   useEffect(() => {

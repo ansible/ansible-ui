@@ -10,7 +10,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
-export function PlatformHubUser(props: { route?: string }) {
+export function PlatformHubUser(props: Readonly<{ route?: string }>) {
   const { t } = useTranslation();
   const { id: idFromParam } = useParams<{ id: string }>();
   const { activePlatformUser: activeUser } = usePlatformActiveUser();

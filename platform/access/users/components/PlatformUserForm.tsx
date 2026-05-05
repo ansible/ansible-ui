@@ -362,7 +362,7 @@ export function EditPlatformUser() {
   );
 }
 
-function PlatformUserInputs(props: { isCreate?: boolean }) {
+function PlatformUserInputs(props: Readonly<{ isCreate?: boolean }>) {
   const { t } = useTranslation();
 
   const USER_TYPE_OPTIONS = [

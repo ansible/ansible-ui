@@ -43,7 +43,7 @@ interface SubscriptionWizardData {
   agree: boolean;
 }
 
-export function SubscriptionWizard(props: { onSuccess: () => void }) {
+export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
   const { t } = useTranslation();
   const { refreshAwxConfig } = useAwxConfigState();
 
