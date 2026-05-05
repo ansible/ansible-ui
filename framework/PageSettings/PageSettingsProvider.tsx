@@ -37,6 +37,8 @@ export function createSWRErrorRetryHandler() {
   };
 }
 
+const swrErrorRetryHandler = createSWRErrorRetryHandler();
+
 export interface IPageSettings {
   refreshInterval?: number;
   theme?: 'system' | 'light' | 'dark';
@@ -114,7 +116,7 @@ export function PageSettingsProvider(props: {
     <SWRConfig
       value={{
         refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
-        onErrorRetry: createSWRErrorRetryHandler(),
+        onErrorRetry: swrErrorRetryHandler,
       }}
     >
       <PageSettingsContext.Provider value={[settings, setSettings]}>
