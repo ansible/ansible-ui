@@ -47,7 +47,7 @@ No hardcoded project keys. The skill reads env vars (matching CI pipeline conven
 | `SONARCLOUD_TOKEN` | Only for private projects | — | API auth token |
 | `SONAR_DEFAULT_BRANCH` | No (default: `devel`) | `main` | Base branch for fix PRs |
 | `SONAR_VALIDATE_COMMANDS` | No (default: `npm run tsc && npm run vitest`) | `make lint && make test` | Validation commands that must pass before PR creation |
-| `SONAR_E2E_TRIGGER_COMMENT` | No (default: `/run-playwright`) | `/run-e2e` | Comment to post on PR to trigger e2e tests |
+| `SONAR_E2E_TRIGGER_COMMENT` | No (default: `/run-playwright`) | `/run-e2e` | Comment to post on PR to trigger e2e tests. Set to `none`, `skip`, `false`, or `""` to disable. |
 
 The skill validates `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` at runtime with a clear error if missing.
 

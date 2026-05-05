@@ -29,7 +29,7 @@ Same as `/sonarcloud-analyze`, plus optional:
 |----------|---------|---------|
 | `SONAR_DEFAULT_BRANCH` | `devel` | Base branch for fix PRs |
 | `SONAR_VALIDATE_COMMANDS` | `npm run tsc && npm run vitest` | Validation gate commands |
-| `SONAR_E2E_TRIGGER_COMMENT` | `/run-playwright` | Comment posted on PR to trigger e2e tests |
+| `SONAR_E2E_TRIGGER_COMMENT` | `/run-playwright` | Comment posted on PR to trigger e2e tests. Set to `none`, `skip`, `false`, or `""` to disable. |
 
 ### Permissions
 

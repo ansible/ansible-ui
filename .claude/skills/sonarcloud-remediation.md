@@ -20,7 +20,7 @@ Fetch SonarCloud issues, analyze and group them, suggest fixes, and create focus
 | `SONARCLOUD_TOKEN` | Only for private projects | API authentication token |
 | `SONAR_DEFAULT_BRANCH` | No (default: `devel`) | Base branch for fix PRs |
 | `SONAR_VALIDATE_COMMANDS` | No (default: `npm run tsc && npm run vitest`) | Validation commands that must pass before PR creation |
-| `SONAR_E2E_TRIGGER_COMMENT` | No (default: `/run-playwright`) | Comment to post on PR to trigger e2e tests |
+| `SONAR_E2E_TRIGGER_COMMENT` | No (default: `/run-playwright`) | Comment to post on PR to trigger e2e tests. Set to `none`, `skip`, `false`, or empty string `""` to disable. |
 
 ### Validate Environment
 
@@ -226,11 +226,12 @@ Display:
 | SONARCLOUD_TOKEN          | (set)                          | env     | API token for private projects                     |
 | SONAR_DEFAULT_BRANCH      | devel                          | default | Branch that fix PRs will target                    |
 | SONAR_VALIDATE_COMMANDS   | npm run tsc && npm run vitest  | default | Commands that must pass before a PR can be created |
-| SONAR_E2E_TRIGGER_COMMENT | /run-playwright                | default | Comment posted on PR to trigger e2e test pipeline  |
+| SONAR_E2E_TRIGGER_COMMENT | /run-playwright                | default | Comment posted on PR to trigger e2e test pipeline. Set to none/skip/false/"" to disable |
 ```
 
 - Show `(set)` or `(not set)` for `SONARCLOUD_TOKEN` — never display the actual value
 - Show `env` in the Source column if the variable is explicitly set, `default` if using the built-in default
+- If `SONAR_E2E_TRIGGER_COMMENT` is set to `none`, `skip`, `false`, or an empty string, show `(disabled)` in the Value column
 - **Highlight any variables using defaults** so they stand out
 
 Then ask: "Do these settings look correct? If any need updating, set the environment variables and re-run the command."
@@ -425,7 +426,7 @@ Adjust **Type of Change** and **Risk Analysis** based on the fix category:
 
 ### Step 8: Trigger E2E and Continue
 
-1. Post the e2e trigger comment on each newly created PR:
+1. Check `SONAR_E2E_TRIGGER_COMMENT`. If set to `none`, `skip`, `false`, or an empty string `""`, **skip posting** the e2e trigger comment entirely. Otherwise, post the comment on each newly created PR:
    ```bash
    E2E_COMMENT="${SONAR_E2E_TRIGGER_COMMENT:-/run-playwright}"
    gh pr comment <PR_NUMBER> --body "$E2E_COMMENT"
@@ -452,7 +453,7 @@ export SONAR_PROJECT_KEY=your-project-key
 export SONARCLOUD_TOKEN=your-token        # only for private projects
 export SONAR_DEFAULT_BRANCH=main                          # if not devel
 export SONAR_VALIDATE_COMMANDS="make lint && make test"    # your validation pipeline
-export SONAR_E2E_TRIGGER_COMMENT="/run-e2e"                # your e2e trigger comment
+export SONAR_E2E_TRIGGER_COMMENT="/run-e2e"                # your e2e trigger comment, or "none" to disable
 ```
 
 Then use `/sonarcloud-analyze` and `/sonarcloud-fix`.
