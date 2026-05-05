@@ -102,6 +102,7 @@ type DashboardCommonCardProps = {
 export type DashboardValueCardProps = DashboardCommonCardProps & {
   value: string | number;
   valueSuffix?: string;
+  formatAsCurrency?: boolean;
   linkText?: string;
   to?: string;
 };

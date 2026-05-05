@@ -3,14 +3,28 @@ import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { DashboardValueCardProps } from '../types';
 import { Link } from 'react-router-dom';
 import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
+import { currencyFormatter } from '../../utilities/currencyFormatter';
 
 export function DashboardValueCard(props: DashboardValueCardProps) {
-  const { id, title, help, value, linkText, to, valueSuffix, error, errorStateTitle } = props;
+  const {
+    id,
+    title,
+    help,
+    value,
+    linkText,
+    to,
+    valueSuffix,
+    error,
+    errorStateTitle,
+    formatAsCurrency,
+  } = props;
+
+  const usFormat = 'en-US';
 
   const contentValue =
     typeof value === 'number' ? (
-      <span style={{ fontSize: 'xxx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
-        {value.toLocaleString()}
+      <span style={{ fontSize: 'xx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
+        {formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(usFormat)}
         {valueSuffix ? ` ${valueSuffix}` : ''}
       </span>
     ) : (

@@ -104,7 +104,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
     >
       <FlexItem>
         <DashboardTableInputField
-          label={t('Hourly rate for manually running the job')}
+          label={t('Hourly rate for manually running the job ({{currency}})', { currency: '$' })}
           labelHelp={t(
             'The hourly labor cost used to estimate what it would cost to run these jobs manually. Used to calculate manual cost and savings in the table below.'
           )}
@@ -121,7 +121,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
       </FlexItem>
       <FlexItem>
         <DashboardTableInputField
-          label={t('Monthly AAP cost')}
+          label={t('Monthly AAP cost ({{currency}})', { currency: '$' })}
           labelHelp={t(
             'Monthly cost of running the Ansible Automation Platform. This value includes license, labor and infrastructure costs to run AAP. It is used to calculate the automation savings'
           )}
