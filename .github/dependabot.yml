@@ -16,3 +16,6 @@
           update-types:
             - "minor"
             - "patch"
+          exclude-patterns:
+            - "prettier"
+            - "typescript"
