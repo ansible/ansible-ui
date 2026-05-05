@@ -19,9 +19,7 @@ export function useCopyTemplate(onComplete: () => void) {
     };
     if (template.type === 'job_template') {
       postRequest(awxAPI`/job_templates/${template.id.toString()}/copy/`, {
-        name: `${template.name} @ ${new Date()
-          .toTimeString()
-          .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,
+        name: `${template.name} @ ${new Date().toTimeString().substring(0, 8)}`,
       })
         .then(() => {
           alertToaster.addAlert(alert);
@@ -36,9 +34,7 @@ export function useCopyTemplate(onComplete: () => void) {
         .finally(onComplete);
     } else if (template.type === 'workflow_job_template') {
       postRequest(awxAPI`/workflow_job_templates/${template.id.toString()}/copy/`, {
-        name: `${template.name} @ ${new Date()
-          .toTimeString()
-          .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,
+        name: `${template.name} @ ${new Date().toTimeString().substring(0, 8)}`,
       })
         .then(() => {
           alertToaster.addAlert(alert);
