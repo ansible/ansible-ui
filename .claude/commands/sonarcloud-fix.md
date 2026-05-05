@@ -18,7 +18,7 @@ Remediates SonarCloud issues for a selected group with a 2-step approval process
 
 | Argument | Description | Example |
 |----------|-------------|---------|
-| `group` | Group number or name from `/sonarcloud-analyze` output. If omitted, you will be prompted to select interactively. | `3` or `S1854-AWX` |
+| `group` | Group number or name from `/sonarcloud-analyze` output. If omitted, you will be prompted to select interactively. | `3` or `S1854-frontend-awx` |
 | `--help` | Show this usage information | |
 
 ### Required Environment Variables
@@ -52,7 +52,7 @@ Add to `.claude/settings.json` to avoid permission prompts:
 6. **Approval 2 — Create PR(s):**
    - Present a summary: number of PRs to be created, LOC per PR, target branch
    - Wait for explicit approval before creating any PR
-   - Create PR(s) with title prefixed `SonarCloud Fix:` (e.g., `SonarCloud Fix: Remove dead stores (S1854, AWX)`)
+   - Create PR(s) with title prefixed `SonarCloud Fix:` (e.g., `SonarCloud Fix: Remove dead stores (S1854, frontend/awx)`)
    - PR body follows `.github/pull_request_template.md`
    - Post e2e trigger comment on each PR
 7. Offer to continue with the next group

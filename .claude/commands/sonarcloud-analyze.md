@@ -17,7 +17,7 @@ Fetches all open issues from SonarCloud, groups them by category and workspace, 
 | Flag | Description | Example |
 |------|-------------|---------|
 | `--severity <level>` | Only show issues at or above this severity (BLOCKER, CRITICAL, MAJOR, MINOR, INFO) | `--severity MAJOR` |
-| `--workspace <name>` | Only show issues in the specified workspace (AWX, EDA, Hub, Framework, Platform, Common, Chatbot, Tests) | `--workspace AWX` |
+| `--module <name>` | Only show issues in the specified module (auto-detected from repo structure — see skill docs) | `--module frontend/awx` |
 | `--help` | Show this usage information | |
 
 ### Required Environment Variables
@@ -43,7 +43,7 @@ A prioritized summary table per SonarCloud category:
 - **Security Hotspots** — hotspots pending review
 - **Duplication** — duplicated blocks and files
 
-Each table groups issues by SonarCloud rule and workspace, sorted by remediation priority, with issue count, severity, and estimated LOC impact.
+Each table groups issues by SonarCloud rule and module (auto-detected from workspace definitions or top-level directories), sorted by remediation priority, with issue count, severity, and estimated LOC impact.
 
 ### Permissions
 
@@ -57,5 +57,5 @@ Add to `.claude/settings.json` to avoid permission prompts:
 1. Validate environment variables (`SONAR_ORGANIZATION`, `SONAR_PROJECT_KEY`)
 2. Fetch all open issues, hotspots, and duplication metrics from SonarCloud API
 3. Categorize by the 5 SonarCloud categories
-4. Group by rule + workspace, sort by remediation priority
+4. Detect modules (from workspace definitions or top-level directories), group by rule + module, sort by remediation priority
 5. Present a prioritized summary table per category

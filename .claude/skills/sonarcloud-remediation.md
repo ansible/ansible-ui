@@ -94,27 +94,43 @@ Group all fetched issues into the 5 SonarCloud categories:
 | **Security Hotspots** | `/api/hotspots/search` | `status=TO_REVIEW` |
 | **Duplication** | `/api/measures/component` | `duplicated_blocks` metric; also code smell rules related to duplication (e.g., `typescript:S1192`) |
 
-### Step 3: Group by Rule + Workspace
+### Step 3: Group by Rule + Module
 
-Within each category, group issues by **SonarCloud rule key** and **workspace**.
+Within each category, group issues by **SonarCloud rule key** and **module** (workspace, package, or top-level directory depending on the repo structure).
 
-Detect workspace from the file path `component` field:
+#### Detecting Modules
 
-| Path prefix | Workspace |
-|-------------|-----------|
-| `frontend/awx/` | AWX |
-| `frontend/eda/` | EDA |
-| `frontend/hub/` | Hub |
-| `frontend/common/` | Common |
-| `frontend/chatbot/` | Chatbot |
-| `framework/` | Framework |
-| `platform/` | Platform |
-| `cypress/` or `playwright/` | Tests |
-| Other | Root |
+Determine the repo's module structure **once at the start of analysis**, then apply it consistently to all issues.
 
-For non-monorepo projects, group by top-level directory instead.
+**Step 3a: Check for monorepo workspace definitions**
 
-Each group is identified as: `<rule key> — <workspace>` (e.g., `typescript:S1854 — AWX`).
+Look for workspace/package definitions in this order:
+
+1. **`package.json` `workspaces`** — NPM/Yarn workspaces (array of glob patterns like `["frontend/*", "framework"]`)
+2. **`pnpm-workspace.yaml`** — pnpm workspaces (`packages:` list)
+3. **`nx.json`** or `workspace.json` — Nx monorepo
+4. **`lerna.json`** — Lerna monorepo (`packages` list)
+
+If any of these exist, resolve the workspace patterns to actual directories. Map each issue's `component` file path to the workspace whose path prefix matches. Use the workspace directory name (or a human-friendly label derived from it) as the module name.
+
+Example: if `package.json` has `"workspaces": ["frontend/*", "framework"]`, then:
+- `frontend/awx/src/Foo.tsx` → module `frontend/awx`
+- `framework/PageTable.tsx` → module `framework`
+- `scripts/build.js` → module `root`
+
+**Step 3b: No workspace definitions found (non-monorepo)**
+
+Group issues by their **top-level directory** from the `component` field (the first path segment after the project key). Files in the repo root go into a `root` group.
+
+Example:
+- `src/api/handler.ts` → module `src`
+- `lib/utils.ts` → module `lib`
+- `tests/unit/foo.test.ts` → module `tests`
+- `README.md` → module `root`
+
+#### Group Identifier
+
+Each group is identified as: `<rule key> — <module>` (e.g., `typescript:S1854 — frontend/awx`, `python:S1481 — src`).
 
 ### Step 4: Sort by Remediation Priority
 
@@ -153,34 +169,34 @@ Display one table per category. Include total issue count in the heading.
 ```
 ## Maintainability (847 issues)
 
-| # | Group                              | Workspace | Count | Severity | Est. LOC | Note      |
-|---|------------------------------------|-----------|-------|----------|----------|-----------|
-| 1 | Unused imports (typescript:S1128)   | AWX       |   45  | Minor    |   ~45    |           |
-| 2 | Dead stores (typescript:S1854)      | AWX       |   23  | Major    |   ~35    |           |
-| 3 | Duplicate strings (typescript:S1192)| Framework |   12  | Minor    |   ~36    |           |
-| 4 | Cognitive complexity (typescript:S3776) | Hub   |   8   | Critical |  ~120    | Will split |
+| # | Group                              | Module          | Count | Severity | Est. LOC | Note      |
+|---|------------------------------------|-----------------|-------|----------|----------|-----------|
+| 1 | Unused imports (typescript:S1128)   | frontend/awx    |   45  | Minor    |   ~45    |           |
+| 2 | Dead stores (typescript:S1854)      | frontend/awx    |   23  | Major    |   ~35    |           |
+| 3 | Duplicate strings (typescript:S1192)| framework       |   12  | Minor    |   ~36    |           |
+| 4 | Cognitive complexity (typescript:S3776) | frontend/hub|   8   | Critical |  ~120    | Will split |
 ...
 
 ## Reliability (42 issues)
 
-| # | Group                              | Workspace | Count | Severity | Est. LOC | Note      |
-|---|------------------------------------|-----------|-------|----------|----------|-----------|
-| 5 | Constant nullishness (typescript:S6638) | AWX   |   2   | Major    |    ~4    |           |
+| # | Group                              | Module          | Count | Severity | Est. LOC | Note      |
+|---|------------------------------------|-----------------|-------|----------|----------|-----------|
+| 5 | Constant nullishness (typescript:S6638) | frontend/awx|   2   | Major    |    ~4    |           |
 ...
 
 ## Security (5 issues)
 
-| # | Group                              | Workspace | Count | Severity | Est. LOC | Note      |
-|---|------------------------------------|-----------|-------|----------|----------|-----------|
-| 8 | SQL injection (typescript:S2077)    | Hub       |   1   | Blocker  |    ~5    |           |
+| # | Group                              | Module          | Count | Severity | Est. LOC | Note      |
+|---|------------------------------------|-----------------|-------|----------|----------|-----------|
+| 8 | SQL injection (typescript:S2077)    | frontend/hub   |   1   | Blocker  |    ~5    |           |
 ...
 
 ## Security Hotspots (18 issues)
 
-| # | Group                              | Workspace | Count | Severity | Est. LOC | Note      |
-|---|------------------------------------|-----------|-------|----------|----------|-----------|
-|11 | Weak cryptography (weak-cryptography) | AWX     |   3   | Medium   |    ~6    |           |
-|12 | Data encryption (encrypt-data)     | AWX       |   1   | Low      |    ~2    |           |
+| # | Group                              | Module          | Count | Severity | Est. LOC | Note      |
+|---|------------------------------------|-----------------|-------|----------|----------|-----------|
+|11 | Weak cryptography (weak-cryptography) | frontend/awx |   3   | Medium   |    ~6    |           |
+|12 | Data encryption (encrypt-data)     | frontend/awx    |   1   | Low      |    ~2    |           |
 ...
 
 ## Duplication
@@ -202,7 +218,7 @@ Good starting groups for `/sonarcloud-fix`:
 If the user provides flags, apply them before grouping:
 
 - `--severity <BLOCKER|CRITICAL|MAJOR|MINOR|INFO>` — only show issues at or above this severity
-- `--workspace <name>` — only show issues in the specified workspace
+- `--module <name>` — only show issues in the specified module
 
 ---
 
@@ -265,7 +281,7 @@ For each issue in the selected group(s):
 Display:
 
 ```
-## Group: Unused imports (typescript:S1128) — AWX (45 issues)
+## Group: Unused imports (typescript:S1128) — frontend/awx (45 issues)
 
 **Severity:** Minor  |  **Risk:** Low  |  **Est. LOC changed:** ~45
 
@@ -328,14 +344,14 @@ If validation fails:
 **Branch** off the configured default branch:
 ```bash
 DEFAULT_BRANCH="${SONAR_DEFAULT_BRANCH:-devel}"
-git checkout -b "sonar/<rule-key>-<workspace>" "origin/${DEFAULT_BRANCH}"
+git checkout -b "sonar/<rule-key>-<module-slug>" "origin/${DEFAULT_BRANCH}"
 ```
 
-Branch naming: `sonar/<rule-key>-<workspace>` (e.g., `sonar/S1854-awx`, `sonar/S1128-framework`)
+Branch naming: `sonar/<rule-key>-<module-slug>` where `<module-slug>` is the module name with `/` replaced by `-` (e.g., `sonar/S1854-frontend-awx`, `sonar/S1128-framework`, `sonar/S1481-src`)
 
 **Commit** with a descriptive message:
 ```
-fix: remove dead stores in AWX components (SonarCloud S1854)
+fix: remove dead stores in frontend/awx (SonarCloud S1854)
 
 Addresses 23 typescript:S1854 violations in frontend/awx/.
 SonarCloud issue keys: AZxx1, AZxx2, ...
@@ -344,7 +360,7 @@ SonarCloud issue keys: AZxx1, AZxx2, ...
 **CRITICAL: Pause here.** Inform the engineer:
 
 ```
-Branch `sonar/S1854-awx` is ready with N commits.
+Branch `sonar/S1854-frontend-awx` is ready with N commits.
 
 You can now:
   - Review the diff: git diff origin/devel...HEAD
@@ -380,25 +396,25 @@ Proceed with PR creation?
 All PR titles **must** start with the prefix `SonarCloud Fix:` followed by a short description of the issue area being addressed. Use this pattern:
 
 ```
-SonarCloud Fix: <brief description of fix> (<rule key>, <workspace>)
+SonarCloud Fix: <brief description of fix> (<rule key>, <module>)
 ```
 
 Examples:
-- `SonarCloud Fix: Remove unused imports (S1128, AWX)`
-- `SonarCloud Fix: Remove dead stores (S1854, Framework)`
-- `SonarCloud Fix: Extract duplicate string literals (S1192, Hub)`
-- `SonarCloud Fix: Reduce cognitive complexity (S3776, EDA)`
-- `SonarCloud Fix: Remove commented-out code (S125, Platform)`
+- `SonarCloud Fix: Remove unused imports (S1128, frontend/awx)`
+- `SonarCloud Fix: Remove dead stores (S1854, framework)`
+- `SonarCloud Fix: Extract duplicate string literals (S1192, frontend/hub)`
+- `SonarCloud Fix: Reduce cognitive complexity (S3776, frontend/eda)`
+- `SonarCloud Fix: Remove commented-out code (S125, src)`
 
 For batched PRs, append the batch number:
-- `SonarCloud Fix: Remove dead stores (S1854, AWX) [batch 1/2]`
+- `SonarCloud Fix: Remove dead stores (S1854, frontend/awx) [batch 1/2]`
 
 Follow `.github/pull_request_template.md` for the PR body:
 
 ```markdown
 ## Summary
 
-Remove N unused imports across M files in the <workspace> workspace.
+Remove N unused imports across M files in the <module> module.
 Addresses SonarCloud rule `typescript:S1128` (<count> violations).
 
 SonarCloud dashboard: https://sonarcloud.io/project/issues?id=<PROJECT_KEY>&rules=<rule>
@@ -441,7 +457,7 @@ This skill is designed for adoption by other teams and repos:
 
 1. **No hardcoded values** — all project-specific config via environment variables
 2. **Configurable base branch** — `SONAR_DEFAULT_BRANCH` defaults to `devel` but can be set to `main` or any branch
-3. **Workspace detection is path-based** — for non-monorepo projects, issues group by top-level directory instead
+3. **Automatic module detection** — detects monorepo workspaces from `package.json`, `pnpm-workspace.yaml`, `nx.json`, or `lerna.json`. For non-monorepo projects, groups issues by top-level directory. No repo-specific configuration required.
 4. **Validation commands** — set `SONAR_VALIDATE_COMMANDS` to your project's validation pipeline (e.g., `make lint && make test`)
 5. **PR template** — adjust to match the target repo's `.github/pull_request_template.md`
 

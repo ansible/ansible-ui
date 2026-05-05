@@ -67,7 +67,7 @@ Both commands support a `--help` flag that displays usage information and exits 
    - Maintainability (code smells)
    - Security Hotspots (hotspots with status `TO_REVIEW`)
    - Duplication (duplicated blocks — fetched via `/api/measures/component` or identified from code smell rules)
-4. **Within each category, group by SonarCloud rule + aap-ui workspace** (awx, eda, hub, framework, platform, common, chatbot) — e.g., "Dead store (typescript:S1854) — AWX (12 issues)"
+4. **Within each category, group by SonarCloud rule + module** — modules are auto-detected from monorepo workspace definitions (`package.json` workspaces, `pnpm-workspace.yaml`, `nx.json`, `lerna.json`), or by top-level directory for non-monorepo projects — e.g., "Dead store (typescript:S1854) — frontend/awx (12 issues)"
 5. **Sort groups by remediation priority** (within each category):
    1. Unused imports and variables
    2. Dead code / dead stores
@@ -82,15 +82,15 @@ Both commands support a `--help` flag that displays usage information and exits 
    ```
    ## Maintainability (847 issues)
 
-   | # | Group                              | Workspace | Count | Severity | Est. LOC |
-   |---|------------------------------------|-----------|-------|----------|----------|
-   | 1 | Unused imports (typescript:S1128)   | AWX       |   45  | Minor    |   ~90    |
-   | 2 | Dead stores (typescript:S1854)      | AWX       |   23  | Major    |   ~46    |
-   | 3 | Duplicate strings (typescript:S1192)| Framework |   12  | Minor    |   ~60    |
+   | # | Group                              | Module          | Count | Severity | Est. LOC |
+   |---|------------------------------------|-----------------|-------|----------|----------|
+   | 1 | Unused imports (typescript:S1128)   | frontend/awx    |   45  | Minor    |   ~90    |
+   | 2 | Dead stores (typescript:S1854)      | frontend/awx    |   23  | Major    |   ~46    |
+   | 3 | Duplicate strings (typescript:S1192)| framework       |   12  | Minor    |   ~60    |
    ...
    ```
 7. **Flag groups exceeding 200 LOC** with a note that they will auto-split into multiple PRs
-8. **Support optional flags**: `--severity <level>` to filter by severity, `--workspace <name>` to filter by workspace
+8. **Support optional flags**: `--severity <level>` to filter by severity, `--module <name>` to filter by module
 
 ### Phase B — Fix (`/sonarcloud-fix`)
 
@@ -100,7 +100,7 @@ The fix workflow uses a **2-step approval process** to give engineers full contr
 1. **Engineer selects one or more groups** from the analyze output (by number or name)
 2. **Read all affected files** for the selected group(s); analyze each issue in its code context
 3. **Present fixes as a group for human approval** — not individually. Display:
-   - Group summary: rule, workspace, count, severity
+   - Group summary: rule, module, count, severity
    - Table of all fixes: file, line, issue description, proposed change (before/after snippet)
    - Estimated total LOC changed
    - Risk assessment for the group (Low / Medium / High)
@@ -112,19 +112,19 @@ The fix workflow uses a **2-step approval process** to give engineers full contr
    - Run `SONAR_VALIDATE_COMMANDS` (default: `npm run tsc && npm run vitest`)
    - If validation fails, diagnose, fix, and re-validate before proceeding
 7. **Create branch** off the configured default branch (`SONAR_DEFAULT_BRANCH` or `devel`):
-   - Branch name: `sonar/<rule-key>-<workspace>` (e.g., `sonar/S1854-awx`)
+   - Branch name: `sonar/<rule-key>-<module-slug>` (e.g., `sonar/S1854-frontend-awx`)
 8. **Commit** with descriptive message referencing SonarCloud issue keys:
    ```
-   fix: remove dead stores in AWX components (SonarCloud S1854)
+   fix: remove dead stores in frontend/awx (SonarCloud S1854)
 
    Addresses 23 typescript:S1854 violations in frontend/awx/.
    SonarCloud keys: AZxx1, AZxx2, ...
    ```
 9. **Approval 1 — Apply & Test**: Pause and inform the engineer the branch is ready for local testing. They can review the diff, run additional tests, or commit manual adjustments. **Wait for explicit go-ahead before proceeding to PR creation.**
 10. **Approval 2 — Create PR(s)**: Present a summary of how many PRs will be created, LOC per PR, and target branch. Wait for explicit approval, then create PR(s):
-    - **PR title** must use the format: `SonarCloud Fix: <description> (<rule key>, <workspace>)` (e.g., `SonarCloud Fix: Remove dead stores (S1854, AWX)`). For batched PRs, append `[batch 1/N]`.
+    - **PR title** must use the format: `SonarCloud Fix: <description> (<rule key>, <module>)` (e.g., `SonarCloud Fix: Remove dead stores (S1854, frontend/awx)`). For batched PRs, append `[batch 1/N]`.
     - **PR body** follows `.github/pull_request_template.md`:
-      - **Summary**: Which SonarCloud rule was fixed, which workspace, issue count, link to SonarCloud dashboard
+      - **Summary**: Which SonarCloud rule was fixed, which module, issue count, link to SonarCloud dashboard
       - **Type of Change**: Bug fix or Enhancement (depending on category)
       - **Risk Analysis (required)**: Low for dead code/unused imports; Medium for code smell refactors touching shared paths; High for security/reliability fixes in shared components
       - **Testing**: Validation pass confirmed pre-PR. E2E trigger comment posted after PR creation.
@@ -138,7 +138,7 @@ The fix workflow uses a **2-step approval process** to give engineers full contr
 ### In scope (this story):
 - **Skill creation**: `/sonarcloud-analyze` and `/sonarcloud-fix` skills + command wrappers
 - **Documentation**: Setup instructions, env var configuration, troubleshooting, portability guide
-- **Validation testing**: Run the skills against 1-2 small groups (e.g., unused imports in one workspace) to verify end-to-end functionality — analyze, group-level approval, fix application, validation gates, branch/PR creation
+- **Validation testing**: Run the skills against 1-2 small groups (e.g., unused imports in one module) to verify end-to-end functionality — analyze, group-level approval, fix application, validation gates, branch/PR creation
 
 ### Follow-on stories:
 - **Remediation campaigns** — systematic use of the skills to fix outstanding SonarCloud issues, starting with low-risk categories (unused imports, dead stores, duplicate strings, unused params, commented-out code, type safety)
@@ -165,7 +165,7 @@ The skill is designed for adoption beyond aap-ui:
 
 1. **No hardcoded project keys** — everything via env vars
 2. **Configurable default branch** — `SONAR_DEFAULT_BRANCH` (defaults to `devel`)
-3. **Workspace grouping is optional** — if the target repo isn't a monorepo, issues group by directory instead
+3. **Automatic module detection** — detects monorepo workspaces from `package.json`, `pnpm-workspace.yaml`, `nx.json`, or `lerna.json`; falls back to top-level directory grouping for non-monorepo projects
 4. **Validation commands are configurable** — set `SONAR_VALIDATE_COMMANDS` to your project's pipeline; set `SONAR_E2E_TRIGGER_COMMENT` for your e2e trigger
 5. **Skill header includes setup instructions** — env var configuration, prerequisites, troubleshooting
 
@@ -177,7 +177,7 @@ The skill is designed for adoption beyond aap-ui:
 |----|-------------|
 | AC1 (Skill Installation) | `.claude/skills/sonarcloud-remediation.md` + commands in `.claude/commands/` |
 | AC2 (Authentication) | Skill validates env vars at runtime; `SONARCLOUD_TOKEN` for private projects; no secrets committed |
-| AC3 (Issue Analysis) | `/sonarcloud-analyze` with 5-category grouping, rule+workspace sub-groups, priority sorting, severity/workspace flags |
+| AC3 (Issue Analysis) | `/sonarcloud-analyze` with 5-category grouping, rule+module sub-groups (auto-detected), priority sorting, severity/module flags |
 | AC4 (Configuration) | Environment variables matching CI pipeline; configurable default branch |
 | AC5 (Documentation) | Skill header docs + command docs + setup/troubleshooting in skill preamble |
 | AC6 (Validation) | Tested against project SonarCloud data during implementation |
@@ -206,7 +206,7 @@ The skill is designed for adoption beyond aap-ui:
 1. Set env vars: `SONAR_ORGANIZATION=<your-org>`, `SONAR_PROJECT_KEY=<your-project-key>`
 2. Run `/sonarcloud-analyze --help` and `/sonarcloud-fix --help` — verify usage information is displayed
 3. Run `/sonarcloud-analyze` — verify it fetches issues, groups by 5 categories, sorts by priority, shows summary table with continuous group numbering
-4. Run `/sonarcloud-fix` — select a small group (e.g., unused imports in one workspace), verify group-level approval flow, LOC cap, branch creation, validation gates
+4. Run `/sonarcloud-fix` — select a small group (e.g., unused imports in one module), verify group-level approval flow, LOC cap, branch creation, validation gates
 5. Confirm validation commands pass before PR
 6. Verify Approval 1 pauses for engineer review before PR creation
 7. Verify Approval 2 presents PR summary and waits for explicit go-ahead
