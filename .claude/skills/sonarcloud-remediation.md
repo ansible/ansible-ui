@@ -134,14 +134,14 @@ Each group is identified as: `<rule key> — <module>` (e.g., `typescript:S1854 
 
 ### Step 4: Sort by Remediation Priority
 
-Within each category, sort groups by this priority order:
+Within each category, sort groups by this priority order. Match by rule ID suffix (the numeric part is language-agnostic in SonarCloud — e.g., `S1128` appears as `typescript:S1128`, `python:S1128`, `java:S1128`, etc.):
 
-1. Unused imports and variables (`S1128`, `S1481`)
-2. Dead code / dead stores (`S1854`, `S1186`)
+1. Unused imports and variables (`S1128`, `S1481`, `S1144`)
+2. Dead code / dead stores (`S1854`, `S1186`, `S1068`)
 3. Duplicate string literals (`S1192`)
 4. Unused function parameters (`S1172`)
 5. Commented-out code (`S125`)
-6. Simple type safety improvements (`S4325`, `S4204`)
+6. Simple type safety improvements (`S4325`, `S4204`, `S1874`)
 7. Cognitive complexity (`S3776`)
 8. Security hotspot rules
 9. Reliability / bug rules
@@ -302,16 +302,18 @@ Ask the engineer to:
 - **Exclude specific files** — list file numbers to skip
 - **Reject** — skip this group entirely
 
-### TypeScript/React Fix Strategies
+### Fix Strategies by Rule Pattern
+
+These strategies apply across languages. Adapt to the project's language and conventions.
 
 | Rule Pattern | Fix Strategy | Caution |
 |---|---|---|
-| Unused imports | Remove the import line | Check for side-effect imports (e.g., CSS imports, polyfills) — do not remove those |
-| Dead stores | Remove the unused assignment | Check for intentional destructuring patterns |
-| Duplicate strings | Extract to a named `const` at the top of the file | Use descriptive names; check if a shared constant already exists in the workspace |
-| Unused function parameters | Remove if internal function; prefix with `_` if required by an interface or callback signature | Verify the function isn't part of a public API |
+| Unused imports | Remove the import/include/require line | Check for side-effect imports (e.g., CSS imports, polyfills, module-level init) — do not remove those |
+| Dead stores | Remove the unused assignment | Check for intentional destructuring or unpacking patterns |
+| Duplicate strings | Extract to a named constant at the top of the file or a shared constants module | Use descriptive names; check if a shared constant already exists in the project |
+| Unused function parameters | Remove if internal function; prefix with `_` if required by an interface, override, or callback signature | Verify the function isn't part of a public API or framework contract |
 | Commented-out code | Delete entirely | Git history preserves it; no need to keep |
-| Type safety (`any`) | Replace with proper TypeScript types | Use existing interfaces from the workspace; check framework types first |
+| Type safety (e.g., `any` in TypeScript, raw types in Java) | Replace with proper types using existing project type definitions | Check for existing types/interfaces in the project before creating new ones |
 | Cognitive complexity | Extract nested logic into helper functions | Ensure extracted functions are testable and well-named |
 
 ### Step 5: Apply Fixes and Validate
@@ -381,8 +383,8 @@ Ready to create PR(s):
 
 | # | Branch                  | Files | LOC changed | Target     |
 |---|-------------------------|-------|-------------|------------|
-| 1 | sonar/S1854-awx         |   12  |    ~46      | devel      |
-| 2 | sonar/S1854-awx-batch2  |    8  |    ~38      | devel      |
+| 1 | sonar/S1854-frontend-awx        |   12  |    ~46      | devel      |
+| 2 | sonar/S1854-frontend-awx-batch2 |    8  |    ~38      | devel      |
 
 Total: 2 PR(s) targeting `devel`.
 
@@ -409,13 +411,13 @@ Examples:
 For batched PRs, append the batch number:
 - `SonarCloud Fix: Remove dead stores (S1854, frontend/awx) [batch 1/2]`
 
-Follow `.github/pull_request_template.md` for the PR body:
+If the repo has a `.github/pull_request_template.md`, follow its structure for the PR body. Otherwise, use this default format:
 
 ```markdown
 ## Summary
 
 Remove N unused imports across M files in the <module> module.
-Addresses SonarCloud rule `typescript:S1128` (<count> violations).
+Addresses SonarCloud rule `<language>:S1128` (<count> violations).
 
 SonarCloud dashboard: https://sonarcloud.io/project/issues?id=<PROJECT_KEY>&rules=<rule>
 
@@ -423,15 +425,13 @@ SonarCloud dashboard: https://sonarcloud.io/project/issues?id=<PROJECT_KEY>&rule
 
 - [x] Enhancement
 
-## Risk Analysis - REQUIRED
+## Risk Analysis
 
 - [x] **Low** — Narrowly scoped (removing unused imports has no runtime effect).
 
 ## Testing
 
-### Ephemeral E2E Tests
-
-Once PR is ready and preliminary checks pass, trigger tests by posting a comment `${SONAR_E2E_TRIGGER_COMMENT:-/run-playwright}` on this PR.
+Validation passed: `<SONAR_VALIDATE_COMMANDS>`.
 ```
 
 Adjust **Type of Change** and **Risk Analysis** based on the fix category:
@@ -483,6 +483,6 @@ Then use `/sonarcloud-analyze` and `/sonarcloud-fix`.
 | "ERROR: SONAR_ORGANIZATION and SONAR_PROJECT_KEY must be set" | Missing env vars | Export `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` |
 | Empty results from API | Wrong project key or org | Verify at `https://sonarcloud.io/project/overview?id=<PROJECT_KEY>` |
 | 401 from API | Private project without token | Export `SONARCLOUD_TOKEN` |
-| `npm run tsc` fails after fix | Fix introduced a type error | Review the error, adjust the fix, re-run |
-| `npm run vitest` fails after fix | Fix broke a test | Check if the test relied on removed code; update the test |
+| Validation command fails after fix | Fix introduced a build/lint/type error | Review the error, adjust the fix, re-run `SONAR_VALIDATE_COMMANDS` |
+| Tests fail after fix | Fix broke a test | Check if the test relied on removed code; update the test and re-run validation |
 | Pagination missed issues | More than 500 issues per query | The skill paginates automatically; if issues are still missing, try filtering by severity or type |

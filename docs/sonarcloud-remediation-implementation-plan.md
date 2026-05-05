@@ -146,16 +146,18 @@ The fix workflow uses a **2-step approval process** to give engineers full contr
 
 ---
 
-## TypeScript/React Fix Strategies
+## Fix Strategies by Rule Pattern
+
+These strategies apply across languages. Adapt to the project's language and conventions.
 
 | Rule Pattern | Fix Strategy |
 |---|---|
 | Unused imports/variables | Remove dead references; verify no side-effect imports |
-| Dead stores | Remove unused assignments; check for intentional destructuring |
-| Duplicate strings | Extract to named `const` in same file or nearest shared module |
-| Unused function parameters | Remove if internal; prefix with `_` if interface-required |
+| Dead stores | Remove unused assignments; check for intentional destructuring or unpacking |
+| Duplicate strings | Extract to named constant in same file or nearest shared module |
+| Unused function parameters | Remove if internal; prefix with `_` if required by interface, override, or callback |
 | Commented-out code | Remove entirely (git history preserves it) |
-| Type safety (`any`) | Add proper TypeScript types; use existing interfaces from workspace |
+| Type safety (e.g., `any` in TS, raw types in Java) | Replace with proper types using existing project type definitions |
 
 ---
 
