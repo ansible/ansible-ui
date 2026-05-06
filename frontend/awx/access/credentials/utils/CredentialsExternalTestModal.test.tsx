@@ -684,4 +684,197 @@ describe('CredentialsExternalTestModal', () => {
       ).not.toBeInTheDocument();
     });
   });
+
+  describe('Credential configuration preservation', () => {
+    it('should send current form values when testing existing credential with unsaved changes', async () => {
+      const user = userEvent.setup();
+      let capturedPayload: {
+        inputs: Record<string, unknown>;
+        metadata: Record<string, string>;
+      } | null = null;
+
+      server.use(
+        http.post(awxAPI`/credentials/42/test/`, async ({ request }: { request: Request }) => {
+          capturedPayload = (await request.json()) as {
+            inputs: Record<string, unknown>;
+            metadata: Record<string, string>;
+          };
+          return HttpResponse.json({}, { status: 200 });
+        })
+      );
+
+      const credTypeWithSecretField = {
+        ...centrifyCredentialType,
+        inputs: {
+          fields: [
+            { id: 'url', type: 'string', label: 'URL', secret: false, help_text: '' },
+            { id: 'api_key', type: 'string', label: 'API Key', secret: true, help_text: '' },
+            {
+              id: 'verify',
+              type: 'boolean',
+              label: 'Verify SSL',
+              secret: false,
+              help_text: '',
+              default: true,
+            },
+          ],
+          metadata: [
+            { id: 'object-query', type: 'string', label: 'Query', secret: false, help_text: '' },
+          ],
+          required: ['url', 'object-query'],
+        },
+      };
+
+      const existingCred = {
+        id: 42,
+        type: 'credential',
+        name: 'Test',
+        description: '',
+        credential_type: 1,
+        inputs: { url: 'https://old.com', api_key: 'secret', verify: true }, // saved values
+        summary_fields: {
+          credential_type: { id: 1, name: 'CCP' },
+          user_capabilities: {},
+        },
+      } as unknown as CredentialsExternalTestModalProps['credential'];
+
+      // User changed url and verify in the form, but didn't save yet
+      // api_key shows as '$encrypted$' placeholder (not modified)
+      renderModal({
+        credential: existingCred,
+        credentialType: credTypeWithSecretField,
+        watchedSubFormFields: ['https://new.com', '$encrypted$', false],
+      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+
+      await user.type(screen.getByTestId('object-query'), 'test');
+      await user.click(screen.getByRole('button', { name: 'Run' }));
+
+      await waitFor(() => expect(capturedPayload).toBeDefined());
+
+      // Should send current form values (including unsaved changes)
+      expect(capturedPayload!.inputs.url).toBe('https://new.com'); // changed
+      expect(capturedPayload!.inputs.verify).toBe(false); // changed
+      expect(capturedPayload!.inputs.api_key).toBe('$encrypted$'); // unchanged secret
+      expect(capturedPayload!.metadata['object-query']).toBe('test');
+    });
+
+    it('should send current form values when testing new credential type', async () => {
+      const user = userEvent.setup();
+      let capturedPayload: {
+        inputs: Record<string, unknown>;
+        metadata: Record<string, string>;
+      } | null = null;
+
+      server.use(
+        http.post(
+          ({ request }: { request: Request }) =>
+            request.url.includes('/credential_types/') && request.url.includes('/test/'),
+          async ({ request }: { request: Request }) => {
+            capturedPayload = (await request.json()) as {
+              inputs: Record<string, unknown>;
+              metadata: Record<string, string>;
+            };
+            return HttpResponse.json({}, { status: 200 });
+          }
+        )
+      );
+
+      const credTypeWithVerify = {
+        ...centrifyCredentialType,
+        inputs: {
+          fields: [
+            { id: 'url', type: 'string', label: 'URL', secret: false, help_text: '' },
+            {
+              id: 'verify',
+              type: 'boolean',
+              label: 'Verify SSL',
+              secret: false,
+              help_text: '',
+              default: true,
+            },
+          ],
+          metadata: [
+            { id: 'object-query', type: 'string', label: 'Query', secret: false, help_text: '' },
+          ],
+          required: ['url', 'object-query'],
+        },
+      };
+
+      renderModal({
+        credentialType: credTypeWithVerify,
+        watchedSubFormFields: ['https://example.com', true],
+      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+
+      await user.type(screen.getByTestId('object-query'), 'test');
+      await user.click(screen.getByRole('button', { name: 'Run' }));
+
+      await waitFor(() => expect(capturedPayload).toBeDefined());
+
+      // Should send inputs with current form values
+      expect(capturedPayload!.inputs).toBeDefined();
+      expect(capturedPayload!.inputs.url).toBe('https://example.com');
+      expect(capturedPayload!.inputs.verify).toBe(true);
+      expect(capturedPayload!.metadata['object-query']).toBe('test');
+    });
+
+    it('should properly handle false values in watched fields when testing new credential', async () => {
+      const user = userEvent.setup();
+      let capturedPayload: {
+        inputs: Record<string, unknown>;
+        metadata: Record<string, string>;
+      } | null = null;
+
+      server.use(
+        http.post(
+          ({ request }: { request: Request }) =>
+            request.url.includes('/credential_types/') && request.url.includes('/test/'),
+          async ({ request }: { request: Request }) => {
+            capturedPayload = (await request.json()) as {
+              inputs: Record<string, unknown>;
+              metadata: Record<string, string>;
+            };
+            return HttpResponse.json({}, { status: 200 });
+          }
+        )
+      );
+
+      const credTypeWithVerify = {
+        ...centrifyCredentialType,
+        inputs: {
+          fields: [
+            { id: 'url', type: 'string', label: 'URL', secret: false, help_text: '' },
+            {
+              id: 'verify',
+              type: 'boolean',
+              label: 'Verify SSL',
+              secret: false,
+              help_text: '',
+              default: true,
+            },
+          ],
+          metadata: [
+            { id: 'object-query', type: 'string', label: 'Query', secret: false, help_text: '' },
+          ],
+          required: ['url', 'object-query'],
+        },
+      };
+
+      // User unchecked "Verify SSL" - watchedSubFormFields contains false
+      renderModal({
+        credentialType: credTypeWithVerify,
+        watchedSubFormFields: ['https://example.com', false],
+      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+
+      await user.type(screen.getByTestId('object-query'), 'test');
+      await user.click(screen.getByRole('button', { name: 'Run' }));
+
+      await waitFor(() => expect(capturedPayload).toBeDefined());
+
+      // Should send verify: false, not fall back to default value of true
+      expect(capturedPayload!.inputs).toBeDefined();
+      expect(capturedPayload!.inputs.url).toBe('https://example.com');
+      expect(capturedPayload!.inputs.verify).toBe(false);
+      expect(capturedPayload!.metadata['object-query']).toBe('test');
+    });
+  });
 });
