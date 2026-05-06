@@ -57,7 +57,6 @@ export function useRunHealthCheckToolbarAction(
 ) {
   const { t } = useTranslation();
   const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
-  const { activeAwxUser } = useAwxActiveUser();
 
   return useMemo<IPageAction<Instance>>(
     () => ({
@@ -73,14 +72,14 @@ export function useRunHealthCheckToolbarAction(
         instances.some(
           (instance) =>
             cannotRunHealthCheckDueToNodeType(instance, t) ||
-            cannotRunHealthCheckDueToPermissions(activeAwxUser, t) ||
+            cannotRunHealthCheckDueToPermissions(instance, t) ||
             cannotRunHealthCheckDueToManagedInstance(instance, t) ||
             cannotRunHealthCheckDueToPending(instance, t)
         )
           ? 'Cannot run health checks on one or more of the selected instances'
           : '',
     }),
-    [t, runHealthCheck, isPinned, isHidden, activeAwxUser]
+    [t, runHealthCheck, isPinned, isHidden]
   );
 }
 

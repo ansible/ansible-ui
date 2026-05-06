@@ -77,7 +77,6 @@ export function useRunHealthCheckRowAction(
   const { t } = useTranslation();
 
   const alertToaster = usePageAlertToaster();
-  const { activeAwxUser } = useAwxActiveUser();
 
   return useMemo<IPageAction<Instance>>(
     () => ({
@@ -87,7 +86,7 @@ export function useRunHealthCheckRowAction(
       isPinned: true,
       isDisabled: (instance) =>
         cannotRunHealthCheckDueToNodeType(instance, t) ||
-        cannotRunHealthCheckDueToPermissions(activeAwxUser, t) ||
+        cannotRunHealthCheckDueToPermissions(instance, t) ||
         cannotRunHealthCheckDueToManagedInstance(instance, t) ||
         cannotRunHealthCheckDueToPending(instance, t),
       isHidden: () => isHidden,
@@ -113,7 +112,7 @@ export function useRunHealthCheckRowAction(
           });
       },
     }),
-    [t, onComplete, alertToaster, activeAwxUser, isHidden]
+    [t, onComplete, alertToaster, isHidden]
   );
 }
 

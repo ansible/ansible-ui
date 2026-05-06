@@ -111,10 +111,7 @@ export function useInstanceDetailsActions() {
     isPinned: false,
   });
   const removeInstanceAction = useRemoveInstanceItemAction(isHidden);
-  const runHealthCheckAction = useRunHealthCheckRowAction(
-    refresh,
-    instance?.node_type !== 'execution'
-  );
+  const runHealthCheckAction = useRunHealthCheckRowAction(refresh, false);
 
   return useMemo<IPageAction<Instance>[]>(
     () => [editInstanceAction, removeInstanceAction, runHealthCheckAction],
@@ -198,11 +195,11 @@ export function cannotRunHealthCheckDueToManagedInstance(
 }
 
 export function cannotRunHealthCheckDueToPermissions(
-  activeAwxUser: AwxUser | null | undefined,
+  instance: Instance,
   t: TFunction<'translation', undefined>
 ) {
-  if (!activeAwxUser?.is_superuser && !activeAwxUser?.is_system_auditor)
-    return t(`Health checks cannot be run on instance do not have correct permissions.`);
+  if (!instance.related?.health_check)
+    return t(`You do not have permission to run health checks on this instance.`);
   return '';
 }
 
