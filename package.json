@@ -148,7 +148,7 @@
     "typescript-plugin-styled-components": "3.0.0",
     "uuid": "11.0.5",
     "victory": "^37.3.6",
-    "vite": "6.0.11",
+    "vite": "6.4.2",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-monaco-editor": "^1.1.0",
     "vite-plugin-static-copy": "^2.2.0",
