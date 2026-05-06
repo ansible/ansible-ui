@@ -63,13 +63,10 @@ export function CredentialPlugins({
       credentialType?.namespace === 'hashivault-kv-oidc' ||
       credentialType?.namespace === 'hashivault-ssh-oidc';
 
-    if (!credentialType) {
-      return null;
-    }
     return credentialType?.inputs?.metadata ? (
       <PageFormSection title={t('Metadata')}>
         {credentialType?.inputs?.metadata.map((input) => {
-          if ('choices' in input) {
+          if ('choices' in input && input.choices) {
             return (
               <PageFormSingleSelect
                 defaultValue={input?.default}

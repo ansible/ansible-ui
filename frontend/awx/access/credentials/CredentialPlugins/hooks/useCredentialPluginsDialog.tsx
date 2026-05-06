@@ -65,11 +65,8 @@ function CredentialPluginsModal(
       const { metadata, source_credential } = pluginValues;
       return {
         source_credential,
-        job_template_id: (metadata as Record<string, unknown>)?.job_template_id as
-          | number
-          | undefined,
         ...metadata,
-      };
+      } as CredentialPluginsForm;
     } else {
       return undefined;
     }
@@ -98,24 +95,16 @@ function CredentialPluginsModal(
   const modalTitle = testResponse && hasJwtPayload ? t('Payload of JWT') : t('Credential Plugins');
 
   const handleSubmit: PageFormSubmitHandler<CredentialPluginsForm> = (data) => {
-    return new Promise<void>((resolve, reject) => {
-      const { source_credential, ...rest } = data;
-      props.setCredentialPluginValues([
-        {
-          input_field_name: props.field.id,
-          metadata: {
-            ...rest,
-          },
-          source_credential: source_credential,
-        },
-      ]);
-      onClose();
-      try {
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
+    const { source_credential, job_template_id: _job_template_id, ...rest } = data;
+    props.setCredentialPluginValues([
+      {
+        input_field_name: props.field.id,
+        metadata: { ...rest },
+        source_credential,
+      },
+    ]);
+    onClose();
+    return Promise.resolve();
   };
 
   const handleTest = async (data: CredentialPluginsForm) => {

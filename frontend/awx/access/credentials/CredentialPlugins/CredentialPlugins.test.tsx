@@ -8,7 +8,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialPlugins, CredentialPluginsForm } from './CredentialPlugins';
 
-function TestWrapper({ children }: { children: React.ReactNode }) {
+function TestWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter>{children}</MemoryRouter>

@@ -10,7 +10,7 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { CredentialTestResponse } from '../../../../interfaces/CredentialTestResponse';
 import { useCredentialPluginsModal } from './useCredentialPluginsDialog';
 
-function TestWrapper({ children }: { children: React.ReactNode }) {
+function TestWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter>{children}</MemoryRouter>
@@ -58,7 +58,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 const mockJwtTestResponse: CredentialTestResponse = {
-  status: 'successful',
+  status: 'success',
   details: {
     sent_jwt_payload: {
       iss: 'https://test.example.com',
@@ -91,7 +91,13 @@ function TestCredentialPluginsModal() {
 
   const handleOpenModal = () => {
     openModal({
-      field: { id: 'test-field' },
+      field: {
+        id: 'test-field',
+        label: 'Test Field',
+        secret: false,
+        type: 'string',
+        help_text: '',
+      },
       setCredentialPluginValues: vi.fn(),
       onClose: vi.fn(),
       accumulatedPluginValues: [
@@ -167,7 +173,7 @@ describe('OIDC Credential Type Detection', () => {
   });
 
   it('should handle undefined credential type', () => {
-    const credentialType = undefined;
+    const credentialType = undefined as { namespace: string } | undefined;
     const isOidcCredential =
       credentialType?.namespace === 'hashivault-kv-oidc' ||
       credentialType?.namespace === 'hashivault-ssh-oidc';
@@ -195,12 +201,10 @@ describe('Default Values Extraction', () => {
       (plugin) => plugin.input_field_name === field.id
     );
 
+    const metadata = pluginValues?.metadata as Record<string, unknown> | undefined;
     const defaultValues = pluginValues
       ? {
           source_credential: pluginValues.source_credential,
-          job_template_id: (pluginValues.metadata as Record<string, unknown>)?.job_template_id as
-            | number
-            | undefined,
           ...pluginValues.metadata,
         }
       : undefined;
@@ -211,6 +215,7 @@ describe('Default Values Extraction', () => {
       'account-name': 'test-account',
       custom_field: 'custom-value',
     });
+    expect(metadata?.job_template_id).toBe(5);
   });
 
   it('should handle missing job_template_id in metadata', () => {
@@ -229,17 +234,15 @@ describe('Default Values Extraction', () => {
       (plugin) => plugin.input_field_name === field.id
     );
 
+    const metadata = pluginValues?.metadata as Record<string, unknown> | undefined;
     const defaultValues = pluginValues
       ? {
           source_credential: pluginValues.source_credential,
-          job_template_id: (pluginValues.metadata as Record<string, unknown>)?.job_template_id as
-            | number
-            | undefined,
           ...pluginValues.metadata,
         }
       : undefined;
 
-    expect(defaultValues?.job_template_id).toBeUndefined();
+    expect(metadata?.job_template_id).toBeUndefined();
     expect(defaultValues?.source_credential).toBe(1);
   });
 
@@ -275,7 +278,7 @@ describe('JWT Payload Modal State Logic', () => {
 
   it('should handle successful JWT test response structure', () => {
     const response = mockJwtTestResponse;
-    expect(response.status).toBe('successful');
+    expect(response.status).toBe('success');
     expect(response.details?.sent_jwt_payload).toBeDefined();
     expect(response.details?.sent_jwt_payload?.job_template_id).toBe(1);
   });
@@ -324,14 +327,14 @@ describe('Form Data Handling', () => {
     };
 
     const { source_credential, job_template_id, ...rest } = formData;
-    const isOidcCredential = false; // Would be determined by namespace check
+    const isOidcCredential = false;
 
-    const payload = {
-      metadata: {
-        ...rest,
-        ...(isOidcCredential && job_template_id && { job_template_id }),
-      } as Record<string, unknown>,
-    };
+    const metadata: Record<string, unknown> = { ...rest };
+    if (isOidcCredential && job_template_id) {
+      metadata.job_template_id = job_template_id;
+    }
+
+    const payload = { metadata };
 
     expect(payload.metadata.job_template_id).toBeUndefined();
     expect(payload.metadata['api-key']).toBe('test-key');
