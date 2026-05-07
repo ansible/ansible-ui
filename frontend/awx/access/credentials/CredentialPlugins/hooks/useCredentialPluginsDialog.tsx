@@ -5,7 +5,6 @@ import {
   usePageDialogs,
 } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import {
   Alert,
   AlertProps,
@@ -22,10 +21,9 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons'
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../../common/api/awx-utils';
-import { Credential } from '../../../../interfaces/Credential';
 import { CredentialInputSource } from '../../../../interfaces/CredentialInputSource';
-import { CredentialType } from '../../../../interfaces/CredentialType';
 import { CredentialTestResponse } from '../../../../interfaces/CredentialTestResponse';
+import { CredentialType } from '../../../../interfaces/CredentialType';
 import { CredentialPlugins, CredentialPluginsForm } from '../CredentialPlugins';
 
 export interface CredentialPluginsInputSource
@@ -72,26 +70,9 @@ function CredentialPluginsModal(
     }
   }
 
-  // Get credential type for OIDC detection
   const defaultValues = getDefaultValues();
-  const { data: sourceCredential } = useGetItem<Credential>(
-    awxAPI`/credentials/`,
-    defaultValues?.source_credential
-  );
-  const { data: credentialType } = useGetItem<CredentialType>(
-    awxAPI`/credential_types/`,
-    sourceCredential?.summary_fields?.credential_type?.id
-  );
 
-  // Check if this is an OIDC credential type
-  const isOidcCredential =
-    credentialType?.namespace === 'hashivault-kv-oidc' ||
-    credentialType?.namespace === 'hashivault-ssh-oidc';
-
-  // Check if response has JWT payload
   const hasJwtPayload = Boolean(testResponse?.details?.sent_jwt_payload);
-
-  // Dynamic modal title
   const modalTitle = testResponse && hasJwtPayload ? t('Payload of JWT') : t('Credential Plugins');
 
   const handleSubmit: PageFormSubmitHandler<CredentialPluginsForm> = (data) => {
@@ -115,7 +96,7 @@ function CredentialPluginsModal(
     const payload = {
       metadata: {
         ...rest,
-        ...(isOidcCredential && job_template_id && { job_template_id }),
+        ...(job_template_id && { job_template_id }),
       },
     };
 
@@ -126,12 +107,10 @@ function CredentialPluginsModal(
       );
       const isFailed = response.status === 'failed';
 
-      // Store response for OIDC credentials with JWT payload
-      if (isOidcCredential && response?.details?.sent_jwt_payload) {
+      if (response?.details?.sent_jwt_payload) {
         setTestFailed(isFailed);
         setTestResponse(response);
       } else {
-        // For non-OIDC credentials, show simple toast alert and close modal
         const alert: AlertProps = isFailed
           ? {
               variant: 'danger',
@@ -147,7 +126,7 @@ function CredentialPluginsModal(
       }
     } catch (error) {
       const errorData = (error as { json?: unknown })?.json as CredentialTestResponse | undefined;
-      if (isOidcCredential && errorData?.details?.sent_jwt_payload) {
+      if (errorData?.details?.sent_jwt_payload) {
         setTestFailed(true);
         setTestResponse(errorData);
         return;

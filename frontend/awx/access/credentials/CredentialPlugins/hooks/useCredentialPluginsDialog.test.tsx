@@ -300,7 +300,7 @@ describe('JWT Payload Modal State Logic', () => {
 });
 
 describe('Form Data Handling', () => {
-  it('should include job_template_id in OIDC credential test payload', () => {
+  it('should include job_template_id in test payload when present in form data', () => {
     const formData: Record<string, string | number> = {
       source_credential: 1,
       job_template_id: 5,
@@ -312,7 +312,7 @@ describe('Form Data Handling', () => {
     const payload = {
       metadata: {
         ...rest,
-        job_template_id, // Should be included for OIDC
+        ...(job_template_id && { job_template_id }),
       } as Record<string, unknown>,
     };
 
@@ -320,21 +320,20 @@ describe('Form Data Handling', () => {
     expect(payload.metadata['account-name']).toBe('test-account');
   });
 
-  it('should exclude job_template_id for non-OIDC credentials', () => {
+  it('should not include job_template_id when absent from form data', () => {
     const formData: Record<string, string | number> = {
       source_credential: 2,
       'api-key': 'test-key',
     };
 
     const { source_credential, job_template_id, ...rest } = formData;
-    const isOidcCredential = false;
 
-    const metadata: Record<string, unknown> = { ...rest };
-    if (isOidcCredential && job_template_id) {
-      metadata.job_template_id = job_template_id;
-    }
-
-    const payload = { metadata };
+    const payload = {
+      metadata: {
+        ...rest,
+        ...(job_template_id && { job_template_id }),
+      } as Record<string, unknown>,
+    };
 
     expect(payload.metadata.job_template_id).toBeUndefined();
     expect(payload.metadata['api-key']).toBe('test-key');
