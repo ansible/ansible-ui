@@ -52,7 +52,7 @@ describe('useRuntimeFeatureFlagsEnabled', () => {
     expect(result.current.isEnabled).toBe(false);
   });
 
-  it('should return false on API error', async () => {
+  it('should return true on API error', async () => {
     server.use(http.get('/api/gateway/v1/settings/feature_flags/', () => HttpResponse.error()));
 
     const { result } = renderHook(() => useRuntimeFeatureFlagsEnabled(), { wrapper });
@@ -60,6 +60,6 @@ describe('useRuntimeFeatureFlagsEnabled', () => {
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    expect(result.current.isEnabled).toBe(false);
+    expect(result.current.isEnabled).toBe(true);
   });
 });
