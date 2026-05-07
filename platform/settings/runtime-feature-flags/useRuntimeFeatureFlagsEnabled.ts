@@ -10,7 +10,7 @@ export function useRuntimeFeatureFlagsEnabled() {
   const response = useSWR<FeatureFlagsSettings>(gatewayAPI`/settings/feature_flags/`, requestGet);
 
   return {
-    isEnabled: response.data?.RUNTIME_FEATURE_FLAGS ?? false,
+    isEnabled: response.data?.RUNTIME_FEATURE_FLAGS ?? true,
     isLoading: !response.data && !response.error,
   };
 }
