@@ -9,7 +9,7 @@ Fetch SonarCloud issues, analyze and group them, suggest fixes, and create focus
 ### Prerequisites
 
 - **`gh`** (GitHub CLI) — must be installed and authenticated (`gh auth login`). Used by `/sonarcloud-fix` to create PRs and post e2e trigger comments.
-- **`curl`** — used for SonarCloud API calls.
+- **`python3`** (3.8+) — used by the fetch script (`scripts/sonarcloud-fetch.py`). Uses only Python stdlib (no external dependencies).
 
 ### Required Environment Variables
 
@@ -24,31 +24,7 @@ Fetch SonarCloud issues, analyze and group them, suggest fixes, and create focus
 
 ### Validate Environment
 
-Before any operation, check that required env vars are set:
-
-```bash
-if [ -z "$SONAR_ORGANIZATION" ] || [ -z "$SONAR_PROJECT_KEY" ]; then
-  echo "ERROR: SONAR_ORGANIZATION and SONAR_PROJECT_KEY must be set."
-  echo ""
-  echo "Example:"
-  echo "  export SONAR_ORGANIZATION=your-org"
-  echo "  export SONAR_PROJECT_KEY=your-project-key"
-  echo "  export SONARCLOUD_TOKEN=your-token  # only for private projects"
-  exit 1
-fi
-```
-
-### Authentication
-
-For public projects, no token is needed (read-only API). For private projects, use the token:
-
-```bash
-# Public project
-curl -s "https://sonarcloud.io/api/issues/search?..."
-
-# Private project
-curl -s -u "${SONARCLOUD_TOKEN}:" "https://sonarcloud.io/api/issues/search?..."
-```
+The fetch script validates that `SONAR_PROJECT_KEY` and `SONAR_ORGANIZATION` are set, and handles authentication automatically when `SONARCLOUD_TOKEN` is present. For public projects, no token is needed.
 
 ---
 
@@ -56,45 +32,33 @@ curl -s -u "${SONARCLOUD_TOKEN}:" "https://sonarcloud.io/api/issues/search?..."
 
 Invoked via `/sonarcloud-analyze`. Fetches all open issues and presents a prioritized, grouped report.
 
-### Step 1: Fetch Issues
+### Step 1: Fetch and Categorize Issues
 
-Fetch unresolved issues with pagination. SonarCloud caps at 500 per page.
+Run the fetch script to retrieve all SonarCloud data:
 
-**Issues (bugs, vulnerabilities, code smells):**
 ```bash
-curl -s "https://sonarcloud.io/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&resolved=false&ps=500&p=1"
+python3 .claude/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py
 ```
 
-If the response `total` exceeds 500, paginate:
-```bash
-curl -s "https://sonarcloud.io/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&resolved=false&ps=500&p=2"
-```
+The script handles pagination, authentication, and categorization automatically. It outputs JSON to stdout with this structure:
 
-**Security hotspots:**
-```bash
-curl -s "https://sonarcloud.io/api/hotspots/search?projectKey=${SONAR_PROJECT_KEY}&status=TO_REVIEW&ps=500&p=1"
-```
+- `project_key` — the project key used
+- `fetched_at` — ISO timestamp of when data was fetched
+- `issues.total` — total issue count
+- `issues.items[]` — array of issues, each with: `key`, `component` (relative file path), `type` (BUG/VULNERABILITY/CODE_SMELL), `severity`, `line`, `message`, `rule`
+- `hotspots.total` — total hotspot count
+- `hotspots.items[]` — array of hotspots, each with: `key`, `component`, `securityCategory`, `vulnerabilityProbability`, `line`, `message`, `rule`, `status`
+- `duplication` — object with `duplicated_lines_density`, `duplicated_blocks`, `duplicated_files`
+- `categories` — pre-grouped object with keys: `Security`, `Reliability`, `Maintainability`, `Security Hotspots`, `Duplication`
 
-**Duplication metrics:**
-```bash
-curl -s "https://sonarcloud.io/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=duplicated_lines_density,duplicated_blocks,duplicated_files"
-```
+If the script exits with code 1, read the `error` field from its JSON output and display the error message to the user. Common errors:
+- Missing env vars → prompt the user to set them
+- HTTP 401 → invalid token
+- HTTP 404 → wrong project key
 
-Parse each JSON response. For issues, extract: `key`, `component` (file path), `type` (BUG, VULNERABILITY, CODE_SMELL), `severity`, `line`, `message`, `rule`.
+Parse the JSON output. Use the `categories` object as the starting point for Step 2.
 
-### Step 2: Categorize by SonarCloud Category
-
-Group all fetched issues into the 5 SonarCloud categories:
-
-| Category | Source | Filter |
-|----------|--------|--------|
-| **Security** | `/api/issues/search` | `type=VULNERABILITY` |
-| **Reliability** | `/api/issues/search` | `type=BUG` |
-| **Maintainability** | `/api/issues/search` | `type=CODE_SMELL` |
-| **Security Hotspots** | `/api/hotspots/search` | `status=TO_REVIEW` |
-| **Duplication** | `/api/measures/component` | `duplicated_blocks` metric; also code smell rules related to duplication (e.g., `typescript:S1192`) |
-
-### Step 3: Group by Rule + Module
+### Step 2: Group by Rule + Module
 
 Within each category, group issues by **SonarCloud rule key** and **module** (workspace, package, or top-level directory depending on the repo structure).
 
@@ -102,7 +66,7 @@ Within each category, group issues by **SonarCloud rule key** and **module** (wo
 
 Determine the repo's module structure **once at the start of analysis**, then apply it consistently to all issues.
 
-**Step 3a: Check for monorepo workspace definitions**
+**Step 2a: Check for monorepo workspace definitions**
 
 Look for workspace/package definitions in this order:
 
@@ -118,7 +82,7 @@ Example: if `package.json` has `"workspaces": ["frontend/*", "framework"]`, then
 - `framework/PageTable.tsx` → module `framework`
 - `scripts/build.js` → module `root`
 
-**Step 3b: No workspace definitions found (non-monorepo)**
+**Step 2b: No workspace definitions found (non-monorepo)**
 
 Group issues by their **top-level directory** from the `component` field (the first path segment after the project key). Files in the repo root go into a `root` group.
 
@@ -132,7 +96,7 @@ Example:
 
 Each group is identified as: `<rule key> — <module>` (e.g., `typescript:S1854 — frontend/awx`, `python:S1481 — src`).
 
-### Step 4: Sort by Remediation Priority
+### Step 3: Sort by Remediation Priority
 
 Within each category, sort groups by this priority order. Match by rule ID suffix (the numeric part is language-agnostic in SonarCloud — e.g., `S1128` appears as `typescript:S1128`, `python:S1128`, `java:S1128`, etc.):
 
@@ -149,7 +113,7 @@ Within each category, sort groups by this priority order. Match by rule ID suffi
 
 Rules not matching any priority bucket sort to the end, ordered by issue count descending.
 
-### Step 5: Estimate LOC Impact
+### Step 4: Estimate LOC Impact
 
 For each group, estimate the lines of code that will change:
 - Unused imports: ~1 LOC per issue (removal)
@@ -160,7 +124,7 @@ For each group, estimate the lines of code that will change:
 - Type safety: ~1-3 LOC per issue
 - Cognitive complexity: ~10-20 LOC per issue (refactoring)
 
-### Step 6: Present Summary Table
+### Step 5: Present Summary Table
 
 Display one table per category. Include total issue count in the heading.
 
@@ -458,8 +422,9 @@ This skill is designed for adoption by other teams and repos:
 1. **No hardcoded values** — all project-specific config via environment variables
 2. **Configurable base branch** — `SONAR_DEFAULT_BRANCH` defaults to `devel` but can be set to `main` or any branch
 3. **Automatic module detection** — detects monorepo workspaces from `package.json`, `pnpm-workspace.yaml`, `nx.json`, or `lerna.json`. For non-monorepo projects, groups issues by top-level directory. No repo-specific configuration required.
-4. **Validation commands** — set `SONAR_VALIDATE_COMMANDS` to your project's validation pipeline (e.g., `make lint && make test`)
-5. **PR template** — adjust to match the target repo's `.github/pull_request_template.md`
+4. **Fetch script** — `scripts/sonarcloud-fetch.py` uses only Python stdlib (no external dependencies). Handles pagination, authentication, and categorization deterministically.
+5. **Validation commands** — set `SONAR_VALIDATE_COMMANDS` to your project's validation pipeline (e.g., `make lint && make test`)
+6. **PR template** — adjust to match the target repo's `.github/pull_request_template.md`
 
 ### Quick Start for Other Teams
 

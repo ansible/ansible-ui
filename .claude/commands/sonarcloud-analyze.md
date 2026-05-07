@@ -1,6 +1,6 @@
 # Analyze SonarCloud Issues
 
-Follow **Phase A — Analyze** in `.claude/skills/sonarcloud-remediation.md`.
+Follow **Phase A — Analyze** in `.claude/skills/sonarcloud-remediation/sonarcloud-remediation.md`.
 
 If the user passes `--help`, display the usage information below and stop.
 
@@ -49,13 +49,11 @@ Each table groups issues by SonarCloud rule and module (auto-detected from works
 
 Add to `.claude/settings.json` to avoid permission prompts:
 ```json
-"Bash(curl -s *sonarcloud.io*)"
+"Bash(python3 *sonarcloud-fetch.py*)"
 ```
 
 ## Workflow
 
-1. Validate environment variables (`SONAR_ORGANIZATION`, `SONAR_PROJECT_KEY`)
-2. Fetch all open issues, hotspots, and duplication metrics from SonarCloud API
-3. Categorize by the 5 SonarCloud categories
-4. Detect modules (from workspace definitions or top-level directories), group by rule + module, sort by remediation priority
-5. Present a prioritized summary table per category
+1. Run the fetch script (`scripts/sonarcloud-fetch.py`) to fetch and categorize all issues
+2. Detect modules (from workspace definitions or top-level directories), group by rule + module, sort by remediation priority
+3. Present a prioritized summary table per category

@@ -1,6 +1,6 @@
 # Fix SonarCloud Issues
 
-Follow **Phase B — Fix** in `.claude/skills/sonarcloud-remediation.md`.
+Follow **Phase B — Fix** in `.claude/skills/sonarcloud-remediation/sonarcloud-remediation.md`.
 
 If the user passes `--help`, display the usage information below and stop.
 
@@ -35,7 +35,7 @@ Same as `/sonarcloud-analyze`, plus optional:
 
 Add to `.claude/settings.json` to avoid permission prompts:
 ```json
-"Bash(curl -s *sonarcloud.io*)"
+"Bash(python3 *sonarcloud-fetch.py*)"
 ```
 
 ### Workflow

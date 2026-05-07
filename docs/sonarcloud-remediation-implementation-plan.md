@@ -10,14 +10,14 @@ SonarCloud shows ~2700 open issues for this project. Engineers currently triage 
 
 ## Architecture Decision
 
-Direct SonarCloud API integration via `curl` in skill markdown — no custom API client, no MCP server, no coded application. Claude Code skills are instruction files. The amazon.aws PR proved this pattern works at scale.
+Hybrid approach: a Python script handles the mechanical API fetching and categorization (deterministic, token-efficient), while the LLM handles module detection, grouping, prioritization, and presentation (where reasoning about unfamiliar project structures adds value). No custom API client, no MCP server. The amazon.aws PR proved the SonarCloud API pattern works at scale.
 
 ---
 
 ## Prerequisites
 
 - **`gh`** (GitHub CLI) — must be installed and authenticated (`gh auth login`). Used by `/sonarcloud-fix` to create PRs and post e2e trigger comments.
-- **`curl`** — used for SonarCloud API calls.
+- **`python3`** (3.8+) — used by the fetch script (`scripts/sonarcloud-fetch.py`). Uses only Python stdlib (no external dependencies).
 
 ---
 
@@ -26,7 +26,10 @@ Direct SonarCloud API integration via `curl` in skill markdown — no custom API
 ```
 .claude/
   skills/
-    sonarcloud-remediation.md     — Full workflow logic (analyze + fix)
+    sonarcloud-remediation/
+      sonarcloud-remediation.md   — Full workflow logic (analyze + fix)
+      scripts/
+        sonarcloud-fetch.py       — API fetching + categorization (stdlib-only Python)
   commands/
     sonarcloud-analyze.md         — /sonarcloud-analyze command (thin wrapper)
     sonarcloud-fix.md             — /sonarcloud-fix command (thin wrapper)
@@ -59,16 +62,9 @@ The skill validates `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` at runtime with
 
 Both commands support a `--help` flag that displays usage information and exits without performing any action.
 
-1. **Validate environment** — check `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` are set
-2. **Fetch issues** from SonarCloud API (`/api/issues/search`) with pagination (max 500/page); also fetch hotspots via `/api/hotspots/search`
-3. **Categorize by the 5 SonarCloud categories**:
-   - Security (vulnerabilities)
-   - Reliability (bugs)
-   - Maintainability (code smells)
-   - Security Hotspots (hotspots with status `TO_REVIEW`)
-   - Duplication (duplicated blocks — fetched via `/api/measures/component` or identified from code smell rules)
-4. **Within each category, group by SonarCloud rule + module** — modules are auto-detected from monorepo workspace definitions (`package.json` workspaces, `pnpm-workspace.yaml`, `nx.json`, `lerna.json`), or by top-level directory for non-monorepo projects — e.g., "Dead store (typescript:S1854) — frontend/awx (12 issues)"
-5. **Sort groups by remediation priority** (within each category):
+1. **Run the fetch script** (`scripts/sonarcloud-fetch.py`) — validates environment, fetches issues from SonarCloud API with pagination (max 500/page), fetches hotspots and duplication metrics, and categorizes into the 5 SonarCloud categories (Security, Reliability, Maintainability, Security Hotspots, Duplication). Outputs compact JSON to stdout.
+2. **Within each category, group by SonarCloud rule + module** — modules are auto-detected from monorepo workspace definitions (`package.json` workspaces, `pnpm-workspace.yaml`, `nx.json`, `lerna.json`), or by top-level directory for non-monorepo projects — e.g., "Dead store (typescript:S1854) — frontend/awx (12 issues)"
+3. **Sort groups by remediation priority** (within each category):
    1. Unused imports and variables
    2. Dead code / dead stores
    3. Duplicate string literals (extract to constants)
@@ -78,7 +74,7 @@ Both commands support a `--help` flag that displays usage information and exits 
    7. Cognitive complexity refactoring
    8. Security hotspot remediation
    9. Reliability bug fixes
-6. **Present a prioritized summary table** per category, using **continuous group numbering across all categories** (the group `#` is globally unique, not reset per category — this is the ID that `/sonarcloud-fix` uses to select groups):
+4. **Present a prioritized summary table** per category, using **continuous group numbering across all categories** (the group `#` is globally unique, not reset per category — this is the ID that `/sonarcloud-fix` uses to select groups):
    ```
    ## Maintainability (847 issues)
 
@@ -89,8 +85,8 @@ Both commands support a `--help` flag that displays usage information and exits 
    | 3 | Duplicate strings (typescript:S1192)| framework       |   12  | Minor    |   ~60    |
    ...
    ```
-7. **Flag groups exceeding 200 LOC** with a note that they will auto-split into multiple PRs
-8. **Support optional flags**: `--severity <level>` to filter by severity, `--module <name>` to filter by module
+5. **Flag groups exceeding 200 LOC** with a note that they will auto-split into multiple PRs
+6. **Support optional flags**: `--severity <level>` to filter by severity, `--module <name>` to filter by module
 
 ### Phase B — Fix (`/sonarcloud-fix`)
 
@@ -177,7 +173,7 @@ The skill is designed for adoption beyond aap-ui:
 
 | AC | Deliverable |
 |----|-------------|
-| AC1 (Skill Installation) | `.claude/skills/sonarcloud-remediation.md` + commands in `.claude/commands/` |
+| AC1 (Skill Installation) | `.claude/skills/sonarcloud-remediation/` (skill + fetch script) + commands in `.claude/commands/` |
 | AC2 (Authentication) | Skill validates env vars at runtime; `SONARCLOUD_TOKEN` for private projects; no secrets committed |
 | AC3 (Issue Analysis) | `/sonarcloud-analyze` with 5-category grouping, rule+module sub-groups (auto-detected), priority sorting, severity/module flags |
 | AC4 (Configuration) | Environment variables matching CI pipeline; configurable default branch |
@@ -197,9 +193,10 @@ The skill is designed for adoption beyond aap-ui:
 
 ## Files to Create
 
-1. **`.claude/skills/sonarcloud-remediation.md`** — Main skill file (~300-400 lines). Contains: env var validation, SonarCloud API curl templates, grouping/sorting logic, fix strategies, validation gates, PR creation workflow, portability notes.
-2. **`.claude/commands/sonarcloud-analyze.md`** — Thin command wrapper (~10-15 lines). Invokes the analyze phase of the skill.
-3. **`.claude/commands/sonarcloud-fix.md`** — Thin command wrapper (~10-15 lines). Invokes the fix phase of the skill.
+1. **`.claude/skills/sonarcloud-remediation/sonarcloud-remediation.md`** — Main skill file (~400 lines). Contains: grouping/sorting logic, fix strategies, validation gates, PR creation workflow, portability notes. References the fetch script for API data.
+2. **`.claude/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py`** — Python script (~200 lines). Handles paginated SonarCloud API fetching, authentication, and categorization into 5 categories. Stdlib-only, outputs JSON to stdout.
+3. **`.claude/commands/sonarcloud-analyze.md`** — Thin command wrapper (~10-15 lines). Invokes the analyze phase of the skill.
+4. **`.claude/commands/sonarcloud-fix.md`** — Thin command wrapper (~10-15 lines). Invokes the fix phase of the skill.
 
 ---
 
