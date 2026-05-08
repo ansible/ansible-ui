@@ -8,7 +8,9 @@ import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 
-export function PlatformSelectUsersStep(props: { descriptionForUsersSelection?: string }) {
+export function PlatformSelectUsersStep(
+  props: Readonly<{ descriptionForUsersSelection?: string }>
+) {
   const toolbarFilters = useUsersFilters();
   const { t } = useTranslation();
 

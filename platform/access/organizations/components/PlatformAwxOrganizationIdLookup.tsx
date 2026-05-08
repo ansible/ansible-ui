@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
-export function PlatformAwxOrganizationIdLookup(props: { children: ReactNode }) {
+export function PlatformAwxOrganizationIdLookup(props: Readonly<{ children: ReactNode }>) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { data: organization } = useGetItem<PlatformOrganization>(

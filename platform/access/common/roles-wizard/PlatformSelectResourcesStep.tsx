@@ -3,7 +3,7 @@ import { AwxSelectResourcesStep } from '@ansible/awx-ui/access/common/AwxRolesWi
 import { EdaSelectResourcesStep } from '@ansible/eda-ui/access/common/EdaRolesWizardSteps/EdaSelectResourcesStep';
 import { HubSelectResourcesStep } from '@ansible/hub-ui/access/common/HubRoleWizardSteps/HubSelectResourcesStep';
 
-export function PlatformSelectResourcesStep(props: { userOrTeamName: string }) {
+export function PlatformSelectResourcesStep(props: Readonly<{ userOrTeamName: string }>) {
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
   const { userOrTeamName } = props;

@@ -93,7 +93,7 @@ export function EditPlatformTeam() {
   );
 }
 
-function PlatformTeamInputs(props: { isEditMode?: boolean }) {
+function PlatformTeamInputs(props: Readonly<{ isEditMode?: boolean }>) {
   const { t } = useTranslation();
   const { activePlatformUser } = usePlatformActiveUser();
   const { isEditMode } = props;

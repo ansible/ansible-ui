@@ -30,7 +30,9 @@ const ReviewAlert = styled(Alert)`
   margin-left: var(--pf-t--global--spacer--lg);
 `;
 
-export function OrganizationReviewStep(props: { controllerOrganization?: ControllerOrganization }) {
+export function OrganizationReviewStep(
+  props: Readonly<{ controllerOrganization?: ControllerOrganization }>
+) {
   const { t } = useTranslation();
   const controllerOrganization = props.controllerOrganization;
   const { wizardData } = usePageWizard();

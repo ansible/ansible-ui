@@ -17,7 +17,7 @@ import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { usePlatformRoleColumns } from './hooks/usePlatformRoleColumns';
 import { usePlatformRoleRowActions } from './hooks/usePlatformRoleRowActions';
 
-export function PlatformRoleDetails(props: { breadcrumbLabelForPreviousPage?: string }) {
+export function PlatformRoleDetails(props: Readonly<{ breadcrumbLabelForPreviousPage?: string }>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();

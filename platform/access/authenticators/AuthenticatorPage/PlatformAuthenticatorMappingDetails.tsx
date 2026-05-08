@@ -133,7 +133,7 @@ export function PlatformAuthenticatorMappingDetails() {
   );
 }
 
-function AttributesSubsection(props: { mapping: AuthenticatorMap }) {
+function AttributesSubsection(props: Readonly<{ mapping: AuthenticatorMap }>) {
   const attributes = parseAttributes(JSON.stringify(props.mapping.triggers));
   const attributeDetails: React.ReactNode[] = [];
   attributes.forEach((attribute) => {
@@ -169,7 +169,7 @@ function AttributesSubsection(props: { mapping: AuthenticatorMap }) {
   );
 }
 
-function GroupsSubsection(props: { mapping: AuthenticatorMap }) {
+function GroupsSubsection(props: Readonly<{ mapping: AuthenticatorMap }>) {
   const groups = parseGroups(JSON.stringify(props.mapping.triggers));
   const groupDetails: React.ReactNode[] = [];
 
@@ -193,7 +193,9 @@ function GroupsSubsection(props: { mapping: AuthenticatorMap }) {
   );
 }
 
-export function PlatformAuthenticatorMappingDetailsInner(props: { mapping: AuthenticatorMap }) {
+export function PlatformAuthenticatorMappingDetailsInner(
+  props: Readonly<{ mapping: AuthenticatorMap }>
+) {
   const mapping = props.mapping;
   const columns = useMappingColumns();
 

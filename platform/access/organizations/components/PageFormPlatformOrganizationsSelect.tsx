@@ -13,7 +13,7 @@ export function PageFormPlatformOrganizationsSelect<
     TFieldValues,
     number
   >,
->(props: { name: TFieldName; isRequired?: boolean }) {
+>(props: Readonly<{ name: TFieldName; isRequired?: boolean }>) {
   const { t } = useTranslation();
   const queryOptions = useQueryPlatformOptions<PlatformOrganization, 'name', 'id'>({
     url: gatewayAPI`/organizations/`,

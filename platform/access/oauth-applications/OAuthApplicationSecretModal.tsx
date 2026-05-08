@@ -3,10 +3,12 @@ import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { ClipboardCopy, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export function OAuthApplicationSecretModal(props: {
-  onClose: () => void;
-  applicationModalSource: Application;
-}) {
+export function OAuthApplicationSecretModal(
+  props: Readonly<{
+    onClose: () => void;
+    applicationModalSource: Application;
+  }>
+) {
   const { applicationModalSource } = props;
   const { t } = useTranslation();
   return (
