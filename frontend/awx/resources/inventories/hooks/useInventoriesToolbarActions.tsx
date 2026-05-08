@@ -21,7 +21,7 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
   const pageNavigate = usePageNavigate();
   const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventories/`);
-  const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateInventory = Boolean(data?.actions?.['POST']);
 
   return useMemo<IPageAction<Inventory>[]>(() => {
     const actions: IPageAction<Inventory>[] = [

@@ -54,7 +54,7 @@ export const CustomNode: FC<
       onSelect={(e) => {
         if (!jobType) return;
         setSidebarMode('view');
-        onSelect && onSelect(e);
+        onSelect?.(e);
       }}
       truncateLength={20}
       raiseLabelOnHover={false}

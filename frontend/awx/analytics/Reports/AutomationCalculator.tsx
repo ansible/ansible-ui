@@ -328,10 +328,9 @@ export function AutomationCalculatorInternal(props: {
       cluster_id: filterState.cluster_id ?? [],
       template_id: filterState.template_id ?? [],
       inventory_id: filterState.inventory_id ?? [],
-      quick_date_range:
-        filterState.quick_date_range && filterState.quick_date_range.length
-          ? filterState.quick_date_range[0]
-          : 'roi_last_year',
+      quick_date_range: filterState.quick_date_range?.length
+        ? filterState.quick_date_range[0]
+        : 'roi_last_year',
       job_type: [],
       sort_options: sortOption.value,
       sort_order: sortOrder,

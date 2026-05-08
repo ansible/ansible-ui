@@ -36,10 +36,7 @@ export function InventoryHosts() {
     OptionsResponse<ActionsResponse>
   >(awxAPI`/hosts/`);
   const canCreateHost = Boolean(
-    hostOptions &&
-      hostOptions.actions &&
-      hostOptions.actions['POST'] &&
-      params.inventory_type === 'inventory'
+    hostOptions?.actions?.['POST'] && params.inventory_type === 'inventory'
   );
 
   let emptyStateTitle = '';

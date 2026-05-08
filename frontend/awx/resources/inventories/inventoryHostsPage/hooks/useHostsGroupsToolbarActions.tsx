@@ -25,9 +25,7 @@ export function useHostsGroupsToolbarActions(
   const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh, hostId);
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
-  const canCreateGroup = Boolean(
-    groupOptions && groupOptions.actions && groupOptions.actions['POST']
-  );
+  const canCreateGroup = Boolean(groupOptions?.actions?.['POST']);
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
   const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh, hostId);

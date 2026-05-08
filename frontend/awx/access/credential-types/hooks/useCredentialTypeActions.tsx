@@ -23,7 +23,7 @@ export function useCredentialTypeToolbarActions(
   const getPageUrl = useGetPageUrl();
   const deleteCredentialTypes = useDeleteCredentialTypes(onCredentialTypesDeleted);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
-  const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateCredentialType = Boolean(data?.actions?.['POST']);
 
   return useMemo<IPageAction<CredentialType>[]>(
     () => [

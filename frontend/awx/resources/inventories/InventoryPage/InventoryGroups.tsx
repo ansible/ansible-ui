@@ -35,9 +35,7 @@ export function InventoryGroups() {
   const { data: groupOptions, isLoading: isLoadingGroupOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(awxAPI`/groups/`);
-  const canCreateGroup = Boolean(
-    groupOptions && groupOptions.actions && groupOptions.actions['POST'] && !constructed_inventory
-  );
+  const canCreateGroup = Boolean(groupOptions?.actions?.['POST'] && !constructed_inventory);
 
   let emptyStateTitle = '';
   let emptyStateDescription = '';

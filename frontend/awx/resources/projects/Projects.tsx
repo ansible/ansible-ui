@@ -39,7 +39,7 @@ export function Projects() {
   const { data, isLoading: isLoadingProjectOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/projects/`
   );
-  const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateProject = Boolean(data?.actions?.['POST']);
   const { refresh } = view;
   usePersistentFilters('projects');
 

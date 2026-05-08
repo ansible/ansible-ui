@@ -71,7 +71,7 @@ export function useAccessColumns(
                         <Label
                           variant="outline"
                           key={role.id}
-                          onClose={() => deleteRole && deleteRole(role, user)}
+                          onClose={() => deleteRole?.(role, user)}
                           closeBtnAriaLabel={t(`Remove {{roleName}} chip`, { roleName: role.name })}
                         >
                           {role.name}
@@ -90,7 +90,7 @@ export function useAccessColumns(
                         <Label
                           variant="outline"
                           key={role.id}
-                          onClose={() => deleteRole && deleteRole(role, user)}
+                          onClose={() => deleteRole?.(role, user)}
                           closeBtnAriaLabel={t(`Remove {{roleName}} chip`, { roleName: role.name })}
                         >
                           {role.name}

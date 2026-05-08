@@ -109,7 +109,7 @@ export function useSaveVisualizer(templateId: string) {
           }
         );
 
-        if (workflowNode && workflowNode.id) {
+        if (workflowNode?.id) {
           await postWorkflowNodeApproval(
             awxAPI`/workflow_job_template_nodes/${workflowNode.id.toString()}/create_approval_template/`,
             {
@@ -140,7 +140,7 @@ export function useSaveVisualizer(templateId: string) {
           }
         );
 
-        if (workflowNode && workflowNode.id) {
+        if (workflowNode?.id) {
           // wf approval node doesn't exist, create it
           if (nodeTemplate.id === -1) {
             await postWorkflowNodeApproval(

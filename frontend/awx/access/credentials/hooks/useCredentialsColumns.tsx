@@ -56,7 +56,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
         id: 'credential_type',
         header: t('Credential type'),
         cell: (credential) => {
-          return credentialTypesMap && credentialTypesMap[credential.credential_type]
+          return credentialTypesMap?.[credential.credential_type]
             ? credentialTypesMap[credential.credential_type]
             : t('Unknown');
         },

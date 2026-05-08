@@ -38,7 +38,7 @@ export function useSurveyToolbarActions(
       ? awxAPI`/${isJobTemplate ? 'job_templates' : 'workflow_job_templates'}/${id.toString()}/`
       : ''
   );
-  const canModifySurvey = Boolean(options && options.actions && options.actions['PUT']);
+  const canModifySurvey = Boolean(options?.actions?.['PUT']);
 
   return useMemo<IPageAction<Spec>[]>(
     () => [

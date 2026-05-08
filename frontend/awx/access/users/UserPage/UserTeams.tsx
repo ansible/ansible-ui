@@ -50,7 +50,7 @@ function UserTeamsInternal(props: { user: AwxUser }) {
   const { data, isLoading: isLoadingUserOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/users/`
   );
-  const canAddUserToTeam = Boolean(data && data.actions && data.actions['POST']);
+  const canAddUserToTeam = Boolean(data?.actions?.['POST']);
 
   const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [

@@ -50,7 +50,7 @@ export function useSurveyView(options: { url: string }): ISurveyView {
 
   const selection = useSelected<Spec>(data?.spec ?? [], getSpecKey);
 
-  if (data && data.spec !== undefined) {
+  if (data?.spec !== undefined) {
     itemCountRef.current.itemCount = data.spec.length;
   } else if (data && data.spec === undefined) {
     itemCountRef.current.itemCount = 0;

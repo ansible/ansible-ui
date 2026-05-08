@@ -93,7 +93,7 @@ export function EditProject() {
   const id = Number(params.id);
   const { data: project } = useGet<Project>(awxAPI`/projects/${id.toString()}/`);
 
-  if (project && project.scm_type === '') {
+  if (project?.scm_type === '') {
     project.scm_type = 'manual';
   }
 

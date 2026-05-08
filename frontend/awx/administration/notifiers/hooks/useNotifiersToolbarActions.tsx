@@ -26,9 +26,7 @@ export function useNotifiersToolbarActions(
   const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/notification_templates/`
   ).data;
-  const canAddNotificationTemplate = Boolean(
-    notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
-  );
+  const canAddNotificationTemplate = Boolean(notificationsOptions?.actions?.['POST']);
 
   return useMemo<IPageAction<NotificationTemplate>[]>(
     () => [

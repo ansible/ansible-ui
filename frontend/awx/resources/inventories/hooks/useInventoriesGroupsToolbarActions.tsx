@@ -32,9 +32,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     awxAPI`/inventories/${params.id ?? ''}/groups/`
   ).data;
 
-  const canCreateGroup = Boolean(
-    groupOptions && groupOptions.actions && groupOptions.actions['POST']
-  );
+  const canCreateGroup = Boolean(groupOptions?.actions?.['POST']);
 
   const selectedItems = view.selectedItems || [];
   const runCommandAction = useRunCommandAction<InventoryGroup>({
@@ -113,9 +111,7 @@ export function useRunCommandAction<T extends { name: string }>(
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
   ).data;
-  const canRunAdHocCommand = Boolean(
-    adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
-  );
+  const canRunAdHocCommand = Boolean(adhocOptions?.actions?.['POST']);
 
   const onClick = useCallback(
     (selectedItems: T[]) => {

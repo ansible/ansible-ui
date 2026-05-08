@@ -50,9 +50,7 @@ export function InventorySources() {
   const { data: sourceOptions, isLoading: isLoadingSourceOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(awxAPI`/inventory_sources/`);
-  const canCreateSource = Boolean(
-    sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']
-  );
+  const canCreateSource = Boolean(sourceOptions?.actions?.['POST']);
 
   usePersistentFilters('inventories');
 

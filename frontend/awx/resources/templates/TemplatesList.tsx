@@ -95,13 +95,9 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
     OptionsResponse<ActionsResponse>
   >(awxAPI`/workflow_job_templates/`);
 
-  const canCreateJobTemplate = Boolean(
-    jobTemplateActions && jobTemplateActions.actions && jobTemplateActions.actions['POST']
-  );
+  const canCreateJobTemplate = Boolean(jobTemplateActions?.actions?.['POST']);
 
-  const canCreateWFJobTemplate = Boolean(
-    wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
-  );
+  const canCreateWFJobTemplate = Boolean(wfJobTemplateActions?.actions?.['POST']);
 
   const isLoadingPermissions = isLoadingJobTemplateActions || isLoadingWfJobTemplateActions;
 
