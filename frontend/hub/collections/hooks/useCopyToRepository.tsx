@@ -98,7 +98,7 @@ function CopyToRepositoryModal(props: {
   useEffect(() => {
     async function getSelected() {
       const repos = await request(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=100&name=${collection.collection_version?.name}&version=${collection.collection_version?.version}`
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=100&name=${collection.collection_version?.name}&version=${collection.collection_version?.version}&namespace=${collection.collection_version?.namespace}`
       );
 
       if (repos.data?.length > 0) {
