@@ -16,7 +16,7 @@ export function usePlatformActiveUser() {
   return useContext(PlatformActiveUserContext);
 }
 
-export function PlatformActiveUserProvider(props: { children: ReactNode }) {
+export function PlatformActiveUserProvider(props: Readonly<{ children: ReactNode }>) {
   const response = useSWR<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/me/`, requestGet, {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,

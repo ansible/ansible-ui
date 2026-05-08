@@ -20,7 +20,7 @@ export function useGatewayServices() {
   return useContext(GatewayServicesContext);
 }
 
-export function GatewayServicesProvider(props: { children: ReactNode }) {
+export function GatewayServicesProvider(props: Readonly<{ children: ReactNode }>) {
   const [gatewayServices, setGatewayServices] = useState<GatewayServices>();
   const result = useSWR<{
     apis: {

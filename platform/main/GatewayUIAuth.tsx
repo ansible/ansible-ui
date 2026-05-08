@@ -10,7 +10,7 @@ export function useGatewayUIAuth() {
   return useContext(ManagedCloudInstallContext);
 }
 
-export function GatewayUIAuthProvider(props: { children: ReactNode }) {
+export function GatewayUIAuthProvider(props: Readonly<{ children: ReactNode }>) {
   const response = useSWR<UIAuth>(gatewayAPI`/ui_auth/`, requestGet);
   return (
     <ManagedCloudInstallContext.Provider value={response?.data}>

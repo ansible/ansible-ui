@@ -33,7 +33,9 @@ interface ResourceRolePair {
   role: PlatformRole;
 }
 
-export function PlatformUsersAssignRoles(props: { id?: string; userRolesRoute?: string }) {
+export function PlatformUsersAssignRoles(
+  props: Readonly<{ id?: string; userRolesRoute?: string }>
+) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();

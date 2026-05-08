@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
-export function PlatformEdaUserIdLookup(props: { children: ReactNode }) {
+export function PlatformEdaUserIdLookup(props: Readonly<{ children: ReactNode }>) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { data: user } = useGetItem<PlatformUser>(gatewayAPI`/users/`, params.id);
