@@ -597,7 +597,7 @@ export function twilioPhoneNumber(value: string, t: TFunction<'translation', und
       return;
     }
 
-    if (!/^\s*(?:\+?(\d{1,3}))?[. (]*(\d{7,12})$/.test(v)) {
+    if (!/^\s*(?:\+?(\d{1,3}))?[. (]{0,5}(\d{7,12})$/.test(v)) {
       error = t('Please enter valid phone numbers.');
     }
   });
@@ -631,13 +631,16 @@ export function validateUrl(value: string, t: TFunction<'translation', undefined
   if (!value) {
     return undefined;
   }
-  // URL regex from https://urlregex.com/
-  if (
-    // eslint-disable-next-line max-len
-    !/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)/.test(
-      value
-    )
-  ) {
+  // Use URL constructor for validation - safer than complex regex
+  try {
+    // Handle www. prefix by adding protocol
+    const urlToTest = value.startsWith('www.') ? `https://${value}` : value;
+    const url = new URL(urlToTest);
+    // Ensure it has a valid protocol
+    if (!['http:', 'https:', 'ftp:'].includes(url.protocol)) {
+      return t`Please enter a valid URL`;
+    }
+  } catch {
     return t`Please enter a valid URL`;
   }
   return undefined;

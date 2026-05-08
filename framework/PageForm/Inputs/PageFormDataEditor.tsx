@@ -480,10 +480,27 @@ function hasYamlComments(yamlString: string): boolean {
   const lines = yamlString.split('\n');
   return lines.some((line) => {
     const trimmed = line.trim();
-    return (
-      trimmed.startsWith('#') ||
-      (trimmed.includes('#') && !/^[^#]*["'][^"']*#[^"']*["'][^#]*$/.exec(trimmed))
-    );
+    if (trimmed.startsWith('#')) {
+      return true;
+    }
+    // Check for # outside of quotes
+    if (trimmed.includes('#')) {
+      let inQuote = false;
+      let quoteChar = '';
+      for (let i = 0; i < trimmed.length; i++) {
+        const char = trimmed[i];
+        if (!inQuote && (char === '"' || char === "'")) {
+          inQuote = true;
+          quoteChar = char;
+        } else if (inQuote && char === quoteChar && trimmed[i - 1] !== '\\') {
+          inQuote = false;
+          quoteChar = '';
+        } else if (!inQuote && char === '#') {
+          return true;
+        }
+      }
+    }
+    return false;
   });
 }
 

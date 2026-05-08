@@ -17,9 +17,7 @@ export function useCopyNotifier(onComplete: () => void) {
       timeout: 2000,
     };
     postRequest(awxAPI`/notification_templates/${notification.id.toString()}/copy/`, {
-      name: `${notification.name} @ ${new Date()
-        .toTimeString()
-        .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,
+      name: `${notification.name} @ ${new Date().toTimeString().substring(0, 8)}`,
     })
       .then(() => {
         alertToaster.addAlert(alert);
