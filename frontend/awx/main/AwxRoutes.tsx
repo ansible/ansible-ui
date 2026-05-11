@@ -15,6 +15,7 @@ export enum AwxRoute {
   EditSchedule = 'awx-edit-schedule',
 
   ActivityStream = 'awx-activity-stream',
+  Deprecations = 'awx-deprecations',
 
   WorkflowApprovals = 'awx-workflow-approvals',
   WorkflowApprovalPage = 'awx-workflow-approval-page',
