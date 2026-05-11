@@ -1,5 +1,5 @@
 import { PageWizard, PageWizardStep, usePageAlertToaster } from '@ansible/ansible-ui-framework';
-import { useVisualizationController } from '@patternfly/react-topology';
+import { action, useVisualizationController } from '@patternfly/react-topology';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
@@ -191,12 +191,18 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       nodeToEdit.resource.extra_data = {};
     }
 
-    node.setLabel(getNodeLabel(nodeName, node_alias));
-    node.setData(nodeToEdit);
-    node.setState({ modified: true });
-    controller.setState({ ...controller.getState(), modified: true });
-    closeSidebar();
+    // Fix race condition: without action(), node updates are async and non-atomic.
+    // The save operation could read stale node data if it executes mid-update, losing changes.
+    action(() => {
+      node.setLabel(getNodeLabel(nodeName, node_alias));
+      node.setData(nodeToEdit);
+      node.setState({ modified: true });
+      controller.setState({ ...controller.getState(), modified: true });
+    })();
+
+    // Layout must happen after action() commits data to avoid operating on stale state
     controller.getGraph().layout();
+    closeSidebar();
 
     await Promise.resolve();
   };
