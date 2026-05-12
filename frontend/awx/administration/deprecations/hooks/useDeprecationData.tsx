@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useMemo } from 'react';
 
 interface JobEvent {
   id: number;
@@ -11,14 +12,14 @@ interface JobEvent {
   play: string;
   playbook: string;
   created: string;
+  job: number;
 }
 
-interface DeprecationStat {
+export interface DeprecationStat {
   type: string;
   description: string;
   count: number;
   severity: 'hot' | 'warm' | 'moderate' | 'cool';
-  trend: number; // Positive for increase, negative for decrease
 }
 
 interface DeprecationData {
@@ -26,7 +27,6 @@ interface DeprecationData {
   affectedJobs: number;
   uniqueIssues: number;
   deprecations: DeprecationStat[];
-  loading: boolean;
 }
 
 // Helper to extract deprecation type from event
@@ -56,7 +56,7 @@ function extractDeprecationType(event: JobEvent): string {
 }
 
 // Helper to get description for deprecation type
-function getDeprecationDescription(type: string): string {
+export function getDeprecationDescription(type: string): string {
   const descriptions: Record<string, string> = {
     'with_items on module': 'Using with_items on package modules (yum, dnf, apt)',
     'with_dict loop': 'Deprecated in favor of loop with dict2items filter',
@@ -76,90 +76,54 @@ function getSeverity(count: number): 'hot' | 'warm' | 'moderate' | 'cool' {
   return 'cool';
 }
 
-export function useDeprecationData(): DeprecationData {
-  const [data, setData] = useState<DeprecationData>({
-    totalWarnings: 0,
-    affectedJobs: 0,
-    uniqueIssues: 0,
-    deprecations: [],
-    loading: true,
-  });
+export function useDeprecationData(): {
+  data?: DeprecationData;
+  error?: Error;
+  isLoading: boolean;
+} {
+  // Fetch all deprecation events directly (single query instead of N+1)
+  // Note: This fetches ALL deprecation events visible to the user (RBAC-filtered by AWX)
+  const {
+    data: eventsData,
+    error,
+    isLoading,
+  } = useSWR<{ count: number; results: JobEvent[] }, Error>(
+    awxAPI`/job_events/?event=deprecated&page_size=200&order_by=-id`,
+    requestGet
+  );
 
-  useEffect(() => {
-    let isMounted = true;
+  const data = useMemo(() => {
+    if (!eventsData) return undefined;
 
-    async function fetchDeprecations() {
-      try {
-        // Fetch recent jobs (last 100)
-        const jobsResponse = await requestGet<{ results: { id: number }[]; count: number }>(
-          awxAPI`/jobs/?page_size=100&order_by=-id`
-        );
+    const deprecationsByType: Record<string, number> = {};
+    const affectedJobsSet = new Set<number>();
+    let totalWarnings = 0;
 
-        const jobs = jobsResponse.results;
-        const deprecationsByType: Record<string, number> = {};
-        let totalWarnings = 0;
-        let affectedJobsCount = 0;
+    eventsData.results.forEach((event) => {
+      totalWarnings++;
+      affectedJobsSet.add(event.job);
 
-        // Fetch deprecation events for each job
-        await Promise.all(
-          jobs.slice(0, 20).map(async (job) => {
-            // Limit to first 20 jobs for performance
-            try {
-              const eventsResponse = await requestGet<{ count: number; results: JobEvent[] }>(
-                awxAPI`/jobs/${job.id.toString()}/job_events/?event=deprecated`
-              );
+      const type = extractDeprecationType(event);
+      deprecationsByType[type] = (deprecationsByType[type] || 0) + 1;
+    });
 
-              if (eventsResponse.count > 0) {
-                affectedJobsCount++;
-                totalWarnings += eventsResponse.count;
+    // Convert to array and sort by count
+    const deprecations: DeprecationStat[] = Object.entries(deprecationsByType)
+      .map(([type, count]: [string, number]) => ({
+        type,
+        description: getDeprecationDescription(type),
+        count,
+        severity: getSeverity(count),
+      }))
+      .sort((a, b) => b.count - a.count);
 
-                // Categorize deprecations by type
-                eventsResponse.results.forEach((event) => {
-                  const type = extractDeprecationType(event);
-                  deprecationsByType[type] = (deprecationsByType[type] || 0) + 1;
-                });
-              }
-            } catch {
-              // Skip jobs that error (403, 404, etc.)
-              // Silently continue - user may not have access to all jobs
-            }
-          })
-        );
-
-        // Convert to array and sort by count
-        const deprecations: DeprecationStat[] = Object.entries(deprecationsByType)
-          .map(([type, count]) => ({
-            type,
-            description: getDeprecationDescription(type),
-            count,
-            severity: getSeverity(count),
-            trend: 0, // TODO: Calculate trend from historical data
-          }))
-          .sort((a, b) => b.count - a.count);
-
-        if (isMounted) {
-          setData({
-            totalWarnings,
-            affectedJobs: affectedJobsCount,
-            uniqueIssues: deprecations.length,
-            deprecations,
-            loading: false,
-          });
-        }
-      } catch {
-        // Failed to fetch - show empty state
-        if (isMounted) {
-          setData((prev) => ({ ...prev, loading: false }));
-        }
-      }
-    }
-
-    void fetchDeprecations();
-
-    return () => {
-      isMounted = false;
+    return {
+      totalWarnings,
+      affectedJobs: affectedJobsSet.size,
+      uniqueIssues: deprecations.length,
+      deprecations,
     };
-  }, []);
+  }, [eventsData]);
 
-  return data;
+  return { data, error, isLoading };
 }
