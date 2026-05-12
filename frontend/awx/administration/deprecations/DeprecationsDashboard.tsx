@@ -1,47 +1,94 @@
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardTitle, Grid, GridItem, Spinner } from '@patternfly/react-core';
-import { useDeprecationData } from './hooks/useDeprecationData';
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  Grid,
+  GridItem,
+  Spinner,
+  Progress,
+  ProgressVariant,
+} from '@patternfly/react-core';
+import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import { ExclamationTriangleIcon, InfoCircleIcon } from '@patternfly/react-icons';
+import { useDeprecationData, getDeprecationDescription } from './hooks/useDeprecationData';
 
-const SEVERITY_COLORS = {
-  hot: '#c9190b',
-  warm: '#ec7a08',
-  moderate: '#f0ab00',
-  cool: '#06c',
-};
+function getSeverityVariant(severity: string): ProgressVariant {
+  switch (severity) {
+    case 'hot':
+      return ProgressVariant.danger;
+    case 'warm':
+      return ProgressVariant.warning;
+    case 'moderate':
+    default:
+      return ProgressVariant.success;
+  }
+}
 
-const SEVERITY_LABELS = {
-  hot: '🔥 HOT',
-  warm: '⚠️ WARN',
-  moderate: '⚡ MODERATE',
-  cool: '❄️ COOL',
-};
+function getSeverityIcon(severity: string) {
+  switch (severity) {
+    case 'hot':
+    case 'warm':
+      return <ExclamationTriangleIcon />;
+    default:
+      return <InfoCircleIcon />;
+  }
+}
+
+function getSeverityLabel(severity: string, t: (key: string) => string): string {
+  switch (severity) {
+    case 'hot':
+      return t('Hot');
+    case 'warm':
+      return t('Warn');
+    case 'moderate':
+      return t('Moderate');
+    default:
+      return t('Cool');
+  }
+}
 
 export function DeprecationsDashboard() {
   const { t } = useTranslation();
-  const { totalWarnings, affectedJobs, uniqueIssues, deprecations, loading } = useDeprecationData();
+  const { data, isLoading } = useDeprecationData();
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div style={{ padding: '24px', textAlign: 'center' }}>
+      <div style={{ padding: 'var(--pf-t--global--spacer--xl)', textAlign: 'center' }}>
         <Spinner size="xl" />
-        <div style={{ marginTop: '16px' }}>{t('Loading deprecation data...')}</div>
+        <div style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
+          {t('Loading deprecation data...')}
+        </div>
       </div>
     );
   }
 
+  const maxCount = data?.deprecations[0]?.count || 1;
+
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: 'var(--pf-t--global--spacer--xl)' }}>
       {/* Stats Cards */}
       <Grid hasGutter>
         <GridItem span={4}>
           <Card>
             <CardTitle>{t('Total Warnings')}</CardTitle>
             <CardBody>
-              <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '8px' }}>
-                {totalWarnings}
+              <div
+                style={{
+                  fontSize: 'var(--pf-t--global--font--size--4xl)',
+                  fontWeight: 'var(--pf-t--global--font--weight--light)',
+                  marginBottom: 'var(--pf-t--global--spacer--sm)',
+                }}
+              >
+                {data?.totalWarnings || 0}
               </div>
-              <div style={{ fontSize: '13px', color: '#6a6e73' }}>
-                {t('From last 20 jobs scanned')}
+              <div
+                style={{
+                  fontSize: 'var(--pf-t--global--font--size--sm)',
+                  color: 'var(--pf-t--global--text--color--subtle)',
+                }}
+              >
+                {t('From recent job executions')}
               </div>
             </CardBody>
           </Card>
@@ -50,10 +97,21 @@ export function DeprecationsDashboard() {
           <Card>
             <CardTitle>{t('Affected Jobs')}</CardTitle>
             <CardBody>
-              <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '8px' }}>
-                {affectedJobs}
+              <div
+                style={{
+                  fontSize: 'var(--pf-t--global--font--size--4xl)',
+                  fontWeight: 'var(--pf-t--global--font--weight--light)',
+                  marginBottom: 'var(--pf-t--global--spacer--sm)',
+                }}
+              >
+                {data?.affectedJobs || 0}
               </div>
-              <div style={{ fontSize: '13px', color: '#6a6e73' }}>
+              <div
+                style={{
+                  fontSize: 'var(--pf-t--global--font--size--sm)',
+                  color: 'var(--pf-t--global--text--color--subtle)',
+                }}
+              >
                 {t('Jobs with deprecation warnings')}
               </div>
             </CardBody>
@@ -63,10 +121,21 @@ export function DeprecationsDashboard() {
           <Card>
             <CardTitle>{t('Unique Issues')}</CardTitle>
             <CardBody>
-              <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '8px' }}>
-                {uniqueIssues}
+              <div
+                style={{
+                  fontSize: 'var(--pf-t--global--font--size--4xl)',
+                  fontWeight: 'var(--pf-t--global--font--weight--light)',
+                  marginBottom: 'var(--pf-t--global--spacer--sm)',
+                }}
+              >
+                {data?.uniqueIssues || 0}
               </div>
-              <div style={{ fontSize: '13px', color: '#6a6e73' }}>
+              <div
+                style={{
+                  fontSize: 'var(--pf-t--global--font--size--sm)',
+                  color: 'var(--pf-t--global--text--color--subtle)',
+                }}
+              >
                 {t('Different deprecation types')}
               </div>
             </CardBody>
@@ -75,182 +144,128 @@ export function DeprecationsDashboard() {
       </Grid>
 
       {/* Heat Map Card */}
-      <Card style={{ marginTop: '24px' }}>
+      <Card style={{ marginTop: 'var(--pf-t--global--spacer--xl)' }}>
         <CardTitle>{t('Deprecation Activity Heat Map')}</CardTitle>
         <CardBody>
-          {deprecations.length === 0 ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: '#6a6e73' }}>
+          {!data?.deprecations || data.deprecations.length === 0 ? (
+            <div
+              style={{
+                padding: 'var(--pf-t--global--spacer--xl)',
+                textAlign: 'center',
+                color: 'var(--pf-t--global--text--color--subtle)',
+              }}
+            >
               {t('No deprecation warnings found in recent jobs')}
             </div>
           ) : (
-            <div style={{ marginBottom: '16px' }}>
-              {deprecations.map((dep, index) => {
-                const maxCount = deprecations[0]?.count || 1;
-                const widthPercent = Math.min((dep.count / maxCount) * 100, 100);
-                const color = SEVERITY_COLORS[dep.severity];
-                const label = SEVERITY_LABELS[dep.severity];
-
-                return (
+            <div style={{ marginBottom: 'var(--pf-t--global--spacer--md)' }}>
+              {data.deprecations.map((dep) => (
+                <div
+                  key={dep.type}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--pf-t--global--spacer--md)',
+                    marginBottom: 'var(--pf-t--global--spacer--md)',
+                    padding: 'var(--pf-t--global--spacer--md)',
+                  }}
+                >
                   <div
-                    key={dep.type}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '16px',
-                      marginBottom: index < deprecations.length - 1 ? '12px' : '0',
-                      padding: '12px',
+                      flex: '0 0 220px',
+                      fontWeight: 'var(--pf-t--global--font--weight--semi-bold)',
+                      fontSize: 'var(--pf-t--global--font--size--sm)',
                     }}
                   >
-                    <div style={{ flex: '0 0 220px', fontWeight: '500', fontSize: '14px' }}>
-                      {dep.type}
-                    </div>
-                    <div
-                      style={{
-                        flex: '1',
-                        height: '24px',
-                        background: 'rgba(255,255,255,0.1)',
-                        borderRadius: '3px',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: `${widthPercent}%`,
-                          height: '100%',
-                          background: `linear-gradient(to right, ${color}, ${color}dd)`,
-                          borderRadius: '3px',
-                        }}
-                      ></div>
-                    </div>
-                    <div
-                      style={{
-                        flex: '0 0 110px',
-                        textAlign: 'right',
-                        fontWeight: '500',
-                        fontSize: '14px',
-                      }}
-                    >
-                      {dep.count} {t('occurrences')}
-                    </div>
-                    <div
-                      style={{
-                        flex: '0 0 110px',
-                        textAlign: 'right',
-                        fontWeight: '600',
-                        color,
-                        fontSize: '13px',
-                      }}
-                    >
-                      {label}
-                    </div>
+                    {dep.type}
                   </div>
-                );
-              })}
+                  <div style={{ flex: '1' }}>
+                    <Progress
+                      value={(dep.count / maxCount) * 100}
+                      title={`${dep.count} ${t('occurrences')}`}
+                      variant={getSeverityVariant(dep.severity)}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      flex: '0 0 110px',
+                      textAlign: 'right',
+                      fontSize: 'var(--pf-t--global--font--size--sm)',
+                    }}
+                  >
+                    {getSeverityIcon(dep.severity)}{' '}
+                    <span style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}>
+                      {getSeverityLabel(dep.severity, t)}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardBody>
       </Card>
 
       {/* Table Card */}
-      <Card style={{ marginTop: '24px' }}>
+      <Card style={{ marginTop: 'var(--pf-t--global--spacer--xl)' }}>
         <CardTitle>{t('Deprecation Issues')}</CardTitle>
         <CardBody>
-          <div style={{ fontSize: '13px', color: '#6a6e73', marginBottom: '16px' }}>
+          <div
+            style={{
+              fontSize: 'var(--pf-t--global--font--size--sm)',
+              color: 'var(--pf-t--global--text--color--subtle)',
+              marginBottom: 'var(--pf-t--global--spacer--md)',
+            }}
+          >
             {t('Showing deprecations from recent jobs')}
           </div>
 
-          {deprecations.length === 0 ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: '#6a6e73' }}>
+          {!data?.deprecations || data.deprecations.length === 0 ? (
+            <div
+              style={{
+                padding: 'var(--pf-t--global--spacer--xl)',
+                textAlign: 'center',
+                color: 'var(--pf-t--global--text--color--subtle)',
+              }}
+            >
               {t('No deprecation warnings found')}
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', background: 'transparent' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #4a4a4a', background: 'transparent' }}>
-                  <th
-                    style={{
-                      padding: '12px',
-                      textAlign: 'left',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: '#fff',
-                    }}
-                  >
-                    {t('Deprecation Type')}
-                  </th>
-                  <th
-                    style={{
-                      padding: '12px',
-                      textAlign: 'center',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: '#fff',
-                    }}
-                  >
-                    {t('Count')}
-                  </th>
-                  <th
-                    style={{
-                      padding: '12px',
-                      textAlign: 'center',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: '#fff',
-                    }}
-                  >
-                    {t('Severity')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {deprecations.map((dep, index) => {
-                  const color = SEVERITY_COLORS[dep.severity];
-                  const label = SEVERITY_LABELS[dep.severity];
-                  const isLast = index === deprecations.length - 1;
-
-                  return (
-                    <tr
-                      key={dep.type}
-                      style={{
-                        borderBottom: isLast ? 'none' : '1px solid #4a4a4a',
-                        background: 'transparent',
-                      }}
-                    >
-                      <td style={{ padding: '16px 12px' }}>
-                        <div style={{ fontWeight: '500', fontSize: '14px', color: '#fff' }}>
-                          {dep.type}
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#c7c7c7', marginTop: '4px' }}>
-                          {dep.description}
-                        </div>
-                      </td>
-                      <td
+            <Table variant="compact">
+              <Thead>
+                <Tr>
+                  <Th>{t('Deprecation Type')}</Th>
+                  <Th>{t('Count')}</Th>
+                  <Th>{t('Severity')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {data.deprecations.map((dep) => (
+                  <Tr key={dep.type}>
+                    <Td>
+                      <div style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}>
+                        {dep.type}
+                      </div>
+                      <div
                         style={{
-                          padding: '16px 12px',
-                          textAlign: 'center',
-                          fontWeight: '500',
-                          fontSize: '14px',
-                          color: '#fff',
+                          fontSize: 'var(--pf-t--global--font--size--sm)',
+                          color: 'var(--pf-t--global--text--color--subtle)',
+                          marginTop: 'var(--pf-t--global--spacer--xs)',
                         }}
                       >
-                        {dep.count}
-                      </td>
-                      <td
-                        style={{
-                          padding: '16px 12px',
-                          textAlign: 'center',
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          color,
-                        }}
-                      >
-                        {label}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        {getDeprecationDescription(dep.type)}
+                      </div>
+                    </Td>
+                    <Td>{dep.count}</Td>
+                    <Td>
+                      {getSeverityIcon(dep.severity)}{' '}
+                      <span style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}>
+                        {getSeverityLabel(dep.severity, t)}
+                      </span>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
           )}
         </CardBody>
       </Card>
