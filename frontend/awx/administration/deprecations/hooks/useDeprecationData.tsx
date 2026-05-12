@@ -29,8 +29,12 @@ interface DeprecationData {
   loading: boolean;
 }
 
-// Helper to extract deprecation type from stdout message
-function extractDeprecationType(stdout: string): string {
+// Helper to extract deprecation type from event
+function extractDeprecationType(event: JobEvent): string {
+  const stdout = event.stdout || '';
+  const task = event.task || '';
+
+  // Check stdout first (for events that have deprecation text)
   if (stdout.includes('with_items')) return 'with_items on module';
   if (stdout.includes('with_dict')) return 'with_dict loop';
   if (stdout.includes('bare variable') || stdout.includes('Conditional result')) {
@@ -39,6 +43,15 @@ function extractDeprecationType(stdout: string): string {
   if (stdout.includes('include')) return 'include directive';
   if (stdout.includes('squash_actions')) return 'squash_actions';
   if (stdout.includes('hash_behaviour')) return 'hash_behaviour';
+
+  // If stdout is empty, check task name (common for bare conditional deprecations)
+  const taskLower = task.toLowerCase();
+  if (taskLower.includes('bare') && taskLower.includes('conditional')) {
+    return 'Bare variables in conditionals';
+  }
+  if (taskLower.includes('with_items')) return 'with_items on module';
+  if (taskLower.includes('with_dict')) return 'with_dict loop';
+
   return 'Other deprecation';
 }
 
@@ -102,7 +115,7 @@ export function useDeprecationData(): DeprecationData {
 
                 // Categorize deprecations by type
                 eventsResponse.results.forEach((event) => {
-                  const type = extractDeprecationType(event.stdout);
+                  const type = extractDeprecationType(event);
                   deprecationsByType[type] = (deprecationsByType[type] || 0) + 1;
                 });
               }
