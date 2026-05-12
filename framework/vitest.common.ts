@@ -52,3 +52,32 @@ export function enablePreview() {
     });
   });
 }
+
+export function polyfillJsdom() {
+  // Polyfill for HTMLCanvasElement (required for jsdom)
+  if (global.window?.HTMLCanvasElement) {
+    global.window.HTMLCanvasElement.prototype.getContext = function (
+      _contextType: '2d' | 'webgl' | 'webgl2' | 'webgpu' | 'bitmaprenderer',
+      _contextAttributes?: Record<string, unknown>
+    ): null {
+      return null;
+    };
+  }
+
+  // Polyfill for matchMedia (required for jsdom + monaco-editor)
+  if (global.window && !global.window.matchMedia) {
+    Object.defineProperty(global.window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => {}, // deprecated
+        removeListener: () => {}, // deprecated
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    });
+  }
+}

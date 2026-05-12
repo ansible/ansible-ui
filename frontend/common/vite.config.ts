@@ -13,7 +13,7 @@ export default defineConfig({
   test: {
     globals: true,
     css: !process.env.CI,
-    environment: 'happy-dom',
+    environment: 'jsdom',
     setupFiles: ['vitest.setup.ts'],
     coverage: {
       enabled: true, // Enabled for dump scripts

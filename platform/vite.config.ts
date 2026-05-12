@@ -101,7 +101,7 @@ const config: VitestUserConfig = {
       exclude: ['node_modules/**'],
     },
     css: !process.env.CI,
-    environment: 'happy-dom',
+    environment: 'jsdom',
     setupFiles: ['vitest.setup.ts'],
     server: {
       deps: {

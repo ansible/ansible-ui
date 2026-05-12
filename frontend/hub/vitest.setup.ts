@@ -1,5 +1,9 @@
 // vitest.setup.ts
-import { enablePreview, mockI18n } from '@ansible/ansible-ui-framework/vitest.common';
+import {
+  enablePreview,
+  mockI18n,
+  polyfillJsdom,
+} from '@ansible/ansible-ui-framework/vitest.common';
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
@@ -25,3 +29,4 @@ vi.mock('monaco-yaml', () => ({
 
 mockI18n();
 enablePreview();
+polyfillJsdom();

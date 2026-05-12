@@ -1,6 +1,10 @@
 // vitest.setup.ts
 import '@testing-library/jest-dom/vitest';
-import { mockI18n, enablePreview } from '@ansible/ansible-ui-framework/vitest.common';
+import {
+  mockI18n,
+  enablePreview,
+  polyfillJsdom,
+} from '@ansible/ansible-ui-framework/vitest.common';
 import { vi } from 'vitest';
 
 // Mock localStorage for MSW compatibility
@@ -16,3 +20,4 @@ globalThis.localStorage = localStorageMock as Storage;
 
 mockI18n();
 enablePreview();
+polyfillJsdom();
