@@ -1,7 +1,6 @@
 import useSWR from 'swr';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useMemo } from 'react';
 
 interface JobEvent {
   id: number;
@@ -76,54 +75,73 @@ function getSeverity(count: number): 'hot' | 'warm' | 'moderate' | 'cool' {
   return 'cool';
 }
 
+// Custom fetcher that fetches jobs and their deprecation events
+async function fetchDeprecations() {
+  // Fetch recent jobs (reduced to 20 per reviewer feedback)
+  const jobsResponse = await requestGet<{ results: { id: number }[]; count: number }>(
+    awxAPI`/jobs/?page_size=20&order_by=-id`
+  );
+
+  const jobs = jobsResponse.results;
+  const deprecationsByType: Record<string, number> = {};
+  const affectedJobsSet = new Set<number>();
+  let totalWarnings = 0;
+
+  // Fetch deprecation events for each job
+  await Promise.all(
+    jobs.map(async (job) => {
+      try {
+        const eventsResponse = await requestGet<{ count: number; results: JobEvent[] }>(
+          awxAPI`/jobs/${job.id.toString()}/job_events/?event=deprecated`
+        );
+
+        if (eventsResponse.count > 0) {
+          affectedJobsSet.add(job.id);
+          totalWarnings += eventsResponse.count;
+
+          eventsResponse.results.forEach((event) => {
+            const type = extractDeprecationType(event);
+            deprecationsByType[type] = (deprecationsByType[type] || 0) + 1;
+          });
+        }
+      } catch {
+        // Silently ignore errors (user may not have access to specific jobs)
+      }
+    })
+  );
+
+  // Convert to array and sort by count
+  const deprecations: DeprecationStat[] = Object.entries(deprecationsByType)
+    .map(([type, count]: [string, number]) => ({
+      type,
+      description: getDeprecationDescription(type),
+      count,
+      severity: getSeverity(count),
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  return {
+    totalWarnings,
+    affectedJobs: affectedJobsSet.size,
+    uniqueIssues: deprecations.length,
+    deprecations,
+  };
+}
+
 export function useDeprecationData(): {
   data?: DeprecationData;
   error?: Error;
   isLoading: boolean;
 } {
-  // Fetch all deprecation events directly (single query instead of N+1)
-  // Note: This fetches ALL deprecation events visible to the user (RBAC-filtered by AWX)
-  const {
-    data: eventsData,
-    error,
-    isLoading,
-  } = useSWR<{ count: number; results: JobEvent[] }, Error>(
-    awxAPI`/job_events/?event=deprecated&page_size=200&order_by=-id`,
-    requestGet
+  // Use a single SWR call with a custom fetcher that handles the N+1 query internally
+  const { data, error, isLoading } = useSWR<DeprecationData, Error>(
+    'deprecations-dashboard',
+    fetchDeprecations,
+    {
+      refreshInterval: 60000, // Refresh every minute
+      revalidateOnFocus: false,
+    }
   );
-
-  const data = useMemo(() => {
-    if (!eventsData) return undefined;
-
-    const deprecationsByType: Record<string, number> = {};
-    const affectedJobsSet = new Set<number>();
-    let totalWarnings = 0;
-
-    eventsData.results.forEach((event) => {
-      totalWarnings++;
-      affectedJobsSet.add(event.job);
-
-      const type = extractDeprecationType(event);
-      deprecationsByType[type] = (deprecationsByType[type] || 0) + 1;
-    });
-
-    // Convert to array and sort by count
-    const deprecations: DeprecationStat[] = Object.entries(deprecationsByType)
-      .map(([type, count]: [string, number]) => ({
-        type,
-        description: getDeprecationDescription(type),
-        count,
-        severity: getSeverity(count),
-      }))
-      .sort((a, b) => b.count - a.count);
-
-    return {
-      totalWarnings,
-      affectedJobs: affectedJobsSet.size,
-      uniqueIssues: deprecations.length,
-      deprecations,
-    };
-  }, [eventsData]);
 
   return { data, error, isLoading };
 }

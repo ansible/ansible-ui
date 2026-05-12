@@ -17,8 +17,13 @@ describe('useDeprecationData', () => {
   });
 
   it('should fetch and categorize deprecations', async () => {
-    const mockEventsResponse = {
-      count: 4,
+    const mockJobsResponse = {
+      results: [{ id: 1 }, { id: 2 }],
+      count: 2,
+    };
+
+    const mockEventsJob1 = {
+      count: 2,
       results: [
         {
           id: 1,
@@ -42,6 +47,12 @@ describe('useDeprecationData', () => {
           created: '2024-01-01T00:00:00Z',
           job: 1,
         },
+      ],
+    };
+
+    const mockEventsJob2 = {
+      count: 2,
+      results: [
         {
           id: 3,
           event: 'deprecated',
@@ -67,7 +78,10 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    vi.spyOn(Data, 'requestGet').mockResolvedValue(mockEventsResponse);
+    vi.spyOn(Data, 'requestGet')
+      .mockResolvedValueOnce(mockJobsResponse) // First call: fetch jobs
+      .mockResolvedValueOnce(mockEventsJob1) // Second call: events for job 1
+      .mockResolvedValueOnce(mockEventsJob2); // Third call: events for job 2
 
     const { result } = renderHook(() => useDeprecationData());
 
@@ -84,12 +98,12 @@ describe('useDeprecationData', () => {
   });
 
   it('should handle empty results', async () => {
-    const mockEventsResponse = {
+    const mockJobsResponse = {
       results: [],
       count: 0,
     };
 
-    vi.spyOn(Data, 'requestGet').mockResolvedValue(mockEventsResponse);
+    vi.spyOn(Data, 'requestGet').mockResolvedValue(mockJobsResponse);
 
     const { result } = renderHook(() => useDeprecationData());
 
