@@ -80,4 +80,39 @@ export function polyfillJsdom() {
       }),
     });
   }
+
+  // Polyfill for ResizeObserver (required for jsdom + @react-hook/resize-observer)
+  if (global.window && !global.window.ResizeObserver) {
+    global.window.ResizeObserver = class ResizeObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    };
+  }
+
+  // Polyfill for localStorage (jsdom provides it but sometimes it's not functional)
+  if (global.window) {
+    const localStorageData: Record<string, string> = {};
+    const localStorageMock = {
+      getItem: (key: string) => localStorageData[key] || null,
+      setItem: (key: string, value: string) => {
+        localStorageData[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete localStorageData[key];
+      },
+      clear: () => {
+        Object.keys(localStorageData).forEach((key) => delete localStorageData[key]);
+      },
+      get length() {
+        return Object.keys(localStorageData).length;
+      },
+      key: (index: number) => Object.keys(localStorageData)[index] || null,
+    };
+
+    Object.defineProperty(global.window, 'localStorage', {
+      writable: true,
+      value: localStorageMock,
+    });
+  }
 }
