@@ -2,6 +2,8 @@ import useSWR from 'swr';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 
+export type TimeRange = '7d' | '30d' | '6m' | '1y' | 'all';
+
 interface JobEvent {
   id: number;
   event: string;
@@ -22,11 +24,18 @@ export interface DeprecationStat {
   jobIds: number[]; // IDs of jobs that have this deprecation
 }
 
+export interface DeprecationEventsByDate {
+  date: string;
+  events: JobEvent[];
+}
+
 interface DeprecationData {
   totalWarnings: number;
   affectedJobs: number;
   uniqueIssues: number;
   deprecations: DeprecationStat[];
+  eventsByDate: DeprecationEventsByDate[];
+  timeRange: TimeRange;
 }
 
 // Helper to extract deprecation type from event
@@ -76,16 +85,50 @@ function getSeverity(count: number): 'hot' | 'warm' | 'moderate' | 'cool' {
   return 'cool';
 }
 
+// Helper to calculate date filter from time range
+function getDateFilter(timeRange: TimeRange): string | null {
+  if (timeRange === 'all') return null;
+
+  const now = new Date();
+  const date = new Date(now);
+
+  switch (timeRange) {
+    case '7d':
+      date.setDate(date.getDate() - 7);
+      break;
+    case '30d':
+      date.setDate(date.getDate() - 30);
+      break;
+    case '6m':
+      date.setMonth(date.getMonth() - 6);
+      break;
+    case '1y':
+      date.setFullYear(date.getFullYear() - 1);
+      break;
+  }
+
+  return date.toISOString();
+}
+
 // Custom fetcher that fetches jobs and their deprecation events
-async function fetchDeprecations() {
-  // Fetch recent jobs (reduced to 20 per reviewer feedback)
+async function fetchDeprecations(timeRange: TimeRange) {
+  const dateFilter = getDateFilter(timeRange);
+
+  // Build jobs URL with optional date filter
+  let jobsUrl = '/jobs/?page_size=100&order_by=-created';
+  if (dateFilter) {
+    jobsUrl += `&created__gte=${dateFilter}`;
+  }
+
+  // Fetch jobs in the time range
   const jobsResponse = await requestGet<{ results: { id: number }[]; count: number }>(
-    awxAPI`/jobs/?page_size=20&order_by=-id`
+    awxAPI`${jobsUrl}`
   );
 
   const jobs = jobsResponse.results;
   const deprecationsByType: Record<string, { count: number; jobIds: Set<number> }> = {};
   const affectedJobsSet = new Set<number>();
+  const allEvents: JobEvent[] = [];
   let totalWarnings = 0;
 
   // Fetch deprecation events for each job
@@ -107,6 +150,7 @@ async function fetchDeprecations() {
             }
             deprecationsByType[type].count++;
             deprecationsByType[type].jobIds.add(job.id);
+            allEvents.push(event);
           });
         }
       } catch {
@@ -126,23 +170,39 @@ async function fetchDeprecations() {
     }))
     .sort((a, b) => b.count - a.count);
 
+  // Group events by date for trend graph
+  const eventsByDateMap = new Map<string, JobEvent[]>();
+  allEvents.forEach((event) => {
+    const date = new Date(event.created).toISOString().split('T')[0]; // YYYY-MM-DD
+    if (!eventsByDateMap.has(date)) {
+      eventsByDateMap.set(date, []);
+    }
+    eventsByDateMap.get(date)!.push(event);
+  });
+
+  const eventsByDate: DeprecationEventsByDate[] = Array.from(eventsByDateMap.entries())
+    .map(([date, events]) => ({ date, events }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
   return {
     totalWarnings,
     affectedJobs: affectedJobsSet.size,
     uniqueIssues: deprecations.length,
     deprecations,
+    eventsByDate,
+    timeRange,
   };
 }
 
-export function useDeprecationData(): {
+export function useDeprecationData(timeRange: TimeRange = '7d'): {
   data?: DeprecationData;
   error?: Error;
   isLoading: boolean;
 } {
   // Use a single SWR call with a custom fetcher that handles the N+1 query internally
   const { data, error, isLoading } = useSWR<DeprecationData, Error>(
-    'deprecations-dashboard',
-    fetchDeprecations,
+    ['deprecations-dashboard', timeRange],
+    () => fetchDeprecations(timeRange),
     {
       refreshInterval: 60000, // Refresh every minute
       revalidateOnFocus: false,

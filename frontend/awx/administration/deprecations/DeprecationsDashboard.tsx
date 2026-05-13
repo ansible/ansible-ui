@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardBody,
@@ -12,8 +13,15 @@ import {
 } from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { ExclamationTriangleIcon, InfoCircleIcon } from '@patternfly/react-icons';
-import { useDeprecationData, getDeprecationDescription } from './hooks/useDeprecationData';
-import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  useDeprecationData,
+  getDeprecationDescription,
+  TimeRange,
+} from './hooks/useDeprecationData';
+import { useGetPageUrl, PageDashboardChart } from '@ansible/ansible-ui-framework';
+import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
+import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
+import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useNavigate } from 'react-router-dom';
 
@@ -54,9 +62,22 @@ function getSeverityLabel(severity: string, t: (key: string) => string): string 
 
 export function DeprecationsDashboard() {
   const { t } = useTranslation();
-  const { data, isLoading } = useDeprecationData();
+  const [timeRange, setTimeRange] = useState<TimeRange>('7d');
+  const { data, isLoading } = useDeprecationData(timeRange);
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
+  const { blueColor } = usePageChartColors();
+
+  const timeRangeOptions: PageSelectOption<TimeRange>[] = useMemo(
+    () => [
+      { value: '7d', label: t('Last 7 days') },
+      { value: '30d', label: t('Last 30 days') },
+      { value: '6m', label: t('Last 6 months') },
+      { value: '1y', label: t('Last year') },
+      { value: 'all', label: t('All time') },
+    ],
+    [t]
+  );
 
   if (isLoading) {
     return (
@@ -71,8 +92,37 @@ export function DeprecationsDashboard() {
 
   const maxCount = data?.deprecations[0]?.count || 1;
 
+  // Prepare chart data for trend graph
+  const chartData =
+    data?.eventsByDate.map((item) => ({
+      label: item.date,
+      value: item.events.length,
+    })) || [];
+
   return (
     <div style={{ padding: 'var(--pf-t--global--spacer--xl)' }}>
+      {/* Time Range Selector */}
+      <div
+        style={{
+          marginBottom: 'var(--pf-t--global--spacer--lg)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 'var(--pf-t--global--spacer--md)',
+        }}
+      >
+        <div style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}>
+          {t('Time period:')}
+        </div>
+        <div style={{ width: '200px' }}>
+          <PageSingleSelect<TimeRange>
+            value={timeRange}
+            onSelect={(value) => value && setTimeRange(value)}
+            options={timeRangeOptions}
+            placeholder={t('Select time range')}
+          />
+        </div>
+      </div>
+
       {/* Stats Cards */}
       <Grid hasGutter>
         <GridItem span={4}>
@@ -148,6 +198,39 @@ export function DeprecationsDashboard() {
           </Card>
         </GridItem>
       </Grid>
+
+      {/* Trend Graph */}
+      <Card style={{ marginTop: 'var(--pf-t--global--spacer--xl)' }}>
+        <CardTitle>{t('Deprecation Trends Over Time')}</CardTitle>
+        <CardBody>
+          {!data?.eventsByDate || data.eventsByDate.length === 0 ? (
+            <div
+              style={{
+                padding: 'var(--pf-t--global--spacer--xl)',
+                textAlign: 'center',
+                color: 'var(--pf-t--global--text--color--subtle)',
+              }}
+            >
+              {t('No deprecation data in selected time period')}
+            </div>
+          ) : (
+            <div style={{ height: '300px' }}>
+              <PageDashboardChart
+                groups={[
+                  {
+                    label: t('Total Deprecations'),
+                    color: blueColor,
+                    values: chartData,
+                  },
+                ]}
+                variant="stackedAreaChart"
+                allowZero
+                onlyIntegerTicks
+              />
+            </div>
+          )}
+        </CardBody>
+      </Card>
 
       {/* Heat Map Card */}
       <Card style={{ marginTop: 'var(--pf-t--global--spacer--xl)' }}>
