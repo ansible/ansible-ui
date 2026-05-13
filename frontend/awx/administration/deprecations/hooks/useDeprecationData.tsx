@@ -19,6 +19,7 @@ export interface DeprecationStat {
   description: string;
   count: number;
   severity: 'hot' | 'warm' | 'moderate' | 'cool';
+  jobIds: number[]; // IDs of jobs that have this deprecation
 }
 
 interface DeprecationData {
@@ -83,7 +84,7 @@ async function fetchDeprecations() {
   );
 
   const jobs = jobsResponse.results;
-  const deprecationsByType: Record<string, number> = {};
+  const deprecationsByType: Record<string, { count: number; jobIds: Set<number> }> = {};
   const affectedJobsSet = new Set<number>();
   let totalWarnings = 0;
 
@@ -101,7 +102,11 @@ async function fetchDeprecations() {
 
           eventsResponse.results.forEach((event) => {
             const type = extractDeprecationType(event);
-            deprecationsByType[type] = (deprecationsByType[type] || 0) + 1;
+            if (!deprecationsByType[type]) {
+              deprecationsByType[type] = { count: 0, jobIds: new Set() };
+            }
+            deprecationsByType[type].count++;
+            deprecationsByType[type].jobIds.add(job.id);
           });
         }
       } catch {
@@ -112,11 +117,12 @@ async function fetchDeprecations() {
 
   // Convert to array and sort by count
   const deprecations: DeprecationStat[] = Object.entries(deprecationsByType)
-    .map(([type, count]: [string, number]) => ({
+    .map(([type, data]: [string, { count: number; jobIds: Set<number> }]) => ({
       type,
       description: getDeprecationDescription(type),
-      count,
-      severity: getSeverity(count),
+      count: data.count,
+      severity: getSeverity(data.count),
+      jobIds: Array.from(data.jobIds),
     }))
     .sort((a, b) => b.count - a.count);
 

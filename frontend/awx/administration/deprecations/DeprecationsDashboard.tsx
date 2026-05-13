@@ -8,10 +8,14 @@ import {
   Spinner,
   Progress,
   ProgressVariant,
+  Button,
 } from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { ExclamationTriangleIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { useDeprecationData, getDeprecationDescription } from './hooks/useDeprecationData';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { useNavigate } from 'react-router-dom';
 
 function getSeverityVariant(severity: string): ProgressVariant {
   switch (severity) {
@@ -51,6 +55,8 @@ function getSeverityLabel(severity: string, t: (key: string) => string): string 
 export function DeprecationsDashboard() {
   const { t } = useTranslation();
   const { data, isLoading } = useDeprecationData();
+  const getPageUrl = useGetPageUrl();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -162,12 +168,38 @@ export function DeprecationsDashboard() {
               {data.deprecations.map((dep) => (
                 <div
                   key={dep.type}
+                  role="button"
+                  tabIndex={0}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: 'var(--pf-t--global--spacer--md)',
                     marginBottom: 'var(--pf-t--global--spacer--md)',
                     padding: 'var(--pf-t--global--spacer--md)',
+                    cursor: 'pointer',
+                    borderRadius: 'var(--pf-t--global--border--radius--medium)',
+                  }}
+                  onClick={() => {
+                    const jobsUrl = getPageUrl(AwxRoute.Jobs, {
+                      query: { id__in: dep.jobIds },
+                    });
+                    void navigate(jobsUrl);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      const jobsUrl = getPageUrl(AwxRoute.Jobs, {
+                        query: { id__in: dep.jobIds },
+                      });
+                      void navigate(jobsUrl);
+                    }
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor =
+                      'var(--pf-t--global--background--color--action--hover)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
                   }}
                 >
                   <div
@@ -216,7 +248,7 @@ export function DeprecationsDashboard() {
               marginBottom: 'var(--pf-t--global--spacer--md)',
             }}
           >
-            {t('Showing deprecations from recent jobs')}
+            {t('Click on occurrence count to view affected jobs and their templates')}
           </div>
 
           {!data?.deprecations || data.deprecations.length === 0 ? (
@@ -234,7 +266,7 @@ export function DeprecationsDashboard() {
               <Thead>
                 <Tr>
                   <Th>{t('Deprecation Type')}</Th>
-                  <Th>{t('Count')}</Th>
+                  <Th>{t('Occurrences')}</Th>
                   <Th>{t('Severity')}</Th>
                 </Tr>
               </Thead>
@@ -255,7 +287,20 @@ export function DeprecationsDashboard() {
                         {getDeprecationDescription(dep.type)}
                       </div>
                     </Td>
-                    <Td>{dep.count}</Td>
+                    <Td>
+                      <Button
+                        variant="link"
+                        isInline
+                        onClick={() => {
+                          const jobsUrl = getPageUrl(AwxRoute.Jobs, {
+                            query: { id__in: dep.jobIds },
+                          });
+                          void navigate(jobsUrl);
+                        }}
+                      >
+                        {dep.count}
+                      </Button>
+                    </Td>
                     <Td>
                       {getSeverityIcon(dep.severity)}{' '}
                       <span style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}>

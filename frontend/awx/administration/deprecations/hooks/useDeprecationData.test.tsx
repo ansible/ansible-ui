@@ -95,6 +95,7 @@ describe('useDeprecationData', () => {
     expect(result.current.data?.deprecations).toHaveLength(1);
     expect(result.current.data?.deprecations[0].type).toBe('with_items on module');
     expect(result.current.data?.deprecations[0].count).toBe(4);
+    expect(result.current.data?.deprecations[0].jobIds).toEqual([1, 2]);
   });
 
   it('should handle empty results', async () => {
