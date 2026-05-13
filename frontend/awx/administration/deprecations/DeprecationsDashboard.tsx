@@ -181,7 +181,7 @@ export function DeprecationsDashboard() {
                   }}
                   onClick={() => {
                     const jobsUrl = getPageUrl(AwxRoute.Jobs, {
-                      query: { id__in: dep.jobIds },
+                      query: { id__in: dep.jobIds.join(',') },
                     });
                     void navigate(jobsUrl);
                   }}
@@ -189,7 +189,7 @@ export function DeprecationsDashboard() {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
                       const jobsUrl = getPageUrl(AwxRoute.Jobs, {
-                        query: { id__in: dep.jobIds },
+                        query: { id__in: dep.jobIds.join(',') },
                       });
                       void navigate(jobsUrl);
                     }
@@ -293,7 +293,7 @@ export function DeprecationsDashboard() {
                         isInline
                         onClick={() => {
                           const jobsUrl = getPageUrl(AwxRoute.Jobs, {
-                            query: { id__in: dep.jobIds },
+                            query: { id__in: dep.jobIds.join(',') },
                           });
                           void navigate(jobsUrl);
                         }}
