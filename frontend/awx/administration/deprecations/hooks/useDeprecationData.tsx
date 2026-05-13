@@ -115,15 +115,12 @@ async function fetchDeprecations(timeRange: TimeRange) {
   const dateFilter = getDateFilter(timeRange);
 
   // Build jobs URL with optional date filter
-  let jobsUrl = '/jobs/?page_size=100&order_by=-created';
-  if (dateFilter) {
-    jobsUrl += `&created__gte=${dateFilter}`;
-  }
+  const jobsUrl = dateFilter
+    ? awxAPI`/jobs/?page_size=100&order_by=-created&created__gte=${dateFilter}`
+    : awxAPI`/jobs/?page_size=100&order_by=-created`;
 
   // Fetch jobs in the time range
-  const jobsResponse = await requestGet<{ results: { id: number }[]; count: number }>(
-    awxAPI`${jobsUrl}`
-  );
+  const jobsResponse = await requestGet<{ results: { id: number }[]; count: number }>(jobsUrl);
 
   const jobs = jobsResponse.results;
   const deprecationsByType: Record<string, { count: number; jobIds: Set<number> }> = {};
