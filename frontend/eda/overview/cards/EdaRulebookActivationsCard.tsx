@@ -25,6 +25,7 @@ export function EdaRulebookActivationsCard() {
   columns = useDashboardColumns(columns);
   return (
     <PageDashboardCard
+      id="rulebook-activations"
       title={t('Rulebook Activations')}
       subtitle={t('Recently updated rulebook activations')}
       height="md"

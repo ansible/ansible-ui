@@ -47,6 +47,9 @@ export function PlatformOverview() {
           </Button>
         }
       />
+      {/* Service detection elements for tests */}
+      {awxService && <div data-testid="platform-awx" style={{ display: 'none' }} />}
+      {edaService && <div data-testid="platform-eda" style={{ display: 'none' }} />}
       <PageDashboard>
         {managedResources
           .filter((resource) => {
