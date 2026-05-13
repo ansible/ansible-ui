@@ -15,6 +15,7 @@ import { AwxPageForm } from '../../../common/AwxPageForm';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialsTestButton } from '../utils/CredentialsTestButton';
+import { isOidcCredential } from '../utils/isOidcCredential';
 import { PageFormExternalCredentialSelect } from './components/PageFormExternalCredentialSelect';
 import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
 
@@ -57,11 +58,6 @@ export function CredentialPlugins({
       awxAPI`/credential_types/`,
       credentialData?.summary_fields?.credential_type?.id
     );
-
-    // Check if this is an OIDC credential type
-    const isOidcCredential =
-      credentialType?.namespace === 'hashivault-kv-oidc' ||
-      credentialType?.namespace === 'hashivault-ssh-oidc';
 
     return credentialType?.inputs?.metadata ? (
       <PageFormSection title={t('Metadata')}>
@@ -109,8 +105,7 @@ export function CredentialPlugins({
           }
         })}
 
-        {/* Add job template selector for OIDC credentials */}
-        {isOidcCredential && (
+        {isOidcCredential(credentialType?.namespace) && (
           <PageFormJobTemplateSelect
             key="job_template_id"
             name="job_template_id"

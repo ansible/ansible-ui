@@ -161,9 +161,9 @@ function CredentialPluginsModal(
               }
               isInline
               customIcon={testFailed ? <ExclamationCircleIcon /> : <CheckCircleIcon />}
-              style={{ marginBottom: '16px' }}
+              className="pf-v6-u-mb-md"
             />
-            <p style={{ marginBottom: '16px' }}>
+            <p className="pf-v6-u-mb-md">
               {t('JWT claims associated to the Controller job template:')}
             </p>
             <CodeBlock>
