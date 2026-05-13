@@ -6,7 +6,7 @@ async function mockReportRoute(
   page: import('playwright').Page,
   status: number = 200
 ): Promise<void> {
-  await page.route(`**/api/metrics/v1/dashboard_reports/report/**`, async (route) => {
+  await page.route(`**/api/metrics/v1/dashboard_reports/report/*`, async (route) => {
     await route.fulfill({
       status: status,
       contentType: 'application/json',
@@ -41,7 +41,7 @@ async function mockReportDetailRoute(
   page: import('playwright').Page,
   status: number = 200
 ): Promise<void> {
-  await page.route(`**/api/metrics/v1/dashboard_reports/report/details`, async (route) => {
+  await page.route(`**/api/metrics/v1/dashboard_reports/report/details/**`, async (route) => {
     await route.fulfill({
       status: status,
       contentType: 'application/json',
