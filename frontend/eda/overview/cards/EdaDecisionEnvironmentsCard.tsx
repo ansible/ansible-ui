@@ -24,6 +24,7 @@ export function EdaDecisionEnvironmentsCard() {
 
   return (
     <PageDashboardCard
+      id="decision-environments"
       title={t('Decision Environments')}
       subtitle={t('Recently updated decision environments')}
       height="md"

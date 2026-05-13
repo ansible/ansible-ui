@@ -10,5 +10,9 @@ export function PlatformCountsCard() {
   if (!data || isLoading) {
     return <></>;
   }
-  return <AwxCountsCard data={data} />;
+  return (
+    <div data-testid="resource-counts">
+      <AwxCountsCard data={data} />
+    </div>
+  );
 }

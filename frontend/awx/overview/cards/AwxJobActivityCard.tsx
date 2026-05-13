@@ -36,6 +36,7 @@ export function AwxJobActivityCard() {
 
   return (
     <PageDashboardCard
+      id="job-activity"
       title={t('Job Activity')}
       linkText={t('View all Jobs')}
       to={getPageUrl(AwxRoute.Jobs)}
