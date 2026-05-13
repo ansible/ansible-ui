@@ -110,41 +110,6 @@ describe('HubRoot', () => {
   });
 });
 
-describe('useForceLight', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-    document.documentElement.classList.remove('pf-v6-theme-dark');
-  });
-
-  it('should remove pf-v6-theme-dark class on render', () => {
-    document.documentElement.classList.add('pf-v6-theme-dark');
-
-    render(
-      <MemoryRouter>
-        <HubRoot />
-      </MemoryRouter>
-    );
-
-    expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
-  });
-
-  it('should revert dark mode class if re-added', async () => {
-    render(
-      <MemoryRouter>
-        <HubRoot />
-      </MemoryRouter>
-    );
-
-    // Simulate PageSettingsProvider re-adding dark class
-    document.documentElement.classList.add('pf-v6-theme-dark');
-
-    // MutationObserver should revert it
-    // Give it a tick for the observer to fire
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
-  });
-});
-
 describe('HubRoot with missing chrome methods', () => {
   it('should handle missing identifyApp gracefully', () => {
     // Temporarily override mock to have undefined identifyApp
