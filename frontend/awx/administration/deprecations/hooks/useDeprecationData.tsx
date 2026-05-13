@@ -110,13 +110,75 @@ function getDateFilter(timeRange: TimeRange): string | null {
   return date.toISOString();
 }
 
+const MOCK_DEPRECATION_DATA: DeprecationData = {
+  totalWarnings: 147,
+  affectedJobs: 13,
+  uniqueIssues: 6,
+  timeRange: '7d',
+  eventsByDate: [
+    { date: '2026-05-06', events: [] },
+    { date: '2026-05-07', events: [] },
+    { date: '2026-05-08', events: [] },
+    { date: '2026-05-09', events: [] },
+    { date: '2026-05-10', events: [] },
+    { date: '2026-05-11', events: [] },
+    { date: '2026-05-12', events: [] },
+  ],
+  deprecations: [
+    {
+      type: 'with_items on module',
+      description: 'Using with_items on package modules (yum, dnf, apt)',
+      count: 62,
+      severity: 'hot',
+      jobIds: [101, 102, 103, 104, 105],
+    },
+    {
+      type: 'Bare variables in conditionals',
+      description: 'Variables in when statements should use {{ }} syntax',
+      count: 38,
+      severity: 'warm',
+      jobIds: [101, 103, 106],
+    },
+    {
+      type: 'include directive',
+      description: 'Use import_tasks or include_tasks instead',
+      count: 21,
+      severity: 'warm',
+      jobIds: [102, 107, 108],
+    },
+    {
+      type: 'with_dict loop',
+      description: 'Deprecated in favor of loop with dict2items filter',
+      count: 14,
+      severity: 'moderate',
+      jobIds: [104, 109],
+    },
+    {
+      type: 'hash_behaviour',
+      description: 'Deprecated ansible.cfg setting for hash merging',
+      count: 8,
+      severity: 'cool',
+      jobIds: [110],
+    },
+    {
+      type: 'squash_actions',
+      description: 'Invoking modules only once while using loop',
+      count: 4,
+      severity: 'cool',
+      jobIds: [111],
+    },
+  ],
+};
+
 // Custom fetcher that fetches jobs and their deprecation events
 async function fetchDeprecations(timeRange: TimeRange) {
+  void timeRange;
+  return { ...MOCK_DEPRECATION_DATA, timeRange };
   const dateFilter = getDateFilter(timeRange);
 
   // Build jobs URL with optional date filter
   const jobsUrl = dateFilter
-    ? awxAPI`/jobs/?page_size=100&order_by=-created&created__gte=${dateFilter}`
+    ? awxAPI`/jobs/?page_size=100&order_by=-created&created__gte=${dateFilter as string}`
     : awxAPI`/jobs/?page_size=100&order_by=-created`;
 
   // Fetch jobs in the time range

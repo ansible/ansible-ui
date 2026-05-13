@@ -16,6 +16,9 @@ export enum AwxRoute {
 
   ActivityStream = 'awx-activity-stream',
   Deprecations = 'awx-deprecations',
+  DeprecationPage = 'awx-deprecation-page',
+  DeprecationDetails = 'awx-deprecation-details',
+  DeprecationAffectedJobs = 'awx-deprecation-affected-jobs',
 
   WorkflowApprovals = 'awx-workflow-approvals',
   WorkflowApprovalPage = 'awx-workflow-approval-page',
