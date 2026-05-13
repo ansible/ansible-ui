@@ -1,0 +1,165 @@
+---
+# Production-Scale Deprecation Test (No Collections Required)
+# Simulates what a customer with multiple teams and playbooks would see
+# Run this 5-10 times to generate realistic dashboard data
+
+- name: Infrastructure Provisioning (Team 1)
+  hosts: localhost
+  gather_facts: yes
+  connection: local
+  tasks:
+    - name: Check server type
+      debug:
+        msg: "Server type: {{ ansible_system }}"
+      when: ansible_system
+
+    - name: Verify OS family
+      debug:
+        msg: "OS Family: {{ ansible_os_family }}"
+      when: ansible_os_family
+
+    - name: Check distribution
+      debug:
+        msg: "Distribution: {{ ansible_distribution }}"
+      when: ansible_distribution
+
+    - name: Validate architecture
+      debug:
+        msg: "Architecture: {{ ansible_architecture }}"
+      when: ansible_architecture
+
+- name: Web Server Configuration (Team 2)
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - name: Check hostname
+      debug:
+        msg: "Hostname: {{ ansible_hostname }}"
+      when: ansible_hostname
+
+    - name: Verify FQDN
+      debug:
+        msg: "FQDN: {{ ansible_fqdn }}"
+      when: ansible_fqdn
+
+    - name: Check node name
+      debug:
+        msg: "Node: {{ ansible_nodename }}"
+      when: ansible_nodename
+
+    - name: Validate domain
+      debug:
+        msg: "Domain: {{ ansible_domain }}"
+      when: ansible_domain
+
+- name: Database Configuration (Team 3)
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - name: Check kernel version
+      debug:
+        msg: "Kernel: {{ ansible_kernel }}"
+      when: ansible_kernel
+
+    - name: Verify machine type
+      debug:
+        msg: "Machine: {{ ansible_machine }}"
+      when: ansible_machine
+
+    - name: Check user
+      debug:
+        msg: "User: {{ ansible_user_id }}"
+      when: ansible_user_id
+
+    - name: Verify home directory
+      debug:
+        msg: "Home: {{ ansible_env.HOME }}"
+      when: ansible_env.HOME
+
+- name: Application Deployment (Team 4)
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - name: Check Python version
+      debug:
+        msg: "Python: {{ ansible_python_version }}"
+      when: ansible_python_version
+
+    - name: Verify date/time
+      debug:
+        msg: "Date: {{ ansible_date_time.date }}"
+      when: ansible_date_time.date
+
+    - name: Check product name
+      debug:
+        msg: "Product: {{ ansible_product_name }}"
+      when: ansible_product_name
+
+    - name: Loop through services
+      debug:
+        msg: "Service: {{ item }}"
+      when: item
+      loop:
+        - httpd
+        - nginx
+        - postgresql
+        - redis
+        - memcached
+
+- name: Security Hardening (Team 5)
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - name: Multiple environment checks
+      debug:
+        msg: "Environment validated"
+      when: ansible_distribution and ansible_os_family
+
+    - name: System validation
+      debug:
+        msg: "System validated"
+      when: ansible_system and ansible_kernel
+
+    - name: Register command output
+      command: echo "security-check"
+      register: sec_check
+      changed_when: false
+
+    - name: Validate security check
+      debug:
+        msg: "Security check passed"
+      when: sec_check.stdout
+
+    - name: Loop through packages
+      debug:
+        msg: "Package: {{ item }}"
+      when: item
+      loop:
+        - firewalld
+        - selinux-policy
+        - aide
+        - auditd
+        - fail2ban
+
+- name: Summary
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Display summary
+      debug:
+        msg: |
+          Production-scale test complete!
+
+          This playbook simulates 5 different teams (Infrastructure, Web, Database,
+          Application, Security) each running their own automation.
+
+          Run this playbook 5-10 times to simulate:
+          - Multiple job executions across different teams
+          - Typical enterprise automation volume
+          - Realistic deprecation warning distribution
+
+          Expected dashboard results after 10 runs:
+          - Total Warnings: 50-70
+          - Affected Jobs: 10
+          - Unique Issues: 1-2
+          - Severity: WARM-HOT range

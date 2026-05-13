@@ -1,0 +1,58 @@
+---
+- name: Deprecation Events Test
+  hosts: localhost
+  gather_facts: yes
+  connection: local
+
+  tasks:
+    # This pattern DOES trigger deprecated events
+    - name: Bare string variable in when (generates event)
+      debug:
+        msg: "Test 1"
+      when: ansible_distribution
+
+    - name: Another bare variable (generates event)
+      debug:
+        msg: "Test 2"
+      when: ansible_os_family
+
+    - name: Bare hostname variable (generates event)
+      debug:
+        msg: "Test 3"
+      when: ansible_hostname
+
+    - name: Bare user variable (generates event)
+      debug:
+        msg: "Test 4"
+      when: ansible_user_id
+
+    - name: Bare architecture variable (generates event)
+      debug:
+        msg: "Test 5"
+      when: ansible_architecture
+
+    - name: Multiple bare variables in loop
+      debug:
+        msg: "Processing {{ item }}"
+      when: item
+      loop:
+        - value1
+        - value2
+        - value3
+        - value4
+        - value5
+
+    - name: Another bare conditional
+      debug:
+        msg: "Test 6"
+      when: ansible_python_version
+
+    - name: Yet another bare conditional
+      debug:
+        msg: "Test 7"
+      when: ansible_system
+
+    - name: Final bare conditional
+      debug:
+        msg: "Test 8"
+      when: ansible_kernel

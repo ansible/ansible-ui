@@ -1,0 +1,72 @@
+---
+- name: Force Deprecation Warnings
+  hosts: localhost
+  gather_facts: yes
+
+  tasks:
+    # This WILL trigger deprecation on 2.16 - using include instead of import/include_tasks
+    - name: Use deprecated include (not include_tasks)
+      include: included_tasks.yml
+      ignore_errors: yes
+
+    # Bare variables in when - deprecated in 2.8+
+    - name: Bare variable in conditional 1
+      debug:
+        msg: "Testing"
+      when: ansible_os_family == "RedHat" or ansible_os_family == "Debian"
+
+    - name: Bare variable in conditional 2
+      debug:
+        msg: "Testing"
+      when: ansible_distribution == "CentOS"
+
+    - name: Bare variable in conditional 3
+      debug:
+        msg: "Testing"
+      when: ansible_hostname != ""
+
+    - name: Bare variable in conditional 4
+      debug:
+        msg: "Testing"
+      when: ansible_user_id != "root"
+
+    - name: Bare variable in conditional 5
+      debug:
+        msg: "Testing"
+      when: ansible_virtualization_type != "docker"
+
+    # with_items on package modules - deprecated
+    - name: with_items on debug (many iterations)
+      debug:
+        msg: "Item {{ item }}"
+      with_items:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+
+    # Enable deprecation warnings explicitly
+    - name: Show deprecation test
+      debug:
+        msg: "If you see [DEPRECATION WARNING] above, deprecations are working"
+
+    - name: Another bare conditional
+      debug:
+        msg: "More bare variables"
+      when: true
