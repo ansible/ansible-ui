@@ -115,4 +115,12 @@ export function polyfillJsdom() {
       value: localStorageMock,
     });
   }
+
+  // Polyfill for URL.createObjectURL and URL.revokeObjectURL (required for file download tests)
+  if (global.URL && !global.URL.createObjectURL) {
+    global.URL.createObjectURL = () => 'blob:mock-url';
+  }
+  if (global.URL && !global.URL.revokeObjectURL) {
+    global.URL.revokeObjectURL = () => {};
+  }
 }

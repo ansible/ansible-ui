@@ -60,8 +60,15 @@ describe('PageWizard', () => {
     );
   };
 
-  it('should render with correct steps', () => {
+  it('should render with correct steps', async () => {
+    const user = userEvent.setup();
     renderWizard();
+
+    // In jsdom, wizard may be collapsed - expand it first
+    const toggle = screen.queryByTestId('wizard-toggle');
+    if (toggle) {
+      await user.click(toggle);
+    }
 
     const navItems = screen.getAllByRole('listitem');
     const navTexts = navItems.map((item) => item.textContent);
@@ -71,8 +78,15 @@ describe('PageWizard', () => {
     expect(navTexts).toContain('Review');
   });
 
-  it('should hide step when hidden is set to true', () => {
+  it('should hide step when hidden is set to true', async () => {
+    const user = userEvent.setup();
     renderWizard();
+
+    // In jsdom, wizard may be collapsed - expand it first
+    const toggle = screen.queryByTestId('wizard-toggle');
+    if (toggle) {
+      await user.click(toggle);
+    }
 
     const navItems = screen.getAllByRole('listitem');
     const navTexts = navItems.map((item) => item.textContent);

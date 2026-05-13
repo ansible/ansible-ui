@@ -52,11 +52,18 @@ describe('PlatformTeamAssignRoles', () => {
   };
 
   it('should render the wizard with all step labels', async () => {
+    const user = (await import('@testing-library/user-event')).default.setup();
     renderComponent();
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Assign roles' })).toBeInTheDocument();
     });
+
+    // In jsdom, wizard may be collapsed - expand it first
+    const toggle = screen.queryByTestId('wizard-toggle');
+    if (toggle) {
+      await user.click(toggle);
+    }
 
     const navItems = screen.getAllByRole('listitem');
     const navTexts = navItems.map((item) => item.textContent);
@@ -67,11 +74,18 @@ describe('PlatformTeamAssignRoles', () => {
   });
 
   it('should hide Select resources step when resourceType is system', async () => {
+    const user = (await import('@testing-library/user-event')).default.setup();
     renderComponent();
 
     await waitFor(() => {
       expect(screen.getByTestId('resource-type-step')).toBeInTheDocument();
     });
+
+    // In jsdom, wizard may be collapsed - expand it first
+    const toggle = screen.queryByTestId('wizard-toggle');
+    if (toggle) {
+      await user.click(toggle);
+    }
 
     // Simulate selecting "system" as resource type by setting wizard data
     // The wizard's hidden function checks wizardData.resourceType === 'system'

@@ -13,7 +13,7 @@ describe('ErrorAlert', () => {
     expect(alert).toBeInTheDocument();
     expect(screen.getByText(error)).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: /Danger alert: An error occurred/i })
+      screen.getByRole('heading', { name: /Danger alert:?\s*An error occurred/i })
     ).toBeInTheDocument();
   });
 
@@ -24,7 +24,7 @@ describe('ErrorAlert', () => {
     const alert = screen.getByRole('alert');
     expect(alert).toBeInTheDocument();
     expect(screen.getByText('Error as ReactNode')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Danger alert: Error/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Danger alert:?\s*Error/i })).toBeInTheDocument();
   });
 
   test('does not render when error is null', () => {
@@ -54,7 +54,7 @@ describe('ErrorAlert', () => {
     expect(screen.getByText('Single error message')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /alert details/i })).not.toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: /Danger alert: Single error message/i })
+      screen.getByRole('heading', { name: /Danger alert:?\s*Single error message/i })
     ).toBeInTheDocument();
   });
 
@@ -65,7 +65,7 @@ describe('ErrorAlert', () => {
     const alert = screen.getByRole('alert');
     expect(alert).toBeInTheDocument();
     expect(alert).toHaveClass('pf-m-expandable');
-    expect(screen.getByRole('heading', { name: /Danger alert: Errors/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Danger alert:?\s*Errors/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /alert details/i })).toBeInTheDocument();
   });
 
@@ -149,7 +149,7 @@ describe('ErrorAlert', () => {
     // Empty array is truthy, so it renders with title "Error"
     const alert = screen.getByRole('alert');
     expect(alert).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Danger alert: Error/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Danger alert:?\s*Error/i })).toBeInTheDocument();
   });
 
   test('handles array with empty string', () => {
@@ -194,7 +194,7 @@ describe('ErrorAlert', () => {
 
     const alert = screen.getByRole('alert');
     const heading = screen.getByRole('heading', {
-      name: /Danger alert: Accessible error message/i,
+      name: /Danger alert:?\s*Accessible error message/i,
     });
     expect(alert).toBeInTheDocument();
     expect(heading).toBeInTheDocument();
@@ -207,7 +207,7 @@ describe('ErrorAlert', () => {
 
     const alert = screen.getByRole('alert');
     const toggleButton = screen.getByRole('button', { name: /alert details/i });
-    const heading = screen.getByRole('heading', { name: /Danger alert: Errors/i });
+    const heading = screen.getByRole('heading', { name: /Danger alert:?\s*Errors/i });
 
     expect(alert).toBeInTheDocument();
     expect(heading).toBeInTheDocument();

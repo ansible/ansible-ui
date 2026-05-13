@@ -25,8 +25,15 @@ describe('SubscriptionWizard Component', () => {
   });
 
   describe('Wizard Structure', () => {
-    it('should render wizard with proper navigation steps', () => {
+    it('should render wizard with proper navigation steps', async () => {
+      const user = userEvent.setup();
       renderWithRouter();
+
+      // In jsdom, wizard may be collapsed - expand it first
+      const toggle = screen.queryByTestId('wizard-toggle');
+      if (toggle) {
+        await user.click(toggle);
+      }
 
       // Check that wizard navigation is present
       expect(screen.getByRole('navigation', { name: 'Steps' })).toBeInTheDocument();
