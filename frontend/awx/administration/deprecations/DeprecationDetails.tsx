@@ -1,8 +1,16 @@
 import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
-import { Label } from '@patternfly/react-core';
+import {
+  CodeBlock,
+  CodeBlockCode,
+  Grid,
+  GridItem,
+  PageSection,
+  Title,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { getDeprecationDescription } from './hooks/useDeprecationData';
+import { SeverityLabel, DeprecationSeverity } from './DeprecationSeverityLabel';
 
 const DEPRECATION_REMEDIATION: Record<string, string> = {
   'with_items on module':
@@ -19,29 +27,101 @@ const DEPRECATION_REMEDIATION: Record<string, string> = {
     'Remove `hash_behaviour = merge` from ansible.cfg and update playbooks to use the `combine` filter explicitly where hash merging is needed.',
 };
 
-const DEPRECATION_DOCS: Record<string, string> = {
-  'with_items on module':
-    'https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html',
-  'Bare variables in conditionals':
-    'https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_conditionals.html',
-  'include directive':
-    'https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse.html',
-  'with_dict loop': 'https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html',
-  squash_actions: 'https://docs.ansible.com/ansible/latest/reference_appendices/config.html',
-  hash_behaviour:
-    'https://docs.ansible.com/ansible/latest/reference_appendices/config.html#default-hash-behaviour',
+const DEPRECATION_SEVERITY: Record<string, DeprecationSeverity> = {
+  'with_items on module': 'hot',
+  'Bare variables in conditionals': 'warm',
+  'include directive': 'warm',
+  'with_dict loop': 'moderate',
+  squash_actions: 'cool',
+  hash_behaviour: 'cool',
 };
 
-const DEPRECATION_SEVERITY: Record<
-  string,
-  { label: string; color: 'red' | 'orange' | 'blue' | 'green' }
-> = {
-  'with_items on module': { label: 'Hot', color: 'red' },
-  'Bare variables in conditionals': { label: 'Warm', color: 'orange' },
-  'include directive': { label: 'Warm', color: 'orange' },
-  'with_dict loop': { label: 'Moderate', color: 'blue' },
-  squash_actions: { label: 'Cool', color: 'green' },
-  hash_behaviour: { label: 'Cool', color: 'green' },
+const DEPRECATION_IMPACT: Record<string, string> = {
+  'with_items on module': 'Removed in Ansible Core 2.17',
+  'Bare variables in conditionals': 'Removed in Ansible Core 2.16',
+  'include directive': 'Removed in Ansible Core 2.16',
+  'with_dict loop': 'Removed in Ansible Core 2.17',
+  squash_actions: 'Removed in Ansible Core 2.17',
+  hash_behaviour: 'Removed in Ansible Core 2.17',
+};
+
+interface CodeExample {
+  before: string;
+  after: string;
+}
+
+const DEPRECATION_EXAMPLES: Record<string, CodeExample> = {
+  'with_items on module': {
+    before: `- name: Install packages
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - httpd
+    - vim
+    - curl`,
+    after: `- name: Install packages
+  ansible.builtin.yum:
+    name:
+      - httpd
+      - vim
+      - curl
+    state: present`,
+  },
+  'Bare variables in conditionals': {
+    before: `- name: Start service
+  ansible.builtin.service:
+    name: httpd
+    state: started
+  when: enable_httpd`,
+    after: `- name: Start service
+  ansible.builtin.service:
+    name: httpd
+    state: started
+  when: enable_httpd | bool`,
+  },
+  'include directive': {
+    before: `- include: tasks/setup.yml
+  vars:
+    env: production`,
+    after: `- ansible.builtin.import_tasks: tasks/setup.yml
+  vars:
+    env: production
+
+# or for dynamic includes:
+- ansible.builtin.include_tasks: tasks/setup.yml`,
+  },
+  'with_dict loop': {
+    before: `- name: Create users
+  ansible.builtin.user:
+    name: "{{ item.key }}"
+    uid: "{{ item.value.uid }}"
+  with_dict: "{{ users }}"`,
+    after: `- name: Create users
+  ansible.builtin.user:
+    name: "{{ item.key }}"
+    uid: "{{ item.value.uid }}"
+  loop: "{{ users | dict2items }}"`,
+  },
+  squash_actions: {
+    before: `# ansible.cfg
+[defaults]
+squash_actions = yum,apt,pip`,
+    after: `# ansible.cfg — remove squash_actions entirely
+# Use loop with the module's list parameter instead:
+- ansible.builtin.yum:
+    name: "{{ packages }}"
+    state: present`,
+  },
+  hash_behaviour: {
+    before: `# ansible.cfg
+[defaults]
+hash_behaviour = merge`,
+    after: `# ansible.cfg — remove hash_behaviour setting
+# Use the combine filter explicitly in playbooks:
+- ansible.builtin.set_fact:
+    merged: "{{ defaults | combine(overrides, recursive=true) }}"`,
+  },
 };
 
 export function DeprecationDetails() {
@@ -51,25 +131,60 @@ export function DeprecationDetails() {
 
   const severity = DEPRECATION_SEVERITY[decodedType];
   const remediation = DEPRECATION_REMEDIATION[decodedType];
-  const docsUrl = DEPRECATION_DOCS[decodedType];
+  const impact = DEPRECATION_IMPACT[decodedType];
+  const example = DEPRECATION_EXAMPLES[decodedType];
 
   return (
-    <PageDetails>
-      <PageDetail label={t('Deprecation Type')}>{decodedType}</PageDetail>
-      <PageDetail label={t('Description')}>{getDeprecationDescription(decodedType)}</PageDetail>
-      {severity && (
-        <PageDetail label={t('Severity')}>
-          <Label color={severity.color}>{t(severity.label)}</Label>
-        </PageDetail>
+    <>
+      <PageDetails numberOfColumns="multiple" disableScroll>
+        <PageDetail label={t('Pattern')}>{decodedType}</PageDetail>
+        <PageDetail label={t('Description')}>{getDeprecationDescription(decodedType)}</PageDetail>
+        {severity && (
+          <PageDetail label={t('Severity')}>
+            <SeverityLabel severity={severity} />
+          </PageDetail>
+        )}
+        {impact && <PageDetail label={t('Impact')}>{impact}</PageDetail>}
+        {remediation && <PageDetail label={t('Recommended remediation')}>{remediation}</PageDetail>}
+      </PageDetails>
+
+      {example && (
+        <PageSection style={{ paddingTop: 'var(--pf-t--global--spacer--md)' }}>
+          <Title
+            headingLevel="h3"
+            size="md"
+            style={{ marginBottom: 'var(--pf-t--global--spacer--md)' }}
+          >
+            {t('Resolution')}
+          </Title>
+          <Grid hasGutter md={6}>
+            <GridItem>
+              <Title
+                headingLevel="h4"
+                size="md"
+                style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}
+              >
+                {t('Before (deprecated)')}
+              </Title>
+              <CodeBlock>
+                <CodeBlockCode>{example.before}</CodeBlockCode>
+              </CodeBlock>
+            </GridItem>
+            <GridItem>
+              <Title
+                headingLevel="h4"
+                size="md"
+                style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}
+              >
+                {t('After (recommended)')}
+              </Title>
+              <CodeBlock>
+                <CodeBlockCode>{example.after}</CodeBlockCode>
+              </CodeBlock>
+            </GridItem>
+          </Grid>
+        </PageSection>
       )}
-      {remediation && <PageDetail label={t('Recommended Remediation')}>{remediation}</PageDetail>}
-      {docsUrl && (
-        <PageDetail label={t('Documentation')}>
-          <a href={docsUrl} target="_blank" rel="noopener noreferrer">
-            {t('Ansible Documentation')}
-          </a>
-        </PageDetail>
-      )}
-    </PageDetails>
+    </>
   );
 }

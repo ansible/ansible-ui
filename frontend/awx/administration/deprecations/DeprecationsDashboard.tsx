@@ -1,64 +1,98 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useMemo } from 'react';
 import {
+  Bullseye,
   Card,
   CardBody,
   CardTitle,
+  Content,
+  Flex,
+  FlexItem,
   Grid,
   GridItem,
+  Icon,
+  PageSection,
   Spinner,
-  Label,
-  SearchInput,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-  Pagination,
+  Title,
 } from '@patternfly/react-core';
-import { Table, Thead, Tr, Th, Tbody, Td, ThProps } from '@patternfly/react-table';
-import {
-  FireIcon,
-  ExclamationTriangleIcon,
-  InfoCircleIcon,
-  CheckCircleIcon,
-} from '@patternfly/react-icons';
+import { Chart, ChartAxis, ChartBar, ChartTooltip } from '@patternfly/react-charts/victory';
+import { ArrowUpIcon, ArrowDownIcon, MinusIcon } from '@patternfly/react-icons';
+import { SeverityLabel } from './DeprecationSeverityLabel';
 import { useDeprecationData, TimeRange, DeprecationStat } from './hooks/useDeprecationData';
-import { useGetPageUrl, PageDashboardChart } from '@ansible/ansible-ui-framework';
-import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
+import {
+  useGetPageUrl,
+  ITableColumn,
+  IToolbarFilter,
+  PageTable,
+  TextCell,
+  ToolbarFilterType,
+  useInMemoryView,
+} from '@ansible/ansible-ui-framework';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
+import { PageChartContainer } from '@ansible/ansible-ui-framework/PageDashboard/PageChartContainer';
+import { PageChartLegend } from '@ansible/ansible-ui-framework/PageDashboard/PageChartLegend';
 import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
 import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useNavigate } from 'react-router-dom';
 
-type SortDirection = 'asc' | 'desc';
+// Module-level constants — do not use t() here
+// Hardcoded PF severity colors — CSS variables don't resolve inside SVG fill attributes
+const SEVERITY_COLORS: Record<string, string> = {
+  hot: '#C9190B',
+  warm: '#EC7A08',
+  moderate: '#F0AB00',
+  cool: '#707070',
+};
 
-function SeverityLabel({ severity }: { severity: DeprecationStat['severity'] }) {
-  const { t } = useTranslation();
-  switch (severity) {
-    case 'hot':
-      return (
-        <Label color="red" icon={<FireIcon />}>
-          {t('Hot')}
-        </Label>
-      );
-    case 'warm':
-      return (
-        <Label color="orange" icon={<ExclamationTriangleIcon />}>
-          {t('Warn')}
-        </Label>
-      );
-    case 'moderate':
-      return (
-        <Label color="blue" icon={<InfoCircleIcon />}>
-          {t('Moderate')}
-        </Label>
-      );
-    default:
-      return (
-        <Label color="green" icon={<CheckCircleIcon />}>
-          {t('Cool')}
-        </Label>
-      );
+// Critical = 0 (highest), Minor = 3 (lowest) — used for sort order
+const SEVERITY_RANK: Record<string, number> = {
+  hot: 0,
+  warm: 1,
+  moderate: 2,
+  cool: 3,
+};
+
+type DeprecationRow = DeprecationStat & { severityRank: number };
+
+function TrendIndicator({ trend, t }: { trend: number; t: (key: string) => string }) {
+  if (trend === 0) {
+    return (
+      <Flex spaceItems={{ default: 'spaceItemsXs' }} alignItems={{ default: 'alignItemsCenter' }}>
+        <FlexItem>
+          <Icon size="sm">
+            <MinusIcon />
+          </Icon>
+        </FlexItem>
+        <FlexItem>
+          <Content component="small" style={{ color: 'var(--pf-t--global--text--color--subtle)' }}>
+            {t('No change vs previous period')}
+          </Content>
+        </FlexItem>
+      </Flex>
+    );
   }
+  const isIncrease = trend > 0;
+  return (
+    <Flex spaceItems={{ default: 'spaceItemsXs' }} alignItems={{ default: 'alignItemsCenter' }}>
+      <FlexItem>
+        <Icon size="sm" status={isIncrease ? 'danger' : 'success'}>
+          {isIncrease ? <ArrowUpIcon /> : <ArrowDownIcon />}
+        </Icon>
+      </FlexItem>
+      <FlexItem>
+        <Content
+          component="small"
+          style={{
+            color: isIncrease
+              ? 'var(--pf-t--global--color--status--danger--default)'
+              : 'var(--pf-t--global--color--status--success--default)',
+          }}
+        >
+          {Math.abs(trend)}% {t('vs previous period')}
+        </Content>
+      </FlexItem>
+    </Flex>
+  );
 }
 
 export function DeprecationsDashboard() {
@@ -66,14 +100,16 @@ export function DeprecationsDashboard() {
   const [timeRange, setTimeRange] = useState<TimeRange>('7d');
   const { data, isLoading } = useDeprecationData(timeRange);
   const getPageUrl = useGetPageUrl();
-  const navigate = useNavigate();
-  const { blueColor } = usePageChartColors();
 
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [sortIndex, setSortIndex] = useState<number | null>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const SEVERITY_LABELS = useMemo<Record<string, string>>(
+    () => ({
+      hot: t('Critical'),
+      warm: t('Important'),
+      moderate: t('Moderate'),
+      cool: t('Minor'),
+    }),
+    [t]
+  );
 
   const timeRangeOptions: PageSelectOption<TimeRange>[] = useMemo(
     () => [
@@ -86,106 +122,168 @@ export function DeprecationsDashboard() {
     [t]
   );
 
-  // Bar chart: one group per severity color, one bar per deprecation type
-  const chartGroups = useMemo(() => {
-    if (!data?.deprecations.length) return [];
-    return [
+  const toolbarFilters = useMemo<IToolbarFilter[]>(
+    () => [
       {
-        color: blueColor,
-        values: data.deprecations.map((dep) => ({
-          label: dep.type,
-          value: dep.count,
-        })),
+        type: ToolbarFilterType.Search,
+        key: 'search',
+        label: t('Search'),
+        query: 'type',
+        placeholder: t('Enter search'),
       },
-    ];
-  }, [data, blueColor]);
+      {
+        type: ToolbarFilterType.SingleSelect,
+        key: 'organization',
+        label: t('Organization'),
+        query: 'organization',
+        placeholder: t('Filter by organization'),
+        options: [
+          { label: t('Default'), value: 'default' },
+          { label: t('Operations'), value: 'operations' },
+          { label: t('Engineering'), value: 'engineering' },
+          { label: t('Platform Team'), value: 'platform-team' },
+        ],
+      },
+      {
+        type: ToolbarFilterType.SingleSelect,
+        key: 'time-period',
+        label: t('Time period'),
+        query: 'time-period',
+        placeholder: t('Filter by time period'),
+        options: [
+          { label: t('Last 7 days'), value: '7d' },
+          { label: t('Last 30 days'), value: '30d' },
+          { label: t('Last 6 months'), value: '6m' },
+          { label: t('Last year'), value: '1y' },
+          { label: t('All time'), value: 'all' },
+        ],
+      },
+      {
+        type: ToolbarFilterType.SingleSelect,
+        key: 'severity',
+        label: t('Severity'),
+        query: 'severity',
+        placeholder: t('Filter by severity'),
+        options: [
+          { label: t('Critical'), value: 'hot' },
+          { label: t('Important'), value: 'warm' },
+          { label: t('Moderate'), value: 'moderate' },
+          { label: t('Minor'), value: 'cool' },
+        ],
+      },
+      {
+        type: ToolbarFilterType.SingleSelect,
+        key: 'job-template',
+        label: t('Job template'),
+        query: 'job-template',
+        placeholder: t('Filter by job template'),
+        options: [
+          { label: t('Deploy Web App'), value: 'deploy-web-app' },
+          { label: t('Update System Packages'), value: 'update-system-packages' },
+          { label: t('Configure Firewall'), value: 'configure-firewall' },
+          { label: t('Provision DB Server'), value: 'provision-db-server' },
+          { label: t('Sync Inventory'), value: 'sync-inventory' },
+        ],
+      },
+    ],
+    [t]
+  );
 
-  // Table filtering + sorting + pagination
-  const filteredDeprecations = useMemo(() => {
-    const lower = search.toLowerCase();
-    return (data?.deprecations ?? []).filter(
-      (dep) =>
-        !lower ||
-        dep.type.toLowerCase().includes(lower) ||
-        dep.description.toLowerCase().includes(lower) ||
-        dep.severity.toLowerCase().includes(lower)
-    );
-  }, [data, search]);
+  const deprecationRows = useMemo<DeprecationRow[]>(
+    () =>
+      (data?.deprecations ?? []).map((d) => ({
+        ...d,
+        severityRank: SEVERITY_RANK[d.severity] ?? 99,
+      })),
+    [data]
+  );
 
-  const sortedDeprecations = useMemo(() => {
-    if (sortIndex === null) return filteredDeprecations;
-    return [...filteredDeprecations].sort((a, b) => {
-      let av: string | number, bv: string | number;
-      switch (sortIndex) {
-        case 0:
-          av = a.type;
-          bv = b.type;
-          break;
-        case 1:
-          av = a.count;
-          bv = b.count;
-          break;
-        case 2:
-          av = a.severity;
-          bv = b.severity;
-          break;
-        default:
-          return 0;
-      }
-      if (typeof av === 'number' && typeof bv === 'number') {
-        return sortDirection === 'asc' ? av - bv : bv - av;
-      }
-      return sortDirection === 'asc'
-        ? String(av).localeCompare(String(bv))
-        : String(bv).localeCompare(String(av));
-    });
-  }, [filteredDeprecations, sortIndex, sortDirection]);
+  const columns = useMemo<ITableColumn<DeprecationRow>[]>(
+    () => [
+      {
+        header: t('Pattern'),
+        cell: (dep) => (
+          <>
+            <TextCell
+              text={dep.type}
+              to={getPageUrl(AwxRoute.DeprecationDetails, {
+                params: { deprecationType: encodeURIComponent(dep.type) },
+              })}
+            />
+            <Content
+              component="small"
+              style={{
+                color: 'var(--pf-t--global--text--color--subtle)',
+                marginTop: 'var(--pf-t--global--spacer--xs)',
+                display: 'block',
+              }}
+            >
+              {dep.description}
+            </Content>
+          </>
+        ),
+        sort: 'type',
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Total occurrences'),
+        cell: (dep) => <TextCell text={String(dep.count)} />,
+        sort: 'count',
+      },
+      {
+        header: t('Severity'),
+        cell: (dep) => <SeverityLabel severity={dep.severity} />,
+        sort: 'severityRank',
+      },
+    ],
+    [t, getPageUrl]
+  );
 
-  const paginatedDeprecations = sortedDeprecations.slice((page - 1) * perPage, page * perPage);
-
-  const getSortParams = (columnIndex: number): ThProps['sort'] => ({
-    sortBy: { index: sortIndex ?? undefined, direction: sortDirection },
-    onSort: (_e, index, direction) => {
-      setSortIndex(index);
-      setSortDirection(direction);
-    },
-    columnIndex,
+  const view = useInMemoryView<DeprecationRow>({
+    items: deprecationRows,
+    tableColumns: columns,
+    toolbarFilters,
+    keyFn: (dep) => dep.type,
+    disableQueryString: true,
   });
 
   if (isLoading) {
     return (
-      <div style={{ padding: 'var(--pf-t--global--spacer--xl)', textAlign: 'center' }}>
-        <Spinner size="xl" />
-        <div style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
-          {t('Loading deprecation data...')}
-        </div>
-      </div>
+      <PageSection hasBodyWrapper={false} isFilled>
+        <Bullseye>
+          <Spinner />
+        </Bullseye>
+      </PageSection>
     );
   }
 
   return (
-    <div style={{ padding: 'var(--pf-t--global--spacer--xl)' }}>
+    <PageSection>
       {/* Time Range Selector */}
-      <div
-        style={{
-          marginBottom: 'var(--pf-t--global--spacer--lg)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--pf-t--global--spacer--md)',
-        }}
+      <Flex
+        spaceItems={{ default: 'spaceItemsMd' }}
+        alignItems={{ default: 'alignItemsCenter' }}
+        style={{ marginBottom: 'var(--pf-t--global--spacer--lg)' }}
       >
-        <div style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}>
-          {t('Time period:')}
-        </div>
-        <div style={{ width: '200px' }}>
+        <FlexItem>
+          <Content
+            component="p"
+            style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}
+          >
+            {t('Time period:')}
+          </Content>
+        </FlexItem>
+        <FlexItem style={{ width: '200px' }}>
           <PageSingleSelect<TimeRange>
             value={timeRange}
             onSelect={(value) => value && setTimeRange(value)}
             options={timeRangeOptions}
             placeholder={t('Select time range')}
+            isRequired
           />
-        </div>
-      </div>
+        </FlexItem>
+      </Flex>
 
       {/* Stats Cards */}
       <Grid hasGutter>
@@ -193,23 +291,16 @@ export function DeprecationsDashboard() {
           <Card>
             <CardTitle>{t('Total Warnings')}</CardTitle>
             <CardBody>
-              <div
-                style={{
-                  fontSize: 'var(--pf-t--global--font--size--4xl)',
-                  fontWeight: 'var(--pf-t--global--font--weight--light)',
-                  marginBottom: 'var(--pf-t--global--spacer--sm)',
-                }}
+              <Title
+                headingLevel="h2"
+                size="4xl"
+                style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}
               >
                 {data?.totalWarnings ?? 0}
-              </div>
-              <div
-                style={{
-                  fontSize: 'var(--pf-t--global--font--size--sm)',
-                  color: 'var(--pf-t--global--text--color--subtle)',
-                }}
-              >
-                {t('From recent job executions')}
-              </div>
+              </Title>
+              {data?.trends?.totalWarnings !== undefined && (
+                <TrendIndicator trend={data.trends.totalWarnings} t={t} />
+              )}
             </CardBody>
           </Card>
         </GridItem>
@@ -217,23 +308,16 @@ export function DeprecationsDashboard() {
           <Card>
             <CardTitle>{t('Affected Jobs')}</CardTitle>
             <CardBody>
-              <div
-                style={{
-                  fontSize: 'var(--pf-t--global--font--size--4xl)',
-                  fontWeight: 'var(--pf-t--global--font--weight--light)',
-                  marginBottom: 'var(--pf-t--global--spacer--sm)',
-                }}
+              <Title
+                headingLevel="h2"
+                size="4xl"
+                style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}
               >
                 {data?.affectedJobs ?? 0}
-              </div>
-              <div
-                style={{
-                  fontSize: 'var(--pf-t--global--font--size--sm)',
-                  color: 'var(--pf-t--global--text--color--subtle)',
-                }}
-              >
-                {t('Jobs with deprecation warnings')}
-              </div>
+              </Title>
+              {data?.trends?.affectedJobs !== undefined && (
+                <TrendIndicator trend={data.trends.affectedJobs} t={t} />
+              )}
             </CardBody>
           </Card>
         </GridItem>
@@ -241,52 +325,113 @@ export function DeprecationsDashboard() {
           <Card>
             <CardTitle>{t('Unique Issues')}</CardTitle>
             <CardBody>
-              <div
-                style={{
-                  fontSize: 'var(--pf-t--global--font--size--4xl)',
-                  fontWeight: 'var(--pf-t--global--font--weight--light)',
-                  marginBottom: 'var(--pf-t--global--spacer--sm)',
-                }}
+              <Title
+                headingLevel="h2"
+                size="4xl"
+                style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}
               >
                 {data?.uniqueIssues ?? 0}
-              </div>
-              <div
-                style={{
-                  fontSize: 'var(--pf-t--global--font--size--sm)',
-                  color: 'var(--pf-t--global--text--color--subtle)',
-                }}
-              >
-                {t('Different deprecation types')}
-              </div>
+              </Title>
+              {data?.trends?.uniqueIssues !== undefined && (
+                <TrendIndicator trend={data.trends.uniqueIssues} t={t} />
+              )}
             </CardBody>
           </Card>
         </GridItem>
       </Grid>
 
-      {/* Deprecation Activity Graph (Bar Chart) */}
+      {/* Deprecation Activity Graph
+          PROTOTYPE NOTE: Production should use PF Victory chart theme for severity colors
+          and CursorVoronoiContainer for accessible tooltips. */}
       <Card style={{ marginTop: 'var(--pf-t--global--spacer--xl)' }}>
         <CardTitle>{t('Deprecation Activity Graph')}</CardTitle>
         <CardBody>
           {!data?.deprecations.length ? (
-            <div
-              style={{
-                padding: 'var(--pf-t--global--spacer--xl)',
-                textAlign: 'center',
-                color: 'var(--pf-t--global--text--color--subtle)',
-              }}
-            >
-              {t('No deprecation data in selected time period')}
-            </div>
+            <EmptyStateNoData
+              title={t('No deprecation data')}
+              description={t('No deprecation warnings were found in the selected time period.')}
+            />
           ) : (
-            <div style={{ height: '300px' }}>
-              <PageDashboardChart
-                groups={chartGroups}
-                variant="barChart"
-                allowZero
-                onlyIntegerTicks
-                padding={{ right: 16 }}
-              />
-            </div>
+            <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsXs' }}>
+              <FlexItem>
+                <PageChartContainer height={300}>
+                  {(size) => {
+                    if (!size.width || !size.height) return null;
+                    const deps = data?.deprecations ?? [];
+                    const maxY = Math.max(...deps.map((d) => d.count), 60);
+                    const pad = { top: 20, bottom: 60, left: 80, right: 80 };
+
+                    return (
+                      <div style={{ position: 'relative', width: size.width, height: size.height }}>
+                        <Chart
+                          height={size.height}
+                          width={size.width}
+                          padding={pad}
+                          maxDomain={{ y: maxY }}
+                        >
+                          <ChartAxis fixLabelOverlap />
+                          <ChartAxis
+                            dependentAxis
+                            showGrid
+                            tickFormat={(v: number) => (Number.isInteger(v) ? String(v) : '')}
+                          />
+                          <ChartBar
+                            data={deps.map((dep) => ({
+                              x: dep.type,
+                              y: dep.count,
+                              fill: SEVERITY_COLORS[dep.severity],
+                              label: `${dep.type}\n${dep.count} ${t('occurrences')}\n${t('Severity')}: ${SEVERITY_LABELS[dep.severity]}`,
+                            }))}
+                            style={{
+                              data: {
+                                fill: (args: { datum?: { fill?: string } }) =>
+                                  args.datum?.fill ?? '#06c',
+                              },
+                            }}
+                            labelComponent={
+                              <ChartTooltip
+                                constrainToVisibleArea
+                                style={[
+                                  { fontWeight: 'bold', textAnchor: 'start', fontSize: 13 },
+                                  { fontWeight: 'normal', textAnchor: 'start', fontSize: 12 },
+                                  { fontWeight: 'normal', textAnchor: 'start', fontSize: 12 },
+                                ]}
+                                flyoutPadding={{ top: 8, bottom: 8, left: 12, right: 12 }}
+                              />
+                            }
+                          />
+                        </Chart>
+                      </div>
+                    );
+                  }}
+                </PageChartContainer>
+              </FlexItem>
+              <FlexItem>
+                <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+                  <FlexItem>
+                    <Content
+                      component="small"
+                      style={{ color: 'var(--pf-t--global--text--color--subtle)' }}
+                    >
+                      {t('Occurrences by severity')}
+                    </Content>
+                  </FlexItem>
+                </Flex>
+                <PageChartLegend
+                  id="deprecation-severity-legend"
+                  horizontal
+                  showLegendCount
+                  allowZero
+                  legend={(['hot', 'warm', 'moderate', 'cool'] as const).map((sev) => ({
+                    label: SEVERITY_LABELS[sev],
+                    color: SEVERITY_COLORS[sev],
+                    count: (data?.deprecations ?? [])
+                      .filter((d) => d.severity === sev)
+                      .reduce((s, d) => s + d.count, 0),
+                  }))}
+                />
+              </FlexItem>
+            </Flex>
           )}
         </CardBody>
       </Card>
@@ -295,116 +440,17 @@ export function DeprecationsDashboard() {
       <Card style={{ marginTop: 'var(--pf-t--global--spacer--xl)' }}>
         <CardTitle>{t('Deprecation Issues')}</CardTitle>
         <CardBody style={{ padding: 0 }}>
-          <Toolbar>
-            <ToolbarContent>
-              <ToolbarItem>
-                <SearchInput
-                  placeholder={t('Search by type, description, or severity')}
-                  value={search}
-                  onChange={(_e, val) => {
-                    setSearch(val);
-                    setPage(1);
-                  }}
-                  onClear={() => {
-                    setSearch('');
-                    setPage(1);
-                  }}
-                  style={{ minWidth: '300px' }}
-                />
-              </ToolbarItem>
-              <ToolbarItem align={{ default: 'alignEnd' }}>
-                <Pagination
-                  itemCount={filteredDeprecations.length}
-                  page={page}
-                  perPage={perPage}
-                  onSetPage={(_e, p) => setPage(p)}
-                  onPerPageSelect={(_e, pp) => {
-                    setPerPage(pp);
-                    setPage(1);
-                  }}
-                  variant="top"
-                  isCompact
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-
-          {!data?.deprecations.length ? (
-            <div
-              style={{
-                padding: 'var(--pf-t--global--spacer--xl)',
-                textAlign: 'center',
-                color: 'var(--pf-t--global--text--color--subtle)',
-              }}
-            >
-              {t('No deprecation warnings found')}
-            </div>
-          ) : (
-            <Table variant="compact" aria-label={t('Deprecation issues')}>
-              <Thead>
-                <Tr>
-                  <Th sort={getSortParams(0)}>{t('Deprecation type')}</Th>
-                  <Th sort={getSortParams(1)}>{t('Occurrences')}</Th>
-                  <Th sort={getSortParams(2)}>{t('Severity')}</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {paginatedDeprecations.map((dep) => (
-                  <Tr
-                    key={dep.type}
-                    isClickable
-                    onRowClick={() => {
-                      void navigate(
-                        getPageUrl(AwxRoute.DeprecationDetails, {
-                          params: { deprecationType: encodeURIComponent(dep.type) },
-                        })
-                      );
-                    }}
-                  >
-                    <Td>
-                      <div style={{ fontWeight: 'var(--pf-t--global--font--weight--semi-bold)' }}>
-                        {dep.type}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 'var(--pf-t--global--font--size--sm)',
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                          marginTop: 'var(--pf-t--global--spacer--xs)',
-                        }}
-                      >
-                        {dep.description}
-                      </div>
-                    </Td>
-                    <Td>{dep.count}</Td>
-                    <Td>
-                      <SeverityLabel severity={dep.severity} />
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          )}
-
-          <Toolbar>
-            <ToolbarContent>
-              <ToolbarItem align={{ default: 'alignEnd' }}>
-                <Pagination
-                  itemCount={filteredDeprecations.length}
-                  page={page}
-                  perPage={perPage}
-                  onSetPage={(_e, p) => setPage(p)}
-                  onPerPageSelect={(_e, pp) => {
-                    setPerPage(pp);
-                    setPage(1);
-                  }}
-                  variant="bottom"
-                  isCompact
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
+          <PageTable<DeprecationRow>
+            {...view}
+            tableColumns={columns}
+            toolbarFilters={toolbarFilters}
+            keyFn={(dep) => dep.type}
+            emptyStateTitle={t('No deprecation issues')}
+            emptyStateDescription={t('No deprecation patterns found in the selected time period.')}
+            errorStateTitle={t('Error loading deprecation issues')}
+          />
         </CardBody>
       </Card>
-    </div>
+    </PageSection>
   );
 }

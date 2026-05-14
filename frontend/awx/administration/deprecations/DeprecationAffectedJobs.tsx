@@ -1,209 +1,155 @@
-import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
-  SearchInput,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-  Pagination,
-  PageSection,
-} from '@patternfly/react-core';
-import { Table, Thead, Tr, Th, Tbody, Td, ThProps } from '@patternfly/react-table';
-import { useState, useMemo } from 'react';
+  DateTimeCell,
+  ITableColumn,
+  IToolbarFilter,
+  PageTable,
+  TextCell,
+  ToolbarFilterType,
+  useGetPageUrl,
+  useInMemoryView,
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import useSWR from 'swr';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useDeprecationData } from './hooks/useDeprecationData';
 
-interface MockJob {
+interface AffectedJob {
   id: number;
   name: string;
-  status: 'successful' | 'failed' | 'running';
+  status: string;
   started: string;
   finished: string;
-  template: string;
-}
-
-function makeMockJob(id: number): MockJob {
-  const statuses: MockJob['status'][] = ['successful', 'failed', 'running'];
-  const templates = [
-    'Deploy Web App',
-    'Update System Packages',
-    'Configure Firewall',
-    'Provision DB Server',
-    'Sync Inventory',
-  ];
-  const daysAgo = (id % 7) + 1;
-  const started = new Date(Date.now() - daysAgo * 86400000).toISOString();
-  const finished = new Date(Date.now() - daysAgo * 86400000 + 300000).toISOString();
-  return {
-    id,
-    name: `Job #${id}`,
-    status: statuses[id % 3],
-    started,
-    finished,
-    template: templates[id % templates.length],
+  occurrences: number;
+  summary_fields: {
+    job_template?: { name: string };
   };
 }
-
-type SortDirection = 'asc' | 'desc';
 
 export function DeprecationAffectedJobs() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const { deprecationType } = useParams<{ deprecationType: string }>();
   const decodedType = decodeURIComponent(deprecationType ?? '');
-  const getPageUrl = useGetPageUrl();
 
-  const { data } = useDeprecationData();
-  const deprecation = data?.deprecations.find((d) => d.type === decodedType);
-  const jobs: MockJob[] = useMemo(
-    () => (deprecation?.jobIds ?? []).map(makeMockJob),
-    [deprecation]
+  const { data: deprecationData } = useDeprecationData();
+  const deprecation = deprecationData?.deprecations.find((d) => d.type === decodedType);
+  const jobIds = deprecation?.jobIds ?? [];
+
+  const { data: jobsResponse, isLoading } = useSWR(
+    jobIds.length > 0 ? ['deprecation-affected-jobs', jobIds.join(',')] : null,
+    () =>
+      requestGet<{ results: AffectedJob[]; count: number }>(
+        awxAPI`/jobs/?id__in=${jobIds.join(',')}&page_size=${String(jobIds.length)}`
+      )
   );
 
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [sortIndex, setSortIndex] = useState<number | null>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const jobs = useMemo<AffectedJob[]>(() => {
+    if (!jobsResponse?.results || !deprecation) return [];
+    return jobsResponse.results.map((job) => ({
+      ...job,
+      occurrences: deprecation.jobOccurrences[job.id] ?? 0,
+    }));
+  }, [jobsResponse, deprecation]);
 
-  const filtered = useMemo(() => {
-    const lower = search.toLowerCase();
-    return jobs.filter(
-      (j) =>
-        !lower ||
-        j.name.toLowerCase().includes(lower) ||
-        j.template.toLowerCase().includes(lower) ||
-        j.status.toLowerCase().includes(lower)
-    );
-  }, [jobs, search]);
+  const columns = useMemo<ITableColumn<AffectedJob>[]>(
+    () => [
+      {
+        header: t('ID'),
+        cell: (job) => <TextCell text={String(job.id)} />,
+        sort: 'id',
+        minWidth: 0,
+        card: 'hidden',
+        list: 'hidden',
+      },
+      {
+        header: t('Name'),
+        cell: (job) => (
+          <TextCell
+            text={job.summary_fields.job_template?.name ?? job.name}
+            to={getPageUrl(AwxRoute.JobDetails, { params: { id: job.id, job_type: 'playbook' } })}
+          />
+        ),
+        sort: 'name',
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Status'),
+        cell: (job) => <StatusCell status={job.status} />,
+        sort: 'status',
+        card: 'subtitle',
+        list: 'subtitle',
+      },
+      {
+        header: t('Occurrences'),
+        cell: (job) => <TextCell text={String(job.occurrences)} />,
+        sort: 'occurrences',
+        minWidth: 0,
+      },
+      {
+        header: t('Started'),
+        cell: (job) => <DateTimeCell value={job.started || undefined} />,
+        sort: 'started',
+      },
+      {
+        header: t('Finished'),
+        cell: (job) => <DateTimeCell value={job.finished || undefined} />,
+        sort: 'finished',
+        defaultSort: true,
+        defaultSortDirection: 'desc',
+      },
+    ],
+    [t, getPageUrl]
+  );
 
-  const sorted = useMemo(() => {
-    if (sortIndex === null) return filtered;
-    return [...filtered].sort((a, b) => {
-      const keys: (keyof MockJob)[] = ['id', 'name', 'template', 'status', 'started'];
-      const key = keys[sortIndex];
-      const av = String(a[key]);
-      const bv = String(b[key]);
-      return sortDirection === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
-  }, [filtered, sortIndex, sortDirection]);
+  const toolbarFilters = useMemo<IToolbarFilter[]>(
+    () => [
+      {
+        key: 'name',
+        label: t('Name'),
+        type: ToolbarFilterType.Search,
+        query: 'name',
+      },
+      {
+        key: 'status',
+        label: t('Status'),
+        type: ToolbarFilterType.SingleSelect,
+        query: 'status',
+        placeholder: t('Filter by status'),
+        options: [
+          { label: t('Successful'), value: 'successful' },
+          { label: t('Failed'), value: 'failed' },
+          { label: t('Running'), value: 'running' },
+          { label: t('Pending'), value: 'pending' },
+        ],
+      },
+    ],
+    [t]
+  );
 
-  const paginated = sorted.slice((page - 1) * perPage, page * perPage);
-
-  const getSortParams = (columnIndex: number): ThProps['sort'] => ({
-    sortBy: { index: sortIndex ?? undefined, direction: sortDirection },
-    onSort: (_e, index, direction) => {
-      setSortIndex(index);
-      setSortDirection(direction);
-    },
-    columnIndex,
+  const view = useInMemoryView<AffectedJob>({
+    items: jobs,
+    tableColumns: columns,
+    toolbarFilters,
+    keyFn: (job) => job.id,
+    disableQueryString: true,
   });
 
-  const statusColor: Record<MockJob['status'], string> = {
-    successful: 'var(--pf-t--global--color--status--success--default)',
-    failed: 'var(--pf-t--global--color--status--danger--default)',
-    running: 'var(--pf-t--global--color--status--info--default)',
-  };
-
   return (
-    <PageSection>
-      <Toolbar>
-        <ToolbarContent>
-          <ToolbarItem>
-            <SearchInput
-              placeholder={t('Search by name, template, or status')}
-              value={search}
-              onChange={(_e, val) => {
-                setSearch(val);
-                setPage(1);
-              }}
-              onClear={() => {
-                setSearch('');
-                setPage(1);
-              }}
-              style={{ minWidth: '280px' }}
-            />
-          </ToolbarItem>
-          <ToolbarItem align={{ default: 'alignEnd' }}>
-            <Pagination
-              itemCount={filtered.length}
-              page={page}
-              perPage={perPage}
-              onSetPage={(_e, p) => setPage(p)}
-              onPerPageSelect={(_e, pp) => {
-                setPerPage(pp);
-                setPage(1);
-              }}
-              variant="top"
-              isCompact
-            />
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
-
-      <Table variant="compact" aria-label={t('Affected jobs')}>
-        <Thead>
-          <Tr>
-            <Th sort={getSortParams(0)}>{t('ID')}</Th>
-            <Th sort={getSortParams(1)}>{t('Name')}</Th>
-            <Th sort={getSortParams(2)}>{t('Template')}</Th>
-            <Th sort={getSortParams(3)}>{t('Status')}</Th>
-            <Th sort={getSortParams(4)}>{t('Started')}</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {paginated.length === 0 ? (
-            <Tr>
-              <Td
-                colSpan={5}
-                style={{ textAlign: 'center', color: 'var(--pf-t--global--text--color--subtle)' }}
-              >
-                {t('No jobs match the current filter')}
-              </Td>
-            </Tr>
-          ) : (
-            paginated.map((job) => (
-              <Tr key={job.id}>
-                <Td>
-                  <a href={getPageUrl(AwxRoute.JobDetails, { params: { id: job.id } })}>{job.id}</a>
-                </Td>
-                <Td>{job.name}</Td>
-                <Td>{job.template}</Td>
-                <Td>
-                  <span
-                    style={{
-                      color: statusColor[job.status],
-                      fontWeight: 'var(--pf-t--global--font--weight--semi-bold)',
-                    }}
-                  >
-                    {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
-                  </span>
-                </Td>
-                <Td>{new Date(job.started).toLocaleString()}</Td>
-              </Tr>
-            ))
-          )}
-        </Tbody>
-      </Table>
-
-      <Toolbar>
-        <ToolbarContent>
-          <ToolbarItem align={{ default: 'alignEnd' }}>
-            <Pagination
-              itemCount={filtered.length}
-              page={page}
-              perPage={perPage}
-              onSetPage={(_e, p) => setPage(p)}
-              onPerPageSelect={(_e, pp) => {
-                setPerPage(pp);
-                setPage(1);
-              }}
-              variant="bottom"
-              isCompact
-            />
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
-    </PageSection>
+    <PageTable<AffectedJob>
+      {...view}
+      tableColumns={columns}
+      toolbarFilters={toolbarFilters}
+      keyFn={(job) => job.id}
+      isLoading={isLoading}
+      emptyStateTitle={t('No affected jobs')}
+      emptyStateDescription={t('No jobs have been recorded for this deprecation pattern.')}
+      errorStateTitle={t('Error loading affected jobs')}
+    />
   );
 }

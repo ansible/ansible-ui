@@ -79,12 +79,14 @@ describe('useDeprecationData', () => {
     };
 
     vi.spyOn(Data, 'requestGet')
-      .mockResolvedValueOnce(mockJobsResponse) // First call: fetch jobs
-      .mockResolvedValueOnce(mockEventsJob1) // Second call: events for job 1
-      .mockResolvedValueOnce(mockEventsJob2); // Third call: events for job 2
+      .mockResolvedValueOnce(mockJobsResponse) // current period: fetch jobs
+      .mockResolvedValueOnce(mockEventsJob1) // current period: events for job 1
+      .mockResolvedValueOnce(mockEventsJob2) // current period: events for job 2
+      .mockResolvedValueOnce({ results: [], count: 0 }); // previous period: fetch jobs (empty)
 
     const { result } = renderHook(() => useDeprecationData());
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
@@ -96,6 +98,7 @@ describe('useDeprecationData', () => {
     expect(result.current.data?.deprecations[0].type).toBe('with_items on module');
     expect(result.current.data?.deprecations[0].count).toBe(4);
     expect(result.current.data?.deprecations[0].jobIds).toEqual([1, 2]);
+    expect(result.current.data?.deprecations[0].jobOccurrences).toEqual({ 1: 2, 2: 2 });
   });
 
   it('should handle empty results', async () => {
@@ -108,6 +111,7 @@ describe('useDeprecationData', () => {
 
     const { result } = renderHook(() => useDeprecationData());
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
@@ -123,6 +127,7 @@ describe('useDeprecationData', () => {
 
     const { result } = renderHook(() => useDeprecationData());
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });

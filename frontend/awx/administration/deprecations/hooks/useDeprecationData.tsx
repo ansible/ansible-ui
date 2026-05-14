@@ -21,7 +21,8 @@ export interface DeprecationStat {
   description: string;
   count: number;
   severity: 'hot' | 'warm' | 'moderate' | 'cool';
-  jobIds: number[]; // IDs of jobs that have this deprecation
+  jobIds: number[];
+  jobOccurrences: Record<number, number>; // job id -> occurrence count for this deprecation type
 }
 
 export interface DeprecationEventsByDate {
@@ -36,6 +37,11 @@ interface DeprecationData {
   deprecations: DeprecationStat[];
   eventsByDate: DeprecationEventsByDate[];
   timeRange: TimeRange;
+  trends?: {
+    totalWarnings: number; // percentage change vs previous period, positive = increase
+    affectedJobs: number;
+    uniqueIssues: number;
+  };
 }
 
 // Helper to extract deprecation type from event
@@ -110,105 +116,40 @@ function getDateFilter(timeRange: TimeRange): string | null {
   return date.toISOString();
 }
 
-const MOCK_DEPRECATION_DATA: DeprecationData = {
-  totalWarnings: 147,
-  affectedJobs: 13,
-  uniqueIssues: 6,
-  timeRange: '7d',
-  eventsByDate: [
-    { date: '2026-05-06', events: [] },
-    { date: '2026-05-07', events: [] },
-    { date: '2026-05-08', events: [] },
-    { date: '2026-05-09', events: [] },
-    { date: '2026-05-10', events: [] },
-    { date: '2026-05-11', events: [] },
-    { date: '2026-05-12', events: [] },
-  ],
-  deprecations: [
-    {
-      type: 'with_items on module',
-      description: 'Using with_items on package modules (yum, dnf, apt)',
-      count: 62,
-      severity: 'hot',
-      jobIds: [101, 102, 103, 104, 105],
-    },
-    {
-      type: 'Bare variables in conditionals',
-      description: 'Variables in when statements should use {{ }} syntax',
-      count: 38,
-      severity: 'warm',
-      jobIds: [101, 103, 106],
-    },
-    {
-      type: 'include directive',
-      description: 'Use import_tasks or include_tasks instead',
-      count: 21,
-      severity: 'warm',
-      jobIds: [102, 107, 108],
-    },
-    {
-      type: 'with_dict loop',
-      description: 'Deprecated in favor of loop with dict2items filter',
-      count: 14,
-      severity: 'moderate',
-      jobIds: [104, 109],
-    },
-    {
-      type: 'hash_behaviour',
-      description: 'Deprecated ansible.cfg setting for hash merging',
-      count: 8,
-      severity: 'cool',
-      jobIds: [110],
-    },
-    {
-      type: 'squash_actions',
-      description: 'Invoking modules only once while using loop',
-      count: 4,
-      severity: 'cool',
-      jobIds: [111],
-    },
-  ],
-};
-
-// Custom fetcher that fetches jobs and their deprecation events
-async function fetchDeprecations(timeRange: TimeRange) {
-  void timeRange;
-  return { ...MOCK_DEPRECATION_DATA, timeRange };
-  const dateFilter = getDateFilter(timeRange);
-
-  // Build jobs URL with optional date filter
+// Fetch deprecation stats for a given time window (extracted for reuse in trend calculation)
+async function fetchDeprecationStats(dateFilter: string | null) {
   const jobsUrl = dateFilter
-    ? awxAPI`/jobs/?page_size=100&order_by=-created&created__gte=${dateFilter as string}`
+    ? awxAPI`/jobs/?page_size=100&order_by=-created&created__gte=${dateFilter}`
     : awxAPI`/jobs/?page_size=100&order_by=-created`;
 
-  // Fetch jobs in the time range
   const jobsResponse = await requestGet<{ results: { id: number }[]; count: number }>(jobsUrl);
-
   const jobs = jobsResponse.results;
-  const deprecationsByType: Record<string, { count: number; jobIds: Set<number> }> = {};
+  const deprecationsByType: Record<
+    string,
+    { count: number; jobIds: Set<number>; jobOccurrences: Record<number, number> }
+  > = {};
   const affectedJobsSet = new Set<number>();
   const allEvents: JobEvent[] = [];
   let totalWarnings = 0;
 
-  // Fetch deprecation events for each job
   await Promise.all(
     jobs.map(async (job) => {
       try {
         const eventsResponse = await requestGet<{ count: number; results: JobEvent[] }>(
           awxAPI`/jobs/${job.id.toString()}/job_events/?event=deprecated`
         );
-
         if (eventsResponse.count > 0) {
           affectedJobsSet.add(job.id);
           totalWarnings += eventsResponse.count;
-
           eventsResponse.results.forEach((event) => {
             const type = extractDeprecationType(event);
             if (!deprecationsByType[type]) {
-              deprecationsByType[type] = { count: 0, jobIds: new Set() };
+              deprecationsByType[type] = { count: 0, jobIds: new Set(), jobOccurrences: {} };
             }
             deprecationsByType[type].count++;
             deprecationsByType[type].jobIds.add(job.id);
+            deprecationsByType[type].jobOccurrences[job.id] =
+              (deprecationsByType[type].jobOccurrences[job.id] ?? 0) + 1;
             allEvents.push(event);
           });
         }
@@ -218,24 +159,48 @@ async function fetchDeprecations(timeRange: TimeRange) {
     })
   );
 
-  // Convert to array and sort by count
-  const deprecations: DeprecationStat[] = Object.entries(deprecationsByType)
-    .map(([type, data]: [string, { count: number; jobIds: Set<number> }]) => ({
+  return { totalWarnings, affectedJobsSet, deprecationsByType, allEvents };
+}
+
+// Compute % change between two values; returns 0 if previous is 0
+function percentChange(current: number, previous: number): number {
+  if (previous === 0) return 0;
+  return Math.round(((current - previous) / previous) * 100);
+}
+
+// Fetch and aggregate deprecation data for the given time range
+async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData> {
+  const dateFilter = getDateFilter(timeRange);
+
+  // Compute previous period date filter (same window, shifted back)
+  let prevDateFilter: string | null = null;
+  if (dateFilter) {
+    const now = new Date();
+    const windowMs = now.getTime() - new Date(dateFilter).getTime();
+    prevDateFilter = new Date(new Date(dateFilter).getTime() - windowMs).toISOString();
+  }
+
+  // Fetch current and previous periods in parallel for trend calculation
+  const [current, previous] = await Promise.all([
+    fetchDeprecationStats(dateFilter),
+    fetchDeprecationStats(prevDateFilter),
+  ]);
+
+  const deprecations: DeprecationStat[] = Object.entries(current.deprecationsByType)
+    .map(([type, data]) => ({
       type,
       description: getDeprecationDescription(type),
       count: data.count,
       severity: getSeverity(data.count),
       jobIds: Array.from(data.jobIds),
+      jobOccurrences: data.jobOccurrences,
     }))
     .sort((a, b) => b.count - a.count);
 
-  // Group events by date for trend graph
   const eventsByDateMap = new Map<string, JobEvent[]>();
-  allEvents.forEach((event) => {
-    const date = new Date(event.created).toISOString().split('T')[0]; // YYYY-MM-DD
-    if (!eventsByDateMap.has(date)) {
-      eventsByDateMap.set(date, []);
-    }
+  current.allEvents.forEach((event) => {
+    const date = new Date(event.created).toISOString().split('T')[0];
+    if (!eventsByDateMap.has(date)) eventsByDateMap.set(date, []);
     eventsByDateMap.get(date)!.push(event);
   });
 
@@ -244,12 +209,20 @@ async function fetchDeprecations(timeRange: TimeRange) {
     .sort((a, b) => a.date.localeCompare(b.date));
 
   return {
-    totalWarnings,
-    affectedJobs: affectedJobsSet.size,
+    totalWarnings: current.totalWarnings,
+    affectedJobs: current.affectedJobsSet.size,
     uniqueIssues: deprecations.length,
     deprecations,
     eventsByDate,
     timeRange,
+    trends: {
+      totalWarnings: percentChange(current.totalWarnings, previous.totalWarnings),
+      affectedJobs: percentChange(current.affectedJobsSet.size, previous.affectedJobsSet.size),
+      uniqueIssues: percentChange(
+        Object.keys(current.deprecationsByType).length,
+        Object.keys(previous.deprecationsByType).length
+      ),
+    },
   };
 }
 
@@ -258,7 +231,6 @@ export function useDeprecationData(timeRange: TimeRange = '7d'): {
   error?: Error;
   isLoading: boolean;
 } {
-  // Use a single SWR call with a custom fetcher that handles the N+1 query internally
   const { data, error, isLoading } = useSWR<DeprecationData, Error>(
     ['deprecations-dashboard', timeRange],
     () => fetchDeprecations(timeRange),
