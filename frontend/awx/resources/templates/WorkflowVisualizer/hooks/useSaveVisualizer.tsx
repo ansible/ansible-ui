@@ -259,7 +259,7 @@ export function useSaveVisualizer(templateId: string) {
     }
 
     async function updateExistingNodes(editedNodes: GraphNode[]) {
-      await Promise.allSettled(
+      const results = await Promise.allSettled(
         editedNodes.map(async (node) => {
           const updatedNodePayload: Partial<CreateWorkflowNodePayload> = {};
           const nodeData = node.getData() as GraphNodeData;
@@ -346,6 +346,15 @@ export function useSaveVisualizer(templateId: string) {
           );
         })
       );
+
+      // Check for any failures and throw an error with details
+      const failures = results.filter(
+        (result): result is PromiseRejectedResult => result.status === 'rejected'
+      );
+      if (failures.length > 0) {
+        // Throw the first error to propagate it to the UI
+        throw failures[0].reason;
+      }
     }
 
     function handleNodeDeletion(node: GraphNode) {
