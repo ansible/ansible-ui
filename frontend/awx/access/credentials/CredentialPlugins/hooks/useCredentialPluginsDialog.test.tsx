@@ -507,11 +507,10 @@ describe('CredentialPluginsModal', () => {
   describe('handleTest with job_template_id', () => {
     it('should include job_template_id in test payload when present', async () => {
       const user = userEvent.setup();
-      let capturedPayload: { metadata: Record<string, unknown> } | null = null;
+      let capturedPayload: Record<string, unknown> | null = null;
       server.use(
         http.post(awxAPI`/credentials/10/test/`, async ({ request }) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          capturedPayload = await request.json();
+          capturedPayload = (await request.json()) as Record<string, unknown>;
           return HttpResponse.json(mockNonJwtSuccessResponse);
         })
       );
@@ -537,9 +536,13 @@ describe('CredentialPluginsModal', () => {
       await user.click(testButton);
 
       await waitFor(() => {
-        const payload = capturedPayload as { metadata: Record<string, unknown> };
-        expect(payload.metadata['api-key']).toBe('test-key');
-        expect(payload.metadata['job_template_id']).toBe(42);
+        expect(capturedPayload).not.toBeNull();
+        const metadata = (capturedPayload as Record<string, unknown>)['metadata'] as Record<
+          string,
+          unknown
+        >;
+        expect(metadata['api-key']).toBe('test-key');
+        expect(metadata['job_template_id']).toBe(42);
       });
     });
   });
