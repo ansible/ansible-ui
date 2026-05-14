@@ -140,6 +140,9 @@ export function useAwxNavigation() {
       id: AwxRoute.Administration,
       label: t('Administration'),
       path: 'administration',
+      // Deprecations is intentionally visible to all users (not gated to superusers).
+      // This aligns with product requirements: visibility should be broad so any user
+      // can identify and act on deprecation warnings in their jobs.
       children: activeAwxUser?.is_superuser
         ? [
             awxActivityStreamRoutes,

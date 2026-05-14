@@ -37,6 +37,8 @@ interface DeprecationData {
   deprecations: DeprecationStat[];
   eventsByDate: DeprecationEventsByDate[];
   timeRange: TimeRange;
+  /** true when one or more per-job event fetches failed (data is partial) */
+  hasPartialData: boolean;
   trends?: {
     totalWarnings: number; // percentage change vs previous period, positive = increase
     affectedJobs: number;
@@ -55,7 +57,8 @@ function extractDeprecationType(event: JobEvent): string {
   if (stdout.includes('bare variable') || stdout.includes('Conditional result')) {
     return 'Bare variables in conditionals';
   }
-  if (stdout.includes('include')) return 'include directive';
+  // Match the deprecated bare `include:` directive, not modern include_tasks/include_role
+  if (/\binclude:\s/.test(stdout)) return 'include directive';
   if (stdout.includes('squash_actions')) return 'squash_actions';
   if (stdout.includes('hash_behaviour')) return 'hash_behaviour';
 
@@ -116,6 +119,19 @@ function getDateFilter(timeRange: TimeRange): string | null {
   return date.toISOString();
 }
 
+const CONCURRENCY_LIMIT = 10;
+
+/** Run promises in batches to avoid flooding the API with concurrent requests. */
+async function runInBatches<T>(items: T[], fn: (item: T) => Promise<void>): Promise<number> {
+  let failureCount = 0;
+  for (let i = 0; i < items.length; i += CONCURRENCY_LIMIT) {
+    const batch = items.slice(i, i + CONCURRENCY_LIMIT);
+    const results = await Promise.allSettled(batch.map(fn));
+    failureCount += results.filter((r) => r.status === 'rejected').length;
+  }
+  return failureCount;
+}
+
 // Fetch deprecation stats for a given time window (extracted for reuse in trend calculation)
 async function fetchDeprecationStats(dateFilter: string | null) {
   const jobsUrl = dateFilter
@@ -132,34 +148,29 @@ async function fetchDeprecationStats(dateFilter: string | null) {
   const allEvents: JobEvent[] = [];
   let totalWarnings = 0;
 
-  await Promise.all(
-    jobs.map(async (job) => {
-      try {
-        const eventsResponse = await requestGet<{ count: number; results: JobEvent[] }>(
-          awxAPI`/jobs/${job.id.toString()}/job_events/?event=deprecated`
-        );
-        if (eventsResponse.count > 0) {
-          affectedJobsSet.add(job.id);
-          totalWarnings += eventsResponse.count;
-          eventsResponse.results.forEach((event) => {
-            const type = extractDeprecationType(event);
-            if (!deprecationsByType[type]) {
-              deprecationsByType[type] = { count: 0, jobIds: new Set(), jobOccurrences: {} };
-            }
-            deprecationsByType[type].count++;
-            deprecationsByType[type].jobIds.add(job.id);
-            deprecationsByType[type].jobOccurrences[job.id] =
-              (deprecationsByType[type].jobOccurrences[job.id] ?? 0) + 1;
-            allEvents.push(event);
-          });
+  const failureCount = await runInBatches(jobs, async (job) => {
+    const eventsResponse = await requestGet<{ count: number; results: JobEvent[] }>(
+      awxAPI`/jobs/${job.id.toString()}/job_events/?event=deprecated`
+    );
+    // Use results.length (not .count) to stay consistent with what was actually processed
+    if (eventsResponse.results.length > 0) {
+      affectedJobsSet.add(job.id);
+      totalWarnings += eventsResponse.results.length;
+      eventsResponse.results.forEach((event) => {
+        const type = extractDeprecationType(event);
+        if (!deprecationsByType[type]) {
+          deprecationsByType[type] = { count: 0, jobIds: new Set(), jobOccurrences: {} };
         }
-      } catch {
-        // Silently ignore errors (user may not have access to specific jobs)
-      }
-    })
-  );
+        deprecationsByType[type].count++;
+        deprecationsByType[type].jobIds.add(job.id);
+        deprecationsByType[type].jobOccurrences[job.id] =
+          (deprecationsByType[type].jobOccurrences[job.id] ?? 0) + 1;
+        allEvents.push(event);
+      });
+    }
+  });
 
-  return { totalWarnings, affectedJobsSet, deprecationsByType, allEvents };
+  return { totalWarnings, affectedJobsSet, deprecationsByType, allEvents, failureCount };
 }
 
 // Compute % change between two values; returns 0 if previous is 0
@@ -172,18 +183,21 @@ function percentChange(current: number, previous: number): number {
 async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData> {
   const dateFilter = getDateFilter(timeRange);
 
-  // Compute previous period date filter (same window, shifted back)
+  // "All time" has no meaningful previous period — skip the second fetch
+  const isAllTime = timeRange === 'all';
+
+  // Compute previous period date filter (same window shifted back in time)
   let prevDateFilter: string | null = null;
-  if (dateFilter) {
+  if (!isAllTime && dateFilter) {
     const now = new Date();
     const windowMs = now.getTime() - new Date(dateFilter).getTime();
     prevDateFilter = new Date(new Date(dateFilter).getTime() - windowMs).toISOString();
   }
 
-  // Fetch current and previous periods in parallel for trend calculation
+  // Fetch current period; fetch previous only when a meaningful comparison exists
   const [current, previous] = await Promise.all([
     fetchDeprecationStats(dateFilter),
-    fetchDeprecationStats(prevDateFilter),
+    isAllTime ? Promise.resolve(null) : fetchDeprecationStats(prevDateFilter),
   ]);
 
   const deprecations: DeprecationStat[] = Object.entries(current.deprecationsByType)
@@ -215,14 +229,17 @@ async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData>
     deprecations,
     eventsByDate,
     timeRange,
-    trends: {
-      totalWarnings: percentChange(current.totalWarnings, previous.totalWarnings),
-      affectedJobs: percentChange(current.affectedJobsSet.size, previous.affectedJobsSet.size),
-      uniqueIssues: percentChange(
-        Object.keys(current.deprecationsByType).length,
-        Object.keys(previous.deprecationsByType).length
-      ),
-    },
+    hasPartialData: current.failureCount > 0,
+    trends: previous
+      ? {
+          totalWarnings: percentChange(current.totalWarnings, previous.totalWarnings),
+          affectedJobs: percentChange(current.affectedJobsSet.size, previous.affectedJobsSet.size),
+          uniqueIssues: percentChange(
+            Object.keys(current.deprecationsByType).length,
+            Object.keys(previous.deprecationsByType).length
+          ),
+        }
+      : undefined,
   };
 }
 

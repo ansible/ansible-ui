@@ -1,4 +1,4 @@
-import { Severity, SeverityType } from '@patternfly/react-component-groups/dist/dynamic/Severity';
+import { Severity, SeverityType } from '@patternfly/react-component-groups';
 import { useTranslation } from 'react-i18next';
 
 export type DeprecationSeverity = 'hot' | 'warm' | 'moderate' | 'cool';

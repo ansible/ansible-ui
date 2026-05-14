@@ -21,6 +21,7 @@ import { useDeprecationData } from './hooks/useDeprecationData';
 interface AffectedJob {
   id: number;
   name: string;
+  type: string;
   status: string;
   started: string;
   finished: string;
@@ -71,7 +72,7 @@ export function DeprecationAffectedJobs() {
         cell: (job) => (
           <TextCell
             text={job.summary_fields.job_template?.name ?? job.name}
-            to={getPageUrl(AwxRoute.JobDetails, { params: { id: job.id, job_type: 'playbook' } })}
+            to={getPageUrl(AwxRoute.JobDetails, { params: { id: job.id, job_type: job.type } })}
           />
         ),
         sort: 'name',

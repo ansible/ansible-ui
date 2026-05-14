@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useMemo } from 'react';
 import {
+  Alert,
   Bullseye,
   Card,
   CardBody,
@@ -54,7 +55,8 @@ const SEVERITY_RANK: Record<string, number> = {
 
 type DeprecationRow = DeprecationStat & { severityRank: number };
 
-function TrendIndicator({ trend, t }: { trend: number; t: (key: string) => string }) {
+function TrendIndicator({ trend }: { trend: number }) {
+  const { t } = useTranslation();
   if (trend === 0) {
     return (
       <Flex spaceItems={{ default: 'spaceItemsXs' }} alignItems={{ default: 'alignItemsCenter' }}>
@@ -133,33 +135,6 @@ export function DeprecationsDashboard() {
       },
       {
         type: ToolbarFilterType.SingleSelect,
-        key: 'organization',
-        label: t('Organization'),
-        query: 'organization',
-        placeholder: t('Filter by organization'),
-        options: [
-          { label: t('Default'), value: 'default' },
-          { label: t('Operations'), value: 'operations' },
-          { label: t('Engineering'), value: 'engineering' },
-          { label: t('Platform Team'), value: 'platform-team' },
-        ],
-      },
-      {
-        type: ToolbarFilterType.SingleSelect,
-        key: 'time-period',
-        label: t('Time period'),
-        query: 'time-period',
-        placeholder: t('Filter by time period'),
-        options: [
-          { label: t('Last 7 days'), value: '7d' },
-          { label: t('Last 30 days'), value: '30d' },
-          { label: t('Last 6 months'), value: '6m' },
-          { label: t('Last year'), value: '1y' },
-          { label: t('All time'), value: 'all' },
-        ],
-      },
-      {
-        type: ToolbarFilterType.SingleSelect,
         key: 'severity',
         label: t('Severity'),
         query: 'severity',
@@ -169,20 +144,6 @@ export function DeprecationsDashboard() {
           { label: t('Important'), value: 'warm' },
           { label: t('Moderate'), value: 'moderate' },
           { label: t('Minor'), value: 'cool' },
-        ],
-      },
-      {
-        type: ToolbarFilterType.SingleSelect,
-        key: 'job-template',
-        label: t('Job template'),
-        query: 'job-template',
-        placeholder: t('Filter by job template'),
-        options: [
-          { label: t('Deploy Web App'), value: 'deploy-web-app' },
-          { label: t('Update System Packages'), value: 'update-system-packages' },
-          { label: t('Configure Firewall'), value: 'configure-firewall' },
-          { label: t('Provision DB Server'), value: 'provision-db-server' },
-          { label: t('Sync Inventory'), value: 'sync-inventory' },
         ],
       },
     ],
@@ -285,6 +246,20 @@ export function DeprecationsDashboard() {
         </FlexItem>
       </Flex>
 
+      {/* Partial data warning — shown when one or more per-job event fetches failed */}
+      {data?.hasPartialData && (
+        <Alert
+          variant="warning"
+          isInline
+          title={t('Some data could not be loaded')}
+          style={{ marginBottom: 'var(--pf-t--global--spacer--lg)' }}
+        >
+          {t(
+            'Results may be incomplete. Some job event data could not be retrieved, possibly due to permissions or network errors.'
+          )}
+        </Alert>
+      )}
+
       {/* Stats Cards */}
       <Grid hasGutter>
         <GridItem span={4}>
@@ -299,7 +274,7 @@ export function DeprecationsDashboard() {
                 {data?.totalWarnings ?? 0}
               </Title>
               {data?.trends?.totalWarnings !== undefined && (
-                <TrendIndicator trend={data.trends.totalWarnings} t={t} />
+                <TrendIndicator trend={data.trends.totalWarnings} />
               )}
             </CardBody>
           </Card>
@@ -316,7 +291,7 @@ export function DeprecationsDashboard() {
                 {data?.affectedJobs ?? 0}
               </Title>
               {data?.trends?.affectedJobs !== undefined && (
-                <TrendIndicator trend={data.trends.affectedJobs} t={t} />
+                <TrendIndicator trend={data.trends.affectedJobs} />
               )}
             </CardBody>
           </Card>
@@ -333,7 +308,7 @@ export function DeprecationsDashboard() {
                 {data?.uniqueIssues ?? 0}
               </Title>
               {data?.trends?.uniqueIssues !== undefined && (
-                <TrendIndicator trend={data.trends.uniqueIssues} t={t} />
+                <TrendIndicator trend={data.trends.uniqueIssues} />
               )}
             </CardBody>
           </Card>
