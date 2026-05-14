@@ -86,7 +86,12 @@ export function getDeprecationDescription(type: string): string {
   return descriptions[type] || 'Deprecated Ansible pattern';
 }
 
-// Helper to determine severity based on count
+// TODO: Severity thresholds need a product/design discussion.
+// The current count-based heuristic (>50 = Critical, >25 = Important, etc.) is a
+// placeholder. Open questions: Should severity map to Ansible's own deprecation
+// classification (if one exists)? Should it be configurable? Should some patterns
+// always be Critical regardless of count (e.g. anything removed in the next release)?
+// Tracked in: https://issues.redhat.com/browse/AAP-XXXX (update with real ticket)
 function getSeverity(count: number): 'hot' | 'warm' | 'moderate' | 'cool' {
   if (count > 50) return 'hot';
   if (count > 25) return 'warm';
