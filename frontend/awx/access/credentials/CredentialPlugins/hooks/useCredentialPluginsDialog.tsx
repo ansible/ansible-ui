@@ -64,7 +64,7 @@ export function CredentialPluginsModal(
       return {
         source_credential,
         ...metadata,
-      } as CredentialPluginsForm;
+      };
     } else {
       return undefined;
     }
