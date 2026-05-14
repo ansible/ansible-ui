@@ -171,8 +171,6 @@ function serializeObjectInterface(schema, depth, interfaceName, needImport) {
       // type, description, format : 'date-time'
       const type = property.type;
       const description = property.description;
-      const format = property.format;
-
       const tabs = '\t\t\t\t';
 
       if (description) {
@@ -253,8 +251,6 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         fileContent += add('');
 
         fileContent += add('/* eslint-disable @typescript-eslint/no-empty-interface */');
-
-        let canCreateFile = true;
 
         if (pathSchemas[interfaceName]) {
           interfacePath = pathSchemas[interfaceName]?.path;
