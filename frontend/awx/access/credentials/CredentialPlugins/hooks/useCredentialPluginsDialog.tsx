@@ -40,7 +40,7 @@ interface CredentialsRetainInput {
   metadata: Record<string, unknown>;
 }
 
-function CredentialPluginsModal(
+export function CredentialPluginsModal(
   props: CredentialPluginsModalProps & { alertToaster: IPageAlertToaster }
 ) {
   const { t } = useTranslation();

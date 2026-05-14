@@ -371,9 +371,125 @@ describe('CredentialPlugins', () => {
     });
   });
 
+  describe('Metadata field types', () => {
+    it('should render a dropdown for metadata with choices', async () => {
+      server.use(
+        http.get(awxAPI`/credentials/5/`, () =>
+          HttpResponse.json({
+            id: 5,
+            name: 'Credential With Choices',
+            credential_type: 5,
+            summary_fields: {
+              credential_type: { id: 5, name: 'With Choices', namespace: 'with-choices' },
+            },
+          })
+        ),
+        http.get(awxAPI`/credential_types/5/`, () =>
+          HttpResponse.json({
+            id: 5,
+            name: 'With Choices',
+            namespace: 'with-choices',
+            inputs: {
+              fields: [],
+              metadata: [
+                {
+                  id: 'version',
+                  type: 'string',
+                  label: 'Version',
+                  secret: false,
+                  choices: ['v1', 'v2'],
+                  default: 'v1',
+                },
+              ],
+              required: ['version'],
+            },
+          })
+        )
+      );
+
+      const handleSubmit = vi.fn();
+      const handleTest = vi.fn();
+      const onCancel = vi.fn();
+
+      render(
+        <TestWrapper>
+          <CredentialPlugins
+            onCancel={onCancel}
+            handleSubmit={handleSubmit}
+            handleTest={handleTest}
+            defaultValues={{ source_credential: 5 }}
+          />
+        </TestWrapper>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('Version')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    });
+
+    it('should render a textarea for multiline metadata', async () => {
+      server.use(
+        http.get(awxAPI`/credentials/6/`, () =>
+          HttpResponse.json({
+            id: 6,
+            name: 'Credential With Multiline',
+            credential_type: 6,
+            summary_fields: {
+              credential_type: { id: 6, name: 'With Multiline', namespace: 'with-multiline' },
+            },
+          })
+        ),
+        http.get(awxAPI`/credential_types/6/`, () =>
+          HttpResponse.json({
+            id: 6,
+            name: 'With Multiline',
+            namespace: 'with-multiline',
+            inputs: {
+              fields: [],
+              metadata: [
+                {
+                  id: 'certificate',
+                  type: 'string',
+                  label: 'Certificate',
+                  secret: false,
+                  multiline: true,
+                },
+              ],
+              required: ['certificate'],
+            },
+          })
+        )
+      );
+
+      const handleSubmit = vi.fn();
+      const handleTest = vi.fn();
+      const onCancel = vi.fn();
+
+      render(
+        <TestWrapper>
+          <CredentialPlugins
+            onCancel={onCancel}
+            handleSubmit={handleSubmit}
+            handleTest={handleTest}
+            defaultValues={{ source_credential: 6 }}
+          />
+        </TestWrapper>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('Certificate')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    });
+  });
+
   describe('Form Interface', () => {
     it('should include job_template_id in CredentialPluginsForm interface', () => {
-      // This is a TypeScript interface test - if it compiles, the interface is correct
       const formData: CredentialPluginsForm = {
         source_credential: 1,
         job_template_id: 1,
