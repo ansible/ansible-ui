@@ -83,7 +83,7 @@ describe('DashboardValueCard', () => {
     );
     expect(screen.getByText('Card Error')).toBeInTheDocument();
     expect(screen.getByText('Something failed')).toBeInTheDocument();
-    expect(screen.queryByText((12345).toLocaleString())).not.toBeInTheDocument();
+    expect(screen.queryByText((12345).toLocaleString('en-US'))).not.toBeInTheDocument();
   });
 
   test('should not render error state when error is not provided', () => {
