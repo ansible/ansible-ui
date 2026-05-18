@@ -11,7 +11,7 @@ test.afterEach(setupAfter);
 test.describe('Users - Create, Edit and Delete', () => {
   test(
     'edits a user from the list view and deletes it from the ui',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const userResult = await User.ui.create(page);
       const originalUserName = typeof userResult === 'string' ? userResult : userResult.userName;
@@ -60,6 +60,7 @@ test.describe('Users - Create, Edit and Delete', () => {
     }
   );
 
+  // Shifted left: Redundant UI path - edit/delete already covered via list view
   test(
     'edits a user from the details page and deletes it from the ui',
     { tag: ['@not_mock'] },
@@ -83,6 +84,7 @@ test.describe('Users - Create, Edit and Delete', () => {
     }
   );
 
+  // Shifted left: Bulk operation - convenience feature, not core functionality
   test('bulk deletes users from the toolbar action', { tag: ['@not_mock'] }, async ({ page }) => {
     const user1Result = await User.ui.create(page);
     const user1Name = typeof user1Result === 'string' ? user1Result : user1Result.userName;
