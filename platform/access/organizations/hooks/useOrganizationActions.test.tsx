@@ -44,16 +44,17 @@ vi.mock('../hooks/useDeleteOrganizations', () => ({
 
 import { useOrganizationRowActions, useOrganizationPageActions } from './useOrganizationActions';
 
+function isSingleButton(
+  action: ReturnType<typeof useOrganizationRowActions>[number]
+): action is IPageActionButtonSingle<PlatformOrganization> {
+  return action.type === PageActionType.Button && action.selection === PageActionSelection.Single;
+}
+
 function findSingleButtonAction(
   actions: ReturnType<typeof useOrganizationRowActions>,
   label: string
 ) {
-  return actions.find(
-    (a) =>
-      a.type === PageActionType.Button &&
-      a.selection === PageActionSelection.Single &&
-      a.label === label
-  ) as IPageActionButtonSingle<PlatformOrganization> | undefined;
+  return actions.filter(isSingleButton).find((a) => a.label === label);
 }
 
 const mockOrganization: PlatformOrganization = {

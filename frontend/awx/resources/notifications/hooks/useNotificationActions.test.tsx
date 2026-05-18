@@ -60,10 +60,14 @@ const baseProps = {
   resourceId: '1',
 };
 
+function isSwitchSingle(
+  action: ReturnType<typeof useNotificationActions>[number]
+): action is IPageActionSwitchSingle<NotificationTemplate> {
+  return action.type === PageActionType.Switch && 'onToggle' in action;
+}
+
 function findSwitchAction(actions: ReturnType<typeof useNotificationActions>, label: string) {
-  return actions.find((a) => a.type === PageActionType.Switch && a.label === label) as
-    | IPageActionSwitchSingle<NotificationTemplate>
-    | undefined;
+  return actions.filter(isSwitchSingle).find((a) => a.label === label);
 }
 
 describe('useNotificationActions', () => {
