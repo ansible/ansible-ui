@@ -220,10 +220,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: vitest-coverage
-    if: always()
+    if: always() && github.event_name == 'push'
     permissions:
       contents: read
-      pull-requests: read
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -237,22 +236,7 @@ jobs:
           path: coverage/combined
         continue-on-error: true
 
-      - name: SonarQube Scan (PR)
-        if: github.event_name == 'pull_request'
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
-        with:
-          args: >
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
-            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
-            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
-
       - name: SonarQube Scan (Branch)
-        if: github.event_name == 'push'
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
