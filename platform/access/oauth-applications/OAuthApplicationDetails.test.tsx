@@ -53,6 +53,7 @@ const mockApplication: Application = {
   app_url: 'https://example.com',
   client_type: 'confidential',
   redirect_uris: 'https://example.com/callback',
+  post_logout_redirect_uris: 'https://example.com/logout',
   organization: 1,
   type: 'o_auth2_application',
   created: '2024-01-01T00:00:00Z',
@@ -113,6 +114,11 @@ describe('ApplicationDetailInner', () => {
   test('should display redirect URIs', () => {
     render(<ApplicationDetailInner application={mockApplication} />);
     expect(screen.getByText('https://example.com/callback')).toBeInTheDocument();
+  });
+
+  test('should display post logout redirect URIs', () => {
+    render(<ApplicationDetailInner application={mockApplication} />);
+    expect(screen.getByText('https://example.com/logout')).toBeInTheDocument();
   });
 
   test('should display "No OIDC support" when algorithm is empty', async () => {

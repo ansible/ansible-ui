@@ -37,6 +37,9 @@ test.describe('OAuth Applications', () => {
         await page.getByPlaceholder('Enter OAuth application name').fill(appName);
         await page.getByPlaceholder('Enter description').fill('E2E test application');
         await page.getByPlaceholder('Enter redirect URIs').fill('https://example.com/callback');
+        await page
+          .getByPlaceholder('Enter post logout redirect URIs')
+          .fill('https://example.com/logout');
 
         // Select organization
         const orgSelectButton = page.getByRole('button', { name: 'Organization' });
@@ -73,6 +76,9 @@ test.describe('OAuth Applications', () => {
         // Verify algorithm is displayed on the details page
         await expect(page.getByText('RSA with SHA-2 256')).toBeVisible();
 
+        // Verify post logout redirect URIs is displayed on the details page
+        await expect(page.getByText('https://example.com/logout')).toBeVisible();
+
         // Cleanup: delete the application via API
         const appsData = await gatewayAPI.get<{ results: Application[] }>(page, `applications/`, {
           params: { name: appName },
@@ -92,6 +98,7 @@ test.describe('OAuth Applications', () => {
         organization: organization.id,
         algorithm: 'RS256',
         skip_authorization: true,
+        post_logout_redirect_uris: 'https://example.com/logout',
       });
     });
 
@@ -110,6 +117,7 @@ test.describe('OAuth Applications', () => {
         await expect(page.getByTestId('page-title')).toHaveText(application.name);
         await expect(page.getByText('RSA with SHA-2 256')).toBeVisible();
         await expect(page.getByTestId('skip-authorization')).toContainText('Yes');
+        await expect(page.getByText('https://example.com/logout')).toBeVisible();
       }
     );
   });
