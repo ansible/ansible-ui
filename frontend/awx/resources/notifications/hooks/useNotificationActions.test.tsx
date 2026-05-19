@@ -40,11 +40,6 @@ const mockNotificationTemplate: NotificationTemplate = {
   notification_configuration: {},
 };
 
-const enabledNotification: NotificationTemplate = {
-  ...mockNotificationTemplate,
-  id: 1,
-};
-
 const mockRefresh = vi.fn();
 
 const baseProps = {
@@ -119,7 +114,7 @@ describe('useNotificationActions', () => {
 
   test('should detect enabled notification via isSwitchOn', () => {
     const { result } = renderHook(() =>
-      useNotificationActions({ ...baseProps, notificationApproval: [enabledNotification] })
+      useNotificationActions({ ...baseProps, notificationApproval: [mockNotificationTemplate] })
     );
 
     const action = findSwitchAction(result.current, 'Approval');
@@ -146,7 +141,7 @@ describe('useNotificationActions', () => {
 
     expect(mockPostRequest).toHaveBeenCalledWith(
       expect.stringContaining('/organizations/1/notification_templates_approvals/'),
-      expect.objectContaining({ id: 1 })
+      { id: 1 }
     );
   });
 
@@ -159,7 +154,7 @@ describe('useNotificationActions', () => {
 
     expect(mockPostRequest).toHaveBeenCalledWith(
       expect.stringContaining('/organizations/1/notification_templates_started/'),
-      expect.objectContaining({ id: 1 })
+      { id: 1 }
     );
   });
 
@@ -172,7 +167,7 @@ describe('useNotificationActions', () => {
 
     expect(mockPostRequest).toHaveBeenCalledWith(
       expect.stringContaining('/organizations/1/notification_templates_success/'),
-      expect.objectContaining({ id: 1 })
+      { id: 1 }
     );
   });
 
@@ -185,7 +180,7 @@ describe('useNotificationActions', () => {
 
     expect(mockPostRequest).toHaveBeenCalledWith(
       expect.stringContaining('/organizations/1/notification_templates_error/'),
-      expect.objectContaining({ id: 1 })
+      { id: 1 }
     );
   });
 

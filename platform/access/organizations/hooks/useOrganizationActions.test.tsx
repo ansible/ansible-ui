@@ -30,12 +30,14 @@ vi.mock('react-router-dom', () => ({
   useParams: () => ({ id: '42' }),
 }));
 
+const mockUseOptionsReturn = vi.fn().mockReturnValue({
+  data: { actions: { POST: true, PUT: true, PATCH: true } },
+  isLoading: false,
+  error: null,
+});
+
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
-  useOptions: () => ({
-    data: { actions: { POST: true, PUT: true, PATCH: true } },
-    isLoading: false,
-    error: null,
-  }),
+  useOptions: (...args: unknown[]) => mockUseOptionsReturn(...args) as unknown,
 }));
 
 vi.mock('../hooks/useDeleteOrganizations', () => ({
@@ -178,5 +180,24 @@ describe('useOrganizationPageActions', () => {
       mockManagedOrganization
     );
     expect(disabledMessage).toBeTruthy();
+  });
+
+  test('should disable delete due to insufficient permissions', () => {
+    mockUseOptionsReturn.mockReturnValue({
+      data: { actions: {} },
+      isLoading: false,
+      error: null,
+    });
+
+    const { result } = renderHook(() => useOrganizationPageActions(mockUnselectItemsAndRefresh));
+
+    const deleteAction = findSingleButtonAction(result.current, 'Delete organization');
+    expect(deleteAction).toBeDefined();
+    const disabledMessage = (deleteAction!.isDisabled as (item: PlatformOrganization) => string)(
+      mockOrganization
+    );
+    expect(disabledMessage).toBe(
+      'The organization cannot be deleted due to insufficient permissions.'
+    );
   });
 });
