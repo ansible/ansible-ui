@@ -179,12 +179,14 @@ describe('DashboardMainTableCard', () => {
   test('should display details values in value cards', () => {
     renderCard();
     expect(
-      within(screen.getByTestId('cost-manual-automation-card')).getByText(/1[,.]?000/)
+      within(screen.getByTestId('cost-manual-automation-card')).getByText('$1,000.00')
     ).toBeInTheDocument();
     expect(
-      within(screen.getByTestId('cost-automated-execution-card')).getByText('500')
+      within(screen.getByTestId('cost-automated-execution-card')).getByText('$500.00')
     ).toBeInTheDocument();
-    expect(within(screen.getByTestId('total-savings-card')).getByText('500')).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('total-savings-card')).getByText('$500.00')
+    ).toBeInTheDocument();
     expect(
       within(screen.getByTestId('total-hours-saved-card')).getByText(/50 h/)
     ).toBeInTheDocument();
@@ -201,9 +203,9 @@ describe('DashboardMainTableCard', () => {
       })
     );
     expect(
-      within(screen.getByTestId('cost-manual-automation-card')).getByText('0')
+      within(screen.getByTestId('cost-manual-automation-card')).getByText('$0.00')
     ).toBeInTheDocument();
-    expect(within(screen.getByTestId('total-savings-card')).getByText('0')).toBeInTheDocument();
+    expect(within(screen.getByTestId('total-savings-card')).getByText('$0.00')).toBeInTheDocument();
   });
 
   test('should display - in all value cards when details is undefined', () => {

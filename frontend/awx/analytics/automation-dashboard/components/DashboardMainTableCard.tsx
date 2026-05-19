@@ -207,6 +207,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
           title={t('Cost of manual automation')}
           help={t('Total cost if all jobs were run manually')}
           value={details?.cost_of_manual_automation ?? '-'}
+          formatAsCurrency={true}
           error={detailsError}
           errorStateTitle={t('Error loading manual automation cost')}
         ></DashboardValueCard>
@@ -215,6 +216,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
           title={t('Cost of automated execution')}
           help={t('Total cost of running jobs on AAP')}
           value={details?.cost_of_automated_execution ?? '-'}
+          formatAsCurrency={true}
           error={detailsError}
           errorStateTitle={t('Error loading automated execution cost')}
         ></DashboardValueCard>
@@ -223,6 +225,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
           title={t('Total savings/cost avoided')}
           help={t('Difference between manual and automated cost')}
           value={details?.total_saving ?? '-'}
+          formatAsCurrency={true}
           error={detailsError}
           errorStateTitle={t('Error loading total savings')}
         ></DashboardValueCard>
