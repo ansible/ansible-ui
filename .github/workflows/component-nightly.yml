@@ -57,14 +57,6 @@ jobs:
       - name: Checks
         run: npm run checks
 
-  vitest-awx:
-    name: Vitest (awx)
-    needs: packages
-    uses: ./.github/workflows/vitest.yml
-    with:
-      directory: frontend/awx
-      artifact-prefix: awx
-
   vitest:
     name: Vitest (${{ matrix.name }})
     runs-on: ubuntu-latest
@@ -73,6 +65,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - directory: frontend/awx
+            name: awx
           - directory: frontend/eda
             name: eda
           - directory: frontend/hub

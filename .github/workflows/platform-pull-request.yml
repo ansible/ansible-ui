@@ -60,15 +60,6 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
       - run: npx nx affected -t ${{ matrix.script }} --base=origin/main --head=HEAD --verbose
 
-  vitest-awx:
-    name: Vitest (awx)
-    needs: packages
-    uses: ./.github/workflows/vitest.yml
-    with:
-      directory: frontend/awx
-      artifact-prefix: awx
-      coverage: true
-
   vitest:
     name: Vitest (${{ matrix.name }})
     runs-on: ubuntu-latest
@@ -78,6 +69,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - directory: frontend/awx
+            name: awx
           - directory: frontend/eda
             name: eda
           - directory: frontend/hub
@@ -121,9 +114,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       id-token: write
-    needs:
-      - vitest-awx
-      - vitest
+    needs: vitest
     if: always()
     steps:
       - uses: actions/checkout@v4
@@ -251,25 +242,23 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - checks
-      - vitest-awx
       - vitest
       - vitest-coverage
       - hub-insights
     if: ${{ always() }}
     steps:
       - name: Success Check
-        if: ${{ needs.checks.result == 'success' && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' && needs.hub-insights.result == 'success' }}
+        if: ${{ needs.checks.result == 'success' && needs.vitest.result == 'success' && needs.hub-insights.result == 'success' }}
         run: echo "All jobs succeeded"
       - name: Log dependency results
-        if: ${{ needs.checks.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.checks.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
         run: |
           echo "checks: ${{ needs.checks.result }}"
-          echo "vitest-awx: ${{ needs.vitest-awx.result }}"
           echo "vitest: ${{ needs.vitest.result }}"
           echo "vitest-coverage: ${{ needs.vitest-coverage.result }}"
           echo "hub-insights: ${{ needs.hub-insights.result }}"
       - name: Failure or Cancelled
-        if: ${{ needs.checks.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.checks.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
         run: |
           echo "One or more jobs failed or were canceled."
           exit 1
