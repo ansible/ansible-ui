@@ -9,7 +9,7 @@ test.beforeEach(setupBefore({ path: '/access/teams' }));
 test.afterEach(setupAfter);
 
 test.describe('Platform Teams CRUD', () => {
-  test('create team and verify it exists', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('create team and verify it exists', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
     const teamName = await Team.ui.create(page, { organizationName });
 
@@ -21,7 +21,7 @@ test.describe('Platform Teams CRUD', () => {
     }
   });
 
-  test('edit team from list view', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('edit team from list view', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
     const originalTeamName = await Team.ui.create(page, { organizationName });
     const editedTeamName = `edited-${originalTeamName}`;
@@ -38,6 +38,7 @@ test.describe('Platform Teams CRUD', () => {
     }
   });
 
+  // Shifted left: Redundant UI path - edit already covered via list view
   test('edit team from details page', { tag: ['@not_mock'] }, async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
     const originalTeamName = await Team.ui.create(page, { organizationName });
@@ -56,7 +57,7 @@ test.describe('Platform Teams CRUD', () => {
     }
   });
 
-  test('delete team from list view', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('delete team from list view', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
     const teamName = await Team.ui.create(page, { organizationName });
 
@@ -78,6 +79,7 @@ test.describe('Platform Teams CRUD', () => {
     }
   });
 
+  // Shifted left: Redundant UI path - delete already covered via list view
   test('delete team from details page', { tag: ['@not_mock'] }, async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
     const teamName = await Team.ui.create(page, { organizationName });
@@ -93,6 +95,7 @@ test.describe('Platform Teams CRUD', () => {
     }
   });
 
+  // Shifted left: Bulk operation - convenience feature, not core functionality
   test('bulk delete teams from toolbar action', { tag: ['@not_mock'] }, async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
     const team1Name = await Team.ui.create(page, { organizationName });
