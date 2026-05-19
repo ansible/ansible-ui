@@ -53,8 +53,9 @@ jobs:
 
       - name: Checkout PR Code
         run: |
-          gh pr checkout ${{ steps.pr.outputs.number }}
+          gh pr checkout "$PR_NUMBER"
         env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Vitest Coverage
