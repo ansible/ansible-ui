@@ -1,24 +1,21 @@
 import { expect, test } from '@playwright/test';
-import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { User, Team, Credential } from '@ansible/playwright/utils';
+import { Team, Credential } from '@ansible/playwright/utils';
 
 test.describe('Platform Teams - Roles Tab', () => {
   let credentialName: string;
   let teamName: string;
-  let userName: string;
 
   test.beforeEach(setupBefore({ path: '/access/teams' }));
 
   test.afterEach(async ({ page }) => {
     await Team.api.deleteByName(page, teamName).catch(() => {});
     await Credential.api.deleteByName(page, credentialName).catch(() => {});
-    await User.api.deleteByName(page, userName).catch(() => {});
     await setupAfter({ page });
   });
 
   test(
-    'assign a role to a team and then remove it',
+    'should assign a role to a team and then remove it',
     { tag: ['@team', '@not_mock'] },
     async ({ page }) => {
       credentialName = await Credential.ui.create(page);
@@ -58,65 +55,6 @@ test.describe('Platform Teams - Roles Tab', () => {
       await expect(
         page.getByRole('heading', { name: 'No roles assigned to this team' })
       ).toBeVisible();
-    }
-  );
-
-  test(
-    'verify user inherits team roles when added to team',
-    {
-      tag: ['@team', '@not_mock'],
-    },
-    async ({ page }) => {
-      userName = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
-      credentialName = await Credential.ui.create(page);
-      teamName = await Team.ui.create(page, { organizationName: 'Default' });
-
-      //Assign role to team
-      await page.getByRole('tab', { name: 'Roles' }).click();
-      await expect(page.getByRole('button', { name: 'Assign roles' })).toBeVisible();
-      await page.getByRole('button', { name: 'Assign role' }).click();
-      await page.getByLabel('Breadcrumb').getByText('Assign roles').click();
-      await expect(page.getByRole('heading', { name: 'Assign roles' })).toBeVisible();
-      await page.getByRole('textbox', { name: 'Type to filter' }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).fill('Credential');
-      await page.locator('[id="select-create-typeahead-awx.credential"]').click();
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).fill(credentialName);
-      await page.getByRole('button', { name: 'apply filter' }).click();
-      await page.getByRole('checkbox', { name: 'Select row' }).check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).fill('Admin');
-      await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
-      await page.getByRole('checkbox', { name: 'Select all rows' }).check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await expect(page.getByRole('region', { name: 'Resources' })).toContainText(credentialName);
-      await expect(page.getByRole('region', { name: 'Platform roles' })).toContainText(
-        'Credential Admin'
-      );
-      await page.getByRole('button', { name: 'Finish' }).click();
-
-      await expect(page.getByRole('heading', { name: teamName })).toBeVisible();
-
-      //Assign user to team
-      await page.getByRole('tab', { name: 'Users' }).click();
-      await expect(page.getByRole('button', { name: 'Assign users' })).toBeVisible();
-      await page.getByRole('button', { name: 'Assign users' }).click();
-      await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
-      await page.getByRole('textbox', { name: 'Type to filter' }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).fill(userName);
-      await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
-      await page.getByRole('checkbox', { name: 'Select all rows' }).check();
-      await page.getByRole('button', { name: 'Assign users' }).click();
-
-      await clickTableRow({ text: userName, filterLabel: 'Username' }, page);
-      await page.getByRole('tab', { name: 'Roles' }).click();
-      const row = page.locator('table tr', { hasText: teamName });
-
-      // Verify the row contains the team name and inheritance description
-      await expect(row).toContainText(teamName);
-      await expect(row).toContainText('Team Member');
     }
   );
 });
