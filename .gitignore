@@ -27,6 +27,7 @@
 /storybook-static
 results.xml
 /playwright/playwright/html-report/
+.claude/settings.local.json
 
 # Ignore generated migration spec files (keep the template)
 migration-specs/**/*.yaml
