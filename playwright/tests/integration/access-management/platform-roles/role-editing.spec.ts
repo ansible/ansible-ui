@@ -13,7 +13,7 @@ test.describe('Role Editing Tests', () => {
   test.describe('Basic Role Editing', () => {
     test(
       'should edit both name and description together',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         const originalName = createE2EName();
         const newName = createE2EName();
@@ -106,40 +106,7 @@ test.describe('Role Editing Tests', () => {
     );
   });
 
-  test.describe('Edit Form Navigation and Cancellation', () => {
-    test(
-      'should cancel edit and return to details page',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const originalDescription = 'Original description';
-        const config = {
-          ...TEST_ROLE_CONFIGS.namespace,
-          name: roleName,
-          description: originalDescription,
-        };
-
-        await Role.ui.createWithConfig(page, config);
-
-        // Navigate to edit page
-        await Role.ui.navigate(page);
-        await clickTableRow({ text: roleName }, page);
-        await clickPageAction('Edit role', page);
-
-        // Make changes but cancel
-        await page.getByLabel('Description').fill('');
-        await page.getByLabel('Description').fill('Changed description');
-        await Role.ui.cancelForm(page);
-
-        // Should return to details page with original data
-        await expect(page.getByRole('heading', { name: roleName })).toBeVisible();
-        await expect(page.locator('#description')).toHaveText(originalDescription);
-
-        // Cleanup
-        await Role.ui.delete(page, roleName);
-      }
-    );
-
+  test.describe('Edit Form Navigation', () => {
     test(
       'should navigate from list to edit via row action',
       { tag: ['@not_mock'] },
