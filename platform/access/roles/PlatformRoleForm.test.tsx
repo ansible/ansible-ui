@@ -2,7 +2,7 @@ import { render, waitFor, within, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 
@@ -10,6 +10,11 @@ import roleDefinition from './mocks/roleDefinition.fixture.json';
 import rolePermissions from './mocks/rolePermissions.fixture.json';
 import roleTypes from './mocks/roleTypes.fixture.json';
 import { CreatePlatformRole, EditPlatformRole } from './PlatformRoleForm';
+
+function LocationDisplay() {
+  const location = useLocation();
+  return <div data-testid="location-display">{location.pathname}</div>;
+}
 
 describe('PlatformRoleForm', () => {
   const server = setupServer(
@@ -296,5 +301,48 @@ describe('PlatformRoleForm', () => {
         expect(permissionsButton).toHaveTextContent('Can view organization');
       });
     }, 15000);
+  });
+
+  describe('Cancel Navigation', () => {
+    test('should navigate away from create form when cancel is clicked', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles', '/access/roles/create']}>
+          <Routes>
+            <Route path="/access/roles" element={<LocationDisplay />} />
+            <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      expect(screen.getByRole('heading', { name: 'Create role' })).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('location-display')).toHaveTextContent('/access/roles');
+      });
+    });
+
+    test('should navigate away from edit form when cancel is clicked', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles/1/details', '/access/roles/1/edit']}>
+          <Routes>
+            <Route path="/access/roles/:id/details" element={<LocationDisplay />} />
+            <Route path="/access/roles/:id/edit" element={<EditPlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Save role' })).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('location-display')).toHaveTextContent('/access/roles/1/details');
+      });
+    });
   });
 });
