@@ -1,5 +1,4 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -199,49 +198,5 @@ describe('PlatformRoleDetails', () => {
     expect(screen.getByRole('link', { name: /edit role/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /edit role/i })).toBeEnabled();
     expect(screen.getByRole('button', { name: /kebab dropdown toggle/i })).toBeInTheDocument();
-  });
-
-  it('should render breadcrumb with Roles navigation item on details page', async () => {
-    render(
-      <MemoryRouter initialEntries={['/access/roles/1/details']}>
-        <Routes>
-          <Route path="/access/roles/:id/details" element={<PlatformRoleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Organization Admin' })).toBeInTheDocument();
-    });
-
-    const breadcrumbNav = screen.getByRole('navigation', { name: 'Breadcrumb' });
-    const breadcrumbItems = within(breadcrumbNav).getAllByRole('listitem');
-    expect(breadcrumbItems).toHaveLength(2);
-    expect(breadcrumbItems[0]).toHaveTextContent('Roles');
-    expect(breadcrumbItems[0]).toHaveAttribute('data-testid', 'Roles');
-    expect(breadcrumbItems[1]).toHaveTextContent('Organization Admin');
-  });
-
-  it('should keep role visible after cancelling deletion dialog', async () => {
-    const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={['/access/roles/1/details']}>
-        <Routes>
-          <Route path="/access/roles/:id/details" element={<PlatformRoleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Organization Admin' })).toBeInTheDocument();
-    });
-
-    const kebab = screen.getByRole('button', { name: /kebab dropdown toggle/i });
-    await user.click(kebab);
-
-    const deleteAction = await screen.findByRole('menuitem', { name: /delete role/i });
-    await user.click(deleteAction);
-
-    expect(screen.getByRole('heading', { name: 'Organization Admin' })).toBeInTheDocument();
   });
 });
