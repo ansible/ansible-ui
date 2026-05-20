@@ -85,6 +85,7 @@ describe('OAuthApplicationForm', () => {
     app_url: 'https://example.com',
     client_type: 'confidential',
     redirect_uris: 'https://example.com/callback',
+    post_logout_redirect_uris: 'https://example.com/logout',
     organization: 1,
     type: 'o_auth2_application',
     created: '2024-01-01T00:00:00Z',
@@ -144,6 +145,10 @@ describe('OAuthApplicationForm', () => {
         redirect_uris: {
           type: 'string',
           help_text: 'Allowed URIs list, space separated',
+        },
+        post_logout_redirect_uris: {
+          type: 'string',
+          help_text: 'Allowed post logout URIs list, space separated',
         },
         app_url: {
           type: 'url',
@@ -243,6 +248,7 @@ describe('OAuthApplicationForm', () => {
       expect(screen.getByPlaceholderText('Enter OAuth application URL')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter description')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter redirect URIs')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Enter post logout redirect URIs')).toBeInTheDocument();
 
       // Check for select fields by their labels
       expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
@@ -496,6 +502,7 @@ describe('OAuthApplicationForm', () => {
         expect(screen.getByDisplayValue('Test application description')).toBeInTheDocument();
         expect(screen.getByDisplayValue('https://example.com')).toBeInTheDocument();
         expect(screen.getByDisplayValue('https://example.com/callback')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('https://example.com/logout')).toBeInTheDocument();
       });
     });
 
@@ -514,7 +521,7 @@ describe('OAuthApplicationForm', () => {
       });
 
       // Clear redirect URIs field
-      const redirectUrisField = screen.getByLabelText(/redirect uris/i);
+      const redirectUrisField = screen.getByPlaceholderText('Enter redirect URIs');
       await user.clear(redirectUrisField);
 
       await waitFor(() => {
@@ -735,6 +742,7 @@ describe('OAuthApplicationForm', () => {
       expect(screen.getByPlaceholderText('Enter OAuth application name')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter OAuth application URL')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter redirect URIs')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Enter post logout redirect URIs')).toBeInTheDocument();
       expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
       expect(screen.getByText('Client type')).toBeInTheDocument();
       expect(screen.getByText('Algorithm')).toBeInTheDocument();

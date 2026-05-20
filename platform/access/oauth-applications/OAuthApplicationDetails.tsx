@@ -73,6 +73,9 @@ export function ApplicationDetailInner(props: Readonly<{ application: Applicatio
       <PageDetail label={t('Redirect URIs')} fullWidth>
         {props.application.redirect_uris}
       </PageDetail>
+      <PageDetail label={t('Post Logout Redirect URIs')} fullWidth>
+        {props.application.post_logout_redirect_uris}
+      </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell value={props.application.created} />
       </PageDetail>

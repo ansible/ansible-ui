@@ -7,6 +7,7 @@ export interface Application {
   client_type: 'confidential' | 'public';
   algorithm?: '' | 'RS256' | 'HS256';
   redirect_uris?: string;
+  post_logout_redirect_uris?: string;
   organization: number;
   type: 'o_auth2_application';
   created: string;
