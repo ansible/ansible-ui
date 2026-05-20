@@ -10,7 +10,7 @@ export function getLogMessageColor(messageLevel: string) {
   );
 
   if (messageLevel === 'INFO') {
-    return 'white';
+    return 'var(--pf-t--color--white)';
   }
   return res;
 }

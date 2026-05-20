@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const arrowStyle = `
-  color: white;
+  color: var(--pf-t--color--white);
   &:hover {
     cursor: pointer;
   }

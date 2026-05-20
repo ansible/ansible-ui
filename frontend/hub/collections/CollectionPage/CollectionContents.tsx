@@ -209,7 +209,7 @@ const hoverOrSelected = `
     margin-bottom: -4px;
     cursor: pointer;
     text-decoration: underline;
-    text-decoration-color: blue; /* Sets the underline color to blue */
+    text-decoration-color: var(--pf-t--global--text--color--link--default);
     text-decoration-thickness: 2px; /* Sets the thickness of the underline */
     text-underline-offset: 8px; /* Sets the space between the text and the underline */
 `;
