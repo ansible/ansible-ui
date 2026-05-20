@@ -21,7 +21,7 @@ test.setTimeout(2 * 60 * 1000);
 test.describe('Workflow Viz', () => {
   test(
     'Workflow Viz Add Nodes: Should render a workflow visualizer view with multiple nodes present',
-    { tag: ['@not_e2e', '@not_mock', '@compare'] },
+    { tag: ['@not_e2e', '@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(8 * 60 * 1000);
 
@@ -42,7 +42,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Workflow Viz Add Nodes: Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
@@ -109,7 +109,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can edit a node resource on a workflow visualizer already containing existing nodes',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
@@ -140,7 +140,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Click on edge context menu option to change link type and close visualizer to show unsaved changes modal',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const jobTemplateName = createE2EName();
@@ -266,7 +266,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
@@ -351,7 +351,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can remove all existing nodes on a visualizer using the button in the toolbar kebab, save the visualizer, then add 2 new nodes and save the visualizer again',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectName = createE2EName();
@@ -395,7 +395,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can delete one single node and save the visualizer',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const sourceName = createE2EName();
@@ -466,59 +466,63 @@ test.describe('Workflow Viz', () => {
     }
   );
 
-  test('Should update skip tags', { tag: ['@not_mock', '@compare'] }, async ({ page }) => {
-    const jtName = createE2EName();
-    const inventoryName = await Inventory.ui.create(page);
-    const jobTemplate = await JobTemplate.ui.create(page, {
-      name: jtName,
-      skipTagsPrompt: true,
-      inventoryName,
-    });
-    const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
-    test.setTimeout(5 * 60 * 1000);
-    await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
-    await page.getByRole('button', { name: 'Add step' }).nth(1).click();
-    await expect(page.getByRole('dialog')).toBeVisible();
-    await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-    await page.getByRole('option', { name: 'Job Template', exact: true }).click();
-    await page.getByRole('button', { name: 'Job template', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Search input' }).click();
-    await page.getByRole('textbox', { name: 'Search input' }).fill(jtName);
-    await page.getByRole('option', { name: jtName }).click();
-    await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
-    await page.getByRole('button', { name: 'Prompts' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill('tag1');
-    await page.getByRole('option', { name: 'Create "tag1"' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill('tag2');
-    await page.getByRole('option', { name: 'Create "tag2"' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill('tag3');
-    await page.getByRole('option', { name: 'Create "tag3"' }).click();
-    await page.getByRole('button', { name: 'Next' }).click();
-    await page.getByRole('button', { name: 'Finish' }).click();
-    await page.getByRole('button', { name: 'Legend' }).click();
-    await page.getByRole('button', { name: 'Legend' }).click();
-    await page.getByRole('button', { name: 'Fit to Screen' }).click();
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-    await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-    await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
-    await page.locator('[class*="topology__node__label"]', { hasText: jtName }).click();
-    await expect(page.getByRole('link', { name: jtName })).toBeVisible();
-    await page.getByText('Skip tags', { exact: true }).hover();
-    await page.mouse.wheel(0, 1000);
-    await expect(
-      page
-        .locator('div')
-        .filter({ hasText: /^tag1tag2tag3$/ })
-        .first()
-    ).toBeVisible();
-    await JobTemplate.ui.delete(page, jobTemplate);
-    await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
-    await Inventory.ui.delete(page, inventoryName);
-  });
+  test(
+    'Should update skip tags',
+    { tag: ['@not_mock', '@compare', '@tier1'] },
+    async ({ page }) => {
+      const jtName = createE2EName();
+      const inventoryName = await Inventory.ui.create(page);
+      const jobTemplate = await JobTemplate.ui.create(page, {
+        name: jtName,
+        skipTagsPrompt: true,
+        inventoryName,
+      });
+      const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      test.setTimeout(5 * 60 * 1000);
+      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
+      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('button', { name: 'Job template', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(jtName);
+      await page.getByRole('option', { name: jtName }).click();
+      await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
+      await page.getByRole('button', { name: 'Prompts' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).fill('tag1');
+      await page.getByRole('option', { name: 'Create "tag1"' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).fill('tag2');
+      await page.getByRole('option', { name: 'Create "tag2"' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).fill('tag3');
+      await page.getByRole('option', { name: 'Create "tag3"' }).click();
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+      await page.getByRole('button', { name: 'Legend' }).click();
+      await page.getByRole('button', { name: 'Legend' }).click();
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
+      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
+      await page.locator('[class*="topology__node__label"]', { hasText: jtName }).click();
+      await expect(page.getByRole('link', { name: jtName })).toBeVisible();
+      await page.getByText('Skip tags', { exact: true }).hover();
+      await page.mouse.wheel(0, 1000);
+      await expect(
+        page
+          .locator('div')
+          .filter({ hasText: /^tag1tag2tag3$/ })
+          .first()
+      ).toBeVisible();
+      await JobTemplate.ui.delete(page, jobTemplate);
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
+      await Inventory.ui.delete(page, inventoryName);
+    }
+  );
 
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
   test.skip(
@@ -620,7 +624,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Create a job template node using a JT with a survey enabled',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const inventoryName = await Inventory.ui.create(page);
@@ -661,7 +665,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Should display review step fields when adding an approval node',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
@@ -700,7 +704,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Should save and persist credentials when workflow node has empty credential override',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 

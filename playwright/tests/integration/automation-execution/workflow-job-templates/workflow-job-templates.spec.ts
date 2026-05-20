@@ -41,7 +41,7 @@ test.describe('Workflow Job Templates: Create', () => {
 
   test(
     'can create a WFJT with only a name and then edit it to add all optional fields',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const wfjtName = createE2EName('workflow-job-template');
 
@@ -135,7 +135,7 @@ test.describe('Workflow Job Templates: Create', () => {
 
   test(
     'can create a workflow job template using all optional fields',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const wfjtName = createE2EName('workflow-job-template');
 
@@ -219,7 +219,7 @@ test.describe('Workflow Job Templates: Edit', () => {
 
   test(
     'can edit a workflow job template from the details view',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const newName = `${workflowJobTemplateName} edited`;
 
@@ -263,7 +263,7 @@ test.describe('Workflow Job Templates: Edit', () => {
 
   test(
     'can edit a workflow job template from the list row',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const newName = `${workflowJobTemplateName} edited`;
 
@@ -334,7 +334,7 @@ test.describe('Workflow Job Templates: Copy', () => {
 
   test(
     'can duplicate an existing workflow job template from the list',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Close the visualizer from beforeEach
       await page.getByTestId('workflow-visualizer-toolbar-close').click();
@@ -367,7 +367,7 @@ test.describe('Workflow Job Templates: Copy', () => {
 
   test(
     'can duplicate an existing workflow job template from the details page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Close the visualizer from beforeEach - this navigates to the details page
       await page.getByTestId('workflow-visualizer-toolbar-close').click();
@@ -451,7 +451,7 @@ test.describe('Workflow Job Templates: Delete', () => {
 
   test(
     'can delete a workflow job template from the details page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Use the utility function which properly handles deletion
       await WorkflowJobTemplate.ui.delete(page, workflowJobTemplateName);
@@ -465,7 +465,7 @@ test.describe('Workflow Job Templates: Delete', () => {
 
   test(
     'can delete a workflow job template from the list row',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Execution', 'Templates');
       await filterTable({ filterLabel: 'Name', filterValue: workflowJobTemplateName }, page);
@@ -492,7 +492,7 @@ test.describe('Workflow Job Templates: Delete', () => {
 
   test(
     'can bulk delete multiple workflow job templates from the list toolbar',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Create a second workflow job template
       const result2 = await WorkflowJobTemplate.ui.create(page, {
@@ -570,7 +570,7 @@ test.describe('Workflow Job Templates: Launch', () => {
 
   test(
     'can launch a workflow job template from details view',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Execution', 'Templates');
       await expect(
@@ -630,7 +630,7 @@ test.describe('Workflow Job Templates: Prompt on Launch', () => {
 
   test(
     'can launch a workflow job template with prompt on launch values',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Execution', 'Templates');
       await expect(
@@ -698,7 +698,7 @@ test.describe('Workflow Job Templates: Output and Details Screen', () => {
 
   test(
     'can launch a workflow job, let it finish, and assert expected results on output and details screens',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
