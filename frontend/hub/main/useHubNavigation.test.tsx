@@ -226,7 +226,7 @@ vi.mock('../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPa
 vi.mock('../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails', () => ({
   RemoteRegistryDetails: () => null,
 }));
-vi.mock('../access/token/Token', () => ({ Token: () => null }));
+vi.mock('../access/token/TokenInsights', () => ({ TokenInsights: () => null }));
 vi.mock('../access/roles/HubRoles', () => ({ HubRoles: () => null }));
 vi.mock('../access/roles/RolePage/HubRolePage', () => ({ HubRolePage: () => null }));
 vi.mock('../access/roles/RolePage/HubRoleDetails', () => ({ HubRoleDetails: () => null }));
@@ -326,12 +326,10 @@ describe('useHubNavigation', () => {
       expect(execEnvs?.label).toBe('Execution Environments');
     });
 
-    it('should use "api-token" path for API Token', () => {
+    it('should NOT include API Token in standalone mode', () => {
       const { result } = renderUseHubNavigation();
-      const token = result.current.find(
-        (item) => item.id === HubRoute.APIToken && item.path === 'api-token'
-      );
-      expect(token).toBeDefined();
+      const token = result.current.find((item) => item.id === HubRoute.APIToken);
+      expect(token).toBeUndefined();
     });
 
     it('should include Administration section with nested routes', () => {

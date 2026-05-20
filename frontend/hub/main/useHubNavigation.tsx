@@ -11,7 +11,6 @@ import { CreateRole, EditRole } from '../access/roles/RolePage/HubRoleForm';
 import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
 import { HubTeamRoles } from '../access/teams/TeamPage/TeamUserRole';
 import { HubAddTeamRoles } from '../access/teams/components/HubAddTeamRoles';
-import { Token } from '../access/token/Token';
 import { TokenInsights } from '../access/token/TokenInsights';
 import { HubUserRoles } from '../access/users/UserPage/HubUserRoles';
 import { HubAddUserRoles } from '../access/users/components/HubAddUserRoles';
@@ -779,13 +778,17 @@ export function useHubNavigation() {
             ],
           },
         ]),
-    {
-      id: HubRoute.APIToken,
-      label: isInsightsMode() ? t('Connect to Hub') : t('API Token'),
-      // Insights/CRC uses 'token' path, standalone uses 'api-token'
-      path: isInsightsMode() ? 'token' : 'api-token',
-      element: isInsightsMode() ? <TokenInsights /> : <Token />,
-    },
+    // Connect to Hub page - Insights/HCC only
+    ...(isInsightsMode()
+      ? [
+          {
+            id: HubRoute.APIToken,
+            label: t('Connect to Hub'),
+            path: 'token',
+            element: <TokenInsights />,
+          },
+        ]
+      : []),
     // Access Management section - Platform only (uses Gateway API)
     ...(isInsightsMode()
       ? []
@@ -893,12 +896,6 @@ export function useHubNavigation() {
                     element: <HubRoles />,
                   },
                 ],
-              },
-              {
-                id: HubRoute.APIToken,
-                label: t('API Token'),
-                path: 'api-token',
-                element: <Token />,
               },
             ],
           },
