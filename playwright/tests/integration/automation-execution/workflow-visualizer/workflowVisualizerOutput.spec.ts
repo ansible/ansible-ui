@@ -154,7 +154,7 @@ test.describe('Workflow Visualizer - Job Output', () => {
 
   test(
     'should launch a workflow job template from the templates list and navigate to the output page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await test.step('Navigate to templates and filter for workflow job template', async () => {
         await navigateTo(page, 'Automation Execution', 'Templates');
@@ -193,7 +193,7 @@ test.describe('Workflow Visualizer - Job Output', () => {
 
   test(
     'should configure prompt-on-launch values of a node, launch the job, and view the output screen',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await test.step('Enable ask_variables_on_launch for job template', async () => {
         await awxAPI.patch(page, `job_templates/${jobTemplate.id}/`, {
@@ -300,7 +300,7 @@ test.describe('Workflow Visualizer - Job Output', () => {
 
   test(
     'should view the details pages of related jobs on a workflow either by clicking job nodes or toggling the workflow jobs dropdown',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await test.step('Navigate to workflow job template details', async () => {
         await navigateTo(page, 'Automation Execution', 'Templates');

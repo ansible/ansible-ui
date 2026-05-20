@@ -21,17 +21,19 @@ test.describe('Job Templates', () => {
     await setupAfter({ page });
   });
 
-  test('can create a job template and assert the information showing on the details page', async ({
-    page,
-  }) => {
-    test.setTimeout(2 * 60 * 1000);
-    const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
-    await JobTemplate.ui.delete(page, jobTemplateName);
-  });
+  test(
+    'can create a job template and assert the information showing on the details page',
+    { tag: ['@tier1'] },
+    async ({ page }) => {
+      test.setTimeout(2 * 60 * 1000);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
+      await JobTemplate.ui.delete(page, jobTemplateName);
+    }
+  );
 
   test(
     'can create a job template with prompted fields, launch from the list view, and complete launch via wizard',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 30 * 1000);
       const label = createE2EName('label-jt');
@@ -52,7 +54,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can create a job template with a survey, add limits and verify they are displayed on Edit',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(5 * 30 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, {
@@ -82,7 +84,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can launch a job template from the details page launch button using the prompt on launch',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, {
@@ -101,7 +103,7 @@ test.describe('Job Templates', () => {
 
   test(
     'job template - edit using row action of the template list page',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
@@ -129,7 +131,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can edit a job template using the edit template button on details page',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
@@ -160,7 +162,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can assign a new inventory to a job template if the originally assigned inventory was deleted',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       // create inventory + job template and then delete inventory
@@ -297,7 +299,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can delete a job template from the list line item',
-    { tag: ['@compare'] },
+    { tag: ['@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
@@ -307,7 +309,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can delete a job template from the details page',
-    { tag: ['@compare'] },
+    { tag: ['@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
@@ -317,7 +319,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can bulk delete job templates from the list page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName1 = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
@@ -347,7 +349,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can create a job template and assert the OPA is showing on the details page',
-    { tag: ['@compare', '@mock'] },
+    { tag: ['@compare', '@mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = createE2EName('job-template');
@@ -388,7 +390,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can create a job template, select multiple credentials and deselct one from the selected credential chip close button',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = createE2EName('job-template');
@@ -439,7 +441,7 @@ test.describe('Job Templates', () => {
 
   test(
     'can launch a job template with an enabled survey from the details page launch button using the prompt on launch',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const surveyQuestion = 'q1';
@@ -471,7 +473,7 @@ test.describe('Job Templates', () => {
 
   test(
     'verify playbook selection does not auto-clear unexpectedly',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(60000);
 
@@ -576,76 +578,82 @@ test.describe('Job Templates', () => {
     }
   );
 
-  test('verify the playbook field is creatable', { tag: ['@not_mock'] }, async ({ page }) => {
-    const jobTemplateName = createE2EName('playbook-creatable');
+  test(
+    'verify the playbook field is creatable',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      const jobTemplateName = createE2EName('playbook-creatable');
 
-    // Navigate to templates page
-    await navigateTo(page, 'Automation Execution', 'Templates');
-    await expect(page.getByTestId('page-title')).toBeVisible({ timeout: 10000 });
+      // Navigate to templates page
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await expect(page.getByTestId('page-title')).toBeVisible({ timeout: 10000 });
 
-    const createButtonExists = await page.getByText('Create template', { exact: true }).count();
-    const dropdownExists = await page
-      .getByRole('button', { name: 'dropdown toggle', exact: true })
-      .count();
-
-    if (createButtonExists > 0) {
-      await page.getByText('Create template', { exact: true }).click();
-      const menuItemExists = await page
-        .getByRole('menuitem', { name: 'Create job template' })
+      const createButtonExists = await page.getByText('Create template', { exact: true }).count();
+      const dropdownExists = await page
+        .getByRole('button', { name: 'dropdown toggle', exact: true })
         .count();
-      if (menuItemExists > 0) {
-        await page.getByRole('menuitem', { name: 'Create job template' }).click();
+
+      if (createButtonExists > 0) {
+        await page.getByText('Create template', { exact: true }).click();
+        const menuItemExists = await page
+          .getByRole('menuitem', { name: 'Create job template' })
+          .count();
+        if (menuItemExists > 0) {
+          await page.getByRole('menuitem', { name: 'Create job template' }).click();
+        } else {
+          test.skip(true, 'Create job template menu item not found');
+        }
+      } else if (dropdownExists > 0) {
+        await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
+        await page.waitForTimeout(1000);
+        const menuItemExists = await page
+          .getByRole('menuitem', { name: 'Create job template' })
+          .count();
+        if (menuItemExists > 0) {
+          await page.getByRole('menuitem', { name: 'Create job template' }).click();
+        } else {
+          test.skip(true, 'Create job template menu item not found in dropdown');
+        }
       } else {
-        test.skip(true, 'Create job template menu item not found');
+        test.skip(true, 'Cannot access job template creation form - no create buttons found');
       }
-    } else if (dropdownExists > 0) {
-      await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
-      await page.waitForTimeout(1000);
-      const menuItemExists = await page
-        .getByRole('menuitem', { name: 'Create job template' })
-        .count();
-      if (menuItemExists > 0) {
-        await page.getByRole('menuitem', { name: 'Create job template' }).click();
-      } else {
-        test.skip(true, 'Create job template menu item not found in dropdown');
-      }
-    } else {
-      test.skip(true, 'Cannot access job template creation form - no create buttons found');
+
+      // Continue with form if we got here
+      await expect(page.getByPlaceholder('Enter job template name')).toBeVisible({
+        timeout: 10000,
+      });
+      await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
+
+      // Select inventory (required)
+      await page.getByRole('button', { name: 'Inventory' }).click();
+      await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
+      await page.locator('[role="option"]').first().click();
+
+      await page.locator('#project-select').click();
+      await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
+      const projectOptions = await page.locator('[role="option"]').all();
+      expect(projectOptions.length).toBeGreaterThan(0);
+      await projectOptions[0].click();
+
+      // Wait for and interact with playbook field
+      await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
+        timeout: 10000,
+      });
+      await page.getByPlaceholder('Add a project, then select a').fill('test_hello_world.yml');
+      await page.getByRole('option', { name: 'Create "test_hello_world.yml"' }).click();
+      const selectedPlaybook = await page
+        .getByPlaceholder('Add a project, then select a')
+        .inputValue();
+
+      expect(selectedPlaybook).toBe('test_hello_world.yml');
+
+      await page.waitForTimeout(3000);
+      const persistedValue = await page
+        .getByPlaceholder('Add a project, then select a')
+        .inputValue();
+      expect(persistedValue).toBe('test_hello_world.yml');
     }
-
-    // Continue with form if we got here
-    await expect(page.getByPlaceholder('Enter job template name')).toBeVisible({
-      timeout: 10000,
-    });
-    await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
-
-    // Select inventory (required)
-    await page.getByRole('button', { name: 'Inventory' }).click();
-    await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
-    await page.locator('[role="option"]').first().click();
-
-    await page.locator('#project-select').click();
-    await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
-    const projectOptions = await page.locator('[role="option"]').all();
-    expect(projectOptions.length).toBeGreaterThan(0);
-    await projectOptions[0].click();
-
-    // Wait for and interact with playbook field
-    await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
-      timeout: 10000,
-    });
-    await page.getByPlaceholder('Add a project, then select a').fill('test_hello_world.yml');
-    await page.getByRole('option', { name: 'Create "test_hello_world.yml"' }).click();
-    const selectedPlaybook = await page
-      .getByPlaceholder('Add a project, then select a')
-      .inputValue();
-
-    expect(selectedPlaybook).toBe('test_hello_world.yml');
-
-    await page.waitForTimeout(3000);
-    const persistedValue = await page.getByPlaceholder('Add a project, then select a').inputValue();
-    expect(persistedValue).toBe('test_hello_world.yml');
-  });
+  );
 });
 
 test.describe('Job Template - Copy/Duplicate', () => {
@@ -663,7 +671,7 @@ test.describe('Job Template - Copy/Duplicate', () => {
 
   test(
     'can copy an existing job template from the list view',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
@@ -694,7 +702,7 @@ test.describe('Job Template - Copy/Duplicate', () => {
 
   test(
     'can copy an existing job template from the details page',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName: inventoryName });
@@ -730,7 +738,7 @@ test.describe('Job Template - Auto-populate from Project/Inventory', () => {
 
   test(
     'can auto-populate job template form when creating from project page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Use Demo Project which should exist by default
       const projectName = 'Demo Project';
@@ -771,7 +779,7 @@ test.describe('Job Template - Auto-populate from Project/Inventory', () => {
 
   test(
     'can auto-populate job template form when creating from inventory page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Use Demo Inventory which should exist by default
       const inventoryName = 'Demo Inventory';

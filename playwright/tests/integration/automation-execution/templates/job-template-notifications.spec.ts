@@ -20,7 +20,7 @@ test.describe('Job Template - notifications tab', () => {
   });
   test(
     'can navigate to the Job Templates -> Notifications list and then to the details page of the Notification',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       const notifierName = await Notifier.ui.createSlack(page);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
@@ -47,7 +47,7 @@ test.describe('Job Template - notifications tab', () => {
 
   test(
     'can toggle the Job Templates -> Notification on and off for job start',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       const notifierName = await Notifier.ui.createSlack(page);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
@@ -86,7 +86,7 @@ test.describe('Job Template - notifications tab', () => {
 
   test(
     'can toggle the Job Templates -> Notification on and off for job success',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       const notifierName = await Notifier.ui.createSlack(page);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
@@ -129,7 +129,7 @@ test.describe('Job Template - notifications tab', () => {
 
   test(
     'can toggle the Job Templates -> Notification on and off for job failure',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
       const notifierName = await Notifier.ui.createSlack(page);
       const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
