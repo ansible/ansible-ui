@@ -11,7 +11,7 @@ import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/Pag
 import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
-import { postRequest } from '@ansible/common-ui/crud/Data';
+import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
 import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
 import { ExternalLink } from '@ansible/hub-ui//common/ExternalLink';
 import {
@@ -85,6 +85,9 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
         case 'satellite':
           await postRequest(awxAPI`/config/attach/`, {
             subscription_id: data.subscription_id,
+          });
+          await requestPatch(awxAPI`/settings/all/`, {
+            INSIGHTS_TRACKING_STATE: true,
           });
           break;
       }
