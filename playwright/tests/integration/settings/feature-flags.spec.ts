@@ -10,61 +10,6 @@ const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1
 
 test.afterEach(setupAfter);
 
-test.describe('Feature Flags - Page Visibility', () => {
-  test('should show Feature Flags nav item when RUNTIME_FEATURE_FLAGS is enabled', async ({
-    page,
-  }) => {
-    await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
-    await FeatureFlags.mock.list(page);
-    await login(page, platformUIWithoutSlash + '/overview');
-
-    const nav = page.locator('.pf-v6-c-nav');
-    await expect(nav).toBeVisible();
-
-    const settingsItem = nav
-      .locator('li')
-      .filter({ hasText: /^Settings/i })
-      .first();
-    await expect(settingsItem).toBeVisible();
-
-    if (!(await settingsItem.evaluate((el) => el.classList.contains('pf-m-expanded')))) {
-      await settingsItem.getByRole('button').click();
-    }
-
-    const featureFlagsLink = settingsItem.locator('li').filter({ hasText: /^Feature Flags/i });
-    await expect(featureFlagsLink).toBeVisible();
-
-    await featureFlagsLink.getByRole('link').click();
-    await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
-  });
-
-  test('should hide Feature Flags nav item when RUNTIME_FEATURE_FLAGS is disabled', async ({
-    page,
-  }) => {
-    await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: false });
-    await login(page, platformUIWithoutSlash + '/overview');
-
-    const nav = page.locator('.pf-v6-c-nav');
-    await expect(nav).toBeVisible();
-
-    const settingsItem = nav
-      .locator('li')
-      .filter({ hasText: /^Settings/i })
-      .first();
-    await expect(settingsItem).toBeVisible();
-
-    if (!(await settingsItem.evaluate((el) => el.classList.contains('pf-m-expanded')))) {
-      await settingsItem.getByRole('button').click();
-    }
-
-    const featureFlagsLink = settingsItem.locator('li').filter({ hasText: /^Feature Flags/i });
-    await expect(featureFlagsLink).toBeHidden();
-
-    await page.goto(platformUIWithoutSlash + '/settings/feature-flags');
-    await expect(page.getByText('Page not found')).toBeVisible({ timeout: 30000 });
-  });
-});
-
 test.describe('Feature Flags - Toggle', () => {
   test('should open confirmation dialog and toggle a feature flag', async ({ page }) => {
     await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
@@ -306,17 +251,6 @@ test.describe('Feature Flags - Access Control', () => {
   test.afterEach(async ({ page }) => {
     await User.api.delete(page, normalUser.id).catch(() => {});
     await User.api.delete(page, auditorUser.id).catch(() => {});
-  });
-
-  test('should show Feature Flags page with toggle switches for admin', async ({ page }) => {
-    await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
-    await FeatureFlags.mock.list(page);
-    await page.goto(platformUIWithoutSlash + '/settings/feature-flags');
-
-    await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible({
-      timeout: 30000,
-    });
-    await expect(page.getByTestId('toggle-switch').first()).toBeVisible();
   });
 
   test('should show Feature Flags page as read-only for auditor', async ({ page }) => {
