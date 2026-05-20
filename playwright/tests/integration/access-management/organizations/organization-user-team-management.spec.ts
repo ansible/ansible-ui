@@ -52,7 +52,7 @@ test.describe('Organization User and Team Management', () => {
   // User Management Tests (using utility function)
   test(
     'should successfully add a user to an organization with organization member role',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Add user to organization using the helper function
       await Organization.ui.addUser(page, organizationName, user1Name, {
@@ -97,7 +97,7 @@ test.describe('Organization User and Team Management', () => {
 
   test(
     'should successfully add a user to an organization with multiple roles',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Add user to organization with multiple roles
       await Organization.ui.addUser(page, organizationName, user1Name, {
@@ -148,7 +148,7 @@ test.describe('Organization User and Team Management', () => {
   // User Management Tests (manual wizard workflow)
   test(
     'can add a user and apply roles to users via the users tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);
@@ -243,6 +243,7 @@ test.describe('Organization User and Team Management', () => {
   );
 
   // User Removal Tests
+  // Shifted left: Modal edge case - warning modal behavior
   test(
     'should display correct warning modal when removing a user from organization',
     { tag: ['@not_mock'] },
@@ -342,6 +343,7 @@ test.describe('Organization User and Team Management', () => {
     }
   );
 
+  // Shifted left: Modal edge case - cancel button behavior (to be converted to Vitest)
   test(
     'should cancel user removal when cancel button is clicked in modal',
     { tag: ['@not_mock'] },
@@ -392,7 +394,7 @@ test.describe('Organization User and Team Management', () => {
   // Administrator Management Tests
   test(
     'can add and remove users from an org using the administrators tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);
@@ -429,7 +431,7 @@ test.describe('Organization User and Team Management', () => {
   // Team Management Tests
   test(
     'can add a team and apply/remove roles from organization team via teams tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Create team for this test
       const teamName = await Team.ui.create(page, { organizationName });
@@ -510,6 +512,7 @@ test.describe('Organization User and Team Management', () => {
     }
   );
 
+  // Shifted left: Modal edge case - empty role selection
   test(
     'verifies modal when no organization roles are added to team',
     { tag: ['@not_mock'] },
@@ -549,6 +552,7 @@ test.describe('Organization User and Team Management', () => {
     }
   );
 
+  // Shifted left: Redundant UI path - team creation covered in main team tests
   test(
     'can create a team from teams tab and delete from details page',
     { tag: ['@not_mock'] },

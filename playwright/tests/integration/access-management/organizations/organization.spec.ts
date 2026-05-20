@@ -11,12 +11,12 @@ import { Organization } from '../../../../utils/organization';
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
 
-test('organization - create and delete', { tag: [] }, async ({ page }) => {
+test('organization - create and delete', { tag: ['@tier1'] }, async ({ page }) => {
   const organizationName = await Organization.ui.create(page);
   await Organization.ui.delete(page, organizationName);
 });
 
-test('organization - create/edit', { tag: ['@not_mock'] }, async ({ page }) => {
+test('organization - create/edit', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
   const organizationName = createE2EName();
   const opaPolicyPath = 'test/test';
   await navigateTo(page, 'Access Management', 'Organizations');
@@ -54,6 +54,7 @@ test('organization - create/edit', { tag: ['@not_mock'] }, async ({ page }) => {
   await Organization.ui.delete(page, `${organizationName}-edited`);
 });
 
+// Shifted left: Redundant UI path - edit already covered in tier1 via details page
 test('edits an organization from the list view', { tag: ['@not_mock'] }, async ({ page }) => {
   // Create organization first
   const organizationName = await Organization.ui.create(page);
@@ -84,6 +85,7 @@ test('edits an organization from the list view', { tag: ['@not_mock'] }, async (
   await Organization.ui.delete(page, editedName);
 });
 
+// Shifted left: Redundant UI path - same operation as list view, both covered in tier1 create/edit test
 test('edits an organization from the details view', { tag: ['@not_mock'] }, async ({ page }) => {
   // Create organization first
   const organizationName = await Organization.ui.create(page);
@@ -108,6 +110,7 @@ test('edits an organization from the details view', { tag: ['@not_mock'] }, asyn
   await Organization.ui.delete(page, editedName);
 });
 
+// Shifted left: Redundant UI path - delete already covered in tier1 via details page
 test(
   'deletes an organization from the organizations list view',
   { tag: ['@not_mock'] },
@@ -132,6 +135,7 @@ test(
   }
 );
 
+// Shifted left: Bulk operation - convenience feature, not core functionality
 test(
   'bulk creates and deletes organizations from the organizations list toolbar',
   { tag: ['@not_mock'] },
