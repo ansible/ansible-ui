@@ -11,7 +11,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Execution Environment - Images Tab', () => {
   test(
     'should display images tab for existing execution environment with metadata verification',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       let executionEnvironmentName!: string;
 

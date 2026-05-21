@@ -42,7 +42,7 @@ test.describe('Hub - Namespace - Team and User Access', () => {
 
   test(
     'should assign a user and apply role(s) to the user of the namespace',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const userInfo = await User.ui.create(page);
 
@@ -99,7 +99,7 @@ test.describe('Hub - Namespace - Team and User Access', () => {
 
   test(
     'should assign a team and apply role(s) to the team of the namespace',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const teamName = await Team.ui.create(page, { organizationName });
 

@@ -18,171 +18,179 @@ test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
 test.describe('Hub - Repositories', () => {
-  test('should create, edit, and delete a repository', { tag: ['@not_mock'] }, async ({ page }) => {
-    const repositoryName = createE2EName();
-    const repositoryDescription = 'Here goes description';
-    let remote: HubRemote | undefined;
+  test(
+    'should create, edit, and delete a repository',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      const repositoryName = createE2EName();
+      const repositoryDescription = 'Here goes description';
+      let remote: HubRemote | undefined;
 
-    await test.step('Navigate to repositories page', async () => {
-      await navigateTo(page, 'Automation Content', 'Repositories');
-      await expect(page.getByRole('heading', { name: 'Repositories' })).toBeVisible();
-    });
-
-    await test.step('Create a new repository', async () => {
-      await page.getByTestId('create-repository').click();
-      await expect(page.getByRole('heading', { name: 'Create repository' })).toBeVisible();
-
-      await page.getByTestId('name').fill(repositoryName);
-      await page.getByTestId('description').fill(repositoryDescription);
-      await page.getByTestId('Submit').click();
-
-      await expect(page.getByRole('heading', { name: repositoryName })).toBeVisible();
-    });
-
-    await test.step('Verify repository details', async () => {
-      await expect(page.getByTestId('description')).toContainText('Here goes description');
-      await expect(page.getByTestId('labels')).toContainText('None');
-      await expect(page.getByTestId('remote')).toContainText('None');
-      await expect(page.getByTestId('retained-version-count')).toContainText('1');
-    });
-
-    await test.step('Edit the repository', async () => {
-      // Create a remote for the edit test
-      remote = await Remote.api.create(page);
-
-      await navigateTo(page, 'Automation Content', 'Repositories');
-      await clearTableFilters(page);
-
-      await filterTable({ filterLabel: 'Name', filterValue: repositoryName }, page);
-      await expect(page.locator('tbody tr')).toHaveCount(1);
-
-      await page.getByRole('row', { name: repositoryName }).getByLabel('Edit repository').click();
-      await expect(page.getByRole('heading', { name: `Edit ${repositoryName}` })).toBeVisible();
-
-      const editDescription = 'repositoryDescription edited';
-      const retainedNumber = '10';
-
-      await page.getByTestId('description').clear();
-      await page.getByTestId('description').fill(editDescription);
-
-      const retainInput = page
-        .getByTestId('retain-repo-versions-form-group')
-        .locator('input')
-        .last();
-      await retainInput.clear();
-      await retainInput.fill(retainedNumber);
-
-      await page.getByTestId('pipeline-form-group').last().click();
-      await page.getByTestId('approved').click();
-
-      await page.locator('#remote').click();
-      await page.getByRole('option', { name: remote.name }).click();
-
-      await page.getByTestId('Submit').click();
-      await expect(page.getByRole('heading', { name: repositoryName })).toBeVisible();
-    });
-
-    await test.step('Verify edited repository details', async () => {
-      await expect(page.getByTestId('name')).toContainText(repositoryName);
-      await expect(page.getByTestId('description')).toContainText('repositoryDescription edited');
-      await expect(page.getByTestId('retained-version-count')).toContainText('10');
-      await expect(page.getByTestId('labels')).toContainText('approved');
-      if (remote) {
-        await expect(page.getByTestId('remote')).toContainText(remote.name);
-      }
-    });
-
-    await test.step('Delete the repository', async () => {
-      await page.getByTestId('actions-dropdown').click();
-      await page.getByTestId('delete-repository').click();
-
-      const dialog = page.getByRole('dialog');
-      await expect(dialog).toBeVisible();
-      await dialog.getByTestId('confirm').click();
-      await dialog.getByRole('button', { name: 'Delete repositories' }).click();
-
-      await expect(page.getByRole('heading', { name: 'Repositories' })).toBeVisible();
-    });
-
-    await test.step('Verify repository was deleted', async () => {
-      await filterTable({ filterLabel: 'Name', filterValue: repositoryName }, page);
-      await expect(page.locator('.pf-v6-c-empty-state')).toBeVisible();
-      await expect(page.getByText('No results found')).toBeVisible();
-    });
-
-    // Cleanup
-    if (remote) {
-      await Remote.api.delete(page, remote.pulp_href);
-    }
-  });
-
-  test('should return 200 status for repository URL', { tag: ['@not_mock'] }, async ({ page }) => {
-    let repository: HubRepository | undefined;
-    let distribution: HubRepositoryDistribution | undefined;
-    let remote: HubRemote | undefined;
-
-    try {
-      await test.step('Create prerequisites via API', async () => {
-        remote = await Remote.api.create(page);
-        repository = await Repository.api.create(page, {
-          remote: remote.pulp_href,
-          retain_repo_versions: 2,
-        });
-        distribution = await Distribution.api.create(page, {
-          name: repository.name,
-          repository: repository.pulp_href,
-        });
+      await test.step('Navigate to repositories page', async () => {
+        await navigateTo(page, 'Automation Content', 'Repositories');
+        await expect(page.getByRole('heading', { name: 'Repositories' })).toBeVisible();
       });
 
-      if (!repository) throw new Error('Repository not created');
+      await test.step('Create a new repository', async () => {
+        await page.getByTestId('create-repository').click();
+        await expect(page.getByRole('heading', { name: 'Create repository' })).toBeVisible();
 
-      await test.step('Navigate to repository details', async () => {
+        await page.getByTestId('name').fill(repositoryName);
+        await page.getByTestId('description').fill(repositoryDescription);
+        await page.getByTestId('Submit').click();
+
+        await expect(page.getByRole('heading', { name: repositoryName })).toBeVisible();
+      });
+
+      await test.step('Verify repository details', async () => {
+        await expect(page.getByTestId('description')).toContainText('Here goes description');
+        await expect(page.getByTestId('labels')).toContainText('None');
+        await expect(page.getByTestId('remote')).toContainText('None');
+        await expect(page.getByTestId('retained-version-count')).toContainText('1');
+      });
+
+      await test.step('Edit the repository', async () => {
+        // Create a remote for the edit test
+        remote = await Remote.api.create(page);
+
         await navigateTo(page, 'Automation Content', 'Repositories');
         await clearTableFilters(page);
-        await filterTable({ filterLabel: 'Name', filterValue: repository!.name }, page);
-        await page.getByRole('link', { name: repository!.name }).click();
-        await expect(page.getByRole('heading', { name: repository!.name })).toBeVisible();
+
+        await filterTable({ filterLabel: 'Name', filterValue: repositoryName }, page);
+        await expect(page.locator('tbody tr')).toHaveCount(1);
+
+        await page.getByRole('row', { name: repositoryName }).getByLabel('Edit repository').click();
+        await expect(page.getByRole('heading', { name: `Edit ${repositoryName}` })).toBeVisible();
+
+        const editDescription = 'repositoryDescription edited';
+        const retainedNumber = '10';
+
+        await page.getByTestId('description').clear();
+        await page.getByTestId('description').fill(editDescription);
+
+        const retainInput = page
+          .getByTestId('retain-repo-versions-form-group')
+          .locator('input')
+          .last();
+        await retainInput.clear();
+        await retainInput.fill(retainedNumber);
+
+        await page.getByTestId('pipeline-form-group').last().click();
+        await page.getByTestId('approved').click();
+
+        await page.locator('#remote').click();
+        await page.getByRole('option', { name: remote.name }).click();
+
+        await page.getByTestId('Submit').click();
+        await expect(page.getByRole('heading', { name: repositoryName })).toBeVisible();
       });
 
-      await test.step('Click copy CLI configuration and verify URL returns 200', async () => {
+      await test.step('Verify edited repository details', async () => {
+        await expect(page.getByTestId('name')).toContainText(repositoryName);
+        await expect(page.getByTestId('description')).toContainText('repositoryDescription edited');
+        await expect(page.getByTestId('retained-version-count')).toContainText('10');
+        await expect(page.getByTestId('labels')).toContainText('approved');
+        if (remote) {
+          await expect(page.getByTestId('remote')).toContainText(remote.name);
+        }
+      });
+
+      await test.step('Delete the repository', async () => {
         await page.getByTestId('actions-dropdown').click();
-        await page.getByTestId('copy-cli-configuration').click();
+        await page.getByTestId('delete-repository').click();
 
-        // Wait for success toast
-        await expect(page.getByTestId('alert-toaster')).toBeVisible();
+        const dialog = page.getByRole('dialog');
+        await expect(dialog).toBeVisible();
+        await dialog.getByTestId('confirm').click();
+        await dialog.getByRole('button', { name: 'Delete repositories' }).click();
 
-        // Read clipboard contents
-        const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
-        expect(clipboardContent).toBeTruthy();
-
-        // Extract the URL from the clipboard content
-        const urlMatch = clipboardContent.match(/url=(.+)/);
-        expect(urlMatch).toBeTruthy();
-
-        const repoUrl = urlMatch![1];
-
-        // Make a request to verify the URL is accessible
-        const response = await page.request.get(repoUrl);
-        expect(response.status()).toBe(200);
+        await expect(page.getByRole('heading', { name: 'Repositories' })).toBeVisible();
       });
 
-      await test.step('Close the alert toaster', async () => {
-        await page.getByTestId('alert-toaster').getByRole('button').click();
+      await test.step('Verify repository was deleted', async () => {
+        await filterTable({ filterLabel: 'Name', filterValue: repositoryName }, page);
+        await expect(page.locator('.pf-v6-c-empty-state')).toBeVisible();
+        await expect(page.getByText('No results found')).toBeVisible();
       });
-    } finally {
-      if (distribution) {
-        await Distribution.api.delete(page, distribution.pulp_href);
-      }
-      if (repository) {
-        await Repository.api.delete(page, repository.pulp_href);
-      }
+
+      // Cleanup
       if (remote) {
         await Remote.api.delete(page, remote.pulp_href);
       }
     }
-  });
+  );
 
-  test('should sync repository', { tag: ['@not_mock'] }, async ({ page }) => {
+  test(
+    'should return 200 status for repository URL',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      let repository: HubRepository | undefined;
+      let distribution: HubRepositoryDistribution | undefined;
+      let remote: HubRemote | undefined;
+
+      try {
+        await test.step('Create prerequisites via API', async () => {
+          remote = await Remote.api.create(page);
+          repository = await Repository.api.create(page, {
+            remote: remote.pulp_href,
+            retain_repo_versions: 2,
+          });
+          distribution = await Distribution.api.create(page, {
+            name: repository.name,
+            repository: repository.pulp_href,
+          });
+        });
+
+        if (!repository) throw new Error('Repository not created');
+
+        await test.step('Navigate to repository details', async () => {
+          await navigateTo(page, 'Automation Content', 'Repositories');
+          await clearTableFilters(page);
+          await filterTable({ filterLabel: 'Name', filterValue: repository!.name }, page);
+          await page.getByRole('link', { name: repository!.name }).click();
+          await expect(page.getByRole('heading', { name: repository!.name })).toBeVisible();
+        });
+
+        await test.step('Click copy CLI configuration and verify URL returns 200', async () => {
+          await page.getByTestId('actions-dropdown').click();
+          await page.getByTestId('copy-cli-configuration').click();
+
+          // Wait for success toast
+          await expect(page.getByTestId('alert-toaster')).toBeVisible();
+
+          // Read clipboard contents
+          const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
+          expect(clipboardContent).toBeTruthy();
+
+          // Extract the URL from the clipboard content
+          const urlMatch = clipboardContent.match(/url=(.+)/);
+          expect(urlMatch).toBeTruthy();
+
+          const repoUrl = urlMatch![1];
+
+          // Make a request to verify the URL is accessible
+          const response = await page.request.get(repoUrl);
+          expect(response.status()).toBe(200);
+        });
+
+        await test.step('Close the alert toaster', async () => {
+          await page.getByTestId('alert-toaster').getByRole('button').click();
+        });
+      } finally {
+        if (distribution) {
+          await Distribution.api.delete(page, distribution.pulp_href);
+        }
+        if (repository) {
+          await Repository.api.delete(page, repository.pulp_href);
+        }
+        if (remote) {
+          await Remote.api.delete(page, remote.pulp_href);
+        }
+      }
+    }
+  );
+
+  test('should sync repository', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     let repository: HubRepository | undefined;
     let distribution: HubRepositoryDistribution | undefined;
     let remote: HubRemote | undefined;
@@ -238,7 +246,7 @@ test.describe('Hub - Repositories', () => {
 
   test(
     'should add and remove collection versions',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page, collection }) => {
       let remote: HubRemote | undefined;
       let repository: HubRepository | undefined;

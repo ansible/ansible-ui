@@ -12,7 +12,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Execution Environments - List Operations', () => {
   test(
     'should create, edit, and delete execution environment via UI',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const remoteRegistry = await RemoteRegistry.api.create(page);
       const eeName = createE2EName('ee', { noWhitespace: true }).toLowerCase();

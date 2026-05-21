@@ -11,7 +11,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Remote Registries', () => {
   test(
     'should explore different views and pagination',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const remoteRegistryName = createE2EName('remote-registry');
       const remoteRegistry = await RemoteRegistry.api.create(page, { name: remoteRegistryName });
@@ -73,7 +73,7 @@ test.describe('Hub - Remote Registries', () => {
     }
   );
 
-  test('should sync remote registries', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('should sync remote registries', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const remoteRegistryName = createE2EName('remote-registry');
     const remoteRegistry = await RemoteRegistry.api.create(page, { name: remoteRegistryName });
 
@@ -103,68 +103,72 @@ test.describe('Hub - Remote Registries', () => {
     }
   });
 
-  test('should index execution environments', { tag: ['@not_mock'] }, async ({ page }) => {
-    const remoteRegistryName = createE2EName('remote-registry');
-    const remoteRegistry = await RemoteRegistry.api.create(page, {
-      name: remoteRegistryName,
-      url: 'https://registry.redhat.io',
-    });
+  test(
+    'should index execution environments',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      const remoteRegistryName = createE2EName('remote-registry');
+      const remoteRegistry = await RemoteRegistry.api.create(page, {
+        name: remoteRegistryName,
+        url: 'https://registry.redhat.io',
+      });
 
-    try {
-      await navigateTo(page, 'Automation Content', 'Remote Registries');
-      await expect(page.getByTestId('page-title')).toHaveText('Remote Registries');
-
-      // Filter by remote registry name
-      await page.getByPlaceholder('contains').fill(remoteRegistry.name);
-
-      // Set up intercept for index API call
-      const indexResponsePromise = page.waitForResponse(
-        (response) =>
-          response
-            .url()
-            .includes(`/_ui/v1/execution-environments/registries/${remoteRegistry.id}/index/`) &&
-          response.request().method() === 'POST'
-      );
-
-      // Click index action in kebab menu
-      const row = await getTableRow(page, remoteRegistryName);
-      await row.getByTestId('actions-column-cell').click();
-      await page.getByTestId('index-execution-environments').click();
-
-      // Wait for index API call to confirm indexing started (202 Accepted)
-      const indexResponse = await indexResponsePromise;
-      expect(indexResponse.ok()).toBeTruthy();
-
-      // Delete the remote registry
-      await page.getByPlaceholder('contains').clear();
-      await page.getByPlaceholder('contains').fill(remoteRegistry.name);
-
-      const deleteRow = await getTableRow(page, remoteRegistryName);
-      await deleteRow.getByTestId('actions-column-cell').click();
-      await page.getByTestId('delete-remote-registry').click();
-
-      await page.locator('#confirm').check();
-      await page.getByRole('button', { name: 'Delete remote registries', exact: true }).click();
-
-      // Clear filters
-      await page
-        .locator('[data-ouia-component-id="page-toolbar"]')
-        .getByRole('button', { name: 'Clear all filters', exact: true })
-        .click();
-    } catch (error) {
-      // Cleanup in case of failure
       try {
-        await RemoteRegistry.api.delete(page, remoteRegistry.id);
-      } catch {
-        // Ignore cleanup errors
+        await navigateTo(page, 'Automation Content', 'Remote Registries');
+        await expect(page.getByTestId('page-title')).toHaveText('Remote Registries');
+
+        // Filter by remote registry name
+        await page.getByPlaceholder('contains').fill(remoteRegistry.name);
+
+        // Set up intercept for index API call
+        const indexResponsePromise = page.waitForResponse(
+          (response) =>
+            response
+              .url()
+              .includes(`/_ui/v1/execution-environments/registries/${remoteRegistry.id}/index/`) &&
+            response.request().method() === 'POST'
+        );
+
+        // Click index action in kebab menu
+        const row = await getTableRow(page, remoteRegistryName);
+        await row.getByTestId('actions-column-cell').click();
+        await page.getByTestId('index-execution-environments').click();
+
+        // Wait for index API call to confirm indexing started (202 Accepted)
+        const indexResponse = await indexResponsePromise;
+        expect(indexResponse.ok()).toBeTruthy();
+
+        // Delete the remote registry
+        await page.getByPlaceholder('contains').clear();
+        await page.getByPlaceholder('contains').fill(remoteRegistry.name);
+
+        const deleteRow = await getTableRow(page, remoteRegistryName);
+        await deleteRow.getByTestId('actions-column-cell').click();
+        await page.getByTestId('delete-remote-registry').click();
+
+        await page.locator('#confirm').check();
+        await page.getByRole('button', { name: 'Delete remote registries', exact: true }).click();
+
+        // Clear filters
+        await page
+          .locator('[data-ouia-component-id="page-toolbar"]')
+          .getByRole('button', { name: 'Clear all filters', exact: true })
+          .click();
+      } catch (error) {
+        // Cleanup in case of failure
+        try {
+          await RemoteRegistry.api.delete(page, remoteRegistry.id);
+        } catch {
+          // Ignore cleanup errors
+        }
+        throw error;
       }
-      throw error;
     }
-  });
+  );
 
   test(
     'should create, search and delete a remote registry',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const remoteRegistryName = createE2EName('remote-registry');
 
@@ -224,7 +228,7 @@ test.describe('Hub - Remote Registries', () => {
     }
   );
 
-  test('should edit a remote registry', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('should edit a remote registry', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const remoteRegistryName = createE2EName('remote-registry');
 
     await navigateTo(page, 'Automation Content', 'Remote Registries');
