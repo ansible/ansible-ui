@@ -219,6 +219,12 @@ describe('PageSettingsProvider', () => {
       });
     });
 
+    const disabledThemeWrapper = ({ children }: { children: ReactNode }) => (
+      <PageSettingsProvider defaultRefreshInterval={30} disableThemeManagement>
+        {children}
+      </PageSettingsProvider>
+    );
+
     test('should not modify document theme class when disableThemeManagement is true and theme is dark', async () => {
       vi.mocked(globalThis.matchMedia).mockImplementation((query: string) => ({
         matches: query === '(prefers-color-scheme: dark)',
@@ -231,13 +237,7 @@ describe('PageSettingsProvider', () => {
         dispatchEvent: vi.fn(),
       }));
 
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30} disableThemeManagement>
-          {children}
-        </PageSettingsProvider>
-      );
-
-      const { result } = renderHook(() => usePageSettings(), { wrapper });
+      const { result } = renderHook(() => usePageSettings(), { wrapper: disabledThemeWrapper });
 
       await waitFor(() => {
         expect(result.current.activeTheme).toBe('dark');
@@ -260,13 +260,7 @@ describe('PageSettingsProvider', () => {
         dispatchEvent: vi.fn(),
       }));
 
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30} disableThemeManagement>
-          {children}
-        </PageSettingsProvider>
-      );
-
-      const { result } = renderHook(() => usePageSettings(), { wrapper });
+      const { result } = renderHook(() => usePageSettings(), { wrapper: disabledThemeWrapper });
 
       await waitFor(() => {
         expect(result.current.activeTheme).toBe('light');
