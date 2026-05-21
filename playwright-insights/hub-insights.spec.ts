@@ -272,13 +272,6 @@ test.describe('Hub Insights Chrome integration', () => {
     await loginAndNavigateToHub(page);
   });
 
-  test('should force light mode (no pf-v6-theme-dark class)', async ({ page }) => {
-    const hasDarkClass = await page.evaluate(() =>
-      document.documentElement.classList.contains('pf-v6-theme-dark')
-    );
-    expect(hasDarkClass).toBe(false);
-  });
-
   test('should not render Hub standalone masthead', async ({ page }) => {
     await expect(page.locator('[data-cy="hub-masthead"]')).not.toBeVisible({ timeout: 5_000 });
   });
