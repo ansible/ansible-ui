@@ -24,7 +24,8 @@ test.describe('Platform EDA Overview - Navigation', () => {
       ).toBeVisible();
 
       // Navigate back to platform overview
-      await page.locator('#platform-overview').click();
+      await page.getByTestId('platform-overview').click();
+      await expect(page.getByTestId('page-title')).toBeVisible();
       await expect(page.getByTestId('page-title')).toContainText('Welcome to Ansible');
 
       // Test navigation to Rulebook Activations
@@ -40,7 +41,8 @@ test.describe('Platform EDA Overview - Navigation', () => {
       ).toBeVisible();
 
       // Navigate back to platform overview
-      await page.locator('#platform-overview').click();
+      await page.getByTestId('platform-overview').click();
+      await expect(page.getByTestId('page-title')).toBeVisible();
       await expect(page.getByTestId('page-title')).toContainText('Welcome to Ansible');
 
       // Test navigation to Rule Audit
