@@ -128,8 +128,8 @@ async function mockReportDetailRoute(
 }
 
 test.beforeEach(async ({ page }) => {
-  await setupBefore()({ page });
-  // Mock the collection status API to enable the Automation Dashboard
+  // Register all route mocks BEFORE login/navigation so they intercept initial API calls.
+  // The collection_status response controls whether the Automation Dashboard nav item appears.
   await page.route(`**/api/metrics/v1/dashboard_reports/collection_status/`, async (route) => {
     await route.fulfill({
       status: 200,
@@ -137,9 +137,9 @@ test.beforeEach(async ({ page }) => {
       body: JSON.stringify({ enabled: true, next_run: null, initial_collection_status: null }),
     });
   });
-  // Set up dashboard data mocks before navigation to prevent error states
   await mockReportRoute(page);
   await mockReportDetailRoute(page);
+  await setupBefore()({ page });
   await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
 });
 
