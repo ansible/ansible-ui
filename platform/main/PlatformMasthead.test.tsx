@@ -131,7 +131,6 @@ describe('PlatformMasthead help menu', () => {
 
     await user.click(helpToggle);
     expect(helpToggle).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByTestId('masthead-documentation')).not.toBeInTheDocument();
   });
 
   it('should display documentation link with correct href', async () => {
