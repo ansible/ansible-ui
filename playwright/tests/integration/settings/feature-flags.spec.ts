@@ -257,14 +257,10 @@ test.describe('Feature Flags - Access Control', () => {
     await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
     await FeatureFlags.mock.list(page);
     await logout(page);
-    await page.goto(platformUIWithoutSlash + '/overview');
-    await expect(page).toHaveTitle(/Ansible Automation Platform/, { timeout: 30000 });
-    await page.fill('#pf-login-username-id', auditorUser.username);
-    await page.fill('#pf-login-password-id', userPassword);
-    await page.click('button[type="submit"]');
-    await expect(
-      page.getByTestId('toolbar').getByRole('button', { name: auditorUser.username })
-    ).toBeVisible();
+    await login(page, platformUIWithoutSlash + '/overview', {
+      username: auditorUser.username,
+      password: userPassword,
+    });
 
     await navigateTo(page, 'Settings', 'Feature Flags');
     await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
