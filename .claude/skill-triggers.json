@@ -1,0 +1,23 @@
+{
+  "categories": {
+    "e2e": {
+      "patterns": ["*playwright/tests/*.spec.ts", "*playwright/tests/**/*.spec.ts"],
+      "skills": [".claude/skills/testing_guidelines.md"]
+    },
+    "test": {
+      "patterns": ["*.test.tsx", "*.test.ts"],
+      "skills": [".claude/skills/testing_guidelines.md", ".claude/skills/frontend_specialist.md"]
+    },
+    "tsx": {
+      "patterns": ["*.tsx"],
+      "skills": [
+        ".claude/skills/frontend_specialist.md",
+        ".claude/skills/coding_standards.md"
+      ]
+    },
+    "ts": {
+      "patterns": ["*.ts"],
+      "skills": [".claude/skills/frontend_specialist.md", ".claude/skills/coding_standards.md"]
+    }
+  }
+}
