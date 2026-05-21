@@ -62,6 +62,7 @@ export function usePageSettings() {
 export function PageSettingsProvider(props: {
   children?: ReactNode;
   defaultRefreshInterval: number;
+  disableThemeManagement?: boolean;
 }) {
   const [settings, setSettingsState] = useState<IPageSettings>(() => {
     const preferencesStorage = localStorage.getItem('user-preferences');
@@ -105,12 +106,14 @@ export function PageSettingsProvider(props: {
       if (settings.activeTheme === activeTheme) return settings;
       return { ...settings, activeTheme };
     });
-    if (activeTheme === 'dark') {
-      document.documentElement.classList.add('pf-v6-theme-dark');
-    } else {
-      document.documentElement.classList.remove('pf-v6-theme-dark');
+    if (!props.disableThemeManagement) {
+      if (activeTheme === 'dark') {
+        document.documentElement.classList.add('pf-v6-theme-dark');
+      } else {
+        document.documentElement.classList.remove('pf-v6-theme-dark');
+      }
     }
-  }, [activeTheme]);
+  }, [activeTheme, props.disableThemeManagement]);
 
   return (
     <SWRConfig

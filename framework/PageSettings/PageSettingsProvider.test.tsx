@@ -218,6 +218,56 @@ describe('PageSettingsProvider', () => {
         expect(result.current.theme).toBe('light');
       });
     });
+
+    const disabledThemeWrapper = ({ children }: { children: ReactNode }) => (
+      <PageSettingsProvider defaultRefreshInterval={30} disableThemeManagement>
+        {children}
+      </PageSettingsProvider>
+    );
+
+    test('should not modify document theme class when disableThemeManagement is true and theme is dark', async () => {
+      vi.mocked(globalThis.matchMedia).mockImplementation((query: string) => ({
+        matches: query === '(prefers-color-scheme: dark)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper: disabledThemeWrapper });
+
+      await waitFor(() => {
+        expect(result.current.activeTheme).toBe('dark');
+      });
+
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
+    });
+
+    test('should not modify document theme class when disableThemeManagement is true and theme is light', async () => {
+      document.documentElement.classList.add('pf-v6-theme-dark');
+
+      vi.mocked(globalThis.matchMedia).mockImplementation(() => ({
+        matches: false,
+        media: '',
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper: disabledThemeWrapper });
+
+      await waitFor(() => {
+        expect(result.current.activeTheme).toBe('light');
+      });
+
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
+    });
   });
 
   describe('SWR Configuration', () => {
