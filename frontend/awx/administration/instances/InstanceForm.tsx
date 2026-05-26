@@ -142,7 +142,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         min={0}
         max={65353}
         labelHelp={t(
-          'Select the port that receptor will listen on for incoming connections, e.g. 27199.'
+          'Enter the port number that the receptor will listen on for incoming connections.'
         )}
       />
       <PageFormSelect<Instance>
@@ -168,7 +168,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
           label={t('Enable instance')}
           labelHelpTitle={t('Enable instance')}
           labelHelp={t(
-            'Set the instance enabled or disabled. If disabled, jobs will not be assigned to this instance.'
+            'Enable this box to make the instance available for jobs to run on an execution node. If disabled, jobs will not be assigned to this instance.'
           )}
         />
         <PageFormCheckbox<Instance>
@@ -184,7 +184,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
           label={t('Peers from control nodes')}
           labelHelpTitle={t('Peers from control nodes')}
           labelHelp={t(
-            'If enabled, control nodes will peer to this instance automatically. If disabled, instance will be connected only to associated peers.'
+            'If the hop or execution node needs to have requests pushed directly from automation controller, enable Peers from Control so that control nodes will peer to this instance automatically. If disabled, the instance will be connected only to associated peers. If the hop node is peered to another hop node, or if the execution node is peered to a hop node, do not enable this option.'
           )}
         />
       </PageFormSection>

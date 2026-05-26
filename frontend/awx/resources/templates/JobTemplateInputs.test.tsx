@@ -91,6 +91,12 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
       project: 1,
       name: '',
       job_type: 'run',
+      become_enabled: false,
+      isProvisioningCallbackEnabled: false,
+      isWebhookEnabled: false,
+      allow_simultaneous: false,
+      use_fact_cache: false,
+      prevent_instance_group_fallback: false,
     },
   });
   return (
@@ -123,5 +129,57 @@ describe('JobTemplateInputs', () => {
     );
 
     expect(screen.getByText('Job type')).toBeInTheDocument();
+  });
+
+  it('should render all form sections', () => {
+    render(
+      <TestWrapper>
+        <JobTemplateInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Description')).toBeInTheDocument();
+    expect(screen.getByText('Credentials')).toBeInTheDocument();
+    expect(screen.getByText('Labels')).toBeInTheDocument();
+    expect(screen.getByText('Forks')).toBeInTheDocument();
+    expect(screen.getByText('Limit')).toBeInTheDocument();
+    expect(screen.getByText('Verbosity')).toBeInTheDocument();
+    expect(screen.getByText('Job slicing')).toBeInTheDocument();
+    expect(screen.getByText('Timeout')).toBeInTheDocument();
+    expect(screen.getByText('Job tags')).toBeInTheDocument();
+    expect(screen.getByText('Skip tags')).toBeInTheDocument();
+  });
+
+  it('should render Options section with all checkboxes', () => {
+    render(
+      <TestWrapper>
+        <JobTemplateInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Options')).toBeInTheDocument();
+    expect(screen.getByText('Privilege escalation')).toBeInTheDocument();
+    expect(screen.getByText('Provisioning callback')).toBeInTheDocument();
+    expect(screen.getByText('Enable webhook')).toBeInTheDocument();
+    expect(screen.getByText('Concurrent jobs')).toBeInTheDocument();
+    expect(screen.getByText('Enable fact storage')).toBeInTheDocument();
+    expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
+  });
+
+  it('should render with job template data', () => {
+    const jobtemplate = {
+      id: 1,
+      name: 'Test Template',
+      job_tags: ['tag1', 'tag2'],
+      skip_tags: ['skip1'],
+    } as unknown as JobTemplateForm;
+
+    render(
+      <TestWrapper>
+        <JobTemplateInputs jobtemplate={jobtemplate} />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Name')).toBeInTheDocument();
   });
 });

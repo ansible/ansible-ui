@@ -156,7 +156,7 @@ describe('Instances', () => {
     await waitFor(() => {
       expect(
         screen.getByText(
-          'Ansible node instances dedicated for a particular purpose indicated by node type.'
+          'Ansible node instances are dedicated for a particular purpose, indicated by node type.'
         )
       ).toBeInTheDocument();
     });

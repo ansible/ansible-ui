@@ -79,10 +79,7 @@ export function Projects() {
           { product }
         )}
         titleDocLink={useGetDocsUrl(config, 'projects')}
-        description={t(
-          `A project is a logical collection of Ansible playbooks, represented in {{product}}.`,
-          { product }
-        )}
+        description={t(`A project is a logical collection of Ansible playbooks.`)}
         headerActions={<ActivityStreamIcon type={'project'} />}
       />
       {isLoadingProjectOptions ? (

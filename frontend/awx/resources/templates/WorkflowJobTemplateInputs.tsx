@@ -62,7 +62,7 @@ export function WorkflowJobTemplateInputs(
         name="limit"
         labelHelpTitle={t('Limit')}
         labelHelp={t(
-          'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns.'
+          'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. See the Ansible documentation for details and examples of patterns.'
         )}
         label={t('Limit')}
       />
@@ -83,7 +83,7 @@ export function WorkflowJobTemplateInputs(
       <PageFormLabelSelect<WorkflowJobTemplateForm>
         labelHelpTitle={t('Labels')}
         labelHelp={t(
-          `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
+          `Optional labels that describe this job template, such as 'dev' or 'test'. Use labels to group and filter job templates and completed jobs.`
         )}
         name="labels"
         additionalControls={
@@ -94,7 +94,7 @@ export function WorkflowJobTemplateInputs(
         id="job_tags-form-group"
         labelHelpTitle={t('Job tags')}
         labelHelp={t(
-          'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
+          'Tags help you run specific parts of a play or task. Use commas to separate multiple tags. See the documentation for details on using tags.'
         )}
         name="job_tags"
         additionalControls={
@@ -109,7 +109,7 @@ export function WorkflowJobTemplateInputs(
         id="skip_tags-form-group"
         labelHelpTitle={t('Skip tags')}
         labelHelp={t(
-          'Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
+          'Skip tags let you skip specific parts of a play or task. Use commas to separate multiple tags. See the documentation for details on using tags.'
         )}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_skip_tags_on_launch" />
@@ -138,10 +138,14 @@ export function WorkflowJobTemplateInputs(
         id="isWebhookEnabled"
         label={t('Enable webhook')}
         name="isWebhookEnabled"
+        labelHelp={t(
+          'Select to interface with a predefined SCM system web service that is used to launch a workflow job template.'
+        )}
       />
       <PageFormCheckbox<WorkflowJobTemplateForm>
         label={t('Enable concurrent jobs')}
         name="allow_simultaneous"
+        labelHelp={t('Select to allow simultaneous runs of this workflow.')}
       />
 
       {isWebhookEnabled ? <WebhookSubForm templateType="workflow_job_templates" /> : null}

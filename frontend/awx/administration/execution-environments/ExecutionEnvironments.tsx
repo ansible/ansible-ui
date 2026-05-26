@@ -13,12 +13,10 @@ export function ExecutionEnvironments() {
     <PageLayout>
       <PageHeader
         title={t('Execution Environments')}
-        description={t(
-          'An execution environment allows you to have a customized image to run jobs.'
-        )}
+        description={t('An execution environment is a customized image to run jobs.')}
         titleHelpTitle={t('Execution Environments')}
         titleHelp={[
-          t('An execution environment allows you to have a customized image to run jobs.'),
+          t('An execution environment is a customized image to run jobs.'),
           t(
             'Execution environments are container images that make it possible to incorporate system-level dependencies and collection-based content. Each execution environment allows you to have a customized image to run jobs, and each of them contain only what you need when running the job, nothing more.'
           ),

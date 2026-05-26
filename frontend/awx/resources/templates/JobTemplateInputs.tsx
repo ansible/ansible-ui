@@ -164,7 +164,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         label={t('Credentials')}
         placeholder={t('Select credentials')}
         labelHelp={t(
-          'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+          'Select credentials to access the nodes for this job. You can select only one of each credential type. If you check Prompt on launch but do not select a machine credential (SSH), you must choose credentials at runtime. If you select a machine credential and also check Prompt on launch, the selected credentials become the default, which you can change at runtime.'
         )}
         isMultiple
         queryParams={{ credential_type__kind__in: acceptableCredentialKinds.join(',') }}
@@ -187,7 +187,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       <PageFormLabelSelect
         labelHelpTitle={t('Labels')}
         labelHelp={t(
-          `Optional labels that describe this job template, such as "dev" or "test". Labels can be used to group and filter job templates and completed jobs.`
+          `Optional labels that describe this job template, such as "dev" or "test". Use labels to group and filter job templates and completed jobs.`
         )}
         name="labels"
         additionalControls={
@@ -202,7 +202,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         name="forks"
         labelHelpTitle={t('Forks')}
         labelHelp={t(
-          'The number of parallel or simultaneous processes to use while executing the playbook. An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of forks can be overwritten with a change to ansible.cfg. Refer to the Ansible documentation for details about the configuration file.'
+          'The number of simultaneous processes to use while executing the playbook. An empty value or a value less than 1 will use the Ansible default, typically 5. You can change the default in the ansible.cfg file. See the Ansible documentation for configuration details.'
         )}
         type="number"
         min={0}
@@ -216,7 +216,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         name="limit"
         labelHelpTitle={t('Limit')}
         labelHelp={t(
-          'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns.'
+          'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. See the Ansible documentation for details and examples of patterns.'
         )}
         label={t('Limit')}
       />
@@ -288,7 +288,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       <PageFormCreatableSelect<JobTemplateForm>
         labelHelpTitle={t('Job tags')}
         labelHelp={t(
-          'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
+          'Tags help you run specific parts of a play or task. Use commas to separate multiple tags. See the documentation for details on using tags.'
         )}
         name="job_tags"
         additionalControls={
@@ -301,7 +301,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       <PageFormCreatableSelect<JobTemplateForm>
         labelHelpTitle={t('Skip tags')}
         labelHelp={t(
-          'Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
+          'Skip tags let you skip specific parts of a play or task. Use commas to separate multiple tags. See the documentation for details on using tags.'
         )}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_skip_tags_on_launch" />
@@ -326,20 +326,41 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       <PageFormSection isHorizontal>
         <PageFormGroup label={t('Options')}></PageFormGroup>
       </PageFormSection>
-      <PageFormCheckbox<JobTemplateForm> label={t('Privilege escalation')} name="become_enabled" />
+      <PageFormCheckbox<JobTemplateForm>
+        label={t('Privilege escalation')}
+        name="become_enabled"
+        labelHelp={t('Select to enable this playbook to run as an administrator.')}
+      />
       <PageFormCheckbox<JobTemplateForm>
         label={t('Provisioning callback')}
         name="isProvisioningCallbackEnabled"
+        labelHelp={t(
+          'Select to enable a host to call back to automation controller through the REST API and start a job from this job template.'
+        )}
       />
       <PageFormCheckbox<{ isWebhookEnabled: boolean }>
         label={t('Enable webhook')}
         name="isWebhookEnabled"
+        labelHelp={t(
+          'Select to interface with a predefined SCM system web service that is used to launch a job template. GitHub and GitLab are the supported SCM systems.'
+        )}
       />
-      <PageFormCheckbox<JobTemplateForm> label={t('Concurrent jobs')} name="allow_simultaneous" />
-      <PageFormCheckbox<JobTemplateForm> label={t('Enable fact storage')} name="use_fact_cache" />
+      <PageFormCheckbox<JobTemplateForm>
+        label={t('Concurrent jobs')}
+        name="allow_simultaneous"
+        labelHelp={t('Select to run job slices simultaneously.')}
+      />
+      <PageFormCheckbox<JobTemplateForm>
+        label={t('Enable fact storage')}
+        name="use_fact_cache"
+        labelHelp={t('Select to allow gathered facts to be stored.')}
+      />
       <PageFormCheckbox<JobTemplateForm>
         label={t('Prevent instance group fallback')}
         name="prevent_instance_group_fallback"
+        labelHelp={t(
+          'Select to allow only the instance groups listed in the Instance Groups field to run the job.'
+        )}
       />
       {isProvisioningCallbackEnabled ? (
         <FormSection title={t('Provisioning callback details')}>

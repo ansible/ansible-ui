@@ -207,7 +207,7 @@ export function ContainerGroupInputs() {
       />
       <PageFormTextInput<ContainerGroupForm>
         name="max_concurrent_jobs"
-        helperText={t(
+        labelHelp={t(
           'Maximum number of jobs to run concurrently on this group. Zero means no limit will be enforced.'
         )}
         type="number"
@@ -217,7 +217,7 @@ export function ContainerGroupInputs() {
       />
       <PageFormTextInput<ContainerGroupForm>
         name="max_forks"
-        helperText={t(
+        labelHelp={t(
           'Maximum number of forks to allow across all jobs running concurrently on this group. Zero means no limit will be enforced.'
         )}
         type="number"

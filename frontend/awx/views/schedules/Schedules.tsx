@@ -16,11 +16,11 @@ export function Schedules(props: { sublistEndpoint?: string }) {
         title={t('Schedules')}
         titleHelpTitle={t('Schedules')}
         titleHelp={t(
-          'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
+          'Schedules are used to launch jobs at predetermined times. Use a schedule to launch a job, synchronize inventory sources, and import project content from a version control system at set times.'
         )}
         titleDocLink={useGetDocsUrl(config, 'schedules')}
         description={t(
-          'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
+          'Schedules are used to launch jobs at predetermined times. Use a schedule to launch a job, synchronize inventory sources, and import project content from a version control system at set times.'
         )}
         headerActions={<ActivityStreamIcon type={'schedule'} />}
       />

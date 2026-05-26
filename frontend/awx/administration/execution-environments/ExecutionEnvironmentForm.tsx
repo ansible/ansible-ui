@@ -181,6 +181,7 @@ function ExecutionEnvironmentInputs(props: {
       <PageFormSelect<ExecutionEnvironment>
         name="pull"
         label={t('Pull')}
+        labelHelp={t('Select the type of pull to use when running jobs.')}
         placeholderText={t('Select pull option')}
         options={[
           {
@@ -210,7 +211,7 @@ function ExecutionEnvironmentInputs(props: {
             'Globally available execution environment can not be reassigned to a specific Organization.'
           )}
           helperText={t(
-            'Leave this field blank to make the execution environment globally available.'
+            'Select the organization to assign to this execution environment or leave the field blank to make the execution environment globally available.'
           )}
         />
       ) : undefined}
@@ -218,7 +219,7 @@ function ExecutionEnvironmentInputs(props: {
         <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
           helperText={t(
-            'Leave this field blank to make the execution environment globally available.'
+            'Select the organization to assign to this execution environment or leave the field blank to make the execution environment globally available.'
           )}
         />
       ) : undefined}
@@ -226,7 +227,7 @@ function ExecutionEnvironmentInputs(props: {
         <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
           helperText={t(
-            'Leave this field blank to make the execution environment globally available.'
+            'Select the organization to assign to this execution environment or leave the field blank to make the execution environment globally available.'
           )}
           isRequired={false}
         />
