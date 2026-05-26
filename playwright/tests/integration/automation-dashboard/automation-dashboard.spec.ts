@@ -6,7 +6,7 @@ async function mockReportRoute(
   page: import('playwright').Page,
   status: number = 200
 ): Promise<void> {
-  await page.route(`**/api/metrics/v1/dashboard_reports/report/**`, async (route) => {
+  await page.route(`**/api/metrics/v1/dashboard_reports/report/*`, async (route) => {
     await route.fulfill({
       status: status,
       contentType: 'application/json',
@@ -41,7 +41,7 @@ async function mockReportDetailRoute(
   page: import('playwright').Page,
   status: number = 200
 ): Promise<void> {
-  await page.route(`**/api/metrics/v1/dashboard_reports/report/details`, async (route) => {
+  await page.route(`**/api/metrics/v1/dashboard_reports/report/details/**`, async (route) => {
     await route.fulfill({
       status: status,
       contentType: 'application/json',
@@ -128,8 +128,8 @@ async function mockReportDetailRoute(
 }
 
 test.beforeEach(async ({ page }) => {
-  await setupBefore()({ page });
-  // Mock the collection status API to enable the Automation Dashboard
+  // Register all route mocks BEFORE login/navigation so they intercept initial API calls.
+  // The collection_status response controls whether the Automation Dashboard nav item appears.
   await page.route(`**/api/metrics/v1/dashboard_reports/collection_status/`, async (route) => {
     await route.fulfill({
       status: 200,
@@ -137,6 +137,9 @@ test.beforeEach(async ({ page }) => {
       body: JSON.stringify({ enabled: true, next_run: null, initial_collection_status: null }),
     });
   });
+  await mockReportRoute(page);
+  await mockReportDetailRoute(page);
+  await setupBefore()({ page });
   await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
 });
 
@@ -150,16 +153,24 @@ test.describe('Automation Dashboard', () => {
   });
 
   test('Should have correct link in value cards', async ({ page }) => {
-    await mockReportRoute(page);
-    await mockReportDetailRoute(page);
+    // Wait for dashboard data to load by checking for specific values from our mock
     const successfulJobsCard = page
       .getByTestId('successful-jobs-card')
       .filter({ hasText: 'Successful jobs' });
+
+    // Wait for the card to show the mocked value (31 successful jobs) - this ensures data loaded successfully
+    await expect(successfulJobsCard.getByText('31')).toBeVisible();
+
+    // Now the link should be visible since data loaded without error
     await successfulJobsCard.getByRole('link', { name: 'See all successful jobs in AAP' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=successful$'));
 
     await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
+
     const failedJobsCard = page.getByTestId('failed-jobs-card').filter({ hasText: 'Failed jobs' });
+    // Wait for the card to show the mocked value (3 failed jobs)
+    await expect(failedJobsCard.getByText('3')).toBeVisible();
+
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs in AAP' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
   });
