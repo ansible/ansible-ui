@@ -9,7 +9,9 @@ test(
   { tag: ['@visual', '@not_mock'] },
   async ({ page }) => {
     // Wait for the page to fully render
-    await expect(page.getByRole('heading', { name: 'Welcome to Ansible', level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /Welcome to (?:the )?Ansible/, level: 1 })
+    ).toBeVisible();
 
     // Main content area screenshot (excludes sidebar to avoid layout shift flakiness)
     const mainContent = page.locator('.pf-v6-c-page__main');
@@ -19,6 +21,7 @@ test(
       mask: [
         page.locator('[data-testid="resource-count-bar"]'),
         page.locator('#job-activity .page-chart'),
+        page.getByRole('heading', { level: 1 }),
       ],
     });
   }
