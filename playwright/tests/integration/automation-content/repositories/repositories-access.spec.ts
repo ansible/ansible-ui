@@ -17,7 +17,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Repositories Access', () => {
   test(
     'should assign user to repository and apply role via User Access tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       let repository: HubRepository | undefined;
       let user: UserType | undefined;
@@ -93,7 +93,7 @@ test.describe('Hub - Repositories Access', () => {
 
   test(
     'should assign team to repository and apply role via Team Access tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       let repository: HubRepository | undefined;
       let organization: OrganizationType | undefined;

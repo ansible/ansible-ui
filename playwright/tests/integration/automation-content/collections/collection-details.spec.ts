@@ -4,8 +4,8 @@ import {
   TOPOLOGY_OCP_A,
   TOPOLOGY_SAAS,
 } from '@ansible/playwright/commands/constants';
-import { isOcpA, isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { filterTableByText } from '@ansible/playwright/commands/filterTableByText';
+import { isOcpA, isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { clickKebabActionAndConfirm } from '@ansible/playwright/commands/hub/clickKebabActionAndConfirm';
 import {
   selectFirstAvailableCheckbox,
@@ -38,7 +38,7 @@ test.describe('Hub Collections - Details Page', () => {
   test.describe('Delete Operations', () => {
     test(
       'should delete version from repository',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         const namespace = 'e2edel1';
         const name = 'delverrepo';
@@ -67,7 +67,7 @@ test.describe('Hub Collections - Details Page', () => {
 
     test(
       'should delete version from system',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         const namespace = 'e2edel2';
         const name = 'delversys';
@@ -96,7 +96,7 @@ test.describe('Hub Collections - Details Page', () => {
 
     test(
       'should delete a specific version after switching versions',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
         const namespace = 'e2edelver';
@@ -187,7 +187,7 @@ test.describe('Hub Collections - Details Page', () => {
 
     test(
       'should delete entire collection from repository',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         const namespace = 'e2edel3';
         const name = 'delcollrepo';
@@ -215,7 +215,7 @@ test.describe('Hub Collections - Details Page', () => {
 
     test(
       'should delete entire collection from system',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         const namespace = 'e2edel4';
         const name = 'delcollsys';
@@ -245,7 +245,7 @@ test.describe('Hub Collections - Details Page', () => {
   test.describe('Copy Operations', () => {
     test(
       'should copy a version to repositories',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
 
@@ -349,47 +349,51 @@ test.describe('Hub Collections - Details Page', () => {
       'Signing not available on this environment'
     );
 
-    test('should sign a collection', { tag: ['@not_mock'] }, async ({ page, collection }) => {
-      test.setTimeout(180000);
-      await collection.createNamespace({ name: 'ibm' });
+    test(
+      'should sign a collection',
+      { tag: ['@not_mock', '@tier1'] },
+      async ({ page, collection }) => {
+        test.setTimeout(180000);
+        await collection.createNamespace({ name: 'ibm' });
 
-      let uploaded;
-      try {
-        uploaded = await collection.upload({
-          repository: 'staging',
-          tarballPath: COLLECTION_TARBALLS.zosmf,
+        let uploaded;
+        try {
+          uploaded = await collection.upload({
+            repository: 'staging',
+            tarballPath: COLLECTION_TARBALLS.zosmf,
+          });
+        } catch (error: unknown) {
+          const msg = error instanceof Error ? error.message : String(error);
+          if (/503|502|timeout|ECONNREFUSED|ECONNRESET|pulp/i.test(msg)) {
+            test.skip(true, `Collection upload failed — Pulp backend may be unhealthy: ${msg}`);
+            return;
+          }
+          throw error;
+        }
+
+        await collection.approveCollection({
+          namespace: uploaded.namespace,
+          name: uploaded.name,
+          version: uploaded.version,
         });
-      } catch (error: unknown) {
-        const msg = error instanceof Error ? error.message : String(error);
-        if (/503|502|timeout|ECONNREFUSED|ECONNRESET|pulp/i.test(msg)) {
-          test.skip(true, `Collection upload failed — Pulp backend may be unhealthy: ${msg}`);
+
+        await navigateToCollectionDetails(page, uploaded);
+
+        if (!(await isSigningAvailable(page))) {
+          test.skip();
           return;
         }
-        throw error;
+
+        await clickKebabActionAndConfirm('sign-collection', page);
+
+        await page.getByTestId('collection-detail-tab').click();
+        await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 60000 });
       }
-
-      await collection.approveCollection({
-        namespace: uploaded.namespace,
-        name: uploaded.name,
-        version: uploaded.version,
-      });
-
-      await navigateToCollectionDetails(page, uploaded);
-
-      if (!(await isSigningAvailable(page))) {
-        test.skip();
-        return;
-      }
-
-      await clickKebabActionAndConfirm('sign-collection', page);
-
-      await page.getByTestId('collection-detail-tab').click();
-      await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 60000 });
-    });
+    );
 
     test(
       'should sign a selected version of a collection',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         const namespace = 'e2esignver';
         const name = 'signvertest';
@@ -439,7 +443,7 @@ test.describe('Hub Collections - Details Page', () => {
     // Multi-version signing test: Upload 2 versions, sign only one, verify the other remains unsigned.
     test(
       'should sign only one version leaving other versions unsigned',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
 
@@ -559,7 +563,7 @@ test.describe('Hub Collections - Details Page', () => {
   test.describe('Distribution Display', () => {
     test(
       'should display distribution information from collection detail page',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         const namespace = await collection.createNamespace();
         const collectionName = 'testdist';
@@ -677,7 +681,7 @@ test.describe('Hub Collections - Details Page', () => {
   test.describe('Documentation Tab', () => {
     test(
       'should render documentation content without error',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         const namespace = 'e2edocs';
         const name = 'docstab';
@@ -717,7 +721,7 @@ test.describe('Hub Collections - Details Page', () => {
   test.describe('Deprecation', () => {
     test(
       'should deprecate and undeprecate a collection from detail page',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
         await collection.createNamespace({ name: 'ibm' });
@@ -769,7 +773,7 @@ test.describe('Hub Collections - Details Page', () => {
     // because the main collections list filters out deprecated collections by default.
     test(
       'should deprecate and undeprecate a collection from list view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000); // Extended timeout for upload, approve, and two modal operations
         await collection.createNamespace({ name: 'ibm' });
