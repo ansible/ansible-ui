@@ -6,7 +6,6 @@ import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/P
 import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { Flex, FlexItem, ToggleGroup, ToggleGroupItem, Tooltip } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -104,6 +103,7 @@ export function AwxJobActivityCard() {
 }
 
 function BarChartIcon() {
+  const { t } = useTranslation();
   return (
     <Tooltip content={t('Bar Chart')}>
       <svg width={24} height={24} style={{ marginBottom: -7, marginLeft: -6, marginRight: -6 }}>

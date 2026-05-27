@@ -3,8 +3,8 @@ import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { t } from 'i18next';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { IAwxView } from '../../../../common/useAwxView';
@@ -27,6 +27,7 @@ export function useIGInstanceToolbarActions(view: IAwxView<Instance>) {
 }
 
 function useIGInstanceAssociateToolbarAction(view: IAwxView<Instance>) {
+  const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { id } = params;
   const associateInstanceToIG = useAssociateInstanceToIG(view.unselectItemsAndRefresh, id ?? '');
@@ -53,11 +54,12 @@ function useIGInstanceAssociateToolbarAction(view: IAwxView<Instance>) {
           instanceGroupId: id ?? '',
         }),
     }),
-    [associateInstanceToIG, id, openAssociateInstanceModal, canAssociateInstance]
+    [associateInstanceToIG, id, openAssociateInstanceModal, canAssociateInstance, t]
   );
 }
 
 function useIGInstanceDisassociateToolbarAction(view: IAwxView<Instance>) {
+  const { t } = useTranslation();
   const disassociateInstance = useDisassociateInstanceFromIG(view.unselectItemsAndRefresh);
   const params = useParams<{ id: string }>();
   const { id } = params;
@@ -73,15 +75,16 @@ function useIGInstanceDisassociateToolbarAction(view: IAwxView<Instance>) {
       isPinned: true,
       onClick: disassociateInstance,
       isDisabled: (instances: Instance[]) =>
-        isDisassociateBtnDisabled(instances, instanceGroup?.name === 'controlplane'),
+        isDisassociateBtnDisabled(instances, instanceGroup?.name === 'controlplane', t),
     }),
-    [disassociateInstance, instanceGroup?.name]
+    [disassociateInstance, instanceGroup?.name, t]
   );
 }
 
 function isDisassociateBtnDisabled(
   itemsToDisassociate: Instance[],
-  verifyCannotDisassociate: boolean
+  verifyCannotDisassociate: boolean,
+  t: (key: string) => string
 ) {
   if (verifyCannotDisassociate) {
     const itemsUnableToDisassociate = itemsToDisassociate

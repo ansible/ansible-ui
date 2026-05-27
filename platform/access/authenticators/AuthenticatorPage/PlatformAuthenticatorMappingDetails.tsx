@@ -6,8 +6,8 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Divider, Label, LabelGroup } from '@patternfly/react-core';
-import { t } from 'i18next';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
@@ -134,6 +134,7 @@ export function PlatformAuthenticatorMappingDetails() {
 }
 
 function AttributesSubsection(props: Readonly<{ mapping: AuthenticatorMap }>) {
+  const { t } = useTranslation();
   const attributes = parseAttributes(JSON.stringify(props.mapping.triggers));
   const attributeDetails: React.ReactNode[] = [];
   attributes.forEach((attribute) => {
@@ -170,6 +171,7 @@ function AttributesSubsection(props: Readonly<{ mapping: AuthenticatorMap }>) {
 }
 
 function GroupsSubsection(props: Readonly<{ mapping: AuthenticatorMap }>) {
+  const { t } = useTranslation();
   const groups = parseGroups(JSON.stringify(props.mapping.triggers));
   const groupDetails: React.ReactNode[] = [];
 

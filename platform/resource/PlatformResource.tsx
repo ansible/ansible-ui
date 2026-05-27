@@ -4,12 +4,13 @@ import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingSt
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Page } from '@patternfly/react-core';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 
 export function PlatformResource() {
+  const { t } = useTranslation();
   const { resource_type, ansible_id, route } = useParams<{
     resource_type: string;
     ansible_id: string;

@@ -1,7 +1,8 @@
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { capitalizeFirstLetter } from '../../utils/strings';
 
 export function useRequiredValidationRule(label?: string, isRequired?: boolean) {
+  const { t } = useTranslation();
   return typeof label === 'string' && isRequired === true
     ? {
         value: true,

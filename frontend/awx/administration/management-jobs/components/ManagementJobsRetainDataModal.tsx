@@ -1,7 +1,7 @@
 import { PageFormSubmitHandler, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -22,6 +22,7 @@ export interface ManagementJobRetainDaysInput {
 export function ManagementJobsRetainDataModal(
   props: ManagementJobsRetainDataModalProps & { popDialog: () => void }
 ) {
+  const { t } = useTranslation();
   const postRequest = usePostRequest<ManagementJobRetainDaysInput, SystemJobTemplate>();
   const navigate = useNavigate();
   const getJobOutputUrl = useGetJobOutputUrl();

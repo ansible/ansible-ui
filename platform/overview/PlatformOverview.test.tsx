@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { t } from 'i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, beforeAll, afterAll, beforeEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
@@ -29,13 +28,11 @@ vi.mock('./useManagedPlatformOverview', () => ({
 
 // Mock all the card components
 vi.mock('./cards/PlatformCountsCard', () => ({
-  PlatformCountsCard: () => (
-    <div data-testid="platform-counts-card">{t('Platform Counts Card')}</div>
-  ),
+  PlatformCountsCard: () => <div data-testid="platform-counts-card">Platform Counts Card</div>,
 }));
 
 vi.mock('@ansible/awx-ui/overview/cards/AwxJobActivityCard', () => ({
-  AwxJobActivityCard: () => <div data-testid="awx-job-activity-card">{t('Job Activity Card')}</div>,
+  AwxJobActivityCard: () => <div data-testid="awx-job-activity-card">Job Activity Card</div>,
 }));
 
 // Mock window.location for redirects

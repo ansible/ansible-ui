@@ -1,5 +1,4 @@
 import { Alert, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +16,7 @@ export function PageWizardBody({
   isVertical,
   singleColumn,
 }: PageWizardBody) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { activeStep, stepData, onNext, onBack, submitError, isSubmitting } = usePageWizard();
 

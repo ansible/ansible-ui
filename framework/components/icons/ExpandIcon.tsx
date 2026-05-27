@@ -1,6 +1,6 @@
 import { Icon } from '@patternfly/react-core';
 import { AngleDownIcon } from '@patternfly/react-icons';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 export function ExpandIcon(props: {
   isExpanded: boolean;
@@ -8,6 +8,7 @@ export function ExpandIcon(props: {
   direction?: 'left' | 'right';
   size?: 'sm' | 'md' | 'lg';
 }) {
+  const { t } = useTranslation();
   return (
     <Icon size={props.size ?? 'md'}>
       <AngleDownIcon

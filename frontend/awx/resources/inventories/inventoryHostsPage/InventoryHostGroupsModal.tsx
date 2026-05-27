@@ -1,6 +1,6 @@
 import { MultiSelectDialog, usePageDialog } from '@ansible/ansible-ui-framework';
-import { t } from 'i18next';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
@@ -18,6 +18,7 @@ export function InventoryHostGroupsAddModal(props: {
   inventoryId: string;
   hostId: string;
 }) {
+  const { t } = useTranslation();
   const toolbarFilters = useHostsGroupsFilters(`inventories/${props.inventoryId ?? ''}/groups`);
   const tableColumns = useHostsGroupsColumns({ disableLinks: true });
 

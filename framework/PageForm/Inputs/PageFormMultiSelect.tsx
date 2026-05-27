@@ -1,4 +1,3 @@
-import { t } from 'i18next';
 import {
   Controller,
   FieldPath,
@@ -7,6 +6,7 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { PageMultiSelect, PageMultiSelectProps } from '../../PageInputs/PageMultiSelect';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
@@ -36,6 +36,7 @@ export function PageFormMultiSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormMultiSelectProps<TFieldValues, TFieldName>) {
+  const { t } = useTranslation();
   const id = useID(props);
 
   const { control, formState } = useFormContext<TFieldValues>();

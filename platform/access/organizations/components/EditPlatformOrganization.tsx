@@ -9,8 +9,8 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { t } from 'i18next';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
@@ -49,6 +49,7 @@ function areArraysEqualInOrder<T>(arr1: T[], arr2: T[]): boolean {
 }
 
 export function EditPlatformOrganization() {
+  const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const alertToaster = usePageAlertToaster();
   const params = useParams<{ id?: string }>();

@@ -8,8 +8,8 @@ import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Input
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { Button, FormGroup } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -113,6 +113,7 @@ export function AwxSettingsForm(props: {
   options: Record<string, AwxSettingsOptionsAction>;
   data: object;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const patch = usePatchRequest();
   const openRevertAllSettingsModal = useRevertAllSettingsModal();

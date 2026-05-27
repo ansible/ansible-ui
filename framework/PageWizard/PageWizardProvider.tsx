@@ -1,4 +1,3 @@
-import { t } from 'i18next';
 import {
   ReactNode,
   createContext,
@@ -8,6 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useURLSearchParams } from '../components/useURLSearchParams';
 import type { PageWizardState } from './PageWizardState';
 import type { PageWizardParentStep, PageWizardStep } from './types';
@@ -38,6 +38,7 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
   /** A function that will be called when the wizard is submitted with the final data. */
   onSubmit: (wizardData: DataT) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const { steps, onSubmit } = props;
   const [isToggleExpanded, setToggleExpanded] = useState(false);
   const [activeStep, setActiveStep] = useState<PageWizardStep | null>(null);
@@ -118,7 +119,7 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
       setActiveStep(nextStep);
       return Promise.resolve();
     },
-    [activeStep, steps, onSubmit, setSearchParams, wizardData, setSubmitError]
+    [activeStep, steps, onSubmit, setSearchParams, wizardData, setSubmitError, t]
   );
 
   const onBack = useCallback(() => {

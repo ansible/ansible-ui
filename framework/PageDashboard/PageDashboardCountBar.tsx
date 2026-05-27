@@ -1,6 +1,6 @@
 import { ChartPie } from '@patternfly/react-charts/victory';
 import { Title } from '@patternfly/react-core';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageChartLegend } from './PageChartLegend';
 import { PageDashboardCard } from './PageDashboardCard';
@@ -15,6 +15,7 @@ export type PageDashboardCountBarProps = {
 };
 
 export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
+  const { t } = useTranslation();
   return (
     <PageDashboardCard title={t('Resource Counts')} width="xxl">
       <div

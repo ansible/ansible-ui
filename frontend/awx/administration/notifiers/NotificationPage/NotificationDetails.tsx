@@ -8,7 +8,6 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { StatusCell } from '@ansible/common-ui/Status';
 import { TextArea } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link, useOutletContext } from 'react-router-dom';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
@@ -85,6 +84,7 @@ export function NotificationDetails() {
 }
 
 function RenderMessages(props: Readonly<{ notificationTemplate: NotificationTemplate }>) {
+  const { t } = useTranslation();
   const messages = props.notificationTemplate.messages;
   return (
     <PageDetails numberOfColumns="single" disableScroll={true}>
@@ -164,6 +164,7 @@ function RenderMessages(props: Readonly<{ notificationTemplate: NotificationTemp
 }
 
 function RenderInnerDetail(props: Readonly<{ notificationTemplate: NotificationTemplate }>) {
+  const { t } = useTranslation();
   const { notificationTemplate } = props;
   return (
     <>
@@ -195,7 +196,7 @@ function RenderInnerDetail(props: Readonly<{ notificationTemplate: NotificationT
             return <></>;
           }
 
-          let caption = returnCaption(notificationTemplate.notification_type, key);
+          let caption = returnCaption(notificationTemplate.notification_type, key, t);
 
           if (!caption) {
             caption = key;
@@ -229,7 +230,7 @@ function RenderInnerDetail(props: Readonly<{ notificationTemplate: NotificationT
   );
 }
 
-function returnCaption(notification_type: string | null, key: string) {
+function returnCaption(notification_type: string | null, key: string, t: (key: string) => string) {
   if (notification_type === 'email') {
     if (key === 'username') return t('Username');
     if (key === 'password') return t('Password');

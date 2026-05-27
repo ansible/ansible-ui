@@ -1,4 +1,3 @@
-import { t } from 'i18next';
 import {
   Controller,
   FieldPath,
@@ -7,6 +6,7 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import {
   PageAsyncSingleSelect,
   PageAsyncSingleSelectProps,
@@ -50,6 +50,7 @@ export function PageFormAsyncSingleSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormAsyncSingleSelectProps<TFieldValues, TFieldName>) {
+  const { t } = useTranslation();
   const id = useID(props);
 
   const { control, formState } = useFormContext<TFieldValues>();

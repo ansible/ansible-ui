@@ -1,6 +1,6 @@
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ExpandableRowContent } from '@patternfly/react-table';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 import { AwxRolePermissions } from './AwxRolePermissions';
@@ -10,6 +10,7 @@ interface AwxRoleExpandedRowProps {
 }
 
 export function AwxRoleExpandedRow(props: AwxRoleExpandedRowProps) {
+  const { t } = useTranslation();
   const { role } = props;
 
   const { data: roleDetails } = useGet<AwxRbacRole>(

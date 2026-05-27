@@ -7,7 +7,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
@@ -16,6 +16,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useMappingPageActions } from '../hooks/useMappingActions';
 
 export function PlatformAuthenticatorMappingPage() {
+  const { t } = useTranslation();
   const params = useParams<{ map_id: string; id: string }>();
   const map_id = params.map_id;
   const auth_id = params.id;

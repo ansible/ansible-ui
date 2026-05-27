@@ -1,14 +1,15 @@
 import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { ClipboardCopy, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Token } from '../../../interfaces/Token';
 
 export function UserTokenSecretsModal(props: {
   onClose: (value: SetStateAction<Token | undefined>) => void;
   newToken: Token;
 }) {
+  const { t } = useTranslation();
   const { token, refresh_token } = props.newToken;
   return (
     <Modal

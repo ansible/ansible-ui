@@ -6,7 +6,6 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { t } from 'i18next';
 import { useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -190,6 +189,7 @@ function AuthenticatorFormInputs(
     onTypeChange: (type: AuthenticatorTypeEnum) => void;
   }>
 ) {
+  const { t } = useTranslation();
   const currentType = useWatch<AuthenticatorFormValues, 'type'>({ name: 'type' });
   const { onTypeChange, plugins, authenticator } = props;
   const { setValue } = useFormContext<AuthenticatorFormValues>();

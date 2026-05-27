@@ -17,8 +17,8 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { Button, FormGroup } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const CATEGORY_ID = 'policyascode';
@@ -67,6 +67,7 @@ export function PolicySettingsForm(props: {
   options: Record<string, AwxSettingsOptionsAction>;
   data: object;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const patch = usePatchRequest();
   const openRevertAllSettingsModal = useRevertAllSettingsModal();

@@ -2,8 +2,8 @@ import { PageApp } from '@ansible/ansible-ui-framework';
 import { useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { postRequest, requestGet } from '@ansible/common-ui/crud/Data';
 import { Banner, Button, Flex, FlexItem } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { useUserInteraction } from '../hooks/useUserInteraction';
 import { UIFlag } from '../settings/ui-flags/IUIFlag';
@@ -17,6 +17,7 @@ import { usePlatformNavigation } from './usePlatformNavigation';
 import { PageTitleProvider } from '@ansible/ansible-ui-framework/PageTitle/PageTitle';
 
 export function PlatformApp() {
+  const { t } = useTranslation();
   const navigation = usePlatformNavigation();
   const sessionResponse = useSWR<{ expires_in_seconds: number }>(
     gatewayAPI`/session/`,
@@ -58,7 +59,7 @@ export function PlatformApp() {
       );
     }
     return null;
-  }, [refreshSession, session]);
+  }, [refreshSession, session, t]);
 
   useUserInteraction(60000, () => {
     refreshSession().catch(() => {
@@ -113,7 +114,7 @@ export function PlatformApp() {
       );
     }
     return null;
-  }, [activePlatformUser?.is_superuser, awxConfig, managedCloudInstall]);
+  }, [activePlatformUser?.is_superuser, awxConfig, managedCloudInstall, t]);
 
   const controllerDownBanner = useMemo(() => {
     if (!serviceDown) return null;
@@ -153,7 +154,7 @@ export function PlatformApp() {
         {message}
       </Banner>
     );
-  }, [serviceDown, serviceDownStatusCode]);
+  }, [serviceDown, serviceDownStatusCode, t]);
 
   const personaViewSwitcherFlag = useUIFlag(UIFlag.PersonaViewSwitcher);
 
