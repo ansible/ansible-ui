@@ -6,7 +6,7 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
 }));
 
 vi.mock('@ansible/ansible-ai-connect-chatbot', () => ({
-  ANSIBLE_LIGHTSPEED_PRODUCT_NAME: 'Ansible Lightspeed',
+  getProductName: () => 'Automation Intelligent Assistant',
   LIGHTSPEED_LOGO: 'light-logo.svg',
   LIGHTSPEED_LOGO_DARK: 'dark-logo.svg',
 }));
@@ -22,7 +22,7 @@ describe('ChatbotSideBarHeader', () => {
   it('should render the product name', () => {
     render(<ChatbotSideBarHeader />);
 
-    expect(screen.getByText('Ansible Lightspeed')).toBeInTheDocument();
+    expect(screen.getByText('Automation Intelligent Assistant')).toBeInTheDocument();
   });
 
   it('should render the logo image', () => {
