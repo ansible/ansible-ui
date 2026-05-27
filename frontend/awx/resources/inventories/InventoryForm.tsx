@@ -312,19 +312,19 @@ export function useInventoryFormDetailLabels() {
 
   return {
     labels: t(
-      `Optional labels that describe this inventory, such as "dev" or "test". Labels can be used to group and filter inventories and completed jobs.`
+      `Optional labels that describe this inventory, such as "dev" or "test". Use labels to group and filter inventories and completed jobs.`
     ),
     verbosity: t(
-      'The verbosity level for the related auto-created inventory source, special to constructed inventory.'
+      'Controls the level of output produced as the playbook executes inventory sources associated with the constructed inventory.'
     ),
     cache_timeout: t(
-      `The cache timeout for the related auto-created inventory source, special to constructed inventory.`
+      `Number of seconds before you want the cache plugin data to timeout. Applies to constructed inventory only.`
     ),
     limit: t(
-      `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
+      `Restricts the returned hosts for the auto-created inventory source associated with the constructed inventory.`
     ),
     prevent_instance_group_fallback: t(
-      `Prevent instance group fallback: If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.`
+      `If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. If you enable this and provide an empty list, the global instance groups will be applied.`
     ),
     input_inventories: t(
       `Input inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution.`
@@ -376,7 +376,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
                 <br />
               </Trans>
               {t(
-                'Note: Smart inventories have been deprecated in favor of constructed inventories. Refer to the Ansible Controller documentation for further syntax and examples.'
+                'Note: Smart inventories have been deprecated in favor of constructed inventories. See the Ansible Controller documentation for more syntax and examples.'
               )}
             </>
           }

@@ -4,7 +4,7 @@ import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inpu
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
-import { Label, LabelGroup, ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { DateTime } from 'luxon';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -140,17 +140,11 @@ export function RuleForm(
           isRequired
           label={t('Frequency')}
           placeholderText={t('Select frequency')}
-          labelHelp={[
-            t(
-              'This is the freq field. Select how often the schedule runs. For example, if the frequency is yearly, and the interval is 8, the schedule will run every 8 years.'
-            ),
-          ]}
+          labelHelp={[t('Enter how frequently the schedule runs.')]}
           options={frequencyOptions}
         />
         <PageFormTextInput<RuleFields>
-          labelHelp={[
-            t('This is the interval field. Select the interval at which the rule will repeat.'),
-          ]}
+          labelHelp={[t('Enter the interval for the schedule.')]}
           name={`interval`}
           label={t('Interval')}
           type="number"
@@ -159,9 +153,7 @@ export function RuleForm(
           name={`wkst`}
           label={t('Week start')}
           placeholderText={t('Select start day')}
-          labelHelp={t(
-            'This is the wkst field. Select the day of the week that the schedule will start.'
-          )}
+          labelHelp={t('Select the day of the week that you want the week to begin.')}
           options={weekdayOptions}
         />
         <PageFormMultiSelect<RuleFields>
@@ -169,26 +161,7 @@ export function RuleForm(
           placeholder={t('Select minutes of the hour')}
           options={MINUTES_OF_HOUR}
           label={t('Minutes of the hour')}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the byminute field. Select the minutes of each hour that the schedule will run.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  1
-                </Label>
-                <Label variant="outline" disabled>
-                  37
-                </Label>
-                <Label variant="outline" disabled>
-                  59
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t('Select the minute(s) of the hour that the schedule should run.')}
           labelHelpTitle={t('Minutes of the hour')}
           disableSortOptions
         />
@@ -197,26 +170,7 @@ export function RuleForm(
           placeholder={t('Select hours of the day')}
           options={HOURS_OF_DAY}
           label={t('Hours of the day')}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the byhour field. Select the hours of each day that the schedule will run.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  0
-                </Label>
-                <Label variant="outline" disabled>
-                  7
-                </Label>
-                <Label variant="outline" disabled>
-                  18
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t('Select the hours of day that the schedule should run.')}
           labelHelpTitle={t('Hours of the day')}
           disableSortOptions
         />
@@ -225,26 +179,7 @@ export function RuleForm(
           name={`byweekday`}
           options={weekdayOptions}
           placeholder={t('Select days of the week')}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the byweekday field. Select days of the week on which the run will schedule.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  {t('Sunday')}
-                </Label>
-                <Label variant="outline" disabled>
-                  {t('Wednesday')}
-                </Label>
-                <Label variant="outline" disabled>
-                  {t('Friday')}
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t('Select the days of the week on which to run the schedule.')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
@@ -252,26 +187,7 @@ export function RuleForm(
           placeholder={t('Select days of the month')}
           options={DAYS_OF_MONTH}
           label={t('Days of the month')}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the bymonthday field. Select the numerical days of each month on which the schedule will run.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  1
-                </Label>
-                <Label variant="outline" disabled>
-                  15
-                </Label>
-                <Label variant="outline" disabled>
-                  28
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t('Select the days of the month on which the schedule should run.')}
           labelHelpTitle={t('Days of the month')}
           disableSortOptions
         />
@@ -280,26 +196,7 @@ export function RuleForm(
           options={WEEKS_OF_YEAR}
           placeholder={t('Select weeks of the year')}
           label={t('Weeks of the year')}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the byweekno field. Select the numerical weeks of the year on which the schedule will run.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  17
-                </Label>
-                <Label variant="outline" disabled>
-                  43
-                </Label>
-                <Label variant="outline" disabled>
-                  52
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t('Select the numbered weeks of the year that the schedule should run.')}
           labelHelpTitle={t('Weeks of the year')}
           disableSortOptions
         />
@@ -308,26 +205,7 @@ export function RuleForm(
           label={t('Months of the year')}
           options={monthOptions}
           labelHelpTitle={t('Months of the year')}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the bymonth field. Select the months of the year that the schedule will run.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  {t('June')}
-                </Label>
-                <Label variant="outline" disabled>
-                  {t('August')}
-                </Label>
-                <Label variant="outline" disabled>
-                  {t('January')}
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t('Select the months of the year on which to run the schedule.')}
           placeholder={t('Select months of the year')}
           disableSortOptions
         />
@@ -336,26 +214,7 @@ export function RuleForm(
           placeholder={t('Select days of the year')}
           options={DAYS_OF_YEAR}
           label={t('Days of the year')}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the byyearday field. Select the numerical days of the year that the schedule will run.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  1
-                </Label>
-                <Label variant="outline" disabled>
-                  235
-                </Label>
-                <Label variant="outline" disabled>
-                  300
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t('Select the days of the year on which the schedule should run.')}
           labelHelpTitle={t('Days of the year')}
           disableSortOptions
         />
@@ -363,26 +222,9 @@ export function RuleForm(
           placeholder={t('Select occurrences')}
           options={DAYS_OF_YEAR}
           name={`bysetpos`}
-          labelHelp={
-            <>
-              <div>
-                {t(
-                  'This is the bysetpos field. Use this field to filter recurrence instances within a single interval of the exception. See the iCalendar RFC for bysetpos field more information.'
-                )}
-              </div>
-              <LabelGroup>
-                <Label variant="outline" disabled>
-                  1
-                </Label>
-                <Label variant="outline" disabled>
-                  235
-                </Label>
-                <Label variant="outline" disabled>
-                  300
-                </Label>
-              </LabelGroup>
-            </>
-          }
+          labelHelp={t(
+            'Use this field to filter down recurrence instances within a single interval of the rule. See the iCalendar RFC for more information about the bysetpos field.'
+          )}
           labelHelpTitle={t('Occurrences')}
           label={t('Occurrences')}
           disableSortOptions
@@ -391,6 +233,7 @@ export function RuleForm(
           disableSortOptions
           name="endType"
           label={t('Schedule ending type')}
+          labelHelp={t('Select the ending type for the schedule.')}
           placeholder={t('Select schedule ending type')}
           options={[
             { value: 'never', label: t('Never'), description: t('Never ending schedule') },

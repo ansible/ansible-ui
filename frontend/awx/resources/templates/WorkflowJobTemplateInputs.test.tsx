@@ -39,6 +39,7 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
     defaultValues: {
       name: '',
       isWebhookEnabled: false,
+      allow_simultaneous: false,
     },
   });
   return (
@@ -67,5 +68,49 @@ describe('WorkflowJobTemplateInputs', () => {
     );
 
     expect(screen.getByText('Description')).toBeInTheDocument();
+  });
+
+  it('should render all form fields', () => {
+    render(
+      <TestWrapper>
+        <WorkflowJobTemplateInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Limit')).toBeInTheDocument();
+    expect(screen.getByText('Source control branch')).toBeInTheDocument();
+    expect(screen.getByText('Labels')).toBeInTheDocument();
+    expect(screen.getByText('Job tags')).toBeInTheDocument();
+    expect(screen.getByText('Skip tags')).toBeInTheDocument();
+    expect(screen.getByText('Extra variables')).toBeInTheDocument();
+  });
+
+  it('should render Options section with checkboxes', () => {
+    render(
+      <TestWrapper>
+        <WorkflowJobTemplateInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Options')).toBeInTheDocument();
+    expect(screen.getByText('Enable webhook')).toBeInTheDocument();
+    expect(screen.getByText('Enable concurrent jobs')).toBeInTheDocument();
+  });
+
+  it('should render with workflow template data', () => {
+    const workflowJobTemplate = {
+      id: 1,
+      name: 'Test Workflow',
+      job_tags: ['tag1', 'tag2'],
+      skip_tags: ['skip1'],
+    } as unknown as WorkflowJobTemplateForm;
+
+    render(
+      <TestWrapper>
+        <WorkflowJobTemplateInputs workflowJobTemplate={workflowJobTemplate} />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Name')).toBeInTheDocument();
   });
 });

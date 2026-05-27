@@ -54,7 +54,7 @@ export function LabelHelp(props: { inventoryKind: string }) {
     <>
       {t(`Enter inventory variables using either JSON or YAML syntax.
   Use the radio button to toggle between the two.
-  Refer to the Ansible Controller documentation for example syntax.
+  See the Ansible Controller documentation for example syntax.
   `)}
     </>
   );
@@ -62,10 +62,9 @@ export function LabelHelp(props: { inventoryKind: string }) {
   const labelHelpVarsConstructedInventory = (
     <>
       <Trans>
-        Variables used to configure the constructed inventory plugin. For a detailed description of
-        how to configure this plugin, see{' '}
+        Variables used to configure the constructed inventory plugin. See{' '}
         <ExternalLink href={ansibleDocUrls.constructed}>constructed inventory</ExternalLink> plugin
-        configuration guide.
+        configuration guide for configuration details.
       </Trans>
       <br />
       <br />
