@@ -3,7 +3,7 @@ import { TOPOLOGY_AZURE, TOPOLOGY_OCP_A, TOPOLOGY_SAAS, TOPOLOGY_UNKNOWN } from 
 /**
  * Gets the AAP topology type from AAP_TOPOLOGY_TYPE environment variable.
  *
- * @returns The topology type: 'saas', 'ocp-a', 'azure', or '' (unknown)
+ * @returns The topology type: 'saas', 'ocp-a', 'man-b', or '' (unknown)
  *
  * @example
  * ```typescript
@@ -29,9 +29,9 @@ export function isSaaS(): boolean {
 }
 
 /**
- * Checks if the current topology is Azure.
+ * Checks if the current topology is Azure (man-b).
  *
- * @returns true if topology is 'azure', false otherwise
+ * @returns true if topology is 'man-b', false otherwise
  */
 export function isAzure(): boolean {
   return getTopologyType() === TOPOLOGY_AZURE;
