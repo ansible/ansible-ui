@@ -26,7 +26,9 @@ vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
 }));
 
 vi.mock('../../access/credentials/components/PageFormCredentialSelect', () => ({
-  PageFormCredentialSelect: () => <div data-testid="credential-select" />,
+  PageFormCredentialSelect: (props: { label?: string }) => (
+    <div data-testid="credential-select">{props.label}</div>
+  ),
 }));
 
 vi.mock('../projects/components/PageFormProjectSelect', () => ({
