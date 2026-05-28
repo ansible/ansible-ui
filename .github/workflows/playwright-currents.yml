@@ -39,7 +39,7 @@ on:
         required: false
         default: '90'
       AAP_TOPOLOGY_TYPE:
-        description: 'AAP topology type (saas, ocp-a, azure, or empty)'
+        description: 'AAP topology type (saas, ocp-a, man-b, or empty)'
         type: string
         required: false
         default: ''
