@@ -56,7 +56,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'can create a required survey from surveys tab list of a JT, toggle survey on, and assert info on surveys list view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await expect(
@@ -97,7 +97,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'can edit a JT survey from surveys list view and assert info on surveys list view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await JobTemplateSurvey.api.createQuestion(page, jobTemplate.name, question);
         await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
@@ -144,7 +144,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'can delete a JT survey from the surveys list view and assert deletion',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await JobTemplateSurvey.api.createQuestion(page, jobTemplate.name, question);
         await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
@@ -171,7 +171,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'should show validation error when minimum length exceeds maximum length for text type',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
@@ -199,7 +199,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'should show validation error when minimum exceeds maximum for integer type',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
@@ -231,7 +231,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'should clear validation error when min/max values are corrected',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
@@ -266,7 +266,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'should validate text answer by length not numeric value (01 is valid for length 2)',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await JobTemplateSurvey.ui.navigateToSurveyTab(page, jobTemplate.name);
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
@@ -313,7 +313,7 @@ test.describe('Job Templates Surveys', () => {
 
     test(
       'can create multiple surveys, assert order, change order, and assert new order, then bulk delete all surveys',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         const specs: SurveyQuestion[] = [
           {
@@ -559,7 +559,7 @@ test.describe('Job Templates Surveys', () => {
     for (const surveyType of surveyTypes) {
       test(
         `can create ${surveyType.type} survey type, enable survey, launch JT, view default survey answer, complete launch, and assert survey answer on completed job`,
-        { tag: ['@not_mock'] },
+        { tag: ['@not_mock', '@tier1'] },
         async ({ page }) => {
           test.setTimeout(5 * 60 * 1000);
           await JobTemplateSurvey.api.createQuestion(page, jobTemplate.name, surveyType.question);

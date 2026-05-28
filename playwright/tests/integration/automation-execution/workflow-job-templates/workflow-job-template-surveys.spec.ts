@@ -33,7 +33,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should create a required survey from surveys tab list of a WFJT, toggle survey on, and assert info on surveys list view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Navigate to survey tab', async () => {
           await WorkflowJobTemplateSurvey.ui.navigateToSurveyTab(page, workflowJobTemplate.name);
@@ -90,7 +90,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should edit a WFJT survey from surveys list view and assert info on surveys list view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Create survey via API', async () => {
           await WorkflowJobTemplateSurvey.api.createQuestion(
@@ -151,7 +151,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should delete a WFJT survey from the surveys list view and assert deletion',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Create survey via API', async () => {
           await WorkflowJobTemplateSurvey.api.createQuestion(
@@ -195,7 +195,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should create multiple surveys, assert order, change order, and assert new order, then bulk delete all surveys',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         const specs: SurveyQuestion[] = [
           {
@@ -313,7 +313,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should show validation error when minimum length exceeds maximum length for text type',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Navigate to survey tab', async () => {
           await WorkflowJobTemplateSurvey.ui.navigateToSurveyTab(page, workflowJobTemplate.name);
@@ -348,7 +348,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should show validation error when minimum exceeds maximum for integer type',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Navigate to survey tab', async () => {
           await WorkflowJobTemplateSurvey.ui.navigateToSurveyTab(page, workflowJobTemplate.name);
@@ -390,7 +390,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should clear validation error when min/max values are corrected',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Navigate to survey tab', async () => {
           await WorkflowJobTemplateSurvey.ui.navigateToSurveyTab(page, workflowJobTemplate.name);
@@ -434,7 +434,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should validate text answer by length not numeric value (01 is valid for length 2)',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Navigate to survey tab', async () => {
           await WorkflowJobTemplateSurvey.ui.navigateToSurveyTab(page, workflowJobTemplate.name);
@@ -623,7 +623,7 @@ test.describe('Workflow Job Templates Surveys', () => {
 
     test(
       'should create survey with all question types via UI, enable survey, and verify launch functionality',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page }) => {
         await test.step('Create all survey question types via UI', async () => {
           await WorkflowJobTemplateSurvey.ui.navigateToSurveyTab(page, workflowJobTemplate.name);
