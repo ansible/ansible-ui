@@ -25,37 +25,6 @@ vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   ),
 }));
 
-vi.mock('../../access/credentials/components/PageFormCredentialSelect', () => ({
-  PageFormCredentialSelect: () => <div data-testid="credential-select" />,
-}));
-
-vi.mock('../projects/components/PageFormProjectSelect', () => ({
-  PageFormProjectSelect: () => <div data-testid="project-select" />,
-}));
-
-vi.mock('../inventories/components/PageFormInventorySelect', () => ({
-  PageFormInventorySelect: () => <div data-testid="inventory-select" />,
-}));
-
-vi.mock('./components/PageFormPlaybookSelect', () => ({
-  PageFormPlaybookSelect: () => <div data-testid="playbook-select" />,
-}));
-
-vi.mock(
-  '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment',
-  () => ({
-    PageFormSelectExecutionEnvironment: () => <div data-testid="execution-environment-select" />,
-  })
-);
-
-vi.mock('../../administration/instance-groups/components/PageFormInstanceGroupSelect', () => ({
-  PageFormInstanceGroupSelect: () => <div data-testid="instance-group-select" />,
-}));
-
-vi.mock('./components/WebhookSubForm', () => ({
-  WebhookSubForm: () => <div data-testid="webhook-subform" />,
-}));
-
 const mockProject: Project = {
   id: 1,
   name: 'Demo Project',
