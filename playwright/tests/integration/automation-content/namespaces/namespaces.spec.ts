@@ -10,41 +10,47 @@ test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
 test.describe('Hub - Namespaces', () => {
-  test('should create, search and delete a namespace', { tag: ['@not_mock'] }, async ({ page }) => {
-    await navigateTo(page, 'Automation Content', 'Namespaces');
-    await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+  test(
+    'should create, search and delete a namespace',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      await navigateTo(page, 'Automation Content', 'Namespaces');
+      await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
 
-    const namespaceName = createE2EName('namespace').toLowerCase().replace(/\s+/g, '_');
-    await page.getByText('Create namespace', { exact: true }).click();
+      const namespaceName = createE2EName('namespace').toLowerCase().replace(/\s+/g, '_');
+      await page.getByText('Create namespace', { exact: true }).click();
 
-    await expect(page).toHaveURL(/\/namespaces\/create/);
-    await page.getByTestId('name').fill(namespaceName);
-    await page.getByTestId('company').fill('test company');
-    await page.locator('.view-lines').click();
-    await page.keyboard.type('name: example_namespace');
-    await page.getByText('Preview', { exact: true }).click();
-    await expect(page.getByTestId('resources-form-group')).toContainText('name: example_namespace');
-    await page.getByText('Markdown', { exact: true }).click();
-    await page.getByTestId('link-text-0').fill('test link');
-    await page.getByTestId('link-url-0').fill('https://test.com');
-    await page.getByTestId('Submit').click();
+      await expect(page).toHaveURL(/\/namespaces\/create/);
+      await page.getByTestId('name').fill(namespaceName);
+      await page.getByTestId('company').fill('test company');
+      await page.locator('.view-lines').click();
+      await page.keyboard.type('name: example_namespace');
+      await page.getByText('Preview', { exact: true }).click();
+      await expect(page.getByTestId('resources-form-group')).toContainText(
+        'name: example_namespace'
+      );
+      await page.getByText('Markdown', { exact: true }).click();
+      await page.getByTestId('link-text-0').fill('test link');
+      await page.getByTestId('link-url-0').fill('https://test.com');
+      await page.getByTestId('Submit').click();
 
-    await expect(page).toHaveURL(new RegExp(`/namespaces/${namespaceName}/details`));
-    await expect(page.getByText('Resources', { exact: true })).toBeVisible();
-    await expect(page.getByText('name: example_namespace')).toBeVisible();
+      await expect(page).toHaveURL(new RegExp(`/namespaces/${namespaceName}/details`));
+      await expect(page.getByText('Resources', { exact: true })).toBeVisible();
+      await expect(page.getByText('name: example_namespace')).toBeVisible();
 
-    await page.getByTestId('actions-dropdown').click();
-    await page.getByTestId('delete-namespace').click();
-    await page.locator('[data-ouia-component-id="confirm"]').click();
-    await page.getByRole('button', { name: 'Delete namespaces', exact: true }).click();
+      await page.getByTestId('actions-dropdown').click();
+      await page.getByTestId('delete-namespace').click();
+      await page.locator('[data-ouia-component-id="confirm"]').click();
+      await page.getByRole('button', { name: 'Delete namespaces', exact: true }).click();
 
-    await expect(page).toHaveURL(/\/namespaces/);
-    await expect(page).not.toHaveURL(new RegExp(`/namespaces/${namespaceName}/details`));
-  });
+      await expect(page).toHaveURL(/\/namespaces/);
+      await expect(page).not.toHaveURL(new RegExp(`/namespaces/${namespaceName}/details`));
+    }
+  );
 
   test(
     'should show the correct URL when clicking on the CLI configuration tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Content', 'Namespaces');
       await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
@@ -88,7 +94,7 @@ test.describe('Hub - Namespaces - Use Existing Namespaces', () => {
     await Namespace.api.delete(page, namespaceName);
   });
 
-  test('should show collections tab', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('should show collections tab', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     await navigateTo(page, 'Automation Content', 'Namespaces');
     await page.locator('[data-cy="table-view"] button').click();
     await clickTableRow({ text: namespaceName }, page);
@@ -108,7 +114,7 @@ test.describe('Hub - Namespaces - Use Existing Namespaces', () => {
     await expect(page.locator('#namespace-selector')).toContainText(namespaceName);
   });
 
-  test('should edit a namespace', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('should edit a namespace', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     await navigateTo(page, 'Automation Content', 'Namespaces');
     await page.locator('[data-cy="table-view"] button').click();
     await clickTableRow({ text: namespaceName }, page);
@@ -132,7 +138,7 @@ test.describe('Hub - Namespaces - Use Existing Namespaces', () => {
 });
 
 test.describe('Hub - Namespaces - Bulk Delete', () => {
-  test('should bulk delete namespaces', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('should bulk delete namespaces', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const namespace1 = await Namespace.api.create(page);
     const namespace2 = await Namespace.api.create(page);
 

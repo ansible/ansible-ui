@@ -10,47 +10,51 @@ test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
 test.describe('Hub - My Imports', () => {
-  test('should render empty states', { tag: ['@not_mock'] }, async ({ page, collection }) => {
-    const namespaceName = await collection.createNamespace();
-    const collectionName = `testcollection_${Date.now()}`.toLowerCase();
-    const collectionVersion = '1.0.0';
+  test(
+    'should render empty states',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page, collection }) => {
+      const namespaceName = await collection.createNamespace();
+      const collectionName = `testcollection_${Date.now()}`.toLowerCase();
+      const collectionVersion = '1.0.0';
 
-    await collection.uploadVersion({
-      namespace: namespaceName,
-      name: collectionName,
-      version: collectionVersion,
-      repository: 'staging',
-    });
+      await collection.uploadVersion({
+        namespace: namespaceName,
+        name: collectionName,
+        version: collectionVersion,
+        repository: 'staging',
+      });
 
-    await test.step('Navigate to My Imports via namespace actions', async () => {
-      await navigateTo(page, 'Automation Content', 'Namespaces');
-      await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+      await test.step('Navigate to My Imports via namespace actions', async () => {
+        await navigateTo(page, 'Automation Content', 'Namespaces');
+        await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
 
-      await clickTableRowAction(
-        {
-          text: namespaceName,
-          action: 'Imports',
-        },
-        page
-      );
+        await clickTableRowAction(
+          {
+            text: namespaceName,
+            action: 'Imports',
+          },
+          page
+        );
 
-      await expect(page.getByRole('heading', { name: 'My Imports' })).toBeVisible();
-      await expect(page.locator('#namespace-selector')).toContainText(namespaceName);
-    });
+        await expect(page.getByRole('heading', { name: 'My Imports' })).toBeVisible();
+        await expect(page.locator('#namespace-selector')).toContainText(namespaceName);
+      });
 
-    await test.step('Reset and verify empty states', async () => {
-      await page.getByTestId('reset').click();
+      await test.step('Reset and verify empty states', async () => {
+        await page.getByTestId('reset').click();
 
-      await expect(page.getByText('No namespace selected.')).toBeVisible();
-      await expect(page.getByText('No data')).toBeVisible();
-      await expect(page.locator('#namespace-selector')).toContainText('Select namespace');
-      await expect(page.locator('.pf-v6-c-label-group')).not.toBeVisible();
-    });
-  });
+        await expect(page.getByText('No namespace selected.')).toBeVisible();
+        await expect(page.getByText('No data')).toBeVisible();
+        await expect(page.locator('#namespace-selector')).toContainText('Select namespace');
+        await expect(page.locator('.pf-v6-c-label-group')).not.toBeVisible();
+      });
+    }
+  );
 
   test(
     'should display import details, browse namespaces, and filter imports',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page, collection }) => {
       const namespaceName = await collection.createNamespace();
       const collectionName = `testcollection_${Date.now()}`.toLowerCase();

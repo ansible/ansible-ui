@@ -10,7 +10,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Execution Environment - Activity Tab', () => {
   test(
     'should display activity tab for existing execution environment',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       let executionEnvironmentName!: string;
 

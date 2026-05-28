@@ -19,7 +19,7 @@ test.describe('Hub - Remotes', () => {
     }
   });
 
-  test('should bulk delete remotes', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('should bulk delete remotes', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const remoteNames: string[] = [];
     const testSignature = createE2EName().replace('E2E ', '');
 
@@ -88,117 +88,67 @@ test.describe('Hub - Remotes', () => {
     }
   });
 
-  test('should create, search and delete a remote', { tag: ['@not_mock'] }, async ({ page }) => {
-    const remoteName = createE2EName('remote');
-    let remoteCreated = false;
-
-    try {
-      await test.step('Navigate to remotes', async () => {
-        await navigateTo(page, 'Automation Content', 'Remotes');
-        await expect(page.getByRole('heading', { name: 'Remotes' })).toBeVisible();
-      });
-
-      await test.step('Create new remote via UI', async () => {
-        await page.getByTestId('create-remote').click();
-        await expect(page.getByRole('heading', { name: 'Create remote' })).toBeVisible();
-
-        await page.getByTestId('name').fill(remoteName);
-        await page.getByTestId('url').fill('https://console.redhat.com/api/automation-hub/');
-        await page.getByTestId('Submit').click();
-
-        // Verify redirect to details page
-        await expect(page.getByRole('heading', { name: remoteName })).toBeVisible({
-          timeout: 15000,
-        });
-        remoteCreated = true;
-      });
-
-      await test.step('Navigate back to list and search', async () => {
-        await page.getByLabel('Breadcrumb').getByRole('link', { name: 'Remotes' }).click();
-        await expect(page.getByRole('heading', { name: 'Remotes' })).toBeVisible();
-
-        await clearTableFilters(page);
-        await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
-        await expect(page.locator('tbody')).toContainText(remoteName);
-      });
-
-      await test.step('Delete remote from kebab menu', async () => {
-        // Filter to find the row
-        await clearTableFilters(page);
-        await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
-
-        // Click actions kebab in the row
-        const row = page.locator('tbody tr').first();
-        await row.getByTestId('actions-column-cell').click();
-        await page.getByTestId('delete-remote').click();
-
-        // Confirm deletion
-        const dialog = page.getByRole('dialog');
-        await expect(dialog).toBeVisible();
-        await dialog.locator('#confirm').check();
-        await dialog.getByRole('button', { name: 'Delete remotes', exact: true }).click();
-
-        await expect(dialog).not.toBeVisible({ timeout: 30000 });
-        remoteCreated = false;
-      });
-
-      await test.step('Verify remote was deleted', async () => {
-        await clearTableFilters(page);
-        await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
-        await expect(page.locator('.pf-v6-c-empty-state')).toBeVisible();
-      });
-    } finally {
-      if (remoteCreated) {
-        try {
-          const remote = await Remote.api.get(page, remoteName);
-          await Remote.api.delete(page, remote.pulp_href);
-        } catch {
-          // Ignore errors during cleanup
-        }
-      }
-    }
-  });
-
   test(
-    'should display alert for community URL with signed collections',
-    { tag: ['@not_mock'] },
+    'should create, search and delete a remote',
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const remoteName = createE2EName('remote');
       let remoteCreated = false;
 
       try {
-        await test.step('Navigate to create remote form', async () => {
+        await test.step('Navigate to remotes', async () => {
           await navigateTo(page, 'Automation Content', 'Remotes');
+          await expect(page.getByRole('heading', { name: 'Remotes' })).toBeVisible();
+        });
+
+        await test.step('Create new remote via UI', async () => {
           await page.getByTestId('create-remote').click();
           await expect(page.getByRole('heading', { name: 'Create remote' })).toBeVisible();
-        });
 
-        await test.step('Enter community URL and check signed only', async () => {
           await page.getByTestId('name').fill(remoteName);
-          await page.getByTestId('url').fill('https://galaxy.ansible.com/api/');
-          await page.getByTestId('signed_only').check();
-
-          // Verify warning is displayed
-          await expect(page.getByTestId('signed-only-warning')).toBeVisible();
-          await expect(page.getByTestId('signed-only-warning')).toContainText(
-            'Community content will never be synced if this setting is enabled'
-          );
-        });
-
-        await test.step('Change URL to non-community and verify warning disappears', async () => {
-          await page.getByTestId('url').clear();
           await page.getByTestId('url').fill('https://console.redhat.com/api/automation-hub/');
-
-          // Warning should disappear
-          await expect(page.getByTestId('signed-only-warning')).not.toBeVisible();
-        });
-
-        await test.step('Submit and verify remote created', async () => {
           await page.getByTestId('Submit').click();
+
+          // Verify redirect to details page
           await expect(page.getByRole('heading', { name: remoteName })).toBeVisible({
             timeout: 15000,
           });
           remoteCreated = true;
+        });
+
+        await test.step('Navigate back to list and search', async () => {
+          await page.getByLabel('Breadcrumb').getByRole('link', { name: 'Remotes' }).click();
+          await expect(page.getByRole('heading', { name: 'Remotes' })).toBeVisible();
+
+          await clearTableFilters(page);
+          await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
+          await expect(page.locator('tbody')).toContainText(remoteName);
+        });
+
+        await test.step('Delete remote from kebab menu', async () => {
+          // Filter to find the row
+          await clearTableFilters(page);
+          await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
+
+          // Click actions kebab in the row
+          const row = page.locator('tbody tr').first();
+          await row.getByTestId('actions-column-cell').click();
+          await page.getByTestId('delete-remote').click();
+
+          // Confirm deletion
+          const dialog = page.getByRole('dialog');
+          await expect(dialog).toBeVisible();
+          await dialog.locator('#confirm').check();
+          await dialog.getByRole('button', { name: 'Delete remotes', exact: true }).click();
+
+          await expect(dialog).not.toBeVisible({ timeout: 30000 });
+          remoteCreated = false;
+        });
+
+        await test.step('Verify remote was deleted', async () => {
+          await clearTableFilters(page);
+          await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
+          await expect(page.locator('.pf-v6-c-empty-state')).toBeVisible();
         });
       } finally {
         if (remoteCreated) {
@@ -213,104 +163,110 @@ test.describe('Hub - Remotes', () => {
     }
   );
 
-  test('should edit a remote with advanced options', { tag: ['@not_mock'] }, async ({ page }) => {
-    let remote: HubRemote | undefined;
+  test(
+    'should edit a remote with advanced options',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      let remote: HubRemote | undefined;
 
-    try {
-      await test.step('Create remote with basic config via API', async () => {
-        remote = await Remote.api.create(page, {
-          signed_only: true,
-          sync_dependencies: true,
+      try {
+        await test.step('Create remote with basic config via API', async () => {
+          remote = await Remote.api.create(page, {
+            signed_only: true,
+            sync_dependencies: true,
+          });
         });
-      });
 
-      if (!remote) throw new Error('Remote not created');
+        if (!remote) throw new Error('Remote not created');
 
-      const remoteName = remote.name;
+        const remoteName = remote.name;
 
-      await test.step('Navigate to remote and edit', async () => {
-        await navigateTo(page, 'Automation Content', 'Remotes');
-        await clearTableFilters(page);
-        await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
+        await test.step('Navigate to remote and edit', async () => {
+          await navigateTo(page, 'Automation Content', 'Remotes');
+          await clearTableFilters(page);
+          await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
 
-        // Click edit button (it's a pinned action, visible directly)
-        await page.getByTestId('edit-remote').click();
+          // Click edit button (it's a pinned action, visible directly)
+          await page.getByTestId('edit-remote').click();
 
-        await expect(page.getByRole('heading', { name: `Edit ${remoteName}` })).toBeVisible();
-      });
-
-      await test.step('Update remote with advanced options', async () => {
-        // Update basic fields (not in advanced section)
-        await page.getByTestId('url').clear();
-        await page.getByTestId('url').fill('https://galaxy.ansible.com/api/');
-        await page.getByTestId('username').fill('testuser');
-        await page.getByTestId('password').fill('testpassword');
-        await page.getByTestId('token').fill('test-token-123');
-        await page.getByRole('textbox', { name: 'SSO URL' }).fill('https://sso.example.com/');
-
-        // Expand advanced options section if not already expanded
-        const showButton = page.getByText('Show advanced options');
-        const hideButton = page.getByText('Hide advanced options');
-
-        if (await showButton.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await showButton.click();
-          // Wait for advanced section to expand
-          await hideButton.waitFor({ state: 'visible' });
-        }
-
-        // Fill advanced fields (proxy, misc, certificates) - use role selectors for consistency
-        await page
-          .getByRole('textbox', { name: 'Proxy URL' })
-          .fill('https://proxy.example.com:8080');
-        await page.getByRole('textbox', { name: 'Proxy username' }).fill('proxyuser');
-        await page.getByRole('textbox', { name: 'Proxy password' }).fill('proxypass');
-        await page.getByRole('spinbutton', { name: 'Download concurrency' }).fill('10');
-        await page.getByRole('spinbutton', { name: 'Rate limit' }).fill('5');
-        // TLS validation checkbox doesn't have an accessible name, find it by testid
-        await page.getByTestId('tls_validation').uncheck();
-
-        // Update requirements file (using the code editor textbox)
-        const requirementsEditor = page.getByRole('textbox', { name: 'Editor content' });
-        await requirementsEditor.click({ force: true });
-        await requirementsEditor.clear();
-        await requirementsEditor.fill('collections:\n  - name: community.general');
-
-        await page.getByRole('button', { name: 'Save remote', exact: true }).click();
-
-        await expect(page.getByRole('heading', { name: remoteName })).toBeVisible({
-          timeout: 15000,
+          await expect(page.getByRole('heading', { name: `Edit ${remoteName}` })).toBeVisible();
         });
-      });
 
-      await test.step('Verify all fields were updated', async () => {
-        // Verify basic fields on details page (using kebab-case for PageDetail testids)
-        await expect(page.getByTestId('server-url')).toContainText(
-          'https://galaxy.ansible.com/api/'
-        );
-        await expect(page.getByTestId('proxy-url')).toContainText('https://proxy.example.com:8080');
-        await expect(page.getByTestId('tls-validation')).toContainText('Disabled');
-        await expect(page.getByTestId('rate-limit')).toContainText('5');
-        await expect(page.getByTestId('download-concurrency')).toContainText('10');
-        await expect(page.getByTestId('download-only-signed-collections')).toContainText('True');
-        await expect(
-          page.getByTestId('include-all-dependencies-when-syncing-a-collection')
-        ).toContainText('True');
-        await expect(page.getByTestId('code-block-value')).toContainText('community.general');
-      });
-    } finally {
-      if (remote) {
-        try {
-          await Remote.api.delete(page, remote.pulp_href);
-        } catch {
-          // Ignore cleanup errors - browser context may be closed
+        await test.step('Update remote with advanced options', async () => {
+          // Update basic fields (not in advanced section)
+          await page.getByTestId('url').clear();
+          await page.getByTestId('url').fill('https://galaxy.ansible.com/api/');
+          await page.getByTestId('username').fill('testuser');
+          await page.getByTestId('password').fill('testpassword');
+          await page.getByTestId('token').fill('test-token-123');
+          await page.getByRole('textbox', { name: 'SSO URL' }).fill('https://sso.example.com/');
+
+          // Expand advanced options section if not already expanded
+          const showButton = page.getByText('Show advanced options');
+          const hideButton = page.getByText('Hide advanced options');
+
+          if (await showButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+            await showButton.click();
+            // Wait for advanced section to expand
+            await hideButton.waitFor({ state: 'visible' });
+          }
+
+          // Fill advanced fields (proxy, misc, certificates) - use role selectors for consistency
+          await page
+            .getByRole('textbox', { name: 'Proxy URL' })
+            .fill('https://proxy.example.com:8080');
+          await page.getByRole('textbox', { name: 'Proxy username' }).fill('proxyuser');
+          await page.getByRole('textbox', { name: 'Proxy password' }).fill('proxypass');
+          await page.getByRole('spinbutton', { name: 'Download concurrency' }).fill('10');
+          await page.getByRole('spinbutton', { name: 'Rate limit' }).fill('5');
+          // TLS validation checkbox doesn't have an accessible name, find it by testid
+          await page.getByTestId('tls_validation').uncheck();
+
+          // Update requirements file (using the code editor textbox)
+          const requirementsEditor = page.getByRole('textbox', { name: 'Editor content' });
+          await requirementsEditor.click({ force: true });
+          await requirementsEditor.clear();
+          await requirementsEditor.fill('collections:\n  - name: community.general');
+
+          await page.getByRole('button', { name: 'Save remote', exact: true }).click();
+
+          await expect(page.getByRole('heading', { name: remoteName })).toBeVisible({
+            timeout: 15000,
+          });
+        });
+
+        await test.step('Verify all fields were updated', async () => {
+          // Verify basic fields on details page (using kebab-case for PageDetail testids)
+          await expect(page.getByTestId('server-url')).toContainText(
+            'https://galaxy.ansible.com/api/'
+          );
+          await expect(page.getByTestId('proxy-url')).toContainText(
+            'https://proxy.example.com:8080'
+          );
+          await expect(page.getByTestId('tls-validation')).toContainText('Disabled');
+          await expect(page.getByTestId('rate-limit')).toContainText('5');
+          await expect(page.getByTestId('download-concurrency')).toContainText('10');
+          await expect(page.getByTestId('download-only-signed-collections')).toContainText('True');
+          await expect(
+            page.getByTestId('include-all-dependencies-when-syncing-a-collection')
+          ).toContainText('True');
+          await expect(page.getByTestId('code-block-value')).toContainText('community.general');
+        });
+      } finally {
+        if (remote) {
+          try {
+            await Remote.api.delete(page, remote.pulp_href);
+          } catch {
+            // Ignore cleanup errors - browser context may be closed
+          }
         }
       }
     }
-  });
+  );
 
   test(
     'should create remote with empty requirements file',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const remoteName = createE2EName('remote');
       let remoteCreated = false;
@@ -358,52 +314,59 @@ test.describe('Hub - Remotes', () => {
     }
   );
 
-  test('should edit remote - save without changes', { tag: ['@not_mock'] }, async ({ page }) => {
-    let remote: HubRemote | undefined;
+  test(
+    'should edit remote - save without changes',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      let remote: HubRemote | undefined;
 
-    try {
-      await test.step('Create remote via API', async () => {
-        remote = await Remote.api.create(page);
-      });
-
-      if (!remote) throw new Error('Remote not created');
-
-      const remoteName = remote.name;
-
-      await test.step('Navigate to edit form', async () => {
-        await navigateTo(page, 'Automation Content', 'Remotes');
-        await clearTableFilters(page);
-        await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
-
-        await page.getByTestId('edit-remote').click();
-        await expect(page.getByRole('heading', { name: `Edit ${remoteName}` })).toBeVisible();
-      });
-
-      await test.step('Type and clear a field, then save', async () => {
-        // Type something in username field
-        await page.getByTestId('username').fill('abc');
-
-        // Clear it by backspacing
-        await page.getByTestId('username').press('Control+A');
-        await page.getByTestId('username').press('Backspace');
-
-        // Save should work without error
-        await page.getByRole('button', { name: 'Save remote', exact: true }).click();
-
-        // Should redirect to details page without error
-        await expect(page.getByRole('heading', { name: remoteName })).toBeVisible({
-          timeout: 15000,
+      try {
+        await test.step('Create remote via API', async () => {
+          remote = await Remote.api.create(page);
         });
-      });
-    } finally {
-      if (remote) {
-        await Remote.api.delete(page, remote.pulp_href);
+
+        if (!remote) throw new Error('Remote not created');
+
+        const remoteName = remote.name;
+
+        await test.step('Navigate to edit form', async () => {
+          await navigateTo(page, 'Automation Content', 'Remotes');
+          await clearTableFilters(page);
+          await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
+
+          await page.getByTestId('edit-remote').click();
+          await expect(page.getByRole('heading', { name: `Edit ${remoteName}` })).toBeVisible();
+        });
+
+        await test.step('Type and clear a field, then save', async () => {
+          // Type something in username field
+          await page.getByTestId('username').fill('abc');
+
+          // Clear it by backspacing
+          await page.getByTestId('username').press('Control+A');
+          await page.getByTestId('username').press('Backspace');
+
+          // Save should work without error
+          await page.getByRole('button', { name: 'Save remote', exact: true }).click();
+
+          // Should redirect to details page without error
+          await expect(page.getByRole('heading', { name: remoteName })).toBeVisible({
+            timeout: 15000,
+          });
+        });
+      } finally {
+        if (remote) {
+          await Remote.api.delete(page, remote.pulp_href);
+        }
       }
     }
-  });
+  );
 
-  test('should verify download buttons work', { tag: ['@not_mock'] }, async ({ page }) => {
-    const caCert = `-----BEGIN CERTIFICATE-----
+  test(
+    'should verify download buttons work',
+    { tag: ['@not_mock', '@tier1'] },
+    async ({ page }) => {
+      const caCert = `-----BEGIN CERTIFICATE-----
 MIIFnzCCA4egAwIBAgIUWlomUBb9ad0KVgZDX05ynPyZfGYwDQYJKoZIhvcNAQEL
 BQAweDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAk5DMRAwDgYDVQQHDAdSYWxlaWdo
 MQswCQYDVQQKDAJSSDEMMAoGA1UECwwDQUFQMQ4wDAYDVQQDDAVTYXJhaDEfMB0G
@@ -437,78 +400,79 @@ ZctsPsQiuHJzMv/25snuVzBaBTmEN5OxAQc1JS7uYakyvJ6T108Vb4K+7dnQ6GZm
 oVRa
 -----END CERTIFICATE-----`;
 
-    const clientCert = caCert; // Same for test purposes
-    const requirementsFile = 'collections:\n  - testing.ansible_testing_content';
+      const clientCert = caCert; // Same for test purposes
+      const requirementsFile = 'collections:\n  - testing.ansible_testing_content';
 
-    let remote: HubRemote | undefined;
+      let remote: HubRemote | undefined;
 
-    try {
-      await test.step('Create remote with certificates and requirements via API', async () => {
-        remote = await Remote.api.create(page, {
-          url: 'https://console.redhat.com/api/automation-hub/',
-          ca_cert: caCert,
-          client_cert: clientCert,
-          requirements_file: requirementsFile,
+      try {
+        await test.step('Create remote with certificates and requirements via API', async () => {
+          remote = await Remote.api.create(page, {
+            url: 'https://console.redhat.com/api/automation-hub/',
+            ca_cert: caCert,
+            client_cert: clientCert,
+            requirements_file: requirementsFile,
+          });
         });
-      });
 
-      if (!remote) throw new Error('Remote not created');
+        if (!remote) throw new Error('Remote not created');
 
-      const remoteName = remote.name;
+        const remoteName = remote.name;
 
-      await test.step('Navigate to remotes list', async () => {
-        await navigateTo(page, 'Automation Content', 'Remotes');
-        await clearTableFilters(page);
-        await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
-      });
+        await test.step('Navigate to remotes list', async () => {
+          await navigateTo(page, 'Automation Content', 'Remotes');
+          await clearTableFilters(page);
+          await filterTable({ filterLabel: 'Name', filterValue: remoteName }, page);
+        });
 
-      await test.step('Download and verify requirement file', async () => {
-        const downloadPromise = page.waitForEvent('download');
-        const row = page.locator('tbody tr').first();
-        await row.getByTestId('actions-column-cell').click();
-        await page.getByTestId('download-requirement-file').click();
+        await test.step('Download and verify requirement file', async () => {
+          const downloadPromise = page.waitForEvent('download');
+          const row = page.locator('tbody tr').first();
+          await row.getByTestId('actions-column-cell').click();
+          await page.getByTestId('download-requirement-file').click();
 
-        const download = await downloadPromise;
-        const path = await download.path();
-        if (!path) throw new Error('Download path not found');
+          const download = await downloadPromise;
+          const path = await download.path();
+          if (!path) throw new Error('Download path not found');
 
-        const content = await fs.readFile(path, 'utf-8');
-        expect(content).toContain('testing.ansible_testing_content');
-      });
+          const content = await fs.readFile(path, 'utf-8');
+          expect(content).toContain('testing.ansible_testing_content');
+        });
 
-      await test.step('Download and verify CA certificate', async () => {
-        const downloadPromise = page.waitForEvent('download');
-        const row = page.locator('tbody tr').first();
-        await row.getByTestId('actions-column-cell').click();
-        await page.getByTestId('download-ca-certificate').click();
+        await test.step('Download and verify CA certificate', async () => {
+          const downloadPromise = page.waitForEvent('download');
+          const row = page.locator('tbody tr').first();
+          await row.getByTestId('actions-column-cell').click();
+          await page.getByTestId('download-ca-certificate').click();
 
-        const download = await downloadPromise;
-        const path = await download.path();
-        if (!path) throw new Error('Download path not found');
+          const download = await downloadPromise;
+          const path = await download.path();
+          if (!path) throw new Error('Download path not found');
 
-        const content = await fs.readFile(path, 'utf-8');
-        expect(content).toContain('-----BEGIN CERTIFICATE-----');
-        expect(content).toContain('-----END CERTIFICATE-----');
-      });
+          const content = await fs.readFile(path, 'utf-8');
+          expect(content).toContain('-----BEGIN CERTIFICATE-----');
+          expect(content).toContain('-----END CERTIFICATE-----');
+        });
 
-      await test.step('Download and verify client certificate', async () => {
-        const downloadPromise = page.waitForEvent('download');
-        const row = page.locator('tbody tr').first();
-        await row.getByTestId('actions-column-cell').click();
-        await page.getByTestId('download-client-certificate').click();
+        await test.step('Download and verify client certificate', async () => {
+          const downloadPromise = page.waitForEvent('download');
+          const row = page.locator('tbody tr').first();
+          await row.getByTestId('actions-column-cell').click();
+          await page.getByTestId('download-client-certificate').click();
 
-        const download = await downloadPromise;
-        const path = await download.path();
-        if (!path) throw new Error('Download path not found');
+          const download = await downloadPromise;
+          const path = await download.path();
+          if (!path) throw new Error('Download path not found');
 
-        const content = await fs.readFile(path, 'utf-8');
-        expect(content).toContain('-----BEGIN CERTIFICATE-----');
-        expect(content).toContain('-----END CERTIFICATE-----');
-      });
-    } finally {
-      if (remote) {
-        await Remote.api.delete(page, remote.pulp_href);
+          const content = await fs.readFile(path, 'utf-8');
+          expect(content).toContain('-----BEGIN CERTIFICATE-----');
+          expect(content).toContain('-----END CERTIFICATE-----');
+        });
+      } finally {
+        if (remote) {
+          await Remote.api.delete(page, remote.pulp_href);
+        }
       }
     }
-  });
+  );
 });

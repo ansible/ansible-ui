@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { pulpAPI } from '../../common/api/formatPath';
 import { SignatureKeys } from './SignatureKeys';
@@ -31,6 +32,16 @@ const mockEmptyResponse = {
   results: [],
 };
 
+function renderSignatureKeys() {
+  return render(
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <MemoryRouter>
+        <SignatureKeys />
+      </MemoryRouter>
+    </SWRConfig>
+  );
+}
+
 describe('SignatureKeys Component', () => {
   let server: ReturnType<typeof setupServer>;
 
@@ -50,26 +61,20 @@ describe('SignatureKeys Component', () => {
     });
 
     it('should render page title', async () => {
-      render(
-        <MemoryRouter>
-          <SignatureKeys />
-        </MemoryRouter>
-      );
+      renderSignatureKeys();
 
       expect(await screen.findByRole('heading', { name: 'Signature Keys' })).toBeInTheDocument();
     });
 
-    it('should render correct column headers', async () => {
-      render(
-        <MemoryRouter>
-          <SignatureKeys />
-        </MemoryRouter>
-      );
+    it('should render all column headers', async () => {
+      renderSignatureKeys();
 
       await screen.findByRole('heading', { name: 'Signature Keys' });
 
       expect(screen.getByRole('columnheader', { name: 'Name' })).toBeInTheDocument();
       expect(screen.getByRole('columnheader', { name: 'Fingerprint' })).toBeInTheDocument();
+      expect(screen.getByRole('columnheader', { name: 'Public key' })).toBeInTheDocument();
+      expect(screen.getByRole('columnheader', { name: 'Created' })).toBeInTheDocument();
     });
   });
 
@@ -81,16 +86,39 @@ describe('SignatureKeys Component', () => {
     });
 
     it('should render signature keys from API response', async () => {
-      render(
-        <MemoryRouter>
-          <SignatureKeys />
-        </MemoryRouter>
-      );
+      renderSignatureKeys();
 
       await screen.findByRole('heading', { name: 'Signature Keys' });
 
       expect(await screen.findByText('test-key')).toBeInTheDocument();
       expect(screen.getByText('another-key')).toBeInTheDocument();
+    });
+
+    it('should display fingerprint for each key', async () => {
+      renderSignatureKeys();
+
+      await screen.findByText('test-key');
+
+      expect(screen.getByText('ABC123')).toBeInTheDocument();
+      expect(screen.getByText('DEF456')).toBeInTheDocument();
+    });
+
+    it('should display public key content', async () => {
+      renderSignatureKeys();
+
+      await screen.findByText('test-key');
+
+      const publicKeyCells = screen.getAllByText(/-----BEGIN PUBLIC KEY-----/);
+      expect(publicKeyCells.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should render download button for each key', async () => {
+      renderSignatureKeys();
+
+      await screen.findByText('test-key');
+
+      const downloadButtons = screen.getAllByTestId('download-key');
+      expect(downloadButtons).toHaveLength(2);
     });
   });
 
@@ -100,11 +128,7 @@ describe('SignatureKeys Component', () => {
     });
 
     it('should show empty state when no signature keys exist', async () => {
-      render(
-        <MemoryRouter>
-          <SignatureKeys />
-        </MemoryRouter>
-      );
+      renderSignatureKeys();
 
       await screen.findByRole('heading', { name: 'Signature Keys' });
 
@@ -127,11 +151,7 @@ describe('SignatureKeys Component', () => {
         )
       );
 
-      render(
-        <MemoryRouter>
-          <SignatureKeys />
-        </MemoryRouter>
-      );
+      renderSignatureKeys();
 
       await waitFor(() => {
         expect(screen.getByText('You do not have access to Signature Keys')).toBeInTheDocument();
@@ -145,11 +165,7 @@ describe('SignatureKeys Component', () => {
         )
       );
 
-      render(
-        <MemoryRouter>
-          <SignatureKeys />
-        </MemoryRouter>
-      );
+      renderSignatureKeys();
 
       await screen.findByRole('heading', { name: 'Signature Keys' });
 
