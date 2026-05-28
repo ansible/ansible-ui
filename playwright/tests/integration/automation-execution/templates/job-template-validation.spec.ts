@@ -14,7 +14,7 @@ test.describe('Job Template Form - Validation', () => {
 
   test(
     'cannot create a job template with more than one machine credential',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
@@ -66,7 +66,7 @@ test.describe('Job Template Form - Validation', () => {
 
   test(
     'cannot create a job template with more than one vault credential with same vault_id',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
