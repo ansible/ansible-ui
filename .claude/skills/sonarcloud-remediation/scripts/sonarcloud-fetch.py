@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Fetch SonarCloud issues, hotspots, and duplication metrics.
+Fetch issues, hotspots, and duplication metrics from SonarCloud or SonarQube.
 
 Reads SONAR_PROJECT_KEY, SONAR_ORGANIZATION, and optionally
-SONARCLOUD_TOKEN from environment variables. Outputs categorized
-JSON to stdout. Diagnostics go to stderr.
+SONARCLOUD_TOKEN from environment variables. Set SONAR_BASE_URL to
+target a self-hosted SonarQube instance (defaults to SonarCloud).
+Outputs categorized JSON to stdout. Diagnostics go to stderr.
 
 Usage:
     python3 sonarcloud-fetch.py
@@ -19,8 +20,10 @@ import urllib.error
 import urllib.request
 from base64 import b64encode
 from datetime import datetime, timezone
+from urllib.parse import quote
 
-BASE_URL = "https://sonarcloud.io/api"
+SONARCLOUD_DEFAULT_URL = "https://sonarcloud.io/api"
+BASE_URL = os.environ.get("SONAR_BASE_URL", "").strip().rstrip("/") or SONARCLOUD_DEFAULT_URL
 PAGE_SIZE = 500
 MAX_RESULTS = 10000
 DUPLICATION_RULE_SUFFIXES = {"S1192"}
@@ -40,10 +43,8 @@ def _build_ssl_context():
         return ssl.create_default_context(cafile=certifi.where())
     except ImportError:
         ctx = ssl.create_default_context()
-        try:
-            urllib.request.urlopen("https://sonarcloud.io", timeout=5, context=ctx)
-        except (urllib.error.URLError, ssl.SSLError):
-            ctx = ssl.create_default_context()
+        if os.environ.get("SONAR_INSECURE", "").strip() == "1":
+            print("WARNING: TLS verification disabled (SONAR_INSECURE=1)", file=sys.stderr)
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
         return ctx
@@ -77,13 +78,19 @@ def _rule_suffix(rule):
     return rule
 
 
-def fetch_issues(project_key, ssl_ctx):
+def _org_param(organization):
+    if organization:
+        return f"&organization={quote(organization, safe='')}"
+    return ""
+
+
+def fetch_issues(project_key, organization, ssl_ctx):
     items = []
     page = 1
     total = None
 
     while True:
-        url = f"{BASE_URL}/issues/search?componentKeys={project_key}&resolved=false&ps={PAGE_SIZE}&p={page}"
+        url = f"{BASE_URL}/issues/search?componentKeys={quote(project_key, safe='')}{_org_param(organization)}&resolved=false&ps={PAGE_SIZE}&p={page}"
         data = _request(url, ssl_ctx)
 
         if total is None:
@@ -105,7 +112,7 @@ def fetch_issues(project_key, ssl_ctx):
         if fetched >= total or fetched >= MAX_RESULTS:
             if total > MAX_RESULTS:
                 print(
-                    f"Warning: SonarCloud API limits results to {MAX_RESULTS}. "
+                    f"Warning: Sonar API limits results to {MAX_RESULTS}. "
                     "Use severity/type filters for complete data.",
                     file=sys.stderr,
                 )
@@ -117,13 +124,13 @@ def fetch_issues(project_key, ssl_ctx):
     return {"total": total, "items": items}
 
 
-def fetch_hotspots(project_key, ssl_ctx):
+def fetch_hotspots(project_key, organization, ssl_ctx):
     items = []
     page = 1
     total = None
 
     while True:
-        url = f"{BASE_URL}/hotspots/search?projectKey={project_key}&status=TO_REVIEW&ps={PAGE_SIZE}&p={page}"
+        url = f"{BASE_URL}/hotspots/search?projectKey={quote(project_key, safe='')}{_org_param(organization)}&status=TO_REVIEW&ps={PAGE_SIZE}&p={page}"
         data = _request(url, ssl_ctx)
 
         if total is None:
@@ -152,9 +159,9 @@ def fetch_hotspots(project_key, ssl_ctx):
     return {"total": total, "items": items}
 
 
-def fetch_duplication(project_key, ssl_ctx):
+def fetch_duplication(project_key, organization, ssl_ctx):
     url = (
-        f"{BASE_URL}/measures/component?component={project_key}"
+        f"{BASE_URL}/measures/component?component={quote(project_key, safe='')}{_org_param(organization)}"
         "&metricKeys=duplicated_lines_density,duplicated_blocks,duplicated_files"
     )
     data = _request(url, ssl_ctx)
@@ -198,6 +205,8 @@ def categorize(issues_items, hotspots_items):
             categories["Maintainability"].append(issue)
             if suffix in DUPLICATION_RULE_SUFFIXES:
                 categories["Duplication"].append(issue)
+        else:
+            categories.setdefault("Other", []).append(issue)
 
     return categories
 
@@ -205,23 +214,37 @@ def categorize(issues_items, hotspots_items):
 def main():
     project_key = os.environ.get("SONAR_PROJECT_KEY", "").strip()
     organization = os.environ.get("SONAR_ORGANIZATION", "").strip()
+    is_sonarcloud = BASE_URL == SONARCLOUD_DEFAULT_URL
 
-    if not project_key or not organization:
-        error = {
-            "error": "SONAR_PROJECT_KEY and SONAR_ORGANIZATION environment variables are required.",
-        }
+    if not project_key:
+        error = {"error": "SONAR_PROJECT_KEY environment variable is required."}
         print(json.dumps(error, indent=2))
-        print("ERROR: Set SONAR_PROJECT_KEY and SONAR_ORGANIZATION before running.", file=sys.stderr)
+        print("ERROR: Set SONAR_PROJECT_KEY before running.", file=sys.stderr)
+        sys.exit(1)
+
+    if is_sonarcloud and not organization:
+        error = {"error": "SONAR_ORGANIZATION is required when using SonarCloud (sonarcloud.io)."}
+        print(json.dumps(error, indent=2))
+        print("ERROR: Set SONAR_ORGANIZATION before running (required for SonarCloud).", file=sys.stderr)
         sys.exit(1)
 
     ssl_ctx = _build_ssl_context()
 
     try:
-        print(f"Fetching SonarCloud data for {project_key}...", file=sys.stderr)
-        issues = fetch_issues(project_key, ssl_ctx)
-        hotspots = fetch_hotspots(project_key, ssl_ctx)
-        duplication = fetch_duplication(project_key, ssl_ctx)
+        server_label = "SonarCloud" if is_sonarcloud else BASE_URL
+        print(f"Fetching data from {server_label} for {project_key}...", file=sys.stderr)
+        issues = fetch_issues(project_key, organization, ssl_ctx)
+        hotspots = fetch_hotspots(project_key, organization, ssl_ctx)
+        duplication = fetch_duplication(project_key, organization, ssl_ctx)
     except urllib.error.HTTPError as e:
+        if e.code == 400 and not organization:
+            msg = (
+                "Bad request (HTTP 400). This may mean SONAR_ORGANIZATION is "
+                "required for this Sonar instance. Set SONAR_ORGANIZATION and retry."
+            )
+            print(json.dumps({"error": msg, "hint": "missing_organization"}, indent=2))
+            print(f"ERROR: {msg}", file=sys.stderr)
+            sys.exit(1)
         messages = {
             401: "Authentication failed (HTTP 401). Check SONARCLOUD_TOKEN.",
             403: "Access forbidden (HTTP 403). Token may lack permissions or project key may be wrong.",
