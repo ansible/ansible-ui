@@ -14,7 +14,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Collection Approvals', () => {
   test(
     'should be able to view import logs',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page, collection }) => {
       const namespaceName = await collection.createNamespace();
 
@@ -62,7 +62,7 @@ test.describe('Hub - Collection Approvals', () => {
 
   test(
     'should be able to approve collection',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page, collection }) => {
       const namespaceName = await collection.createNamespace();
 
@@ -113,7 +113,7 @@ test.describe('Hub - Collection Approvals', () => {
 
   test(
     'should be able to reject collection',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page, collection }) => {
       const namespaceName = await collection.createNamespace();
 

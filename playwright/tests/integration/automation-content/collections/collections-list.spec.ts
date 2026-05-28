@@ -18,7 +18,7 @@ test.describe('Hub Collections - List View', () => {
   test.describe('Sign Operations', () => {
     test(
       'should sign collection from list view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
 
@@ -97,7 +97,7 @@ test.describe('Hub Collections - List View', () => {
   test.describe('Copy Operations', () => {
     test(
       'should copy version to repository from list view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
 
@@ -200,7 +200,7 @@ test.describe('Hub Collections - List View', () => {
 
     test(
       'should delete collection from repository in table view',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
 

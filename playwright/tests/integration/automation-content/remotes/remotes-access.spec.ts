@@ -20,7 +20,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Remotes Access', () => {
   test(
     'should assign user to remote and apply role via User Access tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       let remote: HubRemote | undefined;
       let role: RoleType | undefined;
@@ -119,7 +119,7 @@ test.describe('Hub - Remotes Access', () => {
 
   test(
     'should assign team to remote, apply role, then remove role via Team Access tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       let remote: HubRemote | undefined;
       let role: RoleType | undefined;

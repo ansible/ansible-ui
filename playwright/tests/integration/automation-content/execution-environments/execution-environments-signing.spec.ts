@@ -11,7 +11,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Execution Environment - Signing', () => {
   test(
     'should successfully sign execution environment from Docker registry',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       // Set test timeout to 5 minutes to allow for sync and signing operations
       test.setTimeout(300000);
