@@ -100,6 +100,43 @@ Tests should be tagged based on their capabilities. Tags are built into playwrig
 | --------: | -------------------------------------------------------------------- |
 | @not_mock | This test should not run when testing against the mock API           |
 |  @upgrade | This test should only run against a server that is setup for upgrade |
+|    @tier1 | This test runs in the Tier 1 Jenkins nightly pipeline (green-path customer scenarios) |
+|   @visual | Visual regression test (excluded from Jenkins runs via `NOT_TAGS`)   |
+
+### Tier 1 Tagging Convention
+
+The `@tier1` tag follows an **opt-in model**: only tests tagged with `@tier1` run in the Tier 1 Jenkins pipeline. Tests without this tag still run in pre-merge (ephemeral) workflows, which execute the full suite.
+
+**When to use `@tier1`:** Tag tests that validate green-path customer scenarios -- core workflows that every AAP customer would perform (create/edit/delete resources, RBAC assignments, auth setup, license checks).
+
+**When NOT to use `@tier1`:** Do not tag form validation, cancel buttons, redundant CRUD paths (same operation from different UI entry points), bulk operations, or static content checks. These are valuable but belong in pre-merge testing only.
+
+**How to tag:**
+
+```typescript
+// Add @tier1 alongside any existing tags
+test('should create an organization', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
+  // ...
+});
+
+// @tier1 alone (for tests that also run against mock)
+test('should toggle a feature flag', { tag: ['@tier1'] }, async ({ page }) => {
+  // ...
+});
+```
+
+**Environment variable filtering:** The `TAGS` and `NOT_TAGS` environment variables control which tags are included or excluded. In `playwright.config.ts`, `TAGS` maps to the `grep` option and `NOT_TAGS` maps to `grepInvert`. When `TAGS` is empty or unset, all tests run (no filtering).
+
+```bash
+# Run only @tier1 tests (used in Jenkins Tier 1 pipeline)
+TAGS=@tier1 npm run live
+
+# Exclude visual tests (used in all Jenkins runs)
+NOT_TAGS=@visual npm run live
+
+# Both can be combined
+TAGS=@tier1 NOT_TAGS=@visual npm run live
+```
 
 ### Developer Experience
 

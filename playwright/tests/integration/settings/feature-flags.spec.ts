@@ -11,40 +11,44 @@ const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1
 test.afterEach(setupAfter);
 
 test.describe('Feature Flags - Toggle', () => {
-  test('should open confirmation dialog and toggle a feature flag', async ({ page }) => {
-    await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
-    await FeatureFlags.mock.list(page);
-    const { getLastPatchBody } = await FeatureFlags.mock.toggle(page);
-    await login(page, platformUIWithoutSlash + '/settings/feature-flags');
+  test(
+    'should open confirmation dialog and toggle a feature flag',
+    { tag: ['@tier1'] },
+    async ({ page }) => {
+      await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
+      await FeatureFlags.mock.list(page);
+      const { getLastPatchBody } = await FeatureFlags.mock.toggle(page);
+      await login(page, platformUIWithoutSlash + '/settings/feature-flags');
 
-    await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
 
-    // "Indirect Node Counting" is the only visible, runtime, public flag.
-    // Locate its row by name, then click the toggle switch within that row.
-    const flagRow = page.getByRole('row').filter({ hasText: 'Indirect Node Counting' });
-    await expect(flagRow).toBeVisible();
-    await flagRow.getByTestId('toggle-switch').click();
+      // "Indirect Node Counting" is the only visible, runtime, public flag.
+      // Locate its row by name, then click the toggle switch within that row.
+      const flagRow = page.getByRole('row').filter({ hasText: 'Indirect Node Counting' });
+      await expect(flagRow).toBeVisible();
+      await flagRow.getByTestId('toggle-switch').click();
 
-    // Confirmation dialog should appear
-    const dialog = page.locator('dialog, [role="dialog"]').first();
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole('heading', { name: 'Disable feature flag?' })).toBeVisible();
+      // Confirmation dialog should appear
+      const dialog = page.locator('dialog, [role="dialog"]').first();
+      await expect(dialog).toBeVisible();
+      await expect(dialog.getByRole('heading', { name: 'Disable feature flag?' })).toBeVisible();
 
-    // Confirm checkbox must be checked before the action button is enabled
-    const confirmCheckbox = dialog.getByTestId('confirm');
-    await expect(confirmCheckbox).toBeVisible();
-    await confirmCheckbox.click();
+      // Confirm checkbox must be checked before the action button is enabled
+      const confirmCheckbox = dialog.getByTestId('confirm');
+      await expect(confirmCheckbox).toBeVisible();
+      await confirmCheckbox.click();
 
-    // Click the action button
-    const submitButton = dialog.getByTestId('submit');
-    await submitButton.click();
+      // Click the action button
+      const submitButton = dialog.getByTestId('submit');
+      await submitButton.click();
 
-    // The result dialog auto-closes after success. Wait for the dialog to disappear.
-    await expect(dialog).toBeHidden({ timeout: 5000 });
+      // The result dialog auto-closes after success. Wait for the dialog to disappear.
+      await expect(dialog).toBeHidden({ timeout: 5000 });
 
-    // Verify the PATCH was sent with the correct body
-    expect(getLastPatchBody()).toEqual({ value: 'False' });
-  });
+      // Verify the PATCH was sent with the correct body
+      expect(getLastPatchBody()).toEqual({ value: 'False' });
+    }
+  );
 
   test('should close confirmation dialog on cancel without making API call', async ({ page }) => {
     await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
@@ -253,24 +257,28 @@ test.describe('Feature Flags - Access Control', () => {
     await User.api.delete(page, auditorUser.id).catch(() => {});
   });
 
-  test('should show Feature Flags page as read-only for auditor', async ({ page }) => {
-    await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
-    await FeatureFlags.mock.list(page);
-    await logout(page);
-    await login(page, platformUIWithoutSlash + '/overview', {
-      username: auditorUser.username,
-      password: userPassword,
-    });
+  test(
+    'should show Feature Flags page as read-only for auditor',
+    { tag: ['@tier1'] },
+    async ({ page }) => {
+      await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
+      await FeatureFlags.mock.list(page);
+      await logout(page);
+      await login(page, platformUIWithoutSlash + '/overview', {
+        username: auditorUser.username,
+        password: userPassword,
+      });
 
-    await navigateTo(page, 'Settings', 'Feature Flags');
-    await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
+      await navigateTo(page, 'Settings', 'Feature Flags');
+      await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
 
-    await expect(page.getByTestId('toggle-switch')).toHaveCount(0);
-  });
+      await expect(page.getByTestId('toggle-switch')).toHaveCount(0);
+    }
+  );
 
   test(
     'should hide Feature Flags for normal user and show page not found on direct access',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await logout(page);
       await login(page, platformUIWithoutSlash + '/overview', {

@@ -7,7 +7,7 @@ test.afterEach(setupAfter);
 test.describe('Platform EDA Overview - Navigation', () => {
   test(
     'user can navigate to resource pages using View all links from Platform Dashboard',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await expect(page.getByTestId('page-title')).toContainText('Welcome to Ansible');
 
