@@ -23,7 +23,7 @@ Remediates SonarCloud issues for a selected group with a 2-step approval process
 
 ### Environment Variables
 
-Same as `/sonarcloud-analyze`, plus these Phase B variables (set beforehand or provided interactively):
+Same as `/sonarcloud-analyze` (including the requirement that `SONARCLOUD_TOKEN` must be an env var, never interactive), plus these Phase B variables (set beforehand or provided interactively):
 
 | Variable | Purpose |
 |----------|---------|

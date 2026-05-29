@@ -22,14 +22,14 @@ Fetches all open issues from SonarCloud, groups them by category and workspace, 
 
 ### Environment Variables
 
-All variables can be set beforehand **or** provided interactively when the command starts.
+All variables can be set beforehand **or** provided interactively when the command starts, **except `SONARCLOUD_TOKEN`** which must always be set as an environment variable.
 
 | Variable | When needed | Purpose |
 |----------|-------------|---------|
 | `SONAR_BASE_URL` | Optional | Base URL of the Sonar API. Defaults to `https://sonarcloud.io/api`. Set for self-hosted SonarQube. |
 | `SONAR_ORGANIZATION` | Phase A, B | SonarCloud organization slug. **Required for SonarCloud; optional for self-hosted SonarQube.** |
 | `SONAR_PROJECT_KEY` | Phase A, B | Sonar project key |
-| `SONARCLOUD_TOKEN` | Private projects only | API token. **Must be set as an env var** — the skill will never prompt for it. |
+| `SONARCLOUD_TOKEN` | Private projects only | API token. **Must be set as an environment variable before starting Claude** — never provided interactively. |
 
 ### Output
 
