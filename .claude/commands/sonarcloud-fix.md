@@ -12,7 +12,7 @@ If the user passes `--help`, display the usage information below and stop.
 
 Remediates SonarCloud issues for a selected group with a 2-step approval process:
 1. **Approval 1 — Apply & Test**: Fixes are applied, validated, committed to a branch. You can test locally and make manual adjustments before proceeding.
-2. **Approval 2 — Create PR(s)**: After reviewing the branch, you explicitly approve PR creation. A summary of how many PRs will be created is shown first.
+2. **Approval 2 — Create PR(s)/MR(s)**: After reviewing the branch, you explicitly approve PR/MR creation. A summary of how many PRs/MRs will be created is shown first.
 
 ### Arguments
 
@@ -40,7 +40,7 @@ Add to `.claude/settings.json` to avoid permission prompts:
 
 ### Workflow
 
-1. **Configuration pre-check**: Display all environment variables (with values, defaults, and descriptions) and prompt for confirmation before proceeding. Skipped if already confirmed in the current session.
+1. **Configuration pre-check**: Prompt interactively for any missing Phase B variables (branch, validation commands, PR comment), then display all configuration for confirmation. Skipped if already confirmed in the current session.
 2. If no analysis exists in this session, run `/sonarcloud-analyze` first
 3. If no group argument provided, display available groups and prompt for selection
 4. Read affected files, present fixes as a group for review
@@ -49,10 +49,10 @@ Add to `.claude/settings.json` to avoid permission prompts:
    - Run validation commands (hard gate — must pass)
    - Create branch and commit changes
    - **Pause**: Inform the engineer the branch is ready for local testing. They can review the diff, run additional tests, or commit manual adjustments. Wait for explicit go-ahead.
-6. **Approval 2 — Create PR(s):**
-   - Present a summary: number of PRs to be created, LOC per PR, target branch
-   - Wait for explicit approval before creating any PR
-   - Create PR(s) with title prefixed `SonarCloud Fix:` (e.g., `SonarCloud Fix: Remove dead stores (S1854, frontend/awx)`)
-   - PR body follows `.github/pull_request_template.md`
+6. **Approval 2 — Create PR(s)/MR(s):**
+   - Present a summary: number of PRs/MRs to be created, LOC per PR/MR, target branch
+   - Wait for explicit approval before creating any PR/MR
+   - Create PR(s)/MR(s) with title prefixed `SonarCloud Fix:` (e.g., `SonarCloud Fix: Remove dead stores (S1854, frontend/awx)`)
+   - PR/MR body follows repo template (`.github/pull_request_template.md` or `.gitlab/merge_request_templates/`)
    - Post `SONAR_PR_COMMENT` on each PR/MR (if configured)
 7. Offer to continue with the next group
