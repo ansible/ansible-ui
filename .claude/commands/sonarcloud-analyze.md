@@ -20,19 +20,16 @@ Fetches all open issues from SonarCloud, groups them by category and workspace, 
 | `--module <name>` | Only show issues in the specified module (auto-detected from repo structure — see skill docs) | `--module frontend/awx` |
 | `--help` | Show this usage information | |
 
-### Required Environment Variables
+### Environment Variables
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `SONAR_ORGANIZATION` | Yes | SonarCloud organization slug |
-| `SONAR_PROJECT_KEY` | Yes | SonarCloud project key |
-| `SONARCLOUD_TOKEN` | Only for private projects | API authentication token |
+All variables can be set beforehand **or** provided interactively when the command starts.
 
-Set them before running:
-```bash
-export SONAR_ORGANIZATION=your-org
-export SONAR_PROJECT_KEY=your-project-key
-```
+| Variable | When needed | Purpose |
+|----------|-------------|---------|
+| `SONAR_BASE_URL` | Optional | Base URL of the Sonar API. Defaults to `https://sonarcloud.io/api`. Set for self-hosted SonarQube. |
+| `SONAR_ORGANIZATION` | Phase A, B | SonarCloud organization slug. **Required for SonarCloud; optional for self-hosted SonarQube.** |
+| `SONAR_PROJECT_KEY` | Phase A, B | Sonar project key |
+| `SONARCLOUD_TOKEN` | Private projects only | API token. **Must be set as an env var** — the skill will never prompt for it. |
 
 ### Output
 

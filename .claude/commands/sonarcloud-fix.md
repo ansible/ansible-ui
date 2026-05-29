@@ -21,15 +21,15 @@ Remediates SonarCloud issues for a selected group with a 2-step approval process
 | `group` | Group number or name from `/sonarcloud-analyze` output. If omitted, you will be prompted to select interactively. | `3` or `S1854-frontend-awx` |
 | `--help` | Show this usage information | |
 
-### Required Environment Variables
+### Environment Variables
 
-Same as `/sonarcloud-analyze`, plus optional:
+Same as `/sonarcloud-analyze`, plus these Phase B variables (set beforehand or provided interactively):
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `SONAR_DEFAULT_BRANCH` | `devel` | Base branch for fix PRs |
-| `SONAR_VALIDATE_COMMANDS` | `npm run tsc && npm run vitest` | Validation gate commands |
-| `SONAR_E2E_TRIGGER_COMMENT` | `/run-playwright` | Comment posted on PR to trigger e2e tests. Set to `none`, `skip`, `false`, or `""` to disable. |
+| Variable | Purpose |
+|----------|---------|
+| `SONAR_DEFAULT_BRANCH` | Base branch for fix PRs (e.g. `main`, `devel`) |
+| `SONAR_VALIDATE_COMMANDS` | Validation commands that must pass before PR creation |
+| `SONAR_PR_COMMENT` | Comment posted on each PR/MR (e.g. `/run-playwright`). Set to `none`, `skip`, `false`, or `""` to disable. |
 
 ### Permissions
 
@@ -54,5 +54,5 @@ Add to `.claude/settings.json` to avoid permission prompts:
    - Wait for explicit approval before creating any PR
    - Create PR(s) with title prefixed `SonarCloud Fix:` (e.g., `SonarCloud Fix: Remove dead stores (S1854, frontend/awx)`)
    - PR body follows `.github/pull_request_template.md`
-   - Post e2e trigger comment on each PR
+   - Post `SONAR_PR_COMMENT` on each PR/MR (if configured)
 7. Offer to continue with the next group
