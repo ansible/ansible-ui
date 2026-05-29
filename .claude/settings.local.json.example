@@ -1,0 +1,52 @@
+{
+  "env": {
+    "CURRENTS_PROJECT_ID": "<ask-your-team-lead>"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm run tsc:*)",
+      "Bash(npm run vitest:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx playwright:*)",
+      "Bash(git fetch:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh api *)",
+      "Bash(gh search *)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(python3 *)",
+      "mcp__currents__currents-get-runs",
+      "mcp__currents__currents-get-run-details",
+      "mcp__currents__currents-get-spec-instance",
+      "mcp__currents__currents-get-tests-performance",
+      "mcp__currents__currents-get-test-results",
+      "mcp__currents__currents-get-context",
+      "mcp__currents__currents-get-project-insights",
+      "mcp__currents__currents-list-actions",
+      "mcp__currents__currents-create-action",
+      "mcp__atlassian__getJiraIssue",
+      "mcp__atlassian__searchJiraIssuesUsingJql",
+      "mcp__atlassian__getAccessibleAtlassianResources",
+      "mcp__atlassian__addCommentToJiraIssue",
+      "mcp__atlassian__getTransitionsForJiraIssue",
+      "mcp__atlassian__transitionJiraIssue",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_wait_for",
+      "WebSearch"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "playwright"
+  ]
+}
