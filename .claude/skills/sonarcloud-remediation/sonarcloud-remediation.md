@@ -8,23 +8,22 @@ Fetch SonarCloud issues, analyze and group them, suggest fixes, and create focus
 
 ### Prerequisites
 
-- **`gh`** (GitHub CLI) — must be installed and authenticated (`gh auth login`). Used by `/sonarcloud-fix` to create PRs and post e2e trigger comments.
+- **`gh`** (GitHub CLI) or **`glab`** (GitLab CLI) — one must be installed and authenticated, matching the repo's hosting platform. Used by `/sonarcloud-fix` to create PRs/MRs and post comments. The skill auto-detects the platform from the git remote URL.
 - **`python3`** (3.8+) — used by the fetch script (`scripts/sonarcloud-fetch.py`). Uses only Python stdlib (no external dependencies).
 
-### Required Environment Variables
+### Environment Variables
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `SONAR_ORGANIZATION` | Yes | SonarCloud organization slug |
-| `SONAR_PROJECT_KEY` | Yes | SonarCloud project key |
-| `SONARCLOUD_TOKEN` | Only for private projects | API authentication token |
-| `SONAR_DEFAULT_BRANCH` | No (default: `devel`) | Base branch for fix PRs |
-| `SONAR_VALIDATE_COMMANDS` | No (default: `npm run tsc && npm run vitest`) | Validation commands that must pass before PR creation |
-| `SONAR_E2E_TRIGGER_COMMENT` | No (default: `/run-playwright`) | Comment to post on PR to trigger e2e tests. Set to `none`, `skip`, `false`, or empty string `""` to disable. |
+All variables can be set as environment variables beforehand **or** provided interactively when the skill starts. Interactive prompting avoids requiring engineers to exit the session to configure the environment.
 
-### Validate Environment
-
-The fetch script validates that `SONAR_PROJECT_KEY` and `SONAR_ORGANIZATION` are set, and handles authentication automatically when `SONARCLOUD_TOKEN` is present. For public projects, no token is needed.
+| Variable | When needed | Purpose |
+|----------|-------------|---------|
+| `SONAR_BASE_URL` | Phase A, B (optional) | Base URL of the Sonar API. Defaults to `https://sonarcloud.io/api`. Set this to target a self-hosted SonarQube instance (e.g. `https://sonarqube.corp.redhat.com/api`). |
+| `SONAR_ORGANIZATION` | Phase A, B | SonarCloud organization slug. **Required for SonarCloud; optional for self-hosted SonarQube.** |
+| `SONAR_PROJECT_KEY` | Phase A, B | Sonar project key |
+| `SONARCLOUD_TOKEN` | Private projects only | API authentication token. **Must be set as an environment variable before starting Claude** — the skill will never prompt for or handle this value directly. Works with both SonarCloud and SonarQube tokens. |
+| `SONAR_DEFAULT_BRANCH` | Phase B | Base branch for fix PRs (e.g. `main`, `devel`) |
+| `SONAR_VALIDATE_COMMANDS` | Phase B | Validation commands that must pass before PR creation (e.g. `npm run tsc && npm run vitest`) |
+| `SONAR_PR_COMMENT` | Phase B (optional) | Comment to post automatically on each newly created PR/MR. Commonly used to trigger CI workflows (e.g. `/run-playwright`). If not provided, no comment is posted. Set to `none`, `skip`, `false`, or empty string `""` to explicitly disable. |
 
 ---
 
@@ -32,9 +31,56 @@ The fetch script validates that `SONAR_PROJECT_KEY` and `SONAR_ORGANIZATION` are
 
 Invoked via `/sonarcloud-analyze`. Fetches all open issues and presents a prioritized, grouped report.
 
+### Step 0: Collect Configuration
+
+Before fetching data, detect the hosting platform and collect required variables.
+
+**Step 0a: Detect hosting platform**
+
+Read the git remote URL to determine whether this is a GitHub or GitLab repository:
+
+```bash
+git remote get-url origin
+```
+
+- If the URL contains `github.com` → **GitHub** (use `gh` CLI)
+- If the URL contains `gitlab` → **GitLab** (use `glab` CLI)
+- If unclear, ask the engineer: "Is this repo hosted on GitHub or GitLab?"
+
+Store the detected platform for use in Phase B.
+
+**Step 0b: Collect SonarCloud variables**
+
+Check whether the required variables are available as environment variables. For any that are missing, prompt the engineer interactively using AskUserQuestion.
+
+1. If `SONAR_ORGANIZATION` is not set and the target is SonarCloud (no `SONAR_BASE_URL` override), ask: "What is your SonarCloud organization slug?" For self-hosted SonarQube instances, `SONAR_ORGANIZATION` is optional — skip this prompt.
+2. If `SONAR_PROJECT_KEY` is not set, ask: "What is your Sonar project key?"
+3. If `SONARCLOUD_TOKEN` is not set and the project is private, **do not prompt for the token**. Instead, guide the engineer to set it up themselves and restart Claude:
+   > "This project requires a `SONARCLOUD_TOKEN` for API access. Please set it as an environment variable and restart Claude:
+   >
+   > ```bash
+   > export SONARCLOUD_TOKEN=<your-token>
+   > ```
+   >
+   > You can generate a token at your Sonar instance's account security page (e.g. https://sonarcloud.io/account/security for SonarCloud). Once the variable is set, restart Claude and re-run the command."
+
+   Then **stop the workflow** — do not proceed without the token in the environment.
+
+After collecting the required values, also remind the engineer: "If you plan to fix issues after analysis, I'll need a few more values later — the base branch name and your validation commands. You can provide them now or when we get to the fix phase."
+
+If the engineer provides Phase B values at this point (`SONAR_DEFAULT_BRANCH`, `SONAR_VALIDATE_COMMANDS`, `SONAR_PR_COMMENT`), store them for later use and skip re-prompting in Phase B Step 0.
+
+Use the collected values for the remainder of the session.
+
 ### Step 1: Fetch and Categorize Issues
 
-Run the fetch script to retrieve all SonarCloud data:
+Run the fetch script to retrieve all SonarCloud data. If `SONAR_ORGANIZATION` or `SONAR_PROJECT_KEY` were provided interactively (not via environment variables), pass them as inline environment variables. **Never pass `SONARCLOUD_TOKEN` on the command line** — it must already be in the environment.
+
+```bash
+SONAR_PROJECT_KEY=<value> SONAR_ORGANIZATION=<value> python3 .claude/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py
+```
+
+If all values are already set as environment variables, run the script directly:
 
 ```bash
 python3 .claude/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py
@@ -55,6 +101,7 @@ If the script exits with code 1, read the `error` field from its JSON output and
 - Missing env vars → prompt the user to set them
 - HTTP 401 → invalid token
 - HTTP 404 → wrong project key
+- `"hint": "missing_organization"` → the Sonar instance requires an organization. Prompt the user: "This Sonar instance requires an organization. What is your Sonar organization slug?" Then re-run the fetch script with `SONAR_ORGANIZATION` set to the provided value.
 
 Parse the JSON output. Use the `categories` object as the starting point for Step 2.
 
@@ -177,6 +224,8 @@ Good starting groups for `/sonarcloud-fix`:
   /sonarcloud-fix 2   — Dead stores (23 issues, ~35 LOC, Low risk)
 ```
 
+**Tip:** If you plan to fix issues after analysis, it's best to have `SONAR_DEFAULT_BRANCH` and `SONAR_VALIDATE_COMMANDS` ready. You can set them as environment variables beforehand, or provide them interactively when Phase B starts.
+
 ### Optional Filters
 
 If the user provides flags, apply them before grouping:
@@ -192,32 +241,47 @@ Invoked via `/sonarcloud-fix`. The engineer selects groups from the analyze outp
 
 ### Step 0: Configuration Pre-Check
 
-**Before doing any work**, display all non-sensitive configuration values so the engineer can verify them. Use the AskUserQuestion tool to confirm.
+**Before doing any work**, check all required Phase B configuration. If any variables are missing and were not already provided during Phase A Step 0, prompt the engineer interactively using AskUserQuestion.
 
-Display:
+**Step 0a: Collect missing Phase B variables**
+
+If `SONAR_DEFAULT_BRANCH` is not set (env var or earlier prompt), ask:
+> "What is the base branch for fix PRs? (e.g. `main`, `devel`)"
+
+If `SONAR_VALIDATE_COMMANDS` is not set (env var or earlier prompt), ask:
+> "What validation commands must pass before a PR can be created? (e.g. `npm run tsc && npm run vitest`, `make lint && make test`)"
+
+If `SONAR_PR_COMMENT` is not set (env var or earlier prompt), ask:
+> "Do you want a comment posted automatically on each PR/MR? This is commonly used to trigger CI workflows (e.g. `/run-playwright`). Provide the comment text, or type 'skip' to disable."
+
+Use the values provided for the remainder of the session.
+
+**Step 0b: Display configuration summary**
+
+Display all non-sensitive configuration values so the engineer can verify them:
 
 ```
 ## Configuration
 
-| Variable                  | Value                          | Source  | Description                                        |
-|---------------------------|--------------------------------|---------|----------------------------------------------------|
-| SONAR_ORGANIZATION        | your-org                       | env     | SonarCloud organization slug                       |
-| SONAR_PROJECT_KEY         | your-project-key               | env     | SonarCloud project key                             |
-| SONARCLOUD_TOKEN          | (set)                          | env     | API token for private projects                     |
-| SONAR_DEFAULT_BRANCH      | devel                          | default | Branch that fix PRs will target                    |
-| SONAR_VALIDATE_COMMANDS   | npm run tsc && npm run vitest  | default | Commands that must pass before a PR can be created |
-| SONAR_E2E_TRIGGER_COMMENT | /run-playwright                | default | Comment posted on PR to trigger e2e test pipeline. Set to none/skip/false/"" to disable |
+| Variable                  | Value                          | Source      | Description                                        |
+|---------------------------|--------------------------------|-------------|----------------------------------------------------|
+| SONAR_ORGANIZATION        | your-org                       | env         | SonarCloud organization slug                       |
+| SONAR_PROJECT_KEY         | your-project-key               | env         | SonarCloud project key                             |
+| SONARCLOUD_TOKEN          | (set)                          | env         | API token for private projects                     |
+| SONAR_DEFAULT_BRANCH      | main                           | interactive | Branch that fix PRs will target                    |
+| SONAR_VALIDATE_COMMANDS   | make lint && make test         | interactive | Commands that must pass before a PR can be created |
+| SONAR_PR_COMMENT          | /run-playwright                | env         | Comment posted automatically on each PR/MR         |
 ```
 
-- Show `(set)` or `(not set)` for `SONARCLOUD_TOKEN` — never display the actual value
-- Show `env` in the Source column if the variable is explicitly set, `default` if using the built-in default
-- If `SONAR_E2E_TRIGGER_COMMENT` is set to `none`, `skip`, `false`, or an empty string, show `(disabled)` in the Value column
-- **Highlight any variables using defaults** so they stand out
+- Show `(set)` or `(not set)` for `SONARCLOUD_TOKEN` — never display the actual value. This variable is always sourced from the environment (never interactive).
+- In the Source column, show `env` if from an environment variable or `interactive` if provided via prompt
+- If `SONAR_PR_COMMENT` was skipped or not provided, show `(not set — no comment will be posted)` in the Value column
+- If `SONAR_PR_COMMENT` is set to `none`, `skip`, `false`, or an empty string, show `(disabled)` in the Value column
 
-Then ask: "Do these settings look correct? If any need updating, set the environment variables and re-run the command."
+Then ask: "Do these settings look correct? If any need updating, let me know."
 
 - If the engineer confirms → proceed to Step 1
-- If the engineer says values need updating → stop and let them update env vars before retrying
+- If the engineer wants to change a value → prompt for the new value and update the session configuration
 
 **Skip this pre-check** if it was already confirmed earlier in the same session.
 
@@ -291,11 +355,10 @@ Apply all approved fixes using the Edit tool.
 
 **Validation — Hard Gate:**
 
-After applying fixes, the validation commands **must pass before proceeding**:
+After applying fixes, run the validation commands using the value from the environment variable or the value provided interactively in Step 0.
 
 ```bash
-VALIDATE_CMD="${SONAR_VALIDATE_COMMANDS:-npm run tsc && npm run vitest}"
-eval "$VALIDATE_CMD"
+eval "$SONAR_VALIDATE_COMMANDS"
 ```
 
 If validation fails:
@@ -307,10 +370,10 @@ If validation fails:
 
 ### Step 6: Create Branch and Commit (Approval 1)
 
-**Branch** off the configured default branch:
+**Branch** off the configured default branch, using the value from the environment variable or the value provided interactively in Step 0.
+
 ```bash
-DEFAULT_BRANCH="${SONAR_DEFAULT_BRANCH:-devel}"
-git checkout -b "sonar/<rule-key>-<module-slug>" "origin/${DEFAULT_BRANCH}"
+git checkout -b "sonar/<rule-key>-<module-slug>" "origin/$SONAR_DEFAULT_BRANCH"
 ```
 
 Branch naming: `sonar/<rule-key>-<module-slug>` where `<module-slug>` is the module name with `/` replaced by `-` (e.g., `sonar/S1854-frontend-awx`, `sonar/S1128-framework`, `sonar/S1481-src`)
@@ -329,7 +392,7 @@ SonarCloud issue keys: AZxx1, AZxx2, ...
 Branch `sonar/S1854-frontend-awx` is ready with N commits.
 
 You can now:
-  - Review the diff: git diff origin/devel...HEAD
+  - Review the diff: git diff origin/<SONAR_DEFAULT_BRANCH>...HEAD
   - Run additional tests locally
   - Make manual adjustments and commit them to this branch
 
@@ -338,28 +401,28 @@ When you're satisfied, let me know and I'll create the PR.
 
 **Wait for the engineer's explicit go-ahead before proceeding to PR creation.** Do NOT create the PR automatically.
 
-### Step 7: Create PR (Approval 2)
+### Step 7: Create PR/MR (Approval 2)
 
-Before creating any PRs, present a summary:
+Before creating any PRs/MRs, present a summary:
 
 ```
-Ready to create PR(s):
+Ready to create PR(s)/MR(s):
 
-| # | Branch                  | Files | LOC changed | Target     |
-|---|-------------------------|-------|-------------|------------|
-| 1 | sonar/S1854-frontend-awx        |   12  |    ~46      | devel      |
-| 2 | sonar/S1854-frontend-awx-batch2 |    8  |    ~38      | devel      |
+| # | Branch                          | Files | LOC changed | Target              |
+|---|-------------------------------|-------|-------------|---------------------|
+| 1 | sonar/S1854-frontend-awx        |   12  |    ~46      | <SONAR_DEFAULT_BRANCH> |
+| 2 | sonar/S1854-frontend-awx-batch2 |    8  |    ~38      | <SONAR_DEFAULT_BRANCH> |
 
-Total: 2 PR(s) targeting `devel`.
+Total: 2 PR(s)/MR(s) targeting `<SONAR_DEFAULT_BRANCH>`.
 
-Proceed with PR creation?
+Proceed?
 ```
 
-**Wait for explicit approval.** Then for each PR:
+**Wait for explicit approval.** Then for each PR/MR:
 
-**PR Title — REQUIRED format:**
+**Title — REQUIRED format:**
 
-All PR titles **must** start with the prefix `SonarCloud Fix:` followed by a short description of the issue area being addressed. Use this pattern:
+All titles **must** start with the prefix `SonarCloud Fix:` followed by a short description of the issue area being addressed. Use this pattern:
 
 ```
 SonarCloud Fix: <brief description of fix> (<rule key>, <module>)
@@ -372,10 +435,17 @@ Examples:
 - `SonarCloud Fix: Reduce cognitive complexity (S3776, frontend/eda)`
 - `SonarCloud Fix: Remove commented-out code (S125, src)`
 
-For batched PRs, append the batch number:
+For batched PRs/MRs, append the batch number:
 - `SonarCloud Fix: Remove dead stores (S1854, frontend/awx) [batch 1/2]`
 
-If the repo has a `.github/pull_request_template.md`, follow its structure for the PR body. Otherwise, use this default format:
+**Creating the PR/MR:**
+
+Use the platform detected in Phase A Step 0:
+
+- **GitHub**: `gh pr create --title "<title>" --body "<body>" --base <SONAR_DEFAULT_BRANCH>`
+- **GitLab**: `glab mr create --title "<title>" --description "<body>" --target-branch <SONAR_DEFAULT_BRANCH>`
+
+**Body/description:** If the repo has a PR/MR template (`.github/pull_request_template.md` or `.gitlab/merge_request_templates/`), follow its structure. Otherwise, use this default format:
 
 ```markdown
 ## Summary
@@ -404,27 +474,27 @@ Adjust **Type of Change** and **Risk Analysis** based on the fix category:
 - Cognitive complexity refactoring → **Medium**
 - Security/reliability fixes → **Medium** to **High**
 
-### Step 8: Trigger E2E and Continue
+### Step 8: Post PR/MR Comment and Continue
 
-1. Check `SONAR_E2E_TRIGGER_COMMENT`. If set to `none`, `skip`, `false`, or an empty string `""`, **skip posting** the e2e trigger comment entirely. Otherwise, post the comment on each newly created PR:
-   ```bash
-   E2E_COMMENT="${SONAR_E2E_TRIGGER_COMMENT:-/run-playwright}"
-   gh pr comment <PR_NUMBER> --body "$E2E_COMMENT"
-   ```
+1. Check `SONAR_PR_COMMENT`. If the variable is **not set**, **skip** this step entirely. If set to `none`, `skip`, `false`, or an empty string `""`, also **skip**. Otherwise, post the comment on each newly created PR/MR using the detected platform:
+   - **GitHub**: `gh pr comment <PR_NUMBER> --body "$SONAR_PR_COMMENT"`
+   - **GitLab**: `glab mr note <MR_NUMBER> --message "$SONAR_PR_COMMENT"`
 2. Offer to continue — return to group selection for the next batch
 
 ---
 
 ## Portability
 
-This skill is designed for adoption by other teams and repos:
+This skill is designed for adoption across repositories:
 
-1. **No hardcoded values** — all project-specific config via environment variables
-2. **Configurable base branch** — `SONAR_DEFAULT_BRANCH` defaults to `devel` but can be set to `main` or any branch
-3. **Automatic module detection** — detects monorepo workspaces from `package.json`, `pnpm-workspace.yaml`, `nx.json`, or `lerna.json`. For non-monorepo projects, groups issues by top-level directory. No repo-specific configuration required.
-4. **Fetch script** — `scripts/sonarcloud-fetch.py` uses only Python stdlib (no external dependencies). Handles pagination, authentication, and categorization deterministically.
-5. **Validation commands** — set `SONAR_VALIDATE_COMMANDS` to your project's validation pipeline (e.g., `make lint && make test`)
-6. **PR template** — adjust to match the target repo's `.github/pull_request_template.md`
+1. **No hardcoded values** — all project-specific config via environment variables or interactive prompts
+2. **SonarCloud and SonarQube** — works with SonarCloud (default) and self-hosted SonarQube instances via `SONAR_BASE_URL`. Organization parameter is automatically omitted for self-hosted instances where it is not required.
+3. **Configurable base branch** — `SONAR_DEFAULT_BRANCH` set via env var or provided interactively
+4. **Automatic module detection** — detects monorepo workspaces from `package.json`, `pnpm-workspace.yaml`, `nx.json`, or `lerna.json`. For non-monorepo projects, groups issues by top-level directory. No repo-specific configuration required.
+5. **Fetch script** — `scripts/sonarcloud-fetch.py` uses only Python stdlib (no external dependencies). Handles pagination, authentication, and categorization deterministically.
+6. **Validation commands** — `SONAR_VALIDATE_COMMANDS` set via env var or provided interactively
+7. **GitHub and GitLab** — auto-detects hosting platform from git remote URL; uses `gh` or `glab` accordingly
+8. **PR/MR template** — automatically adapts to the target repo's `.github/pull_request_template.md` or `.gitlab/merge_request_templates/`
 
 ### Quick Start for Other Teams
 
@@ -432,9 +502,10 @@ This skill is designed for adoption by other teams and repos:
 export SONAR_ORGANIZATION=your-org
 export SONAR_PROJECT_KEY=your-project-key
 export SONARCLOUD_TOKEN=your-token        # only for private projects
+export SONAR_BASE_URL=https://sonarqube.corp.example.com/api  # only for self-hosted SonarQube
 export SONAR_DEFAULT_BRANCH=main                          # if not devel
 export SONAR_VALIDATE_COMMANDS="make lint && make test"    # your validation pipeline
-export SONAR_E2E_TRIGGER_COMMENT="/run-e2e"                # your e2e trigger comment, or "none" to disable
+export SONAR_PR_COMMENT="/run-e2e"                         # your PR comment, or "none" to disable
 ```
 
 Then use `/sonarcloud-analyze` and `/sonarcloud-fix`.
@@ -445,9 +516,11 @@ Then use `/sonarcloud-analyze` and `/sonarcloud-fix`.
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| "ERROR: SONAR_ORGANIZATION and SONAR_PROJECT_KEY must be set" | Missing env vars | Export `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` |
-| Empty results from API | Wrong project key or org | Verify at `https://sonarcloud.io/project/overview?id=<PROJECT_KEY>` |
-| 401 from API | Private project without token | Export `SONARCLOUD_TOKEN` |
+| Prompted for organization/project key | Not set as env vars | Set env vars beforehand, or provide values when prompted interactively |
+| Empty results from API | Wrong project key or org | Verify the project exists on your Sonar instance (e.g. `https://sonarcloud.io/project/overview?id=<PROJECT_KEY>` for SonarCloud, or `<SONAR_BASE_URL>/dashboard?id=<PROJECT_KEY>` for self-hosted) |
+| 401 from API | Private project without token | Set `SONARCLOUD_TOKEN` as an environment variable (`export SONARCLOUD_TOKEN=<your-token>`), then restart Claude. Generate a token from your Sonar instance's account security page |
+| Connection error to self-hosted instance | Wrong URL or TLS issue | Verify `SONAR_BASE_URL` is correct (include `/api` suffix). For self-signed certificates, set `SONAR_INSECURE=1` |
+| Prompted for Phase B config | Not set as env vars | Set env vars beforehand, or provide values when prompted. You can also provide Phase B values during Phase A to avoid a second prompt. |
 | Validation command fails after fix | Fix introduced a build/lint/type error | Review the error, adjust the fix, re-run `SONAR_VALIDATE_COMMANDS` |
 | Tests fail after fix | Fix broke a test | Check if the test relied on removed code; update the test and re-run validation |
 | Pagination missed issues | More than 500 issues per query | The skill paginates automatically; if issues are still missing, try filtering by severity or type |

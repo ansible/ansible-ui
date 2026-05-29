@@ -10,7 +10,7 @@ If the user passes `--help`, display the usage information below and stop.
 /sonarcloud-analyze [options]
 ```
 
-Fetches all open issues from SonarCloud, groups them by category and workspace, and presents a prioritized summary report.
+Fetches all open issues from SonarCloud or SonarQube, groups them by category and workspace, and presents a prioritized summary report.
 
 ### Options
 
@@ -20,19 +20,16 @@ Fetches all open issues from SonarCloud, groups them by category and workspace, 
 | `--module <name>` | Only show issues in the specified module (auto-detected from repo structure — see skill docs) | `--module frontend/awx` |
 | `--help` | Show this usage information | |
 
-### Required Environment Variables
+### Environment Variables
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `SONAR_ORGANIZATION` | Yes | SonarCloud organization slug |
-| `SONAR_PROJECT_KEY` | Yes | SonarCloud project key |
-| `SONARCLOUD_TOKEN` | Only for private projects | API authentication token |
+All variables can be set beforehand **or** provided interactively when the command starts, **except `SONARCLOUD_TOKEN`** which must always be set as an environment variable.
 
-Set them before running:
-```bash
-export SONAR_ORGANIZATION=your-org
-export SONAR_PROJECT_KEY=your-project-key
-```
+| Variable | When needed | Purpose |
+|----------|-------------|---------|
+| `SONAR_BASE_URL` | Optional | Base URL of the Sonar API. Defaults to `https://sonarcloud.io/api`. Set for self-hosted SonarQube. |
+| `SONAR_ORGANIZATION` | Phase A, B | SonarCloud organization slug. **Required for SonarCloud; optional for self-hosted SonarQube.** |
+| `SONAR_PROJECT_KEY` | Phase A, B | Sonar project key |
+| `SONARCLOUD_TOKEN` | Private projects only | API token. **Must be set as an environment variable before starting Claude** — never provided interactively. |
 
 ### Output
 
@@ -54,6 +51,8 @@ Add to `.claude/settings.json` to avoid permission prompts:
 
 ## Workflow
 
-1. Run the fetch script (`scripts/sonarcloud-fetch.py`) to fetch and categorize all issues
-2. Detect modules (from workspace definitions or top-level directories), group by rule + module, sort by remediation priority
-3. Present a prioritized summary table per category
+1. Detect hosting platform (GitHub or GitLab) from the git remote URL
+2. Collect any missing configuration interactively (org, project key). If `SONARCLOUD_TOKEN` is needed but not set, guide the user to set it and stop.
+3. Run the fetch script (`scripts/sonarcloud-fetch.py`) to fetch and categorize all issues
+4. Detect modules (from workspace definitions or top-level directories), group by rule + module, sort by remediation priority
+5. Present a prioritized summary table per category
