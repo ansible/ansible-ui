@@ -41,6 +41,7 @@ export function createSWRErrorRetryHandler() {
     if (opts.retryCount >= 3) return;
 
     // Add jitter to prevent thundering herd
+    // Math.random is sufficient for retry timing - not security-sensitive (SonarCloud S2245)
     const timeout = Math.trunc((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
 
     setTimeout(() => {
