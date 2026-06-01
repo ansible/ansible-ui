@@ -160,19 +160,32 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
     }
 
     if (isTemplateChange) {
-      // Force-clear all prompt fields regardless of form state. The hidden prompt step may
-      // carry stale values from stepDefaults (PageWizard does not sync setStepData updates
-      // back to formValues for hidden steps), and even visible steps may still carry old
-      // values if the form wasn't re-rendered after the template switch.
-      effectivePrompt.credentials = [];
-      effectivePrompt.labels = [];
-      effectivePrompt.instance_groups = [];
-      effectivePrompt.skip_tags = [];
-      effectivePrompt.job_tags = [];
-      // Clear extra_vars so that setValue('extra_data', ...) does not run with stale
-      // data. Without this, when the new template has ask_variables_on_launch=true,
-      // setValue passes its guard and sends the old template's vars to the API.
-      effectivePrompt.extra_vars = '';
+      // For each prompt field, only clear it when the new template does NOT accept it.
+      // - If the new template accepts the field (ask_*_on_launch=true), the prompt step
+      //   is visible and formValues reflects the user's actual choice — preserve it.
+      // - If the new template does not accept the field (ask_*_on_launch=false or no
+      //   launch_config at all), the field is hidden/stale. Force-clearing ensures
+      //   processCredentials/Labels/InstanceGroups sees removed=[old] and cleans up
+      //   the node's DB state, preventing AWX from rejecting the unified_job_template
+      //   PATCH with "Field is not configured to prompt on launch."
+      if (!launch_config?.ask_credential_on_launch) {
+        effectivePrompt.credentials = [];
+      }
+      if (!launch_config?.ask_labels_on_launch) {
+        effectivePrompt.labels = [];
+      }
+      if (!launch_config?.ask_instance_groups_on_launch) {
+        effectivePrompt.instance_groups = [];
+      }
+      if (!launch_config?.ask_skip_tags_on_launch) {
+        effectivePrompt.skip_tags = [];
+      }
+      if (!launch_config?.ask_tags_on_launch) {
+        effectivePrompt.job_tags = [];
+      }
+      if (!launch_config?.ask_variables_on_launch) {
+        effectivePrompt.extra_vars = '';
+      }
     }
 
     // Always build original so save-time cleanup has what it needs.
