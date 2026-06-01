@@ -1,21 +1,23 @@
-  version: 2
-  updates:
-    - package-ecosystem: "npm"
-      directory: "/"
-      schedule:
-        interval: "weekly"
-      # "increase" is required for npm workspaces monorepos. Without it, Dependabot skips
-      # updating workspace package.json files when the existing range (e.g. ^1.0.0) already
-      # satisfies the new version — so no PR is created. See: https://github.com/dependabot/dependabot-core/issues/5226
-      versioning-strategy: increase
-      groups:
-        # Batches all non-major devDependency updates into a single PR.
-        # Major devDependency bumps and all production dependency updates get individual PRs.
-        non-major-dev:
-          dependency-type: "development"
-          update-types:
-            - "minor"
-            - "patch"
-          exclude-patterns:
-            - "prettier"
-            - "typescript"
+version: 2
+cooldown:
+  default-days: 7
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # "increase" is required for npm workspaces monorepos. Without it, Dependabot skips
+    # updating workspace package.json files when the existing range (e.g. ^1.0.0) already
+    # satisfies the new version — so no PR is created. See: https://github.com/dependabot/dependabot-core/issues/5226
+    versioning-strategy: increase
+    groups:
+      # Batches all non-major devDependency updates into a single PR.
+      # Major devDependency bumps and all production dependency updates get individual PRs.
+      non-major-dev:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "prettier"
+          - "typescript"
