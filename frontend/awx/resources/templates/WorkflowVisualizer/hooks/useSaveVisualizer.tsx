@@ -9,6 +9,7 @@ import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
+import { getAddedAndRemovedCredentials } from './getAddedAndRemovedCredentials';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { Label } from '../../../../interfaces/Label';
 import { Organization } from '../../../../interfaces/Organization';
@@ -755,36 +756,4 @@ const useProcessCredentials = () => {
     },
     [postDisassociate, postAssociateCredential]
   );
-};
-
-interface Credential {
-  id: number;
-  name: string;
-  credential_type: number;
-}
-const getAddedAndRemovedCredentials = (
-  nodeCredentials: Credential[],
-  promptCredentials: Credential[],
-  templateCredentials: Credential[]
-) => {
-  // Step 1: Get the aggregate credentials from the template and node
-  const aggregateCredentials = [...nodeCredentials, ...templateCredentials];
-
-  // Missing step - vault ids are not being compared
-
-  // Step 2: Add credentials from prompt that are not in the aggregate
-  const added = promptCredentials.filter(
-    (promptCredential) =>
-      !aggregateCredentials.find(
-        (aggregateCredential) => aggregateCredential.id === promptCredential.id
-      )
-  );
-
-  // Step 3: Remove credentials from the aggregate that are not in the prompt
-  const removed = nodeCredentials.filter(
-    (nodeCredential) =>
-      !promptCredentials.find((promptCredential) => promptCredential.id === nodeCredential.id)
-  );
-
-  return { added, removed };
 };
