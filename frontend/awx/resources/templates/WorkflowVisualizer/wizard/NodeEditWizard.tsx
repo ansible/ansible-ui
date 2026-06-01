@@ -88,14 +88,23 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         ) {
           return shouldHideOtherStep(launch_config);
         }
-        if ('nodePromptsStep' in initialValues) {
+        // nodePromptsStep is always present in initialValues (it carries original
+        // node resources for save cleanup). Only show the step if the original
+        // template actually had prompts, which is indicated by launch_config being
+        // stored in the initial prompt values.
+        if (initialValues.nodePromptsStep?.prompt?.launch_config) {
           return false;
         }
         return true;
       },
       validate: (wizardData: Partial<WizardFormValues>) => {
+        // Prefer the live wizard data's requiredCredentialTypes so that validation reflects
+        // the currently selected template, not the template that was loaded when the wizard
+        // was first opened (which is stale if the user switched templates mid-edit).
         const requiredCredentialTypes =
-          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || [];
+          wizardData.prompt?.requiredCredentialTypes ||
+          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes ||
+          [];
         validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes);
       },
     },
@@ -120,6 +129,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const handleSubmit = async (formValues: WizardFormValues) => {
     const nodeData = node.getData() as { resource: WorkflowNode };
     const nodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
+    const originalTemplateId = nodeData.resource.summary_fields?.unified_job_template?.id;
 
     const {
       approval_name,
@@ -135,24 +145,42 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       survey,
     } = formValues;
 
-    const promptValues = prompt;
+    const isTemplateChange =
+      originalTemplateId !== undefined && Number(resource?.id) !== originalTemplateId;
 
-    if (promptValues) {
-      if (resource && 'organization' in resource) {
-        promptValues.organization = resource.organization ?? null;
-      }
-      if (launch_config) {
-        promptValues.original = {
-          launch_config,
-        };
-      }
-      if (nodeOriginalResources) {
-        promptValues.original = {
-          ...promptValues.original,
-          ...nodeOriginalResources,
-        };
-      }
+    // When the new template has no prompts, PageWizard hides the prompt step and does not
+    // include it in formValues — prompt is undefined. We still need launch_data to be set
+    // so that processCredentials/Labels/InstanceGroups can clean up any node-level resources
+    // that were associated for the old template. Without this, launch_data is undefined,
+    // processCredentials never runs, and the PATCH fails because orphaned credentials remain.
+    const effectivePrompt: Partial<PromptFormValues> = prompt ?? {};
+
+    if (resource && 'organization' in resource) {
+      effectivePrompt.organization = resource.organization ?? null;
     }
+
+    if (isTemplateChange) {
+      // Force-clear all prompt fields regardless of form state. The hidden prompt step may
+      // carry stale values from stepDefaults (PageWizard does not sync setStepData updates
+      // back to formValues for hidden steps), and even visible steps may still carry old
+      // values if the form wasn't re-rendered after the template switch.
+      effectivePrompt.credentials = [];
+      effectivePrompt.labels = [];
+      effectivePrompt.instance_groups = [];
+      effectivePrompt.skip_tags = [];
+      effectivePrompt.job_tags = [];
+      // Clear extra_vars so that setValue('extra_data', ...) does not run with stale
+      // data. Without this, when the new template has ask_variables_on_launch=true,
+      // setValue passes its guard and sends the old template's vars to the API.
+      effectivePrompt.extra_vars = '';
+    }
+
+    // Always build original so save-time cleanup has what it needs.
+    effectivePrompt.original = {
+      ...(launch_config ? { launch_config } : {}),
+      ...nodeOriginalResources,
+      ...(isTemplateChange ? { isTemplateChange: true } : {}),
+    };
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
@@ -180,7 +208,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
           },
         },
       },
-      launch_data: promptValues,
+      launch_data: effectivePrompt,
       survey_data: survey,
     };
 

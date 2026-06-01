@@ -24,7 +24,7 @@ interface WorkflowApprovalNode {
 
 interface CreateWorkflowNodePayload {
   extra_data?: object;
-  inventory?: number;
+  inventory?: number | null;
   scm_branch?: string;
   job_type?: string;
   job_tags?: string;
@@ -335,6 +335,42 @@ export function useSaveVisualizer(templateId: string) {
               ...parseVariableField(launch_data?.extra_vars ?? '---'),
               ...survey_data,
             });
+          }
+
+          // When the user switches to a different template, any node-level prompt field values
+          // that were valid for the old template may be rejected by the new one. AWX validates
+          // the node's full DB state against the new template on PATCH, so stale values cause
+          // a 400 error. Explicitly clear each field when the new template does not accept it —
+          // consistent with how credentials, labels, and instance_groups are reset on change.
+          if (launch_data?.original?.isTemplateChange) {
+            const newLaunchConfig = launch_data.original.launch_config;
+            if (!newLaunchConfig?.ask_skip_tags_on_launch) {
+              updatedNodePayload.skip_tags = '';
+            }
+            if (!newLaunchConfig?.ask_tags_on_launch) {
+              updatedNodePayload.job_tags = '';
+            }
+            // Clear extra_data whenever it hasn't been explicitly set for the new template.
+            // This covers both ask_variables_on_launch=false (setValue returned early so
+            // extra_data is absent) and ask_variables_on_launch=true with no user-entered
+            // vars (setValue didn't run because extra_vars was cleared in handleSubmit).
+            // When the user DID set new extra_vars, setValue already put them in the payload
+            // so this check leaves them untouched.
+            if (!('extra_data' in updatedNodePayload)) {
+              updatedNodePayload.extra_data = {};
+            }
+            if (!newLaunchConfig?.ask_inventory_on_launch) {
+              updatedNodePayload.inventory = null;
+            }
+            if (!newLaunchConfig?.ask_execution_environment_on_launch) {
+              updatedNodePayload.execution_environment = null;
+            }
+            if (!newLaunchConfig?.ask_limit_on_launch) {
+              updatedNodePayload.limit = '';
+            }
+            if (!newLaunchConfig?.ask_scm_branch_on_launch) {
+              updatedNodePayload.scm_branch = '';
+            }
           }
 
           await processLabels(nodeId, launch_data);
