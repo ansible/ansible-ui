@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { CollectionDocumentation, CollectionVersionsContent } from './CollectionDocumentation';
 
@@ -547,5 +548,35 @@ describe('CollectionDocumentation', () => {
     // Verify the role link is a clickable navigation item
     const roleNavItem = screen.getByText('example_role');
     expect(roleNavItem.closest('button, a, [role="button"]')).not.toBeNull();
+  });
+
+  test('should render gracefully without crashing when docs_blob is missing from API response', async () => {
+    server.use(
+      http.get(
+        ({ request }) => {
+          return request.url.includes('/content/ansible/collection_versions/');
+        },
+        () => {
+          return HttpResponse.json({
+            count: 1,
+            next: '',
+            previous: '',
+            results: [{ license: ['GPL-3.0-or-later'] }],
+          });
+        }
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <TestWrapper>
+          <CollectionDocumentation />
+        </TestWrapper>
+      </SWRConfig>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/can not load documentation/i)).toBeInTheDocument();
+    });
   });
 });
