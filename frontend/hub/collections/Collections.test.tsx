@@ -97,7 +97,7 @@ describe('Collections Component', () => {
       expect(await screen.findByRole('heading', { name: 'Collections' })).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
+          'Collections are packaged units of Ansible content that include roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
         )
       ).toBeInTheDocument();
     });

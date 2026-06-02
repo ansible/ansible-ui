@@ -95,7 +95,7 @@ describe('RemoteRegistries Component', () => {
       expect(await screen.findByRole('heading', { name: 'Remote Registries' })).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Remote registries manage configurations for remote execution environments utilized in Ansible automation tasks.'
+          'Remote registries provide a central location for users to search, retrieve, and install Ansible content.'
         )
       ).toBeInTheDocument();
     });

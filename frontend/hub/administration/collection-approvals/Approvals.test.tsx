@@ -109,7 +109,7 @@ describe('Approvals Component', () => {
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
+          'Collection approvals enable administrators to manage and authorize Ansible content for organizational use.'
         )
       ).toBeInTheDocument();
     });
