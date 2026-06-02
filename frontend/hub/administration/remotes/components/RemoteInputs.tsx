@@ -119,7 +119,7 @@ export function RemoteInputs({
           label={t('Server username')}
           placeholder={t('Enter server username')}
           labelHelp={t(
-            'The username to be used for authentication when syncing. This is not required when using a token.'
+            'The username for authentication when syncing. This is not required when using a token.'
           )}
         />
       </PageFormSecret>
@@ -135,7 +135,7 @@ export function RemoteInputs({
           label={t('Server password')}
           placeholder={t('Enter server password')}
           labelHelp={t(
-            'The password to be used for authentication when syncing. This is not required when using a token.'
+            'The password for authentication when syncing. This is not required when using a token.'
           )}
         />
       </PageFormSecret>
@@ -158,7 +158,7 @@ export function RemoteInputs({
         name="auth_url"
         label={t('SSO URL')}
         placeholder={t('Enter SSO URL')}
-        labelHelp={t('Single sign on URL.')}
+        labelHelp={t('Single sign-on URL.')}
         validate={isValidUrl}
       />
     </>

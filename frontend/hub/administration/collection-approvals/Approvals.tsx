@@ -46,7 +46,7 @@ export function Approvals() {
   const isUnauthorized = !canModifyRepoContent || isAccessDeniedError(view.error);
 
   const description = t(
-    'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
+    'Collection approvals enable administrators to manage and authorize Ansible content for organizational use.'
   );
 
   return (

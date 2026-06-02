@@ -52,7 +52,7 @@ export function RemoteRegistries() {
   const isUnauthorized = isAccessDeniedError(view.error);
 
   const description = t(
-    'Remote registries manage configurations for remote execution environments utilized in Ansible automation tasks.'
+    'Remote registries provide a central location for users to search, retrieve, and install Ansible content.'
   );
 
   return (
