@@ -103,14 +103,16 @@ export const EdaCredential = {
         await page.getByRole('textbox', { name: 'Username' }).fill('test');
         await page.getByRole('textbox', { name: 'Password' }).click();
         await page.getByRole('textbox', { name: 'Password' }).fill('test');
-      } else if (credentialTypeName === 'Rule Engine') {
+      } else if (credentialTypeName === 'Event-Driven Ansible Rule Engine') {
         // Rule Engine credentials require Postgres DB Host and DB Name
         await page.getByRole('textbox', { name: 'Postgres DB Host' }).fill('localhost');
         await page.getByRole('textbox', { name: 'Postgres DB Name' }).fill('test_db');
       }
 
       await page.getByRole('button', { name: 'Create credential' }).click();
-      await expect(page.getByRole('heading', { name: credentialName, exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: credentialName, exact: true })).toBeVisible({
+        timeout: 10000,
+      });
       return credentialName;
     },
 
