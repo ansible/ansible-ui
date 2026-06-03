@@ -45,6 +45,28 @@ async function getNodeCredentials(page: import('@playwright/test').Page, nodeId:
   return (await awxAPI.get(page, `workflow_job_template_nodes/${nodeId}/credentials/`)) as CredList;
 }
 
+/**
+ * Click on a node in the topology canvas to open the details side panel.
+ * Uses the node circle area (above the label) to avoid hitting the kebab icon.
+ */
+async function clickNodeToViewDetails(nodeText: string, page: import('@playwright/test').Page) {
+  const uniqueSuffix = nodeText.split(' ').at(-1) ?? nodeText;
+
+  const fitBtn = page.getByRole('button', { name: 'Fit to Screen' });
+  if (await fitBtn.isVisible()) {
+    await fitBtn.click();
+    await page.waitForTimeout(500);
+  }
+
+  const nodeLabel = page.locator('[class*="topology__node__label"]', { hasText: uniqueSuffix });
+  await nodeLabel.waitFor({ state: 'visible' });
+  const labelBox = await nodeLabel.boundingBox();
+  if (!labelBox) throw new Error(`Node label not found for: ${nodeText}`);
+
+  await page.mouse.click(labelBox.x + labelBox.width / 2, labelBox.y - 30);
+  await page.getByTestId('workflow-topology-sidebar').waitFor({ state: 'visible', timeout: 5000 });
+}
+
 test.describe('Workflow Visualizer - Template Switch', () => {
   // ---------------------------------------------------------------------------
   // Scenario 1: A-prompts + defaults (no overrides) → B-no-prompts
@@ -74,7 +96,7 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateAName);
       await page.getByRole('option', { name: templateAName }).click();
       await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
-      // Skip prompt step — go straight to review/finish
+      await page.getByRole('button', { name: 'Prompts' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
 
@@ -89,8 +111,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s1EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
-      await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await s1EditLaunchConfig;
+      await expect(
+        page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
+      ).not.toBeVisible({ timeout: 10000 });
+      await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed without errors
@@ -165,9 +194,22 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s2EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
-      await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await s2EditLaunchConfig;
+      await expect(
+        page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
+      ).not.toBeVisible({ timeout: 10000 });
+      await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
+
+      // Verify side panel: after wizard finish, the in-memory node data should
+      // immediately reflect the cleared credential — not show the stale DB value
+      await clickNodeToViewDetails(templateBName, page);
+      const sidebar = page.getByTestId('workflow-topology-sidebar');
+      await expect(sidebar.getByText(credentialName)).not.toBeVisible({ timeout: 5000 });
 
       // Save — the bug would cause a 400 error here
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
@@ -234,8 +276,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s3EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
-      await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await s3EditLaunchConfig;
+      await expect(
+        page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
+      ).not.toBeVisible({ timeout: 10000 });
+      await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
@@ -325,7 +374,12 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s4EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
+      await s4EditLaunchConfig;
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
       // Template B has prompts but only credential — skip_tags and vars should be absent
       await page.getByRole('button', { name: 'Next' }).click();
@@ -412,17 +466,29 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s5EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
+      await s5EditLaunchConfig;
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
-      // Verify: credential field should NOT show the old credential
+      // Navigate to Prompts, then wait for the credential to clear. NodeTypeStep calls
+      // setValue AFTER both the launch-config and credentials fetches complete; using a
+      // generous timeout lets the async reset propagate before we assert.
       await page.getByRole('button', { name: 'Prompts' }).click();
       await expect(page.getByRole('button', { name: 'Credentials' })).not.toContainText(
-        credentialName
+        credentialName,
+        { timeout: 15000 }
       );
 
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
+
+      // Verify side panel: in-memory data should show no credential after wizard finish
+      await clickNodeToViewDetails(templateBName, page);
+      const s5Sidebar = page.getByTestId('workflow-topology-sidebar');
+      await expect(s5Sidebar.getByText(credentialName)).not.toBeVisible({ timeout: 5000 });
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -492,13 +558,18 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s6EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
+      await s6EditLaunchConfig;
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
-      // Verify: the editor should NOT contain old_var
+      // Navigate to Prompts then wait for the extra_vars editor to clear.
       await page.getByRole('button', { name: 'Prompts' }).click();
       await expect(page.getByRole('textbox', { name: 'Editor content' })).not.toHaveValue(
-        /old_var/
+        /old_var/,
+        { timeout: 15000 }
       );
 
       await page.getByRole('button', { name: 'Next' }).click();
@@ -592,7 +663,12 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s7EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
+      await s7EditLaunchConfig;
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
       // Prompts step for Template B — set new credential and extra_vars
@@ -604,6 +680,12 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('textbox', { name: 'Editor content' }).fill('new_var: fresh');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
+
+      // Verify side panel: in-memory data should show the new credential immediately
+      await clickNodeToViewDetails(templateBName, page);
+      const s7Sidebar = page.getByTestId('workflow-topology-sidebar');
+      await expect(s7Sidebar.getByText(newCredName)).toBeVisible({ timeout: 5000 });
+      await expect(s7Sidebar.getByText(oldCredName)).not.toBeVisible();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -666,8 +748,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s8EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
-      await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await s8EditLaunchConfig;
+      await expect(
+        page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
+      ).not.toBeVisible({ timeout: 10000 });
+      await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed cleanly
@@ -749,8 +838,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s9EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
-      await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await s9EditLaunchConfig;
+      await expect(
+        page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
+      ).not.toBeVisible({ timeout: 10000 });
+      await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed, orphaned credential disassociated
@@ -928,6 +1024,12 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
 
+      // Verify side panel: in-memory data should show credential B, not A
+      await clickNodeToViewDetails(templateAName, page);
+      const s11Sidebar = page.getByTestId('workflow-topology-sidebar');
+      await expect(s11Sidebar.getByText(credBName)).toBeVisible({ timeout: 5000 });
+      await expect(s11Sidebar.getByText(credAName)).not.toBeVisible();
+
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
@@ -992,14 +1094,22 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateBName);
+      const s12EditLaunchConfig = page.waitForResponse(
+        (resp) => resp.url().includes('/launch/') && resp.status() === 200
+      );
       await page.getByRole('option', { name: templateBName }).click();
+      await s12EditLaunchConfig;
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
       // Verify: Prompts step should appear with default/empty state
       await page.getByRole('button', { name: 'Prompts' }).click();
       await expect(page.getByRole('button', { name: 'Credentials' })).toBeVisible();
-      // Credential selector should be empty (no stale data from a prior template)
-      await expect(page.getByRole('button', { name: 'Credentials' })).not.toContainText(/cred/i);
+      // Credential selector should show empty placeholder (no stale data from a prior template).
+      // Check for "Select credentials" text — the placeholder shown when no credential is selected.
+      await expect(page.getByRole('button', { name: 'Credentials' })).toContainText(
+        'Select credentials'
+      );
 
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
