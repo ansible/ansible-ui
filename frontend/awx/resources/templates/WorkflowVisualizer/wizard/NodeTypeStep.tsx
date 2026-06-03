@@ -106,6 +106,34 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
         launchConfigResults = await requestGet<LaunchConfiguration>(
           awxAPI`/job_templates/${resourceId.toString()}/launch/`
         );
+
+        // Early step-data reset: clear prompt credentials as soon as the launch config is
+        // known, BEFORE the credentials fetch. Because PageWizardBody re-creates the Prompts
+        // form (key={activeStep.id}) from stepData when the user navigates to that step,
+        // this ensures the credential picker initialises with [] even if the user navigates
+        // to Prompts before the credentials fetch completes.
+        if (isTemplateChange) {
+          setStepData((prev) => {
+            if (!prev?.nodePromptsStep) return prev;
+            return {
+              ...prev,
+              nodePromptsStep: {
+                ...prev.nodePromptsStep,
+                prompt: {
+                  ...(prev.nodePromptsStep.prompt as object),
+                  credentials: [],
+                  labels: [],
+                  instance_groups: [],
+                  skip_tags: [],
+                  job_tags: [],
+                  extra_vars: '',
+                  inventory: null,
+                },
+              },
+            };
+          });
+        }
+
         // Fetch template credentials to determine required credential types
         const templateCredentialsResponse = await requestGet<AwxItemsResponse<Credential>>(
           awxAPI`/job_templates/${resourceId.toString()}/credentials/`
@@ -177,6 +205,12 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                 job_type: prompts?.job_type ?? launchConfigValue?.job_type,
               };
 
+          const newCredentials = getAggregateCredentials(
+            [],
+            isTemplateChange ? [] : (prompts?.credentials ?? []),
+            launchConfigValue?.credentials ?? []
+          );
+
           return {
             ...prev,
             nodePromptsStep: {
@@ -186,13 +220,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
               prompt: {
                 ...launchConfigValue,
                 ...preservedPromptOverrides,
-                // Credentials always need the aggregate merge function. On template change,
-                // pass empty prior-prompts so only the new template's defaults are used.
-                credentials: getAggregateCredentials(
-                  [],
-                  isTemplateChange ? [] : (prompts?.credentials ?? []),
-                  launchConfigValue?.credentials ?? []
-                ),
+                credentials: newCredentials,
                 requiredCredentialTypes: templateCredentials.map((cred) => ({
                   id: cred.credential_type,
                   name: cred.summary_fields.credential_type.name,

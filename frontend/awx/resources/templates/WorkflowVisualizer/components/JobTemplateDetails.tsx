@@ -51,55 +51,107 @@ function useAggregateJobTemplateDetails({
     String(promptValues?.execution_environment?.id)
   );
 
-  // Fix: Check for non-empty arrays, not just truthy values (empty arrays are truthy!)
+  const isTemplateChanged = Boolean(promptValues?.original?.isTemplateChange);
   const credentials =
-    (promptValues?.credentials && promptValues.credentials.length > 0
+    promptValues?.credentials !== undefined &&
+    (promptValues.credentials.length > 0 || template.ask_credential_on_launch)
       ? promptValues.credentials
-      : undefined) ??
-    (nodeCredentials?.results && nodeCredentials.results.length > 0
-      ? nodeCredentials.results
-      : undefined) ??
-    templateCredentials?.results;
+      : isTemplateChanged
+        ? templateCredentials?.results
+        : ((nodeCredentials?.results?.length ? nodeCredentials.results : undefined) ??
+          templateCredentials?.results);
 
-  const diffMode = promptValues?.diff_mode ?? nodeValues?.diff_mode ?? template.diff_mode;
+  const diffMode =
+    promptValues?.diff_mode ??
+    (isTemplateChanged ? undefined : nodeValues?.diff_mode) ??
+    template.diff_mode;
   let executionEnvironment: ExecutionEnvironment | undefined;
 
   if (promptValues?.execution_environment && fetchedEE) {
     executionEnvironment = fetchedEE;
+  } else if (isTemplateChanged) {
+    executionEnvironment = template.summary_fields.execution_environment as
+      | ExecutionEnvironment
+      | undefined;
   } else {
     executionEnvironment =
       nodeValues?.summary_fields?.execution_environment ??
       template.summary_fields.execution_environment;
   }
 
-  const forks = Number(promptValues?.forks ?? nodeValues?.forks ?? template.forks);
+  const forks = Number(
+    promptValues?.forks ?? (isTemplateChanged ? undefined : nodeValues?.forks) ?? template.forks
+  );
   const instanceGroups =
-    promptValues?.instance_groups ?? nodeInstanceGroups?.results ?? templateInstanceGroups?.results;
+    promptValues?.instance_groups !== undefined &&
+    (promptValues.instance_groups.length > 0 || template.ask_instance_groups_on_launch)
+      ? promptValues.instance_groups
+      : isTemplateChanged
+        ? templateInstanceGroups?.results
+        : ((nodeInstanceGroups?.results?.length ? nodeInstanceGroups.results : undefined) ??
+          templateInstanceGroups?.results);
   const inventory =
     promptValues?.inventory ??
-    nodeValues.summary_fields.inventory ??
+    (isTemplateChanged ? undefined : nodeValues.summary_fields.inventory) ??
     template.summary_fields.inventory;
   const jobSliceCount =
-    promptValues?.job_slice_count ?? nodeValues?.job_slice_count ?? template.job_slice_count;
+    promptValues?.job_slice_count ??
+    (isTemplateChanged ? undefined : nodeValues?.job_slice_count) ??
+    template.job_slice_count;
   const jobTags =
-    promptValues?.job_tags ?? parseStringToTagArray(nodeValues?.job_tags ?? template.job_tags);
-  const jobType = promptValues?.job_type ?? nodeValues?.job_type ?? template.job_type;
+    promptValues?.job_tags !== undefined &&
+    (promptValues.job_tags.length > 0 || template.ask_tags_on_launch)
+      ? promptValues.job_tags
+      : isTemplateChanged
+        ? parseStringToTagArray(template.job_tags)
+        : parseStringToTagArray(nodeValues?.job_tags ?? template.job_tags);
+  const jobType =
+    promptValues?.job_type ??
+    (isTemplateChanged ? undefined : nodeValues?.job_type) ??
+    template.job_type;
   const labels =
-    promptValues?.labels ?? nodeLabels?.results ?? template.summary_fields.labels?.results;
-  const limit = promptValues?.limit ?? nodeValues?.limit ?? template.limit;
-  const scmBranch = promptValues?.scm_branch ?? nodeValues?.scm_branch ?? template.scm_branch;
+    promptValues?.labels !== undefined &&
+    (promptValues.labels.length > 0 || template.ask_labels_on_launch)
+      ? promptValues.labels
+      : isTemplateChanged
+        ? template.summary_fields.labels?.results
+        : ((nodeLabels?.results?.length ? nodeLabels.results : undefined) ??
+          template.summary_fields.labels?.results);
+  const limit =
+    promptValues?.limit ?? (isTemplateChanged ? undefined : nodeValues?.limit) ?? template.limit;
+  const scmBranch =
+    promptValues?.scm_branch ??
+    (isTemplateChanged ? undefined : nodeValues?.scm_branch) ??
+    template.scm_branch;
   const skipTags =
-    promptValues?.skip_tags ?? parseStringToTagArray(nodeValues?.skip_tags ?? template.skip_tags);
-  const timeout = Number(promptValues?.timeout ?? nodeValues?.timeout ?? template.timeout);
+    promptValues?.skip_tags !== undefined &&
+    (promptValues.skip_tags.length > 0 || template.ask_skip_tags_on_launch)
+      ? promptValues.skip_tags
+      : isTemplateChanged
+        ? parseStringToTagArray(template.skip_tags)
+        : parseStringToTagArray(nodeValues?.skip_tags ?? template.skip_tags);
+  const timeout = Number(
+    promptValues?.timeout ??
+      (isTemplateChanged ? undefined : nodeValues?.timeout) ??
+      template.timeout
+  );
   const timeoutString = useGetTimeoutString(timeout);
   const templateTimeoutString = useGetTimeoutString(template.timeout);
-  const verbosity = promptValues?.verbosity ?? nodeValues?.verbosity ?? template.verbosity;
+  const verbosity =
+    promptValues?.verbosity ??
+    (isTemplateChanged ? undefined : nodeValues?.verbosity) ??
+    template.verbosity;
   const verbosityString = useVerbosityString(verbosity);
   const templateVerbosityString = useVerbosityString(template.verbosity);
   let variables =
-    promptValues?.extra_vars ??
-    (nodeValues?.extra_data ? jsonToYaml(JSON.stringify(nodeValues.extra_data)) : undefined) ??
-    template.extra_vars;
+    promptValues?.extra_vars !== undefined &&
+    (promptValues.extra_vars !== '' || template.ask_variables_on_launch)
+      ? promptValues.extra_vars
+      : isTemplateChanged
+        ? template.extra_vars
+        : ((nodeValues?.extra_data
+            ? jsonToYaml(JSON.stringify(nodeValues.extra_data))
+            : undefined) ?? template.extra_vars);
 
   if (surveyValues) {
     const jsonObj: { [key: string]: string } = {};
