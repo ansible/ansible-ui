@@ -251,7 +251,13 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     }
   );
 
-  test(
+  // Skipped: AAP installs a hidden default rule engine credential (_DEFAULT_EDA_RULE_ENGINE_CREDS)
+  // that is filtered from API responses (eda-server eda_credential.py). Because this credential
+  // always exists at install time, enabling persistence without selecting a credential never
+  // produces an error — the backend silently uses the default. The test's expected error cannot
+  // be triggered unless the instance is built without a managed DB. Behavior is in flux (UXD
+  // discussions tracked under AAP-77521). Re-evaluate when default credential visibility changes.
+  test.skip(
     'should show error when persistence enabled without credential and no default exists',
     { tag: ['@not_mock'] },
     async ({ page }) => {
