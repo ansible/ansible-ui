@@ -455,6 +455,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       // Save the changes
       await page.getByRole('button', { name: 'Save rulebook activation' }).click();
 
+      // Wait for navigation back to details page
+      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
+        timeout: 10000,
+      });
+
       // Verify persistence is disabled and credential is null
       await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
 
