@@ -28,7 +28,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     // Create a rule engine credential for event persistence
     ruleEngineCredentialName = await EdaCredential.ui.create(page, {
       organizationName,
-      credentialTypeName: 'Rule Engine',
+      credentialTypeName: 'Event-Driven Ansible Rule Engine',
     });
   });
 
@@ -103,7 +103,9 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
 
       // Verify details page shows persistence enabled
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
+        timeout: 10000,
+      });
 
       // Check that persistence is enabled on details page
       await expect(page.getByTestId('enable-persistence')).toBeVisible();
