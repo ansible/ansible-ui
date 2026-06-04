@@ -702,8 +702,26 @@ test.describe('Hub Collections - Details Page', () => {
 
         await navigateToCollectionDetails(page, uploaded);
 
-        // Click on the Documentation tab
-        await page.getByRole('tab', { name: 'Documentation' }).click();
+        // Click on the Documentation tab with retry logic for Pulp indexing delay.
+        // docs_blob may not be available immediately after collection approval,
+        // causing the tab to render a NotFound page instead of documentation content.
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          await page.getByRole('tab', { name: 'Documentation' }).click();
+
+          try {
+            await expect(page.getByPlaceholder('Find content')).toBeVisible({ timeout: 10000 });
+            break;
+          } catch {
+            if (attempt === 3) {
+              const mainContent = await page.locator('main').textContent();
+              throw new Error(
+                `Documentation tab did not render after 3 attempts. Page shows: ${mainContent?.slice(0, 200)}`
+              );
+            }
+            await page.waitForTimeout(2000);
+            await page.getByTestId('collection-detail-tab').click();
+          }
+        }
 
         // Verify documentation content renders (not an error state)
         await expect(page.getByRole('heading', { name: 'Page not found' })).not.toBeVisible();
@@ -711,9 +729,6 @@ test.describe('Hub Collections - Details Page', () => {
         // Verify the page does not show a generic error boundary
         const mainContent = page.locator('main');
         await expect(mainContent).not.toContainText('Error', { timeout: 10000 });
-
-        // Verify documentation structure rendered (drawer with navigation panel)
-        await expect(page.getByPlaceholder('Find content')).toBeVisible({ timeout: 10000 });
       }
     );
   });
