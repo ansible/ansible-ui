@@ -24,7 +24,7 @@ test.describe('Notifications Tab for Organizations', () => {
 
   test(
     'should navigate to the notification details page from the organization notifications list',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);
@@ -51,7 +51,7 @@ test.describe('Notifications Tab for Organizations', () => {
 
   test(
     'should toggle the notification on and off for job approval',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);

@@ -25,7 +25,7 @@ test.describe('Organization User Roles', () => {
 
   test(
     'should handle form submission with role changes',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);

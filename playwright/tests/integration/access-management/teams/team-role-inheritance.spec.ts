@@ -25,7 +25,7 @@ test.describe('Platform Teams - Role Inheritance', () => {
   test(
     'user inherits team roles and can be verified on resource team access tabs',
     {
-      tag: ['@team', '@not_mock'],
+      tag: ['@team', '@not_mock', '@tier1'],
     },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000); // 2 minutes timeout for this specific test

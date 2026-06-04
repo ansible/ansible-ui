@@ -10,7 +10,7 @@ test.afterEach(setupAfter);
 test.describe('User Types - Creates Users of Type Normal, Platform Auditor and System Admin', () => {
   test(
     'creates a system administrator in the ui and then deletes it',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const userOptions: CreateUserUIOptions = {
         userType: 'system-admin',
@@ -46,7 +46,7 @@ test.describe('User Types - Creates Users of Type Normal, Platform Auditor and S
 
   test(
     'creates a platform auditor in the ui and then deletes it',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const userOptions: CreateUserUIOptions = {
         userType: 'platform-auditor',
