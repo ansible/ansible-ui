@@ -928,7 +928,7 @@ describe('CredentialsExternalTestModal', () => {
       renderModal({
         credentialType: credTypeWithDefault,
         watchedSubFormFields: ['https://example.com'], // Only 1 element for 2 fields
-      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+      });
 
       await user.type(screen.getByTestId('object-query'), 'test');
       await user.click(screen.getByRole('button', { name: 'Run' }));
