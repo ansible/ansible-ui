@@ -22,6 +22,7 @@ import { GraphNodeData, PromptFormValues } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
+import { resolveExtraVars } from './resolveExtraVars';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -143,15 +144,13 @@ function useAggregateJobTemplateDetails({
     template.verbosity;
   const verbosityString = useVerbosityString(verbosity);
   const templateVerbosityString = useVerbosityString(template.verbosity);
-  let variables =
-    promptValues?.extra_vars !== undefined &&
-    (promptValues.extra_vars !== '' || template.ask_variables_on_launch)
-      ? promptValues.extra_vars
-      : isTemplateChanged
-        ? template.extra_vars
-        : ((nodeValues?.extra_data
-            ? jsonToYaml(JSON.stringify(nodeValues.extra_data))
-            : undefined) ?? template.extra_vars);
+  let variables = resolveExtraVars(
+    promptValues?.extra_vars,
+    template.ask_variables_on_launch,
+    isTemplateChanged,
+    nodeValues?.extra_data,
+    template.extra_vars
+  );
 
   if (surveyValues) {
     const jsonObj: { [key: string]: string } = {};
