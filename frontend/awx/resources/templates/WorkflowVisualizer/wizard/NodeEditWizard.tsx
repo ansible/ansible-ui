@@ -8,6 +8,7 @@ import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { RESOURCE_TYPE } from '../constants';
 import { useCloseSidebar, useGetInitialValues } from '../hooks';
 import type { GraphNode, GraphNodeData, PromptFormValues, WizardFormValues } from '../types';
+import { buildEffectivePrompt } from './buildEffectivePrompt';
 import {
   getNodeLabel,
   getValueBasedOnJobType,
@@ -145,55 +146,15 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       survey,
     } = formValues;
 
-    const isTemplateChange =
-      originalTemplateId !== undefined && Number(resource?.id) !== originalTemplateId;
-
-    // When the new template has no prompts, PageWizard hides the prompt step and does not
-    // include it in formValues — prompt is undefined. We still need launch_data to be set
-    // so that processCredentials/Labels/InstanceGroups can clean up any node-level resources
-    // that were associated for the old template. Without this, launch_data is undefined,
-    // processCredentials never runs, and the PATCH fails because orphaned credentials remain.
-    const effectivePrompt: Partial<PromptFormValues> = prompt ?? {};
-
-    if (resource && 'organization' in resource) {
-      effectivePrompt.organization = resource.organization ?? null;
-    }
-
-    if (isTemplateChange) {
-      // For each prompt field, only clear it when the new template does NOT accept it.
-      // - If the new template accepts the field (ask_*_on_launch=true), the prompt step
-      //   is visible and formValues reflects the user's actual choice — preserve it.
-      // - If the new template does not accept the field (ask_*_on_launch=false or no
-      //   launch_config at all), the field is hidden/stale. Force-clearing ensures
-      //   processCredentials/Labels/InstanceGroups sees removed=[old] and cleans up
-      //   the node's DB state, preventing AWX from rejecting the unified_job_template
-      //   PATCH with "Field is not configured to prompt on launch."
-      if (!launch_config?.ask_credential_on_launch) {
-        effectivePrompt.credentials = [];
-      }
-      if (!launch_config?.ask_labels_on_launch) {
-        effectivePrompt.labels = [];
-      }
-      if (!launch_config?.ask_instance_groups_on_launch) {
-        effectivePrompt.instance_groups = [];
-      }
-      if (!launch_config?.ask_skip_tags_on_launch) {
-        effectivePrompt.skip_tags = [];
-      }
-      if (!launch_config?.ask_tags_on_launch) {
-        effectivePrompt.job_tags = [];
-      }
-      if (!launch_config?.ask_variables_on_launch) {
-        effectivePrompt.extra_vars = '';
-      }
-    }
-
-    // Always build original so save-time cleanup has what it needs.
-    effectivePrompt.original = {
-      ...(launch_config ? { launch_config } : {}),
-      ...nodeOriginalResources,
-      ...(isTemplateChange ? { isTemplateChange: true } : {}),
-    };
+    const { effectivePrompt } = buildEffectivePrompt({
+      originalTemplateId,
+      newResourceId: resource?.id ? Number(resource.id) : undefined,
+      prompt,
+      launchConfig: launch_config ?? undefined,
+      nodeOriginalResources,
+      resourceOrganization:
+        resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
+    });
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);

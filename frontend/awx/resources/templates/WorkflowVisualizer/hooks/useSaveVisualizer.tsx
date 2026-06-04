@@ -9,6 +9,7 @@ import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
+import { clearStaleNodeFields } from './clearStaleNodeFields';
 import { getAddedAndRemovedCredentials } from './getAddedAndRemovedCredentials';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { Label } from '../../../../interfaces/Label';
@@ -341,26 +342,7 @@ export function useSaveVisualizer(templateId: string) {
           }
 
           if (launch_data?.original?.isTemplateChange) {
-            const nullIfMissing = (key: CreatePayloadProperty) => {
-              if (!(key in updatedNodePayload)) {
-                (updatedNodePayload as Record<string, unknown>)[key] = null;
-              }
-            };
-            nullIfMissing('diff_mode');
-            nullIfMissing('execution_environment');
-            nullIfMissing('forks');
-            nullIfMissing('inventory');
-            nullIfMissing('job_slice_count');
-            nullIfMissing('job_tags');
-            nullIfMissing('job_type');
-            nullIfMissing('limit');
-            nullIfMissing('scm_branch');
-            nullIfMissing('skip_tags');
-            nullIfMissing('timeout');
-            nullIfMissing('verbosity');
-            if (!('extra_data' in updatedNodePayload)) {
-              updatedNodePayload.extra_data = {};
-            }
+            clearStaleNodeFields(updatedNodePayload as Record<string, unknown>);
           }
 
           // Disassociate stale resources BEFORE patching the template. AWX validates the

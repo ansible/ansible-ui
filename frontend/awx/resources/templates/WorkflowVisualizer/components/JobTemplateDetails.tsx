@@ -23,6 +23,7 @@ import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
 import { resolveExtraVars } from './resolveExtraVars';
+import { resolveArrayField, resolveScalarField, resolveTagField } from './resolveNodeFields';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -53,19 +54,20 @@ function useAggregateJobTemplateDetails({
   );
 
   const isTemplateChanged = Boolean(promptValues?.original?.isTemplateChange);
-  const credentials =
-    promptValues?.credentials !== undefined &&
-    (promptValues.credentials.length > 0 || template.ask_credential_on_launch)
-      ? promptValues.credentials
-      : isTemplateChanged
-        ? templateCredentials?.results
-        : ((nodeCredentials?.results?.length ? nodeCredentials.results : undefined) ??
-          templateCredentials?.results);
+  const credentials = resolveArrayField(
+    promptValues?.credentials,
+    template.ask_credential_on_launch,
+    isTemplateChanged,
+    nodeCredentials?.results,
+    templateCredentials?.results
+  );
 
-  const diffMode =
-    promptValues?.diff_mode ??
-    (isTemplateChanged ? undefined : nodeValues?.diff_mode) ??
-    template.diff_mode;
+  const diffMode = resolveScalarField(
+    promptValues?.diff_mode,
+    isTemplateChanged,
+    nodeValues?.diff_mode,
+    template.diff_mode
+  );
   let executionEnvironment: ExecutionEnvironment | undefined;
 
   if (promptValues?.execution_environment && fetchedEE) {
@@ -81,68 +83,83 @@ function useAggregateJobTemplateDetails({
   }
 
   const forks = Number(
-    promptValues?.forks ?? (isTemplateChanged ? undefined : nodeValues?.forks) ?? template.forks
+    resolveScalarField(promptValues?.forks, isTemplateChanged, nodeValues?.forks, template.forks)
   );
-  const instanceGroups =
-    promptValues?.instance_groups !== undefined &&
-    (promptValues.instance_groups.length > 0 || template.ask_instance_groups_on_launch)
-      ? promptValues.instance_groups
-      : isTemplateChanged
-        ? templateInstanceGroups?.results
-        : ((nodeInstanceGroups?.results?.length ? nodeInstanceGroups.results : undefined) ??
-          templateInstanceGroups?.results);
-  const inventory =
-    promptValues?.inventory ??
-    (isTemplateChanged ? undefined : nodeValues.summary_fields.inventory) ??
-    template.summary_fields.inventory;
-  const jobSliceCount =
-    promptValues?.job_slice_count ??
-    (isTemplateChanged ? undefined : nodeValues?.job_slice_count) ??
-    template.job_slice_count;
-  const jobTags =
-    promptValues?.job_tags !== undefined &&
-    (promptValues.job_tags.length > 0 || template.ask_tags_on_launch)
-      ? promptValues.job_tags
-      : isTemplateChanged
-        ? parseStringToTagArray(template.job_tags)
-        : parseStringToTagArray(nodeValues?.job_tags ?? template.job_tags);
-  const jobType =
-    promptValues?.job_type ??
-    (isTemplateChanged ? undefined : nodeValues?.job_type) ??
-    template.job_type;
-  const labels =
-    promptValues?.labels !== undefined &&
-    (promptValues.labels.length > 0 || template.ask_labels_on_launch)
-      ? promptValues.labels
-      : isTemplateChanged
-        ? template.summary_fields.labels?.results
-        : ((nodeLabels?.results?.length ? nodeLabels.results : undefined) ??
-          template.summary_fields.labels?.results);
-  const limit =
-    promptValues?.limit ?? (isTemplateChanged ? undefined : nodeValues?.limit) ?? template.limit;
-  const scmBranch =
-    promptValues?.scm_branch ??
-    (isTemplateChanged ? undefined : nodeValues?.scm_branch) ??
-    template.scm_branch;
-  const skipTags =
-    promptValues?.skip_tags !== undefined &&
-    (promptValues.skip_tags.length > 0 || template.ask_skip_tags_on_launch)
-      ? promptValues.skip_tags
-      : isTemplateChanged
-        ? parseStringToTagArray(template.skip_tags)
-        : parseStringToTagArray(nodeValues?.skip_tags ?? template.skip_tags);
+  const instanceGroups = resolveArrayField(
+    promptValues?.instance_groups,
+    template.ask_instance_groups_on_launch,
+    isTemplateChanged,
+    nodeInstanceGroups?.results,
+    templateInstanceGroups?.results
+  );
+  const inventory = resolveScalarField(
+    promptValues?.inventory,
+    isTemplateChanged,
+    nodeValues.summary_fields.inventory,
+    template.summary_fields.inventory
+  );
+  const jobSliceCount = resolveScalarField(
+    promptValues?.job_slice_count,
+    isTemplateChanged,
+    nodeValues?.job_slice_count,
+    template.job_slice_count
+  );
+  const jobTags = resolveTagField(
+    promptValues?.job_tags,
+    template.ask_tags_on_launch,
+    isTemplateChanged,
+    nodeValues?.job_tags,
+    template.job_tags
+  );
+  const jobType = resolveScalarField(
+    promptValues?.job_type,
+    isTemplateChanged,
+    nodeValues?.job_type,
+    template.job_type
+  );
+  const labels = resolveArrayField(
+    promptValues?.labels,
+    template.ask_labels_on_launch,
+    isTemplateChanged,
+    nodeLabels?.results,
+    template.summary_fields.labels?.results
+  );
+  const limit = resolveScalarField(
+    promptValues?.limit,
+    isTemplateChanged,
+    nodeValues?.limit,
+    template.limit
+  );
+  const scmBranch = resolveScalarField(
+    promptValues?.scm_branch,
+    isTemplateChanged,
+    nodeValues?.scm_branch,
+    template.scm_branch
+  );
+  const skipTags = resolveTagField(
+    promptValues?.skip_tags,
+    template.ask_skip_tags_on_launch,
+    isTemplateChanged,
+    nodeValues?.skip_tags,
+    template.skip_tags
+  );
   const timeout = Number(
-    promptValues?.timeout ??
-      (isTemplateChanged ? undefined : nodeValues?.timeout) ??
+    resolveScalarField(
+      promptValues?.timeout,
+      isTemplateChanged,
+      nodeValues?.timeout,
       template.timeout
+    )
   );
   const timeoutString = useGetTimeoutString(timeout);
   const templateTimeoutString = useGetTimeoutString(template.timeout);
-  const verbosity =
-    promptValues?.verbosity ??
-    (isTemplateChanged ? undefined : nodeValues?.verbosity) ??
-    template.verbosity;
-  const verbosityString = useVerbosityString(verbosity);
+  const verbosity = resolveScalarField(
+    promptValues?.verbosity,
+    isTemplateChanged,
+    nodeValues?.verbosity,
+    template.verbosity
+  );
+  const verbosityString = useVerbosityString(verbosity ?? template.verbosity);
   const templateVerbosityString = useVerbosityString(template.verbosity);
   let variables = resolveExtraVars(
     promptValues?.extra_vars,
@@ -388,7 +405,7 @@ export function JobTemplateDetails({
       </PageDetail>
       <NodeTagDetail
         label={t('Labels')}
-        nodeTags={labels}
+        nodeTags={labels ?? []}
         templateTags={template.summary_fields.labels?.results}
       />
       <NodeTagDetail
