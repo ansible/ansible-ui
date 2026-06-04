@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { toggleNodeKebab } from '@ansible/playwright/commands/toggleNodeKebab';
 import { awxAPI } from '@ansible/playwright/commands/apiClient';
 import { Credential, JobTemplate, WorkflowVisualizer } from '@ansible/playwright/utils';
 
@@ -14,6 +13,7 @@ interface WFNode {
   extra_data: Record<string, unknown>;
   skip_tags: string;
   job_tags: string;
+  summary_fields?: { unified_job_template?: { id: number; name: string } };
 }
 
 interface WFNodeList {
@@ -46,30 +46,61 @@ async function getNodeCredentials(page: import('@playwright/test').Page, nodeId:
 }
 
 /**
- * Open the edit wizard for a node. Uses toggleNodeKebab to interact with the
- * node; if the kebab context menu appears, clicks "Edit step". If the node
- * selection sidebar opens instead (common when the click lands on the node
- * circle rather than the action icon), clicks the sidebar's Edit button.
+ * Open the edit wizard for a node. Interacts with the topology canvas to
+ * select the node and open the edit sidebar, then waits for the wizard
+ * form to fully load before returning.
  */
 async function editNode(nodeText: string, page: import('@playwright/test').Page) {
-  await toggleNodeKebab(nodeText, page);
+  const uniqueSuffix = nodeText.split(' ').at(-1) ?? nodeText;
+  const sidebar = page.getByTestId('workflow-topology-sidebar');
+
+  await page.getByRole('button', { name: 'Fit to Screen' }).click();
+  await page.waitForTimeout(1000);
+
+  const nodeLabel = page.locator('[class*="topology__node__label"]', { hasText: uniqueSuffix });
+  await nodeLabel.waitFor({ state: 'visible' });
+  const labelBox = await nodeLabel.boundingBox();
+  if (!labelBox) throw new Error(`Node label not found for: ${nodeText}`);
+
+  // Hover over the node label to reveal the action icon
+  await page.mouse.move(labelBox.x + labelBox.width / 2, labelBox.y + labelBox.height / 2);
+  const icon = nodeLabel.locator('[class*="action-icon__icon"]');
+  await icon.waitFor({ state: 'visible' });
+  const iconBox = await icon.boundingBox();
+  if (!iconBox) throw new Error(`Action icon not found for: ${nodeText}`);
+
+  // Click the action icon with raw mouse coordinates
+  await page.mouse.move(iconBox.x + iconBox.width / 2, iconBox.y + iconBox.height / 2);
+  await page.waitForTimeout(300);
+  await page.mouse.click(iconBox.x + iconBox.width / 2, iconBox.y + iconBox.height / 2);
+  await page.waitForTimeout(500);
+
+  // Check what opened: kebab context menu, sidebar view, or nothing
   const editMenuItem = page.getByRole('menuitem', { name: 'Edit step' });
   const editButton = page.getByTestId('edit-node');
-  if (await editMenuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
+
+  if (await editMenuItem.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Context menu opened — click "Edit step" to enter edit mode
     await editMenuItem.click();
-  } else if (await editButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+  } else if (await editButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+    // Sidebar view opened — click the Edit button to enter edit mode
     await editButton.click();
   } else {
-    const zoomIn = page.getByRole('button', { name: 'Zoom In' });
-    for (let i = 0; i < 3; i++) await zoomIn.click();
-    await page.waitForTimeout(300);
-    await toggleNodeKebab(nodeText, page);
-    if (await editMenuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await editMenuItem.click();
-    } else {
-      await editButton.click();
-    }
+    // Nothing opened — try clicking the label directly to open sidebar
+    await page.mouse.click(labelBox.x + labelBox.width / 2, labelBox.y + labelBox.height / 2);
+    await page.waitForTimeout(1000);
+    await editButton.click({ timeout: 5000 });
   }
+
+  // Wait for the wizard form to fully load inside the sidebar.
+  // The NodeEditWizard fetches initial values async (launch config,
+  // node credentials, labels, instance groups) — the wizard renders
+  // null until all fetches complete. Wait for the form content to appear,
+  // then wait for in-flight network requests to settle.
+  await sidebar
+    .getByRole('button', { name: 'Job template', exact: true })
+    .waitFor({ state: 'visible', timeout: 30000 });
+  await page.waitForLoadState('networkidle');
 }
 
 test.describe('Workflow Visualizer - Template Switch', () => {
@@ -103,15 +134,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
       await page.getByRole('button', { name: 'Prompts' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B
       await editNode(templateAName, page);
@@ -122,17 +153,22 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s1EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await expect(
         page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
       ).not.toBeVisible({ timeout: 10000 });
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed without errors
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Cleanup
       await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
@@ -187,15 +223,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('checkbox', { name: credentialName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B (no prompts)
       await editNode(templateAName, page);
@@ -206,17 +242,23 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s2EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await expect(
         page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
       ).not.toBeVisible({ timeout: 10000 });
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
+      await page.waitForTimeout(1000);
 
       // Save — the bug would cause a 400 error here
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: credential disassociated
       const node = await getWorkflowNode(page, wfjt);
@@ -264,15 +306,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Prompts' }).click();
       await page.getByRole('textbox', { name: 'Editor content' }).fill('my_var: test_value');
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B
       await editNode(templateAName, page);
@@ -283,16 +325,21 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s3EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await expect(
         page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
       ).not.toBeVisible({ timeout: 10000 });
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: extra_data is empty
       const node = await getWorkflowNode(page, wfjt);
@@ -363,15 +410,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('option', { name: 'Create "stale_tag"' }).click();
 
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B (partial prompts: only credential)
       await editNode(templateAName, page);
@@ -382,21 +429,26 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s4EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
       // Template B has prompts but only credential — skip_tags and vars should be absent
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: skip_tags cleared, extra_data cleared, old credential disassociated
       const node = await getWorkflowNode(page, wfjt);
-      expect(node.skip_tags).toBe('');
-      expect(Object.keys(node.extra_data)).toHaveLength(0);
+      expect(node.skip_tags ?? '').toBe('');
+      expect(Object.keys(node.extra_data ?? {})).toHaveLength(0);
       const nodeCreds = await getNodeCredentials(page, node.id);
       expect(nodeCreds.count).toBe(0);
 
@@ -456,15 +508,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('checkbox', { name: credentialName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B (same prompt flags)
       await editNode(templateAName, page);
@@ -475,6 +527,8 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s5EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
       // Navigate to Prompts, then wait for the credential to clear. NodeTypeStep calls
@@ -487,12 +541,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
 
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: no credential on node
       const node = await getWorkflowNode(page, wfjt);
@@ -544,15 +601,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Prompts' }).click();
       await page.getByRole('textbox', { name: 'Editor content' }).fill('old_var: stale_value');
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B (same prompt flags)
       await editNode(templateAName, page);
@@ -563,6 +620,8 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s6EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
       // Navigate to Prompts then wait for the extra_vars editor to clear.
@@ -573,12 +632,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
 
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: extra_data cleared
       const node = await getWorkflowNode(page, wfjt);
@@ -650,15 +712,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('textbox', { name: 'Editor content' }).fill('old_var: old');
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B and set NEW values
       await editNode(templateAName, page);
@@ -669,6 +731,8 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s7EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
@@ -680,12 +744,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('textbox', { name: 'Editor content' }).fill('new_var: fresh');
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: new credential, new extra_data
       const node = await getWorkflowNode(page, wfjt);
@@ -730,15 +797,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateAName);
       await page.getByRole('option', { name: templateAName }).click();
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B (also no prompts)
       await editNode(templateAName, page);
@@ -749,17 +816,22 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s8EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await expect(
         page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
       ).not.toBeVisible({ timeout: 10000 });
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed cleanly
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Cleanup
       await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
@@ -813,12 +885,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('checkbox', { name: credentialName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Via API, change the template to remove prompts — now credential is orphaned
       await awxAPI.patch(page, `job_templates/${tempPrompt.id}/`, {
@@ -837,17 +912,22 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s9EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await expect(
         page.getByRole('navigation', { name: 'Steps' }).getByRole('button', { name: 'Prompts' })
       ).not.toBeVisible({ timeout: 10000 });
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed, orphaned credential disassociated
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: orphaned credential gone
       const node = await getWorkflowNode(page, wfjt);
@@ -909,15 +989,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('textbox', { name: 'Type to filter' }).last().fill('keep_tag');
       await page.getByRole('option', { name: 'Create "keep_tag"' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node WITHOUT changing template — just open, navigate through, finish
       await editNode(templateAName, page);
@@ -925,13 +1005,16 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Prompts' }).click();
       await expect(page.getByRole('button', { name: 'Credentials' })).toContainText(credentialName);
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: values preserved
       const node = await getWorkflowNode(page, wfjt);
@@ -996,15 +1079,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('checkbox', { name: credAName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — same template, swap credential A for B
       await editNode(templateAName, page);
@@ -1018,12 +1101,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('checkbox', { name: credBName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Verify via API: only credential B
       const node = await getWorkflowNode(page, wfjt);
@@ -1071,15 +1157,15 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('textbox', { name: 'Search input' }).fill(templateAName);
       await page.getByRole('option', { name: templateAName }).click();
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByText('Successfully saved workflow visualizer')).not.toBeVisible({
-        timeout: 10000,
-      });
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Edit node — switch to Template B (has prompts)
       await editNode(templateAName, page);
@@ -1090,6 +1176,8 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
       await page.getByRole('option', { name: templateBName }).click();
       await s12EditLaunchConfig;
+      await page.waitForTimeout(2000);
+      await page.waitForLoadState('networkidle');
       await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Next' }).click({ force: true });
 
@@ -1103,13 +1191,16 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       );
 
       await page.getByRole('button', { name: 'Next' }).click();
+      await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
 
       // Save — should succeed
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByText('Successfully saved workflow visualizer')).toBeVisible();
+      // Wait for the toast to auto-dismiss (5s timeout + animation buffer)
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(6000);
 
       // Cleanup
       await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
