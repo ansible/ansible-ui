@@ -341,48 +341,25 @@ export function useSaveVisualizer(templateId: string) {
           }
 
           if (launch_data?.original?.isTemplateChange) {
-            const newLaunchConfig = launch_data.original.launch_config;
-            if (!newLaunchConfig?.ask_diff_mode_on_launch) {
-              updatedNodePayload.diff_mode = null;
-            }
-            if (!newLaunchConfig?.ask_execution_environment_on_launch) {
-              updatedNodePayload.execution_environment = null;
-            }
-            if (!newLaunchConfig?.ask_forks_on_launch) {
-              updatedNodePayload.forks = null;
-            }
-            if (!newLaunchConfig?.ask_inventory_on_launch) {
-              updatedNodePayload.inventory = null;
-            }
-            if (!newLaunchConfig?.ask_job_slice_count_on_launch) {
-              updatedNodePayload.job_slice_count = null;
-            }
-            if (!newLaunchConfig?.ask_job_type_on_launch) {
-              updatedNodePayload.job_type = null;
-            }
-            if (!newLaunchConfig?.ask_limit_on_launch) {
-              updatedNodePayload.limit = null;
-            }
-            if (!newLaunchConfig?.ask_scm_branch_on_launch) {
-              updatedNodePayload.scm_branch = null;
-            }
-            if (!newLaunchConfig?.ask_skip_tags_on_launch) {
-              updatedNodePayload.skip_tags = null;
-            }
-            if (!newLaunchConfig?.ask_tags_on_launch) {
-              updatedNodePayload.job_tags = null;
-            }
-            if (!newLaunchConfig?.ask_timeout_on_launch) {
-              updatedNodePayload.timeout = null;
-            }
-            if (
-              !newLaunchConfig?.ask_variables_on_launch &&
-              !('extra_data' in updatedNodePayload)
-            ) {
+            const nullIfMissing = (key: CreatePayloadProperty) => {
+              if (!(key in updatedNodePayload)) {
+                (updatedNodePayload as Record<string, unknown>)[key] = null;
+              }
+            };
+            nullIfMissing('diff_mode');
+            nullIfMissing('execution_environment');
+            nullIfMissing('forks');
+            nullIfMissing('inventory');
+            nullIfMissing('job_slice_count');
+            nullIfMissing('job_tags');
+            nullIfMissing('job_type');
+            nullIfMissing('limit');
+            nullIfMissing('scm_branch');
+            nullIfMissing('skip_tags');
+            nullIfMissing('timeout');
+            nullIfMissing('verbosity');
+            if (!('extra_data' in updatedNodePayload)) {
               updatedNodePayload.extra_data = {};
-            }
-            if (!newLaunchConfig?.ask_verbosity_on_launch) {
-              updatedNodePayload.verbosity = null;
             }
           }
 
