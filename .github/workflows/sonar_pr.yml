@@ -4,7 +4,7 @@ name: SonarQube PR Analysis
 on:
   workflow_run:
     workflows:
-      - Platform PR
+      - PR Checks
     types:
       - completed
 
