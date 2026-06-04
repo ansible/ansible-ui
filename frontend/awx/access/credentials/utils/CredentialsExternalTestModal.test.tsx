@@ -70,7 +70,12 @@ function mockAlertToaster(addAlert = vi.fn()) {
   };
 }
 
-const defaultProps = {
+const defaultProps: {
+  credentialType: typeof centrifyCredentialType;
+  watchedSubFormFields: unknown[];
+  popDialog: ReturnType<typeof vi.fn>;
+  alertToaster: ReturnType<typeof mockAlertToaster>;
+} = {
   credentialType: centrifyCredentialType,
   watchedSubFormFields: ['http://foo.com', 'client-id', 'client-secret'],
   popDialog: vi.fn(),
@@ -744,7 +749,7 @@ describe('CredentialsExternalTestModal', () => {
         credential: existingCred,
         credentialType: credTypeWithSecretField,
         watchedSubFormFields: ['https://new.com', '$encrypted$', false],
-      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+      });
 
       await user.type(screen.getByTestId('object-query'), 'test');
       await user.click(screen.getByRole('button', { name: 'Run' }));
@@ -803,7 +808,7 @@ describe('CredentialsExternalTestModal', () => {
       renderModal({
         credentialType: credTypeWithVerify,
         watchedSubFormFields: ['https://example.com', true],
-      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+      });
 
       await user.type(screen.getByTestId('object-query'), 'test');
       await user.click(screen.getByRole('button', { name: 'Run' }));
@@ -863,7 +868,7 @@ describe('CredentialsExternalTestModal', () => {
       renderModal({
         credentialType: credTypeWithVerify,
         watchedSubFormFields: ['https://example.com', false],
-      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+      });
 
       await user.type(screen.getByTestId('object-query'), 'test');
       await user.click(screen.getByRole('button', { name: 'Run' }));
@@ -983,7 +988,7 @@ describe('CredentialsExternalTestModal', () => {
       renderModal({
         credentialType: credTypeWithoutDefault,
         watchedSubFormFields: ['https://example.com'], // Only 1 element for 2 fields
-      } as Partial<typeof defaultProps & CredentialsExternalTestModalProps>);
+      });
 
       await user.type(screen.getByTestId('object-query'), 'test');
       await user.click(screen.getByRole('button', { name: 'Run' }));
