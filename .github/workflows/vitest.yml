@@ -38,7 +38,7 @@ jobs:
           echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
 
   vitest:
-    name: Vitest
+    name: ${{ matrix.subdirectory }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: generate-matrix
