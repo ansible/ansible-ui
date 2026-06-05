@@ -190,10 +190,9 @@ export function cannotRunHealthCheckDueToNodeType(
 }
 
 export function cannotRunHealthCheckDueToManagedInstance(
-  instance: Instance,
-  t: TFunction<'translation', undefined>
+  _instance: Instance,
+  _t: TFunction<'translation', undefined>
 ) {
-  if (instance?.managed) return t(`Health checks cannot be run on a managed instance.`);
   return '';
 }
 
