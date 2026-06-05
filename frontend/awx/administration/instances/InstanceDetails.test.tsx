@@ -3,7 +3,8 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { InstanceDetails } from './InstanceDetails';
+import { Instance } from '../../interfaces/Instance';
+import { InstanceDetails, InstanceDetailsTab } from './InstanceDetails';
 
 const instance = {
   id: 1,
@@ -35,18 +36,21 @@ const instance = {
   modified: '2024-01-01T00:00:00Z',
 };
 
+const instanceGroupsResponse = { count: 0, results: [], next: null, previous: null };
+
 const server = setupServer(
   http.get(
-    ({ request }) => request.url.includes('instance_groups'),
-    () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
-  ),
-  http.get(
-    ({ request }) => request.url.includes('settings/system'),
-    () => HttpResponse.json({ IS_K8S: false })
-  ),
-  http.get(
-    ({ request }) => request.url.includes('/instances/') && request.url.includes('/1'),
+    ({ request }) =>
+      request.url.includes('/instances/1/') && !request.url.includes('/instance_groups/'),
     () => HttpResponse.json(instance)
+  ),
+  http.get(
+    ({ request }) => request.url.includes('/instances/1/instance_groups/'),
+    () => HttpResponse.json(instanceGroupsResponse)
+  ),
+  http.get(
+    ({ request }) => request.url.includes('/settings/system'),
+    () => HttpResponse.json({ IS_K8S: false })
   )
 );
 
@@ -66,6 +70,27 @@ describe('InstanceDetails', () => {
 
     await waitFor(() => {
       expect(screen.getByText('awx-node-1')).toBeInTheDocument();
+    });
+  });
+
+  it('should not display used capacity for hop nodes', async () => {
+    const hopInstance = {
+      ...instance,
+      hostname: 'receptor-hop',
+      node_type: 'hop',
+      capacity: 0,
+      percent_capacity_remaining: 0,
+    } as unknown as Instance;
+
+    render(
+      <MemoryRouter>
+        <InstanceDetailsTab instance={hopInstance} instanceGroups={undefined} instanceForks={0} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('used-capacity')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('label-used-capacity')).not.toBeInTheDocument();
     });
   });
 });
