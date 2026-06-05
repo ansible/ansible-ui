@@ -176,6 +176,118 @@ describe('PlatformRoleForm', () => {
     });
   });
 
+  describe('Form submission payload', () => {
+    test('should send content_type as null when System is selected on create', async () => {
+      const user = userEvent.setup();
+      let capturedBody: Record<string, unknown> | undefined;
+
+      server.use(
+        http.post(gatewayAPI`/role_definitions/`, async ({ request }) => {
+          capturedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({ id: 99, ...capturedBody });
+        })
+      );
+
+      const { findByRole, getByRole, getByText, getByLabelText } = render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path={'/access/roles/create'} element={<CreatePlatformRole />} />
+            <Route path={'/access/roles/:id/details'} element={<div>Details</div>} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await user.type(getByRole('textbox', { name: 'Name' }), 'System role');
+      await user.type(getByRole('textbox', { name: 'Description' }), 'A system role');
+
+      const resourceTypeButton = getByRole('button', { name: 'Resource type' });
+      await user.click(resourceTypeButton);
+      await user.click(getByText('System'));
+
+      const permissionsButton = await findByRole(
+        'button',
+        { name: 'Permissions' },
+        { timeout: 10000 }
+      );
+      await user.click(permissionsButton);
+      await user.click(getByLabelText('Can view Ansible repository'));
+      await user.click(document.body);
+
+      await user.click(getByRole('button', { name: 'Create role' }));
+
+      await waitFor(() => {
+        expect(capturedBody).toBeDefined();
+      });
+      expect(capturedBody?.content_type).toBeNull();
+    }, 15000);
+
+    test('should send content_type as null when editing a System role', async () => {
+      const user = userEvent.setup();
+      let capturedBody: Record<string, unknown> | undefined;
+
+      server.use(
+        http.get(gatewayAPI`/role_definitions/2/`, () => {
+          return HttpResponse.json({
+            ...roleDefinition,
+            id: 2,
+            content_type: null,
+            permissions: ['galaxy.view_ansiblerepository'],
+          });
+        }),
+        http.patch(gatewayAPI`/role_definitions/2/`, async ({ request }) => {
+          capturedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({ id: 2, ...capturedBody });
+        })
+      );
+
+      const { findByRole } = render(
+        <MemoryRouter initialEntries={['/access/roles/2/edit']}>
+          <Routes>
+            <Route path={'/access/roles/:id/edit'} element={<EditPlatformRole />} />
+            <Route path={'/access/roles/:id/details'} element={<div>Details</div>} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const saveButton = await findByRole('button', { name: 'Save role' });
+      await user.click(saveButton);
+
+      await waitFor(() => {
+        expect(capturedBody).toBeDefined();
+      });
+      expect(capturedBody?.content_type).toBeNull();
+    }, 15000);
+
+    test('should preserve non-null content_type when editing a non-System role', async () => {
+      const user = userEvent.setup();
+      let capturedBody: Record<string, unknown> | undefined;
+
+      server.use(
+        http.patch(gatewayAPI`/role_definitions/1/`, async ({ request }) => {
+          capturedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({ id: 1, ...capturedBody });
+        })
+      );
+
+      const { findByRole } = render(
+        <MemoryRouter initialEntries={['/access/roles/1/edit']}>
+          <Routes>
+            <Route path={'/access/roles/:id/edit'} element={<EditPlatformRole />} />
+            <Route path={'/access/roles/:id/details'} element={<div>Details</div>} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const saveButton = await findByRole('button', { name: 'Save role' });
+      await user.click(saveButton);
+
+      await waitFor(() => {
+        expect(capturedBody).toBeDefined();
+      });
+      expect(capturedBody?.content_type).toBe('eda.activation');
+    }, 15000);
+  });
+
   describe('Permission Selection Validation', () => {
     test('should show permissions only after selecting resource type', async () => {
       const user = userEvent.setup();
