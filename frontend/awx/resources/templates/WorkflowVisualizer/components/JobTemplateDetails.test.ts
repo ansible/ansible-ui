@@ -125,4 +125,10 @@ describe('arrayIdsMatch', () => {
   test('should return false for single-element arrays with different ids', () => {
     expect(arrayIdsMatch([{ id: 1 }], [{ id: 2 }])).toBe(false);
   });
+
+  test('should return false when arrays have same length but one contains duplicate ids', () => {
+    // arr1 = [{id:1},{id:1}] → Set size 1; arr2 = [{id:1},{id:2}] → Set size 2
+    // Passes length check (both 2) but fails Set size check → covers lines 9-11
+    expect(arrayIdsMatch([{ id: 1 }, { id: 1 }], [{ id: 1 }, { id: 2 }])).toBe(false);
+  });
 });

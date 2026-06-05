@@ -28,7 +28,9 @@ vi.mock('@patternfly/react-topology', () => ({
   EdgeTerminalType: { directional: 'directional' },
 }));
 
-const { getLaunchData, useNodeTypeStepDefaults } = await import('./useGetInitialValues');
+const { getLaunchData, useGetInitialValues, useNodeTypeStepDefaults } = await import(
+  './useGetInitialValues'
+);
 
 const server = setupServer(
   http.get(awxAPI`/job_templates/1/launch/`, () =>
@@ -36,13 +38,47 @@ const server = setupServer(
       ask_credential_on_launch: true,
       ask_inventory_on_launch: false,
       survey_enabled: false,
+      defaults: {},
+    })
+  ),
+  http.get(awxAPI`/job_templates/1/credentials/`, () =>
+    HttpResponse.json({
+      count: 1,
+      results: [
+        {
+          id: 10,
+          name: 'Template SSH',
+          credential_type: 1,
+          summary_fields: { credential_type: { name: 'Machine' } },
+        },
+      ],
     })
   ),
   http.get(awxAPI`/workflow_job_templates/2/launch/`, () =>
     HttpResponse.json({
       ask_inventory_on_launch: true,
       survey_enabled: false,
+      defaults: {},
     })
+  ),
+  http.get(awxAPI`/workflow_job_template_nodes/42/credentials/`, () =>
+    HttpResponse.json({
+      count: 1,
+      results: [
+        {
+          id: 20,
+          name: 'Node SSH',
+          credential_type: 1,
+          summary_fields: { credential_type: { name: 'Machine' } },
+        },
+      ],
+    })
+  ),
+  http.get(awxAPI`/workflow_job_template_nodes/42/labels/`, () =>
+    HttpResponse.json({ count: 1, results: [{ id: 1, name: 'production' }] })
+  ),
+  http.get(awxAPI`/workflow_job_template_nodes/42/instance_groups/`, () =>
+    HttpResponse.json({ count: 1, results: [{ id: 5, name: 'default' }] })
   )
 );
 
@@ -206,5 +242,168 @@ describe('getLaunchData', () => {
 
     const result = await getLaunchData(node);
     expect(result).toBeUndefined();
+  });
+});
+
+describe('useGetInitialValues', () => {
+  it('should return initial values for a new (unsaved) job template node', async () => {
+    const newNode = {
+      getId: () => 'unsavedNode-1',
+      getData: () => ({
+        launch_data: undefined,
+        survey_data: undefined,
+        resource: {
+          identifier: '550e8400-e29b-41d4-a716-446655440000',
+          all_parents_must_converge: false,
+          extra_data: {},
+          diff_mode: false,
+          forks: 0,
+          job_type: 'run',
+          job_tags: '',
+          skip_tags: '',
+          timeout: 0,
+          verbosity: 0,
+          job_slice_count: 1,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+              timeout: 0,
+            },
+            inventory: null,
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(newNode);
+
+    expect(initialValues.nodeTypeStep).toBeDefined();
+    expect(initialValues.nodeTypeStep.node_type).toBe(RESOURCE_TYPE.job);
+    expect(initialValues.nodePromptsStep).toBeDefined();
+    expect(initialValues.nodePromptsStep?.prompt?.credentials).toBeDefined();
+  });
+
+  it('should return initial values for a saved job template node fetching credentials and labels', async () => {
+    const savedNode = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: undefined,
+        survey_data: undefined,
+        resource: {
+          identifier: 'my-node',
+          all_parents_must_converge: true,
+          extra_data: {},
+          diff_mode: false,
+          forks: 0,
+          job_type: 'run',
+          job_tags: '',
+          skip_tags: '',
+          timeout: 0,
+          verbosity: 0,
+          job_slice_count: 1,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+              timeout: 0,
+            },
+            inventory: { id: 1, name: 'My Inventory' },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(savedNode);
+
+    expect(initialValues.nodeTypeStep.node_convergence).toBe('all');
+    expect(initialValues.nodeTypeStep.node_alias).toBe('my-node');
+    expect(initialValues.nodePromptsStep?.prompt?.original?.credentials).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'Node SSH' })])
+    );
+    expect(initialValues.nodePromptsStep?.prompt?.original?.labels).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'production' })])
+    );
+    expect(initialValues.nodePromptsStep?.prompt?.original?.instance_groups).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'default' })])
+    );
+  });
+
+  it('should use hidePromptStep path when launch config has no prompts', async () => {
+    server.use(
+      http.get(awxAPI`/job_templates/1/launch/`, () =>
+        HttpResponse.json({
+          ask_credential_on_launch: false,
+          ask_inventory_on_launch: false,
+          ask_variables_on_launch: false,
+          survey_enabled: false,
+          defaults: {},
+        })
+      )
+    );
+
+    const newNode = {
+      getId: () => 'unsavedNode-2',
+      getData: () => ({
+        launch_data: undefined,
+        survey_data: undefined,
+        resource: {
+          identifier: '',
+          all_parents_must_converge: false,
+          extra_data: {},
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Simple Template',
+              unified_job_type: RESOURCE_TYPE.job,
+              timeout: 0,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(newNode);
+
+    expect(initialValues.nodePromptsStep?.prompt?.credentials).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.labels).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.instance_groups).toEqual([]);
+  });
+
+  it('should include prompt values when node has existing launch_data', async () => {
+    const nodeWithPrompts = {
+      getId: () => 'unsavedNode-3',
+      getData: () => ({
+        launch_data: {
+          limit: 'webservers',
+          credentials: [{ id: 30, name: 'Existing Cred', credential_type: 2 }],
+        },
+        survey_data: undefined,
+        resource: {
+          identifier: '',
+          all_parents_must_converge: false,
+          extra_data: {},
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+              timeout: 0,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithPrompts);
+
+    expect(initialValues.nodeTypeStep).toBeDefined();
+    expect(initialValues.nodePromptsStep?.prompt?.limit).toBe('webservers');
   });
 });

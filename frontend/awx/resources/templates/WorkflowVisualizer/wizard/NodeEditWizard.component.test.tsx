@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus } from '../types';
 import { NodeEditWizard } from './NodeEditWizard';
@@ -96,6 +96,10 @@ vi.mock('../hooks', () => ({
   useTargetNodeAncestors: () => vi.fn(),
 }));
 
+const mockSetLabel = vi.fn();
+const mockSetData = vi.fn();
+const mockSetState = vi.fn();
+
 const mockNode = {
   getId: () => '42',
   getData: () => ({
@@ -116,10 +120,20 @@ const mockNode = {
       },
     },
   }),
+  setLabel: mockSetLabel,
+  setData: mockSetData,
+  setState: mockSetState,
   isVisible: () => true,
 } as never;
 
 describe('NodeEditWizard', () => {
+  beforeEach(() => {
+    mockGetInitialValues.mockClear();
+    mockSetLabel.mockClear();
+    mockSetData.mockClear();
+    mockSetState.mockClear();
+  });
+
   it('should render null initially while loading initial values', () => {
     const { container } = render(
       <MemoryRouter>
@@ -156,5 +170,21 @@ describe('NodeEditWizard', () => {
     await waitFor(() => {
       expect(mockGetInitialValues).toHaveBeenCalledWith(mockNode);
     });
+  });
+
+  it('should render null when getInitialValues rejects (error path)', async () => {
+    mockGetInitialValues.mockRejectedValueOnce(new Error('API error'));
+
+    const { container } = render(
+      <MemoryRouter>
+        <NodeEditWizard node={mockNode} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(mockGetInitialValues).toHaveBeenCalled();
+    });
+
+    expect(container.firstChild).toBeNull();
   });
 });

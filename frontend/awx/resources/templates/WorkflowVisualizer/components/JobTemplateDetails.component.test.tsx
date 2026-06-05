@@ -320,4 +320,64 @@ describe('JobTemplateDetails', () => {
     renderComponent(nodeWithEmptyPromptCredentials);
     expect(screen.queryByText('Credentials')).not.toBeInTheDocument();
   });
+
+  it('should assign fetchedEE when promptValues has execution_environment and useGetItem returns data', () => {
+    vi.mocked(useGetItem).mockImplementation((_api, id) => {
+      if (id && id !== 'undefined') {
+        return { data: { id: Number(id), name: 'Fetched EE From API' } } as never;
+      }
+      return { data: undefined } as never;
+    });
+
+    const nodeWithPromptEE: GraphNodeData = {
+      ...mockNodeData,
+      launch_data: {
+        execution_environment: { id: 7 } as never,
+        original: {
+          isTemplateChange: false,
+          launch_config: { ask_execution_environment_on_launch: true } as never,
+        } as never,
+      },
+    };
+
+    renderComponent(nodeWithPromptEE);
+    expect(screen.getAllByText('Fetched EE From API').length).toBeGreaterThan(0);
+  });
+
+  it('should use labels from template summary_fields when no prompt override', () => {
+    const templateWithLabels = {
+      ...mockTemplate,
+      summary_fields: {
+        ...mockTemplate.summary_fields,
+        labels: {
+          results: [
+            { id: 1, name: 'staging' },
+            { id: 2, name: 'v2' },
+          ],
+          count: 2,
+        },
+      },
+    } as typeof mockTemplate;
+
+    render(
+      <MemoryRouter>
+        <JobTemplateDetails template={templateWithLabels} node={mockNodeData} />
+      </MemoryRouter>
+    );
+    expect(screen.getByText('staging')).toBeInTheDocument();
+    expect(screen.getByText('v2')).toBeInTheDocument();
+  });
+
+  it('should use node instance groups from useGet when they are returned', () => {
+    vi.mocked(useGet).mockImplementation((url) => {
+      if (typeof url === 'string' && url.includes('instance_groups')) {
+        return { data: { results: [{ id: 3, name: 'controlplane' }], count: 1 } } as never;
+      }
+      return { data: undefined } as never;
+    });
+
+    renderComponent();
+    expect(screen.getByText('Instance groups')).toBeInTheDocument();
+    expect(screen.getByText('controlplane')).toBeInTheDocument();
+  });
 });
