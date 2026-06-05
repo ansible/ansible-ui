@@ -222,12 +222,12 @@ export function InventorySourceDetails(
       </PageDetail>
       <PageDetail
         isEmpty={!inventorySource.source}
-        label={t`Inventory file`}
+        label={t`Inventory path`}
         helpText={t(
-          'The inventory file to be synced by this source. You can select from the dropdown or enter a file within the input.'
+          'The inventory path to be synced by this source. You can select from the dropdown or enter a path within the input.'
         )}
       >
-        {inventorySource.source_path === '' ? t`/ (project root)` : inventorySource.source_path}
+        {inventorySource.source_path === '' ? t`. (project root)` : inventorySource.source_path}
       </PageDetail>
       <PageDetail
         label={t`Verbosity`}

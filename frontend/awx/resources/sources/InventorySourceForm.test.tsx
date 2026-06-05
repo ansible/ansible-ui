@@ -341,11 +341,11 @@ describe('EditInventorySource', () => {
 });
 
 describe('source_path transformation', () => {
-  const transformForSubmit = (value: string) => (value === '/ (project root)' ? '' : value);
-  const transformForDisplay = (value: string) => value || '/ (project root)';
+  const transformForSubmit = (value: string) => (value === '. (project root)' ? '' : value);
+  const transformForDisplay = (value: string) => value || '. (project root)';
 
   test('should transform project root to empty string for API', () => {
-    expect(transformForSubmit('/ (project root)')).toBe('');
+    expect(transformForSubmit('. (project root)')).toBe('');
   });
 
   test('should not transform non-root source_path', () => {
@@ -353,7 +353,7 @@ describe('source_path transformation', () => {
   });
 
   test('should transform empty source_path to project root for display', () => {
-    expect(transformForDisplay('')).toBe('/ (project root)');
+    expect(transformForDisplay('')).toBe('. (project root)');
   });
 });
 

@@ -40,8 +40,8 @@ export function InventorySourceDetails({ source }: { source: InventorySource }) 
         />
       </PageDetail>
       <PageDetail label={t`Source`}>{sourceOptions[source.source]}</PageDetail>
-      <PageDetail label={t`Inventory file`}>
-        {source.source_path === '' ? t`/ (project root)` : source.source_path}
+      <PageDetail label={t`Inventory path`}>
+        {source.source_path === '' ? t`. (project root)` : source.source_path}
       </PageDetail>
       <PageDetail label={t`Verbosity`}>{verbosityString}</PageDetail>
       <PageDetail label={t`Source control branch`}>{source.scm_branch}</PageDetail>
