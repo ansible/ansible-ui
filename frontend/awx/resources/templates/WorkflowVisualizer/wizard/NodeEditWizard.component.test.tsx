@@ -48,8 +48,8 @@ const mockGetInitialValues = vi.fn(() =>
       approval_description: '',
       approval_timeout: 0,
       node_days_to_keep: 30,
-      resource: { id: 1, name: 'Demo Template' } as never,
-      resourceId: 1,
+      resource: null,
+      resourceId: undefined,
       node_status_type: EdgeStatus.info,
     },
     nodePromptsStep: {
