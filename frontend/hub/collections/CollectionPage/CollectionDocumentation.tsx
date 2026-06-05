@@ -45,7 +45,7 @@ export function CollectionDocumentation() {
       collection?.collection_version?.namespace || ''
     }&name=${collection?.collection_version?.name || ''}&version=${
       collection?.collection_version?.version || ''
-    }&offset=0&limit=1`
+    }&offset=0&limit=1&exclude_fields=files,manifest,contents`
   );
 
   // create groups for left tab of contents menu

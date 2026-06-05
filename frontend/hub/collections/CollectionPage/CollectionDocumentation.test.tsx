@@ -123,6 +123,39 @@ describe('CollectionDocumentation', () => {
   afterAll(() => server.close());
   afterEach(() => server.resetHandlers());
 
+  test('should request docs_blob by including exclude_fields in API URL', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(
+        ({ request }) => {
+          return request.url.includes('/content/ansible/collection_versions/');
+        },
+        ({ request }) => {
+          capturedUrl = request.url;
+          return HttpResponse.json(mockDocumentationResponse);
+        }
+      )
+    );
+
+    render(
+      <TestWrapper>
+        <CollectionDocumentation />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(capturedUrl).toContain('exclude_fields=');
+    });
+
+    const url = new URL(capturedUrl);
+    const excludeFields = url.searchParams.get('exclude_fields');
+    expect(excludeFields).toBeTruthy();
+    expect(excludeFields).toContain('files');
+    expect(excludeFields).toContain('manifest');
+    expect(excludeFields).toContain('contents');
+    expect(excludeFields).not.toContain('docs_blob');
+  });
+
   test('should render documentation tab with readme content', async () => {
     render(
       <TestWrapper>
