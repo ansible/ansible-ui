@@ -158,6 +158,27 @@ describe('useNodeTypeStepDefaults', () => {
     expect(defaults.approval_name).toBe('');
   });
 
+  it('should return empty approvalDescription when nodeType is falsy (no unified_job_template)', () => {
+    const { result } = renderHook(() => useNodeTypeStepDefaults());
+    const nodeNoUJT = {
+      getData: () => ({
+        resource: {
+          identifier: 'my-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          summary_fields: {},
+        },
+      }),
+    } as never;
+
+    const defaults = result.current(nodeNoUJT);
+    expect(defaults.approval_description).toBe('');
+    expect(defaults.approval_name).toBe('');
+    expect(defaults.node_type).toBe(RESOURCE_TYPE.job);
+    expect(defaults.resource).toBeNull();
+    expect(defaults.resourceId).toBeUndefined();
+  });
+
   it('should return empty alias when identifier is a UUID', () => {
     const { result } = renderHook(() => useNodeTypeStepDefaults());
     const uuidNode = {
@@ -405,5 +426,136 @@ describe('useGetInitialValues', () => {
 
     expect(initialValues.nodeTypeStep).toBeDefined();
     expect(initialValues.nodePromptsStep?.prompt?.limit).toBe('webservers');
+  });
+
+  it('should trigger survey path and return survey data when survey_enabled and ask_variables_on_launch are both true', async () => {
+    server.use(
+      http.get(awxAPI`/job_templates/1/launch/`, () =>
+        HttpResponse.json({
+          ask_credential_on_launch: false,
+          ask_variables_on_launch: true,
+          survey_enabled: true,
+          defaults: {},
+        })
+      ),
+      http.get(awxAPI`/job_templates/1/survey_spec/`, () =>
+        HttpResponse.json({
+          name: 'Test Survey',
+          description: '',
+          spec: [
+            {
+              variable: 'survey_var',
+              type: 'text',
+              question_name: 'Survey Var',
+              question_description: '',
+              required: false,
+              default: '',
+              min: 0,
+              max: 1024,
+              choices: [],
+              new_question: false,
+            },
+          ],
+        })
+      )
+    );
+
+    const nodeWithSurveyData = {
+      getId: () => 'unsavedNode-survey',
+      getData: () => ({
+        launch_data: undefined,
+        survey_data: undefined,
+        resource: {
+          identifier: '',
+          all_parents_must_converge: false,
+          extra_data: { survey_var: 'existing_value', other_var: 'keep_this' },
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Survey Template',
+              unified_job_type: RESOURCE_TYPE.job,
+              timeout: 0,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithSurveyData);
+
+    expect(initialValues.nodeTypeStep).toBeDefined();
+    expect(initialValues.survey).toBeDefined();
+  });
+
+  it('should return empty array from getRelated when API returns no results', async () => {
+    server.use(
+      http.get(awxAPI`/workflow_job_template_nodes/99/credentials/`, () =>
+        HttpResponse.json({ count: 0, results: [] })
+      ),
+      http.get(awxAPI`/workflow_job_template_nodes/99/labels/`, () =>
+        HttpResponse.json({ count: 0, results: [] })
+      ),
+      http.get(awxAPI`/workflow_job_template_nodes/99/instance_groups/`, () =>
+        HttpResponse.json({ count: 0, results: [] })
+      )
+    );
+
+    const savedNodeNoResults = {
+      getId: () => '99',
+      getData: () => ({
+        launch_data: undefined,
+        survey_data: undefined,
+        resource: {
+          identifier: 'my-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+              timeout: 0,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(savedNodeNoResults);
+
+    expect(initialValues.nodePromptsStep?.prompt?.original?.credentials).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.original?.labels).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.original?.instance_groups).toEqual([]);
+  });
+
+  it('should handle project_update node type with no launch config (hidePromptStep = true)', async () => {
+    const projectUpdateNode = {
+      getId: () => 'unsavedNode-project',
+      getData: () => ({
+        launch_data: undefined,
+        survey_data: undefined,
+        resource: {
+          identifier: '',
+          all_parents_must_converge: false,
+          extra_data: {},
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'My Project',
+              unified_job_type: RESOURCE_TYPE.project_update,
+              timeout: 0,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(projectUpdateNode);
+
+    expect(initialValues.nodeTypeStep.node_type).toBe(RESOURCE_TYPE.project_update);
+    expect(initialValues.nodePromptsStep?.prompt?.credentials).toEqual([]);
   });
 });
