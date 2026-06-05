@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { arrayIdsMatch } from './arrayUtils';
 import { resolveExtraVars } from './resolveExtraVars';
 
 describe('resolveExtraVars', () => {
@@ -88,5 +89,40 @@ describe('resolveExtraVars', () => {
       const result = resolveExtraVars(undefined, false, false, {}, '');
       expect(result).toBe('');
     });
+  });
+});
+
+describe('arrayIdsMatch', () => {
+  test('should return true for two empty arrays', () => {
+    expect(arrayIdsMatch([], [])).toBe(true);
+  });
+
+  test('should return true when arrays contain same ids in same order', () => {
+    expect(arrayIdsMatch([{ id: 1 }, { id: 2 }], [{ id: 1 }, { id: 2 }])).toBe(true);
+  });
+
+  test('should return true when arrays contain same ids in different order', () => {
+    expect(arrayIdsMatch([{ id: 2 }, { id: 1 }], [{ id: 1 }, { id: 2 }])).toBe(true);
+  });
+
+  test('should return false when arrays have different lengths', () => {
+    expect(arrayIdsMatch([{ id: 1 }], [{ id: 1 }, { id: 2 }])).toBe(false);
+  });
+
+  test('should return false when arrays have same length but different ids', () => {
+    expect(arrayIdsMatch([{ id: 1 }, { id: 3 }], [{ id: 1 }, { id: 2 }])).toBe(false);
+  });
+
+  test('should return false when one array is empty and the other is not', () => {
+    expect(arrayIdsMatch([], [{ id: 1 }])).toBe(false);
+    expect(arrayIdsMatch([{ id: 1 }], [])).toBe(false);
+  });
+
+  test('should return true for single-element arrays with matching id', () => {
+    expect(arrayIdsMatch([{ id: 42 }], [{ id: 42 }])).toBe(true);
+  });
+
+  test('should return false for single-element arrays with different ids', () => {
+    expect(arrayIdsMatch([{ id: 1 }], [{ id: 2 }])).toBe(false);
   });
 });
