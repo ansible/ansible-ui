@@ -77,11 +77,16 @@ npx playwright test tests/visual/ --project "live chromium" --update-snapshots
 
 ### Linux baselines (local via podman)
 
-PLATFORM_SERVER=https://your-aap-instance ./scripts/update-visual-baselines.sh
+```bash
+PLATFORM_SERVER=https://your-aap-instance \
+PLATFORM_USERNAME=admin \
+PLATFORM_PASSWORD=your-password \
+./scripts/update-visual-baselines.sh
 
 # Review and commit
 git diff playwright/tests/visual/
 git add playwright/tests/visual/**/*-linux.png
+```
 
 This workflow builds the UI inside a container using the official Playwright Linux image, serves it on https://localhost:4100, runs visual tests with --update-snapshots against your PLATFORM_SERVER for API calls, and writes updated -linux.png files directly to your working tree via volume mount.
 

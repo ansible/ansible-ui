@@ -4,15 +4,24 @@
 
 set -e
 
-# Validate PLATFORM_SERVER
+# Validate required environment variables
 if [ -z "$PLATFORM_SERVER" ]; then
   echo "Error: PLATFORM_SERVER environment variable is required"
   echo ""
-  echo "Usage: PLATFORM_SERVER=https://your-aap-instance ./scripts/update-visual-baselines.sh [test-file]"
+  echo "Usage: PLATFORM_SERVER=<url> PLATFORM_USERNAME=<user> PLATFORM_PASSWORD=<pass> ./scripts/update-visual-baselines.sh [test-file]"
   echo ""
   echo "Examples:"
-  echo "  PLATFORM_SERVER=https://3.89.120.97 ./scripts/update-visual-baselines.sh"
-  echo "  PLATFORM_SERVER=https://3.89.120.97 ./scripts/update-visual-baselines.sh tests/visual/overview-visual.spec.ts"
+  echo "  PLATFORM_SERVER=https://your-aap-instance PLATFORM_USERNAME=admin PLATFORM_PASSWORD=secret ./scripts/update-visual-baselines.sh"
+  exit 1
+fi
+
+if [ -z "$PLATFORM_USERNAME" ]; then
+  echo "Error: PLATFORM_USERNAME environment variable is required"
+  exit 1
+fi
+
+if [ -z "$PLATFORM_PASSWORD" ]; then
+  echo "Error: PLATFORM_PASSWORD environment variable is required"
   exit 1
 fi
 
@@ -42,6 +51,8 @@ echo ""
 
 podman run --rm \
   -e PLATFORM_SERVER="$PLATFORM_SERVER" \
+  -e PLATFORM_USERNAME="$PLATFORM_USERNAME" \
+  -e PLATFORM_PASSWORD="$PLATFORM_PASSWORD" \
   -v "$PROJECT_ROOT/playwright/tests/visual:/work/playwright/tests/visual:z" \
   aap-ui-visual
 

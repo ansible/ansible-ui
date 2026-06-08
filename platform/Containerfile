@@ -15,9 +15,8 @@ RUN npm ci
 RUN cd platform && npm run build
 
 # Set environment variables
+# Note: PLATFORM_USERNAME and PLATFORM_PASSWORD must be passed at runtime via -e flags
 ENV PLATFORM_UI=https://localhost:4100
-ENV PLATFORM_USERNAME=e2e
-ENV PLATFORM_PASSWORD=aL6VI1boHdnWc05p
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 
 # Expose port 4100
