@@ -30,7 +30,7 @@ test.describe('Persona Switcher', () => {
     'Persona switcher not available on SaaS or Azure deployments'
   );
 
-  test('Persona views for System Administrator', async ({ page }) => {
+  test('Persona views for System Administrator', { tag: ['@tier1'] }, async ({ page }) => {
     // Administration View
     await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
     await expect(page.locator('#platform-overview')).toContainText('Overview');
@@ -74,7 +74,7 @@ test.describe('Persona Switcher', () => {
     await expect(page.locator('input[type="checkbox"]')).toHaveAttribute('aria-label', 'Disabled');
   });
 
-  test('Persona views for Normal User', async ({ page }) => {
+  test('Persona views for Normal User', { tag: ['@tier1'] }, async ({ page }) => {
     await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
     const username = await User.ui
       .create(page)

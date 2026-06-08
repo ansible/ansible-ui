@@ -16,7 +16,7 @@ test.describe('Platform Teams - Roles Tab', () => {
 
   test(
     'should assign a role to a team and then remove it',
-    { tag: ['@team', '@not_mock'] },
+    { tag: ['@team', '@not_mock', '@tier1'] },
     async ({ page }) => {
       credentialName = await Credential.ui.create(page);
       teamName = await Team.ui.create(page, { organizationName: 'Default' });

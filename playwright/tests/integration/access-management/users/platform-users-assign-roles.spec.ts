@@ -6,7 +6,7 @@ import { User, Inventory } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/users' }));
 test.afterEach(setupAfter);
 
-test('should assign a user role', { tag: ['@not_mock'] }, async ({ page }) => {
+test('should assign a user role', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
   const username = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
   const inventory = await Inventory.ui.create(page);
   await page.getByRole('link', { name: 'Users' }).click();
