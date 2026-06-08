@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RESOURCE_TYPE } from '../constants';
@@ -36,6 +37,11 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
     badgeColor: 'var(--pf-t--global--background--color--secondary--default)',
     badgeBorderColor: 'var(--pf-t--global--border--color--on-secondary)',
   },
+}));
+
+const mockBuildEffectivePrompt = vi.fn(() => ({ effectivePrompt: { diff_mode: false } }));
+vi.mock('./buildEffectivePrompt', () => ({
+  buildEffectivePrompt: () => mockBuildEffectivePrompt(),
 }));
 
 const mockGetInitialValues = vi.fn(() =>
@@ -186,5 +192,124 @@ describe('NodeEditWizard', () => {
     });
 
     expect(container.firstChild).toBeNull();
+  });
+
+  it('should call buildEffectivePrompt and update node on submit', async () => {
+    const user = userEvent.setup();
+    mockGetInitialValues.mockResolvedValueOnce({
+      nodeTypeStep: {
+        node_type: RESOURCE_TYPE.workflow_approval,
+        node_convergence: 'any' as const,
+        node_alias: '',
+        approval_name: 'Approval',
+        approval_description: '',
+        approval_timeout: 0,
+        node_days_to_keep: 30,
+        resource: null,
+        resourceId: undefined,
+        node_status_type: EdgeStatus.info,
+      },
+      nodePromptsStep: {
+        prompt: {
+          credentials: [],
+          labels: [],
+          instance_groups: [],
+          original: {
+            credentials: [],
+            labels: [],
+            instance_groups: [],
+          },
+        },
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <NodeEditWizard node={mockNode} />
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId('wizard-title')).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    // With workflow_approval and no launch_config, prompts and survey are hidden
+    // Wizard goes: Node details → Review
+    const nextButton = screen.getByRole('button', { name: 'Next' });
+    await user.click(nextButton);
+
+    await waitFor(
+      () => {
+        const finishButton = screen.queryByRole('button', { name: 'Finish' });
+        if (finishButton) {
+          return expect(finishButton).toBeInTheDocument();
+        }
+        throw new Error('Finish button not found');
+      },
+      { timeout: 5000 }
+    );
+
+    const finishButton = screen.getByRole('button', { name: 'Finish' });
+    await user.click(finishButton);
+
+    await waitFor(
+      () => {
+        expect(mockBuildEffectivePrompt).toHaveBeenCalled();
+      },
+      { timeout: 5000 }
+    );
+
+    expect(mockSetData).toHaveBeenCalled();
+    expect(mockSetLabel).toHaveBeenCalled();
+  });
+
+  it('should show prompts step when initialValues has launch_config', async () => {
+    mockGetInitialValues.mockResolvedValueOnce({
+      nodeTypeStep: {
+        node_type: RESOURCE_TYPE.job,
+        node_convergence: 'any' as const,
+        node_alias: '',
+        approval_name: '',
+        approval_description: '',
+        approval_timeout: 0,
+        node_days_to_keep: 30,
+        resource: null,
+        resourceId: undefined,
+        node_status_type: EdgeStatus.info,
+      },
+      nodePromptsStep: {
+        prompt: {
+          launch_config: {
+            ask_credential_on_launch: true,
+          },
+          credentials: [],
+          labels: [],
+          instance_groups: [],
+          original: {
+            credentials: [],
+            labels: [],
+            instance_groups: [],
+          },
+        } as never,
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <NodeEditWizard node={mockNode} />
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId('wizard-title')).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    expect(screen.getByText('Edit step')).toBeInTheDocument();
   });
 });

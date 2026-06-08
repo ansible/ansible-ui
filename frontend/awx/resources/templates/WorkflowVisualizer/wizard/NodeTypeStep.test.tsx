@@ -408,3 +408,76 @@ describe('NodeTypeStep', () => {
     expect(container.firstChild).not.toBeNull();
   });
 });
+
+function TestWrapperWithSourceNode({
+  defaultValues,
+  hasSourceNode = false,
+}: Readonly<{ defaultValues: Partial<WizardFormValues>; hasSourceNode?: boolean }>) {
+  const methods = useForm<WizardFormValues>({ defaultValues });
+  return (
+    <MemoryRouter>
+      <FormProvider {...methods}>
+        <NodeTypeStep hasSourceNode={hasSourceNode} />
+      </FormProvider>
+    </MemoryRouter>
+  );
+}
+
+describe('NodeTypeStep sub-components', () => {
+  beforeEach(() => {
+    mockSetWizardData.mockClear();
+    mockSetStepData.mockClear();
+    mockRequestGet.mockClear();
+  });
+
+  it('should render NodeStatusType when hasSourceNode is true', () => {
+    const { getByTestId } = render(
+      <TestWrapperWithSourceNode defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode />
+    );
+    expect(getByTestId('node-status-type')).toBeInTheDocument();
+  });
+
+  it('should not render NodeStatusType when hasSourceNode is false', () => {
+    const { queryByTestId } = render(
+      <TestWrapperWithSourceNode
+        defaultValues={{ node_type: RESOURCE_TYPE.job }}
+        hasSourceNode={false}
+      />
+    );
+    expect(queryByTestId('node-status-type')).not.toBeInTheDocument();
+  });
+
+  it('should render convergence input', () => {
+    const { getByTestId } = render(
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} />
+    );
+    expect(getByTestId('node-convergence')).toBeInTheDocument();
+  });
+
+  it('should render alias input', () => {
+    const { getByTestId } = render(
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} />
+    );
+    expect(getByTestId('node-alias')).toBeInTheDocument();
+  });
+
+  it('should render approval form fields for workflow_approval node type', () => {
+    const { getByTestId } = render(
+      <TestWrapper
+        defaultValues={{
+          node_type: RESOURCE_TYPE.workflow_approval,
+          approval_timeout: 90,
+        }}
+      />
+    );
+    expect(getByTestId('approval_timeout_minutes')).toBeInTheDocument();
+    expect(getByTestId('approval_timeout_seconds')).toBeInTheDocument();
+  });
+
+  it('should render node type select', () => {
+    const { getByTestId } = render(
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} />
+    );
+    expect(getByTestId('node-type')).toBeInTheDocument();
+  });
+});
