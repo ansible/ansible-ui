@@ -88,9 +88,9 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       // original.* ensures they can be properly cleaned up when switching to a template that
       // does not accept them — otherwise processCredentials/Labels/InstanceGroups find nothing
       // to remove and the PATCH fails with "Field is not configured to prompt on launch."
-      const nodeCredentials = !isNewNode ? await getCredentialData(nodeId) : [];
-      const nodeLabels = !isNewNode ? await getLabelData(nodeId) : [];
-      const nodeInstanceGroups = !isNewNode ? await getInstanceGroupData(nodeId) : [];
+      const nodeCredentials = isNewNode ? [] : await getCredentialData(nodeId);
+      const nodeLabels = isNewNode ? [] : await getLabelData(nodeId);
+      const nodeInstanceGroups = isNewNode ? [] : await getInstanceGroupData(nodeId);
 
       const prompt = nodeData?.launch_data;
       const defaults = nodeData?.resource;

@@ -342,7 +342,7 @@ export function useSaveVisualizer(templateId: string) {
           }
 
           if (launch_data?.original?.isTemplateChange) {
-            clearStaleNodeFields(updatedNodePayload as Record<string, unknown>);
+            clearStaleNodeFields(updatedNodePayload);
           }
 
           // Disassociate stale resources BEFORE patching the template. AWX validates the

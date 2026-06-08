@@ -77,7 +77,7 @@ describe('buildEffectivePrompt', () => {
         launchConfig: {
           ...baseLaunchConfig,
           ask_credential_on_launch: true,
-        } as LaunchConfiguration,
+        },
         nodeOriginalResources: undefined,
         resourceOrganization: undefined,
       });
@@ -89,7 +89,7 @@ describe('buildEffectivePrompt', () => {
         originalTemplateId: 1,
         newResourceId: 2,
         prompt: { extra_vars: 'my_var: value' },
-        launchConfig: { ...baseLaunchConfig, ask_variables_on_launch: true } as LaunchConfiguration,
+        launchConfig: { ...baseLaunchConfig, ask_variables_on_launch: true },
         nodeOriginalResources: undefined,
         resourceOrganization: undefined,
       });

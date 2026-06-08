@@ -55,7 +55,7 @@ vi.mock('@ansible/common-ui/utils/useGetDocsUrl', () => ({
 }));
 
 const mockRequestGet = vi.hoisted(() =>
-  vi.fn((url: string) => {
+  vi.fn((url: string): Promise<Record<string, unknown>> => {
     if (url.includes('/launch/')) {
       return Promise.resolve({
         ask_credential_on_launch: true,
@@ -151,7 +151,7 @@ describe('NodeTypeStep', () => {
   });
 
   it('should call setWizardData with null launch_config when template has no promptable fields', async () => {
-    mockRequestGet.mockImplementation(((url: string) => {
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
       if (url.includes('/launch/')) {
         return Promise.resolve({
           ask_credential_on_launch: false,
@@ -165,7 +165,7 @@ describe('NodeTypeStep', () => {
         return Promise.resolve({ count: 0, results: [] });
       }
       return Promise.resolve({ id: 2, name: 'Simple Template', type: 'job_template' });
-    }) as never);
+    });
 
     render(
       <TestWrapper

@@ -10,6 +10,18 @@ interface BuildEffectivePromptParams {
   resourceOrganization: number | null | undefined;
 }
 
+function clearUnpromptedFields(
+  effectivePrompt: Partial<PromptFormValues>,
+  launchConfig: LaunchConfiguration | undefined
+): void {
+  if (!launchConfig?.ask_credential_on_launch) effectivePrompt.credentials = [];
+  if (!launchConfig?.ask_labels_on_launch) effectivePrompt.labels = [];
+  if (!launchConfig?.ask_instance_groups_on_launch) effectivePrompt.instance_groups = [];
+  if (!launchConfig?.ask_skip_tags_on_launch) effectivePrompt.skip_tags = [];
+  if (!launchConfig?.ask_tags_on_launch) effectivePrompt.job_tags = [];
+  if (!launchConfig?.ask_variables_on_launch) effectivePrompt.extra_vars = '';
+}
+
 export function buildEffectivePrompt({
   originalTemplateId,
   newResourceId,
@@ -31,24 +43,7 @@ export function buildEffectivePrompt({
   }
 
   if (isTemplateChange) {
-    if (!launchConfig?.ask_credential_on_launch) {
-      effectivePrompt.credentials = [];
-    }
-    if (!launchConfig?.ask_labels_on_launch) {
-      effectivePrompt.labels = [];
-    }
-    if (!launchConfig?.ask_instance_groups_on_launch) {
-      effectivePrompt.instance_groups = [];
-    }
-    if (!launchConfig?.ask_skip_tags_on_launch) {
-      effectivePrompt.skip_tags = [];
-    }
-    if (!launchConfig?.ask_tags_on_launch) {
-      effectivePrompt.job_tags = [];
-    }
-    if (!launchConfig?.ask_variables_on_launch) {
-      effectivePrompt.extra_vars = '';
-    }
+    clearUnpromptedFields(effectivePrompt, launchConfig);
   }
 
   effectivePrompt.original = {

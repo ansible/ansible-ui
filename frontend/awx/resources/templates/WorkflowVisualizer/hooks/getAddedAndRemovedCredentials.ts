@@ -13,14 +13,14 @@ export function getAddedAndRemovedCredentials(
 
   const added = promptCredentials.filter(
     (promptCredential) =>
-      !aggregateCredentials.find(
+      !aggregateCredentials.some(
         (aggregateCredential) => aggregateCredential.id === promptCredential.id
       )
   );
 
   const removed = nodeCredentials.filter(
     (nodeCredential) =>
-      !promptCredentials.find((promptCredential) => promptCredential.id === nodeCredential.id)
+      !promptCredentials.some((promptCredential) => promptCredential.id === nodeCredential.id)
   );
 
   return { added, removed };

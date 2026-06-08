@@ -2,7 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
-import type { GraphNodeData } from '../types';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import type { GraphNodeData, PromptFormValues } from '../types';
 import { JobTemplateDetails } from './JobTemplateDetails';
 
 vi.mock('@patternfly/react-topology', () => ({
@@ -133,8 +134,18 @@ function renderComponent(nodeData = mockNodeData) {
 
 describe('JobTemplateDetails', () => {
   beforeEach(() => {
-    vi.mocked(useGet).mockReturnValue({ data: undefined } as never);
-    vi.mocked(useGetItem).mockReturnValue({ data: undefined } as never);
+    vi.mocked(useGet).mockReturnValue({
+      data: undefined,
+      error: undefined,
+      refresh: vi.fn(),
+      isLoading: false,
+    });
+    vi.mocked(useGetItem).mockReturnValue({
+      data: undefined,
+      error: undefined,
+      refresh: vi.fn(),
+      isLoading: false,
+    });
   });
 
   it('should render the playbook field from template', () => {
@@ -220,7 +231,10 @@ describe('JobTemplateDetails', () => {
   it('should render execution environment from fetched item when prompt has EE', () => {
     vi.mocked(useGetItem).mockReturnValue({
       data: { id: 5, name: 'Custom EE' },
-    } as never);
+      error: undefined,
+      refresh: vi.fn(),
+      isLoading: false,
+    });
 
     const nodeWithEE: GraphNodeData = {
       ...mockNodeData,
@@ -240,8 +254,8 @@ describe('JobTemplateDetails', () => {
       launch_data: {
         original: {
           isTemplateChange: true,
-          launch_config: {} as never,
-        } as never,
+          launch_config: {} as LaunchConfiguration,
+        },
       },
     };
 
@@ -278,23 +292,31 @@ describe('JobTemplateDetails', () => {
   });
 
   it('should render prompt-overridden inventory name when useGetItem provides it', () => {
-    vi.mocked(useGetItem).mockImplementation((api, id) => {
+    vi.mocked(useGetItem).mockImplementation((_api, id) => {
       if (id && String(id) === '2') {
-        return { data: { id: 2, name: 'Override Inventory' } } as never;
+        return {
+          data: { id: 2, name: 'Override Inventory' },
+          error: undefined,
+          refresh: vi.fn(),
+          isLoading: false,
+        };
       }
-      return { data: undefined } as never;
+      return { data: undefined, error: undefined, refresh: vi.fn(), isLoading: false };
     });
 
     const nodeWithPrompt: GraphNodeData = {
       ...mockNodeData,
       launch_data: {
-        inventory: { id: 2, name: 'Override Inventory' } as never,
+        inventory: {
+          id: 2,
+          name: 'Override Inventory',
+        } as LaunchConfiguration['defaults']['inventory'],
         original: {
           isTemplateChange: false,
           launch_config: {
             ask_inventory_on_launch: true,
-          } as never,
-        } as never,
+          } as LaunchConfiguration,
+        },
       },
     };
 
@@ -313,8 +335,8 @@ describe('JobTemplateDetails', () => {
       launch_data: {
         credentials: [],
         original: {
-          launch_config: { ask_credential_on_launch: true } as never,
-        } as never,
+          launch_config: { ask_credential_on_launch: true } as LaunchConfiguration,
+        },
       },
     };
     renderComponent(nodeWithEmptyPromptCredentials);
@@ -324,19 +346,24 @@ describe('JobTemplateDetails', () => {
   it('should assign fetchedEE when promptValues has execution_environment and useGetItem returns data', () => {
     vi.mocked(useGetItem).mockImplementation((_api, id) => {
       if (id && id !== 'undefined') {
-        return { data: { id: Number(id), name: 'Fetched EE From API' } } as never;
+        return {
+          data: { id: Number(id), name: 'Fetched EE From API' },
+          error: undefined,
+          refresh: vi.fn(),
+          isLoading: false,
+        };
       }
-      return { data: undefined } as never;
+      return { data: undefined, error: undefined, refresh: vi.fn(), isLoading: false };
     });
 
     const nodeWithPromptEE: GraphNodeData = {
       ...mockNodeData,
       launch_data: {
-        execution_environment: { id: 7 } as never,
+        execution_environment: { id: 7 } as PromptFormValues['execution_environment'],
         original: {
           isTemplateChange: false,
-          launch_config: { ask_execution_environment_on_launch: true } as never,
-        } as never,
+          launch_config: { ask_execution_environment_on_launch: true } as LaunchConfiguration,
+        },
       },
     };
 
@@ -371,9 +398,14 @@ describe('JobTemplateDetails', () => {
   it('should use node instance groups from useGet when they are returned', () => {
     vi.mocked(useGet).mockImplementation((url) => {
       if (typeof url === 'string' && url.includes('instance_groups')) {
-        return { data: { results: [{ id: 3, name: 'controlplane' }], count: 1 } } as never;
+        return {
+          data: { results: [{ id: 3, name: 'controlplane' }], count: 1 },
+          error: undefined,
+          refresh: vi.fn(),
+          isLoading: false,
+        };
       }
-      return { data: undefined } as never;
+      return { data: undefined, error: undefined, refresh: vi.fn(), isLoading: false };
     });
 
     renderComponent();
