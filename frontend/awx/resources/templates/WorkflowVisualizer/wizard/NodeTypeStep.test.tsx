@@ -263,8 +263,10 @@ describe('NodeTypeStep', () => {
     // Override mock: template 1 has prompts, template 3 has NO prompts
     // When switching from 1→3 with isTemplateChange=true and shouldShowPromptStep=false,
     // lines 238-254 (the else-if isTemplateChange cleanup path) should be covered.
+    // fetchResource builds URLs with a trailing slash, producing double slashes like
+    // /job_templates//3/launch/. Match resource ID suffix to handle both /3/ and //3/ patterns.
     mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
-      if (url.includes('/job_templates/3/launch/')) {
+      if (url.includes('3/launch/')) {
         return Promise.resolve({
           ask_credential_on_launch: false,
           ask_inventory_on_launch: false,
@@ -286,10 +288,11 @@ describe('NodeTypeStep', () => {
           defaults: {},
         });
       }
-      if (url.includes('/job_templates/3/credentials/')) {
+      if (url.includes('3/credentials/')) {
         return Promise.resolve({ count: 0, results: [] });
       }
-      if (url.includes('/job_templates/3')) {
+      // fetchResource for template 3: endsWith //3 or /3 (must come AFTER launch/ and credentials/ checks)
+      if (url.endsWith('//3') || url.endsWith('/3')) {
         return Promise.resolve({ id: 3, name: 'No-Prompts Template', type: 'job_template' });
       }
       if (url.includes('/launch/')) {
