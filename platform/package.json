@@ -27,6 +27,7 @@
     "podman:stop": "podman rm -f platform-ui || true",
     "podman:run": "echo https://localhost:4100 && podman run --rm -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui",
     "podman:build:run": "npm run podman:build && npm run podman:run",
+    "podman:update-snapshots": "cd .. && ./scripts/update-visual-baselines.sh",
     "test": "concurrently npm:eslint npm:prettier npm:tsc npm:vitest -c auto",
     "tsc": "tsc --noEmit",
     "eslint": "eslint --max-warnings=0 .",

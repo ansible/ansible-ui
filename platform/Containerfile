@@ -1,0 +1,57 @@
+# Multi-stage Containerfile for local Linux visual baseline generation
+# Uses official Playwright image for consistent rendering with CI
+
+# Stage 1: build — Build the UI static assets
+FROM mcr.microsoft.com/playwright:v1.57.0-noble@sha256:3bed4b1a12f2338642f3d8cba28e291deef3c66bd4a964bbeb3e57bbff511dbd AS build
+
+WORKDIR /work
+
+# Copy the full monorepo (respecting .dockerignore)
+COPY . .
+
+# Install dependencies
+RUN npm ci
+
+# Build platform UI
+RUN cd platform && npm run build
+
+# Stage 2: platform-ui — Serve built assets + run visual tests
+FROM mcr.microsoft.com/playwright:v1.57.0-noble@sha256:3bed4b1a12f2338642f3d8cba28e291deef3c66bd4a964bbeb3e57bbff511dbd AS platform-ui
+
+WORKDIR /work
+
+# Install lightweight static server
+RUN npm install -g serve@14.2.4
+
+# Copy package files and install dependencies (Playwright needs @playwright/test at runtime)
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy built assets from stage 1
+COPY --from=build /work/platform/dist ./platform/dist
+
+# Copy playwright directory (test specs, config, snapshots)
+COPY playwright ./playwright
+
+# Set environment variables
+ENV PLATFORM_UI=https://localhost:4100
+ENV PLATFORM_USERNAME=e2e
+ENV PLATFORM_PASSWORD=aL6VI1boHdnWc05p
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+
+# Expose port 4100
+EXPOSE 4100
+
+# Entrypoint: start server, run tests
+CMD ["sh", "-c", "\
+  echo 'Generating self-signed certificate...' && \
+  openssl req -x509 -newkey rsa:2048 -nodes -keyout /tmp/key.pem -out /tmp/cert.pem -days 1 -subj '/CN=localhost' 2>/dev/null && \
+  echo 'Starting static server on https://localhost:4100...' && \
+  serve -s /work/platform/dist -l tcp://0.0.0.0:4100 --ssl-cert /tmp/cert.pem --ssl-key /tmp/key.pem & \
+  SERVER_PID=$! && \
+  sleep 5 && \
+  echo 'Running Playwright visual tests...' && \
+  cd /work/playwright && \
+  npx playwright test tests/visual/ --project 'live chromium' --update-snapshots && \
+  kill $SERVER_PID 2>/dev/null || true \
+"]
