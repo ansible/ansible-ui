@@ -1,12 +1,11 @@
 # Multi-stage Containerfile for local Linux visual baseline generation
 # Uses official Playwright image for consistent rendering with CI
 
-# Stage 1: build — Build the UI static assets
-FROM mcr.microsoft.com/playwright:v1.57.0-noble@sha256:3bed4b1a12f2338642f3d8cba28e291deef3c66bd4a964bbeb3e57bbff511dbd AS build
+FROM mcr.microsoft.com/playwright:v1.57.0-noble@sha256:3bed4b1a12f2338642f3d8cba28e291deef3c66bd4a964bbeb3e57bbff511dbd AS platform-ui
 
 WORKDIR /work
 
-# Copy the full monorepo (respecting .dockerignore)
+# Copy the full monorepo
 COPY . .
 
 # Install dependencies
@@ -14,24 +13,6 @@ RUN npm ci
 
 # Build platform UI
 RUN cd platform && npm run build
-
-# Stage 2: platform-ui — Serve built assets + run visual tests
-FROM mcr.microsoft.com/playwright:v1.57.0-noble@sha256:3bed4b1a12f2338642f3d8cba28e291deef3c66bd4a964bbeb3e57bbff511dbd AS platform-ui
-
-WORKDIR /work
-
-# Install lightweight static server with better SPA support
-RUN npm install -g http-server@14.1.1
-
-# Copy package files and install dependencies (Playwright needs @playwright/test at runtime)
-COPY package.json package-lock.json ./
-RUN npm ci
-
-# Copy built assets from stage 1
-COPY --from=build /work/platform/dist ./platform/dist
-
-# Copy playwright directory (test specs, config, snapshots)
-COPY playwright ./playwright
 
 # Set environment variables
 ENV PLATFORM_UI=https://localhost:4100
@@ -42,13 +23,11 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 # Expose port 4100
 EXPOSE 4100
 
-# Entrypoint: start server, run tests
+# Entrypoint: start vite preview server (handles SPA routing), run tests
 CMD ["sh", "-c", "\
-  echo 'Generating self-signed certificate...' && \
-  openssl req -x509 -newkey rsa:2048 -nodes -keyout /tmp/key.pem -out /tmp/cert.pem -days 1 -subj '/CN=localhost' 2>/dev/null && \
-  echo 'Starting static server on https://localhost:4100...' && \
-  cd /work/platform/dist && \
-  http-server . -p 4100 -S -C /tmp/cert.pem -K /tmp/key.pem -P http://localhost:4100? --log-ip & \
+  echo 'Starting Vite preview server on https://localhost:4100...' && \
+  cd /work/platform && \
+  npm run preview & \
   SERVER_PID=$! && \
   sleep 5 && \
   echo 'Running Playwright visual tests...' && \
