@@ -29,7 +29,11 @@ export function GroupSelectDialog({ onSelectedGroups, groupId }: GroupSelectModa
     [nameColumn, createdColumn, modifiedColumn]
   );
   const view = useAwxView<InventoryGroup>({
-    url: awxAPI`/groups/${groupId}/potential_children/?not__id=${groupId}&not__parents=${groupId}&order_by=name&page=1&page_size=5`,
+    url: awxAPI`/groups/${groupId}/potential_children/`,
+    queryParams: {
+      not__id: groupId,
+      not__parents: groupId,
+    },
     toolbarFilters,
     tableColumns,
   });
