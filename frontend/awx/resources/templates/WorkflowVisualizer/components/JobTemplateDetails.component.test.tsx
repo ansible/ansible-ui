@@ -310,7 +310,7 @@ describe('JobTemplateDetails', () => {
         inventory: {
           id: 2,
           name: 'Override Inventory',
-        } as LaunchConfiguration['defaults']['inventory'],
+        },
         original: {
           isTemplateChange: false,
           launch_config: {

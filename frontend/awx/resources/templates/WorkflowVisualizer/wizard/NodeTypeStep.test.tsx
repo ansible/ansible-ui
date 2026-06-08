@@ -259,6 +259,141 @@ describe('NodeTypeStep', () => {
     expect(mockSetStepData).toHaveBeenCalled();
   });
 
+  it('should clear prompt step state when switching to a template with no promptable fields (else-if isTemplateChange path)', async () => {
+    // Override mock: template 1 has prompts, template 3 has NO prompts
+    // When switching from 1→3 with isTemplateChange=true and shouldShowPromptStep=false,
+    // lines 238-254 (the else-if isTemplateChange cleanup path) should be covered.
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/job_templates/3/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: false,
+          ask_inventory_on_launch: false,
+          ask_variables_on_launch: false,
+          ask_labels_on_launch: false,
+          ask_instance_groups_on_launch: false,
+          ask_tags_on_launch: false,
+          ask_skip_tags_on_launch: false,
+          ask_diff_mode_on_launch: false,
+          ask_limit_on_launch: false,
+          ask_verbosity_on_launch: false,
+          ask_scm_branch_on_launch: false,
+          ask_forks_on_launch: false,
+          ask_job_slice_count_on_launch: false,
+          ask_timeout_on_launch: false,
+          ask_execution_environment_on_launch: false,
+          ask_job_type_on_launch: false,
+          survey_enabled: false,
+          defaults: {},
+        });
+      }
+      if (url.includes('/job_templates/3/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      if (url.includes('/job_templates/3')) {
+        return Promise.resolve({ id: 3, name: 'No-Prompts Template', type: 'job_template' });
+      }
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_inventory_on_launch: true,
+          ask_variables_on_launch: false,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({
+          count: 1,
+          results: [
+            {
+              id: 10,
+              name: 'SSH',
+              credential_type: 1,
+              summary_fields: { credential_type: { name: 'Machine' } },
+            },
+          ],
+        });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    function ControlledWrapper() {
+      const [nextId, setNextId] = useState<number | undefined>(undefined);
+      const methods = useForm<WizardFormValues>({
+        defaultValues: { node_type: RESOURCE_TYPE.job, resourceId: 1 },
+      });
+
+      useEffect(() => {
+        if (nextId !== undefined) {
+          methods.setValue('resourceId', nextId);
+        }
+      }, [nextId, methods]);
+
+      return (
+        <MemoryRouter>
+          <FormProvider {...methods}>
+            <NodeTypeStep />
+            <button onClick={() => setNextId(3)}>Switch to no-prompts</button>
+          </FormProvider>
+        </MemoryRouter>
+      );
+    }
+
+    const { getByRole } = render(<ControlledWrapper />);
+
+    await waitFor(() => expect(mockSetWizardData).toHaveBeenCalled(), { timeout: 5000 });
+    mockSetWizardData.mockClear();
+    mockSetStepData.mockClear();
+
+    act(() => {
+      getByRole('button', { name: 'Switch to no-prompts' }).click();
+    });
+
+    await waitFor(
+      () => {
+        expect(mockSetWizardData).toHaveBeenCalled();
+      },
+      { timeout: 5000 }
+    );
+    expect(mockSetStepData).toHaveBeenCalled();
+
+    const wizardDataArg: unknown = mockSetWizardData.mock.calls[0][0];
+    if (typeof wizardDataArg === 'function') {
+      const result = (wizardDataArg as (prev: Record<string, unknown>) => Record<string, unknown>)(
+        {}
+      );
+      expect(result.launch_config).toBeNull();
+    }
+  });
+
+  it('should handle workflow_job template type and fetch launch config', async () => {
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/workflow_job_templates/10/launch/')) {
+        return Promise.resolve({
+          ask_inventory_on_launch: true,
+          ask_credential_on_launch: false,
+          survey_enabled: false,
+          defaults: {},
+        });
+      }
+      return Promise.resolve({ id: 10, name: 'WF Template', type: 'workflow_job_template' });
+    });
+
+    render(
+      <TestWrapper
+        defaultValues={{
+          node_type: RESOURCE_TYPE.workflow_job,
+          resourceId: 10,
+        }}
+      />
+    );
+
+    await waitFor(() => expect(mockSetWizardData).toHaveBeenCalled(), { timeout: 5000 });
+    expect(mockRequestGet).toHaveBeenCalledWith(
+      expect.stringContaining('/workflow_job_templates/10/launch/')
+    );
+  });
+
   it('should render the node type selector form elements', () => {
     const { container } = render(
       <TestWrapper
