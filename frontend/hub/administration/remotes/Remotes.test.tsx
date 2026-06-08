@@ -66,7 +66,7 @@ describe('Remotes Component', () => {
       expect(await screen.findByRole('heading', { name: 'Remotes' })).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+          'Remotes manage configurations for remote execution environments used in Ansible automation.'
         )
       ).toBeInTheDocument();
     });

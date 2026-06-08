@@ -4,7 +4,6 @@ import { useFormContext } from 'react-hook-form';
 import { Button, HelperTextItem } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { ExternalLink } from '../../../common/ExternalLink';
 import { RemoteFormProps } from '../RemoteForm';
 
 interface IRequirementsFile {
@@ -29,17 +28,10 @@ const Help = () => {
   return (
     <>
       <Trans>
-        This uses the same{' '}
-        <ExternalLink href="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#installing-collections-with-ansible-galaxy">
-          requirements.yml
-        </ExternalLink>{' '}
-        format as the Ansible Galaxy CLI with the caveat that roles are not supported and the source
-        parameter is not supported.
+        Requirements files are a list of collections that you want to install in your automation
+        hub. Click Prefill to prefill the structure for the requirements file.
       </Trans>
       <br />
-      <br />
-      <Trans>Example file:</Trans>
-      <pre>{yamlRequirementsTemplate}</pre>
       <br />
       {!done ? (
         <Button

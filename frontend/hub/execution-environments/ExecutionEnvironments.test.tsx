@@ -71,7 +71,7 @@ describe('ExecutionEnvironments Component', () => {
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
+          'Execution environments are portable, reproducible environments for running Ansible playbooks and roles.'
         )
       ).toBeInTheDocument();
     });

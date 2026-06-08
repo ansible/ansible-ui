@@ -68,7 +68,7 @@ export function Remotes() {
   const isUnauthorized = isAccessDeniedError(view.error);
 
   const description = t(
-    'Remotes are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+    'Remotes manage configurations for remote execution environments used in Ansible automation.'
   );
 
   return (

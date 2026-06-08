@@ -372,7 +372,7 @@ function RemoteInputs({ onClear, shouldHideField, disableEditName }: Readonly<IR
           name="username"
           label={t('Username')}
           placeholder={t('Enter username')}
-          labelHelp={t('The username to be used for authentication when syncing.')}
+          labelHelp={t('The username for authentication when syncing.')}
         />
       </PageFormSecret>
       <PageFormSecret
@@ -386,7 +386,7 @@ function RemoteInputs({ onClear, shouldHideField, disableEditName }: Readonly<IR
           name="password"
           label={t('Password')}
           placeholder={t('Enter password')}
-          labelHelp={t('The password to be used for authentication when syncing.')}
+          labelHelp={t('The password for authentication when syncing.')}
         />
       </PageFormSecret>
     </>
