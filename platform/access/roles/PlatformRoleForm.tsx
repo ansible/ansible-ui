@@ -83,7 +83,11 @@ export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPag
   const patchRequest = usePatchRequest<Partial<PlatformRole>, PlatformRole>();
 
   const onSubmit: PageFormSubmitHandler<PlatformRole> = async (data) => {
-    await patchRequest(gatewayAPI`/role_definitions/${id.toString()}/`, data);
+    const toUpdateRole: PlatformRole = {
+      ...data,
+      content_type: data.content_type === ContentTypeEnum.System ? null : data.content_type,
+    };
+    await patchRequest(gatewayAPI`/role_definitions/${id.toString()}/`, toUpdateRole);
     pageNavigate(PlatformRoute.RoleDetails, { params: { id } });
   };
   const onCancel = () => void navigate(-1);
