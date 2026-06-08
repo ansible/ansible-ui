@@ -11,15 +11,20 @@ import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import { DashboardValueCard } from './DashboardValueCard';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import useResizeObserver from '@react-hook/resize-observer';
 
 interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
   time_taken_create_automation_minutes: number;
 }
+
+// 24-column grid system for responsive layout
+// Uses 1625px instead of PageDashboard's 1662px to account for card padding
+const GRID_COLUMN_WIDTH = 1625 / 24; // ~67.7px per column
 
 export function DashboardMainTableCard(props: IAutomationDashboardView) {
   const {
@@ -36,6 +41,20 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
   const { activeAwxUser } = useAwxActiveUser();
   const putRequest = usePutRequest<IJobTemplateModify, IJobTemplateModify>();
   const alertToaster = usePageAlertToaster();
+
+  const ref = useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = useState(1);
+
+  const calculateGridColumns = (width: number) =>
+    Math.max(1, Math.floor(width / GRID_COLUMN_WIDTH));
+
+  useLayoutEffect(() => {
+    setColumns(calculateGridColumns(ref.current?.clientWidth ?? 0));
+  }, []);
+
+  useResizeObserver(ref, (entry) => {
+    setColumns(calculateGridColumns(entry.contentRect.width));
+  });
 
   const [errors, setErrors] = useState<Record<
     number,
@@ -188,19 +207,10 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
   ];
 
   return (
-    <PageDashboardCard
-      id={'ad-main-table-card'}
-      width="xxl"
-      style={{ gridColumn: 'span 24', maxHeight: 'unset', height: 'fit-content' }}
-      isCompact={false}
-      canCollapse={false}
-    >
+    <PageDashboardCard id={'ad-main-table-card'} width="xxl" isCompact canCollapse={false}>
       <div
-        style={{
-          display: 'grid',
-          gap: '1rem',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(32px, 1fr))',
-        }}
+        ref={ref}
+        style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
       >
         <DashboardValueCard
           id="cost-manual-automation-card"

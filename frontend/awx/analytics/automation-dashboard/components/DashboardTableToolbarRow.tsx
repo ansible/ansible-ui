@@ -1,5 +1,4 @@
 import { Button, Flex, FlexItem, Switch } from '@patternfly/react-core';
-import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { useTranslation } from 'react-i18next';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
@@ -99,73 +98,79 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
   return (
     <Flex
       style={{ paddingTop: '1rem', paddingBottom: '1rem' }}
-      direction={{ default: 'row' }}
-      alignItems={{ default: 'alignItemsCenter' }}
+      direction={{ xl: 'row', default: 'column' }}
+      alignItems={{ xl: 'alignItemsCenter', default: 'alignItemsFlexStart' }}
+      rowGap={{ default: 'rowGapMd' }}
     >
-      <FlexItem>
-        <DashboardTableInputField
-          label={t('Hourly rate for manually running the job ({{currency}})', { currency: '$' })}
-          labelHelp={t(
-            'The hourly labor cost used to estimate what it would cost to run these jobs manually. Used to calculate manual cost and savings in the table below.'
-          )}
-          id="engineer_avg_hourly_rate"
-          value={costState?.engineer_avg_hourly_rate}
-          min={1}
-          max={1000000}
-          onChange={(value) => {
-            void toolbarChangeHandler(value, 'engineer_avg_hourly_rate');
-          }}
-          readOnly={controlsDisabled}
-          error={errors?.engineer_avg_hourly_rate}
-        />
-      </FlexItem>
-      <FlexItem>
-        <DashboardTableInputField
-          label={t('Monthly AAP cost ({{currency}})', { currency: '$' })}
-          labelHelp={t(
-            'Monthly cost of running the Ansible Automation Platform. This value includes license, labor and infrastructure costs to run AAP. It is used to calculate the automation savings'
-          )}
-          id="monthly_subscription_cost"
-          value={costState?.monthly_subscription_cost}
-          min={1}
-          max={1000000}
-          onChange={(value) => {
-            void toolbarChangeHandler(value, 'monthly_subscription_cost');
-          }}
-          readOnly={controlsDisabled}
-          error={errors?.monthly_subscription_cost}
-        />
-      </FlexItem>
-      <FlexItem>
-        <PageFormGroup
-          fieldId={SWITCH_ID}
-          data-testid={SWITCH_ID + '-form-group'}
-          label={t('Include time taken to create automation into calculation')}
-        >
+      <Flex direction={{ md: 'row', default: 'column' }} rowGap={{ default: 'rowGapMd' }}>
+        <FlexItem>
+          <DashboardTableInputField
+            label={t('Hourly rate for manually running the job ({{currency}})', { currency: '$' })}
+            labelHelp={t(
+              'The hourly labor cost used to estimate what it would cost to run these jobs manually. Used to calculate manual cost and savings in the table below.'
+            )}
+            id="engineer_avg_hourly_rate"
+            value={costState?.engineer_avg_hourly_rate}
+            min={1}
+            max={1000000}
+            onChange={(value) => {
+              void toolbarChangeHandler(value, 'engineer_avg_hourly_rate');
+            }}
+            readOnly={controlsDisabled}
+            error={errors?.engineer_avg_hourly_rate}
+          />
+        </FlexItem>
+        <FlexItem>
+          <DashboardTableInputField
+            label={t('Monthly AAP cost ({{currency}})', { currency: '$' })}
+            labelHelp={t(
+              'Monthly cost of running the Ansible Automation Platform. This value includes license, labor and infrastructure costs to run AAP. It is used to calculate the automation savings'
+            )}
+            id="monthly_subscription_cost"
+            value={costState?.monthly_subscription_cost}
+            min={1}
+            max={1000000}
+            onChange={(value) => {
+              void toolbarChangeHandler(value, 'monthly_subscription_cost');
+            }}
+            readOnly={controlsDisabled}
+            error={errors?.monthly_subscription_cost}
+          />
+        </FlexItem>
+      </Flex>
+      <Flex
+        direction={{ md: 'row', default: 'column' }}
+        alignItems={{ md: 'alignItemsCenter', default: 'alignItemsFlexStart' }}
+        justifyContent={{ default: 'justifyContentSpaceBetween' }}
+        grow={{ default: 'grow' }}
+        rowGap={{ default: 'rowGapLg' }}
+      >
+        <FlexItem>
           <Switch
             id={SWITCH_ID + '-toggle'}
             data-testid={SWITCH_ID + '-toggle'}
-            aria-label={t('Include time taken to create automation into calculation')}
+            label={t('Include time taken to create automation into calculation')}
             isChecked={costState?.include_template_creation_time_in_costs === true}
             onChange={(_e, value) => {
               void toolbarChangeHandler(value, 'include_template_creation_time_in_costs');
             }}
+            hasCheckIcon
             isDisabled={controlsDisabled}
           />
-        </PageFormGroup>
-      </FlexItem>
-      <FlexItem style={{ alignSelf: 'flex-end', marginLeft: 'auto' }}>
-        <Button
-          id="btn-export-csv"
-          data-testid="btn-export-csv"
-          variant="secondary"
-          onClick={onExportCsv}
-          // TODO: Remove `|| true` once CSV export is implemented on the BE.
-          isDisabled={controlsDisabled || (itemCount ?? 0) === 0 || !onExportCsv || true}
-        >
-          {t('Export as CSV')}
-        </Button>
-      </FlexItem>
+        </FlexItem>
+        <FlexItem alignSelf={{ md: 'alignSelfFlexEnd', default: 'alignSelfFlexStart' }}>
+          <Button
+            id="btn-export-csv"
+            data-testid="btn-export-csv"
+            variant="secondary"
+            onClick={onExportCsv}
+            // TODO: Remove `|| true` once CSV export is implemented on the BE.
+            isDisabled={controlsDisabled || (itemCount ?? 0) === 0 || !onExportCsv || true}
+          >
+            {t('Export as CSV')}
+          </Button>
+        </FlexItem>
+      </Flex>
     </Flex>
   );
 }
