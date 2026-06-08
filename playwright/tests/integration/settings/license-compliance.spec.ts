@@ -22,7 +22,7 @@ test.describe('License Compliance', () => {
       test.skip(true, 'Test should not run on SaaS/Azure deployment');
     }
   });
-  test('checks license compliance status', { tag: ['@not_mock'] }, async ({ page }) => {
+  test('checks license compliance status', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     // Set up response promise before triggering the request
     const configResponsePromise = page.waitForResponse(
       (response) =>
