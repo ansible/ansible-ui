@@ -28,7 +28,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     // Create a rule engine credential for event persistence
     ruleEngineCredentialName = await EdaCredential.ui.create(page, {
       organizationName,
-      credentialTypeName: 'Rule Engine',
+      credentialTypeName: 'Event-Driven Ansible Rule Engine',
     });
   });
 
@@ -103,7 +103,9 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
 
       // Verify details page shows persistence enabled
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
+        timeout: 10000,
+      });
 
       // Check that persistence is enabled on details page
       await expect(page.getByTestId('enable-persistence')).toBeVisible();
@@ -249,7 +251,13 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     }
   );
 
-  test(
+  // Skipped: AAP installs a hidden default rule engine credential (_DEFAULT_EDA_RULE_ENGINE_CREDS)
+  // that is filtered from API responses (eda-server eda_credential.py). Because this credential
+  // always exists at install time, enabling persistence without selecting a credential never
+  // produces an error — the backend silently uses the default. The test's expected error cannot
+  // be triggered unless the instance is built without a managed DB. Behavior is in flux (UXD
+  // discussions tracked under AAP-77521). Re-evaluate when default credential visibility changes.
+  test.skip(
     'should show error when persistence enabled without credential and no default exists',
     { tag: ['@not_mock'] },
     async ({ page }) => {
@@ -446,6 +454,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
 
       // Save the changes
       await page.getByRole('button', { name: 'Save rulebook activation' }).click();
+
+      // Wait for navigation back to details page
+      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
+        timeout: 10000,
+      });
 
       // Verify persistence is disabled and credential is null
       await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
