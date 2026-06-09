@@ -31,6 +31,8 @@ CMD ["sh", "-c", "\
   sleep 5 && \
   echo 'Running Playwright visual tests...' && \
   cd /work/playwright && \
-  npx playwright test tests/visual/ --project 'live chromium' --update-snapshots && \
-  kill $SERVER_PID 2>/dev/null || true \
+  npx playwright test tests/visual/ --project 'live chromium' --update-snapshots; \
+  TEST_EXIT=$?; \
+  kill $SERVER_PID 2>/dev/null || true; \
+  exit $TEST_EXIT \
 "]
