@@ -15,11 +15,14 @@ import { AwxPageForm } from '../../../common/AwxPageForm';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialsTestButton } from '../utils/CredentialsTestButton';
+import { isOidcCredential } from '../utils/isOidcCredential';
 import { PageFormExternalCredentialSelect } from './components/PageFormExternalCredentialSelect';
+import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
 
 export interface CredentialPluginsForm {
   source_credential: number;
-  [key: string]: string | number;
+  job_template_id?: number;
+  [key: string]: string | number | undefined;
 }
 
 export interface CredentialsRetainInput {
@@ -43,24 +46,23 @@ export function CredentialPlugins({
     const watchedCredentialTypeId = useWatch<{ source_credential: number }>({
       name: 'source_credential',
     });
-    const useCredentialFields = (credentialId: number) => {
-      const { data } = useGetItem<Credential>(awxAPI`/credentials/`, credentialId);
-      const { data: credentialType } = useGetItem<CredentialType>(
-        awxAPI`/credential_types/`,
-        data?.summary_fields?.credential_type?.id
-      );
-      return credentialType as CredentialType;
-    };
 
-    const credentialType = useCredentialFields(watchedCredentialTypeId);
+    // Fetch credential data
+    const { data: credentialData } = useGetItem<Credential>(
+      awxAPI`/credentials/`,
+      watchedCredentialTypeId
+    );
 
-    if (!credentialType) {
-      return null;
-    }
+    // Fetch credential type data
+    const { data: credentialType } = useGetItem<CredentialType>(
+      awxAPI`/credential_types/`,
+      credentialData?.summary_fields?.credential_type?.id
+    );
+
     return credentialType?.inputs?.metadata ? (
       <PageFormSection title={t('Metadata')}>
         {credentialType?.inputs?.metadata.map((input) => {
-          if ('choices' in input) {
+          if ('choices' in input && input.choices) {
             return (
               <PageFormSingleSelect
                 defaultValue={input?.default}
@@ -102,6 +104,16 @@ export function CredentialPlugins({
             );
           }
         })}
+
+        {isOidcCredential(credentialType?.namespace) && (
+          <PageFormJobTemplateSelect
+            key="job_template_id"
+            name="job_template_id"
+            id="job-template-select"
+            label={t('Controller Job Template')}
+            isRequired
+          />
+        )}
       </PageFormSection>
     ) : null;
   };
