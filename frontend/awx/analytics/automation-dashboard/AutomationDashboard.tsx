@@ -70,7 +70,7 @@ export function AutomationDashboard() {
           help={t(
             'Number of job runs that completed without error in the selected period. Use the ratio between successful and failed jobs to track automation health and reliability over time.'
           )}
-          linkText={t('See all successful jobs in AAP')}
+          linkText={t('See all successful jobs')}
           to={getPageUrl(AwxRoute.Jobs) + '?status=successful'}
           value={details?.total_number_of_successful_jobs ?? noDataString}
           error={view.detailsError}
@@ -82,7 +82,7 @@ export function AutomationDashboard() {
           help={t(
             'Number of job runs that ended in failure in the selected period. Review failed jobs to fix playbooks, credentials, or inventory issues and improve success rates.'
           )}
-          linkText={t('See all failed jobs in AAP')}
+          linkText={t('See all failed jobs')}
           to={getPageUrl(AwxRoute.Jobs) + '?status=failed'}
           value={details?.total_number_of_failed_jobs ?? noDataString}
           error={view.detailsError}
@@ -117,11 +117,12 @@ export function AutomationDashboard() {
             'Projects ranked by total job count in the selected period. Helps identify which projects are driving the most automation activity.'
           )}
           firstColumnHeader={t('Project name')}
-          emptyStateTitle={t('No projects')}
           errorStateTitle={t('Error loading projects')}
           items={details?.top_projects ?? []}
           error={view.detailsError}
           loading={view.detailsLoading}
+          clearAllFilters={view.mainTableView.clearAllFilters}
+          filterState={view.mainTableView.filterState}
         ></DashboardTableCard>
         <DashboardTableCard
           id="top-users-card"
@@ -130,11 +131,12 @@ export function AutomationDashboard() {
             'Users ranked by automation runs they triggered or that ran in their context in the selected period. Shows individual adoption and activity.'
           )}
           firstColumnHeader={t('User name')}
-          emptyStateTitle={t('No users')}
           errorStateTitle={t('Error loading users')}
           items={details?.top_users ?? []}
           error={view.detailsError}
           loading={view.detailsLoading}
+          clearAllFilters={view.mainTableView.clearAllFilters}
+          filterState={view.mainTableView.filterState}
         ></DashboardTableCard>
         <DashboardChartCard
           id="host-chart-card"

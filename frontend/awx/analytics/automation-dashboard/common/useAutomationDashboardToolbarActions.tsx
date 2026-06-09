@@ -72,7 +72,7 @@ export function useAutomationDashboardToolbarActions(props: {
                   type: PageActionType.Button,
                   icon: PlusCircleIcon,
                   selection: PageActionSelection.None,
-                  label: t('Create new report'),
+                  label: t('Save report'),
                   isDisabled: saveDisabledReason,
                   onClick: () => (filterState ? createToolbarFilterSet(filterState) : {}),
                 },
@@ -80,7 +80,7 @@ export function useAutomationDashboardToolbarActions(props: {
                   type: PageActionType.Button,
                   icon: PencilAltIcon,
                   selection: PageActionSelection.None,
-                  label: t('Edit current report'),
+                  label: t('Rename report'),
                   isDisabled: saveDisabledReason,
                   onClick: () =>
                     filterState && selectedFilterSet
@@ -90,7 +90,7 @@ export function useAutomationDashboardToolbarActions(props: {
                 {
                   type: PageActionType.Button,
                   selection: PageActionSelection.None,
-                  label: t('Delete current report'),
+                  label: t('Delete report'),
                   onClick: () => removeToolbarFilterSet(selectedFilterSet),
                   icon: TrashIcon,
                   isDisabled: superuserDeleteDisabledReason,

@@ -1,7 +1,13 @@
-import { IFilterState, PageToolbar, PageToolbarProps } from '@ansible/ansible-ui-framework';
+import {
+  IFilterState,
+  PageActions,
+  PageToolbarFilters,
+  PageToolbarProps,
+  useBreakpoint,
+} from '@ansible/ansible-ui-framework';
 import { PageAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect';
-import { Flex, FlexItem } from '@patternfly/react-core';
-import { useCallback } from 'react';
+import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAutomationDashboardToolbarActions } from '../common/useAutomationDashboardToolbarActions';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
@@ -44,6 +50,7 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     removeFilterSet,
     upsertFilterSet,
   } = useFilterSetView();
+
   const { setFilterState, filterState } = props;
 
   const applyFilterSet = useCallback(
@@ -96,32 +103,59 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     },
     [filterSets]
   );
+  const isMdOrLarger = useBreakpoint('md');
 
   return (
-    <Flex
-      alignItems={{ default: 'alignItemsFlexStart' }}
-      gap={{ default: 'gapSm' }}
-      style={{ marginLeft: 'var(--pf-t--global--spacer--lg)' }}
+    <Toolbar
+      ouiaId="page-toolbar"
+      data-testid="page-toolbar"
+      clearAllFilters={props.clearAllFilters}
+      className="page-table-toolbar"
+      style={{
+        paddingBottom: isMdOrLarger ? undefined : 8,
+        paddingTop: isMdOrLarger ? undefined : 8,
+      }}
+      inset={{
+        default: 'insetMd',
+        sm: 'insetMd',
+        md: 'insetMd',
+        lg: 'insetMd',
+        xl: 'insetLg',
+        '2xl': 'insetLg',
+      }}
     >
-      <FlexItem
-        style={{
-          minWidth: '180px',
-        }}
-      >
-        <PageAsyncSingleSelect
-          key={String(version)}
-          id={'filterset-select'}
-          placeholder={t('Select report')}
-          value={value}
-          queryLabel={queryLabel}
-          queryOptions={queryOptions}
-          onSelect={onSelect}
-          queryErrorText={t('Error loading report options')}
-        />
-      </FlexItem>
-      <FlexItem>
-        <PageToolbar {...props} toolbarActions={toolbarActions} />
-      </FlexItem>
-    </Flex>
+      <ToolbarContent>
+        <div
+          style={{
+            minWidth: '180px',
+          }}
+        >
+          <PageAsyncSingleSelect
+            key={String(version)}
+            id={'filterset-select'}
+            placeholder={t('Select report')}
+            value={value}
+            queryLabel={queryLabel}
+            queryOptions={queryOptions}
+            onSelect={onSelect}
+            queryErrorText={t('Error loading report options')}
+          />
+        </div>
+        {filterState && setFilterState && (
+          <PageToolbarFilters
+            toolbarFilters={props.toolbarFilters}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
+        )}
+        <ToolbarGroup variant="action-group">
+          <PageActions
+            dropDownAriaLabel="toolbar actions"
+            actions={toolbarActions}
+            wrapper={ToolbarItem}
+          />
+        </ToolbarGroup>
+      </ToolbarContent>
+    </Toolbar>
   );
 }

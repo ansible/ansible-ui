@@ -355,15 +355,6 @@ describe('DashboardMainTableCard', () => {
   });
 
   // --- Input readOnly ---
-
-  test('should disable table inputs when loading is true', () => {
-    renderCard(
-      buildProps({ loading: true, mainTableView: buildMainTableView({ pageItems: [mockItem] }) })
-    );
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-  });
-
   test('should disable export CSV button when loading is true', () => {
     renderCard(buildProps({ loading: true }));
     expect(screen.getByTestId('btn-export-csv')).toBeDisabled();

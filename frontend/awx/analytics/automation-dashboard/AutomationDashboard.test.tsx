@@ -243,7 +243,7 @@ describe('AutomationDashboard', () => {
 
   test('should render links for successful and failed job value cards', () => {
     render(testWrapper());
-    expect(screen.getByText('See all successful jobs in AAP')).toBeInTheDocument();
-    expect(screen.getByText('See all failed jobs in AAP')).toBeInTheDocument();
+    expect(screen.getByText('See all successful jobs')).toBeInTheDocument();
+    expect(screen.getByText('See all failed jobs')).toBeInTheDocument();
   });
 });

@@ -33,15 +33,15 @@ vi.mock('@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect', () => 
   ),
 }));
 
-// Mock PageToolbar to render a minimal stub (we test it is given toolbarActions below)
-const capturedToolbarProps: Record<string, unknown>[] = [];
+// Mock PageActions to verify it receives the correct actions prop
+const capturedPageActionsProps: Record<string, unknown>[] = [];
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
   return {
     ...actual,
-    PageToolbar: (props: PageToolbarProps<IJobTemplate>) => {
-      capturedToolbarProps.push(props as unknown as Record<string, unknown>);
-      return <div data-testid="page-toolbar" />;
+    PageActions: (props: Record<string, unknown>) => {
+      capturedPageActionsProps.push(props);
+      return <div data-testid="page-actions" />;
     },
   };
 });
@@ -125,7 +125,7 @@ function buildProps(
 describe('DashboardToolbar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    capturedToolbarProps.length = 0;
+    capturedPageActionsProps.length = 0;
     mockUseFilterSetView.mockReturnValue(makeFilterSetViewReturn());
   });
 
@@ -150,15 +150,15 @@ describe('DashboardToolbar', () => {
       expect(screen.getByTestId('page-toolbar')).toBeInTheDocument();
     });
 
-    test('should pass toolbarActions from useAutomationDashboardToolbarActions to PageToolbar', () => {
+    test('should pass toolbarActions from useAutomationDashboardToolbarActions to PageActions', () => {
       render(
         <Wrapper>
           <DashboardToolbar {...buildProps()} />
         </Wrapper>
       );
 
-      const lastProps: Record<string, unknown> | undefined = capturedToolbarProps.at(-1);
-      expect(lastProps?.['toolbarActions']).toBe(mockToolbarActions);
+      const lastProps: Record<string, unknown> | undefined = capturedPageActionsProps.at(-1);
+      expect(lastProps?.['actions']).toBe(mockToolbarActions);
     });
   });
 

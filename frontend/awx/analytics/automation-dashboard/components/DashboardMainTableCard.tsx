@@ -5,7 +5,6 @@ import {
   usePageAlertToaster,
 } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PlusCircleIcon } from '@patternfly/react-icons';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
@@ -16,6 +15,7 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import useResizeObserver from '@react-hook/resize-observer';
+import { CardBody } from '@patternfly/react-core';
 
 interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
@@ -61,14 +61,11 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     Partial<Record<keyof IJobTemplateModify, string>>
   > | null>(null);
 
-  const [isSaving, setIsSaving] = useState(false);
-
   const onTableInputChange = async (
     item: IJobTemplate,
     columnKey: keyof IJobTemplateModify,
     value: number
   ) => {
-    setIsSaving(true);
     setErrors(null);
     const templateName = item.template_name;
     const data = {
@@ -76,56 +73,52 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       time_taken_create_automation_minutes: item.time_taken_create_automation_minutes,
       [columnKey]: value,
     };
+    let updatedData: IJobTemplateModify;
     try {
-      let updatedData: IJobTemplateModify;
-      try {
-        updatedData = await putRequest(
-          metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`,
-          data as IJobTemplateModify
-        );
-      } catch (err) {
-        const { genericErrors, fieldErrors } = awxErrorAdapter(err);
-        alertToaster.addAlert({
-          variant: 'danger',
-          title: t('Failed to update template metadata for {{templateName}}.', { templateName }),
-          children: (
-            <>
-              {genericErrors.map((e) => (
-                <div key={String(e.message)}>{e.message}</div>
-              ))}
-            </>
-          ),
-          timeout: 5000,
-        });
-        setErrors({
-          [item.id]: fieldErrors.reduce<Partial<Record<keyof IJobTemplateModify, string>>>(
-            (acc, e) => ({ ...acc, [e.name]: String(e.message) }),
-            {}
-          ),
-        });
-        return;
-      }
-
-      mainTableView.updateItem({ ...item, ...updatedData });
-
+      updatedData = await putRequest(
+        metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`,
+        data as IJobTemplateModify
+      );
+    } catch (err) {
+      const { genericErrors, fieldErrors } = awxErrorAdapter(err);
       alertToaster.addAlert({
-        variant: 'success',
-        title: t('Template metadata for {{templateName}} updated successfully.', { templateName }),
+        variant: 'danger',
+        title: t('Failed to update template metadata for {{templateName}}.', { templateName }),
+        children: (
+          <>
+            {genericErrors.map((e) => (
+              <div key={String(e.message)}>{e.message}</div>
+            ))}
+          </>
+        ),
         timeout: 5000,
       });
+      setErrors({
+        [item.id]: fieldErrors.reduce<Partial<Record<keyof IJobTemplateModify, string>>>(
+          (acc, e) => ({ ...acc, [e.name]: String(e.message) }),
+          {}
+        ),
+      });
+      return;
+    }
 
-      // Refresh: a failure here does not undo the save.
-      try {
-        await refresh();
-      } catch {
-        alertToaster.addAlert({
-          variant: 'warning',
-          title: t('Update saved but failed to refresh view.'),
-          timeout: 5000,
-        });
-      }
-    } finally {
-      setIsSaving(false);
+    mainTableView.updateItem({ ...item, ...updatedData });
+
+    alertToaster.addAlert({
+      variant: 'success',
+      title: t('Template metadata for {{templateName}} updated successfully.', { templateName }),
+      timeout: 5000,
+    });
+
+    // Refresh: a failure here does not undo the save.
+    try {
+      await refresh();
+    } catch {
+      alertToaster.addAlert({
+        variant: 'warning',
+        title: t('Update saved but failed to refresh view.'),
+        timeout: 5000,
+      });
     }
   };
 
@@ -137,7 +130,6 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       type={'integer'}
       value={item[columnKey]}
       onChange={(value: number) => void onTableInputChange(item, columnKey, value)}
-      readOnly={loading || isSaving}
       error={errors?.[item.id]?.[columnKey]}
     />
   );
@@ -207,68 +199,77 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
   ];
 
   return (
-    <PageDashboardCard id={'ad-main-table-card'} width="xxl" isCompact canCollapse={false}>
-      <div
-        ref={ref}
-        style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
-      >
-        <DashboardValueCard
-          id="cost-manual-automation-card"
-          title={t('Cost of manual automation')}
-          help={t('Total cost if all jobs were run manually')}
-          value={details?.cost_of_manual_automation ?? '-'}
-          formatAsCurrency={true}
-          error={detailsError}
-          errorStateTitle={t('Error loading manual automation cost')}
-        ></DashboardValueCard>
-        <DashboardValueCard
-          id="cost-automated-execution-card"
-          title={t('Cost of automated execution')}
-          help={t('Total cost of running jobs on AAP')}
-          value={details?.cost_of_automated_execution ?? '-'}
-          formatAsCurrency={true}
-          error={detailsError}
-          errorStateTitle={t('Error loading automated execution cost')}
-        ></DashboardValueCard>
-        <DashboardValueCard
-          id="total-savings-card"
-          title={t('Total savings/cost avoided')}
-          help={t('Difference between manual and automated cost')}
-          value={details?.total_saving ?? '-'}
-          formatAsCurrency={true}
-          error={detailsError}
-          errorStateTitle={t('Error loading total savings')}
-        ></DashboardValueCard>
-        <DashboardValueCard
-          id="total-hours-saved-card"
-          title={t('Total hours saved/avoided')}
-          help={t('Time saved by automation vs manual execution')}
-          value={details?.total_time_saving ?? '-'}
-          valueSuffix="h"
-          error={detailsError}
-          errorStateTitle={t('Error loading total hours saved')}
-        ></DashboardValueCard>
-      </div>
-      <DashboardTableToolbarRow
-        isLoading={loading}
-        itemCount={mainTableView?.itemCount ?? 0}
-        costState={costState}
-        setCostState={setCostState}
-        refresh={refresh}
-        onExportCsv={() => void exportCsv()}
-      ></DashboardTableToolbarRow>
-      <PageTable
-        autoHidePagination={true}
-        disableBodyPadding={true}
-        tableColumns={tableColumns}
-        errorStateTitle={t('Error loading data.')}
-        compact
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateTitle={t('No data')}
-        emptyStateDescription={t('There is currently no data available.')}
-        disableLastRowBorder
-        {...mainTableView}
-      />
+    <PageDashboardCard
+      id={'ad-main-table-card'}
+      width="xxl"
+      isCompact
+      canCollapse={false}
+      disableBodyPadding
+    >
+      <CardBody>
+        <div
+          ref={ref}
+          style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+        >
+          <DashboardValueCard
+            id="cost-manual-automation-card"
+            title={t('Cost of manual automation')}
+            help={t('Total cost if all jobs were run manually')}
+            value={details?.cost_of_manual_automation ?? '-'}
+            formatAsCurrency={true}
+            error={detailsError}
+            errorStateTitle={t('Error loading manual automation cost')}
+          ></DashboardValueCard>
+          <DashboardValueCard
+            id="cost-automated-execution-card"
+            title={t('Cost of automated execution')}
+            help={t('Total cost of running jobs on AAP')}
+            value={details?.cost_of_automated_execution ?? '-'}
+            formatAsCurrency={true}
+            error={detailsError}
+            errorStateTitle={t('Error loading automated execution cost')}
+          ></DashboardValueCard>
+          <DashboardValueCard
+            id="total-savings-card"
+            title={t('Total savings/cost avoided')}
+            help={t('Difference between manual and automated cost')}
+            value={details?.total_saving ?? '-'}
+            formatAsCurrency={true}
+            error={detailsError}
+            errorStateTitle={t('Error loading total savings')}
+          ></DashboardValueCard>
+          <DashboardValueCard
+            id="total-hours-saved-card"
+            title={t('Total hours saved/avoided')}
+            help={t('Time saved by automation vs manual execution')}
+            value={details?.total_time_saving ?? '-'}
+            valueSuffix="h"
+            error={detailsError}
+            errorStateTitle={t('Error loading total hours saved')}
+          ></DashboardValueCard>
+        </div>
+        <DashboardTableToolbarRow
+          isLoading={loading}
+          itemCount={mainTableView?.itemCount ?? 0}
+          costState={costState}
+          setCostState={setCostState}
+          refresh={refresh}
+          onExportCsv={() => void exportCsv()}
+        ></DashboardTableToolbarRow>
+      </CardBody>
+      <CardBody>
+        <PageTable
+          autoHidePagination
+          disableBodyPadding
+          tableColumns={tableColumns}
+          errorStateTitle={t('Error loading data.')}
+          compact
+          emptyStateTitle={t('No data')}
+          emptyStateDescription={t('There is currently no data available.')}
+          disableLastRowBorder
+          {...mainTableView}
+        />
+      </CardBody>
     </PageDashboardCard>
   );
 }

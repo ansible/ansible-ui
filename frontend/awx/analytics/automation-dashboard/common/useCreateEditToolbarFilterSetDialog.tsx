@@ -69,9 +69,10 @@ function CreateEditToolbarFilterSetDialog(props: {
       position={'top'}
     >
       <ModalHeader title={title} description={description} />
-      <ModalBody>
+      <ModalBody style={{ paddingLeft: 0 }}>
         <PageForm<DashboardFilterSetFormValues>
           singleColumn
+          disablePadding
           disableSubmitOnEnter
           submitText={t('Save')}
           onSubmit={onSubmit}
@@ -82,7 +83,7 @@ function CreateEditToolbarFilterSetDialog(props: {
           <PageFormTextInput
             name={'name'}
             id={'name'}
-            label={t('Name')}
+            label={t('Report name')}
             placeholder={t('Enter report name')}
             isRequired
             maxLength={255}
@@ -103,7 +104,7 @@ export function useCreateEditToolbarFilterSetDialog(
   return useCallback(
     (filterState: IFilterState, filterSet: IDashboardFilterSet) => {
       const newFilterSet = { ...filterSet, filters: JSON.stringify(filterState) };
-      const title = filterSet.id === undefined ? t('Create report') : t('Edit report');
+      const title = filterSet.id === undefined ? t('Save report') : t('Rename report');
       setDialog(
         <CreateEditToolbarFilterSetDialog
           title={title}

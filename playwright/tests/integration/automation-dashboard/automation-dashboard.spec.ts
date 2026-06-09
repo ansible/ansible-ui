@@ -162,7 +162,7 @@ test.describe('Automation Dashboard', () => {
     await expect(successfulJobsCard.getByText('31')).toBeVisible();
 
     // Now the link should be visible since data loaded without error
-    await successfulJobsCard.getByRole('link', { name: 'See all successful jobs in AAP' }).click();
+    await successfulJobsCard.getByRole('link', { name: 'See all successful jobs' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=successful$'));
 
     await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
@@ -171,7 +171,7 @@ test.describe('Automation Dashboard', () => {
     // Wait for the card to show the mocked value (3 failed jobs)
     await expect(failedJobsCard.getByText('3')).toBeVisible();
 
-    await failedJobsCard.getByRole('link', { name: 'See all failed jobs in AAP' }).click();
+    await failedJobsCard.getByRole('link', { name: 'See all failed jobs' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
   });
 });

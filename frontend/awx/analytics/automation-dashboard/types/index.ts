@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { IAwxView } from '../../../common/useAwxView';
 
 // ─── Dashboard Data Models (API shapes) ──────────────────────────────────────
@@ -110,8 +110,9 @@ export type DashboardValueCardProps = DashboardCommonCardProps & {
 export type DashboardTableCardProps = DashboardCommonCardProps & {
   firstColumnHeader: string;
   items?: IDashboardTableItem[];
-  emptyStateTitle: string;
   loading: boolean;
+  clearAllFilters: () => void;
+  filterState: IFilterState;
 };
 
 export type DashboardChartCardProps = DashboardCommonCardProps & {
