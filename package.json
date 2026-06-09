@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "version": "1.0.0",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   },
   "os": [
     "darwin",
@@ -168,7 +168,7 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.0",
     "@cypress/code-coverage": "3.13.11",
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "1.60",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
