@@ -241,13 +241,13 @@ function useAggregateJobTemplateDetails({
   let variables = resolveVariables(
     promptValues?.extra_vars,
     template.ask_variables_on_launch,
-    nodeValues?.extra_data as Record<string, unknown> | undefined,
+    nodeValues?.extra_data,
     template.extra_vars,
     isTemplateChanged
   );
 
   if (surveyValues) {
-    variables = mergeSurveyIntoVariables(variables, surveyValues as Record<string, unknown>);
+    variables = mergeSurveyIntoVariables(variables, surveyValues);
   }
 
   return {
