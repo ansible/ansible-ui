@@ -11,6 +11,7 @@ permissions:
 jobs:
   check-risk-analysis:
     name: Risk Analysis Required
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Check risk level is selected
