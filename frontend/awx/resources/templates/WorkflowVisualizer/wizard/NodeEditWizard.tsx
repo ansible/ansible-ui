@@ -15,6 +15,7 @@ import {
   replaceIdentifier,
   shouldHideOtherStep,
 } from './helpers';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
@@ -26,6 +27,30 @@ import {
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
 type WizardStep = Record<StepName, StepContent>;
+
+function clearStalePromptFields(
+  effectivePrompt: Partial<PromptFormValues>,
+  launchConfig: LaunchConfiguration | null | undefined
+) {
+  if (!launchConfig?.ask_credential_on_launch) {
+    effectivePrompt.credentials = [];
+  }
+  if (!launchConfig?.ask_labels_on_launch) {
+    effectivePrompt.labels = [];
+  }
+  if (!launchConfig?.ask_instance_groups_on_launch) {
+    effectivePrompt.instance_groups = [];
+  }
+  if (!launchConfig?.ask_skip_tags_on_launch) {
+    effectivePrompt.skip_tags = [];
+  }
+  if (!launchConfig?.ask_tags_on_launch) {
+    effectivePrompt.job_tags = [];
+  }
+  if (!launchConfig?.ask_variables_on_launch) {
+    effectivePrompt.extra_vars = '';
+  }
+}
 
 export function NodeEditWizard({ node }: { node: GraphNode }) {
   const { t } = useTranslation();
@@ -160,32 +185,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
     }
 
     if (isTemplateChange) {
-      // For each prompt field, only clear it when the new template does NOT accept it.
-      // - If the new template accepts the field (ask_*_on_launch=true), the prompt step
-      //   is visible and formValues reflects the user's actual choice — preserve it.
-      // - If the new template does not accept the field (ask_*_on_launch=false or no
-      //   launch_config at all), the field is hidden/stale. Force-clearing ensures
-      //   processCredentials/Labels/InstanceGroups sees removed=[old] and cleans up
-      //   the node's DB state, preventing AWX from rejecting the unified_job_template
-      //   PATCH with "Field is not configured to prompt on launch."
-      if (!launch_config?.ask_credential_on_launch) {
-        effectivePrompt.credentials = [];
-      }
-      if (!launch_config?.ask_labels_on_launch) {
-        effectivePrompt.labels = [];
-      }
-      if (!launch_config?.ask_instance_groups_on_launch) {
-        effectivePrompt.instance_groups = [];
-      }
-      if (!launch_config?.ask_skip_tags_on_launch) {
-        effectivePrompt.skip_tags = [];
-      }
-      if (!launch_config?.ask_tags_on_launch) {
-        effectivePrompt.job_tags = [];
-      }
-      if (!launch_config?.ask_variables_on_launch) {
-        effectivePrompt.extra_vars = '';
-      }
+      clearStalePromptFields(effectivePrompt, launch_config);
     }
 
     // Always build original so save-time cleanup has what it needs.

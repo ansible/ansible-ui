@@ -341,23 +341,18 @@ export function useSaveVisualizer(templateId: string) {
           }
 
           if (launch_data?.original?.isTemplateChange) {
-            const nullIfMissing = (key: CreatePayloadProperty) => {
-              if (!(key in updatedNodePayload)) {
-                (updatedNodePayload as Record<string, unknown>)[key] = null;
-              }
-            };
-            nullIfMissing('diff_mode');
-            nullIfMissing('execution_environment');
-            nullIfMissing('forks');
-            nullIfMissing('inventory');
-            nullIfMissing('job_slice_count');
-            nullIfMissing('job_tags');
-            nullIfMissing('job_type');
-            nullIfMissing('limit');
-            nullIfMissing('scm_branch');
-            nullIfMissing('skip_tags');
-            nullIfMissing('timeout');
-            nullIfMissing('verbosity');
+            nullIfMissing(updatedNodePayload, 'diff_mode');
+            nullIfMissing(updatedNodePayload, 'execution_environment');
+            nullIfMissing(updatedNodePayload, 'forks');
+            nullIfMissing(updatedNodePayload, 'inventory');
+            nullIfMissing(updatedNodePayload, 'job_slice_count');
+            nullIfMissing(updatedNodePayload, 'job_tags');
+            nullIfMissing(updatedNodePayload, 'job_type');
+            nullIfMissing(updatedNodePayload, 'limit');
+            nullIfMissing(updatedNodePayload, 'scm_branch');
+            nullIfMissing(updatedNodePayload, 'skip_tags');
+            nullIfMissing(updatedNodePayload, 'timeout');
+            nullIfMissing(updatedNodePayload, 'verbosity');
             if (!('extra_data' in updatedNodePayload)) {
               updatedNodePayload.extra_data = {};
             }
@@ -606,6 +601,12 @@ export function useSaveVisualizer(templateId: string) {
     processLabels,
     workflowNodeRefresh,
   ]);
+}
+
+function nullIfMissing(payload: Partial<CreateWorkflowNodePayload>, key: CreatePayloadProperty) {
+  if (!(key in payload)) {
+    (payload as Record<string, unknown>)[key] = null;
+  }
 }
 
 export function toKeyedObject(
