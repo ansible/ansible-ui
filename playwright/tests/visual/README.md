@@ -67,7 +67,7 @@ Screenshots deliberately **exclude the brand logo** so that baselines are portab
 
 ## Updating baselines
 
-When a visual change is intentional (e.g., a PatternFly upgrade, a redesigned component), you must regenerate baselines for **both** platforms. Update macOS baselines locally, then use the CI workflow to generate the Linux baselines.
+When a visual change is intentional (e.g., a PatternFly upgrade, a redesigned component), you must regenerate baselines for **both** platforms.
 
 ### macOS (darwin) baselines
 
@@ -75,11 +75,28 @@ When a visual change is intentional (e.g., a PatternFly upgrade, a redesigned co
 npx playwright test tests/visual/ --project "live chromium" --update-snapshots
 ```
 
+### Linux baselines (local via podman)
+
+```bash
+PLATFORM_SERVER=https://your-aap-instance \
+PLATFORM_USERNAME=admin \
+PLATFORM_PASSWORD=your-password \
+./scripts/update-visual-baselines.sh
+
+# Review and commit
+git diff playwright/tests/visual/
+git add playwright/tests/visual/**/*-linux.png
+```
+
+This workflow builds the UI inside a container using the official Playwright Linux image, serves it on https://localhost:4100, runs visual tests with --update-snapshots against your PLATFORM_SERVER for API calls, and writes updated -linux.png files directly to your working tree via volume mount.
+
+Requires Podman or Docker installed locally.
+
 ### Linux baselines (via CI)
 
-Playwright snapshots include a platform suffix (`-darwin` or `-linux`). The ephemeral AAP Playwright workflow runs on Linux runners, so it requires `-linux` baselines. Due to font rendering differences between environments, Linux baselines must be generated directly on the CI runner.
+Playwright snapshots include a platform suffix (`-darwin` or `-linux`). The ephemeral AAP Playwright workflow runs on Linux runners, so it requires `-linux` baselines. Due to font rendering differences between environments, Linux baselines must be generated on Linux.
 
-To generate or update Linux baselines:
+If you don't have Podman/Docker locally, use the CI workflow:
 
 1. Open a PR with your changes
 2. Comment `/run-aap-ui-playwright --update-snapshots` on the PR
