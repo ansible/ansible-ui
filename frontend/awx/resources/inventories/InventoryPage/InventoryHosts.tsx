@@ -44,11 +44,11 @@ export function InventoryHosts() {
 
   if (params.inventory_type === 'inventory') {
     emptyStateTitle = canCreateHost
-      ? t('There are currently no hosts added to this inventory.')
+      ? t('No hosts are assigned to this inventory.')
       : t('You do not have permission to create a host.');
 
     emptyStateDescription = canCreateHost
-      ? t('Please create a host by using the button below.')
+      ? t('Populate this list by creating a host.')
       : t('Please contact your organization administrator if there is an issue with your access.');
   } else {
     emptyStateTitle = t('No hosts found');

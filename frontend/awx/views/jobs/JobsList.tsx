@@ -167,7 +167,7 @@ export function JobsList(props: {
       emptyStateDescription={
         activeDomains.length > 0
           ? t('Please select a different domain or clear the current selection.')
-          : t('Please run a job to populate this list.')
+          : t('Run a job to populate this list.')
       }
       emptyStateIcon={CubesIcon}
       {...view}
