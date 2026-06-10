@@ -114,26 +114,30 @@ const adHocCommandsOptions = { actions: { GET: {}, POST: {} } };
 
 const server = setupServer(
   http.get(
-    ({ request }) => request.url.includes('/hosts/') && !request.url.includes('all_groups'),
+    ({ request }: { request: Request }) =>
+      request.url.includes('/hosts/') && !request.url.includes('all_groups'),
     () => HttpResponse.json(mockHost)
   ),
   http.options(awxAPI`/groups/`, () => HttpResponse.json(groupsOptionsWithPost)),
   http.options(
-    ({ request }) => request.url.includes('/hosts/') && request.url.includes('all_groups'),
+    ({ request }: { request: Request }) =>
+      request.url.includes('/hosts/') && request.url.includes('all_groups'),
     () => HttpResponse.json(allGroupsOptions)
   ),
   http.options(
-    ({ request }) =>
+    ({ request }: { request: Request }) =>
       request.url.includes('/inventories/') && request.url.includes('ad_hoc_commands'),
     () => HttpResponse.json(adHocCommandsOptions)
   ),
   http.get(
-    ({ request }) => request.url.includes('/hosts/') && request.url.includes('all_groups'),
+    ({ request }: { request: Request }) =>
+      request.url.includes('/hosts/') && request.url.includes('all_groups'),
     () => HttpResponse.json(mockGroups)
   ),
   http.get(
-    ({ request }) => request.url.includes('/inventories/') && request.url.endsWith('/'),
-    ({ request }) => {
+    ({ request }: { request: Request }) =>
+      request.url.includes('/inventories/') && request.url.endsWith('/'),
+    ({ request }: { request: Request }) => {
       const match = /\/inventories\/(\d+)\//.exec(request.url);
       const id = match ? Number.parseInt(match[1] ?? '1', 10) : 1;
       return HttpResponse.json({
@@ -196,7 +200,7 @@ describe('InventoryHostGroups', () => {
   it('should show empty state with Associate groups when user has permission', async () => {
     server.use(
       http.get(
-        ({ request }) => request.url.includes('all_groups'),
+        ({ request }: { request: Request }) => request.url.includes('all_groups'),
         () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
       )
     );
@@ -204,9 +208,7 @@ describe('InventoryHostGroups', () => {
     renderInventoryHostGroups('inventory', '/inventories/inventory/1/hosts/1/groups');
 
     await waitFor(() => {
-      expect(
-        screen.getByText('There are currently no groups associated with this host')
-      ).toBeInTheDocument();
+      expect(screen.getByText('There are currently no groups.')).toBeInTheDocument();
       expect(screen.getByText('Please add a group by using the button below.')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Associate groups/ })).toBeInTheDocument();
     });
@@ -216,7 +218,7 @@ describe('InventoryHostGroups', () => {
     server.use(
       http.options(awxAPI`/groups/`, () => HttpResponse.json(groupsOptionsWithoutPost)),
       http.get(
-        ({ request }) => request.url.includes('all_groups'),
+        ({ request }: { request: Request }) => request.url.includes('all_groups'),
         () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
       )
     );
@@ -251,7 +253,7 @@ describe('InventoryHostGroups', () => {
   it('should display error when groups fail to load', async () => {
     server.use(
       http.get(
-        ({ request }) => request.url.includes('all_groups'),
+        ({ request }: { request: Request }) => request.url.includes('all_groups'),
         () => new HttpResponse(null, { status: 500 })
       )
     );
@@ -266,7 +268,7 @@ describe('InventoryHostGroups', () => {
   it('should disable Edit group when user lacks edit capability', async () => {
     server.use(
       http.get(
-        ({ request }) => request.url.includes('all_groups'),
+        ({ request }: { request: Request }) => request.url.includes('all_groups'),
         () => HttpResponse.json(groupsWithEditDisabled)
       )
     );
