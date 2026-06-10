@@ -233,9 +233,7 @@ describe('InsightsRbacAccessWrapper', () => {
       });
 
       // Make listRoles return a promise that doesn't resolve immediately
-      (mockRbacApi.listRoles as ReturnType<typeof vi.fn>).mockImplementation(
-        () => new Promise(() => {})
-      );
+      vi.mocked(mockRbacApi.listRoles).mockImplementation(() => new Promise(() => {}));
 
       renderWithRouter();
 

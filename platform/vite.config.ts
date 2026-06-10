@@ -3,7 +3,8 @@
 /* eslint-disable no-console */
 import react from '@vitejs/plugin-react';
 import selfsigned from 'selfsigned';
-import { defineConfig, PluginOption, UserConfig } from 'vite';
+import { type PluginOption, type UserConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -94,7 +95,6 @@ const config: VitestUserConfig = {
   },
   test: {
     coverage: {
-      all: true,
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',

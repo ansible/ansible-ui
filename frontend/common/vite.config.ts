@@ -2,7 +2,8 @@
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig, type PluginOption } from 'vite';
+import { type PluginOption } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { getVitestAliases } from '../../framework/vitest.shared';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

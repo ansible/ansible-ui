@@ -1,6 +1,6 @@
 // vitest.setup.ts
 import '@testing-library/jest-dom/vitest';
-import { mockI18n, enablePreview } from '@ansible/ansible-ui-framework/vitest.common';
+import '@ansible/ansible-ui-framework/vitest.i18n';
+import { enablePreview } from '@ansible/ansible-ui-framework/vitest.preview';
 
-mockI18n();
 enablePreview();
