@@ -19,7 +19,9 @@ export function useGatewaySettingsCategories(options: Record<string, GatewaySett
       {
         id: 'platform',
         title: t('Platform gateway settings'),
-        description: t(''),
+        description: t(
+          'Configure and manage platform gateway, security, session, password security, custom login, and other settings.'
+        ),
         sections: [
           {
             title: t('Platform gateway'),

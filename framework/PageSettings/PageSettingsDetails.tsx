@@ -36,6 +36,7 @@ export function PageSettingsDetails() {
     <PageLayout>
       <PageHeader
         title={t('User Preferences')}
+        description={t('Customize your platform user experience.')}
         headerActions={<PageActions actions={actions} position={'right'} />}
       />
       <PageDetails>
