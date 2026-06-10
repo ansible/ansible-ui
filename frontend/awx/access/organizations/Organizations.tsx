@@ -158,10 +158,7 @@ export function Organizations() {
       <PageHeader
         title={t('Organizations')}
         titleHelpTitle={t('Organizations')}
-        titleHelp={t(
-          `An organization is a logical collection of users, teams, projects, and inventories, and is the highest level in the {{product}} object hierarchy.`,
-          { product }
-        )}
+        titleHelp={t('An organization is a logical collection of users, teams, and resources.')}
         titleDocLink={useGetDocsUrl(config, 'organizations')}
         description={t(
           `An organization is a logical collection of users, teams, projects, and inventories, and is the highest level in the {{product}} object hierarchy.`,
