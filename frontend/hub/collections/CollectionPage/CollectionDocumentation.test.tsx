@@ -550,6 +550,85 @@ describe('CollectionDocumentation', () => {
     expect(roleNavItem.closest('button, a, [role="button"]')).not.toBeNull();
   });
 
+  test('should render documentation file HTML when navigating to a doc file name without content type', async () => {
+    server.use(
+      http.get(
+        ({ request }) => {
+          return request.url.includes('/content/ansible/collection_versions/');
+        },
+        () => {
+          return HttpResponse.json({
+            count: 1,
+            next: '',
+            previous: '',
+            results: [
+              {
+                docs_blob: {
+                  contents: [],
+                  collection_readme: { html: '<p>Readme</p>', name: 'README.md' },
+                  documentation_files: [
+                    { name: 'changelog.md', html: '<h2>Changelog</h2><p>v1.0.0 release</p>' },
+                  ],
+                },
+                license: ['GPL-3.0-or-later'],
+              },
+            ],
+          });
+        }
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/changelog">
+          <CollectionDocumentation />
+        </TestWrapper>
+      </SWRConfig>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/v1\.0\.0 release/)).toBeInTheDocument();
+    });
+  });
+
+  test('should render gracefully when documentation_files is undefined', async () => {
+    server.use(
+      http.get(
+        ({ request }) => {
+          return request.url.includes('/content/ansible/collection_versions/');
+        },
+        () => {
+          return HttpResponse.json({
+            count: 1,
+            next: '',
+            previous: '',
+            results: [
+              {
+                docs_blob: {
+                  contents: [],
+                  collection_readme: { html: '<p>Readme only</p>', name: 'README.md' },
+                },
+                license: ['GPL-3.0-or-later'],
+              },
+            ],
+          });
+        }
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <TestWrapper>
+          <CollectionDocumentation />
+        </TestWrapper>
+      </SWRConfig>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Readme only/)).toBeInTheDocument();
+    });
+  });
+
   test('should render gracefully without crashing when docs_blob is missing from API response', async () => {
     server.use(
       http.get(
