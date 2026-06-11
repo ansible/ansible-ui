@@ -183,9 +183,7 @@ describe('Notifiers', () => {
 
       await waitFor(() => {
         expect(screen.getByText('No notifiers found.')).toBeInTheDocument();
-        expect(
-          screen.getByText('Please create notifiers to populate this list.')
-        ).toBeInTheDocument();
+        expect(screen.getByText('Create a notifier to populate this list.')).toBeInTheDocument();
       });
 
       const createNotifier =

@@ -89,11 +89,13 @@ describe('TeamAccess', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/No teams assigned to rulebook activation/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/No teams are assigned to this rulebook activation/)
+      ).toBeInTheDocument();
     });
 
     expect(
-      screen.getByText(/To get started, assign teams to this rulebook activation./)
+      screen.getByText(/To get started, assign a team to this rulebook activation./)
     ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Assign teams/ })).toBeInTheDocument();
   });
@@ -119,7 +121,7 @@ describe('TeamAccess', () => {
 
     // Verify empty state is shown after request
     await waitFor(() => {
-      expect(screen.getByText(/No teams assigned to credential/)).toBeInTheDocument();
+      expect(screen.getByText(/No teams are assigned to this credentials/)).toBeInTheDocument();
     });
   });
 
@@ -144,7 +146,9 @@ describe('TeamAccess', () => {
 
     // Verify empty state is shown after request
     await waitFor(() => {
-      expect(screen.getByText(/No teams assigned to rulebook activation/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/No teams are assigned to this rulebook activation/)
+      ).toBeInTheDocument();
     });
   });
 
@@ -169,7 +173,7 @@ describe('TeamAccess', () => {
 
     // Verify empty state is shown after request
     await waitFor(() => {
-      expect(screen.getByText(/No teams assigned to namespace/)).toBeInTheDocument();
+      expect(screen.getByText(/No teams are assigned to this namespace/)).toBeInTheDocument();
     });
   });
 });
