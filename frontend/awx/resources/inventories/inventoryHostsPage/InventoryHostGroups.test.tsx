@@ -209,7 +209,7 @@ describe('InventoryHostGroups', () => {
 
     await waitFor(() => {
       expect(screen.getByText('There are currently no groups.')).toBeInTheDocument();
-      expect(screen.getByText('Please add a group by using the button below.')).toBeInTheDocument();
+      expect(screen.getByText('Associate a group to populate this list.')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Associate groups/ })).toBeInTheDocument();
     });
   });

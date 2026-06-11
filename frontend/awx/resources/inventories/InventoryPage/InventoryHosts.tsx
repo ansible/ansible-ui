@@ -48,7 +48,7 @@ export function InventoryHosts() {
       : t('You do not have permission to create a host.');
 
     emptyStateDescription = canCreateHost
-      ? t('Populate this list by creating a host.')
+      ? t('Create a host to populate this list.')
       : t('Please contact your organization administrator if there is an issue with your access.');
   } else {
     emptyStateTitle = t('No hosts found');
