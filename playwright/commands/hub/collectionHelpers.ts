@@ -88,6 +88,45 @@ export async function verifyVersionDeleted(
 }
 
 /**
+ * Poll API until docs_blob is available for a collection version.
+ *
+ * After collection approval, Pulp indexes the docs_blob asynchronously.
+ * The Documentation tab renders a NotFound page until this completes.
+ *
+ * @param page - Playwright page object
+ * @param namespace - Collection namespace
+ * @param name - Collection name
+ * @param version - Collection version
+ * @param repository - Repository name (default: 'published')
+ * @param maxAttempts - Maximum polling attempts (default: 30)
+ */
+export async function waitForDocsBlob(
+  page: Page,
+  namespace: string,
+  name: string,
+  version: string,
+  repository: string = 'published',
+  maxAttempts: number = 30
+): Promise<void> {
+  const apiUrl = `${platformUI}/api/galaxy/v3/plugin/ansible/content/${repository}/collections/index/${namespace}/${name}/versions/${version}/docs-blob/`;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const response = await page.request.get(apiUrl);
+    if (response.ok()) {
+      const data = (await response.json()) as { docs_blob: Record<string, unknown> };
+      if (data.docs_blob && Object.keys(data.docs_blob).length > 0) {
+        return;
+      }
+    }
+    if (attempt === maxAttempts) {
+      throw new Error(
+        `docs_blob not available for ${namespace}.${name} v${version} after ${maxAttempts} attempts`
+      );
+    }
+    await page.waitForTimeout(2000);
+  }
+}
+
+/**
  * Find and select the first unchecked, enabled checkbox in a locator.
  *
  * @param checkboxes - Locator containing checkbox elements
