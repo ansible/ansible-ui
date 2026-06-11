@@ -38,18 +38,18 @@ npx playwright show-report playwright/html-report
 
 ## Test structure
 
-| Test                              | What it captures                                                                         |
-| --------------------------------- | ---------------------------------------------------------------------------------------- |
-| `overview page`                   | Main content area screenshot of the Overview/dashboard (dynamic counts and chart masked) |
-| `resource counts card`            | Element-level screenshot of the `#resource-counts` card (count bar masked)               |
-| `templates list page`             | Main content area screenshot of Templates list (PageTable) with masked rows              |
-| `templates list toolbar`          | Element-level screenshot of the table toolbar                                            |
-| `eda credential create form`      | Main content area screenshot of EDA Credential create (PageForm)                         |
-| `eda credential create form elem` | Element-level screenshot of the form element                                             |
-| `organization wizard details`     | Main content area screenshot of Organization wizard step 1 (PageWizard)                  |
-| `organization wizard review`      | Main content area screenshot of Organization wizard review step                          |
-| `inventory details page`          | Main content area screenshot of Inventory details (PageDetails)                          |
-| `inventory details panel`         | Element-level screenshot of the details key-value panel                                  |
+| Test                              | What it captures                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `overview page`                   | Main content area of the Overview/dashboard with mocked resource counts (chart and h1 masked)    |
+| `overview resource counts card`   | Element-level screenshot of the `#resource-counts` card with mocked dashboard data               |
+| `templates list page`             | Main content area of Templates list (PageTable) with mocked table rows (pagination masked)       |
+| `templates list toolbar`          | Element-level screenshot of the toolbar (filters, actions) with mocked data                      |
+| `eda credential create form`      | Main content area screenshot of EDA Credential create (PageForm)                                 |
+| `eda credential create form elem` | Element-level screenshot of the form element                                                     |
+| `organization wizard details`     | Main content area screenshot of Organization wizard step 1 (PageWizard)                          |
+| `organization wizard review`      | Main content area screenshot of Organization wizard review step                                  |
+| `inventory details page`          | Main content area of Inventory details (PageDetails) with mocked detail data (timestamps masked) |
+| `inventory details panel`         | Element-level screenshot of the details key-value panel with mocked data (timestamps masked)     |
 
 ## Configuration
 
@@ -106,44 +106,50 @@ If you don't have Podman/Docker locally, use the CI workflow:
 
 Review the updated `.png` files in the `-snapshots/` directory before merging.
 
-## Masking strategy
+## Stabilizing dynamic content
 
-Visual tests must account for dynamic content that changes between runs. We use Playwright's built-in `mask` option to overlay dynamic areas with a solid color box, focusing each screenshot on the stable structural elements we actually want to regression-test.
+Visual tests must account for dynamic content that changes between runs. We use two complementary strategies: **API interception** with `page.route()` to supply deterministic mock data, and **masking** with Playwright's `mask` option for residual dynamic elements.
 
-### What we mask and why
+### Preferred: API interception with `page.route()`
 
-| Source of instability | What to mask                         | Why                                                                                                                                                                                                      |
-| --------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Table row data**    | `tbody`                              | Row count and content vary depending on what other integration tests have run and left behind. Masking the body focuses the test on page chrome (toolbar, filters, column headers, pagination controls). |
-| **Pagination counts** | `.pf-v6-c-pagination`                | "1 - 10 of N" text changes with row count.                                                                                                                                                               |
-| **Resource names**    | `h1`, `[data-testid="name"]`, `td a` | API-created resources use timestamped names (e.g., `e2e-Inventory-1712345678`).                                                                                                                          |
-| **Timestamps**        | `time`                               | "Created" and "Modified" values change every run.                                                                                                                                                        |
-| **Breadcrumbs**       | `.pf-v6-c-breadcrumb`                | Breadcrumbs include the dynamic resource name.                                                                                                                                                           |
-| **Descriptions**      | `[data-testid="description"]`        | API-generated descriptions vary.                                                                                                                                                                         |
-
-### When masking is not needed
-
-- **Empty create forms** (e.g., EDA Credential Create) — all fields are blank and labels are static, so the form element screenshot needs no masking.
-- **Wizard steps with controlled input** (e.g., Organization Create) — when we fill a fixed value like `"Visual Test Org"`, the content is deterministic.
-- **Element-level screenshots** (e.g., a `form`, `dl`, or toolbar locator) — these are scoped to a specific element and avoid instability entirely.
-
-### Applying masks
-
-Use the `mask` option on `toHaveScreenshot()`. Each entry is a Playwright locator.
+For pages where dynamic content covers a large area (table rows, resource counts, detail fields), intercept the API endpoint in `beforeEach` and return a deterministic inline fixture. This lets the test render real UI content — status badges, labels, type icons, counts — without masking it away.
 
 ```ts
-// Screenshot the main content area (excludes sidebar and brand logo)
-const mainContent = page.locator('.pf-v6-c-page__main');
-await expect(mainContent).toHaveScreenshot('my-page.png', {
-  maxDiffPixelRatio: 0.01,
-  animations: 'disabled',
-  mask: [
-    page.locator('h1'), // dynamic resource name
-    page.locator('time'), // timestamps
-    page.locator('.pf-v6-c-breadcrumb'), // breadcrumb with resource name
-  ],
+const mockResponse = { count: 1, results: [{ id: 1, name: 'My Resource', ... }] };
+
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/controller/v2/my-endpoint/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(mockResponse),
+    });
+  });
+  await setupBefore({ path: '/my-page' })({ page });
+});
+
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: 'ignoreErrors' });
+  await setupAfter({ page });
 });
 ```
+
+**Fixture guidelines:**
+
+- Include only the fields the UI actually renders — trim `related`, `object_roles`, `url`, and other internal API fields
+- Inline fixtures in the test file — no separate fixture files to maintain
+- Register routes **before** navigation so intercepted responses are ready when the page loads
+
+### Fallback: masking
+
+For small dynamic elements where maintaining a fixture isn't worth the effort, use masking:
+
+| Source of instability  | What to mask                | Why                                                  |
+| ---------------------- | --------------------------- | ---------------------------------------------------- |
+| **Timestamps**         | `.date-time`, `time`        | "Created" and "Modified" values change every run     |
+| **Pagination counts**  | `.pf-v6-c-pagination`       | "1 - 10 of N" text changes with row count            |
+| **Job activity chart** | `#job-activity .page-chart` | Chart data varies between runs                       |
+| **Brand heading**      | `h1` (on overview)          | Heading text differs between upstream and downstream |
 
 ### Alternative techniques
 
@@ -167,7 +173,13 @@ await page.evaluate(() => {
 });
 ```
 
-> **Tip:** Prefer `mask` for most cases. Use CSS or JS approaches only when you need finer control.
+> **Tip:** Prefer `page.route()` for large dynamic areas and `mask` for small elements. Use CSS or JS approaches only when you need finer control.
+
+### When neither is needed
+
+- **Empty create forms** (e.g., EDA Credential Create) — all fields are blank and labels are static, so the form element screenshot needs no masking.
+- **Wizard steps with controlled input** (e.g., Organization Create) — when we fill a fixed value like `"Visual Test Org"`, the content is deterministic.
+- **Element-level screenshots** (e.g., a `form`, `dl`, or toolbar locator) — these are scoped to a specific element and often avoid instability entirely.
 
 ## Where to add visual tests
 
@@ -194,11 +206,11 @@ Each test file follows a consistent pattern — one `describe` block with two te
 
 ```
 playwright/tests/visual/
-├── overview-visual.spec.ts               # Dashboard cards
-├── templates-list-visual.spec.ts         # PageTable toolbar + chrome
+├── overview-visual.spec.ts               # Dashboard cards and resource counts (mocked)
+├── templates-list-visual.spec.ts         # PageTable with mocked rows
 ├── eda-credential-create-visual.spec.ts  # PageForm element
 ├── organization-create-visual.spec.ts    # PageWizard steps
-├── inventory-details-visual.spec.ts      # PageDetails panel
+├── inventory-details-visual.spec.ts      # PageDetails panel (mocked)
 └── README.md
 ```
 
@@ -209,8 +221,9 @@ When adding visual coverage for a new page:
 1. Create a new file named `<page>-visual.spec.ts` in this directory
 2. Choose a page that exercises a framework component not already covered, preferably from a service not already represented
 3. Include both a main content area and element-level screenshot test
-4. Apply the masking strategy documented above for dynamic content
-5. Generate baselines with `--update-snapshots` and verify they pass on a second run
+4. For pages with dynamic content, prefer `page.route()` API interception over masking — see "Stabilizing dynamic content" above
+5. Mask only residual dynamic elements (timestamps, charts) that aren't worth maintaining fixtures for
+6. Generate baselines with `--update-snapshots` and verify they pass on a second run
 
 ### Tagging
 
@@ -252,27 +265,45 @@ TAGS="not @visual" npx playwright test --project "live chromium"
 
 ## Adding new visual tests
 
-Follow the existing pattern. Use `.pf-v6-c-page__main` for content area screenshots (excludes sidebar and brand logo for compatibility), and mask any dynamic content specific to the page.
+Follow the existing pattern. Use `page.route()` to intercept API endpoints with deterministic data, then screenshot `.pf-v6-c-page__main` (excludes sidebar and brand logo). Mask only residual dynamic elements like timestamps.
 
 ```ts
-test('my page has no visual regressions', { tag: ['@visual', '@not_mock'] }, async ({ page }) => {
-  // Wait for content to render
-  await expect(page.locator('h1')).toContainText('Expected Title');
+const mockResponse = {
+  count: 1,
+  next: null,
+  previous: null,
+  results: [{ id: 1, name: 'My Resource' /* only fields the UI renders */ }],
+};
 
-  // Main content area screenshot (excludes sidebar and brand logo)
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/controller/v2/my-endpoint/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(mockResponse),
+    });
+  });
+  await setupBefore({ path: '/my-page' })({ page });
+});
+
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: 'ignoreErrors' });
+  await setupAfter({ page });
+});
+
+test('my page has no visual regressions', { tag: ['@visual', '@not_mock'] }, async ({ page }) => {
+  await expect(page.getByRole('heading', { name: 'Expected Title' })).toBeVisible();
+
   const mainContent = page.locator('.pf-v6-c-page__main');
   await expect(mainContent).toHaveScreenshot('my-page.png', {
     maxDiffPixelRatio: 0.01,
     animations: 'disabled',
-    mask: [
-      page.locator('time'), // mask any timestamps
-      // add page-specific dynamic locators here
-    ],
+    mask: [page.locator('.date-time')],
   });
 
-  // Element-level screenshot
-  const card = page.locator('#my-card');
-  await expect(card).toHaveScreenshot('my-card.png', {
+  // Element-level screenshot of the key framework component
+  const detailsPanel = page.locator('dl').first();
+  await expect(detailsPanel).toHaveScreenshot('my-page-panel.png', {
     maxDiffPixelRatio: 0.01,
     animations: 'disabled',
   });
