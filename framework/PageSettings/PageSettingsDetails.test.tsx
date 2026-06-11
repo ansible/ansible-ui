@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PageSettingsDetails } from './PageSettingsDetails';
-import { PageSettingsContext } from './PageSettingsProvider';
+import { IPageSettings, PageSettingsContext } from './PageSettingsProvider';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -20,7 +20,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-const mockSettings = { refreshInterval: 30, theme: 'system' };
+const mockSettings: IPageSettings = { refreshInterval: 30, theme: 'system' };
 const mockSetSettings = vi.fn();
 
 vi.mock('./usePageSettingOptions', () => ({
