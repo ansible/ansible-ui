@@ -1,0 +1,155 @@
+import {
+  PageFormDataEditor,
+  PageFormTextArea,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { CredentialType } from '../../interfaces/CredentialType';
+import { AwxRoute } from '../../main/AwxRoutes';
+
+export function CreateCredentialType() {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
+
+  const postRequest = usePostRequest<CredentialType, CredentialType>();
+
+  const handleSubmit: PageFormSubmitHandler<CredentialType> = async (credentialType) => {
+    const createdCredentialType = await postRequest(awxAPI`/credential_types/`, {
+      ...credentialType,
+      kind: 'cloud',
+    });
+    pageNavigate(AwxRoute.CredentialTypeDetails, {
+      params: { id: createdCredentialType.id.toString() },
+    });
+  };
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create credential type')}
+        breadcrumbs={[
+          { label: t('Credential Types'), to: getPageUrl(AwxRoute.CredentialTypes) },
+          { label: t('Create credential type') },
+        ]}
+      />
+      <AwxPageForm<CredentialType>
+        submitText={t('Create credential type')}
+        onSubmit={handleSubmit}
+        onCancel={() => pageNavigate(AwxRoute.CredentialTypes)}
+        defaultValue={getInitialFormValues()}
+      >
+        <CredentialTypeInputs />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+
+export function EditCredentialType() {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
+
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: credentialType } = useGet<CredentialType>(
+    awxAPI`/credential_types/${id.toString()}/`
+  );
+
+  const patchRequest = usePatchRequest<CredentialType, CredentialType>();
+
+  const handleSubmit: PageFormSubmitHandler<CredentialType> = async (editedCredentialType) => {
+    await patchRequest(awxAPI`/credential_types/${id.toString()}/`, editedCredentialType);
+    pageNavigate(AwxRoute.CredentialTypeDetails, { params: { id: id.toString() } });
+  };
+
+  const hasCredentialType = !!credentialType;
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={
+          credentialType?.name
+            ? t('Edit {{credentialtypeName}}', { credentialtypeName: credentialType?.name })
+            : t('Credential Types')
+        }
+        breadcrumbs={[
+          { label: t('Credential Types'), to: getPageUrl(AwxRoute.CredentialTypes) },
+          {
+            label: credentialType?.name
+              ? t('Edit {{credentialtypeName}}', { credentialtypeName: credentialType?.name })
+              : t('Credential Types'),
+          },
+        ]}
+      />
+      {hasCredentialType && (
+        <AwxPageForm<CredentialType>
+          submitText={t('Save credential type')}
+          onSubmit={handleSubmit}
+          onCancel={() => pageNavigate(AwxRoute.CredentialTypeDetails, { params: { id } })}
+          defaultValue={getInitialFormValues(credentialType)}
+        >
+          <CredentialTypeInputs />
+        </AwxPageForm>
+      )}
+    </PageLayout>
+  );
+}
+
+function CredentialTypeInputs() {
+  const { t } = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<CredentialType>
+        name="name"
+        label={t('Name')}
+        placeholder={t('Enter credential type name')}
+        isRequired
+      />
+      <PageFormTextArea<CredentialType>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
+      <PageFormSection singleColumn>
+        <PageFormDataEditor
+          name="inputs"
+          label={t('Input configuration')}
+          labelHelpTitle={t('Input configuration')}
+          labelHelp={t(
+            `Input schema which defines a set of ordered fields for that type, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+          )}
+          format="object"
+        />
+        <PageFormDataEditor
+          name="injectors"
+          label={t('Injector configuration')}
+          labelHelpTitle={t('Injector configuration')}
+          labelHelp={t(
+            `Environment variables or extra variables that specify the values a credential type can inject, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+          )}
+          format="object"
+        />
+      </PageFormSection>
+    </>
+  );
+}
+
+function getInitialFormValues(credentialType?: CredentialType) {
+  if (!credentialType) {
+    return { name: '', description: '', inputs: {}, injectors: {} };
+  }
+  return credentialType;
+}

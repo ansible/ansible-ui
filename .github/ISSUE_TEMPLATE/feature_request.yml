@@ -1,0 +1,39 @@
+---
+name: Feature Request
+description: File a feature request.
+title: "[Feature]: "
+type: feature
+labels:
+  - enhancement
+
+body:
+  - type: markdown
+    attributes:
+      value: >
+        **Thank you for your feedback for ansible-ui**
+
+  - type: textarea
+    attributes:
+      label: Summary
+      description: Describe the new feature briefly below.
+      placeholder: >-
+        I would like for ansible-ui to do X.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: >-
+        Describe how the feature would be used, why it is needed and what it would solve.
+
+  - type: checkboxes
+    attributes:
+      label: Code of Conduct
+      description: |
+        Read the [Ansible Code of Conduct][CoC] first.
+
+        [CoC]: https://docs.ansible.com/projects/ansible/latest/community/code_of_conduct.html
+      options:
+        - label: I agree to follow the Ansible Code of Conduct
+          required: true

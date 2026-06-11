@@ -1,0 +1,294 @@
+import {
+  PageFormSubmitHandler,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { postRequest, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AwxError } from '../../common/AwxError';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
+import { Credential } from '../../interfaces/Credential';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { JobTemplateCreate, JobTemplateForm } from '../../interfaces/JobTemplateForm';
+import { Label } from '../../interfaces/Label';
+import { Organization } from '../../interfaces/Organization';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { getJobTemplateDefaultValues, stringifyTags } from './JobTemplateFormHelpers';
+import { JobTemplateInputs } from './JobTemplateInputs';
+
+export function EditJobTemplate() {
+  const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const {
+    data: jobTemplate,
+    error: jobTemplateError,
+    refresh: jobTemplateRefresh,
+    isLoading: isJobTemplateLoading,
+  } = useGet<JobTemplate>(awxAPI`/job_templates/${id}/`);
+  const {
+    data: instanceGroups,
+    error: instanceGroupsError,
+    isLoading: isInstanceGroupsLoading,
+    refresh: instanceGroupRefresh,
+  } = useGet<AwxItemsResponse<InstanceGroup>>(awxAPI`/job_templates/${id}/instance_groups/`);
+  const { clearCacheByKey } = useClearCache();
+
+  const defaultValues = useMemo(() => {
+    // Only update defaultValues when we have actual jobTemplate data to prevent form resets
+    if (!jobTemplate?.id) {
+      return undefined;
+    }
+    return getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []);
+  }, [t, jobTemplate, instanceGroups]);
+
+  const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values: JobTemplateForm) => {
+    const {
+      credentials,
+      labels,
+      instance_groups,
+      webhook_key,
+      webhook_url,
+      isProvisioningCallbackEnabled,
+      isWebhookEnabled,
+      host_config_key,
+      ...rest
+    } = values;
+    const formValues = {
+      ...rest,
+      project: values.project,
+      execution_environment: values.execution_environment?.id ?? null,
+      job_tags: stringifyTags(values.job_tags) === '' ? null : stringifyTags(values.job_tags),
+      skip_tags: stringifyTags(values.skip_tags) === '' ? null : stringifyTags(values.skip_tags),
+      webhook_credential: values.webhook_credential || null,
+      webhook_service: isWebhookEnabled ? values.webhook_service : null,
+      host_config_key: isProvisioningCallbackEnabled ? host_config_key : null,
+    };
+
+    // Filter out null optional fields before API call
+    const apiPayload = filterOptionalFields(formValues);
+
+    await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id}/`, apiPayload);
+    const promises = [];
+
+    promises.push(submitCredentials(jobTemplate as JobTemplate, credentials));
+    promises.push(submitLabels(jobTemplate as JobTemplate, labels));
+    promises.push(submitInstanceGroups(id, instance_groups));
+    await Promise.all(promises);
+    clearCacheByKey(awxAPI`/labels/`);
+    pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } });
+  };
+
+  const getPageUrl = useGetPageUrl();
+
+  const jobTemplateFormError = jobTemplateError || instanceGroupsError;
+  if (jobTemplateFormError instanceof Error) {
+    return (
+      <AwxError
+        error={jobTemplateFormError}
+        handleRefresh={jobTemplateError ? jobTemplateRefresh : instanceGroupRefresh}
+      />
+    );
+  }
+  if (isJobTemplateLoading || isInstanceGroupsLoading) return <LoadingPage />;
+  return (
+    <PageLayout>
+      <PageHeader
+        title={
+          jobTemplate?.name
+            ? t('Edit {{jobtemplateName}}', { jobtemplateName: jobTemplate?.name })
+            : t('Job Template')
+        }
+        breadcrumbs={[
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          {
+            label: jobTemplate?.name
+              ? t('Edit {{jobtemplateName}}', { jobtemplateName: jobTemplate?.name })
+              : t('Job Template'),
+          },
+        ]}
+      />
+      <AwxPageForm<JobTemplateForm>
+        submitText={t('Save job template')}
+        onSubmit={onSubmit}
+        onCancel={() => pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } })}
+        defaultValue={defaultValues}
+      >
+        <JobTemplateInputs jobtemplate={defaultValues} />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+export function CreateJobTemplate() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const postRequest = usePostRequest<JobTemplateCreate, JobTemplate>();
+  const defaultValues = useMemo(() => getJobTemplateDefaultValues(t, {} as JobTemplate), [t]);
+  const { clearCacheByKey } = useClearCache();
+
+  const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values) => {
+    const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
+    const formValues = {
+      ...rest,
+      project: values.project,
+      execution_environment: values.execution_environment?.id
+        ? values.execution_environment?.id
+        : null,
+      job_tags: stringifyTags(values.job_tags) === '' ? null : stringifyTags(values.job_tags),
+      skip_tags: stringifyTags(values.skip_tags) === '' ? null : stringifyTags(values.skip_tags),
+      webhook_credential: values.webhook_credential || null,
+    };
+
+    // Filter out null optional fields before API call
+    const apiPayload = filterOptionalFields(formValues);
+
+    const template = await postRequest(awxAPI`/job_templates/`, apiPayload);
+    const promises = [];
+    if (credentials && credentials.length > 0) {
+      promises.push(submitCredentials(template, credentials));
+    }
+    if (labels && labels.length > 0) {
+      promises.push(submitLabels(template, labels));
+    }
+    if (instance_groups && instance_groups.length > 0) {
+      promises.push(submitInstanceGroups(template.id, instance_groups));
+    }
+    if (promises.length > 0) await Promise.all(promises);
+
+    clearCacheByKey(awxAPI`/labels/`);
+    pageNavigate(AwxRoute.JobTemplateDetails, { params: { id: template.id } });
+  };
+
+  const getPageUrl = useGetPageUrl();
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create job template')}
+        breadcrumbs={[
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          { label: t('Create job template') },
+        ]}
+      />
+      <AwxPageForm<JobTemplateForm>
+        submitText={t('Create job template')}
+        onSubmit={onSubmit}
+        onCancel={() => void navigate(-1)}
+        defaultValue={defaultValues}
+      >
+        <JobTemplateInputs />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+
+async function submitCredentials(
+  template: JobTemplate,
+  newCredentials: Pick<Credential, 'id' | 'name' | 'cloud' | 'description' | 'kind'>[]
+) {
+  const { added, removed } = getAddedAndRemoved(
+    template?.summary_fields?.credentials ?? ([] as Credential[]),
+    newCredentials
+  );
+
+  const disassociateCredentials = removed.map((cred) =>
+    postRequest(awxAPI`/job_templates/${template?.id}/credentials/`, {
+      id: cred.id,
+      disassociate: true,
+    })
+  );
+  const disassociatePromise = await Promise.all(disassociateCredentials);
+  const associateCredentials = added.map((cred: { id: number }) =>
+    postRequest(awxAPI`/job_templates/${template?.id}/credentials/`, {
+      id: cred.id,
+    })
+  );
+
+  const associatePromise = await Promise.all(associateCredentials);
+  return Promise.all([disassociatePromise, associatePromise]);
+}
+
+async function submitLabels(template: JobTemplate, labels: Label[]) {
+  const { added, removed } = getAddedAndRemoved(
+    template.summary_fields?.labels?.results || ([] as Label[]),
+    labels ?? ([] as Label[])
+  );
+
+  let orgId = template.summary_fields?.organization?.id;
+  if (!template.summary_fields?.organization?.id) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
+      orgId = data.results[0].id;
+    } catch (err) {
+      throw err;
+    }
+  }
+  const disassociationPromises = removed.map((label: { id: number }) =>
+    postRequest(awxAPI`/job_templates/${template.id}/labels/`, {
+      id: label.id,
+      disassociate: true,
+    })
+  );
+  const associationPromises = added.map((label: { name: string }) =>
+    postRequest(awxAPI`/job_templates/${template.id}/labels/`, {
+      name: label.name,
+      organization: orgId,
+    })
+  );
+
+  const results = await Promise.all([...disassociationPromises, ...associationPromises]);
+  return results;
+}
+async function submitInstanceGroups(templateId: number, newInstanceGroups: InstanceGroup[]) {
+  const originalInstanceGroups = await requestGet<AwxItemsResponse<InstanceGroup>>(
+    awxAPI`/job_templates/${templateId}/instance_groups/`
+  );
+  if (!isEqual(newInstanceGroups, originalInstanceGroups.results)) {
+    for (const group of originalInstanceGroups.results) {
+      await postRequest(awxAPI`/job_templates/${templateId}/instance_groups/`, {
+        id: group.id,
+        disassociate: true,
+      });
+    }
+    for (const group of newInstanceGroups) {
+      await postRequest(awxAPI`/job_templates/${templateId}/instance_groups/`, {
+        id: group.id,
+      });
+    }
+  }
+}
+
+function isEqual(array1: InstanceGroup[], array2: InstanceGroup[]) {
+  return (
+    array1.length === array2.length &&
+    array1.every((element, index) => element.id === array2[index].id)
+  );
+}
+
+/**
+ * Filters out null/undefined values for optional numeric fields to avoid API validation issues
+ */
+function filterOptionalFields<T extends Record<string, unknown>>(payload: T): T {
+  const optionalFields: (keyof T)[] = ['job_slice_count', 'forks', 'timeout'];
+  return Object.fromEntries(
+    Object.entries(payload).filter(
+      ([key, value]) =>
+        !optionalFields.includes(key as keyof T) || (value !== null && value !== undefined)
+    )
+  ) as T;
+}

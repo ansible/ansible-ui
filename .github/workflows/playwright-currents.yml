@@ -1,0 +1,266 @@
+name: Playwright Tests with Currents.dev
+
+on:
+  workflow_call:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+      PLATFORM_UI:
+        type: string
+        required: false
+      PLATFORM_USERNAME:
+        type: string
+        required: false
+      PLATFORM_PASSWORD:
+        type: string
+        required: false
+      TAGS:
+        description: 'Test tags to include'
+        type: string
+        required: false
+      NOT_TAGS:
+        description: 'Test tags to exclude'
+        type: string
+        required: false
+      PROJECT:
+        type: string
+        default: "mock chromium"
+      BROWSER:
+        type: string
+        required: false
+        default: chromium
+      PARALLEL_TESTS:
+        type: string
+        required: false
+        default: '4'
+      TIMEOUT_MINUTES:
+        type: string
+        required: false
+        default: '90'
+      AAP_TOPOLOGY_TYPE:
+        description: 'AAP topology type (saas, ocp-a, man-b, or empty)'
+        type: string
+        required: false
+        default: ''
+
+    secrets:
+      PLATFORM_USERNAME:
+        required: false
+      PLATFORM_PASSWORD:
+        required: false
+      ANALYTICS_USER:
+        required: false
+      ANALYTICS_PASSWORD:
+        required: false
+      CURRENTS_PROJECT_ID:
+        required: true
+      CURRENTS_RECORD_KEY:
+        required: true
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate matrix
+        id: set-matrix
+        run: |
+          PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}
+          matrix=$(seq 1 $PARALLEL_TESTS | jq -s -c .)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "Generated matrix for $PARALLEL_TESTS parallel tests: $matrix"
+
+  playwright-tests:
+    timeout-minutes: ${{ fromJSON(inputs.TIMEOUT_MINUTES || '90') }}
+    runs-on: ubuntu-latest
+    needs: generate-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+    steps:
+    - name: Download image
+      if: ${{ inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: platform-ui.tar
+
+    - name: Load image
+      if: ${{ inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      run: docker load --input platform-ui.tar
+
+    - name: Run container
+      if: ${{ inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER }} platform-ui
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Install Currents for Playwright
+      run: npm install @currents/playwright
+
+    - name: Setup environment variables
+      run: |
+        echo "PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER || 'https://localhost:4100' }}" >> $GITHUB_ENV
+        echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}" >> $GITHUB_ENV
+        echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME }}" >> $GITHUB_ENV
+        echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}" >> $GITHUB_ENV
+        echo "ANALYTICS_USER=${{ secrets.ANALYTICS_USER }}" >> $GITHUB_ENV
+        echo "ANALYTICS_PASSWORD=${{ secrets.ANALYTICS_PASSWORD }}" >> $GITHUB_ENV
+        echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
+        echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
+        # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
+        # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
+        echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}" >> $GITHUB_ENV
+        echo "AAP_TOPOLOGY_TYPE=${{ inputs.AAP_TOPOLOGY_TYPE }}" >> $GITHUB_ENV
+
+    - name: Setup coverage directory
+      working-directory: ./playwright
+      run: |
+        # Ensure coverage directory exists for coverage collection
+        mkdir -p coverage
+        echo "Coverage directory created"
+
+    - name: Run Playwright tests with Currents.dev
+      working-directory: ./playwright
+      env:
+        CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+        CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
+        CURRENTS_CI_BUILD_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PROJECT: ${{ inputs.PROJECT || 'live chromium' }}
+        SHARD: ${{ matrix.shard }}/${{ inputs.PARALLEL_TESTS || '4' }}
+        TIMEOUT_MINUTES: ${{ inputs.TIMEOUT_MINUTES || '90' }}
+      run: |
+        npx pwc \
+          --key="${CURRENTS_RECORD_KEY}" \
+          --project-id="${CURRENTS_PROJECT_ID}" \
+          --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
+          -- \
+          --shard=${SHARD} \
+          --project="${PROJECT}"
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-test-results-shard-${{ matrix.shard }}
+        path: playwright/test-results
+        retention-days: 30
+        if-no-files-found: warn
+
+    - name: Debug coverage data
+      if: always()
+      working-directory: ./playwright
+      run: |
+        echo "=== Coverage directory contents ==="
+        ls -la coverage/ 2>/dev/null || echo "Coverage directory is empty or doesn't exist"
+        echo "=== Looking for coverage files ==="
+        find . -name "*coverage*" -type f 2>/dev/null || echo "No coverage files found"
+        echo "=== Looking for .nyc_output ==="
+        ls -la ../.nyc_output/ 2>/dev/null || echo "No .nyc_output directory found"
+
+    - name: Generate Monocart coverage report (for NYC combination)
+      if: always()
+      working-directory: ./playwright
+      env:
+        TAGS: ''
+        NOT_TAGS: ''
+      run: |
+        # Generate Monocart coverage report if coverage data exists
+        # This creates the coverage data needed for NYC combination
+        if [ -d "coverage" ]; then
+          echo "Generating Monocart coverage report..."
+          npx playwright test tests/coverage-utils/coverage.teardown.ts
+        else
+          echo "No coverage data found, skipping report generation"
+        fi
+
+    - name: Stop container
+      if: ${{ always() && inputs.PLATFORM_UI == 'https://localhost:4100' }}
+      run: docker stop platform-ui
+
+  publish-results:
+    if: ${{ !cancelled() }}
+    needs: playwright-tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Combine NYC coverage data
+      if: always()
+      run: |
+        # Create .nyc_output directory
+        mkdir -p .nyc_output
+        
+        # Look for coverage data in test results artifacts
+        # The Monocart coverage generates coverage-final.json files
+        find artifacts/playwright-test-results-shard-* -name "coverage-final.json" -exec cp {} .nyc_output/ \; 2>/dev/null || echo "No coverage files found in test results"
+        
+        # Also check for any .nyc_output directories in the artifacts
+        for shard in artifacts/playwright-test-results-shard-*; do
+          if [ -d "$shard" ]; then
+            # Look for any JSON coverage files
+            find "$shard" -name "*.json" -path "*coverage*" -exec cp {} .nyc_output/ \; 2>/dev/null || true
+          fi
+        done
+        
+        # Generate combined NYC report
+        if [ -d ".nyc_output" ] && [ "$(ls -A .nyc_output)" ]; then
+          echo "Generating combined NYC coverage report..."
+          npm run coverage:fix-paths
+          npx nyc report --cwd=$(pwd)
+        else
+          echo "No coverage data found for NYC report"
+        fi
+
+    - name: Upload combined coverage report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: combined-coverage-report
+        path: coverage/combined
+        retention-days: 30
+        if-no-files-found: warn
+
+    - name: Publish test summary
+      if: always()
+      run: |
+        echo "## 🎭 Playwright Test Results with Coverage" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Tests completed and results published to [Currents.dev Dashboard](https://app.currents.dev)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Test Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- **Combined Coverage Report**: HTML coverage report in \`combined-coverage-report\` artifact" >> $GITHUB_STEP_SUMMARY
+        echo "- **Test Results**: Traces, screenshots, and videos in \`playwright-test-results-shard-*\` artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- **Detailed Analysis**: Available on Currents.dev dashboard" >> $GITHUB_STEP_SUMMARY

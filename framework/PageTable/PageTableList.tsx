@@ -1,0 +1,340 @@
+import {
+  Button,
+  Content,
+  DataList,
+  DataListAction,
+  DataListCell,
+  DataListCheck,
+  DataListItem,
+  DataListItemCells,
+  DataListItemRow,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Flex,
+  Stack,
+  Title,
+} from '@patternfly/react-core';
+import { SearchIcon } from '@patternfly/react-icons';
+import { ReactNode, useCallback, useMemo } from 'react';
+import { IPageAction } from '../PageActions/PageAction';
+import { PageActions } from '../PageActions/PageActions';
+import { IconWrapper } from '../components/IconWrapper';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { PageTableProps } from './PageTable';
+import {
+  ITableColumn,
+  ITableColumnTypeCount,
+  ITableColumnTypeLabels,
+  TableColumnCell,
+} from './PageTableColumn';
+import { PageTableEmptyState } from './PageTableEmptyState';
+
+export type PageTableListProps<T extends object> = PageTableProps<T>;
+
+export function PageTableList<T extends object>(props: PageTableListProps<T>) {
+  const {
+    keyFn,
+    pageItems,
+    tableColumns,
+    isSelected,
+    selectItem,
+    unselectItem,
+    rowActions,
+    defaultSubtitle: defaultCardSubtitle,
+    showSelect,
+    itemCount,
+    clearAllFilters,
+  } = props;
+
+  const [translations] = useFrameworkTranslations();
+  const columnsToDataList = useColumnsToDataList(
+    tableColumns,
+    keyFn,
+    isSelected,
+    selectItem,
+    unselectItem,
+    rowActions,
+    defaultCardSubtitle,
+    showSelect
+  );
+
+  return (
+    <>
+      {itemCount === 0 ? (
+        <PageTableEmptyState
+          icon={SearchIcon}
+          title={translations.noResultsFound}
+          description={translations.noResultsMatchCriteria}
+        >
+          <Button variant="primary" onClick={clearAllFilters}>
+            {translations.clearAllFilters}
+          </Button>
+        </PageTableEmptyState>
+      ) : (
+        <DataList aria-label="TODO">{pageItems?.map(columnsToDataList)}</DataList>
+      )}
+    </>
+  );
+}
+
+export function useColumnsToDataList<T extends object>(
+  tableColumns: ITableColumn<T>[],
+  keyFn: (item: T) => string | number,
+  isSelected?: (item: T) => boolean,
+  selectItem?: (item: T) => void,
+  unselectItem?: (item: T) => void,
+  rowActions?: IPageAction<T>[],
+  defaultCardSubtitle?: ReactNode,
+  showSelect?: boolean
+): (item: T) => ReactNode {
+  const data = useMemo(() => {
+    let nameColumn: ITableColumn<T> | undefined;
+    let subtitleColumn: ITableColumn<T> | undefined;
+    let descriptionColumn: ITableColumn<T> | undefined;
+    const countColumns: ITableColumnTypeCount<T>[] = [];
+    let labelColumn: ITableColumnTypeLabels<T> | undefined;
+    const primaryColumns: ITableColumn<T>[] = [];
+    const secondaryColumns: ITableColumn<T>[] = [];
+
+    for (const column of tableColumns) {
+      if (column.list === 'hidden') continue;
+      switch (column.type) {
+        case 'description':
+          if (!descriptionColumn) descriptionColumn = column;
+          break;
+        case 'labels':
+          if (!labelColumn) labelColumn = column;
+          break;
+        case 'count':
+          countColumns.push(column);
+          break;
+        default:
+          switch (column.list) {
+            case 'name':
+              nameColumn = column;
+              break;
+            case 'subtitle':
+              subtitleColumn = column;
+              break;
+            case 'description':
+              descriptionColumn = column;
+              break;
+            case 'secondary':
+              secondaryColumns.push(column);
+              break;
+            default:
+              primaryColumns.push(column);
+              break;
+          }
+          break;
+      }
+    }
+    return {
+      nameColumn,
+      subtitleColumn,
+      descriptionColumn,
+      countColumns,
+      primaryColumns,
+      secondaryColumns,
+      labelColumn,
+    };
+  }, [tableColumns]);
+
+  const onSelectClick = useCallback(
+    (item: T) => {
+      if (isSelected?.(item)) {
+        unselectItem?.(item);
+      } else {
+        selectItem?.(item);
+      }
+    },
+    [isSelected, selectItem, unselectItem]
+  );
+
+  const {
+    nameColumn,
+    subtitleColumn,
+    descriptionColumn,
+    countColumns,
+    primaryColumns,
+    secondaryColumns,
+    labelColumn,
+  } = data;
+
+  return useCallback(
+    (item: T) => {
+      const key = keyFn(item);
+      const isItemSelected = isSelected?.(item);
+      return (
+        <DataListItem key={key} aria-labelledby={`data-list-${key}`} isExpanded={isItemSelected}>
+          <DataListItemRow>
+            {showSelect && (
+              <DataListCheck
+                aria-labelledby={`data-list-check-${key}`}
+                name={`data-list-check-${key}`}
+                isChecked={isSelected?.(item)}
+                onClick={() => onSelectClick(item)}
+                data-cy={'data-list-check'}
+                data-testid={'data-list-check'}
+              />
+            )}
+            <DataListItemCells
+              dataListCells={[
+                <DataListCell key="primary" width={5}>
+                  <Flex>
+                    <Stack hasGutter>
+                      <Flex alignItems={{ default: 'alignItemsCenter' }}>
+                        {nameColumn?.icon && (
+                          <IconWrapper size="xl">{nameColumn?.icon(item)}</IconWrapper>
+                        )}
+                        <Stack>
+                          <Title
+                            headingLevel="h2"
+                            style={{ marginTop: -4, fontWeight: 'bold' }}
+                            data-cy={'data-list-name'}
+                            data-testid={'data-list-name'}
+                          >
+                            <span id={`data-list-${key}`}>
+                              <TableColumnCell column={nameColumn} item={item} />
+                            </span>
+                          </Title>
+                          {subtitleColumn ? (
+                            <Content component="small" style={{ opacity: 0.7 }}>
+                              <TableColumnCell column={subtitleColumn} item={item} />
+                            </Content>
+                          ) : (
+                            defaultCardSubtitle && (
+                              <Content component="small" style={{ opacity: 0.7 }}>
+                                {defaultCardSubtitle}
+                              </Content>
+                            )
+                          )}
+                        </Stack>
+                      </Flex>
+                      {(descriptionColumn ||
+                        primaryColumns.length > 0 ||
+                        countColumns.length > 0 ||
+                        labelColumn) && (
+                        <DescriptionList isCompact>
+                          {descriptionColumn &&
+                            (!descriptionColumn.value || descriptionColumn.value(item)) && (
+                              <DescriptionListGroup key={descriptionColumn.header}>
+                                <DescriptionListDescription>
+                                  <TableColumnCell column={descriptionColumn} item={item} />
+                                </DescriptionListDescription>
+                              </DescriptionListGroup>
+                            )}
+                          {primaryColumns.map((column) => {
+                            if (column.value && !column.value(item)) return <></>;
+                            return (
+                              <DescriptionListGroup key={column.header}>
+                                <DescriptionListTerm style={{ whiteSpace: 'nowrap', opacity: 0.6 }}>
+                                  {column.header}
+                                </DescriptionListTerm>
+                                <DescriptionListDescription>
+                                  <TableColumnCell column={column} item={item} />
+                                </DescriptionListDescription>
+                              </DescriptionListGroup>
+                            );
+                          })}
+                          {countColumns.length > 0 && (
+                            <DescriptionListGroup key="counts">
+                              <DescriptionListDescription>
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    gap: 16,
+                                    marginTop: 8,
+                                    flexWrap: 'wrap',
+                                  }}
+                                >
+                                  {countColumns.map((column, i) => (
+                                    <div
+                                      key={i}
+                                      style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}
+                                    >
+                                      <TableColumnCell column={column} item={item} />
+                                      <small style={{ opacity: 0.7 }}>{column.header}</small>
+                                    </div>
+                                  ))}
+                                </div>
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                          )}
+                          {labelColumn && (
+                            <>
+                              <div style={{ flexGrow: 1 }}></div>
+                              <DescriptionListGroup key={labelColumn.header}>
+                                <DescriptionListDescription>
+                                  <TableColumnCell column={labelColumn} item={item} />
+                                </DescriptionListDescription>
+                              </DescriptionListGroup>
+                            </>
+                          )}
+                        </DescriptionList>
+                      )}
+                    </Stack>
+                  </Flex>
+                </DataListCell>,
+                secondaryColumns.length > 0 ? (
+                  <DataListCell key="secondary">
+                    <DescriptionList isCompact>
+                      {secondaryColumns.map((column) => {
+                        if (column.value && !column.value(item)) return <></>;
+                        return (
+                          <DescriptionListGroup key={column.header}>
+                            <DescriptionListTerm style={{ whiteSpace: 'nowrap', opacity: 0.6 }}>
+                              {column.header}
+                            </DescriptionListTerm>
+                            <DescriptionListDescription>
+                              <TableColumnCell column={column} item={item} />
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        );
+                      })}
+                    </DescriptionList>
+                  </DataListCell>
+                ) : null,
+              ]}
+            />
+            {rowActions && (
+              <DataListAction
+                aria-labelledby="check-action-item1 check-action-action1"
+                id="check-action-action1"
+                aria-label="Actions"
+                style={{ whiteSpace: 'nowrap' }}
+                data-cy={'data-list-action'}
+                data-testid={'data-list-action'}
+              >
+                <PageActions
+                  actions={rowActions}
+                  position={'right'}
+                  selectedItem={item}
+                  iconOnly
+                  collapse="always"
+                />
+              </DataListAction>
+            )}
+          </DataListItemRow>
+        </DataListItem>
+      );
+    },
+    [
+      keyFn,
+      isSelected,
+      showSelect,
+      nameColumn,
+      subtitleColumn,
+      defaultCardSubtitle,
+      primaryColumns,
+      descriptionColumn,
+      countColumns,
+      labelColumn,
+      secondaryColumns,
+      rowActions,
+      onSelectClick,
+    ]
+  );
+}

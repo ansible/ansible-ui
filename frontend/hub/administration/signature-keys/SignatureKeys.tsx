@@ -1,0 +1,137 @@
+import {
+  CopyCell,
+  DateTimeCell,
+  IPageAction,
+  ITableColumn,
+  IToolbarFilter,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+  TextCell,
+  ToolbarFilterType,
+  PageLayoutWithUnauthorized,
+} from '@ansible/ansible-ui-framework';
+import { downloadTextFile } from '@ansible/ansible-ui-framework/utils/download-file';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
+import { ButtonVariant } from '@patternfly/react-core';
+import { DownloadIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { pulpAPI } from '../../common/api/formatPath';
+import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
+import { useHubConfig } from '../../common/useHubConfig';
+import { useHubView } from '../../common/useHubView';
+import { isAccessDeniedError } from '../../common/utils/errorUtils';
+import { SignatureKey } from './SignatureKey';
+
+export function SignatureKeys() {
+  const { t } = useTranslation();
+  const toolbarFilters = useSignatureKeyFilters();
+  const tableColumns = useSignatureKeysColumns();
+  const config = useHubConfig();
+  const docsUrl = useGetDocsUrl(config, 'signatureKeys');
+
+  const view = useHubView<SignatureKey>({
+    url: pulpAPI`/signing-services/`,
+    keyFn: pulpHrefKeyFn,
+    toolbarFilters,
+    tableColumns,
+  });
+
+  const rowActions = useMemo<IPageAction<SignatureKey>[]>(
+    () => [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        isPinned: true,
+        icon: DownloadIcon,
+        label: t('Download key'),
+        onClick: (signatureKey) => downloadTextFile('key', signatureKey?.public_key ?? ''),
+      },
+    ],
+    [t]
+  );
+
+  // Check if the error is a 403 access denied error
+  const isUnauthorized = isAccessDeniedError(view.error);
+
+  const description = t(
+    'Signature keys are cryptographic keys used to verify the authenticity and integrity of Ansible content.'
+  );
+
+  return (
+    <PageLayoutWithUnauthorized
+      isUnauthorized={isUnauthorized}
+      resourceName={t('Signature Keys')}
+      title={t('Signature Keys')}
+      titleHelpTitle={t('Signature Keys')}
+      titleHelp={description}
+      description={description}
+      titleDocLink={docsUrl}
+    >
+      <PageTable<SignatureKey>
+        id="hub-signature-keys-table"
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading signature keys')}
+        emptyStateTitle={t('No signature keys')}
+        emptyStateDescription={t(
+          'No signature keys have been created for your organization. If you require a key, contact your administrator.'
+        )}
+        {...view}
+      />
+    </PageLayoutWithUnauthorized>
+  );
+}
+
+export function useSignatureKeysColumns(_options?: {
+  disableSort?: boolean;
+  disableLinks?: boolean;
+}) {
+  const { t } = useTranslation();
+  const tableColumns = useMemo<ITableColumn<SignatureKey>[]>(
+    () => [
+      {
+        header: t('Name'),
+        cell: (signatureKey) => <TextCell text={signatureKey.name} />,
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Fingerprint'),
+        cell: (signatureKey) => <CopyCell text={signatureKey.pubkey_fingerprint} />,
+      },
+      {
+        header: t('Public key'),
+        cell: (signatureKey) => <CopyCell text={signatureKey.public_key} />,
+      },
+      {
+        header: t('Created'),
+        cell: (signatureKey) => <DateTimeCell value={signatureKey.pulp_created} />,
+        card: 'hidden',
+        list: 'secondary',
+      },
+    ],
+    [t]
+  );
+  return tableColumns;
+}
+
+export function useSignatureKeyFilters() {
+  const { t } = useTranslation();
+  const toolbarFilters = useMemo<IToolbarFilter[]>(
+    () => [
+      {
+        key: 'name',
+        label: t('Name'),
+        type: ToolbarFilterType.SingleText,
+        query: 'name',
+        comparison: 'equals',
+      },
+    ],
+    [t]
+  );
+  return toolbarFilters;
+}

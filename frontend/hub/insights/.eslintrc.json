@@ -1,0 +1,7 @@
+{
+  "extends": "../../../.eslintrc.json",
+  "parserOptions": {
+    "project": true
+  },
+  "ignorePatterns": ["fec.config.js"]
+}

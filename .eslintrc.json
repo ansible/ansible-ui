@@ -1,0 +1,121 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "i18next", "no-only-tests"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": ["./tsconfig.json"]
+  },
+  "ignorePatterns": ["*.cjs", "**/publish/**", "**/dist/**", "**/build/**", "**/node_modules/**", "**/coverage/**"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended",
+    "plugin:i18next/recommended"
+  ],
+  "rules": {
+    "eqeqeq": ["error", "always"],
+    "semi": ["error", "always"],
+    "no-only-tests/no-only-tests": "error",
+    "react/react-in-jsx-scope": "off",
+    "no-console": "error",
+    "jsx-a11y/no-autofocus": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_",
+        "ignoreRestSiblings": true,
+        "destructuredArrayIgnorePattern": "^_"
+      }
+    ],
+    "i18next/no-literal-string": [
+      "error",
+      {
+        "mode": "jsx-only",
+        "jsx-attributes": {
+          "include": [
+            "label",
+            "placeholderText",
+            "placeholder",
+            "helperText",
+            "description",
+            "title",
+            "subtitle",
+            "errorStateTitle",
+            "emptyStateTitle",
+            "emptyStateDescription",
+            "emptyStateButtonText"
+          ]
+        }
+      }
+    ],
+    "no-restricted-exports": ["error", { "restrictDefaultExports": { "direct": true } }]
+  },
+  "root": true,
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**/*.ts", "scripts/**/*.js"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.tsx"],
+      "rules": {
+        "i18next/no-literal-string": "off"
+      }
+    },
+    {
+      "files": ["frontend/**/*.ts", "frontend/**/*.tsx", "platform/**/*.ts", "platform/**/*.tsx"],
+      "excludedFiles": ["**/*.test.*", "**/*.cy.*", "**/*.fixture.*", "**/generated/**", "**/vite.config.*", "**/awx-utils.tsx", "**/eda-utils.tsx", "**/formatPath.tsx", "**/gateway-api-utils.tsx"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Feda\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/eda/v1' paths. Use the edaAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Feda\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/eda/v1' paths. Use the edaAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Fgateway\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/gateway/v1' paths. Use the gatewayAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Fgateway\\x2Fv1\\x2F?/]",
+            "message": "Don't hardcode '/api/gateway/v1' paths. Use the gatewayAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Fcontroller\\x2Fv2\\x2F?/]",
+            "message": "Don't hardcode '/api/controller/v2' paths. Use the awxAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Fcontroller\\x2Fv2\\x2F?/]",
+            "message": "Don't hardcode '/api/controller/v2' paths. Use the awxAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "Literal[value=/\\x2Fapi\\x2Fgalaxy\\x2F?/]",
+            "message": "Don't hardcode '/api/galaxy' paths. Use the hubAPI`/path/` tagged template helper instead."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/\\x2Fapi\\x2Fgalaxy\\x2F?/]",
+            "message": "Don't hardcode '/api/galaxy' paths. Use the hubAPI`/path/` tagged template helper instead."
+          }
+        ]
+      }
+    }
+  ]
+}

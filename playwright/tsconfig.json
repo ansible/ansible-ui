@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@ansible/playwright/*": ["./*"]
+    }
+  },
+  "extends": "../tsconfig.json",
+  "include": ["**/*.ts", "*.ts", "../playwright.config.ts"]
+}

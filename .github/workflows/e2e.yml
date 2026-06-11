@@ -1,0 +1,169 @@
+name: Platform E2E
+
+on:
+  workflow_call:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+      SKIP_JOB:
+        type: boolean
+        required: false
+        default: false
+      PARALLEL_TESTS:
+        type: string
+        required: true
+    secrets:
+      PLATFORM_PASSWORD:
+        required: true
+
+jobs:
+  matrix-setup:
+    name: Setup Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      CONTAINERS: ${{ steps.set-matrix.outputs.CONTAINERS }}
+    steps:
+      - name: Set matrix containers
+        id: set-matrix
+        run: |
+          # Configure number of parallel test runners
+          PARALLEL_JOBS=${{ inputs.PARALLEL_TESTS }}
+          CONTAINERS=$(seq 1 $PARALLEL_JOBS | jq --slurp -c)
+          echo "CONTAINERS=$CONTAINERS" >> $GITHUB_OUTPUT
+          echo "Running tests across $PARALLEL_JOBS parallel test runners"
+
+  platform-e2e:
+    name: Platform E2E
+    runs-on: ubuntu-latest
+    needs:
+      - matrix-setup
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: ${{ fromJson(needs.matrix-setup.outputs.CONTAINERS) }}
+    steps:
+      - name: Download container image
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/download-artifact@v4
+        with:
+          name: platform-ui.tar
+      - name: Load container image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: docker load --input platform-ui.tar
+      - name: Checkout
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup node
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: PreCache
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: ${{ !inputs.SKIP_JOB }}
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
+        run: npm ci
+      - name: "Install python 3.11"
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install galaxykit
+        if: ${{ !inputs.SKIP_JOB }}
+        run: |
+          pip3 install ansible git+https://github.com/ansible/galaxykit.git@main
+      - name: Strip trailing slash from PLATFORM_SERVER
+        if: ${{ !inputs.SKIP_JOB }}
+        run: |
+          echo "PLATFORM_SERVER=$(echo '${{ inputs.PLATFORM_SERVER }}' | sed 's:/*$::')" >> $GITHUB_ENV
+
+      - name: Start Platform UI container
+        if: ${{ !inputs.SKIP_JOB }}
+        run: |
+          docker run --rm -d -p 4100:443 -e PLATFORM_SERVER=${{ env.PLATFORM_SERVER }} --name platform-ui platform-ui
+
+      - name: Wait for Platform UI
+        if: ${{ !inputs.SKIP_JOB }}
+        run: |
+          timeout 60 bash -c 'until curl -k https://localhost:4100 > /dev/null 2>&1; do sleep 2; done' || exit 1
+
+      - name: Temporarily hide Currents config to bypass Cypress blocking
+        if: ${{ !inputs.SKIP_JOB }}
+        run: |
+          if [ -f "currents.config.ts" ]; then
+            mv currents.config.ts foo.config.ts.backup
+          fi
+
+      - name: Generate a token
+        if: ${{ !inputs.SKIP_JOB }}
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_APP_ID }}
+          private-key: ${{ secrets.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY }}
+
+      - name: Run Cypress E2E Tests
+        if: ${{ !inputs.SKIP_JOB }}
+        run: |
+          npx cypress run \
+            --config-file cypress.platform.config.ts \
+            --config video=true,videoUploadOnPasses=false
+        env:
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
+          SPLIT_FILE: cypress-split-timings.json
+          SPLIT_OUTPUT_FILE: cypress-split-timings.json
+          PLATFORM_SERVER: ${{ env.PLATFORM_SERVER }}
+          PLATFORM_USERNAME: e2e
+          PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+          CYPRESS_AWX_API_PREFIX: /api/controller/v2
+          CYPRESS_EDA_API_PREFIX: /api/eda/v1
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+          CYPRESS_LABELS: '!upstream'
+
+      - name: Restore Currents config after Cypress tests
+        if: always()
+        run: |
+          if [ -f "foo.config.ts.backup" ]; then
+            mv foo.config.ts.backup currents.config.ts
+          fi
+          # Small wait to ensure file is fully written
+          sleep 2
+
+      - name: Stop Platform UI container
+        if: always()
+        run: |
+          docker stop platform-ui || true
+
+      - name: Debug - Check for timings file
+        if: always()
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Looking for timings file..."
+          ls -la cypress-split-timings.json || echo "Timings file not found in $(pwd)"
+          find . -maxdepth 2 -name "cypress-split-timings.json" -type f 2>/dev/null || echo "Timings file not found"
+          echo "Checking GitHub workspace:"
+          ls -la $GITHUB_WORKSPACE/cypress-split-timings.json || echo "Not in GITHUB_WORKSPACE either"
+
+      - name: Upload cypress-split timings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-timings-${{ matrix.containers }}
+          path: cypress-split-timings.json
+          if-no-files-found: ignore
+          retention-days: 30

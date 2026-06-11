@@ -1,0 +1,102 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
+import { ManagementJobPage } from '../../administration/management-jobs/ManagementJobPage/ManagementJobPage';
+import { ManagementJobs } from '../../administration/management-jobs/ManagementJobsList';
+import { awxAPI } from '../../common/api/awx-utils';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
+import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
+import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
+import { AwxRoute } from '../AwxRoutes';
+
+export function useAwxManagementJobsRoutes() {
+  const { t } = useTranslation();
+  const managementJobsRoutes = useMemo<PageNavigationItem>(
+    () => ({
+      id: AwxRoute.ManagementJobs,
+      label: t('Management Jobs'),
+      path: 'management-jobs',
+      children: [
+        {
+          id: AwxRoute.ManagementJobSchedulePage,
+          path: ':id/schedules/:schedule_id/',
+          element: (
+            <SchedulePage
+              resourceEndPoint={awxAPI`/system_job_templates/`}
+              initialBreadCrumbs={[
+                { label: t('Management Jobs'), to: AwxRoute.ManagementJobs },
+                { id: 'data', to: AwxRoute.ManagementJobPage },
+                { label: t('Schedules'), id: 'schedules', to: AwxRoute.ManagementJobSchedules },
+              ]}
+              backTab={{
+                label: t('Back to Schedules'),
+                page: AwxRoute.ManagementJobSchedules,
+                persistentFilterKey: 'management-jobs-schedules',
+              }}
+              tabs={[
+                {
+                  label: t('Details'),
+                  page: AwxRoute.ManagementJobScheduleDetails,
+                },
+              ]}
+            />
+          ),
+          children: [
+            {
+              id: AwxRoute.ManagementJobScheduleDetails,
+              path: 'details',
+              element: <ScheduleDetails isSystemJobTemplateSchedule />,
+            },
+          ],
+        },
+        {
+          id: AwxRoute.ManagementJobScheduleEdit,
+          path: ':id/schedules/:schedule_id/edit',
+          element: <ScheduleEditWizard resourceEndPoint={awxAPI`/system_job_templates/`} />,
+        },
+        {
+          id: AwxRoute.ManagementJobScheduleCreate,
+          path: ':id/schedules/create',
+          element: <ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />,
+        },
+        {
+          id: AwxRoute.ManagementJobPage,
+          path: ':id',
+          element: <ManagementJobPage />,
+          children: [
+            {
+              id: AwxRoute.ManagementJobSchedules,
+              path: 'schedules',
+              element: (
+                <SchedulesList
+                  createSchedulePageId={AwxRoute.ManagementJobScheduleCreate}
+                  sublistEndpoint={awxAPI`/system_job_templates`}
+                  resourceType="management-jobs"
+                />
+              ),
+            },
+            {
+              id: AwxRoute.ManagementJobNotifications,
+              path: 'notifications',
+              element: <ResourceNotifications resourceType="system_job_templates" />,
+            },
+            {
+              path: '',
+              element: <Navigate to="schedules" replace />,
+            },
+          ],
+        },
+        {
+          path: '',
+          element: <ManagementJobs />,
+        },
+      ],
+    }),
+    [t]
+  );
+  return managementJobsRoutes;
+}

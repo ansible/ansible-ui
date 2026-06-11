@@ -1,0 +1,128 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
+import { AddRolesToUser } from '@ansible/awx-ui/access/users/components/AddRolesToUser';
+import { EdaAddUserRoles } from '@ansible/eda-ui/access/users/EdaAddUserRoles';
+import { HubAddUserRoles } from '@ansible/hub-ui/access/users/components/HubAddUserRoles';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
+import { ApiTokenForm } from '../access/api-tokens/ApiTokenForm';
+import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
+import { ApiTokensTable } from '../access/api-tokens/ApiTokensTable';
+import { PlatformAwxUserIdLookup } from '../access/users/components/PlatformAwxUserIdLookup';
+import { PlatformEdaUserIdLookup } from '../access/users/components/PlatformEdaUserIdLookup';
+import { PlatformHubUserIdLookup } from '../access/users/components/PlatformHubUserIdLookup';
+import { PlatformUserDetails } from '../access/users/components/PlatformUserDetails';
+import { CreatePlatformUser, EditPlatformUser } from '../access/users/components/PlatformUserForm';
+import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
+import { PlatformUserRoles } from '../access/users/components/PlatformUserRoles';
+import { PlatformUserTeams } from '../access/users/components/PlatformUserTeams';
+import { PlatformUsersAssignRoles } from '../access/users/components/PlatformUsersAssignRoles';
+import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
+import { PlatformRoute } from '../main/PlatformRoutes';
+
+export function useGetPlatformUsersRoutes() {
+  const { t } = useTranslation();
+  const usersRoutes = useMemo<PageNavigationItem>(
+    () => ({
+      id: PlatformRoute.Users,
+      label: t('Users'),
+      path: 'users',
+      children: [
+        {
+          id: PlatformRoute.CreateUser,
+          path: 'create',
+          element: <CreatePlatformUser />,
+        },
+        {
+          id: PlatformRoute.EditUser,
+          path: ':id/edit',
+          element: <EditPlatformUser />,
+        },
+        {
+          id: PlatformRoute.CreateUserApiToken,
+          path: ':id/api-tokens/create',
+          element: <ApiTokenForm />,
+        },
+        {
+          id: PlatformRoute.EditUserApiToken,
+          path: ':id/api-tokens/:tokenid/edit',
+          element: <ApiTokenForm />,
+        },
+        {
+          id: PlatformRoute.UserApiTokenPage,
+          path: ':id/api-tokens/:tokenid',
+          element: <ApiTokenPage />,
+        },
+        {
+          id: PlatformRoute.UserPage,
+          path: ':id',
+          element: <PlatformUserPage />,
+          children: [
+            {
+              id: PlatformRoute.UserDetails,
+              path: 'details',
+              element: <PlatformUserDetails />,
+            },
+            {
+              id: PlatformRoute.UserTeams,
+              path: 'teams',
+              element: <PlatformUserTeams />,
+            },
+            {
+              id: PlatformRoute.UserRoles,
+              path: 'roles',
+              element: <PlatformUserRoles />,
+            },
+            {
+              id: PlatformRoute.UserApiTokens,
+              path: 'api-tokens',
+              element: <ApiTokensTable />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          id: PlatformRoute.UserAssignRoles,
+          path: ':id/roles/assign',
+          element: <PlatformUsersAssignRoles />,
+        },
+        {
+          id: PlatformRoute.AwxUserAddRoles,
+          path: ':id/roles/controller/add-roles',
+          element: (
+            <PlatformAwxUserIdLookup>
+              <AddRolesToUser userRolesRoute={PlatformRoute.AwxUserRoles} />
+            </PlatformAwxUserIdLookup>
+          ),
+        },
+        {
+          id: PlatformRoute.EdaUserAddRoles,
+          path: ':id/roles/eda/add-roles',
+          element: (
+            <PlatformEdaUserIdLookup>
+              <EdaAddUserRoles userRolesRoute={PlatformRoute.EdaUserRoles} />
+            </PlatformEdaUserIdLookup>
+          ),
+        },
+        {
+          id: PlatformRoute.HubUserAddRoles,
+          path: ':id/roles/hub/add-roles',
+          element: (
+            <PlatformHubUserIdLookup>
+              <HubAddUserRoles userRolesRoute={PlatformRoute.HubUserRoles} />
+            </PlatformHubUserIdLookup>
+          ),
+        },
+        {
+          path: '',
+          element: <PlatformUsersList />,
+        },
+      ],
+    }),
+    [t]
+  );
+  return usersRoutes;
+}

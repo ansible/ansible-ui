@@ -1,0 +1,81 @@
+# Generated with AI assistance: Claude Code (Anthropic)
+name: SonarQube PR Analysis
+
+on:
+  workflow_run:
+    workflows:
+      - PR Checks
+    types:
+      - completed
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+jobs:
+  sonarcloud:
+    name: SonarQube PR Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >-
+      github.event.workflow_run.event == 'pull_request'
+      && (github.event.workflow_run.conclusion == 'success'
+          || github.event.workflow_run.conclusion == 'failure')
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch PR Number
+        uses: actions/download-artifact@v4
+        with:
+          name: pr_number
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Extract PR Number
+        id: pr
+        run: |
+          echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Get PR Details
+        uses: octokit/request-action@v2.x
+        id: pr_info
+        with:
+          route: GET /repos/{repo}/pulls/{number}
+          repo: ${{ github.event.repository.full_name }}
+          number: ${{ steps.pr.outputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout PR Code
+        run: |
+          gh pr checkout "$PR_NUMBER"
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Vitest Coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: vitest-coverage
+          path: coverage/combined
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+        continue-on-error: true
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}
+            -Dsonar.pullrequest.key=${{ steps.pr.outputs.number }}
+            -Dsonar.pullrequest.branch=${{ fromJson(steps.pr_info.outputs.data).head.ref }}
+            -Dsonar.pullrequest.base=${{ fromJson(steps.pr_info.outputs.data).base.ref }}

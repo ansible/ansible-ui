@@ -1,0 +1,6 @@
+build
+dist
+dist-insights
+node_modules
+test-results
+coverage

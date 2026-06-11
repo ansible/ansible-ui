@@ -1,0 +1,21 @@
+AWX:
+  - frontend/awx/**/*
+  - cypress/e2e/awx/**/*
+
+EDA:
+  - frontend/eda/**/*
+  - cypress/e2e/eda/**/*
+
+HUB:
+  - frontend/hub/**/*
+  - cypress/e2e/hub/**/*
+
+E2E:
+  - cypress/e2e/**
+
+CCT:
+  - framework/**/*.cy.*
+  - frontend/**/*.cy.*
+
+AFW:
+  - framework/**/*

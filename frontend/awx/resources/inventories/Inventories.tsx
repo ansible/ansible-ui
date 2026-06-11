@@ -1,0 +1,158 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
+import { CubesIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Domains } from '../../common/domains/Domains';
+import { useDomainsStore } from '../../common/domains/useDomains';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxView } from '../../common/useAwxView';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { type Inventory } from '../../interfaces/Inventory';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { useInventoriesColumns } from './hooks/useInventoriesColumns';
+import { useInventoriesFilters } from './hooks/useInventoriesFilters';
+import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
+import { useInventoryActions } from './hooks/useInventoryActions';
+
+export type WebSocketInventory = {
+  status: string;
+} & Inventory;
+
+type WebSocketMessage = {
+  group_name?: string;
+  type?: string;
+  status?: string;
+  inventory_id?: number;
+};
+
+export function Inventories() {
+  const { t } = useTranslation();
+  const activeDomains = useDomainsStore((state) => state.activeDomains);
+  const focusLabels = activeDomains.map((fa) => fa.labels.map((l) => l.name)).flat();
+  const { data, isLoading: isLoadingInventoryOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(awxAPI`/inventories/`);
+  const canCreateInventory = Boolean(data?.actions?.['POST']);
+  const toolbarFilters = useInventoriesFilters();
+  const tableColumns = useInventoriesColumns();
+  const view = useAwxView<Inventory>({
+    url: awxAPI`/inventories/`,
+    toolbarFilters,
+    tableColumns,
+    queryParams: focusLabels.length > 0 ? { or__labels__name: focusLabels } : undefined,
+  });
+  const { refresh, pageItems } = view;
+  const toolbarActions = useInventoriesToolbarActions(view);
+  const rowActions = useInventoryActions({
+    onInventoriesDeleted: view.unselectItemsAndRefresh,
+    onInventoryCopied: view.refresh,
+    detail: false,
+  });
+  usePersistentFilters('inventories');
+  const config = useAwxConfig();
+
+  const handleWebSocketMessage = useCallback(
+    (message?: WebSocketMessage) => {
+      if (!message?.inventory_id) return;
+      switch (message?.group_name) {
+        case 'inventories':
+          switch (message?.status) {
+            case 'deleted':
+              void refresh();
+              break;
+          }
+          break;
+        case 'jobs':
+          switch (message?.type) {
+            case 'inventory_update':
+              switch (message?.status) {
+                case 'canceled':
+                case 'error':
+                case 'failed':
+                case 'pending':
+                case 'running':
+                case 'successful': {
+                  const wsInventory = (pageItems ?? []).find(
+                    (inv) => inv.id === message.inventory_id
+                  );
+                  if (!wsInventory) return;
+                  (wsInventory as WebSocketInventory).status = message.status;
+                  break;
+                }
+              }
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh, pageItems]
+  );
+
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'], inventories: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
+  );
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Inventories')}
+        titleHelpTitle={t('Inventories')}
+        titleHelp={t(
+          'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+        )}
+        titleDocLink={useGetDocsUrl(config, 'inventories')}
+        description={t(
+          'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+        )}
+        headerActions={<ActivityStreamIcon type={'inventory'} />}
+      />
+      <Domains />
+      {isLoadingInventoryOptions ? (
+        <PageLoadingTable />
+      ) : (
+        <PageTable<Inventory>
+          id="awx-inventories-table"
+          toolbarFilters={toolbarFilters}
+          toolbarActions={toolbarActions}
+          tableColumns={tableColumns}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading inventories')}
+          emptyStateTitle={
+            activeDomains.length > 0
+              ? t('No inventories found for the selected domains.')
+              : canCreateInventory
+                ? t('There are currently no inventories added.')
+                : t('You do not have permission to create an inventory.')
+          }
+          emptyStateDescription={
+            activeDomains.length > 0
+              ? t('Please select a different domain or clear the current selection.')
+              : canCreateInventory
+                ? t('Please create an inventory by using the button below.')
+                : t(
+                    'Please contact your organization administrator if there is an issue with your access.'
+                  )
+          }
+          emptyStateIcon={canCreateInventory ? undefined : CubesIcon}
+          emptyStateActions={
+            activeDomains.length > 0
+              ? undefined
+              : canCreateInventory
+                ? toolbarActions.slice(0, 1)
+                : undefined
+          }
+          {...view}
+          defaultSubtitle={t('Inventory')}
+        />
+      )}
+    </PageLayout>
+  );
+}

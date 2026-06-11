@@ -1,0 +1,96 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { SelectRolesStep } from '@ansible/common-ui/access/RolesWizard/steps/SelectRolesStep';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { hubAPI } from '../../../common/api/formatPath';
+import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { useManagedRolesWithDescription } from '../../roles/hooks/useManagedRolesWithDescription';
+import { useHubRoleFilters } from '../hooks/useHubRoleFilters';
+
+export function HubSelectRolesStep(props: {
+  contentType?: string;
+  fieldNameForPreviousStep?: string;
+  descriptionForRoleSelection?: string;
+  title?: string;
+}) {
+  const toolbarFilters = useHubRoleFilters();
+  const { t } = useTranslation();
+  const { wizardData } = usePageWizard();
+  const { resourceType } = wizardData as { [key: string]: unknown };
+  const { fieldNameForPreviousStep, title } = props;
+  const managedRolesWithDescription = useManagedRolesWithDescription();
+
+  const contentType = useMemo(() => {
+    return props.contentType
+      ? props.contentType
+      : ((resourceType as string)?.split('.').pop() ?? '');
+  }, [props.contentType, resourceType]);
+
+  const descriptionForRoleSelection = useMemo(() => {
+    if (props.descriptionForRoleSelection) {
+      return props.descriptionForRoleSelection;
+    }
+    switch (resourceType as string) {
+      case 'galaxy.namespace':
+        return t('Select roles to apply to all of your selected namespaces.');
+      case 'galaxy.ansiblerepository':
+        return t('Select roles to apply to all of your selected repositories.');
+      case 'galaxy.collectionremote':
+        return t('Select roles to apply to all of your selected remotes.');
+      case 'galaxy.containernamespace':
+        return t('Select roles to apply to all of your selected execution environments.');
+      default:
+        return t('Select roles to apply to all of your selected resources.');
+    }
+  }, [props.descriptionForRoleSelection, resourceType, t]);
+
+  const tableColumns: ITableColumn<HubRbacRole>[] = useMemo(() => {
+    return [
+      {
+        header: t('Name'),
+        cell: (role) => <TextCell text={role.name} />,
+        card: 'name',
+        list: 'name',
+        sort: 'name',
+      },
+      {
+        header: t('Description'),
+        cell: (role) => (
+          <TextCell text={managedRolesWithDescription[role.name] ?? role.description} />
+        ),
+        card: 'description',
+        list: 'description',
+      },
+    ];
+  }, [managedRolesWithDescription, t]);
+
+  const view = useHubMultiSelectListView<HubRbacRole>(
+    {
+      url: hubAPI`/_ui/v2/role_definitions/`,
+      toolbarFilters,
+      tableColumns,
+      queryParams: {
+        ...(contentType !== 'system' && { content_type__model: contentType }),
+        ...(contentType === 'system' && { content_type__isnull: 'true' }),
+        name__startswith: 'galaxy.',
+      },
+      disableQueryString: true,
+    },
+    'hubRoles'
+  );
+
+  return (
+    <SelectRolesStep
+      view={view}
+      tableColumns={tableColumns}
+      toolbarFilters={toolbarFilters}
+      fieldNameForPreviousStep={fieldNameForPreviousStep}
+      descriptionForRoleSelection={
+        resourceType !== 'system' ? descriptionForRoleSelection : undefined
+      }
+      title={title}
+    />
+  );
+}

@@ -1,0 +1,206 @@
+{
+  "name": "Host List",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json"],
+  "actions": {
+    "POST": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "hidden": false,
+        "label": "Name",
+        "max_length": 512,
+        "help_text": "Name of this host.",
+        "filterable": true
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "Description",
+        "help_text": "Optional description of this host.",
+        "filterable": true,
+        "default": ""
+      },
+      "inventory": {
+        "type": "id",
+        "required": true,
+        "hidden": false,
+        "label": "Inventory",
+        "filterable": true
+      },
+      "enabled": {
+        "type": "boolean",
+        "required": false,
+        "hidden": false,
+        "label": "Enabled",
+        "help_text": "Is this host online and available for running jobs?",
+        "filterable": true,
+        "default": true
+      },
+      "instance_id": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "Instance id",
+        "help_text": "The value used by the remote inventory source to uniquely identify the host",
+        "max_length": 1024,
+        "filterable": true,
+        "default": ""
+      },
+      "variables": {
+        "type": "json",
+        "required": false,
+        "hidden": false,
+        "label": "Variables",
+        "help_text": "Host variables in JSON or YAML format.",
+        "filterable": true,
+        "default": ""
+      }
+    },
+    "GET": {
+      "id": {
+        "type": "integer",
+        "hidden": false,
+        "label": "ID",
+        "help_text": "Database ID for this host.",
+        "filterable": true
+      },
+      "type": {
+        "type": "choice",
+        "hidden": false,
+        "label": "Type",
+        "help_text": "Data type for this host.",
+        "choices": [["host", "Host"]]
+      },
+      "url": {
+        "type": "string",
+        "hidden": false,
+        "label": "Url",
+        "help_text": "URL for this host.",
+        "filterable": false
+      },
+      "related": {
+        "type": "object",
+        "hidden": false,
+        "label": "Related",
+        "help_text": "Data structure with URLs of related resources.",
+        "filterable": false
+      },
+      "summary_fields": {
+        "type": "object",
+        "hidden": false,
+        "label": "Summary fields",
+        "help_text": "Data structure with name/description for related resources.  The output for some objects may be limited for performance reasons.",
+        "filterable": false
+      },
+      "created": {
+        "type": "datetime",
+        "hidden": false,
+        "label": "Created",
+        "help_text": "Timestamp when this host was created.",
+        "filterable": true
+      },
+      "modified": {
+        "type": "datetime",
+        "hidden": false,
+        "label": "Modified",
+        "help_text": "Timestamp when this host was last modified.",
+        "filterable": true
+      },
+      "name": {
+        "type": "string",
+        "hidden": false,
+        "label": "Name",
+        "help_text": "Name of this host.",
+        "filterable": true
+      },
+      "description": {
+        "type": "string",
+        "hidden": false,
+        "label": "Description",
+        "help_text": "Optional description of this host.",
+        "filterable": true
+      },
+      "inventory": {
+        "type": "id",
+        "hidden": false,
+        "label": "Inventory",
+        "filterable": true
+      },
+      "enabled": {
+        "type": "boolean",
+        "hidden": false,
+        "label": "Enabled",
+        "help_text": "Is this host online and available for running jobs?",
+        "filterable": true
+      },
+      "instance_id": {
+        "type": "string",
+        "hidden": false,
+        "label": "Instance id",
+        "help_text": "The value used by the remote inventory source to uniquely identify the host",
+        "filterable": true
+      },
+      "variables": {
+        "type": "json",
+        "hidden": false,
+        "label": "Variables",
+        "help_text": "Host variables in JSON or YAML format.",
+        "filterable": true
+      },
+      "has_active_failures": {
+        "type": "field",
+        "hidden": false,
+        "label": "Has active failures",
+        "filterable": false
+      },
+      "has_inventory_sources": {
+        "type": "field",
+        "hidden": false,
+        "label": "Has inventory sources",
+        "filterable": false
+      },
+      "last_job": {
+        "type": "id",
+        "hidden": false,
+        "label": "Last job",
+        "filterable": true
+      },
+      "last_job_host_summary": {
+        "type": "id",
+        "hidden": false,
+        "label": "Last job host summary",
+        "filterable": true
+      },
+      "ansible_facts_modified": {
+        "type": "datetime",
+        "hidden": false,
+        "label": "Ansible facts modified",
+        "help_text": "The date and time ansible_facts was last modified.",
+        "filterable": true
+      }
+    }
+  },
+  "types": ["host"],
+  "search_fields": ["description", "name"],
+  "related_search_fields": [
+    "inventory_sources__search",
+    "job_host_summaries__search",
+    "last_job_host_summary__search",
+    "constructed_host_summaries__search",
+    "inventory__search",
+    "job_events_as_primary_host__search",
+    "ad_hoc_commands__search",
+    "modified_by__search",
+    "host_indirect_host_audits__search",
+    "smart_inventories__search",
+    "last_job__search",
+    "created_by__search",
+    "groups__search",
+    "ad_hoc_command_events__search",
+    "jobs__search",
+    "ansible_facts"
+  ],
+  "max_page_size": 200
+}

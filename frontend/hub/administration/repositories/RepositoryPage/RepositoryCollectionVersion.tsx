@@ -1,0 +1,218 @@
+import { ITableColumn, PageTable } from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useOutletContext } from 'react-router-dom';
+import { CollectionVersionSearch } from '../../../collections/Collection';
+import { useCollectionColumns } from '../../../collections/hooks/useCollectionColumns';
+import { deleteCollectionFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
+import { hubAPI } from '../../../common/api/formatPath';
+import { collectionKeyFn } from '../../../common/api/hub-api-utils';
+import { isInsightsMode } from '../../../common/isInsights';
+import { useHubContext } from '../../../common/useHubContext';
+import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
+import { useHubView } from '../../../common/useHubView';
+import { useAddCollections } from '../hooks/useAddCollections';
+import { useCollectionVersionsActionsRemove } from '../hooks/useRepositoryActions';
+import { useRepositoryCollectionVersionFiltersRemove } from '../hooks/useRepositorySelector';
+import { Repository } from '../Repository';
+
+export function RepositoryCollectionVersion() {
+  const { t } = useTranslation();
+  const toolbarFilters = useRepositoryCollectionVersionFiltersRemove();
+  const { repo_id, repository } = useOutletContext<{
+    id: string;
+    repo_id: string;
+    repository: Repository;
+  }>();
+  const tableColumns = useCollectionColumns();
+
+  const view = useHubView<CollectionVersionSearch>({
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
+    keyFn: collectionKeyFn,
+    defaultSort: 'name',
+    queryParams: {
+      repository: repo_id,
+    },
+    toolbarFilters,
+  });
+
+  const rowActions = useCollectionVersionsActionsRemove(repository, view.unselectItemsAndRefresh);
+  const [selectedCollections, setSelectedCollections] = useState<CollectionVersionSearch[]>([]);
+
+  const dialog = useModifyCollections(() => {
+    view.unselectItemsAndRefresh(selectedCollections);
+    setSelectedCollections([]);
+  }, 'remove');
+
+  const runAddModal = useAddCollections(repository, () => {
+    view.unselectItemsAndRefresh([]);
+    setSelectedCollections([]);
+  });
+
+  // In Insights mode, require ansible.modify_ansible_repo_content for add/remove buttons
+  const { hasPermission, user } = useHubContext();
+  const isInsights = isInsightsMode();
+  const canModifyRepoContent =
+    !isInsights || hasPermission('ansible.modify_ansible_repo_content') || !!user?.is_superuser;
+
+  return (
+    <PageTable<CollectionVersionSearch>
+      id="hub-collection-versions-search-table"
+      tableColumns={tableColumns}
+      toolbarFilters={toolbarFilters}
+      toolbarContent={
+        canModifyRepoContent ? (
+          <>
+            <Button
+              onClick={() =>
+                dialog([selectedCollections], () =>
+                  deleteCollectionFromRepository(repository, selectedCollections, true)
+                )
+              }
+              isDisabled={selectedCollections.length === 0}
+            >
+              {t('Remove collections')}
+            </Button>
+            &nbsp;&nbsp;
+            <Button onClick={() => runAddModal()}>{t('Add collections')}</Button>
+          </>
+        ) : undefined
+      }
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading collection versions')}
+      emptyState={
+        canModifyRepoContent ? (
+          <PageTableEmptyState
+            title={t('No collection versions yet')}
+            description={t('Collection versions will appear once the repository is modified.')}
+          >
+            <Button
+              data-cy="add-collections"
+              data-testid="add-collections"
+              icon={<PlusCircleIcon />}
+              onClick={() => runAddModal()}
+              variant={ButtonVariant.primary}
+            >
+              {t('Add collections')}
+            </Button>
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            title={t('No collection versions yet')}
+            description={t('Collection versions will appear once the repository is modified.')}
+          />
+        )
+      }
+      {...view}
+      defaultTableView="list"
+      defaultSubtitle={t('Collection')}
+      compact={true}
+      showSelect={canModifyRepoContent}
+      selectedItems={selectedCollections}
+      isSelectMultiple={true}
+      isSelected={(item) =>
+        selectedCollections.find((i) => collectionId(i) === collectionId(item)) ? true : false
+      }
+      selectItem={(item) => {
+        const newItems = [...selectedCollections, item];
+        setSelectedCollections(newItems);
+      }}
+      selectItems={(items) => {
+        const newItems = [...selectedCollections, ...items];
+        setSelectedCollections(newItems);
+      }}
+      unselectItem={(item) => {
+        setSelectedCollections(
+          selectedCollections.filter((item2) => collectionId(item2) !== collectionId(item))
+        );
+      }}
+      unselectAll={() => {
+        setSelectedCollections([]);
+      }}
+    />
+  );
+}
+
+export function collectionId(collection: CollectionVersionSearch) {
+  return (
+    collection.collection_version?.namespace +
+    '_' +
+    collection?.collection_version?.name +
+    '_' +
+    collection?.collection_version?.version +
+    '_' +
+    collection.repository?.name
+  );
+}
+
+type BulkCollection = CollectionVersionSearch[];
+
+export function useModifyCollections(
+  onComplete: (collections: BulkCollection[]) => void,
+  operation: 'add' | 'remove'
+) {
+  const { t } = useTranslation();
+  const confirmationColumns = useBulkCollectionColumns(operation);
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useHubBulkConfirmation<BulkCollection>();
+
+  return useCallback(
+    (bulkCollections: BulkCollection[], onClick: () => Promise<unknown>) => {
+      const confirmText =
+        operation === 'add'
+          ? t('Yes, I confirm that I want to add these {{count}} collections versions.', {
+              count: bulkCollections[0].length,
+            })
+          : t('Yes, I confirm that I want to remove these {{count}} collections versions.', {
+              count: bulkCollections[0].length,
+            });
+
+      const title =
+        operation === 'add' ? t('Add collections versions') : t('Remove collections versions');
+
+      const actionButtonText =
+        operation === 'add' ? t('Add collections versions') : t('Remove collections versions');
+
+      bulkAction({
+        title,
+        confirmText,
+        actionButtonText,
+        items: bulkCollections,
+        keyFn: collectionKeyFn,
+        isDanger: true,
+        confirmationColumns,
+        actionColumns,
+        onComplete,
+        actionFn: () => {
+          return onClick();
+        },
+      });
+    },
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, operation]
+  );
+}
+
+export function useBulkCollectionColumns(operation: 'add' | 'remove') {
+  const { t } = useTranslation();
+
+  return useMemo<ITableColumn<BulkCollection>[]>(
+    () => [
+      {
+        header: t('Description'),
+        type: 'description',
+        value: (bulkCollection) =>
+          operation === 'add'
+            ? t('All {{count}} collections will be added in single operation to server.', {
+                count: bulkCollection.length,
+              })
+            : t('All {{count}} collections will be removed in single operation to server.', {
+                count: bulkCollection.length,
+              }),
+      },
+    ],
+    [t, operation]
+  );
+}

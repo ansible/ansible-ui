@@ -1,0 +1,100 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import {
+  Button,
+  ButtonVariant,
+  Modal,
+  ModalVariant,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@patternfly/react-core';
+import { CogIcon } from '@patternfly/react-icons';
+import { useCallback, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { OrgRolesList, OrgRolesListProps } from '../components/OrgRolesList';
+
+type ViewOrgRolesProps = {
+  orgListsOptions: OrgRolesListProps[];
+  onManageRolesClick: () => void;
+  userOrTeamName: string;
+};
+
+export function ManageOrgRoles(props: ViewOrgRolesProps) {
+  const { t } = useTranslation();
+  const { orgListsOptions, onManageRolesClick, userOrTeamName } = props;
+  const [_, setDialog] = usePageDialog();
+  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const [orgListIsEmpty, setOrgListIsEmpty] = useState<boolean[]>(
+    orgListsOptions.map((_) => false)
+  );
+
+  return (
+    <Modal variant={ModalVariant.medium} isOpen onClose={onClose}>
+      <ModalHeader title={t('Roles for {{userOrTeamName}}', { userOrTeamName: userOrTeamName })} />
+      <ModalBody>
+        {orgListsOptions.map((orgListProps, index) => (
+          <OrgRolesList
+            key={index}
+            {...orgListProps}
+            isLastSection={index === orgListsOptions.length - 1}
+            setOrgListIsEmpty={setOrgListIsEmpty}
+            listId={index}
+          />
+        ))}
+        {orgListIsEmpty.every((isEmpty) => isEmpty === true) && (
+          <Trans>
+            <b>{userOrTeamName}</b> has no organization roles. To add roles to{' '}
+            <b>{userOrTeamName}</b> click on the button below.
+          </Trans>
+        )}
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          ouiaId="manage-roles-modal-manage-roles-button"
+          key="manage-roles"
+          variant={ButtonVariant.primary}
+          icon={<CogIcon />}
+          onClick={() => {
+            onManageRolesClick();
+            onClose();
+          }}
+          aria-label={t`Close`}
+        >
+          {t(`Manage roles`)}
+        </Button>
+        <Button
+          ouiaId="manage-roles-modal-close-button"
+          key="close"
+          variant={ButtonVariant.secondary}
+          onClick={() => {
+            onClose();
+          }}
+          aria-label={t`Close`}
+        >
+          {t(`Close`)}
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+}
+
+export function useManageOrgRoles() {
+  const [_, setDialog] = usePageDialog();
+  const openManageOrgRoles = useCallback(
+    (manageOrgRolesOptions: {
+      orgListsOptions: OrgRolesListProps[];
+      onManageRolesClick: () => void;
+      userOrTeamName: string;
+    }) => {
+      setDialog(
+        <ManageOrgRoles
+          orgListsOptions={manageOrgRolesOptions.orgListsOptions}
+          onManageRolesClick={manageOrgRolesOptions.onManageRolesClick}
+          userOrTeamName={manageOrgRolesOptions.userOrTeamName}
+        />
+      );
+    },
+    [setDialog]
+  );
+  return openManageOrgRoles;
+}

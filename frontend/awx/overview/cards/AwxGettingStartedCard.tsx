@@ -1,0 +1,54 @@
+/* eslint-disable i18next/no-literal-string */
+import {
+  PageDashboardGettingStarted,
+  PageDashboardGettingStartedStep,
+} from '@ansible/ansible-ui-framework';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
+import { Content } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AwxRoute } from '../../main/AwxRoutes';
+
+export function AwxGettingStartedCard(props: {
+  hasInventory: boolean;
+  hasExecutionEnvironment: boolean;
+  hasJobTemplate: boolean;
+}) {
+  const { t } = useTranslation();
+  const { hasInventory, hasExecutionEnvironment, hasJobTemplate } = props;
+  const getPageUrl = useGetPageUrl();
+  const steps = useMemo<PageDashboardGettingStartedStep[]>(
+    () => [
+      {
+        title: t('Inventory'),
+        description: t('Create an inventory.'),
+        to: getPageUrl(AwxRoute.Inventories),
+        isComplete: hasInventory,
+      },
+      {
+        title: t('Execution Environment'),
+        description: t('Create an execution environment.'),
+        to: getPageUrl(AwxRoute.ExecutionEnvironments),
+        isComplete: hasExecutionEnvironment,
+      },
+      {
+        title: t('Job Template'),
+        description: t('Create a job template.'),
+        to: getPageUrl(AwxRoute.Jobs),
+        isComplete: hasJobTemplate,
+      },
+    ],
+    [getPageUrl, hasExecutionEnvironment, hasInventory, hasJobTemplate, t]
+  );
+
+  return (
+    <PageDashboardGettingStarted steps={steps}>
+      <Content component="p">
+        To learn how to get started, view the{' '}
+        <ExternalLink href="https://docs.ansible.com">documentation</ExternalLink>, or follow the
+        steps below.
+      </Content>
+    </PageDashboardGettingStarted>
+  );
+}

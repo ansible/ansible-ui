@@ -1,0 +1,154 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectGroup,
+  SelectList,
+  SelectOption,
+} from '@patternfly/react-core';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
+import { stringIsUUID } from '../../common/util/strings';
+import type { WorkflowJobNode } from '../../interfaces/WorkflowNode';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { jobPaths } from './WorkflowOutput/WorkflowOutputNode';
+
+interface WorkflowOutputNavigationProps {
+  workflowNodes: WorkflowJobNode[];
+}
+
+export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
+  const { t } = useTranslation();
+  const { id } = useParams<{ id: string }>();
+  const { workflowNodes } = props;
+  const getPageUrl = useGetPageUrl();
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selected, setSelected] = useState<string | undefined>();
+  const [filteredNodes, setFilteredNodes] = useState<WorkflowJobNode[]>(workflowNodes);
+
+  const totalResults = workflowNodes.length || 0;
+
+  const statuses: Record<string, string[]> = useMemo(
+    () => ({
+      failed: ['error', 'failed'],
+      successful: ['successful'],
+    }),
+    []
+  );
+
+  const flatStatuses = useMemo(
+    () => Object.values(statuses).reduce((acc, cur) => [...acc, ...cur], []),
+    [statuses]
+  );
+
+  const onToggleClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const onSelect = (event: React.MouseEvent | undefined, v: string | number | undefined) => {
+    if (typeof v === 'undefined') return;
+
+    const value = v.toString();
+
+    if (value === selected) {
+      setSelected(undefined);
+      setFilteredNodes(workflowNodes);
+    } else {
+      setSelected(value);
+
+      if (!flatStatuses.includes(value)) return;
+
+      setFilteredNodes(
+        workflowNodes.filter(
+          (node) =>
+            node.summary_fields?.job?.status &&
+            statuses[value].includes(node.summary_fields?.job?.status) &&
+            node.job?.toString() !== id
+        )
+      );
+    }
+  };
+
+  const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      style={
+        {
+          width: '180px',
+        } as React.CSSProperties
+      }
+    >
+      {t(`Workflow Job 1/{{totalResults}}`, { totalResults })}
+    </MenuToggle>
+  );
+
+  return (
+    <Select
+      id="select-workflow-navigation"
+      isOpen={isOpen}
+      selected={selected}
+      onSelect={onSelect}
+      onOpenChange={(isOpen) => setIsOpen(isOpen)}
+      toggle={Toggle}
+      shouldFocusToggleOnSelect
+    >
+      <SelectGroup
+        label={t`Workflow statuses`}
+        key="workflow-status"
+        data-cy="workflow-status"
+        data-testid="workflow-status"
+      >
+        <SelectList>
+          <SelectOption
+            value="failed"
+            key="failed"
+            icon={<ExclamationCircleIcon />}
+            description={t`Filter by failed jobs`}
+          >
+            {t`Failed`}
+          </SelectOption>
+          <SelectOption
+            value={'successful'}
+            icon={<CheckCircleIcon />}
+            key="successful"
+            description={t`Filter by successful jobs`}
+          >
+            {t`Successful`}
+          </SelectOption>
+        </SelectList>
+      </SelectGroup>
+      <SelectGroup
+        label={t`Workflow nodes`}
+        key="workflow-nodes"
+        data-cy="workflow-nodes"
+        data-testid="workflow-nodes"
+      >
+        <SelectList>
+          {filteredNodes.map((node: WorkflowJobNode) => (
+            <SelectOption
+              key={node.id}
+              to={getPageUrl(AwxRoute.JobOutput, {
+                params: {
+                  job_type: node.summary_fields.job?.type
+                    ? jobPaths[node.summary_fields.job?.type]
+                    : '',
+                  id: node.summary_fields.job?.id,
+                },
+              })}
+              component={Link}
+              value={node.summary_fields?.job?.name}
+            >
+              {stringIsUUID(node.identifier) ? node.summary_fields?.job?.name : node.identifier}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </SelectGroup>
+    </Select>
+  );
+}

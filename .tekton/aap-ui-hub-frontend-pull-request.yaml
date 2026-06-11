@@ -1,0 +1,112 @@
+# Insights Hub PR pipeline - builds test image and runs E2E tests against CRC
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    build.appstudio.openshift.io/repo: https://github.com/ansible/ansible-ui?rev={{revision}}
+    build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
+    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/cancel-in-progress: 'true'
+    pipelinesascode.tekton.dev/max-keep-runs: '3'
+    pipelinesascode.tekton.dev/on-cel-expression:
+      event == "pull_request" && target_branch
+      == "devel" && ( "frontend/hub/***".pathChanged() || "frontend/common/***".pathChanged()
+      || "framework/***".pathChanged() || ".tekton/aap-ui-hub-frontend-pull-request.yaml".pathChanged()
+      || "build-tools/Dockerfile".pathChanged() || "package.json".pathChanged()
+      || "package-lock.json".pathChanged() || "playwright-insights/***".pathChanged() )
+    pipelinesascode.tekton.dev/pipeline: https://raw.githubusercontent.com/RedHatInsights/konflux-pipelines/refs/heads/main/pipelines/platform-ui/docker-build-run-all-tests.yaml
+    pipelinesascode.tekton.dev/target-namespace: ansible-automationhu-tenant
+  creationTimestamp: null
+  labels:
+    appstudio.openshift.io/application: automation-hub-main
+    appstudio.openshift.io/component: aap-ui-hub-frontend
+    pipelines.appstudio.openshift.io/type: build
+  name: aap-ui-hub-frontend-on-pull-request
+spec:
+  params:
+    - name: git-url
+      value: '{{source_url}}'
+    - name: revision
+      value: '{{revision}}'
+    - name: output-image
+      value: quay.io/redhat-user-workloads/ansible-automationhu-tenant/automation-hub-main/aap-ui-hub-frontend:on-pr-{{revision}}
+    - name: image-expires-after
+      value: 5d
+    - name: dockerfile
+      value: build-tools/Dockerfile
+    - name: path-context
+      value: .
+    - name: rebuild
+      value: 'true'
+    - name: build-args
+      value:
+        - NPM_BUILD_SCRIPT=insights:ci-build
+        - APP_BUILD_DIR=frontend/hub/dist-insights
+        - PACKAGE_JSON_PATH=frontend/hub/insights/package.json
+    - name: unit-tests-script
+      value: ''
+    - name: run-app-script
+      value: |
+        #!/bin/sh
+        set -e
+        echo "Starting application with Caddy..."
+        exec caddy run --config /etc/caddy/Caddyfile
+    - name: e2e-tests-script
+      value: |
+        set -ex
+
+        getent hosts stage.foo.redhat.com
+
+        timeout 120s bash -c 'until curl -f -k https://stage.foo.redhat.com:1337 > /dev/null 2>&1; do
+          echo "Waiting for dev server to be ready"
+          sleep 5
+        done'
+        echo "Dev server ready!"
+
+        cd /var/workdir/playwright-insights
+        npm ci
+        npx playwright install --with-deps chromium
+        npx playwright test
+    - name: e2e-credentials-secret
+      value: hub-insights-credentials-secret
+    - name: frontend-proxy-routes-configmap
+      value: hub-insights-dev-proxy-caddyfile
+  pipelineRef:
+    resolver: git
+    params:
+      - name: url
+        value: https://github.com/RedHatInsights/konflux-pipelines
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: pipelines/platform-ui/docker-build-run-all-tests.yaml
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-aap-ui-hub-frontend
+  taskRunSpecs:
+    - pipelineTaskName: run-e2e-tests
+      serviceAccountName: build-pipeline-aap-ui-hub-frontend
+      podTemplate:
+        hostAliases:
+          - ip: '::1'
+            hostnames:
+              - 'stage.foo.redhat.com'
+          - ip: '127.0.0.1'
+            hostnames:
+              - 'stage.foo.redhat.com'
+  workspaces:
+    - name: workspace
+      volumeClaimTemplate:
+        metadata:
+          creationTimestamp: null
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+        status: {}
+    - name: git-auth
+      secret:
+        secretName: '{{ git_auth_secret }}'
+status: {}

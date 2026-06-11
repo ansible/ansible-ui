@@ -1,0 +1,132 @@
+import {
+  CopyCell,
+  DateTimeCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  Scrollable,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { Alert } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
+import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
+import { edaAPI } from '../../common/eda-utils';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
+import { EdaRoute } from '../../main/EdaRoutes';
+
+export function EventStreamDetails() {
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const getPageUrl = useGetPageUrl();
+  const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
+  if (!eventStream) {
+    return <LoadingPage />;
+  }
+  return (
+    <Scrollable>
+      {eventStream?.test_mode && (
+        <Alert
+          variant={'warning'}
+          isInline
+          style={{ marginLeft: '24px', marginTop: '16px', marginRight: '16px' }}
+          title={t('This event stream is disabled.')}
+        >
+          <p>
+            {t(
+              'Event streams that are disabled do not forward events to the rulebook activation where they are ' +
+                'configured. To forward events to the rulebook activation, enable the forwarding of events. '
+            )}
+          </p>
+        </Alert>
+      )}
+      <PageDetails disableScroll={true}>
+        <PageDetail label={t('Name')}>{eventStream?.name || ''}</PageDetail>
+        <PageDetail label={t('Event stream type')}>
+          {eventStream?.event_stream_type || ''}
+        </PageDetail>
+        <PageDetail label={t('Organization')}>
+          {eventStream && eventStream.organization ? (
+            <Link
+              to={getPageUrl(EdaRoute.OrganizationPage, {
+                params: { id: `${eventStream?.organization?.id}` },
+              })}
+            >
+              {eventStream?.organization?.name}
+            </Link>
+          ) : (
+            eventStream?.organization?.name || ''
+          )}
+        </PageDetail>
+        <PageDetail label={t('Credential')}>
+          {eventStream && eventStream.eda_credential ? (
+            <Link
+              to={getPageUrl(EdaRoute.CredentialPage, {
+                params: { id: eventStream?.eda_credential?.id },
+              })}
+            >
+              {eventStream?.eda_credential?.name}
+            </Link>
+          ) : (
+            eventStream?.eda_credential?.name || ''
+          )}
+        </PageDetail>
+        <PageDetail label={t('URL')}>
+          <CopyCell text={eventStream?.url || ''} />
+        </PageDetail>
+        <PageDetail
+          label={t('Headers')}
+          helpText={t('The HTTP header keys included in the event payload.')}
+        >
+          {eventStream?.additional_data_headers || ''}
+        </PageDetail>
+        <PageDetail label={t('Events received')}>{eventStream?.events_received}</PageDetail>
+        <PageDetail label={t('Last event received')}>
+          {eventStream?.last_event_received_at
+            ? formatDateString(eventStream.last_event_received_at)
+            : ''}
+        </PageDetail>
+        <PageDetail label={t('Created')}>
+          <DateTimeCell
+            value={eventStream?.created_at}
+            author={eventStream?.created_by?.username}
+          />
+        </PageDetail>
+        <LastModifiedPageDetail
+          value={eventStream?.modified_at ? eventStream.modified_at : ''}
+          author={eventStream?.modified_by?.username}
+        />
+        <PageDetail
+          label={t('Test content type')}
+          helpText={t('The HTTP Body that was sent from the Sender.')}
+        >
+          {eventStream?.test_content_type || ''}
+        </PageDetail>
+        <PageDetail label={t('Test error message')}>
+          {eventStream?.test_error_message || ''}
+        </PageDetail>
+      </PageDetails>
+      <PageDetails numberOfColumns={'single'} disableScroll={true}>
+        {eventStream?.test_headers && (
+          <PageDetailCodeBlock
+            value={eventStream?.test_headers}
+            showCopyToClipboard={true}
+            label={t('Headers')}
+          />
+        )}
+      </PageDetails>
+      <PageDetails numberOfColumns={'single'} disableScroll={true}>
+        {eventStream?.test_content && (
+          <PageDetailCodeBlock
+            value={eventStream?.test_content}
+            showCopyToClipboard={true}
+            label={t('Body')}
+          />
+        )}
+      </PageDetails>
+    </Scrollable>
+  );
+}

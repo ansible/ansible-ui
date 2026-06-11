@@ -1,0 +1,92 @@
+import { usePageAlertToaster, usePageDialogs } from '@ansible/ansible-ui-framework';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import {
+  Button,
+  ModalVariant,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@patternfly/react-core';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { gatewayAPI } from '../utils/gateway-api-utils';
+
+export interface RevertAllModalProps {
+  onComplete: () => void;
+}
+
+export function useRevertAllGatewaySettingsModal() {
+  const { pushDialog, popDialog } = usePageDialogs();
+  const [props, setProps] = useState<RevertAllModalProps>();
+
+  useEffect(() => {
+    if (props) {
+      pushDialog(<RevertAllDialog {...{ ...props, popDialog: popDialog }} />);
+    } else {
+      popDialog();
+    }
+  }, [props, pushDialog, popDialog]);
+
+  return setProps;
+}
+
+export function RevertAllDialog(
+  props: RevertAllModalProps & {
+    popDialog: () => void;
+  }
+) {
+  const { onComplete, popDialog } = props;
+  const { t } = useTranslation();
+  const alertToaster = usePageAlertToaster();
+  const deleteRequest = useDeleteRequest();
+
+  const onRevertAll = useCallback(async () => {
+    try {
+      await deleteRequest(gatewayAPI`/settings/all/`).then(() => {
+        onComplete();
+      });
+    } catch (_) {
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Failed to revert settings'),
+      });
+    } finally {
+      popDialog();
+    }
+  }, [t, alertToaster, deleteRequest, onComplete, popDialog]);
+
+  return (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={() => popDialog()}
+      data-cy="revert-settings-modal"
+      data-testid="revert-settings-modal"
+      aria-label={t('Revert settings confirmation dialog')}
+    >
+      <ModalHeader title={t('Revert settings')} titleIconVariant="warning" />
+      <ModalBody>
+        {t(
+          `This will revert all configuration values on this page to their factory defaults. Are you sure you want to proceed?`
+        )}
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          data-cy="delete-group-modal-delete-button"
+          data-testid="delete-group-modal-delete-button"
+          ouiaId="delete-group-modal-delete-button"
+          key="delete"
+          variant="danger"
+          onClick={() => void onRevertAll()}
+          aria-label={t`Confirm revert all`}
+        >
+          {t('Revert all')}
+        </Button>
+        <Button key="cancel" variant="link" onClick={() => popDialog()}>
+          {t('Cancel')}
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+}

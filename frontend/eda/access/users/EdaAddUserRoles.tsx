@@ -1,0 +1,55 @@
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { edaAPI } from '../../common/eda-utils';
+import { EdaUser } from '../../interfaces/EdaUser';
+import { EdaRoute } from '../../main/EdaRoutes';
+
+import { EdaAddRoles } from '../common/EdaAddRoles';
+
+export function EdaAddUserRoles(props: { id?: string; userRolesRoute?: string }) {
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
+  const { data: user, isLoading } = useGet<EdaUser>(edaAPI`/users/${props.id || params.id || ''}/`);
+
+  if (isLoading || !user) return <LoadingPage />;
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Assign users')}
+        breadcrumbs={[
+          { label: t('Users'), to: getPageUrl(EdaRoute.Users) },
+          {
+            label: user?.username,
+            to: getPageUrl(EdaRoute.UserDetails, { params: { id: user?.id } }),
+          },
+          {
+            label: t('Roles'),
+            to: getPageUrl(EdaRoute.UserRoles, { params: { id: user?.id } }),
+          },
+          { label: t('Assign users') },
+        ]}
+      />
+      <EdaAddRoles
+        id={user?.id.toString()}
+        resourceName={user?.username}
+        type={'user'}
+        onClose={() => {
+          pageNavigate(props.userRolesRoute || EdaRoute.UserRoles, {
+            params: { id: params.id },
+          });
+        }}
+      />
+    </PageLayout>
+  );
+}

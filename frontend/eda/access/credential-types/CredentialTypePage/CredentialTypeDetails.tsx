@@ -1,0 +1,67 @@
+import { DateTimeCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { Label } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { edaAPI } from '../../../common/eda-utils';
+import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
+
+export function CredentialTypeDetails() {
+  const params = useParams<{ id: string }>();
+  const { data: credentialType } = useGetItem<EdaCredentialType>(
+    edaAPI`/credential-types/`,
+    params.id
+  );
+  return credentialType ? <CredentialTypeDetailInner credentialType={credentialType} /> : null;
+}
+
+export function CredentialTypeDetailInner(props: { credentialType: EdaCredentialType }) {
+  const { t } = useTranslation();
+
+  function renderCredentialTypeName(credentialType: EdaCredentialType) {
+    if (credentialType.managed) {
+      return (
+        <>
+          {credentialType.name}
+          <Label style={{ marginLeft: '10px' }}>{t('Read-only')}</Label>
+        </>
+      );
+    } else {
+      return <>{credentialType.name}</>;
+    }
+  }
+
+  return (
+    <PageDetails>
+      <PageDetail label={t('Name')}>{renderCredentialTypeName(props.credentialType)}</PageDetail>
+      <PageDetail label={t('Description')}>{props.credentialType.description}</PageDetail>
+      <PageDetailCodeEditor
+        helpText={t(
+          'Input schema which defines a set of ordered fields for that type, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.'
+        )}
+        label={t('Input configuration')}
+        value={jsonToYaml(JSON.stringify(props.credentialType.inputs))}
+      />
+      <PageDetailCodeEditor
+        helpText={t(
+          'Environment variables or extra variables that specify the values a credential type can inject, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.'
+        )}
+        label={t('Injector configuration')}
+        value={jsonToYaml(JSON.stringify(props.credentialType.injectors))}
+      />
+      <PageDetail label={t('Created')}>
+        <DateTimeCell
+          value={props.credentialType?.created_at}
+          author={props.credentialType?.created_by?.username}
+        />
+      </PageDetail>
+      <LastModifiedPageDetail
+        value={props.credentialType?.modified_at ? props.credentialType.modified_at : ''}
+        author={props.credentialType?.modified_by?.username}
+      />
+    </PageDetails>
+  );
+}

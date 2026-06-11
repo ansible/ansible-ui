@@ -1,0 +1,72 @@
+import { LoadingPage, PageTable } from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { CubesIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useUsersColumns } from '../../users/hooks/useUserColumns';
+import { useUsersFilters } from '../../users/hooks/useUsersFilters';
+import { useTeamUsersRowActions, useTeamUsersToolbarActions } from '../hooks/useTeamUsersActions';
+
+export function PlatformAAPTeamUsers() {
+  const { t } = useTranslation();
+  const toolbarFilters = useUsersFilters();
+  const tableColumns = useUsersColumns();
+  const params = useParams<{ id: string }>();
+  const { data: team, isLoading, error } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
+
+  const view = usePlatformView<PlatformUser>({
+    url: gatewayAPI`/teams/${team?.id?.toString() ?? ''}/users/`,
+    toolbarFilters,
+    tableColumns,
+  });
+
+  const { data: teamOptions, isLoading: isLoadingOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(gatewayAPI`/teams/${team?.id?.toString() ?? ''}/`);
+  const canEditTeam = Boolean(
+    teamOptions &&
+      teamOptions.actions &&
+      (teamOptions.actions['PUT'] || teamOptions.actions['PATCH'])
+  );
+  const toolbarActions = useTeamUsersToolbarActions(view);
+  const rowActions = useTeamUsersRowActions(view);
+
+  if (isLoading || isLoadingOptions) return <LoadingPage />;
+  if (error) return <AwxError error={error} />;
+
+  return (
+    <PageTable<PlatformUser>
+      id="platform-users-table"
+      toolbarFilters={toolbarFilters}
+      toolbarActions={toolbarActions}
+      tableColumns={tableColumns}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading users')}
+      emptyStateTitle={
+        canEditTeam
+          ? t('No users assigned to this team.')
+          : t('You do not have permission to assign a user to this team.')
+      }
+      emptyStateDescription={
+        canEditTeam
+          ? t(
+              'To get started, assign users to this team. These users will inherit roles assigned to this team.'
+            )
+          : t(
+              'Please contact your organization administrator if there is an issue with your access.'
+            )
+      }
+      emptyStateIcon={canEditTeam ? undefined : CubesIcon}
+      emptyStateButtonText={canEditTeam ? t('Assign users') : undefined}
+      emptyStateActions={canEditTeam ? toolbarActions.slice(0, 1) : undefined}
+      {...view}
+    />
+  );
+}

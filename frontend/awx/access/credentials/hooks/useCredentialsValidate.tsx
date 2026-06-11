@@ -1,0 +1,68 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Credential } from '../../../interfaces/Credential';
+import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+
+export function useCredentialsValidate(
+  allowDuplicateCredentialTypes = false,
+  preventCredentialsThatNeedPasswordsOnLaunch?: boolean
+) {
+  const { t } = useTranslation();
+  return useCallback(
+    async (selectedCredentials: PromptFormValues['credentials']) => {
+      const originalCredentials: number[] = [];
+      const newCredentials: Credential[] = [];
+      selectedCredentials?.forEach((credential) =>
+        !('summary_fields' in credential)
+          ? originalCredentials.push(credential.id)
+          : newCredentials.push(credential)
+      );
+      const fullDefaultCredentials: Credential[] = await Promise.all(
+        originalCredentials.map((defCred) =>
+          requestGet<Credential>(awxAPI`/credentials/${defCred.toString()}/`)
+        )
+      ).catch(() => []);
+      const allCredentials = [...(fullDefaultCredentials || []), ...newCredentials];
+      const vaultIds = allCredentials
+        .filter((credential) => credential.kind === 'vault' && credential.inputs.vault_id)
+        .map((vaultCred) => vaultCred.inputs.vault_id.toString());
+      const otherCredentialTypes = allCredentials
+        .filter((credential) => credential.kind !== 'vault')
+        .map((nonVaultCred) => nonVaultCred.summary_fields.credential_type.name);
+
+      const credentialsThatRequirePasswords: Credential[] = allCredentials.filter((credential) =>
+        Object.values(credential.inputs).some((input) => input === 'ASK')
+      );
+      const hasDuplicateVaultIds: boolean =
+        vaultIds.filter(
+          (vaultId, _index, array) => array.indexOf(vaultId) !== array.lastIndexOf(vaultId)
+        ).length > 0;
+      const duplicateCredentialTypes: string[] = [
+        ...new Set(
+          otherCredentialTypes.filter(
+            (cred, _index, array) => array.indexOf(cred) !== array.lastIndexOf(cred)
+          )
+        ),
+      ];
+      if (
+        credentialsThatRequirePasswords.length > 0 &&
+        preventCredentialsThatNeedPasswordsOnLaunch
+      ) {
+        return t(
+          `Cannot assign the following credentials that require a password: ${credentialsThatRequirePasswords.map((c) => c.name).join(' ')}`
+        );
+      }
+      if (duplicateCredentialTypes.length > 0 && !allowDuplicateCredentialTypes) {
+        return t(
+          `Cannot assign multiple credentials of the same type. Duplicated credential types are: ${duplicateCredentialTypes.join(', ')}`
+        );
+      }
+      if (hasDuplicateVaultIds) {
+        return t(`Cannot assign multiple vault credentials of the same vault id.`);
+      }
+    },
+    [t, allowDuplicateCredentialTypes, preventCredentialsThatNeedPasswordsOnLaunch]
+  );
+}

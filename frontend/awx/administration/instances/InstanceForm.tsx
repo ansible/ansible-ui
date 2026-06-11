@@ -1,0 +1,193 @@
+import {
+  PageFormCheckbox,
+  PageFormSelect,
+  PageFormSubmitHandler,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Instance } from '../../interfaces/Instance';
+import { AwxRoute } from '../../main/AwxRoutes';
+
+export function AddInstance() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const postRequest = usePostRequest<Instance>();
+
+  const onSubmit: PageFormSubmitHandler<Instance> = async (instance: Instance) => {
+    const newInstance = await postRequest(awxAPI`/instances/`, instance);
+    pageNavigate(AwxRoute.InstanceDetails, { params: { id: newInstance.id } });
+  };
+
+  const onCancel = () => void navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create instance')}
+        breadcrumbs={[
+          { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
+          { label: t('Create instance') },
+        ]}
+      />
+      <AwxPageForm
+        submitText={t('Create instance')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={{
+          node_type: 'execution',
+          node_state: 'installed',
+          enabled: true,
+          peers_from_control_nodes: false,
+          managed_by_policy: true,
+        }}
+      >
+        <InstanceInputs mode="create" />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+
+export function EditInstance() {
+  const params = useParams();
+  const id = Number(params.id);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const { data: instance } = useGet<Instance>(awxAPI`/instances/${id?.toString()}/`);
+
+  const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
+    instanceInput.listener_port =
+      instanceInput.listener_port && Number(instanceInput?.listener_port);
+    await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, instanceInput);
+    pageNavigate(AwxRoute.InstanceDetails, { params: { id } });
+  };
+
+  const onCancel = () => void navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  if (instance) {
+    return (
+      <PageLayout>
+        <PageHeader
+          title={
+            instance?.hostname
+              ? t('Edit {{instanceName}}', { instanceName: instance?.hostname })
+              : t('Instances')
+          }
+          breadcrumbs={[
+            { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
+            {
+              label: instance?.hostname
+                ? t('Edit {{instanceName}}', { instanceName: instance?.hostname })
+                : t('Instances'),
+            },
+          ]}
+        />
+        <AwxPageForm
+          submitText={t('Save instance')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={instance}
+        >
+          <InstanceInputs mode="edit" />
+        </AwxPageForm>
+      </PageLayout>
+    );
+  }
+}
+
+function InstanceInputs(props: { mode: 'create' | 'edit' }) {
+  const { mode } = props;
+  const { t } = useTranslation();
+  const peersFromControlNodes = useWatch({ name: 'peers_from_control_nodes' }) as boolean;
+  return (
+    <>
+      <PageFormTextInput<Instance>
+        name="hostname"
+        label={t('Host name')}
+        placeholder={t('Enter host name')}
+        isRequired
+        maxLength={150}
+        isDisabled={mode === 'edit'}
+      />
+      <PageFormTextInput<Instance>
+        name="node_state"
+        label={t('Instance state')}
+        placeholder={t('installed')}
+        isDisabled={true}
+        labelHelp={t('Sets the current life cycle stage of this instance. Default is "installed."')}
+      />
+      <PageFormTextInput<Instance>
+        name="listener_port"
+        type="number"
+        label={t('Listener port')}
+        placeholder={t('Enter listener port')}
+        isRequired={peersFromControlNodes}
+        min={0}
+        max={65353}
+        labelHelp={t(
+          'Enter the port number that the receptor will listen on for incoming connections.'
+        )}
+      />
+      <PageFormSelect<Instance>
+        name="node_type"
+        label={t('Instance type')}
+        placeholderText={t('Select client type')}
+        options={[
+          {
+            label: t('Execution'),
+            value: 'execution',
+          },
+          {
+            label: t('Hop'),
+            value: 'hop',
+          },
+        ]}
+        isRequired
+        isDisabled={mode === 'edit'}
+      />
+      <PageFormSection title={t('Options')} singleColumn>
+        <PageFormCheckbox<Instance>
+          name="enabled"
+          label={t('Enable instance')}
+          labelHelpTitle={t('Enable instance')}
+          labelHelp={t(
+            'Enable this box to make the instance available for jobs to run on an execution node. If disabled, jobs will not be assigned to this instance.'
+          )}
+        />
+        <PageFormCheckbox<Instance>
+          name="managed_by_policy"
+          label={t('Managed by policy')}
+          labelHelpTitle={t('Managed by policy')}
+          labelHelp={t(
+            'Controls whether or not this instance is managed by policy. If enabled, the instance will be available for automatic assignment to and unassignment from instance groups based on policy rules.'
+          )}
+        />
+        <PageFormCheckbox<Instance>
+          name="peers_from_control_nodes"
+          label={t('Peers from control nodes')}
+          labelHelpTitle={t('Peers from control nodes')}
+          labelHelp={t(
+            'If the hop or execution node needs to have requests pushed directly from automation controller, enable Peers from Control so that control nodes will peer to this instance automatically. If disabled, the instance will be connected only to associated peers. If the hop node is peered to another hop node, or if the execution node is peered to a hop node, do not enable this option.'
+          )}
+        />
+      </PageFormSection>
+    </>
+  );
+}

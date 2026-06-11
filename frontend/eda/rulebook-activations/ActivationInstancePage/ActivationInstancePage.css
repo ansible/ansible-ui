@@ -1,0 +1,16 @@
+.output-grid {
+  --output-line-chars: 3;
+  --output-line-column-width: calc(var(--output-line-chars) * 1ch);
+  display: grid;
+  grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
+  overflow-x: auto;
+}
+
+.output-grid-row {
+  grid-column: span 3;
+  overflow-wrap: anywhere;
+  display: grid;
+  grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
+  grid-template-columns: subgrid;
+  padding-right: 10px;
+}

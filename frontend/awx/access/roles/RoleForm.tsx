@@ -1,0 +1,173 @@
+import {
+  PageFormSelect,
+  PageFormSubmitHandler,
+  PageFormTextArea,
+  PageFormTextInput,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { AwxContentType } from './hooks/AwxContentType';
+import { useAwxRoleMetadata } from './hooks/useAwxRoleMetadata';
+
+export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+
+  useInvalidateCacheOnUnmount();
+
+  const postRequest = usePostRequest<Partial<AwxRbacRole>, AwxRbacRole>();
+
+  const onSubmit: PageFormSubmitHandler<AwxRbacRole> = async (Role) => {
+    const newRole = await postRequest(awxAPI`/role_definitions/`, Role);
+    pageNavigate(AwxRoute.RoleDetails, { params: { id: newRole.id } });
+  };
+  const onCancel = () => void navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create role')}
+        breadcrumbs={[
+          {
+            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            to: getPageUrl(AwxRoute.Roles),
+          },
+          { label: t('Create role') },
+        ]}
+      />
+      <AwxPageForm<AwxRbacRole>
+        submitText={t('Create role')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+      >
+        <AwxRoleInputs />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+
+export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: role } = useGet<AwxRbacRole>(awxAPI`/role_definitions/${id.toString()}/`);
+
+  useInvalidateCacheOnUnmount();
+
+  const patchRequest = usePatchRequest<Partial<AwxRbacRole>, AwxRbacRole>();
+
+  const onSubmit: PageFormSubmitHandler<AwxRbacRole> = async (data) => {
+    await patchRequest(awxAPI`/role_definitions/${id.toString()}/`, data);
+    pageNavigate(AwxRoute.RoleDetails, { params: { id } });
+  };
+  const onCancel = () => void navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  if (Number.isInteger(id)) {
+    if (!role) {
+      return (
+        <PageLayout>
+          <PageHeader
+            breadcrumbs={[
+              {
+                label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+                to: getPageUrl(AwxRoute.Roles),
+              },
+              { label: t('Edit Role') },
+            ]}
+          />
+        </PageLayout>
+      );
+    } else {
+      return (
+        <PageLayout>
+          <PageHeader
+            title={role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles')}
+            breadcrumbs={[
+              { label: t('Roles'), to: getPageUrl(AwxRoute.Roles) },
+              { label: role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles') },
+            ]}
+          />
+          <AwxPageForm<AwxRbacRole>
+            submitText={t('Save role')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={role}
+          >
+            <AwxRoleInputs disableContentType />
+          </AwxPageForm>
+        </PageLayout>
+      );
+    }
+  }
+}
+
+function AwxRoleInputs(props: { disableContentType?: boolean }) {
+  const { t } = useTranslation();
+  const { disableContentType } = props;
+  const awxRoleMetadata = useAwxRoleMetadata();
+  const content_type = useWatch<AwxRbacRole>({ name: 'content_type' });
+  return (
+    <>
+      <PageFormTextInput<AwxRbacRole>
+        name="name"
+        label={t('Name')}
+        placeholder={t('Enter role name')}
+        isRequired
+      />
+      <PageFormTextArea<AwxRbacRole>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
+      <PageFormSelect
+        name={'content_type'}
+        label={t('Content type')}
+        placeholderText={t('Select content type')}
+        options={Object.entries(awxRoleMetadata.content_types)
+          .filter(([option]) => option !== 'shared.team')
+          .map(([key, value]) => ({
+            label: value?.displayName,
+            value: key,
+          }))}
+        isDisabled={disableContentType}
+        isRequired
+      />
+      <PageFormHidden watch="content_type" hidden={(content_type: string) => !content_type}>
+        <PageFormMultiSelect
+          name="permissions"
+          label={t('Permissions')}
+          options={Object.entries(
+            awxRoleMetadata.content_types[content_type as AwxContentType]?.permissions || {}
+          ).map(([key, value]) => ({
+            label: value,
+            value: key,
+          }))}
+          placeholder={t('Select permissions')}
+          isRequired
+        />
+      </PageFormHidden>
+    </>
+  );
+}

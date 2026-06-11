@@ -1,0 +1,100 @@
+import { MultiSelectDialog, usePageDialogs, QueryParams } from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { useAwxView } from '../../../common/useAwxView';
+import { Instance, Peer } from '../../../interfaces/Instance';
+import { usePeersTabFilters } from '../Instances';
+import { usePeersColumns } from './usePeersColumns';
+
+export interface PeerInstanceModalProps {
+  instanceId: string;
+  onPeer: (peers: Peer[]) => void;
+}
+
+function PeerInstanceModal(props: PeerInstanceModalProps) {
+  const { t } = useTranslation();
+  const { instanceId, onPeer } = props;
+  const toolbarFilters = usePeersTabFilters();
+  const columns = usePeersColumns({ disableLinks: true });
+  const tableColumns = useMemo(
+    () =>
+      columns.filter((item) =>
+        ['Instance name', 'Address', 'Port', 'Node type', 'Protocol'].includes(item.header)
+      ),
+    [columns]
+  );
+
+  const { results: receptors } = useAwxGetAllPages<Peer>(awxAPI`/receptor_addresses/`);
+  const { results: instances } = useAwxGetAllPages<Instance>(awxAPI`/instances`, {
+    not__node_type: ['control', 'hybird'],
+  });
+
+  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, instanceId);
+
+  const peeredInstanceIds = instance?.peers?.map((peer) => String(peer)) ?? [];
+
+  let peeredReceptorIds: string[] = [];
+
+  if (receptors && instance && !instance.managed && instances) {
+    const filteredReceptors = receptors.filter(
+      (receptor) =>
+        !peeredInstanceIds.includes(String(receptor.instance)) &&
+        !instance.peers?.includes(receptor.id) &&
+        !(instance.id === receptor.instance) &&
+        !receptor.is_internal &&
+        instances?.some((instance) => instance.id === receptor.instance)
+    );
+
+    peeredReceptorIds = filteredReceptors.map((receptor) => String(receptor.instance));
+  }
+
+  const queryParams: QueryParams = {
+    is_internal: 'false',
+    order_by: 'address',
+    not__instance: [String(instance?.id ?? '')],
+  };
+
+  if (peeredInstanceIds.length > 0) queryParams['not__id__in'] = peeredInstanceIds;
+
+  if (peeredReceptorIds.length > 0)
+    queryParams['not__instance'] = [...queryParams.not__instance, ...peeredReceptorIds];
+
+  const view = useAwxView<Peer>({
+    url: awxAPI`/receptor_addresses/`,
+    toolbarFilters,
+    tableColumns,
+    disableQueryString: true,
+    queryParams: queryParams,
+  });
+
+  return (
+    <MultiSelectDialog
+      title={t('Select peer addresses')}
+      onSelect={onPeer}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      view={view}
+      confirmText={t('Associate peers')}
+      description={t(
+        'A peer relationship is strictly one-directional. For instance, if you establish a peer relationship from Instance 1 to Instance 2, you cannot create a peer relationship in the reverse direction, from Instance 2 back to Instance 1.\n\nAn instance must have a port number assigned to it before it can be designated as a peer to another instance.'
+      )}
+    />
+  );
+}
+
+export function usePeerInstanceModal() {
+  const { pushDialog, popDialog } = usePageDialogs();
+  const [props, setProps] = useState<PeerInstanceModalProps>();
+
+  useEffect(() => {
+    if (props) {
+      pushDialog(<PeerInstanceModal {...props} />);
+    } else {
+      popDialog();
+    }
+  }, [props, pushDialog, popDialog]);
+  return setProps;
+}

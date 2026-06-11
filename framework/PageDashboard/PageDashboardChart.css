@@ -1,0 +1,3 @@
+.pf-v6-c-chart svg g[clip-path] {
+  mix-blend-mode: unset;
+}

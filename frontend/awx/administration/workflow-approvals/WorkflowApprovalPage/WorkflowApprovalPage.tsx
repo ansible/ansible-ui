@@ -1,0 +1,74 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
+import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Job } from '../../../interfaces/Job';
+import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useWorkflowApprovalsRowActions } from '../hooks/useWorkflowApprovalsRowActions';
+
+export function WorkflowApprovalPage() {
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const {
+    error: workflowApprovalError,
+    data: workflowApproval,
+    refresh,
+  } = useGetItem<WorkflowApproval>(awxAPI`/workflow_approvals`, params.id);
+
+  const workflowJobId = workflowApproval?.summary_fields?.source_workflow_job?.id;
+  const { data: workflowJob, error: workflowJobError } = useGet<Job>(
+    workflowJobId ? awxAPI`/workflow_jobs/${workflowJobId.toString()}/` : ''
+  );
+
+  const getPageUrl = useGetPageUrl();
+  const activityStream = useViewActivityStream('workflow_approval');
+  const actions = useWorkflowApprovalsRowActions(refresh);
+
+  const error = workflowApprovalError || workflowJobError;
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!workflowApproval || !workflowJob) return <LoadingPage breadcrumbs tabs />;
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={workflowApproval?.name}
+        breadcrumbs={[
+          { label: t('Workflow Approvals'), to: getPageUrl(AwxRoute.WorkflowApprovals) },
+          { label: workflowApproval?.name },
+        ]}
+        headerActions={
+          <PageActions
+            actions={[...activityStream, ...actions]}
+            position={'right'}
+            selectedItem={workflowApproval}
+          />
+        }
+      />
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Workflow Approvals'),
+          page: AwxRoute.WorkflowApprovals,
+          persistentFilterKey: 'workflow-approvals',
+        }}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.WorkflowApprovalDetails },
+          { label: t('Workflow Job Details'), page: AwxRoute.WorkflowApprovalWorkflowJobDetails },
+        ]}
+        params={{
+          id: params.id || 0,
+          job_id: workflowApproval?.summary_fields?.workflow_job?.id,
+          job_type: 'workflow',
+        }}
+        componentParams={{ job: workflowJob }}
+      />
+    </PageLayout>
+  );
+}

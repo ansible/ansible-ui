@@ -1,0 +1,504 @@
+/* eslint-disable i18next/no-literal-string */
+import { render, screen, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { MemoryRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { CredentialPlugins, CredentialPluginsForm } from './CredentialPlugins';
+
+function TestWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </SWRConfig>
+  );
+}
+
+const mockCredentialOptions = {
+  actions: {
+    GET: {
+      credential_type__kind: { choices: [['external', 'External']] },
+    },
+  },
+};
+
+const mockCredentialsResponse = {
+  count: 2,
+  results: [
+    {
+      id: 1,
+      name: 'Test OIDC Credential',
+      credential_type: 1,
+      summary_fields: {
+        credential_type: { id: 1, name: 'HashiCorp Vault OIDC', namespace: 'hashivault-kv-oidc' },
+      },
+    },
+    {
+      id: 2,
+      name: 'Test Regular Credential',
+      credential_type: 2,
+      summary_fields: {
+        credential_type: { id: 2, name: 'Custom', namespace: 'custom' },
+      },
+    },
+  ],
+  next: null,
+  previous: null,
+};
+
+const mockOidcCredentialType = {
+  id: 1,
+  name: 'HashiCorp Vault OIDC',
+  namespace: 'hashivault-kv-oidc',
+  inputs: {
+    fields: [],
+    metadata: [{ id: 'account-name', type: 'string', label: 'Account Name', secret: false }],
+    required: ['account-name'],
+  },
+};
+
+const mockRegularCredentialType = {
+  id: 2,
+  name: 'Custom',
+  namespace: 'custom',
+  inputs: {
+    fields: [],
+    metadata: [{ id: 'api-key', type: 'string', label: 'API Key', secret: false }],
+    required: ['api-key'],
+  },
+};
+
+const server = setupServer(
+  http.options(awxAPI`/credentials/`, () => HttpResponse.json(mockCredentialOptions)),
+  // Specific credential endpoints first (more specific routes)
+  http.get(awxAPI`/credentials/1/`, () => HttpResponse.json(mockCredentialsResponse.results[0])),
+  http.get(awxAPI`/credentials/2/`, () => HttpResponse.json(mockCredentialsResponse.results[1])),
+  // General credentials endpoint (less specific, after individual ones)
+  http.get(
+    ({ request }) =>
+      request.url.includes('/credentials/') && !request.url.includes('/credential_types/'),
+    () => HttpResponse.json(mockCredentialsResponse)
+  ),
+  http.get(awxAPI`/credential_types/1/`, () => HttpResponse.json(mockOidcCredentialType)),
+  http.get(awxAPI`/credential_types/2/`, () => HttpResponse.json(mockRegularCredentialType)),
+  http.options(awxAPI`/credential_types/`, () => HttpResponse.json({ actions: { GET: {} } })),
+  http.get(
+    ({ request }) => request.url.includes('credential_types'),
+    () =>
+      HttpResponse.json({
+        count: 2,
+        results: [mockOidcCredentialType, mockRegularCredentialType],
+        next: null,
+        previous: null,
+      })
+  ),
+  // Mock job templates API for PageFormJobTemplateSelect
+  http.options('*/job_templates/', () => HttpResponse.json({}, { status: 200 })),
+  http.get('*/job_templates/', () =>
+    HttpResponse.json({
+      count: 1,
+      results: [
+        { id: 1, name: 'Demo Job Template', type: 'job_template', url: '/api/v2/job_templates/1/' },
+      ],
+    })
+  ),
+  http.options('*/unified_job_templates/', () => HttpResponse.json({}, { status: 200 })),
+  http.get('*/unified_job_templates/', () =>
+    HttpResponse.json({
+      count: 1,
+      results: [
+        { id: 1, name: 'Demo Job Template', type: 'job_template', url: '/api/v2/job_templates/1/' },
+      ],
+    })
+  )
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe('CredentialPlugins', () => {
+  it('should render Secret Management System page with form', async () => {
+    const handleSubmit = vi.fn();
+    const handleTest = vi.fn();
+    const onCancel = vi.fn();
+
+    render(
+      <TestWrapper>
+        <CredentialPlugins
+          onCancel={onCancel}
+          handleSubmit={handleSubmit}
+          handleTest={handleTest}
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Secret Management System')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Select external credential')).toBeInTheDocument();
+    expect(screen.getByText('Finish')).toBeInTheDocument();
+  });
+
+  it('should render with defaultValues when provided', async () => {
+    const handleSubmit = vi.fn();
+    const handleTest = vi.fn();
+    const onCancel = vi.fn();
+
+    render(
+      <TestWrapper>
+        <CredentialPlugins
+          onCancel={onCancel}
+          handleSubmit={handleSubmit}
+          handleTest={handleTest}
+          defaultValues={{ source_credential: 1 }}
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Secret Management System')).toBeInTheDocument();
+    });
+  });
+
+  it('should show job template selector for OIDC credential types', async () => {
+    const handleSubmit = vi.fn();
+    const handleTest = vi.fn();
+    const onCancel = vi.fn();
+
+    render(
+      <TestWrapper>
+        <CredentialPlugins
+          onCancel={onCancel}
+          handleSubmit={handleSubmit}
+          handleTest={handleTest}
+          defaultValues={{ source_credential: 1 }} // OIDC credential
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Account Name')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    // Job template selector should appear for OIDC credentials
+    await waitFor(() => {
+      expect(screen.getByText('Controller Job Template')).toBeInTheDocument();
+    });
+  });
+
+  it('should not show job template selector for non-OIDC credential types', async () => {
+    const handleSubmit = vi.fn();
+    const handleTest = vi.fn();
+    const onCancel = vi.fn();
+
+    render(
+      <TestWrapper>
+        <CredentialPlugins
+          onCancel={onCancel}
+          handleSubmit={handleSubmit}
+          handleTest={handleTest}
+          defaultValues={{ source_credential: 2 }} // Regular credential
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('API Key')).toBeInTheDocument();
+    });
+
+    // Job template selector should NOT appear for non-OIDC credentials
+    expect(screen.queryByText('Controller Job Template')).not.toBeInTheDocument();
+  });
+
+  it('should show metadata fields based on credential type', async () => {
+    const handleSubmit = vi.fn();
+    const handleTest = vi.fn();
+    const onCancel = vi.fn();
+
+    render(
+      <TestWrapper>
+        <CredentialPlugins
+          onCancel={onCancel}
+          handleSubmit={handleSubmit}
+          handleTest={handleTest}
+          defaultValues={{ source_credential: 1 }}
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Metadata')).toBeInTheDocument();
+      expect(screen.getByText('Account Name')).toBeInTheDocument();
+    });
+  });
+
+  describe('OIDC Detection Logic', () => {
+    it('should detect hashivault-kv-oidc as OIDC credential type', async () => {
+      const handleSubmit = vi.fn();
+      const handleTest = vi.fn();
+      const onCancel = vi.fn();
+
+      render(
+        <TestWrapper>
+          <CredentialPlugins
+            onCancel={onCancel}
+            handleSubmit={handleSubmit}
+            handleTest={handleTest}
+            defaultValues={{ source_credential: 1 }} // OIDC credential
+          />
+        </TestWrapper>
+      );
+
+      // Job template selector should appear for OIDC credentials
+      await waitFor(
+        () => {
+          expect(screen.getByText('Controller Job Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    });
+
+    it('should detect hashivault-ssh-oidc as OIDC credential type', async () => {
+      // Add SSH OIDC credential type to mock
+      server.use(
+        http.get(awxAPI`/credentials/3/`, () =>
+          HttpResponse.json({
+            id: 3,
+            name: 'SSH OIDC Credential',
+            credential_type: 3,
+            summary_fields: {
+              credential_type: {
+                id: 3,
+                name: 'HashiCorp Vault SSH OIDC',
+                namespace: 'hashivault-ssh-oidc',
+              },
+            },
+          })
+        ),
+        http.get(awxAPI`/credential_types/3/`, () =>
+          HttpResponse.json({
+            id: 3,
+            name: 'HashiCorp Vault SSH OIDC',
+            namespace: 'hashivault-ssh-oidc',
+            inputs: {
+              fields: [],
+              metadata: [{ id: 'role', type: 'string', label: 'Role', secret: false }],
+              required: ['role'],
+            },
+          })
+        )
+      );
+
+      const handleSubmit = vi.fn();
+      const handleTest = vi.fn();
+      const onCancel = vi.fn();
+
+      render(
+        <TestWrapper>
+          <CredentialPlugins
+            onCancel={onCancel}
+            handleSubmit={handleSubmit}
+            handleTest={handleTest}
+            defaultValues={{ source_credential: 3 }} // SSH OIDC credential
+          />
+        </TestWrapper>
+      );
+
+      // Job template selector should appear for SSH OIDC credentials too
+      await waitFor(
+        () => {
+          expect(screen.getByText('Controller Job Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    });
+
+    it('should not show job template selector for other external credential types', async () => {
+      // Add another external credential type that's not OIDC
+      server.use(
+        http.get(awxAPI`/credentials/4/`, () =>
+          HttpResponse.json({
+            id: 4,
+            name: 'CyberArk Credential',
+            credential_type: 4,
+            summary_fields: {
+              credential_type: { id: 4, name: 'CyberArk', namespace: 'cyberark' },
+            },
+          })
+        ),
+        http.get(awxAPI`/credential_types/4/`, () =>
+          HttpResponse.json({
+            id: 4,
+            name: 'CyberArk',
+            namespace: 'cyberark',
+            inputs: {
+              fields: [],
+              metadata: [{ id: 'safe', type: 'string', label: 'Safe', secret: false }],
+              required: ['safe'],
+            },
+          })
+        )
+      );
+
+      const handleSubmit = vi.fn();
+      const handleTest = vi.fn();
+      const onCancel = vi.fn();
+
+      render(
+        <TestWrapper>
+          <CredentialPlugins
+            onCancel={onCancel}
+            handleSubmit={handleSubmit}
+            handleTest={handleTest}
+            defaultValues={{ source_credential: 4 }} // Non-OIDC external credential
+          />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Safe')).toBeInTheDocument();
+      });
+
+      // Job template selector should NOT appear for non-OIDC external credentials
+      expect(screen.queryByText('Controller Job Template')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Metadata field types', () => {
+    it('should render a dropdown for metadata with choices', async () => {
+      server.use(
+        http.get(awxAPI`/credentials/5/`, () =>
+          HttpResponse.json({
+            id: 5,
+            name: 'Credential With Choices',
+            credential_type: 5,
+            summary_fields: {
+              credential_type: { id: 5, name: 'With Choices', namespace: 'with-choices' },
+            },
+          })
+        ),
+        http.get(awxAPI`/credential_types/5/`, () =>
+          HttpResponse.json({
+            id: 5,
+            name: 'With Choices',
+            namespace: 'with-choices',
+            inputs: {
+              fields: [],
+              metadata: [
+                {
+                  id: 'version',
+                  type: 'string',
+                  label: 'Version',
+                  secret: false,
+                  choices: ['v1', 'v2'],
+                  default: 'v1',
+                },
+              ],
+              required: ['version'],
+            },
+          })
+        )
+      );
+
+      const handleSubmit = vi.fn();
+      const handleTest = vi.fn();
+      const onCancel = vi.fn();
+
+      render(
+        <TestWrapper>
+          <CredentialPlugins
+            onCancel={onCancel}
+            handleSubmit={handleSubmit}
+            handleTest={handleTest}
+            defaultValues={{ source_credential: 5 }}
+          />
+        </TestWrapper>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('Version')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    });
+
+    it('should render a textarea for multiline metadata', async () => {
+      server.use(
+        http.get(awxAPI`/credentials/6/`, () =>
+          HttpResponse.json({
+            id: 6,
+            name: 'Credential With Multiline',
+            credential_type: 6,
+            summary_fields: {
+              credential_type: { id: 6, name: 'With Multiline', namespace: 'with-multiline' },
+            },
+          })
+        ),
+        http.get(awxAPI`/credential_types/6/`, () =>
+          HttpResponse.json({
+            id: 6,
+            name: 'With Multiline',
+            namespace: 'with-multiline',
+            inputs: {
+              fields: [],
+              metadata: [
+                {
+                  id: 'certificate',
+                  type: 'string',
+                  label: 'Certificate',
+                  secret: false,
+                  multiline: true,
+                },
+              ],
+              required: ['certificate'],
+            },
+          })
+        )
+      );
+
+      const handleSubmit = vi.fn();
+      const handleTest = vi.fn();
+      const onCancel = vi.fn();
+
+      render(
+        <TestWrapper>
+          <CredentialPlugins
+            onCancel={onCancel}
+            handleSubmit={handleSubmit}
+            handleTest={handleTest}
+            defaultValues={{ source_credential: 6 }}
+          />
+        </TestWrapper>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('Certificate')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+    });
+  });
+
+  describe('Form Interface', () => {
+    it('should include job_template_id in CredentialPluginsForm interface', () => {
+      const formData: CredentialPluginsForm = {
+        source_credential: 1,
+        job_template_id: 1,
+        'account-name': 'test',
+      };
+
+      expect(formData.job_template_id).toBe(1);
+      expect(formData.source_credential).toBe(1);
+      expect(formData['account-name']).toBe('test');
+    });
+  });
+});

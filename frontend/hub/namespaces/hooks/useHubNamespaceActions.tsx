@@ -1,0 +1,122 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { useWindowLocation } from '@ansible/ansible-ui-framework/components/useWindowLocation';
+import { ButtonVariant } from '@patternfly/react-core';
+import { ImportIcon, KeyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSignAllCollections } from '../../collections/hooks/useSignAllCollections';
+import { isInsightsMode } from '../../common/isInsights';
+import { useHubContext } from '../../common/useHubContext';
+import { useCanSignNamespace } from '../../common/utils/canSign';
+import { HubRoute } from '../../main/HubRoutes';
+import { HubNamespace } from '../HubNamespace';
+import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
+
+export function useHubNamespaceActions(options?: {
+  onHubNamespacesDeleted: (namespaces: HubNamespace[]) => void;
+  onHubNamespacesSignAllCollections?: (namespaces: HubNamespace) => void;
+  isDetailsPageAction?: boolean;
+}) {
+  if (!options) {
+    options = { onHubNamespacesDeleted: () => {}, onHubNamespacesSignAllCollections: () => {} };
+  }
+  const { t } = useTranslation();
+  const { settings, featureFlags, hasPermission, user } = useHubContext();
+  const signing_service = settings.GALAXY_COLLECTION_SIGNING_SERVICE;
+  const can_upload_signatures = featureFlags.can_upload_signatures;
+  const pageNavigate = usePageNavigate();
+  const deleteHubNamespaces = useDeleteHubNamespaces(options.onHubNamespacesDeleted);
+  const { location } = useWindowLocation();
+  const signCollection = useSignAllCollections();
+  const canSignNamespace = useCanSignNamespace();
+
+  return useMemo(() => {
+    const isRepoSelected = () => location?.search.includes('repository=');
+
+    const canSignAllCollections = () => canSignNamespace && !can_upload_signatures;
+
+    const actions: IPageAction<HubNamespace>[] = [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        isPinned: true,
+        icon: PencilAltIcon,
+        label: t('Edit namespace'),
+        onClick: (namespace) =>
+          pageNavigate(HubRoute.EditNamespace, { params: { id: namespace.name } }),
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        icon: ImportIcon,
+        label: t('Imports'),
+        onClick: (namespace) =>
+          pageNavigate(HubRoute.MyImports, {
+            query: {
+              namespace: namespace.name,
+              from: options.isDetailsPageAction ? 'namespace' : 'namespaces',
+            },
+          }),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        icon: KeyIcon,
+        label: t(`Sign all collections`),
+        onClick: (namespace) =>
+          signCollection({
+            onComplete: options.onHubNamespacesSignAllCollections,
+            namespace: namespace,
+            signing_service: signing_service ?? '',
+          }),
+        isDisabled: () => (isRepoSelected() ? '' : t('Select a repository filter')),
+        isHidden: () =>
+          isInsightsMode() || !(options.isDetailsPageAction && canSignAllCollections()),
+      },
+
+      {
+        type: PageActionType.Seperator,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete namespace'),
+        onClick: (namespace) => deleteHubNamespaces([namespace]),
+        isDanger: true,
+        isHidden: (namespace) => {
+          if (!isInsightsMode()) return false;
+          const permission = 'galaxy.delete_namespace';
+          return !(
+            hasPermission(permission) ||
+            namespace?.related_fields?.my_permissions?.includes(permission) ||
+            user?.is_superuser
+          );
+        },
+      },
+    ];
+    return actions;
+  }, [
+    t,
+    location?.search,
+    canSignNamespace,
+    can_upload_signatures,
+    pageNavigate,
+    signCollection,
+    options.onHubNamespacesSignAllCollections,
+    options.isDetailsPageAction,
+    signing_service,
+    deleteHubNamespaces,
+    hasPermission,
+    user,
+  ]);
+}

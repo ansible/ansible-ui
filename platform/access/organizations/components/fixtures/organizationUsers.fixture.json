@@ -1,0 +1,47 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "1",
+      "url": "/api/gateway/v1/users/1/",
+      "related": {
+        "details": "/api/gateway/v1/role_user_access/shared.organization/1/"
+      },
+      "username": "test-user1",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": true,
+      "object_role_assignments": [
+        {
+          "type": "direct",
+          "role_definition": {
+            "name": "Organization Admin",
+            "url": "/api/gateway/v1/role_definitions/1/"
+          }
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "url": "/api/gateway/v1/users/2/",
+      "related": {
+        "details": "/api/gateway/v1/role_user_access/shared.organization/1/"
+      },
+      "username": "test-user2",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": true,
+      "object_role_assignments": [
+        {
+          "type": "direct",
+          "role_definition": {
+            "name": "Organization Member",
+            "url": "/api/gateway/v1/role_definitions/2/"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+import {
+  ActionGroup,
+  Form,
+  Grid,
+  gridItemSpanValueShape,
+  ModalFooter,
+  ModalFooterProps,
+  PageSection,
+  PageSectionProps,
+} from '@patternfly/react-core';
+import { ReactNode, useContext, useState } from 'react';
+import {
+  DefaultValues,
+  ErrorOption,
+  FieldPath,
+  FieldValues,
+  FormProvider,
+  Path,
+  useForm,
+} from 'react-hook-form';
+import styled from 'styled-components';
+import { Scrollable } from '../components/Scrollable';
+import { useBreakpoint } from '../components/useBreakPoint';
+import { PageSettingsContext } from '../PageSettings/PageSettingsProvider';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { ErrorAlert } from './ErrorAlert';
+import { genericErrorAdapter } from './genericErrorAdapter';
+import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
+import { ErrorAdapter } from './typesErrorAdapter';
+import { useIsPageDialog } from '../PageDialogs/PageDialog';
+
+const FormContainer = styled(PageSection)`
+  padding-bottom: var(--pf-t--global--spacer--xl);
+`;
+
+const FormActionGroup = styled(ActionGroup)`
+  && {
+    margin-block-start: unset;
+  }
+`;
+
+const StyledModalFooter = styled(ModalFooter)`
+  padding-inline-start: 0;
+  padding-block-end: 0;
+`;
+
+export interface PageFormProps<T extends object> {
+  children?: ReactNode;
+  submitText?: string;
+  onSubmit: PageFormSubmitHandler<T>;
+  cancelText?: string;
+  onCancel?: () => void;
+  defaultValue?: DefaultValues<T>;
+  isVertical?: boolean;
+  singleColumn?: boolean;
+  disablePadding?: boolean;
+  disableGrid?: boolean;
+  autoComplete?: 'on' | 'off';
+  footer?: ReactNode;
+  errorAdapter?: ErrorAdapter;
+  disableSubmitOnEnter?: boolean;
+  isWizard?: boolean;
+  additionalActions?: ReactNode;
+}
+
+export function useFormErrors<T extends object>(
+  defaultValue: DefaultValues<T> | undefined,
+  errorAdapter: ErrorAdapter,
+  isWizard = false
+) {
+  const form = useForm<T>({
+    defaultValues: defaultValue ?? ({} as DefaultValues<T>),
+  });
+  const { handleSubmit, setError: setFieldError } = form;
+  const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
+
+  const handleSubmitError = (err: unknown) => {
+    const { genericErrors, fieldErrors } = errorAdapter(err);
+
+    // Handle generic errors
+    if (genericErrors.length > 0) {
+      const parsedGenericErrorMessages = genericErrors.map((genericError) => genericError.message);
+      setError(parsedGenericErrorMessages);
+      // This is necessary to handle the wizard case where the error is not associated with a field
+      // then the step itself should be marked as invalid
+      if (isWizard) {
+        setFieldError('root', { message: parsedGenericErrorMessages.join(' ') });
+      }
+    } else {
+      setError(null);
+    }
+
+    // Handle field errors
+    if (fieldErrors.length > 0) {
+      fieldErrors.forEach((fieldError) => {
+        setFieldError(fieldError.name as unknown as Path<T>, {
+          message: typeof fieldError.message === 'string' ? fieldError.message : undefined,
+        });
+      });
+    }
+  };
+
+  return { form, handleSubmit, error, setError, handleSubmitError, setFieldError };
+}
+
+export function PageForm<T extends object>(props: PageFormProps<T>) {
+  const { errorAdapter = genericErrorAdapter, isWizard = false } = props;
+
+  const { form, handleSubmit, error, setError, handleSubmitError, setFieldError } =
+    useFormErrors<T>(props.defaultValue, errorAdapter, isWizard);
+  const [settings] = useContext(PageSettingsContext);
+  const [frameworkTranslations] = useFrameworkTranslations();
+  const isMd = useBreakpoint('md');
+  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
+
+  let children = props.children;
+  if (props.disableGrid !== true) {
+    children = (
+      <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
+        {props.children}
+      </PageFormGrid>
+    );
+  }
+
+  const isPageDialog = useIsPageDialog();
+
+  const FormFooter = isPageDialog ? StyledModalFooter : PageSection;
+  const FormFooterProps: PageSectionProps | ModalFooterProps = isPageDialog
+    ? {
+        hasBodyWrapper: false,
+        isFilled: false,
+      }
+    : {};
+
+  return (
+    <FormProvider {...form}>
+      <Form
+        onKeyDown={(event) => {
+          if (
+            event.key === 'Enter' &&
+            props.disableSubmitOnEnter &&
+            !(event.target instanceof HTMLTextAreaElement)
+          ) {
+            event.preventDefault();
+          }
+        }}
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onSubmit={handleSubmit(async (data) => {
+          setError(null);
+          try {
+            await props.onSubmit(data, (error) => setError(error), setFieldError);
+          } catch (err) {
+            handleSubmitError(err);
+          }
+        })}
+        isHorizontal={isHorizontal}
+        autoComplete={props.autoComplete}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
+          height: '100%',
+          maxHeight: '100%',
+          overflow: 'hidden',
+          gap: 0,
+        }}
+      >
+        {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
+        <Scrollable marginLeft={24}>
+          <FormContainer
+            isFilled
+            isWidthLimited
+            padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
+            style={{ maxWidth: multipleColumns ? undefined : 880 }} // This is the PF limitMaxWidth for forms
+          >
+            {children}
+          </FormContainer>
+        </Scrollable>
+        {props.footer ? (
+          props.footer
+        ) : (
+          <FormFooter
+            isWidthLimited
+            style={{ maxWidth: multipleColumns ? undefined : 880, marginLeft: 24 }}
+            {...FormFooterProps}
+          >
+            <FormActionGroup>
+              <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
+              {props.additionalActions}
+              {props.onCancel && (
+                <PageFormCancelButton onCancel={props.onCancel}>
+                  {props.cancelText ?? frameworkTranslations.cancelText}
+                </PageFormCancelButton>
+              )}
+            </FormActionGroup>
+          </FormFooter>
+        )}
+      </Form>
+    </FormProvider>
+  );
+}
+
+export type PageFormSubmitHandler<T extends FieldValues> = (
+  data: T,
+  setError: (error: string) => void,
+  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void
+) => Promise<unknown>;
+
+export function PageFormGrid(props: {
+  children?: ReactNode;
+  isVertical?: boolean;
+  singleColumn?: boolean;
+  className?: string;
+}) {
+  const [settings] = useContext(PageSettingsContext);
+  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
+
+  const sm: gridItemSpanValueShape | undefined = 12;
+  const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12;
+  const lg: gridItemSpanValueShape | undefined = multipleColumns ? 6 : 12;
+  const xl: gridItemSpanValueShape | undefined = multipleColumns ? 6 : 12;
+  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? 4 : 12;
+
+  const Component = (
+    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2} className={props.className}>
+      {props.children}
+    </Grid>
+  );
+
+  return Component;
+}

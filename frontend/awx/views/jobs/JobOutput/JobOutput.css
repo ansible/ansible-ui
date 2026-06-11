@@ -1,0 +1,17 @@
+.output-grid {
+  --output-line-chars: 3;
+  --output-line-column-width: calc(50px + var(--output-line-chars) * 1ch);
+  display: grid;
+  grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
+  overflow-x: auto;
+  background-color: var(--pf-t--global--background--color--secondary--default);
+}
+
+.output-grid-row {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
+  grid-template-columns: subgrid;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}

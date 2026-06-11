@@ -1,0 +1,176 @@
+name: Cleanup
+
+on:
+  workflow_call:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+    secrets:
+      PLATFORM_PASSWORD:
+        required: true
+
+jobs:
+  platform-cleanup:
+    name: Platform Cleanup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup Platform Resources
+        run: |
+          echo "GET Token"
+          TOKEN_JSON=$(curl -ks -X POST "$PLATFORM_SERVER/api/gateway/v1/tokens/" \
+            --user $PLATFORM_USERNAME:$PLATFORM_PASSWORD)
+          TOKEN=$(echo "$TOKEN_JSON" | jq -r '.token')
+          TOKEN_ID=$(echo "$TOKEN_JSON" | jq -r '.id')
+
+          echo "GET Users"
+          USERS=$(curl -ks -X GET "$PLATFORM_SERVER/api/gateway/v1/users/?username__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for USER in $USERS; do
+            DATA=$(echo "$USER" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE User $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/gateway/v1/users/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "GET Teams"
+          TEAMS=$(curl -ks -X GET "$PLATFORM_SERVER/api/gateway/v1/teams/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for TEAM in $TEAMS; do
+            DATA=$(echo "$TEAM" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Team $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/gateway/v1/teams/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "GET Organizations"
+          ORGANIZATIONS=$(curl -ks -X GET "$PLATFORM_SERVER/api/gateway/v1/organizations/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for ORGANIZATION in $ORGANIZATIONS; do
+            DATA=$(echo "$ORGANIZATION" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Organization $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/gateway/v1/organizations/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "DELETE Token"
+          curl -ks -X DELETE "$PLATFORM_SERVER/api/gateway/v1/tokens/$TOKEN_ID/" \
+            -H "Authorization: Bearer $TOKEN"
+
+        env:
+          PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+          PLATFORM_USERNAME: e2e
+          PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+
+  awx-cleanup:
+    name: AWX Cleanup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup AWX Resources
+        run: |
+          echo "GET Token"
+          TOKEN_JSON=$(curl -ks -X POST "$PLATFORM_SERVER/api/controller/v2/tokens/" \
+            --user $PLATFORM_USERNAME:$PLATFORM_PASSWORD)
+          TOKEN=$(echo "$TOKEN_JSON" | jq -r '.token')
+          TOKEN_ID=$(echo "$TOKEN_JSON" | jq -r '.id')
+
+          echo "GET Projects"
+          PROJECTS=$(curl -ks -X GET "$PLATFORM_SERVER/api/controller/v2/projects/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for PROJECT in $PROJECTS; do
+            DATA=$(echo "$PROJECT" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Project $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/projects/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "GET Inventories"
+          INVENTORIES=$(curl -ks -X GET "$PLATFORM_SERVER/api/controller/v2/inventories/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for INVENTORY in $INVENTORIES; do
+            DATA=$(echo "$INVENTORY" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Inventory $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/inventories/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "GET Job Templates"
+          JOB_TEMPLATES=$(curl -ks -X GET "$PLATFORM_SERVER/api/controller/v2/job_templates/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for JOB_TEMPLATE in $JOB_TEMPLATES; do
+            DATA=$(echo "$JOB_TEMPLATE" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Job Template $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/job_templates/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "GET Jobs"
+          JOBS=$(curl -ks -X GET "$PLATFORM_SERVER/api/controller/v2/jobs/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for JOB in $JOBS; do
+            DATA=$(echo "$JOB" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Job $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/jobs/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+          
+          echo "GET Workflow Jobs"
+          WORKFLOW_JOBS=$(curl -ks -X GET "$PLATFORM_SERVER/api/controller/v2/workflow_jobs/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for WORKFLOW_JOB in $WORKFLOW_JOBS; do
+            DATA=$(echo "$WORKFLOW_JOB" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Workflow Job $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/workflow_jobs/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "GET Workflow Job Templates"
+          WORKFLOW_JOB_TEMPLATES=$(curl -ks -X GET "$PLATFORM_SERVER/api/controller/v2/workflow_job_templates/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for WORKFLOW_JOB_TEMPLATE in $WORKFLOW_JOB_TEMPLATES; do
+            DATA=$(echo "$WORKFLOW_JOB_TEMPLATE" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Workflow Job Template $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/workflow_job_templates/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+          echo "GET Instance Groups"
+          INSTANCE_GROUPS=$(curl -ks -X GET "$PLATFORM_SERVER/api/controller/v2/instance_groups/?name__istartswith=E2E&page_size=200" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r '.results[] | @base64')
+          for INSTANCE_GROUP in $INSTANCE_GROUPS; do
+            DATA=$(echo "$INSTANCE_GROUP" | base64 --decode)
+            ID=$(echo "$DATA" | jq -r '.id')
+            echo "DELETE Instance Group $ID"
+            curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/instance_groups/$ID/" \
+              -H "Authorization: Bearer $TOKEN"
+          done
+
+
+          echo "DELETE Token"
+          curl -ks -X DELETE "$PLATFORM_SERVER/api/controller/v2/tokens/$TOKEN_ID/" \
+            -H "Authorization: Bearer $TOKEN"
+
+        env:
+          PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+          PLATFORM_USERNAME: e2e
+          PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+

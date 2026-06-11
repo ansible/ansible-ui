@@ -1,0 +1,19 @@
+# Ignore generated interfaces
+frontend/awx/interfaces/generated-from-swagger
+/.github/workflows
+
+.dockerignore
+.gitignore
+Dockerfile
+*.png
+*.svg
+*.sh
+.prettierignore
+.*.sw[po]
+/framework/publish
+LICENSE.md
+**/dist
+**/node_modules
+**/build
+**/test-results
+**/coverage

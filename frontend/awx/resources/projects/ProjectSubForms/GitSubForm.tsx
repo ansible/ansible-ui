@@ -1,0 +1,110 @@
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
+import { Trans, useTranslation } from 'react-i18next';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
+import { useAwxConfig } from '../../../common/useAwxConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
+import { Project } from '../../../interfaces/Project';
+import { ScmTypeOptions } from './ScmTypeOptions';
+
+export function GitSubForm() {
+  const { t } = useTranslation();
+  const config = useAwxConfig();
+
+  const gitSourceControlUrlHelp = (
+    <Trans i18nKey="gitSourceControlUrlHelpKey">
+      <span>
+        Example URLs for GIT Source Control include:
+        <ul>
+          <li>
+            <code>https://github.com/ansible/ansible.git</code>
+          </li>
+          <li>
+            <code>git@github.com:ansible/ansible.git</code>
+          </li>
+          <li>
+            <code>git://servername.example.com/ansible.git</code>
+          </li>
+        </ul>
+        Note: When using SSH protocol for GitHub or Bitbucket, enter an SSH key only, do not enter a
+        username (other than git). Additionally, GitHub and Bitbucket do not support password
+        authentication when using SSH. GIT read only protocol (git://) does not use username or
+        password information.
+      </span>
+    </Trans>
+  );
+  const sourceControlRefspecHelp = (
+    <span>
+      {t`A refspec to fetch (passed to the Ansible git
+                module). This parameter allows access to references via
+                the branch field not otherwise available.`}
+      <br />
+      <br />
+      {t`Note: This field assumes the remote name is "origin".`}
+      <br />
+      <br />
+      {t`Examples include:`}
+      <ul style={{ margin: '10px 0 10px 20px' }}>
+        <Trans>
+          <li>
+            <code>refs/*:refs/remotes/origin/*</code>
+          </li>
+          <li>
+            <code>refs/pull/62/head:refs/remotes/origin/pull/62/head</code>
+          </li>
+        </Trans>
+      </ul>
+      {t`The first fetches all references. The second
+                fetches the Github pull request number 62, in this example
+                the branch needs to be "pull/62/head".`}
+      <br />
+      <br />
+      {t`For more information, refer to the`}{' '}
+      <ExternalLink href={useGetDocsUrl(config, 'managePlaybooksSC')}>
+        {t`Documentation.`}
+      </ExternalLink>
+    </span>
+  );
+
+  return (
+    <PageFormHidden watch="scm_type" hidden={(type: string) => type !== 'git'}>
+      <PageFormSection title={t('Type Details')}>
+        <PageFormTextInput<Project>
+          name="scm_url"
+          label={t('Source control URL')}
+          placeholder={t('Enter source control URL')}
+          labelHelpTitle={t('Source control URL')}
+          labelHelp={gitSourceControlUrlHelp}
+          isRequired
+        />
+        <PageFormTextInput<Project>
+          name="scm_branch"
+          label={t('Source control branch/tag/commit')}
+          placeholder={t('Enter source control branch/tag/commit')}
+          labelHelpTitle={t('Source control branch/tag/commit')}
+          labelHelp={t(
+            'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
+          )}
+        />
+        <PageFormTextInput<Project>
+          name="scm_refspec"
+          label={t('Source control refspec')}
+          placeholder={t('Enter source control refspec')}
+          labelHelpTitle={t('Source control refspec')}
+          labelHelp={sourceControlRefspecHelp}
+        />
+        <PageFormCredentialSelect<Project>
+          name="credential"
+          label={t('Source control credential')}
+          placeholder={t('Select source control credential')}
+          queryParams={{
+            credential_type__namespace: 'scm',
+          }}
+        />
+        <ScmTypeOptions />
+      </PageFormSection>
+    </PageFormHidden>
+  );
+}

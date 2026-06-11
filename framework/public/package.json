@@ -1,0 +1,42 @@
+{
+  "name": "@ansible/ansible-ui-framework",
+  "description": "A framework for building applications using PatternFly.",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansible/ansible-ui.git"
+  },
+  "homepage": "https://github.com/ansible/ansible-ui/tree/main/framework#readme",
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./framework/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    },
+    "./style.css": {
+      "import": "./style.css",
+      "require": "./style.css"
+    },
+    "./assets/*": "./assets/*"
+  },
+  "keywords": [
+    "ansible",
+    "react",
+    "patternfly",
+    "framework"
+  ],
+  "peerDependencies": {
+    "@patternfly/patternfly": "^6.3",
+    "@patternfly/react-core": "^6.3",
+    "@patternfly/react-icons": "^6.3",
+    "@patternfly/react-table": "^6.3",
+    "react": "^17 || ^18",
+    "react-dom": "^17 || ^18",
+    "monaco-editor": "^0.51.0",
+    "monaco-yaml": "^5.2.2"
+  }
+}

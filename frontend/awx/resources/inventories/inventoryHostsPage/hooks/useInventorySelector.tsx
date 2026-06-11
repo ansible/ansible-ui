@@ -1,0 +1,56 @@
+import { ITableColumn, TextCell, QueryParams } from '@ansible/ansible-ui-framework';
+import {
+  AsyncSelectFilterBuilderProps,
+  useAsyncSingleSelectFilterBuilder,
+} from '@ansible/hub-ui/common/ToolbarAsyncSelectFilterBuilder';
+import { useTranslation } from 'react-i18next';
+
+import { useAwxView } from '../../../../common/useAwxView';
+
+import { Inventory } from '../../../../interfaces/Inventory';
+import { useInventoriesColumns } from '../../hooks/useInventoriesColumns';
+import { useInventoriesFilters } from '../../hooks/useInventoriesFilters';
+
+import { useMemo } from 'react';
+import { awxAPI } from '../../../../common/api/awx-utils';
+
+function useParameters(queryParams: QueryParams): AsyncSelectFilterBuilderProps<Inventory> {
+  const tableColumns = useInventoriesColumns();
+  const toolbarFilters = useInventoriesFilters();
+
+  const { t } = useTranslation();
+
+  return {
+    title: t`Select Inventory`,
+    tableColumns,
+    useView: useAwxView,
+    toolbarFilters,
+    viewParams: {
+      url: awxAPI`/inventories/`,
+      toolbarFilters,
+      tableColumns,
+      keyFn: (item) => item?.name,
+      queryParams,
+    },
+  };
+}
+
+export function useSelectInventorySingle(queryParams: QueryParams) {
+  const params = useParameters(queryParams);
+
+  return useAsyncSingleSelectFilterBuilder<Inventory>(params);
+}
+
+export function useColumns() {
+  const { t } = useTranslation();
+  return useMemo<ITableColumn<Inventory>[]>(
+    () => [
+      {
+        header: t('Name'),
+        value: (inventory) => inventory.name,
+        cell: (inventory) => <TextCell text={inventory.name} />,
+      },
+    ],
+    [t]
+  );
+}

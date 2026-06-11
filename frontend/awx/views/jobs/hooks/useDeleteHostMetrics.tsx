@@ -1,0 +1,35 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { HostMetric } from '../../../interfaces/HostMetric';
+import { useHostMetricNameColumn } from './useHostMetricNameColumn';
+import { useHostMetricsColumns } from './useHostMetricsColumns';
+
+export function useDeleteHostMetrics(onComplete: (host: HostMetric[]) => void) {
+  const { t } = useTranslation();
+  const confirmationColumns = useHostMetricsColumns();
+  const deleteActionNameColumn = useHostMetricNameColumn({ disableLinks: true, disableSort: true });
+  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
+  const bulkAction = useAwxBulkConfirmation<HostMetric>();
+  const deleteHostMetrics = (host: HostMetric[]) => {
+    bulkAction({
+      title: t('Soft delete hostnames', { count: host.length }),
+      confirmText: t('Yes, I confirm that I want to delete these {{count}} hostnames.', {
+        count: host.length,
+      }),
+      actionButtonText: t('Delete hostnames', { count: host.length }),
+      items: host.sort((l, r) => compareStrings(l.hostname, r.hostname)),
+      keyFn: getItemKey,
+      isDanger: true,
+      confirmationColumns,
+      actionColumns,
+      onComplete,
+      actionFn: (host: HostMetric, signal) =>
+        requestDelete(awxAPI`/host_metrics/${host.id.toString()}/`, signal),
+    });
+  };
+  return deleteHostMetrics;
+}

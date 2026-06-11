@@ -1,0 +1,60 @@
+import i18n from 'i18next';
+import detector from 'i18next-browser-languagedetector';
+import backend from 'i18next-http-backend';
+import { initReactI18next } from 'react-i18next';
+
+const params = new URLSearchParams(window.location.search);
+const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
+void i18n
+  .use({
+    type: 'postProcessor',
+    name: 'pseudolocalization',
+    process: function (value: string | string[]) {
+      if (!pseudolocalizationEnabled) {
+        return value;
+      }
+      if (Array.isArray(value)) {
+        return ['»', ...value, '«'];
+      } else {
+        return `»${value}«`;
+      }
+    },
+  })
+  .use(backend)
+  .use(detector)
+  .use(initReactI18next)
+  .init({
+    backend: {
+      loadPath:
+        (process.env.IS_INSIGHTS as unknown) === true || process.env.IS_INSIGHTS === 'true'
+          ? '/apps/automation-hub/locales/{{lng}}/{{ns}}.json'
+          : '/locales/{{lng}}/{{ns}}.json',
+    },
+    detection: {
+      order: [
+        'querystring',
+        'cookie',
+        'localStorage',
+        'sessionStorage',
+        'navigator',
+        'htmlTag',
+        'path',
+        'subdomain',
+      ],
+      convertDetectedLanguage: (lng) => {
+        if (lng.includes('en_')) {
+          return 'en';
+        }
+        return lng.replace('-', '_');
+      },
+      lookupQuerystring: 'lang',
+      lookupCookie: 'lang',
+      lookupLocalStorage: 'lang',
+    },
+    fallbackLng: 'en', // use en if detected lng is not available
+    supportedLngs: ['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'],
+    interpolation: {
+      escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
+    },
+    postProcess: ['pseudolocalization'],
+  });

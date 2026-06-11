@@ -1,0 +1,14 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "enabledManagers": ["tekton", "git-submodules"],
+  "tekton": {
+    "enabled": true,
+    "automerge": false,
+    "schedule": ["* 0-5 * * 5"]
+  },
+  "git-submodules": {
+    "enabled": true,
+    "automerge": false,
+    "schedule": ["* 0-5 * * 5"]
+  }
+}

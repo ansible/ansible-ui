@@ -1,0 +1,25 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { HostMetric } from '../../../interfaces/HostMetric';
+import { useDeleteHostMetrics } from './useDeleteHostMetrics';
+
+export function useHostMetricsToolbarActions(onComplete: (host: HostMetric[]) => void) {
+  const { t } = useTranslation();
+  const deleteHostMetrics = useDeleteHostMetrics(onComplete);
+
+  return useMemo<IPageAction<HostMetric>[]>(
+    () => [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete hostnames'),
+        onClick: deleteHostMetrics,
+        isDanger: true,
+      },
+    ],
+    [deleteHostMetrics, t]
+  );
+}

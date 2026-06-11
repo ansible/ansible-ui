@@ -1,0 +1,15 @@
+.ansi-green-fg {
+  color: var(--pf-t--global--color--status--success--default);
+}
+
+.ansi-red-fg {
+  color: var(--pf-t--global--color--status--danger--default);
+}
+
+.ansi-yellow-fg {
+  color: var(--pf-t--global--color--status--warning--default);
+}
+
+.ansi-blue-fg {
+  color: var(--pf-t--global--color--status--info--default);
+}

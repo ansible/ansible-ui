@@ -1,0 +1,65 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ButtonVariant } from '@patternfly/react-core';
+import { BanIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useCancelProjects } from './useCancelProjects';
+import { useDeleteProjects } from './useDeleteProjects';
+
+export function useProjectToolbarActions(onComplete: (projects: Project[]) => void) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
+  const canCreateProject = Boolean(data?.actions?.['POST']);
+
+  const deleteProjects = useDeleteProjects(onComplete);
+  const cancelProjects = useCancelProjects(onComplete);
+
+  const ProjectToolbarActions = useMemo<IPageAction<Project>[]>(
+    () => [
+      {
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        variant: ButtonVariant.primary,
+        isPinned: true,
+        icon: PlusCircleIcon,
+        label: t('Create project'),
+        isDisabled: canCreateProject
+          ? undefined
+          : t(
+              'You do not have permission to create a project. Please contact your organization administrator if there is an issue with your access.'
+            ),
+        href: getPageUrl(AwxRoute.CreateProject),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: BanIcon,
+        label: t('Cancel projects'),
+        onClick: cancelProjects,
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete projects'),
+        onClick: deleteProjects,
+        isDanger: true,
+      },
+    ],
+    [canCreateProject, cancelProjects, deleteProjects, getPageUrl, t]
+  );
+
+  return ProjectToolbarActions;
+}

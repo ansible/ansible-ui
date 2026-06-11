@@ -1,0 +1,21 @@
+{
+  "name": "@ansible/chatbot",
+  "type": "module",
+  "version": "1.0.0",
+  "dependencies": {
+    "@ansible/common-ui": "file:../common"
+  },
+  "scripts": {
+    "vitest": "vitest --run",
+    "dump-nyc-vitest": "mkdir -p ../../.nyc_output && vitest run --coverage && mv coverage/vitest/coverage-final.json ../../.nyc_output/chatbot-vitest.json",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
+  }
+}

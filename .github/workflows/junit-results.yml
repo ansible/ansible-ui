@@ -1,0 +1,53 @@
+name: Merge and upload jUnit component test results
+
+on:
+  workflow_call:
+    secrets:
+      PDE_ORG_RESULTS_UPLOAD_PASSWORD:
+
+jobs:
+  merge-and-upload-junit-test-results:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          path: junit-results
+          pattern: junit-results-*
+          merge-multiple: true
+
+      - run: npm install -g junit-report-merger
+
+      - name: Merge component test results
+        run: jrm junit-results/aapui-test-results.xml "junit-results/*.xml"
+
+      - name: Upload combined test result to platform readiness dashboard
+        working-directory: junit-results
+        run: >-
+          curl --fail-with-body -v --user "${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_USER }}:${{ secrets.PDE_ORG_RESULTS_UPLOAD_PASSWORD }}"
+          --form "xunit_xml=@aapui-test-results.xml"
+          --form "component_name=aap-ui"
+          --form "git_commit_sha=${{ github.sha }}"
+          --form "git_repository_url=https://github.com/${{ github.repository }}"
+          "${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_URL }}/api/results/upload/"
+
+      - name: Cleanup test result files
+        run: rm -rf ./junit-results/

@@ -1,0 +1,93 @@
+name: Run Playwright with Currents
+
+on:
+  workflow_dispatch:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+        description: "AAP Server URL"
+      PLATFORM_USERNAME:
+        type: string
+        required: false
+        description: "Username"
+      PLATFORM_PASSWORD:
+        type: string
+        required: false
+        description: "Password"
+      TAGS: 
+        type: string
+        required: false
+        description: "Include Tags"
+      NOT_TAGS: 
+        type: string
+        required: false
+        description: "Exclude Tags"
+      PARALLEL_TESTS:
+        type: number
+        required: false
+        description: "Parallel Tests"
+        default: 4
+      TIMEOUT_MINUTES:
+        type: number
+        required: false
+        description: "Job timeout in minutes (default: 90)"
+        default: 90
+      AAP_TOPOLOGY_TYPE:
+        type: choice
+        required: false
+        description: "AAP topology type for test skip logic"
+        default: ""
+        options:
+          - ""
+          - "saas"
+          - "ocp-a"
+          - "man-b"
+      PROJECT:
+        type: choice
+        description: "Playwright Project"
+        default: "live chromium"
+        options:
+          - "live chromium"
+          - "live firefox"
+          - "live webkit"
+          - "mock chromium"
+          - "mock firefox"
+          - "mock webkit"
+
+jobs:
+  platform-ui-image:
+    name: Platform UI Image
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-context: platform
+      docker-file: _packaging/docker/platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+    secrets: inherit
+
+  playwright-currents:
+    name: Playwright with Currents
+    if: ${{ !cancelled() }}
+    needs:
+      - platform-ui-image
+    uses: ./.github/workflows/playwright-currents.yml
+    with:
+      PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+      PLATFORM_UI: 'https://localhost:4100'
+      TAGS: ${{ inputs.TAGS }}
+      NOT_TAGS: ${{ inputs.NOT_TAGS }}
+      PROJECT: ${{ inputs.PROJECT }}
+      PARALLEL_TESTS: ${{ format('{0}', inputs.PARALLEL_TESTS) }}
+      TIMEOUT_MINUTES: ${{ format('{0}', inputs.TIMEOUT_MINUTES) }}
+      AAP_TOPOLOGY_TYPE: ${{ inputs.AAP_TOPOLOGY_TYPE }}
+    secrets:
+      CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+      CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
+      PLATFORM_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      PLATFORM_USERNAME: ${{ secrets.E2E_USER }}
+      ANALYTICS_USER: ${{ secrets.ANALYTICS_USER }}
+      ANALYTICS_PASSWORD: ${{ secrets.ANALYTICS_PASSWORD }}

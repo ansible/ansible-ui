@@ -1,0 +1,22 @@
+{
+  "name": "@ansible/ansible-ui-framework",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "scripts": {
+    "dump-nyc-vitest": "mkdir -p ../.nyc_output && vitest run --coverage && mv coverage/vitest/coverage-final.json ../.nyc_output/framework-vitest.json",
+    "dump-nyc-pw": "mkdir -p ../.nyc_output && npx playwright test --config ../playwright/playwright.config.ts playwright/tests/framework --project='live chromium' && mv coverage/playwright/coverage-final.json ../.nyc_output/framework-playwright.json",
+    "clean": "rm -rf publish",
+    "build": "npm run clean && vite build && NODE_OPTIONS=--max-old-space-size=8192 tsc --project tsconfig.production.json",
+    "test": "npm run eslint && npm run prettier && npm run tsc && npm run vitest",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
+    "vitest": "vitest --run",
+    "vitest:watch": "vitest watch",
+    "vitest:coverage": "vitest --run --coverage"
+  }
+}

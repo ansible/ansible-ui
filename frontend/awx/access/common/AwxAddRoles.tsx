@@ -1,0 +1,117 @@
+import { PageWizard, PageWizardStep } from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+import { AwxSelectResourceTypeStep } from './AwxRolesWizardSteps/AwxSelectResourceTypeStep';
+import {
+  AwxResourceType,
+  AwxSelectResourcesStep,
+} from './AwxRolesWizardSteps/AwxSelectResourcesStep';
+import { AwxSelectRolesStep } from './AwxRolesWizardSteps/AwxSelectRolesStep';
+
+interface WizardFormValues {
+  resourceType: string;
+  resources: AwxResourceType[];
+  awxRoles: AwxRbacRole[];
+}
+
+interface ResourceRolePair {
+  resource: AwxResourceType;
+  role: AwxRbacRole;
+}
+
+interface RoleResponse {
+  role_definition: number;
+  content_type: string;
+  object_id: number;
+  user?: string;
+  team?: string;
+}
+
+export function AwxAddRoles(props: {
+  id: string;
+  type: 'team' | 'user';
+  userOrTeamName: string;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation();
+
+  const progressDialog = useAwxBulkActionDialog<ResourceRolePair>();
+
+  const steps: PageWizardStep[] = [
+    {
+      id: 'resource-type',
+      label: t('Select a resource type'),
+      inputs: <AwxSelectResourceTypeStep />,
+    },
+    {
+      id: 'resources',
+      label: t('Select resources'),
+      inputs: <AwxSelectResourcesStep userOrTeamName={props.userOrTeamName} />,
+      validate: (formData, _) => {
+        const { resources } = formData as { resources: AwxResourceType[] };
+        if (!resources?.length) {
+          throw new Error(t('Select at least one resource.'));
+        }
+      },
+    },
+    {
+      id: 'roles',
+      label: t('Select roles to apply'),
+      inputs: <AwxSelectRolesStep fieldNameForPreviousStep="resources" />,
+      validate: (formData, _) => {
+        const { awxRoles } = formData as { awxRoles: AwxRbacRole[] };
+        if (!awxRoles?.length) {
+          throw new Error(t('Select at least one role.'));
+        }
+      },
+    },
+    { id: 'review', label: t('Review'), element: <RoleAssignmentsReviewStep /> },
+  ];
+
+  const onSubmit = (data: WizardFormValues) => {
+    const { resources, awxRoles, resourceType } = data;
+    const items: ResourceRolePair[] = [];
+    for (const resource of resources) {
+      for (const role of awxRoles) {
+        items.push({ resource, role });
+      }
+    }
+    return new Promise<void>((resolve) => {
+      progressDialog({
+        title: t('Add roles'),
+        keyFn: ({ resource, role }) => `${resource.id}_${role.id}`,
+        items,
+        actionColumns: [
+          { header: t('Resource name'), cell: ({ resource }) => resource.name },
+          { header: t('Role'), cell: ({ role }) => role.name },
+        ],
+        actionFn: ({ resource, role }) => {
+          const data: RoleResponse = {
+            role_definition: role.id,
+            content_type: resourceType,
+            object_id: resource.id,
+          };
+          props.type === 'user' ? (data.user = props.id) : (data.team = props.id);
+          return postRequest(awxAPI`/role_${props.type}_assignments/`, data);
+        },
+        onComplete: () => {
+          resolve();
+        },
+        onClose: props.onClose,
+      });
+    });
+  };
+
+  return (
+    <PageWizard<WizardFormValues>
+      steps={steps}
+      onSubmit={onSubmit}
+      onCancel={props.onClose}
+      disableGrid
+    />
+  );
+}

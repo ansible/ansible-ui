@@ -1,0 +1,38 @@
+# Multi-stage Containerfile for local Linux visual baseline generation
+# Uses official Playwright image for consistent rendering with CI
+
+FROM mcr.microsoft.com/playwright:v1.57.0-noble@sha256:3bed4b1a12f2338642f3d8cba28e291deef3c66bd4a964bbeb3e57bbff511dbd AS platform-ui
+
+WORKDIR /work
+
+# Copy the full monorepo
+COPY . .
+
+# Install dependencies
+RUN npm ci
+
+# Build platform UI
+RUN cd platform && npm run build
+
+# Set environment variables
+# Note: PLATFORM_USERNAME and PLATFORM_PASSWORD must be passed at runtime via -e flags
+ENV PLATFORM_UI=https://localhost:4100
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+
+# Expose port 4100
+EXPOSE 4100
+
+# Entrypoint: start vite preview server (handles SPA routing), run tests
+CMD ["sh", "-c", "\
+  echo 'Starting Vite preview server on https://localhost:4100...' && \
+  cd /work/platform && \
+  npm run preview & \
+  SERVER_PID=$! && \
+  sleep 5 && \
+  echo 'Running Playwright visual tests...' && \
+  cd /work/playwright && \
+  npx playwright test tests/visual/ --project 'live chromium' --update-snapshots; \
+  TEST_EXIT=$?; \
+  kill $SERVER_PID 2>/dev/null || true; \
+  exit $TEST_EXIT \
+"]

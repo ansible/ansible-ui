@@ -1,0 +1,455 @@
+import {
+  PageFormCheckbox,
+  PageFormSelect,
+  PageFormSubmitHandler,
+  PageFormTextArea,
+  PageFormTextInput,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { Alert } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import useSWR from 'swr';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
+import { EdaPageForm } from '../common/EdaPageForm';
+import { edaAPI } from '../common/eda-utils';
+import { EdaCredential } from '../interfaces/EdaCredential';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
+import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../interfaces/EdaProject';
+import { EdaResult } from '../interfaces/EdaResult';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
+import { EdaRoute } from '../main/EdaRoutes';
+import { ProjectDetails } from './ProjectPage/ProjectDetails';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+
+function ProjectCreateInputs() {
+  const { t } = useTranslation();
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=scm&page_size=300`
+  );
+  const { data: verifyCredentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=cryptography&page_size=300`
+  );
+
+  return (
+    <>
+      <PageFormSection>
+        <PageFormTextInput<EdaProjectCreate>
+          name="name"
+          label={t('Name')}
+          placeholder={t('Enter project name')}
+          isRequired
+          maxLength={150}
+        />
+        <PageFormTextArea<EdaProjectCreate>
+          name="description"
+          label={t('Description')}
+          placeholder={t('Enter description')}
+          maxLength={150}
+        />
+        <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" isRequired />
+        <PageFormTextInput
+          name="type"
+          aria-disabled={true}
+          isDisabled={true}
+          label={t('Source control type')}
+          placeholder={t('Git')}
+          labelHelpTitle={t('Source control type')}
+          labelHelp={t('There is currently only one source control available for use.')}
+        />
+        <PageFormTextInput<EdaProjectCreate>
+          name="url"
+          isRequired={true}
+          label={t('Source control URL')}
+          placeholder={t('Enter source control URL')}
+          labelHelpTitle={t('Source control URL')}
+          labelHelp={t(
+            'HTTP[S] or SSH protocol address of a repository, such as GitHub or GitLab.'
+          )}
+        />
+        <PageFormTextInput<EdaProjectCreate>
+          name="proxy"
+          label={t('Proxy')}
+          placeholder={t('Enter proxy')}
+          labelHelpTitle={t('Proxy')}
+          labelHelp={t('Proxy used to access HTTP or HTTPS servers.')}
+        />
+        <PageFormTextInput
+          name="scm_branch"
+          label={t('Source control branch/tag/commit')}
+          placeholder={t('Enter source control branch/tag/commit')}
+          labelHelpTitle={'Source control branch/tag/commit'}
+          labelHelp={t(
+            'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
+          )}
+        />
+        <PageFormTextInput
+          name="scm_refspec"
+          label={t('Source control refspec')}
+          placeholder={t('Enter source control refspec')}
+          labelHelpTitle={'Source control refspec'}
+          labelHelp={t(
+            'A refspec to fetch (passed to the Ansible git module). This parameter allows access to references via the branch field not otherwise available.'
+          )}
+        />
+        <PageFormSelect
+          name={'eda_credential_id'}
+          label={t('Source control credential')}
+          placeholderText={t('Select source control credential')}
+          options={
+            credentials?.results
+              ? credentials.results.map((item: { name: string; id: number }) => ({
+                  label: item.name,
+                  value: item.id,
+                }))
+              : []
+          }
+          labelHelpTitle={t('Source control credential')}
+          labelHelp={t('The token needed to utilize the source control URL.')}
+        />
+        <PageFormSelect
+          name={'signature_validation_credential_id'}
+          label={t('Content signature validation credential')}
+          labelHelpTitle={t('Content signature validation credential')}
+          labelHelp={t(
+            'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
+          )}
+          placeholderText={t('Select content signature validation credential')}
+          options={
+            verifyCredentials?.results
+              ? verifyCredentials.results.map((item: { name: string; id: number }) => ({
+                  label: item.name,
+                  value: item.id,
+                }))
+              : []
+          }
+        />
+      </PageFormSection>
+      <PageFormSection singleColumn>
+        <PageFormGroup label={t('Options')}>
+          <PageFormCheckbox<EdaProjectCreate>
+            id="option-scm-update-on-launch"
+            label={t('Update revision on launch')}
+            labelHelpTitle={t('Update revision on launch')}
+            labelHelp={t(
+              'Prior to starting or restarting a rulebook activation this project will be updated.'
+            )}
+            name="update_revision_on_launch"
+          />
+          <PageFormCheckbox<EdaProjectCreate>
+            label={t`Verify SSL`}
+            labelHelpTitle={t('Verify SSL')}
+            labelHelp={t(
+              'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+            )}
+            name="verify_ssl"
+          />
+        </PageFormGroup>
+      </PageFormSection>
+      <PageFormHidden
+        watch="update_revision_on_launch"
+        hidden={(scmUpdateOnLaunch?: boolean) => !scmUpdateOnLaunch}
+      >
+        <PageFormSection title={t('Option Details')}>
+          <PageFormTextInput<EdaProject>
+            name="scm_update_cache_timeout"
+            type="number"
+            labelHelp={t(
+              'Time in seconds to consider a project to be current. During job runs and callbacks the task system will evaluate the timestamp of the latest project update. If it is older than Cache Timeout, it is not considered current, and a new project update will be performed.'
+            )}
+            label={t('Cache Timeout')}
+            min="0"
+            placeholder={t('Enter cache timeout')}
+          />
+        </PageFormSection>
+      </PageFormHidden>
+    </>
+  );
+}
+
+function ProjectEditInputs() {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=scm&page_size=300`
+  );
+  const { data: verifyCredentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=cryptography&page_size=300`
+  );
+  return (
+    <>
+      <PageFormSection>
+        <PageFormTextInput<EdaProjectCreate>
+          name="name"
+          label={t('Name')}
+          placeholder={t('Enter project name')}
+          isRequired
+          maxLength={150}
+        />
+        <PageFormTextArea<EdaProjectCreate>
+          name="description"
+          label={t('Description')}
+          placeholder={t('Enter description')}
+          maxLength={150}
+        />
+        <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" isRequired />
+        <PageFormTextInput
+          name="type"
+          aria-disabled={true}
+          isDisabled={true}
+          label={t('Source control type')}
+          labelHelpTitle={t('Source control type')}
+          labelHelp={t('There is currently only one source control available for use.')}
+          placeholder={t('Git')}
+        />
+        <PageFormTextInput<EdaProjectCreate>
+          name="url"
+          isRequired={true}
+          label={t('Source control URL')}
+          placeholder={t('Enter source control URL')}
+          labelHelpTitle={t('Source control URL')}
+          labelHelp={t(
+            'HTTP[S] or SSH protocol address of a repository, such as GitHub or GitLab.'
+          )}
+        />
+        <PageFormTextInput<EdaProjectCreate>
+          name="proxy"
+          label={t('Proxy')}
+          placeholder={t('Enter proxy')}
+          labelHelpTitle={t('Proxy')}
+          labelHelp={t('Proxy used to access HTTP or HTTPS servers.')}
+        />
+        <PageFormTextInput
+          name="scm_branch"
+          label={t('Source control branch/tag/commit')}
+          placeholder={t('Enter source branch/tag/commit')}
+          labelHelpTitle={'Source control branch/tag/commit'}
+          labelHelp={t(
+            'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
+          )}
+        />
+        <PageFormTextInput
+          name="scm_refspec"
+          label={t('Source control refspec')}
+          placeholder={t('Enter source control refspec')}
+          labelHelpTitle={t('Source control refspec')}
+          labelHelp={t(
+            'A refspec to fetch (passed to the Ansible git module). This parameter allows access to references via the branch field not otherwise available.'
+          )}
+        />
+        <PageFormSelect
+          name={'eda_credential_id'}
+          isRequired={false}
+          label={t('Source control credential')}
+          labelHelpTitle={t('Source control credential')}
+          labelHelp={t('The token needed to utilize the source control URL.')}
+          placeholderText={t('Select source control credential')}
+          options={
+            credentials?.results
+              ? credentials.results.map((item: { name: string; id: number }) => ({
+                  label: item.name,
+                  value: item.id,
+                }))
+              : []
+          }
+          footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>{t('Create credential')}</Link>}
+        />
+        <PageFormSelect
+          name={'signature_validation_credential_id'}
+          isRequired={false}
+          label={t('Content signature validation credential')}
+          labelHelpTitle={t('Content signature validation credential')}
+          labelHelp={t(
+            'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
+          )}
+          placeholderText={t('Select content signature validation credential')}
+          options={
+            verifyCredentials?.results
+              ? verifyCredentials.results.map((item: { name: string; id: number }) => ({
+                  label: item.name,
+                  value: item.id,
+                }))
+              : []
+          }
+        />
+      </PageFormSection>
+      <PageFormSection singleColumn>
+        <PageFormGroup label={t('Options')}>
+          <PageFormCheckbox<EdaProject>
+            id="option-scm-update-on-launch"
+            label={t('Update revision on launch')}
+            labelHelpTitle={t('Update revision on launch')}
+            labelHelp={t(
+              'Each time a job runs using this project, update the revision of the project prior to starting the job.'
+            )}
+            name="update_revision_on_launch"
+          />
+          <PageFormCheckbox
+            label={t`Verify SSL`}
+            labelHelp={t(
+              'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+            )}
+            name="verify_ssl"
+          />
+        </PageFormGroup>
+      </PageFormSection>
+      <PageFormHidden
+        watch="update_revision_on_launch"
+        hidden={(scmUpdateOnLaunch?: boolean) => !scmUpdateOnLaunch}
+      >
+        <PageFormSection title={t('Option Details')}>
+          <PageFormTextInput<EdaProject>
+            name="scm_update_cache_timeout"
+            type="number"
+            labelHelp={t(
+              'Time in seconds to consider a project to be current. During job runs and callbacks the task system will evaluate the timestamp of the latest project update. If it is older than Cache Timeout, it is not considered current, and a new project update will be performed.'
+            )}
+            label={t('Cache Timeout')}
+            min="0"
+            placeholder={t('Enter cache timeout')}
+          />
+        </PageFormSection>
+      </PageFormHidden>
+    </>
+  );
+}
+
+export function CreateProject() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
+      : undefined;
+
+  const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
+    const newProject = await postRequest(edaAPI`/projects/`, project);
+    pageNavigate(EdaRoute.ProjectPage, { params: { id: newProject.id } });
+  };
+
+  const onCancel = () => void navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create project')}
+        breadcrumbs={[
+          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+          { label: t('Create project') },
+        ]}
+      />
+      <EdaPageForm
+        submitText={t('Create project')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={{
+          verify_ssl: true,
+          organization_id: defaultOrganization?.id,
+          update_revision_on_launch: false,
+          scm_update_cache_timeout: 0,
+        }}
+      >
+        <ProjectCreateInputs />
+      </EdaPageForm>
+    </PageLayout>
+  );
+}
+
+export function EditProject() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/projects/${params.id ?? ''}/`
+  );
+  const canEditProject = data ? Boolean(data.actions && data.actions['PATCH']) : true;
+
+  const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
+
+  const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
+  const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
+    await patchRequest(edaAPI`/projects/${id.toString()}/`, project);
+    pageNavigate(EdaRoute.ProjectPage, { params: { id: id } });
+  };
+  const onCancel = () => void navigate(-1);
+  const getPageUrl = useGetPageUrl();
+  if (!project) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+            { label: t('Edit Project') },
+          ]}
+        />
+      </PageLayout>
+    );
+  } else {
+    return (
+      <PageLayout>
+        <PageHeader
+          title={`${t('Edit')} ${project?.name || t('Project')}`}
+          breadcrumbs={[
+            { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+            { label: `${t('Edit')} ${project?.name || t('Project')}` },
+          ]}
+        />
+        {!canEditProject ? (
+          <>
+            <Alert
+              variant={'warning'}
+              isInline
+              style={{
+                marginLeft: '24px',
+                marginRight: '24px',
+                marginTop: '24px',
+                paddingLeft: '24px',
+                paddingTop: '16px',
+              }}
+              title={t(
+                'You do not have permissions to edit this project. Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+            <ProjectDetails />
+          </>
+        ) : (
+          <EdaPageForm
+            submitText={t('Save project')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={{
+              ...project,
+              scm_update_cache_timeout: project?.scm_update_cache_timeout || 0,
+              eda_credential_id: project?.eda_credential?.id,
+              organization_id: project?.organization?.id,
+            }}
+          >
+            <ProjectEditInputs />
+          </EdaPageForm>
+        )}
+      </PageLayout>
+    );
+  }
+}

@@ -1,0 +1,62 @@
+# When packaging repo secrets are set, sends repository_dispatch to the repo.
+#
+# Uses actions/github-script (GitHub-maintained) → REST API:
+# https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event
+#
+# Secrets (repository settings → Secrets):
+#   PACKAGING_REPO_DISPATCH_TOKEN — PAT with permission to create repository_dispatch on the packaging repo
+#   PACKAGING_GITHUB_REPOSITORY   — packaging repo slug, e.g. org/private-aap-ui-packaging (not visible in this YAML)
+
+name: Trigger packaging builds
+
+on:
+  push:
+    branches:
+      - main
+      - devel
+    tags:
+      - '*'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      # Secrets cannot be used in step `if:`, so gate via env + output (no secret values written to logs).
+      - name: Check packaging dispatch configuration
+        id: gate
+        env:
+          DISPATCH_TOKEN: ${{ secrets.PACKAGING_REPO_DISPATCH_TOKEN }}
+          PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
+        run: |
+          if [ -n "$DISPATCH_TOKEN" ] && [ -n "$PACKAGING_REPO" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo '::notice::Skipping packaging dispatch: set repository secrets PACKAGING_REPO_DISPATCH_TOKEN and PACKAGING_GITHUB_REPOSITORY to enable Quay builds.'
+          fi
+
+      - uses: actions/github-script@v7
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
+        with:
+          github-token: ${{ secrets.PACKAGING_REPO_DISPATCH_TOKEN }}
+          script: |
+            const slug = process.env.PACKAGING_REPO;
+            if (!slug || !slug.includes('/')) {
+              core.setFailed('PACKAGING_GITHUB_REPOSITORY must be owner/repo');
+              return;
+            }
+            const i = slug.indexOf('/');
+            const owner = slug.slice(0, i);
+            const repo = slug.slice(i + 1);
+            await github.rest.repos.createDispatchEvent({
+              owner,
+              repo,
+              event_type: 'build-images',
+              client_payload: {
+                ref: context.ref,
+                sha: context.sha,
+                repository: `${context.repo.owner}/${context.repo.repo}`,
+              },
+            });

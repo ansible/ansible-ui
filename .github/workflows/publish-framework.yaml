@@ -1,0 +1,46 @@
+name: Publish Framework
+
+on:
+  push:
+    branches:
+      - devel
+
+jobs:
+  publish-framework:
+    name: Publish Framework
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          rm -rf package-lock.json
+          rm -rf node_modules
+          npm i
+
+      - name: Publish Framework
+        working-directory: ./framework
+        run: |
+          npm run build
+          cp -f ../LICENSE.md ./publish/LICENSE.md
+          cp -f ./README.md ./publish/README.md
+          cd publish
+          LATEST_VERSION=$(npm view @ansible/ansible-ui-framework version)
+          npm version $LATEST_VERSION --no-git-tag-version
+          LATEST_SHASUM=$(npm view @ansible/ansible-ui-framework dist.shasum)
+          dry_run_output=$(npm publish --dry-run 2>&1)
+          shasum=$(echo "$dry_run_output" | grep "npm notice shasum:" | awk '{print $4}')
+          if [ "$LATEST_SHASUM" != "$shasum" ]; then
+            npm version patch --no-git-tag-version
+            npm publish --verbose
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

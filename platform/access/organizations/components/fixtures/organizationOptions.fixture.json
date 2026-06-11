@@ -1,0 +1,14 @@
+{
+  "actions": {
+    "PUT": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Name",
+        "help_text": "The name of this resource",
+        "max_length": 512
+      }
+    }
+  }
+}

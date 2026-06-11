@@ -1,0 +1,25 @@
+{
+  "name": "@ansible/playwright",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf coverage test-results blob-report results.xml",
+    "live": "playwright test --project 'live chromium'",
+    "compare": "playwright test --project 'live chromium' --grep @compare",
+    "coverage": "open coverage/index.html",
+    "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 tests commands",
+    "eslint:fix": "eslint --fix tests commands",
+    "prettier": "prettier --check tests commands",
+    "prettier:fix": "prettier --write tests commands",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
+    "markdown": "tsx generate-test-summary.ts",
+    "migration-stats": "tsx scripts/migration-stats.ts"
+  },
+  "dependencies": {
+    "@ansible/awx-ui": "file:../frontend/awx",
+    "@ansible/chatbot": "file:../frontend/chatbot",
+    "@ansible/platform-ui": "file:../platform"
+  }
+}
