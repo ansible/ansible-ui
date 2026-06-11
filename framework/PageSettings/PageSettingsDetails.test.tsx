@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PageSettingsDetails } from './PageSettingsDetails';
+import { PageSettingsContext } from './PageSettingsProvider';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -18,12 +20,8 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('./PageSettingsProvider', () => ({
-  PageSettingsContext: {
-    Consumer: ({ children }: { children: (value: unknown[]) => React.ReactNode }) =>
-      children([{ refreshInterval: 30, theme: 'system' }, vi.fn()]),
-  },
-}));
+const mockSettings = { refreshInterval: 30, theme: 'system' };
+const mockSetSettings = vi.fn();
 
 vi.mock('./usePageSettingOptions', () => ({
   usePageSettingsOptions: () => [
@@ -46,9 +44,11 @@ describe('PageSettingsDetails Component', () => {
 
   it('should display User Preferences title and description', () => {
     render(
-      <MemoryRouter>
-        <PageSettingsDetails />
-      </MemoryRouter>
+      <PageSettingsContext.Provider value={[mockSettings, mockSetSettings]}>
+        <MemoryRouter>
+          <PageSettingsDetails />
+        </MemoryRouter>
+      </PageSettingsContext.Provider>
     );
 
     expect(screen.getByText('User Preferences')).toBeInTheDocument();
@@ -57,24 +57,30 @@ describe('PageSettingsDetails Component', () => {
 
   it('should display Edit button', () => {
     render(
-      <MemoryRouter>
-        <PageSettingsDetails />
-      </MemoryRouter>
+      <PageSettingsContext.Provider value={[mockSettings, mockSetSettings]}>
+        <MemoryRouter>
+          <PageSettingsDetails />
+        </MemoryRouter>
+      </PageSettingsContext.Provider>
     );
 
     const editButton = screen.getByRole('button', { name: 'Edit' });
     expect(editButton).toBeInTheDocument();
   });
 
-  it('should navigate to edit page when Edit button is clicked', () => {
+  it('should navigate to edit page when Edit button is clicked', async () => {
+    const user = userEvent.setup();
+
     render(
-      <MemoryRouter>
-        <PageSettingsDetails />
-      </MemoryRouter>
+      <PageSettingsContext.Provider value={[mockSettings, mockSetSettings]}>
+        <MemoryRouter>
+          <PageSettingsDetails />
+        </MemoryRouter>
+      </PageSettingsContext.Provider>
     );
 
     const editButton = screen.getByRole('button', { name: 'Edit' });
-    editButton.click();
+    await user.click(editButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('./edit');
   });

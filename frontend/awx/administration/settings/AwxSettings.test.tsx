@@ -1,9 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { AwxSettings } from './AwxSettings';
+import { useAwxSettingsGroupsBase } from './useAwxSettingsGroups';
 
 const mockSettingsOptions = {
   actions: {
@@ -72,20 +73,26 @@ describe('AwxSettings', () => {
     );
   });
 
-  it('should display settings group descriptions', async () => {
-    render(
-      <MemoryRouter>
-        <AwxSettings />
-      </MemoryRouter>
+  it('should provide settings group descriptions via hook', () => {
+    const { result } = renderHook(() => useAwxSettingsGroupsBase());
+    const groups = result.current;
+
+    const systemGroup = groups.find((g) => g.id === 'system');
+    expect(systemGroup?.description).toBe(
+      'Configure and manage automation controller system settings.'
     );
 
-    await waitFor(
-      () => {
-        // The AwxSettings component only shows Authentication Methods
-        // Other groups are shown in different views, but we can verify the hook provides descriptions
-        expect(screen.queryByText('Authentication Methods')).toBeInTheDocument();
-      },
-      { timeout: 5000 }
+    const jobsGroup = groups.find((g) => g.id === 'jobs');
+    expect(jobsGroup?.description).toBe('Define the operation of Jobs in automation controller.');
+
+    const loggingGroup = groups.find((g) => g.id === 'logging');
+    expect(loggingGroup?.description).toBe(
+      'Set up logging to one of the supported external log aggregation services.'
+    );
+
+    const debugGroup = groups.find((g) => g.id === 'debug');
+    expect(debugGroup?.description).toBe(
+      'Enable or disable flags to aid in debugging issues within the platform.'
     );
   });
 });
