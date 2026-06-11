@@ -12,29 +12,33 @@ test.describe('Chatbot', () => {
   test.afterEach(setupAfter);
   test.setTimeout(1 * 60 * 1000);
 
-  test('should display the Chatbot, add a question and hide', { tag: [] }, async ({ page }) => {
-    await Lightspeed.mock.healthStatus(page, 200, {
-      'chatbot-service': 'ok',
-      'streaming-chatbot-service': 'ok',
-    });
+  test(
+    'should display the Chatbot, add a question and hide',
+    { tag: ['@tier1'] },
+    async ({ page }) => {
+      await Lightspeed.mock.healthStatus(page, 200, {
+        'chatbot-service': 'ok',
+        'streaming-chatbot-service': 'ok',
+      });
 
-    await page.reload({ waitUntil: 'networkidle' });
-    const chatbotBadge = page.locator('[data-testid="chatbot-badge"]');
-    await expect(chatbotBadge).toBeVisible();
-    await chatbotBadge.click();
-    const chatbotIFrame = page.frameLocator('iframe[title="Ansible Chatbot IFrame"]');
-    const chatbotTextArea = chatbotIFrame.locator('textarea[aria-label="Send a message..."]');
-    await chatbotTextArea.waitFor();
-    await expect(chatbotTextArea).toBeVisible();
-    await chatbotTextArea.fill('what is ansible ?');
+      await page.reload({ waitUntil: 'networkidle' });
+      const chatbotBadge = page.locator('[data-testid="chatbot-badge"]');
+      await expect(chatbotBadge).toBeVisible();
+      await chatbotBadge.click();
+      const chatbotIFrame = page.frameLocator('iframe[title="Ansible Chatbot IFrame"]');
+      const chatbotTextArea = chatbotIFrame.locator('textarea[aria-label="Send a message..."]');
+      await chatbotTextArea.waitFor();
+      await expect(chatbotTextArea).toBeVisible();
+      await chatbotTextArea.fill('what is ansible ?');
 
-    await page.locator('[data-testid="chatbot-badge"]').click();
-    await expect(chatbotTextArea).not.toBeVisible();
-  });
+      await page.locator('[data-testid="chatbot-badge"]').click();
+      await expect(chatbotTextArea).not.toBeVisible();
+    }
+  );
 
   test(
     'should hide chatbot badge when the chatbot service is disabled',
-    { tag: [] },
+    { tag: ['@tier1'] },
     async ({ page }) => {
       await Lightspeed.mock.healthStatus(page, 200, {
         'chatbot-service': 'disabled',
@@ -49,7 +53,7 @@ test.describe('Chatbot', () => {
 
   test(
     'should hide the chatbot badge when health status request return an error',
-    { tag: [] },
+    { tag: ['@tier1'] },
     async ({ page }) => {
       await Lightspeed.mock.healthStatus(page, 200, {
         'chatbot-service': 'an error occurred',
@@ -65,7 +69,7 @@ test.describe('Chatbot', () => {
 
   test(
     'should have RAG conversation return a meaningful response',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.setTimeout(120000);
 
@@ -122,7 +126,7 @@ test.describe('Chatbot', () => {
 
   test(
     'should have MCP conversation return a meaningful response',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       const healthResponse = await page.request.get(
         `${platformUI}/api/lightspeed/v1/health/status/chatbot/`
