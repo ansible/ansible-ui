@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 
 const featureFlagsResponse = {
-  count: 5,
+  count: 4,
   next: null,
   previous: null,
   results: [
@@ -70,40 +70,6 @@ const featureFlagsResponse = {
       description: 'Submit Event-Driven Ansible usage analytics to console.redhat.com.',
       support_url: 'https://access.redhat.com/solutions/7112810',
       labels: ['eda'],
-      state: false,
-    },
-    {
-      id: 3,
-      url: '/api/gateway/v1/feature_flags/3/',
-      related: {
-        activity_stream: '/api/gateway/v1/activitystream/?content_type=29&object_id=3',
-        created_by: '/api/gateway/v1/users/1/',
-        modified_by: '/api/gateway/v1/users/1/',
-      },
-      summary_fields: {
-        modified_by: { id: 1, username: '_system', first_name: '', last_name: '' },
-        created_by: { id: 1, username: '_system', first_name: '', last_name: '' },
-        resource: {
-          ansible_id: '029efdea-9812-40d2-9c19-dd0bd8b6765c',
-          resource_type: 'shared.aapflag',
-        },
-      },
-      created: '2026-03-10T14:00:05.333607Z',
-      created_by: 1,
-      modified: '2026-03-10T14:00:05.333597Z',
-      modified_by: 1,
-      name: 'FEATURE_GATEWAY_CREATE_CRC_SERVICE_TYPE_ENABLED',
-      ui_name: 'Dynamic Service Type Feature',
-      condition: 'boolean',
-      value: 'False',
-      required: false,
-      support_level: 'DEVELOPER_PREVIEW',
-      visibility: false,
-      toggle_type: 'install-time',
-      description:
-        'The Dynamic Service Type feature allows for the introduction of new platform services without requiring registration to the existing database. The new service can be enabled through the use of configuration.',
-      support_url: 'https://access.redhat.com/articles/7122668',
-      labels: ['gateway'],
       state: false,
     },
     {
