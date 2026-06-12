@@ -80,7 +80,7 @@ export default defineConfig({
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**', '**/vitest.setup.ts'],
+      exclude: ['node_modules/**', '**/vitest.*.ts'],
     },
     css: !process.env.CI,
     environment: 'happy-dom',

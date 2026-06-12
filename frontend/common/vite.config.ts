@@ -22,7 +22,7 @@ export default defineConfig({
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**'],
+      exclude: ['node_modules/**', '**/vitest.*.ts'],
     },
     server: {
       deps: {
