@@ -85,7 +85,7 @@ const { data, error, refresh, isLoading } = useGet<User>(awxAPI`/users/${id}/`);
 const { data: user } = useGetItem<User>(awxAPI`/users/`, id);
 ```
 
-Always use `swrOptions` (sets `dedupingInterval: 0`).
+The global `SWRConfig` in `PageSettingsProvider` sets `dedupingInterval: 2000`.
 
 ### OPTIONS Endpoint
 
