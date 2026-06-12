@@ -350,14 +350,10 @@ describe('EditInventorySource', () => {
   test('should transform project root input to empty string for API submission', () => {
     // This tests the lines 68 and 169 transformation logic:
     // source_path: values?.source_path?.name === '. (project root)' ? '' : values?.source_path?.name
-    const projectRootInput = '. (project root)';
-    const expectedApiValue = projectRootInput === '. (project root)' ? '' : projectRootInput;
-    expect(expectedApiValue).toBe('');
+    const transformForSubmit = (value: string) => (value === '. (project root)' ? '' : value);
 
-    // Also verify non-root paths pass through unchanged
-    const normalPath = 'inventories/hosts.yml';
-    const expectedNormalValue = normalPath === '. (project root)' ? '' : normalPath;
-    expect(expectedNormalValue).toBe('inventories/hosts.yml');
+    expect(transformForSubmit('. (project root)')).toBe('');
+    expect(transformForSubmit('inventories/hosts.yml')).toBe('inventories/hosts.yml');
   });
 });
 
