@@ -767,4 +767,119 @@ describe('TemplateSurveyForm', () => {
       expect(screen.getByRole('button', { name: /save survey question/i })).toBeInTheDocument();
     });
   });
+
+  describe('Integer/Float Default Value of 0 Bug Fix', () => {
+    const createSurveyWithIntegerQuestion = (
+      options: { withDefault?: boolean; defaultValue?: number | string } = {}
+    ): Survey => {
+      const { withDefault = true, defaultValue = 10 } = options;
+
+      const baseSpec: Partial<Spec> = {
+        question_name: 'Test Integer Question',
+        question_description: 'An integer question',
+        required: false,
+        type: 'integer',
+        variable: 'integer_variable',
+        min: 0,
+        max: 1024,
+        choices: '',
+        new_question: false,
+      };
+
+      if (withDefault) {
+        (baseSpec as Spec).default = defaultValue;
+      }
+
+      return {
+        name: 'Test Survey',
+        description: 'Test Survey Description',
+        spec: [baseSpec as Spec],
+      };
+    };
+
+    const createSurveyWithFloatQuestion = (
+      options: { withDefault?: boolean; defaultValue?: number | string } = {}
+    ): Survey => {
+      const { withDefault = true, defaultValue = 5.5 } = options;
+
+      const baseSpec: Partial<Spec> = {
+        question_name: 'Test Float Question',
+        question_description: 'A float question',
+        required: false,
+        type: 'float',
+        variable: 'float_variable',
+        min: 0,
+        max: 100,
+        choices: '',
+        new_question: false,
+      };
+
+      if (withDefault) {
+        (baseSpec as Spec).default = defaultValue;
+      }
+
+      return {
+        name: 'Test Survey',
+        description: 'Test Survey Description',
+        spec: [baseSpec as Spec],
+      };
+    };
+
+    test('should preserve integer default value of 0', async () => {
+      const surveyWithZeroDefault = createSurveyWithIntegerQuestion({
+        withDefault: true,
+        defaultValue: 0,
+      });
+
+      renderSurveyForm(server, surveyWithZeroDefault, {
+        mode: 'edit',
+        questionVariable: 'integer_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      const defaultInput = screen.getByLabelText(/default answer/i);
+      expect(defaultInput).toHaveValue(0);
+    });
+
+    test('should preserve float default value of 0', async () => {
+      const surveyWithZeroDefault = createSurveyWithFloatQuestion({
+        withDefault: true,
+        defaultValue: 0,
+      });
+
+      renderSurveyForm(server, surveyWithZeroDefault, {
+        mode: 'edit',
+        questionVariable: 'float_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      const defaultInput = screen.getByLabelText(/default answer/i);
+      expect(defaultInput).toHaveValue(0);
+    });
+
+    test('should preserve float default value of 0.0', async () => {
+      const surveyWithZeroDefault = createSurveyWithFloatQuestion({
+        withDefault: true,
+        defaultValue: 0.0,
+      });
+
+      renderSurveyForm(server, surveyWithZeroDefault, {
+        mode: 'edit',
+        questionVariable: 'float_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      const defaultInput = screen.getByLabelText(/default answer/i);
+      expect(defaultInput).toHaveValue(0);
+    });
+  });
 });
