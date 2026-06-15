@@ -95,7 +95,7 @@ function mergeSurveyIntoVariables(
   variables: string | undefined,
   surveyValues: Record<string, unknown>
 ): string {
-  const jsonObj: { [key: string]: string } = {};
+  const jsonObj: Record<string, unknown> = {};
 
   if (variables) {
     const lines = variables.split('\n');
