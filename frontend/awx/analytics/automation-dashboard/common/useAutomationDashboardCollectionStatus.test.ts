@@ -11,7 +11,7 @@ vi.mock('../../../common/api/metrics-utils', () => ({
 vi.mock('../../../../common/crud/Data');
 
 import useSWR from 'swr';
-import { usePlatformActiveUser } from '../../../../../platform/main/PlatformActiveUserProvider';
+import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
 import { useFetcher } from '../../../../common/crud/Data';
 import { useAutomationDashboardCollectionStatus } from './useAutomationDashboardCollectionStatus';
 import { IAutomationDashboardCollectionStatus } from '../types';
@@ -30,7 +30,38 @@ function setupActiveUser({
   is_platform_auditor?: boolean;
 } = {}) {
   vi.mocked(usePlatformActiveUser).mockReturnValue({
-    activePlatformUser: { is_superuser, is_platform_auditor } as never,
+    activePlatformUser: {
+      is_superuser,
+      is_platform_auditor,
+      id: 0,
+      url: '',
+      created: '',
+      created_by: '',
+      modified: '',
+      modified_by: '',
+      related: {},
+      summary_fields: {
+        modified_by: {
+          id: 0,
+          username: '',
+          first_name: '',
+          last_name: '',
+        },
+        created_by: {
+          id: 0,
+          username: '',
+          first_name: '',
+          last_name: '',
+        },
+        resource: {
+          ansible_id: '',
+          resource_type: '',
+        },
+      },
+      username: '',
+      last_login_map_results: [],
+      managed: false,
+    },
     refreshActivePlatformUser: vi.fn(),
   });
 }
@@ -44,7 +75,7 @@ function setupActiveUserUndefined() {
 
 function setupActiveUserNull() {
   vi.mocked(usePlatformActiveUser).mockReturnValue({
-    activePlatformUser: null as never,
+    activePlatformUser: null,
     refreshActivePlatformUser: vi.fn(),
   });
 }
@@ -56,13 +87,13 @@ function setupSWR(data?: IAutomationDashboardCollectionStatus, error?: Error) {
     mutate: vi.fn(),
     isValidating: false,
     isLoading: !data && !error,
-  } as never);
+  });
 }
 
 describe('useAutomationDashboardCollectionStatus', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useFetcher).mockReturnValue(vi.fn() as never);
+    vi.mocked(useFetcher).mockReturnValue(vi.fn());
   });
 
   describe('when user is not superuser or auditor', () => {
@@ -72,7 +103,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(false);
       // SWR should be called with null key (no fetch)
       expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
     });
@@ -85,7 +117,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(false);
       expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
     });
   });
@@ -97,7 +130,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(false);
       expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
     });
   });
@@ -109,7 +143,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(true);
     });
 
     test('should return data from API when available', () => {
@@ -123,7 +158,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current).toEqual(apiData);
+      expect(result.current.collectionStatus).toEqual(apiData);
+      expect(result.current.isLoading).toBe(false);
     });
 
     test('should return default status on error', () => {
@@ -132,7 +168,23 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    test('should return default status when both data and error exist (revalidation failure)', () => {
+      const apiData: IAutomationDashboardCollectionStatus = {
+        enabled: true,
+        next_run: new Date('2026-05-01T00:00:00Z'),
+        initial_collection_status: 'completed',
+      };
+      setupActiveUser({ is_superuser: true });
+      setupSWR(apiData, new Error('Revalidation failed'));
+
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(false);
     });
 
     test('should fetch using the metrics API URL', () => {
@@ -148,7 +200,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
     test('should pass the fetcher function as second argument to SWR', () => {
       const mockFetcherFn = vi.fn();
-      vi.mocked(useFetcher).mockReturnValue(mockFetcherFn as never);
+      vi.mocked(useFetcher).mockReturnValue(mockFetcherFn);
       setupActiveUser({ is_superuser: true });
       setupSWR();
 
@@ -163,23 +215,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       renderHook(() => useAutomationDashboardCollectionStatus());
 
-      const options = vi.mocked(useSWR).mock.calls[0][2] as Record<string, unknown>;
+      const options = vi.mocked(useSWR).mock.calls[0][2];
       expect(options).toMatchObject({ dedupingInterval: 0, refreshInterval: 10 * 1000 });
-    });
-
-    test('should return default status during initial loading (no data and no error)', () => {
-      setupActiveUser({ is_superuser: true });
-      vi.mocked(useSWR).mockReturnValue({
-        data: undefined,
-        error: undefined,
-        mutate: vi.fn(),
-        isValidating: true,
-        isLoading: true,
-      } as never);
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current).toEqual(DEFAULT_STATUS);
     });
   });
 
@@ -195,7 +232,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current).toEqual(apiData);
+      expect(result.current.collectionStatus).toEqual(apiData);
+      expect(result.current.isLoading).toBe(false);
       const swrKey = vi.mocked(useSWR).mock.calls[0][0];
       expect(swrKey).not.toBeNull();
     });
@@ -212,7 +250,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupSWR();
 
       const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
-      expect(result.current).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(true);
 
       // Simulate data arriving
       setupSWR(apiData);
@@ -220,7 +259,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
         rerender();
       });
 
-      expect(result.current).toEqual(apiData);
+      expect(result.current.collectionStatus).toEqual(apiData);
+      expect(result.current.isLoading).toBe(false);
     });
 
     test('should revert to default status when error occurs after data was loaded', () => {
@@ -233,7 +273,8 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupSWR(apiData);
 
       const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
-      expect(result.current).toEqual(apiData);
+      expect(result.current.collectionStatus).toEqual(apiData);
+      expect(result.current.isLoading).toBe(false);
 
       // Simulate error
       setupSWR(undefined, new Error('Server error'));
@@ -241,7 +282,144 @@ describe('useAutomationDashboardCollectionStatus', () => {
         rerender();
       });
 
-      expect(result.current).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    test('should transition from non-superuser to superuser and start loading', () => {
+      setupActiveUser({ is_superuser: false });
+      setupSWR();
+
+      const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
+      expect(result.current.isLoading).toBe(false);
+
+      // User becomes superuser
+      setupActiveUser({ is_superuser: true });
+      vi.mocked(useSWR).mockReturnValue({
+        data: undefined,
+        error: undefined,
+        mutate: vi.fn(),
+        isValidating: true,
+        isLoading: true,
+      });
+
+      act(() => {
+        rerender();
+      });
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    test('should track multiple loading state transitions', () => {
+      setupActiveUser({ is_superuser: true });
+
+      // Initial loading state
+      vi.mocked(useSWR).mockReturnValue({
+        data: undefined,
+        error: undefined,
+        mutate: vi.fn(),
+        isValidating: true,
+        isLoading: true,
+      });
+
+      const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
+      expect(result.current.isLoading).toBe(true);
+
+      // Data arrives
+      const apiData: IAutomationDashboardCollectionStatus = {
+        enabled: true,
+        next_run: null,
+        initial_collection_status: 'completed',
+      };
+      vi.mocked(useSWR).mockReturnValue({
+        data: apiData,
+        error: undefined,
+        mutate: vi.fn(),
+        isValidating: false,
+        isLoading: false,
+      });
+
+      act(() => {
+        rerender();
+      });
+
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.collectionStatus).toEqual(apiData);
+
+      // Revalidating (but has cached data)
+      vi.mocked(useSWR).mockReturnValue({
+        data: apiData,
+        error: undefined,
+        mutate: vi.fn(),
+        isValidating: true,
+        isLoading: false,
+      });
+
+      act(() => {
+        rerender();
+      });
+
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.collectionStatus).toEqual(apiData);
+    });
+  });
+
+  describe('memoization', () => {
+    test('should return stable object reference when values do not change', () => {
+      setupActiveUser({ is_superuser: true });
+      const apiData: IAutomationDashboardCollectionStatus = {
+        enabled: true,
+        next_run: null,
+        initial_collection_status: 'completed',
+      };
+      setupSWR(apiData);
+
+      const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
+      const firstResult = result.current;
+
+      act(() => {
+        rerender();
+      });
+
+      const secondResult = result.current;
+      expect(firstResult).toBe(secondResult);
+    });
+
+    test('should return new object reference when isLoading changes', () => {
+      setupActiveUser({ is_superuser: true });
+      vi.mocked(useSWR).mockReturnValue({
+        data: undefined,
+        error: undefined,
+        mutate: vi.fn(),
+        isValidating: true,
+        isLoading: true,
+      });
+
+      const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
+      const firstResult = result.current;
+      expect(firstResult.isLoading).toBe(true);
+
+      // Data arrives - isLoading changes
+      const apiData: IAutomationDashboardCollectionStatus = {
+        enabled: true,
+        next_run: null,
+        initial_collection_status: 'completed',
+      };
+      vi.mocked(useSWR).mockReturnValue({
+        data: apiData,
+        error: undefined,
+        mutate: vi.fn(),
+        isValidating: false,
+        isLoading: false,
+      });
+
+      act(() => {
+        rerender();
+      });
+
+      const secondResult = result.current;
+      expect(secondResult.isLoading).toBe(false);
+      expect(firstResult).not.toBe(secondResult);
     });
   });
 });
