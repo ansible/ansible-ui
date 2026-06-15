@@ -3,11 +3,23 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { jobsFixture } from './jobs.fixture';
 import { Jobs } from './Jobs';
 import { getWsAction } from './JobsList';
+
+let capturedOnMessage: ((message: unknown) => void) | undefined;
+
+vi.mock('../../common/useAwxWebSocket', () => ({
+  useAwxWebSocketSubscription: (
+    _events: Record<string, string[]>,
+    onMessage: (message: unknown) => void
+  ) => {
+    capturedOnMessage = onMessage;
+    return { sendMessage: vi.fn(), lastMessage: null, readyState: 1 };
+  },
+}));
 
 const server = setupServer(
   http.options(awxAPI`/unified_jobs/`, () => {
@@ -64,7 +76,10 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  capturedOnMessage = undefined;
+});
 afterAll(() => server.close());
 
 describe('JobsList Component Tests', () => {
@@ -399,4 +414,102 @@ describe('getWsAction', () => {
       )
     ).toEqual({ type: 'refresh' });
   });
+});
+
+describe('JobsList WebSocket handler integration', () => {
+  async function renderAndWaitForJobs() {
+    render(
+      <MemoryRouter>
+        <Jobs />
+      </MemoryRouter>
+    );
+    await waitFor(
+      () => {
+        expect(screen.getByText('491')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+    expect(capturedOnMessage).toBeDefined();
+  }
+
+  test('should call full list refresh on pending status', async () => {
+    let listFetchCount = 0;
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'pending',
+      unified_job_id: 999,
+    });
+
+    await waitFor(() => {
+      expect(listFetchCount).toBeGreaterThan(initialCount);
+    });
+
+    server.events.removeAllListeners();
+  }, 15000);
+
+  test('should fetch individual job on intermediate status for on-page job', async () => {
+    let detailFetchId: string | undefined;
+    server.use(
+      http.get('*/unified_jobs/:id/', ({ params }) => {
+        detailFetchId = params['id'] as string;
+        return HttpResponse.json({ ...jobsFixture.results[1], status: 'running' });
+      })
+    );
+
+    await renderAndWaitForJobs();
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'running',
+      unified_job_id: 492,
+    });
+
+    await waitFor(() => {
+      expect(detailFetchId).toBe('492');
+    });
+  }, 15000);
+
+  test('should skip for intermediate status when job is not on page', async () => {
+    let detailFetched = false;
+    let listFetchCount = 0;
+    server.use(
+      http.get('*/unified_jobs/:id/', () => {
+        detailFetched = true;
+        return HttpResponse.json({});
+      })
+    );
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialListCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'running',
+      unified_job_id: 9999,
+    });
+
+    await new Promise((r) => setTimeout(r, 500));
+
+    expect(detailFetched).toBe(false);
+    expect(listFetchCount).toBe(initialListCount);
+
+    server.events.removeAllListeners();
+  }, 15000);
 });
