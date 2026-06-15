@@ -1,7 +1,8 @@
 import { ITableColumn, PageTable } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { CubesIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
 import { createThrottle } from '../../common/util/createThrottle';
@@ -14,6 +15,16 @@ import { useJobToolbarActions } from '../../views/jobs/hooks/useJobToolbarAction
 import { useJobsFilters } from '../../views/jobs/hooks/useJobsFilters';
 
 type QueryParams = { [key: string]: string };
+
+type WebSocketMessage = {
+  group_name?: string;
+  type?: string;
+  status?: string;
+  unified_job_id?: number;
+};
+
+const FINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+const NEW_JOB_STATUSES = new Set(['new', 'pending']);
 
 export function JobsList(props: {
   queryParams?: QueryParams;
@@ -35,7 +46,7 @@ export function JobsList(props: {
 
   usePersistentFilters('jobs');
 
-  const { refresh } = view;
+  const { refresh, updateItem, pageItems } = view;
   const throttledRefresh = useMemo(
     () =>
       createThrottle(() => {
@@ -45,19 +56,44 @@ export function JobsList(props: {
   );
   useEffect(() => () => throttledRefresh.cancel(), [throttledRefresh]);
 
+  const pageItemsRef = useRef(pageItems);
+  pageItemsRef.current = pageItems;
+  const updateItemRef = useRef(updateItem);
+  updateItemRef.current = updateItem;
+
   const handleWebSocketMessage = useCallback(
-    (message?: { group_name?: string; type?: string }) => {
-      switch (message?.group_name) {
-        case 'jobs':
-          switch (message?.type) {
-            case 'job':
-            case 'workflow_job':
-            case 'project_update':
-              throttledRefresh();
-              break;
-          }
+    (message?: WebSocketMessage) => {
+      if (message?.group_name !== 'jobs') return;
+
+      switch (message?.type) {
+        case 'job':
+        case 'workflow_job':
+        case 'project_update':
           break;
+        default:
+          return;
       }
+
+      const status = message?.status;
+      const jobId = message?.unified_job_id;
+
+      if (!status || !jobId) {
+        throttledRefresh();
+        return;
+      }
+
+      if (NEW_JOB_STATUSES.has(status) || FINAL_STATUSES.has(status)) {
+        throttledRefresh();
+        return;
+      }
+
+      const existingJob = (pageItemsRef.current ?? []).find((item) => item.id === jobId);
+      if (!existingJob) return;
+
+      void requestGet<UnifiedJob>(awxAPI`/unified_jobs/${jobId.toString()}/`).then(
+        (updatedJob) => updateItemRef.current(updatedJob),
+        () => throttledRefresh()
+      );
     },
     [throttledRefresh]
   );
