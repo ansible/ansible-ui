@@ -18,12 +18,14 @@ import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
 export function PageFramework(props: {
   children: ReactNode;
   defaultRefreshInterval: number;
+  defaultDedupingInterval?: number;
   disableThemeManagement?: boolean;
 }) {
   return (
     <FrameworkTranslationsProvider>
       <PageSettingsProvider
         defaultRefreshInterval={props.defaultRefreshInterval}
+        defaultDedupingInterval={props.defaultDedupingInterval}
         disableThemeManagement={props.disableThemeManagement}
       >
         <PageNavigationRoutesProvider>
