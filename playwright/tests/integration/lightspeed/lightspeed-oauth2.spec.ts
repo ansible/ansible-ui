@@ -12,7 +12,7 @@ test.describe('Ansible Lightspeed oauth2', () => {
 
   test(
     'should authenticate to lightspeed via oauth2 successfully',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       test.skip(!lightspeedServer, 'LIGHTSPEED_SERVER not supplied');
       test.skip(!userName, 'PLATFORM_USERNAME not supplied');
