@@ -239,14 +239,16 @@ describe('PlatformRoles', () => {
     );
   }, 15000);
 
-  it('should display table columns headers', () => {
+  it('should display table columns headers', async () => {
     const { getByRole } = render(
       <MemoryRouter>
         <PlatformRoles />
       </MemoryRouter>
     );
 
-    expect(getByRole('columnheader', { name: 'Name' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByRole('columnheader', { name: 'Name' })).toBeInTheDocument();
+    });
     expect(getByRole('columnheader', { name: 'Description' })).toBeInTheDocument();
     expect(getByRole('columnheader', { name: 'Components' })).toBeInTheDocument();
     expect(getByRole('columnheader', { name: 'Resource type' })).toBeInTheDocument();

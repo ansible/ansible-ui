@@ -168,7 +168,9 @@ describe('PlatformRoleForm', () => {
         </MemoryRouter>
       );
 
-      expect(getByRole('textbox', { name: 'Name' })).toHaveValue('Demo role');
+      await waitFor(() => {
+        expect(getByRole('textbox', { name: 'Name' })).toHaveValue('Demo role');
+      });
       expect(getByRole('textbox', { name: 'Description' })).toHaveValue('This is a demo role');
       expect(await findByText('Rulebook Activation')).toBeInTheDocument();
       expect(await findByText('Can view activation')).toBeInTheDocument();
