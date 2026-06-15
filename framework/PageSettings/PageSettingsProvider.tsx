@@ -62,6 +62,7 @@ export function usePageSettings() {
 export function PageSettingsProvider(props: {
   children?: ReactNode;
   defaultRefreshInterval: number;
+  defaultDedupingInterval?: number;
   disableThemeManagement?: boolean;
 }) {
   const [settings, setSettingsState] = useState<IPageSettings>(() => {
@@ -118,7 +119,12 @@ export function PageSettingsProvider(props: {
   return (
     <SWRConfig
       value={{
-        dedupingInterval: 2000,
+        dedupingInterval:
+          props.defaultDedupingInterval ??
+          ((globalThis as unknown as Record<string, number>).__SWR_DEDUPING_INTERVAL__ as
+            | number
+            | undefined) ??
+          2000,
         refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
         revalidateOnFocus: false,
         onErrorRetry: swrErrorRetryHandler,
