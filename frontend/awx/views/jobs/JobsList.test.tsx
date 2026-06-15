@@ -3,10 +3,22 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { jobsFixture } from './jobs.fixture';
 import { Jobs } from './Jobs';
+
+let capturedOnMessage: ((message: unknown) => void) | undefined;
+
+vi.mock('../../common/useAwxWebSocket', () => ({
+  useAwxWebSocketSubscription: (
+    _events: Record<string, string[]>,
+    onMessage: (message: unknown) => void
+  ) => {
+    capturedOnMessage = onMessage;
+    return { sendMessage: vi.fn(), lastMessage: null, readyState: 1 };
+  },
+}));
 
 const server = setupServer(
   http.options(awxAPI`/unified_jobs/`, () => {
@@ -63,7 +75,10 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  capturedOnMessage = undefined;
+});
 afterAll(() => server.close());
 
 describe('JobsList Component Tests', () => {
@@ -288,5 +303,219 @@ describe('JobsList Component Tests', () => {
       },
       { timeout: 10000 }
     );
+  }, 15000);
+});
+
+describe('JobsList WebSocket Handler', () => {
+  async function renderAndWaitForJobs() {
+    render(
+      <MemoryRouter>
+        <Jobs />
+      </MemoryRouter>
+    );
+    await waitFor(
+      () => {
+        expect(screen.getByText('491')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+    expect(capturedOnMessage).toBeDefined();
+  }
+
+  test('should trigger full list refresh on pending status', async () => {
+    let listFetchCount = 0;
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'pending',
+      unified_job_id: 999,
+    });
+
+    await waitFor(() => {
+      expect(listFetchCount).toBeGreaterThan(initialCount);
+    });
+
+    server.events.removeAllListeners();
+  }, 15000);
+
+  test('should trigger full list refresh on final status', async () => {
+    let listFetchCount = 0;
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'successful',
+      unified_job_id: 492,
+    });
+
+    await waitFor(() => {
+      expect(listFetchCount).toBeGreaterThan(initialCount);
+    });
+
+    server.events.removeAllListeners();
+  }, 15000);
+
+  test('should fetch individual job for intermediate status when job is on page', async () => {
+    let detailFetchId: string | undefined;
+    server.use(
+      http.get('*/unified_jobs/:id/', ({ params }) => {
+        detailFetchId = params['id'] as string;
+        return HttpResponse.json({ ...jobsFixture.results[1], status: 'running' });
+      })
+    );
+
+    await renderAndWaitForJobs();
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'running',
+      unified_job_id: 492,
+    });
+
+    await waitFor(() => {
+      expect(detailFetchId).toBe('492');
+    });
+  }, 15000);
+
+  test('should skip fetch for intermediate status when job is not on page', async () => {
+    let detailFetched = false;
+    let listFetchCount = 0;
+    server.use(
+      http.get('*/unified_jobs/:id/', () => {
+        detailFetched = true;
+        return HttpResponse.json({});
+      })
+    );
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialListCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'running',
+      unified_job_id: 9999,
+    });
+
+    // Give time for any async work to settle
+    await new Promise((r) => setTimeout(r, 500));
+
+    expect(detailFetched).toBe(false);
+    expect(listFetchCount).toBe(initialListCount);
+
+    server.events.removeAllListeners();
+  }, 15000);
+
+  test('should fall back to full refresh when status is missing', async () => {
+    let listFetchCount = 0;
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      unified_job_id: 492,
+    });
+
+    await waitFor(() => {
+      expect(listFetchCount).toBeGreaterThan(initialCount);
+    });
+
+    server.events.removeAllListeners();
+  }, 15000);
+
+  test('should ignore messages with non-job group_name', async () => {
+    let detailFetched = false;
+    let listFetchCount = 0;
+    server.use(
+      http.get('*/unified_jobs/:id/', () => {
+        detailFetched = true;
+        return HttpResponse.json({});
+      })
+    );
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialListCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'inventories',
+      type: 'job',
+      status: 'pending',
+      unified_job_id: 492,
+    });
+
+    await new Promise((r) => setTimeout(r, 500));
+
+    expect(detailFetched).toBe(false);
+    expect(listFetchCount).toBe(initialListCount);
+
+    server.events.removeAllListeners();
+  }, 15000);
+
+  test('should ignore messages with unrecognized type', async () => {
+    let detailFetched = false;
+    let listFetchCount = 0;
+    server.use(
+      http.get('*/unified_jobs/:id/', () => {
+        detailFetched = true;
+        return HttpResponse.json({});
+      })
+    );
+    server.events.on('request:match', ({ request }) => {
+      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
+        listFetchCount++;
+      }
+    });
+
+    await renderAndWaitForJobs();
+    const initialListCount = listFetchCount;
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'inventory_update',
+      status: 'running',
+      unified_job_id: 492,
+    });
+
+    await new Promise((r) => setTimeout(r, 500));
+
+    expect(detailFetched).toBe(false);
+    expect(listFetchCount).toBe(initialListCount);
+
+    server.events.removeAllListeners();
   }, 15000);
 });
