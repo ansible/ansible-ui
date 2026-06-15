@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { getAddedAndRemovedCredentials, type Credential } from './getAddedAndRemovedCredentials';
+import { getAddedAndRemovedCredentials, type CredentialRef } from './getAddedAndRemovedCredentials';
 
-const cred = (id: number, credentialType: number, name = `Credential ${id}`): Credential => ({
+const cred = (id: number, credentialType: number, name = `Credential ${id}`): CredentialRef => ({
   id,
   name,
   credential_type: credentialType,
@@ -65,7 +65,7 @@ describe('getAddedAndRemovedCredentials', () => {
   describe('removing credentials', () => {
     it('should detect a node credential removed from prompt', () => {
       const nodeCreds = [cred(3, 1, 'Node SSH')];
-      const promptCreds: Credential[] = [];
+      const promptCreds: CredentialRef[] = [];
 
       const { added, removed } = getAddedAndRemovedCredentials(nodeCreds, promptCreds, []);
       expect(added).toEqual([]);
@@ -119,8 +119,8 @@ describe('getAddedAndRemovedCredentials', () => {
   describe('template change scenarios', () => {
     it('should disassociate all node credentials when prompt is empty (template switch to no-prompts)', () => {
       const nodeCreds = [cred(3, 1, 'Node SSH'), cred(4, 2, 'Node Vault'), cred(5, 3, 'Node SCM')];
-      const promptCreds: Credential[] = [];
-      const templateCreds: Credential[] = [];
+      const promptCreds: CredentialRef[] = [];
+      const templateCreds: CredentialRef[] = [];
 
       const { added, removed } = getAddedAndRemovedCredentials(
         nodeCreds,
@@ -134,7 +134,7 @@ describe('getAddedAndRemovedCredentials', () => {
 
     it('should disassociate node credentials even when new template has its own defaults', () => {
       const nodeCreds = [cred(3, 1, 'Old Template SSH')];
-      const promptCreds: Credential[] = [];
+      const promptCreds: CredentialRef[] = [];
       const newTemplateCreds = [cred(10, 1, 'New Template SSH')];
 
       const { added, removed } = getAddedAndRemovedCredentials(
