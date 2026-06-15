@@ -1,13 +1,13 @@
-export interface Credential {
+export interface CredentialRef {
   id: number;
   name: string;
   credential_type: number;
 }
 
 export function getAddedAndRemovedCredentials(
-  nodeCredentials: Credential[],
-  promptCredentials: Credential[],
-  templateCredentials: Credential[]
+  nodeCredentials: CredentialRef[],
+  promptCredentials: CredentialRef[],
+  templateCredentials: CredentialRef[]
 ) {
   const aggregateCredentials = [...nodeCredentials, ...templateCredentials];
 
