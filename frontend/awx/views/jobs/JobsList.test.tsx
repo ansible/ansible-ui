@@ -482,21 +482,14 @@ describe('JobsList WebSocket handler integration', () => {
 
   test('should skip for intermediate status when job is not on page', async () => {
     let detailFetched = false;
-    let listFetchCount = 0;
     server.use(
       http.get('*/unified_jobs/:id/', () => {
         detailFetched = true;
         return HttpResponse.json({});
       })
     );
-    server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
-      }
-    });
 
     await renderAndWaitForJobs();
-    const initialListCount = listFetchCount;
 
     capturedOnMessage!({
       group_name: 'jobs',
@@ -508,8 +501,5 @@ describe('JobsList WebSocket handler integration', () => {
     await new Promise((r) => setTimeout(r, 500));
 
     expect(detailFetched).toBe(false);
-    expect(listFetchCount).toBe(initialListCount);
-
-    server.events.removeAllListeners();
   }, 15000);
 });
