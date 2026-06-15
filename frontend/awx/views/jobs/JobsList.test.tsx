@@ -3,22 +3,11 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { jobsFixture } from './jobs.fixture';
 import { Jobs } from './Jobs';
-
-let capturedOnMessage: ((message: unknown) => void) | undefined;
-
-vi.mock('../../common/useAwxWebSocket', () => ({
-  useAwxWebSocketSubscription: (
-    _events: Record<string, string[]>,
-    onMessage: (message: unknown) => void
-  ) => {
-    capturedOnMessage = onMessage;
-    return { sendMessage: vi.fn(), lastMessage: null, readyState: 1 };
-  },
-}));
+import { getWsAction } from './JobsList';
 
 const server = setupServer(
   http.options(awxAPI`/unified_jobs/`, () => {
@@ -75,10 +64,7 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => {
-  server.resetHandlers();
-  capturedOnMessage = undefined;
-});
+afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('JobsList Component Tests', () => {
@@ -306,216 +292,111 @@ describe('JobsList Component Tests', () => {
   }, 15000);
 });
 
-describe('JobsList WebSocket Handler', () => {
-  async function renderAndWaitForJobs() {
-    render(
-      <MemoryRouter>
-        <Jobs />
-      </MemoryRouter>
-    );
-    await waitFor(
-      () => {
-        expect(screen.getByText('491')).toBeInTheDocument();
-      },
-      { timeout: 10000 }
-    );
-    expect(capturedOnMessage).toBeDefined();
-  }
+describe('getWsAction', () => {
+  const pageItemIds = [491, 492, 489, 488];
 
-  test('should trigger full list refresh on pending status', async () => {
-    let listFetchCount = 0;
-    server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
-      }
-    });
+  test('should return refresh for pending status', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'job', status: 'pending', unified_job_id: 999 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'refresh' });
+  });
 
-    await renderAndWaitForJobs();
-    const initialCount = listFetchCount;
+  test('should return refresh for new status', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'job', status: 'new', unified_job_id: 999 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'refresh' });
+  });
 
-    capturedOnMessage!({
-      group_name: 'jobs',
-      type: 'job',
-      status: 'pending',
-      unified_job_id: 999,
-    });
+  test('should return refresh for each final status', () => {
+    for (const status of ['successful', 'failed', 'error', 'canceled']) {
+      expect(
+        getWsAction({ group_name: 'jobs', type: 'job', status, unified_job_id: 492 }, pageItemIds)
+      ).toEqual({ type: 'refresh' });
+    }
+  });
 
-    await waitFor(() => {
-      expect(listFetchCount).toBeGreaterThan(initialCount);
-    });
+  test('should return fetch for intermediate status when job is on page', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'job', status: 'running', unified_job_id: 492 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'fetch', jobId: 492 });
+  });
 
-    server.events.removeAllListeners();
-  }, 15000);
+  test('should return fetch for waiting status when job is on page', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'job', status: 'waiting', unified_job_id: 491 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'fetch', jobId: 491 });
+  });
 
-  test('should trigger full list refresh on final status', async () => {
-    let listFetchCount = 0;
-    server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
-      }
-    });
+  test('should return skip for intermediate status when job is not on page', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'job', status: 'running', unified_job_id: 9999 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'skip' });
+  });
 
-    await renderAndWaitForJobs();
-    const initialCount = listFetchCount;
+  test('should return refresh when status is missing', () => {
+    expect(
+      getWsAction({ group_name: 'jobs', type: 'job', unified_job_id: 492 }, pageItemIds)
+    ).toEqual({ type: 'refresh' });
+  });
 
-    capturedOnMessage!({
-      group_name: 'jobs',
-      type: 'job',
-      status: 'successful',
-      unified_job_id: 492,
-    });
+  test('should return refresh when unified_job_id is missing', () => {
+    expect(
+      getWsAction({ group_name: 'jobs', type: 'job', status: 'running' }, pageItemIds)
+    ).toEqual({ type: 'refresh' });
+  });
 
-    await waitFor(() => {
-      expect(listFetchCount).toBeGreaterThan(initialCount);
-    });
+  test('should return skip for non-job group_name', () => {
+    expect(
+      getWsAction(
+        { group_name: 'inventories', type: 'job', status: 'pending', unified_job_id: 492 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'skip' });
+  });
 
-    server.events.removeAllListeners();
-  }, 15000);
+  test('should return skip for unrecognized type', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'inventory_update', status: 'running', unified_job_id: 492 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'skip' });
+  });
 
-  test('should fetch individual job for intermediate status when job is on page', async () => {
-    let detailFetchId: string | undefined;
-    server.use(
-      http.get('*/unified_jobs/:id/', ({ params }) => {
-        detailFetchId = params['id'] as string;
-        return HttpResponse.json({ ...jobsFixture.results[1], status: 'running' });
-      })
-    );
+  test('should return skip for undefined message', () => {
+    expect(getWsAction(undefined, pageItemIds)).toEqual({ type: 'skip' });
+  });
 
-    await renderAndWaitForJobs();
+  test('should handle workflow_job type', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'workflow_job', status: 'running', unified_job_id: 491 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'fetch', jobId: 491 });
+  });
 
-    capturedOnMessage!({
-      group_name: 'jobs',
-      type: 'job',
-      status: 'running',
-      unified_job_id: 492,
-    });
-
-    await waitFor(() => {
-      expect(detailFetchId).toBe('492');
-    });
-  }, 15000);
-
-  test('should skip fetch for intermediate status when job is not on page', async () => {
-    let detailFetched = false;
-    let listFetchCount = 0;
-    server.use(
-      http.get('*/unified_jobs/:id/', () => {
-        detailFetched = true;
-        return HttpResponse.json({});
-      })
-    );
-    server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
-      }
-    });
-
-    await renderAndWaitForJobs();
-    const initialListCount = listFetchCount;
-
-    capturedOnMessage!({
-      group_name: 'jobs',
-      type: 'job',
-      status: 'running',
-      unified_job_id: 9999,
-    });
-
-    // Give time for any async work to settle
-    await new Promise((r) => setTimeout(r, 500));
-
-    expect(detailFetched).toBe(false);
-    expect(listFetchCount).toBe(initialListCount);
-
-    server.events.removeAllListeners();
-  }, 15000);
-
-  test('should fall back to full refresh when status is missing', async () => {
-    let listFetchCount = 0;
-    server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
-      }
-    });
-
-    await renderAndWaitForJobs();
-    const initialCount = listFetchCount;
-
-    capturedOnMessage!({
-      group_name: 'jobs',
-      type: 'job',
-      unified_job_id: 492,
-    });
-
-    await waitFor(() => {
-      expect(listFetchCount).toBeGreaterThan(initialCount);
-    });
-
-    server.events.removeAllListeners();
-  }, 15000);
-
-  test('should ignore messages with non-job group_name', async () => {
-    let detailFetched = false;
-    let listFetchCount = 0;
-    server.use(
-      http.get('*/unified_jobs/:id/', () => {
-        detailFetched = true;
-        return HttpResponse.json({});
-      })
-    );
-    server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
-      }
-    });
-
-    await renderAndWaitForJobs();
-    const initialListCount = listFetchCount;
-
-    capturedOnMessage!({
-      group_name: 'inventories',
-      type: 'job',
-      status: 'pending',
-      unified_job_id: 492,
-    });
-
-    await new Promise((r) => setTimeout(r, 500));
-
-    expect(detailFetched).toBe(false);
-    expect(listFetchCount).toBe(initialListCount);
-
-    server.events.removeAllListeners();
-  }, 15000);
-
-  test('should ignore messages with unrecognized type', async () => {
-    let detailFetched = false;
-    let listFetchCount = 0;
-    server.use(
-      http.get('*/unified_jobs/:id/', () => {
-        detailFetched = true;
-        return HttpResponse.json({});
-      })
-    );
-    server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
-      }
-    });
-
-    await renderAndWaitForJobs();
-    const initialListCount = listFetchCount;
-
-    capturedOnMessage!({
-      group_name: 'jobs',
-      type: 'inventory_update',
-      status: 'running',
-      unified_job_id: 492,
-    });
-
-    await new Promise((r) => setTimeout(r, 500));
-
-    expect(detailFetched).toBe(false);
-    expect(listFetchCount).toBe(initialListCount);
-
-    server.events.removeAllListeners();
-  }, 15000);
+  test('should handle project_update type', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'project_update', status: 'pending', unified_job_id: 999 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'refresh' });
+  });
 });

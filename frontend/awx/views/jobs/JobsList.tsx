@@ -16,7 +16,7 @@ import { useJobsFilters } from '../../views/jobs/hooks/useJobsFilters';
 
 type QueryParams = { [key: string]: string };
 
-type WebSocketMessage = {
+export type WebSocketMessage = {
   group_name?: string;
   type?: string;
   status?: string;
@@ -25,6 +25,33 @@ type WebSocketMessage = {
 
 const FINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
 const NEW_JOB_STATUSES = new Set(['new', 'pending']);
+
+export type WsAction = { type: 'refresh' } | { type: 'fetch'; jobId: number } | { type: 'skip' };
+
+export function getWsAction(
+  message: WebSocketMessage | undefined,
+  pageItemIds: number[]
+): WsAction {
+  if (message?.group_name !== 'jobs') return { type: 'skip' };
+
+  switch (message?.type) {
+    case 'job':
+    case 'workflow_job':
+    case 'project_update':
+      break;
+    default:
+      return { type: 'skip' };
+  }
+
+  const status = message?.status;
+  const jobId = message?.unified_job_id;
+
+  if (!status || !jobId) return { type: 'refresh' };
+  if (NEW_JOB_STATUSES.has(status) || FINAL_STATUSES.has(status)) return { type: 'refresh' };
+
+  if (pageItemIds.includes(jobId)) return { type: 'fetch', jobId };
+  return { type: 'skip' };
+}
 
 export function JobsList(props: {
   queryParams?: QueryParams;
@@ -63,37 +90,22 @@ export function JobsList(props: {
 
   const handleWebSocketMessage = useCallback(
     (message?: WebSocketMessage) => {
-      if (message?.group_name !== 'jobs') return;
+      const pageItemIds = (pageItemsRef.current ?? []).map((item) => item.id);
+      const action = getWsAction(message, pageItemIds);
 
-      switch (message?.type) {
-        case 'job':
-        case 'workflow_job':
-        case 'project_update':
+      switch (action.type) {
+        case 'refresh':
+          throttledRefresh();
           break;
-        default:
-          return;
+        case 'fetch':
+          void requestGet<UnifiedJob>(awxAPI`/unified_jobs/${action.jobId.toString()}/`).then(
+            (updatedJob) => updateItemRef.current(updatedJob),
+            () => throttledRefresh()
+          );
+          break;
+        case 'skip':
+          break;
       }
-
-      const status = message?.status;
-      const jobId = message?.unified_job_id;
-
-      if (!status || !jobId) {
-        throttledRefresh();
-        return;
-      }
-
-      if (NEW_JOB_STATUSES.has(status) || FINAL_STATUSES.has(status)) {
-        throttledRefresh();
-        return;
-      }
-
-      const existingJob = (pageItemsRef.current ?? []).find((item) => item.id === jobId);
-      if (!existingJob) return;
-
-      void requestGet<UnifiedJob>(awxAPI`/unified_jobs/${jobId.toString()}/`).then(
-        (updatedJob) => updateItemRef.current(updatedJob),
-        () => throttledRefresh()
-      );
     },
     [throttledRefresh]
   );
