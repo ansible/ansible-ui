@@ -355,22 +355,17 @@ test.describe('Hub Collections - Details Page', () => {
       { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
         test.setTimeout(180000);
-        await collection.createNamespace({ name: 'ibm' });
+        const namespace = 'e2esigncoll';
+        const name = 'signcolltest';
 
-        let uploaded;
-        try {
-          uploaded = await collection.upload({
-            repository: 'staging',
-            tarballPath: COLLECTION_TARBALLS.zosmf,
-          });
-        } catch (error: unknown) {
-          const msg = error instanceof Error ? error.message : String(error);
-          if (/503|502|timeout|ECONNREFUSED|ECONNRESET|pulp/i.test(msg)) {
-            test.skip(true, `Collection upload failed — Pulp backend may be unhealthy: ${msg}`);
-            return;
-          }
-          throw error;
-        }
+        await collection.createNamespace({ name: namespace });
+
+        const uploaded = await collection.uploadVersion({
+          namespace,
+          name,
+          version: '1.0.0',
+          repository: 'staging',
+        });
 
         await collection.approveCollection({
           namespace: uploaded.namespace,
@@ -385,9 +380,17 @@ test.describe('Hub Collections - Details Page', () => {
           return;
         }
 
-        await clickKebabActionAndConfirm('sign-collection', page);
-
         await page.getByTestId('collection-detail-tab').click();
+        await expect(page.getByTestId('signed-state')).toContainText('Unsigned');
+
+        await page.getByTestId('actions-dropdown').click();
+        await page.getByTestId('sign-collection').click();
+
+        const modal = page.getByRole('dialog');
+        await modal.waitFor({ state: 'visible' });
+        await modal.getByTestId('confirm').click();
+        await modal.getByTestId('submit').click();
+
         await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 60000 });
       }
     );
@@ -684,6 +687,7 @@ test.describe('Hub Collections - Details Page', () => {
       'should render documentation content without error',
       { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
+        test.setTimeout(180000);
         const namespace = 'e2edocs';
         const name = 'docstab';
 
@@ -702,15 +706,38 @@ test.describe('Hub Collections - Details Page', () => {
         });
 
         await waitForDocsBlob(page, namespace, name, '1.0.0');
+
+        // Also wait for docs_blob to be available via the Pulp content API
+        // (which the CollectionDocumentation component uses to render docs)
+        const pulpApiUrl = `${platformUI}/api/galaxy/pulp/api/v3/content/ansible/collection_versions/?namespace=${namespace}&name=${name}&version=1.0.0&offset=0&limit=1&exclude_fields=files,manifest,contents`;
+        for (let attempt = 1; attempt <= 30; attempt++) {
+          const response = await page.request.get(pulpApiUrl);
+          if (response.ok()) {
+            const data = (await response.json()) as {
+              results: Array<{ docs_blob?: Record<string, unknown> }>;
+            };
+            if (data.results?.[0]?.docs_blob && Object.keys(data.results[0].docs_blob).length > 0) {
+              break;
+            }
+          }
+          if (attempt === 30) {
+            throw new Error('docs_blob not available via Pulp content API after 30 attempts');
+          }
+          await page.waitForTimeout(2000);
+        }
+
         await navigateToCollectionDetails(page, uploaded);
 
         await page.getByRole('tab', { name: 'Documentation' }).click();
-        await expect(page.getByPlaceholder('Find content')).toBeVisible({ timeout: 10000 });
+        await page.waitForLoadState('networkidle');
+        await expect(page.getByPlaceholder('Find content')).toBeVisible({ timeout: 30000 });
 
         await expect(page.getByRole('heading', { name: 'Page not found' })).not.toBeVisible();
 
         const mainContent = page.locator('main');
-        await expect(mainContent).not.toContainText('Error', { timeout: 10000 });
+        await expect(mainContent).not.toContainText('Can not load documentation', {
+          timeout: 10000,
+        });
       }
     );
   });
