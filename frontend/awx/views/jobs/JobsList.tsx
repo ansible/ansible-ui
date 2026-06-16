@@ -83,6 +83,7 @@ export function JobsList(props: {
   );
   useEffect(() => () => throttledRefresh.cancel(), [throttledRefresh]);
 
+  // Stable refs to avoid re-render loop in WS subscription
   const pageItemsRef = useRef(pageItems);
   pageItemsRef.current = pageItems;
   const updateItemRef = useRef(updateItem);
