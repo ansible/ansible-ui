@@ -53,8 +53,7 @@ export function AutomationDashboard() {
         controls={
           <Button
             data-testid="save-as-pdf-button"
-            // TODO: Remove `|| true` once PDF export is implemented on the BE.
-            isDisabled={loading || exporting || !view?.mainTableView?.itemCount || true}
+            isDisabled={loading || exporting || !view?.mainTableView?.itemCount}
             variant="secondary"
             onClick={() => void handleExportPdf()}
           >

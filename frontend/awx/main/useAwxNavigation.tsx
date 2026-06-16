@@ -39,6 +39,7 @@ import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 import { AutomationDashboard } from '../analytics/automation-dashboard/AutomationDashboard';
+import { AutomationDashboardPrint } from '../analytics/automation-dashboard/AutomationDashboardPrint';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -110,6 +111,11 @@ export function useAwxNavigation() {
           label: t('Automation Dashboard'),
           path: 'automation-dashboard',
           element: <AutomationDashboard />,
+        },
+        {
+          id: AwxRoute.AutomationDashboardPrint,
+          path: 'automation-dashboard/print',
+          element: <AutomationDashboardPrint />,
         },
         {
           id: AwxRoute.AutomationCalculator,

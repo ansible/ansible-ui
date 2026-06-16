@@ -283,6 +283,7 @@ export enum AwxRoute {
   HostMetrics = 'awx-host-metrics',
   SubscriptionUsage = 'awx-subscription-usage',
   AutomationDashboard = 'awx-automation-dashboard',
+  AutomationDashboardPrint = 'awx-automation-dashboard-print',
   // Settings
   Settings = 'awx-settings',
   SettingsPreferences = 'awx-settings-preferences',
