@@ -15,6 +15,7 @@ import {
   replaceIdentifier,
   shouldHideOtherStep,
 } from './helpers';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
@@ -26,6 +27,30 @@ import {
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
 type WizardStep = Record<StepName, StepContent>;
+
+function clearStalePromptFields(
+  effectivePrompt: Partial<PromptFormValues>,
+  launchConfig: LaunchConfiguration | null | undefined
+) {
+  if (!launchConfig?.ask_credential_on_launch) {
+    effectivePrompt.credentials = [];
+  }
+  if (!launchConfig?.ask_labels_on_launch) {
+    effectivePrompt.labels = [];
+  }
+  if (!launchConfig?.ask_instance_groups_on_launch) {
+    effectivePrompt.instance_groups = [];
+  }
+  if (!launchConfig?.ask_skip_tags_on_launch) {
+    effectivePrompt.skip_tags = [];
+  }
+  if (!launchConfig?.ask_tags_on_launch) {
+    effectivePrompt.job_tags = [];
+  }
+  if (!launchConfig?.ask_variables_on_launch) {
+    effectivePrompt.extra_vars = '';
+  }
+}
 
 export function NodeEditWizard({ node }: { node: GraphNode }) {
   const { t } = useTranslation();
@@ -88,14 +113,23 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         ) {
           return shouldHideOtherStep(launch_config);
         }
-        if ('nodePromptsStep' in initialValues) {
+        // nodePromptsStep is always present in initialValues (it carries original
+        // node resources for save cleanup). Only show the step if the original
+        // template actually had prompts, which is indicated by launch_config being
+        // stored in the initial prompt values.
+        if (initialValues.nodePromptsStep?.prompt?.launch_config) {
           return false;
         }
         return true;
       },
       validate: (wizardData: Partial<WizardFormValues>) => {
+        // Prefer the live wizard data's requiredCredentialTypes so that validation reflects
+        // the currently selected template, not the template that was loaded when the wizard
+        // was first opened (which is stale if the user switched templates mid-edit).
         const requiredCredentialTypes =
-          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || [];
+          wizardData.prompt?.requiredCredentialTypes ||
+          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes ||
+          [];
         validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes);
       },
     },
@@ -120,6 +154,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const handleSubmit = async (formValues: WizardFormValues) => {
     const nodeData = node.getData() as { resource: WorkflowNode };
     const nodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
+    const originalTemplateId = nodeData.resource.summary_fields?.unified_job_template?.id;
 
     const {
       approval_name,
@@ -135,24 +170,30 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       survey,
     } = formValues;
 
-    const promptValues = prompt;
+    const isTemplateChange =
+      originalTemplateId !== undefined && Number(resource?.id) !== originalTemplateId;
 
-    if (promptValues) {
-      if (resource && 'organization' in resource) {
-        promptValues.organization = resource.organization ?? null;
-      }
-      if (launch_config) {
-        promptValues.original = {
-          launch_config,
-        };
-      }
-      if (nodeOriginalResources) {
-        promptValues.original = {
-          ...promptValues.original,
-          ...nodeOriginalResources,
-        };
-      }
+    // When the new template has no prompts, PageWizard hides the prompt step and does not
+    // include it in formValues — prompt is undefined. We still need launch_data to be set
+    // so that processCredentials/Labels/InstanceGroups can clean up any node-level resources
+    // that were associated for the old template. Without this, launch_data is undefined,
+    // processCredentials never runs, and the PATCH fails because orphaned credentials remain.
+    const effectivePrompt: Partial<PromptFormValues> = prompt ?? {};
+
+    if (resource && 'organization' in resource) {
+      effectivePrompt.organization = resource.organization ?? null;
     }
+
+    if (isTemplateChange) {
+      clearStalePromptFields(effectivePrompt, launch_config);
+    }
+
+    // Always build original so save-time cleanup has what it needs.
+    effectivePrompt.original = {
+      ...(launch_config ? { launch_config } : {}),
+      ...nodeOriginalResources,
+      ...(isTemplateChange ? { isTemplateChange: true } : {}),
+    };
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
@@ -180,7 +221,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
           },
         },
       },
-      launch_data: promptValues,
+      launch_data: effectivePrompt,
       survey_data: survey,
     };
 
