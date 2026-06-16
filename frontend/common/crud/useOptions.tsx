@@ -21,18 +21,13 @@ export function useOptions<T>(
     dedupingInterval: 50,
   });
 
-  let error = response.error as Error;
-  if (error && !(error instanceof Error)) {
-    error = new Error('Unknown error');
-  }
-
   return useMemo(
     () => ({
       data: response.data,
-      error: response.isLoading ? undefined : error,
+      error: response.isLoading ? undefined : (response.error as Error | undefined),
       isLoading: response.isLoading,
     }),
-    [response.data, response.isLoading, error]
+    [response.data, response.isLoading, response.error]
   );
 }
 
