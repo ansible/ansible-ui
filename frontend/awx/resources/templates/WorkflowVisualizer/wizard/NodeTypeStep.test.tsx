@@ -25,7 +25,26 @@ vi.mock('@patternfly/react-topology', () => ({
 }));
 
 const mockSetWizardData = vi.hoisted(() => vi.fn());
-const mockSetStepData = vi.hoisted(() => vi.fn());
+const mockStepState = {
+  nodePromptsStep: {
+    prompt: {
+      credentials: [],
+      labels: [],
+      instance_groups: [],
+      skip_tags: [],
+      job_tags: [],
+      extra_vars: '',
+      inventory: null,
+    },
+  },
+};
+const mockSetStepData = vi.hoisted(() =>
+  vi.fn((updater: unknown) => {
+    if (typeof updater === 'function') {
+      (updater as (prev: typeof mockStepState) => typeof mockStepState)(mockStepState);
+    }
+  })
+);
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
   usePageWizard: () => ({
