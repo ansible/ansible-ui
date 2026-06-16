@@ -15,7 +15,8 @@ export function AwxUserDetails() {
   const getPageUrl = useGetPageUrl();
   const { data: user } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
   const itemsResponse = useGet<AwxItemsResponse<Organization>>(
-    user?.related?.organizations as string
+    user?.related?.organizations as string,
+    { count_disabled: 1 }
   );
   const organizations = useMemo<
     {

@@ -9,19 +9,19 @@ import { CredentialType } from '../../../interfaces/CredentialType';
  */
 export function useGetCredentialTypeIDs() {
   const scmCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?kind=scm`
+    awxAPI`/credential_types/?kind=scm&count_disabled=1`
   );
   const insightsCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?name=Insights`
+    awxAPI`/credential_types/?name=Insights&count_disabled=1`
   );
   const cryptoCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?kind=cryptography`
+    awxAPI`/credential_types/?kind=cryptography&count_disabled=1`
   );
   const registryCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?kind=registry`
+    awxAPI`/credential_types/?kind=registry&count_disabled=1`
   );
   const galaxyCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?kind=galaxy`
+    awxAPI`/credential_types/?kind=galaxy&count_disabled=1`
   );
   const credentialTypeIDs: { [key: string]: number } = useMemo(() => {
     const credentialTypeIds: { [key: string]: number } = {};
