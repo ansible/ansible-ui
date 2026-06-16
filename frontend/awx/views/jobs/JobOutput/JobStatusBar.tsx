@@ -56,6 +56,7 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
     },
     {
       refreshInterval: (latestData: AwxItemsResponse<JobEvent>) => {
+        if (job.finished) return 0;
         if (latestData?.results.length) {
           const latestEvent = latestData.results[0];
           if (latestEvent.event === 'playbook_on_start') {
