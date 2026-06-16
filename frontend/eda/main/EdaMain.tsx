@@ -12,7 +12,7 @@ import { EdaLogin } from './EdaLogin';
 export default function EdaMain() {
   return (
     <BrowserRouter>
-      <PageFramework defaultRefreshInterval={10}>
+      <PageFramework defaultRefreshInterval={30}>
         <EdaActiveUserProvider>
           <EdaLogin>
             <EdaApp />

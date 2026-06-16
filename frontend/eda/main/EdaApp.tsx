@@ -9,7 +9,7 @@ export function EdaApp() {
       masthead={<EdaMasthead />}
       navigation={navigation}
       basename={process.env.ROUTE_PREFIX}
-      defaultRefreshInterval={10}
+      defaultRefreshInterval={30}
     />
   );
 }
