@@ -460,7 +460,7 @@ describe('JobsList WebSocket handler integration', () => {
   test('should fetch individual job on intermediate status for on-page job', async () => {
     let detailFetchId: string | undefined;
     server.use(
-      http.get('*/unified_jobs/:id/', ({ params }) => {
+      http.get('*/jobs/:id/', ({ params }) => {
         detailFetchId = params['id'] as string;
         return HttpResponse.json({ ...jobsFixture.results[1], status: 'running' });
       })
@@ -483,7 +483,7 @@ describe('JobsList WebSocket handler integration', () => {
   test('should skip for intermediate status when job is not on page', async () => {
     let detailFetched = false;
     server.use(
-      http.get('*/unified_jobs/:id/', () => {
+      http.get('*/jobs/:id/', () => {
         detailFetched = true;
         return HttpResponse.json({});
       })

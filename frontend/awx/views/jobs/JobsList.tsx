@@ -98,12 +98,15 @@ export function JobsList(props: {
         case 'refresh':
           throttledRefresh();
           break;
-        case 'fetch':
-          void requestGet<UnifiedJob>(awxAPI`/unified_jobs/${action.jobId.toString()}/`).then(
+        case 'fetch': {
+          const item = pageItemsRef.current?.find((i) => i.id === action.jobId);
+          const url = item?.url ?? awxAPI`/unified_jobs/${action.jobId.toString()}/`;
+          requestGet<UnifiedJob>(url).then(
             (updatedJob) => updateItemRef.current(updatedJob),
             () => throttledRefresh()
           );
           break;
+        }
         case 'skip':
           break;
       }
