@@ -12,7 +12,6 @@ import { useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-import { serverlessURL } from './api/hub-api-utils';
 import { url2keys } from './api/query-string';
 import { isInsightsMode } from './isInsights';
 
@@ -44,7 +43,6 @@ export type IHubView<T extends object> = IView &
 
 interface CommonResponse<T extends object> {
   count: number | undefined;
-  next: string | undefined;
   pageItems: T[] | undefined;
 }
 
@@ -55,14 +53,12 @@ function deconstruct<T extends object>(
     // HubItemsResponse
     return {
       count: data.meta.count,
-      next: data.links?.next,
       pageItems: data.data,
     };
   } else {
     // PulpItemsResponse | undefined
     return {
       count: data?.count,
-      next: data?.next,
       pageItems: data?.results,
     };
   }
@@ -144,12 +140,7 @@ export function useHubView<T extends object>({
     await mutate();
   }, [mutate]);
 
-  const { count, next, pageItems } = deconstruct<T>(data);
-
-  const nextPage = serverlessURL(next);
-  useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(nextPage, fetcher, {
-    dedupingInterval: 0,
-  });
+  const { count, pageItems } = deconstruct<T>(data);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
