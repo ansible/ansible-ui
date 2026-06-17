@@ -1,6 +1,7 @@
 import { vi, test, afterEach, describe, expect } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
@@ -196,10 +197,9 @@ describe('AutomationDashboard', () => {
     expect(screen.getByTestId('save-as-pdf-button')).toBeInTheDocument();
   });
 
-  // TODO: Update to `not.toBeDisabled()` once `|| true` is removed from the Save as PDF button.
-  test('should disable Save as PDF button while PDF export is not yet implemented on BE', () => {
+  test('should enable Save as PDF button when table has items', () => {
     render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeDisabled();
+    expect(screen.getByTestId('save-as-pdf-button')).toBeEnabled();
   });
 
   test('should disable Save as PDF button when loading', () => {
@@ -217,12 +217,12 @@ describe('AutomationDashboard', () => {
     expect(screen.getByTestId('save-as-pdf-button')).toBeDisabled();
   });
 
-  // TODO: Re-enable once `|| true` is removed from the Save as PDF button.
-  test.skip('should call exportPdf when Save as PDF button is clicked', () => {
+  test('should call exportPdf when Save as PDF button is clicked', async () => {
+    const user = userEvent.setup();
     const exportPdf = vi.fn();
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({ ...mockView, exportPdf });
     render(testWrapper());
-    fireEvent.click(screen.getByTestId('save-as-pdf-button'));
+    await user.click(screen.getByTestId('save-as-pdf-button'));
     expect(exportPdf).toHaveBeenCalledTimes(1);
   });
 
