@@ -16,6 +16,8 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
     loading,
     clearAllFilters,
     filterState,
+    emptyStateDescription,
+    emptyStateTitle,
   } = props;
   const keyFn = (item: IDashboardTableItem) => item.id;
   const [page, setPage] = useState(1);
@@ -62,6 +64,8 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
           disableLastRowBorder
           clearAllFilters={clearAllFilters}
           filterState={filterState}
+          emptyStateDescription={emptyStateDescription}
+          emptyStateTitle={emptyStateTitle}
         ></PageTable>
       )}
     </PageDashboardCard>

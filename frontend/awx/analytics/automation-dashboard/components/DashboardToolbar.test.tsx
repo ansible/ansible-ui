@@ -218,4 +218,56 @@ describe('DashboardToolbar', () => {
       expect(mockSetFilterState).toHaveBeenLastCalledWith({ period: ['last_7_days'] });
     });
   });
+
+  describe('registerClearCallback', () => {
+    test('should register callback when registerClearCallback is provided', () => {
+      const mockRegisterClearCallback = vi.fn();
+      const mockSetValue = vi.fn();
+
+      mockUseFilterSetView.mockReturnValue(makeFilterSetViewReturn({ setValue: mockSetValue }));
+
+      render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} registerClearCallback={mockRegisterClearCallback} />
+        </Wrapper>
+      );
+
+      expect(mockRegisterClearCallback).toHaveBeenCalledWith(expect.any(Function));
+    });
+
+    test('should reset dropdown and selectedFilterSet when registered callback is invoked', () => {
+      const mockSetValue = vi.fn();
+      let capturedCallback: (() => void) | undefined;
+
+      const mockRegisterClearCallback = vi.fn((callback: () => void) => {
+        capturedCallback = callback;
+      });
+
+      mockUseFilterSetView.mockReturnValue(makeFilterSetViewReturn({ setValue: mockSetValue }));
+
+      render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} registerClearCallback={mockRegisterClearCallback} />
+        </Wrapper>
+      );
+
+      // Invoke the registered callback
+      expect(capturedCallback).toBeDefined();
+      capturedCallback?.();
+
+      // Verify dropdown and selected filter set are reset
+      expect(mockSetValue).toHaveBeenCalledWith(undefined);
+      expect(mockSetSelectedFilterSet).toHaveBeenCalledWith(undefined);
+    });
+
+    test('should not error when registerClearCallback is not provided', () => {
+      expect(() => {
+        render(
+          <Wrapper>
+            <DashboardToolbar {...buildProps()} />
+          </Wrapper>
+        );
+      }).not.toThrow();
+    });
+  });
 });

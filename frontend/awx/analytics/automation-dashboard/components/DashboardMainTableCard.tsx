@@ -16,6 +16,7 @@ import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import useResizeObserver from '@react-hook/resize-observer';
 import { CardBody } from '@patternfly/react-core';
+import styled from 'styled-components';
 
 interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
@@ -25,6 +26,11 @@ interface IJobTemplateModify {
 // 24-column grid system for responsive layout
 // Uses 1625px instead of PageDashboard's 1662px to account for card padding
 const GRID_COLUMN_WIDTH = 1625 / 24; // ~67.7px per column
+
+const TdWrapper = styled.div`
+  padding-block-start: var(--pf-t--global--spacer--control--vertical--default);
+  padding-block-end: var(--pf-t--global--spacer--control--vertical--default);
+`;
 
 export function DashboardMainTableCard(props: IAutomationDashboardView) {
   const {
@@ -36,6 +42,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     exportCsv,
     loading,
     detailsError,
+    isFilterStateDefault,
   } = props;
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
@@ -143,14 +150,18 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     cell: (item) =>
       activeAwxUser?.is_superuser
         ? tableInputField('time_taken_create_automation_minutes', item)
-        : item.time_taken_create_automation_minutes,
+        : tableCell('time_taken_create_automation_minutes', item),
   };
+
+  const tableCell = (columnKey: keyof IJobTemplate, item: IJobTemplate) => (
+    <TdWrapper>{item[columnKey]}</TdWrapper>
+  );
 
   const tableColumns: ITableColumn<IJobTemplate>[] = [
     {
       id: 'template_name',
       header: t('Template Name'),
-      cell: (item) => item.template_name,
+      cell: (item) => tableCell('template_name', item),
       defaultSort: true,
       defaultSortDirection: 'asc',
       sort: 'template_name',
@@ -158,7 +169,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     {
       id: 'num_job_executions',
       header: t('Number of job executions'),
-      cell: (item) => item.runs,
+      cell: (item) => tableCell('runs', item),
       sort: 'runs',
     },
     {
@@ -167,7 +178,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       cell: (item) =>
         activeAwxUser?.is_superuser
           ? tableInputField('time_taken_manually_execute_minutes', item)
-          : item.time_taken_manually_execute_minutes,
+          : tableCell('time_taken_manually_execute_minutes', item),
     },
     ...(costState?.include_template_creation_time_in_costs
       ? [timeTakenCreateAutomationColumn]
@@ -175,25 +186,25 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     {
       id: 'elapsed',
       header: t('Running time'),
-      cell: (item) => item.elapsed,
+      cell: (item) => tableCell('elapsed', item),
       sort: 'elapsed',
     },
     {
       id: 'automated_costs',
       header: t('Automated cost'),
-      cell: (item) => item.automated_costs,
+      cell: (item) => tableCell('automated_costs', item),
       sort: 'automated_costs',
     },
     {
       id: 'manual_costs',
       header: t('Manual cost'),
-      cell: (item) => item.manual_costs,
+      cell: (item) => tableCell('manual_costs', item),
       sort: 'manual_costs',
     },
     {
       id: 'savings',
       header: t('Savings'),
-      cell: (item) => item.savings,
+      cell: (item) => tableCell('savings', item),
       sort: 'savings',
     },
   ];
@@ -207,6 +218,14 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       disableBodyPadding
     >
       <CardBody>
+        <DashboardTableToolbarRow
+          isLoading={loading}
+          itemCount={mainTableView?.itemCount ?? 0}
+          costState={costState}
+          setCostState={setCostState}
+          refresh={refresh}
+          onExportCsv={() => void exportCsv()}
+        ></DashboardTableToolbarRow>
         <div
           ref={ref}
           style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
@@ -248,14 +267,6 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             errorStateTitle={t('Error loading total hours saved')}
           ></DashboardValueCard>
         </div>
-        <DashboardTableToolbarRow
-          isLoading={loading}
-          itemCount={mainTableView?.itemCount ?? 0}
-          costState={costState}
-          setCostState={setCostState}
-          refresh={refresh}
-          onExportCsv={() => void exportCsv()}
-        ></DashboardTableToolbarRow>
       </CardBody>
       <CardBody>
         <PageTable
@@ -264,10 +275,11 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
           tableColumns={tableColumns}
           errorStateTitle={t('Error loading data.')}
           compact
-          emptyStateTitle={t('No data')}
-          emptyStateDescription={t('There is currently no data available.')}
+          emptyStateTitle={t('No automation data yet')}
+          emptyStateDescription={t('Dashboard data will appear after your first automation runs.')}
           disableLastRowBorder
           {...mainTableView}
+          filterState={isFilterStateDefault ? undefined : mainTableView.filterState}
         />
       </CardBody>
     </PageDashboardCard>

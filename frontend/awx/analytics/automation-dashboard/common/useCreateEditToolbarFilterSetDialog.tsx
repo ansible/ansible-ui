@@ -18,13 +18,15 @@ type DashboardFilterSetFormValues = {
   name: string;
 };
 
-function CreateEditToolbarFilterSetDialog(props: {
-  title: string;
-  description?: string;
-  filterSet: IDashboardFilterSet;
-  onComplete: (filterSet: IDashboardFilterSet) => void;
-  onSuccess: (message: string) => void;
-}) {
+function CreateEditToolbarFilterSetDialog(
+  props: Readonly<{
+    title: string;
+    description?: string;
+    filterSet: IDashboardFilterSet;
+    onComplete: (filterSet: IDashboardFilterSet) => void;
+    onSuccess: (message: string) => void;
+  }>
+) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const { title, description, filterSet, onComplete, onSuccess } = props;
@@ -74,7 +76,7 @@ function CreateEditToolbarFilterSetDialog(props: {
           singleColumn
           disablePadding
           disableSubmitOnEnter
-          submitText={t('Save')}
+          submitText={t('Save report')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onClose}

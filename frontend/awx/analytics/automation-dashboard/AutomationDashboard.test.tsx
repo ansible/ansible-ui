@@ -134,6 +134,8 @@ const mockView: IAutomationDashboardView = {
   refresh: vi.fn(),
   exportCsv: vi.fn(),
   exportPdf: vi.fn(),
+  isFilterStateDefault: true,
+  registerClearCallback: vi.fn(),
 };
 
 // ─── Test wrapper ─────────────────────────────────────────────────────────────

@@ -97,7 +97,7 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
       await user.click(screen.getByRole('button', { name: 'Open dialog' }));
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText('Save report')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Save report' })).toBeInTheDocument();
     });
 
     test('should show "Rename report" title when editing an existing filter set', async () => {

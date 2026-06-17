@@ -32,11 +32,11 @@ export function useRemoveToolbarFilterSet(onComplete: (filterSets: IDashboardFil
       const sortedItems = [...items].sort((l, r) => compareStrings(l.name, r.name));
 
       bulkAction({
-        title: t('Permanently delete reports', { count: sortedItems.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} reports.', {
+        title: t('Permanently delete report', { count: sortedItems.length }),
+        confirmText: t('Yes, I confirm that I want to delete this report.', {
           count: sortedItems.length,
         }),
-        actionButtonText: t('Delete reports', { count: sortedItems.length }),
+        actionButtonText: t('Delete report', { count: sortedItems.length }),
         items: sortedItems,
         keyFn: (item) => item.id,
         isDanger: true,

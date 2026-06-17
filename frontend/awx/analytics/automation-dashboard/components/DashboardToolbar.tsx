@@ -7,7 +7,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect';
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAutomationDashboardToolbarActions } from '../common/useAutomationDashboardToolbarActions';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
@@ -37,7 +37,13 @@ function parseFilterState(raw: string): IFilterState {
   return DEFAULT_FILTER_STATE;
 }
 
-export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
+export function DashboardToolbar(
+  props: Readonly<
+    PageToolbarProps<IJobTemplate> & {
+      registerClearCallback?: (callback: () => void) => void;
+    }
+  >
+) {
   const { t } = useTranslation();
   const {
     value,
@@ -51,7 +57,15 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     upsertFilterSet,
   } = useFilterSetView();
 
-  const { setFilterState, filterState } = props;
+  const { setFilterState, filterState, registerClearCallback, clearAllFilters } = props;
+
+  // Register callback to reset dropdown when clearAllFilters is called
+  useEffect(() => {
+    registerClearCallback?.(() => {
+      setValue(undefined);
+      setSelectedFilterSet(undefined);
+    });
+  }, [registerClearCallback, setValue, setSelectedFilterSet]);
 
   const applyFilterSet = useCallback(
     (filterSet: IDashboardFilterSet) => {
@@ -109,7 +123,7 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     <Toolbar
       ouiaId="page-toolbar"
       data-testid="page-toolbar"
-      clearAllFilters={props.clearAllFilters}
+      clearAllFilters={clearAllFilters}
       className="page-table-toolbar"
       style={{
         paddingBottom: isMdOrLarger ? undefined : 8,

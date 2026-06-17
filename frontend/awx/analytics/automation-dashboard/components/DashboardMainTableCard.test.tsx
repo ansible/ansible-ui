@@ -124,6 +124,8 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     refresh: mockRefresh,
     exportCsv: vi.fn(),
     exportPdf: vi.fn(),
+    isFilterStateDefault: true,
+    registerClearCallback: vi.fn(),
     ...overrides,
   };
 }
@@ -395,7 +397,7 @@ describe('DashboardMainTableCard', () => {
 
   test('should render empty state when pageItems is empty', () => {
     renderCard(buildProps({ mainTableView: buildMainTableView({ itemCount: 0, pageItems: [] }) }));
-    expect(screen.getByText('No data')).toBeInTheDocument();
+    expect(screen.getByText('No automation data yet')).toBeInTheDocument();
   });
 
   // --- onTableInputChange: success ---

@@ -92,9 +92,9 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
 
   return (
     <Flex
-      style={{ paddingTop: '1rem', paddingBottom: '1rem' }}
+      style={{ paddingBottom: 'var(--pf-t--global--spacer--action--horizontal--default)' }}
       direction={{ xl: 'row', default: 'column' }}
-      alignItems={{ xl: 'alignItemsCenter', default: 'alignItemsFlexStart' }}
+      alignItems={{ xl: 'alignItemsFlexEnd', default: 'alignItemsFlexStart' }}
       rowGap={{ default: 'rowGapMd' }}
     >
       <Flex direction={{ md: 'row', default: 'column' }} rowGap={{ default: 'rowGapMd' }}>
@@ -140,7 +140,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
         grow={{ default: 'grow' }}
         rowGap={{ default: 'rowGapLg' }}
       >
-        <FlexItem>
+        <FlexItem alignSelf={{ default: 'alignSelfCenter' }}>
           <Switch
             id={SWITCH_ID + '-toggle'}
             data-testid={SWITCH_ID + '-toggle'}

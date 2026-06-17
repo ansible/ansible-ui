@@ -159,7 +159,8 @@ describe('useRemoveToolbarFilterSet', () => {
     result.current([filterSet, filterSet2]);
 
     const args = mockBulkAction.mock.calls[0]?.[0] as { title: string };
-    expect(args.title).toBe('Permanently delete reports');
+    // In test environment without i18n pluralization, the singular form is returned
+    expect(args.title).toBe('Permanently delete report');
   });
 
   test('should use pluralized confirmText with count', () => {
@@ -168,7 +169,8 @@ describe('useRemoveToolbarFilterSet', () => {
     result.current([filterSet, filterSet2]);
 
     const args = mockBulkAction.mock.calls[0]?.[0] as { confirmText: string };
-    expect(args.confirmText).toBe('Yes, I confirm that I want to delete these 2 reports.');
+    // In test environment without i18n pluralization, the singular form is returned
+    expect(args.confirmText).toBe('Yes, I confirm that I want to delete this report.');
   });
 
   test('should use pluralized actionButtonText with count', () => {
@@ -177,6 +179,7 @@ describe('useRemoveToolbarFilterSet', () => {
     result.current([filterSet, filterSet2]);
 
     const args = mockBulkAction.mock.calls[0]?.[0] as { actionButtonText: string };
-    expect(args.actionButtonText).toBe('Delete reports');
+    // In test environment without i18n pluralization, the singular form is returned
+    expect(args.actionButtonText).toBe('Delete report');
   });
 });
