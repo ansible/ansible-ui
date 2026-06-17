@@ -8,7 +8,7 @@ describe('useExportPdf', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    openSpy = vi.spyOn(window, 'open').mockReturnValue(null);
+    openSpy = vi.spyOn(globalThis, 'open').mockReturnValue(null);
   });
 
   afterEach(() => {
@@ -24,18 +24,27 @@ describe('useExportPdf', () => {
     const { result } = renderHook(() => useExportPdf([], {}, {}));
     result.current();
     expect(openSpy).toHaveBeenCalledOnce();
-    const [url, target] = openSpy.mock.calls[0] as [string, string];
-    expect(url).toContain('export_format=html');
-    expect(url).toContain('report_type=summary');
-    expect(url).toContain('dashboard_reports/report/export/');
-    expect(target).toBe('_blank');
+    expect(openSpy).toHaveBeenCalledWith(
+      expect.stringContaining('dashboard_reports/report/export/'),
+      '_blank'
+    );
+    expect(openSpy).toHaveBeenCalledWith(expect.stringContaining('export_format=html'), '_blank');
+    expect(openSpy).toHaveBeenCalledWith(expect.stringContaining('report_type=summary'), '_blank');
   });
 
   test('should include queryParams in the export URL', () => {
     const { result } = renderHook(() => useExportPdf([], {}, { period: 'last_7_days' }));
     result.current();
-    const [url] = openSpy.mock.calls[0] as [string];
-    expect(url).toContain('period=last_7_days');
+    expect(openSpy).toHaveBeenCalledWith(expect.stringContaining('period=last_7_days'), '_blank');
+  });
+
+  test('should include filter state in the export URL', () => {
+    const toolbarFilters = [{ key: 'name', label: 'Name', type: 'string' as const, query: 'name' }];
+    const { result } = renderHook(() =>
+      useExportPdf(toolbarFilters, { name: ['my-job'] }, {})
+    );
+    result.current();
+    expect(openSpy).toHaveBeenCalledWith(expect.stringContaining('name=my-job'), '_blank');
   });
 
   test('should attach a load listener that calls print on the new window', () => {
@@ -51,7 +60,7 @@ describe('useExportPdf', () => {
 
     expect(mockNewWindow.addEventListener).toHaveBeenCalledWith('load', expect.any(Function));
 
-    const [, loadHandler] = mockNewWindow.addEventListener.mock.calls[0] as [string, () => void];
+    const loadHandler = mockNewWindow.addEventListener.mock.calls[0][1] as () => void;
     loadHandler();
     expect(mockPrint).toHaveBeenCalled();
   });
