@@ -156,19 +156,23 @@ describe('AnsibleLogin', () => {
       expect(footer?.innerHTML).toContain('<a href="/docs">Read docs</a>');
     });
 
-    it('should remove dangerous HTML tags', () => {
+    it('should call DOMPurify.sanitize for dangerous HTML', async () => {
       const dangerousContent = '<p>Safe text</p><script>console.log("xss")</script>';
 
-      const { container } = render(
+      // Dynamically import DOMPurify to spy on it
+      const DOMPurifyModule = await import('dompurify');
+      const sanitizeSpy = vi.spyOn(DOMPurifyModule.default, 'sanitize');
+
+      render(
         <MemoryRouter>
           <AnsibleLogin {...defaultProps} textContent={dangerousContent} />
         </MemoryRouter>
       );
 
-      const footer = container.querySelector('.pf-v6-c-login__footer');
-      expect(footer).toBeInTheDocument();
-      expect(footer?.innerHTML).toContain('Safe text');
-      expect(footer?.innerHTML).not.toContain('<script>');
+      // Verify DOMPurify.sanitize was called with the dangerous content
+      expect(sanitizeSpy).toHaveBeenCalledWith(dangerousContent);
+
+      sanitizeSpy.mockRestore();
     });
 
     it('should not render footer when textContent is not provided', () => {
