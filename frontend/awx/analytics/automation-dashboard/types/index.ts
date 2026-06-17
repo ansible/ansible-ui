@@ -161,7 +161,7 @@ export type IAutomationDashboardView = {
   loading: boolean;
   refresh: () => Promise<void>;
   exportCsv: () => Promise<void>;
-  exportPdf: () => Promise<void>;
+  exportPdf: () => void;
   isFilterStateDefault: boolean;
   registerClearCallback: (callback: () => void) => void;
 };

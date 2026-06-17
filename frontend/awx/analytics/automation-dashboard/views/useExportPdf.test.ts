@@ -1,150 +1,64 @@
 /* eslint-disable i18next/no-literal-string */
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, MockInstance, test, vi } from 'vitest';
 import { useExportPdf } from './useExportPdf';
 
-// ─── Hoisted mocks ────────────────────────────────────────────────────────────
-
-const { mockPostRequest, mockAddAlert, mockSvgToPng } = vi.hoisted(() => ({
-  mockPostRequest: vi.fn(),
-  mockAddAlert: vi.fn(),
-  mockSvgToPng: vi.fn(),
-}));
-
-vi.mock('../../../../common/crud/usePostRequest', () => ({
-  usePostRequest: vi.fn(() => mockPostRequest),
-}));
-
-vi.mock('../../../../../framework', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../../../framework')>();
-  return { ...actual, usePageAlertToaster: vi.fn(() => ({ addAlert: mockAddAlert })) };
-});
-
-vi.mock('../utils/svgToPng', () => ({
-  svgToPng: mockSvgToPng,
-}));
-
-// ─── Tests ────────────────────────────────────────────────────────────────────
-
 describe('useExportPdf', () => {
-  let createObjectUrlSpy: MockInstance;
-  let revokeObjectUrlSpy: MockInstance;
-  let mockBlob: Blob;
-  let chartContainer: HTMLDivElement;
+  let openSpy: MockInstance;
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    mockBlob = new Blob(['pdf-content'], { type: 'application/pdf' });
-    mockPostRequest.mockResolvedValue(mockBlob);
-    mockSvgToPng.mockResolvedValue('data:image/png;base64,abc123');
-
-    createObjectUrlSpy = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
-    revokeObjectUrlSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
-
-    chartContainer = document.createElement('div');
-    chartContainer.innerHTML = `
-      <div id="job-chart-card">
-        <div class="pf-v6-c-chart"><svg></svg></div>
-      </div>
-      <div id="host-chart-card">
-        <div class="pf-v6-c-chart"><svg></svg></div>
-      </div>`;
-    document.body.appendChild(chartContainer);
+    openSpy = vi.spyOn(window, 'open').mockReturnValue(null);
   });
 
   afterEach(() => {
-    vi.useRealTimers();
-    createObjectUrlSpy.mockRestore();
-    revokeObjectUrlSpy.mockRestore();
-    if (document.body.contains(chartContainer)) {
-      chartContainer.remove();
-    }
+    openSpy.mockRestore();
   });
-
-  // --- Basic ---
 
   test('should return a function', () => {
     const { result } = renderHook(() => useExportPdf([], {}, {}));
     expect(result.current).toBeTypeOf('function');
   });
 
-  // --- Success path ---
-
-  test('should POST PNG data to PDF endpoint and trigger download when SVGs are present', async () => {
+  test('should open a new tab with the HTML export URL when invoked', () => {
     const { result } = renderHook(() => useExportPdf([], {}, {}));
-
-    await act(async () => {
-      await result.current();
-    });
-
-    expect(mockPostRequest).toHaveBeenCalledOnce();
-    expect(mockPostRequest).toHaveBeenCalledWith(
-      expect.stringContaining('dashboard_reports/report/pdf/'),
-      { job_chart: 'data:image/png;base64,abc123', host_chart: 'data:image/png;base64,abc123' }
-    );
-    expect(createObjectUrlSpy).toHaveBeenCalledWith(mockBlob);
-
-    expect(revokeObjectUrlSpy).toHaveBeenCalledWith('blob:mock-url');
+    result.current();
+    expect(openSpy).toHaveBeenCalledOnce();
+    const [url, target] = openSpy.mock.calls[0] as [string, string];
+    expect(url).toContain('export_format=html');
+    expect(url).toContain('report_type=summary');
+    expect(url).toContain('dashboard_reports/report/export/');
+    expect(target).toBe('_blank');
   });
 
-  test('should include queryParams in the PDF URL', async () => {
+  test('should include queryParams in the export URL', () => {
     const { result } = renderHook(() => useExportPdf([], {}, { period: 'last_7_days' }));
-
-    await act(async () => {
-      await result.current();
-    });
-
-    const [url] = mockPostRequest.mock.calls[0] as [string, unknown];
+    result.current();
+    const [url] = openSpy.mock.calls[0] as [string];
     expect(url).toContain('period=last_7_days');
   });
 
-  // --- Null SVG branch ---
-
-  test('should pass null to svgToPng when chart elements are absent from DOM', async () => {
-    chartContainer.remove();
+  test('should attach a load listener that calls print on the new window', () => {
+    const mockPrint = vi.fn();
+    const mockNewWindow = {
+      addEventListener: vi.fn(),
+      print: mockPrint,
+    };
+    openSpy.mockReturnValue(mockNewWindow as unknown as Window);
 
     const { result } = renderHook(() => useExportPdf([], {}, {}));
+    result.current();
 
-    await act(async () => {
-      await result.current();
-    });
+    expect(mockNewWindow.addEventListener).toHaveBeenCalledWith('load', expect.any(Function));
 
-    expect(mockSvgToPng).toHaveBeenCalledWith(null);
+    const [, loadHandler] = mockNewWindow.addEventListener.mock.calls[0] as [string, () => void];
+    loadHandler();
+    expect(mockPrint).toHaveBeenCalled();
   });
 
-  // --- Error path ---
-
-  test('should show danger alert with error message when postRequest throws an Error', async () => {
-    mockPostRequest.mockRejectedValue(new Error('PDF generation failed'));
+  test('should not throw when window.open returns null (popup blocked)', () => {
+    openSpy.mockReturnValue(null);
     const { result } = renderHook(() => useExportPdf([], {}, {}));
-
-    await act(async () => {
-      await result.current();
-    });
-
-    expect(mockAddAlert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variant: 'danger',
-        title: 'Failed to export PDF.',
-        children: 'PDF generation failed',
-      })
-    );
-  });
-
-  test('should show danger alert with children: undefined when thrown value is not an Error', async () => {
-    mockPostRequest.mockRejectedValue('string error');
-    const { result } = renderHook(() => useExportPdf([], {}, {}));
-
-    await act(async () => {
-      await result.current();
-    });
-
-    expect(mockAddAlert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variant: 'danger',
-        children: undefined,
-      })
-    );
+    expect(() => result.current()).not.toThrow();
   });
 });

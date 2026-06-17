@@ -79,7 +79,7 @@ export function useAutomationDashboardView(options: {
   }, [mainTableView, detailsResponse]);
 
   const exportCsvBase = useExportCsv(toolbarFilters, filterState, QUERY_PARAMS);
-  const exportPdfBase = useExportPdf(toolbarFilters, filterState, QUERY_PARAMS);
+  const exportPdf = useExportPdf(toolbarFilters, filterState, QUERY_PARAMS);
 
   const exportCsv = useCallback(async () => {
     setLoading(true);
@@ -90,17 +90,9 @@ export function useAutomationDashboardView(options: {
     }
   }, [exportCsvBase]);
 
-  const exportPdf = useCallback(async () => {
-    setLoading(true);
-    try {
-      await exportPdfBase();
-    } finally {
-      setLoading(false);
-    }
-  }, [exportPdfBase]);
-
   // Compute whether filter state is default
   const isFilterStateDefaultValue = useMemo(() => isDefaultFilterState(filterState), [filterState]);
+
 
   return useMemo(
     () => ({

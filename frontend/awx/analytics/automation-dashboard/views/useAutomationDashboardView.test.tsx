@@ -86,7 +86,6 @@ describe('useAutomationDashboardView', () => {
     vi.clearAllMocks();
     mockAwxViewRefresh.mockResolvedValue(undefined);
     mockExportCsvBase.mockResolvedValue(undefined);
-    mockExportPdfBase.mockResolvedValue(undefined);
   });
 
   // --- QUERY_PARAMS ---
@@ -212,29 +211,11 @@ describe('useAutomationDashboardView', () => {
 
   // --- exportPdf ---
 
-  test('should call exportPdfBase and manage loading on exportPdf', async () => {
+  test('should call exportPdfBase when exportPdf is invoked', () => {
     const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
-
-    await act(async () => {
-      await result.current.exportPdf();
+    act(() => {
+      result.current.exportPdf();
     });
-
     expect(mockExportPdfBase).toHaveBeenCalled();
-    expect(result.current.loading).toBe(false);
-  });
-
-  test('should set loading to false after exportPdf even when exportPdfBase throws', async () => {
-    mockExportPdfBase.mockRejectedValue(new Error('PDF error'));
-    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
-
-    await act(async () => {
-      try {
-        await result.current.exportPdf();
-      } catch {
-        // expected
-      }
-    });
-
-    expect(result.current.loading).toBe(false);
   });
 });

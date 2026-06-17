@@ -4,9 +4,10 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageAlertToaster,
 } from '@ansible/ansible-ui-framework';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
   DashboardChartCard,
@@ -28,6 +29,9 @@ const AutomationDashboardWrapper = styled.div`
 `;
 const Divisor = 1662 / 24;
 
+/** Warn the user when the filtered template count exceeds this threshold. */
+const EXPORT_TEMPLATE_LIMIT = 500;
+
 export function AutomationDashboard() {
   const { t } = useTranslation();
   const toolbarFilters = useAutomationDashboardToolbar();
@@ -39,16 +43,21 @@ export function AutomationDashboard() {
 
   const view = useAutomationDashboardView({ toolbarFilters });
   const { details, exportPdf, loading } = view;
-  const [exporting, setExporting] = useState(false);
+  const alertToaster = usePageAlertToaster();
 
-  const handleExportPdf = async () => {
-    setExporting(true);
-    try {
-      await exportPdf();
-    } finally {
-      setExporting(false);
+  const handleExport = useCallback(() => {
+    if ((view.mainTableView.itemCount ?? 0) > EXPORT_TEMPLATE_LIMIT) {
+      alertToaster.addAlert({
+        variant: 'warning',
+        title: t(
+          'Your selection contains more than {{limit}} templates. The exported report may take a moment to load.',
+          { limit: EXPORT_TEMPLATE_LIMIT }
+        ),
+        timeout: 8000,
+      });
     }
-  };
+    exportPdf();
+  }, [view.mainTableView.itemCount, exportPdf, alertToaster, t]);
 
   const noDataString = t('No jobs have been run.');
   const ref = useRef<HTMLDivElement>(null);
@@ -74,13 +83,12 @@ export function AutomationDashboard() {
           description={description}
           controls={
             <Button
-              data-testid="save-as-pdf-button"
-              // TODO: Remove `|| true` once PDF export is implemented on the BE.
-              isDisabled={loading || exporting || !view?.mainTableView?.itemCount || true}
+              data-testid="export-report-button"
+              isDisabled={loading || !view?.mainTableView?.itemCount}
               variant="secondary"
-              onClick={() => void handleExportPdf()}
+              onClick={handleExport}
             >
-              {t('Save as PDF')}
+              {t('Export report')}
             </Button>
           }
         />
