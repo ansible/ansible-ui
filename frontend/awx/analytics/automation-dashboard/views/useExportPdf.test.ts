@@ -59,7 +59,7 @@ describe('useExportPdf', () => {
       addEventListener: vi.fn(),
       print: mockPrint,
     };
-    openSpy.mockReturnValue(mockNewWindow as unknown as Window);
+    openSpy.mockReturnValue(mockNewWindow);
 
     const { result } = renderHook(() => useExportPdf([], {}, {}));
     result.current();
