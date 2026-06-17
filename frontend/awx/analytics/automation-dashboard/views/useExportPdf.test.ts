@@ -1,7 +1,16 @@
 /* eslint-disable i18next/no-literal-string */
 import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, MockInstance, test, vi } from 'vitest';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useExportPdf } from './useExportPdf';
+
+const nameFilter: IToolbarFilter = {
+  type: ToolbarFilterType.SingleText,
+  key: 'name',
+  label: 'Name',
+  query: 'name',
+  comparison: 'contains',
+};
 
 describe('useExportPdf', () => {
   let openSpy: MockInstance;
@@ -39,10 +48,7 @@ describe('useExportPdf', () => {
   });
 
   test('should include filter state in the export URL', () => {
-    const toolbarFilters = [{ key: 'name', label: 'Name', type: 'string' as const, query: 'name' }];
-    const { result } = renderHook(() =>
-      useExportPdf(toolbarFilters, { name: ['my-job'] }, {})
-    );
+    const { result } = renderHook(() => useExportPdf([nameFilter], { name: ['my-job'] }, {}));
     result.current();
     expect(openSpy).toHaveBeenCalledWith(expect.stringContaining('name=my-job'), '_blank');
   });
