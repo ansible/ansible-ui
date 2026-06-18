@@ -1,7 +1,8 @@
 import { ITableColumn, PageTable } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { CubesIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
 import { createThrottle } from '../../common/util/createThrottle';
@@ -14,6 +15,43 @@ import { useJobToolbarActions } from '../../views/jobs/hooks/useJobToolbarAction
 import { useJobsFilters } from '../../views/jobs/hooks/useJobsFilters';
 
 type QueryParams = { [key: string]: string };
+
+export type WebSocketMessage = {
+  group_name?: string;
+  type?: string;
+  status?: string;
+  unified_job_id?: number;
+};
+
+const FINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+const NEW_JOB_STATUSES = new Set(['new', 'pending']);
+
+export type WsAction = { type: 'refresh' } | { type: 'fetch'; jobId: number } | { type: 'skip' };
+
+export function getWsAction(
+  message: WebSocketMessage | undefined,
+  pageItemIds: number[]
+): WsAction {
+  if (message?.group_name !== 'jobs') return { type: 'skip' };
+
+  switch (message?.type) {
+    case 'job':
+    case 'workflow_job':
+    case 'project_update':
+      break;
+    default:
+      return { type: 'skip' };
+  }
+
+  const status = message?.status;
+  const jobId = message?.unified_job_id;
+
+  if (!status || !jobId) return { type: 'refresh' };
+  if (NEW_JOB_STATUSES.has(status) || FINAL_STATUSES.has(status)) return { type: 'refresh' };
+
+  if (pageItemIds.includes(jobId)) return { type: 'fetch', jobId };
+  return { type: 'skip' };
+}
 
 export function JobsList(props: {
   queryParams?: QueryParams;
@@ -35,7 +73,7 @@ export function JobsList(props: {
 
   usePersistentFilters('jobs');
 
-  const { refresh } = view;
+  const { refresh, updateItem, pageItems } = view;
   const throttledRefresh = useMemo(
     () =>
       createThrottle(() => {
@@ -45,17 +83,31 @@ export function JobsList(props: {
   );
   useEffect(() => () => throttledRefresh.cancel(), [throttledRefresh]);
 
+  // Stable refs to avoid re-render loop in WS subscription
+  const pageItemsRef = useRef(pageItems);
+  pageItemsRef.current = pageItems;
+  const updateItemRef = useRef(updateItem);
+  updateItemRef.current = updateItem;
+
   const handleWebSocketMessage = useCallback(
-    (message?: { group_name?: string; type?: string }) => {
-      switch (message?.group_name) {
-        case 'jobs':
-          switch (message?.type) {
-            case 'job':
-            case 'workflow_job':
-            case 'project_update':
-              throttledRefresh();
-              break;
-          }
+    (message?: WebSocketMessage) => {
+      const pageItemIds = (pageItemsRef.current ?? []).map((item) => item.id);
+      const action = getWsAction(message, pageItemIds);
+
+      switch (action.type) {
+        case 'refresh':
+          throttledRefresh();
+          break;
+        case 'fetch': {
+          const item = pageItemsRef.current?.find((i) => i.id === action.jobId);
+          const url = item?.url ?? awxAPI`/unified_jobs/${action.jobId.toString()}/`;
+          requestGet<UnifiedJob>(url).then(
+            (updatedJob) => updateItemRef.current(updatedJob),
+            () => throttledRefresh()
+          );
+          break;
+        }
+        case 'skip':
           break;
       }
     },
