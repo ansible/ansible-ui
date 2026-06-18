@@ -421,13 +421,13 @@ describe('OAuthApplicationForm', () => {
       });
     });
 
-    test('should display skip authorization switch with default off', async () => {
+    test('should display skip authorization checkbox with default off', async () => {
       await waitFor(() => {
         expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
       });
     });
 
-    test('should display PKCE required switch', async () => {
+    test('should display PKCE required checkbox', async () => {
       await waitFor(() => {
         expect(screen.getByText('PKCE Required')).toBeInTheDocument();
       });
@@ -624,7 +624,7 @@ describe('OAuthApplicationForm', () => {
       server.resetHandlers();
     });
 
-    test('should display skip authorization switch when application has it enabled', async () => {
+    test('should display skip authorization checkbox when application has it enabled', async () => {
       server.use(
         http.get(gatewayAPI`/applications/4/`, () => {
           return HttpResponse.json({
@@ -648,7 +648,7 @@ describe('OAuthApplicationForm', () => {
       });
     });
 
-    test('should display skip authorization switch when application has it disabled', async () => {
+    test('should display skip authorization checkbox when application has it disabled', async () => {
       render(
         <MemoryRouter initialEntries={['/access/oauth-applications/1/edit']}>
           <Routes>
@@ -671,7 +671,7 @@ describe('OAuthApplicationForm', () => {
       server.resetHandlers();
     });
 
-    test('should display PKCE required switch when application has it enabled', async () => {
+    test('should display PKCE required checkbox when application has it enabled', async () => {
       server.use(
         http.get(gatewayAPI`/applications/5/`, () => {
           return HttpResponse.json({
@@ -695,7 +695,7 @@ describe('OAuthApplicationForm', () => {
       });
     });
 
-    test('should display PKCE required switch when application has it disabled', async () => {
+    test('should display PKCE required checkbox when application has it disabled', async () => {
       server.use(
         http.get(gatewayAPI`/applications/6/`, () => {
           return HttpResponse.json({
