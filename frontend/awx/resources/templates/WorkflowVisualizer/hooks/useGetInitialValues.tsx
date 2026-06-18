@@ -19,6 +19,7 @@ import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from 
 interface WizardStepState {
   nodeTypeStep: Partial<WizardFormValues>;
   nodePromptsStep?: { prompt: Partial<PromptFormValues> };
+  survey?: { survey: unknown };
 }
 
 export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValues {

@@ -9,6 +9,7 @@ import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
+import { clearStaleNodeFields } from './clearStaleNodeFields';
 import { getAddedAndRemovedCredentials } from './getAddedAndRemovedCredentials';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { Label } from '../../../../interfaces/Label';
@@ -341,21 +342,7 @@ export function useSaveVisualizer(templateId: string) {
           }
 
           if (launch_data?.original?.isTemplateChange) {
-            nullIfMissing(updatedNodePayload, 'diff_mode');
-            nullIfMissing(updatedNodePayload, 'execution_environment');
-            nullIfMissing(updatedNodePayload, 'forks');
-            nullIfMissing(updatedNodePayload, 'inventory');
-            nullIfMissing(updatedNodePayload, 'job_slice_count');
-            nullIfMissing(updatedNodePayload, 'job_tags');
-            nullIfMissing(updatedNodePayload, 'job_type');
-            nullIfMissing(updatedNodePayload, 'limit');
-            nullIfMissing(updatedNodePayload, 'scm_branch');
-            nullIfMissing(updatedNodePayload, 'skip_tags');
-            nullIfMissing(updatedNodePayload, 'timeout');
-            nullIfMissing(updatedNodePayload, 'verbosity');
-            if (!('extra_data' in updatedNodePayload)) {
-              updatedNodePayload.extra_data = {};
-            }
+            clearStaleNodeFields(updatedNodePayload);
           }
 
           // Disassociate stale resources BEFORE patching the template. AWX validates the
@@ -601,12 +588,6 @@ export function useSaveVisualizer(templateId: string) {
     processLabels,
     workflowNodeRefresh,
   ]);
-}
-
-function nullIfMissing(payload: Partial<CreateWorkflowNodePayload>, key: CreatePayloadProperty) {
-  if (!(key in payload)) {
-    (payload as Record<string, unknown>)[key] = null;
-  }
 }
 
 export function toKeyedObject(
