@@ -53,7 +53,7 @@ test.describe('Hub - Namespaces', () => {
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Content', 'Namespaces');
-      await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+      await expect(page.getByTestId('page-title')).toBeVisible();
 
       const namespaceName = createE2EName('namespace').toLowerCase().replace(/\s+/g, '_');
       await page.getByText('Create namespace', { exact: true }).click();
