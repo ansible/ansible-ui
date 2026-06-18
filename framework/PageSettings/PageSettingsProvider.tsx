@@ -120,6 +120,8 @@ export function PageSettingsProvider(props: {
     <SWRConfig
       value={{
         dedupingInterval:
+          //  default to 2000ms if no deduping interval is set
+          // __SWR_DEDUPING_INTERVAL__ is used only in testing to force short interval
           props.defaultDedupingInterval ??
           ((globalThis as unknown as Record<string, number>).__SWR_DEDUPING_INTERVAL__ as
             | number

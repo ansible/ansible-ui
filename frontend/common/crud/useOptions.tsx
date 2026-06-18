@@ -18,6 +18,8 @@ export function useOptions<T>(
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     refreshInterval: 0,
+    // short dedup window just enough to prevent multiple components making
+    // the request simultaneously (happens on initial mount of some pages)
     dedupingInterval: 50,
   });
 

@@ -8,7 +8,7 @@ import {
   QueryParams,
   buildQueryString,
 } from '@ansible/ansible-ui-framework';
-import { getItemKey, swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { getItemKey, useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useIsMountedRef } from '@ansible/ansible-ui-framework/components/useIsMounted';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -71,9 +71,7 @@ export function useEdaView<T extends { id: number | string }>(options: {
     url += lastQueryString;
   }
   const fetcher = useFetcher();
-  const response = useSWR<EdaItemsResponse<T>>(url, fetcher, {
-    ...swrOptions,
-  });
+  const response = useSWR<EdaItemsResponse<T>>(url, fetcher);
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});

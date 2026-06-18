@@ -26,6 +26,7 @@ export function AwxActiveUserProvider(props: { children: ReactNode; disabled?: b
 }
 export function AwxActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<AwxItemsResponse<AwxUser>>(awxAPI`/me/`, requestGet, {
+    // Disable deduplication so each refreshInterval poll fetches fresh data
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });

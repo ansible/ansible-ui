@@ -86,6 +86,8 @@ const { data: user } = useGetItem<User>(awxAPI`/users/`, id);
 ```
 
 The global `SWRConfig` in `PageSettingsProvider` sets `dedupingInterval: 2000`.
+Do not set dedupingInterval per-hook unless you have a specific reason to override
+the global default.
 
 ### OPTIONS Endpoint
 

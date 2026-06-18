@@ -26,6 +26,7 @@ export function EdaActiveUserProvider(props: { children: ReactNode; disabled?: b
 
 export function EdaActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<EdaUser>(edaAPI`/users/me/`, requestGet, {
+    // Disable deduplication so each refreshInterval poll fetches fresh data
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });

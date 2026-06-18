@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import { SWRConfiguration } from 'swr';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 
@@ -106,5 +105,3 @@ export function usePostFetcher() {
 export function getItemKey(item: { id: number | string }) {
   return item?.id.toString();
 }
-
-export const swrOptions: SWRConfiguration = {};
