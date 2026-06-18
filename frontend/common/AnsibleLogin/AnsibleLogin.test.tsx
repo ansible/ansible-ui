@@ -172,6 +172,11 @@ describe('AnsibleLogin', () => {
       // Verify DOMPurify.sanitize was called with the dangerous content
       expect(sanitizeSpy).toHaveBeenCalledWith(dangerousContent);
 
+      // Verify the sanitized output removes script tags and preserves safe content
+      const returnValue = sanitizeSpy.mock.results[0]?.value as string;
+      expect(returnValue).not.toContain('<script>');
+      expect(returnValue).toContain('Safe text');
+
       sanitizeSpy.mockRestore();
     });
 
