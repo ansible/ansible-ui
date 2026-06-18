@@ -24,7 +24,7 @@ import {
   MultipleChoiceFieldType,
 } from '../../../common/MultipleChoiceField';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { Spec, Survey } from '../../../interfaces/Survey';
+import { Spec, Survey, SurveyCondition } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 type ResourceType = 'job_templates' | 'workflow_job_templates';
@@ -136,6 +136,9 @@ interface IProps {
 
 interface FormSpec extends Spec {
   formattedChoices?: ChoiceOption[];
+  condition_variable?: string;
+  condition_operator?: string;
+  condition_value?: string;
 }
 
 export function TemplateSurveyForm(props: IProps) {
@@ -186,6 +189,7 @@ export function TemplateSurveyForm(props: IProps) {
 
   const formattedChoices = getFormattedChoices(question);
 
+  const firstCondition = question?.conditions?.[0];
   const initialValues: FormSpec = {
     question_name: question?.question_name || '',
     question_description: question?.question_description || '',
@@ -198,6 +202,11 @@ export function TemplateSurveyForm(props: IProps) {
     choices: question?.choices ?? [],
     formattedChoices,
     new_question: !question,
+    category: question?.category ?? '',
+    page: question?.page ?? 1,
+    condition_variable: firstCondition?.variable ?? '',
+    condition_operator: firstCondition?.operator ?? '',
+    condition_value: firstCondition?.value !== undefined ? String(firstCondition.value) : '',
   };
 
   const onSubmit: PageFormSubmitHandler<FormSpec & { 'add-choice'?: string }> = async (
@@ -240,7 +249,17 @@ export function TemplateSurveyForm(props: IProps) {
       question_name: newQuestion.question_name,
       question_description: newQuestion.question_description,
       choices: newQuestion.choices,
+      category: newQuestion.category || undefined,
+      page: newQuestion.page ? Number(newQuestion.page) : undefined,
     };
+
+    if (newQuestion.condition_variable && newQuestion.condition_operator) {
+      question.conditions = [{
+        variable: newQuestion.condition_variable,
+        operator: newQuestion.condition_operator as SurveyCondition['operator'],
+        value: newQuestion.condition_value || undefined,
+      }];
+    }
 
     const isDuplicate = updatedSurvey.spec.some((q) => q.variable === newQuestion.variable);
 
@@ -305,15 +324,19 @@ export function TemplateSurveyForm(props: IProps) {
       defaultValue={initialValues}
       disableSubmitOnEnter
     >
-      <TemplateSurveyInputs />
+      <TemplateSurveyInputs surveyVariables={survey?.spec?.map((s) => s.variable) ?? []} />
     </AwxPageForm>
   );
 }
 
-function TemplateSurveyInputs() {
+function TemplateSurveyInputs({ surveyVariables }: { surveyVariables: string[] }) {
   const { t } = useTranslation();
 
   const answerType = useWatch({ name: 'type' }) as string;
+  const currentVariable = useWatch({ name: 'variable' }) as string;
+  const conditionVariable = useWatch({ name: 'condition_variable' }) as string;
+
+  const otherVariables = surveyVariables.filter((v) => v !== currentVariable);
 
   return (
     <>
@@ -377,6 +400,74 @@ function TemplateSurveyInputs() {
           name="required"
         />
       </PageFormGroup>
+
+      <PageFormTextInput
+        id="question-category"
+        name="category"
+        type="text"
+        label={t`Category`}
+        placeholder={t('Enter category name')}
+        labelHelp={t`Group this question under a category heading.`}
+      />
+
+      <PageFormTextInput
+        id="question-page"
+        name="page"
+        type="number"
+        min={1}
+        label={t`Page`}
+        placeholder="1"
+        labelHelp={t`Which wizard page this question appears on. Questions on different pages become separate wizard steps.`}
+      />
+
+      {otherVariables.length > 0 && (
+        <>
+          <PageFormSelect
+            name="condition_variable"
+            id="condition-variable"
+            label={t('Condition: Variable')}
+            placeholderText={t('No condition')}
+            options={[
+              { value: '', label: t('No condition') },
+              ...otherVariables.map((v) => ({ value: v, label: v })),
+            ]}
+            labelHelp={t`Only show this question when the selected variable matches the condition.`}
+          />
+
+          {conditionVariable && (
+            <>
+              <PageFormSelect
+                name="condition_operator"
+                id="condition-operator"
+                label={t('Condition: Operator')}
+                placeholderText={t('Select operator')}
+                options={[
+                  { value: 'eq', label: t('Equals (eq)') },
+                  { value: 'neq', label: t('Not equals (neq)') },
+                  { value: 'in', label: t('In list (in)') },
+                  { value: 'notin', label: t('Not in list (notin)') },
+                  { value: 'gt', label: t('Greater than (gt)') },
+                  { value: 'lt', label: t('Less than (lt)') },
+                  { value: 'gte', label: t('Greater or equal (gte)') },
+                  { value: 'lte', label: t('Less or equal (lte)') },
+                  { value: 'is_set', label: t('Is set') },
+                  { value: 'is_not_set', label: t('Is not set') },
+                ]}
+                isRequired
+              />
+
+              <PageFormTextInput
+                id="condition-value"
+                name="condition_value"
+                type="text"
+                label={t`Condition: Value`}
+                placeholder={t('Enter expected value')}
+                labelHelp={t`The value to compare against. Leave empty for is_set/is_not_set operators.`}
+              />
+            </>
+          )}
+        </>
+      )}
 
       {answerType && <SelectedAnswerType answer={answerType} />}
     </>
