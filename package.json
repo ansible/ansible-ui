@@ -160,6 +160,7 @@
     "zustand": "^5.0.1"
   },
   "overrides": {
+    "axios": "1.16.0",
     "nanoid": "3.3.11",
     "minimatch@>=9.0.0 <10.0.0": "9.0.7",
     "@patternfly/react-styles": "6.3.1",
