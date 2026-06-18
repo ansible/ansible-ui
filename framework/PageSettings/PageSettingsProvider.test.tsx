@@ -2,6 +2,7 @@
 import { ReactNode } from 'react';
 import { render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { useSWRConfig } from 'swr';
 import {
   PageSettingsProvider,
   usePageSettings,
@@ -234,6 +235,16 @@ describe('PageSettingsProvider', () => {
       );
 
       expect(getByTestId('interval')).toHaveTextContent('30');
+    });
+
+    test('should disable revalidateOnFocus globally', () => {
+      const wrapper = ({ children }: { children: ReactNode }) => (
+        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
+      );
+
+      const { result } = renderHook(() => useSWRConfig(), { wrapper });
+
+      expect(result.current.revalidateOnFocus).toBe(false);
     });
 
     test('should disable refresh when interval is 0', () => {

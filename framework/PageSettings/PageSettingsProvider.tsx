@@ -116,6 +116,7 @@ export function PageSettingsProvider(props: {
     <SWRConfig
       value={{
         refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
+        revalidateOnFocus: false,
         onErrorRetry: swrErrorRetryHandler,
       }}
     >
