@@ -1,7 +1,7 @@
-// vite.config.js
 /* eslint-disable no-restricted-exports */
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { getVitestAliases } from './vitest.shared';
 
 export default defineConfig({
   plugins: [react()],
@@ -58,6 +58,7 @@ export default defineConfig({
     },
     // found at: https://github.com/vitest-dev/vitest/discussions/1806
     alias: [
+      ...getVitestAliases(),
       {
         find: /^monaco-editor$/,
         replacement: __dirname + '/../node_modules/monaco-editor/esm/vs/editor/editor.api',

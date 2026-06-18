@@ -1,11 +1,14 @@
 import { vi, beforeEach } from 'vitest';
 import { cleanup, screen, Screen } from '@testing-library/react';
 import { debug } from 'vitest-preview';
-import { cache, SWRGlobalState } from 'swr/_internal';
 import '@patternfly/patternfly/patternfly-addons.css';
 import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
+
+import { resetTestSwrCache } from './test-utils/swrTestWrapper';
+
+export { SwrTestWrapper, swrTestConfig, resetTestSwrCache } from './test-utils/swrTestWrapper';
 
 export function mockI18n() {
   vi.mock('react-i18next', () => {
@@ -50,21 +53,7 @@ export function enablePreview() {
       }
       // Still perform cleanup, but after capturing the DOM state
       cleanup();
-      // Clear SWR cache and dedup state between tests to prevent cross-test interference
-      for (const key of cache.keys()) {
-        cache.delete(key);
-      }
-      const swrState = SWRGlobalState.get(cache) as
-        | Record<number, Record<string, unknown>>
-        | undefined;
-      if (swrState) {
-        const fetchState = swrState[2];
-        if (fetchState) {
-          for (const key in fetchState) {
-            delete fetchState[key];
-          }
-        }
-      }
+      resetTestSwrCache();
     });
   });
 }
