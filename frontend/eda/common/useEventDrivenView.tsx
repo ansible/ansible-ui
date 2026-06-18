@@ -79,8 +79,6 @@ export function useEdaView<T extends { id: number | string }>(options: {
     await mutate().finally(() => {});
   }, [mutate]);
 
-  useSWR<EdaItemsResponse<T>>(data?.next, fetcher, swrOptions);
-
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
   if (error instanceof RequestError) {
