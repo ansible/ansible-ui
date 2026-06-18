@@ -97,10 +97,10 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
       await user.click(screen.getByRole('button', { name: 'Open dialog' }));
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText('Create report')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Save report' })).toBeInTheDocument();
     });
 
-    test('should show "Edit report" title when editing an existing filter set', async () => {
+    test('should show "Rename report" title when editing an existing filter set', async () => {
       const user = userEvent.setup();
       render(
         <Wrapper>
@@ -110,7 +110,7 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
 
       await user.click(screen.getByRole('button', { name: 'Open dialog' }));
 
-      expect(screen.getByText('Edit report')).toBeInTheDocument();
+      expect(screen.getByText('Rename report')).toBeInTheDocument();
     });
 
     test('should render the Name input', async () => {

@@ -1,13 +1,11 @@
 import { PageDashboardCard, PageDashboardChart } from '@ansible/ansible-ui-framework';
-import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
 import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import { DashboardChartCardProps, IDashboardChartItem } from '../types';
 import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
 
 export function DashboardChartCard(props: DashboardChartCardProps) {
   const { id, title, help, summaryValue, data, variant, error, errorStateTitle } = props;
-  const { blueColor } = usePageChartColors();
-
+  const blueColor = 'var(--pf-t--chart--color--blue--300)';
   const mapChartItem = (
     chartItem: IDashboardChartItem,
     _index: number,

@@ -1,7 +1,6 @@
 import { ITableColumn, PageDashboardCard, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { PlusCircleIcon } from '@patternfly/react-icons';
 import { DashboardTableCardProps, IDashboardTableItem } from '../types';
 import { PageLoadingTable } from '../../../../../framework/PageTable/PageLoadingTable';
 
@@ -11,11 +10,14 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
     title,
     help,
     firstColumnHeader,
-    emptyStateTitle,
     items,
     errorStateTitle,
     error,
     loading,
+    clearAllFilters,
+    filterState,
+    emptyStateDescription,
+    emptyStateTitle,
   } = props;
   const keyFn = (item: IDashboardTableItem) => item.id;
   const [page, setPage] = useState(1);
@@ -34,7 +36,15 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
   ];
 
   return (
-    <PageDashboardCard id={id} title={title} helpTitle={title} help={help} width="lg" height="md">
+    <PageDashboardCard
+      id={id}
+      title={title}
+      helpTitle={title}
+      help={help}
+      width="lg"
+      height="md"
+      disableBodyPadding
+    >
       {loading && <PageLoadingTable rows={5}></PageLoadingTable>}
       {!loading && (
         <PageTable
@@ -51,10 +61,11 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
           perPage={perPage}
           setPage={setPage}
           setPerPage={setPerPage}
-          emptyStateIcon={PlusCircleIcon}
-          emptyStateTitle={emptyStateTitle}
-          emptyStateDescription={t('There is currently no data available.')}
           disableLastRowBorder
+          clearAllFilters={clearAllFilters}
+          filterState={filterState}
+          emptyStateDescription={emptyStateDescription}
+          emptyStateTitle={emptyStateTitle}
         ></PageTable>
       )}
     </PageDashboardCard>

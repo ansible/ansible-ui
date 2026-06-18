@@ -5,8 +5,8 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
-import { Button } from '@patternfly/react-core';
-import { useState } from 'react';
+import { Button, Grid, GridItem } from '@patternfly/react-core';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
   DashboardChartCard,
@@ -18,6 +18,15 @@ import {
 
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
+import styled from 'styled-components';
+import useResizeObserver from '@react-hook/resize-observer';
+
+const AutomationDashboardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+const Divisor = 1662 / 24;
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
@@ -42,126 +51,184 @@ export function AutomationDashboard() {
   };
 
   const noDataString = t('No jobs have been run.');
+  const ref = useRef<HTMLDivElement>(null);
+  const [gridColumns, setGridColumns] = useState(1);
+
+  useLayoutEffect(() => {
+    const width = Math.max(1, Math.floor((ref.current?.clientWidth ?? 0) / Divisor));
+    setGridColumns(Math.min(25, width));
+  }, []);
+
+  useResizeObserver(ref, (entry) => {
+    const width = Math.max(1, Math.floor((entry.contentRect.width ?? 0) / Divisor));
+    setGridColumns(Math.min(25, width));
+  });
 
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Automation Dashboard')}
-        titleHelpTitle={t('Automation Dashboard')}
-        titleHelp={description}
-        description={description}
-        controls={
-          <Button
-            data-testid="save-as-pdf-button"
-            // TODO: Remove `|| true` once PDF export is implemented on the BE.
-            isDisabled={loading || exporting || !view?.mainTableView?.itemCount || true}
-            variant="secondary"
-            onClick={() => void handleExportPdf()}
-          >
-            {t('Save as PDF')}
-          </Button>
-        }
-      />
-      <DashboardToolbar toolbarFilters={toolbarFilters} {...view.mainTableView} />
-      <PageDashboard>
-        <DashboardValueCard
-          id="successful-jobs-card"
-          title={t('Successful jobs')}
-          help={t(
-            'Number of job runs that completed without error in the selected period. Use the ratio between successful and failed jobs to track automation health and reliability over time.'
-          )}
-          linkText={t('See all successful jobs in AAP')}
-          to={getPageUrl(AwxRoute.Jobs) + '?status=successful'}
-          value={details?.total_number_of_successful_jobs ?? noDataString}
-          error={view.detailsError}
-          errorStateTitle={t('Error loading successful jobs')}
-        ></DashboardValueCard>
-        <DashboardValueCard
-          id="failed-jobs-card"
-          title={t('Failed jobs')}
-          help={t(
-            'Number of job runs that ended in failure in the selected period. Review failed jobs to fix playbooks, credentials, or inventory issues and improve success rates.'
-          )}
-          linkText={t('See all failed jobs in AAP')}
-          to={getPageUrl(AwxRoute.Jobs) + '?status=failed'}
-          value={details?.total_number_of_failed_jobs ?? noDataString}
-          error={view.detailsError}
-          errorStateTitle={t('Error loading failed jobs')}
-        ></DashboardValueCard>
-        <DashboardValueCard
-          id="unique-hosts-card"
-          title={t('Hosts automated')}
-          help={t(
-            'Number of hosts that executed at least one automation job in the selected period. Indicates how much of your inventory is actively automated and can help with license or capacity planning.'
-          )}
-          value={details?.total_number_of_unique_hosts ?? noDataString}
-          error={view.detailsError}
-          errorStateTitle={t('Error loading unique hosts')}
-        ></DashboardValueCard>
-        <DashboardValueCard
-          id="automation-hours-card"
-          title={t('Hours of automation')}
-          help={t(
-            'Sum of all job runtimes in the selected period. Reflects total automation workload and can inform capacity planning and resource allocation.'
-          )}
-          value={details?.total_hours_of_automation ?? noDataString}
-          valueSuffix="h"
-          error={view.detailsError}
-          errorStateTitle={t('Error loading hours of automation')}
-        ></DashboardValueCard>
+    <AutomationDashboardWrapper ref={ref}>
+      <PageLayout>
+        <PageHeader
+          title={t('Automation Dashboard')}
+          titleHelpTitle={t('Automation Dashboard')}
+          titleHelp={description}
+          description={description}
+          controls={
+            <Button
+              data-testid="save-as-pdf-button"
+              // TODO: Remove `|| true` once PDF export is implemented on the BE.
+              isDisabled={loading || exporting || !view?.mainTableView?.itemCount || true}
+              variant="secondary"
+              onClick={() => void handleExportPdf()}
+            >
+              {t('Save as PDF')}
+            </Button>
+          }
+        />
+        <DashboardToolbar
+          toolbarFilters={toolbarFilters}
+          {...view.mainTableView}
+          registerClearCallback={view.registerClearCallback}
+        />
+        <PageDashboard>
+          <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
+            <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
+              <DashboardValueCard
+                id="successful-jobs-card"
+                title={t('Successful jobs')}
+                help={t(
+                  'Number of job runs that completed without error in the selected period. Use the ratio between successful and failed jobs to track automation health and reliability over time.'
+                )}
+                linkText={t('See all successful jobs')}
+                to={getPageUrl(AwxRoute.Jobs) + '?status=successful'}
+                value={details?.total_number_of_successful_jobs ?? noDataString}
+                error={view.detailsError}
+                errorStateTitle={t('Error loading successful jobs')}
+              ></DashboardValueCard>
+              <DashboardValueCard
+                id="failed-jobs-card"
+                title={t('Failed jobs')}
+                help={t(
+                  'Number of job runs that ended in failure in the selected period. Review failed jobs to fix playbooks, credentials, or inventory issues and improve success rates.'
+                )}
+                linkText={t('See all failed jobs')}
+                to={getPageUrl(AwxRoute.Jobs) + '?status=failed'}
+                value={details?.total_number_of_failed_jobs ?? noDataString}
+                error={view.detailsError}
+                errorStateTitle={t('Error loading failed jobs')}
+              ></DashboardValueCard>
+              <DashboardValueCard
+                id="unique-hosts-card"
+                title={t('Hosts automated')}
+                help={t(
+                  'Number of hosts that executed at least one automation job in the selected period. Indicates how much of your inventory is actively automated and can help with license or capacity planning.'
+                )}
+                value={details?.total_number_of_unique_hosts ?? noDataString}
+                error={view.detailsError}
+                errorStateTitle={t('Error loading unique hosts')}
+              ></DashboardValueCard>
+              <DashboardValueCard
+                id="automation-hours-card"
+                title={t('Hours of automation')}
+                help={t(
+                  'Sum of all job runtimes in the selected period. Reflects total automation workload and can inform capacity planning and resource allocation.'
+                )}
+                value={details?.total_hours_of_automation ?? noDataString}
+                valueSuffix="h"
+                error={view.detailsError}
+                errorStateTitle={t('Error loading hours of automation')}
+              ></DashboardValueCard>
+            </Grid>
+          </GridItem>
+          <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
+            <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
+              <DashboardTableCard
+                id="top-projects-card"
+                title={t('Top 5 projects')}
+                help={t(
+                  'Projects ranked by total job count in the selected period. Helps identify which projects are driving the most automation activity.'
+                )}
+                firstColumnHeader={t('Project name')}
+                errorStateTitle={t('Error loading projects')}
+                items={details?.top_projects ?? []}
+                error={view.detailsError}
+                loading={view.detailsLoading}
+                clearAllFilters={view.mainTableView.clearAllFilters}
+                filterState={view.isFilterStateDefault ? undefined : view.mainTableView.filterState}
+                emptyStateTitle={
+                  view?.mainTableView?.itemCount
+                    ? t('No projects to rank')
+                    : t('No project data yet')
+                }
+                emptyStateDescription={
+                  view?.mainTableView?.itemCount
+                    ? t(
+                        'Automation data exists, but no runs are currently associated with projects.'
+                      )
+                    : t('Project data will appear after your first automation runs.')
+                }
+              ></DashboardTableCard>
+              <DashboardTableCard
+                id="top-users-card"
+                title={t('Top 5 users')}
+                help={t(
+                  'Users ranked by automation runs they triggered or that ran in their context in the selected period. Shows individual adoption and activity.'
+                )}
+                firstColumnHeader={t('User name')}
+                errorStateTitle={t('Error loading users')}
+                items={details?.top_users ?? []}
+                error={view.detailsError}
+                loading={view.detailsLoading}
+                clearAllFilters={view.mainTableView.clearAllFilters}
+                filterState={view.isFilterStateDefault ? undefined : view.mainTableView.filterState}
+                emptyStateTitle={
+                  view?.mainTableView?.itemCount ? t('No users to rank') : t('No user data yet')
+                }
+                emptyStateDescription={
+                  view?.mainTableView?.itemCount
+                    ? t(
+                        'Automation data exists, but no runs are currently attributed to individual users.'
+                      )
+                    : t('User data will appear after your first automation runs.')
+                }
+              ></DashboardTableCard>
+            </Grid>
+          </GridItem>
+          <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
+            <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
+              <DashboardChartCard
+                id="host-chart-card"
+                title={t('Number of hosts jobs are running on')}
+                help={t(
+                  'Number of hosts that ran at least one job in the selected period. Complements run count by showing how broadly automation is applied across your inventory.'
+                )}
+                summaryValue={details?.total_number_of_host_job_runs ?? 0}
+                data={details?.host_chart ?? { kind: 'day', items: [] }}
+                variant={'lineChart'}
+                error={view.detailsError}
+                errorStateTitle={t('Error loading host chart')}
+              ></DashboardChartCard>
+              <DashboardChartCard
+                id="job-chart-card"
+                title={t('Number of times jobs were run')}
+                help={t(
+                  'Total number of job executions in the selected period, regardless of success or failure. Use this to understand automation volume, trends, and adoption over time.'
+                )}
+                variant={'barChart'}
+                summaryValue={details?.total_number_of_job_runs ?? 0}
+                data={details?.job_chart ?? { kind: 'day', items: [] }}
+                errorStateTitle={t('Error loading job chart')}
+                error={view.detailsError}
+              ></DashboardChartCard>
+            </Grid>
+          </GridItem>
 
-        <DashboardTableCard
-          id="top-projects-card"
-          title={t('Top 5 projects')}
-          help={t(
-            'Projects ranked by total job count in the selected period. Helps identify which projects are driving the most automation activity.'
-          )}
-          firstColumnHeader={t('Project name')}
-          emptyStateTitle={t('No projects')}
-          errorStateTitle={t('Error loading projects')}
-          items={details?.top_projects ?? []}
-          error={view.detailsError}
-          loading={view.detailsLoading}
-        ></DashboardTableCard>
-        <DashboardTableCard
-          id="top-users-card"
-          title={t('Top 5 users')}
-          help={t(
-            'Users ranked by automation runs they triggered or that ran in their context in the selected period. Shows individual adoption and activity.'
-          )}
-          firstColumnHeader={t('User name')}
-          emptyStateTitle={t('No users')}
-          errorStateTitle={t('Error loading users')}
-          items={details?.top_users ?? []}
-          error={view.detailsError}
-          loading={view.detailsLoading}
-        ></DashboardTableCard>
-        <DashboardChartCard
-          id="host-chart-card"
-          title={t('Number of hosts jobs are running on')}
-          help={t(
-            'Number of hosts that ran at least one job in the selected period. Complements run count by showing how broadly automation is applied across your inventory.'
-          )}
-          summaryValue={details?.total_number_of_host_job_runs ?? 0}
-          data={details?.host_chart ?? { kind: 'day', items: [] }}
-          variant={'lineChart'}
-          error={view.detailsError}
-          errorStateTitle={t('Error loading host chart')}
-        ></DashboardChartCard>
-        <DashboardChartCard
-          id="job-chart-card"
-          title={t('Number of times jobs were run')}
-          help={t(
-            'Total number of job executions in the selected period, regardless of success or failure. Use this to understand automation volume, trends, and adoption over time.'
-          )}
-          variant={'barChart'}
-          summaryValue={details?.total_number_of_job_runs ?? 0}
-          data={details?.job_chart ?? { kind: 'day', items: [] }}
-          errorStateTitle={t('Error loading job chart')}
-          error={view.detailsError}
-        ></DashboardChartCard>
-        <DashboardMainTableCard {...view}></DashboardMainTableCard>
-      </PageDashboard>
-    </PageLayout>
+          <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
+            <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
+              <DashboardMainTableCard {...view}></DashboardMainTableCard>
+            </Grid>
+          </GridItem>
+        </PageDashboard>
+      </PageLayout>
+    </AutomationDashboardWrapper>
   );
 }

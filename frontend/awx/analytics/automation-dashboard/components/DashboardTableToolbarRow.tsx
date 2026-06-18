@@ -12,7 +12,7 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 const SWITCH_ID = 'switch-time-taken-automation';
 
 export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
-  const { costState, isLoading, itemCount, setCostState, refresh, onExportCsv } = props;
+  const { costState, itemCount, setCostState, refresh, onExportCsv } = props;
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const putRequest = usePutRequest<ISubscriptionCosts, ISubscriptionCosts>();
@@ -20,9 +20,8 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof ISubscriptionCosts, string>> | null>(
     null
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const controlsDisabled = isLoading || isSubmitting || !costState || !activeAwxUser?.is_superuser;
+  const controlsDisabled = !costState || !activeAwxUser?.is_superuser;
 
   const toolbarChangeHandler = async <K extends keyof ISubscriptionCosts>(
     value: ISubscriptionCosts[K],
@@ -36,70 +35,66 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
       ...costState,
       [key]: value,
     } as ISubscriptionCosts;
-    setIsSubmitting(true);
     setErrors(null);
+
+    // Save: report failure only when the PUT itself rejects.
+    const id = costState.id;
     try {
-      // Save: report failure only when the PUT itself rejects.
-      const id = costState.id;
-      try {
-        const savedState = await putRequest(
-          metricsAPI`/dashboard_reports/subscription_costs/${id}/`,
-          updatedCostState
-        );
-        if (setCostState) {
-          setCostState(savedState);
-        }
-      } catch (err) {
-        const { genericErrors, fieldErrors } = awxErrorAdapter(err);
-        alertToaster.addAlert({
-          variant: 'danger',
-          title: t('Failed to update subscription costs.'),
-          children: (
-            <>
-              {genericErrors.map((e) => (
-                <div key={String(e.message)}>{e.message}</div>
-              ))}
-            </>
-          ),
-          timeout: 5000,
-        });
-
-        setErrors(
-          fieldErrors.reduce<Partial<Record<keyof ISubscriptionCosts, string>>>(
-            (acc, e) => ({ ...acc, [e.name]: String(e.message) }),
-            {}
-          )
-        );
-        return;
+      const savedState = await putRequest(
+        metricsAPI`/dashboard_reports/subscription_costs/${id}/`,
+        updatedCostState
+      );
+      if (setCostState) {
+        setCostState(savedState);
       }
-
-      // PUT succeeded — show success before attempting the refresh.
+    } catch (err) {
+      const { genericErrors, fieldErrors } = awxErrorAdapter(err);
       alertToaster.addAlert({
-        variant: 'success',
-        title: t('Subscription costs updated successfully.'),
+        variant: 'danger',
+        title: t('Failed to update subscription costs.'),
+        children: (
+          <>
+            {genericErrors.map((e) => (
+              <div key={String(e.message)}>{e.message}</div>
+            ))}
+          </>
+        ),
         timeout: 5000,
       });
 
-      // Refresh: a failure here does not undo the save.
-      try {
-        await refresh();
-      } catch {
-        alertToaster.addAlert({
-          variant: 'warning',
-          title: t('Update saved but failed to refresh view.'),
-          timeout: 5000,
-        });
-      }
-    } finally {
-      setIsSubmitting(false);
+      setErrors(
+        fieldErrors.reduce<Partial<Record<keyof ISubscriptionCosts, string>>>(
+          (acc, e) => ({ ...acc, [e.name]: String(e.message) }),
+          {}
+        )
+      );
+      return;
+    }
+
+    // PUT succeeded — show success before attempting the refresh.
+    alertToaster.addAlert({
+      variant: 'success',
+      title: t('Subscription costs updated successfully.'),
+      timeout: 5000,
+    });
+
+    // Refresh: a failure here does not undo the save.
+    try {
+      await refresh();
+    } catch {
+      alertToaster.addAlert({
+        variant: 'warning',
+        title: t('Update saved but failed to refresh view.'),
+        timeout: 5000,
+      });
     }
   };
 
   return (
     <Flex
-      style={{ paddingTop: '1rem', paddingBottom: '1rem' }}
+      style={{ paddingBottom: 'var(--pf-t--global--spacer--action--horizontal--default)' }}
       direction={{ xl: 'row', default: 'column' }}
-      alignItems={{ xl: 'alignItemsCenter', default: 'alignItemsFlexStart' }}
+      alignItems={{ xl: 'alignItemsFlexEnd', default: 'alignItemsFlexStart' }}
       rowGap={{ default: 'rowGapMd' }}
     >
       <Flex direction={{ md: 'row', default: 'column' }} rowGap={{ default: 'rowGapMd' }}>
@@ -145,7 +140,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
         grow={{ default: 'grow' }}
         rowGap={{ default: 'rowGapLg' }}
       >
-        <FlexItem>
+        <FlexItem alignSelf={{ default: 'alignSelfCenter' }}>
           <Switch
             id={SWITCH_ID + '-toggle'}
             data-testid={SWITCH_ID + '-toggle'}
