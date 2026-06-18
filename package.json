@@ -112,7 +112,7 @@
     "i18next": "24.2.2",
     "i18next-browser-languagedetector": "8.0.2",
     "i18next-http-backend": "3.0.2",
-    "js-yaml": "4.1.0",
+    "js-yaml": "4.2.0",
     "luxon": "3.5.0",
     "merge-jsons-webpack-plugin": "2.0.1",
     "mini-css-extract-plugin": "2.9.2",
