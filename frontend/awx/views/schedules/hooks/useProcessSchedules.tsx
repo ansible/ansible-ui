@@ -23,9 +23,17 @@ export const useProcessSchedule = () => {
       const { resourceId, resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
       const ruleset = getRuleSet(rules, exceptions);
 
+      let rrule = ruleset.toString().split('\n').join(' ');
+
+      // RFC5545: When DTSTART has TZID, UNTIL must be in UTC with Z suffix
+      // The rrule library strips the Z suffix when serializing, so we add it back
+      if (rrule.match(/UNTIL=\d{8}T\d{6}(?!Z)/)) {
+        rrule = rrule.replace(/UNTIL=(\d{8}T\d{6})(?!Z)/, 'UNTIL=$1Z');
+      }
+
       const payload = {
         ...rest,
-        rrule: ruleset.toString().split('\n').join(' '),
+        rrule,
       };
 
       function request(

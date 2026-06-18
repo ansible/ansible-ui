@@ -74,25 +74,28 @@ export function RuleForm(
       const untilTime = until?.time;
       const untilDate = until?.date;
       if (untilDate && untilTime) {
-        const utcDate = DateTime.fromISO(`${untilDate}`).set(get24Hour(untilTime)).toUTC();
+        const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone })
+          .set(get24Hour(untilTime))
+          .toUTC();
         const { year, month, day, hour, minute } = utcDate;
         rule.origOptions.until = datetime(year, month, day, hour, minute);
       } else {
         if (untilDate) {
           // This block is used when the user enters a date, but no time.
-          // We use the date given, and the current time based on the timezone given
-          // in the first step, or default to America/New_York.
+          // We use midnight in the schedule's timezone, not browser timezone.
 
-          const utcDate = DateTime.fromISO(`${untilDate}`).toUTC();
+          const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone })
+            .startOf('day')
+            .toUTC();
           const { year, day, month, hour, minute } = utcDate;
           rule.origOptions.until = datetime(year, month, day, hour, minute);
         }
         if (untilTime) {
           // This block is used when the user enters a time, but no date.
-          // We use the time given, and the tomorrow's date based on the timezone given
-          // in the first step, or default to America/New_York.
+          // We use tomorrow's date in the schedule's timezone, not browser timezone.
 
           const { year, day, month, hour, minute } = DateTime.now()
+            .setZone(timezone)
             .plus({ days: 1 })
             .set(get24Hour(untilTime))
             .toUTC();
@@ -107,7 +110,15 @@ export function RuleForm(
       : isRulesStep
         ? rules.length + 1 || 1
         : exceptions.length + 1 || 1;
-    const ruleObject = { rule: RRule.optionsToString({ ...rule.origOptions }), id: itemId };
+    let ruleString = RRule.optionsToString({ ...rule.origOptions });
+
+    // RFC5545: When DTSTART has TZID, UNTIL must be in UTC with Z suffix
+    // The rrule library doesn't add the Z suffix automatically, so we add it manually
+    if (ruleString.match(/UNTIL=\d{8}T\d{6}(?!Z)/)) {
+      ruleString = ruleString.replace(/UNTIL=(\d{8}T\d{6})(?!Z)/, 'UNTIL=$1Z');
+    }
+
+    const ruleObject = { rule: ruleString, id: itemId };
     const index = isRulesStep
       ? rules.findIndex((r) => r.id === ruleId)
       : exceptions.findIndex((r) => r.id === ruleId);

@@ -19,14 +19,24 @@ export function useUpdateRules() {
       const { year, month, day, hour, minute } = DateTime.fromISO(`${date}`).set(getStart(time));
 
       const updatedRules = (rules || []).map(({ rule, id }) => {
-        const newRule = RRule.optionsToString({
+        let newRule = RRule.optionsToString({
           ...RRule.fromString(rule).origOptions,
           tzid: timezone,
           dtstart: datetime(year, month, day, hour, minute),
         });
+
+        // RFC5545: When DTSTART has TZID, UNTIL must be in UTC with Z suffix
+        // The rrule library doesn't preserve the Z suffix when re-serializing, so we add it back
+        if (newRule.match(/UNTIL=\d{8}T\d{6}(?!Z)/)) {
+          newRule = newRule.replace(/UNTIL=(\d{8}T\d{6})(?!Z)/, 'UNTIL=$1Z');
+        }
+
         return { rule: newRule, id };
       });
-      return updatedRules;
+
+      // Return same reference if no changes to prevent infinite render loops
+      const hasChanges = updatedRules.some((updated, index) => updated.rule !== rules[index].rule);
+      return hasChanges ? updatedRules : rules;
     },
     [getStart, wizardData]
   );
