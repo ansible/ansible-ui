@@ -15,7 +15,7 @@ test.describe('Hub - Namespaces', () => {
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Content', 'Namespaces');
-      await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+      await expect(page.getByTestId('page-title')).toBeVisible();
 
       const namespaceName = createE2EName('namespace').toLowerCase().replace(/\s+/g, '_');
       await page.getByText('Create namespace', { exact: true }).click();
@@ -143,7 +143,7 @@ test.describe('Hub - Namespaces - Bulk Delete', () => {
     const namespace2 = await Namespace.api.create(page);
 
     await navigateTo(page, 'Automation Content', 'Namespaces');
-    await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+    await expect(page.getByTestId('page-title')).toBeVisible();
 
     await page.locator('[data-cy="table-view"] button').click();
     await selectTableRow(
@@ -169,6 +169,6 @@ test.describe('Hub - Namespaces - Bulk Delete', () => {
     await page.getByRole('button', { name: 'Delete namespaces' }).click();
 
     await expect(page).toHaveURL(/\/namespaces/);
-    await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+    await expect(page.getByTestId('page-title')).toBeVisible();
   });
 });
