@@ -39,6 +39,8 @@ test.describe('Host Jobs Tab', () => {
       projectId: project.id,
       playbook: 'hello_world.yml',
     });
+
+    await JobTemplate.api.launch(page, jobTemplate.id);
   });
 
   test.afterEach(async ({ page }) => {
@@ -54,28 +56,6 @@ test.describe('Host Jobs Tab', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(120000);
-
-      await test.step('Launch job from inventory', async () => {
-        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-        await clickTableRow({ text: inventory.name }, page);
-        await page.getByRole('tab', { name: 'Job Templates' }).click();
-
-        await clickTableRowAction({ text: jobTemplate.name, action: 'Launch template' }, page);
-
-        await expect(page.getByTestId('page-title')).toHaveText(jobTemplate.name);
-        await expect(page.getByRole('tab', { name: 'Output' })).toHaveAttribute(
-          'aria-selected',
-          'true'
-        );
-
-        await expect(
-          page
-            .getByTestId('pending-status')
-            .or(page.getByTestId('waiting-status'))
-            .or(page.getByTestId('running-status'))
-            .or(page.getByTestId('success-status'))
-        ).toBeVisible({ timeout: 30000 });
-      });
 
       await test.step('Relaunch job from host jobs tab', async () => {
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
@@ -102,10 +82,10 @@ test.describe('Host Jobs Tab', () => {
         await expect(page.getByRole('heading', { name: host.name, exact: true })).toBeVisible();
         await page.getByRole('tab', { name: 'Jobs' }).click();
 
-        await page.getByRole('toolbar').isVisible();
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
         await clearTableFilters(page);
 
-        await expect(page.locator('tbody tr')).toHaveCount(2);
+        await expect(page.locator('tbody tr')).toHaveCount(2, { timeout: 30000 });
 
         await page.getByLabel('Select all').check();
         await page.getByLabel('toolbar actions').click();

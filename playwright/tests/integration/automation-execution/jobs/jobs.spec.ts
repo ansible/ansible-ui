@@ -7,6 +7,9 @@ import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
 import { clickTableRow } from '../../../../commands/clickTableRow';
 import { selectTableRow } from '../../../../commands/selectTableRow';
 import { clickPageAction } from '../../../../commands/clickPageAction';
+import { createE2EName } from '../../../../commands/createE2EName';
+import { waitForJobStatus } from '../../../../commands/waitForJobStatus';
+import { filterTable } from '../../../../commands/filterTable';
 
 test.beforeEach(setupBefore({ path: '/execution/jobs' }));
 test.afterEach(setupAfter);
@@ -241,42 +244,88 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch an Inventory Sync job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(5 * 60 * 1000);
+      test.setTimeout(3 * 60 * 1000);
       test.slow();
-      const organizationName = await Organization.ui.create(page);
-      const projectName = await Project.ui.create(page, {
-        organizationName,
-        scmUrl: 'https://github.com/ansible/test-playbooks',
+
+      // Setup via API — use a specific inventory file to avoid scanning the entire repo
+      const organization = await Organization.api.create(page);
+      const project = await Project.api.create(page, {
+        organization: organization.id,
+        scm_url: 'https://github.com/ansible/test-playbooks',
+      });
+      await Project.api.sync(page, project.id);
+
+      const inventory = await Inventory.api.create(page, {
+        organization: organization.id,
+      });
+      const inventorySource = await Inventory.api.createSource(page, inventory.id, {
+        name: createE2EName('inventory-source'),
+        source: 'scm',
+        sourceProject: project.id,
+        sourcePath: 'inventories/inventory.ini',
       });
 
-      // Wait for project to sync before creating inventory source
-      await Project.ui.sync(page, projectName);
+      try {
+        // Navigate to inventory source details and trigger sync via UI
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+        await filterTable({ filterLabel: 'Name', filterValue: inventory.name }, page);
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
+        await page
+          .getByRole('row', { name: inventory.name })
+          .getByRole('link', { name: inventory.name })
+          .click();
+        await expect(
+          page.getByRole('main').getByRole('heading', { name: inventory.name }).first()
+        ).toBeVisible({ timeout: 30000 });
 
-      const { inventorySourceName, inventoryName } = await Inventory.ui.createSource(page, {
-        projectName,
-      });
+        await page.getByRole('tab', { name: 'Sources' }).click();
+        await page
+          .getByRole('row', { name: inventorySource.name })
+          .getByRole('link', { name: inventorySource.name })
+          .click();
+        await expect(
+          page.getByRole('main').getByRole('heading', { name: inventorySource.name }).first()
+        ).toBeVisible({ timeout: 30000 });
 
-      await clickPageAction('Sync inventory source', page);
+        const syncResponsePromise = page.waitForResponse(
+          (response) =>
+            response.url().includes('/inventory_sources/') &&
+            response.url().includes('/update/') &&
+            response.request().method() === 'POST' &&
+            response.status() === 202
+        );
 
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+        await clickPageAction('Sync inventory source', page);
+        const syncResponse = await syncResponsePromise;
+        const inventoryUpdate = (await syncResponse.json()) as { id: number };
 
-      await clickTableRow({ text: inventoryName }, page);
+        await waitForJobStatus(
+          {
+            jobType: 'inventory_updates',
+            jobId: inventoryUpdate.id,
+            desiredStatus: 'successful',
+            timeout: 120000,
+          },
+          page
+        );
 
-      await page.getByRole('tab', { name: 'Jobs' }).click();
+        // Navigate to the job via the Jobs list and verify success
+        const jobName = `${inventory.name} - ${inventorySource.name}`;
+        await navigateTo(page, 'Automation Execution', 'Jobs');
+        await filterTable({ filterLabel: 'Name', filterValue: jobName }, page);
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
+        await page.getByRole('row', { name: jobName }).getByRole('link', { name: jobName }).click();
+        await expect(
+          page.getByRole('main').getByRole('heading', { name: jobName }).first()
+        ).toBeVisible({ timeout: 30000 });
 
-      await clickTableRow({ text: `${inventoryName} - ${inventorySourceName}` }, page);
-
-      await expect(page).toHaveURL(/\/jobs\/inventory\/\d+\/details/);
-
-      // Wait for job to complete
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
-      // Cleanup
-      await Inventory.ui.deleteSource(page, inventoryName, inventorySourceName);
-      await Inventory.ui.delete(page, inventoryName);
-      await Project.ui.delete(page, projectName);
-      await Organization.ui.delete(page, organizationName);
+        await expect(page).toHaveURL(/\/jobs\/inventory\/\d+\/output/);
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+      } finally {
+        await Inventory.api.delete(page, inventory.id);
+        await Project.api.deleteByName(page, project.name);
+        await Organization.api.deleteByName(page, organization.name);
+      }
     }
   );
 });
