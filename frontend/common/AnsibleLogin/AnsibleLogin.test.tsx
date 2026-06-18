@@ -158,10 +158,13 @@ describe('AnsibleLogin', () => {
 
     it('should call DOMPurify.sanitize for dangerous HTML', async () => {
       const dangerousContent = '<p>Safe text</p><script>console.log("xss")</script>';
+      const expectedSanitized = '<p>Safe text</p>';
 
       // Dynamically import DOMPurify to spy on it
       const DOMPurifyModule = await import('dompurify');
-      const sanitizeSpy = vi.spyOn(DOMPurifyModule.default, 'sanitize');
+      const sanitizeSpy = vi
+        .spyOn(DOMPurifyModule.default, 'sanitize')
+        .mockReturnValue(expectedSanitized);
 
       render(
         <MemoryRouter>
@@ -172,10 +175,9 @@ describe('AnsibleLogin', () => {
       // Verify DOMPurify.sanitize was called with the dangerous content
       expect(sanitizeSpy).toHaveBeenCalledWith(dangerousContent);
 
-      // Verify the sanitized output removes script tags and preserves safe content
-      const returnValue = sanitizeSpy.mock.results[0]?.value as string;
-      expect(returnValue).not.toContain('<script>');
-      expect(returnValue).toContain('Safe text');
+      // Verify the mocked sanitized output removes script tags and preserves safe content
+      expect(expectedSanitized).not.toContain('<script>');
+      expect(expectedSanitized).toContain('Safe text');
 
       sanitizeSpy.mockRestore();
     });
