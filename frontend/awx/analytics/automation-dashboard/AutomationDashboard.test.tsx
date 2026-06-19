@@ -190,40 +190,81 @@ describe('AutomationDashboard', () => {
     expect(screen.getByTestId('dashboard-main-table-card')).toBeInTheDocument();
   });
 
-  // ─── Save as PDF button ────────────────────────────────────────────────────
+  // ─── Export report button ──────────────────────────────────────────────────
 
-  test('should render Save as PDF button', () => {
+  test('should render Export report button', () => {
     render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeInTheDocument();
+    expect(screen.getByTestId('export-report-button')).toBeInTheDocument();
   });
 
-  test('should enable Save as PDF button when table has items', () => {
+  test('should label the button "Export report"', () => {
     render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Export report' })).toBeInTheDocument();
   });
 
-  test('should disable Save as PDF button when loading', () => {
+  test('should enable Export report button when table has items', () => {
+    render(testWrapper());
+    expect(screen.getByTestId('export-report-button')).toBeEnabled();
+  });
+
+  test('should disable Export report button when loading', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({ ...mockView, loading: true });
     render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeDisabled();
+    expect(screen.getByTestId('export-report-button')).toBeDisabled();
   });
 
-  test('should disable Save as PDF button when table has no items', () => {
+  test('should disable Export report button when table has no items', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
       ...mockView,
       mainTableView: { ...mockMainTableView, itemCount: 0 },
     });
     render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeDisabled();
+    expect(screen.getByTestId('export-report-button')).toBeDisabled();
   });
 
-  test('should call exportPdf when Save as PDF button is clicked', async () => {
+  test('should call exportPdf when Export report button is clicked', async () => {
     const user = userEvent.setup();
     const exportPdf = vi.fn();
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({ ...mockView, exportPdf });
     render(testWrapper());
-    await user.click(screen.getByTestId('save-as-pdf-button'));
+    await user.click(screen.getByTestId('export-report-button'));
     expect(exportPdf).toHaveBeenCalledTimes(1);
+  });
+
+  test('should show warning toast when template count exceeds 500', async () => {
+    const user = userEvent.setup();
+    const addAlert = vi.fn();
+    const { usePageAlertToaster } = await import('@ansible/ansible-ui-framework');
+    vi.mocked(usePageAlertToaster).mockReturnValueOnce({
+      addAlert,
+      removeAlert: vi.fn(),
+      replaceAlert: vi.fn(),
+      removeAlerts: vi.fn(),
+    });
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      mainTableView: { ...mockMainTableView, itemCount: 501 },
+    });
+    render(testWrapper());
+    await user.click(screen.getByTestId('export-report-button'));
+    expect(addAlert).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'warning' })
+    );
+  });
+
+  test('should not show warning toast when template count is within limit', async () => {
+    const user = userEvent.setup();
+    const addAlert = vi.fn();
+    const { usePageAlertToaster } = await import('@ansible/ansible-ui-framework');
+    vi.mocked(usePageAlertToaster).mockReturnValueOnce({
+      addAlert,
+      removeAlert: vi.fn(),
+      replaceAlert: vi.fn(),
+      removeAlerts: vi.fn(),
+    });
+    render(testWrapper());
+    await user.click(screen.getByTestId('export-report-button'));
+    expect(addAlert).not.toHaveBeenCalled();
   });
 
   // ─── Value card data ───────────────────────────────────────────────────────

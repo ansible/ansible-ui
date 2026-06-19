@@ -9,9 +9,17 @@ import {
 import { metricsAPI } from '../../../common/api/metrics-utils';
 
 /**
+ * Delay (ms) between the new tab's `load` event and the print dialog firing.
+ * Gives fonts, inline SVG charts, and styles time to fully render before the
+ * browser captures the page for printing.
+ */
+export const PRINT_DELAY_MS = 2000;
+
+/**
  * Returns a stable callback that opens the dashboard HTML export in a new tab
- * and automatically triggers the browser's print dialog (Save as PDF).
- * PDF generation is handled natively by the browser — no extra libraries needed.
+ * and automatically triggers the browser's print dialog after a short delay
+ * to allow the page to fully render. PDF generation is handled natively by
+ * the browser — no extra libraries needed.
  */
 export function useExportPdf(
   toolbarFilters: IToolbarFilter[],
@@ -29,7 +37,9 @@ export function useExportPdf(
     const newWindow = window.open(url, '_blank');
     if (newWindow) {
       newWindow.addEventListener('load', () => {
-        newWindow.print();
+        setTimeout(() => {
+          newWindow.print();
+        }, PRINT_DELAY_MS);
       });
     }
   }, [toolbarFilters, filterState, queryParams]);

@@ -1,3 +1,4 @@
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   PageDashboard,
@@ -7,7 +8,6 @@ import {
   usePageAlertToaster,
 } from '@ansible/ansible-ui-framework';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
   DashboardChartCard,
@@ -36,6 +36,7 @@ export function AutomationDashboard() {
   const { t } = useTranslation();
   const toolbarFilters = useAutomationDashboardToolbar();
   const getPageUrl = useGetPageUrl();
+  const alertToaster = usePageAlertToaster();
 
   const description = t(
     'Discover the significant cost and time savings achieved by automating Ansible jobs with the Ansible Automation Platform. Explore how automation reduces manual effort, enhances efficiency, and optimizes IT operations across your organization.'
@@ -43,7 +44,6 @@ export function AutomationDashboard() {
 
   const view = useAutomationDashboardView({ toolbarFilters });
   const { details, exportPdf, loading } = view;
-  const alertToaster = usePageAlertToaster();
 
   const handleExport = useCallback(() => {
     if ((view.mainTableView.itemCount ?? 0) > EXPORT_TEMPLATE_LIMIT) {

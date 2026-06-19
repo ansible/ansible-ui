@@ -53,7 +53,8 @@ describe('useExportPdf', () => {
     expect(openSpy).toHaveBeenCalledWith(expect.stringContaining('name=my-job'), '_blank');
   });
 
-  test('should attach a load listener that calls print on the new window', () => {
+  test('should attach a load listener that calls print after PRINT_DELAY_MS', () => {
+    vi.useFakeTimers();
     const mockPrint = vi.fn();
     const mockNewWindow = {
       addEventListener: vi.fn(),
@@ -68,7 +69,14 @@ describe('useExportPdf', () => {
 
     const loadHandler = mockNewWindow.addEventListener.mock.calls[0][1] as () => void;
     loadHandler();
-    expect(mockPrint).toHaveBeenCalled();
+
+    // print must not fire immediately — it waits for the delay
+    expect(mockPrint).not.toHaveBeenCalled();
+
+    vi.runAllTimers();
+    expect(mockPrint).toHaveBeenCalledOnce();
+
+    vi.useRealTimers();
   });
 
   test('should not throw when window.open returns null (popup blocked)', () => {
