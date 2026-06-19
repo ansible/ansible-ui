@@ -231,12 +231,9 @@ export function EditInventory() {
 
   const getPageUrl = useGetPageUrl();
 
-  const isLoaded =
-    inventory &&
-    igResponse &&
-    (params.inventory_type === 'constructed_inventory' ? !inputInventoriesLoading : true)
-      ? true
-      : false;
+  const inputInventoriesReady =
+    params.inventory_type === 'constructed_inventory' ? !inputInventoriesLoading : true;
+  const isLoaded = !!(inventory && igResponse && inputInventoriesReady);
 
   const isError = inventoryRequest.error || iGroupsRequest.error || inputInventoriesError;
 
