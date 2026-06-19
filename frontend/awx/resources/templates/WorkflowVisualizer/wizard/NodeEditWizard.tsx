@@ -15,6 +15,7 @@ import {
   replaceIdentifier,
   shouldHideOtherStep,
 } from './helpers';
+import { buildEffectivePrompt } from './buildEffectivePrompt';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
@@ -88,14 +89,23 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         ) {
           return shouldHideOtherStep(launch_config);
         }
-        if ('nodePromptsStep' in initialValues) {
+        // nodePromptsStep is always present in initialValues (it carries original
+        // node resources for save cleanup). Only show the step if the original
+        // template actually had prompts, which is indicated by launch_config being
+        // stored in the initial prompt values.
+        if (initialValues.nodePromptsStep?.prompt?.launch_config) {
           return false;
         }
         return true;
       },
       validate: (wizardData: Partial<WizardFormValues>) => {
+        // Prefer the live wizard data's requiredCredentialTypes so that validation reflects
+        // the currently selected template, not the template that was loaded when the wizard
+        // was first opened (which is stale if the user switched templates mid-edit).
         const requiredCredentialTypes =
-          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || [];
+          wizardData.prompt?.requiredCredentialTypes ||
+          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes ||
+          [];
         validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes);
       },
     },
@@ -120,6 +130,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const handleSubmit = async (formValues: WizardFormValues) => {
     const nodeData = node.getData() as { resource: WorkflowNode };
     const nodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
+    const originalTemplateId = nodeData.resource.summary_fields?.unified_job_template?.id;
 
     const {
       approval_name,
@@ -135,24 +146,15 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       survey,
     } = formValues;
 
-    const promptValues = prompt;
-
-    if (promptValues) {
-      if (resource && 'organization' in resource) {
-        promptValues.organization = resource.organization ?? null;
-      }
-      if (launch_config) {
-        promptValues.original = {
-          launch_config,
-        };
-      }
-      if (nodeOriginalResources) {
-        promptValues.original = {
-          ...promptValues.original,
-          ...nodeOriginalResources,
-        };
-      }
-    }
+    const { effectivePrompt } = buildEffectivePrompt({
+      originalTemplateId,
+      newResourceId: resource?.id ? Number(resource.id) : undefined,
+      prompt,
+      launchConfig: launch_config,
+      nodeOriginalResources,
+      resourceOrganization:
+        resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
+    });
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
@@ -180,7 +182,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
           },
         },
       },
-      launch_data: promptValues,
+      launch_data: effectivePrompt,
       survey_data: survey,
     };
 

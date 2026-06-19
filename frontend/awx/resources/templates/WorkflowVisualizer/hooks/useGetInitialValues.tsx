@@ -19,6 +19,7 @@ import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from 
 interface WizardStepState {
   nodeTypeStep: Partial<WizardFormValues>;
   nodePromptsStep?: { prompt: Partial<PromptFormValues> };
+  survey?: { survey: unknown };
 }
 
 export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValues {
@@ -81,14 +82,15 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       const hidePromptStep = launch ? shouldHideOtherStep(launch) : true;
       const hideSurveyStep = launch?.survey_enabled === false;
 
-      const nodeCredentials =
-        launch?.ask_credential_on_launch && !isNewNode ? await getCredentialData(nodeId) : [];
-      const nodeLabels =
-        launch?.ask_labels_on_launch && !isNewNode ? await getLabelData(nodeId) : [];
-      const nodeInstanceGroups =
-        launch?.ask_instance_groups_on_launch && !isNewNode
-          ? await getInstanceGroupData(nodeId)
-          : [];
+      // Always fetch node-level resources for saved nodes, regardless of whether the current
+      // template's ask_*_on_launch flags are set. The node may have credentials, labels, or
+      // instance groups from a previous template that accepted them. Tracking them here in
+      // original.* ensures they can be properly cleaned up when switching to a template that
+      // does not accept them — otherwise processCredentials/Labels/InstanceGroups find nothing
+      // to remove and the PATCH fails with "Field is not configured to prompt on launch."
+      const nodeCredentials = isNewNode ? [] : await getCredentialData(nodeId);
+      const nodeLabels = isNewNode ? [] : await getLabelData(nodeId);
+      const nodeInstanceGroups = isNewNode ? [] : await getInstanceGroupData(nodeId);
 
       const prompt = nodeData?.launch_data;
       const defaults = nodeData?.resource;
@@ -157,9 +159,25 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         }),
       };
 
+      // nodePromptsStep is always included even when the prompt step is hidden.
+      // When hidden, a minimal prompt is used so that handleSubmit can access
+      // original.credentials/labels/instance_groups for disassociation cleanup when
+      // switching to a template that does not accept those fields on launch.
+      // Without this, original.* is undefined and processCredentials finds nothing
+      // to remove, causing the PATCH to fail with "Field is not configured to prompt
+      // on launch" because the node still has associated credentials in the DB.
+      const nodePromptsStepPrompt = hidePromptStep
+        ? {
+            credentials: [] as typeof nodePromptsValues.credentials,
+            labels: [] as typeof nodePromptsValues.labels,
+            instance_groups: [] as typeof nodePromptsValues.instance_groups,
+            original,
+          }
+        : nodePromptsValues;
+
       return {
         nodeTypeStep,
-        ...(hidePromptStep ? {} : { nodePromptsStep: { prompt: nodePromptsValues } }),
+        nodePromptsStep: { prompt: nodePromptsStepPrompt },
         ...(hideSurveyStep ? {} : { survey: { survey: nodeData?.survey_data ?? surveyValues } }),
       };
     },

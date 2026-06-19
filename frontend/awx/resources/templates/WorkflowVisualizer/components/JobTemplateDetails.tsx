@@ -1,5 +1,4 @@
 import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +21,15 @@ import { GraphNodeData, PromptFormValues } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
+import { resolveExtraVars } from './resolveExtraVars';
+import {
+  arrayIdsMatch,
+  mergeSurveyIntoVariables,
+  resolveArrayField,
+  resolveExecutionEnvironment,
+  resolveScalar,
+  resolveTagField,
+} from './resolveNodeFields';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -51,73 +59,113 @@ function useAggregateJobTemplateDetails({
     String(promptValues?.execution_environment?.id)
   );
 
-  // Fix: Check for non-empty arrays, not just truthy values (empty arrays are truthy!)
-  const credentials =
-    (promptValues?.credentials && promptValues.credentials.length > 0
-      ? promptValues.credentials
-      : undefined) ??
-    (nodeCredentials?.results && nodeCredentials.results.length > 0
-      ? nodeCredentials.results
-      : undefined) ??
-    templateCredentials?.results;
+  const isTemplateChanged = Boolean(promptValues?.original?.isTemplateChange);
 
-  const diffMode = promptValues?.diff_mode ?? nodeValues?.diff_mode ?? template.diff_mode;
-  let executionEnvironment: ExecutionEnvironment | undefined;
-
-  if (promptValues?.execution_environment && fetchedEE) {
-    executionEnvironment = fetchedEE;
-  } else {
-    executionEnvironment =
-      nodeValues?.summary_fields?.execution_environment ??
-      template.summary_fields.execution_environment;
-  }
-
-  const forks = Number(promptValues?.forks ?? nodeValues?.forks ?? template.forks);
-  const instanceGroups =
-    promptValues?.instance_groups ?? nodeInstanceGroups?.results ?? templateInstanceGroups?.results;
-  const inventory =
-    promptValues?.inventory ??
-    nodeValues.summary_fields.inventory ??
-    template.summary_fields.inventory;
-  const jobSliceCount =
-    promptValues?.job_slice_count ?? nodeValues?.job_slice_count ?? template.job_slice_count;
-  const jobTags =
-    promptValues?.job_tags ?? parseStringToTagArray(nodeValues?.job_tags ?? template.job_tags);
-  const jobType = promptValues?.job_type ?? nodeValues?.job_type ?? template.job_type;
-  const labels =
-    promptValues?.labels ?? nodeLabels?.results ?? template.summary_fields.labels?.results;
-  const limit = promptValues?.limit ?? nodeValues?.limit ?? template.limit;
-  const scmBranch = promptValues?.scm_branch ?? nodeValues?.scm_branch ?? template.scm_branch;
-  const skipTags =
-    promptValues?.skip_tags ?? parseStringToTagArray(nodeValues?.skip_tags ?? template.skip_tags);
-  const timeout = Number(promptValues?.timeout ?? nodeValues?.timeout ?? template.timeout);
+  const credentials = resolveArrayField(
+    promptValues?.credentials,
+    template.ask_credential_on_launch,
+    nodeCredentials?.results,
+    templateCredentials?.results,
+    isTemplateChanged
+  );
+  const diffMode = resolveScalar(
+    promptValues?.diff_mode,
+    nodeValues?.diff_mode,
+    template.diff_mode,
+    isTemplateChanged
+  );
+  const executionEnvironment = resolveExecutionEnvironment(
+    promptValues?.execution_environment,
+    fetchedEE,
+    nodeValues?.summary_fields?.execution_environment,
+    template.summary_fields.execution_environment as ExecutionEnvironment | undefined,
+    isTemplateChanged
+  );
+  const forks = Number(
+    resolveScalar(promptValues?.forks, nodeValues?.forks, template.forks, isTemplateChanged)
+  );
+  const instanceGroups = resolveArrayField(
+    promptValues?.instance_groups,
+    template.ask_instance_groups_on_launch,
+    nodeInstanceGroups?.results,
+    templateInstanceGroups?.results,
+    isTemplateChanged
+  );
+  const inventory = resolveScalar(
+    promptValues?.inventory,
+    nodeValues.summary_fields.inventory,
+    template.summary_fields.inventory,
+    isTemplateChanged
+  );
+  const jobSliceCount = resolveScalar(
+    promptValues?.job_slice_count,
+    nodeValues?.job_slice_count,
+    template.job_slice_count,
+    isTemplateChanged
+  );
+  const jobTags = resolveTagField(
+    promptValues?.job_tags,
+    template.ask_tags_on_launch,
+    nodeValues?.job_tags,
+    template.job_tags,
+    isTemplateChanged
+  );
+  const jobType = resolveScalar(
+    promptValues?.job_type,
+    nodeValues?.job_type,
+    template.job_type,
+    isTemplateChanged
+  );
+  const labels = resolveArrayField(
+    promptValues?.labels,
+    template.ask_labels_on_launch,
+    nodeLabels?.results,
+    template.summary_fields.labels?.results,
+    isTemplateChanged
+  );
+  const limit = resolveScalar(
+    promptValues?.limit,
+    nodeValues?.limit,
+    template.limit,
+    isTemplateChanged
+  );
+  const scmBranch = resolveScalar(
+    promptValues?.scm_branch,
+    nodeValues?.scm_branch,
+    template.scm_branch,
+    isTemplateChanged
+  );
+  const skipTags = resolveTagField(
+    promptValues?.skip_tags,
+    template.ask_skip_tags_on_launch,
+    nodeValues?.skip_tags,
+    template.skip_tags,
+    isTemplateChanged
+  );
+  const timeout = Number(
+    resolveScalar(promptValues?.timeout, nodeValues?.timeout, template.timeout, isTemplateChanged)
+  );
   const timeoutString = useGetTimeoutString(timeout);
   const templateTimeoutString = useGetTimeoutString(template.timeout);
-  const verbosity = promptValues?.verbosity ?? nodeValues?.verbosity ?? template.verbosity;
+  const verbosity = resolveScalar(
+    promptValues?.verbosity,
+    nodeValues?.verbosity,
+    template.verbosity,
+    isTemplateChanged
+  );
   const verbosityString = useVerbosityString(verbosity);
   const templateVerbosityString = useVerbosityString(template.verbosity);
-  let variables =
-    promptValues?.extra_vars ??
-    (nodeValues?.extra_data ? jsonToYaml(JSON.stringify(nodeValues.extra_data)) : undefined) ??
-    template.extra_vars;
+
+  let variables = resolveExtraVars(
+    promptValues?.extra_vars,
+    template.ask_variables_on_launch,
+    nodeValues?.extra_data,
+    template.extra_vars,
+    isTemplateChanged
+  );
 
   if (surveyValues) {
-    const jsonObj: { [key: string]: string } = {};
-
-    if (variables) {
-      const lines = variables.split('\n');
-      lines.forEach((line) => {
-        const [key, value] = line.split(':').map((part) => part.trim());
-        jsonObj[key] = value;
-      });
-    }
-
-    const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
-      ...jsonObj,
-      ...surveyValues,
-    };
-
-    variables = jsonToYaml(JSON.stringify(mergedData));
+    variables = mergeSurveyIntoVariables(variables, surveyValues);
   }
 
   return {
@@ -337,7 +385,7 @@ export function JobTemplateDetails({
       </PageDetail>
       <NodeTagDetail
         label={t('Labels')}
-        nodeTags={labels}
+        nodeTags={labels ?? []}
         templateTags={template.summary_fields.labels?.results}
       />
       <NodeTagDetail
@@ -352,7 +400,7 @@ export function JobTemplateDetails({
       />
       <NodeCodeEditorDetail
         label={t('Variables')}
-        nodeExtraVars={variables}
+        nodeExtraVars={variables ?? ''}
         templateExtraVars={template.extra_vars}
       />
     </>
@@ -435,23 +483,4 @@ function InstanceGroupsDetail({
       </LabelGroup>
     </PromptDetail>
   );
-}
-
-function arrayIdsMatch(arr1: { id: number }[], arr2: { id: number }[]) {
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
-
-  const idSet1 = new Set(arr1.map((obj) => obj.id));
-  const idSet2 = new Set(arr2.map((obj) => obj.id));
-
-  if (idSet1.size !== idSet2.size) {
-    return false;
-  }
-  for (const item of idSet1) {
-    if (!idSet2.has(item)) {
-      return false;
-    }
-  }
-  return true;
 }
