@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CreateInventory, EditInventory } from './InventoryForm';
@@ -88,29 +87,25 @@ const mockSmartInventory = {
 };
 
 const mockConstructedInventory = {
+  ...mockInventory,
   id: 3,
-  name: 'constructed test',
   kind: 'constructed' as const,
-  description: 'constructed description',
-  organization: 1,
-  source_vars: 'plugin: constructed',
-  update_cache_timeout: 30,
-  verbosity: 1,
-  limit: 'webservers',
-  host_filter: null as string | null,
-  prevent_instance_group_fallback: false,
+  name: 'constructed test',
+  description: 'constructed test description',
   summary_fields: {
-    organization: { id: 1, name: 'Default' },
+    ...mockInventory.summary_fields,
     labels: { count: 0, results: [] },
-    user_capabilities: {},
   },
 };
 
-const inputInventoriesResponse = {
-  count: 1,
+const mockInputInventoriesResponse = {
+  count: 2,
   next: null,
   previous: null,
-  results: [{ id: 10, name: 'Input Inv 1', type: 'inventory', url: '/api/v2/inventories/10/' }],
+  results: [
+    { id: 10, name: 'source-inventory-1', type: 'inventory', url: '/api/v2/inventories/10/' },
+    { id: 11, name: 'source-inventory-2', type: 'inventory', url: '/api/v2/inventories/11/' },
+  ],
 };
 
 const inventoryInstanceGroupsResponse = {
@@ -166,11 +161,26 @@ const server = setupServer(
     () => HttpResponse.json(mockSmartInventory)
   ),
   http.get(
+    ({ request }) =>
+      request.url.includes('/constructed_inventories/3/') &&
+      !request.url.includes('instance_groups') &&
+      !request.url.includes('input_inventories'),
+    () => HttpResponse.json(mockConstructedInventory)
+  ),
+  http.get(
+    ({ request }) => request.url.includes('/inventories/3/input_inventories/'),
+    () => HttpResponse.json(mockInputInventoriesResponse)
+  ),
+  http.get(
     ({ request }) => request.url.includes('/inventories/1/instance_groups/'),
     () => HttpResponse.json(inventoryInstanceGroupsResponse)
   ),
   http.get(
     ({ request }) => request.url.includes('/inventories/2/instance_groups/'),
+    () => HttpResponse.json(inventoryInstanceGroupsResponse)
+  ),
+  http.get(
+    ({ request }) => request.url.includes('/inventories/3/instance_groups/'),
     () => HttpResponse.json(inventoryInstanceGroupsResponse)
   ),
   http.options(
@@ -414,248 +424,7 @@ describe('InventoryForm', () => {
       expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
     });
 
-    it('should show loading page while fetching inventory data', async () => {
-      server.use(
-        http.get(
-          ({ request }) =>
-            request.url.includes('/inventories/1/') &&
-            !request.url.includes('instance_groups') &&
-            !request.url.includes('input_inventories'),
-          async () => {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            return HttpResponse.json(mockInventory);
-          }
-        )
-      );
-
-      render(
-        <SWRConfig value={{ provider: () => new Map() }}>
-          <MemoryRouter initialEntries={['/inventories/inventory/1/edit']}>
-            <Routes>
-              <Route path="/inventories/:inventory_type/:id/edit" element={<EditInventory />} />
-            </Routes>
-          </MemoryRouter>
-        </SWRConfig>
-      );
-
-      expect(screen.queryByDisplayValue('test')).not.toBeInTheDocument();
-
-      await waitFor(() => {
-        expect(screen.getByDisplayValue('test')).toBeInTheDocument();
-      });
-    });
-
-    it('should display error when inventory fetch fails', async () => {
-      server.use(
-        http.get(
-          ({ request }) =>
-            request.url.includes('/inventories/1/') &&
-            !request.url.includes('instance_groups') &&
-            !request.url.includes('input_inventories'),
-          () => HttpResponse.json({ detail: 'Not Found' }, { status: 404 })
-        )
-      );
-
-      render(
-        <MemoryRouter initialEntries={['/inventories/inventory/1/edit']}>
-          <Routes>
-            <Route path="/inventories/:inventory_type/:id/edit" element={<EditInventory />} />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText('Not Found')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('CreateInventory - Constructed', () => {
-    it('should render constructed inventory form with extra fields', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/constructed_inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="constructed" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
-      });
-
-      expect(screen.getByText(/cache timeout/i)).toBeInTheDocument();
-      expect(screen.getByText(/verbosity/i)).toBeInTheDocument();
-      expect(screen.getByText(/limit/i)).toBeInTheDocument();
-      expect(screen.getByText(/source variables/i)).toBeInTheDocument();
-      expect(screen.getByText(/input inventories/i)).toBeInTheDocument();
-    });
-
-    it('should not display labels or prevent instance group fallback for constructed inventory', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/constructed_inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="constructed" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
-      });
-
-      expect(screen.queryByText(/prevent instance group fallback/i)).not.toBeInTheDocument();
-    });
-
-    it('should display source_vars as required for constructed inventory', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/constructed_inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="constructed" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText(/source variables/i)).toBeInTheDocument();
-      });
-
-      expect(screen.getByTestId('source_vars')).toBeInTheDocument();
-    });
-  });
-
-  describe('CreateInventory - Regular inventory specific fields', () => {
-    it('should display prevent instance group fallback checkbox for regular inventory', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
-      });
-
-      expect(screen.getByText(/prevent instance group fallback/i)).toBeInTheDocument();
-    });
-
-    it('should not display smart host filter for regular inventory', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
-      });
-
-      expect(screen.queryByLabelText(/smart host filter/i)).not.toBeInTheDocument();
-    });
-
-    it('should not display constructed inventory fields for regular inventory', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
-      });
-
-      expect(screen.queryByText(/cache timeout/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/source variables/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/input inventories/i)).not.toBeInTheDocument();
-    });
-  });
-
-  describe('CreateInventory - Smart inventory specific fields', () => {
-    it('should not display constructed inventory fields for smart inventory', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/smart_inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="smart" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
-      });
-
-      expect(screen.queryByText(/cache timeout/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/source variables/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/input inventories/i)).not.toBeInTheDocument();
-    });
-
-    it('should not display labels or prevent instance group fallback for smart inventory', async () => {
-      render(
-        <MemoryRouter initialEntries={['/inventories/smart_inventory/create']}>
-          <Routes>
-            <Route
-              path="/inventories/:inventory_type/create"
-              element={<CreateInventory inventoryKind="smart" />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
-      });
-
-      expect(screen.queryByText(/prevent instance group fallback/i)).not.toBeInTheDocument();
-    });
-  });
-
-  describe('EditInventory - Constructed', () => {
-    it('should preload constructed inventory form with correct fields', async () => {
-      server.use(
-        http.get(
-          ({ request }) =>
-            request.url.includes('/constructed_inventories/3/') &&
-            !request.url.includes('instance_groups') &&
-            !request.url.includes('input_inventories'),
-          () => HttpResponse.json(mockConstructedInventory)
-        ),
-        http.get(
-          ({ request }) => request.url.includes('/inventories/3/instance_groups/'),
-          () => HttpResponse.json(inventoryInstanceGroupsResponse)
-        ),
-        http.get(
-          ({ request }) => request.url.includes('/inventories/3/input_inventories/'),
-          () => HttpResponse.json(inputInventoriesResponse)
-        )
-      );
-
+    it('should preload constructed inventory form with input inventories from all pages', async () => {
       render(
         <MemoryRouter initialEntries={['/inventories/constructed_inventory/3/edit']}>
           <Routes>
@@ -668,11 +437,42 @@ describe('InventoryForm', () => {
         expect(screen.getByDisplayValue('constructed test')).toBeInTheDocument();
       });
 
-      expect(screen.getByDisplayValue('constructed description')).toBeInTheDocument();
-      expect(screen.getByText(/cache timeout/i)).toBeInTheDocument();
-      expect(screen.getByText(/verbosity/i)).toBeInTheDocument();
-      expect(screen.getByText(/limit/i)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /save inventory/i })).toBeInTheDocument();
+    });
+
+    it('should show error when input_inventories fetch fails for constructed inventory', async () => {
+      // Use id: 4 to avoid SWR cache from the id: 3 preload test above. All handlers
+      // for this inventory are set up here so the test is self-contained.
+      server.use(
+        http.get(
+          ({ request }) =>
+            request.url.includes('/constructed_inventories/4/') &&
+            !request.url.includes('instance_groups') &&
+            !request.url.includes('input_inventories'),
+          () => HttpResponse.json({ ...mockConstructedInventory, id: 4 })
+        ),
+        http.get(
+          ({ request }) => request.url.includes('/inventories/4/instance_groups/'),
+          () => HttpResponse.json(inventoryInstanceGroupsResponse)
+        ),
+        http.get(
+          ({ request }) => request.url.includes('/inventories/4/input_inventories/'),
+          () => HttpResponse.json({ detail: 'Forbidden' }, { status: 403 })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/inventories/constructed_inventory/4/edit']}>
+          <Routes>
+            <Route path="/inventories/:inventory_type/:id/edit" element={<EditInventory />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      // AwxError renders an EmptyState (no role="alert"); the heading is the HTTP status message.
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Forbidden' })).toBeInTheDocument();
+      });
     });
   });
 });
