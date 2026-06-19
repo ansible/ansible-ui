@@ -32,12 +32,6 @@ export function useLabelPayload() {
       templateLabels.forEach((label) => labelIds.add(label.id));
 
       let organizationId = template?.summary_fields?.organization?.id;
-      if (!organizationId) {
-        const { results } = await requestGet<AwxItemsResponse<Organization>>(
-          awxAPI`/organizations/`
-        );
-        organizationId = results[0].id;
-      }
 
       const labelsToCreate: Promise<Label>[] = [];
       for (const label of promptLabels) {
@@ -52,7 +46,21 @@ export function useLabelPayload() {
           continue;
         }
 
-        // Label needs to be created
+        // Label needs to be created — resolve org ID only at this point
+        if (!organizationId) {
+          const { results } = await requestGet<AwxItemsResponse<Organization>>(
+            awxAPI`/organizations/`
+          );
+          if (!results.length) {
+            throw new Error(
+              t(
+                'Cannot create label: this template has no organization and no organizations are accessible.'
+              )
+            );
+          }
+          organizationId = results[0].id;
+        }
+
         labelsToCreate.push(
           postRequest(awxAPI`/labels/`, {
             name: label.name,

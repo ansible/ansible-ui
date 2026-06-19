@@ -109,7 +109,9 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
       const { credential_passwords = {}, prompt = undefined, survey } = formValues;
 
       try {
-        const labelPayload = await createLabelPayload(prompt?.labels || [], template);
+        const labelPayload = config.ask_labels_on_launch
+          ? await createLabelPayload(prompt?.labels || [], template)
+          : [];
 
         let payload: Partial<LaunchPayload> = {};
         const setValue = <K extends LaunchPayloadProperty>(key: K, value?: LaunchPayload[K]) => {
