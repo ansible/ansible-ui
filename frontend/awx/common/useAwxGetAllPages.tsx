@@ -5,10 +5,14 @@ import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 import { AwxItemsResponse } from './AwxItemsResponse';
 
-export function useAwxGetAllPages<T extends object>(url: string, queryParams?: QueryParams) {
+export function useAwxGetAllPages<T extends object>(
+  url: string | undefined,
+  queryParams?: QueryParams
+) {
   const getRequest = useGetRequest<AwxItemsResponse<T>>();
   const getKey = useCallback(
     (pageIndex: number, previousPageData: AwxItemsResponse<T>) => {
+      if (!url) return null;
       if (previousPageData && !previousPageData.next) return null;
       return `${url}${normalizeQueryString({
         ...queryParams,

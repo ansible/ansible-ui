@@ -17,6 +17,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { postRequest, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useAwxGetAllPages } from '../../common/useAwxGetAllPages';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -177,9 +178,11 @@ export function EditInventory() {
     params.inventory_type === 'constructed_inventory'
       ? awxAPI`/inventories/${id.toString()}/input_inventories/`
       : '';
-  const inputInventoriesRequest = useGet<AwxItemsResponse<InputInventory>>(inputInventoriesUrl);
-
-  const inputInventoriesResponse = inputInventoriesRequest.data;
+  const {
+    results: inputInventoriesResults,
+    error: inputInventoriesError,
+    isLoading: inputInventoriesLoading,
+  } = useAwxGetAllPages<InputInventory>(inputInventoriesUrl);
 
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
@@ -215,11 +218,7 @@ export function EditInventory() {
       data.inventories.length > 0
     ) {
       promises.push(
-        submitInputInventories(
-          data,
-          inputInventories || [],
-          inputInventoriesResponse?.results || []
-        )
+        submitInputInventories(data, inputInventories || [], inputInventoriesResults || [])
       );
     }
 
@@ -235,11 +234,11 @@ export function EditInventory() {
   const isLoaded =
     inventory &&
     igResponse &&
-    (params.inventory_type === 'constructed_inventory' ? inputInventoriesResponse : true)
+    (params.inventory_type === 'constructed_inventory' ? !inputInventoriesLoading : true)
       ? true
       : false;
 
-  const isError = inventoryRequest.error || iGroupsRequest.error || inputInventoriesRequest.error;
+  const isError = inventoryRequest.error || iGroupsRequest.error || inputInventoriesError;
 
   if (!isLoaded || !inventory || isError) {
     return (
@@ -253,7 +252,7 @@ export function EditInventory() {
         {!isLoaded && !isError && <LoadingPage></LoadingPage>}
         {inventoryRequest.error && <AwxError error={inventoryRequest.error} />}
         {iGroupsRequest.error && <AwxError error={iGroupsRequest.error} />}
-        {inputInventoriesRequest.error && <AwxError error={inputInventoriesRequest.error} />}
+        {inputInventoriesError && <AwxError error={inputInventoriesError} />}
       </PageLayout>
     );
   }
@@ -265,7 +264,7 @@ export function EditInventory() {
         ? {
             ...inventory,
             instanceGroups: originalInstanceGroups,
-            inventories: inputInventoriesResponse?.results as Inventory[],
+            inventories: (inputInventoriesResults ?? []) as Inventory[],
           }
         : {
             ...inventory,

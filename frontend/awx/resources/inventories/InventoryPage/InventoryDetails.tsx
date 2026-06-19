@@ -11,6 +11,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { StatusCell } from '@ansible/common-ui/Status';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants, Label, LabelGroup, Tooltip } from '@patternfly/react-core';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { useTranslation } from 'react-i18next';
 import { Link, useOutletContext, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
@@ -55,7 +56,7 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
   const verbosityString = useVerbosityString(inventory.verbosity);
   const getPageUrl = useGetPageUrl();
 
-  const { data: inputInventories, error: inputInventoriesError } = useGet<{ results: Inventory[] }>(
+  const { results: inputInventories, error: inputInventoriesError } = useAwxGetAllPages<Inventory>(
     inventory.kind === 'constructed'
       ? awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`
       : ''
@@ -191,14 +192,14 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
         helpText={inventoryFormDetailLables.input_inventories}
         isEmpty={
           typeof inputInventoriesError === 'undefined' &&
-          (!inputInventories || inputInventories?.results.length === 0)
+          (!inputInventories || inputInventories.length === 0)
         }
       >
         {inputInventoriesError ? (
           t`There was an error fetching the input inventories`
         ) : (
           <LabelGroup>
-            {inputInventories?.results.map((inventory) => (
+            {inputInventories?.map((inventory) => (
               <Label
                 isClickable
                 color="blue"
