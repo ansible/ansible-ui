@@ -13,6 +13,27 @@ import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/type
 import { awxAPI } from './api/awx-utils';
 import { evaluateConditions } from './useSurveyConditions';
 
+/**
+ * Read a survey variable's value from the wizard step that owns it. Each survey
+ * page is a separate wizard step (`survey_page_<n>`, or `survey` for a single
+ * page), so a variable defined on page N is authoritative only in that step's
+ * snapshot. Reading from the owning step avoids stale duplicates that other
+ * pages' snapshots may still hold after the value changed.
+ */
+function getOwnedSurveyValue(
+  variable: string,
+  page: number,
+  stepData: Record<string, unknown>
+): unknown {
+  const ownerStep = (stepData[`survey_page_${page}`] ?? stepData['survey']) as
+    | { survey?: Record<string, unknown> }
+    | undefined;
+  if (ownerStep?.survey && variable in ownerStep.survey) {
+    return ownerStep.survey[variable];
+  }
+  return undefined;
+}
+
 function getJobType(resource: WizardFormValues['resource']) {
   if (!resource) return;
 
@@ -49,6 +70,7 @@ export function SurveyStep({
   const { t } = useTranslation();
   const { wizardData, stepData } = usePageWizard();
   const { reset } = useFormContext();
+  const stepDataRecord = stepData as Record<string, unknown>;
 
   let { resource } = wizardData as WizardFormValues;
   if (!resource && stepData?.nodePromptsStep) {
@@ -66,21 +88,13 @@ export function SurveyStep({
   useEffect(() => {
     if (!survey_spec?.spec) return;
     const survey: { [key: string]: string | string[] | number } = {};
-    // Collect previous values from all survey-related wizard steps
-    let previousValues: Record<string, string | number | string[]> | undefined;
-    for (const key of Object.keys(stepData)) {
-      if (key === 'survey' || key.startsWith('survey_page_')) {
-        const step = stepData[key] as { survey?: Record<string, string | number | string[]> } | undefined;
-        if (step?.survey) {
-          previousValues = { ...(previousValues ?? {}), ...step.survey };
-        }
-      }
-    }
 
     survey_spec.spec.forEach((obj: Spec) => {
-      const prev = previousValues?.[obj.variable];
+      // Read the prior value from the step that owns this variable (by page),
+      // not from a stale duplicate copied into another page's step snapshot.
+      const prev = getOwnedSurveyValue(obj.variable, obj.page ?? 1, stepDataRecord);
       if (prev !== undefined) {
-        survey[obj.variable] = prev;
+        survey[obj.variable] = prev as string | string[] | number;
         return;
       }
       if (obj.default === '' || obj.default === undefined || obj.default === null) return;
@@ -92,36 +106,48 @@ export function SurveyStep({
     });
 
     reset({ survey });
-  }, [survey_spec, reset, stepData]);
+  }, [survey_spec, reset, stepDataRecord]);
 
   // Watch current form values for condition evaluation
   const surveyValues = useWatch({ name: 'survey' }) as Record<string, unknown> | undefined;
 
-  // Build condition data from all sources
+  // Build condition data: resolve each variable from a single source of truth.
+  // Live form values win for the current page; every other variable is read from
+  // the step that owns it (by page), so a stale copy lingering in another page's
+  // snapshot can no longer override an updated value.
+  const wizardSurvey = (wizardData as Record<string, unknown>)?.survey as
+    | Record<string, unknown>
+    | undefined;
   const conditionData: Record<string, unknown> = {};
-  const wizardSurvey = (wizardData as Record<string, unknown>)?.survey;
-  if (wizardSurvey && typeof wizardSurvey === 'object') {
-    Object.assign(conditionData, wizardSurvey as Record<string, unknown>);
-  }
-  for (const key of Object.keys(stepData)) {
-    if (key === 'survey' || key.startsWith('survey_page_')) {
-      const step = stepData[key] as { survey?: Record<string, unknown> } | undefined;
-      if (step?.survey) {
-        Object.assign(conditionData, step.survey);
-      }
-    }
-  }
   if (survey_spec?.spec) {
     for (const item of survey_spec.spec) {
-      if (conditionData[item.variable] === undefined) {
-        if (item.default !== undefined && item.default !== null && item.default !== '') {
-          conditionData[item.variable] = item.default;
+      const itemPage = item.page ?? 1;
+      const isCurrentPage = pageNumber === undefined || itemPage === pageNumber;
+
+      let value: unknown;
+      let found = false;
+      if (isCurrentPage && surveyValues && item.variable in surveyValues) {
+        value = surveyValues[item.variable];
+        found = true;
+      } else {
+        const owned = getOwnedSurveyValue(item.variable, itemPage, stepDataRecord);
+        if (owned !== undefined) {
+          value = owned;
+          found = true;
         }
       }
+      if (!found && wizardSurvey && item.variable in wizardSurvey) {
+        value = wizardSurvey[item.variable];
+        found = true;
+      }
+      if (!found && item.default !== undefined && item.default !== null && item.default !== '') {
+        value = item.default;
+        found = true;
+      }
+      if (found) {
+        conditionData[item.variable] = value;
+      }
     }
-  }
-  if (surveyValues && typeof surveyValues === 'object') {
-    Object.assign(conditionData, surveyValues as Record<string, unknown>);
   }
 
   const getChoices = (name: string): PageSelectOption<string>[] => {
