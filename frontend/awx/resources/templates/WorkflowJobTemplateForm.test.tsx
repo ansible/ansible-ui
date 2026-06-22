@@ -337,7 +337,7 @@ describe('WorkflowJobTemplateForm', () => {
           },
         };
         let orgFetched = false;
-        let labelPostBody: unknown = null;
+        let labelPostBody: Record<string, unknown> | null = null;
         server.use(
           http.get(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
           http.patch(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
@@ -346,7 +346,7 @@ describe('WorkflowJobTemplateForm', () => {
             return HttpResponse.json({ count: 1, results: [{ id: 20, name: 'Default' }] });
           }),
           http.post(awxAPI`/workflow_job_templates/1/labels/`, async ({ request }) => {
-            labelPostBody = await request.json();
+            labelPostBody = (await request.json()) as Record<string, unknown>;
             return HttpResponse.json(labelPostBody);
           })
         );
@@ -395,7 +395,7 @@ describe('WorkflowJobTemplateForm', () => {
           },
         };
         let orgFetched = false;
-        let labelPostBody: unknown = null;
+        let labelPostBody: Record<string, unknown> | null = null;
         server.use(
           http.get(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
           http.patch(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
@@ -404,7 +404,7 @@ describe('WorkflowJobTemplateForm', () => {
             return HttpResponse.json({ count: 0, results: [] });
           }),
           http.post(awxAPI`/workflow_job_templates/1/labels/`, async ({ request }) => {
-            labelPostBody = await request.json();
+            labelPostBody = (await request.json()) as Record<string, unknown>;
             return HttpResponse.json(labelPostBody);
           })
         );
