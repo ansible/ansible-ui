@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -132,6 +133,104 @@ describe('TemplateLaunchWizard', () => {
         expect(screen.getAllByText('Review').length).toBeGreaterThan(0);
       });
     });
+
+    it(
+      'should skip createLabelPayload and POST launch when ask_labels_on_launch is false',
+      { timeout: 15000 },
+      async () => {
+        const { useLabelPayload } = await import('../hooks/useLabelPayload');
+        const mockCreateLabelPayload = vi.fn(() => Promise.resolve([]));
+        vi.mocked(useLabelPayload).mockReturnValue(mockCreateLabelPayload);
+
+        let launchPosted = false;
+        server.use(
+          http.post(awxAPI`/job_templates/1/launch/`, () => {
+            launchPosted = true;
+            return HttpResponse.json({ id: 100, type: 'job' });
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(() => {
+          expect(screen.getByText('Prompt on Launch')).toBeInTheDocument();
+        });
+
+        // With all ask_* false only Review step is visible; click Finish to submit
+        await user.click(screen.getByTestId('wizard-next'));
+
+        await waitFor(() => {
+          expect(launchPosted).toBe(true);
+        });
+        expect(mockCreateLabelPayload).not.toHaveBeenCalled();
+      }
+    );
+
+    it(
+      'should call createLabelPayload when ask_labels_on_launch is true',
+      { timeout: 15000 },
+      async () => {
+        const { useLabelPayload } = await import('../hooks/useLabelPayload');
+        const mockCreateLabelPayload = vi.fn(() => Promise.resolve([]));
+        vi.mocked(useLabelPayload).mockReturnValue(mockCreateLabelPayload);
+
+        let launchPosted = false;
+        server.use(
+          http.get(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(makeConfig({ ask_labels_on_launch: true }))
+          ),
+          http.post(awxAPI`/job_templates/1/launch/`, () => {
+            launchPosted = true;
+            return HttpResponse.json({ id: 100, type: 'job' });
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(() => {
+          expect(screen.getByText('Prompt on Launch')).toBeInTheDocument();
+        });
+
+        // With ask_labels_on_launch: true, the Prompts step is visible first.
+        // Steps with `inputs` render PageFormSubmitButton (data-testid="Submit"),
+        // steps with `element` (Review) render a plain button (data-testid="wizard-next").
+        await waitFor(() => {
+          expect(screen.getByTestId('Submit')).toBeInTheDocument();
+        });
+        await user.click(screen.getByTestId('Submit'));
+
+        // Now on Review step — click Finish to submit
+        await waitFor(() => {
+          expect(screen.getByTestId('wizard-next')).toBeInTheDocument();
+        });
+        await user.click(screen.getByTestId('wizard-next'));
+
+        await waitFor(() => {
+          expect(launchPosted).toBe(true);
+        });
+        expect(mockCreateLabelPayload).toHaveBeenCalled();
+      }
+    );
   });
 
   describe('LaunchWizard', () => {

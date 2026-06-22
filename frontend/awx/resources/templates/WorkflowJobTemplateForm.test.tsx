@@ -322,5 +322,121 @@ describe('WorkflowJobTemplateForm', () => {
         expect(screen.getByText('Not Found')).toBeInTheDocument();
       });
     });
+
+    it(
+      'should fetch /organizations/ and create label when template has no org and a label is added',
+      { timeout: 15000 },
+      async () => {
+        const wjtWithoutOrg = {
+          ...mockWJT,
+          organization: null,
+          summary_fields: {
+            ...mockWJT.summary_fields,
+            organization: undefined,
+            labels: { count: 0, results: [] },
+          },
+        };
+        let orgFetched = false;
+        let labelPostBody: unknown = null;
+        server.use(
+          http.get(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.patch(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.get(awxAPI`/organizations/`, () => {
+            orgFetched = true;
+            return HttpResponse.json({ count: 1, results: [{ id: 20, name: 'Default' }] });
+          }),
+          http.post(awxAPI`/workflow_job_templates/1/labels/`, async ({ request }) => {
+            labelPostBody = await request.json();
+            return HttpResponse.json(labelPostBody);
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/workflow-job-templates/1/edit']}>
+            <Routes>
+              <Route
+                path="/workflow-job-templates/:id/edit"
+                element={<EditWorkflowJobTemplate />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(() => {
+          expect(screen.getByTestId('name')).toHaveValue('Test Workflow');
+        });
+
+        const labelsInput = screen.getByTestId('labels-input');
+        await user.click(labelsInput);
+        await user.type(labelsInput, 'new-label');
+        await user.keyboard('{Enter}');
+
+        await user.click(screen.getByRole('button', { name: /save workflow job template/i }));
+
+        await waitFor(() => {
+          expect(orgFetched).toBe(true);
+        });
+        expect(labelPostBody).toMatchObject({ name: 'new-label', organization: 20 });
+      }
+    );
+
+    it(
+      'should not set orgId when /organizations/ returns empty results for WJT',
+      { timeout: 15000 },
+      async () => {
+        const wjtWithoutOrg = {
+          ...mockWJT,
+          organization: null,
+          summary_fields: {
+            ...mockWJT.summary_fields,
+            organization: undefined,
+            labels: { count: 0, results: [] },
+          },
+        };
+        let orgFetched = false;
+        let labelPostBody: unknown = null;
+        server.use(
+          http.get(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.patch(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.get(awxAPI`/organizations/`, () => {
+            orgFetched = true;
+            return HttpResponse.json({ count: 0, results: [] });
+          }),
+          http.post(awxAPI`/workflow_job_templates/1/labels/`, async ({ request }) => {
+            labelPostBody = await request.json();
+            return HttpResponse.json(labelPostBody);
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/workflow-job-templates/1/edit']}>
+            <Routes>
+              <Route
+                path="/workflow-job-templates/:id/edit"
+                element={<EditWorkflowJobTemplate />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(() => {
+          expect(screen.getByTestId('name')).toHaveValue('Test Workflow');
+        });
+
+        const labelsInput = screen.getByTestId('labels-input');
+        await user.click(labelsInput);
+        await user.type(labelsInput, 'new-label');
+        await user.keyboard('{Enter}');
+
+        await user.click(screen.getByRole('button', { name: /save workflow job template/i }));
+
+        await waitFor(() => {
+          expect(orgFetched).toBe(true);
+        });
+        expect(labelPostBody).toMatchObject({ name: 'new-label' });
+      }
+    );
   });
 });
