@@ -47,8 +47,8 @@ export function buildEffectivePrompt({
   }
 
   effectivePrompt.original = {
-    ...(launchConfig ? { launch_config: launchConfig } : {}),
     ...nodeOriginalResources,
+    ...(launchConfig ? { launch_config: launchConfig } : {}),
     ...(isTemplateChange ? { isTemplateChange: true } : {}),
   };
 
