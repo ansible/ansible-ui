@@ -52,6 +52,7 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
     {
       page_size: 1,
       counter: 1,
+      count_disabled: 1,
     },
     {
       refreshInterval: (latestData: AwxItemsResponse<JobEvent>) => {
