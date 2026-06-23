@@ -82,8 +82,6 @@ export function useAwxView<T extends { id: number }>(options: {
     await mutate().finally(() => {});
   }, [mutate]);
 
-  useSWR<AwxItemsResponse<T>>(data?.next, fetcher, swrOptions);
-
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
   if (error instanceof RequestError) {

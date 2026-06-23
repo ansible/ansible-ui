@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
@@ -95,6 +95,78 @@ afterEach(() => {
 afterAll(() => server.close());
 
 describe('useAwxView', () => {
+  describe('Next-page prefetch removed (AAP-78172)', () => {
+    test('should not prefetch the next page URL from the API response', async () => {
+      const requestUrls: string[] = [];
+      server.use(
+        http.get(awxAPI`/hosts/`, ({ request }) => {
+          requestUrls.push(new URL(request.url).pathname + new URL(request.url).search);
+          return HttpResponse.json({
+            count: 40,
+            next: '/api/v2/hosts/?page=2',
+            previous: null,
+            results: mockHosts,
+          });
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.itemCount).toBe(40);
+      });
+
+      expect(requestUrls.some((url) => url.includes('page=2'))).toBe(false);
+    });
+
+    test('should not prefetch next page when refresh is called', async () => {
+      const requestUrls: string[] = [];
+      server.use(
+        http.get(awxAPI`/hosts/`, ({ request }) => {
+          requestUrls.push(new URL(request.url).pathname + new URL(request.url).search);
+          return HttpResponse.json({
+            count: 40,
+            next: '/api/v2/hosts/?page=2',
+            previous: null,
+            results: mockHosts,
+          });
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+      });
+
+      requestUrls.length = 0;
+      await act(async () => {
+        await result.current.refresh();
+      });
+
+      await waitFor(() => {
+        expect(requestUrls.length).toBeGreaterThan(0);
+      });
+
+      expect(requestUrls.some((url) => url.includes('page=2'))).toBe(false);
+    });
+  });
+
   describe('Error handling for pagination', () => {
     describe('Filter with pagination error recovery', () => {
       test('should reset to page 1 when filter returns 400 on page 2', async () => {
