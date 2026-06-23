@@ -2,6 +2,7 @@
 import { LoadingPage, PageLayout, usePageSettings } from '@ansible/ansible-ui-framework';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
@@ -50,14 +51,16 @@ export function useGetJob(id?: string, type?: string) {
   };
   const path = type ? apiPaths[type] : 'jobs';
   const defaultInterval = (settings.refreshInterval ?? 10) * 1000;
+  const refreshInterval = useCallback(
+    (latestData: Job | undefined) => (latestData?.finished ? 0 : defaultInterval),
+    [defaultInterval]
+  );
   const {
     data: job,
     refresh: refreshJob,
     isLoading,
     error,
-  } = useGet<Job>(id ? awxAPI`/${path}/${id}/` : '', undefined, {
-    refreshInterval: (latestData: Job | undefined) => (latestData?.finished ? 0 : defaultInterval),
-  });
+  } = useGet<Job>(id ? awxAPI`/${path}/${id}/` : '', undefined, { refreshInterval });
 
   return { job, refreshJob, isLoading, error };
 }
