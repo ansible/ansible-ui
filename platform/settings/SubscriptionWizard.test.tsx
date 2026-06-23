@@ -1,9 +1,22 @@
 import '@testing-library/jest-dom/vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SubscriptionWizard } from './SubscriptionWizard';
+
+vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
+  useAwxConfig: () => ({ eula: 'End User License Agreement text for testing.' }),
+  useAwxConfigState: () => ({ refreshAwxConfig: vi.fn() }),
+}));
+
+const server = setupServer();
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 const mockOnSuccess = vi.fn();
 
@@ -34,7 +47,6 @@ describe('SubscriptionWizard Component', () => {
       // Check that all three steps are present in navigation
       const navigation = screen.getByRole('navigation', { name: 'Steps' });
       expect(navigation).toHaveTextContent('Ansible Automation Platform Subscription');
-      expect(navigation).toHaveTextContent('Optional: Automation Analytics');
       expect(navigation).toHaveTextContent('End User License Agreement');
       expect(navigation).toHaveTextContent('Review');
 
@@ -45,11 +57,9 @@ describe('SubscriptionWizard Component', () => {
       expect(currentStep).toHaveClass('pf-m-current');
 
       // Other steps should be disabled
-      const analyticsStep = screen.getByRole('button', { name: 'Optional: Automation Analytics' });
       const licenseStep = screen.getByRole('button', { name: 'End User License Agreement' });
       const reviewStep = screen.getByRole('button', { name: 'Review' });
 
-      expect(analyticsStep).toBeDisabled();
       expect(licenseStep).toBeDisabled();
       expect(reviewStep).toBeDisabled();
 
@@ -247,93 +257,124 @@ describe('SubscriptionWizard Component', () => {
     }, 10000);
   });
 
-  describe('Automation Analytics Step', () => {
-    const navigateToAnalyticsStep = async () => {
+  describe('Auto-enabling Insights Tracking', () => {
+    it('should enable INSIGHTS_TRACKING_STATE when submitting service account subscription', async () => {
+      let patchedSettings: Record<string, unknown> | undefined;
+
+      server.use(
+        http.post('*/config/subscriptions/', () =>
+          HttpResponse.json([
+            {
+              subscription_name: 'Test Subscription',
+              subscription_id: 'sub-123',
+              instance_count: 100,
+              license_date: Math.floor(Date.now() / 1000) + 86400,
+            },
+          ])
+        ),
+        http.post('*/config/attach/', () => HttpResponse.json({})),
+        http.patch('*/settings/all/', async ({ request }) => {
+          patchedSettings = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({});
+        })
+      );
+
       const user = userEvent.setup();
       renderWithRouter();
+
+      await user.click(screen.getByRole('button', { name: 'Service Account' }));
+
+      const clientIdField = await screen.findByRole('textbox', { name: 'Client ID' });
+      const clientSecretField = document.querySelector(
+        'input[type="password"]'
+      ) as HTMLInputElement;
+      await user.type(clientIdField, 'test-client-id');
+      await user.type(clientSecretField, 'test-client-secret');
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Subscription' })).toBeEnabled();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Subscription' }));
+
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: /Test Subscription/ })).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('option', { name: /Test Subscription/ }));
+
+      await user.click(screen.getByRole('button', { name: 'Next' }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
+        ).toBeInTheDocument();
+      });
+
+      await user.click(
+        screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
+      );
+      await user.click(screen.getByRole('button', { name: 'Next' }));
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Finish' })).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+      await waitFor(() => {
+        expect(mockOnSuccess).toHaveBeenCalled();
+      });
+
+      expect(patchedSettings).toEqual({ INSIGHTS_TRACKING_STATE: true });
+    }, 30000);
+
+    it('should not enable INSIGHTS_TRACKING_STATE when submitting manifest subscription', async () => {
+      let patchCalled = false;
+
+      server.use(
+        http.post('*/config/', () => HttpResponse.json({})),
+        http.patch('*/settings/all/', () => {
+          patchCalled = true;
+          return HttpResponse.json({});
+        })
+      );
+
+      const user = userEvent.setup();
+      renderWithRouter();
+
       await user.click(screen.getByRole('button', { name: 'Subscription manifest' }));
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       const file = new File(['mock manifest content'], 'manifest.zip', {
         type: 'application/zip',
       });
-      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       await user.upload(fileInput, file);
-      const nextButton = screen.getByRole('button', { name: /next/i });
-      await user.click(nextButton);
 
-      return user;
-    };
+      await user.click(screen.getByRole('button', { name: 'Next' }));
 
-    it('renders automation analytics step with correct content', async () => {
-      await navigateToAnalyticsStep();
+      await waitFor(() => {
+        expect(
+          screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
+        ).toBeInTheDocument();
+      });
 
-      await waitFor(
-        () => {
-          expect(
-            screen.getByRole('heading', { name: /Optional: Automation Analytics/i })
-          ).toBeInTheDocument();
-        },
-        { timeout: 10000 }
+      await user.click(
+        screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
       );
+      await user.click(screen.getByRole('button', { name: 'Next' }));
 
-      expect(
-        screen.getByText(/Enter client ID and client secret to enable Analytics/i)
-      ).toBeInTheDocument();
-      expect(screen.getByLabelText(/Client ID/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Client secret/i)).toBeInTheDocument();
-      expect(screen.getByAltText(/Automation Analytics/i)).toBeInTheDocument();
-    }, 15000);
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Finish' })).toBeInTheDocument();
+      });
 
-    it('allows proceeding to next step with filled analytics fields', async () => {
-      const user = await navigateToAnalyticsStep();
+      await user.click(screen.getByRole('button', { name: 'Finish' }));
 
-      await waitFor(
-        () => {
-          expect(screen.getByLabelText(/Client ID/i)).toBeInTheDocument();
-        },
-        { timeout: 10000 }
-      );
+      await waitFor(() => {
+        expect(mockOnSuccess).toHaveBeenCalled();
+      });
 
-      const clientIdField = screen.getByLabelText(/Client ID/i);
-      const clientSecretField = screen.getByLabelText(/Client secret/i);
-      await user.type(clientIdField, 'test-client-id');
-      await user.type(clientSecretField, 'test-client-secret');
-      // Should be able to proceed to next step
-      const nextButton = screen.getByRole('button', { name: /next/i });
-      expect(nextButton).toBeEnabled();
-      await user.click(nextButton);
-
-      await waitFor(
-        () => {
-          expect(
-            screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
-          ).toBeInTheDocument();
-        },
-        { timeout: 10000 }
-      );
-    }, 15000);
-
-    it('allows proceeding to next step with empty analytics fields (optional)', async () => {
-      const user = await navigateToAnalyticsStep();
-
-      await waitFor(
-        () => {
-          expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
-        },
-        { timeout: 10000 }
-      );
-
-      const nextButton = screen.getByRole('button', { name: /next/i });
-      expect(nextButton).toBeEnabled();
-      await user.click(nextButton);
-
-      await waitFor(
-        () => {
-          expect(
-            screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
-          ).toBeInTheDocument();
-        },
-        { timeout: 10000 }
-      );
-    }, 15000);
+      expect(patchCalled).toBe(false);
+    }, 30000);
   });
 });
