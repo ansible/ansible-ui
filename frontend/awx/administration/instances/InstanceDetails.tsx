@@ -145,7 +145,12 @@ export function InstanceDetailsTab(props: {
           {instance.listener_port}
         </PageDetail>
       ) : null}
-      <PageDetail label={t('Used capacity')} data-cy="used-capacity" data-testid="used-capacity">
+      <PageDetail
+        label={t('Used capacity')}
+        data-cy="used-capacity"
+        data-testid="used-capacity"
+        isEmpty={instance.node_type === 'hop' || instance.capacity === 0}
+      >
         {instance.enabled ? (
           <Progress
             value={Math.round(100 - instance.percent_capacity_remaining)}
