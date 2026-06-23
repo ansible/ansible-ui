@@ -28,7 +28,7 @@ spec:
       - name: name
         value: aap-ui-tests
       - name: bundle
-        value: quay.io/aap-ci/tekton-catalog/pipeline/test/aap-ui-tests:AAP-72998@sha256:efdb343736c4720cb61ead039c6f79d6a68fe0080aacf487a7d402edf83ef14b
+        value: quay.io/aap-ci/tekton-catalog/pipeline/test/aap-ui-tests:AAP-72998@sha256:8f3c23307284bd59cf439b73b08797b96b67dd43bb14f020fab5f3785cbafe05
       - name: kind
         value: pipeline
       - name: secret
