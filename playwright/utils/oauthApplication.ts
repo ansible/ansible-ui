@@ -12,6 +12,7 @@ export interface CreateOAuthApplicationOptions {
   redirect_uris?: string;
   algorithm?: '' | 'RS256' | 'HS256';
   skip_authorization?: boolean;
+  post_logout_redirect_uris?: string;
 }
 
 export const OAuthApplication = {
@@ -26,6 +27,7 @@ export const OAuthApplication = {
         redirect_uris: options.redirect_uris ?? '',
         algorithm: options.algorithm ?? '',
         skip_authorization: options.skip_authorization ?? false,
+        post_logout_redirect_uris: options.post_logout_redirect_uris ?? '',
       });
 
       if (!application) {

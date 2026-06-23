@@ -338,6 +338,14 @@ function OAuthApplicationInputs(props: { mode: 'create' | 'edit' }) {
         validate={(value) => validateUrl(value, t)}
         fullWidth
       />
+      <PageFormTextInput<Application>
+        name="post_logout_redirect_uris"
+        label={t('Post Logout Redirect URIs')}
+        placeholder={t('Enter post logout redirect URIs')}
+        labelHelp={fields?.post_logout_redirect_uris?.help_text}
+        validate={(value) => validateUrl(value, t)}
+        fullWidth
+      />
     </>
   );
 }
