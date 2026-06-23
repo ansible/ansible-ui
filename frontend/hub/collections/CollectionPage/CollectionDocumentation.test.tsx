@@ -591,6 +591,45 @@ describe('CollectionDocumentation', () => {
     });
   });
 
+  test('should render gracefully when documentation_files is undefined and content_name is set', async () => {
+    server.use(
+      http.get(
+        ({ request }) => {
+          return request.url.includes('/content/ansible/collection_versions/');
+        },
+        () => {
+          return HttpResponse.json({
+            count: 1,
+            next: '',
+            previous: '',
+            results: [
+              {
+                docs_blob: {
+                  contents: [],
+                  collection_readme: { html: '<p>Fallback readme</p>', name: 'README.md' },
+                },
+                license: ['GPL-3.0-or-later'],
+              },
+            ],
+          });
+        }
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/changelog">
+          <CollectionDocumentation />
+        </TestWrapper>
+      </SWRConfig>
+    );
+
+    await waitFor(() => {
+      const drawer = document.querySelector('[class*="drawer"]');
+      expect(drawer).toBeTruthy();
+    });
+  });
+
   test('should render gracefully when documentation_files is undefined', async () => {
     server.use(
       http.get(
