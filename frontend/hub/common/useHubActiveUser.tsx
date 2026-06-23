@@ -26,6 +26,7 @@ export function HubActiveUserProvider(props: { children: ReactNode; disabled?: b
 
 export function HubActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<HubUser>(hubAPI`/_ui/v1/me/`, requestGet, {
+    // Disable deduplication so each refreshInterval poll fetches fresh data
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });

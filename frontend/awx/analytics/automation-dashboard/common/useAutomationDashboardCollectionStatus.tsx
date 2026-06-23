@@ -21,7 +21,11 @@ export function useAutomationDashboardCollectionStatus(): IAutomationDashboardCo
   const { data, error } = useSWR<IAutomationDashboardCollectionStatus, Error>(
     isSuperuserOrAuditor ? url : null,
     fetcher,
-    { dedupingInterval: 0, refreshInterval: 10 * 1000 }
+    {
+      // Disable deduplication so each refreshInterval poll fetches fresh data
+      dedupingInterval: 0,
+      refreshInterval: 10 * 1000,
+    }
   );
 
   const [collectionStatus, setCollectionStatus] =

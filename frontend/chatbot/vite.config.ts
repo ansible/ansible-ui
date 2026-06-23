@@ -6,6 +6,7 @@ import { defineConfig, PluginOption } from 'vite';
 import compression from 'vite-plugin-compression';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
+import { getVitestAliases } from '../../framework/vitest.shared';
 
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER as string;
 
@@ -71,5 +72,6 @@ export default defineConfig({
         inline: ['@patternfly/react-styles'],
       },
     },
+    alias: getVitestAliases(),
   },
 });

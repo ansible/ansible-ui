@@ -16,7 +16,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { validateUrl } from '@ansible/awx-ui/administration/notifiers/NotifierFormInner';
 import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
@@ -113,8 +113,7 @@ export function EditOAuthApplication() {
   const id = Number(params.id);
   const { data: application } = useSWR<Application>(
     gatewayAPI`/applications/${id.toString()}/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
@@ -203,8 +202,7 @@ function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
   });
   const { data: gatewaySettings } = useSWR<{ gateway_proxy_url: string }>(
     gatewayAPI`/settings/all/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const { data: options } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
   const fields = options?.actions?.POST;

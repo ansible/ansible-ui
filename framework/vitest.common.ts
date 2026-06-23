@@ -6,6 +6,10 @@ import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
+import { resetTestSwrCache } from './test-utils/swrTestWrapper';
+
+export { SwrTestWrapper, swrTestConfig, resetTestSwrCache } from './test-utils/swrTestWrapper';
+
 export function mockI18n() {
   vi.mock('react-i18next', () => {
     const stableT = vi.fn((key: string, options?: Record<string, unknown>) => {
@@ -49,6 +53,7 @@ export function enablePreview() {
       }
       // Still perform cleanup, but after capturing the DOM state
       cleanup();
+      resetTestSwrCache();
     });
   });
 }

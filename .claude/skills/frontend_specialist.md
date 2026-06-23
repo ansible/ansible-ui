@@ -139,7 +139,7 @@ Only create new components as a last resort.
 
 ### SWR
 - Use `useSWR` with workspace API helpers for all data fetching
-- Import `swrOptions` from `@ansible/common-ui/crud/Data` (sets `dedupingInterval: 0`)
+- Global `SWRConfig` in `PageSettingsProvider` sets `dedupingInterval: 2000`
 - Use hook-based CRUD (`usePostRequest`, etc.) — they auto-invalidate cache
 - Use `useAwxGetAllPages` when you need all items across pages
 

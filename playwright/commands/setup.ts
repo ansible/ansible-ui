@@ -8,6 +8,9 @@ const workerId = process.env.TEST_WORKER_INDEX || '0';
 
 export function setupBefore(options?: { path?: string }) {
   return async ({ page }: { page: Page }) => {
+    await page.addInitScript(() => {
+      (window as unknown as Record<string, unknown>).__SWR_DEDUPING_INTERVAL__ = 0;
+    });
     // Only enable coverage if not explicitly skipped
     if (existsSync('coverage') && process.env.SKIP_COVERAGE !== 'true') {
       // eslint-disable-next-line no-console

@@ -8,7 +8,7 @@ import {
   IToolbarFilter,
   QueryParams,
 } from '../../../../../framework';
-import { swrOptions, useFetcher } from '../../../../common/crud/Data';
+import { useFetcher } from '../../../../common/crud/Data';
 import useSWR from 'swr';
 
 const DETAILS_PATH = 'dashboard_reports/report/details/';
@@ -39,7 +39,7 @@ export function useGetReportDetails(
 
   const url = metricsAPI`/${DETAILS_PATH}?${queryString}`;
   const fetcher = useFetcher();
-  const response = useSWR<IDashboardDetails>(url, fetcher, swrOptions);
+  const response = useSWR<IDashboardDetails>(url, fetcher);
   const { data, mutate, isLoading } = response;
   const refreshDetails = useCallback(async () => {
     await mutate();

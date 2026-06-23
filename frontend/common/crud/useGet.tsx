@@ -15,10 +15,7 @@ export function useGet<T>(
     url += normalizeQueryString(query);
   }
 
-  const response = useSWR<T>(url, getRequest, {
-    dedupingInterval: 0,
-    ...swrConfiguration,
-  });
+  const response = useSWR<T>(url, getRequest, swrConfiguration);
   const refresh = useCallback(() => void response.mutate(), [response]);
   let error = response.error as Error;
   if (error && !(error instanceof Error)) {

@@ -9,6 +9,7 @@ import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 import type { InlineConfig } from 'vitest/node';
+import { getVitestAliases } from '../framework/vitest.shared';
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -109,6 +110,7 @@ const config: VitestUserConfig = {
       },
     },
     alias: [
+      ...getVitestAliases(),
       {
         find: /^monaco-editor$/,
         replacement: __dirname + '/../node_modules/monaco-editor/esm/vs/editor/editor.api',
