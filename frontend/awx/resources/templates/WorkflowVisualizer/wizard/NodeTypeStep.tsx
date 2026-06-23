@@ -14,7 +14,7 @@ import {
   InputGroupText,
   TextInput,
 } from '@patternfly/react-core';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
@@ -40,6 +40,11 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   const { defaultValues } = formState;
 
   const { setWizardData, setStepData } = usePageWizard<WizardFormValues>();
+
+  // Tracks the last resourceId the effect actually processed, so we can distinguish
+  // "initial load of the existing node's template" (no change needed) from
+  // "user switched to a different template" (credentials must be reset).
+  const prevResourceIdRef = useRef<WizardFormValues['resourceId']>(undefined);
 
   // Register form fields
   register('node_type');
@@ -73,6 +78,14 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   }, [nodeType, getFieldState, setValue, reset, setWizardData, setStepData, getValues]);
 
   useEffect(() => {
+    // Compute synchronously before any async work so the value is stable for this effect run.
+    // A defined prev that differs from the current resourceId means the user explicitly switched
+    // to a different template — credentials must be reset. On initial mount, prev is undefined,
+    // meaning we preserve whatever stepDefaults already loaded for the existing node.
+    const isTemplateChange =
+      prevResourceIdRef.current !== undefined && prevResourceIdRef.current !== resourceId;
+    prevResourceIdRef.current = resourceId;
+
     // Once we finish AAP-34015 fetchResource could probably be removed.
     const fetchResource = async () => {
       const nodeResourceUrl = getResourceURL(nodeType);
@@ -93,6 +106,34 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
         launchConfigResults = await requestGet<LaunchConfiguration>(
           awxAPI`/job_templates/${resourceId.toString()}/launch/`
         );
+
+        // Early step-data reset: clear prompt credentials as soon as the launch config is
+        // known, BEFORE the credentials fetch. Because PageWizardBody re-creates the Prompts
+        // form (key={activeStep.id}) from stepData when the user navigates to that step,
+        // this ensures the credential picker initialises with [] even if the user navigates
+        // to Prompts before the credentials fetch completes.
+        if (isTemplateChange) {
+          setStepData((prev) => {
+            if (!prev?.nodePromptsStep) return prev;
+            return {
+              ...prev,
+              nodePromptsStep: {
+                ...prev.nodePromptsStep,
+                prompt: {
+                  ...(prev.nodePromptsStep.prompt as object),
+                  credentials: [],
+                  labels: [],
+                  instance_groups: [],
+                  skip_tags: [],
+                  job_tags: [],
+                  extra_vars: '',
+                  inventory: null,
+                },
+              },
+            };
+          });
+        }
+
         // Fetch template credentials to determine required credential types
         const templateCredentialsResponse = await requestGet<AwxItemsResponse<Credential>>(
           awxAPI`/job_templates/${resourceId.toString()}/credentials/`
@@ -115,32 +156,29 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
 
       const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
       const shouldShowSurveyStep = launchConfigResults.survey_enabled;
+
+      // Always update wizard-level data so launch_config reflects the currently selected template.
+      // This prevents stale prompt flags from a previously selected template being used on save.
+      setWizardData((prev) => ({
+        ...prev,
+        launch_config: shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null,
+        resourceId,
+        resource: nodeResource,
+      }));
+
       if (shouldShowPromptStep || shouldShowSurveyStep) {
-        setWizardData((prev) => ({
-          ...prev,
-          launch_config: shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null,
-          resourceId,
-          resource: nodeResource,
-        }));
         setStepData((prev) => {
           const prompts = prev.nodePromptsStep?.prompt;
 
-          return {
-            ...prev,
-            nodePromptsStep: {
-              launch_config: launchConfigResults,
-              resourceId,
-              resource: nodeResource,
-              prompt: {
-                ...launchConfigValue,
+          // When the template has not changed (initial load or same-template re-render),
+          // preserve any user-entered prompt values from the existing step state so they
+          // survive the effect re-run. When the template HAS changed, all prompt fields
+          // must start from the new template's defaults — stale values from a different
+          // template's playbook are meaningless and can cause incorrect job runs or API errors.
+          const preservedPromptOverrides = isTemplateChange
+            ? {}
+            : {
                 inventory: prompts?.inventory ?? launchConfigValue.inventory,
-                credentials: getAggregateCredentials(
-                  [], // no node credentials for new nodes
-                  prompts?.credentials ?? [],
-                  launchConfigValue?.credentials ?? []
-                ),
-                skip_tags: [...(prompts?.skip_tags || []), ...(launchConfigValue?.skip_tags || [])],
-                job_tags: [...(prompts?.job_tags || []), ...(launchConfigValue?.job_tags ?? [])],
                 execution_environment: prompts?.execution_environment
                   ? {
                       id: prompts?.execution_environment?.id ?? prompts?.execution_environment,
@@ -151,6 +189,8 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                   prompts?.extra_vars && prompts.extra_vars !== ''
                     ? prompts.extra_vars
                     : (launchConfigValue?.extra_vars ?? ''),
+                skip_tags: [...(prompts?.skip_tags || []), ...(launchConfigValue?.skip_tags || [])],
+                job_tags: [...(prompts?.job_tags || []), ...(launchConfigValue?.job_tags ?? [])],
                 instance_groups: [
                   ...(prompts?.instance_groups ?? []),
                   ...(launchConfigValue?.instance_groups ?? []),
@@ -163,11 +203,51 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                 job_slice_count: prompts?.job_slice_count ?? launchConfigValue?.job_slice_count,
                 timeout: prompts?.timeout ?? launchConfigValue?.timeout,
                 job_type: prompts?.job_type ?? launchConfigValue?.job_type,
-                // Add required credential types for job templates
+              };
+
+          const newCredentials = getAggregateCredentials(
+            [],
+            isTemplateChange ? [] : (prompts?.credentials ?? []),
+            launchConfigValue?.credentials ?? []
+          );
+
+          return {
+            ...prev,
+            nodePromptsStep: {
+              launch_config: launchConfigResults,
+              resourceId,
+              resource: nodeResource,
+              prompt: {
+                ...launchConfigValue,
+                ...preservedPromptOverrides,
+                credentials: newCredentials,
                 requiredCredentialTypes: templateCredentials.map((cred) => ({
                   id: cred.credential_type,
                   name: cred.summary_fields.credential_type.name,
                 })),
+              },
+            },
+          };
+        });
+      } else if (isTemplateChange) {
+        // The user switched to a template that has no promptable fields. Clear the entire
+        // previous prompt step state so stale values from the old template are not submitted.
+        // processCredentials, processLabels, and processInstanceGroups all check for non-empty
+        // arrays independently of ask_*_on_launch flags, so any leftover values would be sent.
+        // On initial load (isTemplateChange=false) there is nothing stale to clear.
+        setStepData((prev) => {
+          if (!prev?.nodePromptsStep) return prev;
+          return {
+            ...prev,
+            nodePromptsStep: {
+              launch_config: launchConfigResults,
+              resourceId,
+              resource: nodeResource,
+              prompt: {
+                credentials: [],
+                labels: [],
+                instance_groups: [],
+                requiredCredentialTypes: [],
               },
             },
           };
