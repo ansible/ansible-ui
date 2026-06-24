@@ -52,7 +52,7 @@ export function CollectionDocumentation() {
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
     if (data) {
-      for (const content of data.results[0].docs_blob.contents) {
+      for (const content of data.results[0]?.docs_blob?.contents ?? []) {
         let group = groups[content.content_type];
         if (!group) {
           group = {
@@ -80,9 +80,9 @@ export function CollectionDocumentation() {
           name: string;
         }[]
       | [] = [];
-    if (data?.results[0].docs_blob) {
+    if (data?.results[0]?.docs_blob) {
       const { docs_blob } = data.results[0];
-      files = docs_blob.documentation_files.map(({ name }) => ({
+      files = (docs_blob.documentation_files ?? []).map(({ name }) => ({
         label: name.charAt(0).toUpperCase() + name.slice(1).split('.')[0],
         name: name.split('.')[0],
       }));
@@ -105,7 +105,7 @@ export function CollectionDocumentation() {
   }
 
   const dataItem = data?.results[0];
-  if (error || !dataItem) {
+  if (error || !dataItem?.docs_blob) {
     return (
       <HubError
         error={{ name: '', message: t('Can not load documentation.') }}
@@ -117,19 +117,19 @@ export function CollectionDocumentation() {
   const { content_type, content_name } = params;
 
   // find content based on search params
-  let content = data?.results[0]?.docs_blob?.contents.find(
+  let content = dataItem.docs_blob.contents?.find(
     (c) => c.content_name === content_name && c.content_type === content_type
   );
 
   // for readme, use the root html of all contents
   let html = '';
   if (!content_type && !content_name) {
-    html = dataItem?.docs_blob?.collection_readme?.html || '';
+    html = dataItem.docs_blob.collection_readme?.html || '';
   }
   if (!content_type && content_name) {
     html =
-      data.results[0].docs_blob.documentation_files.find((c) => c.name.startsWith(content_name))
-        ?.html || '';
+      dataItem.docs_blob.documentation_files?.find((c) => c.name.startsWith(content_name))?.html ||
+      '';
   }
 
   // if the content has html, lets use that instead of content frontent generation
@@ -233,7 +233,7 @@ export function CollectionDocumentation() {
 }
 
 export type CollectionVersionContentItem = {
-  docs_blob: {
+  docs_blob?: {
     contents: IContents[];
     collection_readme: {
       html: string;
