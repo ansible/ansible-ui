@@ -401,8 +401,10 @@ describe('useAwxView', () => {
       );
 
       expect(result.current.error).toBeDefined();
-      expect(result.current.error?.message).toContain('Controller service is unavailable');
-      expect(result.current.error?.message).toContain('503');
+      expect((result.current.error as Error).message).toContain(
+        'Controller service is unavailable'
+      );
+      expect((result.current.error as Error).message).toContain('503');
     });
 
     test('should include status code in error message', () => {
@@ -420,7 +422,9 @@ describe('useAwxView', () => {
         { wrapper }
       );
 
-      expect(result.current.error?.message).toBe('Controller service is unavailable (HTTP 502)');
+      expect((result.current.error as Error).message).toBe(
+        'Controller service is unavailable (HTTP 502)'
+      );
     });
 
     test('should resume fetching when serviceDown becomes false', async () => {
