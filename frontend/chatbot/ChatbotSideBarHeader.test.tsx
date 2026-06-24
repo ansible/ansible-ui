@@ -6,7 +6,7 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
 }));
 
 vi.mock('@ansible/ansible-ai-connect-chatbot', () => ({
-  ANSIBLE_LIGHTSPEED_PRODUCT_NAME: 'Ansible Lightspeed',
+  getProductName: () => 'Ansible Lightspeed',
   LIGHTSPEED_LOGO: 'light-logo.svg',
   LIGHTSPEED_LOGO_DARK: 'dark-logo.svg',
 }));
