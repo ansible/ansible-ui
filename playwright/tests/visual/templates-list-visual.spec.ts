@@ -67,6 +67,13 @@ test.beforeEach(async ({ page }) => {
       body: JSON.stringify(mockTemplatesResponse),
     });
   });
+  await page.route('**/api/gateway/v1/settings/all/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ NOTIFICATION_RSS_FEED_ENABLED: false }),
+    });
+  });
   await setupBefore({ path: '/execution/templates' })({ page });
 });
 
