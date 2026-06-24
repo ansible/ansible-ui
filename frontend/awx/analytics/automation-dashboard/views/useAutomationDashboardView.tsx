@@ -1,19 +1,29 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { metricsAPI } from '../../../common/api/metrics-utils';
-import { IAwxView, useAwxView } from '../../../common/useAwxView';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { useGetReportDetails } from './useGetReportDetails';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import { useExportCsv } from './useExportCsv';
 import { useExportPdf } from './useExportPdf';
+import {
+  IAutomationDashboardBaseView,
+  useAutomationDashboardBaseView,
+} from '../common/useAutomationDashboardBaseView';
 
 // Resolved once at module load — the user's time zone does not change during a session.
 export const QUERY_PARAMS = { tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
 
+const DEFAULT_END_DATE = new Date(Date.now());
+const DEFAULT_START_DATE = new Date(DEFAULT_END_DATE.getTime() - 7 * 24 * 60 * 60 * 1000);
+
 const DEFAULT_FILTERS: Record<string, string[]> = {
-  period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
+  period: [
+    AutomationDashboardDateRangeFilterPresets.last_7_days,
+    DEFAULT_START_DATE.toISOString().split('T')[0],
+    DEFAULT_END_DATE.toISOString().split('T')[0],
+  ],
 };
 
 /** Returns true when filterState is empty or equals the default (period = last 7 days only). */
@@ -33,12 +43,10 @@ export function useAutomationDashboardView(options: {
   toolbarFilters: IToolbarFilter[];
 }): IAutomationDashboardView {
   const { toolbarFilters } = options;
-  const mainTableViewBase = useAwxView<IJobTemplate>({
+  const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
     url: metricsAPI`/dashboard_reports/report/`,
-    defaultSort: 'template_name',
     defaultFilters: DEFAULT_FILTERS,
     toolbarFilters,
-    queryParams: QUERY_PARAMS,
   });
 
   const { filterState, setFilterState } = mainTableViewBase;
@@ -59,7 +67,7 @@ export function useAutomationDashboardView(options: {
     onClearFiltersCallback.current = callback;
   }, []);
 
-  const mainTableView: IAwxView<IJobTemplate> = useMemo(
+  const mainTableView: IAutomationDashboardBaseView<IJobTemplate> = useMemo(
     () => ({ ...mainTableViewBase, clearAllFilters }),
     [mainTableViewBase, clearAllFilters]
   );

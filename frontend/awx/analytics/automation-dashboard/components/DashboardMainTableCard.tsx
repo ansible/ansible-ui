@@ -262,14 +262,15 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             title={t('Total hours saved/avoided')}
             help={t('Time saved by automation vs manual execution')}
             value={details?.total_time_saving ?? '-'}
-            valueSuffix="h"
+            valueSuffix={details?.total_time_saving ? 'h' : undefined}
             error={detailsError}
             errorStateTitle={t('Error loading total hours saved')}
           ></DashboardValueCard>
         </div>
       </CardBody>
       <CardBody>
-        <PageTable
+        <PageTable<IJobTemplate>
+          keyFn={(item) => item.id}
           autoHidePagination
           disableBodyPadding
           tableColumns={tableColumns}

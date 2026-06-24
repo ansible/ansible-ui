@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
-import { IAwxView } from '../../../common/useAwxView';
+import { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 
 // ─── Dashboard Data Models (API shapes) ──────────────────────────────────────
 
@@ -152,7 +152,7 @@ export type DashboardTableToolbarProps = {
 // ─── View Type ────────────────────────────────────────────────────────────────
 
 export type IAutomationDashboardView = {
-  mainTableView: IAwxView<IJobTemplate>;
+  mainTableView: IAutomationDashboardBaseView<IJobTemplate>;
   details: IDashboardDetails | undefined;
   detailsError: Error | undefined;
   detailsLoading: boolean;

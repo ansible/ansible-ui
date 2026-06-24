@@ -100,6 +100,7 @@ export function AutomationDashboard() {
         <DashboardToolbar
           toolbarFilters={toolbarFilters}
           {...view.mainTableView}
+          keyFn={(item) => item.id}
           registerClearCallback={view.registerClearCallback}
         />
         <PageDashboard>
@@ -146,7 +147,7 @@ export function AutomationDashboard() {
                   'Sum of all job runtimes in the selected period. Reflects total automation workload and can inform capacity planning and resource allocation.'
                 )}
                 value={details?.total_hours_of_automation ?? noDataString}
-                valueSuffix="h"
+                valueSuffix={details?.total_hours_of_automation ? 'h' : undefined}
                 error={view.detailsError}
                 errorStateTitle={t('Error loading hours of automation')}
               ></DashboardValueCard>

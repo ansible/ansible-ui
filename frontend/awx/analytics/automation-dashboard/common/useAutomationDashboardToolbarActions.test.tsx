@@ -6,8 +6,9 @@ import {
   IPageActionDropdown,
   PageActionSelection,
   PageActionType,
+  ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import type { IFilterState } from '@ansible/ansible-ui-framework';
+import type { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import type { IDashboardFilterSet, IJobTemplate } from '../types';
 import { useAutomationDashboardToolbarActions } from './useAutomationDashboardToolbarActions';
@@ -49,6 +50,29 @@ const nonDefaultFilterState: IFilterState = {
   period: [AutomationDashboardDateRangeFilterPresets.last_30_days],
 };
 
+const invalidCustomRangeFilterState: IFilterState = {
+  period: ['custom'],
+};
+
+const validCustomRangeFilterState: IFilterState = {
+  period: ['custom', '2024-01-01'],
+};
+
+const requiredDateRangeToolbarFilters: IToolbarFilter[] = [
+  {
+    type: ToolbarFilterType.DateRange,
+    key: 'period',
+    label: 'Period',
+    query: 'period',
+    options: [
+      { label: 'Last 7 days', value: AutomationDashboardDateRangeFilterPresets.last_7_days },
+      { label: 'Custom', value: 'custom', isCustom: true },
+    ],
+    placeholder: 'Filter by period',
+    isRequired: true,
+  },
+];
+
 const filterSet: IDashboardFilterSet = {
   id: 1,
   name: 'Report A',
@@ -61,11 +85,13 @@ const mockOnSave = vi.fn();
 
 function renderActions(
   filterState: IFilterState | undefined,
-  selectedFilterSet: IDashboardFilterSet | undefined
+  selectedFilterSet: IDashboardFilterSet | undefined,
+  toolbarFilters?: IToolbarFilter[]
 ) {
   return renderHook(() =>
     useAutomationDashboardToolbarActions({
       filterState,
+      toolbarFilters,
       selectedFilterSet,
       onDelete: mockOnDelete,
       onSave: mockOnSave,
@@ -142,6 +168,26 @@ describe('useAutomationDashboardToolbarActions', () => {
       const action = renderActions(nonDefaultFilterState, undefined)[0] as IPageActionButton;
       action.onClick();
       expect(mockCreateFn).toHaveBeenCalledWith(nonDefaultFilterState);
+    });
+
+    test('should disable the button with an invalid-filter message when a required custom date range has no start date', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        undefined,
+        requiredDateRangeToolbarFilters
+      )[0] as IPageActionButton;
+
+      expect(action.isDisabled).toBe('Enter a valid custom date range before saving');
+    });
+
+    test('should enable the button when the required custom date range has a valid start date', () => {
+      const action = renderActions(
+        validCustomRangeFilterState,
+        undefined,
+        requiredDateRangeToolbarFilters
+      )[0] as IPageActionButton;
+
+      expect(action.isDisabled).toBeFalsy();
     });
   });
 
@@ -253,6 +299,36 @@ describe('useAutomationDashboardToolbarActions', () => {
       const subAction = getDropdownSubAction(action, 'Delete report');
       subAction?.onClick();
       expect(mockRemoveFn).toHaveBeenCalledWith(filterSet);
+    });
+
+    test('should fall back to a single Button when the required custom date range is invalid', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0];
+
+      expect(action.type).toBe(PageActionType.Button);
+    });
+
+    test('should disable the fallback button with an invalid-filter message', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0] as IPageActionButton;
+
+      expect(action.isDisabled).toBe('Enter a valid custom date range before saving');
+    });
+
+    test('should return the Dropdown again once the required custom date range becomes valid', () => {
+      const action = renderActions(
+        validCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0];
+
+      expect(action.type).toBe(PageActionType.Dropdown);
     });
   });
 });

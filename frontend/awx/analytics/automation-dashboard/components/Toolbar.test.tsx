@@ -2,10 +2,10 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 import { useAutomationDashboardToolbar } from './Toolbar';
-import { IToolbarSingleSelectFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { IToolbarDateRangeFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 
-type PeriodFilter = IToolbarSingleSelectFilter;
+type PeriodFilter = IToolbarDateRangeFilter;
 
 function getPeriodFilter(filters: ReturnType<typeof useAutomationDashboardToolbar>): PeriodFilter {
   const period = filters.find((f): f is PeriodFilter => f.key === 'period');
@@ -32,28 +32,28 @@ describe('useAutomationDashboardToolbar', () => {
   test('should have period filter with correct type and query', () => {
     const { result } = renderHook(() => useAutomationDashboardToolbar());
     const period = getPeriodFilter(result.current);
-    expect(period.type).toBe(ToolbarFilterType.SingleSelect);
+    expect(period.type).toBe(ToolbarFilterType.DateRange);
     expect(period.label).toBe('Period');
     expect(period.query).toBe('period');
   });
 
-  test('should have period filter pinned, required, and with sort disabled', () => {
+  test('should have period filter pinned and required', () => {
     const { result } = renderHook(() => useAutomationDashboardToolbar());
     const period = getPeriodFilter(result.current);
     expect(period.isPinned).toBe(true);
     expect(period.isRequired).toBe(true);
-    expect(period.disableSortOptions).toBe(true);
   });
 
   test('should have period filter with all 5 date range options', () => {
     const { result } = renderHook(() => useAutomationDashboardToolbar());
     const period = getPeriodFilter(result.current);
-    expect(period.options).toHaveLength(5);
+    expect(period.options).toHaveLength(6);
     const values = period.options.map((o) => o.value);
     expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_7_days);
     expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_14_days);
     expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_30_days);
     expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_60_days);
     expect(values).toContain(AutomationDashboardDateRangeFilterPresets.last_90_days);
+    expect(values).toContain(AutomationDashboardDateRangeFilterPresets.custom);
   });
 });
