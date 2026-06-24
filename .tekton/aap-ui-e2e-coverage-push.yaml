@@ -9,9 +9,7 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/cancel-in-progress: "true"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    # TODO: restore push trigger before merging
-    # pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch == "devel"
-    pipelinesascode.tekton.dev/on-comment: "^/run-coverage$"
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch == "devel"
     pipelinesascode.tekton.dev/target-namespace: ansible-ci-tenant
   labels:
     appstudio.openshift.io/application: '{{repo_owner}}'
@@ -28,7 +26,7 @@ spec:
       - name: name
         value: aap-ui-tests
       - name: bundle
-        value: quay.io/aap-ci/tekton-catalog/pipeline/test/aap-ui-tests:AAP-72998@sha256:c70964859c2504e78eca36842c0dcedef5bd69e0e07fb27068dba2330c16f1ef
+        value: quay.io/aap-ci/tekton-catalog/pipeline/test/aap-ui-tests:0.1@sha256:4801a75e7c78809565a45cc2c3cec215183c83739ca1e993a5dc5b49c56528ee
       - name: kind
         value: pipeline
       - name: secret
@@ -41,7 +39,7 @@ spec:
     - name: git-url
       value: '{{source_url}}'
     - name: pipeline-pr-number
-      value: '{{pull_request_number}}'
+      value: ''
     - name: pipeline-github-org
       value: '{{repo_owner}}'
     - name: pipeline-github-repo
