@@ -1,13 +1,22 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { SWRConfig } from 'swr';
 import { awxAPI } from './api/awx-utils';
 import { useAwxView, compareByField } from './useAwxView';
 import { AwxHost } from '../interfaces/AwxHost';
 import { ReactNode } from 'react';
 import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+
+vi.mock('./useAwxConfig', () => ({
+  useAwxConfigState: vi.fn(() => ({
+    serviceDown: false,
+    serviceDownStatusCode: undefined,
+  })),
+}));
+
+import { useAwxConfigState } from './useAwxConfig';
 
 const mockHosts: AwxHost[] = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
@@ -91,6 +100,10 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => {
   server.resetHandlers();
   page2ErrorTriggered = false;
+  vi.mocked(useAwxConfigState).mockReturnValue({
+    serviceDown: false,
+    serviceDownStatusCode: undefined,
+  });
 });
 afterAll(() => server.close());
 
@@ -339,6 +352,108 @@ describe('useAwxView', () => {
           expect(result.current.itemCount).toBe(5);
         });
       });
+    });
+  });
+
+  describe('serviceDown flag (AAP-79479)', () => {
+    test('should not fetch when serviceDown is true', async () => {
+      const requestUrls: string[] = [];
+      server.use(
+        http.get(awxAPI`/hosts/`, ({ request }) => {
+          requestUrls.push(new URL(request.url).href);
+          return HttpResponse.json(createMockResponse(1));
+        })
+      );
+
+      vi.mocked(useAwxConfigState).mockReturnValue({
+        serviceDown: true,
+        serviceDownStatusCode: 503,
+      });
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await new Promise((r) => setTimeout(r, 100));
+
+      expect(requestUrls).toHaveLength(0);
+      expect(result.current.pageItems).toBeUndefined();
+    });
+
+    test('should return error when serviceDown is true', () => {
+      vi.mocked(useAwxConfigState).mockReturnValue({
+        serviceDown: true,
+        serviceDownStatusCode: 503,
+      });
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      expect(result.current.error).toBeDefined();
+      expect(result.current.error?.message).toContain('Controller service is unavailable');
+      expect(result.current.error?.message).toContain('503');
+    });
+
+    test('should include status code in error message', () => {
+      vi.mocked(useAwxConfigState).mockReturnValue({
+        serviceDown: true,
+        serviceDownStatusCode: 502,
+      });
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      expect(result.current.error?.message).toBe('Controller service is unavailable (HTTP 502)');
+    });
+
+    test('should resume fetching when serviceDown becomes false', async () => {
+      vi.mocked(useAwxConfigState).mockReturnValue({
+        serviceDown: true,
+        serviceDownStatusCode: 503,
+      });
+
+      const { result, rerender } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      expect(result.current.error).toBeDefined();
+      expect(result.current.pageItems).toBeUndefined();
+
+      vi.mocked(useAwxConfigState).mockReturnValue({
+        serviceDown: false,
+        serviceDownStatusCode: undefined,
+      });
+
+      rerender();
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.itemCount).toBe(40);
+      });
+
+      expect(result.current.error).toBeUndefined();
     });
   });
 });
