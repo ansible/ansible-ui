@@ -460,6 +460,181 @@ describe('useAwxView', () => {
       expect(result.current.error).toBeUndefined();
     });
   });
+
+  describe('Table columns default sort', () => {
+    test('should use defaultSort column when provided', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+            tableColumns: [
+              { header: 'Name', cell: () => '', sort: 'name' },
+              { header: 'Created', cell: () => '', sort: 'created', defaultSort: true },
+            ],
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+      });
+
+      expect(result.current.sort).toBe('created');
+    });
+
+    test('should use first column for sort when no defaultSort specified', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+            tableColumns: [
+              { header: 'Name', cell: () => '', sort: 'name' },
+              { header: 'Created', cell: () => '', sort: 'created' },
+            ],
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+      });
+
+      expect(result.current.sort).toBe('name');
+    });
+  });
+
+  describe('Item management', () => {
+    test('should update item in the list', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.pageItems?.length).toBeGreaterThan(0);
+      });
+
+      const originalItem = result.current.pageItems?.[0];
+      expect(originalItem).toBeDefined();
+
+      if (originalItem) {
+        const updatedItem = { ...originalItem, name: 'updated-host-name' };
+
+        act(() => {
+          result.current.updateItem(updatedItem);
+        });
+
+        expect(result.current.pageItems?.[0].name).toBe('updated-host-name');
+      }
+    });
+
+    test('should not update item if items list is undefined', () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      // Call updateItem before items are loaded
+      act(() => {
+        result.current.updateItem({ id: 999, name: 'test' } as AwxHost);
+      });
+
+      // Should not throw an error
+      expect(result.current.pageItems).toBeUndefined();
+    });
+
+    test('should not update item if item not found in list', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+      });
+
+      const originalCount = result.current.pageItems?.length;
+
+      act(() => {
+        result.current.updateItem({ id: 999, name: 'non-existent' } as AwxHost);
+      });
+
+      expect(result.current.pageItems?.length).toBe(originalCount);
+    });
+  });
+
+  describe('Selection with refresh', () => {
+    test('should select items and refresh', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.pageItems?.length).toBeGreaterThan(0);
+      });
+
+      const itemsToSelect = result.current.pageItems?.slice(0, 2) || [];
+
+      act(() => {
+        result.current.selectItemsAndRefresh(itemsToSelect);
+      });
+
+      expect(result.current.selectedItems).toHaveLength(2);
+    });
+
+    test('should unselect items and refresh', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.pageItems?.length).toBeGreaterThan(0);
+      });
+
+      const itemsToSelect = result.current.pageItems?.slice(0, 2) || [];
+
+      // First select items
+      act(() => {
+        result.current.selectItemsAndRefresh(itemsToSelect);
+      });
+
+      expect(result.current.selectedItems).toHaveLength(2);
+
+      // Then unselect them
+      act(() => {
+        result.current.unselectItemsAndRefresh(itemsToSelect);
+      });
+
+      expect(result.current.selectedItems).toHaveLength(0);
+    });
+  });
 });
 
 describe('compareByField', () => {
