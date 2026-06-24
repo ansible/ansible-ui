@@ -19,8 +19,23 @@ const mockAnsibleFacts = {
   ansible_hostname: 'test-host',
 };
 
+const mockRegularHost = {
+  id: 1,
+  name: 'test-host',
+  instance_id: '',
+  summary_fields: { inventory: { kind: '' } },
+};
+
+const mockConstructedHost = {
+  id: 1,
+  name: 'proxy-host',
+  instance_id: '999',
+  summary_fields: { inventory: { kind: 'constructed' } },
+};
+
 describe('InventoryHostFacts Component', () => {
   const server = setupServer(
+    http.get(awxAPI`/hosts/:id/`, () => HttpResponse.json(mockRegularHost)),
     http.get(awxAPI`/hosts/:id/ansible_facts/`, () => {
       return HttpResponse.json(mockAnsibleFacts);
     })
@@ -57,7 +72,7 @@ describe('InventoryHostFacts Component', () => {
     });
   });
 
-  test('should render empty object when no facts are available', async () => {
+  test('should render empty state when no facts are available', async () => {
     server.use(
       http.get(awxAPI`/hosts/:id/ansible_facts/`, () => {
         return HttpResponse.json({});
@@ -76,8 +91,32 @@ describe('InventoryHostFacts Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Facts')).toBeInTheDocument();
+      expect(screen.getByText('No facts found')).toBeInTheDocument();
     });
+  });
+
+  test('should show informational message for constructed inventory hosts', async () => {
+    server.use(http.get(awxAPI`/hosts/:id/`, () => HttpResponse.json(mockConstructedHost)));
+
+    render(
+      <MemoryRouter initialEntries={['/inventories/1/hosts/1/facts']}>
+        <Routes>
+          <Route
+            path="/inventories/:id/hosts/:host_id/facts"
+            element={<InventoryHostFacts page="inventory_host" />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('No facts available')).toBeInTheDocument();
+    });
+    expect(
+      screen.getByText(
+        'Facts for hosts in constructed and smart inventories are stored on the source inventory host.'
+      )
+    ).toBeInTheDocument();
   });
 
   test('should render facts for standalone host page', async () => {
