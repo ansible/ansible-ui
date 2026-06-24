@@ -20,6 +20,8 @@ import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
 import styled from 'styled-components';
 import useResizeObserver from '@react-hook/resize-observer';
+import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 
 const AutomationDashboardWrapper = styled.div`
   display: flex;
@@ -51,6 +53,8 @@ export function AutomationDashboard() {
   };
 
   const noDataString = t('No jobs have been run.');
+  const { isLoading } = useAutomationDashboardCollectionStatus();
+
   const ref = useRef<HTMLDivElement>(null);
   const [gridColumns, setGridColumns] = useState(1);
 
@@ -63,6 +67,15 @@ export function AutomationDashboard() {
     const width = Math.max(1, Math.floor((entry.contentRect.width ?? 0) / Divisor));
     setGridColumns(Math.min(25, width));
   });
+
+  // Show loading state while checking collection status
+  if (isLoading) {
+    return (
+      <AutomationDashboardWrapper ref={ref}>
+        <LoadingState />
+      </AutomationDashboardWrapper>
+    );
+  }
 
   return (
     <AutomationDashboardWrapper ref={ref}>

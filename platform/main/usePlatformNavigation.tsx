@@ -287,7 +287,9 @@ export function useAutomationAnalytics(): PageNavigationItem {
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
   const { activePlatformUser } = usePlatformActiveUser();
-  const { enabled: automationDashboardEnabled } = useAutomationDashboardCollectionStatus();
+  const { collectionStatus, isLoading: isCollectionStatusLoading } =
+    useAutomationDashboardCollectionStatus();
+  const automationDashboardEnabled = collectionStatus.enabled;
 
   if (analytics && 'children' in analytics) {
     analytics.label = t('Automation Analytics');
@@ -295,16 +297,21 @@ export function useAutomationAnalytics(): PageNavigationItem {
       removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage);
     }
     const automationDashboardId = 'awx-automation-dashboard';
-    if (automationDashboardEnabled) {
-      if (!activePlatformUser?.is_superuser) {
-        analytics.children
-          .filter((c) => c.id !== automationDashboardId)
-          .forEach((item) => {
-            if (item.id) removeNavigationItemById(analytics.children, item.id);
-          });
+
+    // Only apply logic after loading is complete to prevent flicker
+    if (!isCollectionStatusLoading) {
+      if (automationDashboardEnabled) {
+        if (!activePlatformUser?.is_superuser) {
+          analytics.children
+            .filter((c) => c.id !== automationDashboardId)
+            .forEach((item) => {
+              if (item.id) removeNavigationItemById(analytics.children, item.id);
+            });
+        }
+      } else {
+        // Not enabled or error - remove automation dashboard from menu
+        removeNavigationItemById(analytics.children, automationDashboardId);
       }
-    } else {
-      removeNavigationItemById(analytics.children, automationDashboardId);
     }
 
     analytics.hidden =
