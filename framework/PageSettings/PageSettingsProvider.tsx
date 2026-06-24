@@ -127,7 +127,10 @@ export function PageSettingsProvider(props: {
             | number
             | undefined) ??
           2000,
-        refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
+        refreshInterval:
+          ((globalThis as unknown as Record<string, number>).__SWR_REFRESH_INTERVAL__ as
+            | number
+            | undefined) ?? (settings.refreshInterval ? settings.refreshInterval * 1000 : 0),
         revalidateOnFocus: false,
         onErrorRetry: swrErrorRetryHandler,
       }}
