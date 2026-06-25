@@ -30,13 +30,17 @@ const capturedSWRConfigValues: Record<string, unknown>[] = [];
 vi.mock('swr', async (importOriginal) => {
   const actual = await importOriginal<typeof import('swr')>();
 
-  function CapturingSWRConfig(props: { value?: Record<string, unknown>; children?: ReactNode }) {
-    if (props.value) {
-      capturedSWRConfigValues.push({ ...props.value });
+  function CapturingSWRConfig({
+    value,
+    children,
+  }: Readonly<{ value?: Record<string, unknown>; children?: ReactNode }>) {
+    if (value) {
+      capturedSWRConfigValues.push({ ...value });
     }
     return createElement(
       actual.SWRConfig as unknown as React.ComponentType<Record<string, unknown>>,
-      props as unknown as Record<string, unknown>
+      { value } as unknown as Record<string, unknown>,
+      children
     );
   }
 
