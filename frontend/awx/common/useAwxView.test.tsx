@@ -427,6 +427,25 @@ describe('useAwxView', () => {
       );
     });
 
+    test('should show generic message when serviceDown is true but no status code', () => {
+      vi.mocked(useAwxConfigState).mockReturnValue({
+        serviceDown: true,
+        serviceDownStatusCode: undefined,
+      });
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      expect(result.current.error).toBeDefined();
+      expect((result.current.error as Error).message).toBe('Controller service is unavailable');
+    });
+
     test('should resume fetching when serviceDown becomes false', async () => {
       vi.mocked(useAwxConfigState).mockReturnValue({
         serviceDown: true,
@@ -458,6 +477,56 @@ describe('useAwxView', () => {
       });
 
       expect(result.current.error).toBeUndefined();
+    });
+
+    test('should handle other RequestError types beyond 404/400', async () => {
+      server.use(
+        http.get(awxAPI`/hosts/`, () => {
+          return HttpResponse.json({ detail: 'Internal server error.' }, { status: 500 });
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.error).toBeDefined();
+      });
+
+      // For non-404/400 errors, should not reset page and should propagate the error
+      expect(result.current.page).toBe(1); // Should remain at current page
+      expect(result.current.error).toBeDefined();
+    });
+
+    test('should handle regular response errors (not RequestError)', async () => {
+      server.use(
+        http.get(awxAPI`/hosts/`, () => {
+          // Return a network error or other non-RequestError
+          return HttpResponse.error();
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.error).toBeDefined();
+      });
+
+      // Should propagate the error without special handling
+      expect(result.current.error).toBeDefined();
     });
   });
 
@@ -633,6 +702,123 @@ describe('useAwxView', () => {
       });
 
       expect(result.current.selectedItems).toHaveLength(0);
+    });
+  });
+
+  describe('Data handling edge cases', () => {
+    test('should handle API response without count field', async () => {
+      server.use(
+        http.get(awxAPI`/hosts/`, () => {
+          return HttpResponse.json({
+            // Omit count field
+            next: null,
+            previous: null,
+            results: mockHosts.slice(0, 5),
+          });
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+      });
+
+      // itemCount should remain undefined when API doesn't provide count
+      expect(result.current.itemCount).toBeUndefined();
+      expect(result.current.pageItems).toHaveLength(5);
+    });
+
+    test('should handle empty results array', async () => {
+      server.use(
+        http.get(awxAPI`/hosts/`, () => {
+          return HttpResponse.json({
+            count: 0,
+            next: null,
+            previous: null,
+            results: [],
+          });
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toEqual([]);
+      });
+
+      expect(result.current.itemCount).toBe(0);
+      expect(result.current.pageItems).toHaveLength(0);
+    });
+
+    test('should handle refresh method when data is available', async () => {
+      let requestCount = 0;
+      server.use(
+        http.get(awxAPI`/hosts/`, () => {
+          requestCount++;
+          return HttpResponse.json(createMockResponse(1));
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+      });
+
+      const initialRequestCount = requestCount;
+
+      // Call refresh explicitly
+      await act(async () => {
+        await result.current.refresh();
+      });
+
+      await waitFor(() => {
+        expect(requestCount).toBe(initialRequestCount + 1);
+      });
+
+      expect(result.current.pageItems).toBeDefined();
+    });
+
+    test('should handle default selection when provided', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+            defaultSelection: [mockHosts[0], mockHosts[1]],
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+      });
+
+      // Should start with the default selection
+      expect(result.current.selectedItems).toHaveLength(2);
+      expect(result.current.selectedItems.map((item) => item.id)).toEqual([1, 2]);
     });
   });
 });
