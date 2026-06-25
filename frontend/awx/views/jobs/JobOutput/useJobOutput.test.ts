@@ -7,13 +7,14 @@ import {
 import { describe, expect, it, vi } from 'vitest';
 import { getFiltersQueryString } from './useJobOutput';
 
-const textFilter: IToolbarFilter = {
+const textFilter = {
   key: 'search',
   label: 'Search',
   type: ToolbarFilterType.MultiText,
   query: 'search',
   placeholder: 'Search',
-};
+  comparison: 'contains',
+} as IToolbarFilter;
 
 const choiceFilter: IToolbarFilter = {
   key: 'event',
@@ -27,13 +28,14 @@ const choiceFilter: IToolbarFilter = {
   ],
 };
 
-const dateRangeFilter: IToolbarFilter = {
+const dateRangeFilter = {
   key: 'created',
   label: 'Created',
   type: ToolbarFilterType.DateRange,
   query: 'created',
   placeholder: 'Created',
-};
+  options: [],
+} as unknown as IToolbarFilter;
 
 describe('getFiltersQueryString', () => {
   it('should return empty string for null filterState', () => {
