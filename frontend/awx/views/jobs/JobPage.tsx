@@ -50,7 +50,10 @@ export function useGetJob(id?: string, type?: string) {
     workflow: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
-  const defaultInterval = (settings.refreshInterval ?? 10) * 1000;
+  // override refresh interval in testing environment
+  const globalOverride = (globalThis as unknown as Record<string, number>)
+    .__SWR_REFRESH_INTERVAL__ as number | undefined;
+  const defaultInterval = globalOverride ?? (settings.refreshInterval ?? 10) * 1000;
   const refreshInterval = useCallback(
     (latestData: Job | undefined) => (latestData?.finished ? 0 : defaultInterval),
     [defaultInterval]
