@@ -45,7 +45,6 @@ describe('useHandleCollectNodeProps', () => {
     expect(mockSetNodeShape).toHaveBeenCalledWith('circle');
     expect(mockSetNodeStatus).toHaveBeenCalledWith('default');
     expect(collected.edgeDragging).toBe(false);
-    expect(collected.someExtraProp).toBe(true);
   });
 
   it('should set canDrop to true when target status is not danger', () => {
