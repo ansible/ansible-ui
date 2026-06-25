@@ -104,6 +104,18 @@ export function useAwxView<T extends { id: number }>(options: {
 
   const { serviceDown, serviceDownStatusCode } = useAwxConfigState();
 
+  const serviceDownError = useMemo(
+    () =>
+      serviceDown
+        ? new Error(
+            serviceDownStatusCode
+              ? `Controller service is unavailable (HTTP ${String(serviceDownStatusCode)})`
+              : 'Controller service is unavailable'
+          )
+        : undefined,
+    [serviceDown, serviceDownStatusCode]
+  );
+
   const queryString = buildQueryString(view, toolbarFilters || [], queryParams || {});
 
   url += queryString;
@@ -117,11 +129,7 @@ export function useAwxView<T extends { id: number }>(options: {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
   if (serviceDown) {
-    error = new Error(
-      serviceDownStatusCode
-        ? `Controller service is unavailable (HTTP ${String(serviceDownStatusCode)})`
-        : 'Controller service is unavailable'
-    );
+    error = serviceDownError;
   } else if (error instanceof RequestError) {
     if ((error.statusCode === 404 || error.statusCode === 400) && view.page > 1) {
       view.setPage(1);

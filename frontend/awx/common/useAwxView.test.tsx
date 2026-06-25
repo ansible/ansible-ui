@@ -379,10 +379,12 @@ describe('useAwxView', () => {
         { wrapper }
       );
 
-      await new Promise((r) => setTimeout(r, 100));
+      expect(result.current.error).toBeDefined();
+      expect(result.current.pageItems).toBeUndefined();
+
+      await act(async () => {});
 
       expect(requestUrls).toHaveLength(0);
-      expect(result.current.pageItems).toBeUndefined();
     });
 
     test('should return error when serviceDown is true', () => {
