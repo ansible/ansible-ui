@@ -21,7 +21,7 @@ describe('JobOutput util', () => {
     });
 
     it('should return true for undefined status', () => {
-      expect(isJobRunning(undefined)).toBe(true);
+      expect(isJobRunning()).toBe(true);
     });
 
     it('should return false for "successful" status', () => {

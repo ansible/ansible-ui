@@ -24,7 +24,7 @@ describe('useGetTimeoutString', () => {
   });
 
   it('should handle falsy value (NaN coerced to 0)', () => {
-    const { result } = renderHook(() => useGetTimeoutString(NaN));
+    const { result } = renderHook(() => useGetTimeoutString(Number.NaN));
     expect(result.current).toBe('0 min 0 sec ');
   });
 });
