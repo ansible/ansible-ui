@@ -5,7 +5,7 @@ import type { UnifiedJobType } from '../types';
 
 describe('useGetNodeTypeDetail', () => {
   it('should return null when type is undefined', () => {
-    const { result } = renderHook(() => useGetNodeTypeDetail(undefined));
+    const { result } = renderHook(() => useGetNodeTypeDetail());
     expect(result.current).toBeNull();
   });
 

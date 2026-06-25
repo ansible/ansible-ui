@@ -127,7 +127,7 @@ describe('CustomNode', () => {
   });
 
   it('should use deleted_resource icon when job type is undefined', () => {
-    const element = createMockElement('node-8', undefined);
+    const element = createMockElement('node-8');
     element.getData = () => ({
       resource: { summary_fields: { unified_job_template: {} } },
     });
