@@ -11,6 +11,18 @@ import {
 import { SWRConfig } from 'swr';
 import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 
+/** Default SWR refresh interval in milliseconds. Overridden by __SWR_REFRESH_INTERVAL__ in tests. */
+export const SWR_REFRESH_INTERVAL_MS =
+  ((globalThis as unknown as Record<string, number>).__SWR_REFRESH_INTERVAL__ as
+    | number
+    | undefined) ?? 60000;
+
+/** Default SWR deduping interval in milliseconds. Overridden by __SWR_DEDUPING_INTERVAL__ in tests. */
+export const SWR_DEDUPING_INTERVAL_MS =
+  ((globalThis as unknown as Record<string, number>).__SWR_DEDUPING_INTERVAL__ as
+    | number
+    | undefined) ?? 2000;
+
 // Exported for testing
 export function createSWRErrorRetryHandler() {
   return (
@@ -61,8 +73,6 @@ export function usePageSettings() {
 
 export function PageSettingsProvider(props: {
   children?: ReactNode;
-  defaultRefreshInterval: number;
-  defaultDedupingInterval?: number;
   disableThemeManagement?: boolean;
 }) {
   const [settings, setSettingsState] = useState<IPageSettings>(() => {
@@ -77,7 +87,7 @@ export function PageSettingsProvider(props: {
     }
     // defaults
     settings = {
-      refreshInterval: props.defaultRefreshInterval,
+      refreshInterval: SWR_REFRESH_INTERVAL_MS / 1000,
       theme: 'system',
       tableLayout: 'comfortable',
       formColumns: 'multiple',
@@ -119,18 +129,8 @@ export function PageSettingsProvider(props: {
   return (
     <SWRConfig
       value={{
-        dedupingInterval:
-          //  default to 2000ms if no deduping interval is set
-          // __SWR_DEDUPING_INTERVAL__ is used only in testing to force short interval
-          props.defaultDedupingInterval ??
-          ((globalThis as unknown as Record<string, number>).__SWR_DEDUPING_INTERVAL__ as
-            | number
-            | undefined) ??
-          2000,
-        refreshInterval:
-          ((globalThis as unknown as Record<string, number>).__SWR_REFRESH_INTERVAL__ as
-            | number
-            | undefined) ?? (settings.refreshInterval ? settings.refreshInterval * 1000 : 0),
+        dedupingInterval: SWR_DEDUPING_INTERVAL_MS,
+        refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
         revalidateOnFocus: false,
         onErrorRetry: swrErrorRetryHandler,
       }}

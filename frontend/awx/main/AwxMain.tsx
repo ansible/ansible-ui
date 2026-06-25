@@ -13,7 +13,7 @@ import { AwxLogin } from './AwxLogin';
 export default function AwxMain() {
   return (
     <BrowserRouter>
-      <PageFramework defaultRefreshInterval={30}>
+      <PageFramework>
         <AwxActiveUserProvider>
           <AwxLogin>
             <AwxApp />
