@@ -104,17 +104,13 @@ export function useAwxView<T extends { id: number }>(options: {
 
   const { serviceDown, serviceDownStatusCode } = useAwxConfigState();
 
-  const serviceDownError = useMemo(
-    () =>
-      serviceDown
-        ? new Error(
-            serviceDownStatusCode
-              ? `Controller service is unavailable (HTTP ${String(serviceDownStatusCode)})`
-              : 'Controller service is unavailable'
-          )
-        : undefined,
-    [serviceDown, serviceDownStatusCode]
-  );
+  const serviceDownError = useMemo(() => {
+    if (!serviceDown) return undefined;
+    const message = serviceDownStatusCode
+      ? `Controller service is unavailable (HTTP ${String(serviceDownStatusCode)})`
+      : 'Controller service is unavailable';
+    return new Error(message);
+  }, [serviceDown, serviceDownStatusCode]);
 
   const queryString = buildQueryString(view, toolbarFilters || [], queryParams || {});
 
