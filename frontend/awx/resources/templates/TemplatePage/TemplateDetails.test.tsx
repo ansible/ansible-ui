@@ -45,7 +45,7 @@ describe('TemplateDetails Component', () => {
       data: mockTemplate,
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockImplementation((url: string | undefined) => {
       if (url?.includes('webhook_key')) {
         return { data: mockWebhookKey } as ReturnType<typeof useGet>;
@@ -131,7 +131,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: templateAllOptions,
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -151,7 +151,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: { ...testJobTemplateFixture, diff_mode: true },
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -167,7 +167,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: testJobTemplateFixture,
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -190,7 +190,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: noOrgTemplate,
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -214,7 +214,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: noInvTemplate,
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -237,7 +237,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: noProjTemplate,
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -253,7 +253,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: { ...testJobTemplateFixture, host_config_key: 'abc123' },
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -269,7 +269,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: { ...testJobTemplateFixture, opa_query_path: 'policy/check' },
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
@@ -294,7 +294,7 @@ describe('TemplateDetails - conditional rendering', () => {
       data: noOptsTemplate,
       error: null,
       refresh: vi.fn(),
-    } as ReturnType<typeof useGetItem>);
+    } as unknown as ReturnType<typeof useGetItem>);
     vi.mocked(useGet).mockReturnValue({ data: null } as ReturnType<typeof useGet>);
     render(
       <MemoryRouter>
