@@ -22,7 +22,7 @@ export function useQueryPlatformOptions<
       let url = options.url;
       url += `?${options.orderQuery}=${options.labelKey as string}`;
       if (queryOptions.next) {
-        url += `&${options.orderQuery}=${queryOptions.next}`;
+        url += `&${options.labelKey as string}__gt=${encodeURIComponent(String(queryOptions.next))}`;
       }
       if (queryOptions.search) {
         url += `&${options.labelKey as string}__icontains=${encodeURIComponent(queryOptions.search)}`;
@@ -32,7 +32,7 @@ export function useQueryPlatformOptions<
       const itemOptions = itemsResponse.results.map((item) => {
         return {
           label: item[options.labelKey] as string,
-          value: item[options.valueKey] as string,
+          value: String(item[options.valueKey]),
         };
       });
       const lastItem = itemsResponse.results[itemsResponse.results.length - 1];
