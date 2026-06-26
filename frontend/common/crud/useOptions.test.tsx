@@ -2,6 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { SwrTestWrapper } from '../../../framework/test-utils/swrTestWrapper';
 import { useOptions } from './useOptions';
 
 const server = setupServer();
@@ -21,7 +22,9 @@ describe('useOptions', () => {
 
     server.use(http.options('/api/v2/credentials/', () => HttpResponse.json(mockOptions)));
 
-    const { result } = renderHook(() => useOptions<typeof mockOptions>('/api/v2/credentials/'));
+    const { result } = renderHook(() => useOptions<typeof mockOptions>('/api/v2/credentials/'), {
+      wrapper: SwrTestWrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.data).toBeDefined();
@@ -34,12 +37,14 @@ describe('useOptions', () => {
 
   it('should return error on non-ok response', async () => {
     server.use(
-      http.options('/api/v2/credentials/', () =>
+      http.options('/api/v2/forbidden/', () =>
         HttpResponse.json({ detail: 'Forbidden' }, { status: 403 })
       )
     );
 
-    const { result } = renderHook(() => useOptions('/api/v2/credentials/'));
+    const { result } = renderHook(() => useOptions('/api/v2/forbidden/'), {
+      wrapper: SwrTestWrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.error).toBeDefined();
@@ -50,7 +55,7 @@ describe('useOptions', () => {
   });
 
   it('should not fetch when url is undefined', () => {
-    const { result } = renderHook(() => useOptions(undefined));
+    const { result } = renderHook(() => useOptions(undefined), { wrapper: SwrTestWrapper });
 
     expect(result.current.data).toBeUndefined();
     expect(result.current.error).toBeUndefined();
@@ -66,7 +71,9 @@ describe('useOptions', () => {
       })
     );
 
-    const { result } = renderHook(() => useOptions('/api/v2/credentials/', { page_size: 10 }));
+    const { result } = renderHook(() => useOptions('/api/v2/credentials/', { page_size: 10 }), {
+      wrapper: SwrTestWrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.data).toBeDefined();
@@ -78,7 +85,7 @@ describe('useOptions', () => {
   it('should handle 204 No Content response', async () => {
     server.use(http.options('/api/v2/empty/', () => new HttpResponse(null, { status: 204 })));
 
-    const { result } = renderHook(() => useOptions('/api/v2/empty/'));
+    const { result } = renderHook(() => useOptions('/api/v2/empty/'), { wrapper: SwrTestWrapper });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -100,7 +107,9 @@ describe('useOptions', () => {
       )
     );
 
-    const { result } = renderHook(() => useOptions<string>('/api/v2/text/'));
+    const { result } = renderHook(() => useOptions<string>('/api/v2/text/'), {
+      wrapper: SwrTestWrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.data).toBeDefined();
@@ -119,8 +128,12 @@ describe('useOptions', () => {
       })
     );
 
-    const { result: result1 } = renderHook(() => useOptions('/api/v2/dedup/'));
-    const { result: result2 } = renderHook(() => useOptions('/api/v2/dedup/'));
+    const { result: result1 } = renderHook(() => useOptions('/api/v2/dedup/'), {
+      wrapper: SwrTestWrapper,
+    });
+    const { result: result2 } = renderHook(() => useOptions('/api/v2/dedup/'), {
+      wrapper: SwrTestWrapper,
+    });
 
     await waitFor(() => {
       expect(result1.current.data).toBeDefined();
