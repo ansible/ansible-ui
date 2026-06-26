@@ -328,10 +328,17 @@ describe('getWsAction', () => {
     ).toEqual({ type: 'refresh' });
   });
 
-  test('should return refresh for each final status', () => {
+  test('should return fetch for each final status when job is on page', () => {
     for (const status of ['successful', 'failed', 'error', 'canceled']) {
       expect(
         getWsAction({ group_name: 'jobs', type: 'job', status, unified_job_id: 492 }, pageItemIds)
+      ).toEqual({ type: 'fetch', jobId: 492 });
+    }
+  });
+  test('should return refresh for each final status when job is not on page', () => {
+    for (const status of ['successful', 'failed', 'error', 'canceled']) {
+      expect(
+        getWsAction({ group_name: 'jobs', type: 'job', status, unified_job_id: 9999 }, pageItemIds)
       ).toEqual({ type: 'refresh' });
     }
   });
@@ -455,6 +462,29 @@ describe('JobsList WebSocket handler integration', () => {
     });
 
     server.events.removeAllListeners();
+  }, 15000);
+
+  test('should fetch individual job on final status for on-page job instead of full refresh', async () => {
+    let detailFetchId: string | undefined;
+    server.use(
+      http.get('*/jobs/:id/', ({ params }) => {
+        detailFetchId = params['id'] as string;
+        return HttpResponse.json({ ...jobsFixture.results[1], status: 'successful' });
+      })
+    );
+
+    await renderAndWaitForJobs();
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      status: 'successful',
+      unified_job_id: 492,
+    });
+
+    await waitFor(() => {
+      expect(detailFetchId).toBe('492');
+    });
   }, 15000);
 
   test('should fetch individual job on intermediate status for on-page job', async () => {

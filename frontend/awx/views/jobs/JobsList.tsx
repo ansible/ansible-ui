@@ -47,9 +47,18 @@ export function getWsAction(
   const jobId = message?.unified_job_id;
 
   if (!status || !jobId) return { type: 'refresh' };
-  if (NEW_JOB_STATUSES.has(status) || FINAL_STATUSES.has(status)) return { type: 'refresh' };
+  if (NEW_JOB_STATUSES.has(status)) {
+    return { type: 'refresh' };
+  }
 
-  if (pageItemIds.includes(jobId)) return { type: 'fetch', jobId };
+  if (pageItemIds.includes(jobId)) {
+    return { type: 'fetch', jobId };
+  }
+
+  if (FINAL_STATUSES.has(status)) {
+    return { type: 'refresh' };
+  }
+
   return { type: 'skip' };
 }
 
