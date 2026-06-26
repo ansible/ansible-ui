@@ -139,12 +139,12 @@ export function useAwxView<T extends { id: number }>(options: {
     (item: T) => {
       if (!items) return;
       const index = items.findIndex((i) => i.id === item.id);
-      if (index !== -1) {
+      if (index === -1) {
+        setItems([item, ...items]);
+      } else {
         const newItems = [...items];
         newItems[index] = item;
         setItems(newItems);
-      } else {
-        setItems([item, ...items]);
       }
     },
     [items]
