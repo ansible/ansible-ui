@@ -144,7 +144,6 @@ export function useAwxView<T extends { id: number }>(options: {
         newItems[index] = item;
         setItems(newItems);
       } else {
-        // TODO: insert at end if list is inverse sorted?
         setItems([item, ...items]);
       }
     },

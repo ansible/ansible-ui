@@ -328,13 +328,27 @@ describe('getWsAction', () => {
     ).toEqual({ type: 'fetch', jobId: 999 });
   });
 
-  test('should return fetch for each final status when job is on page', () => {
+  test('should return patch with status and finished for each final status when job is on page', () => {
+    const finished = '2026-06-26T20:51:27.549537Z';
     for (const status of ['successful', 'failed', 'error', 'canceled']) {
       expect(
-        getWsAction({ group_name: 'jobs', type: 'job', status, unified_job_id: 492 }, pageItemIds)
-      ).toEqual({ type: 'fetch', jobId: 492 });
+        getWsAction(
+          { group_name: 'jobs', type: 'job', status, unified_job_id: 492, finished },
+          pageItemIds
+        )
+      ).toEqual({ type: 'patch', jobId: 492, data: { status, finished } });
     }
   });
+
+  test('should return patch with status only for final status on page when finished is missing', () => {
+    expect(
+      getWsAction(
+        { group_name: 'jobs', type: 'job', status: 'successful', unified_job_id: 492 },
+        pageItemIds
+      )
+    ).toEqual({ type: 'patch', jobId: 492, data: { status: 'successful' } });
+  });
+
   test('should return skip for each final status when job is not on page', () => {
     for (const status of ['successful', 'failed', 'error', 'canceled']) {
       expect(
@@ -343,22 +357,28 @@ describe('getWsAction', () => {
     }
   });
 
-  test('should return fetch for intermediate status when job is on page', () => {
-    expect(
-      getWsAction(
-        { group_name: 'jobs', type: 'job', status: 'running', unified_job_id: 492 },
-        pageItemIds
-      )
-    ).toEqual({ type: 'fetch', jobId: 492 });
+  test('should return patch with status and started for running status when job is on page', () => {
+    const before = new Date().toISOString();
+    const result = getWsAction(
+      { group_name: 'jobs', type: 'job', status: 'running', unified_job_id: 492 },
+      pageItemIds
+    );
+    const after = new Date().toISOString();
+    expect(result).toMatchObject({ type: 'patch', jobId: 492, data: { status: 'running' } });
+    if (result.type === 'patch') {
+      expect(result.data.started).toBeDefined();
+      expect(result.data.started! >= before).toBe(true);
+      expect(result.data.started! <= after).toBe(true);
+    }
   });
 
-  test('should return fetch for waiting status when job is on page', () => {
+  test('should return patch with status only for waiting status when job is on page', () => {
     expect(
       getWsAction(
         { group_name: 'jobs', type: 'job', status: 'waiting', unified_job_id: 491 },
         pageItemIds
       )
-    ).toEqual({ type: 'fetch', jobId: 491 });
+    ).toEqual({ type: 'patch', jobId: 491, data: { status: 'waiting' } });
   });
 
   test('should return skip for intermediate status when job is not on page', () => {
@@ -404,13 +424,12 @@ describe('getWsAction', () => {
     expect(getWsAction(undefined, pageItemIds)).toEqual({ type: 'skip' });
   });
 
-  test('should handle workflow_job type', () => {
-    expect(
-      getWsAction(
-        { group_name: 'jobs', type: 'workflow_job', status: 'running', unified_job_id: 491 },
-        pageItemIds
-      )
-    ).toEqual({ type: 'fetch', jobId: 491 });
+  test('should handle workflow_job type on page', () => {
+    const result = getWsAction(
+      { group_name: 'jobs', type: 'workflow_job', status: 'running', unified_job_id: 491 },
+      pageItemIds
+    );
+    expect(result).toMatchObject({ type: 'patch', jobId: 491, data: { status: 'running' } });
   });
 
   test('should handle project_update type', () => {
@@ -467,14 +486,12 @@ describe('JobsList WebSocket handler integration', () => {
     server.events.removeAllListeners();
   }, 15000);
 
-  test('should fetch individual job via filtered list query on final status for on-page job', async () => {
+  test('should patch on-page job in place without API call on final status', async () => {
     let fetchedWithId: string | null = null;
-    let fetchedCountDisabled: string | null = null;
     server.events.on('request:match', ({ request }) => {
       const url = new URL(request.url);
       if (url.pathname.includes('/unified_jobs/') && url.searchParams.get('id')) {
         fetchedWithId = url.searchParams.get('id');
-        fetchedCountDisabled = url.searchParams.get('count_disabled');
       }
     });
 
@@ -485,17 +502,16 @@ describe('JobsList WebSocket handler integration', () => {
       type: 'job',
       status: 'successful',
       unified_job_id: 492,
+      finished: '2026-06-26T20:51:27.549537Z',
     });
 
-    await waitFor(() => {
-      expect(fetchedWithId).toBe('492');
-      expect(fetchedCountDisabled).toBe('1');
-    });
+    await new Promise((r) => setTimeout(r, 500));
 
+    expect(fetchedWithId).toBeNull();
     server.events.removeAllListeners();
   }, 15000);
 
-  test('should fetch individual job via filtered list query on intermediate status', async () => {
+  test('should patch on-page job in place without API call on intermediate status', async () => {
     let fetchedWithId: string | null = null;
     server.events.on('request:match', ({ request }) => {
       const url = new URL(request.url);
@@ -513,10 +529,9 @@ describe('JobsList WebSocket handler integration', () => {
       unified_job_id: 492,
     });
 
-    await waitFor(() => {
-      expect(fetchedWithId).toBe('492');
-    });
+    await new Promise((r) => setTimeout(r, 500));
 
+    expect(fetchedWithId).toBeNull();
     server.events.removeAllListeners();
   }, 15000);
 

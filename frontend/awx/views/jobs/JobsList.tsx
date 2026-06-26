@@ -22,12 +22,17 @@ export type WebSocketMessage = {
   type?: string;
   status?: string;
   unified_job_id?: number;
+  finished?: string;
 };
 
-// const FINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+const FINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
 const NEW_JOB_STATUSES = new Set(['new', 'pending']);
 
-export type WsAction = { type: 'refresh' } | { type: 'fetch'; jobId: number } | { type: 'skip' };
+export type WsAction =
+  | { type: 'refresh' }
+  | { type: 'fetch'; jobId: number }
+  | { type: 'patch'; jobId: number; data: Partial<UnifiedJob> }
+  | { type: 'skip' };
 
 export function getWsAction(
   message: WebSocketMessage | undefined,
@@ -49,8 +54,16 @@ export function getWsAction(
 
   if (!status || !jobId) return { type: 'refresh' };
 
-  // Job already visible on current page — fetch updated data via filtered query
-  if (pageItemIds.includes(jobId)) return { type: 'fetch', jobId };
+  if (pageItemIds.includes(jobId)) {
+    const patch: Partial<UnifiedJob> = { status: status as UnifiedJob['status'] };
+    if (status === 'running') {
+      patch.started = new Date().toISOString();
+    }
+    if (FINAL_STATUSES.has(status) && message.finished) {
+      patch.finished = message.finished;
+    }
+    return { type: 'patch', jobId, data: patch };
+  }
 
   // New job — fetch via filtered query so it can be upserted into the list
   if (NEW_JOB_STATUSES.has(status)) return { type: 'fetch', jobId };
@@ -120,6 +133,13 @@ export function JobsList(props: {
             },
             () => throttledRefresh()
           );
+          break;
+        }
+        case 'patch': {
+          const existing = pageItemsRef.current?.find((i) => i.id === action.jobId);
+          if (existing) {
+            upsertItemRef.current({ ...existing, ...action.data });
+          }
           break;
         }
         case 'skip':
