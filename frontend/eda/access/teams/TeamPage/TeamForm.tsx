@@ -7,7 +7,7 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
@@ -29,8 +29,7 @@ export function CreateTeam() {
   useInvalidateCacheOnUnmount();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const defaultOrganization =
     organizations && organizations?.results && organizations.results.length > 0
@@ -73,11 +72,7 @@ export function EditTeam() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
 
-  const { data: team } = useSWR<EdaTeamDetail>(
-    edaAPI`/teams/${id.toString()}/`,
-    requestGet,
-    swrOptions
-  );
+  const { data: team } = useSWR<EdaTeamDetail>(edaAPI`/teams/${id.toString()}/`, requestGet);
 
   useInvalidateCacheOnUnmount();
 

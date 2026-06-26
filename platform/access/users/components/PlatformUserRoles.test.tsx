@@ -250,6 +250,44 @@ describe('PlatformUserRoles - Role Explanation', () => {
     http.get(gatewayAPI`/users/1/teams/`, () => {
       return HttpResponse.json(mockUserTeams);
     }),
+
+    http.get(gatewayAPI`/role_team_assignments/`, ({ request }) => {
+      const url = new URL(request.url);
+      const teamIn = url.searchParams.get('team__in');
+      if (teamIn) {
+        return HttpResponse.json({
+          count: 1,
+          next: null,
+          previous: null,
+          results: [
+            {
+              id: 1,
+              role_definition: 2,
+              team: 2,
+              content_type: 'platform.organization',
+              object_id: '1',
+              summary_fields: {
+                role_definition: {
+                  id: 2,
+                  name: 'Organization Member',
+                  description: 'Basic organization membership',
+                  managed: true,
+                },
+                team: { id: 2, name: 'LGTeam1' },
+                content_object: { id: 1, name: 'Test Organization' },
+              },
+            },
+          ],
+        });
+      }
+      return HttpResponse.json({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
+    }),
+
     // Service index role types endpoint
     http.get(gatewayAPI`/service-index/role-types/`, () => {
       return HttpResponse.json({ results: [] });

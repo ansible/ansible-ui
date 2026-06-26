@@ -7,7 +7,7 @@ import {
   buildQueryString,
 } from '@ansible/ansible-ui-framework';
 import { IView, useView } from '@ansible/ansible-ui-framework/useView';
-import { getItemKey, swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { getItemKey, useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
@@ -76,7 +76,7 @@ export function useAwxView<T extends { id: number }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<AwxItemsResponse<T>>(url, fetcher, swrOptions);
+  const response = useSWR<AwxItemsResponse<T>>(url, fetcher);
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});

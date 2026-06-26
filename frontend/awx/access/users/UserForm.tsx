@@ -9,7 +9,7 @@ import {
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -81,7 +81,7 @@ export function EditUser() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: user } = useSWR<AwxUser>(awxAPI`/users/${id.toString()}/`, requestGet, swrOptions);
+  const { data: user } = useSWR<AwxUser>(awxAPI`/users/${id.toString()}/`, requestGet);
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput: IUserInput,

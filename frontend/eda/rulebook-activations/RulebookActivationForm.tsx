@@ -13,7 +13,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
-import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
@@ -56,8 +56,7 @@ export function CreateRulebookActivation() {
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const defaultOrganization =
     organizations && organizations?.results && organizations.results.length > 0

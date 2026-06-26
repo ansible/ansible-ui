@@ -5,7 +5,13 @@ export function useInvalidateCacheOnUnmount() {
   const { mutate } = useSWRConfig();
   // https://swr.vercel.app/docs/mutation#revalidation
   // When you call mutate(key) without any data, it will trigger a revalidation for the resource.
-  useEffect(() => () => void mutate(() => true), [mutate]);
+  useEffect(
+    () => () => {
+      // mutate is async; SWR context may already be torn down when a scoped SWRConfig unmounts
+      void mutate(() => true).catch(() => undefined);
+    },
+    [mutate]
+  );
 }
 
 /**

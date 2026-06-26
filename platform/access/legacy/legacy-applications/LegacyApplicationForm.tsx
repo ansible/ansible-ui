@@ -15,7 +15,7 @@ import { validateUrl } from '@ansible/awx-ui/administration/notifiers/NotifierFo
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { Alert, Content } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
@@ -34,8 +34,7 @@ export function EditLegacyApplication() {
   const id = Number(params.applicationId);
   const { data: application } = useSWR<Application>(
     awxAPI`/applications/${id.toString()}/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
@@ -117,8 +116,7 @@ function LegacyApplicationInputs(props: { mode: 'create' | 'edit' }) {
   });
   const { data: gatewaySettings } = useSWR<{ gateway_proxy_url: string }>(
     awxAPI`/settings/all/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   return (
     <>

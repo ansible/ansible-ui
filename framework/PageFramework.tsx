@@ -15,10 +15,10 @@ import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
  * @example
  * <PageFramework>...</PageFramework>
  */
-export function PageFramework(props: { children: ReactNode; defaultRefreshInterval: number }) {
+export function PageFramework(props: Readonly<{ children: ReactNode }>) {
   return (
     <FrameworkTranslationsProvider>
-      <PageSettingsProvider defaultRefreshInterval={props.defaultRefreshInterval}>
+      <PageSettingsProvider>
         <PageNavigationRoutesProvider>
           <PageDialogProvider>
             <PageAlertToasterProvider>
