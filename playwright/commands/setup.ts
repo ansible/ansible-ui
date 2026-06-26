@@ -10,6 +10,7 @@ export function setupBefore(options?: { path?: string }) {
   return async ({ page }: { page: Page }) => {
     await page.addInitScript(() => {
       (window as unknown as Record<string, unknown>).__SWR_DEDUPING_INTERVAL__ = 0;
+      (window as unknown as Record<string, unknown>).__SWR_REFRESH_INTERVAL__ = 5000;
     });
     // Only enable coverage if not explicitly skipped
     if (existsSync('coverage') && process.env.SKIP_COVERAGE !== 'true') {

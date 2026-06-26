@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { LoadingPage, PageLayout, usePageSettings } from '@ansible/ansible-ui-framework';
+import {
+  LoadingPage,
+  PageLayout,
+  SWR_REFRESH_INTERVAL_MS,
+  usePageSettings,
+} from '@ansible/ansible-ui-framework';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useCallback } from 'react';
@@ -50,7 +55,7 @@ export function useGetJob(id?: string, type?: string) {
     workflow: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
-  const defaultInterval = (settings.refreshInterval ?? 10) * 1000;
+  const defaultInterval = (settings.refreshInterval ?? SWR_REFRESH_INTERVAL_MS / 1000) * 1000;
   const refreshInterval = useCallback(
     (latestData: Job | undefined) => (latestData?.finished ? 0 : defaultInterval),
     [defaultInterval]

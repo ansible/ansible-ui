@@ -66,7 +66,7 @@ describe('useGetJob', () => {
     };
 
     const runningJob = { status: 'running' } as Job;
-    expect(swrConfig.refreshInterval(runningJob)).toBe(10000);
+    expect(swrConfig.refreshInterval(runningJob)).toBe(60000);
   });
 
   it('should continue polling when no data is available yet', () => {
@@ -76,6 +76,6 @@ describe('useGetJob', () => {
       refreshInterval: (data: Job | undefined) => number;
     };
 
-    expect(swrConfig.refreshInterval(undefined)).toBe(10000);
+    expect(swrConfig.refreshInterval(undefined)).toBe(60000);
   });
 });

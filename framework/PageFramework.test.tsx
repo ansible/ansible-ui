@@ -20,7 +20,7 @@ Object.defineProperty(globalThis, 'matchMedia', {
 describe('PageFramework', () => {
   test('should render children', () => {
     render(
-      <PageFramework defaultRefreshInterval={30}>
+      <PageFramework>
         <div data-testid="child">Hello</div>
       </PageFramework>
     );
@@ -29,7 +29,7 @@ describe('PageFramework', () => {
 
   test('should pass disableThemeManagement to PageSettingsProvider', () => {
     render(
-      <PageFramework defaultRefreshInterval={30} disableThemeManagement>
+      <PageFramework disableThemeManagement>
         <div data-testid="child">Hello</div>
       </PageFramework>
     );

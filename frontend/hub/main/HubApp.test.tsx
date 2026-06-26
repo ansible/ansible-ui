@@ -5,7 +5,7 @@ import { HubApp } from './HubApp';
 
 vi.mock('@ansible/ansible-ui-framework', () => ({
   PageApp: (props: Record<string, unknown>) => (
-    <div data-testid="page-app" data-refresh-interval={props.defaultRefreshInterval} />
+    <div data-testid="page-app">{props.children as React.ReactNode}</div>
   ),
 }));
 vi.mock('./useHubNavigation', () => ({
@@ -13,12 +13,12 @@ vi.mock('./useHubNavigation', () => ({
 }));
 
 describe('HubApp', () => {
-  it('should configure PageApp with a 30 second refresh interval', () => {
+  it('should render PageApp', () => {
     const { getByTestId } = render(
       <MemoryRouter>
         <HubApp />
       </MemoryRouter>
     );
-    expect(getByTestId('page-app').dataset.refreshInterval).toBe('30');
+    expect(getByTestId('page-app')).toBeInTheDocument();
   });
 });

@@ -4,7 +4,7 @@ import HubMain from './HubMain';
 
 vi.mock('@ansible/ansible-ui-framework', () => ({
   PageFramework: (props: Record<string, unknown>) => (
-    <div data-testid="page-framework" data-refresh-interval={props.defaultRefreshInterval} />
+    <div data-testid="page-framework">{props.children as React.ReactNode}</div>
   ),
 }));
 vi.mock('@ansible/common-ui/i18n', () => ({}));
@@ -13,8 +13,8 @@ vi.mock('./HubApp', () => ({
 }));
 
 describe('HubMain', () => {
-  it('should configure PageFramework with a 30 second refresh interval', () => {
+  it('should render PageFramework with HubApp', () => {
     const { getByTestId } = render(<HubMain />);
-    expect(getByTestId('page-framework').dataset.refreshInterval).toBe('30');
+    expect(getByTestId('page-framework')).toBeInTheDocument();
   });
 });

@@ -46,13 +46,13 @@ describe('PageSettingsProvider', () => {
   describe('Settings Management', () => {
     test('should initialize with default settings when localStorage is empty', () => {
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
+        <PageSettingsProvider>{children}</PageSettingsProvider>
       );
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
 
       expect(result.current).toEqual({
-        refreshInterval: 30,
+        refreshInterval: 60,
         theme: 'system',
         tableLayout: 'comfortable',
         formColumns: 'multiple',
@@ -72,7 +72,7 @@ describe('PageSettingsProvider', () => {
       localStorage.setItem('user-preferences', JSON.stringify(savedSettings));
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
+        <PageSettingsProvider>{children}</PageSettingsProvider>
       );
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
@@ -93,13 +93,13 @@ describe('PageSettingsProvider', () => {
       localStorage.setItem('user-preferences', 'invalid-json');
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={15}>{children}</PageSettingsProvider>
+        <PageSettingsProvider>{children}</PageSettingsProvider>
       );
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
 
       // Should use defaults when localStorage has invalid JSON
-      expect(result.current.refreshInterval).toBe(15);
+      expect(result.current.refreshInterval).toBe(60);
       expect(result.current.theme).toBe('system');
     });
 
@@ -122,7 +122,7 @@ describe('PageSettingsProvider', () => {
       }
 
       const { getByTestId } = render(
-        <PageSettingsProvider defaultRefreshInterval={30}>
+        <PageSettingsProvider>
           <PageSettingsContext.Consumer>
             {([_settings, setSettings]) => {
               setSettingsFunc = setSettings;
@@ -133,7 +133,7 @@ describe('PageSettingsProvider', () => {
       );
 
       // Initial state
-      expect(getByTestId('refresh-interval')).toHaveTextContent('30');
+      expect(getByTestId('refresh-interval')).toHaveTextContent('60');
 
       // Update settings
       getByTestId('update-button').click();
@@ -165,7 +165,7 @@ describe('PageSettingsProvider', () => {
       }));
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
+        <PageSettingsProvider>{children}</PageSettingsProvider>
       );
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
@@ -192,7 +192,7 @@ describe('PageSettingsProvider', () => {
       }));
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
+        <PageSettingsProvider>{children}</PageSettingsProvider>
       );
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
@@ -209,7 +209,7 @@ describe('PageSettingsProvider', () => {
       localStorage.setItem('user-preferences', JSON.stringify({ theme: 'light' }));
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
+        <PageSettingsProvider>{children}</PageSettingsProvider>
       );
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
@@ -221,9 +221,7 @@ describe('PageSettingsProvider', () => {
     });
 
     const disabledThemeWrapper = ({ children }: { children: ReactNode }) => (
-      <PageSettingsProvider defaultRefreshInterval={30} disableThemeManagement>
-        {children}
-      </PageSettingsProvider>
+      <PageSettingsProvider disableThemeManagement>{children}</PageSettingsProvider>
     );
 
     test('should not modify document theme class when disableThemeManagement is true and theme is dark', async () => {
@@ -279,17 +277,17 @@ describe('PageSettingsProvider', () => {
       };
 
       const { getByTestId } = render(
-        <PageSettingsProvider defaultRefreshInterval={30}>
+        <PageSettingsProvider>
           <TestComponent />
         </PageSettingsProvider>
       );
 
-      expect(getByTestId('interval')).toHaveTextContent('30');
+      expect(getByTestId('interval')).toHaveTextContent('60');
     });
 
     test('should disable revalidateOnFocus globally', () => {
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
+        <PageSettingsProvider>{children}</PageSettingsProvider>
       );
 
       const { result } = renderHook(() => useSWRConfig(), { wrapper });
@@ -306,7 +304,7 @@ describe('PageSettingsProvider', () => {
       };
 
       const { getByTestId } = render(
-        <PageSettingsProvider defaultRefreshInterval={30}>
+        <PageSettingsProvider>
           <TestComponent />
         </PageSettingsProvider>
       );
