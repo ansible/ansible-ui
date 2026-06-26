@@ -22,6 +22,10 @@ export type IAwxView<T extends { id: number }> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
     limitFiltersToOneOrOperation: true;
     updateItem: (item: T) => void;
+    /** Insert or update an item in the local items state. New items are prepended. */
+    upsertItem: (item: T) => void;
+    /** The current fully-qualified list URL including query string (filters, sort, pagination). */
+    listUrl: string;
   };
 
 export function useAwxView<T extends { id: number }>(options: {
@@ -131,6 +135,22 @@ export function useAwxView<T extends { id: number }>(options: {
     [items]
   );
 
+  const upsertItem = useCallback(
+    (item: T) => {
+      if (!items) return;
+      const index = items.findIndex((i) => i.id === item.id);
+      if (index !== -1) {
+        const newItems = [...items];
+        newItems[index] = item;
+        setItems(newItems);
+      } else {
+        // TODO: insert at end if list is inverse sorted?
+        setItems([item, ...items]);
+      }
+    },
+    [items]
+  );
+
   return useMemo(() => {
     return {
       refresh,
@@ -143,6 +163,8 @@ export function useAwxView<T extends { id: number }>(options: {
       unselectItemsAndRefresh,
       limitFiltersToOneOrOperation: true,
       updateItem,
+      upsertItem,
+      listUrl: url,
     };
   }, [
     error,
@@ -152,6 +174,8 @@ export function useAwxView<T extends { id: number }>(options: {
     selection,
     unselectItemsAndRefresh,
     updateItem,
+    upsertItem,
+    url,
     view,
   ]);
 }

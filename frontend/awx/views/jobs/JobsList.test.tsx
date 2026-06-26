@@ -310,22 +310,22 @@ describe('JobsList Component Tests', () => {
 describe('getWsAction', () => {
   const pageItemIds = [491, 492, 489, 488];
 
-  test('should return refresh for pending status', () => {
+  test('should return fetch for pending status (off-page new job)', () => {
     expect(
       getWsAction(
         { group_name: 'jobs', type: 'job', status: 'pending', unified_job_id: 999 },
         pageItemIds
       )
-    ).toEqual({ type: 'refresh' });
+    ).toEqual({ type: 'fetch', jobId: 999 });
   });
 
-  test('should return refresh for new status', () => {
+  test('should return fetch for new status (off-page new job)', () => {
     expect(
       getWsAction(
         { group_name: 'jobs', type: 'job', status: 'new', unified_job_id: 999 },
         pageItemIds
       )
-    ).toEqual({ type: 'refresh' });
+    ).toEqual({ type: 'fetch', jobId: 999 });
   });
 
   test('should return fetch for each final status when job is on page', () => {
@@ -335,11 +335,11 @@ describe('getWsAction', () => {
       ).toEqual({ type: 'fetch', jobId: 492 });
     }
   });
-  test('should return refresh for each final status when job is not on page', () => {
+  test('should return skip for each final status when job is not on page', () => {
     for (const status of ['successful', 'failed', 'error', 'canceled']) {
       expect(
         getWsAction({ group_name: 'jobs', type: 'job', status, unified_job_id: 9999 }, pageItemIds)
-      ).toEqual({ type: 'refresh' });
+      ).toEqual({ type: 'skip' });
     }
   });
 
@@ -419,7 +419,7 @@ describe('getWsAction', () => {
         { group_name: 'jobs', type: 'project_update', status: 'pending', unified_job_id: 999 },
         pageItemIds
       )
-    ).toEqual({ type: 'refresh' });
+    ).toEqual({ type: 'fetch', jobId: 999 });
   });
 });
 
@@ -439,16 +439,18 @@ describe('JobsList WebSocket handler integration', () => {
     expect(capturedOnMessage).toBeDefined();
   }
 
-  test('should call full list refresh on pending status', async () => {
-    let listFetchCount = 0;
+  test('should fetch individual job via filtered list query on pending status for new job', async () => {
+    let fetchedWithId: string | null = null;
+    let fetchedCountDisabled: string | null = null;
     server.events.on('request:match', ({ request }) => {
-      if (request.url.includes('/unified_jobs/') && !request.url.match(/\/unified_jobs\/\d+\//)) {
-        listFetchCount++;
+      const url = new URL(request.url);
+      if (url.pathname.includes('/unified_jobs/') && url.searchParams.get('id')) {
+        fetchedWithId = url.searchParams.get('id');
+        fetchedCountDisabled = url.searchParams.get('count_disabled');
       }
     });
 
     await renderAndWaitForJobs();
-    const initialCount = listFetchCount;
 
     capturedOnMessage!({
       group_name: 'jobs',
@@ -458,20 +460,23 @@ describe('JobsList WebSocket handler integration', () => {
     });
 
     await waitFor(() => {
-      expect(listFetchCount).toBeGreaterThan(initialCount);
+      expect(fetchedWithId).toBe('999');
+      expect(fetchedCountDisabled).toBe('1');
     });
 
     server.events.removeAllListeners();
   }, 15000);
 
-  test('should fetch individual job on final status for on-page job instead of full refresh', async () => {
-    let detailFetchId: string | undefined;
-    server.use(
-      http.get('*/jobs/:id/', ({ params }) => {
-        detailFetchId = params['id'] as string;
-        return HttpResponse.json({ ...jobsFixture.results[1], status: 'successful' });
-      })
-    );
+  test('should fetch individual job via filtered list query on final status for on-page job', async () => {
+    let fetchedWithId: string | null = null;
+    let fetchedCountDisabled: string | null = null;
+    server.events.on('request:match', ({ request }) => {
+      const url = new URL(request.url);
+      if (url.pathname.includes('/unified_jobs/') && url.searchParams.get('id')) {
+        fetchedWithId = url.searchParams.get('id');
+        fetchedCountDisabled = url.searchParams.get('count_disabled');
+      }
+    });
 
     await renderAndWaitForJobs();
 
@@ -483,18 +488,21 @@ describe('JobsList WebSocket handler integration', () => {
     });
 
     await waitFor(() => {
-      expect(detailFetchId).toBe('492');
+      expect(fetchedWithId).toBe('492');
+      expect(fetchedCountDisabled).toBe('1');
     });
+
+    server.events.removeAllListeners();
   }, 15000);
 
-  test('should fetch individual job on intermediate status for on-page job', async () => {
-    let detailFetchId: string | undefined;
-    server.use(
-      http.get('*/jobs/:id/', ({ params }) => {
-        detailFetchId = params['id'] as string;
-        return HttpResponse.json({ ...jobsFixture.results[1], status: 'running' });
-      })
-    );
+  test('should fetch individual job via filtered list query on intermediate status', async () => {
+    let fetchedWithId: string | null = null;
+    server.events.on('request:match', ({ request }) => {
+      const url = new URL(request.url);
+      if (url.pathname.includes('/unified_jobs/') && url.searchParams.get('id')) {
+        fetchedWithId = url.searchParams.get('id');
+      }
+    });
 
     await renderAndWaitForJobs();
 
@@ -506,18 +514,20 @@ describe('JobsList WebSocket handler integration', () => {
     });
 
     await waitFor(() => {
-      expect(detailFetchId).toBe('492');
+      expect(fetchedWithId).toBe('492');
     });
+
+    server.events.removeAllListeners();
   }, 15000);
 
   test('should skip for intermediate status when job is not on page', async () => {
-    let detailFetched = false;
-    server.use(
-      http.get('*/jobs/:id/', () => {
-        detailFetched = true;
-        return HttpResponse.json({});
-      })
-    );
+    let fetchedWithId: string | null = null;
+    server.events.on('request:match', ({ request }) => {
+      const url = new URL(request.url);
+      if (url.pathname.includes('/unified_jobs/') && url.searchParams.get('id')) {
+        fetchedWithId = url.searchParams.get('id');
+      }
+    });
 
     await renderAndWaitForJobs();
 
@@ -530,6 +540,7 @@ describe('JobsList WebSocket handler integration', () => {
 
     await new Promise((r) => setTimeout(r, 500));
 
-    expect(detailFetched).toBe(false);
+    expect(fetchedWithId).toBeNull();
+    server.events.removeAllListeners();
   }, 15000);
 });

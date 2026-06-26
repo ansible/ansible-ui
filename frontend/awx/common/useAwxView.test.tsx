@@ -167,6 +167,57 @@ describe('useAwxView', () => {
     });
   });
 
+  describe('upsertItem', () => {
+    test('should update an existing item in the list', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.pageItems!.length).toBe(20);
+      });
+
+      const updatedHost = { ...result.current.pageItems![0], name: 'updated-host' };
+      act(() => {
+        result.current.upsertItem(updatedHost);
+      });
+
+      expect(result.current.pageItems![0].name).toBe('updated-host');
+      expect(result.current.pageItems!.length).toBe(20);
+    });
+
+    test('should prepend a new item to the list', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.pageItems!.length).toBe(20);
+      });
+
+      const newHost = { ...mockHosts[0], id: 9999, name: 'new-host' };
+      act(() => {
+        result.current.upsertItem(newHost);
+      });
+
+      expect(result.current.pageItems!.length).toBe(21);
+      expect(result.current.pageItems![0].id).toBe(9999);
+      expect(result.current.pageItems![0].name).toBe('new-host');
+    });
+  });
+
   describe('Error handling for pagination', () => {
     describe('Filter with pagination error recovery', () => {
       test('should reset to page 1 when filter returns 400 on page 2', async () => {

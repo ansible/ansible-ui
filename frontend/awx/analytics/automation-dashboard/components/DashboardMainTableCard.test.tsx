@@ -103,6 +103,8 @@ function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableVi
     unselectItemsAndRefresh: vi.fn(),
     limitFiltersToOneOrOperation: true,
     updateItem: vi.fn(),
+    upsertItem: vi.fn(),
+    listUrl: '',
   };
   return { ...base, ...overrides } as MainTableView;
 }
