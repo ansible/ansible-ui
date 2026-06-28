@@ -4,10 +4,7 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../common/eda-utils';
 
-interface ContentTypeOption {
-  value: string;
-  display_name: string;
-}
+type ContentTypeOption = [string, string];
 
 export function EdaSelectResourceTypeStep() {
   const { t } = useTranslation();
@@ -28,13 +25,13 @@ export function EdaSelectResourceTypeStep() {
       name="resourceType"
       options={options
         .filter(
-          (option) =>
-            option.value.startsWith('eda.') &&
+          ([value, _]) =>
+            value?.startsWith('eda.') &&
             !['extravar', 'auditrule', 'rulebookprocess', 'rulebook'].some(function (v) {
-              return option.value.endsWith(v);
+              return value.endsWith(v);
             })
         )
-        .map(({ value, display_name }) => ({
+        .map(([value, display_name]) => ({
           value,
           label: display_name,
         }))}

@@ -80,7 +80,7 @@ export function EdaSelectResourcesStep(props: { userOrTeamName: string }) {
         key: 'name',
         label: t('Name'),
         type: ToolbarFilterType.MultiText,
-        query: 'name',
+        query: 'name__icontains',
         comparison: 'contains',
       },
     ],
