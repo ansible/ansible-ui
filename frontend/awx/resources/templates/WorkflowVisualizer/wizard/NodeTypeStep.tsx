@@ -50,6 +50,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   register('node_type');
   register('resource');
   register('prompt');
+  register('launch_config');
 
   // Watch form fields
   const nodeType = useWatch<WizardFormValues, 'node_type'>({
@@ -159,12 +160,16 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
 
       // Always update wizard-level data so launch_config reflects the currently selected template.
       // This prevents stale prompt flags from a previously selected template being used on save.
+      const effectiveLaunchConfig =
+        shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null;
       setWizardData((prev) => ({
         ...prev,
-        launch_config: shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null,
+        launch_config: effectiveLaunchConfig,
+        _hidePrompts: !shouldShowPromptStep && !shouldShowSurveyStep,
         resourceId,
         resource: nodeResource,
       }));
+      setValue('launch_config', effectiveLaunchConfig as never);
 
       if (shouldShowPromptStep || shouldShowSurveyStep) {
         setStepData((prev) => {

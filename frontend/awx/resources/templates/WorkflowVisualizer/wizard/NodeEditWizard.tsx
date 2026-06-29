@@ -78,23 +78,16 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       label: t('Prompts'),
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
-        const { launch_config, resource, node_type } = wizardData;
+        if ((wizardData as Record<string, unknown>)._hidePrompts) {
+          return true;
+        }
+        const { launch_config, node_type } = wizardData;
         if (!launch_config) {
           return true;
         }
 
-        if (
-          (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          resource
-        ) {
+        if (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) {
           return shouldHideOtherStep(launch_config);
-        }
-        // nodePromptsStep is always present in initialValues (it carries original
-        // node resources for save cleanup). Only show the step if the original
-        // template actually had prompts, which is indicated by launch_config being
-        // stored in the initial prompt values.
-        if (initialValues.nodePromptsStep?.prompt?.launch_config) {
-          return false;
         }
         return true;
       },
