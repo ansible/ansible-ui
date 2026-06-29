@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { SWRConfig } from 'swr';
 import { awxAPI } from './api/awx-utils';
-import { useAwxView } from './useAwxView';
+import { useAwxView, compareByField } from './useAwxView';
 import { AwxHost } from '../interfaces/AwxHost';
 import { ReactNode } from 'react';
 import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
@@ -340,5 +340,58 @@ describe('useAwxView', () => {
         });
       });
     });
+  });
+});
+
+describe('compareByField', () => {
+  const items = [
+    { id: 1, name: 'Demo Template', started: '2026-06-01T10:00:00Z', priority: 3 },
+    { id: 2, name: 'chatty tasks', started: '2026-06-02T10:00:00Z', priority: 1 },
+    { id: 3, name: 'Test Playbooks', started: '2026-06-01T12:00:00Z', priority: 2 },
+  ];
+
+  test('should sort strings case-insensitively ascending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'name', 'asc'));
+    expect(sorted.map((i) => i.name)).toEqual(['chatty tasks', 'Demo Template', 'Test Playbooks']);
+  });
+
+  test('should sort strings case-insensitively descending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'name', 'desc'));
+    expect(sorted.map((i) => i.name)).toEqual(['Test Playbooks', 'Demo Template', 'chatty tasks']);
+  });
+
+  test('should sort numbers ascending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'priority', 'asc'));
+    expect(sorted.map((i) => i.priority)).toEqual([1, 2, 3]);
+  });
+
+  test('should sort numbers descending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'priority', 'desc'));
+    expect(sorted.map((i) => i.priority)).toEqual([3, 2, 1]);
+  });
+
+  test('should sort date strings ascending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'started', 'asc'));
+    expect(sorted.map((i) => i.id)).toEqual([1, 3, 2]);
+  });
+
+  test('should sort date strings descending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'started', 'desc'));
+    expect(sorted.map((i) => i.id)).toEqual([2, 3, 1]);
+  });
+
+  test('should treat null/undefined values as neutral', () => {
+    const withNulls = [
+      { id: 1, name: 'Bravo' },
+      { id: 2, name: null },
+      { id: 3, name: 'Alpha' },
+    ];
+    const sorted = [...withNulls].sort((a, b) => compareByField(a, b, 'name', 'asc'));
+    expect(sorted.map((i) => i.id)).toEqual([1, 2, 3]);
+  });
+
+  test('should default to ascending when direction is omitted', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'priority'));
+    expect(sorted.map((i) => i.priority)).toEqual([1, 2, 3]);
   });
 });
