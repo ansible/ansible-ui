@@ -84,8 +84,9 @@ const createSurveyWithTextQuestion = (
   };
 };
 
+const DEFAULT_NUMERIC_OPTIONS = { type: 'integer' as const };
 const createSurveyWithNumericQuestion = (
-  options: { type: 'integer' | 'float'; defaultValue?: number } = { type: 'integer' }
+  options: { type: 'integer' | 'float'; defaultValue?: number } = DEFAULT_NUMERIC_OPTIONS
 ): Survey => {
   const { type, defaultValue = 42 } = options;
 
