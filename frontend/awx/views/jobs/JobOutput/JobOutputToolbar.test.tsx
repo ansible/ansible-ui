@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { JobOutputToolbar } from './JobOutputToolbar';
 
 describe('JobOutputToolbar', () => {
@@ -102,7 +103,8 @@ describe('JobOutputToolbar', () => {
           {
             key: 'search',
             label: 'Search',
-            type: 'string' as never,
+            type: ToolbarFilterType.SingleText,
+            comparison: 'contains',
             query: 'search',
             placeholder: 'Search',
           },

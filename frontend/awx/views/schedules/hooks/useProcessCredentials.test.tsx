@@ -4,6 +4,7 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import type { Credential } from '../../../interfaces/Credential';
 import { useProcessCredentials } from './useProcessCredentials';
 
 const postCalls: { url: string; body: unknown }[] = [];
@@ -92,7 +93,7 @@ describe('useProcessCredentials', () => {
       [
         { id: 1, name: 'Existing Cred 1', credential_type: 1 },
         { id: 3, name: 'New Cred', credential_type: 3 },
-      ] as never,
+      ] as unknown as Credential[],
       config
     );
 
@@ -112,7 +113,7 @@ describe('useProcessCredentials', () => {
 
     const { result } = renderHook(() => useProcessCredentials());
 
-    await result.current(42, [] as never, config);
+    await result.current(42, [] as unknown as Credential[], config);
 
     const disassociateCalls = postCalls.filter(
       (c) => (c.body as Record<string, unknown>).disassociate === true
@@ -130,7 +131,11 @@ describe('useProcessCredentials', () => {
 
     const { result } = renderHook(() => useProcessCredentials());
 
-    await result.current(42, [{ id: 5, name: 'Brand New', credential_type: 1 }] as never, config);
+    await result.current(
+      42,
+      [{ id: 5, name: 'Brand New', credential_type: 1 }] as unknown as Credential[],
+      config
+    );
 
     const associateCalls = postCalls.filter((c) => (c.body as Record<string, unknown>).id === 5);
     expect(associateCalls).toHaveLength(1);
@@ -155,7 +160,11 @@ describe('useProcessCredentials', () => {
 
     const { result } = renderHook(() => useProcessCredentials());
 
-    await result.current(42, [{ id: 1, name: 'Cred 1', credential_type: 1 }] as never, config);
+    await result.current(
+      42,
+      [{ id: 1, name: 'Cred 1', credential_type: 1 }] as unknown as Credential[],
+      config
+    );
 
     expect(postCalls).toHaveLength(0);
   });

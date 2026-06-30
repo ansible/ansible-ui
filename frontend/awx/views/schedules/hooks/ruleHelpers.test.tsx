@@ -124,7 +124,7 @@ describe('mungePromptData', () => {
 
 describe('mungeSurveyAndExtraVarsData', () => {
   it('should return empty object when both survey and extra_vars are falsy', () => {
-    expect(mungeSurveyAndExtraVarsData(null as never, '')).toEqual({});
+    expect(mungeSurveyAndExtraVarsData(null as unknown as Record<string, string>, '')).toEqual({});
   });
 
   it('should merge survey data with parsed extra_vars', () => {

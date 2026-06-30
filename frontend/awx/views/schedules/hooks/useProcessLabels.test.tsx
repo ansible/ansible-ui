@@ -4,6 +4,7 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import type { Label } from '../../../interfaces/Label';
 import { useProcessLabels } from './useProcessLabels';
 
 const postCalls: { url: string; body: unknown }[] = [];
@@ -87,7 +88,7 @@ describe('useProcessLabels', () => {
 
     const { result } = renderHook(() => useProcessLabels());
 
-    await result.current(42, [{ name: 'new-label', id: 2 }] as never, config, 5);
+    await result.current(42, [{ name: 'new-label', id: 2 }] as unknown as Label[], config, 5);
 
     const disassociateCall = postCalls.find(
       (c) => (c.body as Record<string, unknown>).disassociate === true
@@ -113,7 +114,7 @@ describe('useProcessLabels', () => {
 
     const { result } = renderHook(() => useProcessLabels());
 
-    await result.current(42, undefined as never, config);
+    await result.current(42, undefined as unknown as Label[], config);
 
     expect(postCalls).toHaveLength(2);
     postCalls.forEach((call) => {
@@ -132,7 +133,7 @@ describe('useProcessLabels', () => {
 
     const { result } = renderHook(() => useProcessLabels());
 
-    await result.current(42, [{ name: 'new-label-no-id' }] as never, config, null);
+    await result.current(42, [{ name: 'new-label-no-id' }] as unknown as Label[], config, null);
 
     const createCall = postCalls.find(
       (c) => (c.body as Record<string, unknown>).name === 'new-label-no-id'
@@ -152,7 +153,7 @@ describe('useProcessLabels', () => {
 
     const { result } = renderHook(() => useProcessLabels());
 
-    await result.current(42, [] as never, config);
+    await result.current(42, [] as unknown as Label[], config);
 
     expect(postCalls).toHaveLength(0);
   });
@@ -168,7 +169,7 @@ describe('useProcessLabels', () => {
 
     const { result } = renderHook(() => useProcessLabels());
 
-    await result.current(42, [{ name: 'org-label' }] as never, config, 99);
+    await result.current(42, [{ name: 'org-label' }] as unknown as Label[], config, 99);
 
     const createCall = postCalls.find(
       (c) => (c.body as Record<string, unknown>).name === 'org-label'

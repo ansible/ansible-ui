@@ -7,6 +7,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import type { Schedule } from '../../../interfaces/Schedule';
 import type { ScheduleFormWizard } from '../types';
+import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import type { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { useProcessSchedule } from './useProcessSchedules';
 
 const mockScheduleResponse: Schedule = {
@@ -109,12 +111,16 @@ function makePayload(
     schedule_type: 'rrule',
     timezone: 'UTC',
     startDateTime: { date: '2023-01-01', time: '00:00' },
-    resource: { id: 10, type: resourceType, name: 'Resource' } as never,
+    resource: {
+      id: 10,
+      type: resourceType,
+      name: 'Resource',
+    } as unknown as ScheduleFormWizard['resource'],
     resourceId: 10,
     rules: [{ id: 1, rule: rruleString }],
     exceptions: [],
     launch_config: null,
-    prompt: undefined as never,
+    prompt: undefined as unknown as PromptFormValues,
     schedule_days_to_keep: 0,
     survey: {},
     enabled: true,
@@ -199,11 +205,11 @@ describe('useProcessSchedule', () => {
       prompt: {
         inventory: { id: 5 },
         extra_vars: '{"key": "val"}',
-      } as never,
+      } as unknown as PromptFormValues,
       launch_config: {
         ask_inventory_on_launch: true,
         ask_variables_on_launch: true,
-      } as never,
+      } as unknown as LaunchConfiguration,
       survey: { q1: 'a1' },
     });
 

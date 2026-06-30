@@ -4,6 +4,7 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import type { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useProcessInstanceGroups } from './useProcessInstanceGroups';
 
 const postCalls: { url: string; body: unknown }[] = [];
@@ -92,7 +93,7 @@ describe('useProcessInstanceGroups', () => {
       [
         { id: 1, name: 'controlplane' },
         { id: 3, name: 'new-group' },
-      ] as never,
+      ] as unknown as InstanceGroup[],
       config
     );
 
@@ -114,7 +115,7 @@ describe('useProcessInstanceGroups', () => {
 
     const { result } = renderHook(() => useProcessInstanceGroups());
 
-    await result.current(42, [] as never, config);
+    await result.current(42, [] as unknown as InstanceGroup[], config);
 
     const disassociateCalls = postCalls.filter(
       (c) => (c.body as Record<string, unknown>).disassociate === true
@@ -133,7 +134,7 @@ describe('useProcessInstanceGroups', () => {
 
     const { result } = renderHook(() => useProcessInstanceGroups());
 
-    await result.current(42, [] as never, config);
+    await result.current(42, [] as unknown as InstanceGroup[], config);
 
     expect(postCalls).toHaveLength(0);
   });
@@ -152,7 +153,11 @@ describe('useProcessInstanceGroups', () => {
 
     const { result } = renderHook(() => useProcessInstanceGroups());
 
-    await result.current(42, [{ id: 1, name: 'controlplane' }] as never, config);
+    await result.current(
+      42,
+      [{ id: 1, name: 'controlplane' }] as unknown as InstanceGroup[],
+      config
+    );
 
     expect(postCalls).toHaveLength(0);
   });
@@ -162,7 +167,7 @@ describe('useProcessInstanceGroups', () => {
 
     const { result } = renderHook(() => useProcessInstanceGroups());
 
-    await result.current(42, [{ id: 5, name: 'brand-new' }] as never, config);
+    await result.current(42, [{ id: 5, name: 'brand-new' }] as unknown as InstanceGroup[], config);
 
     const disassociateCalls = postCalls.filter(
       (c) => (c.body as Record<string, unknown>).disassociate === true

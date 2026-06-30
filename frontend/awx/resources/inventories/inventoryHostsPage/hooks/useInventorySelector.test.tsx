@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useColumns } from './useInventorySelector';
+import type { Inventory } from '../../../../interfaces/Inventory';
 
 vi.mock('../../../../common/useAwxView', () => ({
   useAwxView: vi.fn(),
@@ -27,7 +28,7 @@ describe('useColumns', () => {
     const column = result.current[0];
 
     const inventory = { id: 1, name: 'My Inventory' };
-    expect(column.value?.(inventory as never)).toBe('My Inventory');
+    expect(column.value?.(inventory as unknown as Inventory)).toBe('My Inventory');
   });
 
   it('should return stable reference across re-renders', () => {

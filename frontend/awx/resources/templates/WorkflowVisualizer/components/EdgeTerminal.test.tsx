@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import type { Point } from '@patternfly/react-topology';
 
 vi.mock('@patternfly/react-topology', () => ({
   Point: vi.fn(),
@@ -14,7 +15,7 @@ describe('EdgeTerminal', () => {
     const target = { x: 100, y: 50 };
     const { container } = render(
       <svg>
-        <EdgeTerminal target={target as never} style="pf-m-success" />
+        <EdgeTerminal target={target as unknown as Point} style="pf-m-success" />
       </svg>
     );
 
@@ -26,7 +27,7 @@ describe('EdgeTerminal', () => {
     const target = { x: 200, y: 100 };
     const { container } = render(
       <svg>
-        <EdgeTerminal target={target as never} style="pf-m-danger" />
+        <EdgeTerminal target={target as unknown as Point} style="pf-m-danger" />
       </svg>
     );
 
@@ -39,7 +40,7 @@ describe('EdgeTerminal', () => {
     const target = { x: 50, y: 25 };
     const { container } = render(
       <svg>
-        <EdgeTerminal target={target as never} style="pf-m-info" />
+        <EdgeTerminal target={target as unknown as Point} style="pf-m-info" />
       </svg>
     );
 

@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import type { Node } from '@patternfly/react-topology';
 
 const mockSetNodeShape = vi.fn();
 const mockSetNodeStatus = vi.fn();
@@ -39,13 +40,13 @@ describe('useTargetNodeAncestors', () => {
 
   it('should return early when source has no getGraph', () => {
     const { result } = renderHook(() => useTargetNodeAncestors());
-    const source = { getGraph: undefined } as never;
+    const source = { getGraph: undefined } as unknown as Node;
     expect(() => result.current(source)).not.toThrow();
   });
 
   it('should return early when source.getGraph() returns falsy', () => {
     const { result } = renderHook(() => useTargetNodeAncestors());
-    const source = { getGraph: () => null } as never;
+    const source = { getGraph: () => null } as unknown as Node;
     expect(() => result.current(source)).not.toThrow();
   });
 
@@ -60,7 +61,7 @@ describe('useTargetNodeAncestors', () => {
         getNodes: () => [nodeA, nodeB, nodeC],
         getEdges: () => [makeEdge('A', 'B'), makeEdge('B', 'C')],
       }),
-    } as never;
+    } as unknown as Node;
 
     const { result } = renderHook(() => useTargetNodeAncestors());
     result.current(source);
@@ -77,7 +78,7 @@ describe('useTargetNodeAncestors', () => {
         getNodes: () => [makeNode('source'), child],
         getEdges: () => [makeEdge('source', 'child')],
       }),
-    } as never;
+    } as unknown as Node;
 
     const { result } = renderHook(() => useTargetNodeAncestors());
     result.current(source);
@@ -94,7 +95,7 @@ describe('useTargetNodeAncestors', () => {
         getNodes: () => [nodeA],
         getEdges: () => [makeEdge('startNode', 'A')],
       }),
-    } as never;
+    } as unknown as Node;
 
     const { result } = renderHook(() => useTargetNodeAncestors());
     result.current(source);
@@ -119,7 +120,7 @@ describe('useTargetNodeAncestors', () => {
           makeEdge('C', 'D'),
         ],
       }),
-    } as never;
+    } as unknown as Node;
 
     const { result } = renderHook(() => useTargetNodeAncestors());
     result.current(source);
@@ -135,7 +136,7 @@ describe('useTargetNodeAncestors', () => {
         getNodes: () => [makeNode('solo')],
         getEdges: () => [],
       }),
-    } as never;
+    } as unknown as Node;
 
     const { result } = renderHook(() => useTargetNodeAncestors());
     result.current(source);

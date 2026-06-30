@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import type { Node } from '@patternfly/react-topology';
 
 vi.mock('@patternfly/react-topology', () => ({
   DefaultNode: ({
@@ -56,7 +57,7 @@ function renderCustomNode(element: ReturnType<typeof createMockElement>, onSelec
   return render(
     <svg>
       <CustomNode
-        element={element as never}
+        element={element as unknown as Node}
         onSelect={onSelect ?? vi.fn()}
         selected={false}
         onContextMenu={vi.fn()}

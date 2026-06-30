@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import type { Visualization } from '@patternfly/react-topology';
 
 vi.mock('@patternfly/react-topology', () => ({
   action: vi.fn((fn: () => void) => fn),
@@ -28,7 +29,7 @@ describe('useDedupeOldNodes', () => {
     };
 
     const { result } = renderHook(() => useDedupeOldNodes());
-    result.current(controller as never);
+    result.current(controller as unknown as Visualization);
 
     expect(controller.getElementById).toHaveBeenCalledWith('42-unsavedNode');
     expect(mockSetId).toHaveBeenCalledWith('42-unsavedNode');
@@ -46,7 +47,7 @@ describe('useDedupeOldNodes', () => {
     };
 
     const { result } = renderHook(() => useDedupeOldNodes());
-    result.current(controller as never);
+    result.current(controller as unknown as Visualization);
 
     expect(controller.getElementById).not.toHaveBeenCalled();
     expect(controller.removeElement).not.toHaveBeenCalled();
@@ -62,7 +63,7 @@ describe('useDedupeOldNodes', () => {
     };
 
     const { result } = renderHook(() => useDedupeOldNodes());
-    result.current(controller as never);
+    result.current(controller as unknown as Visualization);
 
     expect(controller.getElementById).toHaveBeenCalledWith('ghost-unsavedNode');
     expect(controller.removeElement).not.toHaveBeenCalled();
@@ -88,7 +89,7 @@ describe('useDedupeOldNodes', () => {
     };
 
     const { result } = renderHook(() => useDedupeOldNodes());
-    result.current(controller as never);
+    result.current(controller as unknown as Visualization);
 
     expect(mockRemoveElement).toHaveBeenCalledTimes(2);
     expect(mockRemoveElement).toHaveBeenCalledWith(stale1);
