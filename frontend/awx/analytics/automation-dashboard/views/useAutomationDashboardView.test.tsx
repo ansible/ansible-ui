@@ -52,6 +52,8 @@ vi.mock('../../../common/useAwxView', () => ({
     unselectItemsAndRefresh: vi.fn(),
     limitFiltersToOneOrOperation: true,
     updateItem: vi.fn(),
+    upsertItem: vi.fn(),
+    listUrl: '',
   })),
 }));
 
