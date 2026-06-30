@@ -1,4 +1,5 @@
-import { Button, Flex, FlexItem, Switch } from '@patternfly/react-core';
+import { Flex, FlexItem, Switch } from '@patternfly/react-core';
+import { ExportIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
@@ -8,11 +9,22 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { DashboardExportButton } from './DashboardExportButton';
+import { hasValidRequiredFilters } from '../utils/queryString';
 
 const SWITCH_ID = 'switch-time-taken-automation';
 
 export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
-  const { costState, itemCount, setCostState, refresh, onExportCsv } = props;
+  const {
+    costState,
+    itemCount,
+    setCostState,
+    refresh,
+    onExportCsv,
+    isLoading,
+    toolbarFilters,
+    filterState,
+  } = props;
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const putRequest = usePutRequest<ISubscriptionCosts, ISubscriptionCosts>();
@@ -22,6 +34,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
   );
 
   const controlsDisabled = !costState || !activeAwxUser?.is_superuser;
+  const filtersValid = hasValidRequiredFilters(toolbarFilters, filterState);
 
   const toolbarChangeHandler = async <K extends keyof ISubscriptionCosts>(
     value: ISubscriptionCosts[K],
@@ -154,16 +167,13 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
           />
         </FlexItem>
         <FlexItem alignSelf={{ md: 'alignSelfFlexEnd', default: 'alignSelfFlexStart' }}>
-          <Button
-            id="btn-export-csv"
-            data-testid="btn-export-csv"
-            variant="secondary"
-            onClick={onExportCsv}
-            // TODO: Remove `|| true` once CSV export is implemented on the BE.
-            isDisabled={controlsDisabled || (itemCount ?? 0) === 0 || !onExportCsv || true}
-          >
-            {t('Export as CSV')}
-          </Button>
+          <DashboardExportButton
+            exportType={'csv'}
+            title={t('Export as CSV')}
+            icon={ExportIcon}
+            isDisabled={isLoading || !itemCount || !costState || !filtersValid}
+            onExport={onExportCsv ?? (() => Promise.resolve())}
+          ></DashboardExportButton>
         </FlexItem>
       </Flex>
     </Flex>

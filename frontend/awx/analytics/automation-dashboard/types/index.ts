@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { ComponentClass, Dispatch, SetStateAction } from 'react';
 import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 
@@ -146,7 +146,9 @@ export type DashboardTableToolbarProps = {
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>> | undefined;
   refresh: () => Promise<void>;
-  onExportCsv?: () => void;
+  onExportCsv?: (reportType: ReportType) => Promise<void>;
+  toolbarFilters?: IToolbarFilter[];
+  filterState?: IFilterState;
 };
 
 // ─── View Type ────────────────────────────────────────────────────────────────
@@ -160,8 +162,22 @@ export type IAutomationDashboardView = {
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>>;
   loading: boolean;
   refresh: () => Promise<void>;
-  exportCsv: () => Promise<void>;
+  exportCsv: (reportType: ReportType) => Promise<void>;
   exportPdf: () => Promise<void>;
   isFilterStateDefault: boolean;
   registerClearCallback: (callback: () => void) => void;
+  toolbarFilters?: IToolbarFilter[];
+};
+
+// ─── Export Types ─────────────────────────────────────────────────────────────
+
+export type ReportType = 'summary' | 'roi' | 'trends';
+
+// ─── Export Button Type ───────────────────────────────────────────────────────────
+export type IAutomationDashboardExportButton = {
+  exportType: 'csv' | 'html';
+  title: string;
+  icon: ComponentClass;
+  isDisabled?: boolean;
+  onExport: (reportType: ReportType) => Promise<void>;
 };
