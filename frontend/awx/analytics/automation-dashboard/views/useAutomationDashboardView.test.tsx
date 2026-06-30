@@ -8,19 +8,13 @@ import type { IAutomationDashboardBaseView } from '../common/useAutomationDashbo
 
 // ─── Hoisted mocks (run before vi.mock factories) ─────────────────────────────
 
-const {
-  mockSetFilterState,
-  mockBaseViewRefresh,
-  mockRefreshDetails,
-  mockExportCsvBase,
-  mockExportPdfBase,
-} = vi.hoisted(() => ({
-  mockSetFilterState: vi.fn(),
-  mockBaseViewRefresh: vi.fn(),
-  mockRefreshDetails: vi.fn(),
-  mockExportCsvBase: vi.fn(),
-  mockExportPdfBase: vi.fn(),
-}));
+const { mockSetFilterState, mockBaseViewRefresh, mockRefreshDetails, mockExportCsvBase } =
+  vi.hoisted(() => ({
+    mockSetFilterState: vi.fn(),
+    mockBaseViewRefresh: vi.fn(),
+    mockRefreshDetails: vi.fn(),
+    mockExportCsvBase: vi.fn(),
+  }));
 
 // ─── Dependency mocks ─────────────────────────────────────────────────────────
 
@@ -77,10 +71,6 @@ vi.mock('./useExportCsv', () => ({
   useExportCsv: vi.fn(() => mockExportCsvBase),
 }));
 
-vi.mock('./useExportPdf', () => ({
-  useExportPdf: vi.fn(() => mockExportPdfBase),
-}));
-
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('useAutomationDashboardView', () => {
@@ -88,7 +78,6 @@ describe('useAutomationDashboardView', () => {
     vi.clearAllMocks();
     mockBaseViewRefresh.mockResolvedValue(undefined);
     mockExportCsvBase.mockResolvedValue(undefined);
-    mockExportPdfBase.mockResolvedValue(undefined);
   });
 
   // --- QUERY_PARAMS ---
@@ -110,7 +99,6 @@ describe('useAutomationDashboardView', () => {
     expect(view.costState).toBeUndefined();
     expect(view.loading).toBe(false);
     expect(view.refresh).toBeTypeOf('function');
-    expect(view.exportPdf).toBeTypeOf('function');
     expect(view.setCostState).toBeTypeOf('function');
     expect(view.isFilterStateDefault).toBe(true);
     expect(view.registerClearCallback).toBeTypeOf('function');
@@ -232,34 +220,6 @@ describe('useAutomationDashboardView', () => {
     await act(async () => {
       try {
         await result.current.exportCsv('summary');
-      } catch {
-        // expected
-      }
-    });
-
-    expect(result.current.loading).toBe(false);
-  });
-
-  // --- exportPdf ---
-
-  test('should call exportPdfBase and manage loading on exportPdf', async () => {
-    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
-
-    await act(async () => {
-      await result.current.exportPdf();
-    });
-
-    expect(mockExportPdfBase).toHaveBeenCalled();
-    expect(result.current.loading).toBe(false);
-  });
-
-  test('should set loading to false after exportPdf even when exportPdfBase throws', async () => {
-    mockExportPdfBase.mockRejectedValue(new Error('PDF error'));
-    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
-
-    await act(async () => {
-      try {
-        await result.current.exportPdf();
       } catch {
         // expected
       }

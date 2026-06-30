@@ -132,7 +132,6 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     loading: false,
     refresh: mockRefresh,
     exportCsv: vi.fn(),
-    exportPdf: vi.fn(),
     isFilterStateDefault: true,
     registerClearCallback: vi.fn(),
     ...overrides,

@@ -5,7 +5,7 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
-import { Button, Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
@@ -40,17 +40,7 @@ export function AutomationDashboard() {
   );
 
   const view = useAutomationDashboardView({ toolbarFilters });
-  const { details, exportPdf, loading } = view;
-  const [exporting, setExporting] = useState(false);
-
-  const handleExportPdf = async () => {
-    setExporting(true);
-    try {
-      await exportPdf();
-    } finally {
-      setExporting(false);
-    }
-  };
+  const { details } = view;
 
   const noDataString = t('No jobs have been run.');
   const { isLoading } = useAutomationDashboardCollectionStatus();
@@ -85,17 +75,6 @@ export function AutomationDashboard() {
           titleHelpTitle={t('Automation Dashboard')}
           titleHelp={description}
           description={description}
-          controls={
-            <Button
-              data-testid="save-as-pdf-button"
-              // TODO: Remove `|| true` once PDF export is implemented on the BE.
-              isDisabled={loading || exporting || !view?.mainTableView?.itemCount || true}
-              variant="secondary"
-              onClick={() => void handleExportPdf()}
-            >
-              {t('Save as PDF')}
-            </Button>
-          }
         />
         <DashboardToolbar
           toolbarFilters={toolbarFilters}
