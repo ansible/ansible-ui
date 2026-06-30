@@ -3,8 +3,11 @@ import { type RefObject } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useVirtualizedList } from './useVirtualized';
 
+let resizeObserverCallback: ((entry: ResizeObserverEntry) => void) | undefined;
 vi.mock('@react-hook/resize-observer', () => ({
-  default: vi.fn(),
+  default: vi.fn((_ref: unknown, cb: (entry: ResizeObserverEntry) => void) => {
+    resizeObserverCallback = cb;
+  }),
 }));
 
 function createMockContainer(overrides?: Record<string, unknown>) {
@@ -40,12 +43,12 @@ describe('useVirtualizedList', () => {
   beforeEach(() => {
     rafCallbacks = [];
     rafIdCounter = 1;
-    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+    vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb) => {
       const id = rafIdCounter++;
       rafCallbacks.push(cb as () => void);
       return id;
     });
-    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(vi.fn());
+    vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(vi.fn());
   });
 
   afterEach(() => {
@@ -98,7 +101,7 @@ describe('useVirtualizedList', () => {
     mock.scrollTop = 300;
     dispatchScroll();
 
-    expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+    expect(globalThis.requestAnimationFrame).toHaveBeenCalledTimes(1);
   });
 
   it('should update scroll position after rAF fires', () => {
@@ -128,14 +131,14 @@ describe('useVirtualizedList', () => {
     renderHook(() => useVirtualizedList(containerRef, items));
 
     dispatchScroll();
-    expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+    expect(globalThis.requestAnimationFrame).toHaveBeenCalledTimes(1);
 
     act(() => {
       flushRaf();
     });
 
     dispatchScroll();
-    expect(window.requestAnimationFrame).toHaveBeenCalledTimes(2);
+    expect(globalThis.requestAnimationFrame).toHaveBeenCalledTimes(2);
   });
 
   it('should call onScrollCallback within rAF', () => {
@@ -188,11 +191,11 @@ describe('useVirtualizedList', () => {
     const { unmount } = renderHook(() => useVirtualizedList(containerRef, items));
 
     dispatchScroll();
-    expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+    expect(globalThis.requestAnimationFrame).toHaveBeenCalledTimes(1);
 
     unmount();
 
-    expect(window.cancelAnimationFrame).toHaveBeenCalled();
+    expect(globalThis.cancelAnimationFrame).toHaveBeenCalled();
   });
 
   it('should remove scroll listener on cleanup', () => {
@@ -265,5 +268,132 @@ describe('useVirtualizedList', () => {
     act(() => {
       flushRaf();
     });
+  });
+
+  it('should not cancel rAF on cleanup when none is pending', () => {
+    const { el } = createMockContainer();
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = [{ id: 1 }];
+
+    const { unmount } = renderHook(() => useVirtualizedList(containerRef, items));
+
+    unmount();
+
+    expect(globalThis.cancelAnimationFrame).not.toHaveBeenCalled();
+  });
+
+  it('should handle ref becoming null in onScroll', () => {
+    const { el, dispatchScroll } = createMockContainer();
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = [{ id: 1 }];
+
+    renderHook(() => useVirtualizedList(containerRef, items));
+
+    (containerRef as { current: HTMLElement | null }).current = null;
+    dispatchScroll();
+
+    expect(globalThis.requestAnimationFrame).not.toHaveBeenCalled();
+  });
+
+  it('should handle ref becoming null before rAF fires', () => {
+    const { el, dispatchScroll } = createMockContainer();
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = Array.from({ length: 50 }, (_, i) => ({ id: i }));
+
+    const { result } = renderHook(() => useVirtualizedList(containerRef, items));
+
+    const initialVisibleCount = result.current.visibleItems.length;
+
+    dispatchScroll();
+
+    (containerRef as { current: HTMLElement | null }).current = null;
+
+    act(() => {
+      flushRaf();
+    });
+
+    expect(result.current.visibleItems.length).toBe(initialVisibleCount);
+  });
+
+  it('should update minRowHeight when setRowHeight receives a smaller height', () => {
+    const { el } = createMockContainer({ scrollTop: 0, clientHeight: 200 });
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = Array.from({ length: 100 }, (_, i) => ({ id: i }));
+
+    const { result } = renderHook(() => useVirtualizedList(containerRef, items));
+
+    const visibleCountBefore = result.current.visibleItems.length;
+
+    act(() => {
+      result.current.setRowHeight(0, 10);
+    });
+
+    expect(result.current.visibleItems.length).toBeGreaterThanOrEqual(visibleCountBefore);
+  });
+
+  it('should no-op when setRowHeight is called with the same height', () => {
+    const { el } = createMockContainer({ scrollTop: 0, clientHeight: 200 });
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = Array.from({ length: 50 }, (_, i) => ({ id: i }));
+
+    const { result } = renderHook(() => useVirtualizedList(containerRef, items));
+
+    act(() => {
+      result.current.setRowHeight(0, 40);
+    });
+
+    const visibleAfterFirst = result.current.visibleItems;
+
+    act(() => {
+      result.current.setRowHeight(0, 40);
+    });
+
+    expect(result.current.visibleItems).toBe(visibleAfterFirst);
+  });
+
+  it('should use custom row heights across before/visible/after regions', () => {
+    const { el, dispatchScroll, mock } = createMockContainer({
+      scrollTop: 3000,
+      clientHeight: 200,
+    });
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = Array.from({ length: 200 }, (_, i) => ({ id: i }));
+
+    const { result } = renderHook(() => useVirtualizedList(containerRef, items));
+
+    act(() => {
+      for (let i = 0; i < 200; i++) {
+        result.current.setRowHeight(i, 50);
+      }
+    });
+
+    mock.scrollTop = 3000;
+    dispatchScroll();
+    act(() => {
+      flushRaf();
+    });
+
+    expect(result.current.beforeRowsCount).toBeGreaterThan(0);
+    expect(result.current.beforeRowsHeight).toBeGreaterThan(0);
+    expect(result.current.afterRowsHeight).toBeGreaterThan(0);
+  });
+
+  it('should invoke resize observer callback', () => {
+    const { el } = createMockContainer({ clientHeight: 300 });
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = Array.from({ length: 100 }, (_, i) => ({ id: i }));
+
+    const { result } = renderHook(() => useVirtualizedList(containerRef, items));
+
+    const initialVisibleCount = result.current.visibleItems.length;
+
+    expect(resizeObserverCallback).toBeDefined();
+
+    (el as unknown as Record<string, number>).clientHeight = 600;
+    act(() => {
+      resizeObserverCallback!({} as ResizeObserverEntry);
+    });
+
+    expect(result.current.visibleItems.length).toBeGreaterThanOrEqual(initialVisibleCount);
   });
 });

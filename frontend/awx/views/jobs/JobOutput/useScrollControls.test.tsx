@@ -296,4 +296,91 @@ describe('useScrollControls', () => {
 
     expect(setIsFollowModeEnabled).toHaveBeenCalledWith(false);
   });
+
+  it('should disable follow mode via tick count when at bottom and job not running', () => {
+    const setIsFollowModeEnabled = vi.fn();
+    const { el } = createMockContainer({
+      scrollTop: 1500,
+      scrollHeight: 2000,
+      clientHeight: 500,
+    });
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+
+    renderHook(() => useScrollControls(containerRef, true, setIsFollowModeEnabled, 100, false));
+
+    setIsFollowModeEnabled.mockClear();
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(setIsFollowModeEnabled).toHaveBeenCalledWith(false);
+  });
+
+  it('should reset tick count when not at bottom and job not running', () => {
+    const setIsFollowModeEnabled = vi.fn();
+    const { el } = createMockContainer({
+      scrollTop: 0,
+      scrollHeight: 2000,
+      clientHeight: 500,
+    });
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+
+    renderHook(() => useScrollControls(containerRef, true, setIsFollowModeEnabled, 100, false));
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(setIsFollowModeEnabled).not.toHaveBeenCalledWith(false);
+
+    act(() => {
+      vi.advanceTimersByTime(800);
+    });
+
+    expect(setIsFollowModeEnabled).toHaveBeenCalledWith(false);
+  });
+
+  it('should handle null containerRef in auto-scroll interval', () => {
+    const containerRef = { current: null } as RefObject<HTMLElement>;
+
+    expect(() => {
+      renderHook(() => useScrollControls(containerRef, true, vi.fn(), 100, true));
+
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+    }).not.toThrow();
+  });
+
+  it('should handle null containerRef in job-not-running interval', () => {
+    const setIsFollowModeEnabled = vi.fn();
+    const containerRef = { current: null } as RefObject<HTMLElement>;
+
+    renderHook(() => useScrollControls(containerRef, true, setIsFollowModeEnabled, 100, false));
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(setIsFollowModeEnabled).not.toHaveBeenCalledWith(false);
+
+    act(() => {
+      vi.advanceTimersByTime(1200);
+    });
+
+    expect(setIsFollowModeEnabled).toHaveBeenCalledWith(false);
+  });
 });
