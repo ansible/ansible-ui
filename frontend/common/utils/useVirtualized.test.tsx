@@ -396,4 +396,20 @@ describe('useVirtualizedList', () => {
 
     expect(result.current.visibleItems.length).toBeGreaterThanOrEqual(initialVisibleCount);
   });
+
+  it('should handle null containerRef in resize observer callback', () => {
+    const { el } = createMockContainer();
+    const containerRef = { current: el } as RefObject<HTMLElement>;
+    const items = [{ id: 1 }];
+
+    renderHook(() => useVirtualizedList(containerRef, items));
+
+    (containerRef as { current: HTMLElement | null }).current = null;
+
+    expect(() => {
+      act(() => {
+        resizeObserverCallback!({} as ResizeObserverEntry);
+      });
+    }).not.toThrow();
+  });
 });
