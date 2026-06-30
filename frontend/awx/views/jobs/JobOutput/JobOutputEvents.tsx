@@ -119,21 +119,24 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
-    containerRef,
-    nonCollapsedRows
-  );
 
   const canCollapseEvents = childrenSummary?.event_processing_finished && childrenSummary.is_tree;
   const estimatedMaxLines = jobOutputRows.length * 5;
   const outputLineChars = String(estimatedMaxLines).length;
 
-  const { scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } = useScrollControls(
+  const { handleScroll, scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } =
+    useScrollControls(
+      containerRef,
+      isFollowModeEnabled,
+      setIsFollowModeEnabled,
+      jobOutputRows.length,
+      isJobRunning(job.status)
+    );
+
+  const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
     containerRef,
-    isFollowModeEnabled,
-    setIsFollowModeEnabled,
-    jobOutputRows.length,
-    isJobRunning(job.status)
+    nonCollapsedRows,
+    handleScroll
   );
 
   const visibleHostIndex = visibleItems.findIndex(

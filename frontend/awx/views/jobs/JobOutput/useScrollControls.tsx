@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 function isAtBottom(el: HTMLElement) {
   const { clientHeight, scrollHeight, scrollTop } = el;
@@ -14,37 +14,31 @@ export function useScrollControls(
   isJobRunning: boolean
 ) {
   const [numTicksAtBottom, setNumTicksAtBottom] = useState(0);
-  const [scrollTop, setScrollTop] = useState(0);
-  const [scrollHeight, setScrollHeight] = useState(0);
-
-  const onScroll = useCallback(() => {
-    if (!containerRef.current) return;
-    if (
-      isFollowModeEnabled &&
-      scrollTop > containerRef.current.scrollTop &&
-      scrollHeight === containerRef.current.scrollHeight
-    ) {
-      setIsFollowModeEnabled(false);
-    }
-    setScrollTop(containerRef.current.scrollTop);
-    setScrollHeight(containerRef.current.scrollHeight);
-    if (
-      containerRef.current.scrollTop + containerRef.current.clientHeight >=
-      containerRef.current.scrollHeight
-    ) {
-      setIsFollowModeEnabled(true);
-    }
-  }, [containerRef, isFollowModeEnabled, scrollHeight, scrollTop, setIsFollowModeEnabled]);
+  const prevScrollTopRef = useRef(0);
+  const prevScrollHeightRef = useRef(0);
+  const isFollowModeRef = useRef(isFollowModeEnabled);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    const el = containerRef.current;
-    el.addEventListener('scroll', onScroll);
+    isFollowModeRef.current = isFollowModeEnabled;
+  }, [isFollowModeEnabled]);
 
-    return () => {
-      el.removeEventListener('scroll', onScroll);
-    };
-  }, [containerRef, onScroll]);
+  const handleScroll = useCallback(
+    (el: HTMLElement) => {
+      if (
+        isFollowModeRef.current &&
+        prevScrollTopRef.current > el.scrollTop &&
+        prevScrollHeightRef.current === el.scrollHeight
+      ) {
+        setIsFollowModeEnabled(false);
+      }
+      prevScrollTopRef.current = el.scrollTop;
+      prevScrollHeightRef.current = el.scrollHeight;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+        setIsFollowModeEnabled(true);
+      }
+    },
+    [setIsFollowModeEnabled]
+  );
 
   /* Keep scrolled to bottom if follow mode is enabled */
   useEffect(() => {
@@ -124,6 +118,7 @@ export function useScrollControls(
   };
 
   return {
+    handleScroll,
     scrollToTop,
     scrollToBottom,
     scrollPageDown,
