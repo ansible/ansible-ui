@@ -23,6 +23,8 @@ export interface DeprecationStat {
   severity: 'hot' | 'warm' | 'moderate' | 'cool';
   jobIds: number[];
   jobOccurrences: Record<number, number>; // job id -> occurrence count for this deprecation type
+  organizations: string[]; // unique organization names from affected jobs
+  jobTemplates: string[]; // unique job template names from affected jobs
 }
 
 export interface DeprecationEventsByDate {
@@ -137,17 +139,31 @@ async function runInBatches<T>(items: T[], fn: (item: T) => Promise<void>): Prom
   return failureCount;
 }
 
+interface Job {
+  id: number;
+  summary_fields?: {
+    organization?: { name: string };
+    job_template?: { name: string };
+  };
+}
+
 // Fetch deprecation stats for a given time window (extracted for reuse in trend calculation)
 async function fetchDeprecationStats(dateFilter: string | null) {
   const jobsUrl = dateFilter
     ? awxAPI`/jobs/?page_size=100&order_by=-created&created__gte=${dateFilter}`
     : awxAPI`/jobs/?page_size=100&order_by=-created`;
 
-  const jobsResponse = await requestGet<{ results: { id: number }[]; count: number }>(jobsUrl);
+  const jobsResponse = await requestGet<{ results: Job[]; count: number }>(jobsUrl);
   const jobs = jobsResponse.results;
   const deprecationsByType: Record<
     string,
-    { count: number; jobIds: Set<number>; jobOccurrences: Record<number, number> }
+    {
+      count: number;
+      jobIds: Set<number>;
+      jobOccurrences: Record<number, number>;
+      organizations: Set<string>;
+      jobTemplates: Set<string>;
+    }
   > = {};
   const affectedJobsSet = new Set<number>();
   const allEvents: JobEvent[] = [];
@@ -164,12 +180,27 @@ async function fetchDeprecationStats(dateFilter: string | null) {
       eventsResponse.results.forEach((event) => {
         const type = extractDeprecationType(event);
         if (!deprecationsByType[type]) {
-          deprecationsByType[type] = { count: 0, jobIds: new Set(), jobOccurrences: {} };
+          deprecationsByType[type] = {
+            count: 0,
+            jobIds: new Set(),
+            jobOccurrences: {},
+            organizations: new Set(),
+            jobTemplates: new Set(),
+          };
         }
         deprecationsByType[type].count++;
         deprecationsByType[type].jobIds.add(job.id);
         deprecationsByType[type].jobOccurrences[job.id] =
           (deprecationsByType[type].jobOccurrences[job.id] ?? 0) + 1;
+
+        // Capture organization and job template from job summary_fields
+        if (job.summary_fields?.organization?.name) {
+          deprecationsByType[type].organizations.add(job.summary_fields.organization.name);
+        }
+        if (job.summary_fields?.job_template?.name) {
+          deprecationsByType[type].jobTemplates.add(job.summary_fields.job_template.name);
+        }
+
         allEvents.push(event);
       });
     }
@@ -213,6 +244,8 @@ async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData>
       severity: getSeverity(data.count),
       jobIds: Array.from(data.jobIds),
       jobOccurrences: data.jobOccurrences,
+      organizations: Array.from(data.organizations),
+      jobTemplates: Array.from(data.jobTemplates),
     }))
     .sort((a, b) => b.count - a.count);
 

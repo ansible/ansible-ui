@@ -1,6 +1,6 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Deprecations } from './Deprecations';
 
 // Mock the DeprecationsDashboard component
@@ -9,11 +9,14 @@ vi.mock('./DeprecationsDashboard', () => ({
 }));
 
 describe('Deprecations', () => {
-  it('should render the deprecations page', () => {
+  it('should render the deprecations dashboard component', () => {
     render(
       <MemoryRouter>
         <Deprecations />
       </MemoryRouter>
     );
+
+    expect(screen.getByTestId('deprecations-dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 });

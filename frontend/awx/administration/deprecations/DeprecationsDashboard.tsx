@@ -124,6 +124,23 @@ export function DeprecationsDashboard() {
     [t]
   );
 
+  // Build filter options dynamically from data
+  const organizationOptions = useMemo(
+    () =>
+      Array.from(
+        new Set((data?.deprecations ?? []).flatMap((d) => d.organizations))
+      ).map((org) => ({ label: org, value: org })),
+    [data]
+  );
+
+  const jobTemplateOptions = useMemo(
+    () =>
+      Array.from(
+        new Set((data?.deprecations ?? []).flatMap((d) => d.jobTemplates))
+      ).map((tmpl) => ({ label: tmpl, value: tmpl })),
+    [data]
+  );
+
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -146,14 +163,37 @@ export function DeprecationsDashboard() {
           { label: t('Minor'), value: 'cool' },
         ],
       },
+      {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'organization',
+        label: t('Organization'),
+        query: 'organizations',
+        placeholder: t('Filter by organization'),
+        options: organizationOptions,
+      },
+      {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'jobTemplate',
+        label: t('Job Template'),
+        query: 'jobTemplates',
+        placeholder: t('Filter by job template'),
+        options: jobTemplateOptions,
+      },
     ],
-    [t]
+    [t, organizationOptions, jobTemplateOptions]
   );
 
   const deprecationRows = useMemo<DeprecationRow[]>(
     () =>
       (data?.deprecations ?? []).map((d) => ({
-        ...d,
+        type: d.type,
+        description: d.description,
+        count: d.count,
+        severity: d.severity,
+        jobIds: d.jobIds,
+        jobOccurrences: d.jobOccurrences,
+        organizations: d.organizations,
+        jobTemplates: d.jobTemplates,
         severityRank: SEVERITY_RANK[d.severity] ?? 99,
       })),
     [data]

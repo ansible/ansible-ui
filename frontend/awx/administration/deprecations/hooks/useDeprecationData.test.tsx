@@ -13,7 +13,22 @@ function swrWrapper({ children }: { children: ReactNode }) {
 }
 
 const mockJobsResponse = {
-  results: [{ id: 1 }, { id: 2 }],
+  results: [
+    {
+      id: 1,
+      summary_fields: {
+        organization: { name: 'Engineering' },
+        job_template: { name: 'Deploy App' },
+      },
+    },
+    {
+      id: 2,
+      summary_fields: {
+        organization: { name: 'Operations' },
+        job_template: { name: 'Run Tests' },
+      },
+    },
+  ],
   count: 2,
 };
 
@@ -125,6 +140,11 @@ describe('useDeprecationData', () => {
     expect(result.current.data?.deprecations[0].count).toBe(4);
     expect(result.current.data?.deprecations[0].jobIds).toEqual([1, 2]);
     expect(result.current.data?.deprecations[0].jobOccurrences).toEqual({ 1: 2, 2: 2 });
+    expect(result.current.data?.deprecations[0].organizations).toEqual([
+      'Engineering',
+      'Operations',
+    ]);
+    expect(result.current.data?.deprecations[0].jobTemplates).toEqual(['Deploy App', 'Run Tests']);
     expect(result.current.data?.hasPartialData).toBe(false);
   });
 
