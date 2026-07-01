@@ -44,4 +44,53 @@ describe('GroupDetails', () => {
     });
     expect(screen.getByText('A test group')).toBeInTheDocument();
   });
+
+  it('should display created date with author', async () => {
+    render(
+      <MemoryRouter initialEntries={['/groups/1']}>
+        <Routes>
+          <Route path="/groups/:group_id" element={<GroupDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    await waitFor(() => {
+      expect(screen.getAllByText('admin').length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it('should display variables section', async () => {
+    render(
+      <MemoryRouter initialEntries={['/groups/1']}>
+        <Routes>
+          <Route path="/groups/:group_id" element={<GroupDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    await waitFor(() => {
+      expect(screen.getByText('Variables')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle group with empty description', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/groups/') && request.url.includes('/1'),
+        () =>
+          HttpResponse.json({
+            ...mockGroup,
+            description: '',
+          })
+      )
+    );
+    render(
+      <MemoryRouter initialEntries={['/groups/1']}>
+        <Routes>
+          <Route path="/groups/:group_id" element={<GroupDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    await waitFor(() => {
+      expect(screen.getByText('Test Group')).toBeInTheDocument();
+    });
+  });
 });
