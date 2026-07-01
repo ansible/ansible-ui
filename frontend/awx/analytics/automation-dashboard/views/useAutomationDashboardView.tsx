@@ -6,7 +6,6 @@ import { IAutomationDashboardView, IJobTemplate, ReportType } from '../types';
 import { useGetReportDetails } from './useGetReportDetails';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import { useExportCsv } from './useExportCsv';
-import { useExportPdf } from './useExportPdf';
 import {
   IAutomationDashboardBaseView,
   useAutomationDashboardBaseView,
@@ -87,7 +86,6 @@ export function useAutomationDashboardView(options: {
   }, [mainTableView, detailsResponse]);
 
   const exportCsvBase = useExportCsv(toolbarFilters, filterState, QUERY_PARAMS);
-  const exportPdfBase = useExportPdf(toolbarFilters, filterState, QUERY_PARAMS);
 
   const exportCsv = useCallback(
     async (reportType: ReportType) => {
@@ -100,15 +98,6 @@ export function useAutomationDashboardView(options: {
     },
     [exportCsvBase]
   );
-
-  const exportPdf = useCallback(async () => {
-    setLoading(true);
-    try {
-      await exportPdfBase();
-    } finally {
-      setLoading(false);
-    }
-  }, [exportPdfBase]);
 
   // Compute whether filter state is default
   const isFilterStateDefaultValue = useMemo(() => isDefaultFilterState(filterState), [filterState]);
@@ -124,7 +113,6 @@ export function useAutomationDashboardView(options: {
       loading,
       refresh,
       exportCsv,
-      exportPdf,
       isFilterStateDefault: isFilterStateDefaultValue,
       registerClearCallback,
     }),
@@ -138,7 +126,6 @@ export function useAutomationDashboardView(options: {
       loading,
       refresh,
       exportCsv,
-      exportPdf,
       isFilterStateDefaultValue,
       registerClearCallback,
     ]

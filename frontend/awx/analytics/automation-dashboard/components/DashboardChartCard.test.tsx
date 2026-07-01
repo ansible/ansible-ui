@@ -43,4 +43,54 @@ describe('DashboardChartCard', () => {
     expect(screen.queryByText('Chart Error')).not.toBeInTheDocument();
     expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
   });
+
+  test('should format year labels correctly', () => {
+    const yearData = {
+      kind: 'year' as const,
+      items: [{ label: '2024-01-01T00:00:00', value: 100 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={yearData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should format month labels correctly', () => {
+    const monthData = {
+      kind: 'month' as const,
+      items: [{ label: '2024-06-01T00:00:00', value: 50 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={monthData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should format hour labels correctly', () => {
+    const hourData = {
+      kind: 'hour' as const,
+      items: [{ label: '2024-06-15T14:00:00', value: 25 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={hourData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should handle invalid date labels gracefully', () => {
+    const invalidData = {
+      kind: 'day' as const,
+      items: [{ label: 'invalid-date', value: 10 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={invalidData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render with empty items array', () => {
+    const emptyData = {
+      kind: 'day' as const,
+      items: [],
+    };
+    render(<DashboardChartCard {...defaultProps} data={emptyData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render lineChart variant', () => {
+    render(<DashboardChartCard {...defaultProps} variant="lineChart" />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
 });
