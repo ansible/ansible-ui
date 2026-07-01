@@ -1,6 +1,7 @@
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Job } from '../../../interfaces/Job';
+import { isJobRunning } from './util';
 
 export interface IJobOutputChildrenSummary {
   children_summary: { [counter: string]: { rowNumber: number; numChildren: number } };
@@ -13,7 +14,9 @@ export function useJobOutputChildrenSummary(job: Job, forceFlatMode: boolean) {
   let isFlatMode = forceFlatMode || job.type !== 'job';
 
   const response = useGet<IJobOutputChildrenSummary>(
-    awxAPI`/jobs/${job.id.toString()}/job_events/children_summary/`
+    awxAPI`/jobs/${job.id.toString()}/job_events/children_summary/`,
+    undefined,
+    isJobRunning(job.status) ? undefined : { refreshInterval: 0 }
   );
   const { data, error } = response;
 

@@ -3,7 +3,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGatewayService } from '../main/GatewayServices';
 
-export function PlatformServiceNavigation(props: { awx?: string; eda?: string; hub?: string }) {
+export function PlatformServiceNavigation(
+  props: Readonly<{ awx?: string; eda?: string; hub?: string }>
+) {
   const { t } = useTranslation();
   const awxService = useGatewayService('controller');
   const edaService = useGatewayService('eda');

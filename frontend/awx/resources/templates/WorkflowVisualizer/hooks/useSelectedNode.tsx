@@ -11,7 +11,7 @@ export function useSelectedNode() {
   const { selectedIds } = controller.getState<SelectionHandlerState>();
 
   const node = useMemo<GraphNode | undefined>(() => {
-    const selectedId = selectedIds && selectedIds[0];
+    const selectedId = selectedIds?.[0];
 
     if (selectedId) {
       return controller.getNodeById(selectedId) as GraphNode;

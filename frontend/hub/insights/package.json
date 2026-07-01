@@ -38,5 +38,15 @@
     "webpack": "^5.90.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.0"
+  },
+  "overrides": {
+    "@redhat-cloud-services/frontend-components-config": {
+      "webpack-dev-server": {
+        "selfsigned": {
+          "node-forge": "1.4.0"
+        }
+      }
+    },
+    "fast-uri": "3.1.2"
   }
 }

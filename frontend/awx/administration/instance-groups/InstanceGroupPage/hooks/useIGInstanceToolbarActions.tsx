@@ -35,7 +35,7 @@ function useIGInstanceAssociateToolbarAction(view: IAwxView<Instance>) {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/instance_groups/${id ?? ''}/instances/`
   );
-  const canAssociateInstance = Boolean(data && data.actions && data.actions['POST']);
+  const canAssociateInstance = Boolean(data?.actions?.['POST']);
 
   return useMemo<IPageAction<Instance>>(
     () => ({

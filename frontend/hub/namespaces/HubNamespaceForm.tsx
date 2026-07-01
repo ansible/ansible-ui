@@ -193,7 +193,7 @@ function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean 
           name="resources"
           labelHelpTitle={t('Resources')}
           labelHelp={t(
-            'You can can customize the resources on your profile by entering custom markdown here.'
+            'Optionally customize the resources on your profile by entering custom markdown here.'
           )}
         />
       </PageFormSection>

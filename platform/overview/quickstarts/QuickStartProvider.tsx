@@ -3,7 +3,7 @@ import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuickStarts } from './useQuickStarts';
 
-export function QuickStartProvider(props: { children: ReactNode }) {
+export function QuickStartProvider(props: Readonly<{ children: ReactNode }>) {
   const { t, i18n } = useTranslation();
   const [activeQuickStartID, setActiveQuickStartID] = useState('');
   const [allQuickStartStates, setAllQuickStartStates] = useState<AllQuickStartStates>({});

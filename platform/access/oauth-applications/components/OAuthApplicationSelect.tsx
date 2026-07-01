@@ -9,7 +9,14 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 export function OAuthApplicationSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
+>(
+  props: Readonly<{
+    name: TFieldName;
+    isRequired?: boolean;
+    isDisabled?: string;
+    helperText?: string;
+  }>
+) {
   const { t } = useTranslation();
   const applicationColumns = useApplicationsColumns({ disableLinks: true });
   const applicationFilters = useApplicationsFilters();

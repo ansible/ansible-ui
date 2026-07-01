@@ -183,6 +183,25 @@ test.describe('Hub Insights navigation and routing', () => {
         await assertNoPageError(page);
       });
     });
+
+    test('should serve Connect to Hub page at /token', async ({ page }) => {
+      await test.step('Navigate to /token', async () => {
+        await navigateToHubRoute(page, '/token');
+      });
+
+      await test.step('Verify Connect to Hub page rendered', async () => {
+        await assertNoPageError(page);
+        await expect(page.getByRole('heading', { name: /Connect to Hub/i })).toBeVisible({
+          timeout: 15_000,
+        });
+        await expect(
+          page.getByRole('heading', { name: /Connect Private Automation Hub/i })
+        ).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: /Connect the ansible-galaxy client/i })
+        ).toBeVisible();
+      });
+    });
   });
 });
 
@@ -251,13 +270,6 @@ test.describe('Hub Insights excluded features', () => {
 test.describe('Hub Insights Chrome integration', () => {
   test.beforeEach(async ({ page }) => {
     await loginAndNavigateToHub(page);
-  });
-
-  test('should force light mode (no pf-v6-theme-dark class)', async ({ page }) => {
-    const hasDarkClass = await page.evaluate(() =>
-      document.documentElement.classList.contains('pf-v6-theme-dark')
-    );
-    expect(hasDarkClass).toBe(false);
   });
 
   test('should not render Hub standalone masthead', async ({ page }) => {

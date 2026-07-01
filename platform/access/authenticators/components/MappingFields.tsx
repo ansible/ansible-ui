@@ -26,7 +26,7 @@ export const MappingFieldsGrid = styled.div`
   }
 `;
 
-export function MappingFields(props: { roleTypes: { [k: string]: string } }) {
+export function MappingFields(props: Readonly<{ roleTypes: { [k: string]: string } }>) {
   const { roleTypes } = props;
   const { getValues } = useFormContext();
   const { t } = useTranslation();

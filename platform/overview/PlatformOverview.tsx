@@ -93,7 +93,9 @@ export function PlatformOverview() {
   );
 }
 
-export function GalleryCardHeader(props: { icon?: ReactNode; title: string; subtitle: string }) {
+export function GalleryCardHeader(
+  props: Readonly<{ icon?: ReactNode; title: string; subtitle: string }>
+) {
   return (
     <CardHeader>
       <Split style={{ width: '100%' }}>

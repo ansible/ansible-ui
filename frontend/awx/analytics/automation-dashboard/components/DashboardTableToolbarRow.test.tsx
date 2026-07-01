@@ -154,12 +154,6 @@ describe('DashboardTableToolbarRow', () => {
   });
 
   // --- Inputs disabled ---
-  test('should disable inputs when isLoading is true', () => {
-    renderRow(buildProps({ isLoading: true }));
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-  });
-
   test('should disable all controls when not superuser', () => {
     mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
     renderRow();

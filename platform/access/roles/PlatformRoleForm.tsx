@@ -25,7 +25,7 @@ import { PageFormRolePermissionsSelect } from './components/PageFormPermissionsS
 import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
 import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
 
-export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: string }) {
+export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPage?: string }>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -69,7 +69,7 @@ export function CreatePlatformRole(props: { breadcrumbLabelForPreviousPage?: str
   );
 }
 
-export function EditPlatformRole(props: { breadcrumbLabelForPreviousPage?: string }) {
+export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPage?: string }>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();

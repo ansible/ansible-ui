@@ -9,7 +9,7 @@ import { PageMastheadDropdown } from '@ansible/ansible-ui-framework/PageMasthead
 import { PageThemeSwitcher } from '@ansible/ansible-ui-framework/PageMasthead/PageThemeSwitcher';
 import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { useAwxNotifications } from '@ansible/awx-ui/main/AwxMasthead';
-import { ChatbotToolbarItem } from '@ansible/chatbot/ChatbotToolbarItem';
+import { ChatbotButton } from '@ansible/chatbot/ChatbotButton';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { PageRefreshIcon } from '@ansible/common-ui/PageRefreshIcon';
 import { useDocsVersion } from '@ansible/common-ui/utils/useDocsVersion';
@@ -92,9 +92,16 @@ export function PlatformMasthead() {
         <ToolbarItem>
           <PageNotificationsIcon />
         </ToolbarItem>
-        <ChatbotToolbarItem />
         <ToolbarItem>
-          <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
+          <ChatbotButton />
+        </ToolbarItem>
+        <ToolbarItem>
+          <PageMastheadDropdown
+            id="help-menu"
+            icon={<QuestionCircleIcon />}
+            tooltipContent={t`Help`}
+            tooltipPosition="bottom"
+          >
             <DropdownItem
               id="documentation"
               isExternalLink

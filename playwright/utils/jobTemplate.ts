@@ -47,6 +47,17 @@ export interface CreateJobTemplateAPIOptions {
   labels?: string[];
 }
 
+async function lookupDemoProjectId(page: Page): Promise<number> {
+  const result = await awxAPI.get<{ results: { id: number; name: string }[] }>(page, 'projects/', {
+    params: { name: 'Demo Project' },
+  });
+  const match = result?.results?.find((p) => p.name === 'Demo Project');
+  if (!match) {
+    throw new Error('Demo Project not found on this server — specify a projectId explicitly');
+  }
+  return match.id;
+}
+
 export const JobTemplate = {
   api: {
     create: async (
@@ -55,12 +66,13 @@ export const JobTemplate = {
     ): Promise<JobTemplateType> => {
       const name = options.name ?? `e2e-job-template-${Date.now()}`;
       const playbook = options.playbook ?? 'hello_world.yml';
+      const projectId = options.projectId ?? (await lookupDemoProjectId(page));
 
       const jobTemplate = await awxAPI.post<JobTemplateType>(page, 'job_templates/', {
         name,
         job_type: 'run',
         inventory: options.inventoryId ?? 1,
-        project: options.projectId ?? 6,
+        project: projectId,
         playbook,
         ask_inventory_on_launch: options.ask_inventory_on_launch ?? false,
         ask_credential_on_launch: options.ask_credential_on_launch ?? false,

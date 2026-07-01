@@ -28,7 +28,7 @@ import { GatewaySettingsOption, UrlOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 import { useRevertAllGatewaySettingsModal } from './useRevertAllGatewaySettingsModal';
 
-export function GatewaySettingsEdit(props: { categoryId?: string }) {
+export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const openRevertAllSettingsModal = useRevertAllGatewaySettingsModal();

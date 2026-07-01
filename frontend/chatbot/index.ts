@@ -1,6 +1,6 @@
 export * from './ChatbotPortal';
 export * from './ChatbotSideBar';
-export * from './ChatbotToolbarItem';
+export * from './ChatbotButton';
 export * from './ChatbotWindow';
 export * from './LazyChatbot';
 export * from './ChatbotProvider';

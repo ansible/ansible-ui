@@ -17,6 +17,13 @@ const filterSet: IDashboardFilterSet = {
   is_default: false,
 };
 
+const filterSet2: IDashboardFilterSet = {
+  id: 8,
+  name: 'Another Report',
+  filters: '{}',
+  is_default: false,
+};
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('useRemoveToolbarFilterSet', () => {
@@ -42,13 +49,33 @@ describe('useRemoveToolbarFilterSet', () => {
     expect(mockBulkAction).toHaveBeenCalledOnce();
   });
 
-  test('should pass the filter set as a single-item array to bulkAction', () => {
+  test('should accept a single filter set and pass it as an array to bulkAction', () => {
     const { result } = renderHook(() => useRemoveToolbarFilterSet(mockOnComplete));
 
     result.current(filterSet);
 
     const args = mockBulkAction.mock.calls[0]?.[0] as { items: IDashboardFilterSet[] };
     expect(args.items).toEqual([filterSet]);
+  });
+
+  test('should accept an array of filter sets and pass them to bulkAction', () => {
+    const { result } = renderHook(() => useRemoveToolbarFilterSet(mockOnComplete));
+
+    result.current([filterSet, filterSet2]);
+
+    const args = mockBulkAction.mock.calls[0]?.[0] as { items: IDashboardFilterSet[] };
+    expect(args.items.length).toBe(2);
+  });
+
+  test('should sort filter sets by name', () => {
+    const { result } = renderHook(() => useRemoveToolbarFilterSet(mockOnComplete));
+
+    result.current([filterSet, filterSet2]);
+
+    const args = mockBulkAction.mock.calls[0]?.[0] as { items: IDashboardFilterSet[] };
+    // "Another Report" should come before "My Report" alphabetically
+    expect(args.items[0]?.name).toBe('Another Report');
+    expect(args.items[1]?.name).toBe('My Report');
   });
 
   test('should set isDanger to true', () => {
@@ -113,5 +140,46 @@ describe('useRemoveToolbarFilterSet', () => {
       confirmationColumns: { header: string }[];
     };
     expect(args.confirmationColumns[0]?.header).toBe('Name');
+  });
+
+  test('should include actionColumns with a Name header', () => {
+    const { result } = renderHook(() => useRemoveToolbarFilterSet(mockOnComplete));
+
+    result.current(filterSet);
+
+    const args = mockBulkAction.mock.calls[0]?.[0] as {
+      actionColumns: { header: string }[];
+    };
+    expect(args.actionColumns[0]?.header).toBe('Name');
+  });
+
+  test('should use pluralized title with count', () => {
+    const { result } = renderHook(() => useRemoveToolbarFilterSet(mockOnComplete));
+
+    result.current([filterSet, filterSet2]);
+
+    const args = mockBulkAction.mock.calls[0]?.[0] as { title: string };
+    // In test environment without i18n pluralization, the singular form is returned
+    expect(args.title).toBe('Permanently delete report');
+  });
+
+  test('should use pluralized confirmText with count', () => {
+    const { result } = renderHook(() => useRemoveToolbarFilterSet(mockOnComplete));
+
+    result.current([filterSet, filterSet2]);
+
+    const args = mockBulkAction.mock.calls[0]?.[0] as { confirmText: string };
+    // In test environment without i18n pluralization, the singular form is returned
+    expect(args.confirmText).toBe('Yes, I confirm that I want to delete this report.');
+  });
+
+  test('should use pluralized actionButtonText with count', () => {
+    const { result } = renderHook(() => useRemoveToolbarFilterSet(mockOnComplete));
+
+    result.current([filterSet, filterSet2]);
+
+    const args = mockBulkAction.mock.calls[0]?.[0] as { actionButtonText: string };
+    // In test environment without i18n pluralization, the singular form is returned
+    expect(args.actionButtonText).toBe('Delete report');
   });
 });

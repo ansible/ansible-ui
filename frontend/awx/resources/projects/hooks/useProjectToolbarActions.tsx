@@ -20,7 +20,7 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
-  const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateProject = Boolean(data?.actions?.['POST']);
 
   const deleteProjects = useDeleteProjects(onComplete);
   const cancelProjects = useCancelProjects(onComplete);

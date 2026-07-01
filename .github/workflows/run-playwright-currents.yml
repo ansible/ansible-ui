@@ -50,7 +50,7 @@ on:
           - ""
           - "saas"
           - "ocp-a"
-          - "azure"
+          - "man-b"
       PROJECT:
         type: choice
         description: "Playwright Project"

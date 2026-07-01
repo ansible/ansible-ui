@@ -107,6 +107,10 @@ export function useAutomationDashboardToolbarFilters(
     const seenKeys = new Set<string>();
     const toolbarFilters: IToolbarFilter[] = [];
 
+    if (additionalFilters) {
+      toolbarFilters.push(...additionalFilters);
+    }
+
     filterableFields.forEach((filterKey) => {
       if (!filterKey || seenKeys.has(filterKey)) return;
       const field = FILTER_KEYS[filterKey];
@@ -124,10 +128,6 @@ export function useAutomationDashboardToolbarFilters(
         queryOptions: (options) => queryResource(options, filterKey),
       });
     });
-
-    if (additionalFilters) {
-      toolbarFilters.push(...additionalFilters);
-    }
 
     return toolbarFilters;
   }, [filterableFields, additionalFilters, t, queryResource, queryResourceLabel]);

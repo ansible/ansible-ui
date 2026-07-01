@@ -33,10 +33,18 @@ on:
         description: 'Upload Image as Artifact'
         type: boolean
         default: false
+      packaging-ref:
+        description: 'Git ref to checkout for packaging repo'
+        type: string
+        default: main
     secrets:
       QUAY_USERNAME:
         required: false
       QUAY_TOKEN:
+        required: false
+      PACKAGING_GITHUB_REPOSITORY:
+        required: true
+      PACKAGING_REPO_TOKEN:
         required: false
 
 jobs:
@@ -46,6 +54,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
+          ref: ${{ inputs.packaging-ref }}
+          path: _packaging
+          token: ${{ secrets.PACKAGING_REPO_TOKEN || github.token }}
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -99,7 +114,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
             type=raw,value={{branch}}
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/devel' }}
 
       - name: Build and Push Image
         if: ${{ inputs.docker-publish }}

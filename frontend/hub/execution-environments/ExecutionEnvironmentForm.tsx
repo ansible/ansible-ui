@@ -306,7 +306,7 @@ function TagsSelector(
     if (tagsText === '' || !tagsText.trim().length) {
       return;
     }
-    const tagsArray = tagsText.split(/\s+|\s*,\s*/).filter(Boolean);
+    const tagsArray = tagsText.split(/\s*,\s*|\s+/).filter(Boolean);
     const uniqueArray = [...new Set([...tags, ...tagsArray])];
     setTags(uniqueArray);
     setTagsText('');

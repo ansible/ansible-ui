@@ -330,7 +330,12 @@ function HostInputs(props: Readonly<{ edit_mode?: boolean; inventory_host?: bool
         labelHelp={t('Whether this host is enabled for use.')}
       />
       <PageFormSection singleColumn>
-        <PageFormDataEditor<IHostInput> format="yaml" name="variables" label={t('Variables')} />
+        <PageFormDataEditor<IHostInput>
+          format="yaml"
+          name="variables"
+          label={t('Variables')}
+          labelHelp={t('Enter the inventory file variables associated with the host.')}
+        />
       </PageFormSection>
     </>
   );

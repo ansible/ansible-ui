@@ -91,7 +91,18 @@ export PLATFORM_PASSWORD='nomeetingsfriday'
 
 ## Code of Conduct
 
-All engineers working with this code are responsible to help maintain the tests and investigate failures that may have been introduced by their changes.
+We follow the [Ansible Code of Conduct](https://docs.ansible.com/projects/ansible/latest/community/code_of_conduct.html) in all our interactions within this project.
+
+If you encounter abusive behavior, please refer to the [policy violations](https://docs.ansible.com/projects/ansible/latest/community/code_of_conduct.html#policy-violations) section of the Code for information on how to raise a complaint.
+
+## Communication
+
+* Join the Ansible forum:
+  * [Posts tagged with 'ui'](https://forum.ansible.com/tag/ui): subscribe to participate in UI related conversations.
+  * [Social Spaces](https://forum.ansible.com/c/chat/4): gather and interact with fellow enthusiasts.
+  * [News & Announcements](https://forum.ansible.com/c/news/5): track project-wide announcements including social events. The [Bullhorn newsletter](https://docs.ansible.com/projects/ansible/latest/community/communication.html#the-bullhorn), which is used to announce releases and important changes, can also be found here.
+
+For more information about communication, see the [Ansible communication guide](https://docs.ansible.com/projects/ansible/latest/community/communication.html).
 
 ### Running Standalone Platform Components (Not Recommended)
 

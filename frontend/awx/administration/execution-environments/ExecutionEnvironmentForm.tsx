@@ -9,7 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -70,8 +70,7 @@ export function EditExecutionEnvironment() {
   const params = useParams<{ id?: string }>();
   const { data: execution_env } = useSWR<ExecutionEnvironment>(
     awxAPI`/execution_environments/${params.id ?? ''}/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
     executionEnvInput: ExecutionEnvironment
@@ -181,6 +180,7 @@ function ExecutionEnvironmentInputs(props: {
       <PageFormSelect<ExecutionEnvironment>
         name="pull"
         label={t('Pull')}
+        labelHelp={t('Select the type of pull to use when running jobs.')}
         placeholderText={t('Select pull option')}
         options={[
           {
@@ -210,7 +210,7 @@ function ExecutionEnvironmentInputs(props: {
             'Globally available execution environment can not be reassigned to a specific Organization.'
           )}
           helperText={t(
-            'Leave this field blank to make the execution environment globally available.'
+            'Select the organization to assign to this execution environment or leave the field blank to make the execution environment globally available.'
           )}
         />
       ) : undefined}
@@ -218,7 +218,7 @@ function ExecutionEnvironmentInputs(props: {
         <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
           helperText={t(
-            'Leave this field blank to make the execution environment globally available.'
+            'Select the organization to assign to this execution environment or leave the field blank to make the execution environment globally available.'
           )}
         />
       ) : undefined}
@@ -226,7 +226,7 @@ function ExecutionEnvironmentInputs(props: {
         <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
           helperText={t(
-            'Leave this field blank to make the execution environment globally available.'
+            'Select the organization to assign to this execution environment or leave the field blank to make the execution environment globally available.'
           )}
           isRequired={false}
         />

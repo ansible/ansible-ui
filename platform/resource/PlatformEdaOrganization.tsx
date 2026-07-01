@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
-export function PlatformEdaOrganization(props: { route?: string }) {
+export function PlatformEdaOrganization(props: Readonly<{ route?: string }>) {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const platformResponse = useGetItem<EdaOrganization>(edaAPI`/organizations/`, id);

@@ -35,20 +35,20 @@ export function Hosts() {
   const { data, isLoading: isLoadingHostOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/hosts/`
   );
-  const canCreateHost = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateHost = Boolean(data?.actions?.['POST']);
 
   return (
     <PageLayout>
       <PageHeader
         title={t('Hosts')}
         description={t(
-          `A system managed by {{product}}, which may include a physical, virtual, cloud-based server, or other device.`,
+          `A system managed by {{product}} that may include a physical, virtual, or cloud-based server, or another device.`,
           { product }
         )}
         titleHelpTitle={t('Hosts')}
         titleHelp={[
           t(
-            `A system managed by {{product}}, which may include a physical, virtual, cloud-based server, or other device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.`,
+            `A system managed by {{product}} that may include a physical, virtual, or cloud-based server, or another device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.`,
             { product }
           ),
           t(

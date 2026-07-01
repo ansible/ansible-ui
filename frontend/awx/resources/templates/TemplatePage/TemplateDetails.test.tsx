@@ -9,7 +9,7 @@ const mockWebhookKey = { webhook_key: 'test-webhook-key-value' };
 
 vi.mock('@ansible/common-ui/crud/useGet', () => ({
   useGet: vi.fn((url: string | undefined) => {
-    if (url && url.includes('webhook_key')) {
+    if (url?.includes('webhook_key')) {
       return { data: mockWebhookKey };
     }
     return { data: null };

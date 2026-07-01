@@ -39,7 +39,7 @@ export function Projects() {
   const { data, isLoading: isLoadingProjectOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/projects/`
   );
-  const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateProject = Boolean(data?.actions?.['POST']);
   const { refresh } = view;
   usePersistentFilters('projects');
 
@@ -79,10 +79,7 @@ export function Projects() {
           { product }
         )}
         titleDocLink={useGetDocsUrl(config, 'projects')}
-        description={t(
-          `A project is a logical collection of Ansible playbooks, represented in {{product}}.`,
-          { product }
-        )}
+        description={t(`A project is a logical collection of Ansible playbooks.`)}
         headerActions={<ActivityStreamIcon type={'project'} />}
       />
       {isLoadingProjectOptions ? (

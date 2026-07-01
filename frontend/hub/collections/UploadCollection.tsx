@@ -202,6 +202,7 @@ function InsightsUploadCollectionByFile() {
             setSelectedRepo(null);
           }}
           label={t`Staging Repos`}
+          description={t('Select this option to upload the collection to a staging repository.')}
           id="radio-staging"
         />
         <Radio
@@ -212,12 +213,15 @@ function InsightsUploadCollectionByFile() {
             setSelectedRepo(null);
           }}
           label={t`All Repos`}
+          description={t(
+            'Select this option to upload the collection to a repository without a defined pipeline.'
+          )}
           id="radio-all"
         />
         <div>
           {!onlyStaging && (
             <>
-              {t`Please note that these repositories are not filtered by permissions. Upload may fail without the right permissions.`}
+              {t`Please note that these repositories are not filtered by permissions. If the operation fails, you don't have the required permission.`}
             </>
           )}
         </div>
@@ -323,6 +327,7 @@ function PlatformUploadCollectionByFile() {
             setOnlyStaging(val);
           }}
           label={t`Staging repos`}
+          description={t('Select this option to upload the collection to a staging repository.')}
           id="radio-staging"
         ></Radio>
         <Radio
@@ -332,6 +337,9 @@ function PlatformUploadCollectionByFile() {
             setOnlyStaging(!val);
           }}
           label={t`Repositories without pipeline`}
+          description={t(
+            'Select this option to upload the collection to a repository without a defined pipeline.'
+          )}
           id="radio-non-pipeline"
         ></Radio>
         <div>

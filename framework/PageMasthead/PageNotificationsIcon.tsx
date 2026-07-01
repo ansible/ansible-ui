@@ -1,9 +1,11 @@
-import { NotificationBadge } from '@patternfly/react-core';
+import { NotificationBadge, Tooltip } from '@patternfly/react-core';
 import { IPageNotification } from '../PageNotifications/PageNotification';
 import { usePageNotifications } from '../PageNotifications/usePageNotifications';
 import { usePageNotificationsRead } from '../PageNotifications/usePageNotificationsRead';
+import { useTranslation } from 'react-i18next';
 
 export function PageNotificationsIcon() {
+  const { t } = useTranslation();
   const { setNotificationsDrawerOpen, notificationGroups } = usePageNotifications();
   const { isNotificationRead } = usePageNotificationsRead();
 
@@ -17,12 +19,14 @@ export function PageNotificationsIcon() {
   }, 0);
 
   return (
-    <NotificationBadge
-      data-cy="notification-badge"
-      data-testid="notification-badge"
-      variant={unreadCount === 0 ? 'read' : 'unread'}
-      count={unreadCount}
-      onClick={() => setNotificationsDrawerOpen((open) => !open)}
-    />
+    <Tooltip content={t`Notifications`} position="bottom">
+      <NotificationBadge
+        data-cy="notification-badge"
+        data-testid="notification-badge"
+        variant={unreadCount === 0 ? 'read' : 'unread'}
+        count={unreadCount}
+        onClick={() => setNotificationsDrawerOpen((open) => !open)}
+      />
+    </Tooltip>
   );
 }

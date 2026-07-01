@@ -15,7 +15,6 @@ export const SettingsFeatureFlags = {
             contentType: 'application/json',
             body: JSON.stringify({
               RUNTIME_FEATURE_FLAGS: options.runtimeFeatureFlags,
-              RUNTIME_FEATURE_FLAGS_UI: false,
             }),
           })
       );

@@ -36,7 +36,7 @@ export function useNotifiersColumns(params?: { runningNotifications?: RunningNot
       {
         header: t('Status'),
         cell: (template: NotificationTemplate) => {
-          if (runningNotifications && runningNotifications[template.id]) {
+          if (runningNotifications?.[template.id]) {
             return <StatusCell status={'running'}></StatusCell>;
           }
           return (

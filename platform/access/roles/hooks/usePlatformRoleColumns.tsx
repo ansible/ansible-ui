@@ -6,6 +6,7 @@ import {
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { useMapContentTypeToDisplayName } from '@ansible/common-ui/access/hooks/useMapContentTypeToDisplayName';
+import { usePlatformRoleMetadata } from '@ansible/common-ui/access/components/usePlatformRoleMetadata';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useManagedRolesWithDescription } from '@ansible/hub-ui/access/roles/hooks/useManagedRolesWithDescription';
@@ -37,14 +38,29 @@ export function usePlatformRoleColumns(options?: {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const getDisplayName = useMapContentTypeToDisplayName();
+  const platformRoleMetadata = usePlatformRoleMetadata();
+
+  // Build a flat map of permission slug → display name from the metadata
+  const metadataPermissionMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const contentType of Object.values(platformRoleMetadata.content_types)) {
+      for (const [slug, label] of Object.entries(contentType.permissions)) {
+        // Only use labels that are actual display names (not raw slugs used as placeholders)
+        if (label !== slug) {
+          map[slug] = label;
+        }
+      }
+    }
+    return map;
+  }, [platformRoleMetadata]);
 
   // Fetch role permissions to map permission codes to display names
   const { data: rolePermissionsResponse } = useGet<RolePermissionsResponse>(
     gatewayAPI`/service-index/role-permissions/?page_size=200`
   );
 
-  // Create a map of permission codes to display names
-  const permissionCodeToNameMap = useMemo(() => {
+  // Create a map of permission codes to display names from API
+  const apiPermissionMap = useMemo(() => {
     if (!rolePermissionsResponse?.results) {
       return {};
     }
@@ -58,19 +74,22 @@ export function usePlatformRoleColumns(options?: {
   }, [rolePermissionsResponse]);
 
   // Function to get permission display names
+  // Prefer metadata labels (used in the form) over API names for consistency
   const getPermissionDisplayNames = useCallback(
     (permissions: string[]) => {
       if (!permissions || !Array.isArray(permissions)) {
         return [];
       }
 
-      // Convert permission codes to display names using the mapping
       return permissions.map((permissionCode) => {
-        const displayName = permissionCodeToNameMap[permissionCode];
-        return displayName || permissionCode;
+        return (
+          metadataPermissionMap[permissionCode] ||
+          apiPermissionMap[permissionCode] ||
+          permissionCode
+        );
       });
     },
-    [permissionCodeToNameMap]
+    [metadataPermissionMap, apiPermissionMap]
   );
 
   const nameColumn = useNameColumn<PlatformRole>({

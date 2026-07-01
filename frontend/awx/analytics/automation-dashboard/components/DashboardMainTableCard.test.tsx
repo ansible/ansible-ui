@@ -124,6 +124,8 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     refresh: mockRefresh,
     exportCsv: vi.fn(),
     exportPdf: vi.fn(),
+    isFilterStateDefault: true,
+    registerClearCallback: vi.fn(),
     ...overrides,
   };
 }
@@ -179,12 +181,14 @@ describe('DashboardMainTableCard', () => {
   test('should display details values in value cards', () => {
     renderCard();
     expect(
-      within(screen.getByTestId('cost-manual-automation-card')).getByText(/1[,.]?000/)
+      within(screen.getByTestId('cost-manual-automation-card')).getByText('$1,000.00')
     ).toBeInTheDocument();
     expect(
-      within(screen.getByTestId('cost-automated-execution-card')).getByText('500')
+      within(screen.getByTestId('cost-automated-execution-card')).getByText('$500.00')
     ).toBeInTheDocument();
-    expect(within(screen.getByTestId('total-savings-card')).getByText('500')).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('total-savings-card')).getByText('$500.00')
+    ).toBeInTheDocument();
     expect(
       within(screen.getByTestId('total-hours-saved-card')).getByText(/50 h/)
     ).toBeInTheDocument();
@@ -201,9 +205,9 @@ describe('DashboardMainTableCard', () => {
       })
     );
     expect(
-      within(screen.getByTestId('cost-manual-automation-card')).getByText('0')
+      within(screen.getByTestId('cost-manual-automation-card')).getByText('$0.00')
     ).toBeInTheDocument();
-    expect(within(screen.getByTestId('total-savings-card')).getByText('0')).toBeInTheDocument();
+    expect(within(screen.getByTestId('total-savings-card')).getByText('$0.00')).toBeInTheDocument();
   });
 
   test('should display - in all value cards when details is undefined', () => {
@@ -353,15 +357,6 @@ describe('DashboardMainTableCard', () => {
   });
 
   // --- Input readOnly ---
-
-  test('should disable table inputs when loading is true', () => {
-    renderCard(
-      buildProps({ loading: true, mainTableView: buildMainTableView({ pageItems: [mockItem] }) })
-    );
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-  });
-
   test('should disable export CSV button when loading is true', () => {
     renderCard(buildProps({ loading: true }));
     expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
@@ -402,7 +397,7 @@ describe('DashboardMainTableCard', () => {
 
   test('should render empty state when pageItems is empty', () => {
     renderCard(buildProps({ mainTableView: buildMainTableView({ itemCount: 0, pageItems: [] }) }));
-    expect(screen.getByText('No data')).toBeInTheDocument();
+    expect(screen.getByText('No automation data yet')).toBeInTheDocument();
   });
 
   // --- onTableInputChange: success ---

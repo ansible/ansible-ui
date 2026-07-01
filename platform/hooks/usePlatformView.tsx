@@ -6,7 +6,7 @@ import {
   useSelected,
   useView,
 } from '@ansible/ansible-ui-framework';
-import { getItemKey, swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { getItemKey, useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
@@ -129,7 +129,7 @@ export function usePlatformView<T extends { id: number | string }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<PlatformItemsResponse<T>>(url, fetcher, swrOptions);
+  const response = useSWR<PlatformItemsResponse<T>>(url, fetcher);
   const { data, mutate } = response;
   const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(async () => {
@@ -139,7 +139,7 @@ export function usePlatformView<T extends { id: number | string }>(options: {
     });
   }, [mutate]);
 
-  useSWR<PlatformItemsResponse<T>>(data?.next, fetcher, swrOptions);
+  useSWR<PlatformItemsResponse<T>>(data?.next, fetcher);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;

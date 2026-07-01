@@ -236,7 +236,7 @@ export function RepositoryForm() {
           label={t('Distributions')}
           labelHelpTitle={t('Distributions')}
           labelHelp={t(
-            'Content in repositories without a distribution will not be visible to clients for sync, download or search.'
+            'Enable distributions to allow content in repositories to be visible to clients for sync, download, or search.'
           )}
         >
           <PageFormWatch<RepositoryFormProps, 'name'> watch="name">
@@ -256,7 +256,7 @@ export function RepositoryForm() {
           label={t('Pipeline')}
           labelHelpTitle={t('Pipeline')}
           labelHelp={t(
-            'Pipeline adds repository labels with pre-defined meanings: None - users require permissions to modify content in this repository to upload collection. Approved - collections can be moved here on approval. Publishing directly to this repository is disabled. Staging - collections uploaded here require approval before showing up on the search page. Anyone with upload permissions for a namespace can upload collections to this repository.'
+            'Pipeline adds repository labels that define who can publish a collection into the repository.'
           )}
           placeholderText={t('Select pipeline')}
           isRequired
@@ -270,9 +270,7 @@ export function RepositoryForm() {
           label={t('Labels')}
           labelHelpTitle={t('Labels')}
           labelHelp={t(
-            'Repository labels can change the context in which a repository is seen.\n' +
-              'Hide from search (hide_from_search) - prevent collections in this repository from showing up on the home page\n' +
-              '(pipeline: *) - see Pipeline above'
+            'Repository labels can change the context in which a repository is seen. Enable this to prevent collections in this repository from showing up on the home page. Related to the Pipeline field.'
           )}
           additionalControls={
             <PageFormWatch<RepositoryFormProps, 'pipeline'> watch="pipeline">
@@ -314,7 +312,7 @@ export function RepositoryForm() {
         <PageFormGroup
           label={t('Private')}
           labelHelpTitle={t('Private')}
-          labelHelp={t('Make the repository private.')}
+          labelHelp={t('Makes the repository private.')}
         >
           <PageFormCheckbox<RepositoryFormProps> name="private" label={t('Make private')} />
         </PageFormGroup>

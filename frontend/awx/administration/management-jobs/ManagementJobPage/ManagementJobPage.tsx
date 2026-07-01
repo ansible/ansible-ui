@@ -30,7 +30,7 @@ export function ManagementJobPage() {
     error: isNotifAdminError,
     refresh: refreshNotifAdmin,
   } = useGet<AwxItemsResponse<Organization>>(
-    awxAPI`/organizations/?role_level=notification_admin_role`
+    awxAPI`/organizations/?role_level=notification_admin_role&count_disabled=1`
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

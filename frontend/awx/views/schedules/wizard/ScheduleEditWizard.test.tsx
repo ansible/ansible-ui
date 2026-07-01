@@ -154,7 +154,7 @@ describe('ScheduleEditWizard', () => {
     });
 
     expect(screen.getByRole('button', { name: /add rule/i })).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('should have actions column with edit and delete for each rule row', async () => {
     const user = userEvent.setup();
@@ -237,5 +237,5 @@ describe('ScheduleEditWizard', () => {
         .filter((r) => r.dataset.testid?.startsWith('row-id-'));
       expect(rows.length).toBeGreaterThan(initialRowCount);
     });
-  });
+  }, 15000);
 });

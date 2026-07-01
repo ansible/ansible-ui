@@ -16,7 +16,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 
-export function GatewaySettingsDetails(props: { categoryId: string }) {
+export function GatewaySettingsDetails(props: Readonly<{ categoryId: string }>) {
   const { t } = useTranslation();
   const { settings, options, hasWritePermissions } = useOutletContext<{
     options: {

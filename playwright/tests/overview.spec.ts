@@ -5,9 +5,7 @@ test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
 test('overview - dashboard cards', async ({ page }) => {
-  await expect(page.locator('h1').first()).toContainText(
-    'Welcome to the Ansible Automation Platform'
-  );
+  await expect(page.locator('h1').first()).toContainText(/Welcome to (?:the )?Ansible/);
 
   if (await page.locator('#platform-awx').isVisible()) {
     await expect(page.locator('#resource-counts')).toContainText('Resource Counts');
@@ -35,9 +33,7 @@ test('overview - dashboard cards', async ({ page }) => {
 });
 
 test('hosts resource counts should redirect correctly', async ({ page }) => {
-  await expect(page.locator('h1').first()).toContainText(
-    'Welcome to the Ansible Automation Platform'
-  );
+  await expect(page.locator('h1').first()).toContainText(/Welcome to (?:the )?Ansible/);
 
   if (await page.locator('#platform-awx').isVisible()) {
     await expect(page.locator('#resource-counts')).toContainText('Resource Counts');

@@ -20,7 +20,7 @@ const Logo = styled(PlatformLogo)`
   }
 `;
 
-export function PlatformLogin(props: { children: ReactNode }) {
+export function PlatformLogin(props: Readonly<{ children: ReactNode }>) {
   const { activePlatformUser } = usePlatformActiveUser();
   const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
   const { t } = useTranslation();

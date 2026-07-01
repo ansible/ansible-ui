@@ -99,7 +99,10 @@ describe('useAutomationAnalytics', () => {
       activePlatformUser: { is_superuser: true, is_platform_auditor: false },
     });
     // Dashboard feature enabled by default
-    mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: true });
+    mockUseAutomationDashboardCollectionStatus.mockReturnValue({
+      collectionStatus: { enabled: true, next_run: null, initial_collection_status: null },
+      isLoading: false,
+    });
   });
 
   // --- Label ---
@@ -221,7 +224,10 @@ describe('useAutomationAnalytics', () => {
 
   describe('when automationDashboardEnabled is false', () => {
     beforeEach(() => {
-      mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: false });
+      mockUseAutomationDashboardCollectionStatus.mockReturnValue({
+        collectionStatus: { enabled: false, next_run: null, initial_collection_status: null },
+        isLoading: false,
+      });
     });
 
     test('should remove automation dashboard from children for superuser', () => {
@@ -260,7 +266,10 @@ describe('useAutomationAnalytics', () => {
 
     test('should not remove automation dashboard from children for superuser when dashboard is enabled', () => {
       // Sanity: switching back to enabled keeps the dashboard
-      mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: true });
+      mockUseAutomationDashboardCollectionStatus.mockReturnValue({
+        collectionStatus: { enabled: true, next_run: null, initial_collection_status: null },
+        isLoading: false,
+      });
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
       expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeDefined();
@@ -363,7 +372,10 @@ describe('useAutomationAnalytics', () => {
   // --- automationDashboardEnabled = null (falsy, same branch as false) ---
 
   test('should remove automation dashboard when enabled is null', () => {
-    mockUseAutomationDashboardCollectionStatus.mockReturnValue({ enabled: null });
+    mockUseAutomationDashboardCollectionStatus.mockReturnValue({
+      collectionStatus: { enabled: null, next_run: null, initial_collection_status: null },
+      isLoading: false,
+    });
     const { result } = renderHook(() => useAutomationAnalytics());
     const { children } = asGroup(result.current);
     expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeUndefined();

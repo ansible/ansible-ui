@@ -6,14 +6,29 @@ import { SWRConfig } from 'swr';
 import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
+import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
 import type {
   IAutomationDashboardView,
   IDashboardDetails,
   IJobTemplate,
   DashboardValueCardProps,
+  IAutomationDashboardCollectionStatus,
 } from './types';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
+
+const DEFAULT_COLLECTION_STATUS: IAutomationDashboardCollectionStatus = {
+  enabled: true,
+  next_run: null,
+  initial_collection_status: null,
+};
+
+vi.mock('./common/useAutomationDashboardCollectionStatus', () => ({
+  useAutomationDashboardCollectionStatus: vi.fn(() => ({
+    collectionStatus: DEFAULT_COLLECTION_STATUS,
+    isLoading: false,
+  })),
+}));
 
 vi.mock('./components', () => ({
   useAutomationDashboardToolbar: vi.fn(() => []),
@@ -54,6 +69,10 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     usePageAlertToaster: vi.fn(() => ({ addAlert: vi.fn() })),
   };
 });
+
+vi.mock('@ansible/ansible-ui-framework/components/LoadingState', () => ({
+  LoadingState: () => <div data-testid="loading-state">Loading...</div>,
+}));
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -134,6 +153,8 @@ const mockView: IAutomationDashboardView = {
   refresh: vi.fn(),
   exportCsv: vi.fn(),
   exportPdf: vi.fn(),
+  isFilterStateDefault: true,
+  registerClearCallback: vi.fn(),
 };
 
 // ─── Test wrapper ─────────────────────────────────────────────────────────────
@@ -243,7 +264,29 @@ describe('AutomationDashboard', () => {
 
   test('should render links for successful and failed job value cards', () => {
     render(testWrapper());
-    expect(screen.getByText('See all successful jobs in AAP')).toBeInTheDocument();
-    expect(screen.getByText('See all failed jobs in AAP')).toBeInTheDocument();
+    expect(screen.getByText('See all successful jobs')).toBeInTheDocument();
+    expect(screen.getByText('See all failed jobs')).toBeInTheDocument();
+  });
+
+  // ─── Collection status loading ─────────────────────────────────────────────
+
+  test('should show loading state when collection status is loading', () => {
+    vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValueOnce({
+      collectionStatus: DEFAULT_COLLECTION_STATUS,
+      isLoading: true,
+    });
+    render(testWrapper());
+    expect(screen.getByTestId('loading-state')).toBeInTheDocument();
+    expect(screen.queryByText('Automation Dashboard')).not.toBeInTheDocument();
+  });
+
+  test('should show dashboard when collection status is not loading', () => {
+    vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValueOnce({
+      collectionStatus: DEFAULT_COLLECTION_STATUS,
+      isLoading: false,
+    });
+    render(testWrapper());
+    expect(screen.queryByTestId('loading-state')).not.toBeInTheDocument();
+    expect(screen.getByText('Automation Dashboard')).toBeInTheDocument();
   });
 });

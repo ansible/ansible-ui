@@ -24,7 +24,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
   const selectUsersAssignTeams = useSelectUsersAssignTeams();
   // const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/teams/`);
-  const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateTeam = Boolean(data?.actions?.['POST']);
 
   return useMemo<IPageAction<Team>[]>(
     () => [

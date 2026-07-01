@@ -121,7 +121,12 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
       (response) => response.url().includes('/api/eda/v1/activations/') && response.status() === 201
     );
 
-    await page.getByRole('button', { name: 'Create rulebook activation', exact: true }).click();
+    await page
+      .getByRole('button', {
+        name: 'Create rulebook activation',
+        exact: true,
+      })
+      .click();
 
     const createResponse = await createResponsePromise;
     const createdRBA = (await createResponse.json()) as ActivationRead;
@@ -146,7 +151,9 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
 
       await page.getByRole('button', { name: 'Restart rulebook activations' }).click();
 
-      await expect(page.getByRole('dialog')).toContainText('Success', { timeout: 15000 });
+      await expect(page.getByRole('dialog')).toContainText('Success', {
+        timeout: 15000,
+      });
       await page.getByRole('button', { name: 'Close' }).click();
     } finally {
       if (createdRBA?.id) {
@@ -165,7 +172,7 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
 
     await page.getByRole('button', { name: 'Create project', exact: true }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill(projectName);
-    await page.getByLabel('Source Control URL').fill('https://github.com/ansible/aap-ui');
+    await page.getByLabel('Source Control URL').fill('https://github.com/ansible/ansible-ui');
 
     await page.getByRole('button', { name: 'Organization' }).click();
     await page.locator('#organization_id-search').getByRole('textbox').fill(organizationName);
@@ -183,7 +190,9 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
     try {
       const syncedProject = await waitForProjectSync(page, newProject);
 
-      await expect(page.getByTestId('status')).toContainText('Failed', { timeout: 30000 });
+      await expect(page.getByTestId('status')).toContainText('Failed', {
+        timeout: 30000,
+      });
       await expect(page.getByTestId('import-error')).toContainText(
         'Credentials not provided or incorrect'
       );
@@ -206,7 +215,12 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
       await navigateTo(page, 'Automation Decisions', 'Decision Environments');
       await expect(page.getByRole('heading', { name: 'Decision Environments' })).toBeVisible();
 
-      await page.getByRole('button', { name: 'Create decision environment', exact: true }).click();
+      await page
+        .getByRole('button', {
+          name: 'Create decision environment',
+          exact: true,
+        })
+        .click();
       await page.getByRole('textbox', { name: 'Name' }).fill(deName);
 
       await page.getByRole('button', { name: 'Organization' }).click();
@@ -220,7 +234,12 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
           response.url().includes('/api/eda/v1/decision-environments/') && response.status() === 201
       );
 
-      await page.getByRole('button', { name: 'Create decision environment', exact: true }).click();
+      await page
+        .getByRole('button', {
+          name: 'Create decision environment',
+          exact: true,
+        })
+        .click();
 
       const createDEResponse = await createDEResponsePromise;
       const privateDE = (await createDEResponse.json()) as EdaDecisionEnvironment;
@@ -261,7 +280,12 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
           response.url().includes('/api/eda/v1/activations/') && response.status() === 201
       );
 
-      await page.getByRole('button', { name: 'Create rulebook activation', exact: true }).click();
+      await page
+        .getByRole('button', {
+          name: 'Create rulebook activation',
+          exact: true,
+        })
+        .click();
 
       const createRBAResponse = await createRBAResponsePromise;
       const createdRBA = (await createRBAResponse.json()) as ActivationRead;

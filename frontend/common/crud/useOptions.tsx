@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import useSWR from 'swr';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
@@ -7,25 +8,29 @@ export function useOptions<T>(
   url: string | undefined,
   query?: Record<string, string | number | boolean>
 ) {
-  const getOptions = useOptionsRequest<T>();
-  url += normalizeQueryString(query);
+  const optionsRequest = useOptionsRequest<T>();
 
-  const [data, setData] = useState<T | undefined>(undefined);
-  const [error, setError] = useState<Error | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
+  if (url) {
+    url += normalizeQueryString(query);
+  }
 
-  // Options is using a straight request instead of SWR
-  // because otherwise SWR would cache the response and
-  // and GETS would get the cached response instead of the correct one
-  useEffect(() => {
-    if (!url) return;
-    void getOptions(url)
-      .then((data) => setData(data))
-      .catch((error) => setError(error instanceof Error ? error : new Error('Unknown error')))
-      .finally(() => setIsLoading(false));
-  }, [getOptions, url]);
+  const response = useSWR<T>(url ? `options:${url}` : undefined, () => optionsRequest(url!), {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 0,
+    // short dedup window just enough to prevent multiple components making
+    // the request simultaneously (happens on initial mount of some pages)
+    dedupingInterval: 50,
+  });
 
-  return useMemo(() => ({ data, error, isLoading }), [data, error, isLoading]);
+  return useMemo(
+    () => ({
+      data: response.data,
+      error: response.isLoading ? undefined : (response.error as Error | undefined),
+      isLoading: response.isLoading,
+    }),
+    [response.data, response.isLoading, response.error]
+  );
 }
 
 /**

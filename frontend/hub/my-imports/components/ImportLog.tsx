@@ -14,7 +14,7 @@ const EmptyImportConsole = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--pf-t--color--white);
 `;
 
 interface IProps {

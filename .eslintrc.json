@@ -71,6 +71,12 @@
       }
     },
     {
+      "files": ["**/*.test.tsx"],
+      "rules": {
+        "i18next/no-literal-string": "off"
+      }
+    },
+    {
       "files": ["frontend/**/*.ts", "frontend/**/*.tsx", "platform/**/*.ts", "platform/**/*.tsx"],
       "excludedFiles": ["**/*.test.*", "**/*.cy.*", "**/*.fixture.*", "**/generated/**", "**/vite.config.*", "**/awx-utils.tsx", "**/eda-utils.tsx", "**/formatPath.tsx", "**/gateway-api-utils.tsx"],
       "rules": {

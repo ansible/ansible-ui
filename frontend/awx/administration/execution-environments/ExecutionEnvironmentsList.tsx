@@ -42,7 +42,7 @@ export function ExecutionEnvironmentsList({
     onDelete: view.unselectItemsAndRefresh,
     onCopy: view.refresh,
   });
-  const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateExecutionEnvironment = Boolean(data?.actions?.['POST']);
   const toolbarActions = useExecutionEnvToolbarActions(view);
 
   if (isLoadingExecutionEnvOptions) return <PageLoadingTable />;

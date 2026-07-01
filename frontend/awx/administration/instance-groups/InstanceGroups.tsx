@@ -38,9 +38,7 @@ export function InstanceGroups() {
         titleHelp={t(
           'An instance group provides the ability to group instances in a clustered environment. It defines grouped instances or grouped containers.'
         )}
-        description={t(
-          'An instance group provides the ability to group instances in a clustered environment.'
-        )}
+        description={t('Group instances in a clustered environment.')}
         headerActions={<ActivityStreamIcon type={'instance_group'} />}
         titleDocLink={useGetDocsUrl(config, 'instanceGroups')}
       />

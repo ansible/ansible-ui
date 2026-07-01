@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Job } from '../../../interfaces/Job';
@@ -47,23 +47,29 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
 
   const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
 
+  const jobFinished = job.finished;
+  const refreshInterval = useCallback(
+    (latestData: AwxItemsResponse<JobEvent>) => {
+      if (jobFinished) return 0;
+      if (latestData?.results.length) {
+        const latestEvent = latestData.results[0];
+        if (latestEvent.event === 'playbook_on_start') {
+          return 0;
+        }
+      }
+      return 5000;
+    },
+    [jobFinished]
+  );
+
   const { data: jobEvents } = useGet<AwxItemsResponse<JobEvent>>(
     awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/`,
     {
       page_size: 1,
       counter: 1,
+      count_disabled: 1,
     },
-    {
-      refreshInterval: (latestData: AwxItemsResponse<JobEvent>) => {
-        if (latestData?.results.length) {
-          const latestEvent = latestData.results[0];
-          if (latestEvent.event === 'playbook_on_start') {
-            return 0;
-          }
-        }
-        return 5000;
-      },
-    }
+    { refreshInterval }
   );
 
   const event = jobEvents?.results[0]?.event;

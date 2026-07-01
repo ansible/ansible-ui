@@ -7,7 +7,7 @@ import {
   buildQueryString,
 } from '@ansible/ansible-ui-framework';
 import { IView, useView } from '@ansible/ansible-ui-framework/useView';
-import { getItemKey, swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { getItemKey, useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
@@ -55,7 +55,7 @@ export function useAwxView<T extends { id: number }>(options: {
   let defaultSortDirection: 'asc' | 'desc' | undefined = options.defaultSortDirection;
 
   // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
-  if (tableColumns && tableColumns.length) {
+  if (tableColumns?.length) {
     const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0];
     defaultSort = defaultSortColumn?.sort;
     defaultSortDirection = defaultSortColumn?.defaultSortDirection;
@@ -76,13 +76,11 @@ export function useAwxView<T extends { id: number }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<AwxItemsResponse<T>>(url, fetcher, swrOptions);
+  const response = useSWR<AwxItemsResponse<T>>(url, fetcher);
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});
   }, [mutate]);
-
-  useSWR<AwxItemsResponse<T>>(data?.next, fetcher, swrOptions);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;

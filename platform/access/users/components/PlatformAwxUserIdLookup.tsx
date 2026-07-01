@@ -17,7 +17,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
  * looks this user up in the gateway API to get its ansible_id and uses the ansible_id to
  * look the user up in AWX. It then renders the child component passing the AWX user ID to it as a prop.
  */
-export function PlatformAwxUserIdLookup(props: { children: ReactNode }) {
+export function PlatformAwxUserIdLookup(props: Readonly<{ children: ReactNode }>) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { data: user } = useGetItem<PlatformUser>(gatewayAPI`/users/`, params.id);

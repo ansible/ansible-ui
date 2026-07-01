@@ -17,9 +17,7 @@ export function useCopyCredential(onComplete?: () => void) {
       timeout: 2000,
     };
     postRequest(awxAPI`/credentials/${credential.id.toString()}/copy/`, {
-      name: `${credential.name} @ ${new Date()
-        .toTimeString()
-        .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,
+      name: `${credential.name} @ ${new Date().toTimeString().substring(0, 8)}`,
     })
       .then(() => {
         alertToaster.addAlert(alert);

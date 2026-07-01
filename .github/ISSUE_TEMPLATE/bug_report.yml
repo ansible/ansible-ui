@@ -1,0 +1,78 @@
+---
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+type: bug
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: >
+        **Thank you for your feedback for ansible-ui**
+
+  - type: textarea
+    attributes:
+      label: Summary
+      description: Explain the problem briefly below.
+      placeholder: >-
+        When I try to do X with ansible-ui from the devel branch on GitHub, Y
+        breaks in a way Z under the env E. Here are all the details I know
+        about this problem...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: ansible-ui git commit
+      description: >-
+        Paste verbatim output from `git rev-parse HEAD` below, under
+        the prompt line. Please don't wrap it with triple backticks — your
+        whole input will be turned into a code snippet automatically.
+      render: console
+      value: |
+        $ git rev-parse HEAD
+      placeholder: |
+        $ git rev-parse HEAD
+        29abc9e9a2123bcacbdf6e31dd9c25a6142c5c68
+
+  - type: textarea
+    attributes:
+      label: OS / Environment
+      description: >-
+        Provide all relevant information below, e.g. target OS versions, node version etc.
+      placeholder: RHEL 8, Node.js 20.x etc.
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        Describe exactly how to reproduce the problem, using a minimal test-case. It would *really* help us understand your problem if you could also provide any configs and commands you used.
+
+        **HINT:** You can paste https://gist.github.com links for larger files.
+
+  - type: textarea
+    attributes:
+      label: Expected Results
+      description: >-
+        Describe what you expected to happen when running the steps above.
+      placeholder: >-
+        I expected X to happen because I assumed Y and was shocked
+        that it did not.
+
+  - type: textarea
+    attributes:
+      label: Actual Results
+      description: Describe what actually happened.
+
+  - type: checkboxes
+    attributes:
+      label: Code of Conduct
+      description: |
+        Read the [Ansible Code of Conduct][CoC] first.
+
+        [CoC]: https://docs.ansible.com/projects/ansible/latest/community/code_of_conduct.html
+      options:
+        - label: I agree to follow the Ansible Code of Conduct
+          required: true

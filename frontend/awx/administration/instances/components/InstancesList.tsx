@@ -42,7 +42,7 @@ export function InstancesList(props: {
   const { data, isLoading: isLoadingInstanceOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(instanceGroupId ? awxAPI`/instance_groups/${instanceGroupId}/instances/` : awxAPI`/instances/`);
-  const canCreateInstance = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateInstance = Boolean(data?.actions?.['POST']);
 
   usePersistentFilters('instances');
 

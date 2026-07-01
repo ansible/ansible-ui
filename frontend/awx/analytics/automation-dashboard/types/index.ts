@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { IAwxView } from '../../../common/useAwxView';
 
 // ─── Dashboard Data Models (API shapes) ──────────────────────────────────────
@@ -72,11 +72,12 @@ export interface IAutomationDashboardCollectionStatus {
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
 
-export interface AutomationDashboardToolbarFiltersProps {
-  filterableFields: string[];
-  /** Additional filters appended after the dynamic filters. */
-  additionalFilters?: IToolbarFilter[];
-}
+export interface AutomationDashboardToolbarFiltersProps
+  extends Readonly<{
+    filterableFields: string[];
+    /** Additional filters appended after the dynamic filters. */
+    additionalFilters?: IToolbarFilter[];
+  }> {}
 
 export interface AsyncKeyOptions {
   /** Display label for the filter (also used as an i18n key). */
@@ -99,18 +100,24 @@ type DashboardCommonCardProps = {
   errorStateTitle: string;
 };
 
-export type DashboardValueCardProps = DashboardCommonCardProps & {
-  value: string | number;
-  valueSuffix?: string;
-  linkText?: string;
-  to?: string;
-};
+export type DashboardValueCardProps = Readonly<
+  DashboardCommonCardProps & {
+    value: string | number;
+    valueSuffix?: string;
+    formatAsCurrency?: boolean;
+    linkText?: string;
+    to?: string;
+  }
+>;
 
 export type DashboardTableCardProps = DashboardCommonCardProps & {
   firstColumnHeader: string;
   items?: IDashboardTableItem[];
-  emptyStateTitle: string;
   loading: boolean;
+  clearAllFilters: () => void;
+  filterState: IFilterState | undefined;
+  emptyStateTitle?: string;
+  emptyStateDescription?: string;
 };
 
 export type DashboardChartCardProps = DashboardCommonCardProps & {
@@ -155,4 +162,6 @@ export type IAutomationDashboardView = {
   refresh: () => Promise<void>;
   exportCsv: () => Promise<void>;
   exportPdf: () => Promise<void>;
+  isFilterStateDefault: boolean;
+  registerClearCallback: (callback: () => void) => void;
 };

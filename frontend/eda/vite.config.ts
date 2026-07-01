@@ -7,6 +7,7 @@ import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
+import { getVitestAliases } from '../../framework/vitest.shared';
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -91,6 +92,7 @@ export default defineConfig({
     },
     // found at: https://github.com/vitest-dev/vitest/discussions/1806
     alias: [
+      ...getVitestAliases(),
       {
         find: /^monaco-editor$/,
         replacement: __dirname + '/../../node_modules/monaco-editor/esm/vs/editor/editor.api',

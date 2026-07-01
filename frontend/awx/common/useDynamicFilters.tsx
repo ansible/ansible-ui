@@ -176,7 +176,7 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
 
       filterableFields.forEach((field) => {
         // Check if key is in preFilledValueKeys
-        let isPreFilled = preFilledValueKeys && preFilledValueKeys[field.key] ? true : false;
+        let isPreFilled = preFilledValueKeys?.[field.key] ? true : false;
         if (knownAwxFilterKeys[field.key]) {
           isPreFilled = true;
         }

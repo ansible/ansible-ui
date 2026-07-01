@@ -30,7 +30,9 @@ export const PlatformAbout: React.FunctionComponent<{
         setPageDialog(undefined)
       }
       productName={t('Ansible Automation Platform {{version}}', { version: platformVersion })}
-      trademark="Copyright 2025 Red Hat, Inc."
+      trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, {
+        fullYear: new Date().getFullYear(),
+      })}
       brandImageAlt={t('Brand Logo')}
       brandImageSrc={settings?.activeTheme === 'dark' ? platformLogoWhite : platformLogo}
     >

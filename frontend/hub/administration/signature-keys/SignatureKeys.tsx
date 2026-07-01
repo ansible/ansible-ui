@@ -26,7 +26,6 @@ import { SignatureKey } from './SignatureKey';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('Automation Hub');
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
   const config = useHubConfig();
@@ -58,8 +57,7 @@ export function SignatureKeys() {
   const isUnauthorized = isAccessDeniedError(view.error);
 
   const description = t(
-    'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on {{product}}.',
-    { product }
+    'Signature keys are cryptographic keys used to verify the authenticity and integrity of Ansible content.'
   );
 
   return (

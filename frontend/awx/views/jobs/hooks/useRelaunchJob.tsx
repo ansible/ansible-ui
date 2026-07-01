@@ -57,10 +57,7 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
 
       // Relaunch job
 
-      if (
-        (relaunchConfig as JobRelaunch).passwords_needed_to_start &&
-        (relaunchConfig as JobRelaunch).passwords_needed_to_start?.length
-      ) {
+      if ((relaunchConfig as JobRelaunch).passwords_needed_to_start?.length) {
         pageNavigate(AwxRoute.TemplateLaunchWithPasswordsWizard, {
           params: { id: job.id, job_type: 'playbook' },
         });

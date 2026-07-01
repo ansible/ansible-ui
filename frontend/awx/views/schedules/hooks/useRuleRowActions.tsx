@@ -20,7 +20,7 @@ export function useRuleRowActions(
 
   return useMemo<IPageAction<RuleListItemType>[]>(() => {
     if (!setIsOpen) return [];
-    const isExceptionStep = wizard.activeStep && wizard.activeStep.id === 'exceptions';
+    const isExceptionStep = wizard.activeStep?.id === 'exceptions';
     const existingRules = context.getValues('rules') as RuleListItemType[];
     const existingExceptions = context.getValues('exceptions') as RuleListItemType[];
 

@@ -43,7 +43,7 @@ export function TemplatePage() {
     refresh: refreshNotifAdmin,
     isLoading: isNotifAdminLoading,
   } = useGet<AwxItemsResponse<Organization>>(
-    awxAPI`/organizations/?role_level=notification_admin_role`
+    awxAPI`/organizations/?role_level=notification_admin_role&count_disabled=1`
   );
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();

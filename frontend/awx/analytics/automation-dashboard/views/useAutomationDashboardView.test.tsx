@@ -110,6 +110,8 @@ describe('useAutomationDashboardView', () => {
     expect(view.refresh).toBeTypeOf('function');
     expect(view.exportPdf).toBeTypeOf('function');
     expect(view.setCostState).toBeTypeOf('function');
+    expect(view.isFilterStateDefault).toBe(true);
+    expect(view.registerClearCallback).toBeTypeOf('function');
   });
 
   // --- clearAllFilters override ---
@@ -119,6 +121,33 @@ describe('useAutomationDashboardView', () => {
     act(() => {
       result.current.mainTableView.clearAllFilters();
     });
+    expect(mockSetFilterState).toHaveBeenCalledWith({
+      period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
+    });
+  });
+
+  // --- isFilterStateDefault ---
+
+  test('should return true for isFilterStateDefault when filter state is default', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.isFilterStateDefault).toBe(true);
+  });
+
+  // --- registerClearCallback ---
+
+  test('should call registered callback when clearAllFilters is invoked', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    const mockCallback = vi.fn();
+
+    act(() => {
+      result.current.registerClearCallback(mockCallback);
+    });
+
+    act(() => {
+      result.current.mainTableView.clearAllFilters();
+    });
+
+    expect(mockCallback).toHaveBeenCalled();
     expect(mockSetFilterState).toHaveBeenCalledWith({
       period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
     });

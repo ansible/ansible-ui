@@ -6,6 +6,13 @@ import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
+import { resetTestSwrCache } from './test-utils/swrTestWrapper';
+
+// Match Playwright setup: disable SWR deduping in unit tests.
+(globalThis as unknown as Record<string, number>).__SWR_DEDUPING_INTERVAL__ = 0;
+
+export { SwrTestWrapper, swrTestConfig, resetTestSwrCache } from './test-utils/swrTestWrapper';
+
 export function mockI18n() {
   vi.mock('react-i18next', () => {
     const stableT = vi.fn((key: string, options?: Record<string, unknown>) => {
@@ -42,6 +49,10 @@ type ScreenWithPreview = Screen & { preview: () => void };
 export function enablePreview() {
   (screen as ScreenWithPreview).preview = debug;
 
+  beforeEach(() => {
+    resetTestSwrCache();
+  });
+
   beforeEach((ctx) => {
     ctx.onTestFinished(({ task }) => {
       if (task?.result?.state === 'fail') {
@@ -49,6 +60,7 @@ export function enablePreview() {
       }
       // Still perform cleanup, but after capturing the DOM state
       cleanup();
+      resetTestSwrCache();
     });
   });
 }

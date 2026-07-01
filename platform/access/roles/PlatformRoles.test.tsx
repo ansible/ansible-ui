@@ -239,14 +239,16 @@ describe('PlatformRoles', () => {
     );
   }, 15000);
 
-  it('should display table columns headers', () => {
+  it('should display table columns headers', async () => {
     const { getByRole } = render(
       <MemoryRouter>
         <PlatformRoles />
       </MemoryRouter>
     );
 
-    expect(getByRole('columnheader', { name: 'Name' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByRole('columnheader', { name: 'Name' })).toBeInTheDocument();
+    });
     expect(getByRole('columnheader', { name: 'Description' })).toBeInTheDocument();
     expect(getByRole('columnheader', { name: 'Components' })).toBeInTheDocument();
     expect(getByRole('columnheader', { name: 'Resource type' })).toBeInTheDocument();
@@ -587,4 +589,28 @@ describe('PlatformRoles', () => {
       expect(screen.getByText('Error loading roles')).toBeInTheDocument();
     });
   });
+
+  it('should pass correct item count to bulk delete confirmation', async () => {
+    const { user } = setupTest();
+    await waitForTableToLoad();
+
+    const customRoleRow = screen.getByRole('row', { name: /Custom Role/ });
+    await user.click(within(customRoleRow).getByRole('checkbox'));
+
+    await user.click(screen.getByRole('button', { name: 'toolbar actions' }));
+    const deleteButton = await screen.findByRole('menuitem', { name: 'Delete selected roles' });
+    await user.click(deleteButton);
+
+    await waitFor(
+      () => {
+        expect(mockBulkConfirmation).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'Permanently delete roles',
+            items: [expect.objectContaining({ name: 'Custom Role' })],
+          })
+        );
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
-export function PlatformHubTeam(props: { route?: string }) {
+export function PlatformHubTeam(props: Readonly<{ route?: string }>) {
   const { t } = useTranslation();
   const { id: idFromParam } = useParams<{ id: string }>();
   const id = idFromParam;

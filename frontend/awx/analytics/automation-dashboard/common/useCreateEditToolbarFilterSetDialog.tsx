@@ -18,13 +18,15 @@ type DashboardFilterSetFormValues = {
   name: string;
 };
 
-function CreateEditToolbarFilterSetDialog(props: {
-  title: string;
-  description?: string;
-  filterSet: IDashboardFilterSet;
-  onComplete: (filterSet: IDashboardFilterSet) => void;
-  onSuccess: (message: string) => void;
-}) {
+function CreateEditToolbarFilterSetDialog(
+  props: Readonly<{
+    title: string;
+    description?: string;
+    filterSet: IDashboardFilterSet;
+    onComplete: (filterSet: IDashboardFilterSet) => void;
+    onSuccess: (message: string) => void;
+  }>
+) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const { title, description, filterSet, onComplete, onSuccess } = props;
@@ -69,11 +71,12 @@ function CreateEditToolbarFilterSetDialog(props: {
       position={'top'}
     >
       <ModalHeader title={title} description={description} />
-      <ModalBody>
+      <ModalBody style={{ paddingLeft: 0 }}>
         <PageForm<DashboardFilterSetFormValues>
           singleColumn
+          disablePadding
           disableSubmitOnEnter
-          submitText={t('Save')}
+          submitText={t('Save report')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onClose}
@@ -82,7 +85,7 @@ function CreateEditToolbarFilterSetDialog(props: {
           <PageFormTextInput
             name={'name'}
             id={'name'}
-            label={t('Name')}
+            label={t('Report name')}
             placeholder={t('Enter report name')}
             isRequired
             maxLength={255}
@@ -103,7 +106,7 @@ export function useCreateEditToolbarFilterSetDialog(
   return useCallback(
     (filterState: IFilterState, filterSet: IDashboardFilterSet) => {
       const newFilterSet = { ...filterSet, filters: JSON.stringify(filterState) };
-      const title = filterSet.id === undefined ? t('Create report') : t('Edit report');
+      const title = filterSet.id === undefined ? t('Save report') : t('Rename report');
       setDialog(
         <CreateEditToolbarFilterSetDialog
           title={title}

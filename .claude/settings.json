@@ -21,12 +21,12 @@
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_wait_for",
-      "Bash(npx tsc --noEmit --project playwright/tsconfig.json)"
+      "Bash(npx tsc --noEmit --project playwright/tsconfig.json)",
+      "Bash(*sonarcloud.io*)",
+      "Bash(echo *SONAR*)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "playwright"
-  ]
+  "enabledMcpjsonServers": ["playwright"]
 }

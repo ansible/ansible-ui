@@ -271,6 +271,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
           await expect(cacheTimeoutInput).toHaveValue('120');
         });
       } finally {
+        await EdaProject.api.waitForSync(page, edaProject.id).catch(() => {});
         await EdaProject.api.delete(page, edaProject.id);
       }
     }

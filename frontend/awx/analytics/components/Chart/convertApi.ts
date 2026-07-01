@@ -58,7 +58,7 @@ export const convertApiToData = (result: ApiReturnType): ChartData => {
       });
       return {
         ...item,
-        childName: s && s.name ? s.name : '',
+        childName: s?.name ?? '',
       };
     });
   }

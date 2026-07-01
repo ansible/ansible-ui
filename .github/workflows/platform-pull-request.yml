@@ -161,8 +161,8 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          url: https://codecov-codecov.apps.rosa.konflux-qe.zmr9.p3.openshiftapps.com
-          slug: ansible-automation-platform/aap-ui
+          url: ${{ vars.CODECOV_URL }}
+          slug: ${{ github.repository }}
           files: ./coverage/combined/lcov.info
           flags: unit-tests
           disable_search: true
@@ -174,19 +174,6 @@ jobs:
         with:
           name: pr_number
           path: pr_number.txt
-
-  platform-ui-image:
-    name: Platform UI Image
-    needs: packages
-    uses: ./.github/workflows/image.yml
-    with:
-      build-directory: platform
-      build-script: build
-      docker-context: platform
-      docker-file: platform/Dockerfile
-      docker-target: platform-ui
-      docker-image: platform-ui
-      upload-artifact: true
 
   hub-insights:
     name: Hub Insights Checks
@@ -240,6 +227,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
         with:
           args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}

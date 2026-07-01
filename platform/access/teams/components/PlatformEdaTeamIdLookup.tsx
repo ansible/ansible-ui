@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
-export function PlatformEdaTeamIdLookup(props: { children: ReactNode }) {
+export function PlatformEdaTeamIdLookup(props: Readonly<{ children: ReactNode }>) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams/`, params.id);

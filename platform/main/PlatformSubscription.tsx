@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useHasAwxService } from './GatewayServices';
 
-export function PlatformSubscription(props: { children: ReactNode }) {
+export function PlatformSubscription(props: Readonly<{ children: ReactNode }>) {
   const { t } = useTranslation();
   const { awxConfig, awxConfigError, serviceDown, refreshAwxConfig } = useAwxConfigState();
 

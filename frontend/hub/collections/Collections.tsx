@@ -46,7 +46,7 @@ export function Collections() {
   const isUnauthorized = isAccessDeniedError(view.error);
 
   const description = t(
-    'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
+    'Collections are packaged units of Ansible content that include roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
   );
 
   // In Insights mode, hide the upload button and all bulk actions from the collections list page

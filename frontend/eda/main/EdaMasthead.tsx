@@ -36,7 +36,12 @@ export function EdaMasthead() {
           <PageNotificationsIcon count={0} onClick={() => pageNavigate(EdaRoute.Notifications)} />
         </ToolbarItem> */}
         <ToolbarItem>
-          <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
+          <PageMastheadDropdown
+            id="help-menu"
+            icon={<QuestionCircleIcon />}
+            tooltipContent={t`Help`}
+            tooltipPosition="bottom"
+          >
             <DropdownItem
               id="documentation"
               isExternalLink

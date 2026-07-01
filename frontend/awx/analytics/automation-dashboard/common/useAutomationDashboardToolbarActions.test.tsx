@@ -165,54 +165,54 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(action.isDisabled).toBeFalsy();
     });
 
-    test('should disable "Create new report" when filter state equals the default', () => {
+    test('should disable "Save report" when filter state equals the default', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Create new report');
+      const subAction = getDropdownSubAction(action, 'Save report');
       expect(subAction?.isDisabled).toBeTruthy();
     });
 
-    test('should disable "Edit current report" when filter state equals the default', () => {
+    test('should disable "Rename report" when filter state equals the default', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
+      const subAction = getDropdownSubAction(action, 'Rename report');
       expect(subAction?.isDisabled).toBeTruthy();
     });
 
-    test('should enable "Create new report" when filter state differs from the default', () => {
+    test('should enable "Save report" when filter state differs from the default', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Create new report');
+      const subAction = getDropdownSubAction(action, 'Save report');
       expect(subAction?.isDisabled).toBeFalsy();
     });
 
-    test('should enable "Edit current report" when filter state differs from the default', () => {
+    test('should enable "Rename report" when filter state differs from the default', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
+      const subAction = getDropdownSubAction(action, 'Rename report');
       expect(subAction?.isDisabled).toBeFalsy();
     });
 
-    test('should disable "Delete current report" with admin-only message when user is not a superuser', () => {
+    test('should disable "Delete report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Delete current report');
+      const subAction = getDropdownSubAction(action, 'Delete report');
       expect(subAction?.isDisabled).toBe('Only administrators can delete reports');
     });
 
-    test('should enable "Delete current report" for superusers', () => {
+    test('should enable "Delete report" for superusers', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Delete current report');
+      const subAction = getDropdownSubAction(action, 'Delete report');
       expect(subAction?.isDisabled).toBeFalsy();
     });
 
-    test('should disable "Create new report" with admin-only message when user is not a superuser', () => {
+    test('should disable "Save report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Create new report');
+      const subAction = getDropdownSubAction(action, 'Save report');
       expect(subAction?.isDisabled).toBe('Only administrators can save reports');
     });
 
-    test('should disable "Edit current report" with admin-only message when user is not a superuser', () => {
+    test('should disable "Rename report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
+      const subAction = getDropdownSubAction(action, 'Rename report');
       expect(subAction?.isDisabled).toBe('Only administrators can save reports');
     });
 
@@ -222,35 +222,35 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(action.actions).toHaveLength(3);
     });
 
-    test('should include "Create new report", "Edit current report", "Delete current report" sub-actions', () => {
+    test('should include "Save report", "Rename report", "Delete report" sub-actions', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
       expect(action.type).toBe(PageActionType.Dropdown);
 
       const labels = action.actions.flatMap((a) =>
         a.type === PageActionType.Seperator ? [] : [a.label]
       );
-      expect(labels).toContain('Create new report');
-      expect(labels).toContain('Edit current report');
-      expect(labels).toContain('Delete current report');
+      expect(labels).toContain('Save report');
+      expect(labels).toContain('Rename report');
+      expect(labels).toContain('Delete report');
     });
 
-    test('should call createToolbarFilterSet when "Create new report" is clicked', () => {
+    test('should call createToolbarFilterSet when "Save report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Create new report');
+      const subAction = getDropdownSubAction(action, 'Save report');
       subAction?.onClick();
       expect(mockCreateFn).toHaveBeenCalledWith(nonDefaultFilterState);
     });
 
-    test('should call updateToolbarFilterSet when "Edit current report" is clicked', () => {
+    test('should call updateToolbarFilterSet when "Rename report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
+      const subAction = getDropdownSubAction(action, 'Rename report');
       subAction?.onClick();
       expect(mockUpdateFn).toHaveBeenCalledWith(filterSet, nonDefaultFilterState);
     });
 
-    test('should call removeToolbarFilterSet when "Delete current report" is clicked', () => {
+    test('should call removeToolbarFilterSet when "Delete report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Delete current report');
+      const subAction = getDropdownSubAction(action, 'Delete report');
       subAction?.onClick();
       expect(mockRemoveFn).toHaveBeenCalledWith(filterSet);
     });

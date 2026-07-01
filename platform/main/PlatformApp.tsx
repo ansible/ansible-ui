@@ -11,6 +11,7 @@ import { useUIFlag } from '../settings/ui-flags/useUIFlag';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { PersonaViewSwitcher } from './persona-view/PersonaViewSwitcher';
+import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
 import { PageTitleProvider } from '@ansible/ansible-ui-framework/PageTitle/PageTitle';
@@ -68,7 +69,10 @@ export function PlatformApp() {
 
   const { awxConfig, serviceDown, serviceDownStatusCode } = useAwxConfigState();
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
+  const { activePlatformUser } = usePlatformActiveUser();
   const subscriptionBanner = useMemo(() => {
+    // Hide compliance banners for non-admin users - they cannot act on compliance issues
+    if (!activePlatformUser?.is_superuser) return null;
     if (!awxConfig?.license_info || managedCloudInstall) return null;
     if (!awxConfig.license_info.compliant) {
       if (awxConfig.license_info.grace_period_remaining) {
@@ -109,7 +113,7 @@ export function PlatformApp() {
       );
     }
     return null;
-  }, [awxConfig, managedCloudInstall]);
+  }, [activePlatformUser?.is_superuser, awxConfig, managedCloudInstall]);
 
   const controllerDownBanner = useMemo(() => {
     if (!serviceDown) return null;
@@ -159,7 +163,7 @@ export function PlatformApp() {
         masthead={<PlatformMasthead />}
         navigation={navigation}
         basename={process.env.ROUTE_PREFIX ?? '/'}
-        defaultRefreshInterval={10}
+        defaultRefreshInterval={30}
         banner={
           <>
             {controllerDownBanner}

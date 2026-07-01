@@ -23,7 +23,7 @@ export function useExecutionEnvToolbarActions(view: IAwxView<ExecutionEnvironmen
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/execution_environments/`);
-  const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
+  const canCreateExecutionEnvironment = Boolean(data?.actions?.['POST']);
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [

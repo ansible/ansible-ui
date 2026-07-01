@@ -43,7 +43,12 @@ export function HubMasthead() {
           <PageNotificationsIcon />
         </ToolbarItem>
         <ToolbarItem>
-          <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
+          <PageMastheadDropdown
+            id="help-menu"
+            icon={<QuestionCircleIcon />}
+            tooltipContent={t`Help`}
+            tooltipPosition="bottom"
+          >
             <DropdownItem
               id="about"
               onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/galaxy-logo.svg' })}

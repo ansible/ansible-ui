@@ -97,7 +97,7 @@ export function NodeContextMenu(props: { element: Node<NodeModel, GraphNodeData>
         icon={item.icon}
         isDanger={item.isDanger}
         onClick={() => {
-          item?.onClick && item.onClick();
+          item?.onClick?.();
         }}
       >
         {item.label}

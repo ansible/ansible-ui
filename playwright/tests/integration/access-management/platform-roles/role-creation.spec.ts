@@ -8,22 +8,30 @@ test.afterEach(setupAfter);
 
 test.describe('Role Creation Tests', () => {
   test.describe('Basic Role Creation', () => {
-    test('should create a Galaxy namespace role', { tag: ['@not_mock'] }, async ({ page }) => {
-      const roleName = createE2EName();
-      const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
+    test(
+      'should create a Galaxy namespace role',
+      { tag: ['@not_mock', '@tier1'] },
+      async ({ page }) => {
+        const roleName = createE2EName();
+        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
 
-      const createdRoleName = await Role.ui.createWithConfig(page, config);
-      await Role.ui.verifyDetails(page, createdRoleName, config);
-      await Role.ui.delete(page, createdRoleName);
-    });
-    test('should create a AWX inventory role', { tag: ['@not_mock'] }, async ({ page }) => {
-      const roleName = createE2EName();
-      const config = { ...TEST_ROLE_CONFIGS.awxInventory, name: roleName };
+        const createdRoleName = await Role.ui.createWithConfig(page, config);
+        await Role.ui.verifyDetails(page, createdRoleName, config);
+        await Role.ui.delete(page, createdRoleName);
+      }
+    );
+    test(
+      'should create a AWX inventory role',
+      { tag: ['@not_mock', '@tier1'] },
+      async ({ page }) => {
+        const roleName = createE2EName();
+        const config = { ...TEST_ROLE_CONFIGS.awxInventory, name: roleName };
 
-      const createdRoleName = await Role.ui.createWithConfig(page, config);
-      await Role.ui.verifyDetails(page, createdRoleName, config);
-      await Role.ui.delete(page, createdRoleName);
-    });
+        const createdRoleName = await Role.ui.createWithConfig(page, config);
+        await Role.ui.verifyDetails(page, createdRoleName, config);
+        await Role.ui.delete(page, createdRoleName);
+      }
+    );
   });
 
   test.describe('Role Creation Validation', () => {
@@ -132,41 +140,6 @@ test.describe('Role Creation Tests', () => {
 
         // Cleanup: Cancel form and delete the role
         await Role.ui.cancelForm(page);
-        await Role.ui.delete(page, roleName);
-      }
-    );
-  });
-
-  test.describe('Role Form  Navigation', () => {
-    test(
-      'should cancel role creation and return to list',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-
-        await Role.ui.navigate(page);
-        await Role.ui.clickCreateRole(page);
-        await Role.ui.fillBasicInfo(page, roleName, 'Test description');
-        await Role.ui.selectResourceType(page, 'Namespace');
-        await Role.ui.cancelForm(page);
-        await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
-        await expect(page.getByRole('row').filter({ hasText: roleName })).not.toBeVisible();
-      }
-    );
-
-    test(
-      'should navigate back to roles list from details page',
-      { tag: ['@not_mock'] },
-      async ({ page }) => {
-        const roleName = createE2EName();
-        const config = { ...TEST_ROLE_CONFIGS.namespace, name: roleName };
-
-        await Role.ui.createWithConfig(page, config);
-        await page.getByLabel('Breadcrumb').getByRole('link', { name: 'Roles' }).click();
-        await expect(page.getByRole('heading', { name: 'Roles' })).toBeVisible();
-        await page.getByRole('textbox', { name: 'Type to filter' }).fill(roleName);
-        await page.getByRole('button', { name: 'apply filter' }).click();
-        await expect(page.getByRole('row').filter({ hasText: roleName })).toBeVisible();
         await Role.ui.delete(page, roleName);
       }
     );

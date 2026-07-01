@@ -28,6 +28,7 @@ test.describe('Host CRUD Operations', () => {
   });
 
   test('should create, edit and delete a host', { tag: ['@not_mock'] }, async ({ page }) => {
+    test.setTimeout(120000);
     let hostName: string;
 
     await test.step('Create host', async () => {

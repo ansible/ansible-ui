@@ -155,7 +155,7 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
 
   // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
-  if (tableColumns && tableColumns.length) {
+  if (tableColumns?.length) {
     const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0];
     defaultSort = defaultSortColumn?.sort;
     defaultSortDirection = defaultSortColumn?.defaultSortDirection;
@@ -280,7 +280,7 @@ export function fillFilters(
           payloadData[key] = values[0];
         } else {
           for (const value of values) {
-            if (payloadData && payloadData[key] && Array.isArray(payloadData[key])) {
+            if (payloadData?.[key] && Array.isArray(payloadData[key])) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-call
               payloadData[key].push(value);
             }

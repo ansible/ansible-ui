@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { AppChatbotContext, ChatbotStateEnum } from './ChatbotProvider';
-import { ChatbotToolbarItem } from './ChatbotToolbarItem';
+import { ChatbotButton } from './ChatbotButton';
 
 vi.mock('./ChatbotState', () => ({
   useChatbot: vi.fn(() => true),
@@ -10,7 +10,7 @@ vi.mock('./ChatbotState', () => ({
 
 import { useChatbot } from './ChatbotState';
 
-describe('ChatbotToolbarItem', () => {
+describe('ChatbotButton', () => {
   const mockSetChatbotState = vi.fn();
 
   const renderWithContext = (chatbotState: ChatbotStateEnum, chatbotEnabled = true) => {
@@ -18,7 +18,7 @@ describe('ChatbotToolbarItem', () => {
 
     return render(
       <AppChatbotContext.Provider value={{ chatbotState, setChatbotState: mockSetChatbotState }}>
-        <ChatbotToolbarItem />
+        <ChatbotButton />
       </AppChatbotContext.Provider>
     );
   };
@@ -30,6 +30,7 @@ describe('ChatbotToolbarItem', () => {
   it('should render chatbot button when chatbot is enabled', () => {
     renderWithContext(ChatbotStateEnum.Closed, true);
 
+    expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument();
     expect(screen.getByTestId('chatbot-badge')).toBeInTheDocument();
   });
 

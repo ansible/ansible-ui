@@ -134,9 +134,7 @@ export function useProjectActions(
             timeout: 2000,
           };
           postRequest(awxAPI`/projects/${project?.id.toString() ?? ''}/copy/`, {
-            name: `${project.name} @ ${new Date()
-              .toTimeString()
-              .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,
+            name: `${project.name} @ ${new Date().toTimeString().substring(0, 8)}`,
           })
             .then(() => {
               alertToaster.addAlert(alert);

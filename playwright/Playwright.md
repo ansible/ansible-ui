@@ -271,7 +271,7 @@ AAP Playwright tests support different deployment topologies (SaaS, Azure, OCP-A
 Set `AAP_TOPOLOGY_TYPE` in `/playwright/.env`:
 
 ```bash
-# Valid values: 'saas', 'azure', 'ocp-a'
+# Valid values: 'saas', 'man-b', 'ocp-a'
 # This is set by the CI/CD pipeline
 AAP_TOPOLOGY_TYPE=saas
 ```
@@ -304,7 +304,7 @@ if (isOcpA()) { /* Skip on OCP-A */ }
 
 **Available constants:**
 - `TOPOLOGY_SAAS` - AWS SaaS deployment (`'saas'`)
-- `TOPOLOGY_AZURE` - Azure cloud deployment (`'azure'`)
+- `TOPOLOGY_AZURE` - Azure cloud deployment (`'man-b'`)
 - `TOPOLOGY_OCP_A` - OpenShift deployment (`'ocp-a'`)
 - `TOPOLOGY_UNKNOWN` - Unknown or local/RPM deployment (`''`)
 

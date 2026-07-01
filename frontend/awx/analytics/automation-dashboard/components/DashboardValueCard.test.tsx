@@ -24,7 +24,7 @@ describe('DashboardValueCard', () => {
       </MemoryRouter>
     );
     expect(screen.getByText('Test Title')).toBeInTheDocument();
-    expect(screen.getByText(/12[.,]345/)).toBeInTheDocument();
+    expect(screen.getByText('12,345', { exact: false })).toBeInTheDocument();
     expect(screen.getByText(/EUR/)).toBeInTheDocument();
   });
 
@@ -83,7 +83,7 @@ describe('DashboardValueCard', () => {
     );
     expect(screen.getByText('Card Error')).toBeInTheDocument();
     expect(screen.getByText('Something failed')).toBeInTheDocument();
-    expect(screen.queryByText(/12[.,]345/)).not.toBeInTheDocument();
+    expect(screen.queryByText((12345).toLocaleString('en-US'))).not.toBeInTheDocument();
   });
 
   test('should not render error state when error is not provided', () => {
@@ -93,6 +93,62 @@ describe('DashboardValueCard', () => {
       </MemoryRouter>
     );
     expect(screen.queryByText('Card Error')).not.toBeInTheDocument();
-    expect(screen.getByText(/12[.,]345/)).toBeInTheDocument();
+    expect(screen.getByText('12,345', { exact: false })).toBeInTheDocument();
+  });
+
+  describe('formatAsCurrency', () => {
+    test('should format numeric value as USD currency when formatAsCurrency is true', () => {
+      render(
+        <MemoryRouter>
+          <DashboardValueCard
+            {...defaultProps}
+            value={2500}
+            valueSuffix={undefined}
+            formatAsCurrency={true}
+          />
+        </MemoryRouter>
+      );
+      expect(screen.getByText('$2,500.00')).toBeInTheDocument();
+    });
+
+    test('should use toLocaleString when formatAsCurrency is false', () => {
+      render(
+        <MemoryRouter>
+          <DashboardValueCard
+            {...defaultProps}
+            value={2500}
+            valueSuffix={undefined}
+            formatAsCurrency={false}
+          />
+        </MemoryRouter>
+      );
+      expect(screen.queryByText('$2,500.00')).not.toBeInTheDocument();
+      expect(screen.getByText('2,500')).toBeInTheDocument();
+    });
+
+    test('should use toLocaleString when formatAsCurrency is omitted', () => {
+      render(
+        <MemoryRouter>
+          <DashboardValueCard {...defaultProps} value={2500} valueSuffix={undefined} />
+        </MemoryRouter>
+      );
+      expect(screen.queryByText('$2,500.00')).not.toBeInTheDocument();
+      expect(screen.getByText('2,500')).toBeInTheDocument();
+    });
+
+    test('should still render valueSuffix alongside currency-formatted value', () => {
+      render(
+        <MemoryRouter>
+          <DashboardValueCard
+            {...defaultProps}
+            value={1000}
+            valueSuffix="*"
+            formatAsCurrency={true}
+          />
+        </MemoryRouter>
+      );
+      expect(screen.getByText(/\$1,000\.00/)).toBeInTheDocument();
+      expect(screen.getByText(/\*/)).toBeInTheDocument();
+    });
   });
 });

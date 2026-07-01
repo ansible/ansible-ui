@@ -11,9 +11,10 @@ const defaultProps: DashboardTableCardProps = {
   title: 'Test Table',
   help: 'Help text',
   firstColumnHeader: 'Name',
-  emptyStateTitle: 'No Data',
   errorStateTitle: 'Error!',
   loading: false,
+  clearAllFilters: () => {},
+  filterState: {},
   items: [
     { id: 1, name: 'Item 1', execution_count: 10 },
     { id: 2, name: 'Item 2', execution_count: 20 },
@@ -34,8 +35,7 @@ describe('DashboardTableCard', () => {
 
   test('shows empty state when items is empty', () => {
     render(<DashboardTableCard {...defaultProps} items={[]} />);
-    expect(screen.getByText('No Data')).toBeInTheDocument();
-    expect(screen.getByText('There is currently no data available.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'No data' })).toBeInTheDocument();
   });
 
   test('should show skeletons and hide table columns when loading', () => {
@@ -71,6 +71,6 @@ describe('DashboardTableCard', () => {
     const { items: _items, ...propsWithoutItems } = defaultProps;
     render(<DashboardTableCard {...propsWithoutItems} />);
     // pageItems falls back to [] and itemCount to 0 — empty state is shown
-    expect(screen.getByText('No Data')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'No data' })).toBeInTheDocument();
   });
 });

@@ -24,11 +24,7 @@ export function JobExpanded(job: UnifiedJob) {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const inventorySourceChoices = useMemo(
     () =>
-      data &&
-      data.actions &&
-      data.actions['GET'] &&
-      data.actions['GET'].source &&
-      Array.isArray(data.actions['GET'].source.choices)
+      Array.isArray(data?.actions?.['GET']?.source?.choices)
         ? data.actions['GET'].source.choices
         : [],
     [data]
@@ -96,7 +92,7 @@ export function JobExpanded(job: UnifiedJob) {
         </PageDetail>
       )}
       {job.summary_fields?.inventory && (
-        <PageDetail label={t`Inventory`}>
+        <PageDetail label={t`Inventory`} helpText={t('Inventory used on this job.')}>
           <Link
             to={getPageUrl(AwxRoute.InventoryDetails, {
               params: {
@@ -110,7 +106,10 @@ export function JobExpanded(job: UnifiedJob) {
         </PageDetail>
       )}
       {job.summary_fields?.project && (
-        <PageDetail label={t`Project`}>
+        <PageDetail
+          label={t`Project`}
+          helpText={t('This is the project that contains the playbook that this job will execute.')}
+        >
           <Link
             to={getPageUrl(AwxRoute.ProjectDetails, {
               params: { id: job.summary_fields?.project.id },
@@ -131,7 +130,11 @@ export function JobExpanded(job: UnifiedJob) {
           />
         )}
       {job.summary_fields?.credentials && (
-        <PageDetail label={t`Credentials`} isEmpty={job.summary_fields?.credentials.length === 0}>
+        <PageDetail
+          label={t`Credentials`}
+          helpText={t('Credentials needed to access the nodes that this job will run against.')}
+          isEmpty={job.summary_fields?.credentials.length === 0}
+        >
           <LabelGroup
             numLabels={5}
             collapsedText={t(`{{count}} more`, {
@@ -145,7 +148,12 @@ export function JobExpanded(job: UnifiedJob) {
         </PageDetail>
       )}
       {job.summary_fields?.labels && job.summary_fields?.labels.count > 0 && (
-        <PageDetail label={t`Labels`}>
+        <PageDetail
+          label={t`Labels`}
+          helpText={t(
+            'Optional labels that describe this job template, such as "dev" or "test". Use labels to group and filter job templates and completed jobs.'
+          )}
+        >
           <LabelGroup
             numLabels={5}
             collapsedText={t(`{{count}} more`, {
@@ -162,12 +170,20 @@ export function JobExpanded(job: UnifiedJob) {
       )}
       {job.job_explanation && <PageDetail label={t`Explanation`}>{job.job_explanation}</PageDetail>}
       {typeof job.job_slice_number === 'number' && typeof job.job_slice_count === 'number' && (
-        <PageDetail label={t`Job slice`}>{`${
-          job.job_slice_number
-        }/${job.job_slice_count.toString()}`}</PageDetail>
+        <PageDetail
+          label={t`Job slice`}
+          helpText={t(
+            'Divide the work done by this job template into the specified number of job slices, each running the same tasks against a portion of the inventory.'
+          )}
+        >{`${job.job_slice_number}/${job.job_slice_count.toString()}`}</PageDetail>
       )}
       {job.type === 'workflow_job' && job.is_sliced_job && (
-        <PageDetail label={t`Job slice parent`}>{t`True`}</PageDetail>
+        <PageDetail
+          label={t`Job slice parent`}
+          helpText={t(
+            'The job slice parent is a workflow job that coordinates and aggregates the execution of the smaller, parallel slice jobs.'
+          )}
+        >{t`True`}</PageDetail>
       )}
     </PageDetails>
   );

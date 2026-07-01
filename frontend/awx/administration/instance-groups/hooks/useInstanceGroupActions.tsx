@@ -21,7 +21,7 @@ export function useDisableCreateInstanceGroup() {
   const { t } = useTranslation();
   return useMemo(
     () =>
-      data && data.actions && data.actions['POST']
+      data?.actions?.['POST']
         ? undefined
         : t(
             'You do not have permission to create an instance group. Please contact your organization administrator if there is an issue with your access.'

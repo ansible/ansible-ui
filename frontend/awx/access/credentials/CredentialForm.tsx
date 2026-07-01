@@ -675,7 +675,7 @@ function CredentialSubForm({
     setIsTestButtonEnabledSubForm(verify.length >= requiredFieldsInSubForm?.length);
   }, [watchedRequiredFields, setIsTestButtonEnabledSubForm, requiredFieldsInSubForm]);
 
-  if (!credentialType || !credentialType?.inputs?.fields) {
+  if (!credentialType?.inputs?.fields) {
     return null;
   }
 
@@ -735,7 +735,7 @@ function CredentialSubForm({
                     accumulatedPluginValues,
                   });
                 }}
-                fieldInitialValue={initialValues && initialValues[field?.id]}
+                fieldInitialValue={initialValues?.[field?.id]}
               />
             );
           } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
@@ -756,7 +756,7 @@ function CredentialSubForm({
                 key={field.id}
                 field={field}
                 credentialType={credentialType}
-                fieldInitialValue={initialValues && initialValues[field?.id]}
+                fieldInitialValue={initialValues?.[field?.id]}
                 isDisabled={
                   field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
                 }
