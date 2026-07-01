@@ -297,7 +297,7 @@ describe('PageSettingsProvider', () => {
   describe('SWR Configuration', () => {
     test('should configure SWRConfig with onErrorRetry to prevent infinite retry loops on 5xx errors', () => {
       render(
-        <PageSettingsProvider defaultRefreshInterval={30}>
+        <PageSettingsProvider>
           <div>test child</div>
         </PageSettingsProvider>
       );
@@ -310,7 +310,7 @@ describe('PageSettingsProvider', () => {
 
     test('should disable revalidateOnFocus to prevent refetch storms', () => {
       render(
-        <PageSettingsProvider defaultRefreshInterval={30}>
+        <PageSettingsProvider>
           <div>test child</div>
         </PageSettingsProvider>
       );
@@ -321,7 +321,7 @@ describe('PageSettingsProvider', () => {
 
     test('should set a dedupingInterval to prevent duplicate requests', () => {
       render(
-        <PageSettingsProvider defaultRefreshInterval={30}>
+        <PageSettingsProvider>
           <div>test child</div>
         </PageSettingsProvider>
       );
