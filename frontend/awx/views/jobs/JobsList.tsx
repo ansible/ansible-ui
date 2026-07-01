@@ -4,9 +4,10 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { awxAPI } from '../../common/api/awx-utils';
 import { createThrottle } from '../../common/util/createThrottle';
 import { useDomainsStore } from '../../common/domains/useDomains';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
@@ -21,12 +22,17 @@ export type WebSocketMessage = {
   type?: string;
   status?: string;
   unified_job_id?: number;
+  finished?: string;
 };
 
 const FINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
 const NEW_JOB_STATUSES = new Set(['new', 'pending']);
 
-export type WsAction = { type: 'refresh' } | { type: 'fetch'; jobId: number } | { type: 'skip' };
+export type WsAction =
+  | { type: 'refresh' }
+  | { type: 'fetch'; jobId: number }
+  | { type: 'patch'; jobId: number; data: Partial<UnifiedJob> }
+  | { type: 'skip' };
 
 export function getWsAction(
   message: WebSocketMessage | undefined,
@@ -47,9 +53,22 @@ export function getWsAction(
   const jobId = message?.unified_job_id;
 
   if (!status || !jobId) return { type: 'refresh' };
-  if (NEW_JOB_STATUSES.has(status) || FINAL_STATUSES.has(status)) return { type: 'refresh' };
 
-  if (pageItemIds.includes(jobId)) return { type: 'fetch', jobId };
+  if (pageItemIds.includes(jobId)) {
+    const patch: Partial<UnifiedJob> = { status: status as UnifiedJob['status'] };
+    if (status === 'running') {
+      patch.started = new Date().toISOString();
+    }
+    if (FINAL_STATUSES.has(status) && message.finished) {
+      patch.finished = message.finished;
+    }
+    return { type: 'patch', jobId, data: patch };
+  }
+
+  // New job — fetch via filtered query so it can be upserted into the list
+  if (NEW_JOB_STATUSES.has(status)) return { type: 'fetch', jobId };
+
+  // All other off-page status changes — let periodic polling handle reordering
   return { type: 'skip' };
 }
 
@@ -73,7 +92,7 @@ export function JobsList(props: {
 
   usePersistentFilters('jobs');
 
-  const { refresh, updateItem, pageItems } = view;
+  const { refresh, upsertItem, listUrl, pageItems } = view;
   const throttledRefresh = useMemo(
     () =>
       createThrottle(() => {
@@ -86,8 +105,10 @@ export function JobsList(props: {
   // Stable refs to avoid re-render loop in WS subscription
   const pageItemsRef = useRef(pageItems);
   pageItemsRef.current = pageItems;
-  const updateItemRef = useRef(updateItem);
-  updateItemRef.current = updateItem;
+  const upsertItemRef = useRef(upsertItem);
+  upsertItemRef.current = upsertItem;
+  const listUrlRef = useRef(listUrl);
+  listUrlRef.current = listUrl;
 
   const handleWebSocketMessage = useCallback(
     (message?: WebSocketMessage) => {
@@ -99,12 +120,26 @@ export function JobsList(props: {
           throttledRefresh();
           break;
         case 'fetch': {
-          const item = pageItemsRef.current?.find((i) => i.id === action.jobId);
-          const url = item?.url ?? awxAPI`/unified_jobs/${action.jobId.toString()}/`;
-          requestGet<UnifiedJob>(url).then(
-            (updatedJob) => updateItemRef.current(updatedJob),
+          const parsed = new URL(listUrlRef.current, 'http://localhost');
+          parsed.searchParams.set('id', action.jobId.toString());
+          parsed.searchParams.set('page_size', '1');
+          parsed.searchParams.set('count_disabled', '1');
+          const fetchUrl = `${parsed.pathname}?${parsed.searchParams.toString()}`;
+          requestGet<AwxItemsResponse<UnifiedJob>>(fetchUrl).then(
+            (response) => {
+              if (response.results.length > 0) {
+                upsertItemRef.current(response.results[0]);
+              }
+            },
             () => throttledRefresh()
           );
+          break;
+        }
+        case 'patch': {
+          const existing = pageItemsRef.current?.find((i) => i.id === action.jobId);
+          if (existing) {
+            upsertItemRef.current({ ...existing, ...action.data });
+          }
           break;
         }
         case 'skip':
