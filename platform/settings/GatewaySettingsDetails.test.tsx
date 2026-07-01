@@ -39,6 +39,7 @@ describe('GatewaySettingsDetails Component', () => {
       {
         id: 'test-category',
         title: 'Test Category',
+        description: 'Test category description',
         sections: [
           {
             title: 'Test Section',
@@ -96,6 +97,13 @@ describe('GatewaySettingsDetails Component', () => {
   };
 
   describe('Admin User (hasWritePermissions: true)', () => {
+    it('should display category title and description', () => {
+      renderWithContext();
+
+      expect(screen.getByText('Test Category')).toBeInTheDocument();
+      expect(screen.getByText('Test category description')).toBeInTheDocument();
+    });
+
     it('should show edit button for admin user', () => {
       renderWithContext();
 
