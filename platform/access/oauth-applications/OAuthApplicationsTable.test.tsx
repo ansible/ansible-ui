@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { resetTestSwrCache, SwrTestWrapper } from '../../../framework/test-utils/swrTestWrapper';
 import { PlatformUser } from '../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { OAuthApplicationsTable } from './OAuthApplicationsTable';
@@ -137,11 +138,24 @@ describe('OAuthApplicationsTable', () => {
 
   beforeEach(() => {
     server.resetHandlers();
+    resetTestSwrCache();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
+
+  function renderTable() {
+    return render(
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/oauth-applications']}>
+          <Routes>
+            <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
+    );
+  }
 
   test('should render the PageTable with correct props', async () => {
     server.use(
@@ -150,16 +164,10 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
-      const table = screen.getByRole('grid'); // PF tables have a role of 'grid'
+      const table = screen.getByRole('grid');
       expect(table).toBeInTheDocument();
     });
   });
@@ -171,13 +179,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       expect(screen.getByText('Test OAuth Application')).toBeInTheDocument();
@@ -192,13 +194,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       expect(screen.getByText('No OAuth applications found')).toBeInTheDocument();
@@ -212,13 +208,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       expect(screen.getByText('Error loading OAuth applications')).toBeInTheDocument();
@@ -232,13 +222,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       expect(screen.getByText('Create OAuth application')).toBeInTheDocument();
@@ -255,13 +239,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       const createButton = screen.getByRole('link', { name: 'Create OAuth application' });
@@ -279,13 +257,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       expect(screen.getByText('No OAuth applications found')).toBeInTheDocument();
@@ -300,20 +272,13 @@ describe('OAuthApplicationsTable', () => {
 
   test('should show loading state while options are loading', () => {
     server.use(
-      http.options(gatewayAPI`/applications/`, () => {
-        return new HttpResponse(null, { status: 200 });
+      http.options(gatewayAPI`/applications/`, async () => {
+        await new Promise(() => {});
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
-    // Check for skeleton loading elements instead of "Loading..." text
     expect(document.querySelector('.pf-v6-c-skeleton')).toBeInTheDocument();
   });
 
@@ -324,16 +289,10 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
-      const table = screen.getByRole('grid'); // PF tables have a role of 'grid'
+      const table = screen.getByRole('grid');
       expect(table).toBeInTheDocument();
       expect(table).toHaveClass('pf-v6-c-table');
     });
@@ -346,13 +305,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       expect(screen.getByText('Create OAuth application')).toBeInTheDocument();
@@ -369,13 +322,7 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
       const createButton = screen.getByRole('link', { name: 'Create OAuth application' });
@@ -393,16 +340,10 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
-      const table = screen.getByRole('grid'); // PF tables have a role of 'grid'
+      const table = screen.getByRole('grid');
       expect(table).toBeInTheDocument();
     });
   });
@@ -414,16 +355,10 @@ describe('OAuthApplicationsTable', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/access/oauth-applications']}>
-        <Routes>
-          <Route path="/access/oauth-applications" element={<OAuthApplicationsTable />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderTable();
 
     await waitFor(() => {
-      const table = screen.getByRole('grid'); // PF tables have a role of 'grid'
+      const table = screen.getByRole('grid');
       expect(table).toBeInTheDocument();
     });
   });

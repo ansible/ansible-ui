@@ -67,7 +67,7 @@ describe('Platform Subscription and Session Validation Tests', () => {
 
     useIsManagedCloudStub = vi
       .spyOn(GatewayUIAuth, 'useIsManagedCloudInstall')
-      .mockReturnValue(false) as MockInstance & ManagedCloudStub;
+      .mockReturnValue(false) as unknown as MockInstance & ManagedCloudStub;
 
     // Add the returns method to match Cypress stub interface
     useIsManagedCloudStub.returns = (value: boolean) => {

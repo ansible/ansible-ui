@@ -73,7 +73,7 @@ function mockAlertToaster(addAlert = vi.fn()) {
 const defaultProps: {
   credentialType: typeof centrifyCredentialType;
   watchedSubFormFields: unknown[];
-  popDialog: ReturnType<typeof vi.fn>;
+  popDialog: () => void;
   alertToaster: ReturnType<typeof mockAlertToaster>;
 } = {
   credentialType: centrifyCredentialType,

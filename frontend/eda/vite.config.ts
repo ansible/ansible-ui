@@ -2,7 +2,8 @@
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
 import react from '@vitejs/plugin-react';
-import { defineConfig, PluginOption } from 'vite';
+import { type PluginOption } from 'vite';
+import { defineConfig } from 'vitest/config';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -75,12 +76,11 @@ export default defineConfig({
   },
   test: {
     coverage: {
-      all: true,
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**'],
+      exclude: ['node_modules/**', '**/vitest.*.ts'],
     },
     css: !process.env.CI,
     environment: 'happy-dom',

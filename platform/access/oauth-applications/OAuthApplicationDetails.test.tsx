@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { resetTestSwrCache, SwrTestWrapper } from '../../../framework/test-utils/swrTestWrapper';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { ApplicationDetailInner } from './OAuthApplicationDetails';
 
@@ -42,7 +43,10 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  resetTestSwrCache();
+});
 afterAll(() => server.close());
 
 const mockApplication: Application = {
@@ -78,65 +82,71 @@ const mockApplication: Application = {
 
 describe('ApplicationDetailInner', () => {
   test('should display application name', () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     expect(screen.getByText('Test OAuth Application')).toBeInTheDocument();
   });
 
   test('should display organization name', () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     expect(screen.getByText('Test Organization')).toBeInTheDocument();
   });
 
   test('should display application URL', () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     expect(screen.getByText('https://example.com')).toBeInTheDocument();
   });
 
   test('should display description', () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     expect(screen.getByText('Test application description')).toBeInTheDocument();
   });
 
   test('should display authorization grant type from OPTIONS choices', async () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     await waitFor(() => {
       expect(screen.getByText('Authorization code')).toBeInTheDocument();
     });
   });
 
   test('should display client type from OPTIONS choices', async () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     await waitFor(() => {
       expect(screen.getByText('Confidential')).toBeInTheDocument();
     });
   });
 
   test('should display redirect URIs', () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     expect(screen.getByText('https://example.com/callback')).toBeInTheDocument();
   });
 
   test('should display post logout redirect URIs', () => {
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
     expect(screen.getByText('https://example.com/logout')).toBeInTheDocument();
   });
 
   test('should display "No OIDC support" when algorithm is empty', async () => {
-    render(<ApplicationDetailInner application={{ ...mockApplication, algorithm: '' }} />);
+    render(<ApplicationDetailInner application={{ ...mockApplication, algorithm: '' }} />, {
+      wrapper: SwrTestWrapper,
+    });
     await waitFor(() => {
       expect(screen.getByText('No OIDC support')).toBeInTheDocument();
     });
   });
 
   test('should display "RSA with SHA-2 256" when algorithm is RS256', async () => {
-    render(<ApplicationDetailInner application={{ ...mockApplication, algorithm: 'RS256' }} />);
+    render(<ApplicationDetailInner application={{ ...mockApplication, algorithm: 'RS256' }} />, {
+      wrapper: SwrTestWrapper,
+    });
     await waitFor(() => {
       expect(screen.getByText('RSA with SHA-2 256')).toBeInTheDocument();
     });
   });
 
   test('should display "HMAC with SHA-2 256" when algorithm is HS256', async () => {
-    render(<ApplicationDetailInner application={{ ...mockApplication, algorithm: 'HS256' }} />);
+    render(<ApplicationDetailInner application={{ ...mockApplication, algorithm: 'HS256' }} />, {
+      wrapper: SwrTestWrapper,
+    });
     await waitFor(() => {
       expect(screen.getByText('HMAC with SHA-2 256')).toBeInTheDocument();
     });
@@ -144,14 +154,16 @@ describe('ApplicationDetailInner', () => {
 
   test('should display "No" when skip_authorization is false', () => {
     render(
-      <ApplicationDetailInner application={{ ...mockApplication, skip_authorization: false }} />
+      <ApplicationDetailInner application={{ ...mockApplication, skip_authorization: false }} />,
+      { wrapper: SwrTestWrapper }
     );
     expect(screen.getByTestId('skip-authorization')).toHaveTextContent('No');
   });
 
   test('should display "Yes" when skip_authorization is true', () => {
     render(
-      <ApplicationDetailInner application={{ ...mockApplication, skip_authorization: true }} />
+      <ApplicationDetailInner application={{ ...mockApplication, skip_authorization: true }} />,
+      { wrapper: SwrTestWrapper }
     );
     expect(screen.getByTestId('skip-authorization')).toHaveTextContent('Yes');
   });
@@ -163,7 +175,7 @@ describe('ApplicationDetailInner', () => {
       })
     );
 
-    render(<ApplicationDetailInner application={mockApplication} />);
+    render(<ApplicationDetailInner application={mockApplication} />, { wrapper: SwrTestWrapper });
 
     // Without OPTIONS data, getChoiceLabel falls back to the raw API value
     await waitFor(() => {

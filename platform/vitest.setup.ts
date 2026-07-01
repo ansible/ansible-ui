@@ -1,9 +1,9 @@
 // vitest.setup.ts
 import '@testing-library/jest-dom/vitest';
+import '@ansible/ansible-ui-framework/vitest.i18n';
 import { Window } from 'happy-dom';
-import { mockI18n, enablePreview } from '@ansible/ansible-ui-framework/vitest.common';
+import { enablePreview } from '@ansible/ansible-ui-framework/vitest.preview';
 
-mockI18n();
 enablePreview();
 
 const window = global.window as unknown as Window;
