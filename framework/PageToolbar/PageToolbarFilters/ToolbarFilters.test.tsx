@@ -186,7 +186,110 @@ describe('PageToolbarFilters', () => {
     const input = screen.getByPlaceholderText('Filter by mt1');
     await user.type(input, 'test');
 
-    // Multi-text filter should have an apply button
     expect(screen.getByRole('button', { name: 'apply filter' })).toBeInTheDocument();
+  });
+
+  it('should render single grouped filter directly without selector', () => {
+    const filter = createSingleTextFilter(1);
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter]} />);
+
+    expect(screen.getByPlaceholderText('Filter by st1')).toBeInTheDocument();
+  });
+
+  it('should render filter key selector for multiple grouped filters', () => {
+    const filter1 = createSingleTextFilter(1);
+    const filter2 = createSingleTextFilter(2);
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter1, filter2]} />);
+
+    expect(screen.getByPlaceholderText('Filter by st1')).toBeInTheDocument();
+  });
+
+  it('should render single select filter', () => {
+    const filter = createSingleSelectFilter(1, { isPinned: true });
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter]} />);
+
+    expect(screen.getByText('Filter by ss1')).toBeInTheDocument();
+  });
+
+  it('should add filter chip on multi-text Enter', async () => {
+    const user = userEvent.setup();
+    const filter = createMultiTextFilter(1, { isPinned: true });
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter]} />);
+
+    const input = screen.getByPlaceholderText('Filter by mt1');
+    await user.type(input, 'value1{Enter}');
+
+    const filterState = screen.getByTestId('filter-state');
+    expect(filterState.textContent).toContain('value1');
+  });
+
+  it('should not render chips for pinned SingleSelect filter', () => {
+    const filter = createSingleSelectFilter(1, { isPinned: true });
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter]} />);
+
+    expect(screen.queryByRole('group', { name: 'Single-Select 1' })).not.toBeInTheDocument();
+  });
+
+  it('should not render chips for pinned DateRange filter', () => {
+    render(<ToolbarFiltersTest toolbarFilters={[dateRangeFilter]} />);
+
+    expect(screen.queryByRole('group', { name: 'Date Range' })).not.toBeInTheDocument();
+  });
+
+  it('should render empty when no toolbar filters', () => {
+    const { container } = render(<ToolbarFiltersTest toolbarFilters={[]} />);
+
+    expect(container.querySelector('[data-testid="text-input"]')).not.toBeInTheDocument();
+  });
+
+  it('should render empty when toolbar filters is undefined', () => {
+    const { container } = render(<ToolbarFiltersTest toolbarFilters={undefined} />);
+
+    expect(container.querySelector('[data-testid="text-input"]')).not.toBeInTheDocument();
+  });
+
+  it('should hide label for pinned single-select with no value', () => {
+    const filter = createSingleSelectFilter(1, { isPinned: true });
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter]} />);
+
+    expect(screen.queryByText('Single-Select 1')).not.toBeInTheDocument();
+  });
+
+  it('should render label for single non-pinned filter', () => {
+    const filter = createSingleTextFilter(1);
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter]} />);
+
+    expect(screen.getByText('Single-Text 1')).toBeInTheDocument();
+  });
+
+  it('should render both grouped and pinned filters', () => {
+    const grouped = createSingleTextFilter(1);
+    const pinned = createSingleTextFilter(2, { isPinned: true });
+
+    render(<ToolbarFiltersTest toolbarFilters={[grouped, pinned]} />);
+
+    expect(screen.getByPlaceholderText('Filter by st1')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Filter by st2')).toBeInTheDocument();
+  });
+
+  it('should render multi-select filter', () => {
+    const filter = createMultiSelectFilter(1, { isPinned: true });
+
+    render(<ToolbarFiltersTest toolbarFilters={[filter]} />);
+
+    expect(screen.getByText('Filter by ms1')).toBeInTheDocument();
+  });
+
+  it('should render date range filter with required default', () => {
+    render(<ToolbarFiltersTest toolbarFilters={[dateRangeFilter]} />);
+
+    expect(screen.getByText('Last 7 days')).toBeInTheDocument();
   });
 });
