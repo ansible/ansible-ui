@@ -1,4 +1,9 @@
 coverage:
+  status:
+    project:
+      default:
+        flags:
+          - unit-tests
   ignore:
     - "**/*.test.ts"
     - "**/*.test.tsx"
