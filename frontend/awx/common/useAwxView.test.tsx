@@ -355,7 +355,7 @@ describe('useAwxView', () => {
     });
   });
 
-  describe('serviceDown flag (AAP-79479)', () => {
+  describe('serviceDown flag', () => {
     test('should not fetch when serviceDown is true', async () => {
       const requestUrls: string[] = [];
       server.use(
