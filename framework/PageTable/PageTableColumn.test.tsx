@@ -1,6 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
-import { renderHook } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
