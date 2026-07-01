@@ -1,11 +1,12 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { IPageAction, PageActionSelection, PageActionType } from '../PageActions/PageAction';
 import { IFilterState } from '../PageToolbar/PageToolbarFilter';
 import { PageTable, PageTableProps } from './PageTable';
-import { ITableColumn } from './PageTableColumn';
+import { ColumnTableOption, ITableColumn } from './PageTableColumn';
 
 describe('PageTable Component', () => {
   interface MockItem {
@@ -278,5 +279,338 @@ describe('PageTable Component', () => {
 
     const pagination = container.querySelector('.pf-v6-c-pagination');
     expect(pagination).not.toBeInTheDocument();
+  });
+
+  it('should render selection checkbox column when showSelect is true', () => {
+    renderPageTable({
+      showSelect: true,
+      isSelected: () => false,
+      selectedItems: [],
+      selectItem: vi.fn(),
+      unselectItem: vi.fn(),
+    });
+
+    expect(screen.getByTestId('selections-column-header')).toBeInTheDocument();
+    const checkboxCells = screen.getAllByTestId('checkbox-column-cell');
+    expect(checkboxCells).toHaveLength(mockItems.length);
+  });
+
+  it('should call selectItems when header select-all checkbox is clicked', async () => {
+    const user = userEvent.setup();
+    const selectItems = vi.fn();
+
+    renderPageTable({
+      showSelect: true,
+      isSelected: () => false,
+      selectedItems: [],
+      selectItem: vi.fn(),
+      unselectItem: vi.fn(),
+      selectItems,
+      unselectAll: vi.fn(),
+    });
+
+    const headerCheckbox = within(screen.getByTestId('selections-column-header')).getByRole(
+      'checkbox'
+    );
+    await user.click(headerCheckbox);
+
+    expect(selectItems).toHaveBeenCalledWith(mockItems);
+  });
+
+  it('should call unselectAll when header checkbox is clicked while all selected', async () => {
+    const user = userEvent.setup();
+    const unselectAll = vi.fn();
+
+    renderPageTable({
+      showSelect: true,
+      isSelected: () => true,
+      selectedItems: [...mockItems],
+      selectItem: vi.fn(),
+      unselectItem: vi.fn(),
+      selectItems: vi.fn(),
+      unselectAll,
+    });
+
+    const headerCheckbox = within(screen.getByTestId('selections-column-header')).getByRole(
+      'checkbox'
+    );
+    await user.click(headerCheckbox);
+
+    expect(unselectAll).toHaveBeenCalled();
+  });
+
+  it('should render expand toggle for description columns and reveal content on click', async () => {
+    const user = userEvent.setup();
+    const columnsWithDescription: ITableColumn<MockItem>[] = [
+      {
+        header: 'Name',
+        cell: (item) => item.name,
+      },
+      {
+        header: 'Details',
+        cell: (item) => item.description,
+        table: ColumnTableOption.description,
+        value: (item) => item.description,
+      },
+    ];
+
+    renderPageTable({
+      tableColumns: columnsWithDescription,
+    });
+
+    const expandCells = screen.getAllByTestId('expand-column-cell');
+    expect(expandCells).toHaveLength(mockItems.length);
+
+    const firstExpandButton = within(expandCells[0]).getByRole('button');
+    await user.click(firstExpandButton);
+
+    expect(screen.getByText('First item description')).toBeInTheDocument();
+  });
+
+  it('should call onSelect when a row is clicked', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+
+    renderPageTable({
+      onSelect,
+      isSelected: () => false,
+      selectItem: vi.fn(),
+      unselectItem: vi.fn(),
+    });
+
+    await user.click(screen.getByTestId('row-id-1'));
+
+    expect(onSelect).toHaveBeenCalledWith(mockItems[0]);
+  });
+
+  it('should call unselectAll before selecting when isSelectMultiple is false', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const unselectAll = vi.fn();
+    const selectItem = vi.fn();
+
+    renderPageTable({
+      onSelect,
+      isSelectMultiple: false,
+      isSelected: () => false,
+      selectItem,
+      unselectItem: vi.fn(),
+      unselectAll,
+    });
+
+    await user.click(screen.getByTestId('row-id-1'));
+
+    expect(unselectAll).toHaveBeenCalled();
+    expect(selectItem).toHaveBeenCalledWith(mockItems[0]);
+    expect(onSelect).toHaveBeenCalledWith(mockItems[0]);
+  });
+
+  it('should unselectItem when clicking a selected row in multi-select mode', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const unselectItem = vi.fn();
+
+    renderPageTable({
+      onSelect,
+      isSelectMultiple: true,
+      isSelected: (item) => item.id === 1,
+      selectItem: vi.fn(),
+      unselectItem,
+    });
+
+    await user.click(screen.getByTestId('row-id-1'));
+
+    expect(unselectItem).toHaveBeenCalledWith(mockItems[0]);
+    expect(onSelect).toHaveBeenCalledWith(mockItems[0]);
+  });
+
+  it('should disable unchecked row checkboxes when maxSelections is reached', () => {
+    renderPageTable({
+      showSelect: true,
+      maxSelections: 1,
+      isSelected: (item) => item.id === 1,
+      selectedItems: [mockItems[0]],
+      selectItem: vi.fn(),
+      unselectItem: vi.fn(),
+    });
+
+    const checkboxCells = screen.getAllByTestId('checkbox-column-cell');
+    const firstCheckbox = within(checkboxCells[0]).getByRole('checkbox');
+    const secondCheckbox = within(checkboxCells[1]).getByRole('checkbox');
+
+    expect(firstCheckbox).not.toBeDisabled();
+    expect(secondCheckbox).toBeDisabled();
+  });
+
+  it('should render sort headers for columns with sort property', () => {
+    const sortableColumns: ITableColumn<MockItem>[] = [
+      {
+        header: 'Name',
+        cell: (item) => item.name,
+        sort: 'name',
+      },
+      {
+        header: 'Description',
+        cell: (item) => item.description,
+      },
+    ];
+
+    const setSort = vi.fn();
+    const setSortDirection = vi.fn();
+
+    renderPageTable({
+      tableColumns: sortableColumns,
+      sort: 'name',
+      setSort,
+      sortDirection: 'asc',
+      setSortDirection,
+    });
+
+    const nameHeader = screen.getByTestId('name-column-header');
+    const sortButton = within(nameHeader).getByRole('button');
+    expect(sortButton).toBeInTheDocument();
+  });
+
+  it('should call setSort and setSortDirection when a sort header is clicked', async () => {
+    const user = userEvent.setup();
+    const sortableColumns: ITableColumn<MockItem>[] = [
+      {
+        header: 'Name',
+        cell: (item) => item.name,
+        sort: 'name',
+      },
+    ];
+
+    const setSort = vi.fn();
+    const setSortDirection = vi.fn();
+
+    renderPageTable({
+      tableColumns: sortableColumns,
+      sort: 'name',
+      setSort,
+      sortDirection: 'asc',
+      setSortDirection,
+    });
+
+    const nameHeader = screen.getByTestId('name-column-header');
+    const sortButton = within(nameHeader).getByRole('button');
+    await user.click(sortButton);
+
+    expect(setSort).toHaveBeenCalledWith('name');
+    expect(setSortDirection).toHaveBeenCalled();
+  });
+
+  it('should render table with compact variant when compact is true', () => {
+    renderPageTable({ compact: true });
+
+    const table = document.querySelector('table.pf-v6-c-table');
+    expect(table).toBeInTheDocument();
+    expect(table).toHaveClass('pf-m-compact');
+  });
+
+  it('should render list view when disableTableView is true', () => {
+    renderPageTable({ disableTableView: true });
+
+    const dataList = document.querySelector('[class*="pf-v6-c-data-list"]');
+    expect(dataList).toBeInTheDocument();
+    expect(document.querySelector('table.pf-v6-c-table')).not.toBeInTheDocument();
+  });
+
+  it('should render card view when both table and list views are disabled', () => {
+    renderPageTable({ disableTableView: true, disableListView: true });
+
+    expect(document.querySelector('table.pf-v6-c-table')).not.toBeInTheDocument();
+    expect(document.querySelector('[class*="pf-v6-c-data-list"]')).not.toBeInTheDocument();
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 2')).toBeInTheDocument();
+  });
+
+  it('should render row action cells when rowActions are provided', () => {
+    renderPageTable();
+
+    const actionCells = screen.getAllByTestId('actions-column-cell');
+    expect(actionCells).toHaveLength(mockItems.length);
+    expect(screen.getByTestId('action-column-header')).toBeInTheDocument();
+  });
+
+  it('should render column header cells with correct data-testid', () => {
+    renderPageTable();
+
+    expect(screen.getByTestId('name-column-header')).toBeInTheDocument();
+    expect(screen.getByTestId('description-column-header')).toBeInTheDocument();
+  });
+
+  it('should render column data cells with correct data-testid', () => {
+    renderPageTable();
+
+    const nameCells = screen.getAllByTestId('name-column-cell');
+    expect(nameCells).toHaveLength(mockItems.length);
+    const descCells = screen.getAllByTestId('description-column-cell');
+    expect(descCells).toHaveLength(mockItems.length);
+  });
+
+  it('should call selectItem when a row checkbox is checked', async () => {
+    const user = userEvent.setup();
+    const selectItem = vi.fn();
+
+    renderPageTable({
+      showSelect: true,
+      isSelected: () => false,
+      selectedItems: [],
+      selectItem,
+      unselectItem: vi.fn(),
+    });
+
+    const checkboxCells = screen.getAllByTestId('checkbox-column-cell');
+    const firstCheckbox = within(checkboxCells[0]).getByRole('checkbox');
+    await user.click(firstCheckbox);
+
+    expect(selectItem).toHaveBeenCalledWith(mockItems[0]);
+  });
+
+  it('should call unselectItem when a selected row checkbox is unchecked', async () => {
+    const user = userEvent.setup();
+    const unselectItem = vi.fn();
+
+    renderPageTable({
+      showSelect: true,
+      isSelected: (item) => item.id === 1,
+      selectedItems: [mockItems[0]],
+      selectItem: vi.fn(),
+      unselectItem,
+    });
+
+    const checkboxCells = screen.getAllByTestId('checkbox-column-cell');
+    const firstCheckbox = within(checkboxCells[0]).getByRole('checkbox');
+    await user.click(firstCheckbox);
+
+    expect(unselectItem).toHaveBeenCalledWith(mockItems[0]);
+  });
+
+  it('should render expanded row with custom expandedRow function', async () => {
+    const user = userEvent.setup();
+
+    renderPageTable({
+      expandedRow: (item) => <div>Expanded: {item.name}</div>,
+    });
+
+    const expandCells = screen.getAllByTestId('expand-column-cell');
+    const firstExpandButton = within(expandCells[0]).getByRole('button');
+    await user.click(firstExpandButton);
+
+    expect(screen.getByText('Expanded: Item 1')).toBeInTheDocument();
+  });
+
+  it('should render onSelect radio buttons when isSelectMultiple is false', () => {
+    renderPageTable({
+      onSelect: vi.fn(),
+      isSelectMultiple: false,
+      isSelected: () => false,
+      selectItem: vi.fn(),
+      unselectItem: vi.fn(),
+    });
+
+    const radios = screen.getAllByRole('radio');
+    expect(radios).toHaveLength(mockItems.length);
   });
 });

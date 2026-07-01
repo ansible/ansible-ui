@@ -248,4 +248,63 @@ describe('PageTableList', () => {
 
     expect(screen.queryByText('should not appear')).not.toBeInTheDocument();
   });
+
+  it('should render labels column', () => {
+    const columnsWithLabels: ITableColumn<TestItem>[] = [
+      {
+        header: 'Name',
+        list: 'name',
+        cell: (item) => item.name,
+      },
+      {
+        header: 'Tags',
+        type: 'labels',
+        value: () => ['production', 'active'],
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageTableList
+          {...baseProps}
+          tableColumns={columnsWithLabels}
+          pageItems={testItems}
+          itemCount={2}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByText('production').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('active').length).toBeGreaterThan(0);
+  });
+
+  it('should skip primary column when value() returns falsy', () => {
+    const columnsWithFalsyPrimary: ITableColumn<TestItem>[] = [
+      {
+        header: 'Name',
+        list: 'name',
+        cell: (item) => item.name,
+      },
+      {
+        header: 'Optional Field',
+        cell: () => 'should not render',
+        value: () => undefined,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageTableList
+          {...baseProps}
+          tableColumns={columnsWithFalsyPrimary}
+          pageItems={testItems}
+          itemCount={2}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Item One')).toBeInTheDocument();
+    expect(screen.queryByText('Optional Field')).not.toBeInTheDocument();
+    expect(screen.queryByText('should not render')).not.toBeInTheDocument();
+  });
 });
