@@ -1,13 +1,9 @@
 coverage:
   status:
     project:
-      unit:
+      default:
         flags:
           - unit-tests
-      e2e:
-        flags:
-          - e2e-tests
-        informational: true
   ignore:
     - "**/*.test.ts"
     - "**/*.test.tsx"
