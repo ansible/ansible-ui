@@ -1,6 +1,7 @@
 import {
   IFilterState,
   IPageAction,
+  IToolbarFilter,
   PageActionSelection,
   PageActionType,
 } from '@ansible/ansible-ui-framework';
@@ -14,6 +15,7 @@ import { useCreateToolbarFilterSet } from './useCreateToolbarFilterSet';
 import { useRemoveToolbarFilterSet } from './useRemoveToolbarFilterSet';
 import { useUpdateToolbarFilterSet } from './useUpdateToolbarFilterSet';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { hasValidRequiredFilters } from '../utils/queryString';
 
 /** Returns true when filterState is empty or equals the default (period = last 7 days only). */
 function isDefaultFilterState(filterState: IFilterState | undefined): boolean {
@@ -29,20 +31,34 @@ function isDefaultFilterState(filterState: IFilterState | undefined): boolean {
   );
 }
 
+function getSaveDisabledReason(
+  superuserDisabledReason: string | undefined,
+  validFilters: boolean,
+  filterState: IFilterState | undefined,
+  t: (key: string) => string
+): string | undefined {
+  if (superuserDisabledReason) return superuserDisabledReason;
+  if (!validFilters) return t('Enter a valid custom date range before saving');
+  if (isDefaultFilterState(filterState)) return t('Modify filters before saving as a report');
+  return undefined;
+}
+
 export function useAutomationDashboardToolbarActions(props: {
   filterState?: IFilterState;
+  toolbarFilters?: IToolbarFilter[];
   selectedFilterSet?: IDashboardFilterSet;
   onDelete: (deletedFilterSet: IDashboardFilterSet) => void;
   onSave: (filterSet: IDashboardFilterSet) => void;
 }) {
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const { filterState, selectedFilterSet, onDelete, onSave } = props;
+  const { filterState, toolbarFilters, selectedFilterSet, onDelete, onSave } = props;
   const createToolbarFilterSet = useCreateToolbarFilterSet(onSave);
   const updateToolbarFilterSet = useUpdateToolbarFilterSet(onSave);
   const removeToolbarFilterSet = useRemoveToolbarFilterSet((deleted) => {
     if (deleted.length > 0) onDelete(deleted[0]);
   });
+  const validFilters = hasValidRequiredFilters(toolbarFilters, filterState);
 
   const superuserDisabledReason = activeAwxUser?.is_superuser
     ? undefined
@@ -52,13 +68,16 @@ export function useAutomationDashboardToolbarActions(props: {
     ? undefined
     : t('Only administrators can delete reports');
 
-  const saveDisabledReason =
-    superuserDisabledReason ??
-    (isDefaultFilterState(filterState) ? t('Modify filters before saving as a report') : undefined);
+  const saveDisabledReason = getSaveDisabledReason(
+    superuserDisabledReason,
+    validFilters,
+    filterState,
+    t
+  );
 
   return useMemo<IPageAction<IJobTemplate>[]>(
     () =>
-      selectedFilterSet
+      selectedFilterSet && validFilters
         ? [
             {
               type: PageActionType.Dropdown,
@@ -120,6 +139,7 @@ export function useAutomationDashboardToolbarActions(props: {
       createToolbarFilterSet,
       updateToolbarFilterSet,
       removeToolbarFilterSet,
+      validFilters,
     ]
   );
 }

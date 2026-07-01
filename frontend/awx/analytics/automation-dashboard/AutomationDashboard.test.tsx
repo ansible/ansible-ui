@@ -257,6 +257,17 @@ describe('AutomationDashboard', () => {
     expect(screen.getByText('88 h')).toBeInTheDocument();
   });
 
+  test('should not render "h" suffix when total_hours_of_automation is 0', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      details: { ...mockDetails, total_hours_of_automation: 0 },
+    });
+    render(testWrapper());
+    expect(screen.getByText('Hours of automation')).toBeInTheDocument();
+    expect(screen.queryByText('88 h')).not.toBeInTheDocument();
+    expect(screen.queryByText(/0 h/)).not.toBeInTheDocument();
+  });
+
   test('should display no jobs have been run when details are undefined', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({ ...mockView, details: undefined });
     render(testWrapper());
