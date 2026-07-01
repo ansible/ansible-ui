@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredentialCell } from './EdaCredentialCell';
 
 const mockCredential = {
@@ -13,7 +14,7 @@ const mockCredential = {
 };
 
 const server = setupServer(
-  http.get('*/eda-credentials/5/', () => HttpResponse.json(mockCredential))
+  http.get(edaAPI`/eda-credentials/5/`, () => HttpResponse.json(mockCredential))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -35,7 +36,7 @@ describe('EdaCredentialCell', () => {
 
   it('should render credential id when data is not yet loaded', () => {
     server.use(
-      http.get('*/eda-credentials/99/', () => {
+      http.get(edaAPI`/eda-credentials/99/`, () => {
         return new HttpResponse(null, { status: 404 });
       })
     );

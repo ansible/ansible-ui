@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../common/eda-utils';
 import { ProjectUserAccess } from './ProjectUserAccess';
 
 const mockUserAccessResponse = {
@@ -46,7 +47,7 @@ const mockRoleDefinitionsResponse = {
 
 const server = setupServer(
   http.get('*/role_user_access/*', () => HttpResponse.json(mockUserAccessResponse)),
-  http.get('*/role_definitions/', () => HttpResponse.json(mockRoleDefinitionsResponse))
+  http.get(edaAPI`/role_definitions/`, () => HttpResponse.json(mockRoleDefinitionsResponse))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));

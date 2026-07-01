@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { CreateOrganization, EditOrganization } from './OrganizationForm';
 
 const mockOrganization = {
@@ -16,12 +17,12 @@ const mockOrganization = {
 };
 
 const server = setupServer(
-  http.get('*/organizations/3/', () => HttpResponse.json(mockOrganization)),
-  http.post('*/organizations/', async ({ request }) => {
+  http.get(edaAPI`/organizations/3/`, () => HttpResponse.json(mockOrganization)),
+  http.post(edaAPI`/organizations/`, async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json({ id: 10, ...(body as object) }, { status: 201 });
   }),
-  http.patch('*/organizations/3/', async ({ request }) => {
+  http.patch(edaAPI`/organizations/3/`, async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json({ ...mockOrganization, ...(body as object) });
   })
@@ -63,7 +64,7 @@ describe('OrganizationForm', () => {
     it('should not submit when name is empty', async () => {
       const postSpy = vi.fn();
       server.use(
-        http.post('*/organizations/', async ({ request }) => {
+        http.post(edaAPI`/organizations/`, async ({ request }) => {
           postSpy(await request.json());
           return HttpResponse.json({ id: 1 }, { status: 201 });
         })
@@ -91,7 +92,7 @@ describe('OrganizationForm', () => {
 
     it('should display error on API failure', async () => {
       server.use(
-        http.post('*/organizations/', () =>
+        http.post(edaAPI`/organizations/`, () =>
           HttpResponse.json({ detail: 'Internal Server Error' }, { status: 500 })
         )
       );
@@ -139,7 +140,9 @@ describe('OrganizationForm', () => {
     });
 
     it('should render loading state before organization data loads', async () => {
-      server.use(http.get('*/organizations/3/', () => new HttpResponse(null, { status: 200 })));
+      server.use(
+        http.get(edaAPI`/organizations/3/`, () => new HttpResponse(null, { status: 200 }))
+      );
 
       render(
         <MemoryRouter initialEntries={['/organizations/3/edit']}>

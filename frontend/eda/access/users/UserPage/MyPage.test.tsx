@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaActiveUserContext } from '../../../common/useEdaActiveUser';
 import { MyPage } from './MyPage';
 
@@ -31,7 +32,7 @@ const mockNonSuperUser = {
   resource: { ansible_id: 'def-456', resource_type: 'shared.user' },
 };
 
-const server = setupServer(http.get('*/users/me/', () => HttpResponse.json(mockUser)));
+const server = setupServer(http.get(edaAPI`/users/me/`, () => HttpResponse.json(mockUser)));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
@@ -93,7 +94,7 @@ describe('MyPage', () => {
   });
 
   it('should not display breadcrumbs for non-superuser', async () => {
-    server.use(http.get('*/users/me/', () => HttpResponse.json(mockNonSuperUser)));
+    server.use(http.get(edaAPI`/users/me/`, () => HttpResponse.json(mockNonSuperUser)));
 
     renderMyPage(mockNonSuperUser);
 

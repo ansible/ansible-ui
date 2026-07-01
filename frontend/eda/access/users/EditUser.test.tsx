@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { edaAPI } from '../../common/eda-utils';
 import { CreateUser, EditCurrentUser, EditUser } from './EditUser';
 
 const mockUser = {
@@ -26,17 +27,17 @@ const mockSuperUser = {
 };
 
 const server = setupServer(
-  http.get('*/users/42/', () => HttpResponse.json(mockUser)),
-  http.get('*/users/me/', () => HttpResponse.json(mockUser)),
-  http.post('*/users/', async ({ request }) => {
+  http.get(edaAPI`/users/42/`, () => HttpResponse.json(mockUser)),
+  http.get(edaAPI`/users/me/`, () => HttpResponse.json(mockUser)),
+  http.post(edaAPI`/users/`, async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json({ id: 99, ...(body as object) }, { status: 201 });
   }),
-  http.patch('*/users/42/', async ({ request }) => {
+  http.patch(edaAPI`/users/42/`, async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json({ ...mockUser, ...(body as object) });
   }),
-  http.patch('*/users/me/', async ({ request }) => {
+  http.patch(edaAPI`/users/me/`, async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json({ ...mockUser, ...(body as object) });
   })
@@ -80,7 +81,7 @@ describe('CreateUser', () => {
   it('should not submit when required fields are empty', async () => {
     const postSpy = vi.fn();
     server.use(
-      http.post('*/users/', async ({ request }) => {
+      http.post(edaAPI`/users/`, async ({ request }) => {
         postSpy(await request.json());
         return HttpResponse.json({ id: 1 }, { status: 201 });
       })
@@ -163,7 +164,7 @@ describe('CreateUser', () => {
 describe('EditUser', () => {
   it('should render loading state before user data loads', async () => {
     server.use(
-      http.get('*/users/42/', () => {
+      http.get(edaAPI`/users/42/`, () => {
         return new HttpResponse(null, { status: 200 });
       })
     );
@@ -201,7 +202,7 @@ describe('EditUser', () => {
   });
 
   it('should render edit form for superuser with correct user type', async () => {
-    server.use(http.get('*/users/42/', () => HttpResponse.json(mockSuperUser)));
+    server.use(http.get(edaAPI`/users/42/`, () => HttpResponse.json(mockSuperUser)));
 
     render(
       <MemoryRouter initialEntries={['/users/42/edit']}>
@@ -260,7 +261,7 @@ describe('EditUser', () => {
 
 describe('EditCurrentUser', () => {
   it('should render loading state before user loads', async () => {
-    server.use(http.get('*/users/me/', () => new HttpResponse(null, { status: 200 })));
+    server.use(http.get(edaAPI`/users/me/`, () => new HttpResponse(null, { status: 200 })));
 
     render(
       <MemoryRouter>

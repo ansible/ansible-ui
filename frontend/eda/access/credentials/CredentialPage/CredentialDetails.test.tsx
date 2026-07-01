@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { CredentialDetails } from './CredentialDetails';
 
 const mockCredential = {
@@ -31,7 +32,7 @@ const mockCredentialInputSources = {
 };
 
 const server = setupServer(
-  http.get('*/eda-credentials/1/', () => HttpResponse.json(mockCredential)),
+  http.get(edaAPI`/eda-credentials/1/`, () => HttpResponse.json(mockCredential)),
   http.get('*/credential-input-sources/*', () => HttpResponse.json(mockCredentialInputSources))
 );
 

@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook, act, screen, fireEvent } from '@testing-library/react';
+import { renderHook, act, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeAll, afterAll, afterEach } from 'vitest';
 import { useDeleteEdaRoles } from './useDeleteEdaRoles';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
@@ -92,6 +93,7 @@ describe('useDeleteEdaRoles', () => {
   });
 
   it('should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.delete(edaAPI`/role_definitions/1/`, () => {
         return HttpResponse.json({});
@@ -104,21 +106,14 @@ describe('useDeleteEdaRoles', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
-    });
+    await user.click(checkbox);
 
     const submitButton = screen.getByRole('button', { name: 'Delete roles' });
-    await act(async () => {
-      fireEvent.click(submitButton);
-      await Promise.resolve();
-    });
+    await user.click(submitButton);
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    await waitFor(() => {
+      expect(onComplete).toHaveBeenCalled();
     });
-
-    expect(onComplete).toHaveBeenCalled();
   });
 
   it('should show alert when built-in roles are selected', () => {

@@ -1,15 +1,47 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { renderHook, act, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { BrowserRouter } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { PageDialogProvider } from '../../../../../framework/PageDialogs/PageDialog';
+import { FrameworkTranslationsProvider } from '../../../../../framework/useFrameworkTranslations';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { useDeleteUsers } from './useDeleteUser';
 
-describe('useDeleteUsers', () => {
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <MemoryRouter>{children}</MemoryRouter>
-  );
+vi.mock('./useUserColumns', () => ({
+  useUserColumns: vi.fn(() => [
+    {
+      header: 'Username',
+      type: 'text',
+      value: (item: EdaUser) => item.username,
+      modal: 'visible',
+    },
+  ]),
+}));
 
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({ children, title }: { children: React.ReactNode; title: string }) => (
+      <div data-testid="modal">
+        <h1>{title}</h1>
+        {children}
+      </div>
+    ),
+  };
+});
+
+const server = setupServer();
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe('useDeleteUsers', () => {
   const createMockUser = (overrides: Partial<EdaUser> = {}): EdaUser =>
     ({
       id: 1,
@@ -24,39 +56,47 @@ describe('useDeleteUsers', () => {
       ...overrides,
     }) as EdaUser;
 
-  it('should return a function', () => {
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <BrowserRouter>
+      <PageDialogProvider>
+        <FrameworkTranslationsProvider>{children}</FrameworkTranslationsProvider>
+      </PageDialogProvider>
+    </BrowserRouter>
+  );
+
+  it('should open confirmation dialog with delete text', () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() => useDeleteUsers(onComplete), { wrapper });
-
-    expect(typeof result.current).toBe('function');
-  });
-
-  it('should accept an array of users when called', () => {
-    const onComplete = vi.fn();
-    const { result } = renderHook(() => useDeleteUsers(onComplete), { wrapper });
-
     const users = [createMockUser({ id: 1, username: 'user1' })];
 
-    expect(() => result.current(users)).not.toThrow();
+    act(() => {
+      result.current(users);
+    });
+
+    expect(screen.getByText('Permanently delete users')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Delete users' })).toBeInTheDocument();
   });
 
-  it('should handle multiple users', () => {
+  it('should call onComplete after confirming deletion', async () => {
+    const user = userEvent.setup();
     const onComplete = vi.fn();
+    server.use(http.delete(edaAPI`/users/1/`, () => HttpResponse.json({})));
+
     const { result } = renderHook(() => useDeleteUsers(onComplete), { wrapper });
+    const users = [createMockUser({ id: 1, username: 'user1' })];
 
-    const users = [
-      createMockUser({ id: 1, username: 'user_a' }),
-      createMockUser({ id: 2, username: 'user_b' }),
-      createMockUser({ id: 3, username: 'user_c' }),
-    ];
+    act(() => {
+      result.current(users);
+    });
 
-    expect(() => result.current(users)).not.toThrow();
-  });
+    const checkbox = screen.getByRole('checkbox');
+    await user.click(checkbox);
 
-  it('should handle an empty array of users', () => {
-    const onComplete = vi.fn();
-    const { result } = renderHook(() => useDeleteUsers(onComplete), { wrapper });
+    const submitButton = screen.getByRole('button', { name: 'Delete users' });
+    await user.click(submitButton);
 
-    expect(() => result.current([])).not.toThrow();
+    await waitFor(() => {
+      expect(onComplete).toHaveBeenCalled();
+    });
   });
 });

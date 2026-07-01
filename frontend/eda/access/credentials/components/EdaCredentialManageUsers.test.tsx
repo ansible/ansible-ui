@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredentialManageUsers } from './EdaCredentialManageUsers';
 
 const mockCredential = {
@@ -29,7 +30,7 @@ const mockUsers = {
 };
 
 const server = setupServer(
-  http.get('*/eda-credentials/1/', () => HttpResponse.json(mockCredential)),
+  http.get(edaAPI`/eda-credentials/1/`, () => HttpResponse.json(mockCredential)),
   http.get('*/v1/users/*', () => HttpResponse.json(mockUsers)),
   http.get('*/role_definitions/*', () => HttpResponse.json({ count: 0, results: [] })),
   http.get('*/role_user_assignments/*', () => HttpResponse.json({ count: 0, results: [] }))
@@ -75,7 +76,7 @@ describe('EdaCredentialManageUsers', () => {
 
   it('should show loading state before data is available', () => {
     server.use(
-      http.get('*/eda-credentials/1/', async () => {
+      http.get(edaAPI`/eda-credentials/1/`, async () => {
         await new Promise(() => {});
         return HttpResponse.json(mockCredential);
       })

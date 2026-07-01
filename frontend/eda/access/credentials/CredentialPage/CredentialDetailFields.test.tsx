@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { CredentialDetailFields } from './CredentialDetailFields';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 
@@ -106,7 +107,7 @@ describe('CredentialDetailFields', () => {
     };
 
     server.use(
-      http.get('*/eda-credentials/5/', () =>
+      http.get(edaAPI`/eda-credentials/5/`, () =>
         HttpResponse.json({
           id: 5,
           name: 'HashiCorp Vault',

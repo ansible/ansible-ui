@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivationManageUsers } from './EdaRulebookActivationManageUsers';
 
 const mockActivation = {
@@ -28,10 +29,10 @@ const mockUsers = {
 };
 
 const server = setupServer(
-  http.get('*/activations/1/', () => {
+  http.get(edaAPI`/activations/1/`, () => {
     return HttpResponse.json(mockActivation);
   }),
-  http.get('*/users/', () => {
+  http.get(edaAPI`/users/`, () => {
     return HttpResponse.json(mockUsers);
   }),
   http.get('*/role_definitions/*', () => {
@@ -90,7 +91,7 @@ describe('EdaRulebookActivationManageUsers', () => {
 
   it('should show loading state while data is being fetched', () => {
     server.use(
-      http.get('*/activations/1/', async () => {
+      http.get(edaAPI`/activations/1/`, async () => {
         await new Promise((resolve) => setTimeout(resolve, 5000));
         return HttpResponse.json(mockActivation);
       })
@@ -112,7 +113,7 @@ describe('EdaRulebookActivationManageUsers', () => {
 
   it('should handle user not found', async () => {
     server.use(
-      http.get('*/users/', () => {
+      http.get(edaAPI`/users/`, () => {
         return HttpResponse.json({ count: 0, results: [] });
       })
     );

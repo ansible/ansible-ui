@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { TeamPage } from './TeamPage';
 
 const mockTeam = {
@@ -14,7 +15,7 @@ const mockTeam = {
   modified: '2024-01-02T00:00:00Z',
 };
 
-const server = setupServer(http.get('*/teams/10/', () => HttpResponse.json(mockTeam)));
+const server = setupServer(http.get(edaAPI`/teams/10/`, () => HttpResponse.json(mockTeam)));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
 afterEach(() => server.resetHandlers());
@@ -66,7 +67,7 @@ describe('TeamPage', () => {
 
   it('should render loading page when team data is not available', () => {
     server.use(
-      http.get('*/teams/99/', async () => {
+      http.get(edaAPI`/teams/99/`, async () => {
         await new Promise(() => {});
         return HttpResponse.json(mockTeam);
       })
@@ -84,7 +85,7 @@ describe('TeamPage', () => {
   });
 
   it('should display error page when API returns an error', async () => {
-    server.use(http.get('*/teams/10/', () => HttpResponse.json({}, { status: 500 })));
+    server.use(http.get(edaAPI`/teams/10/`, () => HttpResponse.json({}, { status: 500 })));
 
     renderTeamPage();
 

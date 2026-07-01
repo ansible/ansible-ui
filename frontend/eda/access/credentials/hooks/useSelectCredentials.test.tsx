@@ -6,6 +6,7 @@ import { PageDialogProvider } from '../../../../../framework/PageDialogs/PageDia
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { BrowserRouter } from 'react-router-dom';
+import { edaAPI } from '../../../common/eda-utils';
 
 const mockCredentials = {
   count: 2,
@@ -28,7 +29,7 @@ const mockCredentials = {
 };
 
 const server = setupServer(
-  http.get('*/eda-credentials/', () => HttpResponse.json(mockCredentials))
+  http.get(edaAPI`/eda-credentials/`, () => HttpResponse.json(mockCredentials))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));

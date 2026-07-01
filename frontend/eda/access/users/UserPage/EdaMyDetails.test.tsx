@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaMyDetails } from './EdaMyDetails';
 
 const mockCurrentUser = {
@@ -18,7 +19,7 @@ const mockCurrentUser = {
   resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
 };
 
-const server = setupServer(http.get('*/users/me/', () => HttpResponse.json(mockCurrentUser)));
+const server = setupServer(http.get(edaAPI`/users/me/`, () => HttpResponse.json(mockCurrentUser)));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
 afterEach(() => server.resetHandlers());
@@ -52,7 +53,7 @@ describe('EdaMyDetails', () => {
 
   it('should render loading page when user data is not loaded', () => {
     server.use(
-      http.get('*/users/me/', async () => {
+      http.get(edaAPI`/users/me/`, async () => {
         await new Promise(() => {});
         return HttpResponse.json(mockCurrentUser);
       })

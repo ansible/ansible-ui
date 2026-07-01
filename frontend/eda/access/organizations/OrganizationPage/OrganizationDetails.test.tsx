@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { OrganizationDetails } from './OrganizationDetails';
 
 const mockOrganization = {
@@ -15,7 +16,7 @@ const mockOrganization = {
 };
 
 const server = setupServer(
-  http.get('*/organizations/1/', () => HttpResponse.json(mockOrganization))
+  http.get(edaAPI`/organizations/1/`, () => HttpResponse.json(mockOrganization))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
@@ -54,7 +55,7 @@ describe('OrganizationDetails', () => {
 
   it('should render loading page when organization is not yet loaded', () => {
     server.use(
-      http.get('*/organizations/99/', async () => {
+      http.get(edaAPI`/organizations/99/`, async () => {
         await new Promise(() => {});
         return HttpResponse.json(mockOrganization);
       })
@@ -73,7 +74,7 @@ describe('OrganizationDetails', () => {
 
   it('should handle organization with empty description', async () => {
     server.use(
-      http.get('*/organizations/1/', () =>
+      http.get(edaAPI`/organizations/1/`, () =>
         HttpResponse.json({ ...mockOrganization, description: '' })
       )
     );

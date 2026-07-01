@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../common/eda-utils';
 import { ActivationInstancePage } from './ActivationInstancePage';
 
 const mockInstance = {
@@ -24,10 +25,10 @@ const mockActivation = {
 };
 
 const server = setupServer(
-  http.get('*/activation-instances/42/', () => {
+  http.get(edaAPI`/activation-instances/42/`, () => {
     return HttpResponse.json(mockInstance);
   }),
-  http.get('*/activations/5/', () => {
+  http.get(edaAPI`/activations/5/`, () => {
     return HttpResponse.json(mockActivation);
   })
 );
@@ -95,7 +96,7 @@ describe('ActivationInstancePage', () => {
 
   it('should handle missing instance data gracefully', async () => {
     server.use(
-      http.get('*/activation-instances/99/', () => {
+      http.get(edaAPI`/activation-instances/99/`, () => {
         return HttpResponse.json({
           id: 99,
           activation_id: null,
@@ -103,7 +104,7 @@ describe('ActivationInstancePage', () => {
           organization_id: 1,
         });
       }),
-      http.get('*/activations//', () => {
+      http.get(edaAPI`/activations//`, () => {
         return new HttpResponse(null, { status: 404 });
       })
     );

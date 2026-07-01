@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { OrganizationPage } from './OrganizationPage';
 
 const mockOrganization = {
@@ -15,7 +16,7 @@ const mockOrganization = {
 };
 
 const server = setupServer(
-  http.get('*/organizations/3/', () => HttpResponse.json(mockOrganization))
+  http.get(edaAPI`/organizations/3/`, () => HttpResponse.json(mockOrganization))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -66,7 +67,7 @@ describe('OrganizationPage', () => {
   });
 
   it('should show loading state when organization data has not loaded', () => {
-    server.use(http.get('*/organizations/3/', () => new HttpResponse(null, { status: 200 })));
+    server.use(http.get(edaAPI`/organizations/3/`, () => new HttpResponse(null, { status: 200 })));
 
     renderOrganizationPage();
 
@@ -75,7 +76,7 @@ describe('OrganizationPage', () => {
 
   it('should show error state on API failure', async () => {
     server.use(
-      http.get('*/organizations/3/', () =>
+      http.get(edaAPI`/organizations/3/`, () =>
         HttpResponse.json({ detail: 'Not found' }, { status: 404 })
       )
     );

@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaRoleExpandedRow } from './EdaRoleExpandedRow';
 
@@ -20,7 +21,7 @@ const mockRoleDetails: EdaRbacRole = {
 } as unknown as EdaRbacRole;
 
 const server = setupServer(
-  http.get('*/role_definitions/5/', () => HttpResponse.json(mockRoleDetails))
+  http.get(edaAPI`/role_definitions/5/`, () => HttpResponse.json(mockRoleDetails))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
@@ -30,7 +31,7 @@ afterAll(() => server.close());
 describe('EdaRoleExpandedRow', () => {
   it('should render expandable row content before data loads', () => {
     server.use(
-      http.get('*/role_definitions/99/', async () => {
+      http.get(edaAPI`/role_definitions/99/`, async () => {
         await new Promise(() => {});
         return HttpResponse.json(mockRoleDetails);
       })

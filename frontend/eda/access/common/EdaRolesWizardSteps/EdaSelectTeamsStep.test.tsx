@@ -5,6 +5,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaSelectTeamsStep } from './EdaSelectTeamsStep';
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
@@ -29,7 +30,7 @@ const mockTeams = {
   ],
 };
 
-const server = setupServer(http.get('*/teams/', () => HttpResponse.json(mockTeams)));
+const server = setupServer(http.get(edaAPI`/teams/`, () => HttpResponse.json(mockTeams)));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
@@ -98,7 +99,7 @@ describe('EdaSelectTeamsStep', () => {
 
   it('should handle empty teams list', async () => {
     server.use(
-      http.get('*/teams/', () =>
+      http.get(edaAPI`/teams/`, () =>
         HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
       )
     );

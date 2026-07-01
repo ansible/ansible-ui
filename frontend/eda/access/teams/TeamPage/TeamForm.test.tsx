@@ -135,7 +135,7 @@ describe('TeamForm', () => {
   describe('EditTeam', () => {
     it('should render loading state before team loads', async () => {
       server.use(
-        http.get('*/teams/5/', async () => {
+        http.get(edaAPI`/teams/5/`, async () => {
           await new Promise((r) => setTimeout(r, 5000));
           return HttpResponse.json({ id: 5, name: 'Team' });
         })
@@ -156,7 +156,7 @@ describe('TeamForm', () => {
 
     it('should render edit team form with populated data', async () => {
       server.use(
-        http.get('*/teams/5/', () =>
+        http.get(edaAPI`/teams/5/`, () =>
           HttpResponse.json({
             id: 5,
             name: 'Existing Team',
@@ -164,7 +164,7 @@ describe('TeamForm', () => {
             organization: { id: 1, name: 'Default' },
           })
         ),
-        http.patch('*/teams/5/', async ({ request }) => {
+        http.patch(edaAPI`/teams/5/`, async ({ request }) => {
           const body = await request.json();
           return HttpResponse.json({ id: 5, ...(body as object) });
         })
@@ -191,7 +191,7 @@ describe('TeamForm', () => {
 
     it('should display breadcrumbs with Teams link', async () => {
       server.use(
-        http.get('*/teams/5/', () =>
+        http.get(edaAPI`/teams/5/`, () =>
           HttpResponse.json({
             id: 5,
             name: 'Existing Team',

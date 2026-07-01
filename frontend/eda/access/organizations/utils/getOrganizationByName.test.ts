@@ -2,6 +2,7 @@
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { getOrganizationByName } from './getOrganizationByName';
 
 const mockOrganization = {
@@ -13,7 +14,7 @@ const mockOrganization = {
 };
 
 const server = setupServer(
-  http.get('*/organizations/', ({ request }) => {
+  http.get(edaAPI`/organizations/`, ({ request }) => {
     const url = new URL(request.url);
     const name = url.searchParams.get('name');
     if (name === 'Default') {
@@ -44,7 +45,7 @@ describe('getOrganizationByName', () => {
 
   it('should return the first result when multiple organizations match', async () => {
     server.use(
-      http.get('*/organizations/', () =>
+      http.get(edaAPI`/organizations/`, () =>
         HttpResponse.json({
           count: 2,
           results: [mockOrganization, { ...mockOrganization, id: 2, name: 'Default Copy' }],

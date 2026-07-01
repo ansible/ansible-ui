@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaActiveUserContext } from '../../common/useEdaActiveUser';
 import { EdaRolePage } from './EdaRolePage';
 
@@ -37,9 +38,9 @@ const mockActiveUser = {
 };
 
 const server = setupServer(
-  http.get('*/role_definitions/5/', () => HttpResponse.json(mockRole)),
-  http.get('*/role_definitions/6/', () => HttpResponse.json(mockManagedRole)),
-  http.get('*/users/me/', () => HttpResponse.json(mockActiveUser))
+  http.get(edaAPI`/role_definitions/5/`, () => HttpResponse.json(mockRole)),
+  http.get(edaAPI`/role_definitions/6/`, () => HttpResponse.json(mockManagedRole)),
+  http.get(edaAPI`/users/me/`, () => HttpResponse.json(mockActiveUser))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));

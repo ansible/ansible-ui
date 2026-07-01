@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { edaAPI } from '../../common/eda-utils';
 import { CredentialPlugins } from './CredentialPlugins';
 
 const mockCredentials = {
@@ -22,7 +23,7 @@ const mockCredentials = {
 };
 
 const server = setupServer(
-  http.get('*/eda-credentials/', () => HttpResponse.json(mockCredentials))
+  http.get(edaAPI`/eda-credentials/`, () => HttpResponse.json(mockCredentials))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));

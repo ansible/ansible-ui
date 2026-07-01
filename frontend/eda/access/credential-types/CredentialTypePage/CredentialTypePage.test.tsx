@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { CredentialTypePage } from './CredentialTypePage';
 
 const mockCredentialType = {
@@ -20,8 +21,8 @@ const mockCredentialType = {
 };
 
 const server = setupServer(
-  http.get('*/credential-types/10/', () => HttpResponse.json(mockCredentialType)),
-  http.options('*/credential-types/10/', () => HttpResponse.json({ actions: { PATCH: {} } }))
+  http.get(edaAPI`/credential-types/10/`, () => HttpResponse.json(mockCredentialType)),
+  http.options(edaAPI`/credential-types/10/`, () => HttpResponse.json({ actions: { PATCH: {} } }))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -74,8 +75,10 @@ describe('CredentialTypePage', () => {
 
   it('should show loading page when data has not loaded', () => {
     server.use(
-      http.get('*/credential-types/10/', () => new HttpResponse(null, { status: 200 })),
-      http.options('*/credential-types/10/', () => HttpResponse.json({ actions: { PATCH: {} } }))
+      http.get(edaAPI`/credential-types/10/`, () => new HttpResponse(null, { status: 200 })),
+      http.options(edaAPI`/credential-types/10/`, () =>
+        HttpResponse.json({ actions: { PATCH: {} } })
+      )
     );
 
     renderCredentialTypePage();

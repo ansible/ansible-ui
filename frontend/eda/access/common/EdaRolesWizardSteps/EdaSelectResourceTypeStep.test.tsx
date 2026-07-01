@@ -5,6 +5,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaSelectResourceTypeStep } from './EdaSelectResourceTypeStep';
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
@@ -40,7 +41,7 @@ const mockOptions = {
 };
 
 const server = setupServer(
-  http.options('*/role_definitions/', () => HttpResponse.json(mockOptions))
+  http.options(edaAPI`/role_definitions/`, () => HttpResponse.json(mockOptions))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));

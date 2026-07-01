@@ -5,6 +5,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaSelectResourcesStep } from './EdaSelectResourcesStep';
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
@@ -29,7 +30,7 @@ const mockProjects = {
   ],
 };
 
-const server = setupServer(http.get('*/projects/', () => HttpResponse.json(mockProjects)));
+const server = setupServer(http.get(edaAPI`/projects/`, () => HttpResponse.json(mockProjects)));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());

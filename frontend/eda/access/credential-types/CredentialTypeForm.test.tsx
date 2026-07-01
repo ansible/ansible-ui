@@ -19,6 +19,7 @@ vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
   return { DataEditor: FakeDataEditor };
 });
 
+import { edaAPI } from '../../common/eda-utils';
 import { CreateCredentialType, EditCredentialType } from './CredentialTypeForm';
 
 const mockCredentialType = {
@@ -35,13 +36,13 @@ const mockCredentialType = {
 };
 
 const server = setupServer(
-  http.get('*/credential-types/10/', () => HttpResponse.json(mockCredentialType)),
-  http.options('*/credential-types/10/', () => HttpResponse.json({ actions: { PATCH: {} } })),
-  http.post('*/credential-types/', async ({ request }) => {
+  http.get(edaAPI`/credential-types/10/`, () => HttpResponse.json(mockCredentialType)),
+  http.options(edaAPI`/credential-types/10/`, () => HttpResponse.json({ actions: { PATCH: {} } })),
+  http.post(edaAPI`/credential-types/`, async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json({ id: 20, ...(body as object) }, { status: 201 });
   }),
-  http.patch('*/credential-types/10/', async ({ request }) => {
+  http.patch(edaAPI`/credential-types/10/`, async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json({ ...mockCredentialType, ...(body as object) });
   })
@@ -87,7 +88,7 @@ describe('CreateCredentialType', () => {
   it('should not submit when name is empty', async () => {
     const postSpy = vi.fn();
     server.use(
-      http.post('*/credential-types/', async ({ request }) => {
+      http.post(edaAPI`/credential-types/`, async ({ request }) => {
         postSpy(await request.json());
         return HttpResponse.json({ id: 1 }, { status: 201 });
       })
@@ -119,7 +120,7 @@ describe('CreateCredentialType', () => {
 
   it('should display error when API returns 500', async () => {
     server.use(
-      http.post('*/credential-types/', () =>
+      http.post(edaAPI`/credential-types/`, () =>
         HttpResponse.json({ detail: 'Internal Server Error' }, { status: 500 })
       )
     );
@@ -192,7 +193,9 @@ describe('EditCredentialType', () => {
   });
 
   it('should show warning when user lacks PATCH permission', async () => {
-    server.use(http.options('*/credential-types/10/', () => HttpResponse.json({ actions: {} })));
+    server.use(
+      http.options(edaAPI`/credential-types/10/`, () => HttpResponse.json({ actions: {} }))
+    );
 
     render(
       <MemoryRouter initialEntries={['/credential-types/10/edit']}>
@@ -211,11 +214,13 @@ describe('EditCredentialType', () => {
 
   it('should render loading state before credential type loads', () => {
     server.use(
-      http.get('*/credential-types/10/', async () => {
+      http.get(edaAPI`/credential-types/10/`, async () => {
         await new Promise((r) => setTimeout(r, 5000));
         return HttpResponse.json(mockCredentialType);
       }),
-      http.options('*/credential-types/10/', () => HttpResponse.json({ actions: { PATCH: {} } }))
+      http.options(edaAPI`/credential-types/10/`, () =>
+        HttpResponse.json({ actions: { PATCH: {} } })
+      )
     );
 
     render(
