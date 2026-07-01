@@ -7,7 +7,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
+import {
+  IToolbarFilter,
+  PageAlertToasterProvider,
+  ToolbarFilterType,
+} from '@ansible/ansible-ui-framework';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import type { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
 
@@ -43,6 +47,21 @@ const defaultCostState: ISubscriptionCosts = {
 const mockSetCostState = vi.fn();
 const mockRefresh = vi.fn();
 
+const mockToolbarFilters: IToolbarFilter[] = [
+  {
+    type: ToolbarFilterType.DateRange,
+    key: 'period',
+    label: 'Period',
+    query: 'period',
+    options: [
+      { label: 'Last 7 days', value: 'last_7_days' },
+      { label: 'Custom', value: 'custom', isCustom: true },
+    ],
+    placeholder: 'Filter by period',
+    isRequired: true,
+  },
+];
+
 function buildProps(
   overrides: Partial<DashboardTableToolbarProps> = {}
 ): DashboardTableToolbarProps {
@@ -53,6 +72,8 @@ function buildProps(
     setCostState: mockSetCostState,
     refresh: mockRefresh,
     onExportCsv: vi.fn(),
+    toolbarFilters: mockToolbarFilters,
+    filterState: { period: ['last_7_days'] },
     ...overrides,
   };
 }
@@ -98,7 +119,7 @@ describe('DashboardTableToolbarRow', () => {
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeInTheDocument();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeInTheDocument();
     expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeInTheDocument();
-    expect(screen.getByTestId('btn-export-csv')).toBeInTheDocument();
+    expect(screen.getByTestId('export-as-csv')).toBeInTheDocument();
   });
 
   test('should display initial values from costState', () => {
@@ -123,44 +144,55 @@ describe('DashboardTableToolbarRow', () => {
 
   test('should render without crashing when costState is undefined', () => {
     renderRow(buildProps({ costState: undefined }));
-    expect(screen.getByTestId('btn-export-csv')).toBeInTheDocument();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeInTheDocument();
   });
 
   // --- Export CSV button ---
 
-  // TODO: Update to `not.toBeDisabled()` once `|| true` is removed from controlsDisabled.
-  test('should disable export button while BE is not yet implemented', () => {
+  test('should enable export button for superuser with data', () => {
     renderRow();
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('export-as-csv')).not.toBeDisabled();
   });
 
   test('should disable export button when isLoading is true', () => {
     renderRow(buildProps({ isLoading: true }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
   test('should disable export button when itemCount is 0', () => {
     renderRow(buildProps({ itemCount: 0 }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
-  // TODO: Re-enable once `|| true` is removed from controlsDisabled.
-  test.skip('should call onExportCsv when export button is clicked', async () => {
+  test('should disable export button when a required toolbar filter is missing a value', () => {
+    renderRow(buildProps({ filterState: {} }));
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+  });
+
+  test('should disable export button when custom period filter is missing a start date', () => {
+    renderRow(buildProps({ filterState: { period: ['custom'] } }));
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+  });
+
+  test('should call onExportCsv with reportType when dropdown option is selected', async () => {
     const user = userEvent.setup();
-    const onExportCsv = vi.fn();
+    const onExportCsv = vi.fn().mockResolvedValue(undefined);
     renderRow(buildProps({ onExportCsv }));
-    await user.click(screen.getByTestId('btn-export-csv'));
-    expect(onExportCsv).toHaveBeenCalled();
+
+    await user.click(screen.getByTestId('export-as-csv'));
+    await user.click(screen.getByRole('menuitem', { name: 'Summary' }));
+
+    await waitFor(() => expect(onExportCsv).toHaveBeenCalledWith('summary'));
   });
 
   // --- Inputs disabled ---
-  test('should disable all controls when not superuser', () => {
+  test('should disable cost inputs and switch when not superuser', () => {
     mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
     renderRow();
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
     expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('export-as-csv')).not.toBeDisabled();
   });
 
   test('should not call put when not superuser', async () => {

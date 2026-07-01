@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
-import { IAutomationDashboardView, IJobTemplate } from '../types';
+import { IAutomationDashboardView, IJobTemplate, ReportType } from '../types';
 import { useGetReportDetails } from './useGetReportDetails';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import { useExportCsv } from './useExportCsv';
@@ -89,14 +89,17 @@ export function useAutomationDashboardView(options: {
   const exportCsvBase = useExportCsv(toolbarFilters, filterState, QUERY_PARAMS);
   const exportPdfBase = useExportPdf(toolbarFilters, filterState, QUERY_PARAMS);
 
-  const exportCsv = useCallback(async () => {
-    setLoading(true);
-    try {
-      await exportCsvBase();
-    } finally {
-      setLoading(false);
-    }
-  }, [exportCsvBase]);
+  const exportCsv = useCallback(
+    async (reportType: ReportType) => {
+      setLoading(true);
+      try {
+        await exportCsvBase(reportType);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [exportCsvBase]
+  );
 
   const exportPdf = useCallback(async () => {
     setLoading(true);

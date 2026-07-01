@@ -7,7 +7,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
+import {
+  IToolbarFilter,
+  PageAlertToasterProvider,
+  ToolbarFilterType,
+} from '@ansible/ansible-ui-framework';
 import { DashboardMainTableCard } from './DashboardMainTableCard';
 import type { IAutomationDashboardView, IDashboardDetails, IJobTemplate } from '../types';
 
@@ -71,6 +75,21 @@ const mockDetails: IDashboardDetails = {
 
 const mockRefresh = vi.fn();
 
+const mockToolbarFilters: IToolbarFilter[] = [
+  {
+    type: ToolbarFilterType.DateRange,
+    key: 'period',
+    label: 'Period',
+    query: 'period',
+    options: [
+      { label: 'Last 7 days', value: 'last_7_days' },
+      { label: 'Custom', value: 'custom', isCustom: true },
+    ],
+    placeholder: 'Filter by period',
+    isRequired: true,
+  },
+];
+
 type MainTableView = IAutomationDashboardView['mainTableView'];
 
 function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableView {
@@ -83,7 +102,7 @@ function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableVi
     setSort: vi.fn(),
     sortDirection: 'asc',
     setSortDirection: vi.fn(),
-    filterState: {},
+    filterState: { period: ['last_7_days'] },
     setFilterState: vi.fn(),
     clearAllFilters: vi.fn(),
     itemCount: 1,
@@ -99,6 +118,7 @@ function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableVi
 function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomationDashboardView {
   return {
     mainTableView: buildMainTableView(),
+    toolbarFilters: mockToolbarFilters,
     details: mockDetails,
     detailsError: undefined,
     detailsLoading: false,
@@ -360,23 +380,26 @@ describe('DashboardMainTableCard', () => {
     expect(screen.getByText('60')).toBeInTheDocument();
   });
 
-  // --- Input readOnly ---
+  // --- Toolbar row ---
+
   test('should disable export CSV button when loading is true', () => {
     renderCard(buildProps({ loading: true }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
-  // TODO: Update to `not.toBeDisabled()` once `|| true` is removed from controlsDisabled in DashboardTableToolbarRow.
-  test('should disable export CSV button while BE is not yet implemented', () => {
+  test('should enable export CSV button for superuser with data', () => {
     renderCard();
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('export-as-csv')).not.toBeDisabled();
   });
-
-  // --- Toolbar row ---
 
   test('should disable export CSV when itemCount is 0', () => {
     renderCard(buildProps({ mainTableView: buildMainTableView({ itemCount: 0, pageItems: [] }) }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+  });
+
+  test('should disable export CSV when a required toolbar filter is missing a value', () => {
+    renderCard(buildProps({ mainTableView: buildMainTableView({ filterState: {} }) }));
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
   test('should disable export CSV when mainTableView itemCount is undefined', () => {
@@ -385,16 +408,18 @@ describe('DashboardMainTableCard', () => {
         mainTableView: buildMainTableView({ itemCount: undefined as unknown as number }),
       })
     );
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
-  // TODO: Re-enable once `|| true` is removed from controlsDisabled in DashboardTableToolbarRow.
-  test.skip('should call onExportCsv when export button is clicked', async () => {
+  test('should call exportCsv with reportType when dropdown option is selected', async () => {
     const user = userEvent.setup();
-    const exportCsv = vi.fn();
+    const exportCsv = vi.fn().mockResolvedValue(undefined);
     renderCard(buildProps({ exportCsv }));
-    await user.click(screen.getByTestId('btn-export-csv'));
-    expect(exportCsv).toHaveBeenCalled();
+
+    await user.click(screen.getByTestId('export-as-csv'));
+    await user.click(screen.getByRole('menuitem', { name: 'Summary' }));
+
+    await waitFor(() => expect(exportCsv).toHaveBeenCalledWith('summary'));
   });
 
   // --- Empty state ---

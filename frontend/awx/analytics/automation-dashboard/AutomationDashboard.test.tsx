@@ -3,8 +3,13 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
-import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
+import {
+  IToolbarFilter,
+  PageAlertToasterProvider,
+  ToolbarFilterType,
+} from '@ansible/ansible-ui-framework';
 import { AutomationDashboard } from './AutomationDashboard';
+import { useAutomationDashboardToolbar } from './components';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
 import type {
@@ -44,7 +49,12 @@ vi.mock('./components', () => ({
   ),
   DashboardChartCard: ({ title }: { title: string }) => <div>{title}</div>,
   DashboardTableCard: ({ title }: { title: string }) => <div>{title}</div>,
-  DashboardMainTableCard: () => <div data-testid="dashboard-main-table-card" />,
+  DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
+    <div
+      data-testid="dashboard-main-table-card"
+      data-toolbar-filter-keys={toolbarFilters?.map((filter) => filter.key).join(',') ?? ''}
+    />
+  ),
 }));
 
 vi.mock('./views/useAutomationDashboardView', () => ({
@@ -208,6 +218,28 @@ describe('AutomationDashboard', () => {
 
     // Main table card placeholder (internals covered by DashboardMainTableCard.test.tsx)
     expect(screen.getByTestId('dashboard-main-table-card')).toBeInTheDocument();
+  });
+
+  test('should pass toolbarFilters through to DashboardMainTableCard', () => {
+    const mockToolbarFilters: IToolbarFilter[] = [
+      {
+        type: ToolbarFilterType.DateRange,
+        key: 'period',
+        label: 'Period',
+        query: 'period',
+        options: [{ label: 'Last 7 days', value: 'last_7_days' }],
+        placeholder: 'Filter by period',
+        isRequired: true,
+      },
+    ];
+    vi.mocked(useAutomationDashboardToolbar).mockReturnValueOnce(mockToolbarFilters);
+
+    render(testWrapper());
+
+    expect(screen.getByTestId('dashboard-main-table-card')).toHaveAttribute(
+      'data-toolbar-filter-keys',
+      'period'
+    );
   });
 
   // ─── Save as PDF button ────────────────────────────────────────────────────

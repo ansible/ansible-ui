@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  filtersToSearchObj,
   IFilterState,
   IToolbarFilter,
   paramsToSearchObj,
@@ -10,7 +9,9 @@ import {
 } from '../../../../../framework';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { requestCommon } from '../../../../common/crud/requestCommon';
-import { downloadCvsFile } from '../../../../../framework/utils/download-file';
+import { downloadBlobFile } from '../../../../../framework/utils/download-file';
+import { ReportType } from '../types';
+import { filtersToSearchObj } from '../utils/queryString';
 
 /**
  * Returns a stable async callback that fetches the CSV export for the current
@@ -23,11 +24,11 @@ export function useExportCsv(
   toolbarFilters: IToolbarFilter[],
   filterState: IFilterState,
   queryParams: QueryParams
-): () => Promise<void> {
+): (reportType: ReportType) => Promise<void> {
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
   const downloadCsv = useCallback(
-    async (url: string) => {
+    async (url: string, reportType: ReportType) => {
       let errorMsg: string | undefined = undefined;
       let error = false;
       try {
@@ -36,8 +37,22 @@ export function useExportCsv(
           method: 'GET',
         });
         if (response.ok) {
-          const content = await response.text();
-          downloadCvsFile('AAP_Automation_Dashboard_Report', [content]);
+          const blob = await response.blob();
+          const disposition = response.headers.get('Content-Disposition');
+          // RFC 5987 takes priority per RFC 6266: charset'language'encoded-value
+          const rfc5987 = disposition?.match(/filename\*=[a-z0-9-]+'[a-z-]*'([^;\n]+)/i)?.[1];
+          // Plain filename fallback
+          const plain = disposition?.match(/\bfilename="?([^";\n]+)"?/i)?.[1];
+          const endDate = new Date().toISOString().split('T')[0];
+          let filename: string;
+          if (rfc5987) {
+            filename = decodeURIComponent(rfc5987.trim()).replace(/\.csv$/i, '');
+          } else if (plain) {
+            filename = plain.trim().replace(/\.csv$/i, '');
+          } else {
+            filename = `automation-dashboard-${reportType}-${endDate}`;
+          }
+          downloadBlobFile(filename, 'csv', blob);
         } else {
           error = true;
           errorMsg = `${response.status} ${response.statusText}`;
@@ -58,12 +73,17 @@ export function useExportCsv(
     [alertToaster, t]
   );
 
-  return useCallback(async () => {
-    const params = new URLSearchParams([
-      ...paramsToSearchObj(queryParams),
-      ...filtersToSearchObj(toolbarFilters, filterState),
-    ]);
-    const url = metricsAPI`/dashboard_reports/report/csv/?${params.toString()}`;
-    await downloadCsv(url);
-  }, [toolbarFilters, filterState, queryParams, downloadCsv]);
+  return useCallback(
+    async (reportType: ReportType) => {
+      const params = new URLSearchParams([
+        ...paramsToSearchObj(queryParams),
+        ...filtersToSearchObj(toolbarFilters, filterState),
+        ['report_type', reportType],
+        ['export_format', 'csv'],
+      ]);
+      const url = metricsAPI`/dashboard_reports/report/export/?${params.toString()}`;
+      await downloadCsv(url, reportType);
+    },
+    [toolbarFilters, filterState, queryParams, downloadCsv]
+  );
 }
