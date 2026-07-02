@@ -59,23 +59,21 @@ jobs:
           fi
 
       - name: Apply size label
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
           SIZE_LABEL: ${{ steps.size.outputs.label }}
         run: |
-          # Ensure all size labels exist in the repo
-          gh label create "size/XS" --repo "$REPO" --color "3CBF00" --description "Extra small PR" --force 2>/dev/null || true
-          gh label create "size/S"  --repo "$REPO" --color "5D9801" --description "Small PR" --force 2>/dev/null || true
-          gh label create "size/M"  --repo "$REPO" --color "7F7203" --description "Medium PR" --force 2>/dev/null || true
-          gh label create "size/L"  --repo "$REPO" --color "A14C05" --description "Large PR" --force 2>/dev/null || true
+          gh label create "size/XS" --repo "$REPO" --color "3CBF00" --description "Extra small PR" --force > /dev/null 2>&1 || true
+          gh label create "size/S"  --repo "$REPO" --color "5D9801" --description "Small PR" --force > /dev/null 2>&1 || true
+          gh label create "size/M"  --repo "$REPO" --color "7F7203" --description "Medium PR" --force > /dev/null 2>&1 || true
+          gh label create "size/L"  --repo "$REPO" --color "A14C05" --description "Large PR" --force > /dev/null 2>&1 || true
 
-          # Remove any existing size labels
           for label in "size/XS" "size/S" "size/M" "size/L"; do
-            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE > /dev/null 2>&1 || true
           done
 
-          # Apply the new size label
           gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$SIZE_LABEL"
           echo "Applied label: $SIZE_LABEL (${{ steps.count.outputs.lines }} changed lines)"

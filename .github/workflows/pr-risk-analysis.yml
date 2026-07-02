@@ -48,58 +48,43 @@ jobs:
 
       - name: Request changes if risk level is missing
         if: steps.check.outputs.result != 'pass'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
           MESSAGE: ${{ steps.check.outputs.message }}
         run: |
-          # Only post a new review if the bot doesn't already have one
           EXISTING=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | length')
           if [ "$EXISTING" -eq 0 ]; then
             gh pr review "$PR_NUMBER" --repo "$REPO" --request-changes --body "$MESSAGE"
           fi
-          # Ensure all risk labels exist in the repo
-          gh label create "risk:high"   --repo "$REPO" --color "D93F0B" --description "High risk PR" --force 2>/dev/null || true
-          gh label create "risk:medium" --repo "$REPO" --color "FBCA04" --description "Medium risk PR" --force 2>/dev/null || true
-          gh label create "risk:low"    --repo "$REPO" --color "0E8A16" --description "Low risk PR" --force 2>/dev/null || true
-          gh label create "missing-risk-analysis" --repo "$REPO" --color "B60205" --description "PR missing risk analysis" --force 2>/dev/null || true
-
-          # Remove any stale risk level labels
+          gh label create "missing-risk-analysis" --repo "$REPO" --color "B60205" --description "PR missing risk analysis" --force > /dev/null 2>&1 || true
           for label in "risk:high" "risk:medium" "risk:low"; do
-            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE > /dev/null 2>&1 || true
           done
-          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "missing-risk-analysis"
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "missing-risk-analysis" > /dev/null 2>&1 || true
 
       - name: Dismiss review and apply risk label on success
         if: steps.check.outputs.result == 'pass'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
           RISK_LEVEL: ${{ steps.check.outputs.level }}
         run: |
-          # Find and dismiss any previous "request changes" review from the bot
           REVIEW_ID=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | last | .id // empty')
           if [ -n "$REVIEW_ID" ]; then
             gh api -X PUT "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals" \
               -f message="Risk analysis provided." \
               -f event="DISMISS"
           fi
-
-          # Ensure all risk labels exist in the repo
-          gh label create "risk:high"   --repo "$REPO" --color "D93F0B" --description "High risk PR" --force 2>/dev/null || true
-          gh label create "risk:medium" --repo "$REPO" --color "FBCA04" --description "Medium risk PR" --force 2>/dev/null || true
-          gh label create "risk:low"    --repo "$REPO" --color "0E8A16" --description "Low risk PR" --force 2>/dev/null || true
-          gh label create "missing-risk-analysis" --repo "$REPO" --color "B60205" --description "PR missing risk analysis" --force 2>/dev/null || true
-
-          # Remove stale risk labels and the missing-risk-analysis label
           for label in "risk:high" "risk:medium" "risk:low" "missing-risk-analysis"; do
-            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE > /dev/null 2>&1 || true
           done
-
-          # Apply the detected risk label
-          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "risk:${RISK_LEVEL}"
+          gh label create "risk:${RISK_LEVEL}" --repo "$REPO" --color "0E8A16" --force > /dev/null 2>&1 || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "risk:${RISK_LEVEL}" > /dev/null 2>&1 || true
 
       - name: Fail check if risk level is missing
         if: steps.check.outputs.result != 'pass'
