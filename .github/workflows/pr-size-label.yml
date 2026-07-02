@@ -1,0 +1,122 @@
+name: PR Size Label
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  label-size:
+    name: Label PR Size
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Count changed lines (excluding tests)
+        id: count
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          LINES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" \
+            | awk '
+              /^diff --git/ {
+                file = $0
+                # Skip test and spec files (Vitest / Playwright)
+                skip = (file ~ /\.(test|spec)\.(ts|tsx|js|jsx)/) || \
+                       (file ~ /\/playwright\//) || \
+                       (file ~ /\/__tests__\//) || \
+                       (file ~ /\/test\//) || \
+                       (file ~ /\.test\./) || \
+                       (file ~ /\.spec\./)
+                next
+              }
+              skip { next }
+              /^[+-]/ && !/^(\+\+\+|---)/ { count++ }
+              END { print count+0 }
+            ')
+
+          echo "lines=$LINES" >> "$GITHUB_OUTPUT"
+          echo "Changed lines (excluding tests): $LINES"
+
+      - name: Determine size label
+        id: size
+        env:
+          LINES: ${{ steps.count.outputs.lines }}
+        run: |
+          if [ "$LINES" -lt 10 ]; then
+            echo "label=size/XS" >> "$GITHUB_OUTPUT"
+          elif [ "$LINES" -lt 50 ]; then
+            echo "label=size/S" >> "$GITHUB_OUTPUT"
+          elif [ "$LINES" -lt 200 ]; then
+            echo "label=size/M" >> "$GITHUB_OUTPUT"
+          else
+            echo "label=size/L" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply size label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          SIZE_LABEL: ${{ steps.size.outputs.label }}
+        run: |
+          # Remove any existing size labels
+          for label in "size/XS" "size/S" "size/M" "size/L"; do
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+          done
+
+          # Apply the new size label
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$SIZE_LABEL"
+          echo "Applied label: $SIZE_LABEL (${{ steps.count.outputs.lines }} changed lines)"
+
+  backfill:
+    name: Backfill Size Labels
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]") | .number' \
+            | while read -r PR_NUMBER; do
+                LINES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" \
+                  | awk '
+                    /^diff --git/ {
+                      file = $0
+                      skip = (file ~ /\.(test|spec)\.(ts|tsx|js|jsx)/) || \
+                             (file ~ /\/playwright\//) || \
+                             (file ~ /\/__tests__\//) || \
+                             (file ~ /\/test\//) || \
+                             (file ~ /\.test\./) || \
+                             (file ~ /\.spec\./)
+                      next
+                    }
+                    skip { next }
+                    /^[+-]/ && !/^(\+\+\+|---)/ { count++ }
+                    END { print count+0 }
+                  ')
+
+                if [ "$LINES" -lt 10 ]; then
+                  SIZE_LABEL="size/XS"
+                elif [ "$LINES" -lt 50 ]; then
+                  SIZE_LABEL="size/S"
+                elif [ "$LINES" -lt 200 ]; then
+                  SIZE_LABEL="size/M"
+                else
+                  SIZE_LABEL="size/L"
+                fi
+
+                for label in "size/XS" "size/S" "size/M" "size/L"; do
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+                done
+                gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$SIZE_LABEL"
+                echo "PR #$PR_NUMBER: $LINES lines -> $SIZE_LABEL"
+              done

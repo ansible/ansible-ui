@@ -3,6 +3,7 @@ name: PR Risk Analysis
 on:
   pull_request:
     types: [opened, edited, synchronize]
+  workflow_dispatch:
 
 permissions:
   pull-requests: write
@@ -11,7 +12,9 @@ permissions:
 jobs:
   check-risk-analysis:
     name: Risk Analysis Required
-    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Check risk level is selected
@@ -35,10 +38,13 @@ jobs:
             echo "result=pass" >> "$GITHUB_OUTPUT"
             if [ "$HIGH" -eq 1 ]; then
               echo "Risk level: HIGH"
+              echo "level=high" >> "$GITHUB_OUTPUT"
             elif [ "$MEDIUM" -eq 1 ]; then
               echo "Risk level: MEDIUM"
+              echo "level=medium" >> "$GITHUB_OUTPUT"
             else
               echo "Risk level: LOW"
+              echo "level=low" >> "$GITHUB_OUTPUT"
             fi
           fi
 
@@ -55,14 +61,19 @@ jobs:
           if [ "$EXISTING" -eq 0 ]; then
             gh pr review "$PR_NUMBER" --repo "$REPO" --request-changes --body "$MESSAGE"
           fi
+          # Remove any stale risk level labels
+          for label in "risk:high" "risk:medium" "risk:low"; do
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+          done
           gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "missing-risk-analysis"
 
-      - name: Dismiss review and remove label on success
+      - name: Dismiss review and apply risk label on success
         if: steps.check.outputs.result == 'pass'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
+          RISK_LEVEL: ${{ steps.check.outputs.level }}
         run: |
           # Find and dismiss any previous "request changes" review from the bot
           REVIEW_ID=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | last | .id // empty')
@@ -72,11 +83,54 @@ jobs:
               -f event="DISMISS"
           fi
 
-          # Remove label if present
-          gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "missing-risk-analysis" 2>/dev/null || true
+          # Remove stale risk labels and the missing-risk-analysis label
+          for label in "risk:high" "risk:medium" "risk:low" "missing-risk-analysis"; do
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+          done
+
+          # Apply the detected risk label
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "risk:${RISK_LEVEL}"
 
       - name: Fail check if risk level is missing
         if: steps.check.outputs.result != 'pass'
         run: |
           echo "::error::${{ steps.check.outputs.message }}"
           exit 1
+
+  backfill:
+    name: Backfill Risk Labels
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open PRs with risk levels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr list --repo "$REPO" --state open --json number,body,author --limit 500 \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]") | "\(.number)\t\(.body)"' \
+            | while IFS=$'\t' read -r PR_NUMBER PR_BODY; do
+                HIGH=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*High\*\*' || true)
+                MEDIUM=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Medium\*\*' || true)
+                LOW=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Low\*\*' || true)
+
+                TOTAL=$((HIGH + MEDIUM + LOW))
+
+                if [ "$TOTAL" -eq 1 ]; then
+                  if [ "$HIGH" -eq 1 ]; then
+                    LEVEL="high"
+                  elif [ "$MEDIUM" -eq 1 ]; then
+                    LEVEL="medium"
+                  else
+                    LEVEL="low"
+                  fi
+
+                  for label in "risk:high" "risk:medium" "risk:low" "missing-risk-analysis"; do
+                    gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+                  done
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "risk:${LEVEL}"
+                  echo "PR #$PR_NUMBER -> risk:${LEVEL}"
+                else
+                  echo "PR #$PR_NUMBER -> skipped (no valid risk selection)"
+                fi
+              done

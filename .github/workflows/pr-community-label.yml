@@ -1,0 +1,44 @@
+name: Community PR Label
+
+on:
+  pull_request_target:
+    types: [opened]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label-community:
+    name: Label Community PRs
+    if: >-
+      github.event_name == 'pull_request_target'
+      && github.repository == 'ansible/ansible-ui'
+      && github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add community label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "community"
+          echo "Labeled PR #$PR_NUMBER as community (from fork: ${{ github.event.pull_request.head.repo.full_name }})"
+
+  backfill:
+    name: Backfill Community Labels
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'ansible/ansible-ui'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open fork PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr list --repo "$REPO" --state open --json number,headRepositoryOwner,isCrossRepository --limit 500 \
+            | jq -r '.[] | select(.isCrossRepository == true) | .number' \
+            | while read -r PR_NUMBER; do
+                gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "community"
+                echo "PR #$PR_NUMBER labeled as community"
+              done
