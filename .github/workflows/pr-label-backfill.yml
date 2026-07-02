@@ -130,8 +130,9 @@ jobs:
           gh label create "platform"   --repo "$REPO" --color "0052CC" --description "Changes in platform" --force 2>/dev/null || true
           gh label create "playwright" --repo "$REPO" --color "E4E669" --description "Changes in playwright" --force 2>/dev/null || true
           gh label create "vitest"     --repo "$REPO" --color "BFD4F2" --description "Changes to vitest test files" --force 2>/dev/null || true
+          gh label create "ci"         --repo "$REPO" --color "D4C5F9" --description "Changes in .github" --force 2>/dev/null || true
 
-          ALL_LABELS="controller hub eda framework platform playwright vitest"
+          ALL_LABELS="controller hub eda framework platform playwright vitest ci"
 
           gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
             | jq -r '.[] | select(.author.login != "dependabot[bot]") | .number' \
@@ -145,6 +146,7 @@ jobs:
                 PLATFORM=$(echo "$FILES" | grep -c '^platform/' || true)
                 PLAYWRIGHT=$(echo "$FILES" | grep -c '^playwright/' || true)
                 VITEST=$(echo "$FILES" | grep -cE '\.(test|spec)\.(ts|tsx|js|jsx)$' || true)
+                CI=$(echo "$FILES" | grep -c '^\.github/' || true)
 
                 for label in $ALL_LABELS; do
                   gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
@@ -158,6 +160,7 @@ jobs:
                 [ "$PLATFORM" -gt 0 ]   && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "platform" && APPLIED="$APPLIED platform"
                 [ "$PLAYWRIGHT" -gt 0 ] && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "playwright" && APPLIED="$APPLIED playwright"
                 [ "$VITEST" -gt 0 ]     && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "vitest" && APPLIED="$APPLIED vitest"
+                [ "$CI" -gt 0 ]         && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "ci" && APPLIED="$APPLIED ci"
 
                 echo "PR #$PR_NUMBER:${APPLIED:- (none)}"
               done

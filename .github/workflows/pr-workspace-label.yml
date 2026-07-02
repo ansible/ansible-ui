@@ -14,52 +14,6 @@ jobs:
     if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Detect workspaces and apply labels
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }}
-        run: |
-          # Define workspace label mappings (color codes: blue/teal palette)
-          gh label create "controller" --repo "$REPO" --color "1D76DB" --description "Changes in frontend/awx" --force 2>/dev/null || true
-          gh label create "hub"        --repo "$REPO" --color "0075CA" --description "Changes in frontend/hub" --force 2>/dev/null || true
-          gh label create "eda"        --repo "$REPO" --color "008672" --description "Changes in frontend/eda" --force 2>/dev/null || true
-          gh label create "framework"  --repo "$REPO" --color "6F42C1" --description "Changes in framework" --force 2>/dev/null || true
-          gh label create "platform"   --repo "$REPO" --color "0052CC" --description "Changes in platform" --force 2>/dev/null || true
-          gh label create "playwright" --repo "$REPO" --color "E4E669" --description "Changes in playwright" --force 2>/dev/null || true
-          gh label create "vitest"     --repo "$REPO" --color "BFD4F2" --description "Changes to vitest test files" --force 2>/dev/null || true
-
-          # Get list of changed files
-          FILES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
-
-          # Detect which workspaces are touched
-          CONTROLLER=$(echo "$FILES" | grep -c '^frontend/awx/' || true)
-          HUB=$(echo "$FILES" | grep -c '^frontend/hub/' || true)
-          EDA=$(echo "$FILES" | grep -c '^frontend/eda/' || true)
-          FRAMEWORK=$(echo "$FILES" | grep -c '^framework/' || true)
-          PLATFORM=$(echo "$FILES" | grep -c '^platform/' || true)
-          PLAYWRIGHT=$(echo "$FILES" | grep -c '^playwright/' || true)
-          VITEST=$(echo "$FILES" | grep -cE '\.(test|spec)\.(ts|tsx|js|jsx)$' || true)
-
-          ALL_LABELS="controller hub eda framework platform playwright vitest"
-
-          # Remove all workspace labels first
-          for label in $ALL_LABELS; do
-            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
-          done
-
-          # Apply labels for detected workspaces
-          APPLIED=""
-          [ "$CONTROLLER" -gt 0 ] && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "controller" && APPLIED="$APPLIED controller"
-          [ "$HUB" -gt 0 ]        && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "hub" && APPLIED="$APPLIED hub"
-          [ "$EDA" -gt 0 ]        && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "eda" && APPLIED="$APPLIED eda"
-          [ "$FRAMEWORK" -gt 0 ]  && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "framework" && APPLIED="$APPLIED framework"
-          [ "$PLATFORM" -gt 0 ]   && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "platform" && APPLIED="$APPLIED platform"
-          [ "$PLAYWRIGHT" -gt 0 ] && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "playwright" && APPLIED="$APPLIED playwright"
-          [ "$VITEST" -gt 0 ]     && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "vitest" && APPLIED="$APPLIED vitest"
-
-          if [ -n "$APPLIED" ]; then
-            echo "Applied labels:$APPLIED"
-          else
-            echo "No workspace labels to apply"
-          fi
+      - uses: actions/labeler@v5
+        with:
+          sync-labels: true
