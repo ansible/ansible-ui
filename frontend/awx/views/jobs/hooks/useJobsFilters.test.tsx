@@ -58,12 +58,28 @@ describe('useJobsFilters', () => {
     await waitFor(
       () => {
         expect(result.current).toBeDefined();
-        expect(result.current.length).toEqual(27);
+        expect(result.current.length).toEqual(28);
       },
       { timeout: 10000 }
     );
 
-    // 24 filterable fields from API + 3 additional filters (search, labels, limit) = 27 total
-    expect(result.current).toHaveLength(27);
+    // 24 filterable fields from API + 4 additional filters (search, labels, launched-by, limit) = 28 total
+    expect(result.current).toHaveLength(28);
+  });
+
+  test('Includes launched-by filter', { timeout: 15000 }, async () => {
+    const { result } = renderHook(() => useJobsFilters());
+
+    await waitFor(
+      () => {
+        expect(result.current.length).toBeGreaterThan(0);
+      },
+      { timeout: 10000 }
+    );
+
+    const launchedByFilter = result.current.find((f) => f.key === 'launched-by');
+    expect(launchedByFilter).toBeDefined();
+    expect(launchedByFilter?.query).toBe('created_by__username__icontains');
+    expect(launchedByFilter?.label).toBe('Launched by (username)');
   });
 });

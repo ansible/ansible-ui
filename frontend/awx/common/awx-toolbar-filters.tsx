@@ -75,6 +75,20 @@ export function useCreatedByToolbarFilter() {
   );
 }
 
+export function useLaunchedByToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'launched-by',
+      label: t('Launched by (username)'),
+      type: ToolbarFilterType.MultiText,
+      query: 'created_by__username__icontains',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}
+
 export function useModifiedByToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
