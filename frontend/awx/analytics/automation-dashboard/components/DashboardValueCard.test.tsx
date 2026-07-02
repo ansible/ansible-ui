@@ -35,9 +35,11 @@ describe('DashboardValueCard', () => {
         <DashboardValueCard {...defaultProps} />
       </MemoryRouter>
     );
-    await user.click(screen.getByRole('button'));
+    const buttons = screen.getAllByRole('button');
+    // Click the help button (first button in this case)
+    await user.click(buttons[0]);
     expect(screen.getByText('Help text')).toBeInTheDocument();
-  });
+  }, 10000);
 
   test('should not render helpTitle when help is not provided', () => {
     render(

@@ -57,7 +57,8 @@ export function DashboardToolbar(
     upsertFilterSet,
   } = useFilterSetView();
 
-  const { setFilterState, filterState, registerClearCallback, clearAllFilters } = props;
+  const { setFilterState, filterState, registerClearCallback, clearAllFilters, toolbarFilters } =
+    props;
 
   // Register callback to reset dropdown when clearAllFilters is called
   useEffect(() => {
@@ -93,6 +94,7 @@ export function DashboardToolbar(
 
   const toolbarActions = useAutomationDashboardToolbarActions({
     filterState,
+    toolbarFilters,
     selectedFilterSet,
     onDelete: onFilterSetDelete,
     onSave,

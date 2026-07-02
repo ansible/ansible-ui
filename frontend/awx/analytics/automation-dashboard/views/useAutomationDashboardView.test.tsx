@@ -3,18 +3,20 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { QUERY_PARAMS, useAutomationDashboardView } from './useAutomationDashboardView';
+import { useAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
+import type { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 
 // ─── Hoisted mocks (run before vi.mock factories) ─────────────────────────────
 
 const {
   mockSetFilterState,
-  mockAwxViewRefresh,
+  mockBaseViewRefresh,
   mockRefreshDetails,
   mockExportCsvBase,
   mockExportPdfBase,
 } = vi.hoisted(() => ({
   mockSetFilterState: vi.fn(),
-  mockAwxViewRefresh: vi.fn(),
+  mockBaseViewRefresh: vi.fn(),
   mockRefreshDetails: vi.fn(),
   mockExportCsvBase: vi.fn(),
   mockExportPdfBase: vi.fn(),
@@ -22,8 +24,12 @@ const {
 
 // ─── Dependency mocks ─────────────────────────────────────────────────────────
 
-vi.mock('../../../common/useAwxView', () => ({
-  useAwxView: vi.fn(() => ({
+// Calculate default dates to match the source code's DEFAULT_FILTERS
+const DEFAULT_END_DATE = new Date(Date.now());
+const DEFAULT_START_DATE = new Date(DEFAULT_END_DATE.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+vi.mock('../common/useAutomationDashboardBaseView', () => ({
+  useAutomationDashboardBaseView: vi.fn(() => ({
     page: 1,
     setPage: vi.fn(),
     perPage: 10,
@@ -32,24 +38,18 @@ vi.mock('../../../common/useAwxView', () => ({
     setSort: vi.fn(),
     sortDirection: 'asc',
     setSortDirection: vi.fn(),
-    filterState: { period: [AutomationDashboardDateRangeFilterPresets.last_7_days] },
+    filterState: {
+      period: [
+        AutomationDashboardDateRangeFilterPresets.last_7_days,
+        DEFAULT_START_DATE.toISOString().split('T')[0],
+        DEFAULT_END_DATE.toISOString().split('T')[0],
+      ],
+    },
     setFilterState: mockSetFilterState,
     clearAllFilters: vi.fn(),
     itemCount: 0,
     pageItems: [],
-    refresh: mockAwxViewRefresh,
-    selectItem: vi.fn(),
-    selectItems: vi.fn(),
-    unselectItem: vi.fn(),
-    unselectItems: vi.fn(),
-    isSelected: vi.fn(() => false),
-    selectAll: vi.fn(),
-    unselectAll: vi.fn(),
-    allSelected: false,
-    selectedItems: [],
-    keyFn: vi.fn(),
-    selectItemsAndRefresh: vi.fn(),
-    unselectItemsAndRefresh: vi.fn(),
+    refresh: mockBaseViewRefresh,
     limitFiltersToOneOrOperation: true,
     updateItem: vi.fn(),
   })),
@@ -84,7 +84,7 @@ vi.mock('./useExportPdf', () => ({
 describe('useAutomationDashboardView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAwxViewRefresh.mockResolvedValue(undefined);
+    mockBaseViewRefresh.mockResolvedValue(undefined);
     mockExportCsvBase.mockResolvedValue(undefined);
     mockExportPdfBase.mockResolvedValue(undefined);
   });
@@ -121,6 +121,8 @@ describe('useAutomationDashboardView', () => {
     act(() => {
       result.current.mainTableView.clearAllFilters();
     });
+    // Note: clearAllFilters only resets to the preset, not including dates
+    // The dates are calculated in DEFAULT_FILTERS on module load
     expect(mockSetFilterState).toHaveBeenCalledWith({
       period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
     });
@@ -130,6 +132,32 @@ describe('useAutomationDashboardView', () => {
 
   test('should return true for isFilterStateDefault when filter state is default', () => {
     const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.isFilterStateDefault).toBe(true);
+  });
+
+  test('should return true for isFilterStateDefault when filter state is undefined', () => {
+    vi.mocked(useAutomationDashboardBaseView).mockReturnValueOnce({
+      page: 1,
+      setPage: vi.fn(),
+      perPage: 10,
+      setPerPage: vi.fn(),
+      sort: 'template_name',
+      setSort: vi.fn(),
+      sortDirection: 'asc',
+      setSortDirection: vi.fn(),
+      filterState: undefined,
+      setFilterState: mockSetFilterState,
+      clearAllFilters: vi.fn(),
+      itemCount: 0,
+      pageItems: [],
+      refresh: mockBaseViewRefresh,
+      limitFiltersToOneOrOperation: true,
+      updateItem: vi.fn(),
+      error: undefined,
+    } as unknown as IAutomationDashboardBaseView<{ id: number }>);
+
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
     expect(result.current.isFilterStateDefault).toBe(true);
   });
 
@@ -163,12 +191,12 @@ describe('useAutomationDashboardView', () => {
     });
 
     expect(mockRefreshDetails).toHaveBeenCalled();
-    expect(mockAwxViewRefresh).toHaveBeenCalled();
+    expect(mockBaseViewRefresh).toHaveBeenCalled();
     expect(result.current.loading).toBe(false);
   });
 
   test('should set loading to false after refresh even when mainTableView.refresh throws', async () => {
-    mockAwxViewRefresh.mockRejectedValue(new Error('Network error'));
+    mockBaseViewRefresh.mockRejectedValue(new Error('Network error'));
     const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
 
     await act(async () => {

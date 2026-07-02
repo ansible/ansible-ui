@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import { IDashboardDetails } from '../types';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import {
-  filtersToSearchObj,
   paramsToSearchObj,
   IFilterState,
   IToolbarFilter,
@@ -10,6 +9,7 @@ import {
 } from '../../../../../framework';
 import { useFetcher } from '../../../../common/crud/Data';
 import useSWR from 'swr';
+import { filtersToSearchObj, hasValidRequiredFilters } from '../utils/queryString';
 
 const DETAILS_PATH = 'dashboard_reports/report/details/';
 
@@ -28,6 +28,12 @@ export function useGetReportDetails(
   filterState: IFilterState,
   queryParams: QueryParams = EMPTY_PARAMS
 ): IGetReportDetailsResult {
+  // Check if all required filters are valid
+  const filtersValid = useMemo(
+    () => hasValidRequiredFilters(toolbarFilters, filterState),
+    [toolbarFilters, filterState]
+  );
+
   // Memoize the query string to prevent unnecessary re-fetches on every render.
   const queryString = useMemo(() => {
     const params = new URLSearchParams([
@@ -37,10 +43,12 @@ export function useGetReportDetails(
     return params.toString();
   }, [toolbarFilters, filterState, queryParams]);
 
-  const url = metricsAPI`/${DETAILS_PATH}?${queryString}`;
+  // Only construct URL if all required filters are valid, otherwise null to prevent fetch
+  const url = filtersValid ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
   const fetcher = useFetcher();
-  const response = useSWR<IDashboardDetails>(url, fetcher);
+  const response = useSWR<IDashboardDetails>(url, fetcher, { keepPreviousData: true });
   const { data, mutate, isLoading } = response;
+
   const refreshDetails = useCallback(async () => {
     await mutate();
   }, [mutate]);

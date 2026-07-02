@@ -223,4 +223,91 @@ describe('useGetReportDetails', () => {
       expect(url.searchParams.get('template_name')).toBe('automation-job');
     });
   });
+
+  describe('Required filters validation', () => {
+    const requiredDateRangeFilter: IToolbarFilter = {
+      type: ToolbarFilterType.DateRange,
+      key: 'period',
+      label: 'Period',
+      query: 'period',
+      options: [
+        { label: 'Last 7 days', value: 'last_7_days' },
+        { label: 'Custom', value: 'custom', isCustom: true },
+      ],
+      placeholder: 'Filter by period',
+      isRequired: true,
+    };
+
+    test('should not fetch when required filter has no value', async () => {
+      let requestReceived = false;
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, () => {
+          requestReceived = true;
+          return HttpResponse.json(dashboardDetailsFixture);
+        })
+      );
+
+      const { result } = renderHook(() => useGetReportDetails([requiredDateRangeFilter], {}), {
+        wrapper,
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      expect(requestReceived).toBe(false);
+      expect(result.current.reportDetails).toBeUndefined();
+    });
+
+    test('should not fetch when custom date range start date is not ISO formatted', async () => {
+      let requestReceived = false;
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, () => {
+          requestReceived = true;
+          return HttpResponse.json(dashboardDetailsFixture);
+        })
+      );
+
+      const { result } = renderHook(
+        () => useGetReportDetails([requiredDateRangeFilter], { period: ['custom', '01/01/2024'] }),
+        { wrapper }
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      expect(requestReceived).toBe(false);
+      expect(result.current.reportDetails).toBeUndefined();
+    });
+
+    test('should fetch when custom date range has a valid ISO start date only', async () => {
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+          HttpResponse.json(dashboardDetailsFixture)
+        )
+      );
+
+      const { result } = renderHook(
+        () => useGetReportDetails([requiredDateRangeFilter], { period: ['custom', '2024-01-01'] }),
+        { wrapper }
+      );
+
+      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
+    });
+
+    test('should fetch when custom date range has valid ISO start and end dates', async () => {
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+          HttpResponse.json(dashboardDetailsFixture)
+        )
+      );
+
+      const { result } = renderHook(
+        () =>
+          useGetReportDetails([requiredDateRangeFilter], {
+            period: ['custom', '2024-01-01', '2024-01-31'],
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
+    });
+  });
 });

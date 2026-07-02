@@ -86,23 +86,12 @@ function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableVi
     filterState: {},
     setFilterState: vi.fn(),
     clearAllFilters: vi.fn(),
-    selectedItems: [],
-    selectItem: vi.fn(),
-    selectItems: vi.fn(),
-    unselectItem: vi.fn(),
-    unselectItems: vi.fn(),
-    isSelected: vi.fn(() => false),
-    selectAll: vi.fn(),
-    unselectAll: vi.fn(),
-    allSelected: false,
-    keyFn: (item: IJobTemplate) => item.id,
     itemCount: 1,
     pageItems: [mockItem],
     refresh: vi.fn(),
-    selectItemsAndRefresh: vi.fn(),
-    unselectItemsAndRefresh: vi.fn(),
     limitFiltersToOneOrOperation: true,
     updateItem: vi.fn(),
+    error: undefined,
   };
   return { ...base, ...overrides } as MainTableView;
 }
@@ -219,9 +208,24 @@ describe('DashboardMainTableCard', () => {
       within(screen.getByTestId('cost-automated-execution-card')).getByText('-')
     ).toBeInTheDocument();
     expect(within(screen.getByTestId('total-savings-card')).getByText('-')).toBeInTheDocument();
+    expect(within(screen.getByTestId('total-hours-saved-card')).getByText('-')).toBeInTheDocument();
+  });
+
+  test('should not render "h" suffix when total_time_saving is 0', () => {
+    renderCard(
+      buildProps({
+        details: {
+          ...mockDetails,
+          total_time_saving: 0,
+        },
+      })
+    );
     expect(
-      within(screen.getByTestId('total-hours-saved-card')).getByText(/- h/)
+      within(screen.getByTestId('total-hours-saved-card')).getByText('0', { exact: true })
     ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('total-hours-saved-card')).queryByText(/0\s*h/)
+    ).not.toBeInTheDocument();
   });
 
   test('should show table columns when loading is false', () => {
@@ -398,6 +402,38 @@ describe('DashboardMainTableCard', () => {
   test('should render empty state when pageItems is empty', () => {
     renderCard(buildProps({ mainTableView: buildMainTableView({ itemCount: 0, pageItems: [] }) }));
     expect(screen.getByText('No automation data yet')).toBeInTheDocument();
+  });
+
+  test('should show default empty state when isFilterStateDefault is true, even if a filter is set', () => {
+    renderCard(
+      buildProps({
+        isFilterStateDefault: true,
+        mainTableView: buildMainTableView({
+          itemCount: 0,
+          pageItems: [],
+          filterState: { template_name: ['Test'] },
+        }),
+      })
+    );
+    expect(screen.getByText('No automation data yet')).toBeInTheDocument();
+    expect(screen.queryByText('No results found')).not.toBeInTheDocument();
+  });
+
+  test('should show filtered no-results state instead of default empty state when isFilterStateDefault is false', () => {
+    const clearAllFilters = vi.fn();
+    renderCard(
+      buildProps({
+        isFilterStateDefault: false,
+        mainTableView: buildMainTableView({
+          itemCount: 0,
+          pageItems: [],
+          filterState: { template_name: ['Test'] },
+          clearAllFilters,
+        }),
+      })
+    );
+    expect(screen.queryByText('No automation data yet')).not.toBeInTheDocument();
+    expect(screen.getByText('No results found')).toBeInTheDocument();
   });
 
   // --- onTableInputChange: success ---
