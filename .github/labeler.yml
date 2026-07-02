@@ -1,21 +1,29 @@
-AWX:
-  - frontend/awx/**/*
-  - cypress/e2e/awx/**/*
-
-EDA:
-  - frontend/eda/**/*
-  - cypress/e2e/eda/**/*
-
-HUB:
-  - frontend/hub/**/*
-  - cypress/e2e/hub/**/*
-
-E2E:
-  - cypress/e2e/**
-
-CCT:
-  - framework/**/*.cy.*
-  - frontend/**/*.cy.*
-
-AFW:
-  - framework/**/*
+controller:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'frontend/awx/**'
+hub:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'frontend/hub/**'
+eda:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'frontend/eda/**'
+framework:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'framework/**'
+platform:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'platform/**'
+playwright:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'playwright/**'
+vitest:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.test.ts'
+          - '**/*.test.tsx'

@@ -1,0 +1,178 @@
+name: PR Label Backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      labels:
+        description: 'Which labels to backfill'
+        required: true
+        type: choice
+        options:
+          - all
+          - size
+          - risk
+          - community
+          - workspace
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  backfill-size:
+    name: Backfill Size Labels
+    if: inputs.labels == 'all' || inputs.labels == 'size'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open PRs by size
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "size/XS" --repo "$REPO" --color "3CBF00" --description "Extra small PR" --force 2>/dev/null || true
+          gh label create "size/S"  --repo "$REPO" --color "5D9801" --description "Small PR" --force 2>/dev/null || true
+          gh label create "size/M"  --repo "$REPO" --color "7F7203" --description "Medium PR" --force 2>/dev/null || true
+          gh label create "size/L"  --repo "$REPO" --color "A14C05" --description "Large PR" --force 2>/dev/null || true
+
+          gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]") | .number' \
+            | while read -r PR_NUMBER; do
+                LINES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" \
+                  | awk '
+                    /^diff --git/ {
+                      file = $0
+                      skip = (file ~ /\.(test|spec)\.(ts|tsx|js|jsx)/) || \
+                             (file ~ /\/playwright\//) || \
+                             (file ~ /\/__tests__\//) || \
+                             (file ~ /\/test\//) || \
+                             (file ~ /\.test\./) || \
+                             (file ~ /\.spec\./)
+                      next
+                    }
+                    skip { next }
+                    /^[+-]/ && !/^(\+\+\+|---)/ { count++ }
+                    END { print count+0 }
+                  ')
+
+                if [ "$LINES" -lt 10 ]; then
+                  SIZE_LABEL="size/XS"
+                elif [ "$LINES" -lt 50 ]; then
+                  SIZE_LABEL="size/S"
+                elif [ "$LINES" -lt 200 ]; then
+                  SIZE_LABEL="size/M"
+                else
+                  SIZE_LABEL="size/L"
+                fi
+
+                for label in "size/XS" "size/S" "size/M" "size/L"; do
+                  gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+                done
+                gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$SIZE_LABEL"
+                echo "PR #$PR_NUMBER: $LINES lines -> $SIZE_LABEL"
+              done
+
+  backfill-risk:
+    name: Backfill Risk Labels
+    if: inputs.labels == 'all' || inputs.labels == 'risk'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open PRs with risk levels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "risk:high"   --repo "$REPO" --color "D93F0B" --description "High risk PR" --force 2>/dev/null || true
+          gh label create "risk:medium" --repo "$REPO" --color "FBCA04" --description "Medium risk PR" --force 2>/dev/null || true
+          gh label create "risk:low"    --repo "$REPO" --color "0E8A16" --description "Low risk PR" --force 2>/dev/null || true
+
+          gh pr list --repo "$REPO" --state open --json number,body,author --limit 500 \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]") | "\(.number)\t\(.body)"' \
+            | while IFS=$'\t' read -r PR_NUMBER PR_BODY; do
+                HIGH=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*High\*\*' || true)
+                MEDIUM=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Medium\*\*' || true)
+                LOW=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Low\*\*' || true)
+
+                TOTAL=$((HIGH + MEDIUM + LOW))
+
+                if [ "$TOTAL" -eq 1 ]; then
+                  if [ "$HIGH" -eq 1 ]; then
+                    LEVEL="high"
+                  elif [ "$MEDIUM" -eq 1 ]; then
+                    LEVEL="medium"
+                  else
+                    LEVEL="low"
+                  fi
+
+                  for label in "risk:high" "risk:medium" "risk:low" "missing-risk-analysis"; do
+                    gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+                  done
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "risk:${LEVEL}"
+                  echo "PR #$PR_NUMBER -> risk:${LEVEL}"
+                else
+                  echo "PR #$PR_NUMBER -> skipped (no valid risk selection)"
+                fi
+              done
+
+  backfill-workspace:
+    name: Backfill Workspace Labels
+    if: inputs.labels == 'all' || inputs.labels == 'workspace'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open PRs by workspace
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "controller" --repo "$REPO" --color "1D76DB" --description "Changes in frontend/awx" --force 2>/dev/null || true
+          gh label create "hub"        --repo "$REPO" --color "0075CA" --description "Changes in frontend/hub" --force 2>/dev/null || true
+          gh label create "eda"        --repo "$REPO" --color "008672" --description "Changes in frontend/eda" --force 2>/dev/null || true
+          gh label create "framework"  --repo "$REPO" --color "6F42C1" --description "Changes in framework" --force 2>/dev/null || true
+          gh label create "platform"   --repo "$REPO" --color "0052CC" --description "Changes in platform" --force 2>/dev/null || true
+          gh label create "playwright" --repo "$REPO" --color "E4E669" --description "Changes in playwright" --force 2>/dev/null || true
+          gh label create "vitest"     --repo "$REPO" --color "BFD4F2" --description "Changes to vitest test files" --force 2>/dev/null || true
+          ALL_LABELS="controller hub eda framework platform playwright vitest"
+
+          gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]") | .number' \
+            | while read -r PR_NUMBER; do
+                FILES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
+
+                CONTROLLER=$(echo "$FILES" | grep -c '^frontend/awx/' || true)
+                HUB=$(echo "$FILES" | grep -c '^frontend/hub/' || true)
+                EDA=$(echo "$FILES" | grep -c '^frontend/eda/' || true)
+                FRAMEWORK=$(echo "$FILES" | grep -c '^framework/' || true)
+                PLATFORM=$(echo "$FILES" | grep -c '^platform/' || true)
+                PLAYWRIGHT=$(echo "$FILES" | grep -c '^playwright/' || true)
+                VITEST=$(echo "$FILES" | grep -cE '\.test\.(ts|tsx)$' || true)
+                for label in $ALL_LABELS; do
+                  gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+                done
+
+                APPLIED=""
+                [ "$CONTROLLER" -gt 0 ] && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "controller" && APPLIED="$APPLIED controller"
+                [ "$HUB" -gt 0 ]        && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "hub" && APPLIED="$APPLIED hub"
+                [ "$EDA" -gt 0 ]        && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "eda" && APPLIED="$APPLIED eda"
+                [ "$FRAMEWORK" -gt 0 ]  && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "framework" && APPLIED="$APPLIED framework"
+                [ "$PLATFORM" -gt 0 ]   && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "platform" && APPLIED="$APPLIED platform"
+                [ "$PLAYWRIGHT" -gt 0 ] && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "playwright" && APPLIED="$APPLIED playwright"
+                [ "$VITEST" -gt 0 ]     && gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "vitest" && APPLIED="$APPLIED vitest"
+                echo "PR #$PR_NUMBER:${APPLIED:- (none)}"
+              done
+
+  backfill-community:
+    name: Backfill Community Labels
+    if: (inputs.labels == 'all' || inputs.labels == 'community') && github.repository == 'ansible/ansible-ui'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open fork PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "community" --repo "$REPO" --color "7057FF" --description "Community contribution from fork" --force 2>/dev/null || true
+          gh pr list --repo "$REPO" --state open --json number,headRepositoryOwner,isCrossRepository --limit 500 \
+            | jq -r '.[] | select(.isCrossRepository == true) | .number' \
+            | while read -r PR_NUMBER; do
+                gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "community"
+                echo "PR #$PR_NUMBER labeled as community"
+              done

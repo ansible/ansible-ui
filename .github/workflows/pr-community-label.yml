@@ -1,0 +1,26 @@
+name: Community PR Label
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label-community:
+    name: Label Community PRs
+    if: >-
+      github.repository == 'ansible/ansible-ui'
+      && github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add community label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "community" --repo "$REPO" --color "7057FF" --description "Community contribution from fork" --force 2>/dev/null || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "community"
+          echo "Labeled PR #$PR_NUMBER as community (from fork: ${{ github.event.pull_request.head.repo.full_name }})"
