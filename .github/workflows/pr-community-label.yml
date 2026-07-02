@@ -23,6 +23,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
+          gh label create "community" --repo "$REPO" --color "7057FF" --description "Community contribution from fork" --force 2>/dev/null || true
           gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "community"
           echo "Labeled PR #$PR_NUMBER as community (from fork: ${{ github.event.pull_request.head.repo.full_name }})"
 
@@ -36,6 +37,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
+          gh label create "community" --repo "$REPO" --color "7057FF" --description "Community contribution from fork" --force 2>/dev/null || true
           gh pr list --repo "$REPO" --state open --json number,headRepositoryOwner,isCrossRepository --limit 500 \
             | jq -r '.[] | select(.isCrossRepository == true) | .number' \
             | while read -r PR_NUMBER; do

@@ -65,9 +65,15 @@ jobs:
           REPO: ${{ github.repository }}
           SIZE_LABEL: ${{ steps.size.outputs.label }}
         run: |
+          # Ensure all size labels exist in the repo
+          gh label create "size/XS" --repo "$REPO" --color "3CBF00" --description "Extra small PR" --force 2>/dev/null || true
+          gh label create "size/S"  --repo "$REPO" --color "5D9801" --description "Small PR" --force 2>/dev/null || true
+          gh label create "size/M"  --repo "$REPO" --color "7F7203" --description "Medium PR" --force 2>/dev/null || true
+          gh label create "size/L"  --repo "$REPO" --color "A14C05" --description "Large PR" --force 2>/dev/null || true
+
           # Remove any existing size labels
           for label in "size/XS" "size/S" "size/M" "size/L"; do
-            gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
           done
 
           # Apply the new size label
@@ -84,6 +90,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
+          # Ensure all size labels exist in the repo
+          gh label create "size/XS" --repo "$REPO" --color "3CBF00" --description "Extra small PR" --force 2>/dev/null || true
+          gh label create "size/S"  --repo "$REPO" --color "5D9801" --description "Small PR" --force 2>/dev/null || true
+          gh label create "size/M"  --repo "$REPO" --color "7F7203" --description "Medium PR" --force 2>/dev/null || true
+          gh label create "size/L"  --repo "$REPO" --color "A14C05" --description "Large PR" --force 2>/dev/null || true
+
           gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
             | jq -r '.[] | select(.author.login != "dependabot[bot]") | .number' \
             | while read -r PR_NUMBER; do
@@ -115,7 +127,7 @@ jobs:
                 fi
 
                 for label in "size/XS" "size/S" "size/M" "size/L"; do
-                  gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+                  gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
                 done
                 gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$SIZE_LABEL"
                 echo "PR #$PR_NUMBER: $LINES lines -> $SIZE_LABEL"
