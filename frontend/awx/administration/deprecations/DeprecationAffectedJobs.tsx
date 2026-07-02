@@ -41,7 +41,7 @@ export function DeprecationAffectedJobs() {
   const deprecation = deprecationData?.deprecations.find((d) => d.type === decodedType);
   const jobIds = deprecation?.jobIds ?? [];
 
-  const { data: jobsResponse, isLoading } = useSWR(
+  const { data: jobsResponse } = useSWR(
     jobIds.length > 0 ? ['deprecation-affected-jobs', jobIds.join(',')] : null,
     () =>
       requestGet<{ results: AffectedJob[]; count: number }>(
@@ -147,7 +147,6 @@ export function DeprecationAffectedJobs() {
       tableColumns={columns}
       toolbarFilters={toolbarFilters}
       keyFn={(job) => job.id}
-      isLoading={isLoading}
       emptyStateTitle={t('No affected jobs')}
       emptyStateDescription={t('No jobs have been recorded for this deprecation pattern.')}
       errorStateTitle={t('Error loading affected jobs')}

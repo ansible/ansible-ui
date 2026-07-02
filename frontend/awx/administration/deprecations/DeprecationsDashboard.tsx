@@ -127,17 +127,17 @@ export function DeprecationsDashboard() {
   // Build filter options dynamically from data
   const organizationOptions = useMemo(
     () =>
-      Array.from(
-        new Set((data?.deprecations ?? []).flatMap((d) => d.organizations))
-      ).map((org) => ({ label: org, value: org })),
+      Array.from(new Set((data?.deprecations ?? []).flatMap((d) => d.organizations))).map(
+        (org) => ({ label: org, value: org })
+      ),
     [data]
   );
 
   const jobTemplateOptions = useMemo(
     () =>
-      Array.from(
-        new Set((data?.deprecations ?? []).flatMap((d) => d.jobTemplates))
-      ).map((tmpl) => ({ label: tmpl, value: tmpl })),
+      Array.from(new Set((data?.deprecations ?? []).flatMap((d) => d.jobTemplates))).map(
+        (tmpl) => ({ label: tmpl, value: tmpl })
+      ),
     [data]
   );
 
