@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CreateInventory, EditInventory } from './InventoryForm';
@@ -428,11 +429,13 @@ describe('InventoryForm', () => {
       );
 
       render(
-        <MemoryRouter initialEntries={['/inventories/inventory/1/edit']}>
-          <Routes>
-            <Route path="/inventories/:inventory_type/:id/edit" element={<EditInventory />} />
-          </Routes>
-        </MemoryRouter>
+        <SWRConfig value={{ provider: () => new Map() }}>
+          <MemoryRouter initialEntries={['/inventories/inventory/1/edit']}>
+            <Routes>
+              <Route path="/inventories/:inventory_type/:id/edit" element={<EditInventory />} />
+            </Routes>
+          </MemoryRouter>
+        </SWRConfig>
       );
 
       expect(screen.queryByDisplayValue('test')).not.toBeInTheDocument();
