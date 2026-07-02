@@ -208,7 +208,7 @@ export function DeprecationsDashboard() {
             <TextCell
               text={dep.type}
               to={getPageUrl(AwxRoute.DeprecationDetails, {
-                params: { deprecationType: encodeURIComponent(dep.type) },
+                params: { deprecationType: dep.type },
               })}
             />
             <Content
