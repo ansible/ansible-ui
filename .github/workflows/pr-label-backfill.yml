@@ -16,6 +16,7 @@ on:
 
 permissions:
   pull-requests: write
+  issues: write
   contents: read
 
 jobs:
@@ -85,9 +86,10 @@ jobs:
           gh label create "risk:medium" --repo "$REPO" --color "FBCA04" --description "Medium risk PR" --force 2>/dev/null || true
           gh label create "risk:low"    --repo "$REPO" --color "0E8A16" --description "Low risk PR" --force 2>/dev/null || true
 
-          gh pr list --repo "$REPO" --state open --json number,body,author --limit 500 \
-            | jq -r '.[] | select(.author.login != "dependabot[bot]") | "\(.number)\t\(.body)"' \
-            | while IFS=$'\t' read -r PR_NUMBER PR_BODY; do
+          gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]") | .number' \
+            | while read -r PR_NUMBER; do
+                PR_BODY=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json body --jq '.body')
                 HIGH=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*High\*\*' || true)
                 MEDIUM=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Medium\*\*' || true)
                 LOW=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Low\*\*' || true)
