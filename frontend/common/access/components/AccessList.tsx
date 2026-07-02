@@ -153,10 +153,10 @@ export function AccessList<T extends UserRoleAccess>(props: AccessProps<T>) {
         break;
       case 'team':
         title = props.content_type_model
-          ? t('No teams assigned to {{resourceType}}', {
+          ? t('No teams are assigned to this {{resourceType}}.', {
               resourceType: getDisplayName(props.content_type_model),
             })
-          : t('No teams assigned to this resource');
+          : t('No teams are assigned to this resource.');
         break;
       case 'user-roles':
         title = t('There are currently no roles assigned to this user.');
@@ -174,10 +174,10 @@ export function AccessList<T extends UserRoleAccess>(props: AccessProps<T>) {
     let title: string;
     if (props.accessListType === 'team') {
       title = props.content_type_model
-        ? t('To get started, assign teams to this {{resourceType}}.', {
+        ? t('To get started, assign a team to this {{resourceType}}.', {
             resourceType: getDisplayName(props.content_type_model),
           })
-        : t('To get started, assign teams to this resource.');
+        : t('To get started, assign a team to this resource.');
     } else {
       title = props.content_type_model
         ? t('To get started, assign users to this {{resourceType}}.', {

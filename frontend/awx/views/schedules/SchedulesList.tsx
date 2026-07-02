@@ -101,9 +101,7 @@ export function SchedulesList(props: {
     emptyStateTitle = isMissingResource
       ? t('Resources are missing from this template.')
       : t('No schedules yet');
-    emptyStateDescription = isMissingResource
-      ? ''
-      : t('Please create a schedule by using the button below.');
+    emptyStateDescription = isMissingResource ? '' : t('Create a schedule to populate this list.');
   } else {
     emptyStateTitle = t('You do not have permission to create a schedule');
     emptyStateDescription = t(
