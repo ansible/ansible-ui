@@ -140,7 +140,12 @@ function createAsyncSingleSelectFilter(
     query: `ass${index}`,
     label: `Async Single ${index}`,
     placeholder: `Filter by ass${index}`,
-    queryOptions: () => Promise.resolve([{ value: '1', label: 'Option 1' }]),
+    queryOptions: () =>
+      Promise.resolve({
+        remaining: 0,
+        options: [{ value: '1', label: 'Option 1' }],
+        next: 0,
+      }),
     queryLabel: (value: string) => value,
     ...options,
   };
@@ -156,7 +161,12 @@ function createAsyncMultiSelectFilter(
     query: `ams${index}`,
     label: `Async Multi ${index}`,
     placeholder: `Filter by ams${index}`,
-    queryOptions: () => Promise.resolve([{ value: '1', label: 'Option 1' }]),
+    queryOptions: () =>
+      Promise.resolve({
+        remaining: 0,
+        options: [{ value: '1', label: 'Option 1' }],
+        next: 0,
+      }),
     queryLabel: (value: string) => value,
     ...options,
   };
