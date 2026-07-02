@@ -3,7 +3,6 @@ name: PR Risk Analysis
 on:
   pull_request:
     types: [opened, edited, synchronize]
-  workflow_dispatch:
 
 permissions:
   pull-requests: write
@@ -12,9 +11,7 @@ permissions:
 jobs:
   check-risk-analysis:
     name: Risk Analysis Required
-    if: >-
-      github.event_name == 'pull_request'
-      && github.event.pull_request.user.login != 'dependabot[bot]'
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Check risk level is selected
@@ -108,46 +105,3 @@ jobs:
         run: |
           echo "::error::${{ steps.check.outputs.message }}"
           exit 1
-
-  backfill:
-    name: Backfill Risk Labels
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Label all open PRs with risk levels
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          # Ensure all risk labels exist in the repo
-          gh label create "risk:high"   --repo "$REPO" --color "D93F0B" --description "High risk PR" --force 2>/dev/null || true
-          gh label create "risk:medium" --repo "$REPO" --color "FBCA04" --description "Medium risk PR" --force 2>/dev/null || true
-          gh label create "risk:low"    --repo "$REPO" --color "0E8A16" --description "Low risk PR" --force 2>/dev/null || true
-
-          gh pr list --repo "$REPO" --state open --json number,body,author --limit 500 \
-            | jq -r '.[] | select(.author.login != "dependabot[bot]") | "\(.number)\t\(.body)"' \
-            | while IFS=$'\t' read -r PR_NUMBER PR_BODY; do
-                HIGH=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*High\*\*' || true)
-                MEDIUM=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Medium\*\*' || true)
-                LOW=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Low\*\*' || true)
-
-                TOTAL=$((HIGH + MEDIUM + LOW))
-
-                if [ "$TOTAL" -eq 1 ]; then
-                  if [ "$HIGH" -eq 1 ]; then
-                    LEVEL="high"
-                  elif [ "$MEDIUM" -eq 1 ]; then
-                    LEVEL="medium"
-                  else
-                    LEVEL="low"
-                  fi
-
-                  for label in "risk:high" "risk:medium" "risk:low" "missing-risk-analysis"; do
-                    gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
-                  done
-                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "risk:${LEVEL}"
-                  echo "PR #$PR_NUMBER -> risk:${LEVEL}"
-                else
-                  echo "PR #$PR_NUMBER -> skipped (no valid risk selection)"
-                fi
-              done
