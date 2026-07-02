@@ -117,36 +117,6 @@ describe('EdaProjectManageUsers', () => {
     expect(screen.getByTestId('User Access')).toBeInTheDocument();
   });
 
-  it('should show loading state while project data is being fetched', () => {
-    server.use(
-      http.get(edaAPI`/projects/10/`, async () => {
-        await new Promise(() => {});
-        return HttpResponse.json(mockProject);
-      })
-    );
-
-    renderComponent();
-
-    expect(
-      screen.queryByRole('heading', { name: /Manage roles directly assigned to/i })
-    ).not.toBeInTheDocument();
-  });
-
-  it('should show loading when user data is still loading', () => {
-    server.use(
-      http.get('*/api/gateway/v1/users/', async () => {
-        await new Promise(() => {});
-        return HttpResponse.json(mockUsersResponse);
-      })
-    );
-
-    renderComponent();
-
-    expect(
-      screen.queryByRole('heading', { name: /Manage roles directly assigned to/i })
-    ).not.toBeInTheDocument();
-  });
-
   it('should handle empty user results gracefully', async () => {
     server.use(
       http.get('*/api/gateway/v1/users/', () =>

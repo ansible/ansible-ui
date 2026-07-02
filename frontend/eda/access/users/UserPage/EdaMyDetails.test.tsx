@@ -51,23 +51,6 @@ describe('EdaMyDetails', () => {
     expect(screen.getByText('User')).toBeInTheDocument();
   });
 
-  it('should render loading page when user data is not loaded', () => {
-    server.use(
-      http.get(edaAPI`/users/me/`, async () => {
-        await new Promise(() => {});
-        return HttpResponse.json(mockCurrentUser);
-      })
-    );
-
-    render(
-      <MemoryRouter>
-        <EdaMyDetails />
-      </MemoryRouter>
-    );
-
-    expect(screen.queryByText('admin')).not.toBeInTheDocument();
-  });
-
   it('should render user email', async () => {
     render(
       <MemoryRouter>

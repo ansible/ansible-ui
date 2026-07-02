@@ -30,7 +30,7 @@ const mockTeams = {
   ],
 };
 
-const server = setupServer(http.get(edaAPI`/teams/`, () => HttpResponse.json(mockTeams)));
+const server = setupServer(http.get('*/teams/', () => HttpResponse.json(mockTeams)));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());

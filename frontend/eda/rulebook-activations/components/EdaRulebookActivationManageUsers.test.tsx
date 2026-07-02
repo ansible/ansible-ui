@@ -32,7 +32,7 @@ const server = setupServer(
   http.get(edaAPI`/activations/1/`, () => {
     return HttpResponse.json(mockActivation);
   }),
-  http.get(edaAPI`/users/`, () => {
+  http.get('*/users/', () => {
     return HttpResponse.json(mockUsers);
   }),
   http.get('*/role_definitions/*', () => {

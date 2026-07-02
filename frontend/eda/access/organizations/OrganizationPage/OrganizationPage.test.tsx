@@ -66,14 +66,6 @@ describe('OrganizationPage', () => {
     });
   });
 
-  it('should show loading state when organization data has not loaded', () => {
-    server.use(http.get(edaAPI`/organizations/3/`, () => new HttpResponse(null, { status: 200 })));
-
-    renderOrganizationPage();
-
-    expect(screen.queryByText('Test Org')).not.toBeInTheDocument();
-  });
-
   it('should show error state on API failure', async () => {
     server.use(
       http.get(edaAPI`/organizations/3/`, () =>

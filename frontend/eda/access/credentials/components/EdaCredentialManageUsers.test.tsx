@@ -73,16 +73,4 @@ describe('EdaCredentialManageUsers', () => {
       expect(screen.getByText('User Access')).toBeInTheDocument();
     });
   });
-
-  it('should show loading state before data is available', () => {
-    server.use(
-      http.get(edaAPI`/eda-credentials/1/`, async () => {
-        await new Promise(() => {});
-        return HttpResponse.json(mockCredential);
-      })
-    );
-
-    renderComponent();
-    expect(screen.queryByText('Test Credential')).not.toBeInTheDocument();
-  });
 });

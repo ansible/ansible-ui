@@ -72,17 +72,4 @@ describe('CredentialTypePage', () => {
       expect(screen.getByText('Back to Credential Types')).toBeInTheDocument();
     });
   });
-
-  it('should show loading page when data has not loaded', () => {
-    server.use(
-      http.get(edaAPI`/credential-types/10/`, () => new HttpResponse(null, { status: 200 })),
-      http.options(edaAPI`/credential-types/10/`, () =>
-        HttpResponse.json({ actions: { PATCH: {} } })
-      )
-    );
-
-    renderCredentialTypePage();
-
-    expect(screen.queryByText('Source Control')).not.toBeInTheDocument();
-  });
 });

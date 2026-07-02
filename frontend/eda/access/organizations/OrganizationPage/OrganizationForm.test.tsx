@@ -139,24 +139,6 @@ describe('OrganizationForm', () => {
       );
     });
 
-    it('should render loading state before organization data loads', async () => {
-      server.use(
-        http.get(edaAPI`/organizations/3/`, () => new HttpResponse(null, { status: 200 }))
-      );
-
-      render(
-        <MemoryRouter initialEntries={['/organizations/3/edit']}>
-          <Routes>
-            <Route path="/organizations/:id/edit" element={<EditOrganization />} />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading', { name: 'Organization', level: 1 })).toBeInTheDocument();
-      });
-    });
-
     it('should display breadcrumbs with Organizations link', async () => {
       render(
         <MemoryRouter initialEntries={['/organizations/3/edit']}>

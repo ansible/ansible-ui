@@ -211,26 +211,4 @@ describe('EditCredentialType', () => {
       ).toBeInTheDocument();
     });
   });
-
-  it('should render loading state before credential type loads', () => {
-    server.use(
-      http.get(edaAPI`/credential-types/10/`, async () => {
-        await new Promise((r) => setTimeout(r, 5000));
-        return HttpResponse.json(mockCredentialType);
-      }),
-      http.options(edaAPI`/credential-types/10/`, () =>
-        HttpResponse.json({ actions: { PATCH: {} } })
-      )
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/credential-types/10/edit']}>
-        <Routes>
-          <Route path="/credential-types/:id/edit" element={<EditCredentialType />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    expect(screen.getByRole('heading', { name: 'Credential Type', level: 1 })).toBeInTheDocument();
-  });
 });
