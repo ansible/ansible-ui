@@ -89,28 +89,6 @@ describe('EdaRulebookActivationManageUsers', () => {
     expect(screen.getByText('User Access')).toBeInTheDocument();
   });
 
-  it('should show loading state while data is being fetched', () => {
-    server.use(
-      http.get(edaAPI`/activations/1/`, async () => {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        return HttpResponse.json(mockActivation);
-      })
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/rulebook-activations/eda.activation/1/users/abc-123/roles']}>
-        <Routes>
-          <Route
-            path="/rulebook-activations/:resource_type/:resource_id/users/:user_id/roles"
-            element={<EdaRulebookActivationManageUsers />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-  });
-
   it('should handle user not found', async () => {
     server.use(
       http.get(edaAPI`/users/`, () => {

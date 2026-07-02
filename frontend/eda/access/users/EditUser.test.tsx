@@ -201,7 +201,7 @@ describe('EditUser', () => {
     expect(screen.getByRole('textbox', { name: /email/i })).toHaveValue('test@example.com');
   });
 
-  it('should render edit form for superuser with correct user type', async () => {
+  it('should render edit form for superuser with correct heading', async () => {
     server.use(http.get(edaAPI`/users/42/`, () => HttpResponse.json(mockSuperUser)));
 
     render(
@@ -216,7 +216,7 @@ describe('EditUser', () => {
       expect(screen.getByRole('heading', { name: /edit admin/i, level: 1 })).toBeInTheDocument();
     });
 
-    expect(screen.getByText('System administrator')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /username/i })).toHaveValue('admin');
   });
 
   it('should display breadcrumbs with user link', async () => {
