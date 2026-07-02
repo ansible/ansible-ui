@@ -202,10 +202,10 @@ describe('EditUser', () => {
   });
 
   it('should render edit form for superuser with correct heading', async () => {
-    server.use(http.get(edaAPI`/users/42/`, () => HttpResponse.json(mockSuperUser)));
+    server.use(http.get(edaAPI`/users/1/`, () => HttpResponse.json(mockSuperUser)));
 
     render(
-      <MemoryRouter initialEntries={['/users/42/edit']}>
+      <MemoryRouter initialEntries={['/users/1/edit']}>
         <Routes>
           <Route path="/users/:id/edit" element={<EditUser />} />
         </Routes>
