@@ -2,27 +2,32 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { render, screen } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, UseFormReturn, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { PageFormPlatformOrganizationSelect } from './PageFormPlatformOrganizationSelect';
 
+interface FormWrapperProps {
+  children: React.ReactNode;
+  form: UseFormReturn;
+}
+
+function FormWrapper({ children, form }: FormWrapperProps) {
+  return (
+    <MemoryRouter>
+      <FormProvider {...form}>{children}</FormProvider>
+    </MemoryRouter>
+  );
+}
+
 function TestWrapper({ children }: { children: React.ReactNode }) {
-  const FormWrapper = () => {
-    const form = useForm({
-      defaultValues: {
-        organization: null,
-      },
-    });
+  const form = useForm({
+    defaultValues: {
+      organization: null,
+    },
+  });
 
-    return (
-      <MemoryRouter>
-        <FormProvider {...form}>{children}</FormProvider>
-      </MemoryRouter>
-    );
-  };
-
-  return <FormWrapper />;
+  return <FormWrapper form={form}>{children}</FormWrapper>;
 }
 
 describe('PageFormPlatformOrganizationSelect', () => {
