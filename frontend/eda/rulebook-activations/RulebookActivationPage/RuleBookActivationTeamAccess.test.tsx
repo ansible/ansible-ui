@@ -40,8 +40,8 @@ describe('RulebookActivationTeamAccess', () => {
     });
   });
 
-  it('should render without errors', () => {
-    const { container } = render(
+  it('should render without errors', async () => {
+    render(
       <MemoryRouter initialEntries={['/rulebook-activations/10/team-access']}>
         <Routes>
           <Route
@@ -52,6 +52,8 @@ describe('RulebookActivationTeamAccess', () => {
       </MemoryRouter>
     );
 
-    expect(container).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.getByText(/assign teams to this rulebook activation/i)).toBeInTheDocument();
+    });
   });
 });

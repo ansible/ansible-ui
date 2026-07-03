@@ -152,7 +152,7 @@ describe('CredentialFormInputs', () => {
       </FormWrapper>
     );
 
-    expect(container.children.length).toBeGreaterThanOrEqual(0);
+    expect(container.innerHTML).toBe('');
   });
 });
 

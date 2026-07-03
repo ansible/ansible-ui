@@ -1,13 +1,21 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCopyCredential } from './useCopyCredential';
+import { BrowserRouter } from 'react-router-dom';
+
+const server = setupServer();
 
 describe('useCopyCredential', () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <MemoryRouter>{children}</MemoryRouter>
+    <BrowserRouter>{children}</BrowserRouter>
   );
 
   const createMockCredential = (): EdaCredential =>
@@ -27,16 +35,34 @@ describe('useCopyCredential', () => {
     expect(typeof result.current).toBe('function');
   });
 
-  it('should return a function when onComplete is provided', () => {
+  it('should call onComplete after successful copy', async () => {
     const onComplete = vi.fn();
-    const { result } = renderHook(() => useCopyCredential(onComplete), { wrapper });
+    server.use(
+      http.post('*/eda-credentials/1/copy/', () => {
+        return HttpResponse.json({ id: 2, name: 'Test Credential copy' });
+      })
+    );
 
-    expect(typeof result.current).toBe('function');
+    const { result } = renderHook(() => useCopyCredential(onComplete), { wrapper });
+    const credential = createMockCredential();
+
+    act(() => {
+      result.current(credential);
+    });
+
+    await waitFor(() => {
+      expect(onComplete).toHaveBeenCalled();
+    });
   });
 
   it('should not throw when called with a credential', () => {
-    const { result } = renderHook(() => useCopyCredential(), { wrapper });
+    server.use(
+      http.post('*/eda-credentials/1/copy/', () => {
+        return HttpResponse.json({ id: 2, name: 'Test Credential copy' });
+      })
+    );
 
+    const { result } = renderHook(() => useCopyCredential(), { wrapper });
     const credential = createMockCredential();
 
     expect(() => result.current(credential)).not.toThrow();

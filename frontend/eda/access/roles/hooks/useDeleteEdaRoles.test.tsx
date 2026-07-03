@@ -52,7 +52,10 @@ const mockActiveUser = {
 
 describe('useDeleteEdaRoles', () => {
   beforeAll(() => server.listen());
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    onComplete.mockClear();
+  });
   afterAll(() => server.close());
 
   const onComplete = vi.fn();

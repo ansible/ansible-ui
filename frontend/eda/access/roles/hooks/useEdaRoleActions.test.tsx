@@ -84,14 +84,13 @@ describe('useEdaRoleRowActions', () => {
     const { result } = renderHook(() => useEdaRoleRowActions(onComplete), { wrapper });
 
     const editAction = result.current.find((a) => 'label' in a && a.label === 'Edit role');
+    expect(editAction).toBeDefined();
 
     const managedRole = { id: 1, managed: true } as EdaRbacRole;
 
-    if (editAction && 'isDisabled' in editAction && typeof editAction.isDisabled === 'function') {
-      expect((editAction.isDisabled as (item: EdaRbacRole) => string)(managedRole)).toBe(
-        'Built-in roles cannot be edited.'
-      );
-    }
+    expect(
+      (editAction as { isDisabled: (item: EdaRbacRole) => string }).isDisabled(managedRole)
+    ).toBe('Built-in roles cannot be edited.');
   });
 
   it('should disable Delete for managed roles', () => {
@@ -99,17 +98,12 @@ describe('useEdaRoleRowActions', () => {
     const { result } = renderHook(() => useEdaRoleRowActions(onComplete), { wrapper });
 
     const deleteAction = result.current.find((a) => 'label' in a && a.label === 'Delete role');
+    expect(deleteAction).toBeDefined();
 
     const managedRole = { id: 1, managed: true } as EdaRbacRole;
 
-    if (
-      deleteAction &&
-      'isDisabled' in deleteAction &&
-      typeof deleteAction.isDisabled === 'function'
-    ) {
-      expect((deleteAction.isDisabled as (item: EdaRbacRole) => string)(managedRole)).toBe(
-        'Built-in roles cannot be deleted.'
-      );
-    }
+    expect(
+      (deleteAction as { isDisabled: (item: EdaRbacRole) => string }).isDisabled(managedRole)
+    ).toBe('Built-in roles cannot be deleted.');
   });
 });

@@ -1,13 +1,43 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { renderHook, act, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './useDeleteProjects';
+import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
+import { FrameworkTranslationsProvider } from '../../../../framework/useFrameworkTranslations';
+import { BrowserRouter } from 'react-router-dom';
+
+vi.mock('./useProjectColumns', () => ({
+  useProjectColumns: vi.fn(() => [
+    {
+      header: 'Name',
+      type: 'text',
+      value: (item: EdaProject) => item.name,
+      modal: 'visible',
+    },
+  ]),
+}));
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({ children, title }: { children: React.ReactNode; title: string }) => (
+      <div data-testid="modal">
+        <h1>{title}</h1>
+        {children}
+      </div>
+    ),
+  };
+});
 
 describe('useDeleteProjects', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <MemoryRouter>{children}</MemoryRouter>
+    <BrowserRouter>
+      <PageDialogProvider>
+        <FrameworkTranslationsProvider>{children}</FrameworkTranslationsProvider>
+      </PageDialogProvider>
+    </BrowserRouter>
   );
 
   const createMockProject = (overrides: Partial<EdaProject> = {}): EdaProject =>
@@ -29,32 +59,34 @@ describe('useDeleteProjects', () => {
     expect(typeof result.current).toBe('function');
   });
 
-  it('should accept an array of projects when called', () => {
+  it('should open bulk action dialog', () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() => useDeleteProjects(onComplete), { wrapper });
 
     const projects = [createMockProject({ id: 1, name: 'Project A' })];
 
-    expect(() => result.current(projects)).not.toThrow();
+    act(() => {
+      result.current(projects);
+    });
+
+    expect(screen.getByText('Permanently delete projects')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Delete projects' })).toBeInTheDocument();
   });
 
-  it('should handle multiple projects', () => {
+  it('should display project names in the dialog', () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() => useDeleteProjects(onComplete), { wrapper });
 
     const projects = [
       createMockProject({ id: 1, name: 'Project A' }),
       createMockProject({ id: 2, name: 'Project B' }),
-      createMockProject({ id: 3, name: 'Project C' }),
     ];
 
-    expect(() => result.current(projects)).not.toThrow();
-  });
+    act(() => {
+      result.current(projects);
+    });
 
-  it('should handle an empty array of projects', () => {
-    const onComplete = vi.fn();
-    const { result } = renderHook(() => useDeleteProjects(onComplete), { wrapper });
-
-    expect(() => result.current([])).not.toThrow();
+    expect(screen.getByText('Project A')).toBeInTheDocument();
+    expect(screen.getByText('Project B')).toBeInTheDocument();
   });
 });

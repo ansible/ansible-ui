@@ -39,7 +39,10 @@ const server = setupServer();
 
 describe('useDeleteCredentialTypes', () => {
   beforeAll(() => server.listen());
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    onComplete.mockClear();
+  });
   afterAll(() => server.close());
 
   const onComplete = vi.fn();

@@ -1,23 +1,53 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
+import { renderHook, act, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useDeleteCredentials } from './useDeleteCredentials';
+import { PageDialogProvider } from '../../../../../framework/PageDialogs/PageDialog';
+import { FrameworkTranslationsProvider } from '../../../../../framework/useFrameworkTranslations';
+import { BrowserRouter } from 'react-router-dom';
+
+vi.mock('./useCredentialColumns', () => ({
+  useCredentialColumns: vi.fn(() => [
+    {
+      header: 'Name',
+      type: 'text',
+      value: (item: EdaCredential) => item.name,
+      modal: 'visible',
+    },
+  ]),
+}));
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({ children, title }: { children: React.ReactNode; title: string }) => (
+      <div data-testid="modal">
+        <h1>{title}</h1>
+        {children}
+      </div>
+    ),
+  };
+});
 
 const server = setupServer(
   http.get('*/eda-credentials/*', () => HttpResponse.json({ id: 1, name: 'Cred', references: [] }))
 );
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-
 describe('useDeleteCredentials', () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <MemoryRouter>{children}</MemoryRouter>
+    <BrowserRouter>
+      <PageDialogProvider>
+        <FrameworkTranslationsProvider>{children}</FrameworkTranslationsProvider>
+      </PageDialogProvider>
+    </BrowserRouter>
   );
 
   const createMockCredential = (overrides: Partial<EdaCredential> = {}): EdaCredential =>
@@ -39,33 +69,20 @@ describe('useDeleteCredentials', () => {
     expect(typeof result.current).toBe('function');
   });
 
-  it('should accept an array of credentials when called', async () => {
+  it('should open bulk action dialog', async () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() => useDeleteCredentials(onComplete), { wrapper });
 
     const credentials = [createMockCredential({ id: 1, name: 'Cred A' })];
 
-    await expect(result.current(credentials)).resolves.not.toThrow();
-  });
+    await act(async () => {
+      await result.current(credentials);
+    });
 
-  it('should handle multiple credentials', async () => {
-    const onComplete = vi.fn();
-    const { result } = renderHook(() => useDeleteCredentials(onComplete), { wrapper });
-
-    const credentials = [
-      createMockCredential({ id: 1, name: 'Cred A' }),
-      createMockCredential({ id: 2, name: 'Cred B' }),
-      createMockCredential({ id: 3, name: 'Cred C' }),
-    ];
-
-    await expect(result.current(credentials)).resolves.not.toThrow();
-  });
-
-  it('should handle an empty array of credentials', async () => {
-    const onComplete = vi.fn();
-    const { result } = renderHook(() => useDeleteCredentials(onComplete), { wrapper });
-
-    await expect(result.current([])).resolves.not.toThrow();
+    await waitFor(() => {
+      expect(screen.getByText('Permanently delete credentials')).toBeInTheDocument();
+    });
+    expect(screen.getByRole('button', { name: 'Delete credentials' })).toBeInTheDocument();
   });
 
   it('should work without onComplete callback', () => {
