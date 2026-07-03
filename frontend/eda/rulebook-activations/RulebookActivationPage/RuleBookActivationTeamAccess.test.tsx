@@ -23,7 +23,7 @@ describe('RulebookActivationTeamAccess', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it('should render PlatformTeamAccess component', async () => {
+  it('should render the team access component', async () => {
     render(
       <MemoryRouter initialEntries={['/rulebook-activations/5/team-access']}>
         <Routes>
@@ -36,24 +36,7 @@ describe('RulebookActivationTeamAccess', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/assign teams to this rulebook activation/i)).toBeInTheDocument();
-    });
-  });
-
-  it('should render without errors', async () => {
-    render(
-      <MemoryRouter initialEntries={['/rulebook-activations/10/team-access']}>
-        <Routes>
-          <Route
-            path="/rulebook-activations/:id/team-access"
-            element={<RulebookActivationTeamAccess />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/assign teams to this rulebook activation/i)).toBeInTheDocument();
+      expect(screen.getByText('Assign teams')).toBeInTheDocument();
     });
   });
 });

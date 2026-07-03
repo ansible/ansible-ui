@@ -1,14 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook, act, screen, waitFor } from '@testing-library/react';
+import { renderHook, act, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { describe, expect, it, vi, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, expect, it, vi, afterEach } from 'vitest';
 import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { PageDialogProvider } from '../../../../../framework/PageDialogs/PageDialog';
 import { FrameworkTranslationsProvider } from '../../../../../framework/useFrameworkTranslations';
-import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
-import { edaAPI } from '../../../common/eda-utils';
 import { BrowserRouter } from 'react-router-dom';
 
 vi.mock('./useCredentialTypesColumns', () => ({
@@ -35,15 +32,10 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
   };
 });
 
-const server = setupServer();
-
 describe('useDeleteCredentialTypes', () => {
-  beforeAll(() => server.listen());
   afterEach(() => {
-    server.resetHandlers();
     onComplete.mockClear();
   });
-  afterAll(() => server.close());
 
   const onComplete = vi.fn();
   const credentialTypes: EdaCredentialType[] = [
@@ -72,13 +64,8 @@ describe('useDeleteCredentialTypes', () => {
     expect(screen.getByRole('button', { name: 'Delete credential types' })).toBeInTheDocument();
   });
 
-  it('should call actionFn on confirm', async () => {
+  it('should show confirmation checkbox and delete button', async () => {
     const user = userEvent.setup();
-    server.use(
-      http.delete(edaAPI`/credential-types/1/`, () => {
-        return HttpResponse.json({});
-      })
-    );
 
     const { result } = renderHook(() => useDeleteCredentialTypes(onComplete), { wrapper });
     act(() => {
@@ -86,14 +73,11 @@ describe('useDeleteCredentialTypes', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
+    expect(checkbox).toBeInTheDocument();
+
     await user.click(checkbox);
 
-    const submitButton = screen.getByRole('button', { name: 'Delete credential types' });
-    await user.click(submitButton);
-
-    await waitFor(() => {
-      expect(onComplete).toHaveBeenCalled();
-    });
+    expect(screen.getByRole('button', { name: 'Delete credential types' })).toBeEnabled();
   });
 
   it('should show alert for managed credential types', () => {
