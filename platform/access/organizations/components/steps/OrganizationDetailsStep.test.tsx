@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, UseFormReturn, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
@@ -17,30 +17,35 @@ vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
   }),
 }));
 
+interface FormWrapperProps {
+  children: React.ReactNode;
+  form: UseFormReturn;
+}
+
+function FormWrapper({ children, form }: FormWrapperProps) {
+  return (
+    <MemoryRouter>
+      <FormProvider {...form}>{children}</FormProvider>
+    </MemoryRouter>
+  );
+}
+
 function TestWrapper({ children }: { children: React.ReactNode }) {
-  const FormWrapper = () => {
-    const form = useForm({
-      defaultValues: {
-        organization: {
-          name: '',
-          description: '',
-        },
-        instanceGroups: [],
-        galaxyCredentials: [],
-        executionEnvironment: undefined,
-        maxHosts: 0,
-        policy: '',
+  const form = useForm({
+    defaultValues: {
+      organization: {
+        name: '',
+        description: '',
       },
-    });
+      instanceGroups: [],
+      galaxyCredentials: [],
+      executionEnvironment: undefined,
+      maxHosts: 0,
+      policy: '',
+    },
+  });
 
-    return (
-      <MemoryRouter>
-        <FormProvider {...form}>{children}</FormProvider>
-      </MemoryRouter>
-    );
-  };
-
-  return <FormWrapper />;
+  return <FormWrapper form={form}>{children}</FormWrapper>;
 }
 
 describe('OrganizationDetailsStep', () => {
