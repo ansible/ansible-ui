@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from '@testing-library/react';
 import { FormProvider, UseFormReturn, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
@@ -19,7 +20,7 @@ vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
 
 interface FormWrapperProps {
   children: React.ReactNode;
-  form: UseFormReturn;
+  form: UseFormReturn<any>;
 }
 
 function FormWrapper({ children, form }: FormWrapperProps) {
