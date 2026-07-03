@@ -8,6 +8,8 @@ export function ApiTokensPage() {
     <PageLayout>
       <PageHeader
         title={t('API Tokens')}
+        titleHelpTitle={t('API Tokens')}
+        titleHelp={t('API tokens used for authentication and authorization in automation.')}
         description={t('API tokens used for authentication and authorization in automation.')}
       />
       <ApiTokensTable />
