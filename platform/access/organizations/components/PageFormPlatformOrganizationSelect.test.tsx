@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from '@testing-library/react';
 import { FormProvider, UseFormReturn, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
@@ -9,7 +10,7 @@ import { PageFormPlatformOrganizationSelect } from './PageFormPlatformOrganizati
 
 interface FormWrapperProps {
   children: React.ReactNode;
-  form: UseFormReturn;
+  form: UseFormReturn<any>;
 }
 
 function FormWrapper({ children, form }: FormWrapperProps) {
