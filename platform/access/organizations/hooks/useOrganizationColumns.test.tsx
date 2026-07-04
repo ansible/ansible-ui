@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useOrganizationColumns } from './useOrganizationColumns';
 
 describe('useOrganizationColumns', () => {
@@ -103,6 +102,9 @@ describe('useOrganizationColumns', () => {
     });
 
     const usersColumn = result.current.find((col) => col.header === 'Users');
+    expect(usersColumn).toBeDefined();
+    expect(typeof usersColumn!.value).toBe('function');
+
     const mockOrg = {
       id: 1,
       name: 'Test Org',
@@ -112,13 +114,10 @@ describe('useOrganizationColumns', () => {
           teams: 5,
         },
       },
-    };
+    } as PlatformOrganization;
 
-    if (usersColumn && typeof usersColumn.value === 'function') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const count = usersColumn.value(mockOrg as any);
-      expect(count).toBe(10);
-    }
+    const count = (usersColumn!.value as (org: PlatformOrganization) => number)(mockOrg);
+    expect(count).toBe(10);
   });
 
   it('should extract teams count from summary fields', () => {
@@ -127,6 +126,9 @@ describe('useOrganizationColumns', () => {
     });
 
     const teamsColumn = result.current.find((col) => col.header === 'Teams');
+    expect(teamsColumn).toBeDefined();
+    expect(typeof teamsColumn!.value).toBe('function');
+
     const mockOrg = {
       id: 1,
       name: 'Test Org',
@@ -136,12 +138,9 @@ describe('useOrganizationColumns', () => {
           teams: 5,
         },
       },
-    };
+    } as PlatformOrganization;
 
-    if (teamsColumn && typeof teamsColumn.value === 'function') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const count = teamsColumn.value(mockOrg as any);
-      expect(count).toBe(5);
-    }
+    const count = (teamsColumn!.value as (org: PlatformOrganization) => number)(mockOrg);
+    expect(count).toBe(5);
   });
 });

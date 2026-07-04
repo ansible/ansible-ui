@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDeleteOrganizations } from './useDeleteOrganizations';
 
 const mockBulkConfirmation = vi.fn();
@@ -17,6 +17,9 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
 });
 
 describe('useDeleteOrganizations', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
   it('should return a function', () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() => useDeleteOrganizations(onComplete), {

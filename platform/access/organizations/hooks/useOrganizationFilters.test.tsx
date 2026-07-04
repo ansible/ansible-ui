@@ -17,10 +17,4 @@ describe('useOrganizationFilters', () => {
     const nameFilter = result.current.find((filter) => filter.key === 'name');
     expect(nameFilter).toBeDefined();
   });
-
-  it('should return at least one filter', () => {
-    const { result } = renderHook(() => useOrganizationFilters());
-
-    expect(result.current.length).toBeGreaterThan(0);
-  });
 });
