@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from '@testing-library/react';
 import { FormProvider, UseFormReturn, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
-import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
 import { OrganizationDetailsStep } from './OrganizationDetailsStep';
 
 vi.mock('../../../../main/GatewayServices', () => ({
@@ -20,7 +20,7 @@ vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
 
 interface FormWrapperProps {
   readonly children: React.ReactNode;
-  readonly form: UseFormReturn<OrganizationWizardFormValues>;
+  readonly form: UseFormReturn<any>;
 }
 
 function FormWrapper({ children, form }: FormWrapperProps) {
