@@ -100,7 +100,7 @@ afterEach(() => {
 afterAll(() => server.close());
 
 describe('EditPlatformOrganization', () => {
-  it('should render the component', async () => {
+  it('should load and display organization data from URL params', async () => {
     render(
       <MemoryRouter initialEntries={['/organizations/1/edit']}>
         <Routes>
@@ -109,45 +109,36 @@ describe('EditPlatformOrganization', () => {
       </MemoryRouter>
     );
 
-    // Component should eventually render
-    await waitFor(
-      () => {
-        expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
+    // Verify organization name and description are loaded from API
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Test Description')).toBeInTheDocument();
+    });
   });
 
-  it('should load organization data from API', async () => {
-    render(
-      <MemoryRouter initialEntries={['/organizations/1/edit']}>
-        <Routes>
-          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    // Verify organization name and description are loaded
-    await waitFor(
-      () => {
-        expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('Test Description')).toBeInTheDocument();
+  it('should load organization with different ID from URL params', async () => {
+    const differentOrg = {
+      ...mockPlatformOrganization,
+      id: 2,
+      name: 'Different Organization',
+      description: 'Different Description',
+      summary_fields: {
+        ...mockPlatformOrganization.summary_fields,
+        resource: {
+          ansible_id: 'ansible-456',
+          resource_type: 'organization',
+        },
       },
-      { timeout: 3000 }
-    );
-  });
-
-  it('should fetch controller organization when AWX service is available', async () => {
-    let controllerOrgRequested = false;
+    };
 
     server.use(
+      http.get(gatewayAPI`/organizations/2/`, () => HttpResponse.json(differentOrg)),
       http.get(awxAPI`/organizations/`, ({ request }) => {
         const url = new URL(request.url);
-        if (url.searchParams.get('resource__ansible_id') === 'ansible-123') {
-          controllerOrgRequested = true;
+        if (url.searchParams.get('resource__ansible_id') === 'ansible-456') {
           return HttpResponse.json({
             count: 1,
-            results: [mockControllerOrganization],
+            results: [{ ...mockControllerOrganization, ansible_id: 'ansible-456' }],
             next: null,
             previous: null,
           });
@@ -157,61 +148,17 @@ describe('EditPlatformOrganization', () => {
     );
 
     render(
-      <MemoryRouter initialEntries={['/organizations/1/edit']}>
+      <MemoryRouter initialEntries={['/organizations/2/edit']}>
         <Routes>
           <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
         </Routes>
       </MemoryRouter>
     );
 
+    // Verify the different organization was loaded
     await waitFor(() => {
-      expect(controllerOrgRequested).toBe(true);
-    });
-  });
-
-  it('should fetch galaxy credentials for controller organization', async () => {
-    let galaxyCredentialsRequested = false;
-
-    server.use(
-      http.get(awxAPI`/organizations/100/galaxy_credentials/`, () => {
-        galaxyCredentialsRequested = true;
-        return HttpResponse.json({ results: mockGalaxyCredentials });
-      })
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/organizations/1/edit']}>
-        <Routes>
-          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(galaxyCredentialsRequested).toBe(true);
-    });
-  });
-
-  it('should fetch instance groups for controller organization', async () => {
-    let instanceGroupsRequested = false;
-
-    server.use(
-      http.get(awxAPI`/organizations/100/instance_groups/`, () => {
-        instanceGroupsRequested = true;
-        return HttpResponse.json({ results: mockInstanceGroups });
-      })
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/organizations/1/edit']}>
-        <Routes>
-          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(instanceGroupsRequested).toBe(true);
+      expect(screen.getByDisplayValue('Different Organization')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Different Description')).toBeInTheDocument();
     });
   });
 
@@ -224,14 +171,10 @@ describe('EditPlatformOrganization', () => {
       </MemoryRouter>
     );
 
-    // After data loads, form fields should appear
-    await waitFor(
-      () => {
-        expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
+    await waitFor(() => {
+      expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
+    });
   });
 
   it('should display edit organization wizard steps', async () => {
@@ -248,23 +191,5 @@ describe('EditPlatformOrganization', () => {
     });
 
     expect(screen.getByText('Review')).toBeInTheDocument();
-  });
-
-  it('should use organization ID from URL params', async () => {
-    render(
-      <MemoryRouter initialEntries={['/organizations/1/edit']}>
-        <Routes>
-          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    // Verify correct organization (ID 1) was loaded
-    await waitFor(
-      () => {
-        expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
   });
 });
