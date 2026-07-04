@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { CreatePlatformOrganization } from './CreatePlatformOrganization';
@@ -49,7 +50,7 @@ const server = setupServer(
     HttpResponse.json({ count: 0, results: [], next: null, previous: null })
   ),
   http.post(gatewayAPI`/organizations/`, () => HttpResponse.json(mockOrganization)),
-  http.get('/api/controller/v2/organizations/*', () =>
+  http.get(awxAPI`/organizations/*`, () =>
     HttpResponse.json({
       count: 1,
       results: [{ id: 1, name: 'Test Organization', ansible_id: 'ansible-123' }],
@@ -57,15 +58,9 @@ const server = setupServer(
       previous: null,
     })
   ),
-  http.post('/api/controller/v2/organizations/*/instance_groups/', () =>
-    HttpResponse.json({ id: 1 })
-  ),
-  http.post('/api/controller/v2/organizations/*/galaxy_credentials/', () =>
-    HttpResponse.json({ id: 1 })
-  ),
-  http.patch('/api/controller/v2/organizations/*/', () =>
-    HttpResponse.json({ id: 1, max_hosts: 100 })
-  )
+  http.post(awxAPI`/organizations/*/instance_groups/`, () => HttpResponse.json({ id: 1 })),
+  http.post(awxAPI`/organizations/*/galaxy_credentials/`, () => HttpResponse.json({ id: 1 })),
+  http.patch(awxAPI`/organizations/*/`, () => HttpResponse.json({ id: 1, max_hosts: 100 }))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -76,25 +71,24 @@ afterEach(() => {
 afterAll(() => server.close());
 
 describe('CreatePlatformOrganization', () => {
-  it('should render the organization wizard', () => {
+  it('should render the organization wizard with title and first step', () => {
     render(
       <MemoryRouter>
         <CreatePlatformOrganization />
       </MemoryRouter>
     );
 
-    expect(screen.getAllByText('Create organization').length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
     expect(screen.getAllByText('Organization details').length).toBeGreaterThan(0);
   });
 
-  it('should render organization details step initially', () => {
+  it('should render form fields on organization details step', () => {
     render(
       <MemoryRouter>
         <CreatePlatformOrganization />
       </MemoryRouter>
     );
 
-    // Check that the first step (Organization details) is visible
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
   });
@@ -106,7 +100,6 @@ describe('CreatePlatformOrganization', () => {
       </MemoryRouter>
     );
 
-    // Wizard should have Review step
     expect(screen.getByText('Review')).toBeInTheDocument();
   });
 
@@ -117,19 +110,6 @@ describe('CreatePlatformOrganization', () => {
       </MemoryRouter>
     );
 
-    // Should have Next button to proceed through wizard
     expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
-  });
-
-  it('should render form fields for organization details', () => {
-    render(
-      <MemoryRouter>
-        <CreatePlatformOrganization />
-      </MemoryRouter>
-    );
-
-    // Check for key form fields
-    expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
   });
 });
