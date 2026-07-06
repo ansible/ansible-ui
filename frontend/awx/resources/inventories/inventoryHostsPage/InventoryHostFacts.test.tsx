@@ -119,6 +119,29 @@ describe('InventoryHostFacts Component', () => {
     ).toBeInTheDocument();
   });
 
+  test('should show error state when facts API fails', async () => {
+    server.use(
+      http.get(awxAPI`/hosts/:id/ansible_facts/`, () =>
+        HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/inventories/1/hosts/1/facts']}>
+        <Routes>
+          <Route
+            path="/inventories/:id/hosts/:host_id/facts"
+            element={<InventoryHostFacts page="inventory_host" />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/internal server error/i)).toBeInTheDocument();
+    });
+  });
+
   test('should render facts for standalone host page', async () => {
     render(
       <MemoryRouter initialEntries={['/hosts/123/facts']}>
@@ -140,5 +163,32 @@ describe('InventoryHostFacts Component', () => {
       // Check if facts data is present in the document
       expect(screen.getByText(/ansible_dns/i, { exact: false })).toBeInTheDocument();
     });
+  });
+
+  test('should fall back to empty string when params.id is absent for standalone host page', () => {
+    // Covers the params.id ?? '' branch on line 15 when route has no :id segment
+    render(
+      <MemoryRouter initialEntries={['/facts']}>
+        <Routes>
+          <Route path="/facts" element={<InventoryHostFacts page="host" />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    expect(document.body).toBeInTheDocument();
+  });
+
+  test('should fall back to empty string when params.host_id is absent for inventory host page', () => {
+    // Covers the params.host_id ?? '' branch on line 15 when route has no :host_id segment
+    render(
+      <MemoryRouter initialEntries={['/inventories/1/facts']}>
+        <Routes>
+          <Route
+            path="/inventories/:id/facts"
+            element={<InventoryHostFacts page="inventory_host" />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+    expect(document.body).toBeInTheDocument();
   });
 });
