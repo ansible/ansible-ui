@@ -1,6 +1,6 @@
 import { vi, test, afterEach, describe, expect } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import {
@@ -48,7 +48,29 @@ vi.mock('./components', () => ({
     </>
   ),
   DashboardChartCard: ({ title }: { title: string }) => <div>{title}</div>,
-  DashboardTableCard: ({ title }: { title: string }) => <div>{title}</div>,
+  DashboardTableCard: ({
+    title,
+    items,
+    emptyStateTitle,
+    emptyStateDescription,
+  }: {
+    title: string;
+    items?: unknown[];
+    emptyStateTitle?: string;
+    emptyStateDescription?: string;
+  }) => (
+    <div>
+      <div>{title}</div>
+      {(!items || items.length === 0) && (
+        <div data-testid={`${title}-empty-state`}>
+          {emptyStateTitle && <div data-testid="empty-state-title">{emptyStateTitle}</div>}
+          {emptyStateDescription && (
+            <div data-testid="empty-state-description">{emptyStateDescription}</div>
+          )}
+        </div>
+      )}
+    </div>
+  ),
   DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
     <div
       data-testid="dashboard-main-table-card"
@@ -162,7 +184,6 @@ const mockView: IAutomationDashboardView = {
   loading: false,
   refresh: vi.fn(),
   exportCsv: vi.fn(),
-  exportPdf: vi.fn(),
   isFilterStateDefault: true,
   registerClearCallback: vi.fn(),
 };
@@ -240,43 +261,6 @@ describe('AutomationDashboard', () => {
     );
   });
 
-  // ─── Save as PDF button ────────────────────────────────────────────────────
-
-  test('should render Save as PDF button', () => {
-    render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeInTheDocument();
-  });
-
-  // TODO: Update to `not.toBeDisabled()` once `|| true` is removed from the Save as PDF button.
-  test('should disable Save as PDF button while PDF export is not yet implemented on BE', () => {
-    render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeDisabled();
-  });
-
-  test('should disable Save as PDF button when loading', () => {
-    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({ ...mockView, loading: true });
-    render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeDisabled();
-  });
-
-  test('should disable Save as PDF button when table has no items', () => {
-    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
-      ...mockView,
-      mainTableView: { ...mockMainTableView, itemCount: 0 },
-    });
-    render(testWrapper());
-    expect(screen.getByTestId('save-as-pdf-button')).toBeDisabled();
-  });
-
-  // TODO: Re-enable once `|| true` is removed from the Save as PDF button.
-  test.skip('should call exportPdf when Save as PDF button is clicked', () => {
-    const exportPdf = vi.fn();
-    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({ ...mockView, exportPdf });
-    render(testWrapper());
-    fireEvent.click(screen.getByTestId('save-as-pdf-button'));
-    expect(exportPdf).toHaveBeenCalledTimes(1);
-  });
-
   // ─── Value card data ───────────────────────────────────────────────────────
 
   test('should display metric values from details', () => {
@@ -331,5 +315,67 @@ describe('AutomationDashboard', () => {
     render(testWrapper());
     expect(screen.queryByTestId('loading-state')).not.toBeInTheDocument();
     expect(screen.getByText('Automation Dashboard')).toBeInTheDocument();
+  });
+
+  // ─── Empty state scenarios ─────────────────────────────────────────────────
+
+  test('should show "no data yet" empty state when there are no items and no top projects', () => {
+    const viewWithNoData = {
+      ...mockView,
+      details: { ...mockDetails, top_projects: [] },
+      mainTableView: { ...mockMainTableView, itemCount: 0 },
+    };
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithNoData);
+    render(testWrapper());
+    expect(screen.getByText('No project data yet')).toBeInTheDocument();
+    expect(
+      screen.getByText('Project data will appear after your first automation runs.')
+    ).toBeInTheDocument();
+  });
+
+  test('should show "no data yet" empty state when there are no items and no top users', () => {
+    const viewWithNoData = {
+      ...mockView,
+      details: { ...mockDetails, top_users: [] },
+      mainTableView: { ...mockMainTableView, itemCount: 0 },
+    };
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithNoData);
+    render(testWrapper());
+    expect(screen.getByText('No user data yet')).toBeInTheDocument();
+    expect(
+      screen.getByText('User data will appear after your first automation runs.')
+    ).toBeInTheDocument();
+  });
+
+  test('should show filtered empty state when items exist but top projects are empty', () => {
+    const viewWithFilteredData = {
+      ...mockView,
+      details: { ...mockDetails, top_projects: [] },
+      mainTableView: { ...mockMainTableView, itemCount: 5 },
+    };
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithFilteredData);
+    render(testWrapper());
+    expect(screen.getByText('No projects to rank')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Automation data exists, but no runs are currently associated with projects.'
+      )
+    ).toBeInTheDocument();
+  });
+
+  test('should show filtered empty state when items exist but top users are empty', () => {
+    const viewWithFilteredData = {
+      ...mockView,
+      details: { ...mockDetails, top_users: [] },
+      mainTableView: { ...mockMainTableView, itemCount: 5 },
+    };
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithFilteredData);
+    render(testWrapper());
+    expect(screen.getByText('No users to rank')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Automation data exists, but no runs are currently attributed to individual users.'
+      )
+    ).toBeInTheDocument();
   });
 });

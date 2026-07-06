@@ -163,7 +163,6 @@ export type IAutomationDashboardView = {
   loading: boolean;
   refresh: () => Promise<void>;
   exportCsv: (reportType: ReportType) => Promise<void>;
-  exportPdf: () => Promise<void>;
   isFilterStateDefault: boolean;
   registerClearCallback: (callback: () => void) => void;
   toolbarFilters?: IToolbarFilter[];
