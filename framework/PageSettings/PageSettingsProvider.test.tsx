@@ -7,6 +7,7 @@ import {
   usePageSettings,
   PageSettingsContext,
   createSWRErrorRetryHandler,
+  SWR_DEDUPING_INTERVAL_MS,
 } from './PageSettingsProvider';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 
@@ -327,9 +328,7 @@ describe('PageSettingsProvider', () => {
       );
 
       const config = capturedSWRConfigValues[capturedSWRConfigValues.length - 1];
-      expect(config).toHaveProperty('dedupingInterval');
-      expect(typeof config.dedupingInterval).toBe('number');
-      expect(config.dedupingInterval as number).toBeGreaterThan(0);
+      expect(config).toHaveProperty('dedupingInterval', SWR_DEDUPING_INTERVAL_MS);
     });
 
     test('should configure SWR with correct refresh interval', () => {
