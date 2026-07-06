@@ -71,8 +71,8 @@ export function Hosts() {
           emptyState={
             canCreateHost ? (
               <PageTableEmptyState
-                title={t('There are currently no hosts.')}
-                description={t('Create a host to populate this list.')}
+                title={t('There are currently no hosts added')}
+                description={t('Please create a host by using the button below.')}
               >
                 <ButtonLink
                   icon={<PlusCircleIcon />}

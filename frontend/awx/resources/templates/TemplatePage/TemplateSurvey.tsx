@@ -145,7 +145,7 @@ export function TemplateSurveyInternal({
         canCreateSurvey ? (
           <PageTableEmptyState
             title={t('There are currently no survey questions.')}
-            description={t('Create a survey question to populate this list.')}
+            description={t('Create a survey question by clicking the button below.')}
           >
             <ButtonLink
               icon={<PlusCircleIcon />}

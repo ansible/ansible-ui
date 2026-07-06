@@ -55,7 +55,9 @@ describe('InventoryHosts Component Button Visibility', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('No hosts are assigned to this inventory.')).toBeInTheDocument();
+      expect(
+        screen.getByText('There are currently no hosts added to this inventory.')
+      ).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /Create host/i })).toBeInTheDocument();
     });
   });

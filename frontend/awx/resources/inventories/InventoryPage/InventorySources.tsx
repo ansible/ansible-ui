@@ -96,8 +96,8 @@ export function InventorySources() {
         emptyState={
           canCreateSource ? (
             <PageTableEmptyState
-              title={t('There are currently no sources assigned to this inventory.')}
-              description={t('Create a source to assign to this inventory.')}
+              title={t('There are currently no sources added to this inventory.')}
+              description={t('Please create a source by using the button below.')}
             >
               <ButtonLink
                 icon={<PlusCircleIcon />}

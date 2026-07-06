@@ -59,6 +59,5 @@ describe('ManagementJobSchedules', () => {
     await waitFor(() => {
       expect(screen.getByText('No schedules yet')).toBeInTheDocument();
     });
-    expect(screen.getByText('Create a schedule to populate this list.')).toBeInTheDocument();
   });
 });

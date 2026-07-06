@@ -67,8 +67,8 @@ export function InventoryHostGroups(props: { page: string }) {
         emptyState={
           canCreateGroup ? (
             <PageTableEmptyState
-              title={t('There are currently no groups.')}
-              description={t('Associate a group to populate this list.')}
+              title={t('There are currently no groups associated with this host')}
+              description={t('Please add a group by using the button below.')}
             >
               <Button
                 icon={<PlusCircleIcon />}
