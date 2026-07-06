@@ -62,4 +62,55 @@ describe('GroupEdit', () => {
       expect(screen.getByRole('button', { name: /save group/i })).toBeInTheDocument();
     });
   });
+
+  it('should populate name field from API data', async () => {
+    render(
+      <MemoryRouter initialEntries={['/inventories/inventory/42/group/1/edit']}>
+        <Routes>
+          <Route
+            path="/inventories/:inventory_type/:id/group/:group_id/edit"
+            element={<GroupEdit />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Group')).toBeInTheDocument();
+    });
+  });
+
+  it('should populate description field from API data', async () => {
+    render(
+      <MemoryRouter initialEntries={['/inventories/inventory/42/group/1/edit']}>
+        <Routes>
+          <Route
+            path="/inventories/:inventory_type/:id/group/:group_id/edit"
+            element={<GroupEdit />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test description')).toBeInTheDocument();
+    });
+  });
+
+  it('should display Cancel button', async () => {
+    render(
+      <MemoryRouter initialEntries={['/inventories/inventory/42/group/1/edit']}>
+        <Routes>
+          <Route
+            path="/inventories/:inventory_type/:id/group/:group_id/edit"
+            element={<GroupEdit />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+    });
+  });
 });

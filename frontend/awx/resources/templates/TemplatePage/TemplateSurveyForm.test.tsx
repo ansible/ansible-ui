@@ -84,6 +84,32 @@ const createSurveyWithTextQuestion = (
   };
 };
 
+const DEFAULT_NUMERIC_OPTIONS = { type: 'integer' as const };
+const createSurveyWithNumericQuestion = (
+  options: { type: 'integer' | 'float'; defaultValue?: number } = DEFAULT_NUMERIC_OPTIONS
+): Survey => {
+  const { type, defaultValue = 42 } = options;
+
+  return {
+    name: 'Test Survey',
+    description: 'Test Survey Description',
+    spec: [
+      {
+        question_name: `Test ${type} Question`,
+        question_description: `A ${type} question`,
+        required: false,
+        type,
+        variable: 'int_variable',
+        min: 0,
+        max: 100,
+        default: defaultValue,
+        choices: '',
+        new_question: false,
+      },
+    ],
+  };
+};
+
 function renderSurveyForm(
   server: ReturnType<typeof setupServer>,
   survey: Survey,
@@ -504,6 +530,241 @@ describe('TemplateSurveyForm', () => {
 
       expect(screen.getByRole('textbox', { name: /question/i })).toHaveValue('');
       expect(screen.getByRole('button', { name: /create survey question/i })).toBeInTheDocument();
+    });
+
+    test('should render answer variable name and description fields in add mode', async () => {
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      renderSurveyForm(server, emptySurvey, { mode: 'add' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /answer variable name/i })).toBeInTheDocument();
+    });
+
+    test('should render answer type selector with all options', async () => {
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      renderSurveyForm(server, emptySurvey, { mode: 'add' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Answer type')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Answer type')).toBeInTheDocument();
+    });
+
+    test('should render required checkbox in add mode', async () => {
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      renderSurveyForm(server, emptySurvey, { mode: 'add' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Required')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Text question', () => {
+    test('should render min/max length fields for text type', async () => {
+      const textSurvey = createSurveyWithTextQuestion({
+        withDefault: true,
+        defaultValue: 'hello',
+      });
+
+      renderSurveyForm(server, textSurvey, {
+        mode: 'edit',
+        questionVariable: 'text_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum length')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum length')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Integer question', () => {
+    test('should render min/max fields for integer type', async () => {
+      const intSurvey = createSurveyWithNumericQuestion({ type: 'integer' });
+
+      renderSurveyForm(server, intSurvey, {
+        mode: 'edit',
+        questionVariable: 'int_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Float question', () => {
+    test('should render min/max fields for float type', async () => {
+      const floatSurvey = createSurveyWithNumericQuestion({ type: 'float' });
+
+      renderSurveyForm(server, floatSurvey, {
+        mode: 'edit',
+        questionVariable: 'int_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Textarea question', () => {
+    test('should render textarea default answer for textarea type', async () => {
+      const textareaSurvey: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Textarea Question',
+            question_description: 'Enter notes',
+            required: false,
+            type: 'textarea',
+            variable: 'textarea_var',
+            min: 0,
+            max: 4096,
+            default: 'default notes',
+            choices: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, textareaSurvey, {
+        mode: 'edit',
+        questionVariable: 'textarea_var',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum length')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum length')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Password question', () => {
+    test('should render password default answer for password type', async () => {
+      const passwordSurvey: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Password Question',
+            question_description: 'Enter secret',
+            required: true,
+            type: 'password',
+            variable: 'password_var',
+            min: 0,
+            max: 256,
+            default: '',
+            choices: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, passwordSurvey, {
+        mode: 'edit',
+        questionVariable: 'password_var',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum length')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum length')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+  });
+
+  describe('Error and Loading states', () => {
+    test('should render error when survey API fails', async () => {
+      const templateId = '123';
+      server.use(
+        http.get(awxAPI`/job_templates/${templateId}/survey_spec/`, () =>
+          HttpResponse.json({ detail: 'Server Error' }, { status: 500 })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/templates/job_template/${templateId}/survey/add`]}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={<TemplateSurveyForm mode="add" resourceType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(/detail: Server Error/)).toBeInTheDocument();
+      });
+    });
+
+    test('should render loading state while fetching survey', async () => {
+      const templateId = '123';
+      server.use(
+        http.get(awxAPI`/job_templates/${templateId}/survey_spec/`, async () => {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          return HttpResponse.json({ name: '', description: '', spec: [] });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/templates/job_template/${templateId}/survey/add`]}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={<TemplateSurveyForm mode="add" resourceType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      expect(screen.queryByText('Question')).not.toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Edit Mode - Workflow job template resource type', () => {
+    test('should render edit form for workflow job template survey', async () => {
+      const textSurvey = createSurveyWithTextQuestion({ withDefault: true });
+
+      renderSurveyForm(server, textSurvey, {
+        mode: 'edit',
+        questionVariable: 'text_variable',
+        resourceType: 'workflow_job_templates',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('textbox', { name: /question/i })).toHaveValue('Test Text Question');
+      expect(screen.getByRole('button', { name: /save survey question/i })).toBeInTheDocument();
     });
   });
 });

@@ -125,4 +125,107 @@ describe('InventoryDetails', () => {
     expect(screen.getByText('Constructed inventory')).toBeInTheDocument();
     expect(screen.getByText(/0 \(Normal\)/)).toBeInTheDocument();
   });
+
+  it('should render labels', async () => {
+    renderInventoryDetails(baseInventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test label')).toBeInTheDocument();
+    });
+  });
+
+  it('should render policy enforcement when opa_query_path is set', async () => {
+    const inventoryWithOpa: Inventory = {
+      ...baseInventory,
+      opa_query_path: 'data/allow',
+    };
+    renderInventoryDetails(inventoryWithOpa);
+
+    await waitFor(() => {
+      expect(screen.getByText('data/allow')).toBeInTheDocument();
+    });
+  });
+
+  it('should render prevent instance group fallback option', async () => {
+    const inventoryWithFallback: Inventory = {
+      ...baseInventory,
+      prevent_instance_group_fallback: true,
+    };
+    renderInventoryDetails(inventoryWithFallback);
+
+    await waitFor(() => {
+      expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
+    });
+  });
+
+  it('should render source variables for constructed inventory', async () => {
+    const constructedWithVars: Inventory = {
+      ...baseInventory,
+      kind: 'constructed',
+      source_vars: 'plugin: constructed\nstrict: true',
+      verbosity: 1,
+      update_cache_timeout: 30,
+      limit: 'host1',
+      hosts_with_active_failures: 0,
+      total_groups: 2,
+      total_inventory_sources: 1,
+      inventory_sources_with_failures: 0,
+    };
+    renderInventoryDetails(constructedWithVars);
+
+    await waitFor(() => {
+      expect(screen.getByText('Source variables')).toBeInTheDocument();
+    });
+    expect(screen.getByText('1 (Verbose)')).toBeInTheDocument();
+    expect(screen.getByText('host1')).toBeInTheDocument();
+  });
+
+  it('should render input inventories for constructed inventory', async () => {
+    const constructedInventory: Inventory = {
+      ...baseInventory,
+      kind: 'constructed',
+      hosts_with_active_failures: 0,
+      total_groups: 0,
+      total_inventory_sources: 0,
+      inventory_sources_with_failures: 0,
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+    };
+
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/input_inventories/'),
+        () =>
+          HttpResponse.json({
+            count: 1,
+            results: [{ id: 5, name: 'Input Inventory A', kind: '' }],
+          })
+      )
+    );
+
+    renderInventoryDetails(constructedInventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('Input Inventory A')).toBeInTheDocument();
+    });
+  });
+
+  it('should render total hosts', async () => {
+    renderInventoryDetails(baseInventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Total hosts')).toBeInTheDocument();
+  });
+
+  it('should render Variables label for regular inventory', async () => {
+    renderInventoryDetails(baseInventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('Variables')).toBeInTheDocument();
+    });
+  });
 });
