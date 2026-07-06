@@ -149,7 +149,7 @@ export function PlatformAccess<T extends Assignment>(props: PlatformAccessProps<
         key: 'role_definition__name',
         label: t('Role name'),
         type: ToolbarFilterType.SingleText,
-        query: 'role_definition__name__contains',
+        query: 'role_definition__name__icontains',
         comparison: 'contains',
       },
       ...(props.additionalTableFilters ?? []),
