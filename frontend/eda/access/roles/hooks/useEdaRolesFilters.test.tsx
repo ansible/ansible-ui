@@ -25,7 +25,7 @@ describe('useEdaRolesFilters', () => {
     const { result } = renderHook(() => useEdaRolesFilters());
 
     const nameFilter = result.current.find((f) => f.key === 'name');
-    expect(nameFilter?.query).toBe('name__contains');
+    expect(nameFilter?.query).toBe('name__icontains');
   });
 
   it('should use contains comparison for name filter', () => {
