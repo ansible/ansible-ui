@@ -80,7 +80,7 @@ export function useLaunchedByToolbarFilter() {
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'launched-by',
-      label: t('Launched by (username)'),
+      label: t('Launched by'),
       type: ToolbarFilterType.MultiText,
       query: 'created_by__username__icontains',
       comparison: 'contains',

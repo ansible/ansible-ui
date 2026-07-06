@@ -80,6 +80,6 @@ describe('useJobsFilters', () => {
     const launchedByFilter = result.current.find((f) => f.key === 'launched-by');
     expect(launchedByFilter).toBeDefined();
     expect(launchedByFilter?.query).toBe('created_by__username__icontains');
-    expect(launchedByFilter?.label).toBe('Launched by (username)');
+    expect(launchedByFilter?.label).toBe('Launched by');
   });
 });
