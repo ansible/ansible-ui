@@ -238,7 +238,10 @@ export function AutomationDashboard() {
 
           <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
             <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
-              <DashboardMainTableCard {...view}></DashboardMainTableCard>
+              <DashboardMainTableCard
+                {...view}
+                toolbarFilters={toolbarFilters}
+              ></DashboardMainTableCard>
             </Grid>
           </GridItem>
         </PageDashboard>

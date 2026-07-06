@@ -212,14 +212,14 @@ describe('useAutomationDashboardView', () => {
 
   // --- exportCsv ---
 
-  test('should call exportCsvBase and manage loading on exportCsv', async () => {
+  test('should call exportCsvBase with reportType and manage loading on exportCsv', async () => {
     const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
 
     await act(async () => {
-      await result.current.exportCsv();
+      await result.current.exportCsv('summary');
     });
 
-    expect(mockExportCsvBase).toHaveBeenCalled();
+    expect(mockExportCsvBase).toHaveBeenCalledWith('summary');
     expect(result.current.loading).toBe(false);
   });
 
@@ -229,7 +229,7 @@ describe('useAutomationDashboardView', () => {
 
     await act(async () => {
       try {
-        await result.current.exportCsv();
+        await result.current.exportCsv('summary');
       } catch {
         // expected
       }

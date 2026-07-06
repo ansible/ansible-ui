@@ -43,6 +43,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     loading,
     detailsError,
     isFilterStateDefault,
+    toolbarFilters,
   } = props;
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
@@ -224,7 +225,9 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
           costState={costState}
           setCostState={setCostState}
           refresh={refresh}
-          onExportCsv={() => void exportCsv()}
+          onExportCsv={exportCsv}
+          filterState={mainTableView?.filterState}
+          toolbarFilters={toolbarFilters}
         ></DashboardTableToolbarRow>
         <div
           ref={ref}
