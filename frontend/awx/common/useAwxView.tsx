@@ -12,11 +12,13 @@ import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { AwxItemsResponse } from './AwxItemsResponse';
+import { useAwxConfigState } from './useAwxConfig';
 
 export type IAwxView<T extends { id: number }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
+    error: Error | undefined;
     refresh: () => Promise<void>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
@@ -72,11 +74,21 @@ export function useAwxView<T extends { id: number }>(options: {
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
+  const { serviceDown, serviceDownStatusCode } = useAwxConfigState();
+
+  const serviceDownError = useMemo(() => {
+    if (!serviceDown) return undefined;
+    const message = serviceDownStatusCode
+      ? `Controller service is unavailable (HTTP ${String(serviceDownStatusCode)})`
+      : 'Controller service is unavailable';
+    return new Error(message);
+  }, [serviceDown, serviceDownStatusCode]);
+
   const queryString = buildQueryString(view, toolbarFilters || [], queryParams || {});
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<AwxItemsResponse<T>>(url, fetcher);
+  const response = useSWR<AwxItemsResponse<T>>(serviceDown ? null : url, fetcher);
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});
@@ -84,7 +96,9 @@ export function useAwxView<T extends { id: number }>(options: {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
-  if (error instanceof RequestError) {
+  if (serviceDown) {
+    error = serviceDownError;
+  } else if (error instanceof RequestError) {
     if ((error.statusCode === 404 || error.statusCode === 400) && view.page > 1) {
       view.setPage(1);
       error = undefined;
