@@ -45,11 +45,11 @@ export function InventoryGroups() {
     emptyStateDescription = t('Please add Items to populate this list');
   } else {
     emptyStateTitle = canCreateGroup
-      ? t('No groups are assigned to this inventory.')
+      ? t('There are currently no groups added to this inventory.')
       : t('You do not have permission to create a group');
 
     emptyStateDescription = canCreateGroup
-      ? t('Create a group to assign to this inventory.')
+      ? t('Please create a group by using the button below.')
       : t('Please contact your organization administrator if there is an issue with your access.');
   }
 

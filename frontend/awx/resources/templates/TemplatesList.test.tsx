@@ -73,7 +73,9 @@ describe('TemplatesList Empty State', () => {
         { timeout: 10000 }
       );
 
-      expect(screen.getByText('Create a template to populate this list.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Please create a template using the button below.')
+      ).toBeInTheDocument();
 
       const createButton = screen.getByTestId('create-template');
       expect(createButton).toBeInTheDocument();
@@ -150,7 +152,9 @@ describe('TemplatesList Empty State', () => {
         { timeout: 10000 }
       );
 
-      expect(screen.getByText('Create a template to populate this list.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Please create a template using the button below.')
+      ).toBeInTheDocument();
 
       const createButton = screen.getByTestId('create-template');
       expect(createButton).toBeInTheDocument();
@@ -222,7 +226,9 @@ describe('TemplatesList Empty State', () => {
         { timeout: 10000 }
       );
 
-      expect(screen.getByText('Create a template to populate this list.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Please create a template using the button below.')
+      ).toBeInTheDocument();
 
       const createButton = screen.getByTestId('create-template');
       expect(createButton).toBeInTheDocument();
