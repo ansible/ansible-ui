@@ -63,7 +63,7 @@ test.describe('Job Templates Surveys', () => {
           page.getByText('There are currently no survey questions.', { exact: true })
         ).toBeVisible();
         await expect(
-          page.getByText('Create a survey question by clicking the button below.', { exact: true })
+          page.getByText('Create a survey question to populate this list.', { exact: true })
         ).toBeVisible();
         await page.getByRole('link', { name: 'Create survey question', exact: true }).click();
         await page.getByTestId('question-name').fill(question.question_name);
@@ -164,7 +164,7 @@ test.describe('Job Templates Surveys', () => {
           page.getByText('There are currently no survey questions.', { exact: true })
         ).toBeVisible();
         await expect(
-          page.getByText('Create a survey question by clicking the button below.', { exact: true })
+          page.getByText('Create a survey question to populate this list.', { exact: true })
         ).toBeVisible();
       }
     );
