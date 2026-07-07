@@ -866,7 +866,7 @@ describe('TemplateSurveyForm', () => {
     test('should preserve float default value of 0.0', async () => {
       const surveyWithZeroDefault = createSurveyWithFloatQuestion({
         withDefault: true,
-        defaultValue: 0.0,
+        defaultValue: 0,
       });
 
       renderSurveyForm(server, surveyWithZeroDefault, {
