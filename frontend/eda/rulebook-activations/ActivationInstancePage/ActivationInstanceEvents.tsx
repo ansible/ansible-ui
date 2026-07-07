@@ -73,19 +73,22 @@ export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) 
   const estimatedMaxLines = (activationInstanceLog?.results.length ?? 0) * 10;
   const outputLineChars = String(estimatedMaxLines).length;
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { handleScroll, scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } =
+    useScrollControls(
+      containerRef,
+      isFollowModeEnabled,
+      setIsFollowModeEnabled,
+      activationInstanceLog?.results.length ?? 0,
+      isRunning
+    );
+
   const { beforeRowsHeight, visibleItems, afterRowsHeight, setRowHeight } =
     useVirtualizedList<EdaActivationInstanceLog>(
       containerRef,
-      activationInstanceLog?.results ?? []
+      activationInstanceLog?.results ?? [],
+      handleScroll
     );
-
-  const { scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } = useScrollControls(
-    containerRef,
-    isFollowModeEnabled,
-    setIsFollowModeEnabled,
-    activationInstanceLog?.results.length ?? 0,
-    isRunning
-  );
 
   return (
     <Section>
