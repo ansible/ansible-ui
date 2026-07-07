@@ -196,7 +196,7 @@ export function TemplatesList(props: Readonly<TemplatesListProps>) {
         ) : canCreateJobTemplate || canCreateWFJobTemplate ? (
           <PageTableEmptyState
             title={t('No templates yet')}
-            description={t('Create a template to populate this list.')}
+            description={t('Please create a template using the button below.')}
           >
             <PageActionsPinned actions={toolbarActions.slice(0, 1)} />
           </PageTableEmptyState>
