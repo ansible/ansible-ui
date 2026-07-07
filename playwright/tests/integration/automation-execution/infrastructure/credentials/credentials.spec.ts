@@ -614,7 +614,7 @@ test.describe('Credentials - Team and User Access', () => {
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
       await page.getByRole('tab', { name: 'Team Access' }).click();
-      await expect(page.getByText('No teams assigned to credential')).toBeVisible({
+      await expect(page.getByText('No teams are assigned to this credential.')).toBeVisible({
         timeout: 10000,
       });
       await page.getByRole('link', { name: 'Assign teams' }).click();
@@ -706,7 +706,7 @@ test.describe('Credentials - Team and User Access', () => {
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
       await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
       await page.getByRole('tab', { name: 'Team Access' }).click();
-      await expect(page.getByText('No teams assigned to credential')).toBeVisible({
+      await expect(page.getByText('No teams are assigned to this credential.')).toBeVisible({
         timeout: 10000,
       });
       await page.getByRole('link', { name: 'Assign teams' }).click();

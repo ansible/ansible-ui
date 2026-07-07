@@ -307,7 +307,9 @@ async function verifyGroupDetails(page: Page, isContainer: boolean) {
             await page.getByRole('tab', { name: 'Team Access' }).click();
 
             // Verify empty state
-            await expect(page.getByText(/No teams assigned to instance group/)).toBeVisible();
+            await expect(
+              page.getByText(/No teams are assigned to this instance group./)
+            ).toBeVisible();
 
             await page.getByRole('link', { name: 'Assign teams' }).click();
 
@@ -358,7 +360,9 @@ async function verifyGroupDetails(page: Page, isContainer: boolean) {
 
             // Wait for removal and verify empty state
             await expect(page.getByRole('dialog')).toBeHidden({ timeout: 10000 });
-            await expect(page.getByText(/No teams assigned to instance group/)).toBeVisible({
+            await expect(
+              page.getByText(/No teams are assigned to this instance group./)
+            ).toBeVisible({
               timeout: 10000,
             });
           } finally {

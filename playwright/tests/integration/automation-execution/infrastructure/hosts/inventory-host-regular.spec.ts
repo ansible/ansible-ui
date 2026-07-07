@@ -109,9 +109,7 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(disassociateDialog).toBeVisible();
       await disassociateDialog.locator('#confirm').click();
       await page.getByRole('button', { name: 'Disassociate groups', exact: true }).click();
-      await expect(
-        page.getByText('There are currently no groups associated with this host')
-      ).toBeVisible();
+      await expect(page.getByText('There are currently no groups.')).toBeVisible();
 
       // Re-associate all groups
       await InventoryHost.ui.navigateToGroupsTab(inventoryName, hostName, page);

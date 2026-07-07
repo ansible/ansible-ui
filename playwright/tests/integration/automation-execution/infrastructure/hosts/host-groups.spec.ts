@@ -104,9 +104,7 @@ test.describe('Host Groups Tab', () => {
         await dialog.locator('#confirm').click();
         await page.getByRole('button', { name: 'Disassociate groups', exact: true }).click();
 
-        await expect(
-          page.getByText('There are currently no groups associated with this host')
-        ).toBeVisible();
+        await expect(page.getByText('There are currently no groups.')).toBeVisible();
       });
     }
   );
