@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useParams } from 'react-router-dom';
 import { GroupCreate } from './GroupCreate';
 
 vi.mock('@ansible/common-ui/crud/usePostRequest', () => ({
@@ -128,5 +129,23 @@ describe('GroupCreate Component', () => {
     await user.type(descriptionInput, 'Test Description');
 
     expect(descriptionInput).toHaveValue('Test Description');
+  });
+
+  it('renders form with group_id param for related groups', () => {
+    vi.mocked(useParams).mockReturnValueOnce({
+      id: '1',
+      inventory_type: 'inventory',
+      group_id: '5',
+    });
+    render(<GroupCreate />);
+
+    expect(screen.getByLabelText('Name')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /create group/i })).toBeInTheDocument();
+  });
+
+  it('renders Variables editor', () => {
+    render(<GroupCreate />);
+
+    expect(screen.getByLabelText('Variables')).toBeInTheDocument();
   });
 });
