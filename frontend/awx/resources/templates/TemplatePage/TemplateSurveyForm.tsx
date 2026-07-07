@@ -343,7 +343,7 @@ function TemplateSurveyInputs() {
         placeholder={t('Enter answer variable name')}
         validate={(variable: string) => {
           if (/\s/.test(variable)) {
-            return t`This field must not contain spaces.`;
+            return t('This field must not contain spaces.');
           }
           return undefined;
         }}
@@ -484,7 +484,7 @@ function SelectedAnswerType({ answer }: { answer: string }) {
             if (answer === 'integer') {
               const num = parseFloat(value);
               if (!Number.isInteger(num) && /[^0-9]/.test(value)) {
-                return t`This field must be an integer.`;
+                return t('This field must be an integer.');
               }
               return undefined;
             }
