@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { SWRConfig } from 'swr';
 import { awxAPI } from './api/awx-utils';
-import { useAwxView } from './useAwxView';
+import { useAwxView, compareByField } from './useAwxView';
 import { AwxHost } from '../interfaces/AwxHost';
 import { ReactNode } from 'react';
 import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
@@ -177,6 +177,57 @@ describe('useAwxView', () => {
       });
 
       expect(requestUrls.some((url) => url.includes('page=2'))).toBe(false);
+    });
+  });
+
+  describe('upsertItem', () => {
+    test('should update an existing item in the list', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.pageItems!.length).toBe(20);
+      });
+
+      const updatedHost = { ...result.current.pageItems![0], name: 'updated-host' };
+      act(() => {
+        result.current.upsertItem(updatedHost);
+      });
+
+      expect(result.current.pageItems![0].name).toBe('updated-host');
+      expect(result.current.pageItems!.length).toBe(20);
+    });
+
+    test('should prepend a new item to the list', async () => {
+      const { result } = renderHook(
+        () =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.pageItems).toBeDefined();
+        expect(result.current.pageItems!.length).toBe(20);
+      });
+
+      const newHost = { ...mockHosts[0], id: 9999, name: 'new-host' };
+      act(() => {
+        result.current.upsertItem(newHost);
+      });
+
+      expect(result.current.pageItems!.length).toBe(21);
+      expect(result.current.pageItems![0].id).toBe(9999);
+      expect(result.current.pageItems![0].name).toBe('new-host');
     });
   });
 
@@ -771,5 +822,58 @@ describe('useAwxView', () => {
       expect(result.current.selectedItems).toHaveLength(2);
       expect(result.current.selectedItems.map((item) => item.id)).toEqual([1, 2]);
     });
+  });
+});
+
+describe('compareByField', () => {
+  const items = [
+    { id: 1, name: 'Demo Template', started: '2026-06-01T10:00:00Z', priority: 3 },
+    { id: 2, name: 'chatty tasks', started: '2026-06-02T10:00:00Z', priority: 1 },
+    { id: 3, name: 'Test Playbooks', started: '2026-06-01T12:00:00Z', priority: 2 },
+  ];
+
+  test('should sort strings case-insensitively ascending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'name', 'asc'));
+    expect(sorted.map((i) => i.name)).toEqual(['chatty tasks', 'Demo Template', 'Test Playbooks']);
+  });
+
+  test('should sort strings case-insensitively descending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'name', 'desc'));
+    expect(sorted.map((i) => i.name)).toEqual(['Test Playbooks', 'Demo Template', 'chatty tasks']);
+  });
+
+  test('should sort numbers ascending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'priority', 'asc'));
+    expect(sorted.map((i) => i.priority)).toEqual([1, 2, 3]);
+  });
+
+  test('should sort numbers descending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'priority', 'desc'));
+    expect(sorted.map((i) => i.priority)).toEqual([3, 2, 1]);
+  });
+
+  test('should sort date strings ascending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'started', 'asc'));
+    expect(sorted.map((i) => i.id)).toEqual([1, 3, 2]);
+  });
+
+  test('should sort date strings descending', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'started', 'desc'));
+    expect(sorted.map((i) => i.id)).toEqual([2, 3, 1]);
+  });
+
+  test('should treat null/undefined values as neutral', () => {
+    const withNulls = [
+      { id: 1, name: 'Bravo' },
+      { id: 2, name: null },
+      { id: 3, name: 'Alpha' },
+    ];
+    const sorted = [...withNulls].sort((a, b) => compareByField(a, b, 'name', 'asc'));
+    expect(sorted.map((i) => i.id)).toEqual([1, 2, 3]);
+  });
+
+  test('should default to ascending when direction is omitted', () => {
+    const sorted = [...items].sort((a, b) => compareByField(a, b, 'priority'));
+    expect(sorted.map((i) => i.priority)).toEqual([1, 2, 3]);
   });
 });

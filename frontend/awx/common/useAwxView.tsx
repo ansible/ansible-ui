@@ -14,6 +14,30 @@ import useSWR from 'swr';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxConfigState } from './useAwxConfig';
 
+export function compareByField<T>(
+  a: T,
+  b: T,
+  key: string,
+  direction: 'asc' | 'desc' = 'asc'
+): number {
+  const aVal = (a as Record<string, unknown>)[key];
+  const bVal = (b as Record<string, unknown>)[key];
+  if (aVal === null || aVal === undefined || bVal === null || bVal === undefined) return 0;
+
+  let cmp: number;
+  if (typeof aVal === 'string' && typeof bVal === 'string') {
+    cmp = aVal.localeCompare(bVal, undefined, { sensitivity: 'base' });
+  } else if (aVal < bVal) {
+    cmp = -1;
+  } else if (aVal > bVal) {
+    cmp = 1;
+  } else {
+    cmp = 0;
+  }
+
+  return direction === 'desc' ? -cmp : cmp;
+}
+
 export type IAwxView<T extends { id: number }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
@@ -24,6 +48,10 @@ export type IAwxView<T extends { id: number }> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
     limitFiltersToOneOrOperation: true;
     updateItem: (item: T) => void;
+    /** Insert or update an item in the local items state. New items are inserted in sort order. */
+    upsertItem: (item: T) => void;
+    /** The current fully-qualified list URL including query string (filters, sort, pagination). */
+    listUrl: string;
   };
 
 export function useAwxView<T extends { id: number }>(options: {
@@ -145,6 +173,27 @@ export function useAwxView<T extends { id: number }>(options: {
     [items]
   );
 
+  const upsertItem = useCallback(
+    (item: T) => {
+      if (!items) return;
+      const index = items.findIndex((i) => i.id === item.id);
+      if (index === -1) {
+        const newItems = [item, ...items];
+        if (view.sort) {
+          const key = view.sort;
+          const dir = view.sortDirection ?? 'asc';
+          newItems.sort((a, b) => compareByField(a, b, key, dir));
+        }
+        setItems(newItems);
+      } else {
+        const newItems = [...items];
+        newItems[index] = item;
+        setItems(newItems);
+      }
+    },
+    [items, view.sort, view.sortDirection]
+  );
+
   return useMemo(() => {
     return {
       refresh,
@@ -157,6 +206,8 @@ export function useAwxView<T extends { id: number }>(options: {
       unselectItemsAndRefresh,
       limitFiltersToOneOrOperation: true,
       updateItem,
+      upsertItem,
+      listUrl: url,
     };
   }, [
     error,
@@ -166,6 +217,8 @@ export function useAwxView<T extends { id: number }>(options: {
     selection,
     unselectItemsAndRefresh,
     updateItem,
+    upsertItem,
+    url,
     view,
   ]);
 }

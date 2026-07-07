@@ -167,6 +167,8 @@ const mockMainTableView: IAutomationDashboardView['mainTableView'] = {
   unselectItemsAndRefresh: vi.fn(),
   limitFiltersToOneOrOperation: true,
   updateItem: vi.fn(),
+  upsertItem: vi.fn(),
+  listUrl: '',
 } as unknown as IAutomationDashboardView['mainTableView'];
 
 const mockView: IAutomationDashboardView = {

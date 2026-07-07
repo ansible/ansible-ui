@@ -46,6 +46,8 @@ vi.mock('../common/useAutomationDashboardBaseView', () => ({
     refresh: mockBaseViewRefresh,
     limitFiltersToOneOrOperation: true,
     updateItem: vi.fn(),
+    upsertItem: vi.fn(),
+    listUrl: '',
   })),
 }));
 
