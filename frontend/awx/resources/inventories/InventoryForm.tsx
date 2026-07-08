@@ -539,7 +539,7 @@ async function submitInstanceGroups(
   return results;
 }
 
-async function submitInputInventories(
+export async function submitInputInventories(
   inventory: Inventory,
   currentInputInventories: InputInventory[],
   originalInputInventories: InputInventory[]
@@ -560,7 +560,7 @@ async function submitInputInventories(
 
 type InputInventory = { id: number; url: string; type: string; name: string };
 
-async function loadInputInventories(
+export async function loadInputInventories(
   inventories: Inventory[],
   t: TFunction<'translation', undefined>
 ) {

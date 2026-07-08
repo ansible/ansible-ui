@@ -3,9 +3,15 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import type { TFunction } from 'i18next';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
-import { CreateInventory, EditInventory } from './InventoryForm';
+import {
+  CreateInventory,
+  EditInventory,
+  loadInputInventories,
+  submitInputInventories,
+} from './InventoryForm';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   DataEditor: (props: {
@@ -440,7 +446,7 @@ describe('InventoryForm', () => {
       expect(screen.getByRole('button', { name: /save inventory/i })).toBeInTheDocument();
     });
 
-    it('should show error when input_inventories fetch fails for constructed inventory', async () => {
+    it('should show error when fetch fails for constructed inventory input_inventories', async () => {
       // Use id: 4 to avoid SWR cache from the id: 3 preload test above. All handlers
       // for this inventory are set up here so the test is self-contained.
       server.use(
@@ -474,5 +480,75 @@ describe('InventoryForm', () => {
         expect(screen.getByRole('heading', { name: 'Forbidden' })).toBeInTheDocument();
       });
     });
+  });
+});
+
+describe('submitInputInventories', () => {
+  it('should disassociate originals then associate current input inventories in order', async () => {
+    const calls: unknown[] = [];
+    server.use(
+      http.post(awxAPI`/inventories/200/input_inventories/`, async ({ request }) => {
+        calls.push(await request.json());
+        return HttpResponse.json({});
+      })
+    );
+
+    await submitInputInventories(
+      { id: 200 } as Parameters<typeof submitInputInventories>[0],
+      [{ id: 20, url: '', type: '', name: '' }],
+      [{ id: 10, url: '', type: '', name: '' }]
+    );
+
+    expect(calls).toEqual([{ id: 10, disassociate: true }, { id: 20 }]);
+  });
+
+  it('should complete without making any requests when both arrays are empty', async () => {
+    await expect(
+      submitInputInventories({ id: 201 } as Parameters<typeof submitInputInventories>[0], [], [])
+    ).resolves.toBeUndefined();
+  });
+});
+
+describe('loadInputInventories', () => {
+  const mockT = ((key: string) => key) as unknown as TFunction<'translation', undefined>;
+
+  it('should return InputInventory list with url and type populated from the API', async () => {
+    server.use(
+      http.get(
+        ({ request }) => new URL(request.url).searchParams.get('id') === '10',
+        () =>
+          HttpResponse.json({
+            count: 1,
+            next: null,
+            previous: null,
+            results: [{ id: 10, url: '/api/v2/inventories/10/', type: 'inventory' }],
+          })
+      )
+    );
+
+    const result = await loadInputInventories(
+      [{ id: 10, name: 'inv-10' } as Parameters<typeof loadInputInventories>[0][0]],
+      mockT
+    );
+
+    expect(result).toEqual([
+      { id: 10, url: '/api/v2/inventories/10/', type: 'inventory', name: '' },
+    ]);
+  });
+
+  it('should throw a translated error when the API request fails', async () => {
+    server.use(
+      http.get(
+        ({ request }) => new URL(request.url).searchParams.get('id') === '99',
+        () => HttpResponse.json({ detail: 'Not Found' }, { status: 404 })
+      )
+    );
+
+    await expect(
+      loadInputInventories(
+        [{ id: 99, name: 'missing' } as Parameters<typeof loadInputInventories>[0][0]],
+        mockT
+      )
+    ).rejects.toThrow('Error loading input inventory with id {{id}}.');
   });
 });
