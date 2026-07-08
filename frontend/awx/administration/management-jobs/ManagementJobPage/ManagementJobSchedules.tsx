@@ -35,7 +35,7 @@ export function ManagementJobSchedules() {
       emptyState={
         <PageTableEmptyState
           title={t('No schedules yet')}
-          description={t('To get started, create a schedule.')}
+          description={t('Create a schedule to populate this list.')}
         >
           <ButtonLink
             icon={<PlusCircleIcon />}
