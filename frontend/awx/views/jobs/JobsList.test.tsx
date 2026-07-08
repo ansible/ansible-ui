@@ -305,6 +305,49 @@ describe('JobsList Component Tests', () => {
       { timeout: 10000 }
     );
   }, 15000);
+
+  test('renders empty state with correct messaging when no jobs exist', async () => {
+    // Override the default handler to return empty results
+    server.use(
+      http.get('*/api/controller/v2/unified_jobs/', () => {
+        return HttpResponse.json({
+          count: 0,
+          next: null,
+          previous: null,
+          results: [],
+        });
+      }),
+      http.get('*/api/v2/unified_jobs/', () => {
+        return HttpResponse.json({
+          count: 0,
+          next: null,
+          previous: null,
+          results: [],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <Jobs />
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Jobs')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    // Verify empty state messaging updated in PR #3345
+    await waitFor(
+      () => {
+        expect(screen.getByText('Run a job to populate this list.')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });
 
 describe('getWsAction', () => {

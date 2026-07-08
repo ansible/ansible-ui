@@ -190,4 +190,39 @@ describe('TemplateSurvey', () => {
       }
     });
   });
+
+  it('should display empty state with correct messaging when no survey questions exist', async () => {
+    // Override handler to return empty survey spec
+    server.use(
+      http.get(awxAPI`/job_templates/7/survey_spec/`, () => {
+        return HttpResponse.json({
+          name: '',
+          description: '',
+          spec: [],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/job-templates/7/survey']}>
+        <Routes>
+          <Route
+            path="/templates/job-templates/:id/survey"
+            element={<TemplateSurvey resourceType="job_templates" />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('There are currently no survey questions.')).toBeInTheDocument();
+    });
+
+    // Verify the updated empty state description from PR #3345
+    await waitFor(() => {
+      expect(
+        screen.getByText('Create a survey question to populate this list.')
+      ).toBeInTheDocument();
+    });
+  });
 });
