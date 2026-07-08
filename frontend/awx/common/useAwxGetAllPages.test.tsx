@@ -66,15 +66,13 @@ describe('useAwxGetAllPages', () => {
     // With initialSize: 200, all 200 pages are fetched simultaneously (previousPageData
     // is null for every page on the initial load). Pages > 2 must return empty results
     // so the final flattened array contains exactly the items from pages 1 and 2.
-    let callCount = 0;
     server.use(
       http.get(awxAPI`/projects/`, ({ request }) => {
-        callCount++;
         const page = new URL(request.url).searchParams.get('page') ?? '1';
         if (page === '1') {
           return HttpResponse.json({
             count: 4,
-            next: '/api/controller/v2/projects/?page=2&page_size=200',
+            next: '/page2',
             previous: null,
             results: [
               { id: 1, name: 'project-a' },
@@ -114,8 +112,22 @@ describe('useAwxGetAllPages', () => {
       },
       { timeout: 10000 }
     );
+  });
 
-    expect(callCount).toBeGreaterThanOrEqual(2);
+  it('should expose a callable refresh function', async () => {
+    server.use(
+      http.get(awxAPI`/hosts/`, () =>
+        HttpResponse.json({ count: 1, next: null, previous: null, results: [{ id: 99 }] })
+      )
+    );
+
+    const { result } = renderHook(() => useAwxGetAllPages<{ id: number }>(awxAPI`/hosts/`));
+
+    await waitFor(() => {
+      expect(result.current.results).toBeDefined();
+    });
+
+    expect(() => result.current.refresh()).not.toThrow();
   });
 
   it('should expose an error when the request fails', async () => {

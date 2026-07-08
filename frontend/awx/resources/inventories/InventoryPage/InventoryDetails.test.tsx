@@ -176,4 +176,41 @@ describe('InventoryDetails', () => {
 
     expect(screen.getByText('source-inventory-2')).toBeInTheDocument();
   });
+
+  it('should render prevent instance group fallback when flag is set', async () => {
+    const inventory: Inventory = { ...baseInventory, prevent_instance_group_fallback: true };
+    renderInventoryDetails(inventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
+  });
+
+  it('should render last job status when inventory source has a last job', async () => {
+    // Use id: 77 to avoid SWR cache conflicts with other constructed-inventory tests.
+    const inventory = {
+      ...baseInventory,
+      id: 77,
+      kind: 'constructed',
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+      source: {
+        summary_fields: {
+          last_job: { id: 42 },
+        },
+      },
+    } as unknown as Inventory;
+
+    renderInventoryDetails(inventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Last job status')).toBeInTheDocument();
+  });
 });
