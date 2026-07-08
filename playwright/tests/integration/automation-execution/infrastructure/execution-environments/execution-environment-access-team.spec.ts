@@ -113,7 +113,9 @@ test.describe('Execution Environment Team Access', () => {
       await page.getByRole('button', { name: 'Remove role' }).click();
 
       // Verify team access was removed
-      await expect(page.getByText('No teams assigned to execution environment')).toBeVisible();
+      await expect(
+        page.getByText('No teams are assigned to this execution environment.')
+      ).toBeVisible();
 
       // Cleanup
       await ExecutionEnvironment.ui.delete(page, executionEnvName);

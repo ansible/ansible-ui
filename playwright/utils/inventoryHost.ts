@@ -163,8 +163,10 @@ export const InventoryHost = {
 
       // Wait for the empty state message to appear
       await expect(
-        page.getByText('There are currently no hosts added to this inventory.')
-      ).toBeVisible({ timeout: 15000 });
+        page.getByRole('heading', { name: 'No hosts are assigned to this inventory.' })
+      ).toBeVisible({
+        timeout: 15000,
+      });
     },
   },
 };

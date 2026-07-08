@@ -94,7 +94,9 @@ test.describe('EDA Credentials', () => {
       await page.getByRole('link', { name: 'Basic Analytics' }).click();
       await page.getByRole('tab', { name: 'Credentials' }).click();
       await page.waitForTimeout(2000);
-      if (await page.getByRole('heading', { name: 'There are currently no' }).isVisible()) {
+      if (
+        await page.getByRole('heading', { name: 'There are currently no credentials' }).isVisible()
+      ) {
         await page.getByRole('link', { name: 'Create credential' }).click();
       } else {
         await page.getByRole('checkbox', { name: 'Select all' }).check();

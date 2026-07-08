@@ -61,7 +61,7 @@ test.describe('Inventory Groups - List View', () => {
 
       // Check that the group is gone - either empty state or no results
       await expect(
-        page.getByText(/There are currently no groups|No results found/i).first()
+        page.getByText(/No groups are assigned to this inventory|No results found/i).first()
       ).toBeVisible({ timeout: 10000 });
 
       await Inventory.ui.delete(page, inventoryName);
@@ -117,7 +117,7 @@ test.describe('Inventory Groups - List View', () => {
 
     // Check that all groups are gone - either empty state or no results
     await expect(
-      page.getByText(/There are currently no groups|No results found/i).first()
+      page.getByText(/No groups are assigned to this inventory|No results found/i).first()
     ).toBeVisible({ timeout: 10000 });
 
     await Inventory.ui.delete(page, inventoryName);
