@@ -16,10 +16,6 @@ export function useAwxDeprecationsRoutes() {
       path: 'deprecations',
       children: [
         {
-          path: '',
-          element: <Deprecations />,
-        },
-        {
           id: AwxRoute.DeprecationPage,
           path: ':deprecationType',
           element: <DeprecationDetailPage />,
@@ -35,6 +31,10 @@ export function useAwxDeprecationsRoutes() {
               element: <DeprecationAffectedJobs />,
             },
           ],
+        },
+        {
+          path: '',
+          element: <Deprecations />,
         },
       ],
     }),

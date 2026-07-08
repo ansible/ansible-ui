@@ -10,7 +10,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { getDeprecationDescription } from './hooks/useDeprecationData';
-import { SeverityLabel, DeprecationSeverity } from './DeprecationSeverityLabel';
 
 const DEPRECATION_REMEDIATION: Record<string, string> = {
   'with_items on module':
@@ -25,15 +24,6 @@ const DEPRECATION_REMEDIATION: Record<string, string> = {
     'Update to use the `loop` keyword instead of deprecated squash_actions behavior. Ensure your ansible.cfg does not set `squash_actions`.',
   hash_behaviour:
     'Remove `hash_behaviour = merge` from ansible.cfg and update playbooks to use the `combine` filter explicitly where hash merging is needed.',
-};
-
-const DEPRECATION_SEVERITY: Record<string, DeprecationSeverity> = {
-  'with_items on module': 'hot',
-  'Bare variables in conditionals': 'warm',
-  'include directive': 'warm',
-  'with_dict loop': 'moderate',
-  squash_actions: 'cool',
-  hash_behaviour: 'cool',
 };
 
 const DEPRECATION_IMPACT: Record<string, string> = {
@@ -129,7 +119,6 @@ export function DeprecationDetails() {
   const { deprecationType } = useParams<{ deprecationType: string }>();
   const decodedType = decodeURIComponent(deprecationType ?? '');
 
-  const severity = DEPRECATION_SEVERITY[decodedType];
   const remediation = DEPRECATION_REMEDIATION[decodedType];
   const impact = DEPRECATION_IMPACT[decodedType];
   const example = DEPRECATION_EXAMPLES[decodedType];
@@ -139,11 +128,6 @@ export function DeprecationDetails() {
       <PageDetails numberOfColumns="multiple" disableScroll>
         <PageDetail label={t('Pattern')}>{decodedType}</PageDetail>
         <PageDetail label={t('Description')}>{getDeprecationDescription(decodedType)}</PageDetail>
-        {severity && (
-          <PageDetail label={t('Severity')}>
-            <SeverityLabel severity={severity} />
-          </PageDetail>
-        )}
         {impact && <PageDetail label={t('Impact')}>{impact}</PageDetail>}
         {remediation && <PageDetail label={t('Recommended remediation')}>{remediation}</PageDetail>}
       </PageDetails>

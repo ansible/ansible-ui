@@ -102,9 +102,10 @@ describe('DeprecationsDashboard', () => {
     expect(screen.getByText('Affected Jobs')).toBeInTheDocument();
     expect(screen.getByText('Unique Issues')).toBeInTheDocument();
 
-    // Stats values (using getAllByText since numbers may appear in multiple places)
-    expect(screen.getByRole('heading', { name: '2' })).toBeInTheDocument(); // Total warnings
-    expect(screen.getByRole('heading', { name: '1', level: 2 })).toBeInTheDocument(); // Affected jobs or unique issues
+    // Total warnings = 2 (two events)
+    expect(screen.getByRole('heading', { name: '2' })).toBeInTheDocument();
+    // Affected jobs = 1 and Unique issues = 1 — both stat cards show '1'
+    expect(screen.getAllByRole('heading', { name: '1', level: 2 })).toHaveLength(2);
   });
 
   it('should display deprecation issues table', async () => {
