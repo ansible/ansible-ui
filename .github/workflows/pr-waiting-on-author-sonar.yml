@@ -34,6 +34,12 @@ jobs:
         run: |
           AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
 
+          # Skip waiting-on-author for bot PRs
+          if [[ "$AUTHOR" == "dependabot[bot]" || "$AUTHOR" == "app/red-hat-konflux" || "$AUTHOR" == "red-hat-konflux[bot]" ]]; then
+            echo "Skipping — bot PR (author: $AUTHOR)"
+            exit 0
+          fi
+
           GATE_PASSED=$(echo "$COMMENT_BODY" | grep -ci 'Quality Gate passed' || true)
 
           if [ "$GATE_PASSED" -ge 1 ]; then

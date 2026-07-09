@@ -14,7 +14,10 @@ permissions:
 jobs:
   check-single-pr:
     name: Check PR for Conflicts
-    if: github.event_name == 'pull_request_target' && github.event.pull_request.user.login != 'dependabot[bot]'
+    if: >-
+      github.event_name == 'pull_request_target'
+      && github.event.pull_request.user.login != 'dependabot[bot]'
+      && github.event.pull_request.user.login != 'red-hat-konflux[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Ensure labels exist
@@ -103,7 +106,7 @@ jobs:
           sleep 30
 
           gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
-            | jq -r '.[] | select(.author.login != "dependabot[bot]") | "\(.number) \(.author.login)"' \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]" and .author.login != "red-hat-konflux[bot]" and .author.login != "app/red-hat-konflux") | "\(.number) \(.author.login)"' \
             | while read -r PR_NUMBER AUTHOR; do
                 STATE=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json mergeable --jq '.mergeable')
 
