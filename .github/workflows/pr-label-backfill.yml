@@ -11,6 +11,7 @@ on:
           - all
           - size
           - risk
+          - type
           - community
           - workspace
 
@@ -113,6 +114,44 @@ jobs:
                 else
                   echo "PR #$PR_NUMBER -> skipped (no valid risk selection)"
                 fi
+              done
+
+  backfill-type:
+    name: Backfill Type Labels
+    if: inputs.labels == 'all' || inputs.labels == 'type'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open PRs by issue type
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "bug-fix"     --repo "$REPO" --color "D93F0B" --description "Bug fix" --force 2>/dev/null || true
+          gh label create "enhancement" --repo "$REPO" --color "A2EEEF" --description "Enhancement" --force 2>/dev/null || true
+
+          gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
+            | jq -r '.[] | select(.author.login != "dependabot[bot]") | .number' \
+            | while read -r PR_NUMBER; do
+                PR_BODY=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json body --jq '.body')
+                BUG=$(echo "$PR_BODY" | grep -ci '\- \[x\] Bug fix' || true)
+                ENHANCEMENT=$(echo "$PR_BODY" | grep -ci '\- \[x\] Enhancement' || true)
+
+                if [ "$BUG" -ge 1 ]; then
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "bug-fix"
+                else
+                  gh api "repos/$REPO/issues/$PR_NUMBER/labels/bug-fix" -X DELETE 2>/dev/null || true
+                fi
+
+                if [ "$ENHANCEMENT" -ge 1 ]; then
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "enhancement"
+                else
+                  gh api "repos/$REPO/issues/$PR_NUMBER/labels/enhancement" -X DELETE 2>/dev/null || true
+                fi
+
+                APPLIED=""
+                [ "$BUG" -ge 1 ] && APPLIED="$APPLIED bug-fix"
+                [ "$ENHANCEMENT" -ge 1 ] && APPLIED="$APPLIED enhancement"
+                echo "PR #$PR_NUMBER:${APPLIED:- (none)}"
               done
 
   backfill-workspace:
