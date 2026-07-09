@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardHeader,
   CardTitle,
   Content,
   Flex,
@@ -16,6 +17,7 @@ import {
   PageSection,
   Spinner,
   Title,
+  Tooltip,
 } from '@patternfly/react-core';
 import { ArrowUpIcon, ArrowDownIcon, MinusIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { SeverityLabel } from './DeprecationSeverityLabel';
@@ -88,7 +90,7 @@ function TrendIndicator({ trend }: { trend: number }) {
 export function DeprecationsDashboard() {
   const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState<TimeRange>('7d');
-  const { data, isLoading, refresh } = useDeprecationData(timeRange);
+  const { data, isLoading, isRefreshing, refresh } = useDeprecationData(timeRange);
   const getPageUrl = useGetPageUrl();
 
   const timeRangeOptions: PageSelectOption<TimeRange>[] = useMemo(
@@ -225,6 +227,8 @@ export function DeprecationsDashboard() {
     toolbarFilters,
     keyFn: (dep) => dep.type,
     disableQueryString: true,
+    defaultSort: 'severityRank',
+    defaultSortDirection: 'asc',
   });
 
   if (isLoading) {
@@ -238,6 +242,7 @@ export function DeprecationsDashboard() {
   }
 
   return (
+    <>
     <PageSection>
       {/* Time Range Selector + Refresh */}
       <Flex
@@ -263,14 +268,11 @@ export function DeprecationsDashboard() {
           />
         </FlexItem>
         <FlexItem>
-          <Button variant="plain" aria-label={t('Refresh')} onClick={refresh} isDisabled={isLoading}>
-            <SyncAltIcon />
-          </Button>
-        </FlexItem>
-        <FlexItem align={{ default: 'alignEnd' }}>
-          <Content component="small" style={{ color: 'var(--pf-t--global--text--color--subtle)' }}>
-            {t('Showing deprecations from last 50 jobs')}
-          </Content>
+          <Tooltip content={t('Refresh data')}>
+            <Button variant="plain" aria-label={t('Refresh data')} onClick={refresh} isDisabled={isRefreshing}>
+              {isRefreshing ? <Spinner size="sm" aria-label={t('Refreshing')} /> : <SyncAltIcon />}
+            </Button>
+          </Tooltip>
         </FlexItem>
       </Flex>
 
@@ -292,7 +294,9 @@ export function DeprecationsDashboard() {
       <Grid hasGutter>
         <GridItem span={4}>
           <Card>
-            <CardTitle>{t('Total Warnings')}</CardTitle>
+            <CardHeader>
+              <CardTitle>{t('Total Warnings')}</CardTitle>
+            </CardHeader>
             <CardBody>
               <Title
                 headingLevel="h2"
@@ -309,7 +313,9 @@ export function DeprecationsDashboard() {
         </GridItem>
         <GridItem span={4}>
           <Card>
-            <CardTitle>{t('Affected Jobs')}</CardTitle>
+            <CardHeader>
+              <CardTitle>{t('Affected Jobs')}</CardTitle>
+            </CardHeader>
             <CardBody>
               <Title
                 headingLevel="h2"
@@ -326,7 +332,9 @@ export function DeprecationsDashboard() {
         </GridItem>
         <GridItem span={4}>
           <Card>
-            <CardTitle>{t('Unique Issues')}</CardTitle>
+            <CardHeader>
+              <CardTitle>{t('Unique Issues')}</CardTitle>
+            </CardHeader>
             <CardBody>
               <Title
                 headingLevel="h2"
@@ -343,21 +351,35 @@ export function DeprecationsDashboard() {
         </GridItem>
       </Grid>
 
-      {/* Deprecation Issues Table */}
-      <Card style={{ marginTop: 'var(--pf-t--global--spacer--xl)' }}>
-        <CardTitle>{t('Deprecation Issues')}</CardTitle>
-        <CardBody style={{ padding: 0 }}>
-          <PageTable<DeprecationRow>
-            {...view}
-            tableColumns={columns}
-            toolbarFilters={toolbarFilters}
-            keyFn={(dep) => dep.type}
-            emptyStateTitle={t('No deprecation issues')}
-            emptyStateDescription={t('No deprecation patterns found in the selected time period.')}
-            errorStateTitle={t('Error loading deprecation issues')}
-          />
-        </CardBody>
-      </Card>
+      {/* Deprecation Issues heading */}
+      <Flex
+        justifyContent={{ default: 'justifyContentSpaceBetween' }}
+        alignItems={{ default: 'alignItemsCenter' }}
+        style={{ marginTop: 'var(--pf-t--global--spacer--xl)', marginBottom: 0 }}
+      >
+        <FlexItem>
+          <Title headingLevel="h2" size="lg">
+            {t('Deprecation Issues')}
+          </Title>
+        </FlexItem>
+        <FlexItem>
+          <Content component="small" style={{ color: 'var(--pf-t--global--text--color--subtle)' }}>
+            {t('Showing deprecations from last 50 jobs')}
+          </Content>
+        </FlexItem>
+      </Flex>
     </PageSection>
+    <PageSection isFilled hasBodyWrapper={false} style={{ paddingInline: 0, paddingBlockStart: 0 }}>
+      <PageTable<DeprecationRow>
+        {...view}
+        tableColumns={columns}
+        toolbarFilters={toolbarFilters}
+        keyFn={(dep) => dep.type}
+        emptyStateTitle={t('No deprecation issues')}
+        emptyStateDescription={t('No deprecation patterns found in the selected time period.')}
+        errorStateTitle={t('Error loading deprecation issues')}
+      />
+    </PageSection>
+    </>
   );
 }

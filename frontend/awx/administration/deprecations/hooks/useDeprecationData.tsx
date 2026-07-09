@@ -265,13 +265,14 @@ export function useDeprecationData(timeRange: TimeRange = '7d'): {
   data?: DeprecationData;
   error?: Error;
   isLoading: boolean;
+  isRefreshing: boolean;
   refresh: () => void;
 } {
-  const { data, error, isLoading, mutate } = useSWR<DeprecationData, Error>(
+  const { data, error, isLoading, isValidating, mutate } = useSWR<DeprecationData, Error>(
     ['deprecations-dashboard', timeRange],
     () => fetchDeprecations(timeRange),
     { revalidateOnFocus: false }
   );
 
-  return { data, error, isLoading, refresh: () => void mutate() };
+  return { data, error, isLoading, isRefreshing: isValidating, refresh: () => void mutate() };
 }

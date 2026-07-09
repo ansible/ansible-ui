@@ -166,7 +166,7 @@ describe('DeprecationsDashboard', () => {
     });
 
     expect(screen.getByText('Showing deprecations from last 50 jobs')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh data' })).toBeInTheDocument();
   });
 
   it('should show partial data warning when some fetches fail', async () => {
