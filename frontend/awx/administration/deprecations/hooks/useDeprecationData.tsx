@@ -27,17 +27,11 @@ export interface DeprecationStat {
   jobTemplates: string[]; // unique job template names from affected jobs
 }
 
-export interface DeprecationEventsByDate {
-  date: string;
-  events: JobEvent[];
-}
-
 interface DeprecationData {
   totalWarnings: number;
   affectedJobs: number;
   uniqueIssues: number;
   deprecations: DeprecationStat[];
-  eventsByDate: DeprecationEventsByDate[];
   timeRange: TimeRange;
   /** true when one or more per-job event fetches failed (data is partial) */
   hasPartialData: boolean;
@@ -150,8 +144,8 @@ interface Job {
 // Fetch deprecation stats for a given time window (extracted for reuse in trend calculation)
 async function fetchDeprecationStats(dateFilter: string | null) {
   const jobsUrl = dateFilter
-    ? awxAPI`/jobs/?page_size=100&order_by=-created&created__gte=${dateFilter}`
-    : awxAPI`/jobs/?page_size=100&order_by=-created`;
+    ? awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}`
+    : awxAPI`/jobs/?page_size=50&order_by=-created`;
 
   const jobsResponse = await requestGet<{ results: Job[]; count: number }>(jobsUrl);
   const jobs = jobsResponse.results;
@@ -166,7 +160,6 @@ async function fetchDeprecationStats(dateFilter: string | null) {
     }
   > = {};
   const affectedJobsSet = new Set<number>();
-  const allEvents: JobEvent[] = [];
   let totalWarnings = 0;
 
   const failureCount = await runInBatches(jobs, async (job) => {
@@ -201,12 +194,11 @@ async function fetchDeprecationStats(dateFilter: string | null) {
           deprecationsByType[type].jobTemplates.add(job.summary_fields.job_template.name);
         }
 
-        allEvents.push(event);
       });
     }
   });
 
-  return { totalWarnings, affectedJobsSet, deprecationsByType, allEvents, failureCount };
+  return { totalWarnings, affectedJobsSet, deprecationsByType, failureCount };
 }
 
 // Compute % change between two values; returns 0 if previous is 0
@@ -249,23 +241,11 @@ async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData>
     }))
     .sort((a, b) => b.count - a.count);
 
-  const eventsByDateMap = new Map<string, JobEvent[]>();
-  current.allEvents.forEach((event) => {
-    const date = new Date(event.created).toISOString().split('T')[0];
-    if (!eventsByDateMap.has(date)) eventsByDateMap.set(date, []);
-    eventsByDateMap.get(date)!.push(event);
-  });
-
-  const eventsByDate: DeprecationEventsByDate[] = Array.from(eventsByDateMap.entries())
-    .map(([date, events]) => ({ date, events }))
-    .sort((a, b) => a.date.localeCompare(b.date));
-
   return {
     totalWarnings: current.totalWarnings,
     affectedJobs: current.affectedJobsSet.size,
     uniqueIssues: deprecations.length,
     deprecations,
-    eventsByDate,
     timeRange,
     hasPartialData: current.failureCount > 0,
     trends: previous
@@ -285,15 +265,13 @@ export function useDeprecationData(timeRange: TimeRange = '7d'): {
   data?: DeprecationData;
   error?: Error;
   isLoading: boolean;
+  refresh: () => void;
 } {
-  const { data, error, isLoading } = useSWR<DeprecationData, Error>(
+  const { data, error, isLoading, mutate } = useSWR<DeprecationData, Error>(
     ['deprecations-dashboard', timeRange],
     () => fetchDeprecations(timeRange),
-    {
-      refreshInterval: 60000, // Refresh every minute
-      revalidateOnFocus: false,
-    }
+    { revalidateOnFocus: false }
   );
 
-  return { data, error, isLoading };
+  return { data, error, isLoading, refresh: () => void mutate() };
 }

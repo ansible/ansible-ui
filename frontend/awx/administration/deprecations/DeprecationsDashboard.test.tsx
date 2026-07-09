@@ -147,10 +147,26 @@ describe('DeprecationsDashboard', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText('No deprecation data')).toBeInTheDocument();
+    expect(screen.getByText('No deprecation issues')).toBeInTheDocument();
     expect(
-      screen.getByText('No deprecation warnings were found in the selected time period.')
+      screen.getByText('No deprecation patterns found in the selected time period.')
     ).toBeInTheDocument();
+  });
+
+  it('should display 50-jobs indicator and refresh button', async () => {
+    server.use(
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
+    );
+
+    render(<DeprecationsDashboard />, { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Showing deprecations from last 50 jobs')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
   });
 
   it('should show partial data warning when some fetches fail', async () => {
