@@ -29,7 +29,15 @@ export function useInMemoryView<T extends object>(options: {
   defaultSort?: string;
   defaultSortDirection?: 'asc' | 'desc';
 }): IInMemoryView<T> {
-  const { items, keyFn, tableColumns, toolbarFilters, disableQueryString, defaultSort, defaultSortDirection } = options;
+  const {
+    items,
+    keyFn,
+    tableColumns,
+    toolbarFilters,
+    disableQueryString,
+    defaultSort,
+    defaultSortDirection,
+  } = options;
   const view = useView({
     defaultValues: {
       sort: defaultSort ?? (tableColumns && tableColumns.length ? tableColumns[0].sort : undefined),

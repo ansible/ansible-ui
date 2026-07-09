@@ -193,7 +193,6 @@ async function fetchDeprecationStats(dateFilter: string | null) {
         if (job.summary_fields?.job_template?.name) {
           deprecationsByType[type].jobTemplates.add(job.summary_fields.job_template.name);
         }
-
       });
     }
   });
