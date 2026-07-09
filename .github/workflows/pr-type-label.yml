@@ -1,0 +1,50 @@
+name: PR Type Label
+
+on:
+  pull_request_target:
+    types: [opened, edited]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  label-type:
+    name: Label PR Type
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect issue type from PR description
+        id: detect
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          BUG=$(echo "$PR_BODY" | grep -ci '\- \[x\] Bug fix' || true)
+          ENHANCEMENT=$(echo "$PR_BODY" | grep -ci '\- \[x\] Enhancement' || true)
+
+          echo "bug=$BUG" >> "$GITHUB_OUTPUT"
+          echo "enhancement=$ENHANCEMENT" >> "$GITHUB_OUTPUT"
+
+      - name: Apply type labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          BUG: ${{ steps.detect.outputs.bug }}
+          ENHANCEMENT: ${{ steps.detect.outputs.enhancement }}
+        run: |
+          gh label create "bug-fix"     --repo "$REPO" --color "D93F0B" --description "Bug fix" --force 2>/dev/null || true
+          gh label create "enhancement" --repo "$REPO" --color "A2EEEF" --description "Enhancement" --force 2>/dev/null || true
+
+          if [ "$BUG" -ge 1 ]; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "bug-fix"
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/bug-fix" -X DELETE 2>/dev/null || true
+          fi
+
+          if [ "$ENHANCEMENT" -ge 1 ]; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "enhancement"
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/enhancement" -X DELETE 2>/dev/null || true
+          fi
