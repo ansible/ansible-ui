@@ -13,7 +13,7 @@ const defaultProps: DashboardChartCardProps = {
   errorStateTitle: 'Chart Error',
 };
 
-const expectedFormatted = (12345).toLocaleString();
+const expectedFormatted = (12345).toLocaleString('en-US');
 
 describe('DashboardChartCard', () => {
   test('should render summary value in locale format', () => {
@@ -92,5 +92,21 @@ describe('DashboardChartCard', () => {
   test('should render lineChart variant', () => {
     render(<DashboardChartCard {...defaultProps} variant="lineChart" />);
     expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render "Count" legend label for chart data', () => {
+    render(<DashboardChartCard {...defaultProps} />);
+    expect(screen.getByText('Count')).toBeInTheDocument();
+  });
+
+  test('should not render "Count" legend label when error is provided', () => {
+    render(<DashboardChartCard {...defaultProps} error={new Error('Chart failed')} />);
+    expect(screen.queryByText('Count')).not.toBeInTheDocument();
+  });
+
+  test('should render custom legendLabel instead of default "Count" when provided', () => {
+    render(<DashboardChartCard {...defaultProps} legendLabel="Hosts" />);
+    expect(screen.getByText('Hosts')).toBeInTheDocument();
+    expect(screen.queryByText('Count')).not.toBeInTheDocument();
   });
 });

@@ -199,6 +199,7 @@ export function AutomationDashboard() {
                 variant={'lineChart'}
                 error={view.detailsError}
                 errorStateTitle={t('Error loading host chart')}
+                legendLabel={t('Hosts')}
               ></DashboardChartCard>
               <DashboardChartCard
                 id="job-chart-card"
@@ -211,6 +212,7 @@ export function AutomationDashboard() {
                 data={details?.job_chart ?? { kind: 'day', items: [] }}
                 errorStateTitle={t('Error loading job chart')}
                 error={view.detailsError}
+                legendLabel={t('Job runs')}
               ></DashboardChartCard>
             </Grid>
           </GridItem>

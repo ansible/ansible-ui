@@ -2,9 +2,12 @@ import { PageDashboardCard, PageDashboardChart } from '@ansible/ansible-ui-frame
 import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import { DashboardChartCardProps, IDashboardChartItem } from '../types';
 import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
+import { useTranslation } from 'react-i18next';
 
 export function DashboardChartCard(props: DashboardChartCardProps) {
-  const { id, title, help, summaryValue, data, variant, error, errorStateTitle } = props;
+  const { id, title, help, summaryValue, data, variant, error, errorStateTitle, legendLabel } =
+    props;
+  const { t } = useTranslation();
   const blueColor = 'var(--pf-t--chart--color--blue--300)';
   const mapChartItem = (
     chartItem: IDashboardChartItem,
@@ -36,19 +39,19 @@ export function DashboardChartCard(props: DashboardChartCardProps) {
     const value = chartItem.value;
     return { label, value };
   };
-
+  const usFormat = 'en-US';
   const values = data?.items?.map((item, index, array) => mapChartItem(item, index, array)) ?? [];
   const content = (
     <Flex direction={{ default: 'row' }} style={{ height: '100%' }}>
       <FlexItem>
         <Title headingLevel="h2" style={{ fontSize: 'xxx-large', lineHeight: 1, fontWeight: 400 }}>
-          {summaryValue || summaryValue === 0 ? summaryValue.toLocaleString() : '--'}
+          {summaryValue || summaryValue === 0 ? summaryValue.toLocaleString(usFormat) : '--'}
         </Title>
       </FlexItem>
 
       <FlexItem style={{ height: '90%', width: '100%' }}>
         <PageDashboardChart
-          groups={[{ color: blueColor, values: values ?? [] }]}
+          groups={[{ label: legendLabel ?? t('Count'), color: blueColor, values: values ?? [] }]}
           variant={variant}
           allowZero
           onlyIntegerTicks
