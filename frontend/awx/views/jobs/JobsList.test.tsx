@@ -570,28 +570,31 @@ describe('JobsList WebSocket handler integration', () => {
   }, 15000);
 
   test('should fall back to throttledRefresh on batch fetch failure', async () => {
-    let fullRefreshCalled = false;
-    server.events.on('request:match', ({ request }) => {
-      const url = new URL(request.url);
-      if (url.pathname.includes('/unified_jobs/') && !url.searchParams.get('id__in')) {
-        fullRefreshCalled = true;
-      }
-    });
-
     await renderAndWaitForJobs();
+
+    let idInRequested = false;
+    let refreshAfterFailure = false;
 
     server.use(
       http.get('*/api/controller/v2/unified_jobs/', ({ request }) => {
         const url = new URL(request.url);
         if (url.searchParams.get('id__in')) {
+          idInRequested = true;
           return HttpResponse.json({}, { status: 500 });
+        }
+        if (idInRequested) {
+          refreshAfterFailure = true;
         }
         return HttpResponse.json(jobsFixture);
       }),
       http.get('*/api/v2/unified_jobs/', ({ request }) => {
         const url = new URL(request.url);
         if (url.searchParams.get('id__in')) {
+          idInRequested = true;
           return HttpResponse.json({}, { status: 500 });
+        }
+        if (idInRequested) {
+          refreshAfterFailure = true;
         }
         return HttpResponse.json(jobsFixture);
       })
@@ -606,10 +609,70 @@ describe('JobsList WebSocket handler integration', () => {
 
     await waitFor(
       () => {
-        expect(fullRefreshCalled).toBe(true);
+        expect(idInRequested).toBe(true);
+        expect(refreshAfterFailure).toBe(true);
       },
       { timeout: 10000 }
     );
+  }, 15000);
+
+  test('should trigger throttledRefresh when status is missing', async () => {
+    let refreshCalled = false;
+    server.events.on('request:match', ({ request }) => {
+      const url = new URL(request.url);
+      if (
+        url.pathname.includes('/unified_jobs/') &&
+        !url.searchParams.get('id__in') &&
+        !url.searchParams.get('page')
+      ) {
+        refreshCalled = true;
+      }
+    });
+
+    await renderAndWaitForJobs();
+
+    capturedOnMessage!({
+      group_name: 'jobs',
+      type: 'job',
+      unified_job_id: 492,
+    });
+
+    await waitFor(
+      () => {
+        expect(refreshCalled).toBe(true);
+      },
+      { timeout: 10000 }
+    );
+
+    server.events.removeAllListeners();
+  }, 15000);
+
+  test('should flush immediately when batch reaches size cap', async () => {
+    let fetchedIdIn: string | null = null;
+    let fetchedPageSize: string | null = null;
+    server.events.on('request:match', ({ request }) => {
+      const url = new URL(request.url);
+      if (url.pathname.includes('/unified_jobs/') && url.searchParams.get('id__in')) {
+        fetchedIdIn = url.searchParams.get('id__in');
+        fetchedPageSize = url.searchParams.get('page_size');
+      }
+    });
+
+    await renderAndWaitForJobs();
+
+    for (let i = 1; i <= 50; i++) {
+      capturedOnMessage!({
+        group_name: 'jobs',
+        type: 'job',
+        status: 'pending',
+        unified_job_id: 1000 + i,
+      });
+    }
+
+    await waitFor(() => {
+      expect(fetchedIdIn).not.toBeNull();
+      expect(fetchedPageSize).toBe('50');
+    });
 
     server.events.removeAllListeners();
   }, 15000);
