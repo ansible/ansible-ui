@@ -12,6 +12,7 @@ on:
           - size
           - risk
           - type
+          - status
           - community
           - workspace
 
@@ -152,6 +153,95 @@ jobs:
                 [ "$BUG" -ge 1 ] && APPLIED="$APPLIED bug-fix"
                 [ "$ENHANCEMENT" -ge 1 ] && APPLIED="$APPLIED enhancement"
                 echo "PR #$PR_NUMBER:${APPLIED:- (none)}"
+              done
+
+  backfill-status:
+    name: Backfill Status Labels
+    if: inputs.labels == 'all' || inputs.labels == 'status'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label all open PRs with status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "waiting-on-author" --repo "$REPO" --color "E4E669" --description "PR requires author attention" --force 2>/dev/null || true
+          gh label create "e2e: pending"      --repo "$REPO" --color "FBCA04" --description "E2E tests not yet triggered" --force 2>/dev/null || true
+          gh label create "e2e: running"      --repo "$REPO" --color "1D76DB" --description "E2E tests in progress" --force 2>/dev/null || true
+          gh label create "e2e: done"         --repo "$REPO" --color "0E8A16" --description "E2E tests completed" --force 2>/dev/null || true
+
+          BOT_FILTER='select(.author.login != "dependabot[bot]" and .author.login != "red-hat-konflux[bot]" and .author.login != "app/red-hat-konflux")'
+
+          gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
+            | jq -r ".[] | \"\(.number) \(.author.login)\"" \
+            | while read -r PR_NUMBER AUTHOR; do
+                IS_BOT="false"
+                if [[ "$AUTHOR" == "dependabot[bot]" || "$AUTHOR" == "app/red-hat-konflux" || "$AUTHOR" == "red-hat-konflux[bot]" ]]; then
+                  IS_BOT="true"
+                fi
+
+                APPLIED=""
+
+                # --- Check suite status (waiting-on-author for non-bots) ---
+                if [ "$IS_BOT" = "false" ]; then
+                  CHECK_STATUS=$(gh pr checks "$PR_NUMBER" --repo "$REPO" --json state --jq '[.[] | select(.state == "FAILURE")] | length' 2>/dev/null || echo "0")
+                  MERGEABLE=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json mergeable --jq '.mergeable')
+
+                  # Latest sonarqubecloud bot comment
+                  SONAR_COMMENT=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+                    --jq '[.[] | select(.user.login == "sonarqubecloud[bot]" or .user.login == "sonarcloud[bot]")] | last | .body // ""')
+                  SONAR_PASSED=$(echo "$SONAR_COMMENT" | grep -ci 'Quality Gate passed' || true)
+                  SONAR_FAILED="0"
+                  if [ -n "$SONAR_COMMENT" ] && [ "$SONAR_PASSED" -eq 0 ]; then
+                    SONAR_FAILED="1"
+                  fi
+
+                  NEEDS_AUTHOR="false"
+                  if [ "$CHECK_STATUS" -gt 0 ]; then
+                    NEEDS_AUTHOR="true"
+                    APPLIED="$APPLIED checks-failed"
+                  fi
+                  if [ "$MERGEABLE" = "CONFLICTING" ]; then
+                    NEEDS_AUTHOR="true"
+                    APPLIED="$APPLIED conflicts"
+                  fi
+                  if [ "$SONAR_FAILED" -eq 1 ]; then
+                    NEEDS_AUTHOR="true"
+                    APPLIED="$APPLIED sonar-failed"
+                  fi
+
+                  if [ "$NEEDS_AUTHOR" = "true" ]; then
+                    gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
+                  else
+                    gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
+                  fi
+                fi
+
+                # --- E2E status (all PRs including bots) ---
+                for label in "e2e: pending" "e2e: running" "e2e: done"; do
+                  gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+                done
+
+                HAS_RUN_PW=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+                  --jq '[.[] | select(.body | test("/run-playwright"))] | length')
+                HAS_CURRENTS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+                  --jq '[.[] | select(.user.login == "aap-pde-ci-bot" and (.body | contains("Currents dashboard")))] | length')
+
+                if [ "$HAS_CURRENTS" -gt 0 ]; then
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: done"
+                  APPLIED="$APPLIED e2e:done"
+                elif [ "$HAS_RUN_PW" -gt 0 ]; then
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: running"
+                  APPLIED="$APPLIED e2e:running"
+                else
+                  gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: pending"
+                  APPLIED="$APPLIED e2e:pending"
+                  if [ "$IS_BOT" = "false" ]; then
+                    gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
+                  fi
+                fi
+
+                echo "PR #$PR_NUMBER ($AUTHOR):${APPLIED:- (none)}"
               done
 
   backfill-workspace:
