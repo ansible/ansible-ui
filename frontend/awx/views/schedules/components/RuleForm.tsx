@@ -223,7 +223,7 @@ export function RuleForm(
           options={DAYS_OF_YEAR}
           name={`bysetpos`}
           labelHelp={t(
-            'Use this field to filter down recurrence instances within a single interval of the rule. See the iCalendar RFC for more information about the bysetpos field.'
+            'Filter which occurrences to include within each recurrence interval. Use positive numbers (1, 2, 3...) to select from the beginning, or negative numbers (-1, -2, -3...) to select from the end. For example, with a monthly schedule: 1 = first occurrence of the month, -1 = last occurrence of the month.'
           )}
           labelHelpTitle={t('Occurrences')}
           label={t('Occurrences')}

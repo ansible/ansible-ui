@@ -933,6 +933,7 @@
   "Filter by role type": "Filter by role type",
   "Filter by status": "Filter by status",
   "Filter by Template": "Filter by Template",
+  "Filter which occurrences to include within each recurrence interval. Use positive numbers (1, 2, 3...) to select from the beginning, or negative numbers (-1, -2, -3...) to select from the end. For example, with a monthly schedule: 1 = first occurrence of the month, -1 = last occurrence of the month.": "Filter which occurrences to include within each recurrence interval. Use positive numbers (1, 2, 3...) to select from the beginning, or negative numbers (-1, -2, -3...) to select from the end. For example, with a monthly schedule: 1 = first occurrence of the month, -1 = last occurrence of the month.",
   "Finalize rules": "Finalize rules",
   "Find and use content that is supported by Red Hat and our partners to deliver reassurance for the most demanding environments. Get started by exploring the options below.": "Find and use content that is supported by Red Hat and our partners to deliver reassurance for the most demanding environments. Get started by exploring the options below.",
   "Find content": "Find content",
