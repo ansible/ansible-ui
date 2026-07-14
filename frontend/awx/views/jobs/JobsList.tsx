@@ -117,6 +117,7 @@ export function JobsList(props: {
     () => () => {
       throttledRefresh.cancel();
       clearTimeout(batchTimerRef.current);
+      pendingFetchIdsRef.current.clear();
     },
     [throttledRefresh]
   );
