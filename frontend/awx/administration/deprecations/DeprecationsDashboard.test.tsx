@@ -255,4 +255,115 @@ describe('DeprecationsDashboard', () => {
     const searchInput = screen.getByPlaceholderText('Enter search');
     expect(searchInput).toBeInTheDocument();
   });
+
+  it('should display positive trend indicator when warnings increase', async () => {
+    const prevJobsResponse = {
+      results: [
+        {
+          id: 10,
+          summary_fields: {
+            organization: { name: 'Old Org' },
+            job_template: { name: 'Old Job' },
+          },
+        },
+      ],
+      count: 1,
+    };
+
+    const prevEventsResponse = {
+      count: 1,
+      results: [
+        {
+          id: 100,
+          event: 'deprecated',
+          stdout: 'Using with_items on yum module is deprecated',
+          start_line: 10,
+          task: 'Old task',
+          play: 'main',
+          playbook: 'site.yml',
+          created: '2023-12-15T00:00:00Z',
+          job: 10,
+        },
+      ],
+    };
+
+    let jobsFetchCount = 0;
+    server.use(
+      http.get(awxAPI`/jobs/`, () => {
+        jobsFetchCount++;
+        if (jobsFetchCount === 1) return HttpResponse.json(mockJobsResponse);
+        if (jobsFetchCount === 2) return HttpResponse.json(prevJobsResponse);
+        return HttpResponse.json(emptyJobsResponse);
+      }),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, ({ params }) => {
+        if (params.jobId === '1') return HttpResponse.json(mockEventsResponse);
+        if (params.jobId === '10') return HttpResponse.json(prevEventsResponse);
+        return HttpResponse.json(emptyEventsResponse);
+      })
+    );
+
+    render(<DeprecationsDashboard />, { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/vs previous period/).length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should display zero change trend indicator when both periods are empty', async () => {
+    let jobsFetchCount = 0;
+    server.use(
+      http.get(awxAPI`/jobs/`, () => {
+        jobsFetchCount++;
+        if (jobsFetchCount <= 2) return HttpResponse.json(emptyJobsResponse);
+        return HttpResponse.json(emptyJobsResponse);
+      }),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
+    );
+
+    render(<DeprecationsDashboard />, { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      const noChangeElements = screen.getAllByText('No change vs previous period');
+      expect(noChangeElements.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should display stat card values as zero when no data', async () => {
+    server.use(
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
+    );
+
+    render(<DeprecationsDashboard />, { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    const zeroHeadings = screen.getAllByRole('heading', { name: '0', level: 2 });
+    expect(zeroHeadings.length).toBe(3);
+  });
+
+  it('should display Deprecation Issues section heading', async () => {
+    server.use(
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
+    );
+
+    render(<DeprecationsDashboard />, { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Deprecation Issues')).toBeInTheDocument();
+  });
 });
