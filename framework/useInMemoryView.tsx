@@ -40,7 +40,7 @@ export function useInMemoryView<T extends object>(options: {
   } = options;
   const view = useView({
     defaultValues: {
-      sort: defaultSort ?? (tableColumns && tableColumns.length ? tableColumns[0].sort : undefined),
+      sort: defaultSort ?? (tableColumns?.length ? tableColumns[0].sort : undefined),
       sortDirection: defaultSortDirection,
     },
     disableQueryString,
