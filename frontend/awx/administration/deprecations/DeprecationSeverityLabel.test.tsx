@@ -4,9 +4,7 @@ import { SeverityLabel } from './DeprecationSeverityLabel';
 import type { DeprecationSeverity } from './DeprecationSeverityLabel';
 
 vi.mock('@patternfly/react-component-groups', () => ({
-  Severity: ({ label }: { severity: string; label: string }) => (
-    <span data-testid="severity-label">{label}</span>
-  ),
+  Severity: ({ label }: { label: string }) => <span data-testid="severity-label">{label}</span>,
   SeverityType: {
     critical: 'critical',
     important: 'important',
