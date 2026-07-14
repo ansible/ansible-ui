@@ -20,20 +20,19 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { ArrowUpIcon, ArrowDownIcon, MinusIcon, SyncAltIcon } from '@patternfly/react-icons';
-import { SeverityLabel } from './DeprecationSeverityLabel';
-import { useDeprecationData, TimeRange, DeprecationStat } from './hooks/useDeprecationData';
+import { useDeprecationData, TimeRange } from './hooks/useDeprecationData';
 import {
-  useGetPageUrl,
-  ITableColumn,
+  useDeprecationDashboardColumns,
+  DeprecationRow,
+} from './hooks/useDeprecationDashboardColumns';
+import {
   IToolbarFilter,
   PageTable,
-  TextCell,
   ToolbarFilterType,
   useInMemoryView,
 } from '@ansible/ansible-ui-framework';
 import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
 import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
-import { AwxRoute } from '../../main/AwxRoutes';
 
 // Critical = 0 (highest), Minor = 3 (lowest) — used for sort order
 const SEVERITY_RANK: Record<string, number> = {
@@ -42,8 +41,6 @@ const SEVERITY_RANK: Record<string, number> = {
   moderate: 2,
   cool: 3,
 };
-
-type DeprecationRow = DeprecationStat & { severityRank: number };
 
 function TrendIndicator({ trend }: { trend: number }) {
   const { t } = useTranslation();
@@ -91,7 +88,6 @@ export function DeprecationsDashboard() {
   const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState<TimeRange>('7d');
   const { data, isLoading, isRefreshing, refresh } = useDeprecationData(timeRange);
-  const getPageUrl = useGetPageUrl();
 
   const timeRangeOptions: PageSelectOption<TimeRange>[] = useMemo(
     () => [
@@ -179,47 +175,7 @@ export function DeprecationsDashboard() {
     [data]
   );
 
-  const columns = useMemo<ITableColumn<DeprecationRow>[]>(
-    () => [
-      {
-        header: t('Pattern'),
-        cell: (dep) => (
-          <>
-            <TextCell
-              text={dep.type}
-              to={getPageUrl(AwxRoute.DeprecationDetails, {
-                params: { deprecationType: dep.type },
-              })}
-            />
-            <Content
-              component="small"
-              style={{
-                color: 'var(--pf-t--global--text--color--subtle)',
-                marginTop: 'var(--pf-t--global--spacer--xs)',
-                display: 'block',
-              }}
-            >
-              {dep.description}
-            </Content>
-          </>
-        ),
-        sort: 'type',
-        card: 'name',
-        list: 'name',
-      },
-      {
-        header: t('Total occurrences'),
-        cell: (dep) => <TextCell text={String(dep.count)} />,
-        sort: 'count',
-      },
-      {
-        header: t('Severity'),
-        cell: (dep) => <SeverityLabel severity={dep.severity} />,
-        sort: 'severityRank',
-      },
-    ],
-    [t, getPageUrl]
-  );
+  const columns = useDeprecationDashboardColumns();
 
   const view = useInMemoryView<DeprecationRow>({
     items: deprecationRows,
