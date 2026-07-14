@@ -1,0 +1,59 @@
+name: PR Waiting on Author (Review)
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  label-on-review:
+    name: Label on Review
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.pull_request.user.login != 'dependabot[bot]'
+      && github.event.pull_request.user.login != 'red-hat-konflux[bot]'
+    steps:
+      - name: Ensure label exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "waiting-on-author" --repo "$REPO" --color "E4E669" --description "PR requires author attention" --force 2>/dev/null || true
+
+      - name: Handle changes requested
+        if: github.event.review.state == 'changes_requested'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
+
+      - name: Handle approval
+        if: github.event.review.state == 'approved'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Check if any other reviewer still has changes_requested
+          PENDING_CHANGES=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq '[.[] | select(.state == "CHANGES_REQUESTED")] | map(.user.login) | unique | length')
+
+          # Also check for other waiting-on-author reasons
+          CHECKS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-checks -->"))] | length')
+          SONAR=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-sonar -->"))] | length')
+          CONFLICTS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-conflicts -->"))] | length')
+          E2E_PENDING=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
+            --jq '[.[] | select(.name == "e2e: pending")] | length')
+
+          if [ "$PENDING_CHANGES" -eq 0 ] && [ "$CHECKS" -eq 0 ] && [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ] && [ "$E2E_PENDING" -eq 0 ]; then
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
+          fi

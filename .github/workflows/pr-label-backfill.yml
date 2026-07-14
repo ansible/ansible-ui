@@ -210,6 +210,14 @@ jobs:
                     APPLIED="$APPLIED sonar-failed"
                   fi
 
+                  # Check for outstanding changes_requested reviews
+                  CHANGES_REQUESTED=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+                    --jq '[.[] | select(.state == "CHANGES_REQUESTED")] | map(.user.login) | unique | length')
+                  if [ "$CHANGES_REQUESTED" -gt 0 ]; then
+                    NEEDS_AUTHOR="true"
+                    APPLIED="$APPLIED changes-requested"
+                  fi
+
                   if [ "$NEEDS_AUTHOR" = "true" ]; then
                     gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
                   else
