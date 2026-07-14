@@ -141,7 +141,7 @@ export function PageAsyncSingleSelect<
       return true;
     });
     return () => abortController.abort();
-  }, [onSelect, queryOptions, searchValue, t, writeInOption]);
+  }, [onSelect, props.disableSortOptions, queryOptions, searchValue, t, writeInOption]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {
