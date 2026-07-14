@@ -120,7 +120,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
             id="engineer_avg_hourly_rate"
             value={costState?.engineer_avg_hourly_rate}
             min={1}
-            max={1000000}
+            max={1000}
             onChange={(value) => {
               void toolbarChangeHandler(value, 'engineer_avg_hourly_rate');
             }}
