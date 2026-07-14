@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { SWRConfiguration } from 'swr';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -55,7 +55,7 @@ describe('JobStatusBar polling', () => {
     mockUseGet.mockClear();
   });
 
-  it('should stop polling when job is finished', () => {
+  it('should pass undefined URL when job is finished', () => {
     const finishedJob = {
       ...baseJob,
       status: 'successful',
@@ -65,16 +65,10 @@ describe('JobStatusBar polling', () => {
 
     renderJobStatusBar(finishedJob);
 
-    const swrConfig = mockUseGet.mock.calls[0][2] as unknown as {
-      refreshInterval: (data: AwxItemsResponse<JobEvent>) => number;
-    };
-
-    expect(swrConfig.refreshInterval({ count: 0, results: [] } as AwxItemsResponse<JobEvent>)).toBe(
-      0
-    );
+    expect(mockUseGet.mock.calls[0][0]).toBeUndefined();
   });
 
-  it('should poll at 5000ms when job is running and playbook has not started', () => {
+  it('should poll at 5000ms when playbook job is running and playbook has not started', () => {
     const runningJob = {
       ...baseJob,
       status: 'running',
@@ -82,6 +76,8 @@ describe('JobStatusBar polling', () => {
     } as unknown as Job;
 
     renderJobStatusBar(runningJob);
+
+    expect(mockUseGet.mock.calls[0][0]).toContain('/jobs/1/job_events/');
 
     const swrConfig = mockUseGet.mock.calls[0][2] as unknown as {
       refreshInterval: (data: AwxItemsResponse<JobEvent>) => number;
@@ -111,5 +107,43 @@ describe('JobStatusBar polling', () => {
     } as AwxItemsResponse<JobEvent>;
 
     expect(swrConfig.refreshInterval(eventData)).toBe(0);
+  });
+
+  it('should pass undefined URL for non-playbook job types', () => {
+    const projectUpdateJob = {
+      ...baseJob,
+      type: 'project_update',
+      status: 'running',
+      started: '2023-06-06T18:22:42Z',
+    } as unknown as Job;
+
+    renderJobStatusBar(projectUpdateJob);
+
+    expect(mockUseGet.mock.calls[0][0]).toBeUndefined();
+  });
+
+  it('should not show waiting label for non-playbook job types', () => {
+    const inventoryUpdateJob = {
+      ...baseJob,
+      type: 'inventory_update',
+      status: 'running',
+      started: '2023-06-06T18:22:42Z',
+    } as unknown as Job;
+
+    renderJobStatusBar(inventoryUpdateJob);
+
+    expect(screen.queryByTestId('waiting-label')).not.toBeInTheDocument();
+  });
+
+  it('should show waiting label for running playbook jobs before playbook starts', () => {
+    const runningJob = {
+      ...baseJob,
+      status: 'running',
+      started: '2023-06-06T18:22:42Z',
+    } as unknown as Job;
+
+    renderJobStatusBar(runningJob);
+
+    expect(screen.getByTestId('waiting-label')).toBeInTheDocument();
   });
 });
