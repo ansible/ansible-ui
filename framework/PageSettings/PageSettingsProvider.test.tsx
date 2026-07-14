@@ -1,8 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
-import { ReactNode } from 'react';
+import { createElement, ReactNode } from 'react';
 import { render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { useSWRConfig } from 'swr';
 import {
   PageSettingsProvider,
   usePageSettings,
@@ -26,11 +25,37 @@ Object.defineProperty(globalThis, 'matchMedia', {
   })),
 });
 
+const capturedSWRConfigValues: Record<string, unknown>[] = [];
+
+vi.mock('swr', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('swr')>();
+
+  function CapturingSWRConfig({
+    value,
+    children,
+  }: Readonly<{ value?: Record<string, unknown>; children?: ReactNode }>) {
+    if (value) {
+      capturedSWRConfigValues.push({ ...value });
+    }
+    return createElement(
+      actual.SWRConfig as unknown as React.ComponentType<Record<string, unknown>>,
+      { value } as unknown as Record<string, unknown>,
+      children
+    );
+  }
+
+  return {
+    ...actual,
+    SWRConfig: CapturingSWRConfig,
+  };
+});
+
 describe('PageSettingsProvider', () => {
   beforeEach(() => {
     // Clear localStorage
     localStorage.clear();
 
+    capturedSWRConfigValues.length = 0;
     // Reset document classes
     document.documentElement.classList.remove('pf-v6-theme-dark');
 
@@ -272,6 +297,41 @@ describe('PageSettingsProvider', () => {
   });
 
   describe('SWR Configuration', () => {
+    test('should configure SWRConfig with onErrorRetry to prevent infinite retry loops on 5xx errors', () => {
+      render(
+        <PageSettingsProvider defaultRefreshInterval={30}>
+          <div>test child</div>
+        </PageSettingsProvider>
+      );
+
+      expect(capturedSWRConfigValues.length).toBeGreaterThan(0);
+      const config = capturedSWRConfigValues[capturedSWRConfigValues.length - 1];
+      expect(config).toHaveProperty('onErrorRetry');
+      expect(typeof config.onErrorRetry).toBe('function');
+    });
+
+    test('should disable revalidateOnFocus to prevent refetch storms', () => {
+      render(
+        <PageSettingsProvider defaultRefreshInterval={30}>
+          <div>test child</div>
+        </PageSettingsProvider>
+      );
+
+      const config = capturedSWRConfigValues[capturedSWRConfigValues.length - 1];
+      expect(config).toHaveProperty('revalidateOnFocus', false);
+    });
+
+    test('should set a dedupingInterval to prevent duplicate requests', () => {
+      render(
+        <PageSettingsProvider defaultRefreshInterval={30}>
+          <div>test child</div>
+        </PageSettingsProvider>
+      );
+
+      const config = capturedSWRConfigValues[capturedSWRConfigValues.length - 1];
+      expect(config).toHaveProperty('dedupingInterval', 0);
+    });
+
     test('should configure SWR with correct refresh interval', () => {
       const TestComponent = () => {
         const settings = usePageSettings();
@@ -285,16 +345,6 @@ describe('PageSettingsProvider', () => {
       );
 
       expect(getByTestId('interval')).toHaveTextContent('30');
-    });
-
-    test('should disable revalidateOnFocus globally', () => {
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider defaultRefreshInterval={30}>{children}</PageSettingsProvider>
-      );
-
-      const { result } = renderHook(() => useSWRConfig(), { wrapper });
-
-      expect(result.current.revalidateOnFocus).toBe(false);
     });
 
     test('should disable refresh when interval is 0', () => {
