@@ -1,5 +1,6 @@
 # Ansible UI
 
+<!-- test PR for devel CI validation (v2) - safe to close -->
 Ansible UI code is housed in this repo and is members listed in the CODEOWNERS. On the devel branch, you can find the most up-to-date stable code for the UI.
 
 UI projects for [Ansible](https://docs.ansible.com).
