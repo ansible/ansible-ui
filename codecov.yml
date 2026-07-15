@@ -1,9 +1,7 @@
 coverage:
   status:
     project:
-      default:
-        flags:
-          - unit-tests
+      default: true
   ignore:
     - "**/*.test.ts"
     - "**/*.test.tsx"
@@ -17,3 +15,9 @@ coverage:
     - "**/swagger.json"
     - "**/openapi.json"
     - "**/package-lock.json"
+
+flags:
+  unit-tests:
+    carryforward: true
+  e2e-tests:
+    carryforward: true
