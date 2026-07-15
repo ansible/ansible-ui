@@ -1,0 +1,130 @@
+name: PR Waiting on Author (Checks)
+
+on:
+  workflow_run:
+    workflows:
+      - PR Checks
+    types:
+      - completed
+
+permissions:
+  actions: read
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  label-on-check-result:
+    name: Label on Check Result
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
+    steps:
+      - name: Download PR number artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr_number
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Extract PR number
+        id: pr
+        run: echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Get PR author
+        id: author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          echo "login=$AUTHOR" >> "$GITHUB_OUTPUT"
+          if [[ "$AUTHOR" == "dependabot[bot]" || "$AUTHOR" == "app/red-hat-konflux" || "$AUTHOR" == "red-hat-konflux[bot]" ]]; then
+            echo "is_bot=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_bot=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ensure labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "waiting-on-author" --repo "$REPO" --color "E4E669" --description "PR requires author attention" --force 2>/dev/null || true
+          gh label create "e2e: pending"      --repo "$REPO" --color "FBCA04" --description "E2E tests not yet triggered" --force 2>/dev/null || true
+
+      - name: Handle check failure
+        if: github.event.workflow_run.conclusion == 'failure' && steps.author.outputs.is_bot == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          AUTHOR: ${{ steps.author.outputs.login }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          FAILED_JOBS=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" \
+            --jq '[.jobs[] | select(.conclusion == "failure") | .name] | join("\n")')
+
+          BODY="<!-- waiting-on-author-checks -->"$'\n'
+          BODY+="@${AUTHOR} — The following PR checks have failed:"$'\n'
+          while IFS= read -r job; do
+            [ -n "$job" ] && BODY+="- ❌ ${job}"$'\n'
+          done <<< "$FAILED_JOBS"
+          BODY+=$'\n'"Please address these failures."
+
+          EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- waiting-on-author-checks -->")) | .id' | tail -1)
+
+          if [ -n "$EXISTING_ID" ]; then
+            gh api "repos/$REPO/issues/comments/$EXISTING_ID" -X PATCH -f body="$BODY"
+          else
+            gh pr comment "$PR_NUMBER" --repo "$REPO" --body "$BODY"
+          fi
+
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
+
+      - name: Handle check success (cleanup waiting-on-author)
+        if: github.event.workflow_run.conclusion == 'success' && steps.author.outputs.is_bot == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          # Delete the checks failure comment if it exists
+          EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- waiting-on-author-checks -->")) | .id' | tail -1)
+          if [ -n "$EXISTING_ID" ]; then
+            gh api "repos/$REPO/issues/comments/$EXISTING_ID" -X DELETE
+          fi
+
+          # Only remove waiting-on-author if no other failure comments exist
+          SONAR=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-sonar -->"))] | length')
+          CONFLICTS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-conflicts -->"))] | length')
+          E2E_PENDING_LABEL=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
+            --jq '[.[] | select(.name == "e2e: pending")] | length')
+
+          if [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ] && [ "$E2E_PENDING_LABEL" -eq 0 ]; then
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
+          fi
+
+      - name: Handle check success (e2e pending)
+        if: github.event.workflow_run.conclusion == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          IS_BOT: ${{ steps.author.outputs.is_bot }}
+        run: |
+          # Add e2e: pending if /run-playwright hasn't been commented yet
+          RUN_PW=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | test("/run-playwright"))] | length')
+          if [ "$RUN_PW" -eq 0 ]; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: pending"
+            # Only add waiting-on-author for non-bot PRs
+            if [ "$IS_BOT" = "false" ]; then
+              gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
+            fi
+          fi

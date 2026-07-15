@@ -1,0 +1,73 @@
+name: PR E2E Status
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  e2e-triggered:
+    name: E2E Triggered
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.issue.pull_request
+      && contains(github.event.comment.body, '/run-playwright')
+    steps:
+      - name: Ensure labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "e2e: pending" --repo "$REPO" --color "FBCA04" --description "E2E tests not yet triggered" --force 2>/dev/null || true
+          gh label create "e2e: running" --repo "$REPO" --color "1D76DB" --description "E2E tests in progress" --force 2>/dev/null || true
+          gh label create "waiting-on-author" --repo "$REPO" --color "E4E669" --description "PR requires author attention" --force 2>/dev/null || true
+
+      - name: Update e2e labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh api "repos/$REPO/issues/$PR_NUMBER/labels/e2e:%20pending" -X DELETE 2>/dev/null || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: running"
+
+          # Remove waiting-on-author if no other failure reasons exist
+          CHECKS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-checks -->"))] | length')
+          SONAR=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-sonar -->"))] | length')
+          CONFLICTS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-conflicts -->"))] | length')
+
+          if [ "$CHECKS" -eq 0 ] && [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ]; then
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
+          fi
+
+  e2e-completed:
+    name: E2E Completed
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.issue.pull_request
+      && github.event.comment.user.login == 'aap-pde-ci-bot'
+      && contains(github.event.comment.body, 'Currents dashboard')
+    steps:
+      - name: Ensure labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "e2e: running" --repo "$REPO" --color "1D76DB" --description "E2E tests in progress" --force 2>/dev/null || true
+          gh label create "e2e: done"    --repo "$REPO" --color "0E8A16" --description "E2E tests completed" --force 2>/dev/null || true
+
+      - name: Update e2e labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh api "repos/$REPO/issues/$PR_NUMBER/labels/e2e:%20running" -X DELETE 2>/dev/null || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: done"
