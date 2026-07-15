@@ -232,6 +232,29 @@ describe('DeprecationsDashboard', () => {
     expect(screen.getByText('Time period:')).toBeInTheDocument();
   });
 
+  it('should include timeRange query param in deprecation pattern link', async () => {
+    server.use(
+      http.get(awxAPI`/jobs/`, ({ request }) => {
+        const url = new URL(request.url);
+        if (url.searchParams.get('created__gte')) {
+          return HttpResponse.json(mockJobsResponse);
+        }
+        return HttpResponse.json(emptyJobsResponse);
+      }),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEventsResponse))
+    );
+
+    render(<DeprecationsDashboard />, { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // The deprecation type link should include ?timeRange= as a query param
+    const patternLink = screen.getByRole('link', { name: 'with_items on module' });
+    expect(patternLink).toHaveAttribute('href', expect.stringContaining('timeRange='));
+  });
+
   it('should display toolbar filters for search, severity, organization, and job template', async () => {
     server.use(
       http.get(awxAPI`/jobs/`, ({ request }) => {

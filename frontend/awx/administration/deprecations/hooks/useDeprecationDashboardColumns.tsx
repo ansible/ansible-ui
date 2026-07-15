@@ -3,12 +3,12 @@ import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-frame
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SeverityLabel } from '../DeprecationSeverityLabel';
-import { DeprecationStat } from './useDeprecationData';
+import { DeprecationStat, TimeRange } from './useDeprecationData';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export type DeprecationRow = DeprecationStat & { severityRank: number };
 
-export function useDeprecationDashboardColumns() {
+export function useDeprecationDashboardColumns(timeRange: TimeRange = '7d') {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -20,9 +20,9 @@ export function useDeprecationDashboardColumns() {
           <>
             <TextCell
               text={dep.type}
-              to={getPageUrl(AwxRoute.DeprecationDetails, {
+              to={`${getPageUrl(AwxRoute.DeprecationDetails, {
                 params: { deprecationType: dep.type },
-              })}
+              })}?timeRange=${timeRange}`}
             />
             <Content
               component="small"
@@ -51,6 +51,6 @@ export function useDeprecationDashboardColumns() {
         sort: 'severityRank',
       },
     ],
-    [t, getPageUrl]
+    [t, getPageUrl, timeRange]
   );
 }

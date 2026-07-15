@@ -882,4 +882,64 @@ describe('useDeprecationData', () => {
     expect(result.current.data?.deprecations[0].organizations).toEqual([]);
     expect(result.current.data?.deprecations[0].jobTemplates).toEqual([]);
   });
+
+  it('should add page_size=200 to job events requests', async () => {
+    const capturedEventUrls: string[] = [];
+    server.use(
+      http.get(awxAPI`/jobs/`, ({ request }) => {
+        const url = new URL(request.url);
+        if (url.searchParams.get('created__gte')) return HttpResponse.json(mockJobsResponse);
+        return HttpResponse.json(emptyJobsResponse);
+      }),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, ({ request }) => {
+        capturedEventUrls.push(request.url);
+        return HttpResponse.json(mockEventsWithItems);
+      })
+    );
+
+    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(capturedEventUrls.length).toBeGreaterThan(0);
+    capturedEventUrls.forEach((url) => {
+      expect(new URL(url).searchParams.get('page_size')).toBe('200');
+    });
+  });
+
+  it('should bound the previous period with created__lte when fetching trends', async () => {
+    const capturedJobsUrls: string[] = [];
+    server.use(
+      http.get(awxAPI`/jobs/`, ({ request }) => {
+        capturedJobsUrls.push(request.url);
+        return HttpResponse.json(emptyJobsResponse);
+      }),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
+    );
+
+    const { result } = renderHook(() => useDeprecationData('7d'), { wrapper: swrWrapper });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // Should have made two job fetches: current period and previous period
+    expect(capturedJobsUrls.length).toBe(2);
+
+    // The previous-period fetch should include both created__gte and created__lte
+    const prevPeriodUrl = capturedJobsUrls.find((url) => {
+      const params = new URL(url).searchParams;
+      return params.has('created__gte') && params.has('created__lte');
+    });
+    expect(prevPeriodUrl).toBeDefined();
+
+    // The current-period fetch should have created__gte but NOT created__lte
+    const currentPeriodUrl = capturedJobsUrls.find((url) => {
+      const params = new URL(url).searchParams;
+      return params.has('created__gte') && !params.has('created__lte');
+    });
+    expect(currentPeriodUrl).toBeDefined();
+  });
 });

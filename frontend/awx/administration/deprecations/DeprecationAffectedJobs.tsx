@@ -4,14 +4,15 @@ import {
   ToolbarFilterType,
   useInMemoryView,
 } from '@ansible/ansible-ui-framework';
+import { Content, ToolbarItem } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useDeprecationAffectedJobsColumns } from './hooks/useDeprecationAffectedJobsColumns';
-import { useDeprecationData } from './hooks/useDeprecationData';
+import { useDeprecationData, TimeRange } from './hooks/useDeprecationData';
 
 interface AffectedJob {
   id: number;
@@ -26,12 +27,23 @@ interface AffectedJob {
   };
 }
 
+const TIME_RANGE_LABELS: Record<TimeRange, string> = {
+  '7d': 'Showing jobs from last 7 days',
+  '30d': 'Showing jobs from last 30 days',
+  '6m': 'Showing jobs from last 6 months',
+  '1y': 'Showing jobs from last year',
+  all: 'Showing all jobs',
+};
+
 export function DeprecationAffectedJobs() {
   const { t } = useTranslation();
   const { deprecationType } = useParams<{ deprecationType: string }>();
   const decodedType = decodeURIComponent(deprecationType ?? '');
 
-  const { data: deprecationData } = useDeprecationData();
+  const [searchParams] = useSearchParams();
+  const timeRange = (searchParams.get('timeRange') ?? '7d') as TimeRange;
+
+  const { data: deprecationData } = useDeprecationData(timeRange);
   const deprecation = deprecationData?.deprecations.find((d) => d.type === decodedType);
   const jobIds = deprecation?.jobIds ?? [];
 
@@ -95,6 +107,13 @@ export function DeprecationAffectedJobs() {
       emptyStateTitle={t('No affected jobs')}
       emptyStateDescription={t('No jobs have been recorded for this deprecation pattern.')}
       errorStateTitle={t('Error loading affected jobs')}
+      toolbarRightContent={
+        <ToolbarItem>
+          <Content component="small" style={{ color: 'var(--pf-t--global--text--color--subtle)' }}>
+            {t(TIME_RANGE_LABELS[timeRange])}
+          </Content>
+        </ToolbarItem>
+      }
     />
   );
 }

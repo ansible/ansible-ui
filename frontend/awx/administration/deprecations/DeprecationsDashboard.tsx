@@ -175,7 +175,7 @@ export function DeprecationsDashboard() {
     [data]
   );
 
-  const columns = useDeprecationDashboardColumns();
+  const columns = useDeprecationDashboardColumns(timeRange);
 
   const view = useInMemoryView<DeprecationRow>({
     items: deprecationRows,

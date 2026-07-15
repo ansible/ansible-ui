@@ -136,10 +136,17 @@ interface Job {
 }
 
 // Fetch deprecation stats for a given time window (extracted for reuse in trend calculation)
-async function fetchDeprecationStats(dateFilter: string | null) {
-  const jobsUrl = dateFilter
-    ? awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}`
-    : awxAPI`/jobs/?page_size=50&order_by=-created`;
+// upperBound, when provided, adds a created__lte bound so the window is [dateFilter, upperBound]
+// rather than [dateFilter, now]. Used for the previous-period fetch to avoid overlap.
+async function fetchDeprecationStats(dateFilter: string | null, upperBound?: string) {
+  let jobsUrl: string;
+  if (dateFilter && upperBound) {
+    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}&created__lte=${upperBound}`;
+  } else if (dateFilter) {
+    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}`;
+  } else {
+    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created`;
+  }
 
   const jobsResponse = await requestGet<{ results: Job[]; count: number }>(jobsUrl);
   const jobs = jobsResponse.results;
@@ -158,7 +165,7 @@ async function fetchDeprecationStats(dateFilter: string | null) {
 
   const failureCount = await runInBatches(jobs, async (job) => {
     const eventsResponse = await requestGet<{ count: number; results: JobEvent[] }>(
-      awxAPI`/jobs/${job.id.toString()}/job_events/?event=deprecated`
+      awxAPI`/jobs/${job.id.toString()}/job_events/?event=deprecated&page_size=200`
     );
     // Use results.length (not .count) to stay consistent with what was actually processed
     if (eventsResponse.results.length > 0) {
@@ -215,10 +222,12 @@ async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData>
     prevDateFilter = new Date(new Date(dateFilter).getTime() - windowMs).toISOString();
   }
 
-  // Fetch current period; fetch previous only when a meaningful comparison exists
+  // Fetch current period; fetch previous only when a meaningful comparison exists.
+  // Pass dateFilter as upperBound for the previous period so it covers [prevStart, currentStart]
+  // rather than [prevStart, now], which would overlap with the current period.
   const [current, previous] = await Promise.all([
     fetchDeprecationStats(dateFilter),
-    isAllTime ? Promise.resolve(null) : fetchDeprecationStats(prevDateFilter),
+    isAllTime ? Promise.resolve(null) : fetchDeprecationStats(prevDateFilter, dateFilter ?? undefined),
   ]);
 
   const deprecations: DeprecationStat[] = Object.entries(current.deprecationsByType)
