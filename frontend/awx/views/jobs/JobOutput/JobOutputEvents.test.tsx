@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { JobEvent } from '../../../interfaces/JobEvent';
 import { testFixture as jobFixture } from '../jobDetails.fixture';
 import { JobOutputEvents } from './JobOutputEvents';
 import * as JobOutputRowModule from './JobOutputRow';
@@ -119,9 +120,10 @@ describe('JobOutputEvents', () => {
       event_data: { play_uuid: 'play-1' },
       start_line: 0,
       parent_uuid: '',
-    };
+      summary_fields: { job: { id: 1 } },
+    } as unknown as JobEvent;
 
-    const jobEvents: Record<number, typeof event1> = { 1: event1 };
+    const jobEvents: Record<number, JobEvent> = { 1: event1 };
 
     vi.mocked(useJobOutput).mockReturnValue({
       jobEventCount: 1,
@@ -171,7 +173,8 @@ describe('JobOutputEvents', () => {
       event_data: { play_uuid: 'play-1' },
       start_line: 0,
       parent_uuid: '',
-    };
+      summary_fields: { job: { id: 1 } },
+    } as unknown as JobEvent;
     const event2 = {
       counter: 2,
       stdout: 'TASK [debug] ***',
@@ -180,7 +183,8 @@ describe('JobOutputEvents', () => {
       event_data: { play_uuid: 'play-1', task_uuid: 'task-1' },
       start_line: 1,
       parent_uuid: '',
-    };
+      summary_fields: { job: { id: 1 } },
+    } as unknown as JobEvent;
 
     const stableFilterState = {};
     const stableReloadJob = vi.fn();
