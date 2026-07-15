@@ -5,6 +5,8 @@ import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { testFixture as jobFixture } from '../jobDetails.fixture';
 import { JobOutputEvents } from './JobOutputEvents';
+import * as JobOutputRowModule from './JobOutputRow';
+import { useJobOutput } from './useJobOutput';
 
 vi.mock('@react-hook/resize-observer', () => ({
   default: vi.fn(),
@@ -104,5 +106,139 @@ describe('JobOutputEvents', () => {
         screen.getByRole('button', { name: /expand job events|collapse all job events/i })
       ).toBeInTheDocument();
     });
+  });
+
+  it('should cache jobEventToRows results across re-renders', () => {
+    const jobEventToRowsSpy = vi.spyOn(JobOutputRowModule, 'jobEventToRows');
+
+    const event1 = {
+      counter: 1,
+      stdout: 'PLAY [all] ***\r\nline2',
+      uuid: 'uuid-1',
+      event: 'playbook_on_play_start',
+      event_data: { play_uuid: 'play-1' },
+      start_line: 0,
+      parent_uuid: '',
+    };
+
+    const jobEvents: Record<number, typeof event1> = { 1: event1 };
+
+    vi.mocked(useJobOutput).mockReturnValue({
+      jobEventCount: 1,
+      getJobOutputEvent: vi.fn(),
+      queryJobOutputEvent: vi.fn(),
+      jobEvents,
+    });
+
+    const { rerender } = renderJobOutput(jobFixture);
+
+    const firstCallCount = jobEventToRowsSpy.mock.calls.length;
+    expect(firstCallCount).toBe(1);
+
+    vi.mocked(useJobOutput).mockReturnValue({
+      jobEventCount: 1,
+      getJobOutputEvent: vi.fn(),
+      queryJobOutputEvent: vi.fn(),
+      jobEvents,
+    });
+
+    rerender(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <JobOutputEvents
+          job={jobFixture}
+          reloadJob={vi.fn()}
+          toolbarFilters={[]}
+          filterState={{}}
+          isFollowModeEnabled={false}
+          setIsFollowModeEnabled={vi.fn()}
+        />
+      </SWRConfig>
+    );
+
+    expect(jobEventToRowsSpy.mock.calls.length).toBe(firstCallCount);
+
+    jobEventToRowsSpy.mockRestore();
+  });
+
+  it('should only call jobEventToRows for new events when count increases', () => {
+    const jobEventToRowsSpy = vi.spyOn(JobOutputRowModule, 'jobEventToRows');
+
+    const event1 = {
+      counter: 1,
+      stdout: 'PLAY [all] ***',
+      uuid: 'uuid-1',
+      event: 'playbook_on_play_start',
+      event_data: { play_uuid: 'play-1' },
+      start_line: 0,
+      parent_uuid: '',
+    };
+    const event2 = {
+      counter: 2,
+      stdout: 'TASK [debug] ***',
+      uuid: 'uuid-2',
+      event: 'playbook_on_task_start',
+      event_data: { play_uuid: 'play-1', task_uuid: 'task-1' },
+      start_line: 1,
+      parent_uuid: '',
+    };
+
+    const stableFilterState = {};
+    const stableReloadJob = vi.fn();
+    const stableSetFollow = vi.fn();
+    const swrConfig = { provider: () => new Map() };
+
+    vi.mocked(useJobOutput).mockReturnValue({
+      jobEventCount: 1,
+      getJobOutputEvent: vi.fn(),
+      queryJobOutputEvent: vi.fn(),
+      jobEvents: { 1: event1 },
+    });
+
+    const { rerender } = render(
+      <SWRConfig value={swrConfig}>
+        <JobOutputEvents
+          job={jobFixture}
+          reloadJob={stableReloadJob}
+          toolbarFilters={[]}
+          filterState={stableFilterState}
+          isFollowModeEnabled={false}
+          setIsFollowModeEnabled={stableSetFollow}
+        />
+      </SWRConfig>
+    );
+    const callsAfterFirstRender = jobEventToRowsSpy.mock.calls.length;
+    expect(callsAfterFirstRender).toBeGreaterThanOrEqual(1);
+
+    jobEventToRowsSpy.mockClear();
+
+    vi.mocked(useJobOutput).mockReturnValue({
+      jobEventCount: 2,
+      getJobOutputEvent: vi.fn(),
+      queryJobOutputEvent: vi.fn(),
+      jobEvents: { 1: event1, 2: event2 },
+    });
+
+    rerender(
+      <SWRConfig value={swrConfig}>
+        <JobOutputEvents
+          job={jobFixture}
+          reloadJob={stableReloadJob}
+          toolbarFilters={[]}
+          filterState={stableFilterState}
+          isFollowModeEnabled={false}
+          setIsFollowModeEnabled={stableSetFollow}
+        />
+      </SWRConfig>
+    );
+
+    const callsForNewEvent = jobEventToRowsSpy.mock.calls.filter((args) => args[0]?.counter === 2);
+    expect(callsForNewEvent.length).toBe(1);
+
+    const callsForCachedEvent = jobEventToRowsSpy.mock.calls.filter(
+      (args) => args[0]?.counter === 1
+    );
+    expect(callsForCachedEvent.length).toBe(0);
+
+    jobEventToRowsSpy.mockRestore();
   });
 });
