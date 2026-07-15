@@ -159,6 +159,7 @@ export function useJobOutput(
       jobEventCount
     );
     setJobEvents((jobEvents) => {
+      jobEvents = { ...jobEvents };
       batchedEvents.current.forEach((message: JobEvent) => {
         jobEvents[message.counter] = message;
       });
