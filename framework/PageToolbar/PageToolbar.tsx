@@ -67,9 +67,6 @@ export type PageToolbarProps<T extends object> = {
 
   toolbarContent?: React.ReactNode;
 
-  /** Content rendered inside the right-aligned toolbar group, immediately before the view switcher. */
-  toolbarRightContent?: React.ReactNode;
-
   /**
    * Limits the filters so that only one filter can be set to an OR operation.
    *
@@ -201,8 +198,6 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
 
           {/* Right aligned items */}
           <ToolbarGroup align={{ default: 'alignEnd' }}>
-            {props.toolbarRightContent}
-
             {/* Sort */}
             {viewType !== 'table' && (
               <PageToolbarSort

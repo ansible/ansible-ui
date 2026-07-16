@@ -136,12 +136,12 @@ interface Job {
 }
 
 // Fetch deprecation stats for a given time window (extracted for reuse in trend calculation)
-// upperBound, when provided, adds a created__lte bound so the window is [dateFilter, upperBound]
+// upperBound, when provided, adds a created__lt bound so the window is [dateFilter, upperBound)
 // rather than [dateFilter, now]. Used for the previous-period fetch to avoid overlap.
 async function fetchDeprecationStats(dateFilter: string | null, upperBound?: string) {
   let jobsUrl: string;
   if (dateFilter && upperBound) {
-    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}&created__lte=${upperBound}`;
+    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}&created__lt=${upperBound}`;
   } else if (dateFilter) {
     jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}`;
   } else {
