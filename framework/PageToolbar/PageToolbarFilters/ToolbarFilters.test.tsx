@@ -527,6 +527,25 @@ describe('PageToolbarFilters', () => {
     expect(screen.getByText('Search 1')).toBeInTheDocument();
   });
 
+  it('should render filter items visible within the toggle group container', () => {
+    const filter1 = createSingleTextFilter(1);
+    const filter2 = createSingleTextFilter(2);
+
+    const { container } = render(<ToolbarFiltersTest toolbarFilters={[filter1, filter2]} />);
+
+    const toggleGroup = container.querySelector('.pf-m-toggle-group');
+    expect(toggleGroup).toBeInTheDocument();
+
+    const filterInput = screen.getByPlaceholderText('Filter by st1');
+    expect(filterInput).toBeInTheDocument();
+    expect(toggleGroup!.contains(filterInput)).toBe(true);
+
+    const filterGroups = toggleGroup!.querySelectorAll(
+      '.pf-v6-c-toolbar__group, .pf-v6-c-toolbar__item'
+    );
+    expect(filterGroups.length).toBeGreaterThan(0);
+  });
+
   it('should render all filter types together', () => {
     const filters: IToolbarFilter[] = [
       createSearchFilter(1, { isPinned: true }),

@@ -38,6 +38,25 @@ table tbody tr td.expanded {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
 }
 
+/* Ensure toolbar toggle-group filter items are visible on desktop viewports.
+   PF6 ToolbarToggleGroup hides items by default and relies on CSS from
+   @patternfly/react-styles to show them at the configured breakpoint.
+   In CRC/Insights mode, bundlePfModules:false strips that CSS from the bundle
+   and Chrome provides PF CSS instead. If Chrome's CSS version doesn't include
+   the matching show rules, filters become invisible. This override guarantees
+   visibility on viewports >= md (48rem) regardless of which PF CSS is loaded. */
+@media (min-width: 48rem) {
+  .page-table-toolbar .pf-v6-c-toolbar__group.pf-m-toggle-group .pf-v6-c-toolbar__group,
+  .page-table-toolbar .pf-v6-c-toolbar__group.pf-m-toggle-group .pf-v6-c-toolbar__item {
+    display: flex;
+    flex: 0 1 auto;
+  }
+
+  .page-table-toolbar .pf-v6-c-toolbar__group.pf-m-toggle-group .pf-v6-c-toolbar__toggle {
+    display: none;
+  }
+}
+
 /* Ansible UI override for PF Tabs that contain a Toolbar */
 .pf-v6-c-page__main-section:has(> .pf-v6-c-page__main-body:only-child > .pf-v6-c-tabs:only-child)
   + .pf-v6-c-toolbar {
