@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EdaContentType } from './EdaContentType';
 
-/**
- * @deprecated as the API will be providing this information
- */
 export type EdaRoleMetadaContentType = {
   displayName: string;
   permissions: {
@@ -12,16 +9,10 @@ export type EdaRoleMetadaContentType = {
   };
 };
 
-/**
- * @deprecated as the API will be providing this information
- */
 export interface EdaRoleMetadata {
   content_types: Record<EdaContentType, EdaRoleMetadaContentType>;
 }
 
-/**
- * @deprecated as the API will be providing this information
- */
 export function useEdaRoleMetadata(): EdaRoleMetadata {
   const { t } = useTranslation();
 

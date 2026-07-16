@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HubContentType } from './HubContentType';
 
-/**
- * @deprecated as the API will be providing this information
- */
 export type HubRoleMetadaContentType = {
   displayName: string;
   permissions: {
@@ -12,16 +9,10 @@ export type HubRoleMetadaContentType = {
   };
 };
 
-/**
- * @deprecated as the API will be providing this information
- */
 export interface HubRoleMetadata {
   content_types: Record<HubContentType, HubRoleMetadaContentType>;
 }
 
-/**
- * @deprecated as the API will be providing this information
- */
 export function useHubRoleMetadata(): HubRoleMetadata {
   const { t } = useTranslation();
 
