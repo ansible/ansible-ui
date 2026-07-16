@@ -294,10 +294,7 @@ describe('DeprecationAffectedJobs', () => {
             ]}
           >
             <Routes>
-              <Route
-                path="/deprecations/:deprecationType/affected-jobs"
-                element={children}
-              />
+              <Route path="/deprecations/:deprecationType/affected-jobs" element={children} />
             </Routes>
           </MemoryRouter>
         </SWRConfig>

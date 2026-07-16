@@ -227,7 +227,9 @@ async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData>
   // rather than [prevStart, now], which would overlap with the current period.
   const [current, previous] = await Promise.all([
     fetchDeprecationStats(dateFilter),
-    isAllTime ? Promise.resolve(null) : fetchDeprecationStats(prevDateFilter, dateFilter ?? undefined),
+    isAllTime
+      ? Promise.resolve(null)
+      : fetchDeprecationStats(prevDateFilter, dateFilter ?? undefined),
   ]);
 
   const deprecations: DeprecationStat[] = Object.entries(current.deprecationsByType)
