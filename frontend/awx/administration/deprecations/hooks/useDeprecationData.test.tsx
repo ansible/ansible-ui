@@ -909,7 +909,7 @@ describe('useDeprecationData', () => {
     });
   });
 
-  it('should bound the previous period with created__lte when fetching trends', async () => {
+  it('should bound the previous period with created__lt when fetching trends', async () => {
     const capturedJobsUrls: string[] = [];
     server.use(
       http.get(awxAPI`/jobs/`, ({ request }) => {
@@ -928,17 +928,17 @@ describe('useDeprecationData', () => {
     // Should have made two job fetches: current period and previous period
     expect(capturedJobsUrls.length).toBe(2);
 
-    // The previous-period fetch should include both created__gte and created__lte
+    // The previous-period fetch should include both created__gte and created__lt
     const prevPeriodUrl = capturedJobsUrls.find((url) => {
       const params = new URL(url).searchParams;
-      return params.has('created__gte') && params.has('created__lte');
+      return params.has('created__gte') && params.has('created__lt');
     });
     expect(prevPeriodUrl).toBeDefined();
 
-    // The current-period fetch should have created__gte but NOT created__lte
+    // The current-period fetch should have created__gte but NOT created__lt
     const currentPeriodUrl = capturedJobsUrls.find((url) => {
       const params = new URL(url).searchParams;
-      return params.has('created__gte') && !params.has('created__lte');
+      return params.has('created__gte') && !params.has('created__lt');
     });
     expect(currentPeriodUrl).toBeDefined();
   });
