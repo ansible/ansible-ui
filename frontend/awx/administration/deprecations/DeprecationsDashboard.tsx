@@ -125,6 +125,7 @@ export function DeprecationsDashboard() {
         label: t('Search'),
         query: 'type',
         placeholder: t('Enter search'),
+        comparison: 'contains',
       },
       {
         type: ToolbarFilterType.SingleSelect,

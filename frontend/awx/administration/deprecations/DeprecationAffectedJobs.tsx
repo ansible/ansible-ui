@@ -60,6 +60,7 @@ export function DeprecationAffectedJobs() {
         label: t('Name'),
         type: ToolbarFilterType.Search,
         query: 'name',
+        comparison: 'contains',
       },
       {
         key: 'status',
