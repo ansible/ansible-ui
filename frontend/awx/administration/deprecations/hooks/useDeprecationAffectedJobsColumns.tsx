@@ -17,6 +17,15 @@ interface AffectedJob {
   };
 }
 
+const JOB_TYPE_TO_PATH: Record<string, string> = {
+  project_update: 'project',
+  inventory_update: 'inventory',
+  job: 'playbook',
+  ad_hoc_command: 'command',
+  system_job: 'management',
+  workflow_job: 'workflow',
+};
+
 export function useDeprecationAffectedJobsColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -36,7 +45,9 @@ export function useDeprecationAffectedJobsColumns() {
         cell: (job) => (
           <TextCell
             text={job.summary_fields.job_template?.name ?? job.name}
-            to={getPageUrl(AwxRoute.JobDetails, { params: { id: job.id, job_type: job.type } })}
+            to={getPageUrl(AwxRoute.JobDetails, {
+              params: { id: job.id, job_type: JOB_TYPE_TO_PATH[job.type] ?? job.type },
+            })}
           />
         ),
         sort: 'name',
