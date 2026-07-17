@@ -69,14 +69,14 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     200
   );
 
-  const eventRowsCache = useRef(new Map<number, IJobOutputRow[]>());
+  const eventRowsCache = useRef(new Map<number, { event: JobEvent; rows: IJobOutputRow[] }>());
   const prevFilterState = useRef(filterState);
 
   const getCachedEventRows = useCallback((counter: number, jobEvent: JobEvent) => {
-    const cached = eventRowsCache.current.get(counter);
-    if (cached) return cached;
+    const entry = eventRowsCache.current.get(counter);
+    if (entry && entry.event === jobEvent) return entry.rows;
     const rows = jobEventToRows(jobEvent);
-    eventRowsCache.current.set(counter, rows);
+    eventRowsCache.current.set(counter, { event: jobEvent, rows });
     return rows;
   }, []);
 
