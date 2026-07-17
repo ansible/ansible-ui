@@ -1,0 +1,83 @@
+name: PR E2E Failed
+
+on:
+  check_run:
+    types: [completed]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  e2e-pipeline-failed:
+    name: E2E Pipeline Failed
+    runs-on: ubuntu-latest
+    if: >-
+      contains(github.event.check_run.name, 'aap-ui-e2e-pull-request')
+      && (github.event.check_run.conclusion == 'failure'
+          || github.event.check_run.conclusion == 'cancelled'
+          || github.event.check_run.conclusion == 'timed_out')
+    steps:
+      - name: Find associated PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.check_run.head_sha }}
+        run: |
+          PR_NUMBER=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" --jq '.[0].number // empty')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No PR found for commit $HEAD_SHA"
+            exit 0
+          fi
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          echo "author=$AUTHOR" >> "$GITHUB_OUTPUT"
+
+          IS_BOT="false"
+          if [[ "$AUTHOR" == "dependabot[bot]" || "$AUTHOR" == "app/red-hat-konflux" || "$AUTHOR" == "red-hat-konflux[bot]" ]]; then
+            IS_BOT="true"
+          fi
+          echo "is_bot=$IS_BOT" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure labels exist
+        if: steps.pr.outputs.number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "e2e: failed"       --repo "$REPO" --color "D93F0B" --description "E2E pipeline failed" --force 2>/dev/null || true
+          gh label create "e2e: running"      --repo "$REPO" --color "1D76DB" --description "E2E tests in progress" --force 2>/dev/null || true
+          gh label create "waiting-on-author" --repo "$REPO" --color "E4E669" --description "PR requires author attention" --force 2>/dev/null || true
+
+      - name: Update labels and comment
+        if: steps.pr.outputs.number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          AUTHOR: ${{ steps.pr.outputs.author }}
+          IS_BOT: ${{ steps.pr.outputs.is_bot }}
+          CONCLUSION: ${{ github.event.check_run.conclusion }}
+          CHECK_URL: ${{ github.event.check_run.html_url }}
+        run: |
+          gh api "repos/$REPO/issues/$PR_NUMBER/labels/e2e:%20running" -X DELETE 2>/dev/null || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: failed"
+
+          BODY="<!-- waiting-on-author-e2e -->"$'\n'
+          BODY+="@${AUTHOR} — The E2E pipeline ${CONCLUSION}. Please check the [pipeline run](${CHECK_URL}) and re-trigger with \`/run-playwright\` if needed."
+
+          EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- waiting-on-author-e2e -->")) | .id' | tail -1)
+
+          if [ -n "$EXISTING_ID" ]; then
+            gh api "repos/$REPO/issues/comments/$EXISTING_ID" -X PATCH -f body="$BODY"
+          else
+            gh pr comment "$PR_NUMBER" --repo "$REPO" --body "$BODY"
+          fi
+
+          if [ "$IS_BOT" = "false" ]; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
+          fi
