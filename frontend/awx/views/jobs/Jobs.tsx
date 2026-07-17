@@ -1,9 +1,7 @@
 import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { Domains } from '../../common/domains/Domains';
 import { useAwxConfig } from '../../common/useAwxConfig';
@@ -17,19 +15,6 @@ export function Jobs() {
 
   usePersistentFilters('jobs');
   const config = useAwxConfig();
-
-  // Read URL search params and pass them to JobsList for filtering
-  const [searchParams] = useSearchParams();
-  const queryParams = useMemo(() => {
-    const params: { [key: string]: string } = {};
-    searchParams.forEach((value, key) => {
-      // Only pass through API filter params, not UI state params
-      if (!['page', 'perPage', 'sort'].includes(key)) {
-        params[key] = value;
-      }
-    });
-    return params;
-  }, [searchParams]);
 
   return (
     <PageLayout>
@@ -48,7 +33,7 @@ export function Jobs() {
         headerActions={<ActivityStreamIcon type={'job'} />}
       />
       <Domains />
-      <JobsList columns={tableColumns} queryParams={queryParams} />
+      <JobsList columns={tableColumns} />
     </PageLayout>
   );
 }
