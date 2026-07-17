@@ -124,6 +124,8 @@ export type DashboardChartCardProps = DashboardCommonCardProps & {
   variant: 'barChart' | 'lineChart';
   summaryValue?: number;
   data: IDashboardChart;
+  /** Label shown in the chart legend for the data series. Defaults to a generic "Count" label. */
+  legendLabel?: string;
 };
 
 export type DashboardTableInputFieldProps = {
