@@ -91,6 +91,9 @@ export function RemoteDetails() {
         <PageDetail label={t('Download only signed collections')}>
           {remote?.signed_only ? t('True') : t('False')}
         </PageDetail>
+        <PageDetail label={t('Sync latest versions')}>
+          {remote?.sync_highest_versions?.toString() ?? t('All versions')}
+        </PageDetail>
         <PageDetail label={t('Repositories')}>
           {repositories?.results?.length ? (
             <LabelGroup

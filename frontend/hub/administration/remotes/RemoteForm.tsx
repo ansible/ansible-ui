@@ -92,6 +92,7 @@ export function CreateRemote() {
           url: '',
           signed_only: false,
           sync_dependencies: false,
+          sync_highest_versions: null,
         }}
       >
         <HelperWrapper isNew />
