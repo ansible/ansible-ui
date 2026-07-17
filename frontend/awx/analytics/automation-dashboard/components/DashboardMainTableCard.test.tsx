@@ -50,7 +50,8 @@ const mockItem: IJobTemplate = {
   num_hosts: 3,
   time_taken_manually_execute_minutes: 30,
   time_taken_create_automation_minutes: 60,
-  elapsed: '00:30:00',
+  elapsed: '1800',
+  elapsed_str: '00:30:00',
   automated_costs: 100,
   manual_costs: 200,
   savings: 100,
@@ -333,6 +334,19 @@ describe('DashboardMainTableCard', () => {
     expect(screen.getByText('Test Template')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(screen.getByText('00:30:00')).toBeInTheDocument();
+  });
+
+  test('should render elapsed_str (not raw elapsed) in the Running time column', () => {
+    renderCard();
+    expect(screen.getByText('00:30:00')).toBeInTheDocument();
+    expect(screen.queryByText('1800')).not.toBeInTheDocument();
+  });
+
+  test('should format automated_costs, manual_costs and savings as currency', () => {
+    renderCard();
+    // automated_costs (100) and savings (100) both render as $100.00
+    expect(screen.getAllByText('$100.00')).toHaveLength(2);
+    expect(screen.getByText('$200.00')).toBeInTheDocument();
   });
 
   test('should render input for time_taken_manually_execute_minutes column', () => {
