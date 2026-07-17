@@ -1,9 +1,9 @@
 import { beforeEach } from 'vitest';
 import { cleanup, screen, Screen } from '@testing-library/react';
 import { debug } from 'vitest-preview';
-import '@patternfly/patternfly/patternfly-addons.css';
-import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts.css';
+import '@patternfly/patternfly/dist/patternfly-addons.css';
+import '@patternfly/patternfly/dist/patternfly-base.css';
+import '@patternfly/patternfly/dist/patternfly-charts.css';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
 type ScreenWithPreview = Screen & { preview: () => void };
