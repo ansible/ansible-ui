@@ -231,7 +231,7 @@ jobs:
                 done
 
                 HAS_RUN_PW=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
-                  --jq '[.[] | select(.body | test("/run-playwright"))] | length')
+                  --jq '[.[] | select(.body == "/run-playwright")] | length')
                 HAS_CURRENTS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
                   --jq '[.[] | select(.user.login == "aap-pde-ci-bot" and (.body | contains("Currents dashboard")))] | length')
 

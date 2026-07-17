@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       github.event.issue.pull_request
-      && contains(github.event.comment.body, '/run-playwright')
+      && github.event.comment.body == '/run-playwright'
     steps:
       - name: Ensure labels exist
         env:

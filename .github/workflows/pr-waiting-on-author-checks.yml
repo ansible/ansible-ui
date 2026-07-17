@@ -120,7 +120,7 @@ jobs:
         run: |
           # Add e2e: pending if /run-playwright hasn't been commented yet
           RUN_PW=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
-            --jq '[.[] | select(.body | test("/run-playwright"))] | length')
+            --jq '[.[] | select(.body == "/run-playwright")] | length')
           if [ "$RUN_PW" -eq 0 ]; then
             gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: pending"
             # Only add waiting-on-author for non-bot PRs
