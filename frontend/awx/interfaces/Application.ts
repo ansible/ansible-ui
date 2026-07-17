@@ -16,6 +16,7 @@ export interface Application {
   client_secret?: string;
   authorization_grant_type?: string;
   skip_authorization?: boolean;
+  pkce_required?: boolean;
   summary_fields: {
     user_capabilities: {
       edit: boolean;

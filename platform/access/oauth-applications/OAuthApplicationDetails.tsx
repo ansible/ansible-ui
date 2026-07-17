@@ -67,6 +67,9 @@ export function ApplicationDetailInner(props: Readonly<{ application: Applicatio
       <PageDetail label={t('Skip Authorization')}>
         {props.application.skip_authorization ? t('Yes') : t('No')}
       </PageDetail>
+      <PageDetail label={t('PKCE Required')}>
+        {props.application.pkce_required ? t('Yes') : t('No')}
+      </PageDetail>
       <PageDetail label={t('Client ID')} fullWidth>
         <CopyCell text={props.application.client_id} />
       </PageDetail>

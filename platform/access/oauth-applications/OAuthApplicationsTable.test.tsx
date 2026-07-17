@@ -74,6 +74,7 @@ describe('OAuthApplicationsTable', () => {
         client_secret: 'test-client-secret',
         authorization_grant_type: 'authorization-code',
         skip_authorization: false,
+        pkce_required: true,
         summary_fields: {
           user_capabilities: {
             edit: true,
@@ -101,6 +102,7 @@ describe('OAuthApplicationsTable', () => {
         client_id: 'test-client-id-2',
         authorization_grant_type: 'password',
         skip_authorization: false,
+        pkce_required: true,
         summary_fields: {
           user_capabilities: {
             edit: true,

@@ -327,6 +327,11 @@ function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
         label={t('Skip Authorization')}
         labelHelp={fields?.skip_authorization?.help_text}
       />
+      <PageFormSwitch<Application>
+        name="pkce_required"
+        label={t('PKCE Required')}
+        labelHelp={fields?.pkce_required?.help_text}
+      />
       <PageFormTextInput<Application>
         name="redirect_uris"
         label={t('Redirect URIs')}
