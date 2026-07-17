@@ -74,7 +74,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
 
   const getCachedEventRows = useCallback((counter: number, jobEvent: JobEvent) => {
     const entry = eventRowsCache.current.get(counter);
-    if (entry && entry.event === jobEvent) return entry.rows;
+    if (entry?.event === jobEvent) return entry.rows;
     const rows = jobEventToRows(jobEvent);
     eventRowsCache.current.set(counter, { event: jobEvent, rows });
     return rows;
