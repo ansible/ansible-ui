@@ -5,7 +5,8 @@ import {
   type IToolbarFilter,
 } from '@ansible/ansible-ui-framework';
 import { describe, expect, it, vi } from 'vitest';
-import { getFiltersQueryString } from './useJobOutput';
+import { applyBatchedEvents, getFiltersQueryString } from './useJobOutput';
+import type { JobEvent } from '../../../interfaces/JobEvent';
 
 const textFilter = {
   key: 'search',
@@ -36,6 +37,47 @@ const dateRangeFilter = {
   placeholder: 'Created',
   options: [],
 } as unknown as IToolbarFilter;
+
+describe('applyBatchedEvents', () => {
+  const makeEvent = (counter: number) => ({ counter }) as JobEvent;
+
+  it('should return a new object without mutating the input', () => {
+    const existing: Record<number, JobEvent> = { 1: makeEvent(1) };
+    const result = applyBatchedEvents(existing, [makeEvent(2)]);
+
+    expect(result).not.toBe(existing);
+    expect(existing[2]).toBeUndefined();
+    expect(result[2]).toEqual(makeEvent(2));
+  });
+
+  it('should merge new events into existing events by counter', () => {
+    const existing: Record<number, JobEvent> = { 1: makeEvent(1), 2: makeEvent(2) };
+    const result = applyBatchedEvents(existing, [makeEvent(3), makeEvent(4)]);
+
+    expect(result[1]).toEqual(makeEvent(1));
+    expect(result[2]).toEqual(makeEvent(2));
+    expect(result[3]).toEqual(makeEvent(3));
+    expect(result[4]).toEqual(makeEvent(4));
+  });
+
+  it('should overwrite existing events with the same counter', () => {
+    const oldEvent = { counter: 1, stdout: 'old' } as unknown as JobEvent;
+    const newEvent = { counter: 1, stdout: 'new' } as unknown as JobEvent;
+    const existing: Record<number, JobEvent> = { 1: oldEvent };
+
+    const result = applyBatchedEvents(existing, [newEvent]);
+
+    expect(result[1]).toBe(newEvent);
+  });
+
+  it('should return a shallow copy when newEvents is empty', () => {
+    const existing: Record<number, JobEvent> = { 1: makeEvent(1) };
+    const result = applyBatchedEvents(existing, []);
+
+    expect(result).not.toBe(existing);
+    expect(result).toEqual(existing);
+  });
+});
 
 describe('getFiltersQueryString', () => {
   it('should return empty string for null filterState', () => {
