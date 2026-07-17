@@ -5,6 +5,7 @@ on:
   workflow_run:
     workflows:
       - PR Checks
+      - Platform PR
     types:
       - completed
 
