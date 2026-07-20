@@ -91,3 +91,19 @@ jobs:
           if [ -n "$E2E_COMMENT_ID" ]; then
             gh api "repos/$REPO/issues/comments/$E2E_COMMENT_ID" -X DELETE
           fi
+
+          # Remove waiting-on-author if no other failure reasons exist
+          CHECKS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-checks -->"))] | length')
+          SONAR=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-sonar -->"))] | length')
+          CONFLICTS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | contains("<!-- waiting-on-author-conflicts -->"))] | length')
+          CHANGES_REQUESTED=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq '[.[] | select(.state == "CHANGES_REQUESTED")] | map(.user.login) | unique | length')
+          E2E_PENDING=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
+            --jq '[.[] | select(.name == "e2e: pending")] | length')
+
+          if [ "$CHECKS" -eq 0 ] && [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ] && [ "$CHANGES_REQUESTED" -eq 0 ] && [ "$E2E_PENDING" -eq 0 ]; then
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
+          fi

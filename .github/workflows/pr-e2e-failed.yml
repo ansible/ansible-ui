@@ -13,6 +13,7 @@ jobs:
   e2e-pipeline-failed:
     name: E2E Pipeline Failed
     runs-on: ubuntu-latest
+    # contains() is intentional — Konflux check run names include dynamic suffixes (e.g. pipeline run ID)
     if: >-
       contains(github.event.check_run.name, 'aap-ui-e2e-pull-request')
       && (github.event.check_run.conclusion == 'failure'
@@ -66,8 +67,15 @@ jobs:
           gh api "repos/$REPO/issues/$PR_NUMBER/labels/e2e:%20running" -X DELETE 2>/dev/null || true
           gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: failed"
 
+          case "$CONCLUSION" in
+            failure)   STATUS_TEXT="failed" ;;
+            cancelled) STATUS_TEXT="was cancelled" ;;
+            timed_out) STATUS_TEXT="timed out" ;;
+            *)         STATUS_TEXT="$CONCLUSION" ;;
+          esac
+
           BODY="<!-- waiting-on-author-e2e -->"$'\n'
-          BODY+="@${AUTHOR} — The E2E pipeline ${CONCLUSION}. Please check the [pipeline run](${CHECK_URL}) and re-trigger with \`/run-playwright\` if needed."
+          BODY+="@${AUTHOR} — The E2E pipeline ${STATUS_TEXT}. Please check the [pipeline run](${CHECK_URL}) and re-trigger with \`/run-playwright\` if needed."
 
           EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
             --jq '.[] | select(.body | contains("<!-- waiting-on-author-e2e -->")) | .id' | tail -1)

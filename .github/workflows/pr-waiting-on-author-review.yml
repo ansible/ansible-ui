@@ -53,7 +53,9 @@ jobs:
             --jq '[.[] | select(.body | contains("<!-- waiting-on-author-conflicts -->"))] | length')
           E2E_PENDING=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
             --jq '[.[] | select(.name == "e2e: pending")] | length')
+          E2E_FAILED=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
+            --jq '[.[] | select(.name == "e2e: failed")] | length')
 
-          if [ "$PENDING_CHANGES" -eq 0 ] && [ "$CHECKS" -eq 0 ] && [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ] && [ "$E2E_PENDING" -eq 0 ]; then
+          if [ "$PENDING_CHANGES" -eq 0 ] && [ "$CHECKS" -eq 0 ] && [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ] && [ "$E2E_PENDING" -eq 0 ] && [ "$E2E_FAILED" -eq 0 ]; then
             gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
           fi
