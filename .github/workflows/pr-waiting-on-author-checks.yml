@@ -105,8 +105,10 @@ jobs:
             --jq '[.[] | select(.body | contains("<!-- waiting-on-author-conflicts -->"))] | length')
           E2E_PENDING_LABEL=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
             --jq '[.[] | select(.name == "e2e: pending")] | length')
+          E2E_FAILED_LABEL=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
+            --jq '[.[] | select(.name == "e2e: failed")] | length')
 
-          if [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ] && [ "$E2E_PENDING_LABEL" -eq 0 ]; then
+          if [ "$SONAR" -eq 0 ] && [ "$CONFLICTS" -eq 0 ] && [ "$E2E_PENDING_LABEL" -eq 0 ] && [ "$E2E_FAILED_LABEL" -eq 0 ]; then
             gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
           fi
 
@@ -120,7 +122,7 @@ jobs:
         run: |
           # Add e2e: pending if /run-playwright hasn't been commented yet
           RUN_PW=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
-            --jq '[.[] | select(.body | test("/run-playwright"))] | length')
+            --jq '[.[] | select(.body == "/run-playwright")] | length')
           if [ "$RUN_PW" -eq 0 ]; then
             gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: pending"
             # Only add waiting-on-author for non-bot PRs
