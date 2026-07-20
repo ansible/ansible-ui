@@ -156,7 +156,7 @@ describe('JobOutputEvents', () => {
       jobEventCount: 1,
       getJobOutputEvent: vi.fn(),
       queryJobOutputEvent: vi.fn(),
-      jobEvents,
+      jobEvents: { ...jobEvents },
     });
 
     rerender(
