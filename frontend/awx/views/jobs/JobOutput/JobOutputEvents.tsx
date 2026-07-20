@@ -80,6 +80,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     return rows;
   }, []);
 
+  // Safe to mutate refs during render — React's recommended pattern for derived state
   if (prevFilterState.current !== filterState) {
     eventRowsCache.current = new Map();
     prevFilterState.current = filterState;
