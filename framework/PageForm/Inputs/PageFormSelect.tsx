@@ -1,14 +1,18 @@
 import {
   ButtonVariant,
+  Divider,
   MenuFooter,
+  MenuSearch,
+  MenuSearchInput,
   MenuToggle,
   MenuToggleElement,
+  SearchInput,
   Select,
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
 import getValue from 'get-value';
-import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Controller,
   FieldPath,
@@ -154,6 +158,25 @@ export function PageFormSelect<
   const [isOpen, setIsOpen] = useState(false);
   const onToggle = useCallback(() => setIsOpen(!isOpen), [isOpen]);
 
+  const [searchValue, setSearchValue] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+  const selectListRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => searchRef.current?.focus(), 1);
+    } else {
+      setSearchValue('');
+    }
+  }, [isOpen]);
+
+  const visibleOptions = useMemo(() => {
+    if (searchValue === '') return options;
+    return options.filter((option) =>
+      option.label.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [options, searchValue]);
+
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
@@ -240,14 +263,63 @@ export function PageFormSelect<
                 shouldFocusToggleOnSelect
                 toggle={(ref) => toggle(ref, selected?.label)}
                 isScrollable
+                innerRef={selectListRef}
                 popperProps={{
                   enableFlip: true,
                   preventOverflow: true,
                 }}
               >
-                <>
-                  <SelectList>
-                    {options.map((option) => {
+                <MenuSearch>
+                  <MenuSearchInput data-cy="search-input" data-testid="search-input">
+                    <SearchInput
+                      id={`${id}-search`}
+                      ref={searchRef}
+                      value={searchValue}
+                      onChange={(_, value: string) => setSearchValue(value)}
+                      onClear={(event) => {
+                        event.stopPropagation();
+                        setSearchValue('');
+                      }}
+                      resultsCount={
+                        visibleOptions.length !== options.length
+                          ? `${visibleOptions.length} / ${options.length}`
+                          : undefined
+                      }
+                      onKeyDown={(event) => {
+                        switch (event.key) {
+                          case 'ArrowDown':
+                          case 'Tab': {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const firstElement = selectListRef?.current?.querySelector(
+                              'li button:not(:disabled),li input:not(:disabled)'
+                            );
+                            firstElement && (firstElement as HTMLElement).focus();
+                            break;
+                          }
+                        }
+                      }}
+                    />
+                  </MenuSearchInput>
+                </MenuSearch>
+                <Divider />
+                {visibleOptions.length === 0 ? (
+                  <SelectOption isDisabled key="no result">
+                    {t('No results found')}
+                  </SelectOption>
+                ) : (
+                  <SelectList
+                    onKeyDown={(event) => {
+                      switch (event.key) {
+                        case 'Tab':
+                          event.preventDefault();
+                          event.stopPropagation();
+                          searchRef.current?.focus();
+                          break;
+                      }
+                    }}
+                  >
+                    {visibleOptions.map((option) => {
                       const optionId = getID(option);
                       return (
                         <SelectOption
@@ -264,8 +336,8 @@ export function PageFormSelect<
                       );
                     })}
                   </SelectList>
-                  {footer && <MenuFooter>{footer}</MenuFooter>}
-                </>
+                )}
+                {footer && <MenuFooter>{footer}</MenuFooter>}
               </Select>
               <PageActions
                 actions={[
