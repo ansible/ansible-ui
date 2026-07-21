@@ -28,6 +28,7 @@ export interface IJobTemplate {
   time_taken_manually_execute_minutes: number;
   time_taken_create_automation_minutes: number;
   elapsed: string;
+  elapsed_str: string;
   automated_costs: number;
   manual_costs: number;
   savings: number;

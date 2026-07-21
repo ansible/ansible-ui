@@ -10,6 +10,7 @@ import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import { DashboardValueCard } from './DashboardValueCard';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
+import { currencyFormatter } from '../../utilities/currencyFormatter';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
@@ -153,9 +154,17 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
         ? tableInputField('time_taken_create_automation_minutes', item)
         : tableCell('time_taken_create_automation_minutes', item),
   };
-
+  const currencyColumnKeys: Set<keyof IJobTemplate> = new Set([
+    'automated_costs',
+    'manual_costs',
+    'savings',
+  ]);
   const tableCell = (columnKey: keyof IJobTemplate, item: IJobTemplate) => (
-    <TdWrapper>{item[columnKey]}</TdWrapper>
+    <TdWrapper>
+      {currencyColumnKeys.has(columnKey)
+        ? currencyFormatter(item[columnKey] as number)
+        : item[columnKey]}
+    </TdWrapper>
   );
 
   const tableColumns: ITableColumn<IJobTemplate>[] = [
@@ -187,7 +196,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     {
       id: 'elapsed',
       header: t('Running time'),
-      cell: (item) => tableCell('elapsed', item),
+      cell: (item) => tableCell('elapsed_str', item),
       sort: 'elapsed',
     },
     {
