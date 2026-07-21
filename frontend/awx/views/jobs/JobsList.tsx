@@ -27,6 +27,8 @@ export type WebSocketMessage = {
 
 const FINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
 const NEW_JOB_STATUSES = new Set(['new', 'pending']);
+const BATCH_FLUSH_DELAY = 500;
+const BATCH_FLUSH_SIZE = 50;
 
 export type WsAction =
   | { type: 'refresh' }
@@ -100,8 +102,6 @@ export function JobsList(props: {
       }, 5000),
     [refresh]
   );
-  useEffect(() => () => throttledRefresh.cancel(), [throttledRefresh]);
-
   // Stable refs to avoid re-render loop in WS subscription
   const pageItemsRef = useRef(pageItems);
   pageItemsRef.current = pageItems;
@@ -109,6 +109,39 @@ export function JobsList(props: {
   upsertItemRef.current = upsertItem;
   const listUrlRef = useRef(listUrl);
   listUrlRef.current = listUrl;
+
+  const pendingFetchIdsRef = useRef(new Set<number>());
+  const batchTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(
+    () => () => {
+      throttledRefresh.cancel();
+      clearTimeout(batchTimerRef.current);
+      pendingFetchIdsRef.current.clear();
+    },
+    [throttledRefresh]
+  );
+
+  const flushBatch = useCallback(() => {
+    const ids = Array.from(pendingFetchIdsRef.current);
+    pendingFetchIdsRef.current.clear();
+    if (ids.length === 0) return;
+
+    const parsed = new URL(listUrlRef.current, 'http://localhost');
+    parsed.searchParams.delete('id');
+    parsed.searchParams.set('id__in', ids.join(','));
+    parsed.searchParams.set('page_size', String(ids.length));
+    parsed.searchParams.set('count_disabled', '1');
+    const fetchUrl = `${parsed.pathname}?${parsed.searchParams.toString()}`;
+    requestGet<AwxItemsResponse<UnifiedJob>>(fetchUrl).then(
+      (response) => {
+        for (const job of response.results) {
+          upsertItemRef.current(job);
+        }
+      },
+      () => throttledRefresh()
+    );
+  }, [throttledRefresh]);
 
   const handleWebSocketMessage = useCallback(
     (message?: WebSocketMessage) => {
@@ -120,19 +153,13 @@ export function JobsList(props: {
           throttledRefresh();
           break;
         case 'fetch': {
-          const parsed = new URL(listUrlRef.current, 'http://localhost');
-          parsed.searchParams.set('id', action.jobId.toString());
-          parsed.searchParams.set('page_size', '1');
-          parsed.searchParams.set('count_disabled', '1');
-          const fetchUrl = `${parsed.pathname}?${parsed.searchParams.toString()}`;
-          requestGet<AwxItemsResponse<UnifiedJob>>(fetchUrl).then(
-            (response) => {
-              if (response.results.length > 0) {
-                upsertItemRef.current(response.results[0]);
-              }
-            },
-            () => throttledRefresh()
-          );
+          pendingFetchIdsRef.current.add(action.jobId);
+          clearTimeout(batchTimerRef.current);
+          if (pendingFetchIdsRef.current.size >= BATCH_FLUSH_SIZE) {
+            flushBatch();
+          } else {
+            batchTimerRef.current = setTimeout(flushBatch, BATCH_FLUSH_DELAY);
+          }
           break;
         }
         case 'patch': {
@@ -146,7 +173,7 @@ export function JobsList(props: {
           break;
       }
     },
-    [throttledRefresh]
+    [throttledRefresh, flushBatch]
   );
   useAwxWebSocketSubscription(
     { control: ['limit_reached_1'], jobs: ['status_changed'], schedules: ['changed'] },
