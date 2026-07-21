@@ -1,4 +1,8 @@
-import { render, screen } from '@testing-library/react';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import { RuleFields, ScheduleFormWizard } from '../types';
@@ -63,5 +67,45 @@ describe('RuleForm', () => {
     );
 
     expect(screen.getByText('Schedule ending type')).toBeInTheDocument();
+  });
+
+  it('should display user-friendly tooltip for Occurrences field', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <RuleForm title={ruleFormTitle} isOpen={false} setIsOpen={() => {}} />
+      </TestWrapper>
+    );
+
+    // Find the Occurrences label
+    const occurrencesLabel = screen.getByText('Occurrences');
+    expect(occurrencesLabel).toBeInTheDocument();
+
+    // Find the help button that's near the Occurrences label
+    // In the DOM, the help button is rendered after the label within the same form group
+    const occurrencesFormGroup = occurrencesLabel.closest('.pf-v6-c-form__group');
+    const helpButton = occurrencesFormGroup?.querySelector('button[type="button"]');
+
+    expect(helpButton).toBeInTheDocument();
+
+    // Click the help icon to open the popover
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    await user.click(helpButton!);
+
+    // Wait for popover to appear and verify new user-friendly text is present
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Filter which occurrences to include within each recurrence interval/i)
+      ).toBeInTheDocument();
+    });
+
+    // Verify it explains positive and negative numbers
+    expect(
+      screen.getByText(/Use positive numbers \(1, 2, 3\.\.\.\) to select from the beginning/i)
+    ).toBeInTheDocument();
+
+    // Verify the old confusing text is NOT present
+    expect(screen.queryByText(/iCalendar RFC/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/bysetpos field/i)).not.toBeInTheDocument();
   });
 });
