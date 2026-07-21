@@ -45,25 +45,21 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
   const [activeJobElapsedTime, setActiveJobElapsedTime] = useState('00:00:00');
   const [playbookStarted, setPlaybookStarted] = useState(false);
 
-  const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
+  const isPlaybookJob = job.type === 'job';
+  const shouldPoll = isPlaybookJob && !playbookStarted && !job.finished;
 
-  const jobFinished = job.finished;
-  const refreshInterval = useCallback(
-    (latestData: AwxItemsResponse<JobEvent>) => {
-      if (jobFinished) return 0;
-      if (latestData?.results.length) {
-        const latestEvent = latestData.results[0];
-        if (latestEvent.event === 'playbook_on_start') {
-          return 0;
-        }
+  const refreshInterval = useCallback((latestData: AwxItemsResponse<JobEvent>) => {
+    if (latestData?.results.length) {
+      const latestEvent = latestData.results[0];
+      if (latestEvent.event === 'playbook_on_start') {
+        return 0;
       }
-      return 5000;
-    },
-    [jobFinished]
-  );
+    }
+    return 5000;
+  }, []);
 
   const { data: jobEvents } = useGet<AwxItemsResponse<JobEvent>>(
-    awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/`,
+    shouldPoll ? awxAPI`/jobs/${job.id.toString()}/job_events/` : undefined,
     {
       page_size: 1,
       counter: 1,
@@ -132,7 +128,7 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
             <h1>{job.name}</h1>
             <StatusCell status={job.status} />
           </HeaderTitle>
-          {!playbookStarted && job?.status === 'running' && (
+          {isPlaybookJob && !playbookStarted && job?.status === 'running' && (
             <Tooltip
               content={t(
                 'Setting up the job now. This involves retrieving the execution environment image' +
