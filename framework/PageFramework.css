@@ -34,6 +34,21 @@ table tbody tr td.expanded {
   margin-inline-start: 0 !important;
 }
 
+/* CRC strips PatternFly CSS (bundlePfModules: false) so the responsive overrides
+   that show ToolbarToggleGroup children at md+ breakpoints are missing. These rules
+   replicate that behavior scoped to our toolbar class. */
+@media (min-width: 48rem) {
+  .page-table-toolbar .pf-v6-c-toolbar__group.pf-m-toggle-group .pf-v6-c-toolbar__group,
+  .page-table-toolbar .pf-v6-c-toolbar__group.pf-m-toggle-group .pf-v6-c-toolbar__item {
+    display: flex;
+    flex: 0 1 auto;
+  }
+
+  .page-table-toolbar .pf-v6-c-toolbar__group.pf-m-toggle-group .pf-v6-c-toolbar__toggle {
+    display: none;
+  }
+}
+
 :root:where(.pf-v6-theme-dark) .pf-topology-content {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
 }

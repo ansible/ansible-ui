@@ -23,6 +23,32 @@ describe('PageToolbarToggleGroup', () => {
     expect(screen.getByText('Child Content')).toBeInTheDocument();
   });
 
+  it('should render with PF6 class names used by CRC CSS override', () => {
+    const { container } = render(
+      <Toolbar className="page-table-toolbar">
+        <ToolbarContent>
+          <PageToolbarToggleGroup id="test-group" toggleIcon={<FilterIcon />} breakpoint="md">
+            <ToolbarItem>
+              <span>Filter Widget</span>
+            </ToolbarItem>
+          </PageToolbarToggleGroup>
+        </ToolbarContent>
+      </Toolbar>
+    );
+
+    const toolbar = container.querySelector('.page-table-toolbar');
+    expect(toolbar).toBeInTheDocument();
+
+    const toggleGroup = toolbar?.querySelector('.pf-v6-c-toolbar__group.pf-m-toggle-group');
+    expect(toggleGroup).toBeInTheDocument();
+
+    const toolbarItem = toggleGroup?.querySelector('.pf-v6-c-toolbar__item');
+    expect(toolbarItem).toBeInTheDocument();
+
+    const toggle = toggleGroup?.querySelector('.pf-v6-c-toolbar__toggle');
+    expect(toggle).toBeInTheDocument();
+  });
+
   it('should toggle expanded state when clicked', async () => {
     const user = userEvent.setup();
 
