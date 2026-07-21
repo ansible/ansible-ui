@@ -64,7 +64,6 @@ export const getClickableText = (
   if (isNoName(item, key)) return '-';
   if (isOther(item, key)) return '-';
   if (timeFields.includes(key)) return formatTotalTime(+item[key]);
-  if (costFields.includes(key)) return currencyFormatter(+item[key]);
   if (Object.keys(countMapper).includes(key) && item.id !== -1 && item.name) {
     return (
       <Tooltip content={`View ${item.name} usage`}>
@@ -132,8 +131,6 @@ export const isAvgDuration = (item: Record<string, string | number>, key: string
 export const DEFAULT_NAMESPACE = 'default';
 
 const timeFields: string[] = ['elapsed'];
-const costFields: string[] = [];
-
 export const formatTotalTime = (elapsed: number): string =>
   new Date(elapsed * 1000).toISOString().substr(11, 8);
 

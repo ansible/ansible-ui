@@ -46,9 +46,6 @@ export function objectIdForResource(
     default:
       return resource.id;
   }
-  return resourceType.substring(0, resourceType.indexOf('.')) === 'galaxy'
-    ? parsePulpIDFromURL(resource?.pulp_href)
-    : resource.id;
 }
 export function PlatformTeamAssignRoles() {
   const { t } = useTranslation();
