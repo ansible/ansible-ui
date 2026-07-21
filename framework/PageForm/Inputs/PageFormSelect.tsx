@@ -310,12 +310,10 @@ export function PageFormSelect<
                 ) : (
                   <SelectList
                     onKeyDown={(event) => {
-                      switch (event.key) {
-                        case 'Tab':
-                          event.preventDefault();
-                          event.stopPropagation();
-                          searchRef.current?.focus();
-                          break;
+                      if (event.key === 'Tab') {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        searchRef.current?.focus();
                       }
                     }}
                   >

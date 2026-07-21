@@ -5,6 +5,10 @@ import { describe, expect, test, vi } from 'vitest';
 import { useForm, FormProvider, FieldValues } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
 
+function getToggle() {
+  return document.getElementById('name-form-group-toggle') as HTMLButtonElement;
+}
+
 describe('PageFormSelect', () => {
   const options = [
     { label: 'Option A', value: 'A' },
@@ -26,10 +30,6 @@ describe('PageFormSelect', () => {
         </form>
       </FormProvider>
     );
-  }
-
-  function getToggle() {
-    return document.getElementById('name-form-group-toggle') as HTMLButtonElement;
   }
 
   test('should render select options', async () => {
