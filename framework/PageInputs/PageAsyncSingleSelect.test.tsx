@@ -60,6 +60,21 @@ function PageAsyncSingleSelectTest(
   );
 }
 
+const unsortedOptionsQuery = (): Promise<{
+  options: { value: number; label: string }[];
+  remaining: number;
+  next: number;
+}> =>
+  Promise.resolve({
+    options: [
+      { value: 3, label: 'Zebra' },
+      { value: 1, label: 'Apple' },
+      { value: 2, label: 'Mango' },
+    ],
+    remaining: 0,
+    next: 2,
+  });
+
 describe('PageAsyncSingleSelect', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -123,22 +138,8 @@ describe('PageAsyncSingleSelect', () => {
 
   it('should sort options alphabetically by default', async () => {
     const user = userEvent.setup();
-    const unsortedQuery = (): Promise<{
-      options: { value: number; label: string }[];
-      remaining: number;
-      next: number;
-    }> =>
-      Promise.resolve({
-        options: [
-          { value: 3, label: 'Zebra' },
-          { value: 1, label: 'Apple' },
-          { value: 2, label: 'Mango' },
-        ],
-        remaining: 0,
-        next: 2,
-      });
 
-    render(<PageAsyncSingleSelectTest queryOptions={unsortedQuery} />);
+    render(<PageAsyncSingleSelectTest queryOptions={unsortedOptionsQuery} />);
     await user.click(screen.getByRole('button', { name: 'Select value' }));
 
     await waitFor(() => {
@@ -153,22 +154,8 @@ describe('PageAsyncSingleSelect', () => {
 
   it('should preserve original order when disableSortOptions is true', async () => {
     const user = userEvent.setup();
-    const unsortedQuery = (): Promise<{
-      options: { value: number; label: string }[];
-      remaining: number;
-      next: number;
-    }> =>
-      Promise.resolve({
-        options: [
-          { value: 3, label: 'Zebra' },
-          { value: 1, label: 'Apple' },
-          { value: 2, label: 'Mango' },
-        ],
-        remaining: 0,
-        next: 2,
-      });
 
-    render(<PageAsyncSingleSelectTest queryOptions={unsortedQuery} disableSortOptions />);
+    render(<PageAsyncSingleSelectTest queryOptions={unsortedOptionsQuery} disableSortOptions />);
     await user.click(screen.getByRole('button', { name: 'Select value' }));
 
     await waitFor(() => {
@@ -183,22 +170,10 @@ describe('PageAsyncSingleSelect', () => {
 
   it('should sort options when disableSortOptions is false', async () => {
     const user = userEvent.setup();
-    const unsortedQuery = (): Promise<{
-      options: { value: number; label: string }[];
-      remaining: number;
-      next: number;
-    }> =>
-      Promise.resolve({
-        options: [
-          { value: 3, label: 'Zebra' },
-          { value: 1, label: 'Apple' },
-          { value: 2, label: 'Mango' },
-        ],
-        remaining: 0,
-        next: 2,
-      });
 
-    render(<PageAsyncSingleSelectTest queryOptions={unsortedQuery} disableSortOptions={false} />);
+    render(
+      <PageAsyncSingleSelectTest queryOptions={unsortedOptionsQuery} disableSortOptions={false} />
+    );
     await user.click(screen.getByRole('button', { name: 'Select value' }));
 
     await waitFor(() => {
