@@ -120,4 +120,184 @@ describe('PageAsyncSingleSelect', () => {
       expect(screen.getByRole('button', { name: 'Option 11' })).toBeInTheDocument();
     });
   });
+
+  it('should sort options alphabetically by default', async () => {
+    const user = userEvent.setup();
+    const unsortedQuery = (): Promise<{
+      options: { value: number; label: string }[];
+      remaining: number;
+      next: number;
+    }> =>
+      Promise.resolve({
+        options: [
+          { value: 3, label: 'Zebra' },
+          { value: 1, label: 'Apple' },
+          { value: 2, label: 'Mango' },
+        ],
+        remaining: 0,
+        next: 2,
+      });
+
+    render(<PageAsyncSingleSelectTest queryOptions={unsortedQuery} />);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Apple')).toBeInTheDocument();
+    });
+
+    const options = screen.getAllByRole('option');
+    expect(options[0]).toHaveTextContent('Apple');
+    expect(options[1]).toHaveTextContent('Mango');
+    expect(options[2]).toHaveTextContent('Zebra');
+  });
+
+  it('should preserve original order when disableSortOptions is true', async () => {
+    const user = userEvent.setup();
+    const unsortedQuery = (): Promise<{
+      options: { value: number; label: string }[];
+      remaining: number;
+      next: number;
+    }> =>
+      Promise.resolve({
+        options: [
+          { value: 3, label: 'Zebra' },
+          { value: 1, label: 'Apple' },
+          { value: 2, label: 'Mango' },
+        ],
+        remaining: 0,
+        next: 2,
+      });
+
+    render(<PageAsyncSingleSelectTest queryOptions={unsortedQuery} disableSortOptions />);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Zebra')).toBeInTheDocument();
+    });
+
+    const options = screen.getAllByRole('option');
+    expect(options[0]).toHaveTextContent('Zebra');
+    expect(options[1]).toHaveTextContent('Apple');
+    expect(options[2]).toHaveTextContent('Mango');
+  });
+
+  it('should sort options when disableSortOptions is false', async () => {
+    const user = userEvent.setup();
+    const unsortedQuery = (): Promise<{
+      options: { value: number; label: string }[];
+      remaining: number;
+      next: number;
+    }> =>
+      Promise.resolve({
+        options: [
+          { value: 3, label: 'Zebra' },
+          { value: 1, label: 'Apple' },
+          { value: 2, label: 'Mango' },
+        ],
+        remaining: 0,
+        next: 2,
+      });
+
+    render(<PageAsyncSingleSelectTest queryOptions={unsortedQuery} disableSortOptions={false} />);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Apple')).toBeInTheDocument();
+    });
+
+    const options = screen.getAllByRole('option');
+    expect(options[0]).toHaveTextContent('Apple');
+    expect(options[1]).toHaveTextContent('Mango');
+    expect(options[2]).toHaveTextContent('Zebra');
+  });
+
+  it('should deduplicate options while preserving order when disableSortOptions is true', async () => {
+    const user = userEvent.setup();
+    const duplicateQuery = (): Promise<{
+      options: { value: number; label: string }[];
+      remaining: number;
+      next: number;
+    }> =>
+      Promise.resolve({
+        options: [
+          { value: 1, label: 'First' },
+          { value: 2, label: 'Second' },
+          { value: 1, label: 'First Duplicate' },
+          { value: 3, label: 'Third' },
+        ],
+        remaining: 0,
+        next: 2,
+      });
+
+    render(<PageAsyncSingleSelectTest queryOptions={duplicateQuery} disableSortOptions />);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('First')).toBeInTheDocument();
+    });
+
+    const options = screen.getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveTextContent('First');
+    expect(options[1]).toHaveTextContent('Second');
+    expect(options[2]).toHaveTextContent('Third');
+  });
+
+  it('should auto-select the only option when remaining is 0 and disableSortOptions is true', async () => {
+    const user = userEvent.setup();
+    const singleOptionQuery = (): Promise<{
+      options: { value: number; label: string }[];
+      remaining: number;
+      next: number;
+    }> =>
+      Promise.resolve({
+        options: [{ value: 42, label: 'Only Option' }],
+        remaining: 0,
+        next: 2,
+      });
+
+    render(<PageAsyncSingleSelectTest queryOptions={singleOptionQuery} disableSortOptions />);
+
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Only Option' })).toBeInTheDocument();
+    });
+  });
+
+  it('should pass disableSortOptions prop to the underlying PageSingleSelect', async () => {
+    const user = userEvent.setup();
+    const unsortedQuery = (): Promise<{
+      options: { value: number; label: string }[];
+      remaining: number;
+      next: number;
+    }> =>
+      Promise.resolve({
+        options: [
+          { value: 1, label: 'Charlie' },
+          { value: 2, label: 'Alpha' },
+          { value: 3, label: 'Bravo' },
+        ],
+        remaining: 0,
+        next: 2,
+      });
+
+    render(<PageAsyncSingleSelectTest queryOptions={unsortedQuery} disableSortOptions />);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Charlie')).toBeInTheDocument();
+    });
+
+    const options = screen.getAllByRole('option');
+    expect(options[0]).toHaveTextContent('Charlie');
+    expect(options[1]).toHaveTextContent('Alpha');
+    expect(options[2]).toHaveTextContent('Bravo');
+
+    await user.click(screen.getByText('Alpha'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Alpha' })).toBeInTheDocument();
+    });
+  });
 });
