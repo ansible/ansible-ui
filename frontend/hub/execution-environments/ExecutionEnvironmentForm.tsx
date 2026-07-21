@@ -306,7 +306,12 @@ function TagsSelector(
     if (tagsText === '' || !tagsText.trim().length) {
       return;
     }
-    const tagsArray = tagsText.split(/\s*,\s*|\s+/).filter(Boolean);
+    // Use string methods only to avoid regex complexity (SonarCloud S5852)
+    const tagsArray = tagsText
+      .split(',')
+      .flatMap((tag) => tag.trim().split(' '))
+      .map((tag) => tag.trim())
+      .filter(Boolean);
     const uniqueArray = [...new Set([...tags, ...tagsArray])];
     setTags(uniqueArray);
     setTagsText('');
