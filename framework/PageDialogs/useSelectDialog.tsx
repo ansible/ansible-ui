@@ -21,6 +21,9 @@ import { Collapse } from '../components/Collapse';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
 
+/**
+ * @deprecated use SingleSelectDialog
+ */
 interface ISelectDialogOptions<T extends object, TMultiple> {
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
   tableColumns: ITableColumn<T>[];
@@ -31,6 +34,9 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
   isMultiple?: TMultiple extends true ? true : false;
 }
 
+/**
+ * @deprecated use SingleSelectDialog
+ */
 export function useSelectDialog<
   T extends { id: number | string; name: string | undefined },
   TMultiple = false,
@@ -81,6 +87,9 @@ export function useSelectDialog<
   return openSetting;
 }
 
+/**
+ * @deprecated use SingleSelectDialog
+ */
 export type SelectDialogProps<T extends object, TMultiple> = {
   title: string;
   open: boolean;

@@ -2,10 +2,16 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AwxContentType } from './AwxContentType';
 
+/**
+ * @deprecated as the API will be providing this information
+ */
 export interface AwxRoleMetadata {
   content_types: Record<AwxContentType, AwxRoleMetadaContentType>;
 }
 
+/**
+ * @deprecated as the API will be providing this information
+ */
 export type AwxRoleMetadaContentType = {
   displayName: string;
   permissions: {
@@ -13,6 +19,9 @@ export type AwxRoleMetadaContentType = {
   };
 };
 
+/**
+ * @deprecated as the API will be providing this information
+ */
 export function useAwxRoleMetadata(): AwxRoleMetadata {
   const { t } = useTranslation();
 
