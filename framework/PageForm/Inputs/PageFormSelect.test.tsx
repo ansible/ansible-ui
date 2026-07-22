@@ -6,7 +6,9 @@ import { useForm, FormProvider, FieldValues } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
 
 function getToggle() {
-  return document.getElementById('name-form-group-toggle') as HTMLButtonElement;
+  const toggle = screen.getAllByRole('button').find((btn) => btn.hasAttribute('aria-expanded'));
+  if (!toggle) throw new Error('Toggle button not found');
+  return toggle;
 }
 
 describe('PageFormSelect', () => {

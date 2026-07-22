@@ -164,7 +164,7 @@ export function PageFormSelect<
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => searchRef.current?.focus(), 1);
+      requestAnimationFrame(() => searchRef.current?.focus());
     } else {
       setSearchValue('');
     }
