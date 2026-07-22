@@ -192,8 +192,8 @@ export function TemplateSurveyForm(props: IProps) {
     required: question ? question?.required : true,
     type: question?.type ?? 'text',
     variable: question?.variable || '',
-    min: question?.min || minDefault,
-    max: question?.max || maxDefault,
+    min: question?.min ?? minDefault,
+    max: question?.max ?? maxDefault,
     default: question?.default ?? '',
     choices: question?.choices ?? [],
     formattedChoices,
@@ -221,13 +221,16 @@ export function TemplateSurveyForm(props: IProps) {
       return;
     }
 
-    const defaultValue = newQuestion.default
-      ? newQuestion.type === 'integer'
-        ? Number(newQuestion.default)
-        : newQuestion.type === 'float'
-          ? parseFloat(newQuestion.default.toString())
-          : newQuestion?.default?.toString()
-      : '';
+    const defaultValue =
+      newQuestion.default !== null &&
+      newQuestion.default !== undefined &&
+      newQuestion.default !== ''
+        ? newQuestion.type === 'integer'
+          ? Number(newQuestion.default)
+          : newQuestion.type === 'float'
+            ? parseFloat(newQuestion.default.toString())
+            : newQuestion?.default?.toString()
+        : '';
 
     let question: Spec = {
       max: Number(newQuestion.max),
@@ -340,7 +343,7 @@ function TemplateSurveyInputs() {
         placeholder={t('Enter answer variable name')}
         validate={(variable: string) => {
           if (/\s/.test(variable)) {
-            return t`This field must not contain spaces.`;
+            return t('This field must not contain spaces.');
           }
           return undefined;
         }}
@@ -481,7 +484,7 @@ function SelectedAnswerType({ answer }: { answer: string }) {
             if (answer === 'integer') {
               const num = parseFloat(value);
               if (!Number.isInteger(num) && /[^0-9]/.test(value)) {
-                return t`This field must be an integer.`;
+                return t('This field must be an integer.');
               }
               return undefined;
             }
