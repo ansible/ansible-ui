@@ -212,6 +212,55 @@ describe('CollectionPage', () => {
     });
   });
 
+  test('should request versions sorted by descending version order', async () => {
+    const capturedUrls: string[] = [];
+    server.use(
+      http.get(
+        ({ request }) => {
+          return request.url.includes('/v3/plugin/ansible/search/collection-versions/');
+        },
+        ({ request }) => {
+          capturedUrls.push(request.url);
+          return HttpResponse.json(mockCollectionResponse);
+        }
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+        <CollectionPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+      ).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      const versionListUrl = capturedUrls.find((url) => url.includes('order_by=-version'));
+      expect(versionListUrl).toBeDefined();
+    });
+  });
+
+  test('should render version selector with disableSortOptions', async () => {
+    render(
+      <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+        <CollectionPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId('version-selector')).toBeInTheDocument();
+    expect(screen.getByTestId('browse-collection-version')).toBeInTheDocument();
+  });
+
   test('should handle API error in getCollectionData and set collection to null', async () => {
     server.use(
       http.get(
