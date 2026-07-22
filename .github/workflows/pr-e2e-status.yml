@@ -35,6 +35,7 @@ jobs:
         run: |
           gh api "repos/$REPO/issues/$PR_NUMBER/labels/e2e:%20pending" -X DELETE 2>/dev/null || true
           gh api "repos/$REPO/issues/$PR_NUMBER/labels/e2e:%20failed" -X DELETE 2>/dev/null || true
+          gh api "repos/$REPO/issues/$PR_NUMBER/labels/e2e:%20done" -X DELETE 2>/dev/null || true
           gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "e2e: running"
 
           # Delete e2e failure comment if it exists
