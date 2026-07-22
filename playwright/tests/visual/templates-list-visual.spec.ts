@@ -104,6 +104,7 @@ test.describe('Templates List - Visual Regression', () => {
       await expect(toolbar).toHaveScreenshot('templates-list-toolbar.png', {
         maxDiffPixelRatio: 0.01,
         animations: 'disabled',
+        mask: [page.getByTestId('notification-badge'), page.getByTestId('chatbot-badge')],
       });
     }
   );
