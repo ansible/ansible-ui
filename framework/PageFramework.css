@@ -38,6 +38,15 @@ table tbody tr td.expanded {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
 }
 
+/* CRC sticky-header fix: PF6 creates a ::before pseudo on <thead> with
+   position: absolute to render the header background. PF6's own CSS sets
+   z-index: -1 on it so it paints behind cell content, but Chrome's PF build
+   may omit that rule, causing the pseudo to overlay column titles. */
+.pf-v6-c-table.pf-m-sticky-header > thead::before,
+.pf-v6-c-table.pf-m-sticky-header > .pf-v6-c-table__thead::before {
+  z-index: -1;
+}
+
 /* Ansible UI override for PF Tabs that contain a Toolbar */
 .pf-v6-c-page__main-section:has(> .pf-v6-c-page__main-body:only-child > .pf-v6-c-tabs:only-child)
   + .pf-v6-c-toolbar {
