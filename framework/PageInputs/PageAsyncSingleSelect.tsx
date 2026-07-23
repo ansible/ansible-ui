@@ -110,13 +110,15 @@ export function PageAsyncSingleSelect<
               uniqueValues.add(option.value);
               return true;
             });
-            newOptions.sort((a, b) => {
-              const lhs = a.label.toLowerCase();
-              const rhs = b.label.toLowerCase();
-              if (lhs < rhs) return -1;
-              if (lhs > rhs) return 1;
-              return 0;
-            });
+            if (!props.disableSortOptions) {
+              newOptions.sort((a, b) => {
+                const lhs = a.label.toLowerCase();
+                const rhs = b.label.toLowerCase();
+                if (lhs < rhs) return -1;
+                if (lhs > rhs) return 1;
+                return 0;
+              });
+            }
             if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
               // Defer onSelect to avoid setState during render
               setTimeout(() => onSelect(newOptions[0].value), 0);
@@ -139,7 +141,7 @@ export function PageAsyncSingleSelect<
       return true;
     });
     return () => abortController.abort();
-  }, [onSelect, queryOptions, searchValue, t, writeInOption]);
+  }, [onSelect, props.disableSortOptions, queryOptions, searchValue, t, writeInOption]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {
@@ -243,6 +245,7 @@ export function PageAsyncSingleSelect<
       isLoading={loading}
       queryLabel={props.queryLabel}
       disableAutoSelect
+      disableSortOptions={props.disableSortOptions}
       isRequired={props.isRequired}
       toggle={
         loadingError
