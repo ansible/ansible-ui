@@ -5,8 +5,15 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableFilter } from '@ansible/playwright/commands/selectTableFilter';
+import { platformUI } from '@ansible/playwright/commands/login';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { Inventory, Credential, JobTemplate } from '@ansible/playwright/utils';
+import {
+  Inventory,
+  Credential,
+  JobTemplate,
+  Organization,
+  Project,
+} from '@ansible/playwright/utils';
 
 test.describe('Job Templates', () => {
   let inventoryName: string;
@@ -475,105 +482,64 @@ test.describe('Job Templates', () => {
     'verify playbook selection does not auto-clear unexpectedly',
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
-      test.setTimeout(60000);
+      test.setTimeout(2 * 60 * 1000);
 
-      const jobTemplateName = createE2EName('playbook-persist-test');
-
-      // Navigate to templates page
-      await navigateTo(page, 'Automation Execution', 'Templates');
-      await expect(page.getByTestId('page-title')).toBeVisible({ timeout: 10000 });
-
-      // Self-contained navigation logic (doesn't modify utility)
-      const createButtonExists = await page.getByText('Create template', { exact: true }).count();
-      const dropdownExists = await page
-        .getByRole('button', { name: 'dropdown toggle', exact: true })
-        .count();
-
-      if (createButtonExists > 0) {
-        await page.getByText('Create template', { exact: true }).click();
-        const menuItemExists = await page
-          .getByRole('menuitem', { name: 'Create job template' })
-          .count();
-        if (menuItemExists > 0) {
-          await page.getByRole('menuitem', { name: 'Create job template' }).click();
-        } else {
-          test.skip(true, 'Create job template menu item not found');
-        }
-      } else if (dropdownExists > 0) {
-        await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
-        await page.waitForTimeout(1000);
-        const menuItemExists = await page
-          .getByRole('menuitem', { name: 'Create job template' })
-          .count();
-        if (menuItemExists > 0) {
-          await page.getByRole('menuitem', { name: 'Create job template' }).click();
-        } else {
-          test.skip(true, 'Create job template menu item not found in dropdown');
-        }
-      } else {
-        test.skip(true, 'Cannot access job template creation form - no create buttons found');
-      }
-
-      // Continue with form if we got here
-      await expect(page.getByPlaceholder('Enter job template name')).toBeVisible({
-        timeout: 10000,
+      // Create two projects with known playbook counts:
+      // - singlePlaybookProject: ansible-tower-samples has exactly 1 playbook (hello_world.yml)
+      // - multiPlaybookProject: test-playbooks has multiple playbooks
+      const organization = await Organization.api.create(page);
+      const singlePlaybookProject = await Project.api.create(page, {
+        organization: organization.id,
+        name: createE2EName('single-pb'),
+        scm_url: 'https://github.com/ansible/ansible-tower-samples',
       });
-      await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
-
-      // Select inventory (required)
-      await page.getByRole('button', { name: 'Inventory' }).click();
-      await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
-      await page.locator('[role="option"]').first().click();
-
-      // Test the core fix: project-playbook interaction
-      await page.locator('#project-select').click();
-      await expect(page.locator('[role="option"]').first()).toBeVisible({ timeout: 5000 });
-      const projectOptions = await page.locator('[role="option"]').all();
-      expect(projectOptions.length).toBeGreaterThan(0);
-      await projectOptions[0].click();
-
-      // Wait for and interact with playbook field
-      await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
-        timeout: 10000,
+      await Project.api.sync(page, singlePlaybookProject.id);
+      const multiPlaybookProject = await Project.api.create(page, {
+        organization: organization.id,
+        name: createE2EName('multi-pb'),
+        scm_url: 'https://github.com/ansible/test-playbooks',
       });
-      await page.getByPlaceholder('Add a project, then select a').fill('hello_world.yml');
+      await Project.api.sync(page, multiPlaybookProject.id);
 
-      const selectedPlaybook = await page
-        .getByPlaceholder('Add a project, then select a')
-        .inputValue();
-      expect(selectedPlaybook).toBe('hello_world.yml');
+      try {
+        await page.goto(`${platformUI}/execution/templates/job-template/create`);
 
-      // Verify playbook doesn't auto-clear without user action - THE KEY TEST
-      // Wait to ensure the field doesn't unexpectedly clear itself
-      await page.waitForTimeout(3000);
-      const persistedValue = await page
-        .getByPlaceholder('Add a project, then select a')
-        .inputValue();
-      expect(persistedValue).toBe('hello_world.yml');
-
-      // Additional test: verify project changes do clear playbook (expected behavior)
-      if (projectOptions.length > 1) {
-        await page.locator('#project-select').click();
-        await projectOptions[1].click();
-        await page.waitForTimeout(1000);
-
-        const clearedValue = await page
-          .getByPlaceholder('Add a project, then select a')
-          .inputValue();
-        expect(clearedValue).toBe('');
-
-        // Switch back and re-enter playbook
-        await page.locator('#project-select').click();
-        await projectOptions[0].click();
-        await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
-          timeout: 5000,
+        await expect(page.getByPlaceholder('Enter job template name')).toBeVisible({
+          timeout: 10000,
         });
-        await page.getByPlaceholder('Add a project, then select a').fill('hello_world.yml');
 
-        // Final verification: playbook should persist after re-selection
+        // Select the single-playbook project by name
+        await page.locator('#project-select').click();
+        await page.getByRole('option', { name: singlePlaybookProject.name }).click();
+
+        // Auto-select should populate hello_world.yml (only playbook in the project)
+        const playbookInput = page.getByPlaceholder('Add a project, then select a');
+        await expect
+          .poll(() => playbookInput.inputValue(), { timeout: 10000 })
+          .toBe('hello_world.yml');
+
+        // THE KEY TEST: verify playbook doesn't randomly clear itself
         await page.waitForTimeout(3000);
-        const finalValue = await page.getByPlaceholder('Add a project, then select a').inputValue();
-        expect(finalValue).toBe('hello_world.yml');
+        expect(await playbookInput.inputValue()).toBe('hello_world.yml');
+
+        // Switch to multi-playbook project — playbook should clear since
+        // auto-select only fires when there is exactly 1 playbook
+        await page.locator('#project-select').click();
+        await page.getByRole('option', { name: multiPlaybookProject.name }).click();
+
+        await expect.poll(() => playbookInput.inputValue(), { timeout: 5000 }).toBe('');
+
+        // Switch back to single-playbook project — auto-select should re-populate
+        await page.locator('#project-select').click();
+        await page.getByRole('option', { name: singlePlaybookProject.name }).click();
+
+        await expect
+          .poll(() => playbookInput.inputValue(), { timeout: 10000 })
+          .toBe('hello_world.yml');
+      } finally {
+        await Project.api.delete(page, singlePlaybookProject.id).catch(() => {});
+        await Project.api.delete(page, multiPlaybookProject.id).catch(() => {});
+        await Organization.api.delete(page, organization.id).catch(() => {});
       }
     }
   );
