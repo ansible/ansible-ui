@@ -139,7 +139,7 @@
     "selfsigned": "^2.4.1",
     "set-value": "4.1.0",
     "style-loader": "4.0.0",
-    "styled-components": "6.1.14",
+    "styled-components": "6.4.4",
     "swr": "2.3.0",
     "tsx": "^4.19.3",
     "type-fest": "4.33.0",
