@@ -160,4 +160,35 @@ describe('SurveyStep', () => {
       expect(document.querySelector('.pf-v6-c-form')).toBeInTheDocument();
     });
   });
+
+  test(
+    'should support typeahead filtering on single-select (multiplechoice) survey questions',
+    { timeout: 15000 },
+    async () => {
+      const user = userEvent.setup();
+      renderSurveyStep(server, '456', testSurveys.withColons);
+
+      await waitFor(() => {
+        expect(screen.getByText('Environment Selection')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: /select option/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText('production: Main production environment')).toBeInTheDocument();
+      });
+
+      const searchInput = screen.getByRole('textbox', { name: 'Search input' });
+      await user.click(searchInput);
+      await user.paste('staging');
+
+      await waitFor(() => {
+        expect(screen.getByText('staging: Testing environment')).toBeInTheDocument();
+        expect(
+          screen.queryByText('production: Main production environment')
+        ).not.toBeInTheDocument();
+        expect(screen.queryByText('development: Local development')).not.toBeInTheDocument();
+      });
+    }
+  );
 });
