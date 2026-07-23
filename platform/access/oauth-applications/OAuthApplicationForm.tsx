@@ -3,7 +3,7 @@ import {
   CopyCell,
   PageFormSelect,
   PageFormSubmitHandler,
-  PageFormSwitch,
+  PageFormCheckbox,
   PageFormTextArea,
   PageHeader,
   PageLayout,
@@ -96,6 +96,7 @@ export function CreateOAuthApplication() {
           client_type: 'confidential',
           algorithm: '',
           skip_authorization: false,
+          pkce_required: true,
         }}
       >
         <OAuthApplicationInputs mode="create" />
@@ -322,10 +323,15 @@ function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
           )
         }
       />
-      <PageFormSwitch<Application>
+      <PageFormCheckbox<Application>
         name="skip_authorization"
         label={t('Skip Authorization')}
         labelHelp={fields?.skip_authorization?.help_text}
+      />
+      <PageFormCheckbox<Application>
+        name="pkce_required"
+        label={t('PKCE Required')}
+        labelHelp={fields?.pkce_required?.help_text}
       />
       <PageFormTextInput<Application>
         name="redirect_uris"
