@@ -13,10 +13,16 @@ export function InventoryHostFacts(props: { page: string }) {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
   const hostId = props.page === 'host' ? (params.id ?? '') : (params.host_id ?? '');
-  const { host } = useGetHost(hostId); // ponytail: SWR deduplicates — parent page already fetched this
+  const { host } = useGetHost(hostId);
   const isConstructed = host?.summary_fields?.inventory?.kind === 'constructed';
 
-  const { data: facts, error, isLoading } = useGet<object>(awxAPI`/hosts/${hostId}/ansible_facts/`);
+  const hostLoaded = host !== undefined;
+  const skipFacts = hostLoaded && isConstructed;
+  const {
+    data: facts,
+    error,
+    isLoading,
+  } = useGet<object>(skipFacts ? undefined : awxAPI`/hosts/${hostId}/ansible_facts/`);
 
   if (isConstructed) {
     return (
