@@ -3,15 +3,21 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import {
+  LaunchConfiguration,
+  LaunchConfigCredential,
+} from '../../../interfaces/LaunchConfiguration';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchTemplate, LaunchWizard } from './TemplateLaunchWizard';
 
+const mockAddAlert = vi.fn();
+
 vi.mock('@ansible/ansible-ui-framework', async () => ({
   ...(await vi.importActual('@ansible/ansible-ui-framework')),
-  usePageAlertToaster: () => ({ addAlert: vi.fn() }),
+  usePageAlertToaster: () => ({ addAlert: mockAddAlert }),
 }));
 
 vi.mock('../hooks/useLabelPayload', () => ({
@@ -86,6 +92,37 @@ const makeConfig = (overrides: Partial<LaunchConfiguration> = {}): LaunchConfigu
   },
   ...overrides,
 });
+
+const baseDefaults = {
+  inventory: { name: '', id: 0 as number },
+  limit: '',
+  labels: [] as { id: number; name: string }[],
+  scm_branch: '',
+  job_tags: '',
+  skip_tags: '',
+  extra_vars: '',
+  diff_mode: false,
+  job_type: 'run',
+  verbosity: 0 as const,
+  credentials: [] as LaunchConfigCredential[],
+  execution_environment: {} as Record<string, never>,
+  forks: 0,
+  job_slice_count: 1,
+  timeout: 0,
+  instance_groups: [] as [],
+};
+
+const mockWJT = {
+  id: 1,
+  name: 'Test WJT',
+  type: 'workflow_job_template',
+  summary_fields: {
+    labels: { count: 0, results: [] },
+    organization: { id: 1, name: 'Default', description: '' },
+    credentials: [],
+    user_capabilities: { edit: true, start: true },
+  },
+} as unknown as JobTemplate;
 
 const server = setupServer(
   http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(mockTemplate)),
@@ -288,5 +325,327 @@ describe('TemplateLaunchWizard', () => {
 
       expect(screen.getAllByText('Review').length).toBeGreaterThan(0);
     });
+
+    it('should render wizard with non-zero inventory id in initial values', () => {
+      render(
+        <MemoryRouter>
+          <LaunchWizard
+            template={mockTemplate}
+            config={makeConfig({
+              defaults: { ...baseDefaults, inventory: { id: 5, name: 'Test Inv' } },
+            })}
+            handleSubmit={vi.fn(() => Promise.resolve())}
+            jobType="job_templates"
+          />
+        </MemoryRouter>
+      );
+      expect(screen.getByText('Prompt on Launch')).toBeInTheDocument();
+    });
+
+    it('should render breadcrumb for workflow_job_template type', () => {
+      const wjtTemplate = {
+        ...mockTemplate,
+        type: 'workflow_job_template' as const,
+        name: 'My WJT',
+      };
+      render(
+        <MemoryRouter>
+          <LaunchWizard
+            template={wjtTemplate as unknown as JobTemplate}
+            config={makeConfig()}
+            handleSubmit={vi.fn(() => Promise.resolve())}
+            jobType="workflow_job_templates"
+          />
+        </MemoryRouter>
+      );
+      expect(screen.getByTestId('My WJT')).toBeInTheDocument();
+    });
+
+    it('should hide Credential Passwords step when no credentials require passwords', () => {
+      render(
+        <MemoryRouter>
+          <LaunchWizard
+            template={mockTemplate}
+            config={makeConfig()}
+            handleSubmit={vi.fn(() => Promise.resolve())}
+            jobType="job_templates"
+          />
+        </MemoryRouter>
+      );
+      expect(screen.queryByTestId('wizard-nav-item-credential_passwords')).not.toBeInTheDocument();
+    });
+
+    it('should show Credential Passwords step when passwords_needed_to_start is set and credential is not asked', () => {
+      render(
+        <MemoryRouter>
+          <LaunchWizard
+            template={mockTemplate}
+            config={makeConfig({
+              ask_credential_on_launch: false,
+              passwords_needed_to_start: ['ssh_password'],
+            })}
+            handleSubmit={vi.fn(() => Promise.resolve())}
+            jobType="job_templates"
+          />
+        </MemoryRouter>
+      );
+      expect(screen.getByTestId('wizard-nav-item-credential_passwords')).toBeInTheDocument();
+    });
+
+    it('should show Credential Passwords step when a default credential has ASK inputs', () => {
+      const credWithAsk: LaunchConfigCredential = {
+        id: 1,
+        name: 'SSH Cred',
+        credential_type: 1,
+        passwords_needed: [],
+        inputs: { password: 'ASK' },
+      };
+      render(
+        <MemoryRouter>
+          <LaunchWizard
+            template={mockTemplate}
+            config={makeConfig({
+              ask_credential_on_launch: true,
+              defaults: { ...baseDefaults, credentials: [credWithAsk] },
+            })}
+            handleSubmit={vi.fn(() => Promise.resolve())}
+            jobType="job_templates"
+          />
+        </MemoryRouter>
+      );
+      expect(screen.getByTestId('wizard-nav-item-credential_passwords')).toBeInTheDocument();
+    });
+
+    it('should show Credential Passwords step when a default credential has passwords_needed', () => {
+      const credWithPasswordsNeeded: LaunchConfigCredential = {
+        id: 2,
+        name: 'Key Cred',
+        credential_type: 1,
+        passwords_needed: ['ssh_password'],
+      };
+      render(
+        <MemoryRouter>
+          <LaunchWizard
+            template={mockTemplate}
+            config={makeConfig({
+              ask_credential_on_launch: true,
+              defaults: { ...baseDefaults, credentials: [credWithPasswordsNeeded] },
+            })}
+            handleSubmit={vi.fn(() => Promise.resolve())}
+            jobType="job_templates"
+          />
+        </MemoryRouter>
+      );
+      expect(screen.getByTestId('wizard-nav-item-credential_passwords')).toBeInTheDocument();
+    });
+  });
+
+  describe('LaunchTemplate - additional coverage', () => {
+    it('should render AwxError when template fetch returns an error', async () => {
+      server.use(http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json({}, { status: 500 })));
+      render(
+        <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+          <Routes>
+            <Route
+              path="/job-templates/:id/launch"
+              element={<LaunchTemplate jobType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+      });
+    });
+
+    it('should launch a workflow job template successfully', { timeout: 15000 }, async () => {
+      let wjtLaunched = false;
+      server.use(
+        http.get(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(mockWJT)),
+        http.get(awxAPI`/workflow_job_templates/1/launch/`, () => HttpResponse.json(makeConfig())),
+        http.post(awxAPI`/workflow_job_templates/1/launch/`, () => {
+          wjtLaunched = true;
+          return HttpResponse.json({ id: 200, type: 'workflow_job' });
+        })
+      );
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/workflow-job-templates/1/launch']}>
+          <Routes>
+            <Route
+              path="/workflow-job-templates/:id/launch"
+              element={<LaunchTemplate jobType="workflow_job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+      await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+      await user.click(screen.getByTestId('wizard-next'));
+      await waitFor(() => {
+        expect(wjtLaunched).toBe(true);
+      });
+    });
+
+    it(
+      'should show failure alert when the launch POST request fails',
+      { timeout: 15000 },
+      async () => {
+        mockAddAlert.mockClear();
+        server.use(
+          http.post(awxAPI`/job_templates/1/launch/`, () => HttpResponse.json({}, { status: 500 }))
+        );
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        await user.click(screen.getByTestId('wizard-next'));
+        await waitFor(() => {
+          expect(mockAddAlert).toHaveBeenCalledWith(
+            expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })
+          );
+        });
+      }
+    );
+
+    it(
+      'should include labels in the launch payload when labelPayload is non-empty',
+      { timeout: 15000 },
+      async () => {
+        const { useLabelPayload } = await import('../hooks/useLabelPayload');
+        const mockCreateLabelPayload = vi.fn(() => Promise.resolve([1, 2]));
+        vi.mocked(useLabelPayload).mockReturnValue(mockCreateLabelPayload);
+
+        let capturedPayload: Record<string, unknown> = {};
+        server.use(
+          http.get(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(makeConfig({ ask_labels_on_launch: true }))
+          ),
+          http.post(awxAPI`/job_templates/1/launch/`, async ({ request }) => {
+            capturedPayload = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json({ id: 100, type: 'job' });
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <SWRConfig value={{ provider: () => new Map() }}>
+            <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+              <Routes>
+                <Route
+                  path="/job-templates/:id/launch"
+                  element={<LaunchTemplate jobType="job_templates" />}
+                />
+              </Routes>
+            </MemoryRouter>
+          </SWRConfig>
+        );
+
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByTestId('Submit')).toBeInTheDocument());
+        await user.click(screen.getByTestId('Submit'));
+        await waitFor(() => expect(screen.getByTestId('wizard-next')).toBeInTheDocument());
+        await user.click(screen.getByTestId('wizard-next'));
+
+        await waitFor(() => {
+          expect(capturedPayload.labels).toEqual([1, 2]);
+        });
+      }
+    );
+
+    it(
+      'should merge survey answers into extra_vars when survey_enabled is true',
+      { timeout: 15000 },
+      async () => {
+        let capturedPayload: Record<string, unknown> = {};
+        server.use(
+          http.get(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(makeConfig({ survey_enabled: true }))
+          ),
+          http.post(awxAPI`/job_templates/1/launch/`, async ({ request }) => {
+            capturedPayload = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json({ id: 100, type: 'job' });
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <SWRConfig value={{ provider: () => new Map() }}>
+            <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+              <Routes>
+                <Route
+                  path="/job-templates/:id/launch"
+                  element={<LaunchTemplate jobType="job_templates" />}
+                />
+              </Routes>
+            </MemoryRouter>
+          </SWRConfig>
+        );
+
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByTestId('Submit')).toBeInTheDocument());
+        await user.click(screen.getByTestId('Submit'));
+        await waitFor(() => expect(screen.getByTestId('wizard-next')).toBeInTheDocument());
+        await user.click(screen.getByTestId('wizard-next'));
+
+        await waitFor(() => {
+          expect(capturedPayload).toHaveProperty('extra_vars');
+        });
+      }
+    );
+
+    it(
+      'should include credential_passwords in payload when passwords_needed_to_start is set',
+      { timeout: 15000 },
+      async () => {
+        let capturedPayload: Record<string, unknown> = {};
+        server.use(
+          http.get(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(
+              makeConfig({
+                ask_credential_on_launch: false,
+                passwords_needed_to_start: ['ssh_password'],
+              })
+            )
+          ),
+          http.post(awxAPI`/job_templates/1/launch/`, async ({ request }) => {
+            capturedPayload = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json({ id: 100, type: 'job' });
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <SWRConfig value={{ provider: () => new Map() }}>
+            <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+              <Routes>
+                <Route
+                  path="/job-templates/:id/launch"
+                  element={<LaunchTemplate jobType="job_templates" />}
+                />
+              </Routes>
+            </MemoryRouter>
+          </SWRConfig>
+        );
+
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByTestId('launch-ssh-password')).toBeInTheDocument());
+        await user.type(screen.getByTestId('launch-ssh-password'), 'secret');
+        await user.click(screen.getByTestId('Submit'));
+        await waitFor(() => expect(screen.getByTestId('wizard-next')).toBeInTheDocument());
+        await user.click(screen.getByTestId('wizard-next'));
+
+        await waitFor(() => {
+          expect(capturedPayload.credential_passwords).toBeDefined();
+        });
+      }
+    );
   });
 });
