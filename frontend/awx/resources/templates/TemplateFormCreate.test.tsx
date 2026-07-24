@@ -31,10 +31,10 @@ vi.mock('../../common/AwxPageForm', () => ({
     onCancel?: () => void;
     submitText: string;
     defaultValue?: JobTemplateForm;
-    children?: React.ReactNode;
   }) => (
     <>
       <button
+        type="button"
         data-testid="mock-submit"
         onClick={() => {
           void props.onSubmit(props.defaultValue ?? ({} as JobTemplateForm));
@@ -43,7 +43,7 @@ vi.mock('../../common/AwxPageForm', () => ({
         {props.submitText}
       </button>
       {props.onCancel && (
-        <button data-testid="mock-cancel" onClick={props.onCancel}>
+        <button type="button" data-testid="mock-cancel" onClick={props.onCancel}>
           Cancel
         </button>
       )}
