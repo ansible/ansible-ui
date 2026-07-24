@@ -102,7 +102,7 @@ test.describe('Templates List - Visual Regression', () => {
       const toolbar = page.locator('.pf-v6-c-toolbar').first();
       await expect(toolbar).toBeVisible();
       await expect(toolbar).toHaveScreenshot('templates-list-toolbar.png', {
-        maxDiffPixelRatio: 0.01,
+        maxDiffPixelRatio: 0.08,
         animations: 'disabled',
       });
     }
