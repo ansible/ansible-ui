@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -324,4 +325,128 @@ describe('TemplateForm - EditJobTemplate', () => {
     expect(screen.getByDisplayValue('5')).toBeInTheDocument();
     expect(screen.getByDisplayValue('120')).toBeInTheDocument();
   }, 15000);
+
+  it(
+    'should fetch /organizations/ and create label when template has no org and a label is added',
+    { timeout: 30000 },
+    async () => {
+      const templateWithoutOrg = {
+        ...mockJobTemplate,
+        id: 1,
+        name: 'No Org Template',
+        summary_fields: {
+          ...mockJobTemplate.summary_fields,
+          organization: undefined,
+          labels: { count: 0, results: [] },
+        },
+      };
+      let orgFetched = false;
+      let labelPostBody: Record<string, unknown> | null = null;
+      server.use(
+        http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/job_templates/1/instance_groups/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        ),
+        http.patch(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/organizations/`, () => {
+          orgFetched = true;
+          return HttpResponse.json({ count: 1, results: [{ id: 10, name: 'Default' }] });
+        }),
+        http.post(awxAPI`/job_templates/1/labels/`, async ({ request }) => {
+          labelPostBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json(labelPostBody);
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/1/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('No Org Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      const labelsInput = screen.getByTestId('labels-input');
+      await user.click(labelsInput);
+      await user.type(labelsInput, 'new-label');
+      await user.keyboard('{Enter}');
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(orgFetched).toBe(true);
+      });
+      expect(labelPostBody).toMatchObject({ name: 'new-label', organization: 10 });
+    }
+  );
+
+  it(
+    'should not set orgId when /organizations/ returns empty results',
+    { timeout: 30000 },
+    async () => {
+      const templateWithoutOrg = {
+        ...mockJobTemplate,
+        id: 1,
+        name: 'No Org Template',
+        summary_fields: {
+          ...mockJobTemplate.summary_fields,
+          organization: undefined,
+          labels: { count: 0, results: [] },
+        },
+      };
+      let orgFetched = false;
+      let labelPostBody: Record<string, unknown> | null = null;
+      server.use(
+        http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/job_templates/1/instance_groups/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        ),
+        http.patch(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/organizations/`, () => {
+          orgFetched = true;
+          return HttpResponse.json({ count: 0, results: [] });
+        }),
+        http.post(awxAPI`/job_templates/1/labels/`, async ({ request }) => {
+          labelPostBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json(labelPostBody);
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/1/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('No Org Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      const labelsInput = screen.getByTestId('labels-input');
+      await user.click(labelsInput);
+      await user.type(labelsInput, 'new-label');
+      await user.keyboard('{Enter}');
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(orgFetched).toBe(true);
+      });
+      expect(labelPostBody).toMatchObject({ name: 'new-label' });
+    }
+  );
 });

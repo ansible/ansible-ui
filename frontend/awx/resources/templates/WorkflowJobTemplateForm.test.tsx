@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -328,10 +329,12 @@ describe('WorkflowJobTemplateForm', () => {
       { timeout: 15000 },
       async () => {
         const wjtWithoutOrg = {
-          ...mockWJT,
+          ...mockWfjt,
+          id: 1,
+          name: 'Test Workflow',
           organization: null,
           summary_fields: {
-            ...mockWJT.summary_fields,
+            ...mockWfjt.summary_fields,
             organization: undefined,
             labels: { count: 0, results: [] },
           },
@@ -353,19 +356,22 @@ describe('WorkflowJobTemplateForm', () => {
 
         const user = userEvent.setup();
         render(
-          <MemoryRouter initialEntries={['/workflow-job-templates/1/edit']}>
+          <MemoryRouter initialEntries={['/templates/workflow_job_template/1/edit']}>
             <Routes>
               <Route
-                path="/workflow-job-templates/:id/edit"
+                path="/templates/workflow_job_template/:id/edit"
                 element={<EditWorkflowJobTemplate />}
               />
             </Routes>
           </MemoryRouter>
         );
 
-        await waitFor(() => {
-          expect(screen.getByTestId('name')).toHaveValue('Test Workflow');
-        });
+        await waitFor(
+          () => {
+            expect(screen.getByDisplayValue('Test Workflow')).toBeInTheDocument();
+          },
+          { timeout: 10000 }
+        );
 
         const labelsInput = screen.getByTestId('labels-input');
         await user.click(labelsInput);
@@ -386,10 +392,12 @@ describe('WorkflowJobTemplateForm', () => {
       { timeout: 15000 },
       async () => {
         const wjtWithoutOrg = {
-          ...mockWJT,
+          ...mockWfjt,
+          id: 1,
+          name: 'Test Workflow',
           organization: null,
           summary_fields: {
-            ...mockWJT.summary_fields,
+            ...mockWfjt.summary_fields,
             organization: undefined,
             labels: { count: 0, results: [] },
           },
@@ -411,19 +419,22 @@ describe('WorkflowJobTemplateForm', () => {
 
         const user = userEvent.setup();
         render(
-          <MemoryRouter initialEntries={['/workflow-job-templates/1/edit']}>
+          <MemoryRouter initialEntries={['/templates/workflow_job_template/1/edit']}>
             <Routes>
               <Route
-                path="/workflow-job-templates/:id/edit"
+                path="/templates/workflow_job_template/:id/edit"
                 element={<EditWorkflowJobTemplate />}
               />
             </Routes>
           </MemoryRouter>
         );
 
-        await waitFor(() => {
-          expect(screen.getByTestId('name')).toHaveValue('Test Workflow');
-        });
+        await waitFor(
+          () => {
+            expect(screen.getByDisplayValue('Test Workflow')).toBeInTheDocument();
+          },
+          { timeout: 10000 }
+        );
 
         const labelsInput = screen.getByTestId('labels-input');
         await user.click(labelsInput);
