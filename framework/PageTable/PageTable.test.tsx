@@ -108,6 +108,15 @@ describe('PageTable Component', () => {
     expect(screen.getByText('Second item description')).toBeInTheDocument();
   });
 
+  it('should render column headers with visible text', () => {
+    renderPageTable();
+
+    const columnHeaders = screen.getAllByRole('columnheader');
+    const headerTexts = columnHeaders.map((header) => header.textContent).filter(Boolean);
+    expect(headerTexts).toContain('Name');
+    expect(headerTexts).toContain('Description');
+  });
+
   it('should render the empty state when there are no items', () => {
     renderPageTable({
       itemCount: 0,
