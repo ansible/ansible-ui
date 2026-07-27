@@ -526,18 +526,17 @@ describe('WorkflowJobTemplateForm', () => {
 
         await waitFor(() => {
           expect(patchBody).not.toBeNull();
+          // mockWfjt has job_tags: 'deploy' and skip_tags: 'cleanup' → stringified (non-null)
+          expect(patchBody?.job_tags).toBe('deploy');
+          expect(patchBody?.skip_tags).toBe('cleanup');
+          // mockWfjt has limit: '' and scm_branch: '' → null
+          expect(patchBody?.limit).toBeNull();
+          expect(patchBody?.scm_branch).toBeNull();
+          // mockWfjt has no inventory and no webhook_credential → null
+          expect(patchBody?.inventory).toBeNull();
+          expect(patchBody?.webhook_credential).toBeNull();
+          expect(patchBody?.webhook_service).toBe('');
         });
-
-        // mockWfjt has job_tags: 'deploy' and skip_tags: 'cleanup' → stringified (non-null)
-        expect(patchBody?.job_tags).toBe('deploy');
-        expect(patchBody?.skip_tags).toBe('cleanup');
-        // mockWfjt has limit: '' and scm_branch: '' → null
-        expect(patchBody?.limit).toBeNull();
-        expect(patchBody?.scm_branch).toBeNull();
-        // mockWfjt has no inventory and no webhook_credential → null
-        expect(patchBody?.inventory).toBeNull();
-        expect(patchBody?.webhook_credential).toBeNull();
-        expect(patchBody?.webhook_service).toBe('');
       }
     );
 
@@ -586,14 +585,13 @@ describe('WorkflowJobTemplateForm', () => {
 
         await waitFor(() => {
           expect(patchBody).not.toBeNull();
+          // Empty tags → stringifyTags([]) = '' → null
+          expect(patchBody?.job_tags).toBeNull();
+          expect(patchBody?.skip_tags).toBeNull();
+          // Non-empty limit and scm_branch → passed through as-is
+          expect(patchBody?.limit).toBe('host-pattern');
+          expect(patchBody?.scm_branch).toBe('feature/test');
         });
-
-        // Empty tags → stringifyTags([]) = '' → null
-        expect(patchBody?.job_tags).toBeNull();
-        expect(patchBody?.skip_tags).toBeNull();
-        // Non-empty limit and scm_branch → passed through as-is
-        expect(patchBody?.limit).toBe('host-pattern');
-        expect(patchBody?.scm_branch).toBe('feature/test');
       }
     );
 
