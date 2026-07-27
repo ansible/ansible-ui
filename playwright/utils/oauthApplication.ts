@@ -12,6 +12,7 @@ export interface CreateOAuthApplicationOptions {
   redirect_uris?: string;
   algorithm?: '' | 'RS256' | 'HS256';
   skip_authorization?: boolean;
+  pkce_required?: boolean;
   post_logout_redirect_uris?: string;
 }
 
@@ -28,6 +29,7 @@ export const OAuthApplication = {
         algorithm: options.algorithm ?? '',
         skip_authorization: options.skip_authorization ?? false,
         post_logout_redirect_uris: options.post_logout_redirect_uris ?? '',
+        ...(options.pkce_required !== undefined && { pkce_required: options.pkce_required }),
       });
 
       if (!application) {
