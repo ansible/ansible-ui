@@ -200,6 +200,12 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       sort: 'elapsed',
     },
     {
+      id: 'time_savings',
+      header: t('Time savings'),
+      cell: (item) => tableCell('time_savings_str', item),
+      sort: 'time_savings',
+    },
+    {
       id: 'automated_costs',
       header: t('Automated cost'),
       cell: (item) => tableCell('automated_costs', item),
