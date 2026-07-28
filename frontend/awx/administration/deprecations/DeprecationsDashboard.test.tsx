@@ -80,14 +80,7 @@ describe('DeprecationsDashboard', () => {
 
   it('should display stats cards with deprecation data', async () => {
     server.use(
-      http.get(awxAPI`/jobs/`, ({ request }) => {
-        const url = new URL(request.url);
-        // First fetch (current period) returns data; second fetch (previous period) returns empty
-        if (url.searchParams.get('created__gte')) {
-          return HttpResponse.json(mockJobsResponse);
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsResponse)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEventsResponse))
     );
 
@@ -110,13 +103,7 @@ describe('DeprecationsDashboard', () => {
 
   it('should display deprecation issues table', async () => {
     server.use(
-      http.get(awxAPI`/jobs/`, ({ request }) => {
-        const url = new URL(request.url);
-        if (url.searchParams.get('created__gte')) {
-          return HttpResponse.json(mockJobsResponse);
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsResponse)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEventsResponse))
     );
 
@@ -149,7 +136,7 @@ describe('DeprecationsDashboard', () => {
 
     expect(screen.getByText('No deprecation issues')).toBeInTheDocument();
     expect(
-      screen.getByText('No deprecation patterns found in the selected time period.')
+      screen.getByText('No deprecation patterns found in the last 50 jobs.')
     ).toBeInTheDocument();
   });
 
@@ -191,13 +178,7 @@ describe('DeprecationsDashboard', () => {
     };
 
     server.use(
-      http.get(awxAPI`/jobs/`, ({ request }) => {
-        const url = new URL(request.url);
-        if (url.searchParams.get('created__gte')) {
-          return HttpResponse.json(mockJobsWithTwo);
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsWithTwo)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, ({ params }) => {
         if (params.jobId === '1') return HttpResponse.json(mockEventsResponse);
         // Job 2 returns an error
@@ -217,7 +198,7 @@ describe('DeprecationsDashboard', () => {
     ).toBeInTheDocument();
   });
 
-  it('should display time range selector', async () => {
+  it('should not display time range selector', async () => {
     server.use(
       http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
@@ -229,18 +210,12 @@ describe('DeprecationsDashboard', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText('Time period:')).toBeInTheDocument();
+    expect(screen.queryByText('Time period:')).not.toBeInTheDocument();
   });
 
   it('should display toolbar filters for search, severity, organization, and job template', async () => {
     server.use(
-      http.get(awxAPI`/jobs/`, ({ request }) => {
-        const url = new URL(request.url);
-        if (url.searchParams.get('created__gte')) {
-          return HttpResponse.json(mockJobsResponse);
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsResponse)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEventsResponse))
     );
 
@@ -254,86 +229,6 @@ describe('DeprecationsDashboard', () => {
     // Check that the table toolbar exists and has filter controls
     const searchInput = screen.getByPlaceholderText('Enter search');
     expect(searchInput).toBeInTheDocument();
-  });
-
-  it('should display positive trend indicator when warnings increase', async () => {
-    const prevJobsResponse = {
-      results: [
-        {
-          id: 10,
-          summary_fields: {
-            organization: { name: 'Old Org' },
-            job_template: { name: 'Old Job' },
-          },
-        },
-      ],
-      count: 1,
-    };
-
-    const prevEventsResponse = {
-      count: 1,
-      results: [
-        {
-          id: 100,
-          event: 'deprecated',
-          stdout: 'Using with_items on yum module is deprecated',
-          start_line: 10,
-          task: 'Old task',
-          play: 'main',
-          playbook: 'site.yml',
-          created: '2023-12-15T00:00:00Z',
-          job: 10,
-        },
-      ],
-    };
-
-    let jobsFetchCount = 0;
-    server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) return HttpResponse.json(mockJobsResponse);
-        if (jobsFetchCount === 2) return HttpResponse.json(prevJobsResponse);
-        return HttpResponse.json(emptyJobsResponse);
-      }),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, ({ params }) => {
-        if (params.jobId === '1') return HttpResponse.json(mockEventsResponse);
-        if (params.jobId === '10') return HttpResponse.json(prevEventsResponse);
-        return HttpResponse.json(emptyEventsResponse);
-      })
-    );
-
-    render(<DeprecationsDashboard />, { wrapper: Wrapper });
-
-    await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-      expect(screen.getAllByText(/vs previous period/).length).toBeGreaterThan(0);
-    });
-  });
-
-  it('should display zero change trend indicator when both periods are empty', async () => {
-    let jobsFetchCount = 0;
-    server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount <= 2) return HttpResponse.json(emptyJobsResponse);
-        return HttpResponse.json(emptyJobsResponse);
-      }),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
-    );
-
-    render(<DeprecationsDashboard />, { wrapper: Wrapper });
-
-    await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-      const noChangeElements = screen.getAllByText('No change vs previous period');
-      expect(noChangeElements.length).toBeGreaterThan(0);
-    });
   });
 
   it('should display stat card values as zero when no data', async () => {

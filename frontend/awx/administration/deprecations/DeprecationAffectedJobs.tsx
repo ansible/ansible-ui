@@ -31,7 +31,7 @@ export function DeprecationAffectedJobs() {
   const { deprecationType } = useParams<{ deprecationType: string }>();
   const decodedType = decodeURIComponent(deprecationType ?? '');
 
-  const { data: deprecationData } = useDeprecationData('all');
+  const { data: deprecationData } = useDeprecationData();
   const deprecation = deprecationData?.deprecations.find((d) => d.type === decodedType);
   const jobIds = deprecation?.jobIds ?? [];
 

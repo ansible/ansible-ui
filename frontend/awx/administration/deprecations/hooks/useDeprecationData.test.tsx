@@ -111,14 +111,8 @@ describe('useDeprecationData', () => {
   });
 
   it('should fetch and categorize deprecations', async () => {
-    // Current period: return 2 jobs with events; previous period: empty
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) return HttpResponse.json(mockJobsResponse);
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsResponse)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, ({ params }) => {
         if (params.jobId === '1') return HttpResponse.json(mockEventsWithItems);
         if (params.jobId === '2') return HttpResponse.json(mockEventsJob2);
@@ -146,21 +140,6 @@ describe('useDeprecationData', () => {
     ]);
     expect(result.current.data?.deprecations[0].jobTemplates).toEqual(['Deploy App', 'Run Tests']);
     expect(result.current.data?.hasPartialData).toBe(false);
-  });
-
-  it('should return no trends for all time range', async () => {
-    server.use(
-      http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
-    );
-
-    const { result } = renderHook(() => useDeprecationData('all'), { wrapper: swrWrapper });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.data?.trends).toBeUndefined();
   });
 
   it('should handle empty results', async () => {
@@ -233,18 +212,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: { organization: { name: 'Org1' } } }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: { organization: { name: 'Org1' } } }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockWithDictEvents))
     );
 
@@ -276,18 +250,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockBareVarEvents))
     );
 
@@ -318,18 +287,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockIncludeEvents))
     );
 
@@ -360,18 +324,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockSquashEvents))
     );
 
@@ -402,18 +361,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockHashEvents))
     );
 
@@ -444,18 +398,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockUnknownEvents))
     );
 
@@ -486,18 +435,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockTaskNameEvents))
     );
 
@@ -528,18 +472,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockTaskEvents))
     );
 
@@ -570,18 +509,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockTaskEvents))
     );
 
@@ -607,18 +541,13 @@ describe('useDeprecationData', () => {
       job: 1,
     }));
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () =>
         HttpResponse.json({ count: manyEvents.length, results: manyEvents })
       )
@@ -646,18 +575,13 @@ describe('useDeprecationData', () => {
       job: 1,
     }));
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () =>
         HttpResponse.json({ count: events.length, results: events })
       )
@@ -685,18 +609,13 @@ describe('useDeprecationData', () => {
       job: 1,
     }));
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () =>
         HttpResponse.json({ count: events.length, results: events })
       )
@@ -709,110 +628,6 @@ describe('useDeprecationData', () => {
     });
 
     expect(result.current.data?.deprecations[0].severity).toBe('moderate');
-  });
-
-  it('should compute positive trend when current period has more warnings', async () => {
-    let jobsFetchCount = 0;
-    server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json(mockJobsResponse);
-        }
-        if (jobsFetchCount === 2) {
-          return HttpResponse.json({
-            results: [
-              {
-                id: 10,
-                summary_fields: {
-                  organization: { name: 'Engineering' },
-                  job_template: { name: 'Old Job' },
-                },
-              },
-            ],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, ({ params }) => {
-        if (params.jobId === '1') return HttpResponse.json(mockEventsWithItems);
-        if (params.jobId === '2') return HttpResponse.json(mockEventsJob2);
-        if (params.jobId === '10') {
-          return HttpResponse.json({
-            count: 1,
-            results: [
-              {
-                id: 100,
-                event: 'deprecated',
-                stdout: 'Using with_items on yum module is deprecated',
-                start_line: 5,
-                task: 'Old task',
-                play: 'main',
-                playbook: 'site.yml',
-                created: '2023-12-01T00:00:00Z',
-                job: 10,
-              },
-            ],
-          });
-        }
-        return HttpResponse.json(emptyEventsResponse);
-      })
-    );
-
-    const { result } = renderHook(() => useDeprecationData('30d'), { wrapper: swrWrapper });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.data?.trends).toBeDefined();
-    expect(result.current.data?.trends?.totalWarnings).toBeGreaterThan(0);
-  });
-
-  it('should use 30d time range correctly', async () => {
-    server.use(
-      http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
-    );
-
-    const { result } = renderHook(() => useDeprecationData('30d'), { wrapper: swrWrapper });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.data?.timeRange).toBe('30d');
-  });
-
-  it('should use 6m time range correctly', async () => {
-    server.use(
-      http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
-    );
-
-    const { result } = renderHook(() => useDeprecationData('6m'), { wrapper: swrWrapper });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.data?.timeRange).toBe('6m');
-  });
-
-  it('should use 1y time range correctly', async () => {
-    server.use(
-      http.get(awxAPI`/jobs/`, () => HttpResponse.json(emptyJobsResponse)),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
-    );
-
-    const { result } = renderHook(() => useDeprecationData('1y'), { wrapper: swrWrapper });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.data?.timeRange).toBe('1y');
   });
 
   it('should handle bare variable detection from stdout keyword', async () => {
@@ -833,18 +648,13 @@ describe('useDeprecationData', () => {
       ],
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) {
-          return HttpResponse.json({
-            results: [{ id: 1, summary_fields: {} }],
-            count: 1,
-          });
-        }
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockBareEvents))
     );
 
@@ -863,13 +673,8 @@ describe('useDeprecationData', () => {
       count: 1,
     };
 
-    let jobsFetchCount = 0;
     server.use(
-      http.get(awxAPI`/jobs/`, () => {
-        jobsFetchCount++;
-        if (jobsFetchCount === 1) return HttpResponse.json(mockJobsNoSummary);
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsNoSummary)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEventsWithItems))
     );
 
@@ -886,11 +691,7 @@ describe('useDeprecationData', () => {
   it('should add page_size=200 to job events requests', async () => {
     const capturedEventUrls: string[] = [];
     server.use(
-      http.get(awxAPI`/jobs/`, ({ request }) => {
-        const url = new URL(request.url);
-        if (url.searchParams.get('created__gte')) return HttpResponse.json(mockJobsResponse);
-        return HttpResponse.json(emptyJobsResponse);
-      }),
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsResponse)),
       http.get(awxAPI`/jobs/:jobId/job_events/`, ({ request }) => {
         capturedEventUrls.push(request.url);
         return HttpResponse.json(mockEventsWithItems);
@@ -907,39 +708,5 @@ describe('useDeprecationData', () => {
     capturedEventUrls.forEach((url) => {
       expect(new URL(url).searchParams.get('page_size')).toBe('200');
     });
-  });
-
-  it('should bound the previous period with created__lt when fetching trends', async () => {
-    const capturedJobsUrls: string[] = [];
-    server.use(
-      http.get(awxAPI`/jobs/`, ({ request }) => {
-        capturedJobsUrls.push(request.url);
-        return HttpResponse.json(emptyJobsResponse);
-      }),
-      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
-    );
-
-    const { result } = renderHook(() => useDeprecationData('7d'), { wrapper: swrWrapper });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    // Should have made two job fetches: current period and previous period
-    expect(capturedJobsUrls.length).toBe(2);
-
-    // The previous-period fetch should include both created__gte and created__lt
-    const prevPeriodUrl = capturedJobsUrls.find((url) => {
-      const params = new URL(url).searchParams;
-      return params.has('created__gte') && params.has('created__lt');
-    });
-    expect(prevPeriodUrl).toBeDefined();
-
-    // The current-period fetch should have created__gte but NOT created__lt
-    const currentPeriodUrl = capturedJobsUrls.find((url) => {
-      const params = new URL(url).searchParams;
-      return params.has('created__gte') && !params.has('created__lt');
-    });
-    expect(currentPeriodUrl).toBeDefined();
   });
 });

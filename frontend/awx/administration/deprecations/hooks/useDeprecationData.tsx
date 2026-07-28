@@ -2,8 +2,6 @@ import useSWR from 'swr';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 
-export type TimeRange = '7d' | '30d' | '6m' | '1y' | 'all';
-
 interface JobEvent {
   id: number;
   event: string;
@@ -32,14 +30,8 @@ interface DeprecationData {
   affectedJobs: number;
   uniqueIssues: number;
   deprecations: DeprecationStat[];
-  timeRange: TimeRange;
   /** true when one or more per-job event fetches failed (data is partial) */
   hasPartialData: boolean;
-  trends?: {
-    totalWarnings: number; // percentage change vs previous period, positive = increase
-    affectedJobs: number;
-    uniqueIssues: number;
-  };
 }
 
 // Helper to extract deprecation type from event
@@ -89,31 +81,6 @@ function getSeverity(count: number): 'hot' | 'warm' | 'moderate' | 'cool' {
   return 'cool';
 }
 
-// Helper to calculate date filter from time range
-function getDateFilter(timeRange: TimeRange): string | null {
-  if (timeRange === 'all') return null;
-
-  const now = new Date();
-  const date = new Date(now);
-
-  switch (timeRange) {
-    case '7d':
-      date.setDate(date.getDate() - 7);
-      break;
-    case '30d':
-      date.setDate(date.getDate() - 30);
-      break;
-    case '6m':
-      date.setMonth(date.getMonth() - 6);
-      break;
-    case '1y':
-      date.setFullYear(date.getFullYear() - 1);
-      break;
-  }
-
-  return date.toISOString();
-}
-
 const CONCURRENCY_LIMIT = 10;
 
 /** Run promises in batches to avoid flooding the API with concurrent requests. */
@@ -135,18 +102,8 @@ interface Job {
   };
 }
 
-// Fetch deprecation stats for a given time window (extracted for reuse in trend calculation)
-// upperBound, when provided, adds a created__lt bound so the window is [dateFilter, upperBound)
-// rather than [dateFilter, now]. Used for the previous-period fetch to avoid overlap.
-async function fetchDeprecationStats(dateFilter: string | null, upperBound?: string) {
-  let jobsUrl: string;
-  if (dateFilter && upperBound) {
-    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}&created__lt=${upperBound}`;
-  } else if (dateFilter) {
-    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created&created__gte=${dateFilter}`;
-  } else {
-    jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created`;
-  }
+async function fetchDeprecationStats() {
+  const jobsUrl = awxAPI`/jobs/?page_size=50&order_by=-created`;
 
   const jobsResponse = await requestGet<{ results: Job[]; count: number }>(jobsUrl);
   const jobs = jobsResponse.results;
@@ -201,36 +158,9 @@ async function fetchDeprecationStats(dateFilter: string | null, upperBound?: str
   return { totalWarnings, affectedJobsSet, deprecationsByType, failureCount };
 }
 
-// Compute % change between two values; returns 0 if previous is 0
-function percentChange(current: number, previous: number): number {
-  if (previous === 0) return 0;
-  return Math.round(((current - previous) / previous) * 100);
-}
-
-// Fetch and aggregate deprecation data for the given time range
-async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData> {
-  const dateFilter = getDateFilter(timeRange);
-
-  // "All time" has no meaningful previous period — skip the second fetch
-  const isAllTime = timeRange === 'all';
-
-  // Compute previous period date filter (same window shifted back in time)
-  let prevDateFilter: string | null = null;
-  if (!isAllTime && dateFilter) {
-    const now = new Date();
-    const windowMs = now.getTime() - new Date(dateFilter).getTime();
-    prevDateFilter = new Date(new Date(dateFilter).getTime() - windowMs).toISOString();
-  }
-
-  // Fetch current period; fetch previous only when a meaningful comparison exists.
-  // Pass dateFilter as upperBound for the previous period so it covers [prevStart, currentStart]
-  // rather than [prevStart, now], which would overlap with the current period.
-  const [current, previous] = await Promise.all([
-    fetchDeprecationStats(dateFilter),
-    isAllTime
-      ? Promise.resolve(null)
-      : fetchDeprecationStats(prevDateFilter, dateFilter ?? undefined),
-  ]);
+// Fetch and aggregate deprecation data from the last 50 jobs
+async function fetchDeprecations(): Promise<DeprecationData> {
+  const current = await fetchDeprecationStats();
 
   const deprecations: DeprecationStat[] = Object.entries(current.deprecationsByType)
     .map(([type, data]) => ({
@@ -250,22 +180,11 @@ async function fetchDeprecations(timeRange: TimeRange): Promise<DeprecationData>
     affectedJobs: current.affectedJobsSet.size,
     uniqueIssues: deprecations.length,
     deprecations,
-    timeRange,
     hasPartialData: current.failureCount > 0,
-    trends: previous
-      ? {
-          totalWarnings: percentChange(current.totalWarnings, previous.totalWarnings),
-          affectedJobs: percentChange(current.affectedJobsSet.size, previous.affectedJobsSet.size),
-          uniqueIssues: percentChange(
-            Object.keys(current.deprecationsByType).length,
-            Object.keys(previous.deprecationsByType).length
-          ),
-        }
-      : undefined,
   };
 }
 
-export function useDeprecationData(timeRange: TimeRange = '7d'): {
+export function useDeprecationData(): {
   data?: DeprecationData;
   error?: Error;
   isLoading: boolean;
@@ -273,8 +192,8 @@ export function useDeprecationData(timeRange: TimeRange = '7d'): {
   refresh: () => void;
 } {
   const { data, error, isLoading, isValidating, mutate } = useSWR<DeprecationData, Error>(
-    ['deprecations-dashboard', timeRange],
-    () => fetchDeprecations(timeRange),
+    'deprecations-dashboard',
+    () => fetchDeprecations(),
     { revalidateOnFocus: false }
   );
 
