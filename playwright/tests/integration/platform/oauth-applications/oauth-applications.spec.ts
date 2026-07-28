@@ -155,8 +155,6 @@ test.describe('OAuth Applications', () => {
         await navigateTo(page, 'Access Management', 'OAuth Applications');
         await clickTableRow({ filterLabel: 'Name', text: application.name }, page);
 
-        await expect(page.getByTestId('pkce-required')).toContainText('No');
-
         // Click edit
         await page.getByRole('button', { name: 'Edit OAuth application', exact: true }).click();
         await expect(page.getByRole('heading', { name: `Edit ${application.name}` })).toBeVisible();

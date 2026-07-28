@@ -29,6 +29,9 @@ export const OAuthApplication = {
         algorithm: options.algorithm ?? '',
         skip_authorization: options.skip_authorization ?? false,
         post_logout_redirect_uris: options.post_logout_redirect_uris ?? '',
+        // Unlike the fields above, pkce_required is only sent when the caller explicitly
+        // asks for it, so callers that don't care about it get the server's real default
+        // instead of one hardcoded here.
         ...(options.pkce_required !== undefined && { pkce_required: options.pkce_required }),
       });
 
