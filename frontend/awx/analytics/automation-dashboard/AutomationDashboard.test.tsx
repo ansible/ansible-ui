@@ -120,6 +120,8 @@ const mockJobTemplate: IJobTemplate = {
   automated_costs: 100,
   manual_costs: 200,
   savings: 100,
+  time_savings: 1800,
+  time_savings_str: '00:30:00',
 };
 
 const mockDetails: IDashboardDetails = {
