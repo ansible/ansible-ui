@@ -10,7 +10,6 @@ import { clickPageAction } from '../../../../commands/clickPageAction';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { waitForJobStatus } from '../../../../commands/waitForJobStatus';
 import { filterTable } from '../../../../commands/filterTable';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
 
 test.beforeEach(setupBefore({ path: '/execution/jobs' }));
 test.afterEach(setupAfter);
@@ -140,47 +139,18 @@ test.describe('Jobs: Delete', () => {
     // Verify job is removed from the list - it should no longer appear
     await expect(page.getByRole('row', { name: jobTemplateName })).not.toBeVisible();
   });
-});
-
-test.describe('Jobs: Filtering', () => {
-  let organizationName: string;
-  let inventoryName: string;
-  let jobTemplateName: string;
-
-  test.beforeEach(async ({ page }) => {
-    organizationName = await Organization.ui.create(page);
-    inventoryName = await Inventory.ui.create(page);
-    jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
-  });
-
-  test.afterEach(async ({ page }) => {
-    // Use API-based deletion to properly cancel running jobs before cleanup
-    try {
-      await JobTemplate.api.deleteByName(page, jobTemplateName);
-    } catch {
-      // Ignore cleanup errors
-    }
-    try {
-      await Inventory.ui.delete(page, inventoryName);
-    } catch {
-      // Ignore cleanup errors
-    }
-    try {
-      await Organization.ui.delete(page, organizationName);
-    } catch {
-      // Ignore cleanup errors
-    }
-  });
 
   test('can filter jobs by Launched by', { tag: ['@not_mock'] }, async ({ page }) => {
-    await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: false });
+    await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: true });
 
     await navigateTo(page, 'Automation Execution', 'Jobs');
     await filterTable({ filterLabel: 'Launched by', filterValue: 'admin' }, page);
+    // Combine with a Name filter so the assertion below is pagination-safe
+    // regardless of how many other admin-launched jobs exist in the environment.
+    await filterTable({ filterLabel: 'Name', filterValue: jobTemplateName }, page);
 
+    await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('row', { name: jobTemplateName })).toBeVisible();
-
-    await clearTableFilters(page);
   });
 });
 
