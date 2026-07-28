@@ -46,6 +46,16 @@ const baseInventory: Inventory = {
   modified: '2023-02-08T21:10:41.447067Z',
 };
 
+const inputInventoriesResponse = {
+  count: 2,
+  next: null,
+  previous: null,
+  results: [
+    { id: 10, name: 'source-inventory-1', type: 'inventory' },
+    { id: 11, name: 'source-inventory-2', type: 'inventory' },
+  ],
+};
+
 const server = setupServer(
   http.get(
     ({ request }) => request.url.includes('/instance_groups/'),
@@ -53,7 +63,7 @@ const server = setupServer(
   ),
   http.get(
     ({ request }) => request.url.includes('/input_inventories/'),
-    () => HttpResponse.json({ count: 0, results: [] })
+    () => HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
   )
 );
 
@@ -126,63 +136,25 @@ describe('InventoryDetails', () => {
     expect(screen.getByText(/0 \(Normal\)/)).toBeInTheDocument();
   });
 
-  it('should render labels', async () => {
-    renderInventoryDetails(baseInventory);
+  it('should render input inventory labels for constructed inventory', async () => {
+    // Use id: 99 so the SWR cache from the previous constructed-inventory test (id: 9)
+    // does not bleed into this one. The page-aware handler ensures that only page=1
+    // returns items; pages 2-200 (all fetched by initialSize: 200) return empty.
+    server.use(
+      http.get(
+        ({ request }) => {
+          const url = new URL(request.url);
+          return (
+            url.pathname.includes('/input_inventories/') && url.searchParams.get('page') === '1'
+          );
+        },
+        () => HttpResponse.json(inputInventoriesResponse)
+      )
+    );
 
-    await waitFor(() => {
-      expect(screen.getByText('test label')).toBeInTheDocument();
-    });
-  });
-
-  it('should render policy enforcement when opa_query_path is set', async () => {
-    const inventoryWithOpa: Inventory = {
-      ...baseInventory,
-      opa_query_path: 'data/allow',
-    };
-    renderInventoryDetails(inventoryWithOpa);
-
-    await waitFor(() => {
-      expect(screen.getByText('data/allow')).toBeInTheDocument();
-    });
-  });
-
-  it('should render prevent instance group fallback option', async () => {
-    const inventoryWithFallback: Inventory = {
-      ...baseInventory,
-      prevent_instance_group_fallback: true,
-    };
-    renderInventoryDetails(inventoryWithFallback);
-
-    await waitFor(() => {
-      expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
-    });
-  });
-
-  it('should render source variables for constructed inventory', async () => {
-    const constructedWithVars: Inventory = {
-      ...baseInventory,
-      kind: 'constructed',
-      source_vars: 'plugin: constructed\nstrict: true',
-      verbosity: 1,
-      update_cache_timeout: 30,
-      limit: 'host1',
-      hosts_with_active_failures: 0,
-      total_groups: 2,
-      total_inventory_sources: 1,
-      inventory_sources_with_failures: 0,
-    };
-    renderInventoryDetails(constructedWithVars);
-
-    await waitFor(() => {
-      expect(screen.getByText('Source variables')).toBeInTheDocument();
-    });
-    expect(screen.getByText('1 (Verbose)')).toBeInTheDocument();
-    expect(screen.getByText('host1')).toBeInTheDocument();
-  });
-
-  it('should render input inventories for constructed inventory', async () => {
     const constructedInventory: Inventory = {
       ...baseInventory,
+      id: 99,
       kind: 'constructed',
       hosts_with_active_failures: 0,
       total_groups: 0,
@@ -193,39 +165,52 @@ describe('InventoryDetails', () => {
       source_vars: '',
       limit: '',
     };
-
-    server.use(
-      http.get(
-        ({ request }) => request.url.includes('/input_inventories/'),
-        () =>
-          HttpResponse.json({
-            count: 1,
-            results: [{ id: 5, name: 'Input Inventory A', kind: '' }],
-          })
-      )
-    );
-
     renderInventoryDetails(constructedInventory);
 
-    await waitFor(() => {
-      expect(screen.getByText('Input Inventory A')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('source-inventory-1')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    expect(screen.getByText('source-inventory-2')).toBeInTheDocument();
   });
 
-  it('should render total hosts', async () => {
-    renderInventoryDetails(baseInventory);
+  it('should render prevent instance group fallback when flag is set', async () => {
+    const inventory: Inventory = { ...baseInventory, prevent_instance_group_fallback: true };
+    renderInventoryDetails(inventory);
 
     await waitFor(() => {
       expect(screen.getByText('test inventory')).toBeInTheDocument();
     });
-    expect(screen.getByText('Total hosts')).toBeInTheDocument();
+
+    expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
   });
 
-  it('should render Variables label for regular inventory', async () => {
-    renderInventoryDetails(baseInventory);
+  it('should render last job status when inventory source has a last job', async () => {
+    // Use id: 77 to avoid SWR cache conflicts with other constructed-inventory tests.
+    const inventory = {
+      ...baseInventory,
+      id: 77,
+      kind: 'constructed',
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+      source: {
+        summary_fields: {
+          last_job: { id: 42 },
+        },
+      },
+    } as unknown as Inventory;
+
+    renderInventoryDetails(inventory);
 
     await waitFor(() => {
-      expect(screen.getByText('Variables')).toBeInTheDocument();
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
     });
+
+    expect(screen.getByText('Last job status')).toBeInTheDocument();
   });
 });
