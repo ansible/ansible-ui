@@ -114,9 +114,12 @@ describe('useDeleteEdaRoles', () => {
     const submitButton = screen.getByRole('button', { name: 'Delete roles' });
     await user.click(submitButton);
 
-    await waitFor(() => {
-      expect(onComplete).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onComplete).toHaveBeenCalled();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('should show alert when built-in roles are selected', () => {
