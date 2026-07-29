@@ -109,4 +109,22 @@ describe('DashboardChartCard', () => {
     expect(screen.getByText('Hosts')).toBeInTheDocument();
     expect(screen.queryByText('Count')).not.toBeInTheDocument();
   });
+
+  test('should format label with default locale string for an unrecognized kind', () => {
+    const unknownKindData = {
+      kind: 'week' as unknown as DashboardChartCardProps['data']['kind'],
+      items: [{ label: '2024-06-15T00:00:00', value: 10 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={unknownKindData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render with no crash when items is missing from data', () => {
+    const dataWithoutItems = {
+      kind: 'day' as const,
+      items: undefined as unknown as DashboardChartCardProps['data']['items'],
+    };
+    render(<DashboardChartCard {...defaultProps} data={dataWithoutItems} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
 });

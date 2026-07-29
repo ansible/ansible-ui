@@ -3,6 +3,7 @@ import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import { DashboardChartCardProps, IDashboardChartItem } from '../types';
 import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
 import { useTranslation } from 'react-i18next';
+import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
 
 export function DashboardChartCard(props: DashboardChartCardProps) {
   const { id, title, help, summaryValue, data, variant, error, errorStateTitle, legendLabel } =
@@ -39,19 +40,21 @@ export function DashboardChartCard(props: DashboardChartCardProps) {
     const value = chartItem.value;
     return { label, value };
   };
-  const usFormat = 'en-US';
+
   const values = data?.items?.map((item, index, array) => mapChartItem(item, index, array)) ?? [];
   const content = (
     <Flex direction={{ default: 'row' }} style={{ height: '100%' }}>
       <FlexItem>
-        <Title headingLevel="h2" style={{ fontSize: 'xxx-large', lineHeight: 1, fontWeight: 400 }}>
-          {summaryValue || summaryValue === 0 ? summaryValue.toLocaleString(usFormat) : '--'}
+        <Title headingLevel="h2" style={{ fontSize: 'xx-large', lineHeight: 1, fontWeight: 400 }}>
+          {summaryValue || summaryValue === 0
+            ? summaryValue.toLocaleString(DEFAULT_NUMBER_LOCALE)
+            : '--'}
         </Title>
       </FlexItem>
 
       <FlexItem style={{ height: '90%', width: '100%' }}>
         <PageDashboardChart
-          groups={[{ label: legendLabel ?? t('Count'), color: blueColor, values: values ?? [] }]}
+          groups={[{ label: legendLabel ?? t('Count'), color: blueColor, values }]}
           variant={variant}
           allowZero
           onlyIntegerTicks
@@ -62,7 +65,7 @@ export function DashboardChartCard(props: DashboardChartCardProps) {
     </Flex>
   );
   return (
-    <PageDashboardCard id={id} title={title} helpTitle={title} help={help} width="lg" height="lg">
+    <PageDashboardCard id={id} title={title} helpTitle={title} help={help} width="md" height="md">
       {error ? <EmptyStateError titleProp={errorStateTitle} message={error.message} /> : content}
     </PageDashboardCard>
   );

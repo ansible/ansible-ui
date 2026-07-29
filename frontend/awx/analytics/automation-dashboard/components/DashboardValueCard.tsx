@@ -4,6 +4,7 @@ import { DashboardValueCardProps } from '../types';
 import { Link } from 'react-router-dom';
 import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
+import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
 
 export function DashboardValueCard(props: DashboardValueCardProps) {
   const {
@@ -17,14 +18,13 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
     error,
     errorStateTitle,
     formatAsCurrency,
+    width,
   } = props;
-
-  const usFormat = 'en-US';
 
   const contentValue =
     typeof value === 'number' ? (
       <span style={{ fontSize: 'xx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
-        {formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(usFormat)}
+        {formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(DEFAULT_NUMBER_LOCALE)}
         {valueSuffix ? ` ${valueSuffix}` : ''}
       </span>
     ) : (
@@ -59,8 +59,7 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
       title={title}
       helpTitle={help ? title : undefined}
       help={help}
-      width="sm"
-      height="xs"
+      width={width ?? 'md'}
     >
       {error ? <EmptyStateError titleProp={errorStateTitle} message={error.message} /> : content}
     </PageDashboardCard>

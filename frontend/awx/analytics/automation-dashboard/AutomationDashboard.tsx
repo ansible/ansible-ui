@@ -29,6 +29,11 @@ const AutomationDashboardWrapper = styled.div`
   overflow: hidden;
 `;
 const Divisor = 1662 / 24;
+/** Horizontal padding subtracted from container width before computing grid columns. */
+const DASHBOARD_PADDING_PX = 40;
+/** Breakpoint range (in grid columns) where value cards switch from 'md' to 'xs' size. */
+const WIDE_LAYOUT_MIN_COLUMNS = 16;
+const WIDE_LAYOUT_MAX_COLUMNS = 31;
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
@@ -49,13 +54,19 @@ export function AutomationDashboard() {
   const [gridColumns, setGridColumns] = useState(1);
 
   useLayoutEffect(() => {
-    const width = Math.max(1, Math.floor((ref.current?.clientWidth ?? 0) / Divisor));
-    setGridColumns(Math.min(25, width));
+    const width = Math.max(
+      1,
+      Math.floor(((ref.current?.clientWidth ?? 0) - DASHBOARD_PADDING_PX) / Divisor)
+    );
+    setGridColumns(width);
   }, []);
 
   useResizeObserver(ref, (entry) => {
-    const width = Math.max(1, Math.floor((entry.contentRect.width ?? 0) / Divisor));
-    setGridColumns(Math.min(25, width));
+    const width = Math.max(
+      1,
+      Math.floor(((entry.contentRect.width ?? 0) - DASHBOARD_PADDING_PX) / Divisor)
+    );
+    setGridColumns(width);
   });
 
   // Show loading state while checking collection status
@@ -66,6 +77,10 @@ export function AutomationDashboard() {
       </AutomationDashboardWrapper>
     );
   }
+
+  const isWideLayout =
+    WIDE_LAYOUT_MIN_COLUMNS <= gridColumns && gridColumns <= WIDE_LAYOUT_MAX_COLUMNS;
+  const valueCardWidth = isWideLayout ? 'xs' : ('md' as const);
 
   return (
     <AutomationDashboardWrapper ref={ref}>
@@ -96,6 +111,7 @@ export function AutomationDashboard() {
                 value={details?.total_number_of_successful_jobs ?? noDataString}
                 error={view.detailsError}
                 errorStateTitle={t('Error loading successful jobs')}
+                width={valueCardWidth}
               ></DashboardValueCard>
               <DashboardValueCard
                 id="failed-jobs-card"
@@ -108,6 +124,7 @@ export function AutomationDashboard() {
                 value={details?.total_number_of_failed_jobs ?? noDataString}
                 error={view.detailsError}
                 errorStateTitle={t('Error loading failed jobs')}
+                width={valueCardWidth}
               ></DashboardValueCard>
               <DashboardValueCard
                 id="unique-hosts-card"
@@ -118,6 +135,7 @@ export function AutomationDashboard() {
                 value={details?.total_number_of_unique_hosts ?? noDataString}
                 error={view.detailsError}
                 errorStateTitle={t('Error loading unique hosts')}
+                width={valueCardWidth}
               ></DashboardValueCard>
               <DashboardValueCard
                 id="automation-hours-card"
@@ -129,6 +147,7 @@ export function AutomationDashboard() {
                 valueSuffix={details?.total_hours_of_automation ? 'h' : undefined}
                 error={view.detailsError}
                 errorStateTitle={t('Error loading hours of automation')}
+                width={valueCardWidth}
               ></DashboardValueCard>
             </Grid>
           </GridItem>
@@ -184,10 +203,6 @@ export function AutomationDashboard() {
                     : t('User data will appear after your first automation runs.')
                 }
               ></DashboardTableCard>
-            </Grid>
-          </GridItem>
-          <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
-            <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
               <DashboardChartCard
                 id="host-chart-card"
                 title={t('Number of hosts jobs are running on')}
@@ -216,13 +231,9 @@ export function AutomationDashboard() {
               ></DashboardChartCard>
             </Grid>
           </GridItem>
-
           <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
             <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
-              <DashboardMainTableCard
-                {...view}
-                toolbarFilters={toolbarFilters}
-              ></DashboardMainTableCard>
+              <DashboardMainTableCard {...view} toolbarFilters={toolbarFilters} />
             </Grid>
           </GridItem>
         </PageDashboard>

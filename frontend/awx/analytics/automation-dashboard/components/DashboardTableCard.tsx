@@ -3,6 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { DashboardTableCardProps, IDashboardTableItem } from '../types';
 import { PageLoadingTable } from '../../../../../framework/PageTable/PageLoadingTable';
+import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
+
+const TRUNCATED_NAME_CELL_MAX_WIDTH = 320;
+
+const truncatedNameCellStyle: React.CSSProperties = {
+  maxWidth: `${TRUNCATED_NAME_CELL_MAX_WIDTH}px`,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
 
 export function DashboardTableCard(props: DashboardTableCardProps) {
   const {
@@ -24,14 +34,34 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
   const [perPage, setPerPage] = useState(5);
   const { t } = useTranslation();
 
+  const nameCell = (item: IDashboardTableItem) => {
+    return <div style={truncatedNameCellStyle}>{item.name}</div>;
+  };
+
+  const valueCell = (item: IDashboardTableItem) => {
+    return (
+      <div
+        style={{
+          textAlign: 'right',
+        }}
+      >
+        {item?.execution_count || item.execution_count === 0
+          ? item.execution_count.toLocaleString(DEFAULT_NUMBER_LOCALE)
+          : ''}
+      </div>
+    );
+  };
+
   const tableColumns: ITableColumn<IDashboardTableItem>[] = [
     {
       header: firstColumnHeader,
-      cell: (item) => item.name,
+      cell: nameCell,
     },
     {
       header: t('Total no. of jobs'),
-      cell: (item) => item.execution_count,
+      cell: valueCell,
+      maxWidth: 75,
+      minWidth: 75,
     },
   ];
 
@@ -41,7 +71,7 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
       title={title}
       helpTitle={title}
       help={help}
-      width="lg"
+      width="md"
       height="md"
       disableBodyPadding
     >

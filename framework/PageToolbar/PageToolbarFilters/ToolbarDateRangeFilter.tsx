@@ -50,7 +50,12 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
   }
 
   function onSelectChange(value: string | null) {
-    if (value === null) return;
+    if (value === null) {
+      if (defaultValue) {
+        setFilterValues(() => [defaultValue]);
+      }
+      return;
+    }
     const option = props.options.find((option) => option.value === value);
     if (option) {
       setFilterValues(() => [value]);
