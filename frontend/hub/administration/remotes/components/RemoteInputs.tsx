@@ -110,9 +110,10 @@ export function RemoteInputs({
           name="sync_highest_versions"
           label={t('Sync latest versions')}
           type="number"
+          min={1}
           labelHelpTitle={t('Sync latest versions')}
           labelHelp={t(
-            'Number of latest versions to sync per collection. 0 or empty syncs all versions.'
+            'Number of latest versions to sync per collection. Empty syncs all versions.'
           )}
           placeholder={t('All versions')}
         />

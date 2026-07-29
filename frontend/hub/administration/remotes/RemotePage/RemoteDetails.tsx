@@ -92,7 +92,7 @@ export function RemoteDetails() {
           {remote?.signed_only ? t('True') : t('False')}
         </PageDetail>
         <PageDetail label={t('Sync latest versions')}>
-          {remote?.sync_highest_versions?.toString() ?? t('All versions')}
+          {remote?.sync_highest_versions ? remote.sync_highest_versions.toString() : t('All versions')}
         </PageDetail>
         <PageDetail label={t('Repositories')}>
           {repositories?.results?.length ? (
