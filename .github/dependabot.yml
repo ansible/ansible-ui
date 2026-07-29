@@ -11,8 +11,9 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      # Batches all non-major devDependency updates into a single PR.
-      # Major devDependency bumps and all production dependency updates get individual PRs.
+      # Batches all non-major dependency updates into single PRs (one for
+      # development, one for production). Major bumps and packages listed in
+      # exclude-patterns still get individual PRs.
       non-major-dev:
         dependency-type: 'development'
         update-types:
@@ -20,5 +21,17 @@ updates:
           - 'patch'
         exclude-patterns:
           - 'prettier'
-          - 'typescript'
           - '@playwright/test'
+          - 'typescript'
+          - 'vite'
+          - 'webpack'
+      non-major-prod:
+        dependency-type: 'production'
+        update-types:
+          - 'minor'
+          - 'patch'
+        exclude-patterns:
+          - 'react'
+          - 'react-dom'
+          - 'react-router-dom'
+          - '@patternfly/*'
