@@ -46,7 +46,7 @@ test.describe('Hub - Repositories', () => {
         await expect(page.getByTestId('description')).toContainText('Here goes description');
         await expect(page.getByTestId('labels')).toContainText('None');
         await expect(page.getByTestId('remote')).toContainText('None');
-        await expect(page.getByTestId('retained-version-count')).toContainText('1');
+        await expect(page.getByTestId('retained-repository-version-count')).toContainText('1');
       });
 
       await test.step('Edit the repository', async () => {
@@ -88,7 +88,7 @@ test.describe('Hub - Repositories', () => {
       await test.step('Verify edited repository details', async () => {
         await expect(page.getByTestId('name')).toContainText(repositoryName);
         await expect(page.getByTestId('description')).toContainText('repositoryDescription edited');
-        await expect(page.getByTestId('retained-version-count')).toContainText('10');
+        await expect(page.getByTestId('retained-repository-version-count')).toContainText('10');
         await expect(page.getByTestId('labels')).toContainText('approved');
         if (remote) {
           await expect(page.getByTestId('remote')).toContainText(remote.name);
