@@ -23,7 +23,14 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
 
   const contentValue =
     typeof value === 'number' ? (
-      <span style={{ fontSize: 'xx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
+      <span
+        style={{
+          fontSize: width === 'xs' ? 'x-large' : 'xx-large',
+          fontWeight: '400',
+          lineHeight: 1,
+          marginTop: 'auto',
+        }}
+      >
         {formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(DEFAULT_NUMBER_LOCALE)}
         {valueSuffix ? ` ${valueSuffix}` : ''}
       </span>

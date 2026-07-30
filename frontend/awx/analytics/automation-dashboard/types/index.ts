@@ -176,6 +176,7 @@ export type IAutomationDashboardView = {
   isFilterStateDefault: boolean;
   registerClearCallback: (callback: () => void) => void;
   toolbarFilters?: IToolbarFilter[];
+  topCardsWidth?: PageDashboardCardWidth;
 };
 
 // ─── Export Types ─────────────────────────────────────────────────────────────

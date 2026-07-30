@@ -24,9 +24,8 @@ interface IJobTemplateModify {
   time_taken_create_automation_minutes: number;
 }
 
-// 24-column grid system for responsive layout
-// Uses 1625px instead of PageDashboard's 1662px to account for card padding
-const GRID_COLUMN_WIDTH = 1625 / 24; // ~67.7px per column
+// Uses 1625px instead of PageDashboard's 1610px to account for card padding
+const GRID_COLUMN_WIDTH = 1610 / 24; // ~67px per column
 
 /** Fixed width (px) for time-input columns to keep editable fields consistently sized. */
 const TIME_COLUMN_WIDTH = 212;
@@ -55,6 +54,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     detailsError,
     isFilterStateDefault,
     toolbarFilters,
+    topCardsWidth,
   } = props;
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
@@ -287,6 +287,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             formatAsCurrency={true}
             error={detailsError}
             errorStateTitle={t('Error loading manual automation cost')}
+            width={topCardsWidth}
           ></DashboardValueCard>
           <DashboardValueCard
             id="cost-automated-execution-card"
@@ -296,6 +297,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             formatAsCurrency={true}
             error={detailsError}
             errorStateTitle={t('Error loading automated execution cost')}
+            width={topCardsWidth}
           ></DashboardValueCard>
           <DashboardValueCard
             id="total-savings-card"
@@ -305,6 +307,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             formatAsCurrency={true}
             error={detailsError}
             errorStateTitle={t('Error loading total savings')}
+            width={topCardsWidth}
           ></DashboardValueCard>
           <DashboardValueCard
             id="total-hours-saved-card"
@@ -314,6 +317,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             valueSuffix={details?.total_time_saving ? 'h' : undefined}
             error={detailsError}
             errorStateTitle={t('Error loading total hours saved')}
+            width={topCardsWidth}
           ></DashboardValueCard>
         </div>
       </CardBody>
