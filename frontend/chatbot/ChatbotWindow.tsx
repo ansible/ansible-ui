@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChatbotMessage } from './ChatbotPortal';
-import { ChatbotContext } from '@ansible/ansible-ai-connect-chatbot/dist/AnsibleChatbot/AnsibleChatbot';
+import type { ChatbotContext } from './types';
 import { App as Chatbot } from '@ansible/ansible-ai-connect-chatbot';
 import { usePageSettings } from '@ansible/ansible-ui-framework';
 

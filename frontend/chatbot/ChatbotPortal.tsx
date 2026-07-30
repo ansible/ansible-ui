@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
 import { ChatbotWindow } from './ChatbotWindow';
 import chatbot_css from '@ansible/ansible-ai-connect-chatbot/style.css?inline';
-import { ChatbotContext } from '@ansible/ansible-ai-connect-chatbot/dist/AnsibleChatbot/AnsibleChatbot';
+import type { ChatbotContext } from './types';
 import { Spinner } from '@patternfly/react-core';
 
 export interface ChatbotMessage {
