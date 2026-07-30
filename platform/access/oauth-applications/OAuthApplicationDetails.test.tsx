@@ -66,6 +66,7 @@ const mockApplication: Application = {
   client_secret: 'test-client-secret',
   authorization_grant_type: 'authorization-code',
   skip_authorization: false,
+  pkce_required: true,
   algorithm: '',
   summary_fields: {
     user_capabilities: {
@@ -166,6 +167,20 @@ describe('ApplicationDetailInner', () => {
       { wrapper: SwrTestWrapper }
     );
     expect(screen.getByTestId('skip-authorization')).toHaveTextContent('Yes');
+  });
+
+  test('should display "No" when pkce_required is false', () => {
+    render(<ApplicationDetailInner application={{ ...mockApplication, pkce_required: false }} />, {
+      wrapper: SwrTestWrapper,
+    });
+    expect(screen.getByTestId('pkce-required')).toHaveTextContent('No');
+  });
+
+  test('should display "Yes" when pkce_required is true', () => {
+    render(<ApplicationDetailInner application={{ ...mockApplication, pkce_required: true }} />, {
+      wrapper: SwrTestWrapper,
+    });
+    expect(screen.getByTestId('pkce-required')).toHaveTextContent('Yes');
   });
 
   test('should fall back to raw values when OPTIONS is unavailable', async () => {
