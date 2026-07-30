@@ -37,6 +37,7 @@ export function useAutomationDashboardToolbar() {
       isPinned: true,
       isRequired: true,
       disableSortOptions: true,
+      defaultValue: AutomationDashboardDateRangeFilterPresets.last_7_days,
     }),
     [t]
   );

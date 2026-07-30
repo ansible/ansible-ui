@@ -67,6 +67,45 @@ describe('ToolbarDateRangeFilter', () => {
     expect(setterFn()).toEqual(['last30days']);
   });
 
+  it('should reset to defaultValue when X clicked and defaultValue is set', async () => {
+    const user = userEvent.setup();
+    const setFilterValues = vi.fn();
+
+    render(
+      <ToolbarDateRangeFilter
+        placeholder="Select range"
+        options={defaultOptions}
+        filterValues={['last7days']}
+        setFilterValues={setFilterValues}
+        defaultValue="last7days"
+      />
+    );
+
+    await user.click(screen.getByTestId('reset'));
+
+    expect(setFilterValues).toHaveBeenCalled();
+    const setterFn = setFilterValues.mock.calls[0][0] as () => string[];
+    expect(setterFn()).toEqual(['last7days']);
+  });
+
+  it('should do nothing when X clicked and no defaultValue is set', async () => {
+    const user = userEvent.setup();
+    const setFilterValues = vi.fn();
+
+    render(
+      <ToolbarDateRangeFilter
+        placeholder="Select range"
+        options={defaultOptions}
+        filterValues={['last7days']}
+        setFilterValues={setFilterValues}
+      />
+    );
+
+    await user.click(screen.getByTestId('reset'));
+
+    expect(setFilterValues).not.toHaveBeenCalled();
+  });
+
   it('should render DateRange pickers when custom option selected', () => {
     render(
       <ToolbarDateRangeFilter

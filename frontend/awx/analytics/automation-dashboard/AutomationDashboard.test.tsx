@@ -1,6 +1,6 @@
 import { vi, test, afterEach, describe, expect } from 'vitest';
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import {
@@ -8,6 +8,7 @@ import {
   PageAlertToasterProvider,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
+import useResizeObserver from '@react-hook/resize-observer';
 import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
@@ -19,6 +20,10 @@ import type {
   DashboardValueCardProps,
   IAutomationDashboardCollectionStatus,
 } from './types';
+
+vi.mock('@react-hook/resize-observer', () => ({
+  default: vi.fn(),
+}));
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -37,15 +42,22 @@ vi.mock('./common/useAutomationDashboardCollectionStatus', () => ({
 
 vi.mock('./components', () => ({
   useAutomationDashboardToolbar: vi.fn(() => []),
-  DashboardValueCard: ({ title, value, valueSuffix, linkText }: DashboardValueCardProps) => (
-    <>
+  DashboardValueCard: ({
+    id,
+    title,
+    value,
+    valueSuffix,
+    linkText,
+    width,
+  }: DashboardValueCardProps) => (
+    <div data-testid={id} data-width={width}>
       <span>{title}</span>
       <span>
         {typeof value === 'number' ? value.toLocaleString() : value}
         {valueSuffix ? ` ${valueSuffix}` : ''}
       </span>
       {linkText && <span>{linkText}</span>}
-    </>
+    </div>
   ),
   DashboardChartCard: ({ title }: { title: string }) => <div>{title}</div>,
   DashboardTableCard: ({
@@ -53,14 +65,19 @@ vi.mock('./components', () => ({
     items,
     emptyStateTitle,
     emptyStateDescription,
+    filterState,
   }: {
     title: string;
     items?: unknown[];
     emptyStateTitle?: string;
     emptyStateDescription?: string;
+    filterState?: Record<string, unknown>;
   }) => (
     <div>
       <div>{title}</div>
+      <div data-testid={`${title}-filter-state`}>
+        {filterState ? JSON.stringify(filterState) : 'none'}
+      </div>
       {(!items || items.length === 0) && (
         <div data-testid={`${title}-empty-state`}>
           {emptyStateTitle && <div data-testid="empty-state-title">{emptyStateTitle}</div>}
@@ -382,5 +399,97 @@ describe('AutomationDashboard', () => {
         'Automation data exists, but no runs are currently attributed to individual users.'
       )
     ).toBeInTheDocument();
+  });
+
+  // ─── Grid column layout ────────────────────────────────────────────────────
+
+  test('should use the container width to compute grid columns on mount', () => {
+    const clientWidthSpy = vi
+      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
+      .mockReturnValue(500);
+
+    render(testWrapper());
+
+    // width 500 -> below the wide-layout column range, so value cards stay 'md'
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
+
+    clientWidthSpy.mockRestore();
+  });
+
+  test('should switch value cards to the wide layout width when the container is wide enough', () => {
+    const clientWidthSpy = vi
+      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
+      .mockReturnValue(1450);
+
+    render(testWrapper());
+
+    // width 1450 -> falls within the wide-layout column range
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
+
+    clientWidthSpy.mockRestore();
+  });
+
+  test('should recompute grid columns when the container is resized', () => {
+    const clientWidthSpy = vi
+      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
+      .mockReturnValue(500);
+
+    render(testWrapper());
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
+
+    const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
+    act(() => {
+      resizeCallback({ contentRect: { width: 1450 } } as ResizeObserverEntry, {} as ResizeObserver);
+    });
+
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
+
+    clientWidthSpy.mockRestore();
+  });
+
+  test('should fall back to the minimum grid columns when a resize reports no width', () => {
+    const clientWidthSpy = vi
+      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
+      .mockReturnValue(1450);
+
+    render(testWrapper());
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
+
+    const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
+    act(() => {
+      resizeCallback({ contentRect: {} } as ResizeObserverEntry, {} as ResizeObserver);
+    });
+
+    // no reported width -> gridColumns falls back to 1, below the wide-layout range
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
+
+    clientWidthSpy.mockRestore();
+  });
+
+  // ─── Filter state passthrough ──────────────────────────────────────────────
+
+  test('should pass the active filter state to the table cards when filters are not default', () => {
+    const activeFilterState = { template_name: ['demo'] };
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      isFilterStateDefault: false,
+      mainTableView: { ...mockMainTableView, filterState: activeFilterState },
+    });
+
+    render(testWrapper());
+
+    expect(screen.getByTestId('Top 5 projects-filter-state')).toHaveTextContent(
+      JSON.stringify(activeFilterState)
+    );
+    expect(screen.getByTestId('Top 5 users-filter-state')).toHaveTextContent(
+      JSON.stringify(activeFilterState)
+    );
+  });
+
+  test('should not pass filter state to the table cards when filters are default', () => {
+    render(testWrapper());
+
+    expect(screen.getByTestId('Top 5 projects-filter-state')).toHaveTextContent('none');
+    expect(screen.getByTestId('Top 5 users-filter-state')).toHaveTextContent('none');
   });
 });

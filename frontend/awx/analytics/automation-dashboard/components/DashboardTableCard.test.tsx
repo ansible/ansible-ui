@@ -73,4 +73,12 @@ describe('DashboardTableCard', () => {
     // pageItems falls back to [] and itemCount to 0 — empty state is shown
     expect(screen.getByRole('heading', { name: 'No data' })).toBeInTheDocument();
   });
+
+  test('renders empty value cell when execution_count is undefined', () => {
+    const items = [{ id: 1, name: 'No Count Item' }] as IDashboardTableItem[];
+    render(<DashboardTableCard {...defaultProps} items={items} />);
+    const row = screen.getByText('No Count Item').closest('tr');
+    const valueCell = row?.querySelectorAll('td')[1];
+    expect(valueCell).toHaveTextContent('');
+  });
 });
