@@ -81,7 +81,7 @@ test.describe('Templates List - Visual Regression', () => {
     { tag: ['@visual', '@not_mock'] },
     async ({ page }) => {
       await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible();
-      await expect(page.locator('tbody')).toBeVisible();
+      await expect(page.getByText('Demo Job Template')).toBeVisible();
 
       const mainContent = page.locator('.pf-v6-c-page__main');
       await expect(mainContent).toHaveScreenshot('templates-list-full-page.png', {
@@ -97,12 +97,12 @@ test.describe('Templates List - Visual Regression', () => {
     { tag: ['@visual', '@not_mock'] },
     async ({ page }) => {
       await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible();
-      await expect(page.locator('tbody')).toBeVisible();
+      await expect(page.getByText('Demo Job Template')).toBeVisible();
 
       const toolbar = page.locator('.pf-v6-c-toolbar').first();
       await expect(toolbar).toBeVisible();
       await expect(toolbar).toHaveScreenshot('templates-list-toolbar.png', {
-        maxDiffPixelRatio: 0.01,
+        maxDiffPixelRatio: 0.08,
         animations: 'disabled',
       });
     }

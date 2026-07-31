@@ -1,4 +1,4 @@
-import '@patternfly/patternfly/components/Wizard/wizard.css';
+import '@patternfly/patternfly/dist/components/Wizard/wizard.css';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageWizardBody } from './PageWizardBody';
 import { PageWizardHeader } from './PageWizardHeader';

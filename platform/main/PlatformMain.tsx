@@ -1,6 +1,6 @@
-import '@patternfly/patternfly/patternfly-addons.css';
-import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts.css';
+import '@patternfly/patternfly/dist/patternfly-addons.css';
+import '@patternfly/patternfly/dist/patternfly-base.css';
+import '@patternfly/patternfly/dist/patternfly-charts.css';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
 import { PageFramework } from '@ansible/ansible-ui-framework';
