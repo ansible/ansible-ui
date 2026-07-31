@@ -32,6 +32,8 @@ export interface IJobTemplate {
   automated_costs: number;
   manual_costs: number;
   savings: number;
+  time_savings: number;
+  time_savings_str: string;
 }
 
 export interface ISubscriptionCosts {

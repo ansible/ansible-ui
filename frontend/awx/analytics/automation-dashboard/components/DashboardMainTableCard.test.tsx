@@ -55,6 +55,8 @@ const mockItem: IJobTemplate = {
   automated_costs: 100,
   manual_costs: 200,
   savings: 100,
+  time_savings: 3600,
+  time_savings_str: '01:00:00',
 };
 
 const mockDetails: IDashboardDetails = {
@@ -266,9 +268,10 @@ describe('DashboardMainTableCard', () => {
       screen.getByRole('columnheader', { name: /Time taken to manually execute/i })
     ).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /Running time/i })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /Time savings/i })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /Automated cost/i })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /Manual cost/i })).toBeInTheDocument();
-    expect(screen.getByRole('columnheader', { name: /Savings/i })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /^Savings$/i })).toBeInTheDocument();
   });
 
   test('should show "time taken to create automation" column when include_template_creation_time_in_costs is true', () => {
@@ -340,6 +343,12 @@ describe('DashboardMainTableCard', () => {
     renderCard();
     expect(screen.getByText('00:30:00')).toBeInTheDocument();
     expect(screen.queryByText('1800')).not.toBeInTheDocument();
+  });
+
+  test('should render time_savings_str (not raw time_savings) in the Time savings column', () => {
+    renderCard();
+    expect(screen.getByText('01:00:00')).toBeInTheDocument();
+    expect(screen.queryByText('3600')).not.toBeInTheDocument();
   });
 
   test('should format automated_costs, manual_costs and savings as currency', () => {
