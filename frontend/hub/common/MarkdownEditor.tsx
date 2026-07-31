@@ -54,7 +54,7 @@ export function MarkdownEditor(props: IProps) {
       )}
       <ReactMarkdownWrapper>
         {editing && t(`Preview`)}
-        <div className={editing ? 'pf-c-content preview' : 'pf-c-content'}>
+        <div className={editing ? 'pf-v6-c-content preview' : 'pf-v6-c-content'}>
           <ReactMarkdown>{text || placeholder}</ReactMarkdown>
         </div>
       </ReactMarkdownWrapper>

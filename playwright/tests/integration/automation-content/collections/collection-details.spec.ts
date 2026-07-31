@@ -282,7 +282,7 @@ test.describe('Hub Collections - Details Page', () => {
         await tableContainer.waitFor({ state: 'visible', timeout: 30000 });
 
         // Wait for loading skeleton to disappear, indicating table has finished loading
-        const skeleton = tableContainer.locator('.pf-v5-c-skeleton');
+        const skeleton = tableContainer.locator('.pf-v6-c-skeleton');
         await expect(skeleton).toHaveCount(0, { timeout: 30000 });
 
         // Wait for table content to appear - either checkboxes (repositories loaded) or empty state

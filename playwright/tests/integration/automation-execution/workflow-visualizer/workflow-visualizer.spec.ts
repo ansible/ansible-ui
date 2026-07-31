@@ -174,8 +174,8 @@ test.describe('Workflow Viz', () => {
       ).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('g > .pf-v6-svg > path').first().click();
-      await page.locator('.pf-topology__node__action-icon > path').click();
+      await page.getByText('Run on success', { exact: true }).click();
+      await page.getByTestId('edge-context-menu_kebab').click();
       await page.getByRole('menuitem', { name: 'Run on fail' }).click();
       await expect(page.getByText('Run on fail', { exact: true })).toBeVisible();
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfjt);

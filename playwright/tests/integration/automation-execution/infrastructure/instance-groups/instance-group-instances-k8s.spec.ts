@@ -149,7 +149,7 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
 
       await test.step('Bulk disassociate all instances', async () => {
         await expect(page.getByRole('button', { name: 'Disassociate' })).toBeVisible();
-        await page.locator('input[name="check-all"]').check();
+        await page.getByTestId('selections-column-header').getByRole('checkbox').check();
         await page.getByRole('button', { name: 'Disassociate' }).click();
 
         const dialog = page.getByRole('dialog');

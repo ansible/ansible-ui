@@ -45,7 +45,7 @@ test.describe('Hub - Remotes', () => {
 
       await test.step('Select all and bulk delete', async () => {
         // Select all remotes
-        await page.locator('input[name="check-all"]').check();
+        await page.getByTestId('selections-column-header').getByRole('checkbox').check();
 
         // Open toolbar actions and click delete
         const toolbar = page.locator('[data-ouia-component-id="page-toolbar"]');
