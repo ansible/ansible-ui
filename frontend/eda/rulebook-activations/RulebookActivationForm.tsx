@@ -25,6 +25,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
+import { getEventPersistenceHelpText } from './constants/eventPersistenceHelpText';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { PageFormRuleEngineCredentialSelect } from '../access/credentials/components/PageFormRuleEngineCredentialSelect';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
@@ -329,32 +330,12 @@ export function RulebookActivationInputs() {
           <PageFormCheckbox
             label={t`Enable event persistence`}
             labelHelpTitle={t('Enable event persistence')}
-            labelHelp={
-              <>
-                <p>
-                  {t(
-                    'Enabling event persistence stores events so they are not lost when a rulebook activation stops or restarts.'
-                  )}
-                </p>
-                <br />
-                <p>
-                  {t(
-                    'If using the platform-provided persistence database, the default System Ansible Rule Engine credential is selected automatically in the credential field below. You can select a different Ansible Rule Engine credential instead if you created one.'
-                  )}
-                </p>
-                <br />
-                <p>
-                  {t(
-                    'If using an external database and no credential exists yet, create an Ansible Rule Engine credential that can reach that database first.'
-                  )}
-                </p>
-              </>
-            }
+            labelHelp={getEventPersistenceHelpText(t)}
             name="enable_persistence"
           />
         </PageFormGroup>
       </PageFormSection>
-      {enablePersistence && config?.deployment_type !== 'managed' && (
+      {enablePersistence && config && config.deployment_type !== 'managed' && (
         <PageFormSection title={t('Option Details')}>
           <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs> name="rule_engine_credential_id" />
         </PageFormSection>

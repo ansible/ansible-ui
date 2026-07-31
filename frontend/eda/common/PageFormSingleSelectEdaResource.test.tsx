@@ -32,8 +32,12 @@ const mockResources = {
   ],
 };
 
+interface FormValues {
+  resource_id: number | null;
+}
+
 function FormWrapper({ children }: { children: React.ReactNode }) {
-  const methods = useForm({
+  const methods = useForm<FormValues>({
     defaultValues: {
       resource_id: null,
     },
@@ -59,7 +63,7 @@ describe('PageFormSingleSelectEdaResource', () => {
     render(
       <MemoryRouter>
         <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, never, never>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
             name="resource_id"
             id="test-resource-select"
             label="Test Resource"
@@ -93,7 +97,7 @@ describe('PageFormSingleSelectEdaResource', () => {
     render(
       <MemoryRouter>
         <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, never, never>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
             name="resource_id"
             id="test-resource-select"
             label="Test Resource"
@@ -131,7 +135,7 @@ describe('PageFormSingleSelectEdaResource', () => {
     render(
       <MemoryRouter>
         <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, never, never>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
             name="resource_id"
             id="test-resource-select"
             label="Test Resource"
@@ -159,7 +163,7 @@ describe('PageFormSingleSelectEdaResource', () => {
     render(
       <MemoryRouter>
         <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, never, never>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
             name="resource_id"
             id="test-resource-select"
             label="Test Resource"

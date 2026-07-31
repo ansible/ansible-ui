@@ -32,12 +32,11 @@ export function PageFormRuleEngineCredentialSelect<
       if (credential.managed) {
         return t('Default credential provided by the database at install');
       }
-      return credential.description
-        ? credential.description.slice(
-            0,
-            credential.description.indexOf('.') || credential.description.length
-          )
-        : '';
+      if (!credential.description) {
+        return '';
+      }
+      const periodIndex = credential.description.indexOf('.');
+      return credential.description.slice(0, periodIndex === -1 ? undefined : periodIndex);
     },
     [t]
   );
