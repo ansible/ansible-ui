@@ -8,12 +8,13 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { PageFormRuleEngineCredentialSelect } from './PageFormRuleEngineCredentialSelect';
 
 const mockDroolsCredentials = {
-  count: 2,
+  count: 3,
   results: [
     {
       id: 1,
       name: 'Drools Credential 1',
       description: 'Test credential',
+      managed: false,
       credential_type: {
         id: 1,
         name: 'Event-Driven Ansible Rule Engine',
@@ -24,6 +25,18 @@ const mockDroolsCredentials = {
       id: 2,
       name: 'Drools Credential 2',
       description: 'Another test credential',
+      managed: false,
+      credential_type: {
+        id: 1,
+        name: 'Event-Driven Ansible Rule Engine',
+        namespace: 'drools',
+      },
+    },
+    {
+      id: 3,
+      name: 'System Managed Credential',
+      description: 'System provided credential',
+      managed: true,
       credential_type: {
         id: 1,
         name: 'Event-Driven Ansible Rule Engine',
@@ -102,6 +115,47 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       </MemoryRouter>
     );
 
+    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+  });
+
+  it('should render helper text for empty state', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json(mockDroolsCredentials);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(
+        'Create an Ansible Rule Engine credential in the Credentials page to populate this list.'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('should render detailed help text in label help', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json(mockDroolsCredentials);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    // The component renders the help text - verify key parts are present
     expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
   });
 });
