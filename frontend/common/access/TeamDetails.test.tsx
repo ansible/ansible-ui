@@ -149,4 +149,72 @@ describe('TeamDetails', () => {
 
     expect(screen.getByText('Created')).toBeInTheDocument();
   });
+
+  it('should render modified_by user with link when modifiedByUserDetailsUrl provided', () => {
+    const team: TeamDetailsType = {
+      ...baseTeam,
+      modified: '2024-03-15T12:00:00Z',
+      summary_fields: {
+        modified_by: {
+          id: 7,
+          username: 'editor',
+          first_name: 'Editor',
+          last_name: 'User',
+        },
+      },
+    };
+
+    render(
+      <MemoryRouter>
+        <TeamDetails team={team} modifiedByUserDetailsUrl="/users/7" />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Last modified')).toBeInTheDocument();
+  });
+
+  it('should render created_at date field', () => {
+    const team: TeamDetailsType = {
+      ...baseTeam,
+      created_at: '2024-04-01T09:00:00Z',
+    };
+
+    render(
+      <MemoryRouter>
+        <TeamDetails team={team} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Created')).toBeInTheDocument();
+  });
+
+  it('should render modified_on date field', () => {
+    const team: TeamDetailsType = {
+      ...baseTeam,
+      modified_on: '2024-04-15T16:00:00Z',
+    };
+
+    render(
+      <MemoryRouter>
+        <TeamDetails team={team} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Last modified')).toBeInTheDocument();
+  });
+
+  it('should render modified_at date field', () => {
+    const team: TeamDetailsType = {
+      ...baseTeam,
+      modified_at: '2024-05-01T11:00:00Z',
+    };
+
+    render(
+      <MemoryRouter>
+        <TeamDetails team={team} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Last modified')).toBeInTheDocument();
+  });
 });
