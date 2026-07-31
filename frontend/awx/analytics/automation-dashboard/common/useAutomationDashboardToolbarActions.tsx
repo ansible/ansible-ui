@@ -113,7 +113,7 @@ export function useAutomationDashboardToolbarActions(props: {
                   onClick: () => removeToolbarFilterSet(selectedFilterSet),
                   icon: TrashIcon,
                   isDisabled: superuserDeleteDisabledReason,
-                  variant: ButtonVariant.danger,
+                  isDanger: true,
                 },
               ],
             },

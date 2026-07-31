@@ -4,6 +4,7 @@ import {
   PageTable,
   usePageAlertToaster,
 } from '@ansible/ansible-ui-framework';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { DashboardTableInputField } from './DashboardTableInputField';
@@ -11,7 +12,6 @@ import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import { DashboardValueCard } from './DashboardValueCard';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
-import { useLayoutEffect, useRef, useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
@@ -24,9 +24,18 @@ interface IJobTemplateModify {
   time_taken_create_automation_minutes: number;
 }
 
-// 24-column grid system for responsive layout
-// Uses 1625px instead of PageDashboard's 1662px to account for card padding
-const GRID_COLUMN_WIDTH = 1625 / 24; // ~67.7px per column
+// Uses 1625px instead of PageDashboard's 1610px to account for card padding
+const GRID_COLUMN_WIDTH = 1610 / 24; // ~67px per column
+
+/** Fixed width (px) for time-input columns to keep editable fields consistently sized. */
+const TIME_COLUMN_WIDTH = 212;
+
+/**
+ * The main table card always spans the full dashboard grid.
+ * 32 exceeds the maximum expected column count (~31) so `span 32`
+ * reliably fills the entire row on every viewport size.
+ */
+const MAIN_TABLE_FULL_SPAN = 32;
 
 const TdWrapper = styled.div`
   padding-block-start: var(--pf-t--global--spacer--control--vertical--default);
@@ -45,6 +54,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     detailsError,
     isFilterStateDefault,
     toolbarFilters,
+    topCardsWidth,
   } = props;
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
@@ -132,19 +142,23 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
   };
 
   const tableInputField = (columnKey: keyof IJobTemplateModify, item: IJobTemplate) => (
-    <DashboardTableInputField
-      id={`${columnKey}_${item.id}`}
-      min={1}
-      max={1000000}
-      type={'integer'}
-      value={item[columnKey]}
-      onChange={(value: number) => void onTableInputChange(item, columnKey, value)}
-      error={errors?.[item.id]?.[columnKey]}
-    />
+    <div style={{ width: `${TIME_COLUMN_WIDTH}px` }}>
+      <DashboardTableInputField
+        id={`${columnKey}_${item.id}`}
+        min={1}
+        max={1000000}
+        type={'integer'}
+        value={item[columnKey]}
+        onChange={(value: number) => void onTableInputChange(item, columnKey, value)}
+        error={errors?.[item.id]?.[columnKey]}
+      />
+    </div>
   );
 
   const timeTakenCreateAutomationColumn: ITableColumn<IJobTemplate> = {
     id: 'time_taken_create_automation',
+    maxWidth: TIME_COLUMN_WIDTH,
+    minWidth: TIME_COLUMN_WIDTH,
     header: t('Time taken to create automation (min)'),
     helpText: t(
       'Time taken to create the automation for the job template. This is used to calculate the total time spent on automation, which includes both the time taken to create the automation and the time taken to execute it.'
@@ -152,15 +166,26 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     cell: (item) =>
       activeAwxUser?.is_superuser
         ? tableInputField('time_taken_create_automation_minutes', item)
-        : tableCell('time_taken_create_automation_minutes', item),
+        : tableCell('time_taken_create_automation_minutes', item, TIME_COLUMN_WIDTH),
   };
   const currencyColumnKeys: Set<keyof IJobTemplate> = new Set([
     'automated_costs',
     'manual_costs',
     'savings',
   ]);
-  const tableCell = (columnKey: keyof IJobTemplate, item: IJobTemplate) => (
-    <TdWrapper>
+  const tableCell = (
+    columnKey: keyof IJobTemplate,
+    item: IJobTemplate,
+    maxWidth?: number | undefined
+  ) => (
+    <TdWrapper
+      style={{
+        maxWidth: maxWidth ?? 'unset',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
+    >
       {currencyColumnKeys.has(columnKey)
         ? currencyFormatter(item[columnKey] as number)
         : item[columnKey]}
@@ -171,24 +196,29 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     {
       id: 'template_name',
       header: t('Template Name'),
-      cell: (item) => tableCell('template_name', item),
+      cell: (item) => tableCell('template_name', item, 250),
       defaultSort: true,
       defaultSortDirection: 'asc',
       sort: 'template_name',
+      maxWidth: 250,
     },
     {
       id: 'num_job_executions',
       header: t('Number of job executions'),
       cell: (item) => tableCell('runs', item),
       sort: 'runs',
+      maxWidth: 190,
+      minWidth: 190,
     },
     {
       id: 'time_taken_manually_execute',
       header: t('Time taken to manually execute (min)'),
+      maxWidth: TIME_COLUMN_WIDTH,
+      minWidth: TIME_COLUMN_WIDTH,
       cell: (item) =>
         activeAwxUser?.is_superuser
           ? tableInputField('time_taken_manually_execute_minutes', item)
-          : tableCell('time_taken_manually_execute_minutes', item),
+          : tableCell('time_taken_manually_execute_minutes', item, TIME_COLUMN_WIDTH),
     },
     ...(costState?.include_template_creation_time_in_costs
       ? [timeTakenCreateAutomationColumn]
@@ -232,6 +262,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       isCompact
       canCollapse={false}
       disableBodyPadding
+      style={{ gridColumn: `span ${MAIN_TABLE_FULL_SPAN}` }}
     >
       <CardBody>
         <DashboardTableToolbarRow
@@ -256,6 +287,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             formatAsCurrency={true}
             error={detailsError}
             errorStateTitle={t('Error loading manual automation cost')}
+            width={topCardsWidth}
           ></DashboardValueCard>
           <DashboardValueCard
             id="cost-automated-execution-card"
@@ -265,6 +297,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             formatAsCurrency={true}
             error={detailsError}
             errorStateTitle={t('Error loading automated execution cost')}
+            width={topCardsWidth}
           ></DashboardValueCard>
           <DashboardValueCard
             id="total-savings-card"
@@ -274,6 +307,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             formatAsCurrency={true}
             error={detailsError}
             errorStateTitle={t('Error loading total savings')}
+            width={topCardsWidth}
           ></DashboardValueCard>
           <DashboardValueCard
             id="total-hours-saved-card"
@@ -283,6 +317,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             valueSuffix={details?.total_time_saving ? 'h' : undefined}
             error={detailsError}
             errorStateTitle={t('Error loading total hours saved')}
+            width={topCardsWidth}
           ></DashboardValueCard>
         </div>
       </CardBody>
