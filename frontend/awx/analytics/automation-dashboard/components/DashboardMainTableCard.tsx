@@ -24,7 +24,7 @@ interface IJobTemplateModify {
   time_taken_create_automation_minutes: number;
 }
 
-// Uses 1625px instead of PageDashboard's 1610px to account for card padding
+// Uses 1610px instead of PageDashboard's 1662px to account for card padding
 const GRID_COLUMN_WIDTH = 1610 / 24; // ~67px per column
 
 /** Fixed width (px) for time-input columns to keep editable fields consistently sized. */
