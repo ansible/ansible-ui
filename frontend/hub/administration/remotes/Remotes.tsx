@@ -37,6 +37,7 @@ export interface HubRemote {
   url: string;
   signed_only: boolean;
   sync_dependencies: boolean;
+  sync_highest_versions: number | null;
   hidden_fields?: {
     is_set: boolean;
     name: 'client_key' | 'password' | 'proxy_username' | 'proxy_password' | 'token' | 'username';
