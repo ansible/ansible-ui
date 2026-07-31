@@ -139,13 +139,14 @@ describe('WorkflowApprovals WebSocket handler', () => {
     });
 
     await renderAndWait();
+    await new Promise((r) => setTimeout(r, 100));
     const initialFetchCount = fetchCount;
 
     act(() => {
       capturedOnMessage!({ group_name: 'jobs', type: 'job' });
     });
 
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 300));
 
     expect(fetchCount).toBe(initialFetchCount);
     server.events.removeAllListeners();
@@ -161,13 +162,14 @@ describe('WorkflowApprovals WebSocket handler', () => {
     });
 
     await renderAndWait();
+    await new Promise((r) => setTimeout(r, 100));
     const initialFetchCount = fetchCount;
 
     act(() => {
       capturedOnMessage!({ group_name: 'inventories', type: 'workflow_approval' });
     });
 
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 300));
 
     expect(fetchCount).toBe(initialFetchCount);
     server.events.removeAllListeners();
