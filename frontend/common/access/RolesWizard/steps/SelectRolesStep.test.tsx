@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
+import type { ISelected, IView } from '@ansible/ansible-ui-framework';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { SelectRolesStep } from './SelectRolesStep';
@@ -16,7 +17,15 @@ vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
   })),
 }));
 
-const mockView = {
+type RoleItem = { id: number; name: string; description: string };
+type ViewType = IView &
+  ISelected<RoleItem> & {
+    itemCount?: number;
+    pageItems: RoleItem[] | undefined;
+    error?: Error;
+  };
+
+const mockView: ViewType = {
   pageItems: [
     { id: 1, name: 'Role A', description: 'Role A description' },
     { id: 2, name: 'Role B', description: 'Role B description' },
@@ -26,9 +35,9 @@ const mockView = {
   perPage: 10,
   setPage: vi.fn(),
   setPerPage: vi.fn(),
-  sort: undefined,
+  sort: '',
   setSort: vi.fn(),
-  sortDirection: undefined,
+  sortDirection: 'asc',
   setSortDirection: vi.fn(),
   filterState: {},
   setFilterState: vi.fn(),
@@ -36,17 +45,17 @@ const mockView = {
   selectedItems: [],
   selectItem: vi.fn(),
   unselectItem: vi.fn(),
+  unselectItems: vi.fn(),
   isSelected: vi.fn().mockReturnValue(false),
   selectItems: vi.fn(),
+  selectAll: vi.fn(),
   unselectAll: vi.fn(),
-  keyFn: (item: { id: number }) => item.id,
+  allSelected: false,
+  keyFn: (item: RoleItem) => item.id,
   error: undefined,
-  refresh: vi.fn(),
-  unselectItemsAndRefresh: vi.fn(),
-  isLoading: false,
 };
 
-const mockTableColumns = [{ header: 'Name', cell: (item: { name: string }) => item.name }];
+const mockTableColumns = [{ header: 'Name', cell: (item: RoleItem) => item.name }];
 
 describe('SelectRolesStep', () => {
   it('should render the default title', () => {

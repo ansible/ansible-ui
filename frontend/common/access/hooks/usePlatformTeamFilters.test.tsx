@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { renderHook } from '@testing-library/react';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { describe, expect, it } from 'vitest';
 import { usePlatformTeamFilters } from './usePlatformTeamFilters';
 
@@ -9,13 +10,13 @@ describe('usePlatformTeamFilters', () => {
     expect(result.current).toHaveLength(1);
   });
 
-  it('should include a name filter', () => {
+  it('should include a name filter with correct properties', () => {
     const { result } = renderHook(() => usePlatformTeamFilters());
     const nameFilter = result.current[0];
 
     expect(nameFilter.key).toBe('name');
     expect(nameFilter.label).toBe('Name');
     expect(nameFilter.query).toBe('name');
-    expect(nameFilter.comparison).toBe('startsWith');
+    expect(nameFilter.type).toBe(ToolbarFilterType.MultiText);
   });
 });

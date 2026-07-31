@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { IndirectRolesModal } from './IndirectRolesModal';
-import type { ITableColumn } from '@ansible/ansible-ui-framework';
+import type { ITableColumn, IInMemoryView } from '@ansible/ansible-ui-framework';
 
 vi.mock('@patternfly/react-core', async () => {
   const actual =
@@ -24,31 +24,33 @@ vi.mock('@patternfly/react-core', async () => {
   };
 });
 
-const mockView = {
-  pageItems: [] as { id: number; name: string }[],
+type Item = { id: number; name: string };
+
+const mockView: IInMemoryView<Item> = {
+  pageItems: [] as Item[],
   itemCount: 0,
   page: 1,
   perPage: 10,
   setPage: vi.fn(),
   setPerPage: vi.fn(),
-  sort: undefined,
+  sort: '',
   setSort: vi.fn(),
-  sortDirection: undefined,
+  sortDirection: 'asc',
   setSortDirection: vi.fn(),
   filterState: {},
   setFilterState: vi.fn(),
   clearAllFilters: vi.fn(),
-  selectedItems: [] as { id: number; name: string }[],
+  selectedItems: [] as Item[],
   selectItem: vi.fn(),
   unselectItem: vi.fn(),
+  unselectItems: vi.fn(),
   isSelected: vi.fn().mockReturnValue(false),
   selectItems: vi.fn(),
+  selectAll: vi.fn(),
   unselectAll: vi.fn(),
-  keyFn: (item: { id: number }) => item.id,
+  allSelected: false,
+  keyFn: (item: Item) => item.id,
   error: undefined,
-  refresh: vi.fn(),
-  unselectItemsAndRefresh: vi.fn(),
-  isLoading: false,
 };
 
 const mockTableColumns: ITableColumn<{ id: number; name: string }>[] = [

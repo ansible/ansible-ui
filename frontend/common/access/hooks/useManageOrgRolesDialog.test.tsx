@@ -6,7 +6,6 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ManageOrgRoles } from './useManageOrgRolesDialog';
-import type { OrgRolesListProps } from '../components/OrgRolesList';
 
 vi.mock('@patternfly/react-core', async () => {
   const actual =
@@ -44,7 +43,7 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-const mockOrgListProps: OrgRolesListProps = {
+const mockOrgListProps = {
   title: 'Automation controller roles',
   isExpandable: true,
   apiPrefixFunction: (strings: TemplateStringsArray, ...values: string[]) => {
@@ -56,9 +55,7 @@ const mockOrgListProps: OrgRolesListProps = {
   },
   orgId: '1',
   userId: '1',
-  listId: 0,
-  setOrgListIsEmpty: vi.fn(),
-};
+} satisfies Parameters<typeof ManageOrgRoles>[0]['orgListsOptions'][number];
 
 describe('ManageOrgRoles', () => {
   it('should render the modal with user/team name in the title', async () => {

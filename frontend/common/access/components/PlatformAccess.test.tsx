@@ -7,6 +7,23 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { PlatformAccess } from './PlatformAccess';
 import type { Assignment } from '../interfaces/Assignment';
 
+type PlatformAccessTestProps = {
+  tableColumnFunctions: {
+    name: {
+      function: (item: Assignment) => string;
+      label: string;
+      sort?: string;
+    };
+  };
+  url: string;
+  id: string;
+  content_type_model?: string;
+  accessListType: 'user' | 'team' | 'user-roles' | 'team-roles';
+  addRoleButtonText?: string;
+  additionalTableColumns?: { header: string; type: 'text'; value: (item: Assignment) => string }[];
+  toolbarNameColumnFiltersValues?: { label: string; query: string };
+};
+
 const mockAssignments = {
   count: 2,
   next: null,
@@ -75,7 +92,7 @@ describe('PlatformAccess', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  const renderWithRoute = (props: typeof defaultProps & Record<string, unknown>) =>
+  const renderWithRoute = (props: PlatformAccessTestProps) =>
     render(
       <MemoryRouter initialEntries={['/orgs/1/access']}>
         <Routes>

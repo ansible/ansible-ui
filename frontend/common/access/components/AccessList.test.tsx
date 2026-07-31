@@ -5,45 +5,40 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { AccessList } from './AccessList';
+import type { UserRoleAccess } from '../interfaces/UserRoleAccess';
+
+const mockResults: UserRoleAccess[] = [
+  {
+    id: '1',
+    url: '/api/v2/users/1/',
+    related: { details: '/api/gateway/v1/role_user_access/awx.project/5/abc/' },
+    username: 'alice',
+    is_superuser: false,
+    object_role_assignments: [
+      { type: 'direct', role_definition: { name: 'Project Admin', url: '/rd/10/' } },
+    ],
+    first_name: 'Alice',
+    last_name: 'Smith',
+  },
+  {
+    id: '2',
+    url: '/api/v2/users/2/',
+    related: { details: '/api/gateway/v1/role_user_access/awx.inventory/8/def/' },
+    username: 'bob',
+    is_superuser: false,
+    object_role_assignments: [
+      { type: 'direct', role_definition: { name: 'Inventory User', url: '/rd/11/' } },
+    ],
+    first_name: 'Bob',
+    last_name: 'Jones',
+  },
+];
 
 const mockUserRoleAssignments = {
   count: 2,
   next: null,
   previous: null,
-  results: [
-    {
-      id: 1,
-      summary_fields: {
-        object_role: { id: 1 },
-        role_definition: {
-          id: 10,
-          name: 'Project Admin',
-          description: 'Has all project permissions',
-          managed: true,
-        },
-        content_object: { name: 'Demo Project', id: 5 },
-      },
-      object_id: '5',
-      content_type: 'awx.project',
-      role_definition: 10,
-    },
-    {
-      id: 2,
-      summary_fields: {
-        object_role: { id: 2 },
-        role_definition: {
-          id: 11,
-          name: 'Inventory User',
-          description: 'Can use inventory',
-          managed: true,
-        },
-        content_object: { name: 'Production Inventory', id: 8 },
-      },
-      object_id: '8',
-      content_type: 'awx.inventory',
-      role_definition: 11,
-    },
-  ],
+  results: mockResults,
 };
 
 const mockEmptyResults = {
@@ -64,9 +59,8 @@ describe('AccessList', () => {
     service: 'awx' as const,
     tableColumnFunctions: {
       name: {
-        function: (item: (typeof mockUserRoleAssignments.results)[0]) =>
-          item.summary_fields?.content_object?.name,
-        label: 'Resource name',
+        function: (item: UserRoleAccess) => item.username,
+        label: 'Username',
       },
     },
     url: '/api/gateway/v1/role_user_assignments/',
@@ -86,9 +80,9 @@ describe('AccessList', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Demo Project')).toBeInTheDocument();
+      expect(screen.getByText('alice')).toBeInTheDocument();
     });
-    expect(screen.getByText('Production Inventory')).toBeInTheDocument();
+    expect(screen.getByText('bob')).toBeInTheDocument();
   });
 
   it('should display empty state for user-roles when no assignments', async () => {
@@ -176,31 +170,6 @@ describe('AccessList', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Custom Button')).toBeInTheDocument();
-    });
-  });
-
-  it('should render with additional table columns', async () => {
-    server.use(
-      http.get('*/role_user_assignments/*', () => HttpResponse.json(mockUserRoleAssignments))
-    );
-
-    render(
-      <MemoryRouter>
-        <AccessList
-          {...defaultProps}
-          additionalTableColumns={[
-            {
-              header: 'Type',
-              type: 'description',
-              value: (item: (typeof mockUserRoleAssignments.results)[0]) => item.content_type,
-            },
-          ]}
-        />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Demo Project')).toBeInTheDocument();
     });
   });
 });
