@@ -131,8 +131,8 @@ jobs:
           path: coverage/combined
           retention-days: 7
           if-no-files-found: error
-      - name: Upload unit test coverage to Codecov (OIDC)
-        if: ${{ !vars.CODECOV_URL }}
+      - name: Upload coverage to Codecov (OIDC)
+        if: ${{ !vars.CODECOV_URL && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' }}
         uses: codecov/codecov-action@v5
         with:
           use_oidc: true
@@ -140,8 +140,8 @@ jobs:
           flags: unit-tests
           disable_search: true
           fail_ci_if_error: false
-      - name: Upload unit test coverage to Codecov (Token)
-        if: ${{ vars.CODECOV_URL }}
+      - name: Upload coverage to Codecov (Token)
+        if: ${{ vars.CODECOV_URL && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -151,6 +151,9 @@ jobs:
           flags: unit-tests
           disable_search: true
           fail_ci_if_error: false
+      - name: Skip Codecov upload (incomplete coverage)
+        if: ${{ needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' }}
+        run: echo "::warning::Skipping Codecov upload — one or more test shards failed. Codecov will carry forward the last complete upload."
 
   sonarqube-code-quality:
     name: Sonar (branch analysis)
