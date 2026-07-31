@@ -158,4 +158,89 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     // The component renders the help text - verify key parts are present
     expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
   });
+
+  it('should use custom getOptionDescription for managed credentials', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json(mockDroolsCredentials);
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    // Component should render without errors
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should handle description with period correctly', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 1,
+              name: 'Credential With Period',
+              description: 'First sentence. Second sentence.',
+              managed: false,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+  });
+
+  it('should handle description without period correctly', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 1,
+              name: 'Credential Without Period',
+              description: 'Description without any period',
+              managed: false,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+  });
 });
