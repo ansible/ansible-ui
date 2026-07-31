@@ -37,7 +37,8 @@ export function PageFormSingleSelectEdaResource<
   defaultSelection?: Value[];
   placeholder: string;
   helperText?: string;
-  labelHelp?: string;
+  labelHelp?: string | React.ReactNode;
+  getOptionDescription?: (resource: Resource) => string;
 }) {
   const id = useID(props);
 
@@ -72,12 +73,14 @@ export function PageFormSingleSelectEdaResource<
           options:
             response.results?.map((resource) => ({
               value: resource.id as PathValue<FormData, Name>,
-              description: resource?.description
-                ? resource.description.slice(
-                    0,
-                    resource.description.indexOf('.') || resource.description.length
-                  )
-                : '',
+              description: props.getOptionDescription
+                ? props.getOptionDescription(resource)
+                : resource?.description
+                  ? resource.description.slice(
+                      0,
+                      resource.description.indexOf('.') || resource.description.length
+                    )
+                  : '',
               label: resource.name,
             })) ?? [],
           next: response.count,
@@ -90,7 +93,7 @@ export function PageFormSingleSelectEdaResource<
         };
       }
     },
-    [props.url, props.queryParams]
+    [props.url, props.queryParams, props.getOptionDescription]
   );
 
   const [_, setDialog] = usePageDialog();

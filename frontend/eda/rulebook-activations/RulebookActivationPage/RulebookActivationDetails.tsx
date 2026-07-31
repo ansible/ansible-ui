@@ -197,7 +197,9 @@ export function RulebookActivationDetails() {
         {rulebookActivation.rule_engine_credential && (
           <PageDetail
             label={t('Event persistence credential')}
-            helpText={t('The credential used for event persistence')}
+            helpText={t(
+              'Credential the Ansible Rule Engine uses for the event persistence database. If using the platform-provided database, the default credential is selected automatically. You can select a different credential you created instead. If using an external database, select a credential you created.'
+            )}
           >
             <Label
               key={rulebookActivation.rule_engine_credential?.id}
@@ -305,9 +307,27 @@ export function RulebookActivationDetails() {
                   {t('Enable event persistence')}
                   <StandardPopover
                     header={t('Enable event persistence')}
-                    content={t(
-                      'When enabled you can select the Event-Driven Ansible Rule Engine credential to allow event persistence so that events are not lost if the rulebook activation is down or restarted. If one is not selected it will default to use the System Event-Driven Ansible Rule Engine Credential.'
-                    )}
+                    content={
+                      <>
+                        <p>
+                          {t(
+                            'Enabling event persistence stores events so they are not lost when a rulebook activation stops or restarts.'
+                          )}
+                        </p>
+                        <br />
+                        <p>
+                          {t(
+                            'If using the platform-provided persistence database, the default System Ansible Rule Engine credential is selected automatically in the credential field below. You can select a different Ansible Rule Engine credential instead if you created one.'
+                          )}
+                        </p>
+                        <br />
+                        <p>
+                          {t(
+                            'If using an external database and no credential exists yet, create an Ansible Rule Engine credential that can reach that database first.'
+                          )}
+                        </p>
+                      </>
+                    }
                   />
                 </Content>
               )}

@@ -213,6 +213,84 @@ describe('CreateRulebookActivation', () => {
   });
 });
 
+describe('ManagedCloudDeployment', () => {
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
+  it('should hide credential field when deployment_type is managed', async () => {
+    server.use(
+      http.get(edaAPI`/config/`, () => {
+        return HttpResponse.json({ deployment_type: 'managed' });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/edit']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/edit" element={<EditRulebookActivation />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Edit Test Activation/ })).toBeInTheDocument();
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.getByText(/Options/)).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    // Verify persistence checkbox is checked (from mock data)
+    await waitFor(() => {
+      const persistenceCheckbox = screen.getByRole('checkbox', {
+        name: /Enable event persistence/,
+      });
+      expect(persistenceCheckbox).toBeChecked();
+    });
+
+    // Verify credential field is NOT shown for managed deployment
+    expect(screen.queryByText(/Event persistence credential/)).not.toBeInTheDocument();
+  });
+
+  it('should show credential field when deployment_type is not managed and persistence enabled', async () => {
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/edit']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/edit" element={<EditRulebookActivation />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Edit Test Activation/ })).toBeInTheDocument();
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.getByText(/Options/)).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    // Verify persistence checkbox is checked (from mock data)
+    await waitFor(() => {
+      const persistenceCheckbox = screen.getByRole('checkbox', {
+        name: /Enable event persistence/,
+      });
+      expect(persistenceCheckbox).toBeChecked();
+    });
+
+    // Verify credential field IS shown for non-managed deployment
+    await waitFor(() => {
+      expect(screen.getByText(/Event persistence credential/)).toBeInTheDocument();
+    });
+  });
+});
+
 describe('EditRulebookActivation', () => {
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());

@@ -4,7 +4,7 @@ import { PageFormSingleSelectEdaResource } from '../../../common/PageFormSingleS
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from '../hooks/useCredentialColumns';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 
 export function PageFormRuleEngineCredentialSelect<
@@ -27,6 +27,21 @@ export function PageFormRuleEngineCredentialSelect<
     [t]
   );
 
+  const getOptionDescription = useCallback(
+    (credential: EdaCredential) => {
+      if (credential.managed) {
+        return t('Default credential provided by the database at install');
+      }
+      return credential.description
+        ? credential.description.slice(
+            0,
+            credential.description.indexOf('.') || credential.description.length
+          )
+        : '';
+    },
+    [t]
+  );
+
   return (
     <PageFormSingleSelectEdaResource<EdaCredential, TFieldValues, TFieldName>
       name={props.name}
@@ -41,7 +56,21 @@ export function PageFormRuleEngineCredentialSelect<
       queryParams={{ credential_type__namespace__in: 'drools' }}
       tableColumns={credentialColumns}
       toolbarFilters={eventPersistenceCredentialsFilter}
-      labelHelp={t('The Ansible Rule Engine credential used for event persistence.')}
+      getOptionDescription={getOptionDescription}
+      helperText={t(
+        'Create an Ansible Rule Engine credential in the Credentials page to populate this list.'
+      )}
+      labelHelp={
+        <>
+          <p>{t('Credential the Ansible Rule Engine uses for the event persistence database.')}</p>
+          <br />
+          <p>
+            {t(
+              'If using the platform-provided database, the default credential is selected automatically. You can select a different credential you created instead. If using an external database, select a credential you created.'
+            )}
+          </p>
+        </>
+      }
     />
   );
 }
