@@ -18,7 +18,7 @@ vi.mock('@patternfly/react-core', async () => {
       children: React.ReactNode;
       [key: string]: unknown;
     }) => (isOpen ? <div data-testid="mock-modal">{children}</div> : null),
-    ModalHeader: ({ title }: { title: string; labelId?: string }) => <div>{title}</div>,
+    ModalHeader: ({ title }: { title: string }) => <div>{title}</div>,
     ModalBody: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     ModalFooter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   };
