@@ -33,6 +33,7 @@ const mockEventStreams = {
 
 const mockConfig = {
   deployment_type: 'podman',
+  managed_cloud_install: false,
 };
 
 const mockProjects = {
@@ -218,10 +219,10 @@ describe('ManagedCloudDeployment', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it('should hide credential field when deployment_type is managed', async () => {
+  it('should hide credential field when managed_cloud_install is true', async () => {
     server.use(
       http.get(edaAPI`/config/`, () => {
-        return HttpResponse.json({ deployment_type: 'managed' });
+        return HttpResponse.json({ managed_cloud_install: true });
       })
     );
 
@@ -288,7 +289,7 @@ describe('ManagedCloudDeployment', () => {
     // (this tests the config && config.deployment_type check)
   });
 
-  it('should show credential field when deployment_type is not managed and persistence enabled', async () => {
+  it('should show credential field when managed_cloud_install is false and persistence enabled', async () => {
     render(
       <MemoryRouter initialEntries={['/rulebook-activations/1/edit']}>
         <Routes>

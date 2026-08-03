@@ -152,7 +152,9 @@ export function RulebookActivationInputs() {
     edaAPI`/event-streams/?test_mode=false`
   );
 
-  const { data: config } = useGet<{ deployment_type?: string }>(edaAPI`/config/`);
+  const { data: config } = useGet<{ deployment_type?: string; managed_cloud_install?: boolean }>(
+    edaAPI`/config/`
+  );
 
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
@@ -215,10 +217,10 @@ export function RulebookActivationInputs() {
   }, [getFieldState, projectId, setValue]);
 
   useEffect(() => {
-    if (!enablePersistence || config?.deployment_type === 'managed') {
+    if (!enablePersistence || config?.managed_cloud_install) {
       setValue('rule_engine_credential_id', null);
     }
-  }, [enablePersistence, config?.deployment_type, setValue]);
+  }, [enablePersistence, config?.managed_cloud_install, setValue]);
 
   return (
     <>
@@ -335,7 +337,7 @@ export function RulebookActivationInputs() {
           />
         </PageFormGroup>
       </PageFormSection>
-      {enablePersistence && config && config.deployment_type !== 'managed' && (
+      {enablePersistence && config && !config.managed_cloud_install && (
         <PageFormSection title={t('Option Details')}>
           <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs> name="rule_engine_credential_id" />
         </PageFormSection>
