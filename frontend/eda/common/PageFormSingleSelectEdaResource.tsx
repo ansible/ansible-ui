@@ -17,6 +17,14 @@ import { useTranslation } from 'react-i18next';
 import { EdaItemsResponse } from './EdaItemsResponse';
 import { useEdaView } from './useEventDrivenView';
 
+export function getDefaultResourceDescription(description: string | null | undefined): string {
+  if (!description) {
+    return '';
+  }
+  const dotIndex = description.indexOf('.');
+  return description.slice(0, dotIndex === -1 ? undefined : dotIndex);
+}
+
 export function PageFormSingleSelectEdaResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
   FormData extends FieldValues = FieldValues,
@@ -72,18 +80,16 @@ export function PageFormSingleSelectEdaResource<
         return {
           remaining: response.count - response.results.length,
           options:
-            response.results?.map((resource) => ({
-              value: resource.id as PathValue<FormData, Name>,
-              description: getOptionDescription
+            response.results?.map((resource) => {
+              const description = getOptionDescription
                 ? getOptionDescription(resource)
-                : resource?.description
-                  ? resource.description.slice(
-                      0,
-                      resource.description.indexOf('.') || resource.description.length
-                    )
-                  : '',
-              label: resource.name,
-            })) ?? [],
+                : getDefaultResourceDescription(resource?.description);
+              return {
+                value: resource.id as PathValue<FormData, Name>,
+                description,
+                label: resource.name,
+              };
+            }) ?? [],
           next: response.count,
         };
       } catch (error) {

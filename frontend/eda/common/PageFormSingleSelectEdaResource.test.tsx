@@ -5,7 +5,10 @@ import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { PageFormSingleSelectEdaResource } from './PageFormSingleSelectEdaResource';
+import {
+  getDefaultResourceDescription,
+  PageFormSingleSelectEdaResource,
+} from './PageFormSingleSelectEdaResource';
 
 interface TestResource {
   id: number;
@@ -45,6 +48,36 @@ function FormWrapper({ children }: { children: React.ReactNode }) {
 
   return <FormProvider {...methods}>{children}</FormProvider>;
 }
+
+describe('getDefaultResourceDescription', () => {
+  it('should return first sentence when description contains a period', () => {
+    expect(getDefaultResourceDescription('First sentence. Second sentence.')).toBe(
+      'First sentence'
+    );
+  });
+
+  it('should return full description when no period exists', () => {
+    expect(getDefaultResourceDescription('Description without period')).toBe(
+      'Description without period'
+    );
+  });
+
+  it('should return empty string when description is null', () => {
+    expect(getDefaultResourceDescription(null)).toBe('');
+  });
+
+  it('should return empty string when description is undefined', () => {
+    expect(getDefaultResourceDescription(undefined)).toBe('');
+  });
+
+  it('should return empty string when description is empty', () => {
+    expect(getDefaultResourceDescription('')).toBe('');
+  });
+
+  it('should handle period at the beginning', () => {
+    expect(getDefaultResourceDescription('.Starts with period')).toBe('');
+  });
+});
 
 describe('PageFormSingleSelectEdaResource', () => {
   const server = setupServer();
