@@ -5,7 +5,7 @@ import { DashboardTableCardProps, IDashboardTableItem } from '../types';
 import { PageLoadingTable } from '../../../../../framework/PageTable/PageLoadingTable';
 import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
 
-const TRUNCATED_NAME_CELL_MAX_WIDTH = 350;
+const TRUNCATED_NAME_CELL_MAX_WIDTH = 320;
 
 const truncatedNameCellStyle: React.CSSProperties = {
   maxWidth: `${TRUNCATED_NAME_CELL_MAX_WIDTH}px`,
@@ -38,30 +38,21 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
     return <div style={truncatedNameCellStyle}>{item.name}</div>;
   };
 
-  const valueCell = (item: IDashboardTableItem) => {
-    return (
-      <div
-        style={{
-          textAlign: 'right',
-        }}
-      >
-        {item?.execution_count || item.execution_count === 0
-          ? item.execution_count.toLocaleString(DEFAULT_NUMBER_LOCALE)
-          : ''}
-      </div>
-    );
-  };
+  const valueCell = (item: IDashboardTableItem) =>
+    item?.execution_count || item.execution_count === 0
+      ? item.execution_count.toLocaleString(DEFAULT_NUMBER_LOCALE)
+      : '';
 
   const tableColumns: ITableColumn<IDashboardTableItem>[] = [
     {
       header: firstColumnHeader,
       cell: nameCell,
-      maxWidth: TRUNCATED_NAME_CELL_MAX_WIDTH,
+      fullWidth: true,
     },
     {
       header: t('Total no. of jobs'),
       cell: valueCell,
-      maxWidth: 104,
+      maxWidth: 128,
     },
   ];
 
