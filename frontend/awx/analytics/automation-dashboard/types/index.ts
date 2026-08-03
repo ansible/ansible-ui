@@ -151,14 +151,9 @@ export type DashboardTableInputFieldProps = {
 };
 
 export type DashboardTableToolbarProps = {
-  isLoading: boolean;
-  itemCount: number | undefined;
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>> | undefined;
   refresh: () => Promise<void>;
-  onExportCsv?: (reportType: ReportType) => Promise<void>;
-  toolbarFilters?: IToolbarFilter[];
-  filterState?: IFilterState;
 };
 
 // ─── View Type ────────────────────────────────────────────────────────────────
