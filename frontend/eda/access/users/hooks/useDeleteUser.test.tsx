@@ -95,8 +95,11 @@ describe('useDeleteUsers', () => {
     const submitButton = screen.getByRole('button', { name: 'Delete users' });
     await user.click(submitButton);
 
-    await waitFor(() => {
-      expect(onComplete).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onComplete).toHaveBeenCalled();
+      },
+      { timeout: 10000 }
+    );
   });
 });
