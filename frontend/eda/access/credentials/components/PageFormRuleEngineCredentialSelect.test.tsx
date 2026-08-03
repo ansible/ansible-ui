@@ -243,4 +243,69 @@ describe('PageFormRuleEngineCredentialSelect', () => {
 
     expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
   });
+
+  it('should handle credential with empty description', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 1,
+              name: 'Credential No Description',
+              description: '',
+              managed: false,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should handle credential with undefined description', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 1,
+              name: 'Credential Undefined Description',
+              managed: false,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
 });

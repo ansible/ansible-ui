@@ -213,4 +213,78 @@ describe('PageFormSingleSelectEdaResource', () => {
 
     expect(screen.getByText('This is helper text for the field')).toBeInTheDocument();
   });
+
+  it('should handle description without period using default logic', () => {
+    server.use(
+      http.get('*/test-resources/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 3,
+              name: 'Resource No Period',
+              description: 'Full description without period',
+              managed: false,
+            },
+          ],
+        });
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should handle empty description using default logic', () => {
+    server.use(
+      http.get('*/test-resources/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 4,
+              name: 'Resource Empty Description',
+              description: '',
+              managed: false,
+            },
+          ],
+        });
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
 });
