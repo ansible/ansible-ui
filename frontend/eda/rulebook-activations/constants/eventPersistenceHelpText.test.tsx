@@ -1,11 +1,12 @@
 /* eslint-disable i18next/no-literal-string */
 import { render } from '@testing-library/react';
+import { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
 import { getEventPersistenceHelpText } from './eventPersistenceHelpText';
 
 describe('getEventPersistenceHelpText', () => {
   it('should return help text with three paragraphs', () => {
-    const t = (key: string) => key;
+    const t = ((key: string) => key) as unknown as TFunction;
     const helpText = getEventPersistenceHelpText(t);
 
     const { container } = render(<div>{helpText}</div>);
@@ -25,10 +26,10 @@ describe('getEventPersistenceHelpText', () => {
 
   it('should use translation function for all text', () => {
     const translations: string[] = [];
-    const mockT = (key: string) => {
+    const mockT = ((key: string) => {
       translations.push(key);
       return key;
-    };
+    }) as unknown as TFunction;
 
     const helpText = getEventPersistenceHelpText(mockT);
     render(<div>{helpText}</div>);
@@ -38,7 +39,7 @@ describe('getEventPersistenceHelpText', () => {
   });
 
   it('should return ReactNode with proper structure', () => {
-    const t = (key: string) => key;
+    const t = ((key: string) => key) as unknown as TFunction;
     const helpText = getEventPersistenceHelpText(t);
 
     const { container } = render(<div>{helpText}</div>);

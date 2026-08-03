@@ -41,19 +41,20 @@ export function PageFormSingleSelectEdaResource<
   getOptionDescription?: (resource: Resource) => string;
 }) {
   const id = useID(props);
+  const { url, queryParams: propsQueryParams, getOptionDescription } = props;
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        const baseUrl = props.url.split('?')[0];
-        const queryParams = props.url.split('?')[1];
+        const baseUrl = url.split('?')[0];
+        const queryParams = url.split('?')[1];
         const urlSearchParameters = new URLSearchParams(queryParams);
         urlSearchParameters.delete('page_size');
         urlSearchParameters.set('page_size', options?.next ? `${options.next}` : '10');
         urlSearchParameters.delete('order_by');
         urlSearchParameters.set('order_by', 'name');
-        if (props.queryParams) {
-          for (const [key, value] of Object.entries(props.queryParams)) {
+        if (propsQueryParams) {
+          for (const [key, value] of Object.entries(propsQueryParams)) {
             if (Array.isArray(value)) {
               for (const subValue of value) {
                 urlSearchParameters.set(key, subValue);
@@ -73,8 +74,8 @@ export function PageFormSingleSelectEdaResource<
           options:
             response.results?.map((resource) => ({
               value: resource.id as PathValue<FormData, Name>,
-              description: props.getOptionDescription
-                ? props.getOptionDescription(resource)
+              description: getOptionDescription
+                ? getOptionDescription(resource)
                 : resource?.description
                   ? resource.description.slice(
                       0,
@@ -93,7 +94,7 @@ export function PageFormSingleSelectEdaResource<
         };
       }
     },
-    [props.url, props.queryParams, props.getOptionDescription]
+    [url, propsQueryParams, getOptionDescription]
   );
 
   const [_, setDialog] = usePageDialog();
