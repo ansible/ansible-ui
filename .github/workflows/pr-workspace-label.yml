@@ -6,6 +6,7 @@ on:
 
 permissions:
   pull-requests: write
+  issues: write
   contents: read
 
 jobs:
@@ -17,3 +18,18 @@ jobs:
       - uses: actions/labeler@v5
         with:
           sync-labels: true
+
+      - name: Add community label for external contributors
+        if: >-
+          github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+          && github.event.pull_request.author_association != 'MEMBER'
+          && github.event.pull_request.author_association != 'COLLABORATOR'
+          && github.event.pull_request.author_association != 'OWNER'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "community" --repo "$REPO" --color "7057FF" --description "Community contribution from fork" --force 2>/dev/null || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "community"
+          echo "Labeled PR #$PR_NUMBER as community (from fork: ${{ github.event.pull_request.head.repo.full_name }})"
