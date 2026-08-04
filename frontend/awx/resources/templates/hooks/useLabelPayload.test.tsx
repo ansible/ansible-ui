@@ -114,6 +114,30 @@ describe('useLabelPayload', () => {
     expect(labelIds).toContain(999);
   });
 
+  it('should throw when template has no org and no organizations are accessible', async () => {
+    server.use(
+      http.get(awxAPI`/organizations/`, () => HttpResponse.json({ count: 0, results: [] }))
+    );
+
+    const templateNoOrg = {
+      ...mockTemplate,
+      summary_fields: {
+        ...mockTemplate.summary_fields,
+        organization: undefined,
+      },
+    } as unknown as JobTemplate;
+
+    const { result } = renderHook(() => useLabelPayload());
+
+    await waitFor(() => {
+      expect(result.current).toBeInstanceOf(Function);
+    });
+
+    await expect(result.current([{ name: 'new-label' }], templateNoOrg)).rejects.toThrow(
+      'Cannot create label: this template has no organization and no organizations are accessible.'
+    );
+  });
+
   it('should handle label creation failure gracefully', async () => {
     server.use(http.post(awxAPI`/labels/`, () => HttpResponse.json({}, { status: 500 })));
 

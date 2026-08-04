@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -109,6 +110,10 @@ const server = setupServer(
   http.get(awxAPI`/job_templates/42/`, () => HttpResponse.json(mockJobTemplate)),
   http.get(awxAPI`/job_templates/42/instance_groups/`, () =>
     HttpResponse.json({ count: 0, results: [] })
+  ),
+  http.get(
+    ({ request }) => request.url.includes('/webhook_key/'),
+    () => HttpResponse.json({ webhook_key: 'test-key' })
   )
 );
 
@@ -323,5 +328,570 @@ describe('TemplateForm - EditJobTemplate', () => {
 
     expect(screen.getByDisplayValue('5')).toBeInTheDocument();
     expect(screen.getByDisplayValue('120')).toBeInTheDocument();
+  }, 15000);
+
+  it(
+    'should fetch /organizations/ and create label when template has no org and a label is added',
+    { timeout: 30000 },
+    async () => {
+      const templateWithoutOrg = {
+        ...mockJobTemplate,
+        id: 1,
+        name: 'No Org Template',
+        summary_fields: {
+          ...mockJobTemplate.summary_fields,
+          organization: undefined,
+          labels: { count: 0, results: [] },
+        },
+      };
+      let orgFetched = false;
+      let labelPostBody: Record<string, unknown> | null = null;
+      server.use(
+        http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/job_templates/1/instance_groups/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        ),
+        http.patch(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/organizations/`, () => {
+          orgFetched = true;
+          return HttpResponse.json({ count: 1, results: [{ id: 10, name: 'Default' }] });
+        }),
+        http.post(awxAPI`/job_templates/1/labels/`, async ({ request }) => {
+          labelPostBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json(labelPostBody);
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/1/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('No Org Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      const labelsInput = screen.getByTestId('labels-input');
+      await user.click(labelsInput);
+      await user.type(labelsInput, 'new-label');
+      await user.keyboard('{Enter}');
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(orgFetched).toBe(true);
+      });
+      expect(labelPostBody).toMatchObject({ name: 'new-label', organization: 10 });
+    }
+  );
+
+  it(
+    'should not set orgId when /organizations/ returns empty results',
+    { timeout: 30000 },
+    async () => {
+      const templateWithoutOrg = {
+        ...mockJobTemplate,
+        id: 1,
+        name: 'No Org Template',
+        summary_fields: {
+          ...mockJobTemplate.summary_fields,
+          organization: undefined,
+          labels: { count: 0, results: [] },
+        },
+      };
+      let orgFetched = false;
+      let labelPostBody: Record<string, unknown> | null = null;
+      server.use(
+        http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/job_templates/1/instance_groups/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        ),
+        http.patch(awxAPI`/job_templates/1/`, () => HttpResponse.json(templateWithoutOrg)),
+        http.get(awxAPI`/organizations/`, () => {
+          orgFetched = true;
+          return HttpResponse.json({ count: 0, results: [] });
+        }),
+        http.post(awxAPI`/job_templates/1/labels/`, async ({ request }) => {
+          labelPostBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json(labelPostBody);
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/1/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('No Org Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      const labelsInput = screen.getByTestId('labels-input');
+      await user.click(labelsInput);
+      await user.type(labelsInput, 'new-label');
+      await user.keyboard('{Enter}');
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(orgFetched).toBe(true);
+      });
+      expect(labelPostBody).toMatchObject({ name: 'new-label' });
+    }
+  );
+
+  it('should render error and use instanceGroupRefresh when instance groups fetch fails', async () => {
+    server.use(
+      http.get(awxAPI`/job_templates/42/instance_groups/`, () =>
+        HttpResponse.json({ detail: 'Internal Server Error' }, { status: 500 })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/42/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
+    });
+  });
+
+  it('should render fallback title when template has no name', async () => {
+    server.use(
+      http.get(awxAPI`/job_templates/42/`, () =>
+        HttpResponse.json({ ...mockJobTemplate, name: '' })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/42/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Job Template');
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
+
+  it('should navigate when cancel is clicked in edit mode', { timeout: 15000 }, async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/42/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    await user.click(screen.getByRole('button', { name: /cancel/i }));
+  });
+
+  it('should submit edit form with non-empty skip_tags', { timeout: 30000 }, async () => {
+    const templateWithSkipTags = {
+      ...mockJobTemplate,
+      id: 100,
+      name: 'Skip Tags Template',
+      skip_tags: 'tag1,tag2',
+      summary_fields: {
+        ...mockJobTemplate.summary_fields,
+        labels: { count: 0, results: [] },
+      },
+    };
+    let patchPayload: Record<string, unknown> | null = null;
+
+    server.use(
+      http.get(awxAPI`/job_templates/100/`, () => HttpResponse.json(templateWithSkipTags)),
+      http.get(awxAPI`/job_templates/100/instance_groups/`, () =>
+        HttpResponse.json({ count: 0, results: [] })
+      ),
+      http.patch(awxAPI`/job_templates/100/`, async ({ request }) => {
+        patchPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(templateWithSkipTags);
+      })
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/100/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByDisplayValue('Skip Tags Template')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+    await waitFor(() => {
+      expect(patchPayload).not.toBeNull();
+      expect(patchPayload?.skip_tags).toBe('tag1,tag2');
+    });
+  });
+
+  it('should submit edit form with webhook_credential set', { timeout: 30000 }, async () => {
+    const templateWithWebhookCred = {
+      ...mockJobTemplate,
+      id: 101,
+      name: 'Webhook Cred Template',
+      webhook_credential: 99,
+      summary_fields: {
+        ...mockJobTemplate.summary_fields,
+        labels: { count: 0, results: [] },
+      },
+    };
+    let patchPayload: Record<string, unknown> | null = null;
+
+    server.use(
+      http.get(awxAPI`/job_templates/101/`, () => HttpResponse.json(templateWithWebhookCred)),
+      http.get(awxAPI`/job_templates/101/instance_groups/`, () =>
+        HttpResponse.json({ count: 0, results: [] })
+      ),
+      http.patch(awxAPI`/job_templates/101/`, async ({ request }) => {
+        patchPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(templateWithWebhookCred);
+      })
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/101/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByDisplayValue('Webhook Cred Template')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+    await waitFor(() => {
+      expect(patchPayload?.webhook_credential).toBe(99);
+    });
+  });
+
+  it(
+    'should submit edit form with webhook_service when webhook is enabled',
+    { timeout: 30000 },
+    async () => {
+      const templateWithWebhook = {
+        ...mockJobTemplate,
+        id: 102,
+        name: 'Webhook Template',
+        webhook_service: 'github',
+        related: {
+          ...mockJobTemplate.related,
+          webhook_receiver: '/api/v2/job_templates/102/github/',
+        },
+        summary_fields: {
+          ...mockJobTemplate.summary_fields,
+          labels: { count: 0, results: [] },
+        },
+      };
+      let patchPayload: Record<string, unknown> | null = null;
+
+      server.use(
+        http.get(awxAPI`/job_templates/102/`, () => HttpResponse.json(templateWithWebhook)),
+        http.get(awxAPI`/job_templates/102/instance_groups/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        ),
+        http.patch(awxAPI`/job_templates/102/`, async ({ request }) => {
+          patchPayload = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json(templateWithWebhook);
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/102/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('Webhook Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(patchPayload?.webhook_service).toBe('github');
+      });
+    }
+  );
+
+  it(
+    'should submit edit form with host_config_key when provisioning callback is enabled',
+    { timeout: 30000 },
+    async () => {
+      const templateWithCallback = {
+        ...mockJobTemplate,
+        id: 103,
+        name: 'Callback Template',
+        host_config_key: 'my-key-123',
+        related: {
+          ...mockJobTemplate.related,
+          callback: '/api/v2/job_templates/103/callback/',
+        },
+        summary_fields: {
+          ...mockJobTemplate.summary_fields,
+          labels: { count: 0, results: [] },
+        },
+      };
+      let patchPayload: Record<string, unknown> | null = null;
+
+      server.use(
+        http.get(awxAPI`/job_templates/103/`, () => HttpResponse.json(templateWithCallback)),
+        http.get(awxAPI`/job_templates/103/instance_groups/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        ),
+        http.patch(awxAPI`/job_templates/103/`, async ({ request }) => {
+          patchPayload = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json(templateWithCallback);
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/103/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('Callback Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(patchPayload?.host_config_key).toBe('my-key-123');
+      });
+    }
+  );
+
+  it('should submit edit form with execution_environment id', { timeout: 30000 }, async () => {
+    const templateWithEE = {
+      ...mockJobTemplate,
+      id: 104,
+      name: 'EE Template',
+      summary_fields: {
+        ...mockJobTemplate.summary_fields,
+        execution_environment: { id: 3, name: 'Default EE', description: '' },
+        labels: { count: 0, results: [] },
+      },
+    };
+    let patchPayload: Record<string, unknown> | null = null;
+
+    server.use(
+      http.get(awxAPI`/job_templates/104/`, () => HttpResponse.json(templateWithEE)),
+      http.get(awxAPI`/job_templates/104/instance_groups/`, () =>
+        HttpResponse.json({ count: 0, results: [] })
+      ),
+      http.patch(awxAPI`/job_templates/104/`, async ({ request }) => {
+        patchPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(templateWithEE);
+      })
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/104/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByDisplayValue('EE Template')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+    await waitFor(() => {
+      expect(patchPayload?.execution_environment).toBe(3);
+    });
+  });
+
+  it(
+    'should disassociate original and associate new instance groups when they differ',
+    { timeout: 30000 },
+    async () => {
+      const templateId = 105;
+      let instanceGroupsCallCount = 0;
+      const disassociateRequests: number[] = [];
+      const associateRequests: number[] = [];
+
+      server.use(
+        http.get(awxAPI`/job_templates/105/`, () =>
+          HttpResponse.json({ ...mockJobTemplate, id: templateId, name: 'IG Template' })
+        ),
+        http.get(awxAPI`/job_templates/105/instance_groups/`, () => {
+          instanceGroupsCallCount++;
+          if (instanceGroupsCallCount === 1) {
+            return HttpResponse.json({ count: 1, results: [{ id: 5, name: 'original-group' }] });
+          }
+          return HttpResponse.json({ count: 1, results: [{ id: 6, name: 'different-group' }] });
+        }),
+        http.patch(awxAPI`/job_templates/105/`, () =>
+          HttpResponse.json({ ...mockJobTemplate, id: templateId })
+        ),
+        http.post(awxAPI`/job_templates/105/instance_groups/`, async ({ request }) => {
+          const body = (await request.json()) as { id: number; disassociate?: boolean };
+          if (body.disassociate) {
+            disassociateRequests.push(body.id);
+          } else {
+            associateRequests.push(body.id);
+          }
+          return HttpResponse.json({});
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/105/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('IG Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(disassociateRequests).toContain(6);
+        expect(associateRequests).toContain(5);
+      });
+    }
+  );
+
+  it(
+    'should handle submitCredentials when template has no credentials in summary_fields',
+    { timeout: 30000 },
+    async () => {
+      const templateWithoutCredentials = {
+        ...mockJobTemplate,
+        id: 106,
+        name: 'No Cred Template',
+        summary_fields: {
+          ...mockJobTemplate.summary_fields,
+          credentials: undefined as unknown as [],
+          labels: { count: 0, results: [] },
+        },
+      };
+
+      server.use(
+        http.get(awxAPI`/job_templates/106/`, () => HttpResponse.json(templateWithoutCredentials)),
+        http.get(awxAPI`/job_templates/106/instance_groups/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        ),
+        http.patch(awxAPI`/job_templates/106/`, () => HttpResponse.json(templateWithoutCredentials))
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/106/edit']}>
+          <Routes>
+            <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('No Cred Template')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      await user.click(screen.getByRole('button', { name: /save job template/i }));
+
+      await waitFor(() => {
+        expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
+      });
+    }
+  );
+});
+
+describe('TemplateForm - CreateJobTemplate cancel', () => {
+  it('should go back when cancel is clicked in create mode', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/create']}>
+        <CreateJobTemplate />
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    await user.click(screen.getByRole('button', { name: /cancel/i }));
   }, 15000);
 });

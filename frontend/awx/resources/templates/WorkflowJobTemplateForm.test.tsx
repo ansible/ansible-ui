@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -231,6 +232,47 @@ describe('WorkflowJobTemplateForm', () => {
         expect(screen.getByText('Extra variables')).toBeInTheDocument();
       });
     });
+
+    it('should POST to /workflow_job_templates/ with null for empty job_tags, skip_tags, and webhook_credential', async () => {
+      let postBody: Record<string, unknown> | null = null;
+      server.use(
+        http.post(awxAPI`/workflow_job_templates/`, async ({ request }) => {
+          postBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({ id: 99, name: 'New Template', organization: 1 });
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <CreateWorkflowJobTemplate />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByPlaceholderText(/enter workflow job template name/i)
+        ).toBeInTheDocument();
+      });
+
+      await user.type(
+        screen.getByPlaceholderText(/enter workflow job template name/i),
+        'New Template'
+      );
+      await user.click(screen.getByRole('button', { name: /create workflow job template/i }));
+
+      await waitFor(() => {
+        expect(postBody).not.toBeNull();
+      });
+
+      // Default job_tags/skip_tags are [] → stringifyTags([]) = '' → null
+      expect(postBody).toMatchObject({
+        name: 'New Template',
+        job_tags: null,
+        skip_tags: null,
+        webhook_credential: null,
+      });
+    });
   });
 
   describe('EditWorkflowJobTemplate', () => {
@@ -322,5 +364,278 @@ describe('WorkflowJobTemplateForm', () => {
         expect(screen.getByText('Not Found')).toBeInTheDocument();
       });
     });
+
+    it(
+      'should fetch /organizations/ and create label when template has no org and a label is added',
+      { timeout: 15000 },
+      async () => {
+        const wjtWithoutOrg = {
+          ...mockWfjt,
+          id: 1,
+          name: 'Test Workflow',
+          organization: null,
+          summary_fields: {
+            ...mockWfjt.summary_fields,
+            organization: undefined,
+            labels: { count: 0, results: [] },
+          },
+        };
+        let orgFetched = false;
+        let labelPostBody: Record<string, unknown> | null = null;
+        server.use(
+          http.get(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.patch(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.get(awxAPI`/organizations/`, () => {
+            orgFetched = true;
+            return HttpResponse.json({ count: 1, results: [{ id: 20, name: 'Default' }] });
+          }),
+          http.post(awxAPI`/workflow_job_templates/1/labels/`, async ({ request }) => {
+            labelPostBody = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json(labelPostBody);
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/templates/workflow_job_template/1/edit']}>
+            <Routes>
+              <Route
+                path="/templates/workflow_job_template/:id/edit"
+                element={<EditWorkflowJobTemplate />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(
+          () => {
+            expect(screen.getByDisplayValue('Test Workflow')).toBeInTheDocument();
+          },
+          { timeout: 10000 }
+        );
+
+        const labelsInput = screen.getByTestId('labels-input');
+        await user.click(labelsInput);
+        await user.type(labelsInput, 'new-label');
+        await user.keyboard('{Enter}');
+
+        await user.click(screen.getByRole('button', { name: /save workflow job template/i }));
+
+        await waitFor(() => {
+          expect(orgFetched).toBe(true);
+        });
+        expect(labelPostBody).toMatchObject({ name: 'new-label', organization: 20 });
+      }
+    );
+
+    it(
+      'should not set orgId when /organizations/ returns empty results for WJT',
+      { timeout: 15000 },
+      async () => {
+        const wjtWithoutOrg = {
+          ...mockWfjt,
+          id: 1,
+          name: 'Test Workflow',
+          organization: null,
+          summary_fields: {
+            ...mockWfjt.summary_fields,
+            organization: undefined,
+            labels: { count: 0, results: [] },
+          },
+        };
+        let orgFetched = false;
+        let labelPostBody: Record<string, unknown> | null = null;
+        server.use(
+          http.get(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.patch(awxAPI`/workflow_job_templates/1/`, () => HttpResponse.json(wjtWithoutOrg)),
+          http.get(awxAPI`/organizations/`, () => {
+            orgFetched = true;
+            return HttpResponse.json({ count: 0, results: [] });
+          }),
+          http.post(awxAPI`/workflow_job_templates/1/labels/`, async ({ request }) => {
+            labelPostBody = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json(labelPostBody);
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/templates/workflow_job_template/1/edit']}>
+            <Routes>
+              <Route
+                path="/templates/workflow_job_template/:id/edit"
+                element={<EditWorkflowJobTemplate />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(
+          () => {
+            expect(screen.getByDisplayValue('Test Workflow')).toBeInTheDocument();
+          },
+          { timeout: 10000 }
+        );
+
+        const labelsInput = screen.getByTestId('labels-input');
+        await user.click(labelsInput);
+        await user.type(labelsInput, 'new-label');
+        await user.keyboard('{Enter}');
+
+        await user.click(screen.getByRole('button', { name: /save workflow job template/i }));
+
+        await waitFor(() => {
+          expect(orgFetched).toBe(true);
+        });
+        expect(labelPostBody).toMatchObject({ name: 'new-label' });
+      }
+    );
+
+    it(
+      'should PATCH with non-null job_tags/skip_tags and null for empty limit and scm_branch',
+      { timeout: 15000 },
+      async () => {
+        let patchBody: Record<string, unknown> | null = null;
+        server.use(
+          http.patch(awxAPI`/workflow_job_templates/10/`, async ({ request }) => {
+            patchBody = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json({ ...mockWfjt });
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/templates/workflow_job_template/10/edit']}>
+            <Routes>
+              <Route
+                path="/templates/workflow_job_template/:id/edit"
+                element={<EditWorkflowJobTemplate />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(
+          () => {
+            expect(screen.getByDisplayValue('My Workflow')).toBeInTheDocument();
+          },
+          { timeout: 10000 }
+        );
+
+        await user.click(screen.getByRole('button', { name: /save workflow job template/i }));
+
+        await waitFor(() => {
+          expect(patchBody).not.toBeNull();
+          // mockWfjt has job_tags: 'deploy' and skip_tags: 'cleanup' → stringified (non-null)
+          expect(patchBody?.job_tags).toBe('deploy');
+          expect(patchBody?.skip_tags).toBe('cleanup');
+          // mockWfjt has limit: '' and scm_branch: '' → null
+          expect(patchBody?.limit).toBeNull();
+          expect(patchBody?.scm_branch).toBeNull();
+          // mockWfjt has no inventory and no webhook_credential → null
+          expect(patchBody?.inventory).toBeNull();
+          expect(patchBody?.webhook_credential).toBeNull();
+          expect(patchBody?.webhook_service).toBe('');
+        });
+      }
+    );
+
+    it(
+      'should PATCH with null job_tags/skip_tags and non-null limit/scm_branch when template has those values',
+      { timeout: 15000 },
+      async () => {
+        const wfjtEmptyTagsWithLimit = {
+          ...mockWfjt,
+          job_tags: '',
+          skip_tags: '',
+          limit: 'host-pattern',
+          scm_branch: 'feature/test',
+        };
+        let patchBody: Record<string, unknown> | null = null;
+        server.use(
+          http.get(awxAPI`/workflow_job_templates/10/`, () =>
+            HttpResponse.json(wfjtEmptyTagsWithLimit)
+          ),
+          http.patch(awxAPI`/workflow_job_templates/10/`, async ({ request }) => {
+            patchBody = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json(wfjtEmptyTagsWithLimit);
+          })
+        );
+
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/templates/workflow_job_template/10/edit']}>
+            <Routes>
+              <Route
+                path="/templates/workflow_job_template/:id/edit"
+                element={<EditWorkflowJobTemplate />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(
+          () => {
+            expect(screen.getByDisplayValue('My Workflow')).toBeInTheDocument();
+          },
+          { timeout: 10000 }
+        );
+
+        await user.click(screen.getByRole('button', { name: /save workflow job template/i }));
+
+        await waitFor(() => {
+          expect(patchBody).not.toBeNull();
+          // Empty tags → stringifyTags([]) = '' → null
+          expect(patchBody?.job_tags).toBeNull();
+          expect(patchBody?.skip_tags).toBeNull();
+          // Non-empty limit and scm_branch → passed through as-is
+          expect(patchBody?.limit).toBe('host-pattern');
+          expect(patchBody?.scm_branch).toBe('feature/test');
+        });
+      }
+    );
+
+    it(
+      'should set isWebhookEnabled and render webhook details when webhook_receiver is present',
+      { timeout: 15000 },
+      async () => {
+        const wfjtWithWebhook = {
+          ...mockWfjt,
+          related: {
+            ...mockWfjt.related,
+            webhook_receiver: '/api/v2/workflow_job_templates/10/github/',
+          },
+        };
+        server.use(
+          http.get(awxAPI`/workflow_job_templates/10/`, () => HttpResponse.json(wfjtWithWebhook)),
+          http.get(awxAPI`/workflow_job_templates/10/webhook_key/`, () =>
+            HttpResponse.json({ webhook_key: 'test-key' })
+          )
+        );
+
+        render(
+          <MemoryRouter initialEntries={['/templates/workflow_job_template/10/edit']}>
+            <Routes>
+              <Route
+                path="/templates/workflow_job_template/:id/edit"
+                element={<EditWorkflowJobTemplate />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+
+        await waitFor(
+          () => {
+            expect(screen.getByDisplayValue('My Workflow')).toBeInTheDocument();
+          },
+          { timeout: 10000 }
+        );
+
+        // isWebhookEnabled = true because webhook_receiver is truthy → WebhookSubForm renders
+        await waitFor(() => {
+          expect(screen.getByText('Webhook details')).toBeInTheDocument();
+        });
+      }
+    );
   });
 });
