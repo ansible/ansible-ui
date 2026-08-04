@@ -42,9 +42,17 @@ export function isRequiredFilterValid(filter: IToolbarFilter, filterState: IFilt
   // Custom date range requires 2 values: ['custom', 'start_date']
   // (end_date will default to the current date)
   // or 3 values: ['custom', 'start_date', 'end_date']
+  // In both cases, start_date must not be after end_date — ISO date strings
+  // compare correctly with simple string comparison.
   if (filter.type === ToolbarFilterType.DateRange && values[0] === 'custom') {
-    if (values.length === 2) return isIsoDateString(values[1]);
-    if (values.length === 3) return isIsoDateString(values[1]) && isIsoDateString(values[2]);
+    if (values.length === 2) {
+      if (!isIsoDateString(values[1])) return false;
+      return values[1] <= yyyyMMddFormat(new Date());
+    }
+    if (values.length === 3) {
+      if (!isIsoDateString(values[1]) || !isIsoDateString(values[2])) return false;
+      return values[1] <= values[2];
+    }
     return false;
   }
 
