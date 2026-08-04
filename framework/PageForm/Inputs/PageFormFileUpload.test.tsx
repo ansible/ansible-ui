@@ -102,4 +102,46 @@ describe('PageFormFileUpload', () => {
     await user.click(screen.getByRole('button', { name: /clear/i }));
     expect(textarea).toHaveValue('');
   });
+
+  it('Should display helper text', () => {
+    render(
+      <TestWrapper defaultValue={{ file: '' }}>
+        <PageFormFileUpload
+          name="file"
+          label="File upload"
+          helperText="Supported formats: YAML, JSON"
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Supported formats: YAML, JSON')).toBeInTheDocument();
+  });
+
+  it('Should render with icon prop', () => {
+    render(
+      <TestWrapper defaultValue={{ file: '' }}>
+        <PageFormFileUpload
+          name="file"
+          label="File upload"
+          icon={<span data-testid="custom-icon">Icon</span>}
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
+  });
+
+  it('Should render with additionalHelperText', () => {
+    render(
+      <TestWrapper defaultValue={{ file: '' }}>
+        <PageFormFileUpload
+          name="file"
+          label="File upload"
+          additionalHelperText={<span>Extra helper info</span>}
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Extra helper info')).toBeInTheDocument();
+  });
 });
