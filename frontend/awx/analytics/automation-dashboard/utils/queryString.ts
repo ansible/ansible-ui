@@ -9,7 +9,7 @@ import {
 import { isValidDate, yyyyMMddFormat } from '@patternfly/react-core';
 
 function isIsoDateString(value: string): boolean {
-  const date = new Date(value);
+  const date = new Date(`${value}T00:00:00`);
   return isValidDate(date) && yyyyMMddFormat(date) === value;
 }
 
