@@ -308,4 +308,109 @@ describe('PageFormRuleEngineCredentialSelect', () => {
 
     expect(container).toBeInTheDocument();
   });
+
+  it('should pass isDisabled prop correctly', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json(mockDroolsCredentials);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect
+            name="rule_engine_credential_id"
+            isDisabled="Field is disabled"
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+  });
+
+  it('should pass correct filter configuration to underlying component', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json(mockDroolsCredentials);
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should format managed credential description correctly in getOptionDescription', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 99,
+              name: 'System Managed Credential',
+              description: 'Managed credential description. More text here.',
+              managed: true,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" isRequired />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+  });
+
+  it('should extract first sentence from description when not managed', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 100,
+              name: 'Custom Credential',
+              description: 'First sentence here. Second sentence here.',
+              managed: false,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+  });
 });

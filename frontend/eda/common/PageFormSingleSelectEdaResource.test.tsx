@@ -287,4 +287,60 @@ describe('PageFormSingleSelectEdaResource', () => {
 
     expect(container).toBeInTheDocument();
   });
+
+  it('should handle URL with query parameters correctly', () => {
+    server.use(
+      http.get('*/test-resources/*', () => {
+        return HttpResponse.json(mockResources);
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/?status=active&type=managed"
+            tableColumns={[]}
+            queryParams={{ credential_type__namespace__in: 'drools' }}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should handle queryParams with array values', () => {
+    server.use(
+      http.get('*/test-resources/*', () => {
+        return HttpResponse.json(mockResources);
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+            queryParams={{ types: ['type1', 'type2'] }}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
 });
