@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -86,9 +87,10 @@ describe('PageFormSingleSelectEdaResource', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it('should use default description when getOptionDescription is not provided', () => {
+  it('should render default descriptions from resource when dropdown is opened', async () => {
+    const user = userEvent.setup();
     server.use(
-      http.get('*/test-resources/*', () => {
+      http.get('*/test-resources/', () => {
         return HttpResponse.json(mockResources);
       })
     );
@@ -110,21 +112,29 @@ describe('PageFormSingleSelectEdaResource', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Test Resource')).toBeInTheDocument();
+    await user.click(screen.getByTestId('test-resource-select'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Regular Resource')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('This is a regular resource')).toBeInTheDocument();
+    expect(screen.getByText('This is managed')).toBeInTheDocument();
   });
 
   it('should use custom getOptionDescription when provided', async () => {
+    const user = userEvent.setup();
     server.use(
-      http.get('*/test-resources/*', () => {
+      http.get('*/test-resources/', () => {
         return HttpResponse.json(mockResources);
       })
     );
 
     const customDescriptionFn = (resource: TestResource) => {
       if (resource.managed) {
-        return 'Default credential provided by the database at install';
+        return 'Custom managed description';
       }
-      return resource.description.split('.')[0];
+      return 'Custom: ' + resource.name;
     };
 
     render(
@@ -145,14 +155,255 @@ describe('PageFormSingleSelectEdaResource', () => {
       </MemoryRouter>
     );
 
+    await user.click(screen.getByTestId('test-resource-select'));
+
     await waitFor(() => {
-      expect(screen.getByText('Test Resource')).toBeInTheDocument();
+      expect(screen.getByText('Regular Resource')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Custom: Regular Resource')).toBeInTheDocument();
+    expect(screen.getByText('Custom managed description')).toBeInTheDocument();
+  });
+
+  it('should handle resources with empty description', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/test-resources/', () => {
+        return HttpResponse.json({
+          count: 2,
+          results: [
+            {
+              id: 4,
+              name: 'No Description Resource',
+              description: '',
+              managed: false,
+            },
+            {
+              id: 5,
+              name: 'With Description',
+              description: 'A valid description. More text.',
+              managed: false,
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('test-resource-select'));
+
+    await waitFor(() => {
+      expect(screen.getByText('No Description Resource')).toBeInTheDocument();
+    });
+    expect(screen.getByText('A valid description')).toBeInTheDocument();
+  });
+
+  it('should handle resources with undefined description', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/test-resources/', () => {
+        return HttpResponse.json({
+          count: 2,
+          results: [
+            {
+              id: 5,
+              name: 'Undefined Description Resource',
+            },
+            {
+              id: 6,
+              name: 'Another Resource',
+              description: 'Has a description. With more text.',
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('test-resource-select'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Undefined Description Resource')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Has a description')).toBeInTheDocument();
+  });
+
+  it('should apply queryParams to the request', async () => {
+    const user = userEvent.setup();
+    let requestUrl = '';
+    server.use(
+      http.get('*/test-resources/', ({ request }) => {
+        requestUrl = request.url;
+        return HttpResponse.json(mockResources);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+            queryParams={{ credential_type__namespace__in: 'drools' }}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('test-resource-select'));
+
+    await waitFor(() => {
+      expect(requestUrl).toContain('credential_type__namespace__in=drools');
+    });
+  });
+
+  it('should apply array queryParams to the request', async () => {
+    const user = userEvent.setup();
+    let requestUrl = '';
+    server.use(
+      http.get('*/test-resources/', ({ request }) => {
+        requestUrl = request.url;
+        return HttpResponse.json(mockResources);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+            queryParams={{ types: ['type1', 'type2'] }}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('test-resource-select'));
+
+    await waitFor(() => {
+      expect(requestUrl).toContain('types=');
+    });
+  });
+
+  it('should handle URL with existing query parameters', async () => {
+    const user = userEvent.setup();
+    let requestUrl = '';
+    server.use(
+      http.get('*/test-resources/', ({ request }) => {
+        requestUrl = request.url;
+        return HttpResponse.json(mockResources);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/?status=active"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('test-resource-select'));
+
+    await waitFor(() => {
+      expect(requestUrl).toContain('status=active');
+    });
+    expect(requestUrl).toContain('page_size=');
+    expect(requestUrl).toContain('order_by=name');
+  });
+
+  it('should handle API error gracefully by returning empty options', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/test-resources/', () => {
+        return HttpResponse.error();
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('test-resource-select'));
+
+    // The queryOptions catch block returns empty options, which the framework
+    // handles - since the promise resolves (not rejects), the framework shows
+    // no options available rather than an error state.
+    await waitFor(() => {
+      expect(screen.queryByText('Regular Resource')).not.toBeInTheDocument();
     });
   });
 
   it('should support React.ReactNode for labelHelp', () => {
     server.use(
-      http.get('*/test-resources/*', () => {
+      http.get('*/test-resources/', () => {
         return HttpResponse.json(mockResources);
       })
     );
@@ -188,7 +439,7 @@ describe('PageFormSingleSelectEdaResource', () => {
 
   it('should render helperText when provided', () => {
     server.use(
-      http.get('*/test-resources/*', () => {
+      http.get('*/test-resources/', () => {
         return HttpResponse.json(mockResources);
       })
     );
@@ -214,11 +465,12 @@ describe('PageFormSingleSelectEdaResource', () => {
     expect(screen.getByText('This is helper text for the field')).toBeInTheDocument();
   });
 
-  it('should handle description without period using default logic', () => {
+  it('should handle description without period using default logic', async () => {
+    const user = userEvent.setup();
     server.use(
-      http.get('*/test-resources/*', () => {
+      http.get('*/test-resources/', () => {
         return HttpResponse.json({
-          count: 1,
+          count: 2,
           results: [
             {
               id: 3,
@@ -226,41 +478,10 @@ describe('PageFormSingleSelectEdaResource', () => {
               description: 'Full description without period',
               managed: false,
             },
-          ],
-        });
-      })
-    );
-
-    const { container } = render(
-      <MemoryRouter>
-        <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
-            name="resource_id"
-            id="test-resource-select"
-            label="Test Resource"
-            placeholder="Select a resource"
-            queryPlaceholder="Loading resources..."
-            queryErrorText="Error loading resources"
-            url="/api/eda/v1/test-resources/"
-            tableColumns={[]}
-          />
-        </FormWrapper>
-      </MemoryRouter>
-    );
-
-    expect(container).toBeInTheDocument();
-  });
-
-  it('should handle empty description using default logic', () => {
-    server.use(
-      http.get('*/test-resources/*', () => {
-        return HttpResponse.json({
-          count: 1,
-          results: [
             {
               id: 4,
-              name: 'Resource Empty Description',
-              description: '',
+              name: 'Resource With Period',
+              description: 'First sentence. Second sentence.',
               managed: false,
             },
           ],
@@ -268,7 +489,7 @@ describe('PageFormSingleSelectEdaResource', () => {
       })
     );
 
-    const { container } = render(
+    render(
       <MemoryRouter>
         <FormWrapper>
           <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
@@ -285,125 +506,12 @@ describe('PageFormSingleSelectEdaResource', () => {
       </MemoryRouter>
     );
 
-    expect(container).toBeInTheDocument();
-  });
+    await user.click(screen.getByTestId('test-resource-select'));
 
-  it('should handle URL with query parameters correctly', () => {
-    server.use(
-      http.get('*/test-resources/*', () => {
-        return HttpResponse.json(mockResources);
-      })
-    );
-
-    const { container } = render(
-      <MemoryRouter>
-        <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
-            name="resource_id"
-            id="test-resource-select"
-            label="Test Resource"
-            placeholder="Select a resource"
-            queryPlaceholder="Loading resources..."
-            queryErrorText="Error loading resources"
-            url="/api/eda/v1/test-resources/?status=active&type=managed"
-            tableColumns={[]}
-            queryParams={{ credential_type__namespace__in: 'drools' }}
-          />
-        </FormWrapper>
-      </MemoryRouter>
-    );
-
-    expect(container).toBeInTheDocument();
-  });
-
-  it('should handle queryParams with array values', () => {
-    server.use(
-      http.get('*/test-resources/*', () => {
-        return HttpResponse.json(mockResources);
-      })
-    );
-
-    const { container } = render(
-      <MemoryRouter>
-        <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
-            name="resource_id"
-            id="test-resource-select"
-            label="Test Resource"
-            placeholder="Select a resource"
-            queryPlaceholder="Loading resources..."
-            queryErrorText="Error loading resources"
-            url="/api/eda/v1/test-resources/"
-            tableColumns={[]}
-            queryParams={{ types: ['type1', 'type2'] }}
-          />
-        </FormWrapper>
-      </MemoryRouter>
-    );
-
-    expect(container).toBeInTheDocument();
-  });
-
-  it('should handle API error and return empty options', () => {
-    server.use(
-      http.get('*/test-resources/*', () => {
-        return HttpResponse.json({}, { status: 500 });
-      })
-    );
-
-    const { container } = render(
-      <MemoryRouter>
-        <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
-            name="resource_id"
-            id="test-resource-select"
-            label="Test Resource"
-            placeholder="Select a resource"
-            queryPlaceholder="Loading resources..."
-            queryErrorText="Error loading resources"
-            url="/api/eda/v1/test-resources/"
-            tableColumns={[]}
-          />
-        </FormWrapper>
-      </MemoryRouter>
-    );
-
-    expect(container).toBeInTheDocument();
-  });
-
-  it('should handle undefined description in resource', () => {
-    server.use(
-      http.get('*/test-resources/*', () => {
-        return HttpResponse.json({
-          count: 1,
-          results: [
-            {
-              id: 5,
-              name: 'No Description Resource',
-              managed: false,
-            },
-          ],
-        });
-      })
-    );
-
-    const { container } = render(
-      <MemoryRouter>
-        <FormWrapper>
-          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
-            name="resource_id"
-            id="test-resource-select"
-            label="Test Resource"
-            placeholder="Select a resource"
-            queryPlaceholder="Loading resources..."
-            queryErrorText="Error loading resources"
-            url="/api/eda/v1/test-resources/"
-            tableColumns={[]}
-          />
-        </FormWrapper>
-      </MemoryRouter>
-    );
-
-    expect(container).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Resource No Period')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Full description without period')).toBeInTheDocument();
+    expect(screen.getByText('First sentence')).toBeInTheDocument();
   });
 });
