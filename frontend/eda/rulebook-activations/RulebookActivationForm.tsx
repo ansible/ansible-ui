@@ -25,6 +25,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
+import { getEventPersistenceHelpText } from './constants/eventPersistenceHelpText';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { PageFormRuleEngineCredentialSelect } from '../access/credentials/components/PageFormRuleEngineCredentialSelect';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
@@ -151,7 +152,9 @@ export function RulebookActivationInputs() {
     edaAPI`/event-streams/?test_mode=false`
   );
 
-  const { data: config } = useGet<{ deployment_type?: string }>(edaAPI`/config/`);
+  const { data: config } = useGet<{ deployment_type?: string; managed_cloud_install?: boolean }>(
+    edaAPI`/config/`
+  );
 
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
@@ -214,10 +217,10 @@ export function RulebookActivationInputs() {
   }, [getFieldState, projectId, setValue]);
 
   useEffect(() => {
-    if (!enablePersistence) {
+    if (!enablePersistence || config?.managed_cloud_install) {
       setValue('rule_engine_credential_id', null);
     }
-  }, [enablePersistence, setValue]);
+  }, [enablePersistence, config?.managed_cloud_install, setValue]);
 
   return (
     <>
@@ -329,14 +332,12 @@ export function RulebookActivationInputs() {
           <PageFormCheckbox
             label={t`Enable event persistence`}
             labelHelpTitle={t('Enable event persistence')}
-            labelHelp={t(
-              'When enabled you can select the Event-Driven Ansible Rule Engine credential to allow event persistence so that events are not lost if the rulebook activation is down or restarted. If one is not selected it will default to use the System Event-Driven Ansible Rule Engine Credential.'
-            )}
+            labelHelp={getEventPersistenceHelpText(t)}
             name="enable_persistence"
           />
         </PageFormGroup>
       </PageFormSection>
-      {enablePersistence && (
+      {enablePersistence && config && !config.managed_cloud_install && (
         <PageFormSection title={t('Option Details')}>
           <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs> name="rule_engine_credential_id" />
         </PageFormSection>
