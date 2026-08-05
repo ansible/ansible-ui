@@ -100,7 +100,7 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
       expect(screen.getByRole('heading', { name: 'Create new report' })).toBeInTheDocument();
     });
 
-    test('should show "Edit report" title when editing an existing filter set', async () => {
+    test('should show "Update report" title when editing an existing filter set', async () => {
       const user = userEvent.setup();
       render(
         <Wrapper>
@@ -110,7 +110,7 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
 
       await user.click(screen.getByRole('button', { name: 'Open dialog' }));
 
-      expect(screen.getByText('Edit report')).toBeInTheDocument();
+      expect(screen.getByText('Update report')).toBeInTheDocument();
     });
 
     test('should communicate that both name and filter state will be saved when editing', async () => {

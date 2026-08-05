@@ -49,7 +49,7 @@ function getEditDisabledReason(
   t: (key: string) => string
 ): string | undefined {
   if (superuserDisabledReason) return superuserDisabledReason;
-  if (!validFilters) return t('Enter a valid custom date range before saving');
+  if (!validFilters) return t('Enter a valid custom date range before updating');
   return undefined;
 }
 
@@ -114,7 +114,7 @@ export function useAutomationDashboardToolbarActions(props: {
                   type: PageActionType.Button,
                   icon: PencilAltIcon,
                   selection: PageActionSelection.None,
-                  label: t('Edit report'),
+                  label: t('Update report'),
                   isDisabled: editDisabledReason,
                   onClick: () =>
                     filterState && selectedFilterSet

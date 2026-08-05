@@ -107,7 +107,7 @@ export function useCreateEditToolbarFilterSetDialog(
     (filterState: IFilterState, filterSet: IDashboardFilterSet) => {
       const newFilterSet = { ...filterSet, filters: JSON.stringify(filterState) };
       const isCreate = filterSet.id === undefined;
-      const title = isCreate ? t('Create new report') : t('Edit report');
+      const title = isCreate ? t('Create new report') : t('Update report');
       const description = isCreate
         ? t('Save the current filter configuration as a new report.')
         : t('This will update the report with the current name and filter configuration.');
