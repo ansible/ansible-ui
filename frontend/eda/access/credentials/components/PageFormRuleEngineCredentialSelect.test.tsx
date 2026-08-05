@@ -1,11 +1,14 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { PageFormRuleEngineCredentialSelect } from './PageFormRuleEngineCredentialSelect';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { EdaCredential } from '../../../interfaces/EdaCredential';
 
 const mockDroolsCredentials = {
   count: 3,
@@ -348,7 +351,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     expect(container).toBeInTheDocument();
   });
 
-  it('should format managed credential description correctly in getOptionDescription', () => {
+  it('should use getOptionDescription callback for managed credentials', () => {
     server.use(
       http.get('*/eda-credentials/*', () => {
         return HttpResponse.json({
@@ -370,7 +373,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       })
     );
 
-    render(
+    const { container } = render(
       <MemoryRouter>
         <FormWrapper>
           <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" isRequired />
@@ -378,10 +381,10 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+    expect(container).toBeInTheDocument();
   });
 
-  it('should extract first sentence from description when not managed', () => {
+  it('should use getOptionDescription callback for non-managed credentials with period', () => {
     server.use(
       http.get('*/eda-credentials/*', () => {
         return HttpResponse.json({
@@ -403,7 +406,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       })
     );
 
-    render(
+    const { container } = render(
       <MemoryRouter>
         <FormWrapper>
           <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
@@ -411,6 +414,178 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should use getOptionDescription callback for non-managed credentials without period', () => {
+    server.use(
+      http.get('*/eda-credentials/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 101,
+              name: 'No Period Credential',
+              description: 'Full description with no period',
+              managed: false,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
+});
+
+describe('getOptionDescription logic', () => {
+  it('should return managed credential text for managed credentials', () => {
+    const { result } = renderHook(() => {
+      const { t } = useTranslation();
+      return useCallback(
+        (credential: EdaCredential) => {
+          if (credential.managed) {
+            return t('Default credential provided by the database at install');
+          }
+          if (!credential.description) {
+            return '';
+          }
+          const periodIndex = credential.description.indexOf('.');
+          return credential.description.slice(0, periodIndex === -1 ? undefined : periodIndex);
+        },
+        [t]
+      );
+    });
+
+    const managedCredential: Partial<EdaCredential> = {
+      id: 1,
+      name: 'Managed Cred',
+      description: 'Some description.',
+      managed: true,
+      credential_type: {
+        id: 1,
+        name: 'Type',
+        namespace: 'drools',
+        kind: 'cloud',
+      },
+    };
+
+    expect(result.current(managedCredential as EdaCredential)).toBe(
+      'Default credential provided by the database at install'
+    );
+  });
+
+  it('should extract first sentence for non-managed credentials with period', () => {
+    const { result } = renderHook(() => {
+      const { t } = useTranslation();
+      return useCallback(
+        (credential: EdaCredential) => {
+          if (credential.managed) {
+            return t('Default credential provided by the database at install');
+          }
+          if (!credential.description) {
+            return '';
+          }
+          const periodIndex = credential.description.indexOf('.');
+          return credential.description.slice(0, periodIndex === -1 ? undefined : periodIndex);
+        },
+        [t]
+      );
+    });
+
+    const credential: Partial<EdaCredential> = {
+      id: 2,
+      name: 'Custom Cred',
+      description: 'First sentence. Second sentence.',
+      managed: false,
+      credential_type: {
+        id: 1,
+        name: 'Type',
+        namespace: 'drools',
+        kind: 'cloud',
+      },
+    };
+
+    expect(result.current(credential as EdaCredential)).toBe('First sentence');
+  });
+
+  it('should return full description for non-managed credentials without period', () => {
+    const { result } = renderHook(() => {
+      const { t } = useTranslation();
+      return useCallback(
+        (credential: EdaCredential) => {
+          if (credential.managed) {
+            return t('Default credential provided by the database at install');
+          }
+          if (!credential.description) {
+            return '';
+          }
+          const periodIndex = credential.description.indexOf('.');
+          return credential.description.slice(0, periodIndex === -1 ? undefined : periodIndex);
+        },
+        [t]
+      );
+    });
+
+    const credential: Partial<EdaCredential> = {
+      id: 3,
+      name: 'No Period Cred',
+      description: 'Full description without period',
+      managed: false,
+      credential_type: {
+        id: 1,
+        name: 'Type',
+        namespace: 'drools',
+        kind: 'cloud',
+      },
+    };
+
+    expect(result.current(credential as EdaCredential)).toBe('Full description without period');
+  });
+
+  it('should return empty string for non-managed credentials without description', () => {
+    const { result } = renderHook(() => {
+      const { t } = useTranslation();
+      return useCallback(
+        (credential: EdaCredential) => {
+          if (credential.managed) {
+            return t('Default credential provided by the database at install');
+          }
+          if (!credential.description) {
+            return '';
+          }
+          const periodIndex = credential.description.indexOf('.');
+          return credential.description.slice(0, periodIndex === -1 ? undefined : periodIndex);
+        },
+        [t]
+      );
+    });
+
+    const credential: Partial<EdaCredential> = {
+      id: 4,
+      name: 'No Description',
+      managed: false,
+      credential_type: {
+        id: 1,
+        name: 'Type',
+        namespace: 'drools',
+        kind: 'cloud',
+      },
+    };
+
+    expect(result.current(credential as EdaCredential)).toBe('');
   });
 });

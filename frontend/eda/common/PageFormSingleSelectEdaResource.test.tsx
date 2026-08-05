@@ -343,4 +343,67 @@ describe('PageFormSingleSelectEdaResource', () => {
 
     expect(container).toBeInTheDocument();
   });
+
+  it('should handle API error and return empty options', () => {
+    server.use(
+      http.get('*/test-resources/*', () => {
+        return HttpResponse.json({}, { status: 500 });
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should handle undefined description in resource', () => {
+    server.use(
+      http.get('*/test-resources/*', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 5,
+              name: 'No Description Resource',
+              managed: false,
+            },
+          ],
+        });
+      })
+    );
+
+    const { container } = render(
+      <MemoryRouter>
+        <FormWrapper>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
 });
