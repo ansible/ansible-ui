@@ -5,47 +5,42 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { describe, expect, test } from 'vitest';
 import { PageFormTextArea } from './PageFormTextArea';
 
+function DefaultWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+  const methods = useForm({ defaultValues: { description: '' } });
+  return (
+    <FormProvider {...methods}>
+      <form>{children}</form>
+    </FormProvider>
+  );
+}
+
 describe('PageFormTextArea', () => {
   describe('basic rendering', () => {
     test('should render a textarea with label', () => {
-      function Wrapper() {
-        const methods = useForm({ defaultValues: { description: '' } });
-        return (
-          <FormProvider {...methods}>
-            <form>
-              <PageFormTextArea name="description" label="Description" />
-            </form>
-          </FormProvider>
-        );
-      }
-
-      render(<Wrapper />);
+      render(
+        <DefaultWrapper>
+          <PageFormTextArea name="description" label="Description" />
+        </DefaultWrapper>
+      );
       expect(screen.getByText('Description')).toBeInTheDocument();
     });
 
     test('should render with placeholder', () => {
-      function Wrapper() {
-        const methods = useForm({ defaultValues: { description: '' } });
-        return (
-          <FormProvider {...methods}>
-            <form>
-              <PageFormTextArea
-                name="description"
-                label="Description"
-                placeholder="Enter description"
-              />
-            </form>
-          </FormProvider>
-        );
-      }
-
-      const { container } = render(<Wrapper />);
+      const { container } = render(
+        <DefaultWrapper>
+          <PageFormTextArea
+            name="description"
+            label="Description"
+            placeholder="Enter description"
+          />
+        </DefaultWrapper>
+      );
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
       expect(textarea).toHaveAttribute('placeholder', 'Enter description');
     });
 
     test('should render with default value', () => {
-      function Wrapper() {
+      function WrapperWithDefault() {
         const methods = useForm({ defaultValues: { description: 'Default text' } });
         return (
           <FormProvider {...methods}>
@@ -56,30 +51,23 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
+      const { container } = render(<WrapperWithDefault />);
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
       expect(textarea).toHaveValue('Default text');
     });
 
     test('should render disabled textarea', () => {
-      function Wrapper() {
-        const methods = useForm({ defaultValues: { description: '' } });
-        return (
-          <FormProvider {...methods}>
-            <form>
-              <PageFormTextArea name="description" label="Description" isDisabled />
-            </form>
-          </FormProvider>
-        );
-      }
-
-      const { container } = render(<Wrapper />);
+      const { container } = render(
+        <DefaultWrapper>
+          <PageFormTextArea name="description" label="Description" isDisabled />
+        </DefaultWrapper>
+      );
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
       expect(textarea).toBeDisabled();
     });
 
     test('should render read-only textarea', () => {
-      function Wrapper() {
+      function WrapperWithReadOnly() {
         const methods = useForm({ defaultValues: { description: 'Read Only' } });
         return (
           <FormProvider {...methods}>
@@ -90,7 +78,7 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
+      const { container } = render(<WrapperWithReadOnly />);
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
       expect(textarea).toHaveValue('Read Only');
       expect(textarea).toHaveAttribute('readonly');
@@ -101,18 +89,11 @@ describe('PageFormTextArea', () => {
     test('should trim leading whitespace on input', async () => {
       const user = userEvent.setup();
 
-      function Wrapper() {
-        const methods = useForm({ defaultValues: { description: '' } });
-        return (
-          <FormProvider {...methods}>
-            <form>
-              <PageFormTextArea name="description" label="Description" />
-            </form>
-          </FormProvider>
-        );
-      }
-
-      const { container } = render(<Wrapper />);
+      const { container } = render(
+        <DefaultWrapper>
+          <PageFormTextArea name="description" label="Description" />
+        </DefaultWrapper>
+      );
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
       await user.type(textarea, '  hello');
 
@@ -126,7 +107,7 @@ describe('PageFormTextArea', () => {
     test('should validate minLength', async () => {
       const user = userEvent.setup();
 
-      function Wrapper() {
+      function ValidationWrapper() {
         const methods = useForm({ defaultValues: { description: '' }, mode: 'onChange' });
         return (
           <FormProvider {...methods}>
@@ -137,7 +118,7 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
+      const { container } = render(<ValidationWrapper />);
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
       await user.type(textarea, 'short');
 
@@ -149,7 +130,7 @@ describe('PageFormTextArea', () => {
     test('should validate maxLength', async () => {
       const user = userEvent.setup();
 
-      function Wrapper() {
+      function ValidationWrapper() {
         const methods = useForm({ defaultValues: { description: '' }, mode: 'onChange' });
         return (
           <FormProvider {...methods}>
@@ -160,7 +141,7 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
+      const { container } = render(<ValidationWrapper />);
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
       await user.type(textarea, 'this is way too long');
 
@@ -172,22 +153,15 @@ describe('PageFormTextArea', () => {
 
   describe('helper text', () => {
     test('should display helper text', () => {
-      function Wrapper() {
-        const methods = useForm({ defaultValues: { description: '' } });
-        return (
-          <FormProvider {...methods}>
-            <form>
-              <PageFormTextArea
-                name="description"
-                label="Description"
-                helperText="Enter a description"
-              />
-            </form>
-          </FormProvider>
-        );
-      }
-
-      render(<Wrapper />);
+      render(
+        <DefaultWrapper>
+          <PageFormTextArea
+            name="description"
+            label="Description"
+            helperText="Enter a description"
+          />
+        </DefaultWrapper>
+      );
       expect(screen.getByText('Enter a description')).toBeInTheDocument();
     });
   });
