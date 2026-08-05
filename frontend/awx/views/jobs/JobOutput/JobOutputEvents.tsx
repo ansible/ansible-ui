@@ -1,5 +1,5 @@
 import { type IFilterState, type IToolbarFilter } from '@ansible/ansible-ui-framework';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PageControls } from '../../../../common/PageControls';
 import { useVirtualizedList } from '../../../../common/utils/useVirtualized';
@@ -50,9 +50,16 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const [hostModalData, setHostModalData] = useState<IJobOutputRow | null>(null);
   const isFiltered = Object.keys(filterState).length > 0;
 
+  const wasRunningOnMount = useRef(isJobRunning(job.status));
+  useEffect(() => {
+    if (isJobRunning(job.status)) {
+      wasRunningOnMount.current = true;
+    }
+  }, [job.status]);
+
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
     job,
-    isJobRunning(job.status) || isFiltered
+    wasRunningOnMount.current || isFiltered
   );
   const { jobEventCount, getJobOutputEvent, queryJobOutputEvent, jobEvents } = useJobOutput(
     job,
