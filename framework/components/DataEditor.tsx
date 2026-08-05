@@ -209,7 +209,7 @@ const EditorPaddingBottom = 6;
 const EditorPadding = EditorPaddingTop + EditorPaddingBottom;
 
 // Set up Monaco editor json language support
-monaco.json.jsonDefaults.setDiagnosticsOptions({ validate: true });
+monaco.json?.jsonDefaults?.setDiagnosticsOptions({ validate: true });
 
 // Set up Monaco editor yaml language support
 configureMonacoYaml(monaco, {

@@ -6,12 +6,12 @@ import { vi } from 'vitest';
 
 // Mock monaco-editor to avoid resolution issues in tests
 vi.mock('monaco-editor', () => ({
-  languages: {
-    json: {
-      jsonDefaults: {
-        setDiagnosticsOptions: vi.fn(),
-      },
+  json: {
+    jsonDefaults: {
+      setDiagnosticsOptions: vi.fn(),
     },
+  },
+  languages: {
     register: vi.fn(),
     setMonarchTokensProvider: vi.fn(),
   },
