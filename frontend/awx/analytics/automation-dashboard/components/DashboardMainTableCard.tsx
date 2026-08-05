@@ -273,7 +273,6 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       id={'ad-main-table-card'}
       title={t('Cost calculation')}
       width="xxl"
-      isCompact
       canCollapse={false}
       disableBodyPadding
       style={{ gridColumn: `span ${MAIN_TABLE_FULL_SPAN}` }}
