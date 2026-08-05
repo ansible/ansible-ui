@@ -56,12 +56,6 @@ export default defineConfig({
       },
     },
     // found at: https://github.com/vitest-dev/vitest/discussions/1806
-    alias: [
-      ...getVitestAliases(),
-      {
-        find: /^monaco-editor$/,
-        replacement: __dirname + '/../node_modules/monaco-editor/esm/vs/editor/editor.api',
-      },
-    ],
+    alias: getVitestAliases(),
   },
 });

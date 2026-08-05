@@ -44,8 +44,12 @@ const config: VitestUserConfig = {
     svgr(),
     monacoEditorPluginDefault({
       publicPath: '/',
-      languageWorkers: ['json', 'editorWorkerService'],
-      customWorkers: [{ label: 'yaml', entry: 'monaco-yaml' }],
+      languageWorkers: [],
+      customWorkers: [
+        { label: 'editorWorkerService', entry: 'monaco-editor/editor/editor.worker' },
+        { label: 'json', entry: 'monaco-editor/language/json/json.worker' },
+        { label: 'yaml', entry: 'monaco-yaml' },
+      ],
     }),
     viteStaticCopy({ targets: [{ src: '../locales', dest: '' }] }) as PluginOption,
     compression(),
@@ -109,13 +113,7 @@ const config: VitestUserConfig = {
         inline: ['@patternfly/react-styles'],
       },
     },
-    alias: [
-      ...getVitestAliases(),
-      {
-        find: /^monaco-editor$/,
-        replacement: __dirname + '/../node_modules/monaco-editor/esm/vs/editor/editor.api',
-      },
-    ],
+    alias: getVitestAliases(),
   },
 };
 
