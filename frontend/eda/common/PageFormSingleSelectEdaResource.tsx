@@ -17,6 +17,14 @@ import { useTranslation } from 'react-i18next';
 import { EdaItemsResponse } from './EdaItemsResponse';
 import { useEdaView } from './useEventDrivenView';
 
+export function getDefaultResourceDescription(description: string | null | undefined): string {
+  if (!description) {
+    return '';
+  }
+  const dotIndex = description.indexOf('.');
+  return description.slice(0, dotIndex === -1 ? undefined : dotIndex);
+}
+
 export function PageFormSingleSelectEdaResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
   FormData extends FieldValues = FieldValues,
@@ -37,22 +45,24 @@ export function PageFormSingleSelectEdaResource<
   defaultSelection?: Value[];
   placeholder: string;
   helperText?: string;
-  labelHelp?: string;
+  labelHelp?: string | React.ReactNode;
+  getOptionDescription?: (resource: Resource) => string;
 }) {
   const id = useID(props);
+  const { url, queryParams: propsQueryParams, getOptionDescription } = props;
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        const baseUrl = props.url.split('?')[0];
-        const queryParams = props.url.split('?')[1];
+        const baseUrl = url.split('?')[0];
+        const queryParams = url.split('?')[1];
         const urlSearchParameters = new URLSearchParams(queryParams);
         urlSearchParameters.delete('page_size');
         urlSearchParameters.set('page_size', options?.next ? `${options.next}` : '10');
         urlSearchParameters.delete('order_by');
         urlSearchParameters.set('order_by', 'name');
-        if (props.queryParams) {
-          for (const [key, value] of Object.entries(props.queryParams)) {
+        if (propsQueryParams) {
+          for (const [key, value] of Object.entries(propsQueryParams)) {
             if (Array.isArray(value)) {
               for (const subValue of value) {
                 urlSearchParameters.set(key, subValue);
@@ -70,16 +80,16 @@ export function PageFormSingleSelectEdaResource<
         return {
           remaining: response.count - response.results.length,
           options:
-            response.results?.map((resource) => ({
-              value: resource.id as PathValue<FormData, Name>,
-              description: resource?.description
-                ? resource.description.slice(
-                    0,
-                    resource.description.indexOf('.') || resource.description.length
-                  )
-                : '',
-              label: resource.name,
-            })) ?? [],
+            response.results?.map((resource) => {
+              const description = getOptionDescription
+                ? getOptionDescription(resource)
+                : getDefaultResourceDescription(resource?.description);
+              return {
+                value: resource.id as PathValue<FormData, Name>,
+                description,
+                label: resource.name,
+              };
+            }) ?? [],
           next: response.count,
         };
       } catch (error) {
@@ -90,7 +100,7 @@ export function PageFormSingleSelectEdaResource<
         };
       }
     },
-    [props.url, props.queryParams]
+    [url, propsQueryParams, getOptionDescription]
   );
 
   const [_, setDialog] = usePageDialog();
