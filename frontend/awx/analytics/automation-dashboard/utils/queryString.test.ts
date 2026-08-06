@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   IFilterState,
   IToolbarDateRangeFilter,
@@ -605,6 +605,40 @@ describe('queryString', () => {
       expect(
         isRequiredFilterValid(requiredDateRangeFilter, { period: ['custom', '2024-13-45'] })
       ).toBe(false);
+    });
+
+    describe('timezones west of UTC', () => {
+      const originalTz = process.env.TZ;
+
+      beforeEach(() => {
+        process.env.TZ = 'America/Los_Angeles'; // UTC-8
+      });
+
+      afterEach(() => {
+        process.env.TZ = originalTz;
+      });
+
+      test('should return true for a required custom DateRange filter with a valid ISO start date', () => {
+        expect(
+          isRequiredFilterValid(requiredDateRangeFilter, { period: ['custom', '2024-01-01'] })
+        ).toBe(true);
+      });
+
+      test('should return true for a required custom DateRange filter with valid ISO start and end dates', () => {
+        expect(
+          isRequiredFilterValid(requiredDateRangeFilter, {
+            period: ['custom', '2024-01-01', '2024-01-31'],
+          })
+        ).toBe(true);
+      });
+
+      test('should return true for dates spanning a UTC day boundary (Dec 31 / Jan 1)', () => {
+        expect(
+          isRequiredFilterValid(requiredDateRangeFilter, {
+            period: ['custom', '2023-12-31', '2024-01-01'],
+          })
+        ).toBe(true);
+      });
     });
   });
 
