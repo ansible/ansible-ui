@@ -64,7 +64,7 @@ jobs:
         run: npm ci
       - name: Run vitest
         working-directory: ${{ inputs.directory }}
-        run: npx vitest run ${{ inputs.coverage && '--coverage' || '' }} ${{ matrix.subdirectory }}
+        run: npx vitest run ${{ inputs.coverage && '--coverage' || '' }} --dir ${{ matrix.subdirectory }}
       - name: Upload coverage artifact
         if: ${{ inputs.coverage && always() }}
         uses: actions/upload-artifact@v4
