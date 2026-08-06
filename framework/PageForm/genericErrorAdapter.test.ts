@@ -203,4 +203,17 @@ describe('genericErrorAdapter', () => {
       ],
     });
   });
+
+  it('should skip non-string values in json non_field_errors array', () => {
+    const error = {
+      json: {
+        non_field_errors: ['Valid generic', 42, undefined, 'Another generic'],
+      },
+    };
+    const result = genericErrorAdapter(error);
+    expect(result).toEqual({
+      genericErrors: [{ message: 'Valid generic' }, { message: 'Another generic' }],
+      fieldErrors: [],
+    });
+  });
 });

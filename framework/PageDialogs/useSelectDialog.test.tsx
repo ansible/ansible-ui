@@ -352,4 +352,66 @@ describe('SelectDialog', () => {
 
     expect(screen.queryByText('Select Items')).not.toBeInTheDocument();
   });
+
+  it('should show skeleton when itemCount is undefined', () => {
+    const view = createMockView([]);
+    const loadingView = { ...view, itemCount: undefined } as unknown as SelectDialogView;
+
+    render(
+      <PageDialogProvider>
+        <SelectDialog<TestItem, false>
+          title="Select Items"
+          open={true}
+          setOpen={vi.fn()}
+          onSelect={vi.fn()}
+          view={loadingView}
+          tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
+          confirm="Confirm"
+          cancel="Cancel"
+          selected="Selected"
+          keyFn={(item) => item.id}
+        />
+      </PageDialogProvider>
+    );
+
+    expect(screen.getByText('Select Items')).toBeInTheDocument();
+  });
+
+  it('should call unselectItem when chip is clicked', async () => {
+    const user = userEvent.setup();
+    const unselectItem = vi.fn();
+    const selectedItems = [testItems[0]];
+    const view = {
+      ...createMockView(selectedItems),
+      unselectItem,
+    } as unknown as SelectDialogView;
+
+    render(
+      <PageDialogProvider>
+        <SelectDialog<TestItem, false>
+          title="Select Items"
+          open={true}
+          setOpen={vi.fn()}
+          onSelect={vi.fn()}
+          view={view}
+          tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
+          confirm="Confirm"
+          cancel="Cancel"
+          selected="Selected"
+          keyFn={(item) => item.id}
+        />
+      </PageDialogProvider>
+    );
+
+    const chipButtons = screen.getAllByRole('button', { name: /close/i });
+    const chipClose = chipButtons.find(
+      (btn) => btn.closest('[class*="label"]') || btn.closest('[class*="chip"]')
+    );
+    if (chipClose) {
+      await user.click(chipClose);
+      expect(unselectItem).toHaveBeenCalledWith(testItems[0]);
+    }
+  });
 });

@@ -2,7 +2,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { PageFormTextArea } from './PageFormTextArea';
 
 function DefaultWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -163,6 +163,58 @@ describe('PageFormTextArea', () => {
         </DefaultWrapper>
       );
       expect(screen.getByText('Enter a description')).toBeInTheDocument();
+    });
+  });
+
+  describe('select lookup button', () => {
+    test('should render lookup button when selectTitle is provided', () => {
+      function WrapperWithSelect() {
+        const methods = useForm({ defaultValues: { description: '' } });
+        return (
+          <FormProvider {...methods}>
+            <form>
+              <PageFormTextArea
+                name="description"
+                label="Description"
+                selectTitle="Browse"
+                selectOpen={() => undefined}
+                selectValue={() => 'selected-value'}
+              />
+            </form>
+          </FormProvider>
+        );
+      }
+
+      render(<WrapperWithSelect />);
+      expect(screen.getByRole('button', { name: 'Options menu' })).toBeInTheDocument();
+    });
+
+    test('should call selectOpen when lookup button is clicked', async () => {
+      const user = userEvent.setup();
+      const selectOpen = vi.fn((callback: (item: { value: string }) => void) => {
+        callback({ value: 'selected-value' });
+      });
+
+      function WrapperWithSelect() {
+        const methods = useForm({ defaultValues: { description: '' } });
+        return (
+          <FormProvider {...methods}>
+            <form>
+              <PageFormTextArea
+                name="description"
+                label="Description"
+                selectTitle="Browse"
+                selectOpen={selectOpen}
+                selectValue={(item: { value: string }) => item.value}
+              />
+            </form>
+          </FormProvider>
+        );
+      }
+
+      render(<WrapperWithSelect />);
+      await user.click(screen.getByRole('button', { name: 'Options menu' }));
+      expect(selectOpen).toHaveBeenCalledWith(expect.any(Function), 'Browse');
     });
   });
 });
