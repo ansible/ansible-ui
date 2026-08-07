@@ -23,7 +23,7 @@ export const useProcessSchedule = () => {
       const { resourceId, resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
       const ruleset = getRuleSet(rules, exceptions);
 
-      let rrule = ruleset.toString().split('\n').join(' ');
+      let rrule = ruleset.toString().replaceAll('\n', ' ');
 
       // RFC5545: When DTSTART has TZID, UNTIL must be in UTC with Z suffix
       // The rrule library strips the Z suffix when serializing, so we add it back
