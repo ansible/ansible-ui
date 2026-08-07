@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-exports */
+// noop: trigger e2e run
 import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
