@@ -275,4 +275,78 @@ describe('PageAsyncSingleSelect', () => {
       expect(screen.getByRole('button', { name: 'Alpha' })).toBeInTheDocument();
     });
   });
+
+  it('should show Load more button and load additional options', async () => {
+    const user = userEvent.setup();
+    render(<PageAsyncSingleSelectTest queryOptions={asyncSelectTestQuery} />);
+
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: 'Load more' })).toBeInTheDocument();
+    expect(screen.getByText(/Loaded \d+ of \d+/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Load more' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Option 11')).toBeInTheDocument();
+    });
+  });
+
+  it('should show Browse button when onBrowse is provided', async () => {
+    const user = userEvent.setup();
+    const onBrowse = vi.fn();
+
+    render(<PageAsyncSingleSelectTest queryOptions={asyncSelectTestQuery} onBrowse={onBrowse} />);
+
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Browse' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Browse' }));
+    expect(onBrowse).toHaveBeenCalled();
+  });
+
+  it('should show custom error text when queryErrorText is a string', async () => {
+    const user = userEvent.setup();
+    render(
+      <PageAsyncSingleSelectTest
+        queryOptions={async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1));
+          throw new Error('API Error');
+        }}
+        queryErrorText="Custom error message"
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Custom error message')).toBeInTheDocument();
+    });
+  });
+
+  it('should show custom error text from function when queryErrorText is a function', async () => {
+    const user = userEvent.setup();
+    render(
+      <PageAsyncSingleSelectTest
+        queryOptions={async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1));
+          throw new Error('Specific API Error');
+        }}
+        queryErrorText={(err) => `Failed: ${err.message}`}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed: Specific API Error')).toBeInTheDocument();
+    });
+  });
 });
