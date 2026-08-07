@@ -6,7 +6,7 @@ test.afterEach(setupAfter);
 test.setTimeout(2 * 60 * 1000);
 test.skip(
   'chatbot - should display the Chatbot, add a question and hide',
-  { tag: [] },
+  { tag: ['@tier1'] },
   async ({ page }) => {
     test.setTimeout(8 * 60 * 1000);
     await Lightspeed.mock.healthStatus(page, 200, {
@@ -34,7 +34,7 @@ test.skip(
 
 test(
   'chatbot - the chatbot badge is not displayed when the chatbot service is disabled',
-  { tag: [] },
+  { tag: ['@tier1'] },
   async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
     await Lightspeed.mock.healthStatus(page, 200, {
@@ -51,7 +51,7 @@ test(
 
 test(
   'chatbot - the chatbot badge is not displayed when health status request return an error',
-  { tag: [] },
+  { tag: ['@tier1'] },
   async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
     await Lightspeed.mock.healthStatus(page, 200, {
