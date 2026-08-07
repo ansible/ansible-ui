@@ -85,9 +85,9 @@ describe('InventorySourceDetails', () => {
     expect(screen.getByText('inventory/aws.yml')).toBeInTheDocument();
   });
 
-  it('should render "/ (project root)" when source_path is empty', () => {
+  it('should render ". (project root)" when source_path is empty', () => {
     renderComponent(makeSource({ source_path: '' }));
-    expect(screen.getByText('/ (project root)')).toBeInTheDocument();
+    expect(screen.getByText('. (project root)')).toBeInTheDocument();
   });
 
   it('should render the verbosity string', () => {
