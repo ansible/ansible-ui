@@ -6,7 +6,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/require-await */
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -22,32 +21,19 @@ vi.mock('@ansible/common-ui/crud/useGet', () => ({
 }));
 
 // Mock PageFormSingleSelectEdaResource to simplify dropdown testing
-vi.mock('../../../common/PageFormSingleSelectEdaResource', async () => {
-  const actual = await vi.importActual<typeof import('react-hook-form')>('react-hook-form');
-  return {
-    PageFormSingleSelectEdaResource: ({
-      name,
-      label,
-      placeholder,
-      helperText,
-      isDisabled,
-    }: any) => {
-      const { useFormContext } = actual;
-      const { watch } = useFormContext();
-      const value = watch(name);
-
-      return (
-        <div>
-          <label htmlFor={name}>{label}</label>
-          <select id={name} data-testid="rule-engine-credential-select" disabled={!!isDisabled}>
-            <option value="">{placeholder}</option>
-          </select>
-          {helperText && <div data-testid="helper-text">{helperText}</div>}
-        </div>
-      );
-    },
-  };
-});
+vi.mock('../../../common/PageFormSingleSelectEdaResource', () => ({
+  PageFormSingleSelectEdaResource: ({ name, label, placeholder, helperText, isDisabled }: any) => {
+    return (
+      <div>
+        <label htmlFor={name}>{label}</label>
+        <select id={name} data-testid="rule-engine-credential-select" disabled={!!isDisabled}>
+          <option value="">{placeholder}</option>
+        </select>
+        {helperText && <div data-testid="helper-text">{helperText}</div>}
+      </div>
+    );
+  },
+}));
 
 const mockDroolsCredentials = {
   count: 3,
@@ -305,9 +291,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     expect(toggle).toBeDisabled();
   });
 
-  it('should filter credentials by drools namespace', async () => {
-    const user = userEvent.setup();
-
+  it('should filter credentials by drools namespace', () => {
     render(
       <FormWrapper>
         <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
