@@ -4,6 +4,7 @@ import { clickTableRowAction } from '../../../../../../commands/clickTableRowAct
 import { clearTableFilters } from '../../../../../../commands/clearTableFilters';
 import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../../../commands/createE2EName';
+import { fillMonacoEditor } from '../../../../../../commands/fillMonacoEditor';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
 import { Organization, Inventory, InstanceGroup } from '@ansible/playwright/utils';
 
@@ -73,8 +74,7 @@ test.describe('Regular Inventory', () => {
           page.getByRole('heading', { name: `Edit ${inventoryName}`, exact: true })
         ).toBeVisible();
 
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(TEST_VAR_EDITED);
+        await fillMonacoEditor(page, TEST_VAR_EDITED);
         await page.getByRole('button', { name: 'Save inventory' }).click();
 
         await expect(page.getByTestId('name')).toHaveText(inventoryName);

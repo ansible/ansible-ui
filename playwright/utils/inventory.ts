@@ -9,6 +9,7 @@ import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 
@@ -207,8 +208,7 @@ export const Inventory = {
 
       // Variables
       if (options.variables) {
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.variables);
+        await fillMonacoEditor(page, options.variables);
       }
 
       // Prevent instance group fallback
@@ -298,8 +298,7 @@ export const Inventory = {
 
       // source vars
       if (options.sourceVars) {
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.sourceVars);
+        await fillMonacoEditor(page, options.sourceVars);
       }
 
       // label

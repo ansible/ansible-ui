@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { getTableRow } from '../commands/getTableRow';
 import { navigateTo } from '../commands/navigateTo';
 import { InventoryGroup as InventoryGroupType } from '@ansible/awx-ui/interfaces/InventoryGroup';
@@ -62,7 +63,7 @@ export const InventoryGroup = {
         await page.getByRole('textbox', { name: 'Description' }).fill(options.description);
       }
       if (options.variables) {
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.variables);
+        await fillMonacoEditor(page, options.variables);
       }
       await page.getByRole('button', { name: 'Create group' }).click();
       await expect(page.getByRole('heading', { name: groupName, exact: true })).toBeVisible();

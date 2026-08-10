@@ -7,6 +7,7 @@ import type { WorkflowNode } from '@ansible/awx-ui/interfaces/WorkflowNode';
 import { awxAPI } from '@ansible/playwright/commands/apiClient';
 import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -241,7 +242,7 @@ test.describe('Workflow Visualizer - Job Output', () => {
         await page.getByRole('button', { name: 'Next' }).click();
 
         // Add extra variables
-        await page.getByRole('textbox', { name: 'Editor content' }).fill('foo: bar');
+        await fillMonacoEditor(page, 'foo: bar');
         await page.getByRole('button', { name: 'Next' }).click();
 
         // Verify extra vars are shown in review step
