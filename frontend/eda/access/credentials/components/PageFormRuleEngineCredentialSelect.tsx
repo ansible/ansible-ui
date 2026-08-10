@@ -1,11 +1,13 @@
-import { FieldPath, FieldValues } from 'react-hook-form';
+import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormSingleSelectEdaResource } from '../../../common/PageFormSingleSelectEdaResource';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from '../hooks/useCredentialColumns';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { EdaItemsResponse } from '../../../common/EdaItemsResponse';
 
 export function PageFormRuleEngineCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -13,6 +15,14 @@ export function PageFormRuleEngineCredentialSelect<
 >(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string }) {
   const { t } = useTranslation();
   const credentialColumns = useCredentialColumns({ disableLinks: true });
+  const { setValue, watch } = useFormContext<TFieldValues>();
+  const currentValue = watch(props.name);
+
+  // Fetch credentials to check count and find managed credential
+  const { data: credentialsData, isLoading } = useGet<EdaItemsResponse<EdaCredential>>(
+    edaAPI`/eda-credentials/`,
+    { credential_type__namespace__in: 'drools' }
+  );
 
   const eventPersistenceCredentialsFilter = useMemo<IToolbarFilter[]>(
     () => [
@@ -41,6 +51,23 @@ export function PageFormRuleEngineCredentialSelect<
     [t]
   );
 
+  // Auto-select the managed credential on mount if no value is set
+  useEffect(() => {
+    if (!currentValue && credentialsData?.results) {
+      const managedCredential = credentialsData.results.find((cred) => cred.managed);
+      if (managedCredential) {
+        setValue(props.name, managedCredential.id as never, {
+          shouldValidate: false,
+          shouldDirty: false,
+        });
+      }
+    }
+  }, [currentValue, credentialsData, setValue, props.name]);
+
+  // Only show helper text when there are no credentials (and data has loaded)
+  const hasCredentials = !isLoading && (credentialsData?.count ?? 0) > 0;
+  const shouldShowHelperText = !isLoading && !hasCredentials;
+
   return (
     <PageFormSingleSelectEdaResource<EdaCredential, TFieldValues, TFieldName>
       name={props.name}
@@ -56,9 +83,13 @@ export function PageFormRuleEngineCredentialSelect<
       tableColumns={credentialColumns}
       toolbarFilters={eventPersistenceCredentialsFilter}
       getOptionDescription={getOptionDescription}
-      helperText={t(
-        'Create an Ansible Rule Engine credential in the Credentials page to populate this list.'
-      )}
+      helperText={
+        shouldShowHelperText
+          ? t(
+              'Create an Ansible Rule Engine credential in the Credentials page to populate this list.'
+            )
+          : undefined
+      }
       labelHelp={
         <>
           <p>{t('Credential the Ansible Rule Engine uses for the event persistence database.')}</p>
