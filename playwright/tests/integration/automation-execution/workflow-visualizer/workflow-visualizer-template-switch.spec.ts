@@ -567,8 +567,8 @@ test.describe('Workflow Visualizer - Template Switch', () => {
 
       // Navigate to Prompts then wait for the extra_vars editor to clear.
       await page.getByRole('button', { name: 'Prompts' }).click();
-      await expect(page.getByRole('textbox', { name: 'Editor content' })).not.toHaveValue(
-        /old_var/,
+      await expect(page.locator('.monaco-editor .view-lines').first()).not.toContainText(
+        'old_var',
         { timeout: 15000 }
       );
 
