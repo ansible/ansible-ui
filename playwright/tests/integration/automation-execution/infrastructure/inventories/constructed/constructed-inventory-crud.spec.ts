@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import { clickPageAction } from '../../../../../../commands/clickPageAction';
 import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../../../commands/createE2EName';
+import { fillMonacoEditor } from '../../../../../../commands/fillMonacoEditor';
 import { filterTableByText } from '../../../../../../commands/filterTableByText';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
@@ -112,9 +113,7 @@ test.describe('Constructed Inventory', () => {
         // Edit description and source vars
         await page.getByPlaceholder('Enter description').clear();
         await page.getByPlaceholder('Enter description').fill(description);
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).clear();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill('plugin: constructed');
+        await fillMonacoEditor(page, 'plugin: constructed');
         await page.getByRole('button', { name: 'Save inventory' }).click();
 
         // Verify changes were saved

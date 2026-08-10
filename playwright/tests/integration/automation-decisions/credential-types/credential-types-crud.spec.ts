@@ -1,6 +1,7 @@
 import type { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -32,11 +33,11 @@ test.describe('EDA Credential Types - CRUD Operations', () => {
       await test.step('Verify error on invalid input configuration', async () => {
         await page.getByPlaceholder('Enter credential type name').fill(name);
         await page.getByPlaceholder('Enter description').fill('temp');
-        await page.locator('.view-lines').first().click();
-        await page
-          .locator('#inputs')
-          .getByRole('textbox', { name: 'Editor content' })
-          .fill('random');
+        await fillMonacoEditor(
+          page,
+          'random',
+          page.locator('#inputs').getByRole('textbox', { name: 'Editor content' })
+        );
         await page.getByRole('button', { name: 'Create credential type' }).click();
         await expect(page.getByText('schema must be in dict format')).toBeVisible();
       });
@@ -46,16 +47,12 @@ test.describe('EDA Credential Types - CRUD Operations', () => {
         await page.getByPlaceholder('Enter credential type name').fill(name);
         await page.getByPlaceholder('Enter description').clear();
         await page.getByPlaceholder('Enter description').fill('This is a custom Credential Type.');
-        const inputsEditor = page
-          .locator('#inputs')
-          .getByRole('textbox', { name: 'Editor content' });
-        await page.locator('#inputs').locator('.view-lines').first().click();
-        await inputsEditor.press('ControlOrMeta+a');
-        await inputsEditor.press('Delete');
-        await inputsEditor.fill(
+        await fillMonacoEditor(
+          page,
           JSON.stringify({
             fields: [{ id: 'username', type: 'string', label: 'Username' }],
-          })
+          }),
+          page.locator('#inputs').getByRole('textbox', { name: 'Editor content' })
         );
       });
 
