@@ -3,6 +3,7 @@ import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { navigateTo } from '../commands/navigateTo';
 import { Inventory } from './inventory';
 import { JobTemplate } from './jobTemplate';
@@ -76,9 +77,11 @@ export const Schedule = {
         }
         if (options.extraVars) {
           await expect(page.getByText('Variables')).toBeVisible();
-          await page.locator('.view-lines').first().click();
-          const varsEditor = page.locator('.monaco-editor').first().getByRole('textbox');
-          await varsEditor.fill(options.extraVars);
+          await fillMonacoEditor(
+            page,
+            options.extraVars,
+            page.locator('.monaco-editor').first().getByRole('textbox')
+          );
         }
         await page.getByRole('button', { name: 'Next' }).click();
       }
