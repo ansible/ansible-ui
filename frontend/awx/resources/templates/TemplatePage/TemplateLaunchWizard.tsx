@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { SurveyStep, getSurveyPages, getSurveyPageLabel } from '../../../common/SurveyStep';
+import { pruneSurveyByConditions } from '../../../common/useSurveyConditions';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
@@ -100,9 +101,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
     error: getLaunchError,
     refresh: getLaunchRefresh,
   } = useGet<LaunchConfiguration>(awxAPI`/${jobType}/${resourceId}/launch/`);
-  const { data: surveySpec } = useGet<Survey>(
-    awxAPI`/${jobType}/${resourceId}/survey_spec/`
-  );
+  const { data: surveySpec } = useGet<Survey>(awxAPI`/${jobType}/${resourceId}/survey_spec/`);
   const error = getTemplateError || getLaunchError;
   const refresh = getTemplateRefresh || getLaunchRefresh;
   const getJobOutputUrl = useGetJobOutputUrl();
@@ -168,9 +167,10 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           const extraVarsObj = prompt?.extra_vars
             ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
             : {};
+          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, extraVarsObj);
           setValue('extra_vars', {
             ...extraVarsObj,
-            ...survey,
+            ...visibleSurvey,
           });
         }
 
@@ -178,10 +178,11 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           const extraVarsObj = prompt?.extra_vars
             ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
             : {};
+          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, extraVarsObj);
 
           payload = {
             ...payload,
-            extra_vars: { ...extraVarsObj, ...survey },
+            extra_vars: { ...extraVarsObj, ...visibleSurvey },
           };
         }
 
@@ -242,16 +243,31 @@ export function LaunchWizard({
     if (!config?.survey_enabled || !surveySpec?.spec || surveySpec.spec.length === 0) return [];
     const pages = getSurveyPages(surveySpec.spec);
     if (pages.length <= 1) {
-      return [{
-        id: 'survey',
-        label: getSurveyPageLabel(surveySpec.spec, pages[0] ?? 1),
-        inputs: <SurveyStep jobType={jobType} templateId={template.id.toString()} surveySpecData={surveySpec} />,
-      }];
+      return [
+        {
+          id: 'survey',
+          label: getSurveyPageLabel(surveySpec.spec, pages[0] ?? 1),
+          inputs: (
+            <SurveyStep
+              jobType={jobType}
+              templateId={template.id.toString()}
+              surveySpecData={surveySpec}
+            />
+          ),
+        },
+      ];
     }
     return pages.map((pageNum) => ({
       id: `survey_page_${pageNum}`,
       label: getSurveyPageLabel(surveySpec.spec, pageNum),
-      inputs: <SurveyStep jobType={jobType} templateId={template.id.toString()} pageNumber={pageNum} surveySpecData={surveySpec} />,
+      inputs: (
+        <SurveyStep
+          jobType={jobType}
+          templateId={template.id.toString()}
+          pageNumber={pageNum}
+          surveySpecData={surveySpec}
+        />
+      ),
     }));
   }, [config?.survey_enabled, surveySpec, jobType, template, t]);
 
