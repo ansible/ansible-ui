@@ -304,4 +304,94 @@ debug_mode: true         # Enable debugging`;
     expect(backToYaml).toContain('# Extra variables for this job template');
     expect(backToYaml).toContain('# Enable debugging');
   });
+
+  test('should show copy button by default', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" />
+      </TestWrapper>
+    );
+
+    expect(screen.getByRole('button', { name: /copy to clipboard/i })).toBeInTheDocument();
+  });
+
+  test('should hide copy button when disableCopy is true', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" disableCopy />
+      </TestWrapper>
+    );
+
+    expect(screen.queryByRole('button', { name: /copy to clipboard/i })).not.toBeInTheDocument();
+  });
+
+  test('should show upload button by default', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" />
+      </TestWrapper>
+    );
+
+    expect(screen.getByRole('button', { name: /upload from file/i })).toBeInTheDocument();
+  });
+
+  test('should hide upload button when disableUpload is true', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" disableUpload />
+      </TestWrapper>
+    );
+
+    expect(screen.queryByRole('button', { name: /upload from file/i })).not.toBeInTheDocument();
+  });
+
+  test('should show download button by default', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" />
+      </TestWrapper>
+    );
+
+    expect(screen.getByRole('button', { name: /download file/i })).toBeInTheDocument();
+  });
+
+  test('should hide download button when disableDownload is true', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject>
+          label="Editor"
+          name="data"
+          format="object"
+          disableDownload
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
+  });
+
+  test('should start collapsed when defaultCollapsed is true', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject>
+          label="Editor"
+          name="data"
+          format="object"
+          defaultCollapsed
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.queryByTestId('data-editor')).not.toBeInTheDocument();
+  });
+
+  test('should start expanded when defaultCollapsed is not set', () => {
+    render(
+      <TestWrapper defaultValue={{ data: { test: 1 } }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" />
+      </TestWrapper>
+    );
+
+    expect(screen.getByTestId('data-editor')).toBeInTheDocument();
+  });
 });
