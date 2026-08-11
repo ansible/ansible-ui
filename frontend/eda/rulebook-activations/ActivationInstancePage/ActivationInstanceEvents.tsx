@@ -2,9 +2,8 @@ import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { useScrollControls } from '@ansible/awx-ui/views/jobs/JobOutput/useScrollControls';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { useGet } from '@ansible/common-ui/crud/useGet';
 import { PageSection } from '@patternfly/react-core';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useVirtualizedList } from '../../..//common/utils/useVirtualized';
@@ -13,6 +12,9 @@ import { PageControls } from '../../../common/PageControls';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
 import { ActivationInstanceOutputRow } from './ActivationInstanceOutputRow';
+
+const INITIAL_PAGE_SIZE = 5000;
+const POLL_INTERVAL_MS = 5000;
 
 const ScrollContainer = styled.div`
   overflow: auto;
@@ -38,57 +40,122 @@ interface IActivationInstanceEventsProps {
 }
 
 export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) {
-  const [activationInstanceLog, setActivationInstanceLog] =
-    useState<AwxItemsResponse<EdaActivationInstanceLog>>();
+  const [logs, setLogs] = useState<EdaActivationInstanceLog[]>([]);
+  const [hasOlderLogs, setHasOlderLogs] = useState(false);
+  const latestTimestampRef = useRef<number>(0);
 
   const params = useParams<{ instanceId: string }>();
   const { toolbarFilters, filterState, isFollowModeEnabled, setIsFollowModeEnabled, isRunning } =
     props;
 
-  const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`
-  );
+  const buildFilterString = useCallback(() => {
+    return getFiltersQueryString(toolbarFilters, filterState);
+  }, [toolbarFilters, filterState]);
 
   useEffect(() => {
-    async function fetchData() {
-      const filterString = getFiltersQueryString(toolbarFilters, filterState);
-      const qsParts = [`page_size=${activationInstanceLogInfo?.count.toString() ?? '10'}`];
+    async function initialLoad() {
+      const filterString = buildFilterString();
+      const qsParts = [`page_size=${INITIAL_PAGE_SIZE}`, 'ordering=-id'];
       if (filterString) {
         qsParts.push(filterString);
       }
-      const activationInstanceLogOutput = await requestGet<
-        AwxItemsResponse<EdaActivationInstanceLog>
-      >(
+      const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
         edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
           `?${qsParts.join('&')}`
         )
       );
 
-      setActivationInstanceLog(activationInstanceLogOutput);
+      const results = [...(response.results ?? [])].reverse();
+      setLogs(results);
+      setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
+
+      if (results.length > 0) {
+        const lastLog = results[results.length - 1];
+        latestTimestampRef.current = lastLog.log_timestamp ?? 0;
+      }
     }
 
-    void fetchData();
-  }, [params.instanceId, activationInstanceLogInfo?.count, toolbarFilters, filterState]);
+    void initialLoad();
+  }, [params.instanceId, buildFilterString]);
 
-  const estimatedMaxLines = (activationInstanceLog?.results.length ?? 0) * 10;
+  useEffect(() => {
+    if (!isRunning && !isFollowModeEnabled) return;
+
+    const interval = setInterval(async () => {
+      if (latestTimestampRef.current === 0) return;
+
+      const filterString = buildFilterString();
+      const qsParts = [
+        `log_timestamp__gt=${latestTimestampRef.current}`,
+        `page_size=${INITIAL_PAGE_SIZE}`,
+      ];
+      if (filterString) {
+        qsParts.push(filterString);
+      }
+
+      const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+        edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
+          `?${qsParts.join('&')}`
+        )
+      );
+
+      const newLogs = response.results ?? [];
+      if (newLogs.length > 0) {
+        setLogs((prev) => [...prev, ...newLogs]);
+        const lastLog = newLogs[newLogs.length - 1];
+        latestTimestampRef.current = lastLog.log_timestamp ?? latestTimestampRef.current;
+      }
+    }, POLL_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [params.instanceId, isRunning, isFollowModeEnabled, buildFilterString]);
+
+  const loadOlderLogs = useCallback(async () => {
+    if (logs.length === 0 || !hasOlderLogs) return;
+
+    const oldestTimestamp = logs[0].log_timestamp ?? 0;
+    const filterString = buildFilterString();
+    const qsParts = [
+      `log_timestamp__lt=${oldestTimestamp}`,
+      `page_size=${INITIAL_PAGE_SIZE}`,
+      'ordering=-id',
+    ];
+    if (filterString) {
+      qsParts.push(filterString);
+    }
+
+    const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+      edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
+        `?${qsParts.join('&')}`
+      )
+    );
+
+    const olderLogs = [...(response.results ?? [])].reverse();
+    if (olderLogs.length > 0) {
+      setLogs((prev) => [...olderLogs, ...prev]);
+    }
+    setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
+  }, [logs, hasOlderLogs, params.instanceId, buildFilterString]);
+
+  const estimatedMaxLines = (logs.length ?? 0) * 10;
   const outputLineChars = String(estimatedMaxLines).length;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { handleScroll, scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } =
-    useScrollControls(
-      containerRef,
-      isFollowModeEnabled,
-      setIsFollowModeEnabled,
-      activationInstanceLog?.results.length ?? 0,
-      isRunning
-    );
+    useScrollControls(containerRef, isFollowModeEnabled, setIsFollowModeEnabled, logs.length, isRunning);
+
+  const onScroll = useCallback(
+    (el: HTMLElement) => {
+      handleScroll(el);
+      if (el.scrollTop === 0 && hasOlderLogs) {
+        void loadOlderLogs();
+      }
+    },
+    [handleScroll, hasOlderLogs, loadOlderLogs]
+  );
 
   const { beforeRowsHeight, visibleItems, afterRowsHeight, setRowHeight } =
-    useVirtualizedList<EdaActivationInstanceLog>(
-      containerRef,
-      activationInstanceLog?.results ?? [],
-      handleScroll
-    );
+    useVirtualizedList<EdaActivationInstanceLog>(containerRef, logs, onScroll);
 
   return (
     <Section>
@@ -110,7 +177,7 @@ export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) 
             {visibleItems?.map((row) => (
               <ActivationInstanceOutputRow
                 key={row.id}
-                index={activationInstanceLog?.results.findIndex((r) => r.id === row.id) ?? 0}
+                index={logs.findIndex((r) => r.id === row.id)}
                 row={row}
                 setHeight={setRowHeight}
               />
