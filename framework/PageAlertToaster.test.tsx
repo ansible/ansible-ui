@@ -13,16 +13,22 @@ function TestConsumer() {
   const toaster = useContext(PageAlertToasterContext);
   return (
     <div>
-      <button onClick={() => toaster.addAlert({ title: 'Test Alert', variant: 'success' })}>
+      <button
+        type="button"
+        onClick={() => toaster.addAlert({ title: 'Test Alert', variant: 'success' })}
+      >
         Add
       </button>
       <button
+        type="button"
         onClick={() => toaster.addAlert({ title: 'Timed Alert', variant: 'info', timeout: 1000 })}
       >
         Add Timed
       </button>
-      <button onClick={() => toaster.removeAlerts()}>Clear All</button>
-      <button onClick={() => toaster.removeAlerts((a) => a.variant !== 'danger')}>
+      <button type="button" onClick={() => toaster.removeAlerts()}>
+        Clear All
+      </button>
+      <button type="button" onClick={() => toaster.removeAlerts((a) => a.variant !== 'danger')}>
         Keep Danger
       </button>
     </div>
