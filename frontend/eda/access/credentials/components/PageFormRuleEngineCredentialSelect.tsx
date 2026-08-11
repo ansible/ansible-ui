@@ -4,7 +4,7 @@ import { PageFormSingleSelectEdaResource } from '../../../common/PageFormSingleS
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from '../hooks/useCredentialColumns';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { EdaItemsResponse } from '../../../common/EdaItemsResponse';
@@ -17,6 +17,9 @@ export function PageFormRuleEngineCredentialSelect<
   const credentialColumns = useCredentialColumns({ disableLinks: true });
   const { setValue, watch } = useFormContext<TFieldValues>();
   const currentValue = watch(props.name);
+
+  // Track if auto-select has run to prevent it from running on every empty state
+  const hasAutoSelectedRef = useRef(false);
 
   // Fetch credentials to check count and find managed credential
   const { data: credentialsData, isLoading } = useGet<EdaItemsResponse<EdaCredential>>(
@@ -51,15 +54,17 @@ export function PageFormRuleEngineCredentialSelect<
     [t]
   );
 
-  // Auto-select the managed credential on mount if no value is set
+  // Auto-select the managed credential ONLY on initial mount if no value is set
+  // Do NOT run auto-select when user clears the field (for required fields, clear button is hidden anyway)
   useEffect(() => {
-    if (!currentValue && credentialsData?.results) {
+    if (!hasAutoSelectedRef.current && !currentValue && credentialsData?.results) {
       const managedCredential = credentialsData.results.find((cred) => cred.managed);
       if (managedCredential) {
         setValue(props.name, managedCredential.id as never, {
           shouldValidate: false,
           shouldDirty: false,
         });
+        hasAutoSelectedRef.current = true;
       }
     }
   }, [currentValue, credentialsData, setValue, props.name]);
