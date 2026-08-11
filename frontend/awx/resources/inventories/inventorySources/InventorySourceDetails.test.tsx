@@ -241,7 +241,7 @@ describe('InventorySourceDetails', () => {
     );
     renderInventorySourceDetails();
     await waitFor(() => {
-      expect(screen.getByText('/ (project root)')).toBeInTheDocument();
+      expect(screen.getByText('. (project root)')).toBeInTheDocument();
     });
   });
 

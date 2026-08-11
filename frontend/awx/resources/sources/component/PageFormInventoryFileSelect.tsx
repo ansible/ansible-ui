@@ -36,22 +36,22 @@ export function PageFormInventoryFileSelect<
 
   inventoryOptions = [
     ...inventoryOptions,
-    { value: '/ (project root)', label: t('/ (project root)') },
+    { value: '. (project root)', label: t('. (project root)') },
   ];
 
   return (
     <PageFormCreatableSelect<InventorySourceForm>
-      placeholderText={t('Select inventory file')}
+      placeholderText={t('Select inventory path')}
       name="source_path"
       toggleButtonId="inventory-file-toggle"
       id="inventory"
       additionalControls={props.additionalControls}
-      label={t('Inventory file')}
+      label={t('Inventory path')}
       options={inventoryOptions}
       labelHelpTitle={t('Inventory')}
       labelHelp={
         props.labelHelp ??
-        t('Select the inventory containing the playbook you want this job to execute.')
+        t('Select the inventory path containing the resources you want this source to sync.')
       }
       isRequired={props.isRequired}
       isMulti={false}

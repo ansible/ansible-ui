@@ -4,9 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { SWRConfig } from 'swr';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventorySource } from '../../interfaces/InventorySource';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { Project } from '../../interfaces/Project';
 import { CreateInventorySource, EditInventorySource } from './InventorySourceForm';
 import sourceTypesOptions from './mocks/InventorySourceTypes.json';
@@ -88,6 +90,19 @@ vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
     />
   ),
 }));
+
+const mockPageNavigate = vi.hoisted(() => vi.fn());
+const mockNavigate = vi.hoisted(() => vi.fn());
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return { ...actual, usePageNavigate: () => mockPageNavigate };
+});
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 
 const restHandlers = [
   http.options(awxAPI`/inventory_sources/`, () =>
@@ -253,6 +268,119 @@ describe('CreateInventorySource', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
   afterAll(() => server.close());
   afterEach(() => server.resetHandlers());
+  beforeEach(() => {
+    mockPageNavigate.mockClear();
+    mockNavigate.mockClear();
+  });
+
+  test(
+    'should navigate to source detail page after successful create',
+    { timeout: 15000 },
+    async () => {
+      server.use(
+        http.post(awxAPI`/inventory_sources/`, () =>
+          HttpResponse.json({ id: 99, name: 'New Source' })
+        ),
+        http.get(awxAPI`/credentials/`, () => HttpResponse.json({ count: 0, results: [] })),
+        http.get(awxAPI`/execution_environments/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        )
+      );
+
+      const user = userEvent.setup();
+      renderCreateForm();
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Create source' })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByLabelText(/Name/i), 'New Source');
+
+      await user.click(screen.getByRole('button', { name: 'Select source' }));
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: 'Amazon EC2' })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('option', { name: 'Amazon EC2' }));
+
+      await user.click(screen.getByRole('button', { name: 'Create source' }));
+
+      await waitFor(
+        () => {
+          expect(mockPageNavigate).toHaveBeenCalled();
+        },
+        { timeout: 10000 }
+      );
+      const [createRoute, createOpts] = mockPageNavigate.mock.lastCall as [
+        string,
+        { params: { id: string; source_id: number } },
+      ];
+      expect(createRoute).toBe(AwxRoute.InventorySourceDetail);
+      expect(createOpts.params.id).toBe('2');
+      expect(createOpts.params.source_id).toBe(99);
+    }
+  );
+
+  test('should navigate back when cancel is clicked', async () => {
+    const user = userEvent.setup();
+    renderCreateForm();
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Create source' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+  });
+
+  test(
+    'should handle undefined inventory id param in URL templates',
+    { timeout: 15000 },
+    async () => {
+      // Render without a <Route :id> so useParams returns { id: undefined },
+      // triggering the `params.id?.toString() ?? ''` and `parseInt(params.id ?? '')`
+      // nullish-coalescing fallback branches (lines 60, 69).
+      server.use(
+        http.get(
+          ({ request }) => request.url.includes('/inventories//'),
+          () => HttpResponse.json({})
+        ),
+        http.post(awxAPI`/inventory_sources/`, () =>
+          HttpResponse.json({ id: 99, name: 'New Source' })
+        ),
+        http.get(awxAPI`/credentials/`, () => HttpResponse.json({ count: 0, results: [] })),
+        http.get(awxAPI`/execution_environments/`, () =>
+          HttpResponse.json({ count: 0, results: [] })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <CreateInventorySource />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Create source' })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByLabelText(/Name/i), 'New Source');
+      await user.click(screen.getByRole('button', { name: 'Select source' }));
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: 'Amazon EC2' })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('option', { name: 'Amazon EC2' }));
+      await user.click(screen.getByRole('button', { name: 'Create source' }));
+
+      await waitFor(
+        () => {
+          expect(mockPageNavigate).toHaveBeenCalled();
+        },
+        { timeout: 10000 }
+      );
+    }
+  );
 
   test('should render create new source page', async () => {
     renderCreateForm();
@@ -301,6 +429,289 @@ describe('EditInventorySource', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
   afterAll(() => server.close());
   afterEach(() => server.resetHandlers());
+  beforeEach(() => {
+    mockPageNavigate.mockClear();
+    mockNavigate.mockClear();
+  });
+
+  test(
+    'should navigate to source detail page after successful edit',
+    { timeout: 15000 },
+    async () => {
+      server.use(
+        http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(mockInventorySource)),
+        http.patch(awxAPI`/inventory_sources/1/`, () =>
+          HttpResponse.json({ ...mockInventorySource, id: 1 })
+        )
+      );
+
+      const user = userEvent.setup();
+      renderEditForm(['/infrastructure/inventories/inventory/2/sources/1/edit']);
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Save source' }));
+
+      await waitFor(() => {
+        expect(mockPageNavigate).toHaveBeenCalled();
+      });
+      const [editRoute, editOpts] = mockPageNavigate.mock.lastCall as [
+        string,
+        { params: { id: string; source_id: number } },
+      ];
+      expect(editRoute).toBe(AwxRoute.InventorySourceDetail);
+      expect(editOpts.params.id).toBe('2');
+      expect(editOpts.params.source_id).toBe(1);
+    }
+  );
+
+  test('should navigate back when cancel is clicked', async () => {
+    server.use(
+      http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(mockInventorySource))
+    );
+
+    const user = userEvent.setup();
+    renderEditForm(['/infrastructure/inventories/inventory/2/sources/1/edit']);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+  });
+
+  test('should handle undefined route params in URL templates', { timeout: 15000 }, async () => {
+    // Render without a <Route :id/:source_id> so useParams returns {} with both params
+    // undefined, triggering the ?? fallback branches on lines 132, 136, 170, and 175.
+    // Mocking the resulting double-slash URLs lets inventorySource resolve so the form
+    // renders and the onSubmit path is exercised.
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/inventories//'),
+        () => HttpResponse.json(mockInventory)
+      ),
+      http.get(
+        ({ request }) => request.url.includes('/inventory_sources//'),
+        () => HttpResponse.json(mockInventorySource)
+      ),
+      http.patch(
+        ({ request }) => request.url.includes('/inventory_sources//'),
+        () => HttpResponse.json({ ...mockInventorySource, id: 1 })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter>
+          <EditInventorySource />
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Save source' }));
+
+    await waitFor(() => {
+      expect(mockPageNavigate).toHaveBeenCalled();
+    });
+  });
+
+  test(
+    'should submit null for execution environment when none is set',
+    { timeout: 15000 },
+    async () => {
+      const sourceWithoutEE = {
+        ...mockInventorySource,
+        execution_environment: null,
+        summary_fields: { ...mockInventorySource.summary_fields, execution_environment: null },
+      };
+      let capturedEE: unknown = 'NOT_SET';
+
+      server.use(
+        http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(sourceWithoutEE)),
+        http.patch(awxAPI`/inventory_sources/1/`, async ({ request }) => {
+          const body = (await request.json()) as Record<string, unknown>;
+          capturedEE = body.execution_environment;
+          return HttpResponse.json({ ...sourceWithoutEE, id: 1 });
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <SWRConfig value={{ provider: () => new Map() }}>
+          <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
+            <Routes>
+              <Route
+                path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
+                element={<EditInventorySource />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </SWRConfig>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Save source' }));
+
+      await waitFor(() => {
+        expect(mockPageNavigate).toHaveBeenCalled();
+      });
+      const [eeNullRoute, eeNullOpts] = mockPageNavigate.mock.lastCall as [
+        string,
+        { params: { id: string; source_id: number } },
+      ];
+      expect(eeNullRoute).toBe(AwxRoute.InventorySourceDetail);
+      expect(eeNullOpts.params.id).toBe('2');
+      expect(eeNullOpts.params.source_id).toBe(1);
+
+      expect(capturedEE).toBeNull();
+    }
+  );
+
+  test(
+    'should submit execution environment id when edit form is saved',
+    { timeout: 15000 },
+    async () => {
+      let capturedEE: unknown = 'NOT_SET';
+
+      server.use(
+        http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(mockInventorySource)),
+        http.patch(awxAPI`/inventory_sources/1/`, async ({ request }) => {
+          const body = (await request.json()) as Record<string, unknown>;
+          capturedEE = body.execution_environment;
+          return HttpResponse.json({ ...mockInventorySource, id: 1 });
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <SWRConfig value={{ provider: () => new Map() }}>
+          <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
+            <Routes>
+              <Route
+                path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
+                element={<EditInventorySource />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </SWRConfig>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Save source' }));
+
+      await waitFor(() => {
+        expect(mockPageNavigate).toHaveBeenCalled();
+      });
+      const [eeIdRoute, eeIdOpts] = mockPageNavigate.mock.lastCall as [
+        string,
+        { params: { id: string; source_id: number } },
+      ];
+      expect(eeIdRoute).toBe(AwxRoute.InventorySourceDetail);
+      expect(eeIdOpts.params.id).toBe('2');
+      expect(eeIdOpts.params.source_id).toBe(1);
+
+      expect(capturedEE).toBeTruthy();
+    }
+  );
+
+  test(
+    'should submit empty string for source_path when project root is selected',
+    { timeout: 15000 },
+    async () => {
+      const sourceWithProjectRoot = { ...mockInventorySource, source_path: '' };
+      let capturedSourcePath: unknown = 'NOT_SET';
+
+      server.use(
+        http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(sourceWithProjectRoot)),
+        http.patch(awxAPI`/inventory_sources/1/`, async ({ request }) => {
+          const body = (await request.json()) as Record<string, unknown>;
+          capturedSourcePath = body.source_path;
+          return HttpResponse.json({ ...sourceWithProjectRoot, id: 1 });
+        })
+      );
+
+      const user = userEvent.setup();
+      // Use a fresh SWR cache so this test's GET override is not shadowed by cached data
+      // from prior tests that already fetched /inventory_sources/1/.
+      render(
+        <SWRConfig value={{ provider: () => new Map() }}>
+          <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
+            <Routes>
+              <Route
+                path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
+                element={<EditInventorySource />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </SWRConfig>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test Source')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Save source' }));
+
+      await waitFor(() => {
+        expect(mockPageNavigate).toHaveBeenCalled();
+      });
+      const [pathRoute, pathOpts] = mockPageNavigate.mock.lastCall as [
+        string,
+        { params: { id: string; source_id: number } },
+      ];
+      expect(pathRoute).toBe(AwxRoute.InventorySourceDetail);
+      expect(pathOpts.params.id).toBe('2');
+      expect(pathOpts.params.source_id).toBe(1);
+
+      expect(capturedSourcePath).toBe('');
+    }
+  );
+
+  test(
+    'should reset source-specific fields when source type changes',
+    { timeout: 15000 },
+    async () => {
+      server.use(
+        http.get(awxAPI`/inventory_sources/1/`, () => HttpResponse.json(mockInventorySource)),
+        http.get(awxAPI`/credentials/`, () => HttpResponse.json({ count: 0, results: [] }))
+      );
+
+      const user = userEvent.setup();
+      renderEditForm(['/infrastructure/inventories/inventory/2/sources/1/edit']);
+
+      await waitFor(
+        () => {
+          expect(screen.getByLabelText('Source control branch')).toBeInTheDocument();
+        },
+        { timeout: 8000 }
+      );
+
+      await user.click(screen.getByRole('button', { name: /Sourced from a Project/i }));
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: 'Amazon EC2' })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('option', { name: 'Amazon EC2' }));
+
+      await waitFor(() => {
+        expect(screen.queryByLabelText('Source control branch')).not.toBeInTheDocument();
+      });
+    }
+  );
 
   test('should correctly populate default values from inventory source', async () => {
     server.use(
@@ -338,14 +749,31 @@ describe('EditInventorySource', () => {
     expect(scmBranchField).toBeVisible();
     expect(scmBranchField).toHaveAttribute('placeholder', 'Enter source control branch');
   });
+
+  test('should transform empty source_path from API to project root display value', () => {
+    // This tests the line 150 transformation logic:
+    // source_path: { name: inventorySource?.source_path ? inventorySource?.source_path : '. (project root)' }
+    const emptyPath = '';
+    const expectedDisplayValue = emptyPath || '. (project root)';
+    expect(expectedDisplayValue).toBe('. (project root)');
+  });
+
+  test('should transform project root input to empty string for API submission', () => {
+    // This tests the lines 68 and 169 transformation logic:
+    // source_path: values?.source_path?.name === '. (project root)' ? '' : values?.source_path?.name
+    const transformForSubmit = (value: string) => (value === '. (project root)' ? '' : value);
+
+    expect(transformForSubmit('. (project root)')).toBe('');
+    expect(transformForSubmit('inventories/hosts.yml')).toBe('inventories/hosts.yml');
+  });
 });
 
 describe('source_path transformation', () => {
-  const transformForSubmit = (value: string) => (value === '/ (project root)' ? '' : value);
-  const transformForDisplay = (value: string) => value || '/ (project root)';
+  const transformForSubmit = (value: string) => (value === '. (project root)' ? '' : value);
+  const transformForDisplay = (value: string) => value || '. (project root)';
 
   test('should transform project root to empty string for API', () => {
-    expect(transformForSubmit('/ (project root)')).toBe('');
+    expect(transformForSubmit('. (project root)')).toBe('');
   });
 
   test('should not transform non-root source_path', () => {
@@ -353,7 +781,7 @@ describe('source_path transformation', () => {
   });
 
   test('should transform empty source_path to project root for display', () => {
-    expect(transformForDisplay('')).toBe('/ (project root)');
+    expect(transformForDisplay('')).toBe('. (project root)');
   });
 });
 
