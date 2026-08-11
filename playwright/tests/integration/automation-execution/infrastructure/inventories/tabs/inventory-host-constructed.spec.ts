@@ -306,7 +306,7 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
   );
 
   test(
-    'should verify edit/delete buttons and facts tab are hidden for constructed inventory hosts',
+    'should verify edit/delete buttons are hidden and Facts tab is visible for constructed inventory hosts',
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(4 * 60 * 1000);
@@ -389,8 +389,8 @@ test.describe('Inventory Host - Constructed Inventory Tests', () => {
         await clickTableRow({ text: host.name }, page);
         await expect(page.getByRole('heading', { name: host.name, exact: true })).toBeVisible();
 
-        // Verify Facts tab is not visible
-        await expect(page.getByRole('tab', { name: 'Facts' })).not.toBeVisible();
+        // Verify Facts tab is visible for constructed inventory hosts
+        await expect(page.getByRole('tab', { name: 'Facts' })).toBeVisible();
       } finally {
         // Cleanup using utilities
         await Inventory.api.delete(page, constructedInventory.id).catch(() => {});
