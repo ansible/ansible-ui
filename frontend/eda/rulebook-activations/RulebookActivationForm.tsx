@@ -120,7 +120,7 @@ export function RulebookActivationInputs() {
 
   const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>(() => {
     return defaultValues?.source_mappings
-      ? (jsyaml.load(defaultValues?.source_mappings as string) as EdaSourceEventMapping[])
+      ? (jsyaml.load(defaultValues?.source_mappings) as EdaSourceEventMapping[])
       : undefined;
   });
   const restartPolicyHelpBlock = (
@@ -443,13 +443,16 @@ export function EditRulebookActivation() {
   }
 }
 
-export type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
+export type IEdaRulebookActivationInputs = Omit<
+  EdaRulebookActivationCreate,
+  'event_streams' | 'source_mappings'
+> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;
   eda_credentials?: number[] | EdaCredential[] | null;
   enable_persistence?: boolean;
   rule_engine_credential_id?: number | null;
-  source_mappings: EdaSourceEventMapping[];
+  source_mappings?: string;
   restart_on_project_update: boolean;
 };
