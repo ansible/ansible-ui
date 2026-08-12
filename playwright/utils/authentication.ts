@@ -3,6 +3,7 @@ import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { navigateTo } from '../commands/navigateTo';
 
 export interface CreateAuthenticationMethodOptions {
@@ -52,18 +53,16 @@ export const Authentication = {
             .fill('ldap://ldap.example.com:389');
           await page.getByRole('button', { name: 'Select a value' }).click();
           await page.getByRole('option', { name: 'MemberDNGroupType', exact: true }).click();
-          await page
-            .locator(
-              '#configuration-editor-GROUP_TYPE_PARAMS > .monaco-editor > .overflow-guard > div:nth-child(2) > .lines-content > .view-lines > .view-line'
-            )
-            .click();
-          await page.keyboard.type(`{name_attr: "cn", member_attr: "member"}`);
-          await page
-            .locator(
-              '#configuration-editor-USER_ATTR_MAP > .monaco-editor > .overflow-guard > div:nth-child(2) > .lines-content > .view-lines > .view-line'
-            )
-            .click();
-          await page.keyboard.type('email: "mail"');
+          await fillMonacoEditor(
+            page,
+            `{name_attr: "cn", member_attr: "member"}`,
+            page.locator('#configuration-editor-GROUP_TYPE_PARAMS').getByRole('textbox')
+          );
+          await fillMonacoEditor(
+            page,
+            'email: "mail"',
+            page.locator('#configuration-editor-USER_ATTR_MAP').getByRole('textbox')
+          );
           break;
         case 'TACACS+':
           await page

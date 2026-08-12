@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { toggleNodeKebab } from '@ansible/playwright/commands/toggleNodeKebab';
 import { awxAPI } from '@ansible/playwright/commands/apiClient';
@@ -569,7 +570,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('textbox', { name: 'Search input' }).fill(instanceGroup);
       await page.getByRole('checkbox', { name: instanceGroup }).check();
       await page.getByRole('button', { name: 'Instance groups' }).click();
-      await page.getByRole('textbox', { name: 'Editor content' }).fill('var: test');
+      await fillMonacoEditor(page, 'var: test');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
@@ -593,7 +594,7 @@ test.describe('Workflow Viz', () => {
       await expect(
         page.getByRole('code').locator('div').filter({ hasText: 'var: test' }).nth(4)
       ).toBeVisible();
-      await page.getByRole('textbox', { name: 'Editor content' }).fill('newvar: newtest');
+      await fillMonacoEditor(page, 'newvar: newtest');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();

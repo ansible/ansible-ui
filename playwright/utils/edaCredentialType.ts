@@ -4,6 +4,7 @@ import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { navigateTo } from '../commands/navigateTo';
 
 export interface CreateEdaCredentialTypeOptions {
@@ -84,37 +85,35 @@ export const EdaCredentialType = {
       await page.getByText('Create credential type').click();
       const credentialTypeName = options.credentialTypeName ?? createE2EName('credential_type');
       await page.getByPlaceholder('Enter credential type name').fill(credentialTypeName);
-      await page.locator('.view-lines').first().click();
-      await page
-        .locator('#inputs')
-        .getByRole('textbox', { name: 'Editor content' })
-        .fill(
-          options?.inputType ??
-            JSON.stringify({
-              fields: [
-                {
-                  id: 'auth_type',
-                  type: 'string',
-                  label: 'Event Stream Authentication Type',
-                  hidden: true,
-                  default: 'basic',
-                },
-                {
-                  id: 'username',
-                  type: 'string',
-                  label: 'Username',
-                  help_text: 'The username used to authenticate the incoming event stream',
-                },
-                {
-                  id: 'password',
-                  type: 'string',
-                  label: 'Password',
-                  secret: true,
-                  help_text: 'The password used to authenticate the incoming event stream',
-                },
-              ],
-            })
-        );
+      await fillMonacoEditor(
+        page,
+        options?.inputType ??
+          JSON.stringify({
+            fields: [
+              {
+                id: 'auth_type',
+                type: 'string',
+                label: 'Event Stream Authentication Type',
+                hidden: true,
+                default: 'basic',
+              },
+              {
+                id: 'username',
+                type: 'string',
+                label: 'Username',
+                help_text: 'The username used to authenticate the incoming event stream',
+              },
+              {
+                id: 'password',
+                type: 'string',
+                label: 'Password',
+                secret: true,
+                help_text: 'The password used to authenticate the incoming event stream',
+              },
+            ],
+          }),
+        page.locator('#inputs').getByRole('textbox', { name: 'Editor content' })
+      );
       await page.getByRole('button', { name: 'Create credential type' }).click();
       await expect(
         page.getByRole('heading', { name: credentialTypeName, exact: true })

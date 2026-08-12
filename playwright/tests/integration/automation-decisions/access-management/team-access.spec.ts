@@ -25,7 +25,7 @@ const edaResources: AccessTabResource[] = [
     name: 'credentials',
     navPath: ['Automation Decisions', 'Infrastructure', 'Credentials'],
     content_type: 'eda.edacredential',
-    role: 'Eda Credential Admin',
+    role: 'EDA Credential Admin',
   },
   {
     name: 'decision-environments',

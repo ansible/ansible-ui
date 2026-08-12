@@ -4,6 +4,7 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { confirmAndAssertDeletion } from '@ansible/playwright/commands/confirmAndAssertDeletion';
 import { deleteResourceFromDetailsPage } from '@ansible/playwright/commands/deleteResourceFromDetailsPage';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
@@ -283,9 +284,11 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
           fields: [{ id: 'api_key', type: 'string', label: 'API Key' }],
         });
 
-        await page.locator('.view-lines').first().click();
-        const inputEditor = page.locator('.monaco-editor').first().getByRole('textbox');
-        await inputEditor.fill(inputConfig);
+        await fillMonacoEditor(
+          page,
+          inputConfig,
+          page.locator('.monaco-editor').first().getByRole('textbox')
+        );
 
         await page.getByRole('button', { name: 'Save credential type' }).click();
 

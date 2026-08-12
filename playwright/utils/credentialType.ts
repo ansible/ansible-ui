@@ -3,6 +3,7 @@ import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { selectTableRow } from '../commands/selectTableRow';
 
 export interface CredentialTypeOptions {
@@ -26,15 +27,19 @@ export const CredentialType = {
       await page.getByPlaceholder('Enter description').fill(description);
 
       if (options.inputConfiguration) {
-        await page.locator('.view-lines').first().click();
-        const inputEditor = page.locator('.monaco-editor').first().getByRole('textbox');
-        await inputEditor.fill(options.inputConfiguration);
+        await fillMonacoEditor(
+          page,
+          options.inputConfiguration,
+          page.locator('.monaco-editor').first().getByRole('textbox')
+        );
       }
 
       if (options.injectorConfiguration) {
-        await page.locator('.view-lines').nth(1).click();
-        const injectorEditor = page.locator('.monaco-editor').nth(1).getByRole('textbox');
-        await injectorEditor.fill(options.injectorConfiguration);
+        await fillMonacoEditor(
+          page,
+          options.injectorConfiguration,
+          page.locator('.monaco-editor').nth(1).getByRole('textbox')
+        );
       }
 
       await page.getByRole('button', { name: 'Create credential type' }).click();

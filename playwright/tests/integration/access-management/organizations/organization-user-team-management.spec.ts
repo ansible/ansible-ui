@@ -474,6 +474,11 @@ test.describe('Organization User and Team Management', () => {
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
 
+      // Navigate back to the organization Teams tab after wizard completes
+      await navigateTo(page, 'Access Management', 'Organizations');
+      await clickTableRow({ text: organizationName }, page);
+      await page.getByRole('tab', { name: 'Teams' }).click();
+
       // Verify team roles and manage them
       await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
       await expect(page.locator('tbody')).toContainText(teamName);

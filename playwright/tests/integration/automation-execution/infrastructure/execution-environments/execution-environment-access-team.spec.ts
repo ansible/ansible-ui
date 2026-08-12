@@ -54,7 +54,7 @@ test.describe('Execution Environment Team Access', () => {
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
 
-      // Navigate to execution environment and assign team with role
+      // Navigate back after wizard completes — wizard does not reliably redirect
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
       await clickTableRow({ filterLabel: 'Name', text: executionEnvName }, page);
 
