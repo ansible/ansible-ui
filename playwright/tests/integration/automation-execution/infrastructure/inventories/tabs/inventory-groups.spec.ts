@@ -4,6 +4,7 @@ import { clickPageAction } from '../../../../../../commands/clickPageAction';
 import { clickTableRow } from '../../../../../../commands/clickTableRow';
 import { clickTableRowAction } from '../../../../../../commands/clickTableRowAction';
 import { createE2EName } from '../../../../../../commands/createE2EName';
+import { fillMonacoEditor } from '../../../../../../commands/fillMonacoEditor';
 import { getTableRow } from '../../../../../../commands/getTableRow';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../../commands/runAdHocCommandWizard';
@@ -35,7 +36,7 @@ test.describe('Inventory Groups - List View', () => {
 
       await page.getByRole('textbox', { name: 'Name', exact: true }).fill(groupName);
       await page.getByRole('textbox', { name: 'Description' }).fill('This is a description');
-      await page.getByRole('textbox', { name: 'Editor content' }).fill(variablesText);
+      await fillMonacoEditor(page, variablesText);
 
       await page.getByRole('button', { name: 'Create group' }).click();
       await page.waitForURL(/\/groups\/\d+\/details/);

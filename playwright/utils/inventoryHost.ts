@@ -4,6 +4,7 @@ import { awxAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { getTableRow } from '../commands/getTableRow';
 import { navigateTo } from '../commands/navigateTo';
 
@@ -119,8 +120,7 @@ export const InventoryHost = {
       }
 
       if (options.variables) {
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.variables);
+        await fillMonacoEditor(page, options.variables);
       }
 
       await page.getByRole('button', { name: 'Create host', exact: true }).click();

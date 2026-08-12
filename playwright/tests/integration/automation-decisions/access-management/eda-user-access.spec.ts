@@ -30,7 +30,7 @@ const userAccessResources: AccessTabResource[] = [
   {
     name: 'credentials',
     content_type: 'eda.edacredential',
-    role: 'Eda Credential Admin',
+    role: 'EDA Credential Admin',
     path: ['Automation Decisions', 'Infrastructure', 'Credentials'],
   },
 ];

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { awxAPI } from '@ansible/playwright/commands/apiClient';
 import { Credential, JobTemplate, WorkflowVisualizer } from '@ansible/playwright/utils';
@@ -285,7 +286,7 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
 
       await page.getByRole('button', { name: 'Prompts' }).click();
-      await page.getByRole('textbox', { name: 'Editor content' }).fill('my_var: test_value');
+      await fillMonacoEditor(page, 'my_var: test_value');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
@@ -372,7 +373,7 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('checkbox', { name: credentialName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
       // Set extra_vars
-      await page.getByRole('textbox', { name: 'Editor content' }).fill('stale_var: old_value');
+      await fillMonacoEditor(page, 'stale_var: old_value');
       // Set skip_tags
       await page.getByRole('textbox', { name: 'Type to filter' }).last().click();
       await page.getByRole('textbox', { name: 'Type to filter' }).last().fill('stale_tag');
@@ -545,7 +546,7 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
 
       await page.getByRole('button', { name: 'Prompts' }).click();
-      await page.getByRole('textbox', { name: 'Editor content' }).fill('old_var: stale_value');
+      await fillMonacoEditor(page, 'old_var: stale_value');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
@@ -566,8 +567,8 @@ test.describe('Workflow Visualizer - Template Switch', () => {
 
       // Navigate to Prompts then wait for the extra_vars editor to clear.
       await page.getByRole('button', { name: 'Prompts' }).click();
-      await expect(page.getByRole('textbox', { name: 'Editor content' })).not.toHaveValue(
-        /old_var/,
+      await expect(page.locator('.monaco-editor .view-lines').first()).not.toContainText(
+        'old_var',
         { timeout: 15000 }
       );
 
@@ -645,7 +646,7 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('textbox', { name: 'Search input' }).fill(oldCredName);
       await page.getByRole('checkbox', { name: oldCredName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
-      await page.getByRole('textbox', { name: 'Editor content' }).fill('old_var: old');
+      await fillMonacoEditor(page, 'old_var: old');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();
@@ -670,7 +671,7 @@ test.describe('Workflow Visualizer - Template Switch', () => {
       await page.getByRole('textbox', { name: 'Search input' }).fill(newCredName);
       await page.getByRole('checkbox', { name: newCredName }).check();
       await page.getByRole('button', { name: 'Credentials' }).click();
-      await page.getByRole('textbox', { name: 'Editor content' }).fill('new_var: fresh');
+      await fillMonacoEditor(page, 'new_var: fresh');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.waitForTimeout(500);
       await page.getByRole('button', { name: 'Finish' }).click();

@@ -241,7 +241,7 @@ test.describe('Event Stream and Rulebook Activation Integration', () => {
 
       await test.step('Navigate to event stream details', async () => {
         await navigateTo(page, 'Automation Decisions', 'Event Streams');
-        await expect(page.getByRole('heading', { name: 'Event Streams' })).toBeVisible();
+        await expect(page.getByTestId('page-title')).toContainText('Event Streams');
         await clickTableRow(
           {
             text: eventStream.name,
