@@ -110,7 +110,7 @@ const config: VitestUserConfig = {
     setupFiles: ['vitest.setup.ts'],
     server: {
       deps: {
-        inline: ['@patternfly/react-styles'],
+        inline: ['@patternfly/react-styles', 'msw', 'rettime'],
       },
     },
     alias: getVitestAliases(),

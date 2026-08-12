@@ -190,7 +190,7 @@
     "mochawesome": "7.1.4",
     "monaco-editor-webpack-plugin": "7.1.0",
     "monocart-coverage-reports": "2.12.12",
-    "msw": "^2.7.3",
+    "msw": "^2.15.0",
     "nx": "22.7.7",
     "nyc": "^17.1.0",
     "prettier": "3.4.2",

@@ -103,6 +103,8 @@ export default defineConfig({
           '@patternfly/react-styles',
           '@patternfly/react-icons',
           '@patternfly/react-topology',
+          'msw',
+          'rettime',
         ],
       },
     },

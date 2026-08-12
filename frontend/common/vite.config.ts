@@ -26,7 +26,7 @@ export default defineConfig({
     },
     server: {
       deps: {
-        inline: ['@patternfly/react-styles'],
+        inline: ['@patternfly/react-styles', 'msw', 'rettime'],
       },
     },
     // found at: https://github.com/vitest-dev/vitest/discussions/1806
