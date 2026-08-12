@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { SWRConfig } from 'swr';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleDetails } from './ScheduleDetails';
 
@@ -174,5 +175,42 @@ describe('ScheduleDetails', () => {
     });
 
     expect(screen.getByText('web_servers')).toBeInTheDocument();
+  });
+
+  it('should preserve the Z suffix on UNTIL in per-rule preview calls', async () => {
+    const rruleWithUntil =
+      'DTSTART;TZID=America/New_York:20260812T170000 RRULE:FREQ=HOURLY;INTERVAL=1;UNTIL=20260813T000000Z;BYSECOND=0';
+    const capturedBodies: string[] = [];
+
+    server.use(
+      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
+        const body = (await request.json()) as { rrule: string };
+        capturedBodies.push(body.rrule);
+        return HttpResponse.json({ local: [], utc: [] });
+      }),
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({
+          ...mockSchedule,
+          rrule: rruleWithUntil,
+          timezone: 'America/New_York',
+        })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(2));
+
+    const perRuleBody = capturedBodies.find((r) => r !== rruleWithUntil);
+    expect(perRuleBody).toBeDefined();
+    expect(perRuleBody).toContain('UNTIL=20260813T000000Z');
   });
 });
