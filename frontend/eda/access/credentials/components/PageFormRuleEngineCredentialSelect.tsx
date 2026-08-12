@@ -22,9 +22,16 @@ export function PageFormRuleEngineCredentialSelect<
   const hasAutoSelectedRef = useRef(false);
 
   // Fetch credentials to check count and find managed credential
+  // Disable automatic revalidation to prevent refetching on dropdown open/focus
   const { data: credentialsData, isLoading } = useGet<EdaItemsResponse<EdaCredential>>(
     edaAPI`/eda-credentials/`,
-    { credential_type__namespace__in: 'drools' }
+    { credential_type__namespace__in: 'drools' },
+    {
+      refreshInterval: 0, // Disable periodic refresh
+      revalidateOnFocus: false, // Don't refetch when window regains focus
+      revalidateOnReconnect: false, // Don't refetch on reconnect
+      dedupingInterval: 60000, // Cache for 60 seconds
+    }
   );
 
   const eventPersistenceCredentialsFilter = useMemo<IToolbarFilter[]>(
