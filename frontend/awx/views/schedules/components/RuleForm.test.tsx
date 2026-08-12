@@ -4,7 +4,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RuleFields, ScheduleFormWizard } from '../types';
 import { RuleForm, pad } from './RuleForm';
 
@@ -314,6 +314,10 @@ describe('RuleForm', () => {
   });
 
   describe('until handling', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it('should set UNTIL in UTC and append Z suffix when both until date and time are provided', async () => {
       // Arrange
       const user = userEvent.setup();
@@ -330,11 +334,11 @@ describe('RuleForm', () => {
       // Act
       await user.click(screen.getByTestId('add-rule-button'));
 
-      // Assert: UNTIL is in UTC with the RFC5545 required Z suffix
+      // Assert: UNTIL is converted to UTC (10:00 EDT = 14:00 UTC) with Z suffix
       expect(setIsOpen).toHaveBeenCalledWith(false);
       await waitFor(() => {
         const rulesContent = screen.getByTestId('form-rules').textContent ?? '';
-        expect(rulesContent).toMatch(/UNTIL=\d{8}T\d{6}Z/);
+        expect(rulesContent).toContain('UNTIL=20250601T140000Z');
       });
     });
 
@@ -352,16 +356,18 @@ describe('RuleForm', () => {
       // Act
       await user.click(screen.getByTestId('add-rule-button'));
 
-      // Assert: UNTIL derived from midnight in schedule timezone, with Z suffix
+      // Assert: midnight EDT (UTC-4) = 04:00 UTC with Z suffix
       expect(setIsOpen).toHaveBeenCalledWith(false);
       await waitFor(() => {
         const rulesContent = screen.getByTestId('form-rules').textContent ?? '';
-        expect(rulesContent).toMatch(/UNTIL=\d{8}T\d{6}Z/);
+        expect(rulesContent).toContain('UNTIL=20250601T040000Z');
       });
     });
 
     it("should use tomorrow's date in the schedule timezone when only until time is provided", async () => {
       // Arrange
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2025-05-31T00:00:00Z'));
       const user = userEvent.setup();
       const setIsOpen = vi.fn();
       render(
@@ -374,11 +380,11 @@ describe('RuleForm', () => {
       // Act
       await user.click(screen.getByTestId('add-rule-button'));
 
-      // Assert: UNTIL derived from tomorrow in schedule timezone, with Z suffix
+      // Assert: 2025-05-31 10:00 EDT (UTC-4) = 14:00 UTC with Z suffix
       expect(setIsOpen).toHaveBeenCalledWith(false);
       await waitFor(() => {
         const rulesContent = screen.getByTestId('form-rules').textContent ?? '';
-        expect(rulesContent).toMatch(/UNTIL=\d{8}T\d{6}Z/);
+        expect(rulesContent).toContain('UNTIL=20250531T140000Z');
       });
     });
   });
