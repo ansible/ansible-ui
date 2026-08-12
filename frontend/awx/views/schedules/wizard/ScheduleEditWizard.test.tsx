@@ -237,5 +237,5 @@ describe('ScheduleEditWizard', () => {
         .filter((r) => r.dataset.testid?.startsWith('row-id-'));
       expect(rows.length).toBeGreaterThan(initialRowCount);
     });
-  }, 15000);
+  });
 });
