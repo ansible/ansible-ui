@@ -16,7 +16,7 @@
     "preview": "vite preview --port 4103",
     "serve": "concurrently --kill-others-on-fail npm:preview npm:build:watch -c auto",
     "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
-    "tsc": "tsc --noEmit",
+    "tsc": "node --stack-size=16384 ../../node_modules/typescript/bin/tsc --noEmit",
     "eslint": "eslint --max-warnings=0 .",
     "eslint:fix": "eslint --fix .",
     "prettier": "prettier --check .",
