@@ -106,7 +106,8 @@ export function RuleForm(
       }
     }
 
-    const itemId = ruleId ? ruleId : isRulesStep ? rules.length + 1 : exceptions.length + 1;
+    const newItemId = isRulesStep ? rules.length + 1 : exceptions.length + 1;
+    const itemId = ruleId || newItemId;
     const ruleObject = {
       rule: ensureUntilZSuffix(RRule.optionsToString({ ...rule.origOptions })),
       id: itemId,
