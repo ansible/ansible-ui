@@ -21,11 +21,15 @@ export function PageFormRuleEngineCredentialSelect<
   // Track if auto-select has run to prevent it from running on every empty state
   const hasAutoSelectedRef = useRef(false);
 
+  // Memoize queryParams to prevent recreating the object on every render
+  // (which would cause the dropdown to refetch continuously)
+  const queryParams = useMemo(() => ({ credential_type__namespace__in: 'drools' }), []);
+
   // Fetch credentials to check count and find managed credential
   // Disable automatic revalidation to prevent refetching on dropdown open/focus
   const { data: credentialsData, isLoading } = useGet<EdaItemsResponse<EdaCredential>>(
     edaAPI`/eda-credentials/`,
-    { credential_type__namespace__in: 'drools' },
+    queryParams,
     {
       refreshInterval: 0, // Disable periodic refresh
       revalidateOnFocus: false, // Don't refetch when window regains focus
@@ -91,7 +95,7 @@ export function PageFormRuleEngineCredentialSelect<
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       url={edaAPI`/eda-credentials/`}
-      queryParams={{ credential_type__namespace__in: 'drools' }}
+      queryParams={queryParams}
       tableColumns={credentialColumns}
       toolbarFilters={eventPersistenceCredentialsFilter}
       getOptionDescription={getOptionDescription}
