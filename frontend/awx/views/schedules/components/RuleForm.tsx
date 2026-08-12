@@ -11,6 +11,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
 import {
+  ensureUntilZSuffix,
   useGetFrequencyOptions,
   useGetMonthOptions,
   useGetWeekdayOptions,
@@ -110,15 +111,10 @@ export function RuleForm(
       : isRulesStep
         ? rules.length + 1 || 1
         : exceptions.length + 1 || 1;
-    let ruleString = RRule.optionsToString({ ...rule.origOptions });
-
-    // RFC5545: When DTSTART has TZID, UNTIL must be in UTC with Z suffix
-    // The rrule library doesn't add the Z suffix automatically, so we add it manually
-    if (ruleString.match(/UNTIL=\d{8}T\d{6}(?!Z)/)) {
-      ruleString = ruleString.replace(/UNTIL=(\d{8}T\d{6})(?!Z)/, 'UNTIL=$1Z');
-    }
-
-    const ruleObject = { rule: ruleString, id: itemId };
+    const ruleObject = {
+      rule: ensureUntilZSuffix(RRule.optionsToString({ ...rule.origOptions })),
+      id: itemId,
+    };
     const index = isRulesStep
       ? rules.findIndex((r) => r.id === ruleId)
       : exceptions.findIndex((r) => r.id === ruleId);

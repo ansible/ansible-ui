@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { useCallback } from 'react';
 import { datetime, RRule } from 'rrule';
 import { RuleListItemType, ScheduleFormWizard } from '../types';
+import { ensureUntilZSuffix } from './ruleHelpers';
 import { useGet24HourTime } from './useGet24HourTime';
 
 export function useUpdateRules() {
@@ -19,17 +20,13 @@ export function useUpdateRules() {
       const { year, month, day, hour, minute } = DateTime.fromISO(`${date}`).set(getStart(time));
 
       const updatedRules = (rules || []).map(({ rule, id }) => {
-        let newRule = RRule.optionsToString({
-          ...RRule.fromString(rule).origOptions,
-          tzid: timezone,
-          dtstart: datetime(year, month, day, hour, minute),
-        });
-
-        // RFC5545: When DTSTART has TZID, UNTIL must be in UTC with Z suffix
-        // The rrule library doesn't preserve the Z suffix when re-serializing, so we add it back
-        if (newRule.match(/UNTIL=\d{8}T\d{6}(?!Z)/)) {
-          newRule = newRule.replace(/UNTIL=(\d{8}T\d{6})(?!Z)/, 'UNTIL=$1Z');
-        }
+        const newRule = ensureUntilZSuffix(
+          RRule.optionsToString({
+            ...RRule.fromString(rule).origOptions,
+            tzid: timezone,
+            dtstart: datetime(year, month, day, hour, minute),
+          })
+        );
 
         return { rule: newRule, id };
       });

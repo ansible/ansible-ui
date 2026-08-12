@@ -8,6 +8,7 @@ import { WizardFormValues } from '../../../resources/templates/WorkflowVisualize
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { NodePromptsStep as PromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { RuleFields, ScheduleFormWizard } from '../types';
+import { ensureUntilZSuffix } from './ruleHelpers';
 import { ExceptionsStep } from '../wizard/ExceptionsStep';
 import { RulesStep } from '../wizard/RulesStep';
 import { ScheduleReviewStep } from '../wizard/ScheduleReviewStep';
@@ -97,7 +98,7 @@ export function useScheduleSteps() {
           const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
             awxAPI`/schedules/preview/`,
             {
-              rrule: ruleset.toString().split('\n').join(' '),
+              rrule: ensureUntilZSuffix(ruleset.toString().replaceAll('\n', ' ')),
             }
           );
           if (!local.length && !utc.length) {
