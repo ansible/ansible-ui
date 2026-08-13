@@ -208,63 +208,58 @@ const EditorPaddingTop = 6;
 const EditorPaddingBottom = 6;
 const EditorPadding = EditorPaddingTop + EditorPaddingBottom;
 
-// Monaco initialization runs at module scope so it executes once on first
-// import.  In some build environments (e.g. Insights webpack bundle) the
-// monaco ESM interop can fail, so guard with try/catch to avoid crashing
-// the entire application before any route renders.
-try {
-  monaco.json?.jsonDefaults?.setDiagnosticsOptions({ validate: true });
+// Set up Monaco editor json language support
+monaco.json?.jsonDefaults?.setDiagnosticsOptions({ validate: true });
 
-  configureMonacoYaml(monaco, {
-    validate: true,
-    format: { enable: true },
-    schemas: [
-      {
-        uri: '',
-        fileMatch: [],
-        schema: {
-          type: 'object',
-          properties: {},
-          additionalProperties: true,
-        },
+// Set up Monaco editor yaml language support
+configureMonacoYaml(monaco, {
+  validate: true,
+  format: { enable: true },
+  schemas: [
+    {
+      uri: '',
+      fileMatch: [],
+      schema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: true,
       },
-    ],
-  });
-
-  monaco.editor.defineTheme('data-editor-dark', {
-    base: 'vs-dark',
-    inherit: true,
-    colors: {
-      'editor.background': '#00000000',
-      'minimap.background': '#00000000',
-      'scrollbarSlider.background': '#FFFFFF22',
-      'editor.outline': '#00000000',
-      'editor.lineHighlightBorder': '#00000000',
-      'editor.lineHighlightBackground': '#00000000',
-      'editorLineNumber.foreground': '#FFFFFF88',
-      'editorBracketMatch.border': '#00000000',
-      'editorBracketMatch.background': '#FFFFFF00',
     },
-    rules: [{ token: '', background: '#222222' }],
-  });
+  ],
+});
 
-  monaco.editor.defineTheme('data-editor-light', {
-    base: 'vs',
-    inherit: true,
-    colors: {
-      'editor.background': '#FFFFFF00',
-      'minimap.background': '#FFFFFF00',
-      'scrollbarSlider.background': '#FFFFFF22',
-      'editor.outline': '#00000000',
-      'editor.lineHighlightBorder': '#ffffff00',
-      'editor.lineHighlightBackground': '#ffffff00',
-      'editorLineNumber.foreground': '#00000088',
-      'editorBracketMatch.border': '#ffffff00',
-      'editorBracketMatch.background': '#00000000',
-    },
-    rules: [],
-  });
-} catch {
-  // Monaco initialization failed — editor features (yaml validation,
-  // custom themes) will be unavailable but the app will still render.
-}
+// Set up Monaco editor dark theme
+monaco.editor.defineTheme('data-editor-dark', {
+  base: 'vs-dark',
+  inherit: true,
+  colors: {
+    'editor.background': '#00000000',
+    'minimap.background': '#00000000',
+    'scrollbarSlider.background': '#FFFFFF22',
+    'editor.outline': '#00000000',
+    'editor.lineHighlightBorder': '#00000000',
+    'editor.lineHighlightBackground': '#00000000',
+    'editorLineNumber.foreground': '#FFFFFF88',
+    'editorBracketMatch.border': '#00000000',
+    'editorBracketMatch.background': '#FFFFFF00',
+  },
+  rules: [{ token: '', background: '#222222' }],
+});
+
+// Set up Monaco editor light theme
+monaco.editor.defineTheme('data-editor-light', {
+  base: 'vs',
+  inherit: true,
+  colors: {
+    'editor.background': '#FFFFFF00',
+    'minimap.background': '#FFFFFF00',
+    'scrollbarSlider.background': '#FFFFFF22',
+    'editor.outline': '#00000000',
+    'editor.lineHighlightBorder': '#ffffff00',
+    'editor.lineHighlightBackground': '#ffffff00',
+    'editorLineNumber.foreground': '#00000088',
+    'editorBracketMatch.border': '#ffffff00',
+    'editorBracketMatch.background': '#00000000',
+  },
+  rules: [],
+});
