@@ -279,8 +279,10 @@ describe('InventoryHostGroups', () => {
       expect(screen.getByText('Test groups 1')).toBeInTheDocument();
     });
 
-    const editButtons = screen.getAllByRole('button', { name: /Edit group/ });
-    expect(editButtons.length).toBeGreaterThan(0);
-    expect(editButtons[0]).toHaveAttribute('aria-disabled', 'true');
+    await waitFor(() => {
+      const editButtons = screen.getAllByRole('button', { name: /Edit group/ });
+      expect(editButtons.length).toBeGreaterThan(0);
+      expect(editButtons[0]).toHaveAttribute('aria-disabled', 'true');
+    });
   });
 });
