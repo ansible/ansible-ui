@@ -265,6 +265,6 @@ describe('ScheduleDetails', () => {
 
     await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(1));
     expect(capturedBodies.every((b) => !b.startsWith('DTSTART'))).toBe(true);
-    expect(capturedBodies.some((b) => b === rruleNoDtstart)).toBe(true);
+    expect(capturedBodies.includes(rruleNoDtstart)).toBe(true);
   });
 });
