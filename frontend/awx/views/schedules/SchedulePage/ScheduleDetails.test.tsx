@@ -213,4 +213,58 @@ describe('ScheduleDetails', () => {
     expect(perRuleBody).toBeDefined();
     expect(perRuleBody).toContain('UNTIL=20260813T000000Z');
   });
+
+  it('should render exceptions list when schedule has an EXRULE', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({
+          ...mockSchedule,
+          rrule:
+            'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;INTERVAL=1 EXRULE:FREQ=WEEKLY;BYDAY=SA',
+        })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    expect(await screen.findByText('Exrule')).toBeInTheDocument();
+  });
+
+  it('should handle schedule rrule with no DTSTART', async () => {
+    const rruleNoDtstart = 'RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1';
+    const capturedBodies: string[] = [];
+
+    server.use(
+      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
+        const body = (await request.json()) as { rrule: string };
+        capturedBodies.push(body.rrule);
+        return HttpResponse.json({ local: [], utc: [] });
+      }),
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({ ...mockSchedule, rrule: rruleNoDtstart })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(1));
+    expect(capturedBodies.every((b) => !b.startsWith('DTSTART'))).toBe(true);
+    expect(capturedBodies.some((b) => b === rruleNoDtstart)).toBe(true);
+  });
 });
