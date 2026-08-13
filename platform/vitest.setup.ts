@@ -1,10 +1,16 @@
 // vitest.setup.ts
 import '@testing-library/jest-dom/vitest';
+import { beforeEach } from 'vitest';
 import '@ansible/ansible-ui-framework/vitest.i18n';
 import { Window } from 'happy-dom';
 import { enablePreview } from '@ansible/ansible-ui-framework/vitest.preview';
+import { resetTestSwrCache } from '@ansible/ansible-ui-framework/test-utils/swrTestWrapper';
 
 enablePreview();
+
+beforeEach(() => {
+  resetTestSwrCache();
+});
 
 const window = global.window as unknown as Window;
 window.HTMLCanvasElement.prototype.getContext = function (
