@@ -297,6 +297,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading manual automation cost')}
             width={topCardsWidth}
+            isNested
           ></DashboardValueCard>
           <DashboardValueCard
             id="cost-automated-execution-card"
@@ -307,6 +308,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading automated execution cost')}
             width={topCardsWidth}
+            isNested
           ></DashboardValueCard>
           <DashboardValueCard
             id="total-savings-card"
@@ -317,6 +319,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading total savings')}
             width={topCardsWidth}
+            isNested
           ></DashboardValueCard>
           <DashboardValueCard
             id="total-hours-saved-card"
@@ -327,6 +330,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading total hours saved')}
             width={topCardsWidth}
+            isNested
           ></DashboardValueCard>
         </div>
       </CardBody>

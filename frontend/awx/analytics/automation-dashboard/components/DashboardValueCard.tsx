@@ -6,6 +6,26 @@ import { EmptyStateError } from '../../../../../framework/components/EmptyStateE
 import { currencyFormatter } from '../../utilities/currencyFormatter';
 import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
 
+function getSpanFontSize(
+  isNested: DashboardValueCardProps['isNested'],
+  width: DashboardValueCardProps['width']
+): string {
+  if (isNested) {
+    return width === 'xs' ? 'large' : 'x-large';
+  }
+  return width === 'xs' ? 'x-large' : 'xx-large';
+}
+
+function getDisplayValue(
+  value: DashboardValueCardProps['value'],
+  formatAsCurrency: DashboardValueCardProps['formatAsCurrency']
+): string | number {
+  if (typeof value !== 'number') {
+    return value;
+  }
+  return formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(DEFAULT_NUMBER_LOCALE);
+}
+
 export function DashboardValueCard(props: DashboardValueCardProps) {
   const {
     id,
@@ -19,31 +39,25 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
     errorStateTitle,
     formatAsCurrency,
     width,
+    isNested,
   } = props;
 
-  const contentValue =
-    typeof value === 'number' ? (
-      <span
-        style={{
-          fontSize: width === 'xs' ? 'x-large' : 'xx-large',
-          fontWeight: '400',
-          lineHeight: 1,
-          marginTop: 'auto',
-        }}
-      >
-        {formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(DEFAULT_NUMBER_LOCALE)}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-    ) : (
-      <span style={{ fontSize: 'large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
-        {value}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-    );
+  const fontSize = typeof value === 'number' ? getSpanFontSize(isNested, width) : 'large';
+  const displayValue = getDisplayValue(value, formatAsCurrency);
+
+  const contentValue = (
+    <span style={{ fontSize, fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
+      {displayValue}
+      {valueSuffix ? ` ${valueSuffix}` : ''}
+    </span>
+  );
 
   const content = (
     <Flex
-      style={{ height: '100%' }}
+      style={{
+        height: '100%',
+        paddingTop: isNested ? 'var(--pf-t--global--spacer--md)' : undefined,
+      }}
       spaceItems={{ default: 'spaceItemsLg' }}
       alignItems={{ default: 'alignItemsFlexStart' }}
       justifyContent={{ default: 'justifyContentFlexStart' }}
@@ -56,7 +70,6 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
           </Content>
         </FlexItem>
       )}
-
       {contentValue}
     </Flex>
   );
@@ -67,6 +80,8 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
       helpTitle={help ? title : undefined}
       help={help}
       width={width ?? 'md'}
+      titleSize={isNested ? 'md' : 'xl'}
+      isCompact={isNested}
     >
       {error ? <EmptyStateError titleProp={errorStateTitle} message={error.message} /> : content}
     </PageDashboardCard>

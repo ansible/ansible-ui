@@ -63,4 +63,29 @@ describe('PageDashboardCard', () => {
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });
+
+  it('should default the title size to xl when titleSize is not provided', () => {
+    renderCard({ title: 'Inventories' });
+
+    expect(screen.getByTestId('card-title')).toHaveClass('pf-m-xl');
+  });
+
+  it('should render the title at the provided titleSize', () => {
+    renderCard({ title: 'Inventories', titleSize: 'md' });
+
+    expect(screen.getByTestId('card-title')).toHaveClass('pf-m-md');
+    expect(screen.getByTestId('card-title')).not.toHaveClass('pf-m-xl');
+  });
+
+  it('should not apply compact styling when isCompact is not provided', () => {
+    renderCard({ id: 'compact-card-test', title: 'Inventories' });
+
+    expect(screen.getByTestId('compact-card-test')).not.toHaveClass('pf-m-compact');
+  });
+
+  it('should apply compact styling when isCompact is true', () => {
+    renderCard({ id: 'compact-card-test', title: 'Inventories', isCompact: true });
+
+    expect(screen.getByTestId('compact-card-test')).toHaveClass('pf-m-compact');
+  });
 });

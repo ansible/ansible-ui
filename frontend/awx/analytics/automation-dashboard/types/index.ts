@@ -115,6 +115,7 @@ export type DashboardValueCardProps = Readonly<
     formatAsCurrency?: boolean;
     linkText?: string;
     to?: string;
+    isNested?: boolean;
   }
 >;
 

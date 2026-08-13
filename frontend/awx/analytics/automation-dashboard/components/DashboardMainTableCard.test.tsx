@@ -205,6 +205,21 @@ describe('DashboardMainTableCard', () => {
     ).toBeInTheDocument();
   });
 
+  test('should render parent title at xl size and nested KPI titles at md size', () => {
+    renderCard();
+    expect(screen.getByText('Cost calculation')).toHaveClass('pf-m-xl');
+    expect(screen.getByText('Cost of manual automation')).toHaveClass('pf-m-md');
+    expect(screen.getByText('Cost of automated execution')).toHaveClass('pf-m-md');
+    expect(screen.getByText('Total savings/cost avoided')).toHaveClass('pf-m-md');
+    expect(screen.getByText('Total hours saved/avoided')).toHaveClass('pf-m-md');
+  });
+
+  test('should apply compact card styling to nested KPI cards but not to the parent card', () => {
+    renderCard();
+    expect(screen.getByTestId('cost-manual-automation-card')).toHaveClass('pf-m-compact');
+    expect(screen.getByTestId('ad-main-table-card')).not.toHaveClass('pf-m-compact');
+  });
+
   test('should display 0 in value cards when details has zero values', () => {
     renderCard(
       buildProps({

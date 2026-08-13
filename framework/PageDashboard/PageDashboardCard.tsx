@@ -66,6 +66,7 @@ export function PageDashboardCard(props: {
   canCollapse?: boolean;
 
   disableBodyPadding?: boolean;
+  titleSize?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 }) {
   const id = useID(props);
 
@@ -161,7 +162,7 @@ export function PageDashboardCard(props: {
                   data-cy="card-title"
                   data-testid="card-title"
                   headingLevel="h3"
-                  size="xl"
+                  size={props.titleSize ?? 'xl'}
                   style={{ display: 'inline-block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
                 >
                   {props.title}
