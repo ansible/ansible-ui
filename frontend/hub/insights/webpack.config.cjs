@@ -175,6 +175,11 @@ const newWebpackConfig = {
 
       // Stub AWX for standalone Hub (only AwxRoute is imported)
       '@ansible/awx-ui': resolve(__dirname, 'awx-stub.ts'),
+
+      // monaco-editor@0.56+ exports field maps ./*.js → ./esm/vs/*.js which
+      // doubles the path when resolving esm/vs/* subpaths. Direct alias
+      // bypasses exports resolution for the worker entry used by monaco-yaml.
+      'monaco-editor/esm': resolve(__dirname, 'node_modules/monaco-editor/esm'),
     },
   },
 
