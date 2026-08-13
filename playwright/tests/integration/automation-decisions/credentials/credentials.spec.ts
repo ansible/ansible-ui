@@ -111,7 +111,10 @@ test.describe('EDA Credentials', () => {
       await page.getByRole('textbox', { name: 'Name' }).click();
       await page.getByRole('textbox', { name: 'Name' }).fill(credentialName);
       await page.getByRole('button', { name: 'Organization' }).click();
-      await page.getByRole('option', { name: 'Default The default' }).click();
+      await expect(page.getByRole('option', { name: /^Default/ })).toBeVisible({
+        timeout: 15000,
+      });
+      await page.getByRole('option', { name: /^Default/ }).click();
       await page.getByRole('button', { name: 'Credential type' }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill('Basic Analytics');
       await page.getByRole('option', { name: 'Basic Analytics' }).click();

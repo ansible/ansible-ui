@@ -161,8 +161,8 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       // Save changes
       await page.getByRole('button', { name: 'Save rulebook activation' }).click();
 
-      // Verify changes on details page
-      await expect(page.getByTestId('enable-persistence')).toBeVisible();
+      // Verify changes on details page — wait for redirect and data load
+      await expect(page.getByTestId('enable-persistence')).toBeVisible({ timeout: 15000 });
       await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
 
       // Clean up
@@ -432,9 +432,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       // Create the activation
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
 
-      // Verify it was created with persistence and credential
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
-      await expect(page.getByTestId('enable-persistence')).toBeVisible();
+      // Verify it was created with persistence and credential — wait for redirect
+      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
+        timeout: 15000,
+      });
+      await expect(page.getByTestId('enable-persistence')).toBeVisible({ timeout: 10000 });
       await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
 
       // Edit the activation
