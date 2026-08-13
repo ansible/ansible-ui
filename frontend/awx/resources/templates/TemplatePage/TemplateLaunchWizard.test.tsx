@@ -496,16 +496,14 @@ describe('TemplateLaunchWizard', () => {
         );
         const user = userEvent.setup();
         render(
-          <SWRConfig value={{ provider: () => new Map() }}>
-            <MemoryRouter initialEntries={['/job-templates/1/launch']}>
-              <Routes>
-                <Route
-                  path="/job-templates/:id/launch"
-                  element={<LaunchTemplate jobType="job_templates" />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </SWRConfig>
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
         );
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
         await user.click(screen.getByTestId('wizard-next'));
