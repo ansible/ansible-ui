@@ -29,6 +29,7 @@
     "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^6.10.0",
     "mini-css-extract-plugin": "^2.8.0",
+    "monaco-editor": "0.56.0",
     "monaco-editor-webpack-plugin": "^7.1.0",
     "sass": "^1.71.0",
     "sass-loader": "^14.1.0",
