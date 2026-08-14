@@ -225,11 +225,16 @@ filteredPlugins.push(
 const awxStub = resolve(__dirname, 'awx-stub.ts');
 
 // Add remaining plugins:
+// - Monaco language scope limit (only bundle yaml/json/markdown, not all 80+)
 // - AWX stub replacement
 // - DataEditor lazy-load (breaks Monaco circular dep in Module Federation)
 // - process.env definitions
 // - Suppress "Critical dependency" warning from @rhds/elements
 filteredPlugins.push(
+  new webpack.NormalModuleReplacementPlugin(
+    /monaco-editor[/\\]esm[/\\]vs[/\\]basic-languages[/\\]monaco\.contribution\.js/,
+    resolve(__dirname, 'monaco-languages.js')
+  ),
   new webpack.NormalModuleReplacementPlugin(/@ansible\/awx-ui/, awxStub),
   new webpack.NormalModuleReplacementPlugin(
     /\/components\/DataEditor/,
