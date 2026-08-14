@@ -229,16 +229,11 @@ describe('NodeEditWizard', () => {
       </MemoryRouter>
     );
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId('wizard-title')).toBeInTheDocument();
-      },
-      { timeout: 5000 }
-    );
-
+    // Wait for Next — title can appear before activeStep is set (useEffect), so Next
+    // is not available on the first paint of the wizard shell.
+    const nextButton = await screen.findByRole('button', { name: 'Next' }, { timeout: 5000 });
     // With workflow_approval and no launch_config, prompts and survey are hidden
     // Wizard goes: Node details → Review
-    const nextButton = screen.getByRole('button', { name: 'Next' });
     await user.click(nextButton);
 
     await waitFor(
