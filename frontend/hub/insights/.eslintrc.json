@@ -3,5 +3,5 @@
   "parserOptions": {
     "project": true
   },
-  "ignorePatterns": ["fec.config.js"]
+  "ignorePatterns": ["fec.config.js", "monaco-languages.js"]
 }
