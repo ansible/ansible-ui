@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { DataEditor } from './LazyDataEditor';
+import { DataEditor } from '../insights/LazyDataEditor';
 
 vi.mock('../../../framework/components/DataEditor', () => ({
   DataEditor: (props: Record<string, unknown>) => (
