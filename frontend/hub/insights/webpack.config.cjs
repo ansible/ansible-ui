@@ -179,6 +179,11 @@ const newWebpackConfig = {
       // doubles the path when resolving esm/vs/* subpaths. Direct alias
       // bypasses exports resolution for the worker entry used by monaco-yaml.
       'monaco-editor/esm': resolve(__dirname, 'node_modules/monaco-editor/esm'),
+
+      // Redirect the monaco-editor package entry to our slim build that only
+      // includes editor core + yaml/markdown (instead of all 80+ languages).
+      // This avoids TDZ errors with Module Federation that MonacoWebpackPlugin causes.
+      'monaco-editor$': resolve(__dirname, 'monaco-languages.js'),
     },
   },
 
@@ -225,19 +230,14 @@ filteredPlugins.push(
 const awxStub = resolve(__dirname, 'awx-stub.ts');
 
 // Add remaining plugins:
-// - Monaco language scope limit (only bundle yaml/json/markdown, not all 80+)
 // - AWX stub replacement
 // - DataEditor lazy-load (breaks Monaco circular dep in Module Federation)
 // - process.env definitions
 // - Suppress "Critical dependency" warning from @rhds/elements
 filteredPlugins.push(
-  new webpack.NormalModuleReplacementPlugin(
-    /monaco-editor[/\\]esm[/\\]vs[/\\]basic-languages[/\\]monaco\.contribution\.js/,
-    resolve(__dirname, 'monaco-languages.js')
-  ),
   new webpack.NormalModuleReplacementPlugin(/@ansible\/awx-ui/, awxStub),
   new webpack.NormalModuleReplacementPlugin(
-    /\/components\/DataEditor/,
+    /\/components\/DataEditor(\.tsx?)?$/,
     (resource) => {
       const issuer = resource.contextInfo?.issuer || '';
       if (issuer.includes('LazyDataEditor')) return;
