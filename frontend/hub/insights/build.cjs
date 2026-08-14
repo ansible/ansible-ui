@@ -9,7 +9,13 @@ compiler.run((err, stats) => {
     process.exit(1);
   }
 
-  console.log(stats.toString({ warnings: true, colors: false }));
+  if (stats.hasErrors()) {
+    console.error('=== WEBPACK ERRORS ===');
+    console.error(stats.toString({ errors: true, warnings: false, children: true, colors: false }));
+    console.error('=== END WEBPACK ERRORS ===');
+  }
+
+  console.log(stats.toString({ errors: false, warnings: false, colors: false }));
 
   compiler.close((closeErr) => {
     if (closeErr) console.error(closeErr);
