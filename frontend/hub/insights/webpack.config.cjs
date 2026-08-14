@@ -236,14 +236,11 @@ const awxStub = resolve(__dirname, 'awx-stub.ts');
 // - Suppress "Critical dependency" warning from @rhds/elements
 filteredPlugins.push(
   new webpack.NormalModuleReplacementPlugin(/@ansible\/awx-ui/, awxStub),
-  new webpack.NormalModuleReplacementPlugin(
-    /\/components\/DataEditor(\.tsx?)?$/,
-    (resource) => {
-      const issuer = resource.contextInfo?.issuer || '';
-      if (issuer.includes('LazyDataEditor')) return;
-      resource.request = resolve(__dirname, 'LazyDataEditor.tsx');
-    }
-  ),
+  new webpack.NormalModuleReplacementPlugin(/\/components\/DataEditor(\.tsx?)?$/, (resource) => {
+    const issuer = resource.contextInfo?.issuer || '';
+    if (issuer.includes('LazyDataEditor')) return;
+    resource.request = resolve(__dirname, 'LazyDataEditor.tsx');
+  }),
   new webpack.DefinePlugin({
     'process.env.IS_INSIGHTS': JSON.stringify(true),
     'process.env.HUB_API_PREFIX': JSON.stringify(
