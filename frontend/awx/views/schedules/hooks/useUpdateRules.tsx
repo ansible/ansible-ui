@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { useCallback } from 'react';
 import { datetime, RRule } from 'rrule';
 import { RuleListItemType, ScheduleFormWizard } from '../types';
+import { ensureUntilZSuffix } from './ruleHelpers';
 import { useGet24HourTime } from './useGet24HourTime';
 
 export function useUpdateRules() {
@@ -19,14 +20,20 @@ export function useUpdateRules() {
       const { year, month, day, hour, minute } = DateTime.fromISO(`${date}`).set(getStart(time));
 
       const updatedRules = (rules || []).map(({ rule, id }) => {
-        const newRule = RRule.optionsToString({
-          ...RRule.fromString(rule).origOptions,
-          tzid: timezone,
-          dtstart: datetime(year, month, day, hour, minute),
-        });
+        const newRule = ensureUntilZSuffix(
+          RRule.optionsToString({
+            ...RRule.fromString(rule).origOptions,
+            tzid: timezone,
+            dtstart: datetime(year, month, day, hour, minute),
+          })
+        );
+
         return { rule: newRule, id };
       });
-      return updatedRules;
+
+      // Return same reference if no changes to prevent infinite render loops
+      const hasChanges = updatedRules.some((updated, index) => updated.rule !== rules[index].rule);
+      return hasChanges ? updatedRules : rules;
     },
     [getStart, wizardData]
   );
