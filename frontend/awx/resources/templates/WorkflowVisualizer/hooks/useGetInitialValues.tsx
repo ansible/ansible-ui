@@ -1,7 +1,10 @@
 import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback } from 'react';
-import { getAggregateCredentials } from '../wizard/getAggregateCredentials';
+import {
+  getAggregateCredentials,
+  type AggregateCredential,
+} from '../wizard/getAggregateCredentials';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { stringIsUUID } from '../../../../common/util/strings';
@@ -92,6 +95,10 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       const nodeLabels = isNewNode ? [] : await getLabelData(nodeId);
       const nodeInstanceGroups = isNewNode ? [] : await getInstanceGroupData(nodeId);
 
+      // For scalar prompt fields, ALWAYS read from resource (API data), not launch_data.
+      // launch_data becomes stale after save/refresh and causes cleared fields to revert
+      // to template defaults. For relationship fields (credentials, labels, instance_groups),
+      // use launch_data since resource doesn't contain them (they're fetched separately).
       const prompt = nodeData?.launch_data;
       const defaults = nodeData?.resource;
       const original = {
@@ -100,13 +107,12 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         labels: nodeLabels,
       };
 
-      let aggregateCredentials;
-      let templateCredentials: Credential[] = [];
-
+      // Process template credentials
       const UJT = defaults?.summary_fields?.unified_job_template;
+      let aggregateCredentials: AggregateCredential[] | undefined;
+      let templateCredentials: Credential[] = [];
       if (UJT?.id && UJT?.unified_job_type === RESOURCE_TYPE.job) {
         templateCredentials = await getTemplateCredentialData(UJT.id.toString());
-
         aggregateCredentials = getAggregateCredentials(
           nodeCredentials,
           prompt?.credentials,
@@ -114,9 +120,9 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         );
       }
 
+      // Process survey data
       let extraVarsWithoutSurvey = { ...(defaults?.extra_data || {}) };
       let surveyValues = nodeData?.resource?.extra_data;
-
       if (launch?.ask_variables_on_launch && launch.survey_enabled) {
         const surveySpec = await getSurveySpec(
           nodeData?.resource?.summary_fields?.unified_job_template
@@ -131,25 +137,49 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         }
       }
 
+      // Build node prompts values
       const nodePromptsValues = {
-        credentials: aggregateCredentials ?? (nodeCredentials || []),
-        diff_mode: prompt?.diff_mode ?? (defaults?.diff_mode || false),
+        credentials: (aggregateCredentials ??
+          (nodeCredentials || [])) as PromptFormValues['credentials'],
+        // For saved nodes with resource data, prefer resource (fresh API data) over launch_data
+        // (stale local state). For new nodes where resource fields are undefined, fall back
+        // to launch_data (wizard local state).
+        diff_mode:
+          defaults?.diff_mode !== undefined
+            ? (defaults.diff_mode ?? false)
+            : (prompt?.diff_mode ?? false),
         execution_environment:
           prompt?.execution_environment ?? (defaults?.execution_environment || undefined),
         extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
-        forks: prompt?.forks ?? (defaults?.forks || 0),
+        forks: defaults?.forks !== undefined ? (defaults.forks ?? 0) : (prompt?.forks ?? 0),
         instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),
-        job_slice_count: prompt?.job_slice_count ?? (defaults?.job_slice_count || 0),
-        job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults?.job_tags || ''),
-        job_type: prompt?.job_type ?? (defaults?.job_type || 'run'),
+        job_slice_count:
+          defaults?.job_slice_count !== undefined
+            ? (defaults.job_slice_count ?? 0)
+            : (prompt?.job_slice_count ?? 0),
+        job_tags:
+          defaults?.job_tags !== undefined
+            ? parseStringToTagArray(defaults.job_tags ?? '')
+            : (prompt?.job_tags ?? parseStringToTagArray('')),
+        job_type:
+          defaults?.job_type !== undefined
+            ? (defaults.job_type ?? 'run')
+            : (prompt?.job_type ?? 'run'),
         labels: prompt?.labels ?? (nodeLabels || []),
-        limit: prompt?.limit ?? (defaults?.limit || ''),
-        scm_branch: prompt?.scm_branch ?? (defaults?.scm_branch || ''),
-        skip_tags: prompt?.skip_tags ?? parseStringToTagArray(defaults?.skip_tags || ''),
-        timeout: prompt?.timeout ?? (defaults?.timeout || 0),
-        verbosity: prompt?.verbosity ?? (defaults?.verbosity || 0),
-        launch_config: launch,
+        limit: defaults?.limit !== undefined ? (defaults.limit ?? '') : (prompt?.limit ?? ''),
+        scm_branch:
+          defaults?.scm_branch !== undefined
+            ? (defaults.scm_branch ?? '')
+            : (prompt?.scm_branch ?? ''),
+        skip_tags:
+          defaults?.skip_tags !== undefined
+            ? parseStringToTagArray(defaults.skip_tags ?? '')
+            : (prompt?.skip_tags ?? parseStringToTagArray('')),
+        timeout: defaults?.timeout !== undefined ? (defaults.timeout ?? 0) : (prompt?.timeout ?? 0),
+        verbosity:
+          defaults?.verbosity !== undefined ? (defaults.verbosity ?? 0) : (prompt?.verbosity ?? 0),
+        launch_config: launch ?? undefined,
         original,
         requiredCredentialTypes: templateCredentials.map((cred) => {
           return {
@@ -168,9 +198,9 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       // on launch" because the node still has associated credentials in the DB.
       const nodePromptsStepPrompt = hidePromptStep
         ? {
-            credentials: [] as typeof nodePromptsValues.credentials,
-            labels: [] as typeof nodePromptsValues.labels,
-            instance_groups: [] as typeof nodePromptsValues.instance_groups,
+            credentials: [],
+            labels: [],
+            instance_groups: [],
             original,
           }
         : nodePromptsValues;

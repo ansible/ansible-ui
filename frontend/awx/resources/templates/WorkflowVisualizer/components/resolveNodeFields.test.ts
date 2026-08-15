@@ -71,9 +71,10 @@ describe('resolveScalar', () => {
     expect(resolveScalar(undefined, 'node-val', 'template-val', false)).toBe('node-val');
   });
 
-  test('should use template default when node value is null/undefined', () => {
+  test('should use template default when node value is undefined, but honor null', () => {
     expect(resolveScalar(undefined, undefined, 'template-val', false)).toBe('template-val');
-    expect(resolveScalar(undefined, null, 'template-val', false)).toBe('template-val');
+    // When nodeValue is explicitly null (cleared field), honor it instead of using template default
+    expect(resolveScalar(undefined, null, 'template-val', false)).toBe(null);
   });
 });
 

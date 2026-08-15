@@ -1,10 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus } from '../types';
+
+// Mock requestGet to avoid happy-dom ReadableStream bug
+vi.mock('@ansible/common-ui/crud/Data', async () => {
+  const actual = await vi.importActual('@ansible/common-ui/crud/Data');
+  return {
+    ...actual,
+    requestGet: vi.fn(),
+  };
+});
 
 vi.mock('@patternfly/react-topology', () => ({
   Edge: {},
@@ -28,6 +37,7 @@ vi.mock('@patternfly/react-topology', () => ({
   EdgeTerminalType: { directional: 'directional' },
 }));
 
+const { requestGet } = await import('@ansible/common-ui/crud/Data');
 const { getLaunchData, useGetInitialValues, useNodeTypeStepDefaults } = await import(
   './useGetInitialValues'
 );
@@ -82,7 +92,111 @@ const server = setupServer(
   )
 );
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+// Mock data that requestGet will return (bypassing happy-dom fetch)
+const mockData: Record<string, unknown> = {
+  '/api/v2/job_templates/1/launch/': {
+    ask_credential_on_launch: true,
+    ask_inventory_on_launch: false,
+    survey_enabled: false,
+    defaults: {},
+  },
+  '/api/v2/job_templates/1/credentials/': {
+    count: 1,
+    results: [
+      {
+        id: 10,
+        name: 'Template SSH',
+        credential_type: 1,
+        summary_fields: { credential_type: { name: 'Machine' } },
+      },
+    ],
+  },
+  '/api/v2/workflow_job_templates/2/launch/': {
+    ask_inventory_on_launch: true,
+    survey_enabled: false,
+    defaults: {},
+  },
+  '/api/v2/workflow_job_template_nodes/42/credentials/': {
+    count: 1,
+    results: [
+      {
+        id: 20,
+        name: 'Node SSH',
+        credential_type: 1,
+        summary_fields: { credential_type: { name: 'Machine' } },
+      },
+    ],
+  },
+  '/api/v2/workflow_job_template_nodes/42/labels/': {
+    count: 1,
+    results: [{ id: 1, name: 'production' }],
+  },
+  '/api/v2/workflow_job_template_nodes/42/instance_groups/': {
+    count: 1,
+    results: [{ id: 1, name: 'default' }],
+  },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-1/credentials/': {
+    count: 0,
+    results: [],
+  },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-1/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-1/instance_groups/': {
+    count: 0,
+    results: [],
+  },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-2/credentials/': {
+    count: 0,
+    results: [],
+  },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-2/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-2/instance_groups/': {
+    count: 0,
+    results: [],
+  },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-3/credentials/': {
+    count: 0,
+    results: [],
+  },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-3/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-3/instance_groups/': {
+    count: 0,
+    results: [],
+  },
+  '/api/v2/job_templates/1/survey_spec/': {
+    name: 'Survey',
+    description: '',
+    spec: [
+      { variable: 'question1', question_name: 'Question 1', type: 'text' },
+      { variable: 'question2', question_name: 'Question 2', type: 'integer' },
+    ],
+  },
+};
+
+// Test-specific overrides for server.use() - allows individual tests to override mockData
+const testOverrides = new Map<string, unknown>();
+
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: 'warn' });
+  // Mock requestGet to return data directly without going through fetch (avoids happy-dom ReadableStream bug)
+  vi.mocked(requestGet).mockImplementation((url: string) => {
+    // Check test-specific overrides first (for server.use() scenarios)
+    if (testOverrides.has(url)) {
+      return Promise.resolve(testOverrides.get(url));
+    }
+    // Then check static mock data
+    const data = mockData[url];
+    if (data) {
+      return Promise.resolve(data);
+    }
+    return Promise.resolve({ count: 0, results: [] });
+  });
+});
+
+beforeEach(() => {
+  // Clear test-specific overrides before each test
+  testOverrides.clear();
+});
+
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -355,17 +469,14 @@ describe('useGetInitialValues', () => {
   });
 
   it('should use hidePromptStep path when launch config has no prompts', async () => {
-    server.use(
-      http.get(awxAPI`/job_templates/1/launch/`, () =>
-        HttpResponse.json({
-          ask_credential_on_launch: false,
-          ask_inventory_on_launch: false,
-          ask_variables_on_launch: false,
-          survey_enabled: false,
-          defaults: {},
-        })
-      )
-    );
+    // Override launch config to have no prompts
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_credential_on_launch: false,
+      ask_inventory_on_launch: false,
+      ask_variables_on_launch: false,
+      survey_enabled: false,
+      defaults: {},
+    });
 
     const newNode = {
       getId: () => 'unsavedNode-2',
@@ -429,36 +540,32 @@ describe('useGetInitialValues', () => {
   });
 
   it('should trigger survey path and return survey data when survey_enabled and ask_variables_on_launch are both true', async () => {
-    server.use(
-      http.get(awxAPI`/job_templates/1/launch/`, () =>
-        HttpResponse.json({
-          ask_credential_on_launch: false,
-          ask_variables_on_launch: true,
-          survey_enabled: true,
-          defaults: {},
-        })
-      ),
-      http.get(awxAPI`/job_templates/1/survey_spec/`, () =>
-        HttpResponse.json({
-          name: 'Test Survey',
-          description: '',
-          spec: [
-            {
-              variable: 'survey_var',
-              type: 'text',
-              question_name: 'Survey Var',
-              question_description: '',
-              required: false,
-              default: '',
-              min: 0,
-              max: 1024,
-              choices: [],
-              new_question: false,
-            },
-          ],
-        })
-      )
-    );
+    // Override launch config to enable survey
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_credential_on_launch: false,
+      ask_variables_on_launch: true,
+      survey_enabled: true,
+      defaults: {},
+    });
+    // Override survey spec
+    testOverrides.set('/api/v2/job_templates/1/survey_spec/', {
+      name: 'Test Survey',
+      description: '',
+      spec: [
+        {
+          variable: 'survey_var',
+          type: 'text',
+          question_name: 'Survey Var',
+          question_description: '',
+          required: false,
+          default: '',
+          min: 0,
+          max: 1024,
+          choices: [],
+          new_question: false,
+        },
+      ],
+    });
 
     const nodeWithSurveyData = {
       getId: () => 'unsavedNode-survey',

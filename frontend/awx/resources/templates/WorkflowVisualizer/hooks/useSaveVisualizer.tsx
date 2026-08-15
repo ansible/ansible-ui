@@ -200,7 +200,26 @@ export function useSaveVisualizer(templateId: string) {
             }
           }
 
-          if (typeof value === 'undefined' || value === null || value === '') {
+          // For prompt fields: undefined means the field was cleared in the form
+          // For non-prompt fields: undefined means don't send anything
+          if (value === undefined) {
+            if (isPrompt) {
+              // User cleared a prompt field - send null to clear it on the server
+              createNodePayload[key] = null as Partial<CreateWorkflowNodePayload>[K];
+            }
+            return;
+          }
+
+          // Convert empty strings and null to null for prompt fields to clear them on the server
+          // (AWX API expects null to clear optional fields, not empty string)
+          // For non-prompt fields, omit empty strings (return without setting) to maintain
+          // original behavior, but convert explicit null values
+          if (value === '' || value === null) {
+            if (isPrompt || value === null) {
+              // Prompt field (empty string or null) or non-prompt null: convert to null
+              createNodePayload[key] = null as Partial<CreateWorkflowNodePayload>[K];
+            }
+            // Non-prompt empty string: omit from payload (return without setting)
             return;
           }
 
@@ -301,7 +320,26 @@ export function useSaveVisualizer(templateId: string) {
               }
             }
 
-            if (typeof value === 'undefined' || value === null || value === '') {
+            // For prompt fields: undefined means the field was cleared in the form
+            // For non-prompt fields: undefined means don't send anything
+            if (value === undefined) {
+              if (isPrompt) {
+                // User cleared a prompt field - send null to clear it on the server
+                updatedNodePayload[key] = null as Partial<CreateWorkflowNodePayload>[K];
+              }
+              return;
+            }
+
+            // Convert empty strings and null to null for prompt fields to clear them on the server
+            // (AWX API expects null to clear optional fields, not empty string)
+            // For non-prompt fields, omit empty strings (return without setting) to maintain
+            // original behavior, but convert explicit null values
+            if (value === '' || value === null) {
+              if (isPrompt || value === null) {
+                // Prompt field (empty string or null) or non-prompt null: convert to null
+                updatedNodePayload[key] = null as Partial<CreateWorkflowNodePayload>[K];
+              }
+              // Non-prompt empty string: omit from payload (return without setting)
               return;
             }
 

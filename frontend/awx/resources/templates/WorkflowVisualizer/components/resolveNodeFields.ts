@@ -8,9 +8,19 @@ export function resolveScalar<T>(
   nodeValue: T | undefined | null,
   templateValue: T,
   isTemplateChanged: boolean
-): T {
+): T | null {
   if (promptValue !== undefined && promptValue !== null) return promptValue;
-  if (!isTemplateChanged && nodeValue !== undefined && nodeValue !== null) return nodeValue;
+  // When the node has an explicit null value (cleared field), honor it instead of
+  // falling back to the template default. Only use template default when the field
+  // is truly unset (undefined).
+  if (!isTemplateChanged) {
+    if (nodeValue !== undefined) {
+      // nodeValue can be null (cleared field) - return as-is since the function return
+      // type now includes null. The null value is semantically valid (represents "cleared")
+      // and will be handled appropriately by the UI (e.g., empty string for display).
+      return nodeValue;
+    }
+  }
   return templateValue;
 }
 

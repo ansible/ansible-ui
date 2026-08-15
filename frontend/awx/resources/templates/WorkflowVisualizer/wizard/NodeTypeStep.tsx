@@ -198,7 +198,15 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                 labels: [...(prompts?.labels ?? []), ...(launchConfigValue?.labels ?? [])],
                 diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
                 forks: prompts?.forks ?? launchConfigValue?.forks,
-                limit: prompts?.limit ?? launchConfigValue?.limit,
+                // Use 'in' operator for string fields (limit, scm_branch) to distinguish between
+                // null (field explicitly cleared by user) and undefined (field not set, use template default).
+                // The nullish coalescing operator (??) treats both null and undefined as falsy,
+                // which would incorrectly fall back to template default when field is cleared.
+                limit: prompts && 'limit' in prompts ? prompts.limit : launchConfigValue?.limit,
+                scm_branch:
+                  prompts && 'scm_branch' in prompts
+                    ? prompts.scm_branch
+                    : launchConfigValue?.scm_branch,
                 verbosity: prompts?.verbosity ?? launchConfigValue?.verbosity,
                 job_slice_count: prompts?.job_slice_count ?? launchConfigValue?.job_slice_count,
                 timeout: prompts?.timeout ?? launchConfigValue?.timeout,

@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { RESOURCE_TYPE, START_NODE_ID } from '../constants';
 import { EdgeStatus, type GraphNode, type GraphNodeData } from '../types';
 
@@ -800,5 +801,506 @@ describe('useSaveVisualizer', () => {
     expect(nodePatch).toBeDefined();
     const payload = (nodePatch as unknown[])[1] as { extra_data?: object };
     expect(payload.extra_data).toEqual(expect.objectContaining({ survey_answer: 42 }));
+  });
+
+  describe('Clearing prompt fields with empty strings', () => {
+    test('should send null when scm_branch is cleared (empty string)', async () => {
+      const editedNode = makeGraphNode({
+        id: '123',
+        visible: true,
+        modified: true,
+        nodeData: {
+          launch_data: {
+            scm_branch: '', // User cleared the field
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [editedNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const patchCalls = mockPatchFn.mock.calls;
+      const nodePatch = patchCalls.find(
+        (c: unknown[]) => typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/')
+      );
+      expect(nodePatch).toBeDefined();
+      const payload = (nodePatch as unknown[])[1] as { scm_branch?: string | null };
+      expect(payload.scm_branch).toBe(null); // Empty string converted to null
+    });
+
+    test('should send null when limit is cleared (empty string)', async () => {
+      const editedNode = makeGraphNode({
+        id: '124',
+        visible: true,
+        modified: true,
+        nodeData: {
+          launch_data: {
+            limit: '', // User cleared the field
+            original: {
+              launch_config: {
+                ask_limit_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [editedNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const patchCalls = mockPatchFn.mock.calls;
+      const nodePatch = patchCalls.find(
+        (c: unknown[]) =>
+          typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/124')
+      );
+      expect(nodePatch).toBeDefined();
+      const payload = (nodePatch as unknown[])[1] as { limit?: string | null };
+      expect(payload.limit).toBe(null); // Empty string converted to null
+    });
+
+    test('should send null when job_tags is cleared (empty string)', async () => {
+      const editedNode = makeGraphNode({
+        id: '125',
+        visible: true,
+        modified: true,
+        nodeData: {
+          launch_data: {
+            job_tags: [], // User cleared all tags
+            original: {
+              launch_config: {
+                ask_tags_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [editedNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const patchCalls = mockPatchFn.mock.calls;
+      const nodePatch = patchCalls.find(
+        (c: unknown[]) =>
+          typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/125')
+      );
+      expect(nodePatch).toBeDefined();
+      const payload = (nodePatch as unknown[])[1] as { job_tags?: string | null };
+      expect(payload.job_tags).toBe(null); // Empty array converted to null via '' conversion
+    });
+
+    test('should send null when prompt field is undefined (cleared in form)', async () => {
+      const editedNode = makeGraphNode({
+        id: '126',
+        visible: true,
+        modified: true,
+        nodeData: {
+          launch_data: {
+            scm_branch: undefined, // User cleared it in the form
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        },
+      });
+
+      mockGraphNodes = [editedNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const patchCalls = mockPatchFn.mock.calls;
+      const nodePatch = patchCalls.find(
+        (c: unknown[]) =>
+          typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/126')
+      );
+      expect(nodePatch).toBeDefined();
+      const payload = (nodePatch as unknown[])[1] as { scm_branch?: string | null };
+      expect(payload.scm_branch).toBe(null); // Undefined for prompt fields becomes null
+    });
+
+    test('should send non-empty string values normally', async () => {
+      const editedNode = makeGraphNode({
+        id: '127',
+        visible: true,
+        modified: true,
+        nodeData: {
+          launch_data: {
+            scm_branch: 'feature-branch', // User set a value
+            limit: 'localhost',
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+                ask_limit_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        },
+      });
+
+      mockGraphNodes = [editedNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const patchCalls = mockPatchFn.mock.calls;
+      const nodePatch = patchCalls.find(
+        (c: unknown[]) =>
+          typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/127')
+      );
+      expect(nodePatch).toBeDefined();
+      const payload = (nodePatch as unknown[])[1] as { scm_branch?: string; limit?: string };
+      expect(payload.scm_branch).toBe('feature-branch'); // Non-empty string preserved
+      expect(payload.limit).toBe('localhost'); // Non-empty string preserved
+    });
+
+    test('should not send prompt value when prompt is not enabled for existing node', async () => {
+      const editedNode = makeGraphNode({
+        id: '128',
+        visible: true,
+        modified: true,
+        nodeData: {
+          launch_data: {
+            scm_branch: 'develop', // User set value
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: false, // Prompt NOT enabled
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [editedNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const patchCalls = mockPatchFn.mock.calls;
+      const nodePatch = patchCalls.find(
+        (c: unknown[]) =>
+          typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/128')
+      );
+      expect(nodePatch).toBeDefined();
+      const payload = (nodePatch as unknown[])[1] as { scm_branch?: string | null };
+      // Should NOT include scm_branch because ask_scm_branch_on_launch is false
+      expect('scm_branch' in payload).toBe(false);
+    });
+
+    test('should send null when explicit null value is provided', async () => {
+      const editedNode = makeGraphNode({
+        id: '129',
+        visible: true,
+        modified: true,
+        nodeData: {
+          launch_data: {
+            scm_branch: null, // Explicit null value
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [editedNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const patchCalls = mockPatchFn.mock.calls;
+      const nodePatch = patchCalls.find(
+        (c: unknown[]) =>
+          typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/129')
+      );
+      expect(nodePatch).toBeDefined();
+      const payload = (nodePatch as unknown[])[1] as { scm_branch?: string | null };
+      expect(payload.scm_branch).toBe(null); // Explicit null preserved
+    });
+  });
+
+  describe('Clearing prompt fields for NEW nodes (createNewNodes path)', () => {
+    test('should send null when scm_branch is cleared on new node', async () => {
+      const newNode = makeGraphNode({
+        id: 'unsavedNode-1',
+        visible: true,
+        modified: true,
+        nodeData: {
+          resource: {
+            id: 0,
+            identifier: 'new-job-1',
+            all_parents_must_converge: false,
+            extra_data: {},
+            always_nodes: [],
+            failure_nodes: [],
+            success_nodes: [],
+            summary_fields: {
+              unified_job_template: {
+                id: 10,
+                name: 'New Template',
+                description: 'New job template',
+                unified_job_type: RESOURCE_TYPE.job,
+              },
+            },
+          },
+          launch_data: {
+            scm_branch: '', // User cleared the field
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [newNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const postCalls = mockPostFn.mock.calls;
+      expect(postCalls.length).toBeGreaterThan(0);
+      // Find the POST call (first arg is URL, second is payload)
+      const nodePost = postCalls[postCalls.length - 1]; // Get last POST call
+      const payload = nodePost[1] as { scm_branch?: string | null };
+      expect(payload.scm_branch).toBe(null); // Empty string converted to null
+    });
+
+    test('should send null when limit is cleared on new node', async () => {
+      const newNode = makeGraphNode({
+        id: 'unsavedNode-2',
+        visible: true,
+        modified: true,
+        nodeData: {
+          resource: {
+            id: 0,
+            identifier: 'new-job-2',
+            all_parents_must_converge: false,
+            extra_data: {},
+            always_nodes: [],
+            failure_nodes: [],
+            success_nodes: [],
+            summary_fields: {
+              unified_job_template: {
+                id: 11,
+                name: 'New Template 2',
+                description: 'New job template 2',
+                unified_job_type: RESOURCE_TYPE.job,
+              },
+            },
+          },
+          launch_data: {
+            limit: '', // User cleared the field
+            original: {
+              launch_config: {
+                ask_limit_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [newNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const postCalls = mockPostFn.mock.calls;
+      expect(postCalls.length).toBeGreaterThan(0);
+      // Find the POST call (first arg is URL, second is payload)
+      const nodePost = postCalls[postCalls.length - 1]; // Get last POST call
+      const payload = nodePost[1] as { limit?: string | null };
+      expect(payload.limit).toBe(null); // Empty string converted to null
+    });
+
+    test('should preserve non-empty values on new node', async () => {
+      const newNode = makeGraphNode({
+        id: 'unsavedNode-3',
+        visible: true,
+        modified: true,
+        nodeData: {
+          resource: {
+            id: 0,
+            identifier: 'new-job-3',
+            all_parents_must_converge: false,
+            extra_data: {},
+            always_nodes: [],
+            failure_nodes: [],
+            success_nodes: [],
+            summary_fields: {
+              unified_job_template: {
+                id: 12,
+                name: 'New Template 3',
+                description: 'New job template 3',
+                unified_job_type: RESOURCE_TYPE.job,
+              },
+            },
+          },
+          launch_data: {
+            scm_branch: 'main',
+            limit: 'localhost',
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+                ask_limit_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [newNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const postCalls = mockPostFn.mock.calls;
+      expect(postCalls.length).toBeGreaterThan(0);
+      // Find the POST call (first arg is URL, second is payload)
+      const nodePost = postCalls[postCalls.length - 1]; // Get last POST call
+      const payload = nodePost[1] as { scm_branch?: string; limit?: string };
+      expect(payload.scm_branch).toBe('main'); // Non-empty string preserved
+      expect(payload.limit).toBe('localhost'); // Non-empty string preserved
+    });
+
+    test('should not send prompt value when prompt is not enabled (ask_*_on_launch is false)', async () => {
+      const newNode = makeGraphNode({
+        id: 'unsavedNode-4',
+        visible: true,
+        modified: true,
+        nodeData: {
+          resource: {
+            id: 0,
+            identifier: 'new-job-4',
+            all_parents_must_converge: false,
+            extra_data: {},
+            always_nodes: [],
+            failure_nodes: [],
+            success_nodes: [],
+            summary_fields: {
+              unified_job_template: {
+                id: 13,
+                name: 'New Template 4',
+                description: 'New job template 4',
+                unified_job_type: RESOURCE_TYPE.job,
+              },
+            },
+          },
+          launch_data: {
+            scm_branch: 'develop', // User set value
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: false, // Prompt NOT enabled
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [newNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const postCalls = mockPostFn.mock.calls;
+      expect(postCalls.length).toBeGreaterThan(0);
+      const nodePost = postCalls[postCalls.length - 1];
+      const payload = nodePost[1] as { scm_branch?: string | null };
+      // Should NOT include scm_branch because ask_scm_branch_on_launch is false
+      expect('scm_branch' in payload).toBe(false);
+    });
+
+    test('should send null when explicit null value is provided for new node', async () => {
+      const newNode = makeGraphNode({
+        id: 'unsavedNode-5',
+        visible: true,
+        modified: true,
+        nodeData: {
+          resource: {
+            id: 0,
+            identifier: 'new-job-5',
+            all_parents_must_converge: false,
+            extra_data: {},
+            always_nodes: [],
+            failure_nodes: [],
+            success_nodes: [],
+            summary_fields: {
+              unified_job_template: {
+                id: 14,
+                name: 'New Template 5',
+                description: 'New job template 5',
+                unified_job_type: RESOURCE_TYPE.job,
+              },
+            },
+          },
+          launch_data: {
+            scm_branch: null, // Explicit null value
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [newNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const postCalls = mockPostFn.mock.calls;
+      expect(postCalls.length).toBeGreaterThan(0);
+      const nodePost = postCalls[postCalls.length - 1];
+      const payload = nodePost[1] as { scm_branch?: string | null };
+      expect(payload.scm_branch).toBe(null); // Explicit null preserved
+    });
+
+    test('should send null when prompt field is undefined on new node (cleared in form)', async () => {
+      const newNode = makeGraphNode({
+        id: 'unsavedNode-6',
+        visible: true,
+        modified: true,
+        nodeData: {
+          resource: {
+            id: 0,
+            identifier: 'new-job-6',
+            all_parents_must_converge: false,
+            extra_data: {},
+            always_nodes: [],
+            failure_nodes: [],
+            success_nodes: [],
+            summary_fields: {
+              unified_job_template: {
+                id: 15,
+                name: 'New Template 6',
+                description: 'New job template 6',
+                unified_job_type: RESOURCE_TYPE.job,
+              },
+            },
+          },
+          launch_data: {
+            scm_branch: undefined, // User cleared it in the form
+            original: {
+              launch_config: {
+                ask_scm_branch_on_launch: true,
+              } as unknown as LaunchConfiguration,
+            },
+          },
+        } as unknown as Partial<GraphNodeData>,
+      });
+
+      mockGraphNodes = [newNode];
+      const { result } = renderHook(() => useSaveVisualizer('123'));
+      await result.current();
+
+      const postCalls = mockPostFn.mock.calls;
+      expect(postCalls.length).toBeGreaterThan(0);
+      const nodePost = postCalls[postCalls.length - 1];
+      const payload = nodePost[1] as { scm_branch?: string | null };
+      expect(payload.scm_branch).toBe(null); // Undefined for prompt fields becomes null
+    });
   });
 });
