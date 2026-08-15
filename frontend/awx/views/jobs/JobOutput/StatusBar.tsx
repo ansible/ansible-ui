@@ -161,8 +161,7 @@ function StatusBar<T extends object, K extends object>(props: StatusBarProps<T, 
 
   const barSegments = Object.keys(status).map((key) => {
     const count = (counts[key as keyof T] as number) || 0;
-    const jobStatus =
-      (status[key as keyof K] as StatusProps) ?? (status as CommonStatusType)['dark'];
+    const jobStatus = status[key as keyof K] as StatusProps;
     return (
       <Tooltip
         key={key}
@@ -205,7 +204,9 @@ function StatusBar<T extends object, K extends object>(props: StatusBarProps<T, 
               (status[key as keyof K] as StatusProps)?.label ??
               (status as CommonStatusType)['dark'].label
             }
-            percent={(((counts[key as keyof T] as number) ?? 0) / totalCounts) * 100}
+            percent={((counts[key as keyof T] as number) / totalCounts) * 100}
+            count={counts[key as keyof T] as number}
+            total={totalCounts}
           />
         ))}
       </Legend>
@@ -213,13 +214,23 @@ function StatusBar<T extends object, K extends object>(props: StatusBarProps<T, 
   );
 }
 
-function LegendItem(props: { color: string; label: string; percent: number }) {
-  const { color, label, percent } = props;
+function LegendItem(
+  props: Readonly<{ color: string; label: string; percent: number; count: number; total: number }>
+) {
+  const { color, label, percent, count, total } = props;
+  let display: string;
+  if (count > 0 && Math.round(percent) === 0) {
+    display = '<1%';
+  } else if (count < total && Math.round(percent) === 100) {
+    display = '>99%';
+  } else {
+    display = `${Math.round(percent)}%`;
+  }
 
   return (
     <div>
       <LegendBox color={color} />
-      {label} {Math.round(percent)}%
+      {label} {display}
     </div>
   );
 }

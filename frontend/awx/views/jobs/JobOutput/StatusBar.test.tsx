@@ -50,6 +50,34 @@ describe('StatusBar', () => {
       render(<HostStatusBar counts={counts} />);
       expect(screen.getByTestId('status-bar')).toBeInTheDocument();
     });
+
+    it('should fall back to dark styling for counts keys absent from status', () => {
+      const counts = {
+        ok: 9,
+        skipped: 0,
+        changed: 0,
+        failures: 0,
+        dark: 0,
+        unknown: 1,
+      } as unknown as HostStatusCounts;
+      render(<HostStatusBar counts={counts} />);
+      // 'unknown' key is not in hostStatus, so legend falls back to the 'dark' (Unreachable) label
+      // Two "Unreachable" entries appear: one for dark=0 and one for the fallback unknown=1 (10%)
+      expect(screen.getAllByText(/Unreachable/)).toHaveLength(2);
+    });
+
+    it('should display <1% and >99% for minority/majority statuses that round to 0%/100%', () => {
+      const counts: HostStatusCounts = {
+        ok: 999,
+        skipped: 0,
+        changed: 0,
+        failures: 0,
+        dark: 1,
+      };
+      render(<HostStatusBar counts={counts} />);
+      expect(screen.getByText('Unreachable <1%')).toBeInTheDocument();
+      expect(screen.getByText('Success >99%')).toBeInTheDocument();
+    });
   });
 
   describe('WorkflowNodesStatusBar', () => {
