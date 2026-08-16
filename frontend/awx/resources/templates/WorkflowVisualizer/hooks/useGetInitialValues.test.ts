@@ -1,10 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus } from '../types';
+
+// Mock requestGet to avoid happy-dom ReadableStream bug
+vi.mock('@ansible/common-ui/crud/Data', async () => {
+  const actual = await vi.importActual('@ansible/common-ui/crud/Data');
+  return {
+    ...actual,
+    requestGet: vi.fn(),
+  };
+});
 
 vi.mock('@patternfly/react-topology', () => ({
   Edge: {},
@@ -28,6 +37,7 @@ vi.mock('@patternfly/react-topology', () => ({
   EdgeTerminalType: { directional: 'directional' },
 }));
 
+const { requestGet } = await import('@ansible/common-ui/crud/Data');
 const { getLaunchData, useGetInitialValues, useNodeTypeStepDefaults } = await import(
   './useGetInitialValues'
 );
@@ -82,8 +92,92 @@ const server = setupServer(
   )
 );
 
+// Test-specific overrides for server.use()
+const testOverrides = new Map<string, unknown>();
+
+// Mock data that requestGet will return (bypassing happy-dom fetch)
+const mockData: Record<string, unknown> = {
+  '/api/v2/job_templates/1/launch/': {
+    ask_credential_on_launch: true,
+    ask_inventory_on_launch: false,
+    survey_enabled: false,
+    defaults: {},
+  },
+  '/api/v2/workflow_job_templates/2/launch/': {
+    ask_inventory_on_launch: true,
+    survey_enabled: false,
+    defaults: {},
+  },
+  '/api/v2/workflow_job_template_nodes/42/credentials/': {
+    count: 1,
+    results: [
+      {
+        id: 20,
+        name: 'Node SSH',
+        credential_type: 1,
+        summary_fields: { credential_type: { name: 'Machine' } },
+      },
+    ],
+  },
+  '/api/v2/workflow_job_template_nodes/42/labels/': {
+    count: 1,
+    results: [{ id: 1, name: 'production' }],
+  },
+  '/api/v2/workflow_job_template_nodes/42/instance_groups/': {
+    count: 1,
+    results: [{ id: 5, name: 'default' }],
+  },
+  '/api/v2/job_templates/1/credentials/': {
+    count: 1,
+    results: [
+      {
+        id: 10,
+        name: 'Template SSH',
+        credential_type: 1,
+        summary_fields: { credential_type: { name: 'Machine' } },
+      },
+    ],
+  },
+  '/api/v2/workflow_job_template_nodes/unsavedNode123/credentials/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode123/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode123/instance_groups/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/99/credentials/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/99/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/99/instance_groups/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-2/credentials/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-2/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-2/instance_groups/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-3/credentials/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-3/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-3/instance_groups/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-tags/credentials/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-tags/labels/': { count: 0, results: [] },
+  '/api/v2/workflow_job_template_nodes/unsavedNode-tags/instance_groups/': {
+    count: 0,
+    results: [],
+  },
+};
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+beforeEach(() => {
+  testOverrides.clear();
+  vi.mocked(requestGet).mockImplementation((url: string) => {
+    const key = url.split('?')[0];
+    // Check for test-specific overrides first
+    if (testOverrides.has(key)) {
+      return Promise.resolve(testOverrides.get(key));
+    }
+    if (key in mockData) {
+      return Promise.resolve(mockData[key]);
+    }
+    return Promise.reject(new Error(`No mock data for ${url}`));
+  });
+});
+afterEach(() => {
+  testOverrides.clear();
+  server.resetHandlers();
+  vi.clearAllMocks();
+});
 afterAll(() => server.close());
 
 function makeGraphNode(overrides: Record<string, unknown> = {}) {
@@ -355,17 +449,13 @@ describe('useGetInitialValues', () => {
   });
 
   it('should use hidePromptStep path when launch config has no prompts', async () => {
-    server.use(
-      http.get(awxAPI`/job_templates/1/launch/`, () =>
-        HttpResponse.json({
-          ask_credential_on_launch: false,
-          ask_inventory_on_launch: false,
-          ask_variables_on_launch: false,
-          survey_enabled: false,
-          defaults: {},
-        })
-      )
-    );
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_credential_on_launch: false,
+      ask_inventory_on_launch: false,
+      ask_variables_on_launch: false,
+      survey_enabled: false,
+      defaults: {},
+    });
 
     const newNode = {
       getId: () => 'unsavedNode-2',
@@ -429,36 +519,30 @@ describe('useGetInitialValues', () => {
   });
 
   it('should trigger survey path and return survey data when survey_enabled and ask_variables_on_launch are both true', async () => {
-    server.use(
-      http.get(awxAPI`/job_templates/1/launch/`, () =>
-        HttpResponse.json({
-          ask_credential_on_launch: false,
-          ask_variables_on_launch: true,
-          survey_enabled: true,
-          defaults: {},
-        })
-      ),
-      http.get(awxAPI`/job_templates/1/survey_spec/`, () =>
-        HttpResponse.json({
-          name: 'Test Survey',
-          description: '',
-          spec: [
-            {
-              variable: 'survey_var',
-              type: 'text',
-              question_name: 'Survey Var',
-              question_description: '',
-              required: false,
-              default: '',
-              min: 0,
-              max: 1024,
-              choices: [],
-              new_question: false,
-            },
-          ],
-        })
-      )
-    );
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_credential_on_launch: false,
+      ask_variables_on_launch: true,
+      survey_enabled: true,
+      defaults: {},
+    });
+    testOverrides.set('/api/v2/job_templates/1/survey_spec/', {
+      name: 'Test Survey',
+      description: '',
+      spec: [
+        {
+          variable: 'survey_var',
+          type: 'text',
+          question_name: 'Survey Var',
+          question_description: '',
+          required: false,
+          default: '',
+          min: 0,
+          max: 1024,
+          choices: [],
+          new_question: false,
+        },
+      ],
+    });
 
     const nodeWithSurveyData = {
       getId: () => 'unsavedNode-survey',
@@ -557,5 +641,206 @@ describe('useGetInitialValues', () => {
 
     expect(initialValues.nodeTypeStep.node_type).toBe(RESOURCE_TYPE.project_update);
     expect(initialValues.nodePromptsStep?.prompt?.credentials).toEqual([]);
+  });
+
+  it('should use defaults for job_tags and skip_tags when defined in resource', async () => {
+    const nodeWithTags = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          job_tags: [{ name: 'prompt-tag' }],
+          skip_tags: [{ name: 'prompt-skip' }],
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          job_tags: 'tag1,tag2',
+          skip_tags: 'skip1,skip2',
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithTags);
+
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([
+      { name: 'tag1', label: 'tag1', value: 'tag1' },
+      { name: 'tag2', label: 'tag2', value: 'tag2' },
+    ]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([
+      { name: 'skip1', label: 'skip1', value: 'skip1' },
+      { name: 'skip2', label: 'skip2', value: 'skip2' },
+    ]);
+  });
+
+  it('should handle null job_tags and skip_tags in resource (cleared tags)', async () => {
+    const nodeWithNullTags = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          job_tags: [{ name: 'prompt-tag' }],
+          skip_tags: [{ name: 'prompt-skip' }],
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // Explicitly null (user cleared tags)
+          job_tags: null,
+          skip_tags: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithNullTags);
+
+    // When tags are null, the ?? '' inside parseStringToTagArray is triggered
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
+  });
+
+  it('should use prompt for job_tags and skip_tags when resource does not define them', async () => {
+    const nodeWithoutTagsInResource = {
+      getId: () => 'unsavedNode-tags',
+      getData: () => ({
+        launch_data: {
+          job_tags: [{ name: 'prompt-tag' }],
+          skip_tags: [{ name: 'prompt-skip' }],
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // job_tags and skip_tags are undefined (not in resource)
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithoutTagsInResource);
+
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
+  });
+
+  it('should use fallback values when scalar fields are cleared (null in resource)', async () => {
+    const nodeWithClearedFields = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          limit: 'old-limit',
+          scm_branch: 'old-branch',
+          verbosity: 2,
+          forks: 5,
+          timeout: 300,
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // These fields are explicitly null (cleared by user)
+          limit: null,
+          scm_branch: null,
+          verbosity: null,
+          forks: null,
+          timeout: null,
+          diff_mode: null,
+          job_slice_count: null,
+          job_type: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithClearedFields);
+
+    // When fields are null, resolvePromptField returns null,
+    // then ?? operator uses fallback values
+    expect(initialValues.nodePromptsStep?.prompt?.limit).toBe('');
+    expect(initialValues.nodePromptsStep?.prompt?.scm_branch).toBe('');
+    expect(initialValues.nodePromptsStep?.prompt?.verbosity).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.forks).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.timeout).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.diff_mode).toBe(false);
+    expect(initialValues.nodePromptsStep?.prompt?.job_slice_count).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.job_type).toBe('run');
+  });
+
+  it('should use resource values when scalar fields have non-null values', async () => {
+    const nodeWithResourceValues = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          limit: 'old-limit',
+          scm_branch: 'old-branch',
+          verbosity: 1,
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // These fields have actual values from the API
+          limit: 'host1:host2',
+          scm_branch: 'feature-branch',
+          verbosity: 3,
+          forks: 10,
+          timeout: 600,
+          diff_mode: true,
+          job_slice_count: 5,
+          job_type: 'check',
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithResourceValues);
+
+    // When fields have values, resolvePromptField returns those values,
+    // ?? operator is not triggered (left side is truthy)
+    expect(initialValues.nodePromptsStep?.prompt?.limit).toBe('host1:host2');
+    expect(initialValues.nodePromptsStep?.prompt?.scm_branch).toBe('feature-branch');
+    expect(initialValues.nodePromptsStep?.prompt?.verbosity).toBe(3);
+    expect(initialValues.nodePromptsStep?.prompt?.forks).toBe(10);
+    expect(initialValues.nodePromptsStep?.prompt?.timeout).toBe(600);
+    expect(initialValues.nodePromptsStep?.prompt?.diff_mode).toBe(true);
+    expect(initialValues.nodePromptsStep?.prompt?.job_slice_count).toBe(5);
+    expect(initialValues.nodePromptsStep?.prompt?.job_type).toBe('check');
   });
 });
