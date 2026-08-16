@@ -19,7 +19,7 @@ export function resolvePromptField<T>(
   resource: T | null | undefined,
   prompt: T | null | undefined,
   fallback: T
-): T | null {
+): T {
   // For saved nodes: resource !== undefined means we have fresh API data (could be null for cleared)
   if (resource !== undefined) {
     return resource ?? fallback;

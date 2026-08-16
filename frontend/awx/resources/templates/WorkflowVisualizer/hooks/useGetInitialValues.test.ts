@@ -746,6 +746,37 @@ describe('useGetInitialValues', () => {
     expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
   });
 
+  it('should use empty arrays when both resource and prompt have no job_tags/skip_tags', async () => {
+    const nodeWithNoTags = {
+      getId: () => 'unsavedNode-tags',
+      getData: () => ({
+        launch_data: {
+          // No job_tags or skip_tags in prompt (undefined)
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // job_tags and skip_tags are undefined (not in resource)
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithNoTags);
+
+    // When both defaults and prompt are undefined, parseStringToTagArray('') is called
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
+  });
+
   it('should use fallback values when scalar fields are cleared (null in resource)', async () => {
     const nodeWithClearedFields = {
       getId: () => '42',

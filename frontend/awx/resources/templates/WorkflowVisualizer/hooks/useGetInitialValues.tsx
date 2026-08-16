@@ -134,29 +134,28 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
 
       const nodePromptsValues = {
         credentials: aggregateCredentials ?? (nodeCredentials || []),
-        diff_mode: resolvePromptField(defaults?.diff_mode, prompt?.diff_mode, false) ?? false,
+        diff_mode: resolvePromptField(defaults?.diff_mode, prompt?.diff_mode, false),
         execution_environment:
           prompt?.execution_environment ?? (defaults?.execution_environment || undefined),
         extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
-        forks: resolvePromptField(defaults?.forks, prompt?.forks, 0) ?? 0,
+        forks: resolvePromptField(defaults?.forks, prompt?.forks, 0),
         instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),
-        job_slice_count:
-          resolvePromptField(defaults?.job_slice_count, prompt?.job_slice_count, 0) ?? 0,
+        job_slice_count: resolvePromptField(defaults?.job_slice_count, prompt?.job_slice_count, 0),
         job_tags:
           defaults?.job_tags !== undefined
             ? parseStringToTagArray(defaults.job_tags ?? '')
             : (prompt?.job_tags ?? parseStringToTagArray('')),
-        job_type: resolvePromptField(defaults?.job_type, prompt?.job_type, 'run') ?? 'run',
+        job_type: resolvePromptField(defaults?.job_type, prompt?.job_type, 'run'),
         labels: prompt?.labels ?? (nodeLabels || []),
-        limit: resolvePromptField(defaults?.limit, prompt?.limit, '') ?? '',
-        scm_branch: resolvePromptField(defaults?.scm_branch, prompt?.scm_branch, '') ?? '',
+        limit: resolvePromptField(defaults?.limit, prompt?.limit, ''),
+        scm_branch: resolvePromptField(defaults?.scm_branch, prompt?.scm_branch, ''),
         skip_tags:
           defaults?.skip_tags !== undefined
             ? parseStringToTagArray(defaults.skip_tags ?? '')
             : (prompt?.skip_tags ?? parseStringToTagArray('')),
-        timeout: resolvePromptField(defaults?.timeout, prompt?.timeout, 0) ?? 0,
-        verbosity: resolvePromptField(defaults?.verbosity, prompt?.verbosity, 0) ?? 0,
+        timeout: resolvePromptField(defaults?.timeout, prompt?.timeout, 0),
+        verbosity: resolvePromptField(defaults?.verbosity, prompt?.verbosity, 0),
         launch_config: launch,
         original,
         requiredCredentialTypes: templateCredentials.map((cred) => {
