@@ -558,4 +558,236 @@ describe('useGetInitialValues', () => {
     expect(initialValues.nodeTypeStep.node_type).toBe(RESOURCE_TYPE.project_update);
     expect(initialValues.nodePromptsStep?.prompt?.credentials).toEqual([]);
   });
+
+  it('should use defaults for job_tags and skip_tags when defined in resource', async () => {
+    const nodeWithTags = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          job_tags: [{ name: 'prompt-tag' }],
+          skip_tags: [{ name: 'prompt-skip' }],
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          job_tags: 'tag1,tag2',
+          skip_tags: 'skip1,skip2',
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithTags);
+
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([
+      { name: 'tag1', label: 'tag1', value: 'tag1' },
+      { name: 'tag2', label: 'tag2', value: 'tag2' },
+    ]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([
+      { name: 'skip1', label: 'skip1', value: 'skip1' },
+      { name: 'skip2', label: 'skip2', value: 'skip2' },
+    ]);
+  });
+
+  it('should handle null job_tags and skip_tags in resource (cleared tags)', async () => {
+    const nodeWithNullTags = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          job_tags: [{ name: 'prompt-tag' }],
+          skip_tags: [{ name: 'prompt-skip' }],
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // Explicitly null (user cleared tags)
+          job_tags: null,
+          skip_tags: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithNullTags);
+
+    // When tags are null, the ?? '' inside parseStringToTagArray is triggered
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
+  });
+
+  it('should use prompt for job_tags and skip_tags when resource does not define them', async () => {
+    const nodeWithoutTagsInResource = {
+      getId: () => 'unsavedNode-tags',
+      getData: () => ({
+        launch_data: {
+          job_tags: [{ name: 'prompt-tag' }],
+          skip_tags: [{ name: 'prompt-skip' }],
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // job_tags and skip_tags are undefined (not in resource)
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithoutTagsInResource);
+
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
+  });
+
+  it('should use empty arrays when both resource and prompt have no job_tags/skip_tags', async () => {
+    const nodeWithNoTags = {
+      getId: () => 'unsavedNode-tags',
+      getData: () => ({
+        launch_data: {
+          // No job_tags or skip_tags in prompt (undefined)
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // job_tags and skip_tags are undefined (not in resource)
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithNoTags);
+
+    // When both defaults and prompt are undefined, parseStringToTagArray('') is called
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
+  });
+
+  it('should use fallback values when scalar fields are cleared (null in resource)', async () => {
+    const nodeWithClearedFields = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          limit: 'old-limit',
+          scm_branch: 'old-branch',
+          verbosity: 2,
+          forks: 5,
+          timeout: 300,
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // These fields are explicitly null (cleared by user)
+          limit: null,
+          scm_branch: null,
+          verbosity: null,
+          forks: null,
+          timeout: null,
+          diff_mode: null,
+          job_slice_count: null,
+          job_type: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithClearedFields);
+
+    // When fields are null, resolvePromptField returns null,
+    // then ?? operator uses fallback values
+    expect(initialValues.nodePromptsStep?.prompt?.limit).toBe('');
+    expect(initialValues.nodePromptsStep?.prompt?.scm_branch).toBe('');
+    expect(initialValues.nodePromptsStep?.prompt?.verbosity).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.forks).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.timeout).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.diff_mode).toBe(false);
+    expect(initialValues.nodePromptsStep?.prompt?.job_slice_count).toBe(0);
+    expect(initialValues.nodePromptsStep?.prompt?.job_type).toBe('run');
+  });
+
+  it('should use resource values when scalar fields have non-null values', async () => {
+    const nodeWithResourceValues = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          limit: 'old-limit',
+          scm_branch: 'old-branch',
+          verbosity: 1,
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          // These fields have actual values from the API
+          limit: 'host1:host2',
+          scm_branch: 'feature-branch',
+          verbosity: 3,
+          forks: 10,
+          timeout: 600,
+          diff_mode: true,
+          job_slice_count: 5,
+          job_type: 'check',
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithResourceValues);
+
+    // When fields have values, resolvePromptField returns those values,
+    // ?? operator is not triggered (left side is truthy)
+    expect(initialValues.nodePromptsStep?.prompt?.limit).toBe('host1:host2');
+    expect(initialValues.nodePromptsStep?.prompt?.scm_branch).toBe('feature-branch');
+    expect(initialValues.nodePromptsStep?.prompt?.verbosity).toBe(3);
+    expect(initialValues.nodePromptsStep?.prompt?.forks).toBe(10);
+    expect(initialValues.nodePromptsStep?.prompt?.timeout).toBe(600);
+    expect(initialValues.nodePromptsStep?.prompt?.diff_mode).toBe(true);
+    expect(initialValues.nodePromptsStep?.prompt?.job_slice_count).toBe(5);
+    expect(initialValues.nodePromptsStep?.prompt?.job_type).toBe('check');
+  });
 });
