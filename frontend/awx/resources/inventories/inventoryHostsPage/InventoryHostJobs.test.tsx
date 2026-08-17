@@ -51,8 +51,23 @@ const mockCompletedJob = {
   },
 };
 
+const mockRegularHost = {
+  id: 123,
+  name: 'test-host',
+  instance_id: '',
+  summary_fields: { inventory: { kind: '' } },
+};
+
+const mockConstructedHost = {
+  id: 7,
+  name: 'proxy-host',
+  instance_id: '42',
+  summary_fields: { inventory: { kind: 'constructed' } },
+};
+
 describe('InventoryHostJobs Component', () => {
   const server = setupServer(
+    http.get(awxAPI`/hosts/:id/`, () => HttpResponse.json(mockRegularHost)),
     http.get(awxAPI`/unified_jobs/`, () => {
       return HttpResponse.json({
         count: 1,
@@ -198,6 +213,33 @@ describe('InventoryHostJobs Component', () => {
     await waitFor(
       () => {
         expect(screen.getByText(/No jobs yet/i)).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+  });
+
+  test('should use source host instance_id for constructed inventory hosts', async () => {
+    const capturedUrls: string[] = [];
+
+    server.use(
+      http.get(awxAPI`/hosts/:id/`, () => HttpResponse.json(mockConstructedHost)),
+      http.get(awxAPI`/unified_jobs/`, ({ request }) => {
+        capturedUrls.push(request.url);
+        return HttpResponse.json({ count: 0, next: null, previous: null, results: [] });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/inventories/1/hosts/7/jobs']}>
+        <Routes>
+          <Route path="/inventories/:id/hosts/:host_id/jobs" element={<InventoryHostJobs />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(capturedUrls.some((url) => url.includes('job__hosts=42'))).toBe(true);
       },
       { timeout: 5000 }
     );
