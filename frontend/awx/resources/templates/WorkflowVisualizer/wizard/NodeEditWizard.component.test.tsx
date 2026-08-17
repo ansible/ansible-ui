@@ -238,7 +238,7 @@ describe('NodeEditWizard', () => {
 
     // With workflow_approval and no launch_config, prompts and survey are hidden
     // Wizard goes: Node details → Review
-    const nextButton = screen.getByRole('button', { name: 'Next' });
+    const nextButton = await screen.findByRole('button', { name: 'Next' });
     await user.click(nextButton);
 
     await waitFor(
