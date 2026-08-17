@@ -390,7 +390,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
       for (const descriptionColumn of descriptionColumns) {
         if ('value' in descriptionColumn) {
           expandedRowFunctions.push((item) => {
-            const value = descriptionColumn.value?.(item);
+            const value = descriptionColumn.value?.(item) as ReactNode;
             if (value) {
               return <div key={descriptionColumn.id ?? descriptionColumn.header}>{value}</div>;
             }

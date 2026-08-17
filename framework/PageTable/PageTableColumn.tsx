@@ -1,8 +1,13 @@
 import { ReactNode, useMemo } from 'react';
+import { LabelColor } from '../components/pfcolors';
 import { DateTimeCell } from '../PageCells/DateTimeCell';
 import { LabelsCell } from '../PageCells/LabelsCell';
 import { TextCell } from '../PageCells/TextCell';
 import { PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
+
+export type LabelValue =
+  | string
+  | { label: string; color?: LabelColor; icon?: ReactNode; variant?: 'outline' | 'filled' };
 
 /** Column options for controlling how the column displays in a table. */
 export enum ColumnTableOption {
@@ -160,11 +165,12 @@ export interface ITableColumnTypeCount<T extends object> extends ITableColumnCom
   // TODO options for formatting number. i.e. should number be error/warning color if not 0?
 }
 
-/** Table column that shows a count. In a card, this shows up in a count section at the bottom of the card. */
+/** Table column that shows labels. In a card, this shows up in the footer label area. */
 export interface ITableColumnTypeLabels<T extends object> extends ITableColumnCommon<T> {
   type: 'labels';
-  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists. */
-  value: CellFn<T, string[] | undefined>;
+  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists.
+   *  Values can be plain strings or rich objects with color, icon, and variant. */
+  value: CellFn<T, LabelValue[] | undefined>;
   // TODO add use option indicating how many labels to show by default
 }
 

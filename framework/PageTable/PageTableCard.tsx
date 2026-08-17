@@ -329,7 +329,9 @@ export function useColumnsToTableCardFn<T extends object>(
 
       const to = nameColumn && 'to' in nameColumn ? nameColumn.to : undefined;
       let value: CellFn<T, ReactNode> | undefined =
-        nameColumn && 'value' in nameColumn ? nameColumn.value : undefined;
+        nameColumn && 'value' in nameColumn
+          ? (nameColumn.value as CellFn<T, ReactNode>)
+          : undefined;
       if (!value) {
         value = nameColumn && 'cell' in nameColumn ? nameColumn.cell : undefined;
       }
@@ -389,7 +391,9 @@ export function useColumnsToTableCardFn<T extends object>(
             )}
           </DescriptionList>
         ),
-        labels: labelColumn && labelColumn.value(item)?.map((label) => ({ label })),
+        labels: labelColumn
+          ?.value(item)
+          ?.map((label) => (typeof label === 'string' ? { label } : label)),
       };
       if (!hasDescription && visibleCardColumns.length === 0 && countColumns.length === 0) {
         pageTableCard.cardBody = <div style={{ flexGrow: 1 }} />;

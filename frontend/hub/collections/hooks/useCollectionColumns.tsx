@@ -2,6 +2,7 @@ import {
   ColumnCardOption,
   ColumnTableOption,
   ITableColumn,
+  LabelValue,
   PFColorE,
   TextCell,
   useGetPageUrl,
@@ -86,6 +87,8 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
             </Label>
           );
         },
+        card: 'hidden',
+        list: 'hidden',
       },
       {
         header: t('Namespace'),
@@ -179,8 +182,26 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         },
         list: 'secondary',
         value: (collection) => !collection.is_signed || collection.is_signed,
-        card: display_signatures ? undefined : ColumnCardOption.hidden,
+        card: ColumnCardOption.hidden,
         table: display_signatures ? undefined : ColumnTableOption.hidden,
+      },
+      {
+        header: t('Badges'),
+        type: 'labels',
+        value: (collection) => {
+          const badge = getCollectionBadge(collection.repository?.name, t);
+          const labels: LabelValue[] = [badge];
+          if (display_signatures && collection.is_signed) {
+            labels.push({
+              label: t('Signed'),
+              color: 'green',
+              icon: <CheckCircleIcon />,
+              variant: 'outline',
+            });
+          }
+          return labels;
+        },
+        table: ColumnTableOption.hidden,
       },
     ],
     [getPageUrl, t, display_signatures, name, namespace, repository]
