@@ -32,9 +32,10 @@ export function LabelsCell(props: Readonly<LabelsProps | LabelsWithLinksProps>) 
             return (
               <Label
                 key={label.label}
-                color={label.color}
+                color={label.status ? undefined : label.color}
                 icon={label.icon}
                 variant={label.variant}
+                status={label.status}
               >
                 {label.label}
               </Label>

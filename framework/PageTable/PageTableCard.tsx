@@ -46,6 +46,7 @@ export interface IPageTableCard {
     color?: LabelColor;
     icon?: ReactNode;
     variant?: 'outline' | 'filled' | undefined;
+    status?: 'success' | 'warning' | 'danger' | 'info' | 'custom';
   }[]; // TODO - disable/enable auto generated filters
   badge?: string;
   badgeColor?: LabelColor;
@@ -72,6 +73,7 @@ const CardTopDiv = styled.div`
   align-items: center;
   gap: 16px;
   max-width: 100%;
+  flex: 1;
 `;
 
 const CardDiv = styled.div`
@@ -186,6 +188,24 @@ export function PageTableCard<T extends object>(props: {
                 )
               )}
             </CardDiv>
+            {card.labels && (
+              <>
+                <div style={{ flexGrow: 1 }} />
+                <LabelGroup numLabels={999}>
+                  {card.labels.map((item) => (
+                    <Label
+                      key={item.label}
+                      color={item.status ? undefined : item.color}
+                      icon={item.icon}
+                      variant={item.variant}
+                      status={item.status}
+                    >
+                      <Truncate content={item.label} style={{ minWidth: 0 }} />
+                    </Label>
+                  ))}
+                </LabelGroup>
+              </>
+            )}
           </CardTopDiv>
           {card.badge && card.badgeTooltip && (
             <FlexItem>
@@ -200,22 +220,6 @@ export function PageTableCard<T extends object>(props: {
           {card.badge && !card.badgeTooltip && (
             <FlexItem>
               <Label color={card.badgeColor}>{card.badge}</Label>
-            </FlexItem>
-          )}
-          {card.labels && (
-            <FlexItem>
-              <LabelGroup numLabels={999}>
-                {card.labels.map((item) => (
-                  <Label
-                    key={item.label}
-                    color={item.color}
-                    icon={item.icon}
-                    variant={item.variant}
-                  >
-                    <Truncate content={item.label} style={{ minWidth: 0 }} />
-                  </Label>
-                ))}
-              </LabelGroup>
             </FlexItem>
           )}
         </CardHeaderDiv>

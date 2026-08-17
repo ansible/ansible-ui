@@ -1,18 +1,18 @@
 import {
   ColumnCardOption,
+  ColumnListOption,
   ColumnTableOption,
   ITableColumn,
+  LabelColor,
   LabelValue,
   PFColorE,
   TextCell,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
-import { Label, Truncate } from '@patternfly/react-core';
 import { BanIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { getCollectionBadge } from '../../common/collectionBadgeUtils';
 import { CollectionLogo } from '../../common/Logo';
 import { namespaceTitle } from '../../common/namespaceTitle';
 import { useHubContext } from '../../common/useHubContext';
@@ -79,16 +79,17 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
       {
         header: t('Repository'),
         value: (collection) => collection.repository?.name,
-        cell: (collection) => {
-          const badge = getCollectionBadge(collection.repository?.name, t);
-          return (
-            <Label color={badge.color} icon={badge.icon} variant={badge.variant}>
-              <Truncate content={badge.label} style={{ minWidth: 0 }} />
-            </Label>
-          );
-        },
-        card: 'hidden',
-        list: 'hidden',
+        cell: (collection) => (
+          <TextCell
+            text={collection.repository?.name}
+            to={getPageUrl(HubRoute.RepositoryDetails, {
+              params: {
+                id: collection.repository?.name,
+              },
+            })}
+          />
+        ),
+        card: ColumnCardOption.hidden,
       },
       {
         header: t('Namespace'),
@@ -189,19 +190,30 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         header: t('Badges'),
         type: 'labels',
         value: (collection) => {
-          const badge = getCollectionBadge(collection.repository?.name, t);
-          const labels: LabelValue[] = [badge];
-          if (display_signatures && collection.is_signed) {
+          const labels: LabelValue[] = [];
+          if (collection.repository?.name) {
+            const repoName = collection.repository.name;
+            const repoColorMap: Record<string, LabelColor> = {
+              'rh-certified': 'blue',
+              validated: 'purple',
+            };
             labels.push({
-              label: t('Signed'),
-              color: 'green',
-              icon: <CheckCircleIcon />,
-              variant: 'outline',
+              label: repoName,
+              color: repoColorMap[repoName] ?? 'grey',
+              variant: 'filled',
             });
+          }
+          if (display_signatures) {
+            labels.push(
+              collection.is_signed
+                ? { label: t('Signed'), status: 'success' as const, variant: 'outline' as const }
+                : { label: t('Unsigned'), status: 'warning' as const, variant: 'outline' as const }
+            );
           }
           return labels;
         },
         table: ColumnTableOption.hidden,
+        list: ColumnListOption.hidden,
       },
     ],
     [getPageUrl, t, display_signatures, name, namespace, repository]

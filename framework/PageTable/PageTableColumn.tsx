@@ -7,7 +7,13 @@ import { PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 
 export type LabelValue =
   | string
-  | { label: string; color?: LabelColor; icon?: ReactNode; variant?: 'outline' | 'filled' };
+  | {
+      label: string;
+      color?: LabelColor;
+      icon?: ReactNode;
+      variant?: 'outline' | 'filled';
+      status?: 'success' | 'warning' | 'danger' | 'info' | 'custom';
+    };
 
 /** Column options for controlling how the column displays in a table. */
 export enum ColumnTableOption {
