@@ -196,6 +196,22 @@ describe('TableColumnCell', () => {
     expect(screen.getByText('stable')).toBeInTheDocument();
   });
 
+  it('should render LabelsCell with rich LabelValue objects', () => {
+    const column: ITableColumn<TestItem> = {
+      header: 'Labels',
+      type: 'labels',
+      value: () => [
+        { label: 'published', color: 'blue', variant: 'filled' },
+        { label: 'Signed', status: 'success', variant: 'outline' },
+      ],
+    };
+
+    renderCell(column);
+
+    expect(screen.getByText('published')).toBeInTheDocument();
+    expect(screen.getByText('Signed')).toBeInTheDocument();
+  });
+
   it('should render LabelsCell with empty array when labels value is undefined', () => {
     const column: ITableColumn<TestItem> = {
       header: 'Labels',
