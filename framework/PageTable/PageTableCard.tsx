@@ -89,10 +89,6 @@ const CardFooterDiv = styled.div`
   flex-wrap: wrap;
 `;
 
-const CardFooterLabelsDiv = styled.div`
-  flex-grow: 1;
-`;
-
 export const PageDetailDiv = styled.div`
   display: flex;
   gap: 16px;
@@ -208,6 +204,17 @@ export function PageTableCard<T extends object>(props: {
           )}
         </CardHeaderDiv>
       </CardHeader>
+      {card.labels && (
+        <div style={{ paddingLeft: 32, paddingRight: 32, paddingTop: 8 }}>
+          <LabelGroup numLabels={999}>
+            {card.labels.map((item) => (
+              <Label key={item.label} color={item.color} icon={item.icon} variant={item.variant}>
+                <Truncate content={item.label} style={{ minWidth: 0 }} />
+              </Label>
+            ))}
+          </LabelGroup>
+        </div>
+      )}
       <div
         style={{
           overflow: 'hidden',
@@ -218,37 +225,14 @@ export function PageTableCard<T extends object>(props: {
       >
         <Scrollable>{card.cardBody}</Scrollable>
       </div>
-      {card.labels || (itemActions && itemActions.length) ? (
+      {itemActions && itemActions.length ? (
         <CardFooter>
           <CardFooterDiv>
-            <CardFooterLabelsDiv>
-              {card.labels && (
-                <LabelGroup numLabels={999}>
-                  {card.labels.map((item) => (
-                    <Label
-                      key={item.label}
-                      color={item.color}
-                      icon={item.icon}
-                      variant={item.variant}
-                    >
-                      <Truncate content={item.label} style={{ minWidth: 0 }} />
-                    </Label>
-                  ))}
-                </LabelGroup>
-              )}
-            </CardFooterLabelsDiv>
-            {itemActions && itemActions.length ? (
-              <div
-                style={{ marginRight: -16, alignSelf: 'end', justifySelf: 'flex-end', flexGrow: 1 }}
-              >
-                <PageActions
-                  actions={itemActions}
-                  position={'right'}
-                  selectedItem={item}
-                  iconOnly
-                />
-              </div>
-            ) : null}
+            <div
+              style={{ marginRight: -16, alignSelf: 'end', justifySelf: 'flex-end', flexGrow: 1 }}
+            >
+              <PageActions actions={itemActions} position={'right'} selectedItem={item} iconOnly />
+            </div>
           </CardFooterDiv>
         </CardFooter>
       ) : null}
