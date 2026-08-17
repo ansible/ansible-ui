@@ -20,6 +20,17 @@ interface WorkflowOutputNavigationProps {
   workflowNodes: WorkflowJobNode[];
 }
 
+function getWorkflowNodeLabel(node: WorkflowJobNode): string {
+  if (!stringIsUUID(node.identifier) && node.identifier !== '') {
+    return node.identifier;
+  }
+  return (
+    node.summary_fields?.job?.name ||
+    node.summary_fields?.unified_job_template?.name ||
+    `Node ${node.id.toString()}`
+  );
+}
+
 export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
@@ -142,9 +153,9 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
                 },
               })}
               component={Link}
-              value={node.summary_fields?.job?.name}
+              value={getWorkflowNodeLabel(node)}
             >
-              {stringIsUUID(node.identifier) ? node.summary_fields?.job?.name : node.identifier}
+              {getWorkflowNodeLabel(node)}
             </SelectOption>
           ))}
         </SelectList>
