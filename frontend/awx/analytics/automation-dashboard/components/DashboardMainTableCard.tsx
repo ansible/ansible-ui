@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
-import { DashboardValueCard } from './DashboardValueCard';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
@@ -21,6 +20,7 @@ import styled from 'styled-components';
 import { ExportIcon } from '@patternfly/react-icons';
 import { DashboardExportButton } from './DashboardExportButton';
 import { hasValidRequiredFilters } from '../utils/queryString';
+import { DashboardDetailsCard } from './DashboardDetailsCard';
 
 interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
@@ -288,7 +288,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
           ref={ref}
           style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
-          <DashboardValueCard
+          <DashboardDetailsCard
             id="cost-manual-automation-card"
             title={t('Cost of manual automation')}
             help={t('Total cost if all jobs were run manually')}
@@ -297,9 +297,8 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading manual automation cost')}
             width={topCardsWidth}
-            isNested
-          ></DashboardValueCard>
-          <DashboardValueCard
+          ></DashboardDetailsCard>
+          <DashboardDetailsCard
             id="cost-automated-execution-card"
             title={t('Cost of automated execution')}
             help={t('Total cost of running jobs on AAP')}
@@ -308,9 +307,8 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading automated execution cost')}
             width={topCardsWidth}
-            isNested
-          ></DashboardValueCard>
-          <DashboardValueCard
+          ></DashboardDetailsCard>
+          <DashboardDetailsCard
             id="total-savings-card"
             title={t('Total savings/cost avoided')}
             help={t('Difference between manual and automated cost')}
@@ -319,9 +317,8 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading total savings')}
             width={topCardsWidth}
-            isNested
-          ></DashboardValueCard>
-          <DashboardValueCard
+          ></DashboardDetailsCard>
+          <DashboardDetailsCard
             id="total-hours-saved-card"
             title={t('Total hours saved/avoided')}
             help={t('Time saved by automation vs manual execution')}
@@ -330,8 +327,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading total hours saved')}
             width={topCardsWidth}
-            isNested
-          ></DashboardValueCard>
+          ></DashboardDetailsCard>
         </div>
       </CardBody>
       <CardBody>

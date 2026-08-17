@@ -98,85 +98,17 @@ describe('DashboardValueCard', () => {
     expect(screen.getByText('12,345', { exact: false })).toBeInTheDocument();
   });
 
-  describe('formatAsCurrency', () => {
-    test('should format numeric value as USD currency when formatAsCurrency is true', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard
-            {...defaultProps}
-            value={2500}
-            valueSuffix={undefined}
-            formatAsCurrency={true}
-          />
-        </MemoryRouter>
-      );
-      expect(screen.getByText('$2,500.00')).toBeInTheDocument();
-    });
-
-    test('should use toLocaleString when formatAsCurrency is false', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard
-            {...defaultProps}
-            value={2500}
-            valueSuffix={undefined}
-            formatAsCurrency={false}
-          />
-        </MemoryRouter>
-      );
-      expect(screen.queryByText('$2,500.00')).not.toBeInTheDocument();
-      expect(screen.getByText('2,500')).toBeInTheDocument();
-    });
-
-    test('should use toLocaleString when formatAsCurrency is omitted', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard {...defaultProps} value={2500} valueSuffix={undefined} />
-        </MemoryRouter>
-      );
-      expect(screen.queryByText('$2,500.00')).not.toBeInTheDocument();
-      expect(screen.getByText('2,500')).toBeInTheDocument();
-    });
-
-    test('should still render valueSuffix alongside currency-formatted value', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard
-            {...defaultProps}
-            value={1000}
-            valueSuffix="*"
-            formatAsCurrency={true}
-          />
-        </MemoryRouter>
-      );
-      expect(screen.getByText(/\$1,000\.00/)).toBeInTheDocument();
-      expect(screen.getByText(/\*/)).toBeInTheDocument();
-    });
-  });
-
-  describe('isNested', () => {
-    test('should render title at xl size and card without compact styling when isNested is not provided', () => {
+  describe('font size', () => {
+    test('should render title at xl size', () => {
       render(
         <MemoryRouter>
           <DashboardValueCard {...defaultProps} />
         </MemoryRouter>
       );
       expect(screen.getByTestId('card-title')).toHaveClass('pf-m-xl');
-      expect(screen.getByTestId('test-card')).not.toHaveClass('pf-m-compact');
     });
 
-    test('should render title at md size and card with compact styling when isNested is true', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard {...defaultProps} isNested />
-        </MemoryRouter>
-      );
-      expect(screen.getByTestId('card-title')).toHaveClass('pf-m-md');
-      expect(screen.getByTestId('card-title')).not.toHaveClass('pf-m-xl');
-      expect(screen.getByTestId('test-card')).toHaveClass('pf-m-compact');
-    });
-
-    test('should render value at xx-large font size by default (not nested, no width)', () => {
+    test('should render value at xx-large font size by default (no width)', () => {
       render(
         <MemoryRouter>
           <DashboardValueCard {...defaultProps} />
@@ -185,31 +117,13 @@ describe('DashboardValueCard', () => {
       expect(screen.getByText('12,345', { exact: false })).toHaveStyle({ fontSize: 'xx-large' });
     });
 
-    test('should render value at x-large font size when not nested and width is xs', () => {
+    test('should render value at x-large font size when width is xs', () => {
       render(
         <MemoryRouter>
           <DashboardValueCard {...defaultProps} width="xs" />
         </MemoryRouter>
       );
       expect(screen.getByText('12,345', { exact: false })).toHaveStyle({ fontSize: 'x-large' });
-    });
-
-    test('should render value at x-large font size when nested and width is not xs', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard {...defaultProps} isNested width="md" />
-        </MemoryRouter>
-      );
-      expect(screen.getByText('12,345', { exact: false })).toHaveStyle({ fontSize: 'x-large' });
-    });
-
-    test('should render value at large font size when nested and width is xs', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard {...defaultProps} isNested width="xs" />
-        </MemoryRouter>
-      );
-      expect(screen.getByText('12,345', { exact: false })).toHaveStyle({ fontSize: 'large' });
     });
   });
 });

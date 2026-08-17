@@ -108,15 +108,24 @@ type DashboardCommonCardProps = {
   width?: PageDashboardCardWidth;
 };
 
+type DashboardCardValueProps = {
+  value: string | number;
+  valueSuffix?: string;
+};
+
 export type DashboardValueCardProps = Readonly<
-  DashboardCommonCardProps & {
-    value: string | number;
-    valueSuffix?: string;
-    formatAsCurrency?: boolean;
-    linkText?: string;
-    to?: string;
-    isNested?: boolean;
-  }
+  DashboardCommonCardProps &
+    DashboardCardValueProps & {
+      linkText?: string;
+      to?: string;
+    }
+>;
+
+export type DashboardDetailsCardProps = Readonly<
+  DashboardCommonCardProps &
+    DashboardCardValueProps & {
+      formatAsCurrency?: boolean;
+    }
 >;
 
 export type DashboardTableCardProps = DashboardCommonCardProps & {
