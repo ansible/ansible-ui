@@ -1,0 +1,45 @@
+import { LabelColor } from '@ansible/ansible-ui-framework';
+import { ReactNode } from 'react';
+import { isInsightsMode } from './isInsights';
+
+const CERTIFIED_REPO = isInsightsMode() ? 'published' : 'rh-certified';
+const VALIDATED_REPO = 'validated';
+
+export interface CollectionBadge {
+  label: string;
+  color: LabelColor;
+  icon?: ReactNode;
+  variant: 'filled' | 'outline';
+}
+
+export function CertifiedIcon() {
+  return <i className="fas fa-certificate"></i>;
+}
+
+export function getCollectionBadge(
+  repositoryName: string | undefined,
+  t: (key: string) => string
+): CollectionBadge {
+  if (repositoryName === CERTIFIED_REPO) {
+    return {
+      label: t('Certified'),
+      color: 'blue',
+      icon: <CertifiedIcon />,
+      variant: 'filled',
+    };
+  }
+
+  if (repositoryName === VALIDATED_REPO) {
+    return {
+      label: t('Validated'),
+      color: 'purple',
+      variant: 'filled',
+    };
+  }
+
+  return {
+    label: repositoryName || '',
+    color: 'blue',
+    variant: 'filled',
+  };
+}

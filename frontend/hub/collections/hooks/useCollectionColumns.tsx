@@ -6,10 +6,12 @@ import {
   TextCell,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { Label, Truncate } from '@patternfly/react-core';
 import { BanIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { getCollectionBadge } from '../../common/collectionBadgeUtils';
 import { CollectionLogo } from '../../common/Logo';
 import { namespaceTitle } from '../../common/namespaceTitle';
 import { useHubContext } from '../../common/useHubContext';
@@ -76,16 +78,14 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
       {
         header: t('Repository'),
         value: (collection) => collection.repository?.name,
-        cell: (collection) => (
-          <TextCell
-            text={collection.repository?.name}
-            to={getPageUrl(HubRoute.RepositoryDetails, {
-              params: {
-                id: collection.repository?.name,
-              },
-            })}
-          />
-        ),
+        cell: (collection) => {
+          const badge = getCollectionBadge(collection.repository?.name, t);
+          return (
+            <Label color={badge.color} icon={badge.icon} variant={badge.variant}>
+              <Truncate content={badge.label} style={{ minWidth: 0 }} />
+            </Label>
+          );
+        },
       },
       {
         header: t('Namespace'),
