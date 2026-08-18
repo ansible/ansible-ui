@@ -22,7 +22,9 @@ export function RulesStep() {
   const hasRules = rules?.length > 0;
   useEffect(() => {
     const updatedRules = updateRules(rules);
-    setValue('rules', updatedRules);
+    if (updatedRules !== rules) {
+      setValue('rules', updatedRules);
+    }
   }, [rules, setValue, updateRules]);
   return (
     <PageFormSection singleColumn>

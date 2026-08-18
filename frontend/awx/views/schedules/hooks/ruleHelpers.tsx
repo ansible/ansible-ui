@@ -191,6 +191,10 @@ export function mungeSurveyAndExtraVarsData(
   return { ...extraData, ...parseVariableField(extra_vars) };
 }
 
+export function ensureUntilZSuffix(ruleStr: string): string {
+  return ruleStr.replace(/UNTIL=(\d{8}T\d{6})(?!Z)/g, 'UNTIL=$1Z');
+}
+
 export const normalizeOptions = (options: Partial<Options>) => {
   // compiled from https://github.com/jkbrzt/rrule/blob/master/src/types.ts#L59
   const propertiesToNormalize = [

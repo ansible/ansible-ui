@@ -11,6 +11,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
 import {
+  ensureUntilZSuffix,
   useGetFrequencyOptions,
   useGetMonthOptions,
   useGetWeekdayOptions,
@@ -74,25 +75,28 @@ export function RuleForm(
       const untilTime = until?.time;
       const untilDate = until?.date;
       if (untilDate && untilTime) {
-        const utcDate = DateTime.fromISO(`${untilDate}`).set(get24Hour(untilTime)).toUTC();
+        const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone })
+          .set(get24Hour(untilTime))
+          .toUTC();
         const { year, month, day, hour, minute } = utcDate;
         rule.origOptions.until = datetime(year, month, day, hour, minute);
       } else {
         if (untilDate) {
           // This block is used when the user enters a date, but no time.
-          // We use the date given, and the current time based on the timezone given
-          // in the first step, or default to America/New_York.
+          // We use midnight in the schedule's timezone, not browser timezone.
 
-          const utcDate = DateTime.fromISO(`${untilDate}`).toUTC();
+          const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone })
+            .startOf('day')
+            .toUTC();
           const { year, day, month, hour, minute } = utcDate;
           rule.origOptions.until = datetime(year, month, day, hour, minute);
         }
         if (untilTime) {
           // This block is used when the user enters a time, but no date.
-          // We use the time given, and the tomorrow's date based on the timezone given
-          // in the first step, or default to America/New_York.
+          // We use tomorrow's date in the schedule's timezone, not browser timezone.
 
           const { year, day, month, hour, minute } = DateTime.now()
+            .setZone(timezone)
             .plus({ days: 1 })
             .set(get24Hour(untilTime))
             .toUTC();
@@ -102,12 +106,12 @@ export function RuleForm(
       }
     }
 
-    const itemId = ruleId
-      ? ruleId
-      : isRulesStep
-        ? rules.length + 1 || 1
-        : exceptions.length + 1 || 1;
-    const ruleObject = { rule: RRule.optionsToString({ ...rule.origOptions }), id: itemId };
+    const newItemId = isRulesStep ? rules.length + 1 : exceptions.length + 1;
+    const itemId = ruleId || newItemId;
+    const ruleObject = {
+      rule: ensureUntilZSuffix(RRule.optionsToString({ ...rule.origOptions })),
+      id: itemId,
+    };
     const index = isRulesStep
       ? rules.findIndex((r) => r.id === ruleId)
       : exceptions.findIndex((r) => r.id === ruleId);

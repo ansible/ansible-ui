@@ -69,6 +69,12 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      "files": ["**/*.test.tsx"],
+      "rules": {
+        "i18next/no-literal-string": "off"
+      }
     }
   ]
 }
