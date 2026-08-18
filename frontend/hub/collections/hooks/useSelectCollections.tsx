@@ -10,15 +10,17 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
-import { CollectionBadge, getCollectionBadge } from '../../common/collectionBadgeUtils';
+import { getCollectionBadge } from '../../common/collectionBadgeUtils';
 import { useHubView } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionFilters } from './useCollectionFilters';
 
-function CollectionRepositoryLabel(props: Readonly<{ badge: CollectionBadge }>) {
+function CollectionRepositoryCell(props: Readonly<{ collection: CollectionVersionSearch }>) {
+  const { t } = useTranslation();
+  const badge = getCollectionBadge(props.collection.repository?.name, t);
   return (
-    <Label color={props.badge.color} icon={props.badge.icon} variant={props.badge.variant}>
-      <Truncate content={props.badge.label} style={{ minWidth: 0 }} />
+    <Label color={badge.color} icon={badge.icon} variant={badge.variant}>
+      <Truncate content={badge.label} style={{ minWidth: 0 }} />
     </Label>
   );
 }
@@ -60,7 +62,7 @@ export function CollectionMultiSelectDialog(props: {
       {
         header: t('Repository'),
         cell: (collection: CollectionVersionSearch) => (
-          <CollectionRepositoryLabel badge={getCollectionBadge(collection.repository?.name, t)} />
+          <CollectionRepositoryCell collection={collection} />
         ),
       },
     ],

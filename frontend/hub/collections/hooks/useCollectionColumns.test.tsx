@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { LabelValue } from '@ansible/ansible-ui-framework';
+import { ITableColumn, LabelValue } from '@ansible/ansible-ui-framework';
 import { useCollectionColumns } from './useCollectionColumns';
 import { CollectionVersionSearch } from '../Collection';
 
@@ -43,18 +43,18 @@ function makeCollection(repoName: string, isSigned: boolean): CollectionVersionS
   } as CollectionVersionSearch;
 }
 
+function getBadgesColumn(): ITableColumn<CollectionVersionSearch> | undefined {
+  const { result } = renderHook(() => useCollectionColumns());
+  return result.current.find((col) => col.header === 'Badges');
+}
+
+function getBadgeValues(repoName: string, isSigned: boolean): LabelValue[] | undefined {
+  const col = getBadgesColumn();
+  if (!col || col.type !== 'labels') return undefined;
+  return col.value(makeCollection(repoName, isSigned));
+}
+
 describe('useCollectionColumns badges column', () => {
-  function getBadgesColumn() {
-    const { result } = renderHook(() => useCollectionColumns());
-    return result.current.find((col) => col.header === 'Badges');
-  }
-
-  function getBadgeValues(repoName: string, isSigned: boolean): LabelValue[] | undefined {
-    const col = getBadgesColumn();
-    if (!col || !('value' in col)) return undefined;
-    return col.value(makeCollection(repoName, isSigned)) as LabelValue[] | undefined;
-  }
-
   it('should return blue filled label for rh-certified repository', () => {
     const labels = getBadgeValues('rh-certified', false);
     expect(labels).toBeDefined();
