@@ -63,4 +63,16 @@ describe('PageDashboardCard', () => {
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });
+
+  it('should not apply compact styling when isCompact is not provided', () => {
+    renderCard({ id: 'compact-card-test', title: 'Inventories' });
+
+    expect(screen.getByTestId('compact-card-test')).not.toHaveClass('pf-m-compact');
+  });
+
+  it('should apply compact styling when isCompact is true', () => {
+    renderCard({ id: 'compact-card-test', title: 'Inventories', isCompact: true });
+
+    expect(screen.getByTestId('compact-card-test')).toHaveClass('pf-m-compact');
+  });
 });

@@ -205,6 +205,18 @@ describe('DashboardMainTableCard', () => {
     ).toBeInTheDocument();
   });
 
+  test('should render parent title in the card header at xl size', () => {
+    renderCard();
+    expect(screen.getByText('Cost calculation')).toHaveClass('pf-m-xl');
+  });
+
+  test('should render nested KPI titles as description list labels rather than card headers', () => {
+    renderCard();
+    // Only the parent card renders a PageDashboardCard header title.
+    expect(screen.getAllByTestId('card-title')).toHaveLength(1);
+    expect(screen.getByText('Cost of manual automation')).not.toHaveClass('pf-m-xl');
+  });
+
   test('should display 0 in value cards when details has zero values', () => {
     renderCard(
       buildProps({
