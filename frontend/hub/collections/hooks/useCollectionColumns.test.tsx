@@ -50,7 +50,7 @@ function getBadgesColumn(): ITableColumn<CollectionVersionSearch> | undefined {
 
 function getBadgeValues(repoName: string, isSigned: boolean): LabelValue[] | undefined {
   const col = getBadgesColumn();
-  if (!col || col.type !== 'labels') return undefined;
+  if (col?.type !== 'labels') return undefined;
   return col.value(makeCollection(repoName, isSigned));
 }
 

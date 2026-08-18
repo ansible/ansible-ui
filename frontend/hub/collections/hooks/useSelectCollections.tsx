@@ -25,6 +25,10 @@ function CollectionRepositoryCell(props: Readonly<{ collection: CollectionVersio
   );
 }
 
+function renderRepositoryCell(collection: CollectionVersionSearch) {
+  return <CollectionRepositoryCell collection={collection} />;
+}
+
 export function CollectionMultiSelectDialog(props: {
   title: string;
   description: string;
@@ -61,9 +65,7 @@ export function CollectionMultiSelectDialog(props: {
       },
       {
         header: t('Repository'),
-        cell: (collection: CollectionVersionSearch) => (
-          <CollectionRepositoryCell collection={collection} />
-        ),
+        cell: renderRepositoryCell,
       },
     ],
     [t]
