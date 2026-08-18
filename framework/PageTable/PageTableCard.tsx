@@ -191,19 +191,21 @@ export function PageTableCard<T extends object>(props: {
             {card.labels && (
               <>
                 <div style={{ flexGrow: 1 }} />
-                <LabelGroup numLabels={999}>
-                  {card.labels.map((item) => (
-                    <Label
-                      key={item.label}
-                      color={item.status ? undefined : item.color}
-                      icon={item.icon}
-                      variant={item.variant}
-                      status={item.status}
-                    >
-                      <Truncate content={item.label} style={{ minWidth: 0 }} />
-                    </Label>
-                  ))}
-                </LabelGroup>
+                <div style={{ alignSelf: 'flex-start', marginTop: 2 }}>
+                  <LabelGroup numLabels={999}>
+                    {card.labels.map((item) => (
+                      <Label
+                        key={item.label}
+                        color={item.status ? undefined : item.color}
+                        icon={item.icon}
+                        variant={item.variant}
+                        status={item.status}
+                      >
+                        <Truncate content={item.label} style={{ minWidth: 0 }} />
+                      </Label>
+                    ))}
+                  </LabelGroup>
+                </div>
               </>
             )}
           </CardTopDiv>
