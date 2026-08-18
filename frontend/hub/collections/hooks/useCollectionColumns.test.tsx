@@ -55,34 +55,34 @@ function getBadgeValues(repoName: string, isSigned: boolean): LabelValue[] | und
 }
 
 describe('useCollectionColumns badges column', () => {
-  it('should return blue filled label for rh-certified repository', () => {
+  it('should return Certified blue filled label for rh-certified repository', () => {
     const labels = getBadgeValues('rh-certified', false);
     expect(labels).toBeDefined();
     const repoLabel = labels![0];
     expect(typeof repoLabel).not.toBe('string');
     if (typeof repoLabel !== 'string') {
-      expect(repoLabel.label).toBe('rh-certified');
+      expect(repoLabel.label).toBe('Certified');
       expect(repoLabel.color).toBe('blue');
       expect(repoLabel.variant).toBe('filled');
     }
   });
 
-  it('should return purple filled label for validated repository', () => {
-    const labels = getBadgeValues('validated', false);
+  it('should return Certified blue filled label for published repository', () => {
+    const labels = getBadgeValues('published', false);
     const repoLabel = labels![0];
     if (typeof repoLabel !== 'string') {
-      expect(repoLabel.label).toBe('validated');
-      expect(repoLabel.color).toBe('purple');
+      expect(repoLabel.label).toBe('Certified');
+      expect(repoLabel.color).toBe('blue');
       expect(repoLabel.variant).toBe('filled');
     }
   });
 
-  it('should return grey filled label for published repository', () => {
-    const labels = getBadgeValues('published', false);
+  it('should return Validated purple filled label for validated repository', () => {
+    const labels = getBadgeValues('validated', false);
     const repoLabel = labels![0];
     if (typeof repoLabel !== 'string') {
-      expect(repoLabel.label).toBe('published');
-      expect(repoLabel.color).toBe('grey');
+      expect(repoLabel.label).toBe('Validated');
+      expect(repoLabel.color).toBe('purple');
       expect(repoLabel.variant).toBe('filled');
     }
   });

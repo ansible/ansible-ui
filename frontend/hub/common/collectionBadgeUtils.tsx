@@ -38,7 +38,7 @@ export function getCollectionBadge(
 
   return {
     label: repositoryName || '',
-    color: 'blue',
+    color: 'grey',
     variant: 'filled',
   };
 }

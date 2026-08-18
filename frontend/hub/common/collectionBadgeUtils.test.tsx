@@ -29,17 +29,17 @@ describe('getCollectionBadge', () => {
     expect(badge.icon).toBeUndefined();
   });
 
-  it('should return raw name with blue color for unknown repository', () => {
+  it('should return raw name with grey color for unknown repository', () => {
     const badge = getCollectionBadge('community', t);
     expect(badge.label).toBe('community');
-    expect(badge.color).toBe('blue');
+    expect(badge.color).toBe('grey');
     expect(badge.variant).toBe('filled');
   });
 
   it('should return empty label for undefined repository', () => {
     const badge = getCollectionBadge(undefined, t);
     expect(badge.label).toBe('');
-    expect(badge.color).toBe('blue');
+    expect(badge.color).toBe('grey');
     expect(badge.variant).toBe('filled');
   });
 });

@@ -3,7 +3,6 @@ import {
   ColumnListOption,
   ColumnTableOption,
   ITableColumn,
-  LabelColor,
   LabelValue,
   PFColorE,
   TextCell,
@@ -13,6 +12,7 @@ import { BanIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/r
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { getCollectionBadge } from '../../common/collectionBadgeUtils';
 import { CollectionLogo } from '../../common/Logo';
 import { namespaceTitle } from '../../common/namespaceTitle';
 import { useHubContext } from '../../common/useHubContext';
@@ -192,16 +192,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         value: (collection) => {
           const labels: LabelValue[] = [];
           if (collection.repository?.name) {
-            const repoName = collection.repository.name;
-            const repoColorMap: Record<string, LabelColor> = {
-              'rh-certified': 'blue',
-              validated: 'purple',
-            };
-            labels.push({
-              label: repoName,
-              color: repoColorMap[repoName] ?? 'grey',
-              variant: 'filled',
-            });
+            labels.push(getCollectionBadge(collection.repository.name, t));
           }
           if (display_signatures) {
             labels.push(
