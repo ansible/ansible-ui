@@ -1,7 +1,7 @@
 import { LabelColor } from '@ansible/ansible-ui-framework';
 import { ReactNode } from 'react';
 
-const CERTIFIED_REPOS = ['published', 'rh-certified'];
+const CERTIFIED_REPOS = new Set(['published', 'rh-certified']);
 const VALIDATED_REPO = 'validated';
 
 export interface CollectionBadge {
@@ -19,7 +19,7 @@ export function getCollectionBadge(
   repositoryName: string | undefined,
   t: (key: string) => string
 ): CollectionBadge {
-  if (repositoryName && CERTIFIED_REPOS.includes(repositoryName)) {
+  if (repositoryName && CERTIFIED_REPOS.has(repositoryName)) {
     return {
       label: t('Certified'),
       color: 'blue',
