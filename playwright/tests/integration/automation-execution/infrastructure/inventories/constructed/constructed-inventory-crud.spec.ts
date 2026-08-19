@@ -132,10 +132,12 @@ test.describe('Constructed Inventory', () => {
         await page.getByRole('button', { name: 'Sync inventory' }).click();
         await syncResponsePromise;
 
-        // Wait for sync to complete and verify success status
-        await expect(page.getByTestId('last-job-status')).toContainText('Success', {
-          timeout: 60000,
-        });
+        // Poll for sync completion — the details page doesn't live-update,
+        // so reload periodically to check the job status.
+        await expect(async () => {
+          await page.reload();
+          await expect(page.getByTestId('last-job-status')).toContainText('Success');
+        }).toPass({ intervals: [5_000, 10_000, 10_000], timeout: 120_000 });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories
         await Organization.api.deleteByName(page, organization.name);
@@ -214,10 +216,11 @@ test.describe('Constructed Inventory', () => {
         await page.getByRole('button', { name: 'Sync inventory' }).click();
         await syncResponsePromise;
 
-        // Wait for sync to complete and verify failed status
-        await expect(page.getByTestId('last-job-status')).toContainText('Failed', {
-          timeout: 30000,
-        });
+        // Poll for sync completion — the details page doesn't live-update
+        await expect(async () => {
+          await page.reload();
+          await expect(page.getByTestId('last-job-status')).toContainText('Failed');
+        }).toPass({ intervals: [5_000, 10_000, 10_000], timeout: 120_000 });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories
         await Organization.api.deleteByName(page, organization.name);
