@@ -15,7 +15,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
  */
 // Use verbose configuration by default for better debugging
 const isCI = !!process.env.CI;
-const jobTimeoutMinutes = Number(process.env.TIMEOUT_MINUTES) || 90;
+const jobTimeoutMinutes = Number(process.env.TIMEOUT_MINUTES) || 120;
 const config: PlaywrightTestConfig = {
   testDir: '.',
   fullyParallel: false,

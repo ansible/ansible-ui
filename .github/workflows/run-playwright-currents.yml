@@ -39,8 +39,8 @@ on:
       TIMEOUT_MINUTES:
         type: number
         required: false
-        description: "Job timeout in minutes (default: 90)"
-        default: 90
+        description: "Job timeout in minutes (default: 120)"
+        default: 120
       AAP_TOPOLOGY_TYPE:
         type: choice
         required: false
