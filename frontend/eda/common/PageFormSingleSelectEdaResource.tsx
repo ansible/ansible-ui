@@ -199,7 +199,8 @@ function SelectResource<
 
 function EdaAsyncName(props: { url: string; id: number; nameProp?: string }) {
   const { t } = useTranslation();
-  const { data, isLoading, error } = useGetItem<Record<string, string>>(props.url, props.id);
+  const baseUrl = props.url.split('?')[0];
+  const { data, isLoading, error } = useGetItem<Record<string, string>>(baseUrl, props.id);
   if (isLoading) return <Spinner size="md" />;
   if (error) return t('Not found');
   if (!data) return t('Not found');
