@@ -559,7 +559,7 @@ describe('useGetInitialValues', () => {
     expect(initialValues.nodePromptsStep?.prompt?.credentials).toEqual([]);
   });
 
-  it('should use defaults for job_tags and skip_tags when defined in resource', async () => {
+  it('should use prompt for job_tags and skip_tags when both prompt and resource are defined (prompt-first)', async () => {
     const nodeWithTags = {
       getId: () => '42',
       getData: () => ({
@@ -587,17 +587,12 @@ describe('useGetInitialValues', () => {
     const { result } = renderHook(() => useGetInitialValues());
     const initialValues = await result.current(nodeWithTags);
 
-    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([
-      { name: 'tag1', label: 'tag1', value: 'tag1' },
-      { name: 'tag2', label: 'tag2', value: 'tag2' },
-    ]);
-    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([
-      { name: 'skip1', label: 'skip1', value: 'skip1' },
-      { name: 'skip2', label: 'skip2', value: 'skip2' },
-    ]);
+    // Prompt-first: in-session tag edits win over stale resource
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
   });
 
-  it('should handle null job_tags and skip_tags in resource (cleared tags)', async () => {
+  it('should preserve in-session tag edits even when resource has null tags', async () => {
     const nodeWithNullTags = {
       getId: () => '42',
       getData: () => ({
@@ -626,9 +621,9 @@ describe('useGetInitialValues', () => {
     const { result } = renderHook(() => useGetInitialValues());
     const initialValues = await result.current(nodeWithNullTags);
 
-    // When tags are null, the ?? '' inside parseStringToTagArray is triggered
-    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
-    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
+    // Prompt-first: in-session tag edits win over null resource
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
   });
 
   it('should use prompt for job_tags and skip_tags when resource does not define them', async () => {
@@ -660,6 +655,77 @@ describe('useGetInitialValues', () => {
 
     expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
     expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
+  });
+
+  it('should preserve in-session cleared tags (empty array in prompt)', async () => {
+    const nodeWithClearedTags = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          job_tags: [],
+          skip_tags: [],
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          job_tags: 'tag1,tag2',
+          skip_tags: 'skip1,skip2',
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithClearedTags);
+
+    // Prompt-first: user cleared tags in wizard, preserve empty arrays
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
+  });
+
+  it('should use resource tags when prompt is undefined (not edited)', async () => {
+    const nodeWithResourceTags = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {
+          // No job_tags or skip_tags in prompt (undefined)
+        },
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          job_tags: 'tag1,tag2',
+          skip_tags: 'skip1,skip2',
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithResourceTags);
+
+    // Prompt undefined: use resource
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([
+      { name: 'tag1', label: 'tag1', value: 'tag1' },
+      { name: 'tag2', label: 'tag2', value: 'tag2' },
+    ]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([
+      { name: 'skip1', label: 'skip1', value: 'skip1' },
+      { name: 'skip2', label: 'skip2', value: 'skip2' },
+    ]);
   });
 
   it('should use empty arrays when both resource and prompt have no job_tags/skip_tags', async () => {
