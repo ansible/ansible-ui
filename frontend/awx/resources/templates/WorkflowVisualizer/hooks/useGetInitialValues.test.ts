@@ -588,8 +588,12 @@ describe('useGetInitialValues', () => {
     const initialValues = await result.current(nodeWithTags);
 
     // Prompt-first: in-session tag edits win over stale resource
-    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
-    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([
+      { name: 'prompt-tag', label: 'prompt-tag', value: 'prompt-tag' },
+    ]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([
+      { name: 'prompt-skip', label: 'prompt-skip', value: 'prompt-skip' },
+    ]);
   });
 
   it('should preserve in-session tag edits even when resource has null tags', async () => {
@@ -622,8 +626,12 @@ describe('useGetInitialValues', () => {
     const initialValues = await result.current(nodeWithNullTags);
 
     // Prompt-first: in-session tag edits win over null resource
-    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
-    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([
+      { name: 'prompt-tag', label: 'prompt-tag', value: 'prompt-tag' },
+    ]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([
+      { name: 'prompt-skip', label: 'prompt-skip', value: 'prompt-skip' },
+    ]);
   });
 
   it('should use prompt for job_tags and skip_tags when resource does not define them', async () => {
@@ -653,8 +661,12 @@ describe('useGetInitialValues', () => {
     const { result } = renderHook(() => useGetInitialValues());
     const initialValues = await result.current(nodeWithoutTagsInResource);
 
-    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([{ name: 'prompt-tag' }]);
-    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([{ name: 'prompt-skip' }]);
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([
+      { name: 'prompt-tag', label: 'prompt-tag', value: 'prompt-tag' },
+    ]);
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([
+      { name: 'prompt-skip', label: 'prompt-skip', value: 'prompt-skip' },
+    ]);
   });
 
   it('should preserve in-session cleared tags (empty array in prompt)', async () => {
