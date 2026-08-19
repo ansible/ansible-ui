@@ -1,7 +1,9 @@
 import {
   ColumnCardOption,
+  ColumnListOption,
   ColumnTableOption,
   ITableColumn,
+  LabelValue,
   PFColorE,
   TextCell,
   useGetPageUrl,
@@ -10,6 +12,7 @@ import { BanIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/r
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { getCollectionBadge } from '../../common/collectionBadgeUtils';
 import { CollectionLogo } from '../../common/Logo';
 import { namespaceTitle } from '../../common/namespaceTitle';
 import { useHubContext } from '../../common/useHubContext';
@@ -86,6 +89,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
             })}
           />
         ),
+        card: ColumnCardOption.hidden,
       },
       {
         header: t('Namespace'),
@@ -179,8 +183,28 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         },
         list: 'secondary',
         value: (collection) => !collection.is_signed || collection.is_signed,
-        card: display_signatures ? undefined : ColumnCardOption.hidden,
+        card: ColumnCardOption.hidden,
         table: display_signatures ? undefined : ColumnTableOption.hidden,
+      },
+      {
+        header: t('Badges'),
+        type: 'labels',
+        value: (collection) => {
+          const labels: LabelValue[] = [];
+          if (collection.repository?.name) {
+            labels.push(getCollectionBadge(collection.repository.name, t));
+          }
+          if (display_signatures) {
+            labels.push(
+              collection.is_signed
+                ? { label: t('Signed'), status: 'success' as const, variant: 'outline' as const }
+                : { label: t('Unsigned'), status: 'warning' as const, variant: 'outline' as const }
+            );
+          }
+          return labels;
+        },
+        table: ColumnTableOption.hidden,
+        list: ColumnListOption.hidden,
       },
     ],
     [getPageUrl, t, display_signatures, name, namespace, repository]

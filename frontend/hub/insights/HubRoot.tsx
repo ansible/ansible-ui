@@ -16,7 +16,7 @@
 import { useEffect } from 'react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import type { ChromeAPI } from '@redhat-cloud-services/types';
-import { PageFramework } from '@ansible/ansible-ui-framework';
+import { PageFramework } from '@ansible/ansible-ui-framework/PageFramework';
 import '@ansible/common-ui/i18n';
 import { HubActiveUserProvider } from '../common/useHubActiveUser';
 import { HubContextProvider } from '../common/useHubContext';

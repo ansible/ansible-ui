@@ -98,59 +98,32 @@ describe('DashboardValueCard', () => {
     expect(screen.getByText('12,345', { exact: false })).toBeInTheDocument();
   });
 
-  describe('formatAsCurrency', () => {
-    test('should format numeric value as USD currency when formatAsCurrency is true', () => {
+  describe('font size', () => {
+    test('should render title at xl size', () => {
       render(
         <MemoryRouter>
-          <DashboardValueCard
-            {...defaultProps}
-            value={2500}
-            valueSuffix={undefined}
-            formatAsCurrency={true}
-          />
+          <DashboardValueCard {...defaultProps} />
         </MemoryRouter>
       );
-      expect(screen.getByText('$2,500.00')).toBeInTheDocument();
+      expect(screen.getByTestId('card-title')).toHaveClass('pf-m-xl');
     });
 
-    test('should use toLocaleString when formatAsCurrency is false', () => {
+    test('should render value at xx-large font size by default (no width)', () => {
       render(
         <MemoryRouter>
-          <DashboardValueCard
-            {...defaultProps}
-            value={2500}
-            valueSuffix={undefined}
-            formatAsCurrency={false}
-          />
+          <DashboardValueCard {...defaultProps} />
         </MemoryRouter>
       );
-      expect(screen.queryByText('$2,500.00')).not.toBeInTheDocument();
-      expect(screen.getByText('2,500')).toBeInTheDocument();
+      expect(screen.getByText('12,345', { exact: false })).toHaveStyle({ fontSize: 'xx-large' });
     });
 
-    test('should use toLocaleString when formatAsCurrency is omitted', () => {
+    test('should render value at x-large font size when width is xs', () => {
       render(
         <MemoryRouter>
-          <DashboardValueCard {...defaultProps} value={2500} valueSuffix={undefined} />
+          <DashboardValueCard {...defaultProps} width="xs" />
         </MemoryRouter>
       );
-      expect(screen.queryByText('$2,500.00')).not.toBeInTheDocument();
-      expect(screen.getByText('2,500')).toBeInTheDocument();
-    });
-
-    test('should still render valueSuffix alongside currency-formatted value', () => {
-      render(
-        <MemoryRouter>
-          <DashboardValueCard
-            {...defaultProps}
-            value={1000}
-            valueSuffix="*"
-            formatAsCurrency={true}
-          />
-        </MemoryRouter>
-      );
-      expect(screen.getByText(/\$1,000\.00/)).toBeInTheDocument();
-      expect(screen.getByText(/\*/)).toBeInTheDocument();
+      expect(screen.getByText('12,345', { exact: false })).toHaveStyle({ fontSize: 'x-large' });
     });
   });
 });

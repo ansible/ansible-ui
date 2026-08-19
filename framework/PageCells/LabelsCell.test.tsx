@@ -32,6 +32,39 @@ describe('LabelsCell', () => {
     });
   });
 
+  describe('with rich LabelValue objects', () => {
+    it('should render labels with color and variant', () => {
+      render(
+        <LabelsCell
+          labels={[
+            { label: 'published', color: 'blue', variant: 'filled' },
+            { label: 'validated', color: 'purple', variant: 'filled' },
+          ]}
+        />
+      );
+
+      expect(screen.getByText('published')).toBeInTheDocument();
+      expect(screen.getByText('validated')).toBeInTheDocument();
+    });
+
+    it('should render labels with status prop', () => {
+      render(<LabelsCell labels={[{ label: 'Signed', status: 'success', variant: 'outline' }]} />);
+
+      expect(screen.getByText('Signed')).toBeInTheDocument();
+    });
+
+    it('should render mixed string and object labels', () => {
+      render(
+        <LabelsCell
+          labels={['plain-label', { label: 'colored-label', color: 'green', variant: 'filled' }]}
+        />
+      );
+
+      expect(screen.getByText('plain-label')).toBeInTheDocument();
+      expect(screen.getByText('colored-label')).toBeInTheDocument();
+    });
+  });
+
   describe('with labelsWithLinks', () => {
     const labelsWithLinks = [
       { name: 'Link1', link: '/path1' },

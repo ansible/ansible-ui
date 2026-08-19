@@ -197,6 +197,17 @@ test.describe('EDA External Credentials - Linking', () => {
           await expect(page.getByRole('heading', { name: `Edit ${credentialName}` })).toBeVisible();
           await expect(page.getByRole('textbox', { name: 'Password' })).toBeDisabled();
         });
+
+        await test.step('Open secret management modal and verify external credential is pre-selected', async () => {
+          const passwordGroup = page.getByTestId('inputs-password-form-group');
+          await passwordGroup.getByTestId('secret-management-input').click();
+
+          const dialog = page.getByRole('dialog');
+          await expect(dialog.getByText('Secret Management System')).toBeVisible();
+          await expect(dialog.getByTestId('id')).toContainText(externalCredentialName);
+
+          await dialog.getByRole('button', { name: 'Cancel' }).click();
+        });
       } finally {
         if (createdCredentialId) {
           await EdaCredential.api.delete(page, createdCredentialId);

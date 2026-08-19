@@ -11,7 +11,7 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { CSSProperties } from 'styled-components';
 import { CollectionVersionSearch } from '../collections/Collection';
-import { isInsightsMode } from '../common/isInsights';
+import { getCollectionBadge } from '../common/collectionBadgeUtils';
 import { CollectionLogo } from '../common/Logo';
 import { namespaceTitle } from '../common/namespaceTitle';
 import { HubRoute } from '../main/HubRoutes';
@@ -22,8 +22,6 @@ export const ColumnsDiv = styled.div`
   align-items: baseline;
 `;
 
-const CERTIFIED_REPO = isInsightsMode() ? 'published' : 'rh-certified';
-
 type Labels =
   | {
       label: string;
@@ -32,10 +30,6 @@ type Labels =
       variant?: 'outline' | 'filled' | undefined;
     }[]
   | undefined;
-
-function CertifiedIcon() {
-  return <i className="fas fa-certificate"></i>;
-}
 
 export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
@@ -55,23 +49,8 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
 
   const getLabels = useCallback(
     (item: CollectionVersionSearch) => {
-      const cardLabels: Labels =
-        item.repository?.name === CERTIFIED_REPO
-          ? [
-              {
-                label: t('Certified'),
-                color: 'blue',
-                icon: <CertifiedIcon />,
-                variant: 'outline',
-              },
-            ]
-          : [
-              {
-                label: item.repository?.name || '',
-                color: 'blue',
-                variant: 'outline',
-              },
-            ];
+      const badge = getCollectionBadge(item.repository?.name, t);
+      const cardLabels: Labels = [badge];
       if (item.is_signed) {
         cardLabels?.push({
           label: t('Signed'),
