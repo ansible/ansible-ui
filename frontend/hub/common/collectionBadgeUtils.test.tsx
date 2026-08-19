@@ -5,20 +5,19 @@ import { getCollectionBadge } from './collectionBadgeUtils';
 const t = (key: string) => key;
 
 describe('getCollectionBadge', () => {
-  it('should return Certified badge for "published" repository', () => {
-    const badge = getCollectionBadge('published', t);
+  it('should return Certified badge for "rh-certified" repository in standalone mode', () => {
+    const badge = getCollectionBadge('rh-certified', t);
     expect(badge.label).toBe('Certified');
     expect(badge.color).toBe('blue');
     expect(badge.variant).toBe('filled');
     expect(badge.icon).toBeDefined();
   });
 
-  it('should return Certified badge for "rh-certified" repository', () => {
-    const badge = getCollectionBadge('rh-certified', t);
-    expect(badge.label).toBe('Certified');
-    expect(badge.color).toBe('blue');
+  it('should return raw name for "published" repository in standalone mode', () => {
+    const badge = getCollectionBadge('published', t);
+    expect(badge.label).toBe('published');
+    expect(badge.color).toBe('grey');
     expect(badge.variant).toBe('filled');
-    expect(badge.icon).toBeDefined();
   });
 
   it('should return Validated badge for "validated" repository', () => {

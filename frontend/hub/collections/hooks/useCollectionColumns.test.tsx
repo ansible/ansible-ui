@@ -67,12 +67,12 @@ describe('useCollectionColumns badges column', () => {
     }
   });
 
-  it('should return Certified blue filled label for published repository', () => {
+  it('should return raw grey label for published repository in standalone mode', () => {
     const labels = getBadgeValues('published', false);
     const repoLabel = labels![0];
     if (typeof repoLabel !== 'string') {
-      expect(repoLabel.label).toBe('Certified');
-      expect(repoLabel.color).toBe('blue');
+      expect(repoLabel.label).toBe('published');
+      expect(repoLabel.color).toBe('grey');
       expect(repoLabel.variant).toBe('filled');
     }
   });

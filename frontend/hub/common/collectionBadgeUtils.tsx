@@ -1,7 +1,8 @@
 import { LabelColor } from '@ansible/ansible-ui-framework';
 import { ReactNode } from 'react';
+import { isInsightsMode } from './isInsights';
 
-const CERTIFIED_REPOS = new Set(['published', 'rh-certified']);
+const CERTIFIED_REPOS = isInsightsMode() ? new Set(['published']) : new Set(['rh-certified']);
 const VALIDATED_REPO = 'validated';
 
 export interface CollectionBadge {
