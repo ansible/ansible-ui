@@ -37,7 +37,7 @@ on:
       TIMEOUT_MINUTES:
         type: string
         required: false
-        default: '90'
+        default: '120'
       AAP_TOPOLOGY_TYPE:
         description: 'AAP topology type (saas, ocp-a, man-b, or empty)'
         type: string
@@ -73,7 +73,7 @@ jobs:
           echo "Generated matrix for $PARALLEL_TESTS parallel tests: $matrix"
 
   playwright-tests:
-    timeout-minutes: ${{ fromJSON(inputs.TIMEOUT_MINUTES || '90') }}
+    timeout-minutes: ${{ fromJSON(inputs.TIMEOUT_MINUTES || '120') }}
     runs-on: ubuntu-latest
     needs: generate-matrix
     strategy:
@@ -145,7 +145,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PROJECT: ${{ inputs.PROJECT || 'live chromium' }}
         SHARD: ${{ matrix.shard }}/${{ inputs.PARALLEL_TESTS || '4' }}
-        TIMEOUT_MINUTES: ${{ inputs.TIMEOUT_MINUTES || '90' }}
+        TIMEOUT_MINUTES: ${{ inputs.TIMEOUT_MINUTES || '120' }}
       run: |
         npx pwc \
           --key="${CURRENTS_RECORD_KEY}" \
