@@ -153,7 +153,7 @@ function useAggregateJobTemplateDetails({
     template.verbosity,
     isTemplateChanged
   );
-  const verbosityString = useVerbosityString(verbosity);
+  const verbosityString = useVerbosityString(verbosity ?? undefined);
   const templateVerbosityString = useVerbosityString(template.verbosity);
 
   let variables = resolveExtraVars(
