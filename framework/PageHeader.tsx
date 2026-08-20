@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './PageFramework.css';
 import { usePageBreadcrumbs } from './PageTabs/PageBreadcrumbs';
 import { useBreakpoint } from './components/useBreakPoint';
@@ -149,15 +149,9 @@ export function PageHeader(props: PageHeaderProps) {
                       )}
                       {props.titleDocLink && (
                         <StackItem>
-                          <Button
-                            icon={<ExternalLinkAltIcon />}
-                            variant="link"
-                            onClick={() => window.open(props.titleDocLink, '_blank')}
-                            isInline
-                            iconPosition="end"
-                          >
-                            {translations.documentation}
-                          </Button>
+                          <Link to={props.titleDocLink} target="_blank" rel="noopener noreferrer">
+                            {translations.documentation} &nbsp; <ExternalLinkAltIcon />
+                          </Link>
                         </StackItem>
                       )}
                     </Stack>
