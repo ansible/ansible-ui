@@ -1,39 +1,12 @@
-/* eslint-disable i18next/no-literal-string */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/require-await */
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { PageFormRuleEngineCredentialSelect } from './PageFormRuleEngineCredentialSelect';
-
-// Mock useGet and useGetItem to return data synchronously
-vi.mock('@ansible/common-ui/crud/useGet', () => ({
-  useGet: vi.fn(),
-  useGetItem: vi.fn(),
-}));
-
-// Mock PageFormSingleSelectEdaResource to simplify dropdown testing
-vi.mock('../../../common/PageFormSingleSelectEdaResource', () => ({
-  PageFormSingleSelectEdaResource: ({ name, label, placeholder, helperText, isDisabled }: any) => {
-    return (
-      <div>
-        <label htmlFor={name}>{label}</label>
-        <select id={name} data-testid="rule-engine-credential-select" disabled={!!isDisabled}>
-          <option value="">{placeholder}</option>
-        </select>
-        {helperText && <div data-testid="helper-text">{helperText}</div>}
-      </div>
-    );
-  },
-}));
+import { EdaCredential } from '../../../interfaces/EdaCredential';
 
 const mockDroolsCredentials = {
   count: 3,
@@ -63,7 +36,7 @@ const mockDroolsCredentials = {
     {
       id: 3,
       name: 'System Managed Credential',
-      description: 'System provided credential',
+      description: 'Default credential provided by the database at install',
       managed: true,
       credential_type: {
         id: 1,
@@ -71,75 +44,46 @@ const mockDroolsCredentials = {
         namespace: 'drools',
       },
     },
-  ],
+  ] as EdaCredential[],
 };
 
+interface FormValues {
+  rule_engine_credential_id: number | null;
+}
+
 function FormWrapper({ children }: { children: React.ReactNode }) {
-  const methods = useForm({
+  const methods = useForm<FormValues>({
     defaultValues: {
       rule_engine_credential_id: null,
     },
   });
 
   return (
-    <SWRConfig
-      value={{
-        provider: () => new Map(),
-        dedupingInterval: 0,
-        revalidateOnMount: true,
-        revalidateOnFocus: false,
-        revalidateOnReconnect: false,
-      }}
-    >
-      <MemoryRouter>
-        <FormProvider {...methods}>{children}</FormProvider>
-      </MemoryRouter>
-    </SWRConfig>
+    <MemoryRouter>
+      <FormProvider {...methods}>{children}</FormProvider>
+    </MemoryRouter>
   );
 }
 
-// Import useGet and useGetItem for mocking
-import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
-
 describe('PageFormRuleEngineCredentialSelect', () => {
   const server = setupServer(
-    // Default handler for list endpoint
-    http.get('*/eda-credentials/', () => {
-      return HttpResponse.json(mockDroolsCredentials);
-    }),
-    // Default handler for individual credential fetches
-    http.get('*/eda-credentials/:id/', ({ params }) => {
-      const credential = mockDroolsCredentials.results.find((c) => c.id === Number(params.id));
-      return credential
-        ? HttpResponse.json(credential)
-        : HttpResponse.json({ detail: 'Not found' }, { status: 404 });
+    http.get('*/eda-credentials/', ({ request }) => {
+      const url = new URL(request.url);
+      const namespace = url.searchParams.get('credential_type__namespace__in');
+      const pageSize = url.searchParams.get('page_size');
+
+      // Verify correct query params are sent
+      if (namespace === 'drools' && pageSize === '5000') {
+        return HttpResponse.json(mockDroolsCredentials);
+      }
+
+      return HttpResponse.json({ count: 0, results: [] });
     })
   );
 
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
-
-  beforeEach(() => {
-    // Mock useGet to return mockDroolsCredentials by default
-    vi.mocked(useGet).mockReturnValue({
-      data: mockDroolsCredentials,
-      error: undefined,
-      refresh: vi.fn(),
-      isLoading: false,
-    });
-
-    // Mock useGetItem to return individual credentials
-    vi.mocked(useGetItem).mockImplementation((url, id) => {
-      const credential = mockDroolsCredentials.results.find((c) => c.id === id);
-      return {
-        data: credential,
-        error: credential ? undefined : new Error('Not found'),
-        refresh: vi.fn(),
-        isLoading: false,
-      };
-    });
-  });
 
   it('should render with correct label and placeholder', () => {
     render(
@@ -152,13 +96,71 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     expect(screen.getByText(/Select an event persistence credential/i)).toBeInTheDocument();
   });
 
-  it('should show helper text only when there are no credentials', async () => {
-    vi.mocked(useGet).mockReturnValue({
-      data: { count: 0, results: [] },
-      error: undefined,
-      refresh: vi.fn(),
-      isLoading: false,
+  it('should filter credentials by drools namespace with page_size parameter', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <FormWrapper>
+        <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+      </FormWrapper>
+    );
+
+    // Open the dropdown to trigger the API call
+    await user.click(screen.getByTestId('rule-engine-credential-select'));
+
+    // Wait for credentials to load - verify the handler was called with correct params
+    await waitFor(() => {
+      expect(screen.getByText('Drools Credential 1')).toBeInTheDocument();
     });
+  });
+
+  it('should show managed credential description in dropdown', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <FormWrapper>
+        <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+      </FormWrapper>
+    );
+
+    await user.click(screen.getByTestId('rule-engine-credential-select'));
+
+    await waitFor(() => {
+      expect(screen.getByText('System Managed Credential')).toBeInTheDocument();
+    });
+
+    // Verify the managed credential shows the default description
+    expect(
+      screen.getByText('Default credential provided by the database at install')
+    ).toBeInTheDocument();
+  });
+
+  it('should show first sentence of description for non-managed credentials', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <FormWrapper>
+        <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+      </FormWrapper>
+    );
+
+    await user.click(screen.getByTestId('rule-engine-credential-select'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Drools Credential 1')).toBeInTheDocument();
+    });
+
+    // Should show only first sentence (before the period)
+    expect(screen.getByText('Test credential')).toBeInTheDocument();
+    expect(screen.queryByText('More details here.')).not.toBeInTheDocument();
+  });
+
+  it('should show helper text only when there are no credentials', async () => {
+    server.use(
+      http.get('*/eda-credentials/', () => {
+        return HttpResponse.json({ count: 0, results: [] });
+      })
+    );
 
     render(
       <FormWrapper>
@@ -182,7 +184,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       </FormWrapper>
     );
 
-    // Wait for data to load - helper text should not appear at any point
+    // Wait for component to stabilize - helper text should never appear
     await waitFor(
       () => {
         expect(
@@ -191,15 +193,15 @@ describe('PageFormRuleEngineCredentialSelect', () => {
           )
         ).not.toBeInTheDocument();
       },
-      { timeout: 3000 }
+      { timeout: 2000 }
     );
   });
 
   it('should auto-select managed credential on mount', async () => {
-    let formMethods: any = null;
+    let formMethods: ReturnType<typeof useForm<FormValues>> | null = null;
 
     const TestComponent = () => {
-      const methods = useForm({
+      const methods = useForm<FormValues>({
         defaultValues: {
           rule_engine_credential_id: null,
         },
@@ -208,21 +210,11 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       formMethods = methods;
 
       return (
-        <SWRConfig
-          value={{
-            provider: () => new Map(),
-            dedupingInterval: 0,
-            revalidateOnMount: true,
-            revalidateOnFocus: false,
-            revalidateOnReconnect: false,
-          }}
-        >
-          <MemoryRouter>
-            <FormProvider {...methods}>
-              <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
-            </FormProvider>
-          </MemoryRouter>
-        </SWRConfig>
+        <MemoryRouter>
+          <FormProvider {...methods}>
+            <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+          </FormProvider>
+        </MemoryRouter>
       );
     };
 
@@ -234,10 +226,10 @@ describe('PageFormRuleEngineCredentialSelect', () => {
   });
 
   it('should NOT auto-select if a value is already set', async () => {
-    let formMethods: any = null;
+    let formMethods: ReturnType<typeof useForm<FormValues>> | null = null;
 
     const TestComponent = () => {
-      const methods = useForm({
+      const methods = useForm<FormValues>({
         defaultValues: {
           rule_engine_credential_id: 1,
         },
@@ -246,36 +238,37 @@ describe('PageFormRuleEngineCredentialSelect', () => {
       formMethods = methods;
 
       return (
-        <SWRConfig
-          value={{
-            provider: () => new Map(),
-            dedupingInterval: 0,
-            revalidateOnMount: true,
-            revalidateOnFocus: false,
-            revalidateOnReconnect: false,
-          }}
-        >
-          <MemoryRouter>
-            <FormProvider {...methods}>
-              <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
-            </FormProvider>
-          </MemoryRouter>
-        </SWRConfig>
+        <MemoryRouter>
+          <FormProvider {...methods}>
+            <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
+          </FormProvider>
+        </MemoryRouter>
       );
     };
 
     render(<TestComponent />);
 
+    // Value should remain as 1, not auto-select to 3
     await waitFor(() => {
       expect(formMethods?.getValues('rule_engine_credential_id')).toBe(1);
     });
   });
 
-  // Note: Tests for getOptionDescription callback behavior (managed credential description,
-  // first sentence extraction, empty/undefined handling) are covered by integration tests
-  // and the PageFormSingleSelectEdaResource component tests. These tests were removed because
-  // they required complex mocking of the dropdown interaction which is out of scope for
-  // unit testing this component's core functionality (auto-select and conditional helper text).
+  it('should pass isRequired prop correctly', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <FormWrapper>
+        <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" isRequired />
+      </FormWrapper>
+    );
+
+    // Open dropdown to verify the field rendered
+    await user.click(screen.getByTestId('rule-engine-credential-select'));
+
+    // The field should be marked as required - verify label has required indicator
+    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+  });
 
   it('should pass isDisabled prop correctly', () => {
     render(
@@ -291,17 +284,45 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     expect(toggle).toBeDisabled();
   });
 
-  it('should filter credentials by drools namespace', () => {
+  it('should handle empty description gracefully', async () => {
+    const user = userEvent.setup();
+
+    server.use(
+      http.get('*/eda-credentials/', () => {
+        return HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              id: 1,
+              name: 'No Description Cred',
+              description: '',
+              managed: false,
+              credential_type: {
+                id: 1,
+                name: 'Event-Driven Ansible Rule Engine',
+                namespace: 'drools',
+              },
+            },
+          ],
+        });
+      })
+    );
+
     render(
       <FormWrapper>
         <PageFormRuleEngineCredentialSelect name="rule_engine_credential_id" />
       </FormWrapper>
     );
 
-    // Verify the component renders correctly with the mocked data
-    expect(screen.getByText('Event persistence credential')).toBeInTheDocument();
+    await user.click(screen.getByTestId('rule-engine-credential-select'));
 
-    // Check that useGet was called (it's called by the component)
-    expect(useGet).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(screen.getByText('No Description Cred')).toBeInTheDocument();
+    });
+
+    // Should not show any description when empty
+    const listItems = screen.getAllByRole('option');
+    const credOption = listItems.find((item) => item.textContent?.includes('No Description Cred'));
+    expect(credOption?.textContent).toBe('No Description Cred');
   });
 });

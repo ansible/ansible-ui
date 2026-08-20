@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { EdaItemsResponse } from '../../../common/EdaItemsResponse';
+import { EDA_MAX_PAGE_SIZE } from '../../../common/eda-constants';
 
 export function PageFormRuleEngineCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -23,7 +24,13 @@ export function PageFormRuleEngineCredentialSelect<
 
   // Memoize queryParams to prevent recreating the object on every render
   // (which would cause the dropdown to refetch continuously)
-  const queryParams = useMemo(() => ({ credential_type__namespace__in: 'drools' }), []);
+  const queryParams = useMemo(
+    () => ({
+      credential_type__namespace__in: 'drools',
+      page_size: EDA_MAX_PAGE_SIZE.toString(),
+    }),
+    []
+  );
 
   // Fetch credentials to check count and find managed credential
   // Disable automatic revalidation to prevent refetching on dropdown open/focus
@@ -75,8 +82,9 @@ export function PageFormRuleEngineCredentialSelect<
           shouldValidate: false,
           shouldDirty: false,
         });
-        hasAutoSelectedRef.current = true;
       }
+      // Mark auto-select as attempted regardless of whether we found a managed credential
+      hasAutoSelectedRef.current = true;
     }
   }, [currentValue, credentialsData, setValue, props.name]);
 
