@@ -110,7 +110,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
 
     // Wait for credentials to load - verify the handler was called with correct params
     await waitFor(() => {
-      expect(screen.getByText('Drools Credential 1')).toBeInTheDocument();
+      expect(screen.getAllByText('Drools Credential 1').length).toBeGreaterThan(0);
     });
   });
 
@@ -126,7 +126,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     await user.click(screen.getByTestId('rule-engine-credential-select'));
 
     await waitFor(() => {
-      expect(screen.getByText('System Managed Credential')).toBeInTheDocument();
+      expect(screen.getAllByText('System Managed Credential').length).toBeGreaterThan(0);
     });
 
     // Verify the managed credential shows the default description
@@ -147,7 +147,7 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     await user.click(screen.getByTestId('rule-engine-credential-select'));
 
     await waitFor(() => {
-      expect(screen.getByText('Drools Credential 1')).toBeInTheDocument();
+      expect(screen.getAllByText('Drools Credential 1').length).toBeGreaterThan(0);
     });
 
     // Should show only first sentence (before the period)
@@ -317,12 +317,13 @@ describe('PageFormRuleEngineCredentialSelect', () => {
     await user.click(screen.getByTestId('rule-engine-credential-select'));
 
     await waitFor(() => {
-      expect(screen.getByText('No Description Cred')).toBeInTheDocument();
+      expect(screen.getAllByText('No Description Cred')).toHaveLength(2); // Name appears twice in the dropdown
     });
 
-    // Should not show any description when empty
+    // Should not show any description when empty - check that option only contains name
     const listItems = screen.getAllByRole('option');
     const credOption = listItems.find((item) => item.textContent?.includes('No Description Cred'));
+    // When description is empty, the option should only show the name (no additional text)
     expect(credOption?.textContent).toBe('No Description Cred');
   });
 });
