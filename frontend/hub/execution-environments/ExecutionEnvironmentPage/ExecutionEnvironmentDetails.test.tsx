@@ -22,7 +22,7 @@ const mockReadmeEmpty: ReadmeType = {
 const mockReadmeWithContent: ReadmeType = {
   updated_at: '2024-01-01T00:00:00Z',
   created_at: '2024-01-01T00:00:00Z',
-  text: '# Heading 1\n**bold text**',
+  text: '# heading1\n## heading2\n**bold text**\n*italic text*\n- list item',
 };
 
 const mockReadmeWithGfmTable: ReadmeType = {
@@ -112,13 +112,19 @@ describe('ExecutionEnvironmentDetails', () => {
 
     renderWithFreshCache();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText('Heading 1')).toBeInTheDocument();
-        expect(screen.getByText('bold text')).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
+    const heading1 = await screen.findByRole('heading', { level: 1, name: 'heading1' });
+    const heading2 = screen.getByRole('heading', { level: 2, name: 'heading2' });
+    const listItem = screen.getByRole('listitem');
+
+    expect(heading1).toHaveAttribute('data-ouia-component-type', 'PF6/Title');
+    expect(heading1).toHaveClass('pf-v6-c-title', 'pf-m-h1');
+    expect(heading2).toHaveAttribute('data-ouia-component-type', 'PF6/Title');
+    expect(heading2).toHaveClass('pf-v6-c-title', 'pf-m-h2');
+    expect(listItem).toHaveAttribute('data-ouia-component-type', 'PF6/Content');
+    expect(listItem).toHaveClass('pf-v6-c-content--li');
+    expect(listItem).toHaveTextContent('list item');
+    expect(screen.getByText('bold text').tagName).toBe('STRONG');
+    expect(screen.getByText('italic text').tagName).toBe('EM');
 
     const editButton = screen.getByRole('button', { name: /edit/i });
     await user.click(editButton);
@@ -129,13 +135,13 @@ describe('ExecutionEnvironmentDetails', () => {
     await user.clear(markdownTextarea);
     await user.type(markdownTextarea, '# New Heading\n**new bold text**');
 
-    const previewButton = screen.getByText('Preview');
-    await user.click(previewButton);
+    expect(screen.getByText('Preview')).toBeInTheDocument();
 
     await waitFor(() => {
-      const preview = screen.getByTestId('readme').querySelector('.preview');
-      expect(preview).toHaveTextContent('New Heading');
-      expect(preview).toHaveTextContent('new bold text');
+      const previewHeading = screen.getByRole('heading', { level: 1, name: 'New Heading' });
+      expect(previewHeading).toHaveAttribute('data-ouia-component-type', 'PF6/Title');
+      expect(previewHeading).toHaveClass('pf-v6-c-title');
+      expect(screen.getByText('new bold text')).toBeInTheDocument();
     });
 
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
