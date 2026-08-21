@@ -25,6 +25,12 @@ const mockReadmeWithContent: ReadmeType = {
   text: '# Heading 1\n**bold text**',
 };
 
+const mockReadmeWithGfmTable: ReadmeType = {
+  updated_at: '2024-01-01T00:00:00Z',
+  created_at: '2024-01-01T00:00:00Z',
+  text: '| Col A | Col B |\n| ----- | ----- |\n| cell1 | cell2 |',
+};
+
 describe('ExecutionEnvironmentDetails', () => {
   let readmeMockData: ReadmeType = mockReadmeEmpty;
 
@@ -134,5 +140,16 @@ describe('ExecutionEnvironmentDetails', () => {
 
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+  });
+
+  test('should render GFM tables in README', async () => {
+    readmeMockData = mockReadmeWithGfmTable;
+    renderWithFreshCache();
+
+    await waitFor(() => {
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getByText('Col A')).toBeInTheDocument();
+      expect(screen.getByText('cell1')).toBeInTheDocument();
+    });
   });
 });

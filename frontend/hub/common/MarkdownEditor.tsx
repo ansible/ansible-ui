@@ -1,6 +1,7 @@
-import { TextArea } from '@patternfly/react-core';
+import { Content, TextArea } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 
 const MarkdownEditorWrapper = styled.div`
@@ -20,6 +21,19 @@ const RawMarkdown = styled.div`
 
 const ReactMarkdownWrapper = styled.div`
   flex-grow: 1;
+
+  td,
+  th {
+    padding: 2px 16px 2px 0;
+    vertical-align: top;
+  }
+
+  code {
+    display: inline-block;
+    background: var(--pf-t--global--background--color--secondary--default);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
 `;
 
 interface IProps {
@@ -54,8 +68,14 @@ export function MarkdownEditor(props: IProps) {
       )}
       <ReactMarkdownWrapper>
         {editing && t(`Preview`)}
-        <div className={editing ? 'pf-v6-c-content preview' : 'pf-v6-c-content'}>
-          <ReactMarkdown>{text || placeholder}</ReactMarkdown>
+        <div
+          data-cy="readme"
+          data-testid="readme"
+          className={editing ? 'pf-v6-c-content preview' : 'pf-v6-c-content'}
+        >
+          <Content>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{text || placeholder}</ReactMarkdown>
+          </Content>
         </div>
       </ReactMarkdownWrapper>
     </MarkdownEditorWrapper>
