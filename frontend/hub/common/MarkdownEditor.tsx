@@ -1,6 +1,7 @@
-import { Content, TextArea } from '@patternfly/react-core';
+import { Content, TextArea, Title } from '@patternfly/react-core';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 
@@ -44,7 +45,41 @@ interface IProps {
   editing: boolean;
 }
 
-export function MarkdownEditor(props: IProps) {
+function MarkdownHeading({
+  headingLevel,
+  children,
+}: Readonly<{ headingLevel: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'; children?: ReactNode }>) {
+  return <Title headingLevel={headingLevel}>{children}</Title>;
+}
+
+function MarkdownContent({
+  component,
+  children,
+}: Readonly<{
+  component: 'p' | 'ul' | 'ol' | 'li' | 'blockquote' | 'hr';
+  children?: ReactNode;
+}>) {
+  return <Content component={component}>{children}</Content>;
+}
+
+const markdownComponents: Components = {
+  h1: ({ children }) => <MarkdownHeading headingLevel="h1">{children}</MarkdownHeading>,
+  h2: ({ children }) => <MarkdownHeading headingLevel="h2">{children}</MarkdownHeading>,
+  h3: ({ children }) => <MarkdownHeading headingLevel="h3">{children}</MarkdownHeading>,
+  h4: ({ children }) => <MarkdownHeading headingLevel="h4">{children}</MarkdownHeading>,
+  h5: ({ children }) => <MarkdownHeading headingLevel="h5">{children}</MarkdownHeading>,
+  h6: ({ children }) => <MarkdownHeading headingLevel="h6">{children}</MarkdownHeading>,
+  p: ({ children }) => <MarkdownContent component="p">{children}</MarkdownContent>,
+  ul: ({ children }) => <MarkdownContent component="ul">{children}</MarkdownContent>,
+  ol: ({ children }) => <MarkdownContent component="ol">{children}</MarkdownContent>,
+  li: ({ children }) => <MarkdownContent component="li">{children}</MarkdownContent>,
+  blockquote: ({ children }) => (
+    <MarkdownContent component="blockquote">{children}</MarkdownContent>
+  ),
+  hr: () => <MarkdownContent component="hr" />,
+};
+
+export function MarkdownEditor(props: Readonly<IProps>) {
   const { t } = useTranslation();
 
   const { text, placeholder, updateText, helperText, editing } = props;
@@ -73,9 +108,9 @@ export function MarkdownEditor(props: IProps) {
           data-testid="readme"
           className={editing ? 'pf-v6-c-content preview' : 'pf-v6-c-content'}
         >
-          <Content>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{text || placeholder}</ReactMarkdown>
-          </Content>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+            {text || placeholder}
+          </ReactMarkdown>
         </div>
       </ReactMarkdownWrapper>
     </MarkdownEditorWrapper>
