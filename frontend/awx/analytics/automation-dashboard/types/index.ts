@@ -108,14 +108,24 @@ type DashboardCommonCardProps = {
   width?: PageDashboardCardWidth;
 };
 
+type DashboardCardValueProps = {
+  value: string | number;
+  valueSuffix?: string;
+};
+
 export type DashboardValueCardProps = Readonly<
-  DashboardCommonCardProps & {
-    value: string | number;
-    valueSuffix?: string;
-    formatAsCurrency?: boolean;
-    linkText?: string;
-    to?: string;
-  }
+  DashboardCommonCardProps &
+    DashboardCardValueProps & {
+      linkText?: string;
+      to?: string;
+    }
+>;
+
+export type DashboardDetailsCardProps = Readonly<
+  DashboardCommonCardProps &
+    DashboardCardValueProps & {
+      formatAsCurrency?: boolean;
+    }
 >;
 
 export type DashboardTableCardProps = DashboardCommonCardProps & {
@@ -151,14 +161,9 @@ export type DashboardTableInputFieldProps = {
 };
 
 export type DashboardTableToolbarProps = {
-  isLoading: boolean;
-  itemCount: number | undefined;
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>> | undefined;
   refresh: () => Promise<void>;
-  onExportCsv?: (reportType: ReportType) => Promise<void>;
-  toolbarFilters?: IToolbarFilter[];
-  filterState?: IFilterState;
 };
 
 // ─── View Type ────────────────────────────────────────────────────────────────

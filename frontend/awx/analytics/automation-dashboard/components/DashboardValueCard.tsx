@@ -3,47 +3,22 @@ import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { DashboardValueCardProps } from '../types';
 import { Link } from 'react-router-dom';
 import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
-import { currencyFormatter } from '../../utilities/currencyFormatter';
-import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
+import { DashboardCardValueDisplay, getDashboardCardValueFontSize } from './DashboardCardValue';
 
 export function DashboardValueCard(props: DashboardValueCardProps) {
-  const {
-    id,
-    title,
-    help,
-    value,
-    linkText,
-    to,
-    valueSuffix,
-    error,
-    errorStateTitle,
-    formatAsCurrency,
-    width,
-  } = props;
+  const { id, title, help, value, linkText, to, valueSuffix, error, errorStateTitle, width } =
+    props;
 
-  const contentValue =
-    typeof value === 'number' ? (
-      <span
-        style={{
-          fontSize: width === 'xs' ? 'x-large' : 'xx-large',
-          fontWeight: '400',
-          lineHeight: 1,
-          marginTop: 'auto',
-        }}
-      >
-        {formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(DEFAULT_NUMBER_LOCALE)}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-    ) : (
-      <span style={{ fontSize: 'large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
-        {value}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-    );
+  const fontSize = getDashboardCardValueFontSize(value, width, {
+    compact: 'x-large',
+    expanded: 'xx-large',
+  });
 
   const content = (
     <Flex
-      style={{ height: '100%' }}
+      style={{
+        height: '100%',
+      }}
       spaceItems={{ default: 'spaceItemsLg' }}
       alignItems={{ default: 'alignItemsFlexStart' }}
       justifyContent={{ default: 'justifyContentFlexStart' }}
@@ -56,8 +31,7 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
           </Content>
         </FlexItem>
       )}
-
-      {contentValue}
+      <DashboardCardValueDisplay value={value} valueSuffix={valueSuffix} fontSize={fontSize} />
     </Flex>
   );
   return (

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import type { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import {
+  ensureUntilZSuffix,
   mungePromptData,
   mungeSurveyAndExtraVarsData,
   normalizeOptions,
@@ -186,6 +187,39 @@ describe('useGetMonthOptions', () => {
     expect(result.current).toHaveLength(12);
     expect(result.current[0]).toEqual({ value: 1, label: 'January' });
     expect(result.current[11]).toEqual({ value: 12, label: 'December' });
+  });
+});
+
+describe('ensureUntilZSuffix', () => {
+  it('should return empty string unchanged', () => {
+    expect(ensureUntilZSuffix('')).toBe('');
+  });
+
+  it('should return string with no UNTIL unchanged', () => {
+    const input = 'DTSTART;TZID=America/New_York:20250101T120000 RRULE:FREQ=WEEKLY;COUNT=5';
+    expect(ensureUntilZSuffix(input)).toBe(input);
+  });
+
+  it('should append Z to UNTIL without Z suffix', () => {
+    const input =
+      'DTSTART;TZID=America/New_York:20250101T120000 RRULE:FREQ=WEEKLY;UNTIL=20250201T120000';
+    const expected =
+      'DTSTART;TZID=America/New_York:20250101T120000 RRULE:FREQ=WEEKLY;UNTIL=20250201T120000Z';
+    expect(ensureUntilZSuffix(input)).toBe(expected);
+  });
+
+  it('should not double-append Z when UNTIL already has Z suffix', () => {
+    const input =
+      'DTSTART;TZID=America/New_York:20250101T120000 RRULE:FREQ=WEEKLY;UNTIL=20250201T120000Z';
+    expect(ensureUntilZSuffix(input)).toBe(input);
+  });
+
+  it('should fix all UNTIL clauses in a multi-rule string', () => {
+    const input =
+      'DTSTART;TZID=America/New_York:20250101T120000 RRULE:FREQ=WEEKLY;UNTIL=20250201T120000 RRULE:FREQ=DAILY;UNTIL=20250301T120000';
+    const expected =
+      'DTSTART;TZID=America/New_York:20250101T120000 RRULE:FREQ=WEEKLY;UNTIL=20250201T120000Z RRULE:FREQ=DAILY;UNTIL=20250301T120000Z';
+    expect(ensureUntilZSuffix(input)).toBe(expected);
   });
 });
 

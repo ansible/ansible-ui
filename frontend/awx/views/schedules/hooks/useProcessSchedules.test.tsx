@@ -216,4 +216,69 @@ describe('useProcessSchedule', () => {
     const response = await result.current(payload);
     expect(response.schedule).toBeDefined();
   });
+
+  it('should append Z to UNTIL date when DTSTART has TZID', async () => {
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+
+    // DTSTART with TZID + UNTIL: the rrule library strips the Z suffix on serialization
+    const tzidRule =
+      'DTSTART;TZID=America/New_York:20230101T000000\nRRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20231231T050000Z';
+
+    const payload = makePayload('job_template', {
+      rules: [{ id: 1, rule: tzidRule }],
+    });
+
+    await result.current(payload);
+
+    const savedRRule = (postCalls[0].body as Record<string, unknown>).rrule as string;
+    expect(savedRRule).toMatch(/UNTIL=\d{8}T\d{6}Z/);
+  });
+
+  it('should POST to system_job_templates with empty extra_data when schedule_days_to_keep is undefined', async () => {
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+
+    const payload = makePayload('system_job_template', {
+      schedule_days_to_keep: undefined as unknown as number,
+    });
+
+    const response = await result.current(payload);
+
+    expect(response.schedule).toBeDefined();
+    expect(postCalls[0].url).toContain('/system_job_templates/');
+    expect((postCalls[0].body as Record<string, unknown>).extra_data).toEqual({});
+  });
+
+  it('should fall back to empty survey for workflow_job_template when survey is undefined', async () => {
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+
+    const payload = makePayload('workflow_job_template', {
+      survey: undefined as unknown as Record<string, string | number | string[]>,
+    });
+
+    const response = await result.current(payload);
+
+    expect(response.schedule).toBeDefined();
+    expect(postCalls[0].url).toContain('/workflow_job_templates/');
+  });
+
+  it('should fall back to empty survey for job_template when survey is undefined', async () => {
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+
+    const payload = makePayload('job_template', {
+      survey: undefined as unknown as Record<string, string | number | string[]>,
+    });
+
+    const response = await result.current(payload);
+
+    expect(response.schedule).toBeDefined();
+    expect(postCalls[0].url).toContain('/job_templates/');
+  });
 });

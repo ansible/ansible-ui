@@ -118,8 +118,10 @@ describe('DeprecationsDashboard', () => {
     expect(screen.getByText('Total occurrences')).toBeInTheDocument();
     expect(screen.getByText('Severity')).toBeInTheDocument();
 
-    // Check deprecation type appears
-    expect(screen.getByText('with_items on module')).toBeInTheDocument();
+    // Check deprecation type appears (async data processing may take an extra render cycle)
+    await waitFor(() => {
+      expect(screen.getByText('with_items on module')).toBeInTheDocument();
+    });
   });
 
   it('should display empty state when no deprecations found', async () => {

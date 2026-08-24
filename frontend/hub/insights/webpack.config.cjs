@@ -14,7 +14,6 @@ const { resolve } = require('node:path');
 const config = require('@redhat-cloud-services/frontend-components-config');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const webpack = require('webpack');
 
 const isBuild = process.env.NODE_ENV === 'production';
@@ -143,7 +142,7 @@ const newWebpackConfig = {
       {
         test: /\.(woff(2)?|ttf|jpg|png|eot|gif)(\?v=\d+\.\d+\.\d+)?$/,
         type: 'asset/resource',
-        generator: { filename: 'fonts/[name][ext][query]' },
+        generator: { filename: 'fonts/[name].[contenthash:8][ext][query]' },
       },
       {
         test: /\.svg$/,
@@ -154,7 +153,7 @@ const newWebpackConfig = {
         test: /\.svg$/,
         resourceQuery: { not: [/react/] },
         type: 'asset/resource',
-        generator: { filename: 'fonts/[name][ext][query]' },
+        generator: { filename: 'fonts/[name].[contenthash:8][ext][query]' },
       },
     ],
   },
@@ -175,6 +174,16 @@ const newWebpackConfig = {
 
       // Stub AWX for standalone Hub (only AwxRoute is imported)
       '@ansible/awx-ui': resolve(__dirname, 'awx-stub.ts'),
+
+      // monaco-editor@0.56+ exports field maps ./*.js → ./esm/vs/*.js which
+      // doubles the path when resolving esm/vs/* subpaths. Direct alias
+      // bypasses exports resolution for the worker entry used by monaco-yaml.
+      'monaco-editor/esm': resolve(__dirname, 'node_modules/monaco-editor/esm'),
+
+      // Redirect the monaco-editor package entry to our slim build that only
+      // includes editor core + yaml/markdown (instead of all 80+ languages).
+      // This avoids TDZ errors with Module Federation that MonacoWebpackPlugin causes.
+      'monaco-editor$': resolve(__dirname, 'monaco-languages.js'),
     },
   },
 
@@ -220,31 +229,18 @@ filteredPlugins.push(
 // Stub out AWX imports - Hub is standalone on CRC (only AwxRoute is imported)
 const awxStub = resolve(__dirname, 'awx-stub.ts');
 
-// Add remaining plugins in a single push call:
-// - Monaco editor for YAML support
+// Add remaining plugins:
 // - AWX stub replacement
+// - DataEditor lazy-load (breaks Monaco circular dep in Module Federation)
 // - process.env definitions
 // - Suppress "Critical dependency" warning from @rhds/elements
 filteredPlugins.push(
-  new MonacoWebpackPlugin({
-    // Include all languages used by Hub forms:
-    // - yaml: for YAML editors (variables, etc.)
-    // - json: for JSON editors
-    // - markdown: for PageFormMarkdown (used in namespace forms)
-    languages: ['yaml', 'json', 'markdown'],
-    // Configure monaco-yaml worker (must match main webpack config)
-    customLanguages: [
-      {
-        label: 'yaml',
-        entry: 'monaco-yaml',
-        worker: {
-          id: 'monaco-yaml/yamlWorker',
-          entry: 'monaco-yaml/yaml.worker',
-        },
-      },
-    ],
-  }),
   new webpack.NormalModuleReplacementPlugin(/@ansible\/awx-ui/, awxStub),
+  new webpack.NormalModuleReplacementPlugin(/\/components\/DataEditor(\.tsx?)?$/, (resource) => {
+    const issuer = resource.contextInfo?.issuer || '';
+    if (issuer.includes('LazyDataEditor')) return;
+    resource.request = resolve(__dirname, 'LazyDataEditor.tsx');
+  }),
   new webpack.DefinePlugin({
     'process.env.IS_INSIGHTS': JSON.stringify(true),
     'process.env.HUB_API_PREFIX': JSON.stringify(

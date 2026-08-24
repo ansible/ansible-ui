@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
-import { DashboardValueCard } from './DashboardValueCard';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
@@ -18,6 +17,10 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import useResizeObserver from '@react-hook/resize-observer';
 import { CardBody } from '@patternfly/react-core';
 import styled from 'styled-components';
+import { ExportIcon } from '@patternfly/react-icons';
+import { DashboardExportButton } from './DashboardExportButton';
+import { hasValidRequiredFilters } from '../utils/queryString';
+import { DashboardDetailsCard } from './DashboardDetailsCard';
 
 interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
@@ -63,7 +66,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
 
   const ref = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(1);
-
+  const filtersValid = hasValidRequiredFilters(toolbarFilters, mainTableView.filterState);
   const calculateGridColumns = (width: number) =>
     Math.max(1, Math.floor(width / GRID_COLUMN_WIDTH));
 
@@ -255,31 +258,37 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     },
   ];
 
+  const exportButton = (
+    <DashboardExportButton
+      exportType={'csv'}
+      title={t('Export as CSV')}
+      icon={ExportIcon}
+      isDisabled={loading || !(mainTableView.itemCount ?? 0) || !costState || !filtersValid}
+      onExport={exportCsv}
+    ></DashboardExportButton>
+  );
+
   return (
     <PageDashboardCard
       id={'ad-main-table-card'}
+      title={t('Cost calculation')}
       width="xxl"
-      isCompact
       canCollapse={false}
       disableBodyPadding
       style={{ gridColumn: `span ${MAIN_TABLE_FULL_SPAN}` }}
+      headerControls={exportButton}
     >
       <CardBody>
         <DashboardTableToolbarRow
-          isLoading={loading}
-          itemCount={mainTableView?.itemCount ?? 0}
           costState={costState}
           setCostState={setCostState}
           refresh={refresh}
-          onExportCsv={exportCsv}
-          filterState={mainTableView?.filterState}
-          toolbarFilters={toolbarFilters}
         ></DashboardTableToolbarRow>
         <div
           ref={ref}
           style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
-          <DashboardValueCard
+          <DashboardDetailsCard
             id="cost-manual-automation-card"
             title={t('Cost of manual automation')}
             help={t('Total cost if all jobs were run manually')}
@@ -288,8 +297,8 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading manual automation cost')}
             width={topCardsWidth}
-          ></DashboardValueCard>
-          <DashboardValueCard
+          ></DashboardDetailsCard>
+          <DashboardDetailsCard
             id="cost-automated-execution-card"
             title={t('Cost of automated execution')}
             help={t('Total cost of running jobs on AAP')}
@@ -298,8 +307,8 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading automated execution cost')}
             width={topCardsWidth}
-          ></DashboardValueCard>
-          <DashboardValueCard
+          ></DashboardDetailsCard>
+          <DashboardDetailsCard
             id="total-savings-card"
             title={t('Total savings/cost avoided')}
             help={t('Difference between manual and automated cost')}
@@ -308,8 +317,8 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading total savings')}
             width={topCardsWidth}
-          ></DashboardValueCard>
-          <DashboardValueCard
+          ></DashboardDetailsCard>
+          <DashboardDetailsCard
             id="total-hours-saved-card"
             title={t('Total hours saved/avoided')}
             help={t('Time saved by automation vs manual execution')}
@@ -318,7 +327,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
             error={detailsError}
             errorStateTitle={t('Error loading total hours saved')}
             width={topCardsWidth}
-          ></DashboardValueCard>
+          ></DashboardDetailsCard>
         </div>
       </CardBody>
       <CardBody>
