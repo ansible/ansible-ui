@@ -339,7 +339,10 @@ export function RulebookActivationInputs() {
       </PageFormSection>
       {enablePersistence && config && !config.managed_cloud_install && (
         <PageFormSection title={t('Option Details')}>
-          <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs> name="rule_engine_credential_id" />
+          <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs>
+            name="rule_engine_credential_id"
+            isRequired
+          />
         </PageFormSection>
       )}
     </>
