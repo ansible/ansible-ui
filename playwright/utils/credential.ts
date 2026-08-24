@@ -5,6 +5,7 @@ import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { navigateTo } from '../commands/navigateTo';
 import { filterTable } from '../commands/filterTable';
+import { waitForPageTableLoad } from '../commands/waitForPageTableLoad';
 
 export interface CreateCredentialOptions {
   credentialName?: string;
@@ -40,6 +41,7 @@ export const Credential = {
     create: async (page: Page, options: CreateCredentialOptions = {}): Promise<string> => {
       const testToken = createE2EName('test-token');
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       const credentialName = options.credentialName ?? createE2EName('credential');
       await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
