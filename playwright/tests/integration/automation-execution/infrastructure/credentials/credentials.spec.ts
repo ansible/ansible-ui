@@ -5,6 +5,7 @@ import { createE2EName } from '../../../../../commands/createE2EName';
 import { filterTable } from '../../../../../commands/filterTable';
 import { navigateTo } from '../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../commands/setup';
+import { waitForPageTableLoad } from '../../../../../commands/waitForPageTableLoad';
 import { Credential } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials' }));
@@ -183,6 +184,7 @@ test.describe('Credentials Create - External test modal', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       await page.getByPlaceholder('Enter credential name').fill('foo');
       await page.getByRole('button', { name: 'Credential type' }).click();
@@ -223,6 +225,7 @@ test.describe('Credentials - Credential Types Tests', () => {
       const credentialName = createE2EName('credential');
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       await page.getByPlaceholder('Enter credential name').fill(credentialName);
       await page.getByRole('button', { name: 'Credential type' }).click();
@@ -250,6 +253,7 @@ test.describe('Credentials - Credential Types Tests', () => {
       const credentialName = createE2EName('credential');
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       await page.getByPlaceholder('Enter credential name').fill(credentialName);
       await page.getByRole('button', { name: 'Credential type' }).click();
@@ -297,6 +301,7 @@ test.describe('Credentials - Credential Types Tests', () => {
     async ({ page }) => {
       const credentialName = createE2EName('credential');
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       await page.getByPlaceholder('Enter credential name').fill(credentialName);
       await page.getByRole('button', { name: 'Credential type' }).click();
@@ -327,6 +332,7 @@ test.describe('Credentials - Credential Types Tests', () => {
       const credentialName = createE2EName('credential');
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       await page.getByPlaceholder('Enter credential name').fill(credentialName);
       await page.getByRole('button', { name: 'Credential type' }).click();
@@ -351,6 +357,7 @@ test.describe('Credentials - Credential Types Tests', () => {
       const credentialName = createE2EName('credential');
 
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       await page.getByPlaceholder('Enter credential name').fill(credentialName);
       await page.getByRole('button', { name: 'Credential type' }).click();
@@ -393,6 +400,7 @@ test.describe('Credentials - External Credential Plugins (AAP-44813)', () => {
 
       // Step 1: Create an external credential (HashiCorp Vault Secret Lookup)
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       const externalCredentialName = createE2EName('external-cred');
       await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
@@ -418,6 +426,7 @@ test.describe('Credentials - External Credential Plugins (AAP-44813)', () => {
 
       // Step 2: Create a Machine credential and link its password to the external credential
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       const machineCredentialName = createE2EName('machine-cred-linked');
       await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
@@ -509,6 +518,7 @@ test.describe('Credentials - External Credential Plugins (AAP-44813)', () => {
 
       // Step 1: Create an external credential (HashiCorp Vault Secret Lookup)
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+      await waitForPageTableLoad(page);
       await page.getByText('Create credential', { exact: true }).click();
       const externalCredentialName = createE2EName('external-cred');
       await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
@@ -604,6 +614,7 @@ test.describe('Credentials - Team and User Access', () => {
       const teamName = createE2EName('team');
 
       await navigateTo(page, 'Access Management', 'Teams');
+      await waitForPageTableLoad(page);
       await page.getByText('Create team', { exact: true }).click();
       await page.getByPlaceholder('Enter team name').fill(teamName);
       await page.getByLabel('Organization').click();
@@ -651,6 +662,7 @@ test.describe('Credentials - Team and User Access', () => {
       const userName = `E2E-user-${createE2EName('').replaceAll(/\s+/g, '')}`;
 
       await navigateTo(page, 'Access', 'Users');
+      await waitForPageTableLoad(page);
       await page.getByText('Create user', { exact: true }).click();
       await page.getByRole('textbox', { name: 'Username' }).fill(userName);
       await page.getByRole('textbox', { name: 'Password', exact: true }).fill('TestPassword123!');
@@ -696,6 +708,7 @@ test.describe('Credentials - Team and User Access', () => {
       const teamName = createE2EName('team');
 
       await navigateTo(page, 'Access Management', 'Teams');
+      await waitForPageTableLoad(page);
       await page.getByText('Create team', { exact: true }).click();
       await page.getByPlaceholder('Enter team name').fill(teamName);
       await page.getByLabel('Organization').click();
@@ -755,6 +768,7 @@ test.describe('Credentials - Team and User Access', () => {
       const userName = `E2E-user-${createE2EName('').replaceAll(/\s+/g, '')}`;
 
       await navigateTo(page, 'Access', 'Users');
+      await waitForPageTableLoad(page);
       await page.getByText('Create user', { exact: true }).click();
       await page.getByRole('textbox', { name: 'Username' }).fill(userName);
       await page.getByRole('textbox', { name: 'Password', exact: true }).fill('TestPassword123!');
@@ -829,6 +843,7 @@ test.describe('Credentials - Team and User Access', () => {
     const userName = `E2E-user-${createE2EName('').replaceAll(/\s+/g, '')}`;
 
     await navigateTo(page, 'Access', 'Users');
+    await waitForPageTableLoad(page);
     await page.getByText('Create user', { exact: true }).click();
     await page.getByRole('textbox', { name: 'Username' }).fill(userName);
     await page.getByRole('textbox', { name: 'Password', exact: true }).fill('TestPassword123!');
