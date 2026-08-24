@@ -7,6 +7,7 @@ import { fillMonacoEditor } from '../../../../../../commands/fillMonacoEditor';
 import { filterTableByText } from '../../../../../../commands/filterTableByText';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
+import { waitForJobStatus } from '../../../../../../commands/waitForJobStatus';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -86,6 +87,7 @@ test.describe('Constructed Inventory', () => {
     'should edit description and source_vars, then sync inventory successfully',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(120000);
       const inventory1Name = createE2EName('inventory');
       const constructedInventoryName = createE2EName('constructed-inventory');
       const description = 'Edit action: New description created by Playwright';
@@ -127,14 +129,25 @@ test.describe('Constructed Inventory', () => {
           (response) =>
             response.url().includes('/inventory_sources/') &&
             response.url().includes('/update/') &&
-            response.request().method() === 'POST'
+            response.request().method() === 'POST' &&
+            response.status() === 202
         );
         await page.getByRole('button', { name: 'Sync inventory' }).click();
-        await syncResponsePromise;
+        const syncResponse = await syncResponsePromise;
+        const inventoryUpdate = (await syncResponse.json()) as { id: number };
 
-        // Wait for sync to complete and verify success status
+        // Wait for sync to complete using API polling, then verify the UI reflects it
+        await waitForJobStatus(
+          {
+            jobType: 'inventory_updates',
+            jobId: inventoryUpdate.id,
+            desiredStatus: 'successful',
+            timeout: 60000,
+          },
+          page
+        );
         await expect(page.getByTestId('last-job-status')).toContainText('Success', {
-          timeout: 60000,
+          timeout: 15000,
         });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories
@@ -147,6 +160,7 @@ test.describe('Constructed Inventory', () => {
     'should fail sync when strict mode is enabled with bad variables',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(120000);
       const inputInventoryName = createE2EName('inventory');
       const constructedInventoryName = createE2EName('constructed-inventory');
 
@@ -209,14 +223,25 @@ test.describe('Constructed Inventory', () => {
           (response) =>
             response.url().includes('/inventory_sources/') &&
             response.url().includes('/update/') &&
-            response.request().method() === 'POST'
+            response.request().method() === 'POST' &&
+            response.status() === 202
         );
         await page.getByRole('button', { name: 'Sync inventory' }).click();
-        await syncResponsePromise;
+        const syncResponse = await syncResponsePromise;
+        const inventoryUpdate = (await syncResponse.json()) as { id: number };
 
-        // Wait for sync to complete and verify failed status
+        // Wait for sync to fail using API polling, then verify the UI reflects it
+        await waitForJobStatus(
+          {
+            jobType: 'inventory_updates',
+            jobId: inventoryUpdate.id,
+            desiredStatus: 'failed',
+            timeout: 60000,
+          },
+          page
+        );
         await expect(page.getByTestId('last-job-status')).toContainText('Failed', {
-          timeout: 30000,
+          timeout: 15000,
         });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories
