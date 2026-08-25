@@ -561,10 +561,10 @@ Key enforced rules from `.eslintrc.json`:
 
 ## 16. Internationalization
 
-See the comprehensive i18n section in CLAUDE.md. Quick rules:
-
-- Wrap all user-facing strings: `t('Label text')`
+- Wrap all user-facing strings: `t('Label text')` via `useTranslation`
 - **Never** compare translated strings in logic — compare raw API values
+  (`resource.status === 'active'`), enums, routes, or other non-translated IDs
+- Translate only for display: `<Label>{t(resource.status)}</Label>`
 - Run `npm run i18n` after adding new strings
 - ESLint enforces `i18next/no-literal-string` on JSX attributes
 

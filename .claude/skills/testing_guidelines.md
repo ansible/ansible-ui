@@ -3,8 +3,9 @@
 Testing standards for this project. Read this skill before writing or reviewing
 any test file.
 
-For Playwright E2E testing, see the comprehensive section in CLAUDE.md — this
-skill covers **Vitest unit and component tests** only.
+For Playwright E2E, read `.claude/skills/frontend-playwright-e2e/SKILL.md` and
+`.claude/skills/frontend-overlay/SKILL.md`. This skill covers **Vitest unit and
+component tests** only.
 
 ---
 
@@ -341,8 +342,6 @@ it('should increment counter when button clicked', async () => {
 });
 ```
 
-See CLAUDE.md for the full AAA pattern reference.
-
 ---
 
 ## Skipping Tests
@@ -374,8 +373,6 @@ Never commit `test.only()` — ESLint rule `no-only-tests` will catch it.
 - Third-party library behavior (PatternFly, React Router)
 - Static content that never changes
 - React rendering lifecycle
-
-See CLAUDE.md for the complete testing tables.
 
 ---
 

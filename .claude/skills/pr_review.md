@@ -8,9 +8,9 @@ Your goal is to review a pull request with high clarity, consistency, and alignm
 
 Before reviewing the PR, read:
 
-- `claude.md` (global instructions)
-- Any relevant project guidelines: architecture, naming, lint, testing
-- Any domain-specific instructions (e.g., React, react-hook-form, Patternfly)
+- `CLAUDE.md` trigger table, then the matching skills (not the whole skill set)
+- `.claude/skills/frontend-overlay/SKILL.md` for wrappers and API helpers
+- Any domain-specific skill: coding_standards, testing_guidelines, playwright-e2e
 
 **Branch Strategy:**
 
