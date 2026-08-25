@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { PageAlertToasterProvider, PageDialogProvider } from '@ansible/ansible-ui-framework';
-import type { PageToolbarProps } from '@ansible/ansible-ui-framework';
+import type { IFilterState, PageToolbarProps } from '@ansible/ansible-ui-framework';
 import type { IDashboardFilterSet, IJobTemplate } from '../types';
 import { DashboardToolbar } from './DashboardToolbar';
 
@@ -268,6 +268,71 @@ describe('DashboardToolbar', () => {
           </Wrapper>
         );
       }).not.toThrow();
+    });
+  });
+
+  describe('custom period default start date', () => {
+    test('should seed the start date to 7 days ago when switching to Custom with no dates', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-06-15T12:00:00Z'));
+      try {
+        const { rerender } = render(
+          <Wrapper>
+            <DashboardToolbar {...buildProps({ filterState: { period: ['last_7_days'] } })} />
+          </Wrapper>
+        );
+
+        rerender(
+          <Wrapper>
+            <DashboardToolbar {...buildProps({ filterState: { period: ['custom'] } })} />
+          </Wrapper>
+        );
+
+        expect(mockSetFilterState).toHaveBeenCalled();
+        const updater = mockSetFilterState.mock.calls.at(-1)?.[0] as (
+          prev: IFilterState
+        ) => IFilterState;
+        expect(updater({ period: ['custom'] })).toEqual({ period: ['custom', '2024-06-08'] });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    test('should not seed a start date when Custom already has one', () => {
+      const { rerender } = render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps({ filterState: { period: ['last_7_days'] } })} />
+        </Wrapper>
+      );
+
+      rerender(
+        <Wrapper>
+          <DashboardToolbar
+            {...buildProps({ filterState: { period: ['custom', '2024-01-01'] } })}
+          />
+        </Wrapper>
+      );
+
+      expect(mockSetFilterState).not.toHaveBeenCalled();
+    });
+
+    test('should not re-seed the start date when it is cleared while already on Custom', () => {
+      const { rerender } = render(
+        <Wrapper>
+          <DashboardToolbar
+            {...buildProps({ filterState: { period: ['custom', '2024-01-01'] } })}
+          />
+        </Wrapper>
+      );
+      mockSetFilterState.mockClear();
+
+      rerender(
+        <Wrapper>
+          <DashboardToolbar {...buildProps({ filterState: { period: ['custom'] } })} />
+        </Wrapper>
+      );
+
+      expect(mockSetFilterState).not.toHaveBeenCalled();
     });
   });
 });

@@ -70,12 +70,12 @@ function OpenDialogButton({
   return <button onClick={() => openDialog(filterState, filterSet)}>Open dialog</button>;
 }
 
-/** Opens the dialog, fills the name field, and clicks Save. */
+/** Opens the dialog, fills the name field, and clicks the submit button. */
 async function openAndSubmit(user: ReturnType<typeof userEvent.setup>, name: string) {
   await user.click(screen.getByRole('button', { name: 'Open dialog' }));
   await user.clear(screen.getByRole('textbox', { name: /name/i }));
   await user.type(screen.getByRole('textbox', { name: /name/i }), name);
-  await user.click(screen.getByRole('button', { name: /save/i }));
+  await user.click(screen.getByRole('button', { name: /create report|save changes/i }));
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -97,10 +97,10 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
       await user.click(screen.getByRole('button', { name: 'Open dialog' }));
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'Save report' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create new report' })).toBeInTheDocument();
     });
 
-    test('should show "Rename report" title when editing an existing filter set', async () => {
+    test('should show "Update report" title when editing an existing filter set', async () => {
       const user = userEvent.setup();
       render(
         <Wrapper>
@@ -110,7 +110,24 @@ describe('useCreateEditToolbarFilterSetDialog', () => {
 
       await user.click(screen.getByRole('button', { name: 'Open dialog' }));
 
-      expect(screen.getByText('Rename report')).toBeInTheDocument();
+      expect(screen.getByText('Update report')).toBeInTheDocument();
+    });
+
+    test('should communicate that both name and filter state will be saved when editing', async () => {
+      const user = userEvent.setup();
+      render(
+        <Wrapper>
+          <OpenDialogButton filterSet={existingFilterSet} onComplete={vi.fn()} />
+        </Wrapper>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Open dialog' }));
+
+      expect(
+        screen.getByText(
+          'This will update the report with the current name and filter configuration.'
+        )
+      ).toBeInTheDocument();
     });
 
     test('should render the Name input', async () => {

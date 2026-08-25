@@ -76,7 +76,7 @@ function CreateEditToolbarFilterSetDialog(
           singleColumn
           disablePadding
           disableSubmitOnEnter
-          submitText={t('Save report')}
+          submitText={filterSet.id === undefined ? t('Create report') : t('Save changes')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onClose}
@@ -106,10 +106,15 @@ export function useCreateEditToolbarFilterSetDialog(
   return useCallback(
     (filterState: IFilterState, filterSet: IDashboardFilterSet) => {
       const newFilterSet = { ...filterSet, filters: JSON.stringify(filterState) };
-      const title = filterSet.id === undefined ? t('Save report') : t('Rename report');
+      const isCreate = filterSet.id === undefined;
+      const title = isCreate ? t('Create new report') : t('Update report');
+      const description = isCreate
+        ? t('Save the current filter configuration as a new report.')
+        : t('This will update the report with the current name and filter configuration.');
       setDialog(
         <CreateEditToolbarFilterSetDialog
           title={title}
+          description={description}
           filterSet={newFilterSet}
           onComplete={onComplete}
           onSuccess={(message) =>

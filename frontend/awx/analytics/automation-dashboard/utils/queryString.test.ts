@@ -607,6 +607,46 @@ describe('queryString', () => {
       ).toBe(false);
     });
 
+    test('should return false when start date is after end date', () => {
+      expect(
+        isRequiredFilterValid(requiredDateRangeFilter, {
+          period: ['custom', '2024-01-31', '2024-01-01'],
+        })
+      ).toBe(false);
+    });
+
+    test('should return true when start date equals end date', () => {
+      expect(
+        isRequiredFilterValid(requiredDateRangeFilter, {
+          period: ['custom', '2024-01-15', '2024-01-15'],
+        })
+      ).toBe(true);
+    });
+
+    test('should return false when only a start date after today is provided (end defaults to today)', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-06-15T12:00:00Z'));
+      try {
+        expect(
+          isRequiredFilterValid(requiredDateRangeFilter, { period: ['custom', '2024-06-16'] })
+        ).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    test('should return true when only a start date of today is provided (end defaults to today)', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-06-15T12:00:00Z'));
+      try {
+        expect(
+          isRequiredFilterValid(requiredDateRangeFilter, { period: ['custom', '2024-06-15'] })
+        ).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     describe('timezones west of UTC', () => {
       const originalTz = process.env.TZ;
 
