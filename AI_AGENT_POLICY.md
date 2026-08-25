@@ -18,12 +18,17 @@ sessions and are a supply-chain risk in a public tree.
 | Allowed in git | Role |
 | --- | --- |
 | `CLAUDE.md`, `AGENTS.md` | On-demand agent instructions |
-| `.claude/skills/**` | Shared skill documents |
+| `.claude/skills/**` | Shared skill documents and user-invoked helper scripts |
 | `.claude/commands/**` | Slash-command prompts as markdown |
 | `.claude/skill-triggers.json` | Advisory file-type → skill mapping |
 
-Skills and commands are documentation loaded by the agent. They are not
-executable hooks.
+Skills and commands are documentation loaded by the agent. A skill may include a
+helper script (for example `.claude/skills/sonarcloud-remediation/scripts/`) that
+a contributor runs explicitly as part of that skill. These are **not** agent
+hooks: they never run automatically during a session, and running them requires
+an explicit, user-approved permission. The ban is on hooks that execute
+automatically (for example `PreToolUse`/`PostToolUse` wired through
+`settings.json`).
 
 ### Local-only agent settings
 
