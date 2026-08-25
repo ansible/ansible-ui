@@ -32,7 +32,8 @@ const AWX_WEBSOCKET_PREFIX = '/api/controller/v2/websocket/';
 const platformDir = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(platformDir, 'dist');
 const distIndex = path.join(distDir, 'index.html');
-const isE2eSidecar = !process.stdout.isTTY && fs.existsSync(distIndex);
+const isE2eSidecar =
+  process.env.E2E_SIDECAR === '1' || (!process.stdout.isTTY && fs.existsSync(distIndex));
 
 const environment: Record<string, string> = {
   PLATFORM_SERVER,
@@ -80,9 +81,9 @@ const config: VitestUserConfig = {
   // https://vite.dev/guide/migration#consistent-commonjs-interop
   legacy: { inconsistentCjsInterop: true },
   server: {
-    host: '0.0.0.0',
+    host: process.env.CI ? '0.0.0.0' : 'localhost',
     strictPort: true,
-    allowedHosts: true,
+    allowedHosts: process.env.CI ? true : undefined,
     cors: false,
     proxy: {
       '/api': {
@@ -173,7 +174,7 @@ if (isE2eSidecar) {
           const pathname = decodeURIComponent(url.split('?')[0] ?? '/');
           const filePath = path.join(distDir, pathname === '/' ? 'index.html' : pathname);
           const safe = path.normalize(filePath);
-          if (!safe.startsWith(distDir)) {
+          if (!safe.startsWith(distDir + path.sep) && safe !== distDir) {
             res.statusCode = 403;
             res.end();
             return;
