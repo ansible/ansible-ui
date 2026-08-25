@@ -9,6 +9,7 @@ UI projects for [Ansible](https://docs.ansible.com).
 - [Environment Variables](#environment-variables)
 - [NPM Scripts](#npm-scripts)
 - [Documentation](#documentation)
+- [AI-assisted contributions](#ai-assisted-contributions)
 - [Code of Conduct](#code-of-conduct)
 
 ## Getting Started
@@ -81,6 +82,12 @@ export PLATFORM_PASSWORD='nomeetingsfriday'
 - [Development](./docs/DEVELOPMENT.md)
 - [Framework](./framework/README.md) - A framework for building applications using [PatternFly](https://www.patternfly.org).
 - [Handling Errors in Forms](./framework/PageForm/README.md) - A component for handling forms and errors.
+
+## AI-assisted contributions
+
+This project may use AI-assisted development. Contributors may use AI tools and
+remain responsible for their work. See [`AI_POLICY.md`](AI_POLICY.md) and the
+[Ansible community AI policy](https://docs.ansible.com/projects/ansible/latest/community/ai_policy.html).
 
 ## Code of Conduct
 

@@ -44,7 +44,7 @@ Each table groups issues by SonarCloud rule and module (auto-detected from works
 
 ### Permissions
 
-Add to `.claude/settings.json` to avoid permission prompts:
+Add to a **local** `.claude/settings.json` (not committed; see `AI_AGENT_POLICY.md`) to avoid permission prompts:
 ```json
 "Bash(python3 *sonarcloud-fetch.py*)"
 ```

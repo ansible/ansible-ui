@@ -27,7 +27,18 @@
 /storybook-static
 results.xml
 /playwright/playwright/html-report/
-.claude/settings.local.json
+# Local agent runtime; keep shared skills/commands (see AI_AGENT_POLICY.md)
+.claude/*
+!.claude/skills/
+!.claude/skills/**
+!.claude/commands/
+!.claude/commands/**
+!.claude/skill-triggers.json
+.cursor/
+.gemini/
+CLAUDE.local.md
+AGENTS.local.md
+.playwright-mcp/
 
 # Ignore generated migration spec files (keep the template)
 migration-specs/**/*.yaml
