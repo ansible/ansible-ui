@@ -10,7 +10,7 @@ Before reviewing the PR, read:
 
 - `CLAUDE.md` trigger table, then the matching skills (not the whole skill set)
 - `.claude/skills/frontend-overlay/SKILL.md` for wrappers and API helpers
-- Any domain-specific skill: coding_standards, testing_guidelines, playwright-e2e
+- Any domain-specific skill: coding_standards, testing_guidelines
 
 **Branch Strategy:**
 

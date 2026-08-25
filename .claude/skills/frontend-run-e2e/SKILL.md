@@ -9,8 +9,8 @@ user-invocable: true
 
 # Running E2E tests
 
-For **writing** tests, read `frontend-playwright-e2e`. For paths, ports, and
-password files, read `frontend-overlay`.
+For **writing** tests, read `.claude/skills/testing_guidelines.md` (Playwright
+Testing). For paths, ports, and password files, read `frontend-overlay`.
 
 When invoked, gather config with sensible defaults. Confirm or override — do
 not make the user start from a blank form.

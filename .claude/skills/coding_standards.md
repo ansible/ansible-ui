@@ -579,3 +579,11 @@ export function MyComponent(props: Readonly<MyComponentProps>) { ... }
 ```
 
 This is enforced by SonarCloud rule S6759.
+
+## 18. File naming
+
+- Test files: `*.spec.ts` (Playwright) or `*.test.ts` / `*.test.tsx` (Vitest)
+- Component files: PascalCase (e.g. `UserTable.tsx`)
+- Utility files: camelCase (e.g. `apiHelpers.ts`)
+- Constants: UPPER_SNAKE_CASE
+

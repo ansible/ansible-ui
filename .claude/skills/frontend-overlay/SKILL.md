@@ -11,6 +11,7 @@ description: >
 
 - React version: 18.3.x (not 19 — no `ref`-as-prop, no `use(Context)`)
 - PatternFly version: 6.5.x
+- Node: 20.x+, NPM 8.x+
 - Server state: SWR
 - Router: react-router
 
@@ -73,12 +74,12 @@ description: >
 - Snapshot directory: `playwright/tests/visual/` Linux `-linux.png` suffix
 - Overlay module (`vr.overlay.ts`): N/A
 
-## E2E (frontend-run-e2e / frontend-playwright-e2e)
+## E2E (see testing_guidelines for write rules)
 
 - Playwright config path: `playwright/playwright.config.ts`
 - Default mode: live (`npm run live` in `playwright/`) or mock (`npx playwright test --project 'mock chromium'`)
-- UI URL: `PLATFORM_UI` in `playwright/.env` (typically `https://localhost:4100`)
-- Backend URL: env vars in `playwright/.env` — never print values
+- UI URL: `PLATFORM_UI` in `playwright/.env` (typically `https://localhost:4100`, HTTPS in browser)
+- Extra env (shell): `PLATFORM_SERVER=https://localhost:443`; optional `AWX_SERVER`, `EDA_SERVER`, `HUB_SERVER`
 - Secret file path: `playwright/.env` (`PLATFORM_USERNAME`, `PLATFORM_PASSWORD`). Never print values
 - How to check the stack is up: UI listens on 4100; do not start a second copy
 - Commands (from `playwright/`):
@@ -86,14 +87,10 @@ description: >
   - `npx playwright test --project 'mock chromium'`
   - `npx playwright test tests/path/to/test.spec.ts --project 'live chromium'`
   - Fail-fast: add `--max-failures=1 --retries=0`
+  - Debug: `--debug`; traces: `npx playwright show-trace trace.zip`
+- Write rules, table helpers, MCP SSL bypass (`thisisunsafe`): `.claude/skills/testing_guidelines.md`
 - Unique-name helper: `createE2EName()` in `playwright/commands/`
 - Cleanup helper: `setupAfter`, resource `*.api.delete`, `confirmAndAssertDeletion`
-- Import `test` / `expect` from `@playwright/test` (no `{ app }` fixture)
-- Setup: `setupBefore({ path })` / `setupAfter` from `playwright/commands/setup`
-- Tables: `getTableRow` / `clickTableRow` — never paginated `.filter({ hasText })` alone
-- Selectors: `getByRole` first; `getByTestId` allowed; do not use `data-cy`
-- Tags: `@not_mock` for live-only. Visual: `@visual`
-- Always wrap tests in a top-level `describe`
 
 ## Review remainder (lint cannot catch)
 

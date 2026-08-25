@@ -3,7 +3,7 @@
     "e2e": {
       "patterns": ["*playwright/tests/*.spec.ts", "*playwright/tests/**/*.spec.ts"],
       "skills": [
-        ".claude/skills/frontend-playwright-e2e/SKILL.md",
+        ".claude/skills/testing_guidelines.md",
         ".claude/skills/frontend-overlay/SKILL.md"
       ]
     },
