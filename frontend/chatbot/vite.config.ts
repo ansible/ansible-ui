@@ -30,6 +30,7 @@ export default defineConfig({
     compression(),
   ],
   define: { 'process.env': environment },
+  legacy: { inconsistentCjsInterop: true },
   server: {
     cors: false,
     proxy: {
@@ -43,7 +44,6 @@ export default defineConfig({
       },
     },
   },
-  esbuild: { legalComments: 'none' },
   build: {
     lib: {
       name: '@ansible/chatbot',
@@ -53,6 +53,9 @@ export default defineConfig({
     commonjsOptions: { transformMixedEsModules: true },
     rollupOptions: {
       external: ['react'],
+      output: {
+        legalComments: 'none',
+      },
     },
   },
   test: {
