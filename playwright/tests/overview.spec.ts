@@ -52,3 +52,21 @@ test('hosts resource counts should redirect correctly', async ({ page }) => {
     }
   }
 });
+
+test('notifications drawer can be opened and closed', async ({ page }) => {
+  await expect(page.locator('h1').first()).toContainText(/Welcome to (?:the )?Ansible/);
+
+  const notificationsButton = page.getByTestId('notification-badge');
+  if (await notificationsButton.isVisible()) {
+    await notificationsButton.click();
+    await expect(page.locator('.pf-v6-c-notification-drawer')).toBeVisible();
+
+    const closeButton = page.locator('.pf-v6-c-notification-drawer').getByRole('button', {
+      name: /close/i,
+    });
+    if (await closeButton.isVisible()) {
+      await closeButton.click();
+      await expect(page.locator('.pf-v6-c-notification-drawer')).not.toBeVisible();
+    }
+  }
+});
