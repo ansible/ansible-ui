@@ -13,7 +13,7 @@ Skills are advisory markdown. Do not load every skill at once.
 | Before coding with React, SWR, Vitest, Vite, or PatternFly 6 | `.claude/skills/library_references.md` |
 | When fixing SonarCloud issues | `.claude/skills/sonarcloud-remediation/sonarcloud-remediation.md` |
 
-To add or change file-based skill triggers, edit `.claude/skill-triggers.json`. Keep this table in sync.
+To add or change file-based skill triggers, edit `.claude/skill-triggers.json`. Keep this table in sync. This repository does not ship executable agent hooks; see [`AI_AGENT_POLICY.md`](AI_AGENT_POLICY.md).
 
 ### MCP (when available)
 
