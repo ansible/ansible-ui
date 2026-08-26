@@ -26,3 +26,4 @@
 /storybook-static
 results.xml
 /playwright/playwright/html-report/
+.claude/settings.local.json
