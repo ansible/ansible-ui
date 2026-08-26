@@ -116,7 +116,7 @@
     "protobufjs": "7.6.5",
     "brace-expansion": "5.0.9",
     "minimatch@<9.0.0": {
-      "brace-expansion": "1.1.16"
+      "brace-expansion": "1.1.18"
     },
     "postcss": "8.5.26"
   },
