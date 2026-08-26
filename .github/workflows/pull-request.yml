@@ -83,8 +83,11 @@ jobs:
         run: npm run knip | tee knip-report.txt
       # Surface the report on the run's Summary page so findings are visible
       # without expanding logs or downloading the artifact. Advisory only.
+      # continue-on-error so the summary can never fail the job (which would
+      # trip the "All checks passed" gate). Advisory only.
       - name: knip summary
         if: always()
+        continue-on-error: true
         run: |
           {
             echo "### knip — unused code report"
@@ -97,11 +100,11 @@ jobs:
             echo
             echo '```'
             # Drop the npm script banner lines from the collapsible dump.
-            grep -vE '^\s*> ' knip-report.txt
+            grep -vE '^\s*> ' knip-report.txt || true
             echo '```'
             echo
             echo "</details>"
-          } >> "$GITHUB_STEP_SUMMARY"
+          } >> "$GITHUB_STEP_SUMMARY" || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
