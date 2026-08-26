@@ -342,7 +342,11 @@ export const Inventory = {
       await page.getByRole('button', { name: 'Select source' }).click();
       await page.getByRole('option', { name: 'Sourced from a Project' }).click();
       await page.locator('#project-select').click();
+      const inventoryPathsResponsePromise = page.waitForResponse((response) =>
+        /\/projects\/\d+\/inventories\//.test(response.url())
+      );
       await page.getByRole('option', { name: projectName }).click();
+      await inventoryPathsResponsePromise;
       await page.getByPlaceholder('Select inventory path').click();
       await page.getByRole('option', { name: '. (project root)' }).click();
       await page.getByRole('button', { name: 'Create source' }).click();
