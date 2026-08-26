@@ -16,9 +16,9 @@ Read the relevant skill file(s) **before** writing code.
 | Before reviewing a pull request                        | `.claude/skills/pr_review.md`                           |
 | When fixing SonarCloud issues                          | `.claude/skills/sonarcloud-remediation/sonarcloud-remediation.md` |
 
-> **Enforced by hook:** A `PreToolUse` hook (`.claude/hooks/skill-gate.sh`) will **block** your first `Edit`/`Write` to each source file category and list the required skills. The file-to-skill mapping lives in [`.claude/skill-triggers.json`](.claude/skill-triggers.json) (single source of truth). Read the listed skills with the `Read` tool, then retry. This applies to all contributors automatically.
+> **Skill triggers:** File-type → skill mapping lives in [`.claude/skill-triggers.json`](.claude/skill-triggers.json). Read the listed skills before editing matching files. This repository does not ship executable agent hooks; see [`AI_AGENT_POLICY.md`](AI_AGENT_POLICY.md).
 
-> **To add or change skill triggers:** Edit [`.claude/skill-triggers.json`](.claude/skill-triggers.json). The hook and this table should stay in sync -- the JSON is what the hook enforces at runtime.
+> **To add or change skill triggers:** Edit [`.claude/skill-triggers.json`](.claude/skill-triggers.json) and keep this table in sync.
 
 ### Common PR Mistakes Checklist
 

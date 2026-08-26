@@ -35,7 +35,7 @@ Hybrid approach: a Python script handles the mechanical API fetching and categor
     sonarcloud-fix.md             — /sonarcloud-fix command (thin wrapper)
 ```
 
-**Existing files unchanged**: `commands/migrate-test.md`, `commands/review-pr.md`, `skills/pr_review.md`, `settings.json`
+**Existing files unchanged**: `commands/migrate-test.md`, `commands/review-pr.md`, `skills/pr_review.md` (local `settings.json` is not committed; see `AI_AGENT_POLICY.md`)
 
 ---
 
@@ -186,7 +186,7 @@ The skill is designed for adoption beyond aap-ui:
 
 - No changes to aap-ui application source code (this PR delivers the skill files only)
 - No new dependencies in package.json
-- No modifications to settings.json (env vars are set by the user, not committed)
+- No committed `settings.json` (env vars and permissions belong in local agent settings; see `AI_AGENT_POLICY.md`)
 - No hardcoded project keys or tokens
 
 ---
