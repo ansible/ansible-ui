@@ -43,7 +43,7 @@ export EDA_SERVER='http://localhost:8000'
 export HUB_SERVER='http://localhost:5001'
 ```
 
-Prerequisites: Node.js 20.x+, NPM 8.x+. Live UI is typically `https://localhost:4100`.
+Prerequisites: Node.js 20+ (`engines` in `package.json`). Live UI is typically `https://localhost:4100`.
 
 ### Test structure
 

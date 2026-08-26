@@ -9,9 +9,9 @@ description: >
 
 ## Stack
 
-- React version: 18.3.x (not 19 — no `ref`-as-prop, no `use(Context)`)
-- PatternFly version: 6.5.x
-- Node: 20.x+, NPM 8.x+
+- React 18, not 19 — no `ref`-as-prop, no `use(Context)` (exact version in `package.json`)
+- PatternFly 6 (exact version in `package.json`)
+- Node 20+ (`engines` in `package.json`)
 - Server state: SWR
 - Router: react-router
 
@@ -30,6 +30,9 @@ description: >
 
 ## Wrappers (use these, not raw PatternFly)
 
+Global/shared components live in the `framework/` package — search there first
+before reaching for raw PatternFly or writing a new component.
+
 | Pattern | Component / hook | Notes |
 | --- | --- | --- |
 | Page shell | `PageLayout` | `framework/` |
@@ -45,7 +48,7 @@ description: >
 ## API
 
 - Call the backend with workspace tagged templates + SWR / CRUD hooks (`useGet`, `usePostRequest`, …)
-- Forbidden: hardcoded `/api/...` paths; mocking `requestGet` instead of MSW
+- Forbidden: hardcoded `/api/...` paths (ESLint-enforced — custom rule); mocking `requestGet` instead of MSW
 - Error shape: per-workspace adapters (not RFC 9457 everywhere)
 
 ## Permissions
@@ -56,7 +59,7 @@ description: >
 
 ## Icons
 
-- PatternFly icons / existing framework icons. No Syntara `RhUi*` / `Nx*` prefix
+- PatternFly icons or existing framework icons in `framework/`
 
 ## Router
 
