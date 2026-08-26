@@ -3,6 +3,17 @@
   "treatConfigHintsAsErrors": false,
   "vite": false,
   "vitest": false,
+  "ignore": [
+    "**/vite.config.ts",
+    "vitest.config.ts",
+    "**/vitest.setup.ts",
+    "framework/vitest.i18n.ts",
+    "framework/vitest.monaco.ts",
+    "framework/vitest.preview.ts",
+    "**/playwright.config.ts",
+    "i18next-parser.config.cjs",
+    "currents.config.ts"
+  ],
   "exclude": [
     "unlisted",
     "types",
