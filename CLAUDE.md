@@ -7,8 +7,8 @@ Skills are advisory markdown. Do not load every skill at once.
 | Before implementing, reviewing, or refactoring frontend code | `.claude/skills/frontend_specialist.md` |
 | Before writing components, forms, pages, or hooks | `.claude/skills/coding_standards.md` |
 | Product wrappers, API helpers, paths | `.claude/skills/frontend-overlay/SKILL.md` |
-| Before writing or reviewing any test (Vitest or Playwright) | `.claude/skills/testing_guidelines.md` |
-| When the user asks to run E2E | `.claude/skills/frontend-run-e2e/SKILL.md` |
+| Before writing or reviewing a Vitest unit/component test | `.claude/skills/testing_guidelines.md` |
+| Writing, running, or debugging Playwright E2E | `.claude/skills/frontend-playwright-e2e/SKILL.md` |
 | Before reviewing a pull request | `.claude/skills/pr_review.md` |
 | Before coding with React, SWR, Vitest, Vite, or PatternFly 6 | `.claude/skills/library_references.md` |
 | When fixing SonarCloud issues | `.claude/skills/sonarcloud-remediation/sonarcloud-remediation.md` |
