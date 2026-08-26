@@ -81,6 +81,27 @@ jobs:
       - name: knip report
         continue-on-error: true
         run: npm run knip | tee knip-report.txt
+      # Surface the report on the run's Summary page so findings are visible
+      # without expanding logs or downloading the artifact. Advisory only.
+      - name: knip summary
+        if: always()
+        run: |
+          {
+            echo "### knip — unused code report"
+            echo
+            grep -E '^(Unused|Unlisted|Unresolved|Duplicate|Configuration hints)' knip-report.txt \
+              | sed 's/^/- /' \
+              || echo "- No findings 🎉"
+            echo
+            echo "<details><summary>Show full report</summary>"
+            echo
+            echo '```'
+            # Drop the npm script banner lines from the collapsible dump.
+            grep -vE '^\s*> ' knip-report.txt
+            echo '```'
+            echo
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
