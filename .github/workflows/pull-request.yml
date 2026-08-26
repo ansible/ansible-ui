@@ -58,6 +58,37 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
       - run: npx nx affected -t ${{ matrix.script }} --base=origin/main --head=HEAD --verbose
 
+  knip:
+    name: knip
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: packages
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm version 0.0.0 --no-git-tag-version
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+        if: steps.cache.outputs.cache-hit != 'true'
+      # Advisory: reports unused files/deps, does not block merge.
+      # Remove continue-on-error when the report is small enough to enforce.
+      - name: knip report
+        continue-on-error: true
+        run: npm run knip | tee knip-report.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: knip-report
+          path: knip-report.txt
+          if-no-files-found: ignore
+          retention-days: 14
+
   vitest-awx:
     name: Vitest (awx)
     needs: packages
@@ -219,6 +250,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - checks
+      - knip
       - vitest-awx
       - vitest
       - vitest-coverage
@@ -226,18 +258,19 @@ jobs:
     if: ${{ always() }}
     steps:
       - name: Success Check
-        if: ${{ needs.checks.result == 'success' && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' && needs.hub-insights.result == 'success' }}
+        if: ${{ needs.checks.result == 'success' && needs.knip.result == 'success' && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' && needs.hub-insights.result == 'success' }}
         run: echo "All jobs succeeded"
       - name: Log dependency results
-        if: ${{ needs.checks.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
         run: |
           echo "checks: ${{ needs.checks.result }}"
+          echo "knip: ${{ needs.knip.result }}"
           echo "vitest-awx: ${{ needs.vitest-awx.result }}"
           echo "vitest: ${{ needs.vitest.result }}"
           echo "vitest-coverage: ${{ needs.vitest-coverage.result }}"
           echo "hub-insights: ${{ needs.hub-insights.result }}"
       - name: Failure or Cancelled
-        if: ${{ needs.checks.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
         run: |
           echo "One or more jobs failed or were canceled."
           exit 1

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "treatConfigHintsAsErrors": false,
+  "vite": false,
+  "vitest": false,
+  "exclude": [
+    "unlisted",
+    "types",
+    "exports",
+    "nsExports",
+    "enumMembers",
+    "namespaceMembers",
+    "duplicates"
+  ],
+  "ignoreDependencies": [
+    "@babel/plugin-proposal-object-rest-spread",
+    "@cypress/code-coverage",
+    "@svgr/webpack",
+    "@types/debounce",
+    "@types/glob",
+    "@types/html-webpack-plugin",
+    "@types/json-schema",
+    "@types/set-value",
+    "@types/styled-components",
+    "@types/webpack",
+    "@types/webpack-dev-server",
+    "@vitejs/plugin-react",
+    "babel-loader",
+    "babel-plugin-transform-class-properties",
+    "canvas",
+    "chalk",
+    "coverage-istanbul-loader",
+    "css-loader",
+    "cypress-split",
+    "eslint-plugin-import",
+    "klona",
+    "mochawesome",
+    "rollup",
+    "selfsigned",
+    "sift",
+    "style-loader",
+    "typescript-plugin-styled-components",
+    "v8-to-istanbul",
+    "vite-plugin-compression",
+    "vite-plugin-monaco-editor",
+    "vite-plugin-static-copy",
+    "vite-plugin-svgr",
+    "webpack-cli"
+  ],
+  "workspaces": {
+    ".": {
+      "entry": ["webpack/**/*.{js,cjs}"]
+    },
+    "framework": {
+      "entry": ["**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/common": {
+      "entry": ["**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/awx": {
+      "entry": ["main/Awx.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/eda": {
+      "entry": ["main/Eda.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/hub": {
+      "entry": ["main/Hub.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/chatbot": {
+      "entry": ["ChatbotPortal.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "platform": {
+      "entry": ["main/Platform.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "playwright": {
+      "entry": ["tests/**/*.{ts,tsx}", "commands/**/*.{ts,tsx}", "scripts/**/*.ts"]
+    }
+  }
+}
