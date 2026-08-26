@@ -1,6 +1,6 @@
 import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
-import { Content, ContentVariants, Label, LabelGroup } from '@patternfly/react-core';
+import { Content, Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
@@ -153,7 +153,7 @@ function useAggregateJobTemplateDetails({
     template.verbosity,
     isTemplateChanged
   );
-  const verbosityString = useVerbosityString(verbosity);
+  const verbosityString = useVerbosityString(verbosity ?? undefined);
   const templateVerbosityString = useVerbosityString(template.verbosity);
 
   let variables = resolveExtraVars(
@@ -374,13 +374,9 @@ export function JobTemplateDetails({
         label={t('Enabled options')}
         isEmpty={!(template.allow_simultaneous || template.webhook_service)}
       >
-        <Content component={ContentVariants.ul}>
-          {template.allow_simultaneous && (
-            <Content component={ContentVariants.li}>{t`Concurrent jobs`}</Content>
-          )}
-          {template.webhook_service && (
-            <Content component={ContentVariants.li}>{t`Webhooks`}</Content>
-          )}
+        <Content component="ul">
+          {template.allow_simultaneous && <Content component="li">{t`Concurrent jobs`}</Content>}
+          {template.webhook_service && <Content component="li">{t`Webhooks`}</Content>}
         </Content>
       </PageDetail>
       <NodeTagDetail
