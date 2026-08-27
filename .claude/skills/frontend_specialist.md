@@ -45,6 +45,11 @@ Key differences:
 - **Hub** requires an explicit `keyFn` prop and handles two response formats
 - **Platform** reuses AWX error adapter by default but accepts overrides
 
+Workspace purpose: **Platform** = unified gateway UI (AAP main entry point);
+**AWX** = Ansible Controller UI; **EDA** = Event-Driven Ansible UI; **Hub** =
+Automation Hub UI; **Chatbot** = Ansible Virtual Assistant UI; **Framework** =
+shared PatternFly-based UI framework; **Common** = shared components and utilities.
+
 ---
 
 ## Step 3: Check for Existing Components
@@ -128,6 +133,7 @@ Only create new components as a last resort.
 - No nested component declarations (SonarCloud S6478) — extract to module scope
 
 ### TypeScript
+- Follow TypeScript strict mode (enabled in `tsconfig`)
 - Never use `any` — use `unknown` and narrow with type guards
 - Leverage type inference; explicit types where clarity demands
 - `as const` for literal narrowing
@@ -138,6 +144,7 @@ Only create new components as a last resort.
 - Use PF6 components as foundation — never recreate existing PF components
 - Use PF6 layout components (Stack, Flex, Grid) for spacing
 - Use PF6 design tokens where available, not hardcoded px values
+- Prefer the PF6 design system first; for custom styling use CSS modules or styled-components
 
 ### SWR
 - Use `useSWR` with workspace API helpers for all data fetching
@@ -197,6 +204,7 @@ Only create new components as a last resort.
 - [ ] All user-facing strings wrapped in `t()`
 - [ ] No default exports
 - [ ] Named route enum values used for navigation
+- [ ] Comments only for complex logic — no obvious or redundant comments
 
 ### Quality Gates
 - [ ] TypeScript passes: `npm run tsc`
@@ -211,6 +219,7 @@ Only create new components as a last resort.
 1. Read the skills (coding_standards, testing_guidelines, library_references)
 2. Identify the correct workspace for the work
 3. Search for existing framework/PF/common components before creating new ones
+   — prefer editing existing files over creating new ones
 4. Implement incrementally — happy path first, then edge cases
 5. Write tests alongside implementation (not after)
 6. Run quality checks: `npm run tsc && npm run eslint && npm run vitest`

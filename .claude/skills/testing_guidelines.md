@@ -156,6 +156,9 @@ Source: `frontend/awx/resources/sources/component/PageFormInventoryFileSelect.te
 
 ## Testing Hooks
 
+For validation logic, prefer hook-level tests with `renderHook` over rendering a
+full form.
+
 ### Basic hook test with MSW
 
 ```typescript
@@ -365,6 +368,9 @@ Never commit `test.only()` — ESLint rule `no-only-tests` will catch it.
 | **Hook**      | Return values, state transitions, error handling     |
 | **Utility**   | Input/output transformations, boundary conditions    |
 | **Form**      | Validation, field interactions, submit behavior      |
+
+Cover the happy path, error states, edge cases, and user interactions. Remove
+obvious comments from test files.
 
 ### What NOT to test
 

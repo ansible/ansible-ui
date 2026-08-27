@@ -11,7 +11,8 @@ description: >
 
 - React 18, not 19 — no `ref`-as-prop, no `use(Context)` (exact version in `package.json`)
 - PatternFly 6 (exact version in `package.json`)
-- Node 20+ (`engines` in `package.json`)
+- Node 20+ and npm 8+ (`engines` in `package.json`)
+- Monorepo/build tooling: Nx
 - Server state: SWR
 - Router: react-router
 
@@ -26,6 +27,9 @@ description: >
 - Storybook command and port: N/A — no Storybook
 - Check command: `npm test` (eslint + tsc + prettier + vitest). There is no `npm run check`
 - Test command: `npm run vitest` (unit); Playwright from `playwright/`
+- Dev server: `npm start` (from `platform/`)
+- Build all workspaces: `npm run build`
+- Fix lint + formatting: `npm run fix` (`npm run prettier:fix` for formatting only)
 - Instruction files: `CLAUDE.md` (symlink `AGENTS.md`)
 
 ## Wrappers (use these, not raw PatternFly)
@@ -94,6 +98,13 @@ before reaching for raw PatternFly or writing a new component.
 - Write rules, table helpers, MCP SSL bypass (`thisisunsafe`): `.claude/skills/testing_guidelines.md`
 - Unique-name helper: `createE2EName()` in `playwright/commands/`
 - Cleanup helper: `setupAfter`, resource `*.api.delete`, `confirmAndAssertDeletion`
+
+## Troubleshooting
+
+- Build errors: `npm run clean` then `npm ci`
+- Type errors: check the TypeScript config in the relevant workspace
+- Logs: platform → platform server logs; dev → browser console + terminal
+  output; tests → Playwright reports and traces
 
 ## Review remainder (lint cannot catch)
 
