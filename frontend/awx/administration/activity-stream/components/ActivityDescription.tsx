@@ -163,91 +163,41 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
             : ''
         }`;
       }
-      case 'disassociate': {
-        if (targetResourceRoute && sourceResourceRoute && sourceResourceObj) {
-          return (
-            <span>
-              {`${operationText} ${object1} `}
-              {sourceResourceRoute && (
-                <Link
-                  to={getPageUrl(sourceResourceRoute, {
-                    params: { id: sourceResourceObj.id },
-                  })}
-                  data-cy="source-resource-detail"
-                  data-testid="source-resource-detail"
-                >
-                  {sourceResourceName}
-                </Link>
-              )}
-              {roleName && ` ${roleName} role `}
-              {!sourceResourceRoute && <span>{sourceResourceName}</span>}
-              {` from ${object2} `}
-              {targetResourceRoute && targetResourceObj && (
-                <Link
-                  to={getPageUrl(targetResourceRoute, {
-                    params: {
-                      id: targetResourceObj.id,
-                    },
-                  })}
-                  data-cy="target-resource-detail"
-                  data-testid="target-resource-detail"
-                >
-                  {targetResourceName}
-                </Link>
-              )}
-              {!targetResourceRoute && <span>{targetResourceName}</span>}
-            </span>
-          );
-        }
-        return (
-          <span>
-            {`${operationText} ${object1} ${sourceResourceName}${
-              roleName ? ` ${roleName} role` : ''
-            } from ${object2} ${targetResourceName}`}
-          </span>
-        );
-      }
+      case 'disassociate':
       case 'associate': {
-        if (targetResourceRoute && sourceResourceRoute && sourceResourceObj) {
-          return (
-            <span>
-              {`${operationText} ${object1} `}
-              {sourceResourceRoute && (
-                <Link
-                  to={getPageUrl(sourceResourceRoute, {
-                    params: { id: sourceResourceObj.id },
-                  })}
-                  data-cy="source-resource-detail"
-                  data-testid="source-resource-detail"
-                >
-                  {sourceResourceName}
-                </Link>
-              )}
-              {roleName && ` ${roleName} role `}
-              {!sourceResourceRoute && <span>{sourceResourceName}</span>}
-              {` to ${object2} `}
-              {targetResourceRoute && targetResourceObj && (
-                <Link
-                  to={getPageUrl(targetResourceRoute, {
-                    params: {
-                      id: targetResourceObj.id,
-                    },
-                  })}
-                  data-cy="target-resource-detail"
-                  data-testid="target-resource-detail"
-                >
-                  {targetResourceName}
-                </Link>
-              )}
-              {!targetResourceRoute && <span>{targetResourceName}</span>}
-            </span>
-          );
-        }
+        const preposition = operation === 'associate' ? 'to' : 'from';
         return (
           <span>
-            {`${operationText} ${object1} ${sourceResourceName}${
-              roleName ? ` ${roleName} role` : ''
-            } to ${object2} ${targetResourceName}`}
+            {object1 && `${operationText} ${object1} `}
+            {!object1 && `${operationText} `}
+            {sourceResourceRoute && sourceResourceObj ? (
+              <Link
+                to={getPageUrl(sourceResourceRoute, {
+                  params: { id: sourceResourceObj.id },
+                })}
+                data-cy="source-resource-detail"
+                data-testid="source-resource-detail"
+              >
+                {sourceResourceName}
+              </Link>
+            ) : (
+              sourceResourceName && <span>{sourceResourceName}</span>
+            )}
+            {roleName && ` ${roleName} role `}
+            {` ${preposition} ${object2} `}
+            {targetResourceRoute && targetResourceObj ? (
+              <Link
+                to={getPageUrl(targetResourceRoute, {
+                  params: { id: targetResourceObj.id },
+                })}
+                data-cy="target-resource-detail"
+                data-testid="target-resource-detail"
+              >
+                {targetResourceName}
+              </Link>
+            ) : (
+              <span>{targetResourceName}</span>
+            )}
           </span>
         );
       }
