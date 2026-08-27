@@ -826,6 +826,216 @@ describe('useSaveVisualizer', () => {
     expect(payload.extra_data).toEqual(expect.objectContaining({ survey_key: 'survey_value' }));
   });
 
+  test('should send null to API when scm_branch prompt field is cleared on a new node', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-scm',
+      visible: true,
+      modified: false,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'scm-clear',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          scm_branch: '',
+          limit: '',
+          original: {
+            launch_config: {
+              ask_scm_branch_on_launch: true,
+              ask_limit_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const workflowNodeCall = mockPostFn.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && c[0].includes('/workflow_nodes/')
+    );
+    expect(workflowNodeCall).toBeDefined();
+    const payload = (workflowNodeCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).toHaveProperty('scm_branch', null);
+    expect(payload).toHaveProperty('limit', null);
+  });
+
+  test('should not send cleared scm_branch when ask_scm_branch_on_launch is false on a new node', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-scm2',
+      visible: true,
+      modified: false,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'scm-no-prompt',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          scm_branch: '',
+          original: {
+            launch_config: {
+              ask_scm_branch_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const workflowNodeCall = mockPostFn.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && c[0].includes('/workflow_nodes/')
+    );
+    expect(workflowNodeCall).toBeDefined();
+    const payload = (workflowNodeCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('scm_branch');
+  });
+
+  test('should send null to API when scm_branch prompt field is cleared on an existing node', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          scm_branch: '',
+          limit: '',
+          original: {
+            launch_config: {
+              ask_scm_branch_on_launch: true,
+              ask_limit_on_launch: true,
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCall = mockPatchFn.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCall).toBeDefined();
+    const payload = (nodePatchCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).toHaveProperty('scm_branch', null);
+    expect(payload).toHaveProperty('limit', null);
+  });
+
+  test('should not send cleared scm_branch when ask_scm_branch_on_launch is false on an existing node', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          scm_branch: '',
+          original: {
+            launch_config: {
+              ask_scm_branch_on_launch: false,
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCall = mockPatchFn.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCall).toBeDefined();
+    const payload = (nodePatchCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('scm_branch');
+  });
+
   test('should propagate errors from updateExistingNodes', async () => {
     mockPatchFn.mockRejectedValueOnce(new Error('PATCH failed'));
     const editedNode = makeGraphNode({
