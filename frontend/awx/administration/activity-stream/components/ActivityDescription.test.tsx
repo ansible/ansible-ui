@@ -11,8 +11,12 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     useGetPageUrl:
       () => (routeId: string, opts?: { params?: Record<string, string | number | undefined> }) => {
         const id = opts?.params?.id;
-        if (id !== undefined) return `/test/${routeId}/${id}`;
-        return `/test/${routeId}`;
+        const inventoryType = opts?.params?.inventory_type;
+        let url = id !== undefined ? `/test/${routeId}/${id}` : `/test/${routeId}`;
+        if (inventoryType !== undefined) {
+          url += `/${inventoryType}`;
+        }
+        return url;
       },
   };
 });
@@ -238,5 +242,65 @@ describe('ActivityDescription', () => {
       screen.getByText((content) => content.includes('global-view-role role'))
     ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'rando' })).toBeInTheDocument();
+  });
+
+  it('should include the inventory_type route param when linking a regular inventory', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'user',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory', kind: '' }],
+        user: [{ id: '3', username: 'johndoe' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'Inventory Admin',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: 'prod-inventory' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('/inventory')
+    );
+  });
+
+  it('should include the inventory_type route param when linking a smart inventory', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'user',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'smart-inventory', kind: 'smart' }],
+        user: [{ id: '3', username: 'johndoe' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'smart-inventory',
+        role_definition: 'Inventory Admin',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: 'smart-inventory' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('/smart_inventory')
+    );
   });
 });
