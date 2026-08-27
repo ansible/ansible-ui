@@ -164,8 +164,20 @@ const newWebpackConfig = {
     // Support jsx, tsx
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
 
+    fallback: {
+      ...webpackConfig.resolve?.fallback,
+      process: require.resolve('process/browser.js'),
+    },
+
     alias: {
       ...webpackConfig.resolve?.alias,
+
+      // FEC ProvidePlugin injects `process/browser.js` as if imported from each
+      // issuer (Hub/EDA/framework files). Webpack then walks up from that file
+      // to repo-root node_modules — not insights/node_modules. Pin the absolute
+      // path so the console build does not depend on root webpack transitives.
+      'process/browser.js': require.resolve('process/browser.js'),
+      'process/browser': require.resolve('process/browser'),
 
       // Workspace package aliases - point to actual source in parent directories
       '@ansible/ansible-ui-framework': resolve(repoRoot, 'framework'),
