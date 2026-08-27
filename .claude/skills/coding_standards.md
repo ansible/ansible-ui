@@ -638,22 +638,23 @@ rows.filter((r) => selected.has(r.id));
 
 Defining a component inside another component's body gives it a new identity
 every render, so React unmounts/remounts its subtree (state loss, flicker).
-Hoist it to module scope. The same applies to render props passed to framework
-components (`PageTable` cell renderers, `PageForm` inputs) — keep the function
-reference stable (module scope or `useCallback`), never an inline arrow that
-closes over changing values it does not need.
+Hoist it to module scope. (Inline `cell:` render functions in an
+`ITableColumn[]` are fine — those are render callbacks, not component
+definitions; the rule is about declaring a `function`/`const` component within
+render.)
 
-### CSS Modules over inline style objects
+### Avoid inline style objects
 
 An inline `style={{ ... }}` object is a new object every render (breaks
-memoization and PatternFly's own bailouts) and cannot be cached by the browser.
-Prefer a CSS Module class; when a dynamic inline style is unavoidable, memoize
-the object with `useMemo`.
+memoization and PatternFly's own bailouts). Prefer PatternFly layout components
+and utility classes, or a `styled-components` style — the repo's styling
+approach (see `library_references.md`); when a dynamic inline style is
+unavoidable, memoize the object with `useMemo`.
 
 ### Never `eslint-disable` in new or modified code
 
 Disabling a rule ships the problem plus a suppression to maintain. Fix the
-cause. (This repo forbids it outright — see the overlay skill.)
+cause. (This repo forbids it outright — see `CLAUDE.md`.)
 
 ### Build `ReactNode` lists, not joined strings
 
