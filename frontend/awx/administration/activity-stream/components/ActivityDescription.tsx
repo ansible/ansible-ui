@@ -42,6 +42,17 @@ function getResourceObject(activity: ActivityStream, resourceKey: ResourceKey) {
   return null;
 }
 
+function getInventoryTypeParam(
+  objectKey: string,
+  resourceObj: Record<string, string> | null
+): string | undefined {
+  if (objectKey !== 'inventory' || !resourceObj) {
+    return undefined;
+  }
+
+  return INVENTORYURLPATHS[resourceObj.kind ?? ''];
+}
+
 function getRoleName(activity: ActivityStream): string {
   const roleResource = getResourceObject(activity, 'role');
   if (roleResource && typeof roleResource.role_field === 'string') {
@@ -173,7 +184,10 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
             {sourceResourceRoute && sourceResourceObj ? (
               <Link
                 to={getPageUrl(sourceResourceRoute, {
-                  params: { id: sourceResourceObj.id },
+                  params: {
+                    id: sourceResourceObj.id,
+                    inventory_type: getInventoryTypeParam(String(object1), sourceResourceObj),
+                  },
                 })}
                 data-cy="source-resource-detail"
                 data-testid="source-resource-detail"
@@ -188,7 +202,10 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
             {targetResourceRoute && targetResourceObj ? (
               <Link
                 to={getPageUrl(targetResourceRoute, {
-                  params: { id: targetResourceObj.id },
+                  params: {
+                    id: targetResourceObj.id,
+                    inventory_type: getInventoryTypeParam(String(object2), targetResourceObj),
+                  },
                 })}
                 data-cy="target-resource-detail"
                 data-testid="target-resource-detail"
