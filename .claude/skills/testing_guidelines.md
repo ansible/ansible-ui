@@ -346,6 +346,51 @@ it('should increment counter when button clicked', async () => {
 
 ---
 
+## Accessibility Testing (vitest-axe)
+
+Accessibility is part of every UI change, so it belongs in the unit test. Test
+it at three levels, cheapest first.
+
+**1. Automated smoke check** — run `axe` over the rendered container and assert
+no violations:
+
+```typescript
+import { axe } from 'vitest-axe';
+
+it('has no accessibility violations', async () => {
+  const { container } = render(<CredentialForm />);
+  expect(await axe(container)).toHaveNoViolations();
+});
+```
+
+**2. Role/name queries as the default** — writing assertions with `getByRole`
+
+- accessible name (see **Query Priority**) proves elements are reachable by
+  assistive tech. If a query needs `getByTestId`, that is usually a missing
+  label, not a test problem — fix the component.
+
+**3. Keyboard and focus** — for interactive flows, assert with the keyboard,
+not just the mouse (reuse `userEvent.setup()` from **User Interaction**):
+
+```typescript
+const user = userEvent.setup();
+render(<ConfirmDialog />);
+
+await user.tab();
+expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+await user.keyboard('{Enter}');
+```
+
+> **Caveat — `happy-dom` limits `axe`.** The default test environment is
+> `happy-dom` (see **Test Stack** / **Vitest Configuration**), which does not
+> compute layout or styles. Checks that depend on rendering — color-contrast,
+> visibility/overlap, computed geometry — are unreliable or silent no-ops here.
+> Treat the `axe` smoke check as catching structural issues (missing labels,
+> roles, `alt`, ARIA misuse). Contrast and visual-focus checks belong in
+> Playwright against a real browser, not Vitest.
+
+---
+
 ## Skipping Tests
 
 Use `test.skip()` for tests that depend on data not always available:
