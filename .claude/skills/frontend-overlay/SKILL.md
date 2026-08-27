@@ -108,17 +108,17 @@ before reaching for raw PatternFly or writing a new component.
 
 ## Review remainder (lint cannot catch)
 
-| Miss                                                                 | Grep / check                                                                                                                         |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Raw `PageForm` in a workspace UI                                     | `PageForm` import from framework in `frontend/` or `platform/`                                                                       |
-| Hardcoded API path                                                   | `/api/controller`, `/api/eda`, `/api/galaxy`, `/api/gateway` as strings                                                              |
-| `fireEvent` in tests                                                 | `fireEvent` in `*.test.tsx`                                                                                                          |
-| Translated string used in logic                                      | `if (t(` or `=== t(`                                                                                                                 |
-| Alert body in `description`, or `addAlert` without `variant`         | `rg "addAlert\(\{" -A4 --glob '!*.test.*' \| rg "description:"` (any hit) — body goes in `children`; every `addAlert` sets `variant` |
-| Resource `use*Actions/Filters/Columns` hook not under a `hooks/` dir | `fd "use.*(Actions\|Filters\|Columns)\.tsx$" \| rg -v "/hooks/"` (≈96% live under `hooks/`)                                          |
-| Test placed in a `__tests__/` dir instead of colocated `*.test.tsx`  | `fd -t d "__tests__"` (repo has none; unit tests colocate beside source)                                                             |
-| `userEvent` used without a `userEvent.setup()` handle                | test uses `userEvent.click/type` but has no `const user = userEvent.setup()` (≈91% use `setup()`)                                    |
-| Raw string path in `navigate('/...')`                                | `rg "navigate\('/" -g '*.tsx' -g '!*.test.tsx'` — use `usePageNavigate` + route enum, or `<Link>`                                    |
+| Miss                                                                 | Grep / check                                                                                                                                                                            |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raw `PageForm` in a workspace UI                                     | `PageForm` import from framework in `frontend/` or `platform/`                                                                                                                          |
+| Hardcoded API path                                                   | `/api/controller`, `/api/eda`, `/api/galaxy`, `/api/gateway` as strings                                                                                                                 |
+| `fireEvent` in tests                                                 | `fireEvent` in `*.test.tsx`                                                                                                                                                             |
+| Translated string used in logic                                      | `if (t(` or `=== t(`                                                                                                                                                                    |
+| Alert body in `description`, or `addAlert` without `variant`         | `rg "addAlert\(\{" -A8 --glob '!*.test.*' \| rg "description:"` (any hit) — body goes in `children`; every `addAlert` sets `variant` (`title:` may push `children:` several lines down) |
+| Resource `use*Actions/Filters/Columns` hook not under a `hooks/` dir | `fd "use.*(Actions\|Filters\|Columns)\.tsx$" \| rg -v "/hooks/"` (≈95% live under `hooks/`)                                                                                             |
+| Test placed in a `__tests__/` dir instead of colocated `*.test.tsx`  | `fd -t d "__tests__"` (repo has none; unit tests colocate beside source)                                                                                                                |
+| `userEvent` used without a `userEvent.setup()` handle                | test uses `userEvent.click/type` but has no `const user = userEvent.setup()` (≈94% use `setup()`)                                                                                       |
+| Raw string path in `navigate('/...')`                                | `rg "navigate\('/" -g '*.tsx' -g '!*.test.tsx'` — use `usePageNavigate` + route enum, or `<Link>`                                                                                       |
 
 ## Review harvest
 
