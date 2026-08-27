@@ -1,6 +1,6 @@
 import { ActionList, ActionListItem, Button, Flex, FlexItem, Stack } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import { debounce } from '../utils/debounce';
+import debounce from 'debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
