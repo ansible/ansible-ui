@@ -180,4 +180,63 @@ describe('ActivityDescription', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Engineering')).toBeInTheDocument();
   });
+
+  it('should link the target user for a global role assignment with no source object', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: '',
+      object2: 'user',
+      summary_fields: {
+        user: [{ id: '7', username: 'rando' }],
+      },
+      changes: {
+        inventory: '',
+        id: 0,
+        object1_pk: 0,
+        name: '',
+        role_definition: 'global-view-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('global-view-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'rando' })).toBeInTheDocument();
+    expect(screen.getByTestId('target-resource-detail')).toBeInTheDocument();
+  });
+
+  it('should link the source and target for a global role removal with no source object', () => {
+    const activity = createActivity({
+      operation: 'disassociate',
+      object1: '',
+      object2: 'user',
+      summary_fields: {
+        user: [{ id: '7', username: 'rando' }],
+      },
+      changes: {
+        inventory: '',
+        id: 0,
+        object1_pk: 0,
+        name: '',
+        role_definition: 'global-view-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('global-view-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'rando' })).toBeInTheDocument();
+  });
 });
