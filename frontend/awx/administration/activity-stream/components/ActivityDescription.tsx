@@ -42,6 +42,15 @@ function getResourceObject(activity: ActivityStream, resourceKey: ResourceKey) {
   return null;
 }
 
+function getRoleName(activity: ActivityStream): string {
+  const roleResource = getResourceObject(activity, 'role');
+  if (roleResource && typeof roleResource.role_field === 'string') {
+    return roleResource.role_field;
+  }
+
+  return activity.changes?.role_definition ?? '';
+}
+
 const getOperationText = (operation: string) => {
   switch (operation) {
     case 'associate':
@@ -72,7 +81,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
   const targetResourceName = getResourceName(activity, activity.object2);
   const targetResourceObj = getResourceObject(activity, activity.object2);
   const sourceResourceObj = getResourceObject(activity, activity.object1);
-  const roleResource = getResourceObject(activity, 'role');
+  const roleName = getRoleName(activity);
   const eventText = generateEventText(activity);
 
   function generateEventText(activity: ActivityStream): JSX.Element | string {
@@ -170,7 +179,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                   {sourceResourceName}
                 </Link>
               )}
-              {roleResource && ` ${roleResource.role_field} `}
+              {roleName && ` ${roleName} role `}
               {!sourceResourceRoute && <span>{sourceResourceName}</span>}
               {` from ${object2} `}
               {targetResourceRoute && targetResourceObj && (
@@ -192,8 +201,9 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
         }
         return (
           <span>
-            {`${operationText} ${object1} ${sourceResourceName}`}
-            {roleResource && `${roleResource.role_field}`} {`from ${object2} ${targetResourceName}`}
+            {`${operationText} ${object1} ${sourceResourceName}${
+              roleName ? ` ${roleName} role` : ''
+            } from ${object2} ${targetResourceName}`}
           </span>
         );
       }
@@ -213,7 +223,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                   {sourceResourceName}
                 </Link>
               )}
-              {roleResource && ` ${roleResource.role_field} `}
+              {roleName && ` ${roleName} role `}
               {!sourceResourceRoute && <span>{sourceResourceName}</span>}
               {` to ${object2} `}
               {targetResourceRoute && targetResourceObj && (
@@ -235,8 +245,9 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
         }
         return (
           <span>
-            {`${operationText} ${object1} ${sourceResourceName}`}
-            {roleResource && `${roleResource.role_field}`} {`to ${object2} ${targetResourceName}`}
+            {`${operationText} ${object1} ${sourceResourceName}${
+              roleName ? ` ${roleName} role` : ''
+            } to ${object2} ${targetResourceName}`}
           </span>
         );
       }
