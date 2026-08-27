@@ -587,3 +587,110 @@ This is enforced by SonarCloud rule S6759.
 - Utility files: camelCase (e.g. `apiHelpers.ts`)
 - Constants: UPPER_SNAKE_CASE
 
+## 19. React & TypeScript Patterns
+
+§15 lists the ESLint rules; this section covers patterns lint does not catch,
+each with the reason and the fix.
+
+### You might not need an Effect
+
+`useEffect` is for synchronizing with external systems (subscriptions,
+non-React widgets, the network). Do not use it to react to React itself — it
+adds an extra render, is easy to desync, and hides the data flow. Five common
+misuses:
+
+```typescript
+// ❌ Syncing derived state          // ✅ Derive during render
+const [full, setFull] = useState('');
+useEffect(() => {
+  setFull(`${first} ${last}`);
+}, [first, last]);
+const full = `${first} ${last}`;
+
+// ❌ Effect to transform props for rendering → compute inline (memoize only if expensive)
+const visible = useMemo(() => rows.filter((r) => r.active), [rows]);
+
+// ❌ Effect to reset state when a prop changes → remount with a key instead
+<UserForm key={userId} userId={userId} />;
+
+// ❌ Effect that runs on a user action → put the logic in the event handler
+function onSubmit() {
+  postUser(data); // not: setSubmitted(true) + useEffect(...)
+}
+
+// ❌ Effect to compute data already available → just compute it (no state, no effect)
+```
+
+If nothing external is involved, the effect is probably wrong.
+
+### Prefer `Set` for repeated membership checks
+
+`Array.includes` in a loop is O(n·m). Build a `Set` once for O(1) lookups.
+
+```typescript
+// ❌ O(n·m)                              // ✅ O(n)
+rows.filter((r) => selectedIds.includes(r.id));
+const selected = new Set(selectedIds);
+rows.filter((r) => selected.has(r.id));
+```
+
+### No component definitions inside render
+
+Defining a component inside another component's body gives it a new identity
+every render, so React unmounts/remounts its subtree (state loss, flicker).
+Hoist it to module scope. The same applies to render props passed to framework
+components (`PageTable` cell renderers, `PageForm` inputs) — keep the function
+reference stable (module scope or `useCallback`), never an inline arrow that
+closes over changing values it does not need.
+
+### CSS Modules over inline style objects
+
+An inline `style={{ ... }}` object is a new object every render (breaks
+memoization and PatternFly's own bailouts) and cannot be cached by the browser.
+Prefer a CSS Module class; when a dynamic inline style is unavoidable, memoize
+the object with `useMemo`.
+
+### Never `eslint-disable` in new or modified code
+
+Disabling a rule ships the problem plus a suppression to maintain. Fix the
+cause. (This repo forbids it outright — see the overlay skill.)
+
+### Build `ReactNode` lists, not joined strings
+
+To render multiple lines/items, return an array of nodes or a fragment — do not
+`join('\n')` a string (it renders as one text node with literal newlines and
+loses per-item keys/markup).
+
+```tsx
+// ❌ one text blob                        // ✅ real nodes
+<div>{messages.join('\n')}</div>;
+<List>
+  {messages.map((m) => (
+    <ListItem key={m.id}>{m.text}</ListItem>
+  ))}
+</List>;
+```
+
+### Derive named booleans
+
+Extract complex conditions into named `const`s. The name documents intent and
+the condition stays readable at the call site.
+
+```tsx
+// ❌                                      // ✅
+{
+  !isLoading && !error && items.length > 0 && <Table />;
+}
+const hasResults = !isLoading && !error && items.length > 0;
+{
+  hasResults && <Table />;
+}
+```
+
+### Prefer native/browser APIs
+
+Reach for the platform before writing (or importing) custom code — see
+`pr_review.md` for the review grep. Deep copy → `structuredClone(obj)`; query
+strings → `URLSearchParams`; request cancellation → `AbortController`; URL
+parsing → `new URL(...)`.
+
