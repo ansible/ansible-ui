@@ -120,4 +120,64 @@ describe('ActivityDescription', () => {
       screen.getByText((content) => content.includes('Inventory Admin role'))
     ).toBeInTheDocument();
   });
+
+  it('should include the role name when a role is associated to a team rather than a user', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'team',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory' }],
+        team: [{ id: '3', name: 'Engineering' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'inventory-custom-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('inventory-custom-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByText('Engineering')).toBeInTheDocument();
+  });
+
+  it('should include the role name when a role is disassociated from a team rather than a user', () => {
+    const activity = createActivity({
+      operation: 'disassociate',
+      object1: 'inventory',
+      object2: 'team',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory' }],
+        team: [{ id: '3', name: 'Engineering' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'inventory-custom-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('inventory-custom-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByText('Engineering')).toBeInTheDocument();
+  });
 });
