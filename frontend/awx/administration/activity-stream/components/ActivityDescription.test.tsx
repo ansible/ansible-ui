@@ -91,4 +91,33 @@ describe('ActivityDescription', () => {
       screen.getByText((content) => content.includes('disassociated user'))
     ).toBeInTheDocument();
   });
+
+  it('should include the role name from changes.role_definition when summary_fields.role is absent', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'user',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory' }],
+        user: [{ id: '3', username: 'johndoe' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'Inventory Admin',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('Inventory Admin role'))
+    ).toBeInTheDocument();
+  });
 });
