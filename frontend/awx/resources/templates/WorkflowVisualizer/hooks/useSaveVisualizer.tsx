@@ -200,7 +200,7 @@ export function useSaveVisualizer(templateId: string) {
             }
           }
 
-          if (typeof value === 'undefined') {
+          if (value === undefined) {
             return;
           }
           if (value === null || value === '') {
@@ -309,7 +309,7 @@ export function useSaveVisualizer(templateId: string) {
               }
             }
 
-            if (typeof value === 'undefined') {
+            if (value === undefined) {
               return;
             }
             if (value === null || value === '') {
@@ -625,7 +625,7 @@ export function toKeyedObject(
   key: string,
   value: string | number | undefined | null
 ): { [key: string]: string | number } | object {
-  if ((typeof value === 'string' && value !== '') || typeof value === 'number') {
+  if (value !== null && value !== undefined && value !== '') {
     return { [key]: value };
   } else {
     return {};
