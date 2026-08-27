@@ -18,6 +18,25 @@ Before reviewing the PR, read:
 - Review diff: `git diff devel...HEAD` or `devel` → current branch
 - Focus on changes introduced by the current branch, not existing code in `devel`
 
+### Identify PR Scope (CRITICAL)
+
+Review exactly what the PR changes — nothing more, nothing less. Getting the
+scope wrong wastes effort and produces misleading feedback.
+
+- Establish the range first: `git log --oneline devel..HEAD` (commits) and
+  `git diff --stat devel...HEAD` (files). Confirm the file list matches what
+  the PR claims to change.
+- Use three-dot `devel...HEAD` so you see only this branch's changes, not
+  unrelated commits that landed on `devel` after it forked.
+- When the diff is large or surprising, confirm scope with the author before
+  reviewing line-by-line.
+
+| Pitfall                              | Avoid by                                   |
+| ------------------------------------ | ------------------------------------------ |
+| Reviewing files the PR never touched | Diff the exact range; don't browse `devel` |
+| Stale diff after a rebase/force-push | `git fetch` and re-diff before commenting  |
+| Two-dot vs three-dot confusion       | Use `devel...HEAD` to isolate the branch   |
+
 ---
 
 ## 2. Validate Against Guidelines
@@ -67,6 +86,7 @@ When reviewing new components or logic, ask these critical questions:
 - ❌ **Flag if**: New component recreates existing framework or PF6 functionality
 
 **Examples:**
+
 - Creating a custom table → Should use PageTable from `/framework`
 - Creating a custom modal → Should use PatternFly Modal
 - Creating a custom empty state → Check if framework has a reusable pattern
@@ -81,6 +101,7 @@ When reviewing new components or logic, ask these critical questions:
 - ❌ **Flag if**: Logic is duplicated from another workspace or could be shared
 
 **Examples:**
+
 - Table selection logic → Should be extracted to hook like `useTableSelection`
 - Form validation patterns → Should be in `/frontend/common/hooks/`
 - RBAC permission checks → Should be shared utility
@@ -95,6 +116,7 @@ When reviewing new components or logic, ask these critical questions:
 - ❌ **Flag if**: PR creates new component when existing one could be extended
 
 **Examples:**
+
 - Need table with custom toolbar → Extend PageTable with toolbar prop
 - Need form with different layout → Use PageForm with layout variants
 - Need button with icon → Use PatternFly Button with icon prop
@@ -103,18 +125,46 @@ When reviewing new components or logic, ask these critical questions:
 
 **Flag these patterns for extraction:**
 
-| Pattern Detected                      | Required Action                                       |
-| ------------------------------------- | ----------------------------------------------------- |
-| **Repeated JSX structure** (2+ times) | → Extract to component in `/framework` or workspace   |
-| **Repeated logic/state** (2+ times)   | → Extract to custom hook                              |
-| **Repeated utility functions**        | → Move to `/frontend/common`                          |
-| **Similar components with variants**  | → Consolidate into single component with props        |
+| Pattern Detected                      | Required Action                                     |
+| ------------------------------------- | --------------------------------------------------- |
+| **Repeated JSX structure** (2+ times) | → Extract to component in `/framework` or workspace |
+| **Repeated logic/state** (2+ times)   | → Extract to custom hook                            |
+| **Repeated utility functions**        | → Move to `/frontend/common`                        |
+| **Similar components with variants**  | → Consolidate into single component with props      |
 
 **Where to extract:**
 
 - **Extract to `/framework`**: Used across 2+ workspaces, domain-agnostic
 - **Extract to `/frontend/common`**: Shared utilities, hooks, or types
 - **Keep in workspace**: Service-specific logic (AWX-only, EDA-only, Hub-only)
+
+### Rule Bypass Checks (BLOCKING)
+
+New code must not silence the tooling instead of fixing the problem. Grep the
+diff (`git diff devel...HEAD`) for each of these and flag any hit in added
+lines:
+
+| Pattern                                       | Why it blocks           | Ask for instead                  |
+| --------------------------------------------- | ----------------------- | -------------------------------- |
+| `eslint-disable` / `eslint-disable-next-line` | Suppresses a real rule  | Fix the underlying issue         |
+| `@ts-ignore` / `@ts-expect-error`             | Hides a type error      | Correct the types                |
+| `TODO` / `FIXME` / `HACK` / `XXX`             | Ships unfinished work   | Resolve, or file a tracked issue |
+| Custom deep copy / query parsing / UUID       | Re-invents the platform | Native API (see mapping below)   |
+
+Recipe: `git diff devel...HEAD | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK'`
+
+### HTML → PatternFly 6 Component Mapping
+
+Flag raw HTML text/interaction elements in new JSX — use the PF6 component:
+
+| Raw HTML          | Use       |
+| ----------------- | --------- |
+| `<button>`        | `Button`  |
+| `<p>` / free text | `Content` |
+| `<ul>` / `<ol>`   | `List`    |
+| `<h1>`…`<h6>`     | `Title`   |
+
+Keep `<span>`, `<code>`, and `<div>` where a semantic PF component does not apply.
 
 ---
 
@@ -183,3 +233,18 @@ Output should include:
 3. Recommendations for simplification
 4. Test coverage guidance
 5. A proposed `.md` explanation file for the PR
+
+---
+
+## 9. Self-Review Quality Gate
+
+Before posting, re-read the review as if from a fresh session with no memory of
+the discussion:
+
+- Does every finding cite a file/line and a concrete reason?
+- Would the feedback still make sense to someone who did not see the diff?
+- Have you separated blocking issues from optional suggestions?
+- Did you run the validation commands (§7) rather than assuming they pass?
+
+An independent pass from a clean context catches the assumptions the first pass
+carried in.
