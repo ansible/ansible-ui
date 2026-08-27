@@ -468,6 +468,48 @@ describe('NodeTypeStep', () => {
 
     expect(capturedPrompt).toMatchObject({ scm_branch: '' });
   });
+
+  it('should use launch config scm_branch as fallback when step data has no scm_branch override', async () => {
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_scm_branch_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null, scm_branch: 'release' },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    // Step state without scm_branch — prompts?.scm_branch is undefined, so fallback to launchConfigValue
+    const stepStateWithoutBranch = {
+      nodePromptsStep: {
+        prompt: { ...mockStepState.nodePromptsStep.prompt },
+      },
+    };
+
+    let capturedPrompt: unknown;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithoutBranch) => {
+            nodePromptsStep?: { prompt?: unknown };
+          }
+        )(stepStateWithoutBranch);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt).toMatchObject({ scm_branch: 'release' });
+  });
 });
 
 function TestWrapperWithSourceNode({

@@ -1127,4 +1127,204 @@ describe('useSaveVisualizer', () => {
     const payload = (nodePatch as unknown[])[1] as { extra_data?: object };
     expect(payload.extra_data).toEqual(expect.objectContaining({ survey_answer: 42 }));
   });
+
+  test('should not include undefined prompt field in payload for new node (value === undefined early return)', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-undef-prompt',
+      visible: true,
+      modified: false,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'undef-prompt',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          // scm_branch intentionally absent — launch_data?.scm_branch is undefined
+          original: {
+            launch_config: {
+              ask_scm_branch_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const workflowNodeCall = mockPostFn.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && c[0].includes('/workflow_nodes/')
+    );
+    expect(workflowNodeCall).toBeDefined();
+    const payload = (workflowNodeCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('scm_branch');
+  });
+
+  test('should not include empty non-prompt field in payload for new node (!isPrompt early return)', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-empty-identifier',
+      visible: true,
+      modified: false,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: '',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const workflowNodeCall = mockPostFn.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && c[0].includes('/workflow_nodes/')
+    );
+    expect(workflowNodeCall).toBeDefined();
+    const payload = (workflowNodeCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('identifier');
+  });
+
+  test('should not include undefined prompt field in payload for existing node (value === undefined early return)', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          // scm_branch intentionally absent — launch_data?.scm_branch is undefined
+          original: {
+            launch_config: {
+              ask_scm_branch_on_launch: true,
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCall = mockPatchFn.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCall).toBeDefined();
+    const payload = (nodePatchCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('scm_branch');
+  });
+
+  test('should not include empty non-prompt field in payload for existing node (!isPrompt early return)', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: '',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCall = mockPatchFn.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCall).toBeDefined();
+    const payload = (nodePatchCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('identifier');
+  });
 });
