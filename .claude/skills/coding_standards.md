@@ -561,10 +561,10 @@ Key enforced rules from `.eslintrc.json`:
 
 ## 16. Internationalization
 
-See the comprehensive i18n section in CLAUDE.md. Quick rules:
-
-- Wrap all user-facing strings: `t('Label text')`
+- Wrap all user-facing strings: `t('Label text')` via `useTranslation`
 - **Never** compare translated strings in logic — compare raw API values
+  (`resource.status === 'active'`), enums, routes, or other non-translated IDs
+- Translate only for display: `<Label>{t(resource.status)}</Label>`
 - Run `npm run i18n` after adding new strings
 - ESLint enforces `i18next/no-literal-string` on JSX attributes
 
@@ -579,3 +579,11 @@ export function MyComponent(props: Readonly<MyComponentProps>) { ... }
 ```
 
 This is enforced by SonarCloud rule S6759.
+
+## 18. File naming
+
+- Test files: `*.spec.ts` (Playwright) or `*.test.ts` / `*.test.tsx` (Vitest)
+- Component files: PascalCase (e.g. `UserTable.tsx`)
+- Utility files: camelCase (e.g. `apiHelpers.ts`)
+- Constants: UPPER_SNAKE_CASE
+
