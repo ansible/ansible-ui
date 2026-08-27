@@ -10,7 +10,7 @@ import {
   ModalFooter,
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
-import pLimit from 'p-limit';
+import { pLimit } from '../utils/pLimit';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';

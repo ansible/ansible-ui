@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppChatbotContext, ChatbotStateEnum } from './ChatbotProvider';
 import { ChatbotSideBar } from './ChatbotSideBar';
 
