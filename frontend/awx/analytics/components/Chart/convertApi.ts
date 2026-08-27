@@ -1,5 +1,5 @@
 import { ChartData, ChartDataSerie } from '@ansible/react-json-chart-builder';
-import { generateUUID } from '@ansible/ansible-ui-framework/utils/generateUUID';
+import { v4 } from 'uuid';
 import { ApiReturnType, ApiType, GroupedApi } from './types';
 
 export const convertGroupedByData = (data: GroupedApi): ChartDataSerie[] => {
@@ -12,7 +12,7 @@ export const convertGroupedByData = (data: GroupedApi): ChartDataSerie[] => {
         items[idx] = {
           serie: [],
           hidden: false,
-          name: generateUUID(),
+          name: v4(),
         };
       }
       items[idx].serie.push({
@@ -45,7 +45,7 @@ export const convertApiToData = (result: ApiReturnType): ChartData => {
         {
           serie: result.items || result.meta?.legend || [],
           hidden: false,
-          name: generateUUID(),
+          name: v4(),
         },
       ];
       break;
