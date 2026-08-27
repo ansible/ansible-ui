@@ -7,7 +7,7 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import { ArrowRightIcon, TimesIcon } from '@patternfly/react-icons';
-import debounce from 'debounce';
+import { debounce } from '../../utils/debounce';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ToolbarFilterType } from '../PageToolbarFilter';

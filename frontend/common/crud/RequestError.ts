@@ -1,4 +1,4 @@
-import { stringify } from 'yaml';
+import jsyaml from 'js-yaml';
 
 const HTTP_STATUS_TEXT: Record<number, string> = {
   400: 'Bad Request',
@@ -29,7 +29,7 @@ export async function createRequestError(response: Response) {
 
   if (typeof body === 'object' && body !== null) {
     json = body;
-    details = stringify(body);
+    details = jsyaml.dump(body);
   }
 
   // response.statusText is always empty under HTTP/2, so fall back to the

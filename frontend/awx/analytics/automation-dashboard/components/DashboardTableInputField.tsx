@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { DashboardTableInputFieldProps } from '../types';
 import { Help } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import debounce from 'debounce';
+import { debounce } from '@ansible/ansible-ui-framework/utils/debounce';
 
 export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
   const {

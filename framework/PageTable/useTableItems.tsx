@@ -1,4 +1,4 @@
-import debounce from 'debounce';
+import { debounce } from '../utils/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export function useTableItems<T extends object>(

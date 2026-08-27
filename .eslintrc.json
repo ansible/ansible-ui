@@ -6,7 +6,14 @@
     "sourceType": "module",
     "project": ["./tsconfig.json"]
   },
-  "ignorePatterns": ["*.cjs", "**/publish/**", "**/dist/**", "**/build/**", "**/node_modules/**", "**/coverage/**"],
+  "ignorePatterns": [
+    "*.cjs",
+    "**/publish/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/node_modules/**",
+    "**/coverage/**"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:jsx-a11y/recommended",
@@ -55,7 +62,15 @@
         }
       }
     ],
-    "no-restricted-exports": ["error", { "restrictDefaultExports": { "direct": true } }]
+    "no-restricted-exports": ["error", { "restrictDefaultExports": { "direct": true } }],
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "crypto",
+        "property": "randomUUID",
+        "message": "crypto.randomUUID is unavailable over HTTP (non-secure contexts). Use generateUUID() from framework/utils/generateUUID.ts. Node/Playwright may use node:crypto.randomUUID."
+      }
+    ]
   },
   "root": true,
   "settings": {
@@ -71,6 +86,12 @@
       }
     },
     {
+      "files": ["playwright/**/*.ts", "playwright-insights/**/*.ts"],
+      "rules": {
+        "no-restricted-properties": "off"
+      }
+    },
+    {
       "files": ["**/*.test.tsx"],
       "rules": {
         "i18next/no-literal-string": "off"
@@ -78,7 +99,17 @@
     },
     {
       "files": ["frontend/**/*.ts", "frontend/**/*.tsx", "platform/**/*.ts", "platform/**/*.tsx"],
-      "excludedFiles": ["**/*.test.*", "**/*.cy.*", "**/*.fixture.*", "**/generated/**", "**/vite.config.*", "**/awx-utils.tsx", "**/eda-utils.tsx", "**/formatPath.tsx", "**/gateway-api-utils.tsx"],
+      "excludedFiles": [
+        "**/*.test.*",
+        "**/*.cy.*",
+        "**/*.fixture.*",
+        "**/generated/**",
+        "**/vite.config.*",
+        "**/awx-utils.tsx",
+        "**/eda-utils.tsx",
+        "**/formatPath.tsx",
+        "**/gateway-api-utils.tsx"
+      ],
       "rules": {
         "no-restricted-syntax": [
           "error",

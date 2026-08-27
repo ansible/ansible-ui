@@ -8,7 +8,7 @@ import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
-import pDebounce from 'p-debounce';
+import { pDebounce } from '@ansible/ansible-ui-framework/utils/debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
