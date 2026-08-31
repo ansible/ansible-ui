@@ -17,5 +17,6 @@ export async function fillMonacoEditor(page: Page, text: string, editorLocator?:
   const editor = editorLocator ?? page.getByRole('textbox', { name: 'Editor content' });
   await editor.click({ force: true });
   await page.keyboard.press('Control+a');
+  await page.keyboard.press('Backspace');
   await page.keyboard.type(text);
 }
