@@ -192,20 +192,39 @@ test.describe('Jobs: Launch and Verify Output', () => {
         page
       );
 
-      await clickPageAction('Sync project', page);
-      await expect(page.locator('#last-job-status')).toBeVisible();
-      await page.locator('#last-job-status').getByRole('link').first().click();
+      const syncResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/projects/') &&
+          response.url().includes('/update/') &&
+          response.request().method() === 'POST' &&
+          response.status() === 202
+      );
 
-      // Verify we're on the job output page
+      await clickPageAction('Sync project', page);
+      const syncResponse = await syncResponsePromise;
+      const projectUpdate = (await syncResponse.json()) as { id: number };
+
+      await waitForJobStatus(
+        {
+          jobType: 'project_updates',
+          jobId: projectUpdate.id,
+          desiredStatus: 'successful',
+          timeout: 120000,
+        },
+        page
+      );
+
+      // Navigate to the job output page for the sync we just triggered
+      await navigateTo(page, 'Automation Execution', 'Jobs');
+      await filterTable({ filterLabel: 'ID', filterValue: String(projectUpdate.id) }, page);
+      await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
+      await page.locator('tbody').getByRole('link', { name: project.name }).first().click();
+
       await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
       await expect(
         page.getByRole('main').getByRole('heading', { name: project.name }).first()
       ).toBeVisible();
-
-      // Wait for job to complete
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
+      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
 
       await Project.api.delete(page, project.id).catch(() => {});
       await Organization.api.delete(page, organization.id).catch(() => {});
