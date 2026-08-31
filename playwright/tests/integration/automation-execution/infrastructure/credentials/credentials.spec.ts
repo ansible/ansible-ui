@@ -2,7 +2,6 @@ import { Credential as CredentialType } from '@ansible/awx-ui/interfaces/Credent
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { expect, test } from '@playwright/test';
-import { gatewayAPI } from '../../../../../commands/apiClient';
 import { clickPageAction } from '../../../../../commands/clickPageAction';
 import { clickTableRow } from '../../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../../commands/createE2EName';
@@ -615,14 +614,7 @@ test.describe('Credentials - Team and User Access', () => {
     let team: PlatformTeam;
 
     test.beforeEach(async ({ page }) => {
-      const orgs = await gatewayAPI.get<{ results: { id: number }[] }>(page, 'organizations/', {
-        params: { name: 'Default' },
-      });
-      const organizationId = orgs?.results?.[0]?.id;
-      if (!organizationId) {
-        throw new Error('Default organization not found');
-      }
-      team = await Team.api.create(page, { organization: organizationId });
+      team = await Team.api.create(page, { organization: 1 });
     });
 
     test.afterEach(async ({ page }) => {
