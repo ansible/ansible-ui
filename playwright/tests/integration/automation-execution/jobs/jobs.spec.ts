@@ -181,36 +181,34 @@ test.describe('Jobs: Launch and Verify Output', () => {
       const project = await Project.api.create(page, { organization: organization.id });
       await Project.api.sync(page, project.id);
 
-      try {
-        await navigateTo(page, 'Automation Execution', 'Projects');
-        await clickTableRow(
-          {
-            text: project.name,
-            filterValue: project.name,
-            clearFilters: true,
-            pageTitle: 'Projects',
-          },
-          page
-        );
+      await navigateTo(page, 'Automation Execution', 'Projects');
+      await clickTableRow(
+        {
+          text: project.name,
+          filterValue: project.name,
+          clearFilters: true,
+          pageTitle: 'Projects',
+        },
+        page
+      );
 
-        await clickPageAction('Sync project', page);
-        await expect(page.locator('#last-job-status')).toBeVisible();
-        await page.locator('#last-job-status').getByRole('link').first().click();
+      await clickPageAction('Sync project', page);
+      await expect(page.locator('#last-job-status')).toBeVisible();
+      await page.locator('#last-job-status').getByRole('link').first().click();
 
-        // Verify we're on the job output page
-        await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
-        await expect(
-          page.getByRole('main').getByRole('heading', { name: project.name }).first()
-        ).toBeVisible();
+      // Verify we're on the job output page
+      await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
+      await expect(
+        page.getByRole('main').getByRole('heading', { name: project.name }).first()
+      ).toBeVisible();
 
-        // Wait for job to complete
-        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-          timeout: 120000,
-        });
-      } finally {
-        await Project.api.delete(page, project.id).catch(() => {});
-        await Organization.api.delete(page, organization.id).catch(() => {});
-      }
+      // Wait for job to complete
+      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
+        timeout: 120000,
+      });
+
+      await Project.api.delete(page, project.id).catch(() => {});
+      await Organization.api.delete(page, organization.id).catch(() => {});
     }
   );
 
