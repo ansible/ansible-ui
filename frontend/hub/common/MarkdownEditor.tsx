@@ -1,7 +1,6 @@
-import { Content, TextArea, Title } from '@patternfly/react-core';
-import { ReactNode } from 'react';
+import { Content, TextArea } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import ReactMarkdown, { type Components } from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 
@@ -35,6 +34,11 @@ const ReactMarkdownWrapper = styled.div`
     padding: 2px 6px;
     border-radius: 6px;
   }
+
+  /* remark-gfm / github-markdown-css: hide the list bullet so the checkbox is the marker */
+  li.task-list-item {
+    list-style-type: none;
+  }
 `;
 
 interface IProps {
@@ -44,40 +48,6 @@ interface IProps {
   helperText: string;
   editing: boolean;
 }
-
-function MarkdownHeading({
-  headingLevel,
-  children,
-}: Readonly<{ headingLevel: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'; children?: ReactNode }>) {
-  return <Title headingLevel={headingLevel}>{children}</Title>;
-}
-
-function MarkdownContent({
-  component,
-  children,
-}: Readonly<{
-  component: 'p' | 'ul' | 'ol' | 'li' | 'blockquote' | 'hr';
-  children?: ReactNode;
-}>) {
-  return <Content component={component}>{children}</Content>;
-}
-
-const markdownComponents: Components = {
-  h1: ({ children }) => <MarkdownHeading headingLevel="h1">{children}</MarkdownHeading>,
-  h2: ({ children }) => <MarkdownHeading headingLevel="h2">{children}</MarkdownHeading>,
-  h3: ({ children }) => <MarkdownHeading headingLevel="h3">{children}</MarkdownHeading>,
-  h4: ({ children }) => <MarkdownHeading headingLevel="h4">{children}</MarkdownHeading>,
-  h5: ({ children }) => <MarkdownHeading headingLevel="h5">{children}</MarkdownHeading>,
-  h6: ({ children }) => <MarkdownHeading headingLevel="h6">{children}</MarkdownHeading>,
-  p: ({ children }) => <MarkdownContent component="p">{children}</MarkdownContent>,
-  ul: ({ children }) => <MarkdownContent component="ul">{children}</MarkdownContent>,
-  ol: ({ children }) => <MarkdownContent component="ol">{children}</MarkdownContent>,
-  li: ({ children }) => <MarkdownContent component="li">{children}</MarkdownContent>,
-  blockquote: ({ children }) => (
-    <MarkdownContent component="blockquote">{children}</MarkdownContent>
-  ),
-  hr: () => <MarkdownContent component="hr" />,
-};
 
 export function MarkdownEditor(props: Readonly<IProps>) {
   const { t } = useTranslation();
@@ -103,15 +73,9 @@ export function MarkdownEditor(props: Readonly<IProps>) {
       )}
       <ReactMarkdownWrapper>
         {editing && t(`Preview`)}
-        <div
-          data-cy="readme"
-          data-testid="readme"
-          className={editing ? 'pf-v6-c-content preview' : 'pf-v6-c-content'}
-        >
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-            {text || placeholder}
-          </ReactMarkdown>
-        </div>
+        <Content data-cy="readme" data-testid="readme" className={editing ? 'preview' : undefined}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{text || placeholder}</ReactMarkdown>
+        </Content>
       </ReactMarkdownWrapper>
     </MarkdownEditorWrapper>
   );
