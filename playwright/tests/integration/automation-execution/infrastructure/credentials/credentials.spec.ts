@@ -9,6 +9,7 @@ import { filterTable } from '../../../../../commands/filterTable';
 import { navigateTo } from '../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../commands/setup';
 import { Credential, Team, User } from '@ansible/playwright/utils';
+import { lookupCredentialTypeId } from '@ansible/playwright/utils/credential';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials' }));
 test.afterEach(setupAfter);
@@ -601,7 +602,8 @@ test.describe('Credentials - Team and User Access', () => {
   let credential: CredentialType;
 
   test.beforeEach(async ({ page }) => {
-    credential = await Credential.api.create(page, { credentialTypeName: 'Machine' });
+    const machineTypeId = await lookupCredentialTypeId(page, 'Machine');
+    credential = await Credential.api.create(page, { credentialType: machineTypeId });
   });
 
   test.afterEach(async ({ page }) => {

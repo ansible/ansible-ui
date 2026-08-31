@@ -26,59 +26,36 @@ export interface CreateCredentialOptions {
 
 export interface CreateCredentialAPIOptions {
   name?: string;
-  credentialTypeName?: string;
-  organizationName?: string;
+  credentialType: number;
+  organization?: number;
   description?: string;
   inputs?: Record<string, string>;
 }
 
-async function lookupNamedId(
-  page: Page,
-  resourcePath: string,
-  name: string,
-  resourceLabel: string
-): Promise<number> {
-  const result = await awxAPI.get<{ results: { id: number; name: string }[] }>(page, resourcePath, {
-    params: { name },
-  });
+async function lookupCredentialTypeId(page: Page, name: string): Promise<number> {
+  const result = await awxAPI.get<{ results: { id: number; name: string }[] }>(
+    page,
+    'credential_types/',
+    { params: { name } }
+  );
   const match = result?.results?.find((item) => item.name === name);
   if (!match) {
-    throw new Error(`${resourceLabel} '${name}' not found`);
+    throw new Error(`Credential type '${name}' not found`);
   }
   return match.id;
 }
 
+export { lookupCredentialTypeId };
+
 export const Credential = {
   api: {
-    create: async (
-      page: Page,
-      options: CreateCredentialAPIOptions = {}
-    ): Promise<CredentialType> => {
-      const credentialTypeName = options.credentialTypeName ?? 'Machine';
-      const organizationName = options.organizationName ?? 'Default';
-      const credentialTypeId = await lookupNamedId(
-        page,
-        'credential_types/',
-        credentialTypeName,
-        'Credential type'
-      );
-      const organizationId = await lookupNamedId(
-        page,
-        'organizations/',
-        organizationName,
-        'Organization'
-      );
-
-      const inputs =
-        options.inputs ??
-        (credentialTypeName === 'Machine' ? { username: 'username', password: 'pwd' } : {});
-
+    create: async (page: Page, options: CreateCredentialAPIOptions): Promise<CredentialType> => {
       const credential = await awxAPI.post<CredentialType>(page, 'credentials/', {
         name: options.name ?? createE2EName('credential'),
         description: options.description,
-        credential_type: credentialTypeId,
-        organization: organizationId,
-        inputs,
+        credential_type: options.credentialType,
+        organization: options.organization ?? 1,
+        inputs: options.inputs ?? {},
       });
 
       if (!credential) {
