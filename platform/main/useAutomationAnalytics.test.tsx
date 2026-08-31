@@ -58,7 +58,7 @@ function buildMockNav(): PageNavigationItem[] {
       path: 'analytics',
       children: [
         {
-          id: AwxRoute.AutomationDashboard,
+          id: AwxRoute.AutomationDashboardMainPage,
           label: 'Automation Dashboard',
           path: 'automation-dashboard',
           element: <></>,
@@ -175,7 +175,7 @@ describe('useAutomationAnalytics', () => {
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
       expect(children).toHaveLength(3);
-      expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationDashboard);
+      expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationDashboardMainPage);
       expect(children.map((c) => c.id)).toContain(AwxRoute.SubscriptionUsage);
       expect(children.map((c) => c.id)).toContain(AwxRoute.AutomationCalculator);
     });
@@ -187,7 +187,7 @@ describe('useAutomationAnalytics', () => {
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
       expect(children).toHaveLength(1);
-      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboardMainPage);
     });
 
     test('should keep only automation dashboard for non-superuser non-auditor', () => {
@@ -197,7 +197,7 @@ describe('useAutomationAnalytics', () => {
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
       expect(children).toHaveLength(1);
-      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboardMainPage);
     });
 
     test('should keep only automation dashboard when activePlatformUser is null', () => {
@@ -205,7 +205,7 @@ describe('useAutomationAnalytics', () => {
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
       expect(children).toHaveLength(1);
-      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboardMainPage);
     });
 
     test('should keep only automation dashboard for non-superuser when managed cloud removes subscription usage first', () => {
@@ -216,7 +216,7 @@ describe('useAutomationAnalytics', () => {
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
       expect(children).toHaveLength(1);
-      expect(children[0].id).toBe(AwxRoute.AutomationDashboard);
+      expect(children[0].id).toBe(AwxRoute.AutomationDashboardMainPage);
     });
   });
 
@@ -233,7 +233,7 @@ describe('useAutomationAnalytics', () => {
     test('should remove automation dashboard from children for superuser', () => {
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
-      expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeUndefined();
+      expect(children.find((c) => c.id === AwxRoute.AutomationDashboardMainPage)).toBeUndefined();
     });
 
     test('should keep other children for superuser when dashboard is disabled', () => {
@@ -252,7 +252,7 @@ describe('useAutomationAnalytics', () => {
           path: 'analytics',
           children: [
             {
-              id: AwxRoute.AutomationDashboard,
+              id: AwxRoute.AutomationDashboardMainPage,
               label: 'Automation Dashboard',
               path: 'automation-dashboard',
               element: <></>,
@@ -272,7 +272,7 @@ describe('useAutomationAnalytics', () => {
       });
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
-      expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeDefined();
+      expect(children.find((c) => c.id === AwxRoute.AutomationDashboardMainPage)).toBeDefined();
     });
   });
 
@@ -332,7 +332,7 @@ describe('useAutomationAnalytics', () => {
         path: 'analytics',
         children: [
           {
-            id: AwxRoute.AutomationDashboard,
+            id: AwxRoute.AutomationDashboardMainPage,
             label: 'Automation Dashboard',
             path: 'automation-dashboard',
             element: <></>,
@@ -355,7 +355,7 @@ describe('useAutomationAnalytics', () => {
     const { result } = renderHook(() => useAutomationAnalytics());
     const { children } = asGroup(result.current);
     // AutomationDashboard kept; AutomationCalculator removed; no-id item stays (not removed)
-    expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeDefined();
+    expect(children.find((c) => c.id === AwxRoute.AutomationDashboardMainPage)).toBeDefined();
     expect(children.find((c) => c.id === AwxRoute.AutomationCalculator)).toBeUndefined();
     expect(children.find((c) => !c.id)).toBeDefined();
   });
@@ -378,6 +378,6 @@ describe('useAutomationAnalytics', () => {
     });
     const { result } = renderHook(() => useAutomationAnalytics());
     const { children } = asGroup(result.current);
-    expect(children.find((c) => c.id === AwxRoute.AutomationDashboard)).toBeUndefined();
+    expect(children.find((c) => c.id === AwxRoute.AutomationDashboardMainPage)).toBeUndefined();
   });
 });

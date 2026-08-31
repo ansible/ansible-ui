@@ -19,6 +19,7 @@ import { useAutomationDashboardToolbarActions } from '../common/useAutomationDas
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { IDashboardFilterSet, IJobTemplate } from '../types';
 import { useFilterSetView } from '../views/useFilterSetView';
+import { isFilterStateShape } from '../utils/persistedFilterState';
 
 const DEFAULT_FILTER_STATE: IFilterState = {
   period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
@@ -35,15 +36,8 @@ function getDefaultCustomFrom(): string {
 function parseFilterState(raw: string): IFilterState {
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (
-      parsed !== null &&
-      typeof parsed === 'object' &&
-      !Array.isArray(parsed) &&
-      Object.values(parsed as Record<string, unknown>).every(
-        (v) => Array.isArray(v) && v.every((entry) => typeof entry === 'string')
-      )
-    ) {
-      return parsed as IFilterState;
+    if (isFilterStateShape(parsed)) {
+      return parsed;
     }
   } catch {
     return DEFAULT_FILTER_STATE;

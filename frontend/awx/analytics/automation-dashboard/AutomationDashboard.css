@@ -1,0 +1,267 @@
+.streak-heat-cell {
+  flex: 1 1 0;
+  min-width: 12px;
+  min-height: 28px;
+  border-radius: var(--pf-t--global--border--radius--small);
+  cursor: default;
+}
+
+.streak-heat-cell--success {
+  background-color: var(--pf-t--global--color--status--success--default);
+}
+
+.streak-heat-cell--empty {
+  background-color: var(--pf-t--global--color--nonstatus--gray--100);
+  background-image: linear-gradient(
+    -45deg,
+    transparent 40%,
+    var(--pf-t--global--color--nonstatus--gray--300) 40%,
+    var(--pf-t--global--color--nonstatus--gray--300) 45%,
+    transparent 45%
+  );
+}
+
+#automation-streak-legend-no-activity-count {
+  background-image: linear-gradient(
+    -45deg,
+    transparent 40%,
+    var(--pf-t--global--color--nonstatus--gray--300) 40%,
+    var(--pf-t--global--color--nonstatus--gray--300) 45%,
+    transparent 45%
+  );
+}
+
+.achievement-badge--milestone .achievement-badge__stars {
+  visibility: hidden;
+}
+
+.achievement-badge--milestone.achievement-badge--earned {
+  --badge-tier-color: var(--pf-t--global--color--status--success--default);
+  border: 2px solid var(--badge-tier-color);
+}
+
+.pf-v6-theme-dark .achievement-badge--milestone.achievement-badge--earned {
+  --badge-tier-color: var(--pf-t--global--color--status--success--default);
+}
+
+/* Milestone badges are sized down so the card can sit at 50% width next to the Top 10
+   leaderboard card, and small enough that all 7 fit on one row. Scoped to --milestone so
+   the tiered achievement badges (AchievementBadges.tsx) are unaffected. Uses the compound
+   .achievement-badge.achievement-badge--milestone selector (2 classes) so it reliably beats
+   the later, equal-specificity base .achievement-badge{width:96px} rule regardless of source
+   order. */
+.achievement-badge.achievement-badge--milestone {
+  width: 80px;
+  height: 80px;
+  padding: 6px 4px 4px;
+}
+
+.achievement-badge--milestone .achievement-badge__icon {
+  flex: 0 0 20px;
+  min-height: 20px;
+}
+
+.achievement-badge--milestone.achievement-badge--earned .achievement-badge__icon,
+.achievement-badge--milestone.achievement-badge--locked .achievement-badge__icon {
+  font-size: 20px;
+}
+
+.achievement-badge--milestone .achievement-badge__label {
+  font-size: 10px;
+  min-height: 22px;
+  white-space: normal;
+}
+
+/* Milestone badges arranged in a 5-column grid (5 top, 2 bottom). */
+.achievement-badges-grid--milestone {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 80px));
+  gap: 6px;
+  margin-top: var(--pf-t--global--spacer--sm);
+  padding-bottom: 2px;
+}
+
+.automation-dashboard-at-a-glance-streak {
+  border-top: 1px solid var(--pf-t--global--border--color--default);
+  margin-top: var(--pf-t--global--spacer--md);
+  padding-top: var(--pf-t--global--spacer--md);
+}
+
+.automation-dashboard-at-a-glance-streak-cells {
+  width: 100%;
+  margin-top: var(--pf-t--global--spacer--sm);
+}
+
+.achievement-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 96px);
+  gap: 10px;
+  align-items: start;
+}
+
+.achievement-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 96px;
+  height: 96px;
+  cursor: default;
+  padding: 8px 6px 6px;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  transition: transform 0.15s ease;
+  box-sizing: border-box;
+}
+
+.achievement-badge__stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 10px;
+  width: 100%;
+  min-height: 10px;
+  gap: 1px;
+  line-height: 1;
+  margin-bottom: 6px;
+  color: var(--badge-tier-color, var(--pf-t--global--text--color--subtle));
+}
+
+.achievement-badge__stars svg {
+  width: 8px;
+  height: 8px;
+}
+
+.achievement-badge--locked .achievement-badge__stars {
+  visibility: hidden;
+}
+
+.achievement-badge__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+  width: 100%;
+  min-height: 20px;
+  line-height: 1;
+}
+
+.achievement-badge:hover {
+  transform: scale(1.05);
+}
+
+.achievement-badge--earned {
+  background-color: color-mix(in srgb, var(--badge-tier-color) 10%, transparent);
+}
+
+.pf-v6-theme-dark .achievement-badge--earned {
+  background-color: color-mix(in srgb, var(--badge-tier-color) 20%, transparent);
+}
+
+.achievement-badge--earned .achievement-badge__icon {
+  color: var(--badge-tier-color);
+  font-size: 20px;
+}
+
+.achievement-badge--locked {
+  border: 2px dashed var(--pf-t--global--border--color--default);
+  background-color: var(--pf-t--global--background--color--tertiary--default);
+}
+
+.achievement-badge--locked .achievement-badge__icon {
+  color: var(--pf-t--global--icon--color--disabled);
+  font-size: 20px;
+}
+
+.achievement-badge__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 22px;
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.achievement-badge--earned .achievement-badge__label {
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.achievement-badge--locked .achievement-badge__label {
+  color: var(--pf-t--global--text--color--disabled);
+}
+
+/* Shared tier palette for leaderboard crowns (#1 gold, #2 silver, #3 bronze) */
+.pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--1,
+.automation-dashboard-leaderboard-rank-crown--1 {
+  color: var(--pf-t--global--color--nonstatus--yellow--300);
+}
+
+.pf-v6-theme-dark .pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--1,
+.pf-v6-theme-dark .automation-dashboard-leaderboard-rank-crown--1 {
+  color: var(--pf-t--global--color--nonstatus--yellow--default);
+}
+
+.pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--2,
+.automation-dashboard-leaderboard-rank-crown--2 {
+  color: var(--pf-t--global--color--nonstatus--gray--400);
+}
+
+.pf-v6-theme-dark .pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--2,
+.pf-v6-theme-dark .automation-dashboard-leaderboard-rank-crown--2 {
+  color: var(--pf-t--global--color--nonstatus--gray--300);
+}
+
+.pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--3,
+.automation-dashboard-leaderboard-rank-crown--3 {
+  color: var(--pf-t--global--color--nonstatus--orange--400);
+}
+
+.pf-v6-theme-dark .pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--3,
+.pf-v6-theme-dark .automation-dashboard-leaderboard-rank-crown--3 {
+  color: var(--pf-t--global--color--nonstatus--orange--default);
+}
+
+/* "At a Glance" KPI columns: the Flex stacks vertically below PatternFly's xl breakpoint
+   (1200px) and switches to a row at xl+. Divide the columns with a bottom border while
+   stacked and a right border once they sit side by side. */
+.automation-at-a-glance-kpi-divider {
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+  padding-bottom: var(--pf-t--global--spacer--md);
+}
+
+@media screen and (min-width: 1200px) {
+  .automation-at-a-glance-kpi-divider {
+    border-bottom: none;
+    padding-bottom: 0;
+    border-right: 1px solid var(--pf-t--global--border--color--default);
+    padding-right: var(--pf-t--global--spacer--md);
+  }
+}
+
+/* Automation dimensions — SimpleListItem's default padding is tight; give the row content
+   more breathing room since each item holds an icon + two-line title/value cluster. */
+.automation-dashboard-dimension-row .pf-v6-c-simple-list__item-link {
+  padding-block: 10px;
+}
+
+/* A little extra breathing room between the 3 rows so they don't feel cramped, without
+   force-stretching them to match the (unrelated) height of the leaderboard list beside them. */
+.automation-dashboard-dimension-list .pf-v6-c-simple-list__item + .pf-v6-c-simple-list__item {
+  margin-top: 12px;
+}
+
+/* Tint the leaderboard bars with the same info accent as the dimension icons, and
+   animate them as they grow/shrink when switching dimensions — PF's Progress indicator
+   uses the brand color and has no width transition of its own. */
+.automation-dashboard-dimension-bars .pf-v6-c-progress {
+  --pf-v6-c-progress__indicator--BackgroundColor: var(--pf-t--global--color--status--info--default);
+}
+
+.automation-dashboard-dimension-bars .pf-v6-c-progress__indicator {
+  transition: width 0.3s ease;
+}
