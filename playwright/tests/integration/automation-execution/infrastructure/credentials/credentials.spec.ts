@@ -1,11 +1,15 @@
+import { Credential as CredentialType } from '@ansible/awx-ui/interfaces/Credential';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { expect, test } from '@playwright/test';
+import { gatewayAPI } from '../../../../../commands/apiClient';
 import { clickPageAction } from '../../../../../commands/clickPageAction';
 import { clickTableRow } from '../../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../../commands/createE2EName';
 import { filterTable } from '../../../../../commands/filterTable';
 import { navigateTo } from '../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../commands/setup';
-import { Credential } from '@ansible/playwright/utils';
+import { Credential, Team, User } from '@ansible/playwright/utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials' }));
 test.afterEach(setupAfter);
@@ -595,78 +599,195 @@ test.describe('Credentials - External Credential Plugins (AAP-44813)', () => {
 });
 
 test.describe('Credentials - Team and User Access', () => {
-  test(
-    'can assign a team to credential and apply roles',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      test.setTimeout(120000);
-      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-      const teamName = createE2EName('team');
+  let credential: CredentialType;
 
-      await navigateTo(page, 'Access Management', 'Teams');
-      await page.getByText('Create team', { exact: true }).click();
-      await page.getByPlaceholder('Enter team name').fill(teamName);
-      await page.getByLabel('Organization').click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill('Default');
-      await page.getByRole('option', { name: 'Default' }).click();
-      await page.getByRole('button', { name: 'Create team' }).click();
-      await expect(page.getByRole('heading', { name: teamName, exact: true })).toBeVisible();
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
-      await page.getByRole('tab', { name: 'Team Access' }).click();
-      await expect(page.getByText('No teams are assigned to this credential.')).toBeVisible({
-        timeout: 10000,
-      });
-      await page.getByRole('link', { name: 'Assign teams' }).click();
-      await expect(page.getByRole('heading', { name: 'Assign teams' })).toBeVisible();
-      await filterTable({ filterLabel: 'Name', filterValue: teamName }, page);
-      await page
-        .getByRole('row', { name: new RegExp(teamName) })
-        .getByRole('checkbox')
-        .check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await page
-        .getByRole('row', { name: /Credential Admin/ })
-        .getByRole('checkbox')
-        .check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await page.getByRole('button', { name: 'Finish', exact: true }).click();
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
-      await navigateTo(page, 'Access Management', 'Teams');
-      await clickTableRow({ filterLabel: 'Name', text: teamName }, page);
-      await clickPageAction('Delete team', page);
-      await page.locator('#confirm').click();
-      await page.getByRole('button', { name: 'Delete team' }).click();
-      await expect(page.getByTestId('page-title')).toHaveText('Teams');
-      await Credential.ui.delete(page, credentialName);
+  test.beforeEach(async ({ page }) => {
+    credential = await Credential.api.create(page, { credentialTypeName: 'Machine' });
+  });
+
+  test.afterEach(async ({ page }) => {
+    if (credential?.id) {
+      await Credential.api.delete(page, credential.id).catch(() => {});
     }
-  );
+  });
 
-  test(
-    'can assign a user to credential and apply roles',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      test.setTimeout(120000);
-      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-      const userName = `E2E-user-${createE2EName('').replaceAll(/\s+/g, '')}`;
+  test.describe('Team Access', () => {
+    let team: PlatformTeam;
 
-      await navigateTo(page, 'Access', 'Users');
-      await page.getByText('Create user', { exact: true }).click();
-      await page.getByRole('textbox', { name: 'Username' }).fill(userName);
-      await page.getByRole('textbox', { name: 'Password', exact: true }).fill('TestPassword123!');
-      await page
-        .getByRole('textbox', { name: 'Confirm password', exact: true })
-        .fill('TestPassword123!');
-      await page.getByRole('button', { name: 'Create user' }).click();
-      await expect(page.getByRole('heading', { name: userName, exact: true })).toBeVisible();
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
+    test.beforeEach(async ({ page }) => {
+      const orgs = await gatewayAPI.get<{ results: { id: number }[] }>(page, 'organizations/', {
+        params: { name: 'Default' },
+      });
+      const organizationId = orgs?.results?.[0]?.id;
+      if (!organizationId) {
+        throw new Error('Default organization not found');
+      }
+      team = await Team.api.create(page, { organization: organizationId });
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (team?.id) {
+        await Team.api.delete(page, team.id).catch(() => {});
+      }
+    });
+
+    test(
+      'can assign a team to credential and apply roles',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await Credential.ui.open(page, credential);
+        await page.getByRole('tab', { name: 'Team Access' }).click();
+        await expect(page.getByText('No teams are assigned to this credential.')).toBeVisible({
+          timeout: 10000,
+        });
+        await page.getByRole('link', { name: 'Assign teams' }).click();
+        await expect(page.getByRole('heading', { name: 'Assign teams' })).toBeVisible();
+        await filterTable({ filterLabel: 'Name', filterValue: team.name }, page);
+        await page
+          .getByRole('row', { name: new RegExp(team.name) })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page
+          .getByRole('row', { name: /Credential Admin/ })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page.getByRole('button', { name: 'Finish', exact: true }).click();
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+      }
+    );
+
+    test(
+      'can remove team role from credential Team Access tab',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await Credential.ui.open(page, credential);
+        await page.getByRole('tab', { name: 'Team Access' }).click();
+        await expect(page.getByText('No teams are assigned to this credential.')).toBeVisible({
+          timeout: 10000,
+        });
+        await page.getByRole('link', { name: 'Assign teams' }).click();
+        await expect(page.getByRole('heading', { name: 'Assign teams' })).toBeVisible();
+        await filterTable({ filterLabel: 'Name', filterValue: team.name }, page);
+        await page
+          .getByRole('row', { name: new RegExp(team.name) })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page
+          .getByRole('row', { name: /Credential Admin/ })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page.getByRole('button', { name: 'Finish', exact: true }).click();
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+
+        await expect(page.getByRole('link', { name: team.name })).toBeVisible({ timeout: 10000 });
+        await filterTable({ filterLabel: 'Team name', filterValue: team.name }, page);
+        const teamRow = page.getByRole('row').filter({ hasText: team.name });
+        await teamRow.getByRole('checkbox').check();
+        await page.getByRole('button', { name: 'Remove role' }).click();
+        await expect(page.getByRole('heading', { name: 'Remove role' })).toBeVisible();
+        await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
+        await page.getByRole('button', { name: 'Remove role' }).click();
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
+          timeout: 10000,
+        });
+      }
+    );
+  });
+
+  test.describe('User Access', () => {
+    let user: PlatformUser;
+
+    test.beforeEach(async ({ page }) => {
+      user = await User.api.create(page, { password: 'TestPassword123!' });
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (user?.id) {
+        await User.api.delete(page, user.id).catch(() => {});
+      }
+    });
+
+    test(
+      'can assign a user to credential and apply roles',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await Credential.ui.open(page, credential);
+        await page.getByRole('tab', { name: 'User Access' }).click();
+        await page.getByRole('link', { name: 'Assign users' }).click();
+        await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
+        await filterTable({ filterLabel: 'Username', filterValue: user.username }, page);
+        await page
+          .getByRole('row', { name: new RegExp(user.username) })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page
+          .getByRole('row', { name: /Credential Admin/ })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page.getByRole('button', { name: 'Finish' }).click();
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+      }
+    );
+
+    test(
+      'can remove user role from credential User Access tab',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await Credential.ui.open(page, credential);
+        await page.getByRole('tab', { name: 'User Access' }).click();
+        await page.getByRole('link', { name: 'Assign users' }).click();
+        await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
+        await filterTable({ filterLabel: 'Username', filterValue: user.username }, page);
+        await page
+          .getByRole('row', { name: new RegExp(user.username) })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page
+          .getByRole('row', { name: /Credential Admin/ })
+          .getByRole('checkbox')
+          .check();
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await page.getByRole('button', { name: 'Finish' }).click();
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+
+        await expect(page.getByRole('link', { name: user.username })).toBeVisible({
+          timeout: 10000,
+        });
+        await filterTable({ filterLabel: 'Username', filterValue: user.username }, page);
+
+        const userRow = page.getByRole('row').filter({ hasText: user.username });
+        await userRow.getByRole('button', { name: 'Manage roles' }).click();
+
+        await expect(
+          page.getByRole('heading', {
+            name: new RegExp(`Manage roles directly assigned to ${user.username}`),
+          })
+        ).toBeVisible();
+
+        const credentialAdminRow = page.getByRole('row', { name: /Credential Admin/ });
+        await credentialAdminRow.getByRole('checkbox').uncheck();
+
+        await page.getByRole('button', { name: 'Save roles' }).click();
+
+        await expect(page.getByRole('tab', { name: 'User Access' })).toBeVisible();
+      }
+    );
+
+    test('can manage user roles from User Access tab', { tag: ['@not_mock'] }, async ({ page }) => {
+      await Credential.ui.open(page, credential);
       await page.getByRole('tab', { name: 'User Access' }).click();
       await page.getByRole('link', { name: 'Assign users' }).click();
       await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
-      await filterTable({ filterLabel: 'Username', filterValue: userName }, page);
+      await filterTable({ filterLabel: 'Username', filterValue: user.username }, page);
       await page
-        .getByRole('row', { name: new RegExp(userName) })
+        .getByRole('row', { name: new RegExp(user.username) })
         .getByRole('checkbox')
         .check();
       await page.getByRole('button', { name: 'Next', exact: true }).click();
@@ -677,215 +798,23 @@ test.describe('Credentials - Team and User Access', () => {
       await page.getByRole('button', { name: 'Next', exact: true }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
       await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
-      await navigateTo(page, 'Access', 'Users');
-      await clickTableRow({ filterLabel: 'Username', text: userName }, page);
-      await clickPageAction('Delete user', page);
-      await page.locator('#confirm').click();
-      await page.getByRole('button', { name: 'Delete user' }).click();
-      await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
-      await Credential.ui.delete(page, credentialName);
-    }
-  );
 
-  test(
-    'can remove team role from credential Team Access tab',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      test.setTimeout(120000);
-      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-      const teamName = createE2EName('team');
+      await expect(page.getByRole('link', { name: user.username })).toBeVisible({ timeout: 10000 });
+      await filterTable({ filterLabel: 'Username', filterValue: user.username }, page);
 
-      await navigateTo(page, 'Access Management', 'Teams');
-      await page.getByText('Create team', { exact: true }).click();
-      await page.getByPlaceholder('Enter team name').fill(teamName);
-      await page.getByLabel('Organization').click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill('Default');
-      await page.getByRole('option', { name: 'Default' }).click();
-      await page.getByRole('button', { name: 'Create team' }).click();
-      await expect(page.getByRole('heading', { name: teamName, exact: true })).toBeVisible();
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
-      await page.getByRole('tab', { name: 'Team Access' }).click();
-      await expect(page.getByText('No teams are assigned to this credential.')).toBeVisible({
-        timeout: 10000,
-      });
-      await page.getByRole('link', { name: 'Assign teams' }).click();
-      await expect(page.getByRole('heading', { name: 'Assign teams' })).toBeVisible();
-      await filterTable({ filterLabel: 'Name', filterValue: teamName }, page);
-      await page
-        .getByRole('row', { name: new RegExp(teamName) })
-        .getByRole('checkbox')
-        .check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await page
-        .getByRole('row', { name: /Credential Admin/ })
-        .getByRole('checkbox')
-        .check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await page.getByRole('button', { name: 'Finish', exact: true }).click();
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+      const userRow = page.getByRole('row').filter({ hasText: user.username });
+      await userRow.getByLabel('Manage roles').click();
 
-      await expect(page.getByRole('link', { name: teamName })).toBeVisible({ timeout: 10000 });
-      await filterTable({ filterLabel: 'Team name', filterValue: teamName }, page);
-      const teamRow = page.getByRole('row').filter({ hasText: teamName });
-      await teamRow.getByRole('checkbox').check();
-      await page.getByRole('button', { name: 'Remove role' }).click();
-      await expect(page.getByRole('heading', { name: 'Remove role' })).toBeVisible();
-      await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
-      await page.getByRole('button', { name: 'Remove role' }).click();
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 10000,
-      });
-      await navigateTo(page, 'Access Management', 'Teams');
-      await clickTableRow({ filterLabel: 'Name', text: teamName }, page);
-      await clickPageAction('Delete team', page);
-      await page.locator('#confirm').click();
-      await page.getByRole('button', { name: 'Delete team' }).click();
-      await expect(page.getByTestId('page-title')).toHaveText('Teams');
-      await Credential.ui.delete(page, credentialName);
-    }
-  );
-
-  test(
-    'can remove user role from credential User Access tab',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      test.setTimeout(180000);
-      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-      const userName = `E2E-user-${createE2EName('').replaceAll(/\s+/g, '')}`;
-
-      await navigateTo(page, 'Access', 'Users');
-      await page.getByText('Create user', { exact: true }).click();
-      await page.getByRole('textbox', { name: 'Username' }).fill(userName);
-      await page.getByRole('textbox', { name: 'Password', exact: true }).fill('TestPassword123!');
-      await page
-        .getByRole('textbox', { name: 'Confirm password', exact: true })
-        .fill('TestPassword123!');
-      await page.getByRole('button', { name: 'Create user' }).click();
-      await expect(page.getByRole('heading', { name: userName, exact: true })).toBeVisible();
-
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
-      await page.getByRole('tab', { name: 'User Access' }).click();
-      await page.getByRole('link', { name: 'Assign users' }).click();
-      await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
-      await filterTable({ filterLabel: 'Username', filterValue: userName }, page);
-      await page
-        .getByRole('row', { name: new RegExp(userName) })
-        .getByRole('checkbox')
-        .check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await page
-        .getByRole('row', { name: /Credential Admin/ })
-        .getByRole('checkbox')
-        .check();
-      await page.getByRole('button', { name: 'Next', exact: true }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
-
-      // Wait for user to appear in the list
-      await expect(page.getByRole('link', { name: userName })).toBeVisible({ timeout: 10000 });
-
-      // Filter for the user
-      await filterTable({ filterLabel: 'Username', filterValue: userName }, page);
-
-      // Click the "Manage roles" button
-      const userRow = page.getByRole('row').filter({ hasText: userName });
-      await userRow.getByRole('button', { name: 'Manage roles' }).click();
-
-      // Verify we're on the manage roles page
       await expect(
         page.getByRole('heading', {
-          name: new RegExp(`Manage roles directly assigned to ${userName}`),
+          name: new RegExp(`Manage roles directly assigned to ${user.username}`),
         })
       ).toBeVisible();
 
-      // Uncheck the Credential Admin role
-      const credentialAdminRow = page.getByRole('row', { name: /Credential Admin/ });
-      await credentialAdminRow.getByRole('checkbox').uncheck();
+      await expect(page.getByRole('row', { name: /Credential Admin/ })).toBeVisible();
+      await expect(page.getByText('Has all permissions to a single credential')).toBeVisible();
 
-      // Save the changes
-      await page.getByRole('button', { name: 'Save roles' }).click();
-
-      // Verify we're back on the User Access tab
-      await expect(page.getByRole('tab', { name: 'User Access' })).toBeVisible();
-
-      // Verify the role has been removed (user should no longer appear or have no roles)
-      await page.waitForTimeout(1000);
-
-      await navigateTo(page, 'Access', 'Users');
-      await clickTableRow({ filterLabel: 'Username', text: userName }, page);
-      await clickPageAction('Delete user', page);
-      await page.locator('#confirm').click();
-      await page.getByRole('button', { name: 'Delete user' }).click();
-      await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
-      await Credential.ui.delete(page, credentialName);
-    }
-  );
-
-  test('can manage user roles from User Access tab', { tag: ['@not_mock'] }, async ({ page }) => {
-    test.setTimeout(180000);
-    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-    const userName = `E2E-user-${createE2EName('').replaceAll(/\s+/g, '')}`;
-
-    await navigateTo(page, 'Access', 'Users');
-    await page.getByText('Create user', { exact: true }).click();
-    await page.getByRole('textbox', { name: 'Username' }).fill(userName);
-    await page.getByRole('textbox', { name: 'Password', exact: true }).fill('TestPassword123!');
-    await page
-      .getByRole('textbox', { name: 'Confirm password', exact: true })
-      .fill('TestPassword123!');
-    await page.getByRole('button', { name: 'Create user' }).click();
-    await expect(page.getByRole('heading', { name: userName, exact: true })).toBeVisible();
-
-    await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-    await clickTableRow({ filterLabel: 'Name', text: credentialName }, page);
-    await page.getByRole('tab', { name: 'User Access' }).click();
-    await page.getByRole('link', { name: 'Assign users' }).click();
-    await expect(page.getByRole('heading', { name: 'Assign users' })).toBeVisible();
-    await filterTable({ filterLabel: 'Username', filterValue: userName }, page);
-    await page
-      .getByRole('row', { name: new RegExp(userName) })
-      .getByRole('checkbox')
-      .check();
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page
-      .getByRole('row', { name: /Credential Admin/ })
-      .getByRole('checkbox')
-      .check();
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Finish' }).click();
-    await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
-
-    await expect(page.getByRole('link', { name: userName })).toBeVisible({ timeout: 10000 });
-    await filterTable({ filterLabel: 'Username', filterValue: userName }, page);
-
-    // Find the user row and click the Manage roles button (pencil icon)
-    const userRow = page.getByRole('row').filter({ hasText: userName });
-
-    // Click the Manage roles button (pencil icon) - it's an ARIA button with label
-    await userRow.getByLabel('Manage roles').click();
-
-    // Verify we're on the manage roles page with the longer heading format
-    await expect(
-      page.getByRole('heading', {
-        name: new RegExp(`Manage roles directly assigned to ${userName}`),
-      })
-    ).toBeVisible();
-
-    // Verify the role is displayed in the table
-    await expect(page.getByRole('row', { name: /Credential Admin/ })).toBeVisible();
-    await expect(page.getByText('Has all permissions to a single credential')).toBeVisible();
-
-    // Click Cancel to go back
-    await page.getByRole('button', { name: 'Cancel' }).click();
-
-    await navigateTo(page, 'Access', 'Users');
-    await clickTableRow({ filterLabel: 'Username', text: userName }, page);
-    await clickPageAction('Delete user', page);
-    await page.locator('#confirm').click();
-    await page.getByRole('button', { name: 'Delete user' }).click();
-    await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
-    await Credential.ui.delete(page, credentialName);
+      await page.getByRole('button', { name: 'Cancel' }).click();
+    });
   });
 });
