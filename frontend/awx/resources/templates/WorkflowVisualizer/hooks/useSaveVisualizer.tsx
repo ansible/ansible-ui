@@ -200,7 +200,15 @@ export function useSaveVisualizer(templateId: string) {
             }
           }
 
-          if (typeof value === 'undefined' || value === null || value === '') {
+          if (value === undefined) {
+            return;
+          }
+          if (value === null || value === '') {
+            if (!isPrompt) {
+              return;
+            }
+            // Prompt field explicitly cleared; send null to the API to remove the node override
+            createNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
             return;
           }
 
@@ -301,7 +309,15 @@ export function useSaveVisualizer(templateId: string) {
               }
             }
 
-            if (typeof value === 'undefined' || value === null || value === '') {
+            if (value === undefined) {
+              return;
+            }
+            if (value === null || value === '') {
+              if (!isPrompt) {
+                return;
+              }
+              // Prompt field explicitly cleared; send null to the API to remove the node override
+              updatedNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
               return;
             }
 
@@ -609,7 +625,7 @@ export function toKeyedObject(
   key: string,
   value: string | number | undefined | null
 ): { [key: string]: string | number } | object {
-  if ((typeof value === 'string' && value !== '') || typeof value === 'number') {
+  if (value !== null && value !== undefined && value !== '') {
     return { [key]: value };
   } else {
     return {};
