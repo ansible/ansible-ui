@@ -11,7 +11,7 @@ import '../../AutomationDashboard.css';
 
 export function AutomationAtAGlance(props: Readonly<{ width?: PageDashboardCardWidth }>) {
   const { t } = useTranslation();
-  const title = t('Automation at a Glance');
+  const title = t('Automation at a glance');
   const { atAGlance, streakCalendar } = useAutomationLeaderboardsView();
 
   return (

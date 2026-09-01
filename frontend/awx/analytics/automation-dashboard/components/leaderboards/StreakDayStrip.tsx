@@ -7,9 +7,8 @@ import { PageChartLegend } from '@ansible/ansible-ui-framework/PageDashboard/Pag
 import type { StreakDay } from '../../views/useAutomationLeaderboardsView';
 import '../../AutomationDashboard.css';
 
-/** Kept in sync with `.streak-heat-cell--success` / `--empty` in AutomationDashboard.css. */
-const STREAK_SUCCESS_COLOR = 'var(--pf-t--global--color--status--success--default)';
-const STREAK_EMPTY_COLOR = 'var(--pf-t--global--color--nonstatus--gray--100)';
+const STREAK_SUCCESS_COLOR = 'var(--automation-streak-success-color)';
+const STREAK_EMPTY_COLOR = 'var(--automation-streak-empty-color)';
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
@@ -63,7 +62,7 @@ export function StreakDayStrip(
   const { title, streakDays, showLegend, days, isSuccess, getRuns } = props;
   const { t } = useTranslation();
   return (
-    <>
+    <div className="automation-streak-day-strip">
       <Flex
         justifyContent={{ default: 'justifyContentSpaceBetween' }}
         alignItems={{ default: 'alignItemsCenter' }}
@@ -123,6 +122,6 @@ export function StreakDayStrip(
           );
         })}
       </Flex>
-    </>
+    </div>
   );
 }

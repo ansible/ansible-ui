@@ -1,3 +1,17 @@
+.automation-streak-day-strip {
+  --automation-streak-success-color: var(--pf-t--global--color--status--success--default);
+  --automation-streak-empty-color: var(--pf-t--global--color--nonstatus--gray--400);
+  --automation-streak-empty-stripe-color: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 60%,
+    transparent
+  );
+}
+
+.pf-v6-theme-dark .automation-streak-day-strip {
+  --automation-streak-empty-color: var(--pf-t--global--color--nonstatus--gray--300);
+}
+
 .streak-heat-cell {
   flex: 1 1 0;
   min-width: 12px;
@@ -7,16 +21,16 @@
 }
 
 .streak-heat-cell--success {
-  background-color: var(--pf-t--global--color--status--success--default);
+  background-color: var(--automation-streak-success-color);
 }
 
 .streak-heat-cell--empty {
-  background-color: var(--pf-t--global--color--nonstatus--gray--100);
+  background-color: var(--automation-streak-empty-color);
   background-image: linear-gradient(
     -45deg,
     transparent 40%,
-    var(--pf-t--global--color--nonstatus--gray--300) 40%,
-    var(--pf-t--global--color--nonstatus--gray--300) 45%,
+    var(--automation-streak-empty-stripe-color) 40%,
+    var(--automation-streak-empty-stripe-color) 45%,
     transparent 45%
   );
 }
@@ -25,8 +39,8 @@
   background-image: linear-gradient(
     -45deg,
     transparent 40%,
-    var(--pf-t--global--color--nonstatus--gray--300) 40%,
-    var(--pf-t--global--color--nonstatus--gray--300) 45%,
+    var(--automation-streak-empty-stripe-color) 40%,
+    var(--automation-streak-empty-stripe-color) 45%,
     transparent 45%
   );
 }
