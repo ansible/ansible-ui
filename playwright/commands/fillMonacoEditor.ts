@@ -7,17 +7,18 @@ import { Locator, Page } from '@playwright/test';
  * `<textarea>` or `[contenteditable]`. Playwright's `.fill()` only works on
  * `<input>`, `<textarea>`, or `[contenteditable]` elements.
  *
- * Clipboard paste (Ctrl+V) is used instead of `keyboard.type()` or
- * `keyboard.insertText()`:
- * - `type()` sends per-keystroke events and triggers Monaco auto-closing
- *   brackets/quotes, which corrupts structured JSON/YAML.
- * - `insertText()` dispatches only an `input` event and may not update the
- *   Monaco model / form value when native-edit-context is enabled.
- * Paste inserts the whole string, bypasses auto-closing, and fires Monaco's
- * content-change handlers so React Hook Form stays in sync.
+ * Strategy varies by browser:
+ * - Chromium/Firefox: Clipboard paste (Ctrl+V) bypasses auto-closing brackets
+ *   and reliably triggers Monaco's content-change handlers.
+ * - WebKit: Pastes via a temporary textarea (clipboard API is unavailable due
+ *   to permission restrictions on non-Chromium browsers). The textarea is
+ *   created, filled, copied to clipboard via JS, then pasted into Monaco.
  *
- * Empty string: select-all + Backspace. Pasting or inserting `''` does not
- * reliably clear the current selection.
+ * Why not keyboard.type() everywhere?
+ * - Sends per-keystroke events and triggers Monaco auto-closing brackets/quotes,
+ *   corrupting structured JSON/YAML.
+ *
+ * Empty string: select-all + Backspace (works reliably across all browsers).
  *
  * @param page  - The Playwright Page object
  * @param text  - The text to enter into the editor
@@ -32,8 +33,29 @@ export async function fillMonacoEditor(page: Page, text: string, editorLocator?:
     await page.keyboard.press('Backspace');
     return;
   }
-  await page.evaluate(async (value: string) => {
-    await navigator.clipboard.writeText(value);
-  }, text);
-  await page.keyboard.press('Control+v');
+
+  const browserName = page.context().browser()?.browserType().name() || 'chromium';
+
+  if (browserName === 'webkit') {
+    // WebKit: navigator.clipboard is unavailable (permissions ignored on non-Chromium).
+    // Workaround: copy via a temporary textarea + execCommand, then paste into Monaco.
+    await page.evaluate((value: string) => {
+      const textarea = document.createElement('textarea');
+      textarea.value = value;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }, text);
+    // textarea.select() steals focus; restore Monaco focus and selection before paste.
+    await editor.click({ force: true });
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+v');
+  } else {
+    // Chromium/Firefox: Use navigator.clipboard to paste without per-keystroke events.
+    await page.evaluate(async (value: string) => {
+      await navigator.clipboard.writeText(value);
+    }, text);
+    await page.keyboard.press('Control+v');
+  }
 }
