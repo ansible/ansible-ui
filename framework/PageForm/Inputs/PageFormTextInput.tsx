@@ -24,6 +24,7 @@ import { PageActions } from '../../PageActions/PageActions';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
+import { usePageFormOptionsContext } from '../PageFormOptionsContext';
 import { PageFormGroup } from './PageFormGroup';
 import { useRequiredValidationRule } from './validation-hooks';
 
@@ -273,6 +274,7 @@ export function PageFormTextInput<
   const {
     control,
     setValue,
+    trigger,
     formState: { isSubmitting, isValidating, defaultValues },
   } = useFormContext<TFieldValues>();
 
@@ -280,6 +282,9 @@ export function PageFormTextInput<
 
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
+
+  // Auto-discover field metadata from OPTIONS context
+  const fieldMetadata = usePageFormOptionsContext(name);
 
   // Smart defaults: password fields default to 'new-password', others default to 'off'
   // TypeScript provides type safety for valid autoComplete values
@@ -295,7 +300,7 @@ export function PageFormTextInput<
       control={control}
       shouldUnregister={props.shouldUnregister !== false ? true : false}
       defaultValue={props.defaultValue}
-      render={({ field: { onChange, value, name }, fieldState: { error } }) => {
+      render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message
           ? validate && isValidating
             ? translations.validating
@@ -361,6 +366,15 @@ export function PageFormTextInput<
                   id={id}
                   placeholder={placeholder}
                   onChange={(_event, value: string) => onChangeHandler(value)}
+                  onBlur={
+                    fieldMetadata?.pattern
+                      ? async () => {
+                          onBlur();
+                          // Manually trigger validation for this field
+                          await trigger(name);
+                        }
+                      : onBlur
+                  }
                   value={parsedValue ?? ''}
                   aria-describedby={id ? `${id}-form-group` : undefined}
                   validated={helperTextInvalid ? 'error' : undefined}
@@ -441,7 +455,43 @@ export function PageFormTextInput<
       }}
       rules={{
         required,
-        validate,
+        validate: (value, formValues) => {
+          // Get the default value for this field to check if it's dirty
+          const defaultValue = getValue(defaultValues as object, name) as typeof value;
+          const isFieldDirty = value !== defaultValue;
+
+          // OPTIONS pattern validation (fires first, only when isDirty)
+          if (fieldMetadata?.pattern && isFieldDirty) {
+            // Apply pattern validation
+            if (value && typeof value === 'string') {
+              // Use flags if provided (e.g., 'u' for Unicode support)
+              const regex = new RegExp(fieldMetadata.pattern, fieldMetadata.flags);
+              if (!regex.test(value)) {
+                return (
+                  fieldMetadata.pattern_description ||
+                  `This field does not match the required pattern.`
+                );
+              }
+            }
+          }
+
+          // User-provided validate functions (fire after OPTIONS pattern)
+          if (validate) {
+            if (typeof validate === 'function') {
+              return validate(value, formValues);
+            } else if (typeof validate === 'object') {
+              // Execute all validation functions in the object
+              for (const [_key, validationFn] of Object.entries(validate)) {
+                const result = validationFn(value, formValues);
+                if (result !== true) {
+                  return result;
+                }
+              }
+            }
+          }
+
+          return true;
+        },
 
         minLength:
           typeof label === 'string' && typeof minLength === 'number'
