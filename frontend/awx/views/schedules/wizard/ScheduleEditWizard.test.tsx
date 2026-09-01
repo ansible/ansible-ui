@@ -74,21 +74,35 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
+async function renderEditWizard() {
+  const user = userEvent.setup();
+  render(
+    <TestWrapper>
+      <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
+    </TestWrapper>
+  );
+  await waitFor(() => {
+    expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
+  });
+  // PageWizard sets activeStep in an effect, so the Next footer is not on first paint.
+  await screen.findByRole('button', { name: /^Next$/ });
+  return user;
+}
+
+async function goToRulesStep(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(await screen.findByRole('button', { name: /^Next$/ }));
+  await waitFor(() => {
+    expect(screen.getByText('Schedule Rules')).toBeInTheDocument();
+  });
+}
+
 describe('ScheduleEditWizard', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
   it('should render wizard with correct steps on initial load', async () => {
-    render(
-      <TestWrapper>
-        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
-    });
+    await renderEditWizard();
 
     const nav = screen.getByTestId('wizard-nav');
     expect(nav).toBeInTheDocument();
@@ -99,76 +113,29 @@ describe('ScheduleEditWizard', () => {
   });
 
   it('should render schedule name in title', async () => {
-    render(
-      <TestWrapper>
-        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
-    });
+    await renderEditWizard();
 
     expect(screen.getByTestId('page-title')).toBeInTheDocument();
   });
 
   it('should display rules when navigating to Rules step', async () => {
-    const user = userEvent.setup();
-    render(
-      <TestWrapper>
-        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
-    });
-
-    const nextButton = screen.getByRole('button', { name: /^Next$/ });
-    await user.click(nextButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('Schedule Rules')).toBeInTheDocument();
-    });
+    const user = await renderEditWizard();
+    await goToRulesStep(user);
 
     expect(screen.getByTestId('row-id-1')).toBeInTheDocument();
     expect(screen.getByTestId('row-id-2')).toBeInTheDocument();
   });
 
   it('should show Add rule button on Rules step', async () => {
-    const user = userEvent.setup();
-    render(
-      <TestWrapper>
-        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
-    });
-
-    await user.click(screen.getByRole('button', { name: /^Next$/ }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Schedule Rules')).toBeInTheDocument();
-    });
+    const user = await renderEditWizard();
+    await goToRulesStep(user);
 
     expect(screen.getByRole('button', { name: /add rule/i })).toBeInTheDocument();
   });
 
   it('should have actions column with edit and delete for each rule row', async () => {
-    const user = userEvent.setup();
-    render(
-      <TestWrapper>
-        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
-    });
-
-    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    const user = await renderEditWizard();
+    await goToRulesStep(user);
 
     await waitFor(() => {
       expect(screen.getByTestId('row-id-1')).toBeInTheDocument();
@@ -182,22 +149,8 @@ describe('ScheduleEditWizard', () => {
   });
 
   it('should render rule rows with RRule column', async () => {
-    const user = userEvent.setup();
-    render(
-      <TestWrapper>
-        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
-    });
-
-    await user.click(screen.getByRole('button', { name: /^Next$/ }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Schedule Rules')).toBeInTheDocument();
-    });
+    const user = await renderEditWizard();
+    await goToRulesStep(user);
 
     expect(screen.getByText('RRule')).toBeInTheDocument();
     expect(screen.getByTestId('row-id-1')).toBeInTheDocument();
@@ -205,18 +158,8 @@ describe('ScheduleEditWizard', () => {
   });
 
   it('should add new rule when clicking Add rule and Save rule', async () => {
-    const user = userEvent.setup();
-    render(
-      <TestWrapper>
-        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
-    });
-
-    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    const user = await renderEditWizard();
+    await goToRulesStep(user);
 
     await waitFor(() => {
       expect(screen.getByTestId('row-id-1')).toBeInTheDocument();

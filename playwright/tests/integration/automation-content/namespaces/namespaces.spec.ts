@@ -1,10 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Namespace } from '@ansible/playwright/utils';
-import { createE2EName } from '@ansible/playwright/commands/createE2EName';
-import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
-import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
+import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
@@ -23,8 +24,7 @@ test.describe('Hub - Namespaces', () => {
       await expect(page).toHaveURL(/\/namespaces\/create/);
       await page.getByTestId('name').fill(namespaceName);
       await page.getByTestId('company').fill('test company');
-      await page.locator('.view-lines').click();
-      await page.keyboard.type('name: example_namespace');
+      await fillMonacoEditor(page, 'name: example_namespace');
       await page.getByText('Preview', { exact: true }).click();
       await expect(page.getByTestId('resources-form-group')).toContainText(
         'name: example_namespace'

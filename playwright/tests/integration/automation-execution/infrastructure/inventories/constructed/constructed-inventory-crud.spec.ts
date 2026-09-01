@@ -176,25 +176,16 @@ test.describe('Constructed Inventory', () => {
         await clickPageAction('Edit inventory', page);
         await expect(page.getByRole('heading', { name: 'Edit' })).toBeVisible();
 
-        // Update source vars to add strict mode and bad variables
-        await page.locator('.view-line').click();
-        await page.keyboard.press('Control+a');
-
-        // Type YAML line by line with actual Enter key presses
-        const yamlLines = [
-          `plugin: constructed`,
-          `strict: true`,
-          `groups:`,
-          `  is_shutdown: "state | default('running') == 'shutdown'"`,
-          `  product_dev: "account_alias == 'product_dev'"`,
-        ];
-
-        for (let i = 0; i < yamlLines.length; i++) {
-          await page.keyboard.type(yamlLines[i]);
-          if (i < yamlLines.length - 1) {
-            await page.keyboard.press('Enter');
-          }
-        }
+        await fillMonacoEditor(
+          page,
+          [
+            'plugin: constructed',
+            'strict: true',
+            'groups:',
+            `  is_shutdown: "state | default('running') == 'shutdown'"`,
+            `  product_dev: "account_alias == 'product_dev'"`,
+          ].join('\n')
+        );
 
         // Save and wait for navigation
         await page.getByRole('button', { name: 'Save inventory' }).click();
