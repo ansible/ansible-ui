@@ -38,19 +38,38 @@ test(
     await expect(page.locator('dl')).toContainText('Policy enforcement');
     await expect(page.getByTestId('policy-enforcement')).toContainText(opaPolicyPath);
 
-    await page.getByRole('button', { name: 'Edit organization' }).click();
-    await page.getByRole('textbox', { name: 'Name' }).fill(`${organizationName}-edited`);
-    await page.getByRole('textbox', { name: 'Policy enforcement' }).fill(`${opaPolicyPath}-edit`);
-    await page.getByRole('button', { name: 'Next' }).click();
-    await expect(page.locator('dl')).toContainText(`${organizationName}-edited`);
-    await expect(page.locator('dl')).toContainText(`${opaPolicyPath}-edit`);
-    await page.getByRole('button', { name: 'Finish' }).click();
+    const editedName = `${organizationName}-edited`;
+    const editedPolicy = `${opaPolicyPath}-edit`;
 
-    await expect(
-      page.getByRole('heading', { name: `${organizationName}-edited`, exact: true })
-    ).toBeVisible();
-    await expect(page.locator('dl')).toContainText(`${opaPolicyPath}-edit`);
-    await Organization.ui.delete(page, `${organizationName}-edited`);
+    await page.getByRole('button', { name: 'Edit organization' }).click();
+    await page.getByRole('textbox', { name: 'Name' }).fill(editedName);
+    await page.getByRole('textbox', { name: 'Policy enforcement' }).fill(editedPolicy);
+    await page.getByRole('button', { name: 'Next' }).click();
+    await expect(page.locator('dl')).toContainText(editedName);
+    await expect(page.locator('dl')).toContainText(editedPolicy);
+
+    const gatewayPatchPromise = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'PATCH' &&
+        response.url().includes('/api/gateway/v1/organizations/') &&
+        response.ok()
+    );
+    const controllerPatchPromise = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'PATCH' &&
+        response.url().includes('/api/controller/v2/organizations/') &&
+        response.ok()
+    );
+    await page.getByRole('button', { name: 'Finish' }).click();
+    await Promise.all([gatewayPatchPromise, controllerPatchPromise]);
+
+    await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByTestId('policy-enforcement')).toContainText(editedPolicy, {
+      timeout: 10_000,
+    });
+    await Organization.ui.delete(page, editedName);
   }
 );
 
