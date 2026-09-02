@@ -362,7 +362,7 @@ not just the mouse (reuse `userEvent.setup()` from **User Interaction**):
 
 ```typescript
 const user = userEvent.setup();
-render(<CredentialForm />);
+render(<MyForm />);
 
 await user.tab();
 expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();

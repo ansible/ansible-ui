@@ -600,13 +600,19 @@ adds an extra render, is easy to desync, and hides the data flow. Five common
 misuses:
 
 ```typescript
-// ❌ Syncing derived state          // ✅ Derive during render
+// ❌ Syncing derived state
 const [full, setFull] = useState('');
 useEffect(() => {
   setFull(`${first} ${last}`);
 }, [first, last]);
-const full = `${first} ${last}`;
+```
 
+```typescript
+// ✅ Derive during render
+const full = `${first} ${last}`;
+```
+
+```typescript
 // ❌ Effect to transform props for rendering → compute inline (memoize only if expensive)
 const visible = useMemo(() => rows.filter((r) => r.active), [rows]);
 
@@ -694,4 +700,3 @@ Reach for the platform before writing (or importing) custom code — see
 `pr_review.md` for the review grep. Deep copy → `structuredClone(obj)`; query
 strings → `URLSearchParams`; request cancellation → `AbortController`; URL
 parsing → `new URL(...)`.
-
