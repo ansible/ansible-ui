@@ -1,12 +1,19 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "i18next", "no-only-tests"],
+  "plugins": ["@typescript-eslint", "i18next", "no-only-tests", "sonarjs"],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
     "project": ["./tsconfig.json"]
   },
-  "ignorePatterns": ["*.cjs", "**/publish/**", "**/dist/**", "**/build/**", "**/node_modules/**", "**/coverage/**"],
+  "ignorePatterns": [
+    "*.cjs",
+    "**/publish/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/node_modules/**",
+    "**/coverage/**"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:jsx-a11y/recommended",
@@ -77,8 +84,38 @@
       }
     },
     {
+      "files": ["frontend/**/*.{ts,tsx}", "platform/**/*.{ts,tsx}", "framework/**/*.{ts,tsx}"],
+      "excludedFiles": [
+        "**/*.test.*",
+        "**/*.cy.*",
+        "**/*.fixture.*",
+        "**/generated/**",
+        "**/*.config.*"
+      ],
+      "rules": {
+        "max-lines": ["warn", 500],
+        "max-lines-per-function": ["warn", 200],
+        "complexity": ["warn", 20],
+        "max-depth": ["warn", 4],
+        "max-params": ["warn", 5],
+        "max-nested-callbacks": ["warn", 4],
+        "sonarjs/cognitive-complexity": ["warn", 15],
+        "sonarjs/no-nested-conditional": "warn"
+      }
+    },
+    {
       "files": ["frontend/**/*.ts", "frontend/**/*.tsx", "platform/**/*.ts", "platform/**/*.tsx"],
-      "excludedFiles": ["**/*.test.*", "**/*.cy.*", "**/*.fixture.*", "**/generated/**", "**/vite.config.*", "**/awx-utils.tsx", "**/eda-utils.tsx", "**/formatPath.tsx", "**/gateway-api-utils.tsx"],
+      "excludedFiles": [
+        "**/*.test.*",
+        "**/*.cy.*",
+        "**/*.fixture.*",
+        "**/generated/**",
+        "**/vite.config.*",
+        "**/awx-utils.tsx",
+        "**/eda-utils.tsx",
+        "**/formatPath.tsx",
+        "**/gateway-api-utils.tsx"
+      ],
       "rules": {
         "no-restricted-syntax": [
           "error",
