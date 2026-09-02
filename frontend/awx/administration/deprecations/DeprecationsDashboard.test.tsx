@@ -1,19 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { DeprecationsDashboard } from './DeprecationsDashboard';
 
-function Wrapper({ children }: { children: ReactNode }) {
-  return (
-    <MemoryRouter>
-      <SWRConfig value={{ provider: () => new Map() }}>{children}</SWRConfig>
-    </MemoryRouter>
-  );
+function Wrapper({ children }: { children: React.ReactNode }) {
+  return <MemoryRouter>{children}</MemoryRouter>;
 }
 
 const mockJobsResponse = {

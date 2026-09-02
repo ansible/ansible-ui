@@ -2,7 +2,6 @@ import { vi, test, afterEach, describe, expect } from 'vitest';
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import {
   IToolbarFilter,
   PageAlertToasterProvider,
@@ -215,13 +214,9 @@ const mockView: IAutomationDashboardView = {
 function testWrapper() {
   return (
     <MemoryRouter>
-      <SWRConfig
-        value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}
-      >
-        <PageAlertToasterProvider>
-          <AutomationDashboard />
-        </PageAlertToasterProvider>
-      </SWRConfig>
+      <PageAlertToasterProvider>
+        <AutomationDashboard />
+      </PageAlertToasterProvider>
     </MemoryRouter>
   );
 }

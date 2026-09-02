@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { JobEvent } from '../../../interfaces/JobEvent';
 import { testFixture as jobFixture } from '../jobDetails.fixture';
@@ -42,16 +41,14 @@ afterAll(() => server.close());
 
 function renderJobOutput(job: typeof jobFixture) {
   return render(
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <JobOutputEvents
-        job={job}
-        reloadJob={vi.fn()}
-        toolbarFilters={[]}
-        filterState={{}}
-        isFollowModeEnabled={false}
-        setIsFollowModeEnabled={vi.fn()}
-      />
-    </SWRConfig>
+    <JobOutputEvents
+      job={job}
+      reloadJob={vi.fn()}
+      toolbarFilters={[]}
+      filterState={{}}
+      isFollowModeEnabled={false}
+      setIsFollowModeEnabled={vi.fn()}
+    />
   );
 }
 
@@ -82,16 +79,14 @@ describe('JobOutputEvents', () => {
 
     const completedJob = { ...jobFixture, status: 'successful' as const };
     rerender(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <JobOutputEvents
-          job={completedJob}
-          reloadJob={vi.fn()}
-          toolbarFilters={[]}
-          filterState={{}}
-          isFollowModeEnabled={false}
-          setIsFollowModeEnabled={vi.fn()}
-        />
-      </SWRConfig>
+      <JobOutputEvents
+        job={completedJob}
+        reloadJob={vi.fn()}
+        toolbarFilters={[]}
+        filterState={{}}
+        isFollowModeEnabled={false}
+        setIsFollowModeEnabled={vi.fn()}
+      />
     );
 
     expect(
@@ -127,8 +122,6 @@ describe('JobOutputEvents', () => {
     const stableReloadJob = vi.fn();
     const stableSetFollow = vi.fn();
     const stableFilterState = {};
-    const swrConfig = { provider: () => new Map() };
-
     vi.mocked(useJobOutput).mockReturnValue({
       jobEventCount: 1,
       getJobOutputEvent: vi.fn(),
@@ -137,16 +130,14 @@ describe('JobOutputEvents', () => {
     });
 
     const { rerender } = render(
-      <SWRConfig value={swrConfig}>
-        <JobOutputEvents
-          job={jobFixture}
-          reloadJob={stableReloadJob}
-          toolbarFilters={[]}
-          filterState={stableFilterState}
-          isFollowModeEnabled={false}
-          setIsFollowModeEnabled={stableSetFollow}
-        />
-      </SWRConfig>
+      <JobOutputEvents
+        job={jobFixture}
+        reloadJob={stableReloadJob}
+        toolbarFilters={[]}
+        filterState={stableFilterState}
+        isFollowModeEnabled={false}
+        setIsFollowModeEnabled={stableSetFollow}
+      />
     );
 
     const firstCallCount = jobEventToRowsSpy.mock.calls.length;
@@ -160,16 +151,14 @@ describe('JobOutputEvents', () => {
     });
 
     rerender(
-      <SWRConfig value={swrConfig}>
-        <JobOutputEvents
-          job={jobFixture}
-          reloadJob={stableReloadJob}
-          toolbarFilters={[]}
-          filterState={stableFilterState}
-          isFollowModeEnabled={false}
-          setIsFollowModeEnabled={stableSetFollow}
-        />
-      </SWRConfig>
+      <JobOutputEvents
+        job={jobFixture}
+        reloadJob={stableReloadJob}
+        toolbarFilters={[]}
+        filterState={stableFilterState}
+        isFollowModeEnabled={false}
+        setIsFollowModeEnabled={stableSetFollow}
+      />
     );
 
     expect(jobEventToRowsSpy.mock.calls.length).toBe(firstCallCount);
@@ -204,8 +193,6 @@ describe('JobOutputEvents', () => {
     const stableFilterState = {};
     const stableReloadJob = vi.fn();
     const stableSetFollow = vi.fn();
-    const swrConfig = { provider: () => new Map() };
-
     vi.mocked(useJobOutput).mockReturnValue({
       jobEventCount: 1,
       getJobOutputEvent: vi.fn(),
@@ -214,16 +201,14 @@ describe('JobOutputEvents', () => {
     });
 
     const { rerender } = render(
-      <SWRConfig value={swrConfig}>
-        <JobOutputEvents
-          job={jobFixture}
-          reloadJob={stableReloadJob}
-          toolbarFilters={[]}
-          filterState={stableFilterState}
-          isFollowModeEnabled={false}
-          setIsFollowModeEnabled={stableSetFollow}
-        />
-      </SWRConfig>
+      <JobOutputEvents
+        job={jobFixture}
+        reloadJob={stableReloadJob}
+        toolbarFilters={[]}
+        filterState={stableFilterState}
+        isFollowModeEnabled={false}
+        setIsFollowModeEnabled={stableSetFollow}
+      />
     );
     const callsAfterFirstRender = jobEventToRowsSpy.mock.calls.length;
     expect(callsAfterFirstRender).toBeGreaterThanOrEqual(1);
@@ -238,16 +223,14 @@ describe('JobOutputEvents', () => {
     });
 
     rerender(
-      <SWRConfig value={swrConfig}>
-        <JobOutputEvents
-          job={jobFixture}
-          reloadJob={stableReloadJob}
-          toolbarFilters={[]}
-          filterState={stableFilterState}
-          isFollowModeEnabled={false}
-          setIsFollowModeEnabled={stableSetFollow}
-        />
-      </SWRConfig>
+      <JobOutputEvents
+        job={jobFixture}
+        reloadJob={stableReloadJob}
+        toolbarFilters={[]}
+        filterState={stableFilterState}
+        isFollowModeEnabled={false}
+        setIsFollowModeEnabled={stableSetFollow}
+      />
     );
 
     const callsForNewEvent = jobEventToRowsSpy.mock.calls.filter((args) => args[0]?.counter === 2);
@@ -277,8 +260,6 @@ describe('JobOutputEvents', () => {
 
     const stableReloadJob = vi.fn();
     const stableSetFollow = vi.fn();
-    const swrConfig = { provider: () => new Map() };
-
     vi.mocked(useJobOutput).mockReturnValue({
       jobEventCount: 1,
       getJobOutputEvent: vi.fn(),
@@ -287,16 +268,14 @@ describe('JobOutputEvents', () => {
     });
 
     const { rerender } = render(
-      <SWRConfig value={swrConfig}>
-        <JobOutputEvents
-          job={jobFixture}
-          reloadJob={stableReloadJob}
-          toolbarFilters={[]}
-          filterState={{}}
-          isFollowModeEnabled={false}
-          setIsFollowModeEnabled={stableSetFollow}
-        />
-      </SWRConfig>
+      <JobOutputEvents
+        job={jobFixture}
+        reloadJob={stableReloadJob}
+        toolbarFilters={[]}
+        filterState={{}}
+        isFollowModeEnabled={false}
+        setIsFollowModeEnabled={stableSetFollow}
+      />
     );
 
     expect(jobEventToRowsSpy.mock.calls.length).toBeGreaterThanOrEqual(1);
@@ -312,16 +291,14 @@ describe('JobOutputEvents', () => {
     });
 
     rerender(
-      <SWRConfig value={swrConfig}>
-        <JobOutputEvents
-          job={jobFixture}
-          reloadJob={stableReloadJob}
-          toolbarFilters={[]}
-          filterState={newFilterState}
-          isFollowModeEnabled={false}
-          setIsFollowModeEnabled={stableSetFollow}
-        />
-      </SWRConfig>
+      <JobOutputEvents
+        job={jobFixture}
+        reloadJob={stableReloadJob}
+        toolbarFilters={[]}
+        filterState={newFilterState}
+        isFollowModeEnabled={false}
+        setIsFollowModeEnabled={stableSetFollow}
+      />
     );
 
     const callsForEvent1 = jobEventToRowsSpy.mock.calls.filter((args) => args[0]?.counter === 1);
