@@ -13,22 +13,23 @@ API paths like `/api/v2/...` or `/api/eda/v1/...` are errors.
 ```typescript
 // AWX — /api/v2/...
 import { awxAPI } from '../../common/api/awx-utils';
-awxAPI`/users/${id}/`               // → /api/v2/users/42/
+awxAPI`/users/${id}/`; // → /api/v2/users/42/
 
 // EDA — /api/eda/v1/...
 import { edaAPI } from '../../common/eda-utils';
-edaAPI`/activations/`               // → /api/eda/v1/activations/
+edaAPI`/activations/`; // → /api/eda/v1/activations/
 
 // Hub — /api/galaxy/...
 import { hubAPI } from '../../common/api/formatPath';
-hubAPI`/v3/collections/`            // → /api/galaxy/v3/collections/
+hubAPI`/v3/collections/`; // → /api/galaxy/v3/collections/
 
 // Platform (Gateway) — /api/gateway/v1/...
 import { gatewayAPI } from '../../utils/gateway-api-utils';
-gatewayAPI`/authenticators/`        // → /api/gateway/v1/authenticators/
+gatewayAPI`/authenticators/`; // → /api/gateway/v1/authenticators/
 ```
 
 Source files:
+
 - `frontend/awx/common/api/awx-utils.tsx`
 - `frontend/eda/common/eda-utils.tsx`
 - `frontend/hub/common/api/formatPath.tsx`
@@ -53,16 +54,22 @@ const putRequest = usePutRequest<RequestBody, ResponseBody>();
 const patchRequest = usePatchRequest<RequestBody, ResponseBody>();
 const deleteRequest = useDeleteRequest();
 
-await postRequest(url, body);   // POST — auto-clears SWR cache for url
-await putRequest(url, body);    // PUT — auto-clears cache
-await patchRequest(url, body);  // PATCH — auto-clears cache
-await deleteRequest(url);       // DELETE — auto-clears cache
+await postRequest(url, body); // POST — auto-clears SWR cache for url
+await putRequest(url, body); // PUT — auto-clears cache
+await patchRequest(url, body); // PATCH — auto-clears cache
+await deleteRequest(url); // DELETE — auto-clears cache
 ```
 
 ### Function-based (for use outside components or in SWR fetchers)
 
 ```typescript
-import { requestGet, postRequest, requestPatch, requestPut, requestDelete } from '@ansible/common-ui/crud/Data';
+import {
+  requestGet,
+  postRequest,
+  requestPatch,
+  requestPut,
+  requestDelete,
+} from '@ansible/common-ui/crud/Data';
 
 const data = await requestGet<User>(url, signal);
 await postRequest<ResponseBody, RequestBody>(url, body, signal);
@@ -109,7 +116,7 @@ const { data: allCredentialTypes } = useAwxGetAllPages<CredentialType>(awxAPI`/c
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 
 const { clearCacheByKey, clearAllCache } = useClearCache();
-clearCacheByKey(awxAPI`/users/`);  // Smart: clears all SWR keys containing this URL base
+clearCacheByKey(awxAPI`/users/`); // Smart: clears all SWR keys containing this URL base
 ```
 
 Source: `frontend/common/crud/`
@@ -121,12 +128,12 @@ Source: `frontend/common/crud/`
 Never use the raw `PageForm` from the framework. Each workspace wraps it with
 its error adapter:
 
-| Workspace    | Wrapper              | Error Adapter        | Source                                    |
-| ------------ | -------------------- | -------------------- | ----------------------------------------- |
-| **AWX**      | `AwxPageForm`        | `awxErrorAdapter`    | `frontend/awx/common/AwxPageForm.tsx`     |
-| **EDA**      | `EdaPageForm`        | `edaErrorAdapter`    | `frontend/eda/common/EdaPageForm.tsx`     |
-| **Hub**      | `HubPageForm`        | `hubErrorAdapter`    | `frontend/hub/common/HubPageForm.tsx`     |
-| **Platform** | `PlatformPageForm`   | `awxErrorAdapter`*   | `platform/common/PlatformPageForm.tsx`    |
+| Workspace    | Wrapper            | Error Adapter      | Source                                 |
+| ------------ | ------------------ | ------------------ | -------------------------------------- |
+| **AWX**      | `AwxPageForm`      | `awxErrorAdapter`  | `frontend/awx/common/AwxPageForm.tsx`  |
+| **EDA**      | `EdaPageForm`      | `edaErrorAdapter`  | `frontend/eda/common/EdaPageForm.tsx`  |
+| **Hub**      | `HubPageForm`      | `hubErrorAdapter`  | `frontend/hub/common/HubPageForm.tsx`  |
+| **Platform** | `PlatformPageForm` | `awxErrorAdapter`* | `platform/common/PlatformPageForm.tsx` |
 
 *Platform defaults to AWX's error adapter but accepts an override prop.
 
@@ -150,13 +157,14 @@ import { AwxPageForm } from '../../common/AwxPageForm';
 Each workspace API returns errors in different formats. The error adapters
 normalize them to `{ genericErrors[], fieldErrors[] }`.
 
-| Workspace | Error formats handled                                                      |
-| --------- | -------------------------------------------------------------------------- |
-| **AWX**   | `detail`, `__all__`, `inputs` (credentials), `module_args`, `error`, field-by-field |
-| **EDA**   | `detail` (string/array), `non_field_errors`, field-by-field               |
+| Workspace | Error formats handled                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------- |
+| **AWX**   | `detail`, `__all__`, `inputs` (credentials), `module_args`, `error`, field-by-field                |
+| **EDA**   | `detail` (string/array), `non_field_errors`, field-by-field                                        |
 | **Hub**   | Galaxy format (`{ errors: [{ code, detail, source }] }`), Pulp format (field objects), 500 strings |
 
 Each also exports a message parser hook:
+
 - `useAwxErrorMessageParser()` — from `frontend/awx/common/adapters/awxErrorAdapter.tsx`
 - `useEdaErrorMessageParser()` — from `frontend/eda/common/edaErrorAdapter.tsx`
 - `useHubErrorMessageParser()` — from `frontend/hub/common/adapters/hubErrorAdapter.tsx`
@@ -169,28 +177,29 @@ Use these parsers when displaying errors outside of PageForm (e.g., toast alerts
 
 Use the framework's PageForm inputs from `framework/PageForm/Inputs/`:
 
-| Component                     | Use for                                   |
-| ----------------------------- | ----------------------------------------- |
-| `PageFormTextInput`           | Text, email, password, number fields      |
-| `PageFormTextArea`            | Multiline text                            |
-| `PageFormSelect`              | Static dropdown                           |
-| `PageFormSingleSelect`        | Single-select with search                 |
-| `PageFormMultiSelect`         | Multi-select dropdown                     |
-| `PageFormAsyncSingleSelect`   | Async-loading single select (API-backed)  |
-| `PageFormAsyncMultiSelect`    | Async-loading multi select (API-backed)   |
-| `PageFormCreatableSelect`     | User can type new options                 |
-| `PageFormCheckbox`            | Boolean toggle (checkbox)                 |
-| `PageFormSwitch`              | Boolean toggle (switch)                   |
-| `PageFormDataEditor`          | JSON/YAML code editor (Monaco)            |
-| `PageFormSecret`              | Password with show/hide toggle            |
-| `PageFormDateTimePicker`      | Date and time picker                      |
-| `PageFormFileUpload`          | File upload                               |
-| `PageFormSlider`              | Numeric slider                            |
-| `PageFormToggleGroup`         | Toggle button group                       |
-| `PageFormMarkdown`            | Markdown editor                           |
-| `PageFormMultiInput`          | Multi-value text input                    |
+| Component                   | Use for                                  |
+| --------------------------- | ---------------------------------------- |
+| `PageFormTextInput`         | Text, email, password, number fields     |
+| `PageFormTextArea`          | Multiline text                           |
+| `PageFormSelect`            | Static dropdown                          |
+| `PageFormSingleSelect`      | Single-select with search                |
+| `PageFormMultiSelect`       | Multi-select dropdown                    |
+| `PageFormAsyncSingleSelect` | Async-loading single select (API-backed) |
+| `PageFormAsyncMultiSelect`  | Async-loading multi select (API-backed)  |
+| `PageFormCreatableSelect`   | User can type new options                |
+| `PageFormCheckbox`          | Boolean toggle (checkbox)                |
+| `PageFormSwitch`            | Boolean toggle (switch)                  |
+| `PageFormDataEditor`        | JSON/YAML code editor (Monaco)           |
+| `PageFormSecret`            | Password with show/hide toggle           |
+| `PageFormDateTimePicker`    | Date and time picker                     |
+| `PageFormFileUpload`        | File upload                              |
+| `PageFormSlider`            | Numeric slider                           |
+| `PageFormToggleGroup`       | Toggle button group                      |
+| `PageFormMarkdown`          | Markdown editor                          |
+| `PageFormMultiInput`        | Multi-value text input                   |
 
 Workspace-specific resource selectors also exist:
+
 - `PageFormSingleSelectAwxResource` / `PageFormMultiSelectAwxResource`
 - `PageFormSingleSelectEdaResource` / `PageFormMultiSelectEdaResource`
 - `PageFormSelectOrganization`, `PageFormLabelSelect`, etc.
@@ -237,6 +246,7 @@ export function EditUser() {
 ```
 
 Key points:
+
 - `PageFormSubmitHandler<T>` receives `(data, setError, setFieldError)`
 - Form data type may include extra fields not in the API type
   (e.g., `confirmPassword`, `userType`)
@@ -253,11 +263,11 @@ Source: `frontend/awx/access/users/UserForm.tsx`
 Each workspace has its own view hook. They differ in type constraints and
 response format handling.
 
-| Workspace | Hook               | Type constraint           | Response format                                   |
-| --------- | ------------------ | ------------------------- | ------------------------------------------------- |
-| **AWX**   | `useAwxView<T>`    | `T extends { id: number }`| `{ count, results, next, previous }`              |
-| **EDA**   | `useEdaView<T>`    | `T extends { id: number \| string }` | `{ count, results }`               |
-| **Hub**   | `useHubView<T>`    | `T extends object` (requires `keyFn`) | Galaxy: `{ meta: { count }, data, links }` or Pulp: `{ count, results }` |
+| Workspace | Hook            | Type constraint                       | Response format                                                          |
+| --------- | --------------- | ------------------------------------- | ------------------------------------------------------------------------ |
+| **AWX**   | `useAwxView<T>` | `T extends { id: number }`            | `{ count, results, next, previous }`                                     |
+| **EDA**   | `useEdaView<T>` | `T extends { id: number \| string }`  | `{ count, results }`                                                     |
+| **Hub**   | `useHubView<T>` | `T extends object` (requires `keyFn`) | Galaxy: `{ meta: { count }, data, links }` or Pulp: `{ count, results }` |
 
 ```typescript
 // AWX
@@ -266,7 +276,7 @@ const view = useAwxView<Credential>({
   toolbarFilters,
   tableColumns,
   queryParams,
-  disableQueryString,  // Use in modals/details
+  disableQueryString, // Use in modals/details
 });
 
 // EDA
@@ -281,7 +291,7 @@ const view = useHubView<HubNamespace>({
   url: hubAPI`/v3/namespaces/`,
   toolbarFilters,
   tableColumns,
-  keyFn: (item) => item.name,  // Required for Hub
+  keyFn: (item) => item.name, // Required for Hub
 });
 ```
 
@@ -289,6 +299,7 @@ All return: `pageItems`, `itemCount`, `error`, `refresh()`, `updateItem()`,
 plus pagination, sorting, filtering, and selection state.
 
 Source files:
+
 - `frontend/awx/common/useAwxView.tsx`
 - `frontend/eda/common/useEventDrivenView.tsx`
 - `frontend/hub/common/useHubView.tsx`
@@ -393,50 +404,62 @@ These check `resource.summary_fields.user_capabilities.edit/delete/copy`.
 The framework exports 79+ components. Before creating anything new, check here:
 
 ### Page Structure
+
 `PageLayout`, `PageBody`, `PageHeader`, `PageMasthead`, `PageNavigation`,
 `PageApp`, `PageFramework`, `PageTabs`, `PageTitle`
 
 ### Data Display
+
 `PageTable`, `PageDetails`, `PageDetailsFromColumns`, `PageDashboard`,
 `PageDashboardCard`, `PageDashboardChart`, `PageDashboardCount`
 
 ### Forms
+
 `PageForm`, `GenericForm`, `PageFormCheckbox`, `PageFormSelect`,
 `PageFormSwitch`, `PageFormTextArea`, `PageFormTextInput`,
 `PageFormDataEditor`, `PageFormAsyncSingleSelect`, `PageFormAsyncMultiSelect`
 
 ### Dialogs
+
 `PageDialog`, `BulkActionDialog`, `BulkConfirmationDialog`,
 `MultiSelectDialog`, `useSelectDialog`
 
 ### Wizards
+
 `PageWizard`, `PageWizardStep`, `usePageWizard()`
 
 ### Actions
+
 `PageAction`, `PageActions` (with `PageActionType` and `PageActionSelection`)
 
 ### Toolbar & Filtering
+
 `PageToolbar`, `ToolbarTextFilter`, `ToolbarSingleSelectFilter`,
 `ToolbarMultiSelectFilter`, `ToolbarAsyncSingleSelectFilter`,
 `ToolbarAsyncMultiSelectFilter`, `ToolbarDateRangeFilter`
 
 ### Empty States
+
 `PageNotFound`, `PageNotImplemented`, `EmptyStateError`, `EmptyStateNoData`,
 `EmptyStateFilter`, `EmptyStateUnauthorized`
 
 ### Notifications
+
 `PageAlertToaster`, `usePageAlertToaster()`, `PageNotificationsIcon`
 
 ### Cell Renderers
+
 `TextCell`, `DateTimeCell`, `BytesCell`, `ElapsedTimeCell`, `LabelsCell`,
 `CopyCell`
 
 ### Hooks
+
 `useView`, `useInMemoryView`, `usePageSettings`, `usePageNavigate`,
 `useGetPageUrl`, `usePageDialogs`, `usePageAlertToaster`, `useBreakPoint`,
 `useID`, `useClipboard`, `useAbortController`
 
 ### Utilities
+
 `LoadingPage`, `Scrollable`, `ErrorBoundary`, `Collapse`, `Help`,
 `StandardPopover`, `BulkSelector`, `RunningIcon`, `pfcolors`
 
@@ -462,6 +485,7 @@ const url = getPageUrl(AwxRoute.Users);
 ```
 
 Route enum naming convention: `WorkspaceRoute.ResourceAction`
+
 - `AwxRoute.Users`, `AwxRoute.CreateUser`, `AwxRoute.EditUser`, `AwxRoute.UserDetails`
 - `EdaRoute.RulebookActivations`, `EdaRoute.CreateRulebookActivation`
 - Route enum values use kebab-case: `'awx-users'`, `'eda-rulebook-activations'`
@@ -473,31 +497,39 @@ Source: `frontend/awx/main/AwxRoutes.tsx`, `frontend/eda/main/EdaRoutes.tsx`
 ## 12. Common Utilities
 
 ### Shared Columns (`frontend/common/columns.tsx`)
+
 `useIdColumn<T>()`, `useNameColumn<T>()`, `useDescriptionColumn<T>()`,
 `useLastRanColumn()`
 
 ### Key Functions (`frontend/common/utils/nameKeyFn.tsx`)
+
 `nameKeyFn(item)` — returns `item.name`
 `idKeyFn(item)` — returns `item.id`
 
 ### Polling (`frontend/common/poll.ts`)
+
 `poll<T>(fn, check, interval?, maxAttempts?)` — poll until condition met
 
 ### Virtual Scrolling (`frontend/common/utils/useVirtualized.tsx`)
+
 `useVirtualizedList<T>(containerRef, items)` — virtual list rendering
 
 ### URL Validation (`frontend/common/validation/useIsValidUrl.tsx`)
+
 `useIsValidUrl()` — returns validator for HTTP/HTTPS URLs
 
 ### String Utilities (`frontend/awx/common/util/strings.ts`)
+
 `toTitleCase()`, `truncateString()`, `stringIsUUID()`, `arrayToString()`,
 `stringToArray()`
 
 ### Hub Task Polling (`frontend/hub/common/api/hub-api-utils.tsx`)
+
 `waitForTask(taskHref, signal, minDelay, multiplier, retries)` — exponential
 backoff for async Hub operations (returns 202 with task reference)
 
 ### Request Error (`frontend/common/crud/RequestError.ts`)
+
 `RequestError` class with `statusCode`, `body`, `json`, `details`
 `createRequestError(response)` — factory from HTTP response
 `isRequestError(error)` — type guard
@@ -589,8 +621,10 @@ This is enforced by SonarCloud rule S6759.
 
 ## 19. React & TypeScript Patterns
 
-§15 lists the ESLint rules; this section covers patterns lint does not catch,
-each with the reason and the fix.
+§15 lists the ESLint rules; this section covers patterns the current lint
+configuration does not enforce, each with the reason and the fix. Although
+`eslint-plugin-react-hooks` provides `set-state-in-effect`, enabling it needs a
+separate warning-first evaluation because it may be noisy in this codebase.
 
 ### You might not need an Effect
 
@@ -599,7 +633,7 @@ non-React widgets, the network). Do not use it to react to React itself — it
 adds an extra render, is easy to desync, and hides the data flow. Five common
 misuses:
 
-```typescript
+```tsx
 // ❌ Syncing derived state
 const [full, setFull] = useState('');
 useEffect(() => {
@@ -607,12 +641,12 @@ useEffect(() => {
 }, [first, last]);
 ```
 
-```typescript
+```tsx
 // ✅ Derive during render
 const full = `${first} ${last}`;
 ```
 
-```typescript
+```tsx
 // ❌ Effect to transform props for rendering → compute inline (memoize only if expensive)
 const visible = useMemo(() => rows.filter((r) => r.active), [rows]);
 
