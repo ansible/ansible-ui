@@ -26,7 +26,7 @@ Each workspace has a `vitest.setup.ts` that calls:
 ```typescript
 import '@testing-library/jest-dom/vitest';
 import { mockI18n, enablePreview } from './vitest.common';
-mockI18n();     // Mocks react-i18next globally — t() returns the key string
+mockI18n(); // Mocks react-i18next globally — t() returns the key string
 enablePreview(); // Captures DOM snapshot on test failure via vitest-preview
 ```
 
@@ -56,9 +56,7 @@ const server = setupServer(
   ),
 
   // GET — return single item
-  http.get(awxAPI`/feature_flags_state/`, () =>
-    HttpResponse.json({ MY_FLAG: true })
-  ),
+  http.get(awxAPI`/feature_flags_state/`, () => HttpResponse.json({ MY_FLAG: true })),
 
   // POST — create
   http.post(awxAPI`/users/`, async ({ request }) => {
@@ -79,19 +77,17 @@ afterAll(() => server.close());
 
 ### `onUnhandledRequest` options
 
-| Value     | Use when                                                |
-| --------- | ------------------------------------------------------- |
-| `'warn'`  | Default — logs unhandled requests but doesn't fail      |
-| `'error'` | Strict — fails test on any unmocked API call            |
-| `'bypass'`| Permissive — silently passes through unhandled requests |
+| Value      | Use when                                                |
+| ---------- | ------------------------------------------------------- |
+| `'warn'`   | Default — logs unhandled requests but doesn't fail      |
+| `'error'`  | Strict — fails test on any unmocked API call            |
+| `'bypass'` | Permissive — silently passes through unhandled requests |
 
 ### Override handlers in individual tests
 
 ```typescript
 it('should show error on API failure', async () => {
-  server.use(
-    http.get(awxAPI`/users/`, () => HttpResponse.json({}, { status: 500 }))
-  );
+  server.use(http.get(awxAPI`/users/`, () => HttpResponse.json({}, { status: 500 })));
   // ... render and assert error state
 });
 ```
@@ -178,9 +174,12 @@ it('should return feature flags from API', async () => {
 ### Hook test with timeout (for slow or complex hooks)
 
 ```typescript
-await waitFor(() => {
-  expect(result.current).toBeDefined();
-}, { timeout: 10000 });
+await waitFor(
+  () => {
+    expect(result.current).toBeDefined();
+  },
+  { timeout: 10000 }
+);
 ```
 
 ### Hooks that read OPTIONS response
@@ -189,16 +188,19 @@ await waitFor(() => {
 const server = setupServer(
   http.options(awxAPI`/credentials/`, () =>
     HttpResponse.json({
-      actions: { GET: { credential_type: { filterable: true, type: 'field' } } }
+      actions: { GET: { credential_type: { filterable: true, type: 'field' } } },
     })
   )
 );
 
 it('should generate filters from OPTIONS', async () => {
   const { result } = renderHook(() => useCredentialTypesFilters());
-  await waitFor(() => {
-    expect(result.current.length).toBeGreaterThan(0);
-  }, { timeout: 10000 });
+  await waitFor(
+    () => {
+      expect(result.current.length).toBeGreaterThan(0);
+    },
+    { timeout: 10000 }
+  );
 });
 ```
 
@@ -319,9 +321,12 @@ await waitFor(() => {
 });
 
 // With custom timeout for slow operations
-await waitFor(() => {
-  expect(result.current.data).toBeDefined();
-}, { timeout: 15000 });
+await waitFor(
+  () => {
+    expect(result.current.data).toBeDefined();
+  },
+  { timeout: 15000 }
+);
 ```
 
 ---
@@ -369,18 +374,6 @@ expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
 await user.keyboard('{Enter}');
 ```
 
-**Automated axe scan (optional).** An `axe`/`toHaveNoViolations` smoke check is
-useful but `vitest-axe` is **not** currently a dependency in this repo — adding
-it is a prerequisite, not something to assume. Even then, note the caveat below.
-
-> **Caveat — `happy-dom` limits axe-style checks.** The default test environment
-> is `happy-dom` (see **Test Stack** / **Vitest Configuration**), which does not
-> compute layout or styles. Checks that depend on rendering — color-contrast,
-> visibility/overlap, computed geometry — are unreliable or silent no-ops here.
-> An automated scan under happy-dom only catches structural issues (missing
-> labels, roles, `alt`, ARIA misuse). Contrast and visual-focus checks belong in
-> Playwright against a real browser, not Vitest.
-
 ---
 
 ## Skipping Tests
@@ -399,8 +392,8 @@ Never commit `test.only()` — ESLint rule `no-only-tests` will catch it.
 
 ## What to Test
 
-| Type          | Focus on                                            |
-| ------------- | --------------------------------------------------- |
+| Type          | Focus on                                             |
+| ------------- | ---------------------------------------------------- |
 | **Component** | User interactions, conditional rendering, edge cases |
 | **Hook**      | Return values, state transitions, error handling     |
 | **Utility**   | Input/output transformations, boundary conditions    |
