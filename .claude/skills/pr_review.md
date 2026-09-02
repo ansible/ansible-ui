@@ -138,24 +138,26 @@ When reviewing new components or logic, ask these critical questions:
 - **Extract to `/frontend/common`**: Shared utilities, hooks, or types
 - **Keep in workspace**: Service-specific logic (AWX-only, EDA-only, Hub-only)
 
-### Rule Bypass Checks (BLOCKING)
+### Rule Bypass Checks
 
-New code must not silence the tooling instead of fixing the problem. Grep the
-diff (`git diff devel...HEAD`) for each of these and flag any hit in added
+New code should not silence the tooling instead of fixing the problem. Grep the
+diff (`git diff devel...HEAD`) for each of these and review every hit in added
 lines:
 
-| Pattern                                       | Why it blocks           | Ask for instead                                                          |
-| --------------------------------------------- | ----------------------- | ------------------------------------------------------------------------ |
-| `eslint-disable` / `eslint-disable-next-line` | Suppresses a real rule  | Fix the underlying issue                                                 |
-| `@ts-ignore` / `@ts-expect-error`             | Hides a type error      | Correct the types                                                        |
-| `TODO` / `FIXME` / `HACK` / `XXX`             | Ships unfinished work   | Resolve, or file a tracked issue                                         |
-| Custom deep copy / query parsing / UUID       | Re-invents the platform | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
+| Pattern                                       | Review expectation          | Ask for instead                                                          |
+| --------------------------------------------- | --------------------------- | ------------------------------------------------------------------------ |
+| `eslint-disable` / `eslint-disable-next-line` | Blocks: suppresses a rule   | Fix the underlying issue                                                 |
+| `@ts-ignore` / `@ts-expect-error`             | Require narrow justification | Correct the types where possible; document exceptional cases            |
+| `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work | Resolve, or file a tracked issue                                      |
+| Custom deep copy / query parsing / UUID       | Avoid re-inventing platform APIs | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
 
 Recipe: `git diff devel...HEAD | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK|XXX'`
 
 ### HTML → PatternFly 6 Component Mapping
 
-Flag raw HTML text/interaction elements in new JSX — use the PF6 component:
+Prefer PF6 or existing framework components for standard controls and content.
+Retain semantic HTML where the framework markup requires it or no suitable
+component abstraction exists. Typical mappings:
 
 | Raw HTML          | Use       |
 | ----------------- | --------- |
