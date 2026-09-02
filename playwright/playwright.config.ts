@@ -63,16 +63,20 @@ const config: PlaywrightTestConfig = {
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    // fillMonacoEditor pastes via the clipboard (Ctrl+V). Chromium honors these
-    // permissions; other browsers ignore unknown entries.
-    permissions: ['clipboard-read', 'clipboard-write'],
+    // fillMonacoEditor only needs clipboard-write. Chromium honors this grant;
+    // other browsers ignore unknown permission entries.
+    permissions: ['clipboard-write'],
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: 'live chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Hub copy-CLI specs call navigator.clipboard.readText().
+        permissions: ['clipboard-read', 'clipboard-write'],
+      },
       dependencies: ['coverage setup'],
 
       // Commenting this out for now to see if it is really needed

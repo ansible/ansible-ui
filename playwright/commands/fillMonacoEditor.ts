@@ -8,8 +8,8 @@ import { Locator, Page } from '@playwright/test';
  * `<input>`, `<textarea>`, or `[contenteditable]` elements.
  *
  * Strategy varies by browser:
- * - Chromium/Firefox: Clipboard paste (Ctrl+V) bypasses auto-closing brackets
- *   and reliably triggers Monaco's content-change handlers.
+ * - Chromium/Firefox: Clipboard paste (ControlOrMeta+V) bypasses auto-closing
+ *   brackets and reliably triggers Monaco's content-change handlers.
  * - WebKit: Pastes via a temporary textarea (clipboard API is unavailable due
  *   to permission restrictions on non-Chromium browsers). The textarea is
  *   created, filled, copied to clipboard via JS, then pasted into Monaco.
@@ -28,7 +28,7 @@ import { Locator, Page } from '@playwright/test';
 export async function fillMonacoEditor(page: Page, text: string, editorLocator?: Locator) {
   const editor = editorLocator ?? page.getByRole('textbox', { name: 'Editor content' });
   await editor.click({ force: true });
-  await page.keyboard.press('Control+a');
+  await page.keyboard.press('ControlOrMeta+a');
   if (text === '') {
     await page.keyboard.press('Backspace');
     return;
@@ -49,13 +49,13 @@ export async function fillMonacoEditor(page: Page, text: string, editorLocator?:
     }, text);
     // textarea.select() steals focus; restore Monaco focus and selection before paste.
     await editor.click({ force: true });
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+v');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('ControlOrMeta+v');
   } else {
     // Chromium/Firefox: Use navigator.clipboard to paste without per-keystroke events.
     await page.evaluate(async (value: string) => {
       await navigator.clipboard.writeText(value);
     }, text);
-    await page.keyboard.press('Control+v');
+    await page.keyboard.press('ControlOrMeta+v');
   }
 }
