@@ -20,12 +20,14 @@ Before reviewing the PR, read:
 
 ### Identify PR Scope (CRITICAL)
 
-Review exactly what the PR changes — nothing more, nothing less. Getting the
-scope wrong wastes effort and produces misleading feedback.
+Review only what the PR changes. Getting the scope wrong wastes effort and
+produces misleading feedback.
 
-- Establish the range first: `git log --oneline devel..HEAD` (commits) and
-  `git diff --stat devel...HEAD` (files). Confirm the file list matches what
-  the PR claims to change.
+- When GitHub CLI is available, start with `gh pr view <N> --json
+title,body,files,additions,deletions,baseRefName,headRefName` and
+  `gh pr diff <N> --name-only`. Then use `git diff --stat devel...HEAD` and
+  scoped `git diff` hunks for the detailed review. Confirm the file list
+  matches what the PR claims to change.
 - Use three-dot `devel...HEAD` so you see only this branch's changes, not
   unrelated commits that landed on `devel` after it forked.
 - When the diff is large or surprising, confirm scope with the author before
@@ -144,11 +146,11 @@ New code should not silence the tooling instead of fixing the problem. Grep the
 diff (`git diff devel...HEAD`) for each of these and review every hit in added
 lines:
 
-| Pattern                                       | Review expectation          | Ask for instead                                                          |
-| --------------------------------------------- | --------------------------- | ------------------------------------------------------------------------ |
-| `eslint-disable` / `eslint-disable-next-line` | Blocks: suppresses a rule   | Fix the underlying issue                                                 |
-| `@ts-ignore` / `@ts-expect-error`             | Require narrow justification | Correct the types where possible; document exceptional cases            |
-| `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work | Resolve, or file a tracked issue                                      |
+| Pattern                                       | Review expectation               | Ask for instead                                                          |
+| --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
+| `eslint-disable` / `eslint-disable-next-line` | Blocks: suppresses a rule        | Fix the underlying issue                                                 |
+| `@ts-ignore` / `@ts-expect-error`             | Require narrow justification     | Correct the types where possible; document exceptional cases             |
+| `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work    | Resolve, or file a tracked issue                                         |
 | Custom deep copy / query parsing / UUID       | Avoid re-inventing platform APIs | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
 
 Recipe: `git diff devel...HEAD | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK|XXX'`
@@ -240,8 +242,10 @@ Output should include:
 
 ## 9. Self-Review Quality Gate
 
-Before posting, re-read the review as if from a fresh session with no memory of
-the discussion:
+Before posting, ask a fresh subagent that has not participated in the review to
+independently inspect the PR. Give it the PR URL, base branch, and head branch;
+do not provide the first review's conclusions. Compare its findings before
+posting:
 
 - Does every finding cite a file/line and a concrete reason?
 - Would the feedback still make sense to someone who did not see the diff?
