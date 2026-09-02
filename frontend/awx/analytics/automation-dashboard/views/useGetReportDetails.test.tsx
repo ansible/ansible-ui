@@ -2,8 +2,6 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, test, expect } from 'vitest';
-import { SWRConfig } from 'swr';
-import { ReactNode } from 'react';
 import { ToolbarFilterType } from '../../../../../framework';
 import { useGetReportDetails } from './useGetReportDetails';
 import type { IDashboardDetails } from '../types';
@@ -27,12 +25,6 @@ const dashboardDetailsFixture: IDashboardDetails = {
   host_chart: { kind: 'day', items: [{ label: 'Mon', value: 2 }] },
 };
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}>
-    {children}
-  </SWRConfig>
-);
-
 const server = setupServer();
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
@@ -49,7 +41,7 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportDetails([], {}), { wrapper });
+      const { result } = renderHook(() => useGetReportDetails([], {}));
 
       expect(result.current.isLoading).toBe(true);
       await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -64,7 +56,7 @@ describe('useGetReportDetails', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportDetails([], {}), { wrapper });
+      const { result } = renderHook(() => useGetReportDetails([], {}));
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
@@ -82,7 +74,7 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportDetails([], {}), { wrapper });
+      const { result } = renderHook(() => useGetReportDetails([], {}));
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
@@ -102,7 +94,7 @@ describe('useGetReportDetails', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportDetails([], {}), { wrapper });
+      const { result } = renderHook(() => useGetReportDetails([], {}));
 
       await waitFor(() => expect(result.current.error).toBeDefined());
 
@@ -117,7 +109,7 @@ describe('useGetReportDetails', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportDetails([], {}), { wrapper });
+      const { result } = renderHook(() => useGetReportDetails([], {}));
 
       await waitFor(() => expect(result.current.error).toBeDefined());
 
@@ -136,7 +128,7 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportDetails([], {}), { wrapper });
+      const { result } = renderHook(() => useGetReportDetails([], {}));
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
@@ -153,9 +145,7 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportDetails([], {}, { tz: 'Europe/Ljubljana' }), {
-        wrapper,
-      });
+      const { result } = renderHook(() => useGetReportDetails([], {}, { tz: 'Europe/Ljubljana' }));
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
@@ -182,9 +172,7 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportDetails([nameFilter], filterState), {
-        wrapper,
-      });
+      const { result } = renderHook(() => useGetReportDetails([nameFilter], filterState));
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
@@ -211,9 +199,8 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(
-        () => useGetReportDetails([nameFilter], filterState, { tz: 'UTC' }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useGetReportDetails([nameFilter], filterState, { tz: 'UTC' })
       );
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
@@ -247,9 +234,7 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportDetails([requiredDateRangeFilter], {}), {
-        wrapper,
-      });
+      const { result } = renderHook(() => useGetReportDetails([requiredDateRangeFilter], {}));
 
       await new Promise((resolve) => setTimeout(resolve, 50));
 
@@ -266,9 +251,8 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(
-        () => useGetReportDetails([requiredDateRangeFilter], { period: ['custom', '01/01/2024'] }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useGetReportDetails([requiredDateRangeFilter], { period: ['custom', '01/01/2024'] })
       );
 
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -284,9 +268,8 @@ describe('useGetReportDetails', () => {
         )
       );
 
-      const { result } = renderHook(
-        () => useGetReportDetails([requiredDateRangeFilter], { period: ['custom', '2024-01-01'] }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useGetReportDetails([requiredDateRangeFilter], { period: ['custom', '2024-01-01'] })
       );
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
@@ -299,12 +282,10 @@ describe('useGetReportDetails', () => {
         )
       );
 
-      const { result } = renderHook(
-        () =>
-          useGetReportDetails([requiredDateRangeFilter], {
-            period: ['custom', '2024-01-01', '2024-01-31'],
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useGetReportDetails([requiredDateRangeFilter], {
+          period: ['custom', '2024-01-01', '2024-01-31'],
+        })
       );
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());

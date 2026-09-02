@@ -1,9 +1,8 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
-import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { awxAPI } from './api/awx-utils';
 import { AwxConfigProviderInternal, useAwxConfigState } from './useAwxConfig';
 
@@ -16,15 +15,7 @@ const mockConfig = {
 };
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <SWRConfig
-    value={{
-      dedupingInterval: 0,
-      provider: () => new Map(),
-      shouldRetryOnError: false,
-    }}
-  >
-    <AwxConfigProviderInternal>{children}</AwxConfigProviderInternal>
-  </SWRConfig>
+  <AwxConfigProviderInternal>{children}</AwxConfigProviderInternal>
 );
 
 const server = setupServer();

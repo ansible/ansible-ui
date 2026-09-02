@@ -2,7 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { pulpAPI } from '../../common/api/formatPath';
 import { SignatureKeys } from './SignatureKeys';
@@ -34,11 +33,9 @@ const mockEmptyResponse = {
 
 function renderSignatureKeys() {
   return render(
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter>
-        <SignatureKeys />
-      </MemoryRouter>
-    </SWRConfig>
+    <MemoryRouter>
+      <SignatureKeys />
+    </MemoryRouter>
   );
 }
 

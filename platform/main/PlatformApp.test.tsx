@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import * as GatewayUIAuth from './GatewayUIAuth';
 import * as PlatformActiveUserModule from './PlatformActiveUserProvider';
@@ -30,9 +29,7 @@ vi.mock('./usePlatformNavigation', () => ({
 const mountPlatformApp = (component: React.ReactNode) => {
   return render(
     <MemoryRouter>
-      <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
-        <AwxConfigProvider>{component}</AwxConfigProvider>
-      </SWRConfig>
+      <AwxConfigProvider>{component}</AwxConfigProvider>
     </MemoryRouter>
   );
 };
