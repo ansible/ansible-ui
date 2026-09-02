@@ -2,6 +2,7 @@ import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 import { EdaCredential, EdaCredentialType } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
@@ -110,8 +111,7 @@ test.describe('EDA Credentials', () => {
       }
       await page.getByRole('textbox', { name: 'Name' }).click();
       await page.getByRole('textbox', { name: 'Name' }).fill(credentialName);
-      await page.getByRole('button', { name: 'Organization' }).click();
-      await page.getByRole('option', { name: 'Default The default' }).click();
+      await singleSelectByLabel('Organization', 'Default', page);
       await page.getByRole('button', { name: 'Credential type' }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill('Basic Analytics');
       await page.getByRole('option', { name: 'Basic Analytics' }).click();
