@@ -24,7 +24,6 @@ updates:
           - '@playwright/test'
           - 'typescript'
           - 'vite'
-          - 'webpack'
       non-major-prod:
         dependency-type: 'production'
         update-types:
