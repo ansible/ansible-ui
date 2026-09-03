@@ -238,46 +238,6 @@ describe('ScheduleDetails', () => {
     expect(await screen.findByText('Exrule')).toBeInTheDocument();
   });
 
-  it('should transform EXRULE to RRULE in exception preview POST bodies', async () => {
-    const rruleWithExrule =
-      'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;INTERVAL=1 EXRULE:FREQ=WEEKLY;BYDAY=SA';
-    const capturedBodies: string[] = [];
-
-    server.use(
-      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
-        const body = (await request.json()) as { rrule: string };
-        capturedBodies.push(body.rrule);
-        return HttpResponse.json({ local: [], utc: [] });
-      }),
-      http.get(awxAPI`/schedules/1/`, () =>
-        HttpResponse.json({
-          ...mockSchedule,
-          rrule: rruleWithExrule,
-          timezone: 'America/New_York',
-        })
-      )
-    );
-
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-          <Routes>
-            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
-    );
-
-    await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(2));
-
-    const exceptionPreviewBody = capturedBodies.find(
-      (body) => body.includes('FREQ=WEEKLY') && body.includes('BYDAY=SA')
-    );
-    expect(exceptionPreviewBody).toBeDefined();
-    expect(exceptionPreviewBody).not.toContain('EXRULE:');
-    expect(exceptionPreviewBody).toContain('RRULE:');
-  });
-
   it('should handle schedule rrule with no DTSTART', async () => {
     const rruleNoDtstart = 'RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1';
     const capturedBodies: string[] = [];

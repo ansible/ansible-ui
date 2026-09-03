@@ -25,7 +25,7 @@ export function ScheduleSummary(props: {
       const { local, utc } = await postRequest<{ local: string[]; utc: string[] }>(
         awxAPI`/schedules/preview/`,
         {
-          rrule: props.rrule.replace(/\bEXRULE:/gi, 'RRULE:'),
+          rrule: props.rrule,
         }
       );
       setPreview({ local, utc });
