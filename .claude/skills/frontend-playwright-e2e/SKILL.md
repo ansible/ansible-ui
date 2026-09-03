@@ -65,12 +65,12 @@ test.describe('Feature Name - Description', () => {
 
 ### Test type guidelines
 
-| Type | Meaning |
-| --- | --- |
-| **Unit** | Pure logic/functions, no DOM, mock dependencies, milliseconds (Vitest) |
-| **Component** | Units together, mocked APIs, Vitest, UI/form behavior; don't mock unless necessary |
-| **Integration** | Live API, no mocking; API interaction (RBAC, job execution, DB) |
-| **User acceptance** | Full user flows spanning resources (create template → run job → verify output) |
+| Type                | Meaning                                                                            |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| **Unit**            | Pure logic/functions, no DOM, mock dependencies, milliseconds (Vitest)             |
+| **Component**       | Units together, mocked APIs, Vitest, UI/form behavior; don't mock unless necessary |
+| **Integration**     | Live API, no mocking; API interaction (RBAC, job execution, DB)                    |
+| **User acceptance** | Full user flows spanning resources (create template → run job → verify output)     |
 
 ### Critical Playwright rules
 
