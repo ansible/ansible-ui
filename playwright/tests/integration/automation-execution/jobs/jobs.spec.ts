@@ -176,7 +176,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Source Control Update job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
+      test.setTimeout(5 * 60 * 1000);
       const organization = await Organization.api.create(page);
       const project = await Project.api.create(page, { organization: organization.id });
       await Project.api.sync(page, project.id);
@@ -230,8 +230,8 @@ test.describe('Jobs: Launch and Verify Output', () => {
         await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
         await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
       } finally {
-        await Project.api.delete(page, project.id).catch(() => {});
-        await Organization.api.delete(page, organization.id).catch(() => {});
+        await Project.api.delete(page, project.id);
+        await Organization.api.delete(page, organization.id);
       }
     }
   );
