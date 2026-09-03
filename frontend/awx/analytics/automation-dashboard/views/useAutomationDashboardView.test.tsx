@@ -8,19 +8,25 @@ import type { IAutomationDashboardBaseView } from '../common/useAutomationDashbo
 
 // ─── Hoisted mocks (run before vi.mock factories) ─────────────────────────────
 
-const { mockSetFilterState, mockBaseViewRefresh, mockRefreshDetails, mockExportCsvBase } =
-  vi.hoisted(() => ({
-    mockSetFilterState: vi.fn(),
-    mockBaseViewRefresh: vi.fn(),
-    mockRefreshDetails: vi.fn(),
-    mockExportCsvBase: vi.fn(),
-  }));
+const {
+  mockSetFilterState,
+  mockBaseViewRefresh,
+  mockRefreshDetails,
+  mockExportCsvBase,
+  mockUseAwxActiveUser,
+} = vi.hoisted(() => ({
+  mockSetFilterState: vi.fn(),
+  mockBaseViewRefresh: vi.fn(),
+  mockRefreshDetails: vi.fn(),
+  mockExportCsvBase: vi.fn(),
+  mockUseAwxActiveUser: vi.fn(() => ({ activeAwxUser: { id: 42 } })),
+}));
 
 // ─── Dependency mocks ─────────────────────────────────────────────────────────
 
-// Calculate default dates to match the source code's DEFAULT_FILTERS
-const DEFAULT_END_DATE = new Date(Date.now());
-const DEFAULT_START_DATE = new Date(DEFAULT_END_DATE.getTime() - 7 * 24 * 60 * 60 * 1000);
+vi.mock('../../../common/useAwxActiveUser', () => ({
+  useAwxActiveUser: mockUseAwxActiveUser,
+}));
 
 vi.mock('../common/useAutomationDashboardBaseView', () => ({
   useAutomationDashboardBaseView: vi.fn(() => ({
@@ -33,11 +39,7 @@ vi.mock('../common/useAutomationDashboardBaseView', () => ({
     sortDirection: 'asc',
     setSortDirection: vi.fn(),
     filterState: {
-      period: [
-        AutomationDashboardDateRangeFilterPresets.last_7_days,
-        DEFAULT_START_DATE.toISOString().split('T')[0],
-        DEFAULT_END_DATE.toISOString().split('T')[0],
-      ],
+      period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
     },
     setFilterState: mockSetFilterState,
     clearAllFilters: vi.fn(),
@@ -76,6 +78,8 @@ vi.mock('./useExportCsv', () => ({
 describe('useAutomationDashboardView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    sessionStorage.clear();
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: 42 } });
     mockBaseViewRefresh.mockResolvedValue(undefined);
     mockExportCsvBase.mockResolvedValue(undefined);
   });
@@ -111,8 +115,6 @@ describe('useAutomationDashboardView', () => {
     act(() => {
       result.current.mainTableView.clearAllFilters();
     });
-    // Note: clearAllFilters only resets to the preset, not including dates
-    // The dates are calculated in DEFAULT_FILTERS on module load
     expect(mockSetFilterState).toHaveBeenCalledWith({
       period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
     });
