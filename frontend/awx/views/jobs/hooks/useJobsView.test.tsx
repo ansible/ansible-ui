@@ -1,8 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { ReactNode } from 'react';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useJobsView } from './useJobsView';
@@ -32,21 +30,9 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <SWRConfig
-    value={{
-      dedupingInterval: 0,
-      provider: () => new Map(),
-      shouldRetryOnError: false,
-    }}
-  >
-    {children}
-  </SWRConfig>
-);
-
 describe('useJobsView', () => {
   it('should fetch unified jobs excluding sync launch type', async () => {
-    const { result } = renderHook(() => useJobsView(), { wrapper });
+    const { result } = renderHook(() => useJobsView());
 
     await waitFor(() => {
       expect(result.current.pageItems).toBeDefined();
@@ -58,7 +44,7 @@ describe('useJobsView', () => {
   });
 
   it('should return itemCount from the API response', async () => {
-    const { result } = renderHook(() => useJobsView(), { wrapper });
+    const { result } = renderHook(() => useJobsView());
 
     await waitFor(() => {
       expect(result.current.itemCount).toBe(2);
@@ -72,7 +58,7 @@ describe('useJobsView', () => {
       )
     );
 
-    const { result } = renderHook(() => useJobsView(), { wrapper });
+    const { result } = renderHook(() => useJobsView());
 
     await waitFor(() => {
       expect(result.current.itemCount).toBe(0);

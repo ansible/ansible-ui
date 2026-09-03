@@ -2,11 +2,9 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
-import { SWRConfig } from 'swr';
 import { awxAPI } from './api/awx-utils';
 import { useAwxView, compareByField } from './useAwxView';
 import { AwxHost } from '../interfaces/AwxHost';
-import { ReactNode } from 'react';
 import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
 
 vi.mock('./useAwxConfig', () => ({
@@ -58,18 +56,6 @@ const createMockResponse = (page: number, count = 40) => ({
   previous: page === 2 ? '/api/v2/hosts/?page=1' : null,
   results: mockHosts,
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <SWRConfig
-    value={{
-      dedupingInterval: 0,
-      provider: () => new Map(),
-      shouldRetryOnError: false,
-    }}
-  >
-    {children}
-  </SWRConfig>
-);
 
 let page2ErrorTriggered = false;
 
@@ -123,13 +109,11 @@ describe('useAwxView', () => {
         })
       );
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -154,13 +138,11 @@ describe('useAwxView', () => {
         })
       );
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -182,13 +164,11 @@ describe('useAwxView', () => {
 
   describe('upsertItem', () => {
     test('should update an existing item in the list', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -206,13 +186,11 @@ describe('useAwxView', () => {
     });
 
     test('should prepend a new item to the list', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -257,21 +235,19 @@ describe('useAwxView', () => {
           })
         );
 
-        const { result } = renderHook(
-          () =>
-            useAwxView<AwxHost>({
-              url: '/api/v2/hosts/',
-              disableQueryString: true,
-              toolbarFilters: [
-                {
-                  key: 'name',
-                  label: 'Name',
-                  type: ToolbarFilterType.Search,
-                  query: 'name__icontains',
-                },
-              ],
-            }),
-          { wrapper }
+        const { result } = renderHook(() =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+            toolbarFilters: [
+              {
+                key: 'name',
+                label: 'Name',
+                type: ToolbarFilterType.Search,
+                query: 'name__icontains',
+              },
+            ],
+          })
         );
 
         await waitFor(() => {
@@ -317,21 +293,19 @@ describe('useAwxView', () => {
           })
         );
 
-        const { result } = renderHook(
-          () =>
-            useAwxView<AwxHost>({
-              url: '/api/v2/hosts/',
-              disableQueryString: true,
-              toolbarFilters: [
-                {
-                  key: 'name',
-                  label: 'Name',
-                  type: ToolbarFilterType.Search,
-                  query: 'name__icontains',
-                },
-              ],
-            }),
-          { wrapper }
+        const { result } = renderHook(() =>
+          useAwxView<AwxHost>({
+            url: '/api/v2/hosts/',
+            disableQueryString: true,
+            toolbarFilters: [
+              {
+                key: 'name',
+                label: 'Name',
+                type: ToolbarFilterType.Search,
+                query: 'name__icontains',
+              },
+            ],
+          })
         );
 
         await waitFor(() => {
@@ -370,13 +344,11 @@ describe('useAwxView', () => {
         serviceDownStatusCode: 503,
       });
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       expect(result.current.error).toBeDefined();
@@ -393,13 +365,11 @@ describe('useAwxView', () => {
         serviceDownStatusCode: 503,
       });
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       expect(result.current.error).toBeDefined();
@@ -415,13 +385,11 @@ describe('useAwxView', () => {
         serviceDownStatusCode: 502,
       });
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       expect((result.current.error as Error).message).toBe(
@@ -435,13 +403,11 @@ describe('useAwxView', () => {
         serviceDownStatusCode: undefined,
       });
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       expect(result.current.error).toBeDefined();
@@ -454,13 +420,11 @@ describe('useAwxView', () => {
         serviceDownStatusCode: 503,
       });
 
-      const { result, rerender } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result, rerender } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       expect(result.current.error).toBeDefined();
@@ -488,13 +452,11 @@ describe('useAwxView', () => {
         })
       );
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -514,13 +476,11 @@ describe('useAwxView', () => {
         })
       );
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -534,17 +494,15 @@ describe('useAwxView', () => {
 
   describe('Table columns default sort', () => {
     test('should use defaultSort column when provided', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-            tableColumns: [
-              { header: 'Name', cell: () => '', sort: 'name' },
-              { header: 'Created', cell: () => '', sort: 'created', defaultSort: true },
-            ],
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+          tableColumns: [
+            { header: 'Name', cell: () => '', sort: 'name' },
+            { header: 'Created', cell: () => '', sort: 'created', defaultSort: true },
+          ],
+        })
       );
 
       await waitFor(() => {
@@ -555,17 +513,15 @@ describe('useAwxView', () => {
     });
 
     test('should use first column for sort when no defaultSort specified', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-            tableColumns: [
-              { header: 'Name', cell: () => '', sort: 'name' },
-              { header: 'Created', cell: () => '', sort: 'created' },
-            ],
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+          tableColumns: [
+            { header: 'Name', cell: () => '', sort: 'name' },
+            { header: 'Created', cell: () => '', sort: 'created' },
+          ],
+        })
       );
 
       await waitFor(() => {
@@ -578,13 +534,11 @@ describe('useAwxView', () => {
 
   describe('Item management', () => {
     test('should update item in the list', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -607,13 +561,11 @@ describe('useAwxView', () => {
     });
 
     test('should not update item if items list is undefined', () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       // Call updateItem before items are loaded
@@ -626,13 +578,11 @@ describe('useAwxView', () => {
     });
 
     test('should not update item if item not found in list', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -651,13 +601,11 @@ describe('useAwxView', () => {
 
   describe('Selection with refresh', () => {
     test('should select items and refresh', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -675,13 +623,11 @@ describe('useAwxView', () => {
     });
 
     test('should unselect items and refresh', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -720,13 +666,11 @@ describe('useAwxView', () => {
         })
       );
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -750,13 +694,11 @@ describe('useAwxView', () => {
         })
       );
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -776,13 +718,11 @@ describe('useAwxView', () => {
         })
       );
 
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+        })
       );
 
       await waitFor(() => {
@@ -804,14 +744,12 @@ describe('useAwxView', () => {
     });
 
     test('should handle default selection when provided', async () => {
-      const { result } = renderHook(
-        () =>
-          useAwxView<AwxHost>({
-            url: '/api/v2/hosts/',
-            disableQueryString: true,
-            defaultSelection: [mockHosts[0], mockHosts[1]],
-          }),
-        { wrapper }
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: '/api/v2/hosts/',
+          disableQueryString: true,
+          defaultSelection: [mockHosts[0], mockHosts[1]],
+        })
       );
 
       await waitFor(() => {

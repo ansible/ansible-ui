@@ -3,7 +3,6 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { PlatformAwxUser } from './PlatformAwxUser';
@@ -24,16 +23,12 @@ afterAll(() => server.close());
 
 function wrapper({ children }: { children: ReactNode }) {
   return (
-    <SWRConfig
-      value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}
-    >
-      <MemoryRouter initialEntries={['/users/1']}>
-        <Routes>
-          <Route path="/users/:id" element={children} />
-          <Route path="/mock-resource-route" element={<div>Navigated</div>} />
-        </Routes>
-      </MemoryRouter>
-    </SWRConfig>
+    <MemoryRouter initialEntries={['/users/1']}>
+      <Routes>
+        <Route path="/users/:id" element={children} />
+        <Route path="/mock-resource-route" element={<div>Navigated</div>} />
+      </Routes>
+    </MemoryRouter>
   );
 }
 

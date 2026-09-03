@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { ExecutionEnvironmentDetails } from './ExecutionEnvironmentDetails';
 
 interface ReadmeType {
@@ -61,16 +60,14 @@ describe('ExecutionEnvironmentDetails', () => {
 
   const renderWithFreshCache = () => {
     return render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/execution-environments/test-ee/details']}>
-          <Routes>
-            <Route
-              path="/execution-environments/:id/details"
-              element={<ExecutionEnvironmentDetails />}
-            />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
+      <MemoryRouter initialEntries={['/execution-environments/test-ee/details']}>
+        <Routes>
+          <Route
+            path="/execution-environments/:id/details"
+            element={<ExecutionEnvironmentDetails />}
+          />
+        </Routes>
+      </MemoryRouter>
     );
   };
 

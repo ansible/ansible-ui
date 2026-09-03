@@ -7,6 +7,7 @@ import { fillMonacoEditor } from '../../../../../../commands/fillMonacoEditor';
 import { filterTableByText } from '../../../../../../commands/filterTableByText';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
+import { syncConstructedInventoryAndWait } from '../../../../../../commands/syncConstructedInventoryAndWait';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -122,19 +123,11 @@ test.describe('Constructed Inventory', () => {
         ).toBeVisible();
         await expect(page.getByTestId('description')).toHaveText(description);
 
-        // Sync inventory
-        const syncResponsePromise = page.waitForResponse(
-          (response) =>
-            response.url().includes('/inventory_sources/') &&
-            response.url().includes('/update/') &&
-            response.request().method() === 'POST'
-        );
-        await page.getByRole('button', { name: 'Sync inventory' }).click();
-        await syncResponsePromise;
-
-        // Wait for sync to complete and verify success status
-        await expect(page.getByTestId('last-job-status')).toContainText('Success', {
-          timeout: 60000,
+        await syncConstructedInventoryAndWait(page, 'successful');
+        // Reload so Inventory sources with active failures reflects the finished update.
+        await page.reload();
+        await expect(page.getByTestId('inventory-sources-with-active-failures')).toHaveText('0', {
+          timeout: 15000,
         });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories
@@ -176,25 +169,16 @@ test.describe('Constructed Inventory', () => {
         await clickPageAction('Edit inventory', page);
         await expect(page.getByRole('heading', { name: 'Edit' })).toBeVisible();
 
-        // Update source vars to add strict mode and bad variables
-        await page.locator('.view-line').click();
-        await page.keyboard.press('Control+a');
-
-        // Type YAML line by line with actual Enter key presses
-        const yamlLines = [
-          `plugin: constructed`,
-          `strict: true`,
-          `groups:`,
-          `  is_shutdown: "state | default('running') == 'shutdown'"`,
-          `  product_dev: "account_alias == 'product_dev'"`,
-        ];
-
-        for (let i = 0; i < yamlLines.length; i++) {
-          await page.keyboard.type(yamlLines[i]);
-          if (i < yamlLines.length - 1) {
-            await page.keyboard.press('Enter');
-          }
-        }
+        await fillMonacoEditor(
+          page,
+          [
+            'plugin: constructed',
+            'strict: true',
+            'groups:',
+            `  is_shutdown: "state | default('running') == 'shutdown'"`,
+            `  product_dev: "account_alias == 'product_dev'"`,
+          ].join('\n')
+        );
 
         // Save and wait for navigation
         await page.getByRole('button', { name: 'Save inventory' }).click();
@@ -204,19 +188,11 @@ test.describe('Constructed Inventory', () => {
           page.getByRole('heading', { name: constructedInventoryName, exact: true })
         ).toBeVisible({ timeout: 10000 });
 
-        // Trigger sync
-        const syncResponsePromise = page.waitForResponse(
-          (response) =>
-            response.url().includes('/inventory_sources/') &&
-            response.url().includes('/update/') &&
-            response.request().method() === 'POST'
-        );
-        await page.getByRole('button', { name: 'Sync inventory' }).click();
-        await syncResponsePromise;
-
-        // Wait for sync to complete and verify failed status
-        await expect(page.getByTestId('last-job-status')).toContainText('Failed', {
-          timeout: 30000,
+        await syncConstructedInventoryAndWait(page, 'failed');
+        // Reload so Inventory sources with active failures reflects the finished update.
+        await page.reload();
+        await expect(page.getByTestId('inventory-sources-with-active-failures')).toHaveText('1', {
+          timeout: 15000,
         });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories

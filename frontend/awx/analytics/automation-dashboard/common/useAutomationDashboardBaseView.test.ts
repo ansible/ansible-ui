@@ -1,15 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
-import {
-  act,
-  renderHook as rtlRenderHook,
-  waitFor,
-  type RenderHookOptions,
-  type RenderHookResult,
-} from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { createElement, type ReactNode } from 'react';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import {
   IToolbarDateRangeFilter,
@@ -19,20 +11,6 @@ import {
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useAutomationDashboardBaseView } from './useAutomationDashboardBaseView';
 
-function SwrWrapper({ children }: Readonly<{ children: ReactNode }>) {
-  return createElement(
-    SWRConfig,
-    { value: { provider: () => new Map(), shouldRetryOnError: false } },
-    children
-  );
-}
-
-function renderHook<Result, Props>(
-  render: (initialProps: Props) => Result,
-  options?: RenderHookOptions<Props>
-): RenderHookResult<Result, Props> {
-  return rtlRenderHook(render, { ...options, wrapper: SwrWrapper });
-}
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 // ─── Test Data ────────────────────────────────────────────────────────────────

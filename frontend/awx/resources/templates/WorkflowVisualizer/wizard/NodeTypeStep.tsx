@@ -199,6 +199,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                 diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
                 forks: prompts?.forks ?? launchConfigValue?.forks,
                 limit: prompts?.limit ?? launchConfigValue?.limit,
+                scm_branch: prompts?.scm_branch ?? launchConfigValue?.scm_branch,
                 verbosity: prompts?.verbosity ?? launchConfigValue?.verbosity,
                 job_slice_count: prompts?.job_slice_count ?? launchConfigValue?.job_slice_count,
                 timeout: prompts?.timeout ?? launchConfigValue?.timeout,
