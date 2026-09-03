@@ -17,7 +17,6 @@ import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import {
   cannotRemoveInstances,
-  cannotRunHealthCheckDueToManagedInstance,
   cannotRunHealthCheckDueToNodeType,
   cannotRunHealthCheckDueToPending,
   cannotRunHealthCheckDueToPermissions,
@@ -74,7 +73,6 @@ export function useRunHealthCheckToolbarAction(
           (instance) =>
             cannotRunHealthCheckDueToNodeType(instance, t) ||
             cannotRunHealthCheckDueToPermissions(activeAwxUser, t) ||
-            cannotRunHealthCheckDueToManagedInstance(instance, t) ||
             cannotRunHealthCheckDueToPending(instance, t)
         )
           ? 'Cannot run health checks on one or more of the selected instances'

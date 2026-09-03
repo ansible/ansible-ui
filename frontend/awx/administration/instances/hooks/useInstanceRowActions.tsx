@@ -17,7 +17,6 @@ import { Instance } from '../../../interfaces/Instance';
 import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import {
-  cannotRunHealthCheckDueToManagedInstance,
   cannotRunHealthCheckDueToNodeType,
   cannotRunHealthCheckDueToPending,
   cannotRunHealthCheckDueToPermissions,
@@ -88,7 +87,6 @@ export function useRunHealthCheckRowAction(
       isDisabled: (instance) =>
         cannotRunHealthCheckDueToNodeType(instance, t) ||
         cannotRunHealthCheckDueToPermissions(activeAwxUser, t) ||
-        cannotRunHealthCheckDueToManagedInstance(instance, t) ||
         cannotRunHealthCheckDueToPending(instance, t),
       isHidden: () => isHidden,
       icon: HeartbeatIcon,
