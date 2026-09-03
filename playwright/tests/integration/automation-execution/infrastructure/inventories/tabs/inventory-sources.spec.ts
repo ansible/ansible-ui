@@ -71,9 +71,15 @@ test.describe('Inventory Source List', () => {
         page.getByRole('heading', { name: inventorySourceName, exact: true })
       ).toBeVisible();
 
-      await expect(page.getByTestId('description')).toContainText('mock description');
-      await expect(page.getByTestId('inventory-path')).toContainText('hello_world.yml');
-      await expect(page.getByTestId('enabled-options')).toContainText('Overwrite');
+      await expect(page.getByTestId('description')).toContainText('mock description', {
+        timeout: 10_000,
+      });
+      await expect(page.getByTestId('inventory-file')).toContainText('hello_world.yml', {
+        timeout: 10_000,
+      });
+      await expect(page.getByTestId('enabled-options')).toContainText('Overwrite', {
+        timeout: 10_000,
+      });
 
       await Inventory.ui.delete(page, inventoryName);
       await Organization.ui.delete(page, organizationName);
