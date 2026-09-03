@@ -6,11 +6,11 @@ import {
   HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DashboardTableInputFieldProps } from '../types';
 import { Help } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import debounce from 'debounce';
+import { useDebounce } from '@ansible/ansible-ui-framework/hooks/useDebounce';
 
 export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
   const {
@@ -34,17 +34,11 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
     setError(null);
   }, [props.value]);
 
-  const setValueDebounced = useMemo(
-    () =>
-      debounce((newValue: number | undefined) => {
-        if (newValue !== undefined) {
-          onChange(newValue);
-        }
-      }, 600),
-    [onChange]
-  );
-
-  useEffect(() => () => setValueDebounced.clear(), [setValueDebounced]);
+  const setValueDebounced = useDebounce((newValue: number | undefined) => {
+    if (newValue !== undefined) {
+      onChange(newValue);
+    }
+  }, 600);
 
   const onChangeHandler = (newValue: string) => {
     // Cancel any previously scheduled save by replacing it with undefined.
