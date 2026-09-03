@@ -58,6 +58,28 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
       - run: npx nx affected -t ${{ matrix.script }} --base=origin/main --head=HEAD --verbose
 
+  eslint-guardrails:
+    name: ESLint guardrails (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: packages
+    continue-on-error: true
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - run: npm version 0.0.0 --no-git-tag-version
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        id: cache
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+        if: steps.cache.outputs.cache-hit != 'true'
+      - run: npm run eslint:guardrails
+
   vitest-awx:
     name: Vitest (awx)
     needs: packages
