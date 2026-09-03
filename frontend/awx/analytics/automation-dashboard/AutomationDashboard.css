@@ -1,0 +1,235 @@
+.automation-streak-day-strip {
+  --automation-streak-success-color: var(--pf-t--global--color--status--success--default);
+  --automation-streak-empty-color: var(--pf-t--global--color--nonstatus--gray--400);
+  --automation-streak-empty-stripe-color: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 60%,
+    transparent
+  );
+}
+
+.pf-v6-theme-dark .automation-streak-day-strip {
+  --automation-streak-empty-color: var(--pf-t--global--color--nonstatus--gray--300);
+}
+
+.streak-heat-cell {
+  flex: 1 1 0;
+  min-width: 12px;
+  min-height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pf-t--global--border--radius--small);
+  cursor: default;
+  appearance: none;
+}
+
+.streak-heat-cell:focus-visible {
+  outline: var(--pf-t--global--border--width--strong) solid
+    var(--pf-t--global--color--brand--default);
+  outline-offset: 1px;
+}
+
+.streak-heat-cell--success {
+  background-color: var(--automation-streak-success-color);
+}
+
+.streak-heat-cell--empty {
+  background-color: var(--automation-streak-empty-color);
+  background-image: linear-gradient(
+    -45deg,
+    transparent 40%,
+    var(--automation-streak-empty-stripe-color) 40%,
+    var(--automation-streak-empty-stripe-color) 45%,
+    transparent 45%
+  );
+}
+
+#automation-streak-legend-no-activity-count {
+  background-image: linear-gradient(
+    -45deg,
+    transparent 40%,
+    var(--automation-streak-empty-stripe-color) 40%,
+    var(--automation-streak-empty-stripe-color) 45%,
+    transparent 45%
+  );
+}
+
+/* Milestone badges arranged in a grid (5 top, 2 bottom). */
+.achievement-badges-grid--milestone {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 80px));
+  gap: 6px;
+  margin-top: var(--pf-t--global--spacer--sm);
+  padding-bottom: 2px;
+}
+
+.automation-dashboard-at-a-glance-streak {
+  border-top: 1px solid var(--pf-t--global--border--color--default);
+  margin-top: var(--pf-t--global--spacer--md);
+  padding-top: var(--pf-t--global--spacer--md);
+}
+
+.automation-dashboard-at-a-glance-streak-cells {
+  width: 100%;
+  margin-top: var(--pf-t--global--spacer--sm);
+}
+
+.achievement-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 80px;
+  height: 80px;
+  cursor: default;
+  padding: 6px 4px 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  appearance: none;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  transition: transform 0.15s ease;
+  box-sizing: border-box;
+}
+
+.achievement-badge__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+  width: 100%;
+  min-height: 20px;
+  line-height: 1;
+}
+
+.achievement-badge:hover,
+.achievement-badge:focus-visible {
+  transform: scale(1.05);
+}
+
+.achievement-badge:focus-visible {
+  outline: var(--pf-t--global--border--width--strong) solid
+    var(--pf-t--global--color--brand--default);
+  outline-offset: 1px;
+}
+
+.achievement-badge--earned {
+  --badge-tier-color: var(--pf-t--global--color--status--success--default);
+  border: 2px solid var(--badge-tier-color);
+  background-color: color-mix(in srgb, var(--badge-tier-color) 10%, transparent);
+}
+
+.pf-v6-theme-dark .achievement-badge--earned {
+  background-color: color-mix(in srgb, var(--badge-tier-color) 20%, transparent);
+}
+
+.achievement-badge--earned .achievement-badge__icon {
+  color: var(--badge-tier-color);
+  font-size: 20px;
+}
+
+.achievement-badge--locked {
+  border: 2px dashed var(--pf-t--global--border--color--default);
+  background-color: var(--pf-t--global--background--color--tertiary--default);
+}
+
+.achievement-badge--locked .achievement-badge__icon {
+  color: var(--pf-t--global--icon--color--disabled);
+  font-size: 20px;
+}
+
+.achievement-badge__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 22px;
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+.achievement-badge--earned .achievement-badge__label {
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.achievement-badge--locked .achievement-badge__label {
+  color: var(--pf-t--global--text--color--disabled);
+}
+
+/* Shared tier palette for leaderboard crowns (#1 gold, #2 silver, #3 bronze) */
+.pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--1,
+.automation-dashboard-leaderboard-rank-crown--1 {
+  color: var(--pf-t--global--color--nonstatus--yellow--300);
+}
+
+.pf-v6-theme-dark .pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--1,
+.pf-v6-theme-dark .automation-dashboard-leaderboard-rank-crown--1 {
+  color: var(--pf-t--global--color--nonstatus--yellow--default);
+}
+
+.pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--2,
+.automation-dashboard-leaderboard-rank-crown--2 {
+  color: var(--pf-t--global--color--nonstatus--gray--400);
+}
+
+.pf-v6-theme-dark .pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--2,
+.pf-v6-theme-dark .automation-dashboard-leaderboard-rank-crown--2 {
+  color: var(--pf-t--global--color--nonstatus--gray--300);
+}
+
+.pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--3,
+.automation-dashboard-leaderboard-rank-crown--3 {
+  color: var(--pf-t--global--color--nonstatus--orange--400);
+}
+
+.pf-v6-theme-dark .pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--3,
+.pf-v6-theme-dark .automation-dashboard-leaderboard-rank-crown--3 {
+  color: var(--pf-t--global--color--nonstatus--orange--default);
+}
+
+/* "At a Glance" KPI columns: the Flex stacks vertically below PatternFly's xl breakpoint
+   (1200px) and switches to a row at xl+. Divide the columns with a bottom border while
+   stacked and a right border once they sit side by side. */
+.automation-at-a-glance-kpi-divider {
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+  padding-bottom: var(--pf-t--global--spacer--md);
+}
+
+@media screen and (min-width: 1200px) {
+  .automation-at-a-glance-kpi-divider {
+    border-bottom: none;
+    padding-bottom: 0;
+    border-right: 1px solid var(--pf-t--global--border--color--default);
+    padding-right: var(--pf-t--global--spacer--md);
+  }
+}
+
+/* Automation dimensions — SimpleListItem's default padding is tight; give the row content
+   more breathing room since each item holds an icon + two-line title/value cluster. */
+.automation-dashboard-dimension-row .pf-v6-c-simple-list__item-link {
+  padding-block: 10px;
+}
+
+/* A little extra breathing room between the 3 rows so they don't feel cramped, without
+   force-stretching them to match the (unrelated) height of the leaderboard list beside them. */
+.automation-dashboard-dimension-list .pf-v6-c-simple-list__item + .pf-v6-c-simple-list__item {
+  margin-top: 12px;
+}
+
+/* Tint the leaderboard bars with the same info accent as the dimension icons, and
+   animate them as they grow/shrink when switching dimensions — PF's Progress indicator
+   uses the brand color and has no width transition of its own. */
+.automation-dashboard-dimension-bars .pf-v6-c-progress {
+  --pf-v6-c-progress__indicator--BackgroundColor: var(--pf-t--global--color--status--info--default);
+}
+
+.automation-dashboard-dimension-bars .pf-v6-c-progress__indicator {
+  transition: width 0.3s ease;
+}
