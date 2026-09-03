@@ -22,6 +22,7 @@ import {
   HighlightsDimensionLeaderboardRow,
   useAutomationLeaderboardsView,
 } from '../../views/useAutomationLeaderboardsView';
+import { DEFAULT_NUMBER_LOCALE } from '../../constants/common';
 import '../../AutomationDashboard.css';
 
 const DIMENSION_ACCENT_COLOR = 'var(--pf-t--global--color--status--info--default)';
@@ -78,7 +79,7 @@ function DimensionRow({
                 style={{ marginRight: 6, verticalAlign: '-0.05em' }}
               />
             ) : null}
-            {score.toLocaleString()}
+            {score.toLocaleString(DEFAULT_NUMBER_LOCALE)}
           </MetricValue>
           <MetricLabel>{t('Rank {{rank}} of {{total}}', { rank, total: totalRanked })}</MetricLabel>
         </FlexItem>
@@ -124,7 +125,7 @@ function DimensionBarListRow({
         />
       </FlexItem>
       <FlexItem style={{ width: 64, flexShrink: 0, textAlign: 'right' }}>
-        <span>{row.value.toLocaleString()}</span>
+        <span>{row.value.toLocaleString(DEFAULT_NUMBER_LOCALE)}</span>
       </FlexItem>
     </Flex>
   );

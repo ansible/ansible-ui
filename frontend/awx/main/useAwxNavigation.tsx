@@ -127,7 +127,7 @@ export function useAwxNavigation() {
             },
             {
               path: '',
-              element: <Navigate to="dashboard" replace />,
+              element: <Navigate to={{ pathname: 'dashboard', search: location.search }} />,
             },
           ],
         },

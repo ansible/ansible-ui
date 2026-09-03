@@ -11,6 +11,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
+import { DEFAULT_NUMBER_LOCALE } from './constants/common';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import type {
   IAutomationDashboardView,
@@ -34,7 +35,7 @@ vi.mock('./components', () => ({
     <div data-testid={id} data-width={width}>
       <span>{title}</span>
       <span>
-        {typeof value === 'number' ? value.toLocaleString() : value}
+        {typeof value === 'number' ? value.toLocaleString(DEFAULT_NUMBER_LOCALE) : value}
         {valueSuffix ? ` ${valueSuffix}` : ''}
       </span>
       {linkText && <span>{linkText}</span>}

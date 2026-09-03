@@ -132,6 +132,7 @@ function MilestoneBadge<T extends Badge>({
   badge: T;
   earned: boolean;
 }>) {
+  const { t } = useTranslation();
   const tooltipContent = (
     <>
       <strong>{badge.label}</strong>
@@ -139,21 +140,24 @@ function MilestoneBadge<T extends Badge>({
       {badge.rule}
     </>
   );
+  const ariaLabel = earned
+    ? t('{{label}}, earned. {{rule}}', { label: badge.label, rule: badge.rule })
+    : t('{{label}}, locked. {{rule}}', { label: badge.label, rule: badge.rule });
 
   return (
     <Tooltip content={tooltipContent} position="bottom">
-      <div
+      <button
+        type="button"
         className={
           earned
-            ? 'achievement-badge achievement-badge--earned achievement-badge--milestone'
-            : 'achievement-badge achievement-badge--locked achievement-badge--milestone'
+            ? 'achievement-badge achievement-badge--earned'
+            : 'achievement-badge achievement-badge--locked'
         }
-        aria-label={badge.label}
+        aria-label={ariaLabel}
       >
-        <span className="achievement-badge__stars" aria-hidden />
         <span className="achievement-badge__icon">{badge.icon}</span>
         <span className="achievement-badge__label">{badge.label}</span>
-      </div>
+      </button>
     </Tooltip>
   );
 }

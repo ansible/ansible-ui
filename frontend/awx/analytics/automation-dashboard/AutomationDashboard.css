@@ -16,8 +16,17 @@
   flex: 1 1 0;
   min-width: 12px;
   min-height: 28px;
+  padding: 0;
+  border: 0;
   border-radius: var(--pf-t--global--border--radius--small);
   cursor: default;
+  appearance: none;
+}
+
+.streak-heat-cell:focus-visible {
+  outline: var(--pf-t--global--border--width--strong) solid
+    var(--pf-t--global--color--brand--default);
+  outline-offset: 1px;
 }
 
 .streak-heat-cell--success {
@@ -45,48 +54,7 @@
   );
 }
 
-.achievement-badge--milestone .achievement-badge__stars {
-  visibility: hidden;
-}
-
-.achievement-badge--milestone.achievement-badge--earned {
-  --badge-tier-color: var(--pf-t--global--color--status--success--default);
-  border: 2px solid var(--badge-tier-color);
-}
-
-.pf-v6-theme-dark .achievement-badge--milestone.achievement-badge--earned {
-  --badge-tier-color: var(--pf-t--global--color--status--success--default);
-}
-
-/* Milestone badges are sized down so the card can sit at 50% width next to the Top 10
-   leaderboard card, and small enough that all 7 fit on one row. Scoped to --milestone so
-   the tiered achievement badges (AchievementBadges.tsx) are unaffected. Uses the compound
-   .achievement-badge.achievement-badge--milestone selector (2 classes) so it reliably beats
-   the later, equal-specificity base .achievement-badge{width:96px} rule regardless of source
-   order. */
-.achievement-badge.achievement-badge--milestone {
-  width: 80px;
-  height: 80px;
-  padding: 6px 4px 4px;
-}
-
-.achievement-badge--milestone .achievement-badge__icon {
-  flex: 0 0 20px;
-  min-height: 20px;
-}
-
-.achievement-badge--milestone.achievement-badge--earned .achievement-badge__icon,
-.achievement-badge--milestone.achievement-badge--locked .achievement-badge__icon {
-  font-size: 20px;
-}
-
-.achievement-badge--milestone .achievement-badge__label {
-  font-size: 10px;
-  min-height: 22px;
-  white-space: normal;
-}
-
-/* Milestone badges arranged in a 5-column grid (5 top, 2 bottom). */
+/* Milestone badges arranged in a grid (5 top, 2 bottom). */
 .achievement-badges-grid--milestone {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(72px, 80px));
@@ -106,47 +74,24 @@
   margin-top: var(--pf-t--global--spacer--sm);
 }
 
-.achievement-badges-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 96px);
-  gap: 10px;
-  align-items: start;
-}
-
 .achievement-badge {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
   cursor: default;
-  padding: 8px 6px 6px;
+  padding: 6px 4px 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  appearance: none;
   border-radius: var(--pf-t--global--border--radius--medium);
   transition: transform 0.15s ease;
   box-sizing: border-box;
-}
-
-.achievement-badge__stars {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 10px;
-  width: 100%;
-  min-height: 10px;
-  gap: 1px;
-  line-height: 1;
-  margin-bottom: 6px;
-  color: var(--badge-tier-color, var(--pf-t--global--text--color--subtle));
-}
-
-.achievement-badge__stars svg {
-  width: 8px;
-  height: 8px;
-}
-
-.achievement-badge--locked .achievement-badge__stars {
-  visibility: hidden;
 }
 
 .achievement-badge__icon {
@@ -159,11 +104,20 @@
   line-height: 1;
 }
 
-.achievement-badge:hover {
+.achievement-badge:hover,
+.achievement-badge:focus-visible {
   transform: scale(1.05);
 }
 
+.achievement-badge:focus-visible {
+  outline: var(--pf-t--global--border--width--strong) solid
+    var(--pf-t--global--color--brand--default);
+  outline-offset: 1px;
+}
+
 .achievement-badge--earned {
+  --badge-tier-color: var(--pf-t--global--color--status--success--default);
+  border: 2px solid var(--badge-tier-color);
   background-color: color-mix(in srgb, var(--badge-tier-color) 10%, transparent);
 }
 
@@ -197,7 +151,7 @@
   font-size: 10px;
   font-weight: 600;
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
   line-height: 1.2;
 }
 

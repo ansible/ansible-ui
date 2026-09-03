@@ -1,91 +1,129 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 import {
-  AutomationLeaderboardsView,
+  AutomationLeaderboardsData,
   DimensionKey,
+  MILESTONE_BADGE_IDS,
+  ORG_BADGE_IDS,
   useAutomationLeaderboardsView,
 } from './useAutomationLeaderboardsView';
+import { EMPTY_LEADERBOARDS, MOCK_LEADERBOARDS } from './useAutomationLeaderboardsView.fixtures';
 
-function getView(): AutomationLeaderboardsView {
-  const { result } = renderHook(() => useAutomationLeaderboardsView());
-  return result.current;
+const DIMENSION_KEYS: DimensionKey[] = ['volume', 'breadth', 'consistency'];
+const STREAK_STATES = ['enterpriseAndOrg', 'enterpriseOnly', 'none'];
+
+/**
+ * Assertions that must hold for ANY `AutomationLeaderboardsData` the hook resolves to —
+ * the mock today, an empty window, or a real API payload tomorrow. Value-specific checks
+ * ("jobsRun === 1234") belong nowhere: they only track the fixture and churn when the
+ * endpoint is wired.
+ */
+function assertLeaderboardsContract(data: AutomationLeaderboardsData): void {
+  // ── at a glance ──
+  const { atAGlance } = data;
+  for (const n of [
+    atAGlance.jobsRun,
+    atAGlance.activeOrganizations,
+    atAGlance.enterpriseStreakDays,
+    atAGlance.orgStreakDays,
+    atAGlance.featuredTemplate.runs,
+  ]) {
+    expect(typeof n).toBe('number');
+    expect(n).toBeGreaterThanOrEqual(0);
+  }
+  expect(typeof atAGlance.featuredTemplate.name).toBe('string');
+
+  // ── streak calendar: at most one 30-day window, self-consistent ──
+  expect(Array.isArray(data.streakCalendar)).toBe(true);
+  expect(data.streakCalendar.length).toBeLessThanOrEqual(30);
+  data.streakCalendar.forEach((day) => {
+    expect(STREAK_STATES).toContain(day.state);
+    expect(day.enterpriseRuns).toBeGreaterThanOrEqual(0);
+    expect(day.orgRuns).toBeGreaterThanOrEqual(0);
+    if (day.state === 'none') {
+      expect(day.enterpriseRuns).toBe(0);
+      expect(day.orgRuns).toBe(0);
+    }
+  });
+
+  // ── dimensions + their leaderboards ──
+  DIMENSION_KEYS.forEach((key) => {
+    const standing = data.dimensions[key];
+    expect(standing).toBeDefined();
+    expect(standing.rank).toBeGreaterThanOrEqual(0);
+    expect(standing.rank).toBeLessThanOrEqual(standing.totalRanked);
+
+    const rows = data.dimensionLeaderboards[key];
+    expect(Array.isArray(rows)).toBe(true);
+    const values = rows.map((row) => {
+      expect(typeof row.id).toBe('string');
+      expect(typeof row.name).toBe('string');
+      expect(typeof row.value).toBe('number');
+      return row.value;
+    });
+    expect([...values].sort((a, b) => b - a)).toEqual(values);
+    expect(rows.filter((row) => row.isCurrentUser).length).toBeLessThanOrEqual(1);
+  });
+
+  // ── organization leaderboard: dense ranking from 1, one "current" org ──
+  const ranks = data.organizationLeaderboard.map((org) => org.rank);
+  expect(ranks).toEqual(data.organizationLeaderboard.map((_, i) => i + 1));
+  const currentOrgs = data.organizationLeaderboard.filter((org) => org.isCurrentOrg);
+  expect(currentOrgs.length).toBeLessThanOrEqual(1);
+  if (currentOrgs.length === 1) {
+    expect(data.currentOrgStanding.rank).toBe(currentOrgs[0].rank);
+    expect(data.currentOrgStanding.totalRuns).toBe(currentOrgs[0].runs);
+  }
+
+  // ── achievements: known ids, no duplicates ──
+  expect(new Set(data.earnedUserAchievements).size).toBe(data.earnedUserAchievements.length);
+  data.earnedUserAchievements.forEach((id) => expect(MILESTONE_BADGE_IDS).toContain(id));
+  expect(new Set(data.earnedOrgAchievements).size).toBe(data.earnedOrgAchievements.length);
+  data.earnedOrgAchievements.forEach((id) => expect(ORG_BADGE_IDS).toContain(id));
+
+  // ── sync timestamp: absent or a real instant ──
+  if (data.lastSyncedAt !== null) {
+    expect(Number.isNaN(Date.parse(data.lastSyncedAt))).toBe(false);
+  }
 }
 
 describe('useAutomationLeaderboardsView', () => {
-  test('should resolve immediately without a loading or error state', () => {
-    const view = getView();
+  test('should resolve synchronously with no loading or error state', () => {
+    const { result } = renderHook(() => useAutomationLeaderboardsView());
 
-    expect(view.isLoading).toBe(false);
-    expect(view.error).toBeUndefined();
+    expect(typeof result.current.isLoading).toBe('boolean');
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.error).toBeUndefined();
   });
 
-  test('should expose the at-a-glance summary as numbers', () => {
-    const { atAGlance } = getView();
+  test('should satisfy the leaderboards data contract', () => {
+    const { result } = renderHook(() => useAutomationLeaderboardsView());
 
-    expect(atAGlance.jobsRun).toBe(1234);
-    expect(atAGlance.activeOrganizations).toBe(56);
-    expect(atAGlance.featuredTemplate).toEqual({ name: 'Infrastructure provisioning', runs: 3558 });
-    expect(atAGlance.enterpriseStreakDays).toBeGreaterThan(atAGlance.orgStreakDays);
+    assertLeaderboardsContract(result.current);
   });
 
-  test('should provide a 30-day streak calendar oldest-to-newest', () => {
-    const { streakCalendar } = getView();
+  test('should currently surface the populated mock, not an empty window', () => {
+    const { result } = renderHook(() => useAutomationLeaderboardsView());
 
-    expect(streakCalendar).toHaveLength(30);
-    expect(streakCalendar[0].dateStr).toBe('Jul 23');
-    expect(streakCalendar.at(-1)?.dateStr).toBe('Aug 21');
-    streakCalendar.forEach((day) => {
-      expect(['enterpriseAndOrg', 'enterpriseOnly', 'none']).toContain(day.state);
-      if (day.state === 'none') {
-        expect(day.enterpriseRuns).toBe(0);
-        expect(day.orgRuns).toBe(0);
-      }
+    expect(result.current.organizationLeaderboard.length).toBeGreaterThan(0);
+    expect(result.current.streakCalendar).toHaveLength(30);
+    DIMENSION_KEYS.forEach((key) => {
+      expect(result.current.dimensionLeaderboards[key].length).toBeGreaterThan(0);
     });
   });
+});
 
-  test('should rank each dimension leaderboard by descending value with ten rows', () => {
-    const { dimensions, dimensionLeaderboards } = getView();
-    const keys: DimensionKey[] = ['volume', 'breadth', 'consistency'];
-
-    keys.forEach((key) => {
-      const rows = dimensionLeaderboards[key];
-      expect(rows).toHaveLength(10);
-      const values = rows.map((row) => row.value);
-      expect([...values].sort((a, b) => b - a)).toEqual(values);
-      expect(dimensions[key].rank).toBeGreaterThanOrEqual(1);
-      expect(dimensions[key].rank).toBeLessThanOrEqual(dimensions[key].totalRanked);
-    });
+describe('AutomationLeaderboardsData fixtures', () => {
+  test('the mock fixture satisfies the contract', () => {
+    assertLeaderboardsContract(MOCK_LEADERBOARDS);
   });
 
-  test('should mark exactly one current-user row across volume and breadth but not consistency', () => {
-    const { dimensionLeaderboards } = getView();
+  test('the empty-window fixture satisfies the contract', () => {
+    assertLeaderboardsContract(EMPTY_LEADERBOARDS);
 
-    expect(dimensionLeaderboards.volume.filter((row) => row.isCurrentUser)).toHaveLength(1);
-    expect(dimensionLeaderboards.breadth.filter((row) => row.isCurrentUser)).toHaveLength(1);
-    expect(dimensionLeaderboards.consistency.some((row) => row.isCurrentUser)).toBe(false);
-  });
-
-  test('should provide a ten-organization leaderboard ranked 1..10 with one current org', () => {
-    const { organizationLeaderboard, currentOrgStanding } = getView();
-
-    expect(organizationLeaderboard.map((org) => org.rank)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    const currentOrgs = organizationLeaderboard.filter((org) => org.isCurrentOrg);
-    expect(currentOrgs).toHaveLength(1);
-    expect(currentOrgStanding.rank).toBe(currentOrgs[0].rank);
-    expect(currentOrgStanding.totalRuns).toBe(currentOrgs[0].runs);
-  });
-
-  test('should list earned achievements that are a subset of the known badge ids', () => {
-    const { earnedUserAchievements, earnedOrgAchievements } = getView();
-
-    expect(earnedUserAchievements).toEqual(['ignition', 'weekWarrior', 'explorer', 'centurion']);
-    expect(earnedOrgAchievements).toEqual(['sustained', 'rising']);
-  });
-
-  test('should return a valid ISO sync timestamp', () => {
-    const { lastSyncedAt } = getView();
-
-    expect(lastSyncedAt).not.toBeNull();
-    expect(Number.isNaN(Date.parse(lastSyncedAt ?? ''))).toBe(false);
+    expect(EMPTY_LEADERBOARDS.lastSyncedAt).toBeNull();
+    expect(EMPTY_LEADERBOARDS.organizationLeaderboard).toEqual([]);
+    expect(EMPTY_LEADERBOARDS.streakCalendar).toEqual([]);
+    expect(EMPTY_LEADERBOARDS.earnedUserAchievements).toEqual([]);
   });
 });

@@ -52,6 +52,16 @@ describe('StreakDayStrip', () => {
     expect(screen.getByLabelText('Aug 2: No successful job runs')).toBeInTheDocument();
   });
 
+  test('should expose each cell as a keyboard-reachable control', () => {
+    renderStrip();
+
+    const cell = screen.getByRole('button', { name: 'Aug 1: 12 successful job runs' });
+    expect(cell.tagName).toBe('BUTTON');
+    expect(
+      screen.getByRole('button', { name: 'Aug 2: No successful job runs' })
+    ).toBeInTheDocument();
+  });
+
   test('should render the legend only when showLegend is set', () => {
     const { rerender } = renderStrip({ showLegend: true });
     expect(screen.getByText('Successful job run')).toBeInTheDocument();

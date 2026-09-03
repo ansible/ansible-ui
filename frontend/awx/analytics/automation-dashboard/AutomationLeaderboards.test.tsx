@@ -84,4 +84,36 @@ describe('AutomationLeaderboards', () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
+
+  test('should show the error state with the error message when the view errors', () => {
+    renderLeaderboards({ isLoading: false, error: new Error('Metrics service unavailable') });
+
+    expect(
+      screen.getByRole('heading', { name: 'Unable to load leaderboards' })
+    ).toBeInTheDocument();
+    expect(screen.getByText('Metrics service unavailable')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    expect(screen.queryByText(/last sync on .+ UTC/)).not.toBeInTheDocument();
+  });
+
+  test('should prefer the error state over the never-synced empty state', () => {
+    renderLeaderboards({ isLoading: false, lastSyncedAt: null, error: new Error('boom') });
+
+    expect(
+      screen.getByRole('heading', { name: 'Unable to load leaderboards' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'No leaderboard data yet' })
+    ).not.toBeInTheDocument();
+  });
+
+  test('should show the loading spinner instead of the error state while still loading', () => {
+    renderLeaderboards({ isLoading: true, error: new Error('boom') });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Unable to load leaderboards' })
+    ).not.toBeInTheDocument();
+  });
 });

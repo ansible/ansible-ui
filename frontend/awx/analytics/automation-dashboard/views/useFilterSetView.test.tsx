@@ -131,19 +131,55 @@ describe('useFilterSetView', () => {
       expect(result.current.selectedFilterSet).toBeUndefined();
     });
 
-    test('should re-seed from the new user when the active user changes mid-session', () => {
+    test('should re-seed from the new user when the active user changes mid-session', async () => {
       const OTHER_USER_ID = 7;
       sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
       sessionStorage.setItem(dashboardFilterSetKey(OTHER_USER_ID), JSON.stringify(filterSetB));
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA]))
+        )
+      );
 
       const { result, rerender } = renderHook(() => useFilterSetView());
       expect(result.current.selectedFilterSet).toEqual(filterSetA);
+
+      // First user's fetched reports land in the local cache.
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      await waitFor(() => expect(result.current.filterSets).toContainEqual(filterSetA));
 
       mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: OTHER_USER_ID } });
       rerender();
 
       expect(result.current.selectedFilterSet).toEqual(filterSetB);
       expect(result.current.value).toBe('2');
+      // The first user's cached reports must not leak into the second user's dropdown.
+      expect(result.current.filterSets).toEqual([filterSetB]);
+    });
+
+    test('should clear the cache when the new active user has nothing persisted', async () => {
+      const OTHER_USER_ID = 7;
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA, filterSetB]))
+        )
+      );
+
+      const { result, rerender } = renderHook(() => useFilterSetView());
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      await waitFor(() => expect(result.current.filterSets).toContainEqual(filterSetB));
+
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: OTHER_USER_ID } });
+      rerender();
+
+      expect(result.current.filterSets).toEqual([]);
+      expect(result.current.selectedFilterSet).toBeUndefined();
+      expect(result.current.value).toBeUndefined();
     });
   });
 

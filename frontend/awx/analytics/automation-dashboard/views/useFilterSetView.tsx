@@ -54,10 +54,9 @@ export function useFilterSetView() {
     setValue(persisted ? String(persisted.id) : undefined);
     setSelectedFilterSet(persisted);
     setVersion((v) => v + 1);
-    setFilterSets((prev) => {
-      if (!persisted) return prev;
-      return prev.some((fs) => fs.id === persisted.id) ? prev : [persisted, ...prev];
-    });
+    // Replace (not merge) the cache: the previous user's fetched report names and
+    // filters JSON must not linger in the dropdown after a same-tab user switch.
+    setFilterSets(persisted ? [persisted] : []);
   }, [userId, seededUserId]);
 
   // Persist the current selection for the active user (or clear it when deselected).

@@ -110,7 +110,8 @@ export function StreakDayStrip(
               content={streakDayTooltipContent(day, success, runs, t)}
               position="top"
             >
-              <div
+              <button
+                type="button"
                 className={
                   success
                     ? 'streak-heat-cell streak-heat-cell--success'

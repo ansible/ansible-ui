@@ -32,11 +32,19 @@ describe('MilestoneBadgesCard', () => {
   test('should mark earned badges as earned and the rest as locked', () => {
     render(<MilestoneBadgesCard />);
 
-    expect(screen.getByLabelText('Ignition')).toHaveClass('achievement-badge--earned');
-    expect(screen.getByLabelText('Explorer')).toHaveClass('achievement-badge--earned');
-    expect(screen.getByLabelText('Reliable')).toHaveClass('achievement-badge--locked');
-    expect(screen.getByLabelText('Sustained')).toHaveClass('achievement-badge--earned');
-    expect(screen.getByLabelText('Top Tier')).toHaveClass('achievement-badge--locked');
+    expect(screen.getByLabelText(/^Ignition, earned\./)).toHaveClass('achievement-badge--earned');
+    expect(screen.getByLabelText(/^Explorer, earned\./)).toHaveClass('achievement-badge--earned');
+    expect(screen.getByLabelText(/^Reliable, locked\./)).toHaveClass('achievement-badge--locked');
+    expect(screen.getByLabelText(/^Sustained, earned\./)).toHaveClass('achievement-badge--earned');
+    expect(screen.getByLabelText(/^Top Tier, locked\./)).toHaveClass('achievement-badge--locked');
+  });
+
+  test('should expose each badge as a keyboard-reachable control announcing its state', () => {
+    render(<MilestoneBadgesCard />);
+
+    const earned = screen.getByRole('button', { name: /^Ignition, earned\./ });
+    expect(earned.tagName).toBe('BUTTON');
+    expect(screen.getByRole('button', { name: /^Reliable, locked\./ })).toBeInTheDocument();
   });
 
   test('should list earned badges before locked ones within a shelf', () => {

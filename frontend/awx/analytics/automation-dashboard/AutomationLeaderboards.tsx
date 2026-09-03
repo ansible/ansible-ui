@@ -9,6 +9,7 @@ import { MilestoneBadgesCard } from './components/leaderboards/MilestoneBadgesCa
 import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
 import { useTranslation } from 'react-i18next';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 
 /** Breakpoint (in grid columns) where the top cards widen from 'lg' to 'xl'/'xxl'. */
 const WIDE_LAYOUT_MIN_COLUMNS = 16;
@@ -56,10 +57,24 @@ function LeaderboardsEmptyState() {
   );
 }
 
+/** Shown when the leaderboards report fails to load. */
+function LeaderboardsErrorState({ error }: Readonly<{ error: Error }>) {
+  const { t } = useTranslation();
+
+  return (
+    <DashboardGridRow>
+      <div style={{ gridColumn: 'span 24', maxWidth: '100%' }}>
+        <EmptyStateError titleProp={t('Unable to load leaderboards')} message={error.message} />
+      </div>
+    </DashboardGridRow>
+  );
+}
+
 function renderLeaderboardsContent(
   gridColumns: number,
   lastSyncedAt: string | null,
-  isLoading: boolean
+  isLoading: boolean,
+  error: Error | undefined
 ) {
   const { topCardsWidth, bottomCardsWidth } = getLeaderboardCardWidths(gridColumns);
 
@@ -71,6 +86,10 @@ function renderLeaderboardsContent(
         </div>
       </DashboardGridRow>
     );
+  }
+
+  if (error) {
+    return <LeaderboardsErrorState error={error} />;
   }
 
   if (!lastSyncedAt) {
@@ -101,10 +120,10 @@ function renderLeaderboardsContent(
 }
 
 export function AutomationLeaderboards() {
-  const { lastSyncedAt, isLoading } = useAutomationLeaderboardsView();
+  const { lastSyncedAt, isLoading, error } = useAutomationLeaderboardsView();
   return (
     <DashboardLayout>
-      {(gridColumns) => renderLeaderboardsContent(gridColumns, lastSyncedAt, isLoading)}
+      {(gridColumns) => renderLeaderboardsContent(gridColumns, lastSyncedAt, isLoading, error)}
     </DashboardLayout>
   );
 }
