@@ -1,10 +1,12 @@
 import { Button, InputGroup, InputGroupItem, TextArea } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
+import getValue from 'get-value';
 import { useState } from 'react';
 import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
+import { usePageFormOptionsContext } from '../PageFormOptionsContext';
 import { PageFormGroup } from './PageFormGroup';
 import { PageFormTextInputProps } from './PageFormTextInput';
 import { useRequiredValidationRule } from './validation-hooks';
@@ -50,7 +52,8 @@ export function PageFormTextArea<
   const {
     control,
     setValue,
-    formState: { isSubmitting, isValidating },
+    trigger,
+    formState: { isSubmitting, isValidating, defaultValues },
   } = useFormContext<TFieldValues>();
 
   const [showSecret, setShowSecret] = useState(false);
@@ -58,12 +61,15 @@ export function PageFormTextArea<
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
+  // Auto-discover field metadata from OPTIONS context
+  const fieldMetadata = usePageFormOptionsContext(name);
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
-      render={({ field: { onChange, value, name }, fieldState: { error } }) => {
+      render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message
           ? validate && isValidating
             ? translations.validating
@@ -91,6 +97,15 @@ export function PageFormTextArea<
                   id={id}
                   placeholder={placeholder}
                   onChange={(_event, value: string) => onChangeHandler(value)}
+                  onBlur={
+                    fieldMetadata?.pattern
+                      ? async () => {
+                          onBlur();
+                          // Manually trigger validation for this field
+                          await trigger(name);
+                        }
+                      : onBlur
+                  }
                   value={value ?? ''}
                   aria-describedby={id ? `${id}-form-group` : undefined}
                   validated={helperTextInvalid ? 'error' : undefined}
@@ -141,7 +156,43 @@ export function PageFormTextArea<
       }}
       rules={{
         required,
-        validate,
+        validate: (value, formValues) => {
+          // Get the default value for this field to check if it's dirty
+          const defaultValue = getValue(defaultValues as object, name) as typeof value;
+          const isFieldDirty = value !== defaultValue;
+
+          // OPTIONS pattern validation (fires first, only when isDirty)
+          if (fieldMetadata?.pattern && isFieldDirty) {
+            // Apply pattern validation
+            if (value && typeof value === 'string') {
+              // Use flags if provided (e.g., 'u' for Unicode support)
+              const regex = new RegExp(fieldMetadata.pattern, fieldMetadata.flags);
+              if (!regex.test(value)) {
+                return (
+                  fieldMetadata.pattern_description ||
+                  `This field does not match the required pattern.`
+                );
+              }
+            }
+          }
+
+          // User-provided validate functions (fire after OPTIONS pattern)
+          if (validate) {
+            if (typeof validate === 'function') {
+              return validate(value, formValues);
+            } else if (typeof validate === 'object') {
+              // Execute all validation functions in the object
+              for (const [_key, validationFn] of Object.entries(validate)) {
+                const result = validationFn(value, formValues);
+                if (result !== true) {
+                  return result;
+                }
+              }
+            }
+          }
+
+          return true;
+        },
 
         minLength:
           typeof label === 'string' && typeof minLength === 'number'

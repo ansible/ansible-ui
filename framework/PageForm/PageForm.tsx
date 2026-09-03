@@ -8,7 +8,7 @@ import {
   PageSection,
   PageSectionProps,
 } from '@patternfly/react-core';
-import { ReactNode, useContext, useState } from 'react';
+import { ReactNode, useContext, useMemo, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -28,6 +28,7 @@ import { genericErrorAdapter } from './genericErrorAdapter';
 import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
 import { ErrorAdapter } from './typesErrorAdapter';
 import { useIsPageDialog } from '../PageDialogs/PageDialog';
+import { PageFormOptionsContext, PageFormOptionsContextValue } from './PageFormOptionsContext';
 
 const FormContainer = styled(PageSection)`
   padding-bottom: var(--pf-t--global--spacer--xl);
@@ -61,6 +62,17 @@ export interface PageFormProps<T extends object> {
   disableSubmitOnEnter?: boolean;
   isWizard?: boolean;
   additionalActions?: ReactNode;
+  /**
+   * OPTIONS response data containing field metadata (pattern, pattern_description, etc.)
+   * When provided, form inputs will automatically discover validation patterns from this data
+   */
+  optionsData?: {
+    actions?: {
+      POST?: Record<string, { pattern?: string; pattern_description?: string }>;
+      PUT?: Record<string, { pattern?: string; pattern_description?: string }>;
+      PATCH?: Record<string, { pattern?: string; pattern_description?: string }>;
+    };
+  };
 }
 
 export function useFormErrors<T extends object>(
@@ -114,6 +126,46 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
   const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
+  // Extract field metadata from OPTIONS responses (POST, PUT, PATCH actions)
+  const optionsContextValue = useMemo<PageFormOptionsContextValue>(() => {
+    const fields: Record<
+      string,
+      { pattern?: string; pattern_description?: string; flags?: string }
+    > = {};
+
+    if (props.optionsData?.actions) {
+      // Check POST, PUT, and PATCH actions for field metadata
+      const actions = [
+        props.optionsData.actions.POST,
+        props.optionsData.actions.PUT,
+        props.optionsData.actions.PATCH,
+      ];
+
+      actions.forEach((action) => {
+        if (action) {
+          Object.entries(action).forEach(([fieldName, fieldMetadata]) => {
+            // Only add fields that have pattern or pattern_description (support both snake_case and camelCase)
+            const pattern = fieldMetadata.pattern;
+            const patternDescription =
+              fieldMetadata.pattern_description ||
+              (fieldMetadata as { patternDescription?: string }).patternDescription;
+            const flags = (fieldMetadata as { flags?: string }).flags;
+
+            if (pattern || patternDescription) {
+              fields[fieldName] = {
+                pattern,
+                pattern_description: patternDescription,
+                flags,
+              };
+            }
+          });
+        }
+      });
+    }
+
+    return { fields };
+  }, [props.optionsData]);
+
   let children = props.children;
   if (props.disableGrid !== true) {
     children = (
@@ -134,70 +186,72 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     : {};
 
   return (
-    <FormProvider {...form}>
-      <Form
-        onKeyDown={(event) => {
-          if (
-            event.key === 'Enter' &&
-            props.disableSubmitOnEnter &&
-            !(event.target instanceof HTMLTextAreaElement)
-          ) {
-            event.preventDefault();
-          }
-        }}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit(async (data) => {
-          setError(null);
-          try {
-            await props.onSubmit(data, (error) => setError(error), setFieldError);
-          } catch (err) {
-            handleSubmitError(err);
-          }
-        })}
-        isHorizontal={isHorizontal}
-        autoComplete={props.autoComplete}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1,
-          height: '100%',
-          maxHeight: '100%',
-          overflow: 'hidden',
-          gap: 0,
-        }}
-      >
-        {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
-        <Scrollable marginLeft={24}>
-          <FormContainer
-            isFilled
-            isWidthLimited
-            padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
-            style={{ maxWidth: multipleColumns ? undefined : 880 }} // This is the PF limitMaxWidth for forms
-          >
-            {children}
-          </FormContainer>
-        </Scrollable>
-        {props.footer ? (
-          props.footer
-        ) : (
-          <FormFooter
-            isWidthLimited
-            style={{ maxWidth: multipleColumns ? undefined : 880, marginLeft: 24 }}
-            {...FormFooterProps}
-          >
-            <FormActionGroup>
-              <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
-              {props.additionalActions}
-              {props.onCancel && (
-                <PageFormCancelButton onCancel={props.onCancel}>
-                  {props.cancelText ?? frameworkTranslations.cancelText}
-                </PageFormCancelButton>
-              )}
-            </FormActionGroup>
-          </FormFooter>
-        )}
-      </Form>
-    </FormProvider>
+    <PageFormOptionsContext.Provider value={optionsContextValue}>
+      <FormProvider {...form}>
+        <Form
+          onKeyDown={(event) => {
+            if (
+              event.key === 'Enter' &&
+              props.disableSubmitOnEnter &&
+              !(event.target instanceof HTMLTextAreaElement)
+            ) {
+              event.preventDefault();
+            }
+          }}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onSubmit={handleSubmit(async (data) => {
+            setError(null);
+            try {
+              await props.onSubmit(data, (error) => setError(error), setFieldError);
+            } catch (err) {
+              handleSubmitError(err);
+            }
+          })}
+          isHorizontal={isHorizontal}
+          autoComplete={props.autoComplete}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: 1,
+            height: '100%',
+            maxHeight: '100%',
+            overflow: 'hidden',
+            gap: 0,
+          }}
+        >
+          {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
+          <Scrollable marginLeft={24}>
+            <FormContainer
+              isFilled
+              isWidthLimited
+              padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
+              style={{ maxWidth: multipleColumns ? undefined : 880 }} // This is the PF limitMaxWidth for forms
+            >
+              {children}
+            </FormContainer>
+          </Scrollable>
+          {props.footer ? (
+            props.footer
+          ) : (
+            <FormFooter
+              isWidthLimited
+              style={{ maxWidth: multipleColumns ? undefined : 880, marginLeft: 24 }}
+              {...FormFooterProps}
+            >
+              <FormActionGroup>
+                <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
+                {props.additionalActions}
+                {props.onCancel && (
+                  <PageFormCancelButton onCancel={props.onCancel}>
+                    {props.cancelText ?? frameworkTranslations.cancelText}
+                  </PageFormCancelButton>
+                )}
+              </FormActionGroup>
+            </FormFooter>
+          )}
+        </Form>
+      </FormProvider>
+    </PageFormOptionsContext.Provider>
   );
 }
 

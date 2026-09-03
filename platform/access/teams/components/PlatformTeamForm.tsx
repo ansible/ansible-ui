@@ -21,12 +21,16 @@ import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider'
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export function CreatePlatformTeam() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformTeam>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams/`);
+
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
     const createdTeam = await postRequest(gatewayAPI`/teams/`, team);
     pageNavigate(PlatformRoute.TeamDetails, { params: { id: createdTeam.id } });
@@ -46,6 +50,7 @@ export function CreatePlatformTeam() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={() => void navigate(-1)}
+        optionsData={optionsData}
       >
         <PlatformTeamInputs />
       </PageForm>
@@ -63,6 +68,7 @@ export function EditPlatformTeam() {
     isLoading,
     error,
   } = useGet<PlatformTeam>(gatewayAPI`/teams/${id.toString()}/`);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams/`);
   const patchRequest = usePatchRequest<PlatformTeam, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
     await patchRequest(gatewayAPI`/teams/${id.toString()}/`, team);
@@ -86,6 +92,7 @@ export function EditPlatformTeam() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={team}
+        optionsData={optionsData}
       >
         <PlatformTeamInputs isEditMode />
       </PageForm>
