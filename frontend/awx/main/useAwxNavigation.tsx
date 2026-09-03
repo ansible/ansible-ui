@@ -40,6 +40,8 @@ import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 import { AutomationDashboard } from '../analytics/automation-dashboard/AutomationDashboard';
+import { AutomationDashboardMainPage } from '../analytics/automation-dashboard/AutomationDashboardMainPage';
+import { AutomationLeaderboards } from '../analytics/automation-dashboard/AutomationLeaderboards';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -108,10 +110,26 @@ export function useAwxNavigation() {
       path: 'analytics',
       children: [
         {
-          id: AwxRoute.AutomationDashboard,
+          id: AwxRoute.AutomationDashboardMainPage,
           label: t('Automation Dashboard'),
           path: 'automation-dashboard',
-          element: <AutomationDashboard />,
+          element: <AutomationDashboardMainPage />,
+          children: [
+            {
+              id: AwxRoute.AutomationDashboard,
+              path: 'dashboard',
+              element: <AutomationDashboard />,
+            },
+            {
+              id: AwxRoute.AutomationLeaderboards,
+              path: 'leaderboards',
+              element: <AutomationLeaderboards />,
+            },
+            {
+              path: '',
+              element: <Navigate to={{ pathname: 'dashboard', search: location.search }} />,
+            },
+          ],
         },
         {
           id: AwxRoute.AutomationCalculator,

@@ -1,9 +1,5 @@
 import { ComponentClass, Dispatch, SetStateAction } from 'react';
-import {
-  IFilterState,
-  IToolbarFilter,
-  PageDashboardCardWidth,
-} from '@ansible/ansible-ui-framework';
+import { IToolbarFilter, PageDashboardCardWidth } from '@ansible/ansible-ui-framework';
 import { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 
 // ─── Dashboard Data Models (API shapes) ──────────────────────────────────────
@@ -127,16 +123,6 @@ export type DashboardDetailsCardProps = Readonly<
       formatAsCurrency?: boolean;
     }
 >;
-
-export type DashboardTableCardProps = DashboardCommonCardProps & {
-  firstColumnHeader: string;
-  items?: IDashboardTableItem[];
-  loading: boolean;
-  clearAllFilters: () => void;
-  filterState: IFilterState | undefined;
-  emptyStateTitle?: string;
-  emptyStateDescription?: string;
-};
 
 export type DashboardChartCardProps = DashboardCommonCardProps & {
   variant: 'barChart' | 'lineChart';
