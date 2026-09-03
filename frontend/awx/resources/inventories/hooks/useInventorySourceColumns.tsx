@@ -59,26 +59,33 @@ export function useInventorySourceColumns(options?: {
     () => ({
       header: t('Last job status'),
       cell: (inventorySource: InventorySource) => {
-        return (
-          <Link
-            to={getPageUrl(AwxRoute.JobOutput, {
-              params: {
-                id: inventorySource?.summary_fields?.last_job?.id,
-                job_type: 'inventory',
-              },
-            })}
-          >
-            <StatusCell
-              tooltip={
-                inventorySource.summary_fields.last_job ? (
-                  <LastJobTooltip job={inventorySource?.summary_fields?.last_job} />
-                ) : undefined
-              }
-              tooltipId={inventorySource.summary_fields.last_job?.id}
-              status={inventorySource.status}
-            />
-          </Link>
+        const lastJob = inventorySource?.summary_fields?.last_job;
+        const statusCell = (
+          <StatusCell
+            tooltip={
+              lastJob ? <LastJobTooltip job={lastJob} /> : undefined
+            }
+            tooltipId={lastJob?.id}
+            status={inventorySource.status}
+          />
         );
+
+        if (lastJob?.id) {
+          return (
+            <Link
+              to={getPageUrl(AwxRoute.JobOutput, {
+                params: {
+                  id: lastJob.id,
+                  job_type: 'inventory',
+                },
+              })}
+            >
+              {statusCell}
+            </Link>
+          );
+        }
+
+        return statusCell;
       },
     }),
     [t, getPageUrl]
