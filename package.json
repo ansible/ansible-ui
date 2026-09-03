@@ -47,6 +47,7 @@
     "prettier": "nx run-many --target=prettier",
     "prettier:fix": "nx run-many --target=prettier:fix",
     "eslint": "nx run-many --target=eslint",
+    "eslint:guardrails": "eslint --no-eslintrc --config .eslintrc.guardrails.json --ext .ts,.tsx frontend platform framework",
     "eslint:fix": "nx run-many --target=eslint:fix",
     "fix": "nx run-many --target=eslint:fix,prettier:fix",
     "upgrade": "npx npm-check-updates -u --workspaces && npm npm-check-updates -u && npm i && npm test",
