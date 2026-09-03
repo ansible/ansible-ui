@@ -176,41 +176,63 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Source Control Update job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
-      const organizationName = await Organization.ui.create(page);
-      const projectName = await Project.ui.create(page, { organizationName });
-      // This command waits for the project to be synced upon creation
-      await Project.ui.sync(page, projectName);
+      test.setTimeout(5 * 60 * 1000);
+      const organization = await Organization.api.create(page);
+      const project = await Project.api.create(page, { organization: organization.id });
+      await Project.api.sync(page, project.id);
 
       await navigateTo(page, 'Automation Execution', 'Projects');
       await clickTableRow(
         {
-          text: projectName,
-          filterValue: projectName,
+          text: project.name,
+          filterValue: project.name,
           clearFilters: true,
           pageTitle: 'Projects',
         },
         page
       );
 
+      const syncResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/projects/') &&
+          response.url().includes('/update/') &&
+          response.request().method() === 'POST'
+      );
+
       await clickPageAction('Sync project', page);
-      await expect(page.locator('#last-job-status')).toBeVisible();
-      await page.locator('#last-job-status').getByRole('link').first().click();
+      const syncResponse = await syncResponsePromise;
+      expect(syncResponse.status()).toBe(202);
+      const projectUpdate = (await syncResponse.json()) as { id: number };
 
-      // Verify we're on the job output page
-      await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
-      await expect(
-        page.getByRole('main').getByRole('heading', { name: projectName }).first()
-      ).toBeVisible();
+      try {
+        await waitForJobStatus(
+          {
+            jobType: 'project_updates',
+            jobId: projectUpdate.id,
+            desiredStatus: 'successful',
+            timeout: 120000,
+          },
+          page
+        );
 
-      // Wait for job to complete
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
+        // Navigate to the job output page via the Jobs list (same pattern as inventory sync below)
+        await navigateTo(page, 'Automation Execution', 'Jobs');
+        await filterTable({ filterLabel: 'ID', filterValue: String(projectUpdate.id) }, page);
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
+        await page
+          .getByRole('row', { name: project.name })
+          .getByRole('link', { name: project.name })
+          .click();
+        await expect(
+          page.getByRole('main').getByRole('heading', { name: project.name }).first()
+        ).toBeVisible({ timeout: 30000 });
 
-      // Cleanup
-      await Project.ui.delete(page, projectName);
-      await Organization.ui.delete(page, organizationName);
+        await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+      } finally {
+        await Project.api.delete(page, project.id);
+        await Organization.api.delete(page, organization.id);
+      }
     }
   );
 
