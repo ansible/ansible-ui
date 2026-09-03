@@ -15,6 +15,7 @@ UI projects for [Ansible](https://docs.ansible.com).
 ## Getting Started
 
 1. Prerequisites
+
    - Node 18.x and up (recommended)
    - NPM 8.x and up (recommended)
 
@@ -97,10 +98,10 @@ If you encounter abusive behavior, please refer to the [policy violations](https
 
 ## Communication
 
-* Join the Ansible forum:
-  * [Posts tagged with 'ui'](https://forum.ansible.com/tag/ui): subscribe to participate in UI related conversations.
-  * [Social Spaces](https://forum.ansible.com/c/chat/4): gather and interact with fellow enthusiasts.
-  * [News & Announcements](https://forum.ansible.com/c/news/5): track project-wide announcements including social events. The [Bullhorn newsletter](https://docs.ansible.com/projects/ansible/latest/community/communication.html#the-bullhorn), which is used to announce releases and important changes, can also be found here.
+- Join the Ansible forum:
+  - [Posts tagged with 'ui'](https://forum.ansible.com/tag/ui): subscribe to participate in UI related conversations.
+  - [Social Spaces](https://forum.ansible.com/c/chat/4): gather and interact with fellow enthusiasts.
+  - [News & Announcements](https://forum.ansible.com/c/news/5): track project-wide announcements including social events. The [Bullhorn newsletter](https://docs.ansible.com/projects/ansible/latest/community/communication.html#the-bullhorn), which is used to announce releases and important changes, can also be found here.
 
 For more information about communication, see the [Ansible communication guide](https://docs.ansible.com/projects/ansible/latest/community/communication.html).
 
@@ -159,3 +160,5 @@ export HUB_SERVER=http://localhost:5001
 export HUB_USERNAME='dev'
 export HUB_PASSWORD='nomeetingsfriday'
 ```
+
+testing
