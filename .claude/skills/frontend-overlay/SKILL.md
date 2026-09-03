@@ -37,17 +37,17 @@ description: >
 Global/shared components live in the `framework/` package — search there first
 before reaching for raw PatternFly or writing a new component.
 
-| Pattern | Component / hook | Notes |
-| --- | --- | --- |
-| Page shell | `PageLayout` | `framework/` |
-| Page header | `PageHeader` | `framework/` |
-| Content panel | `Page` helpers in `framework/` | Search `framework/` before new components |
-| List + table + pagination | `PageTable` + `useAwxView` / `useEdaView` / `useHubView` | Workspace view hook |
-| Empty (no data / no filter / error) | framework empty states | |
-| Confirmation | framework dialog / PF Modal | Reversible vs destructive |
-| Error with retry | workspace error adapter | See coding_standards |
-| Forms | `AwxPageForm` / `EdaPageForm` / `HubPageForm` / `PlatformPageForm` | Never raw `PageForm` |
-| Toast / alert helper | framework alerts | object form `{ title, description? }` |
+| Pattern                             | Component / hook                                                   | Notes                                                                                                   |
+| ----------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Page shell                          | `PageLayout`                                                       | `framework/`                                                                                            |
+| Page header                         | `PageHeader`                                                       | `framework/`                                                                                            |
+| Content panel                       | `Page` helpers in `framework/`                                     | Search `framework/` before new components                                                               |
+| List + table + pagination           | `PageTable` + `useAwxView` / `useEdaView` / `useHubView`           | Workspace view hook                                                                                     |
+| Empty (no data / no filter / error) | framework empty states                                             |                                                                                                         |
+| Confirmation                        | framework dialog / PF Modal                                        | Reversible vs destructive                                                                               |
+| Error with retry                    | workspace error adapter                                            | See coding_standards                                                                                    |
+| Forms                               | `AwxPageForm` / `EdaPageForm` / `HubPageForm` / `PlatformPageForm` | See `framework/PageForm/` for shared primitives; use the workspace wrapper, not raw `PageForm`          |
+| Toast / alert helper                | framework alerts                                                   | `addAlert({ variant, title, children? })` — body is `children`, not `description`; always set `variant` |
 
 ## API
 
@@ -106,14 +106,18 @@ before reaching for raw PatternFly or writing a new component.
 - Logs: platform → platform server logs; dev → browser console + terminal
   output; tests → Playwright reports and traces
 
-## Review remainder (lint cannot catch)
+## Review remainder (not currently linted)
 
-| Miss | Grep / check |
-| --- | --- |
-| Raw `PageForm` in a workspace UI | `PageForm` import from framework in `frontend/` or `platform/` |
-| Hardcoded API path | `/api/controller`, `/api/eda`, `/api/galaxy`, `/api/gateway` as strings |
-| `fireEvent` in tests | `fireEvent` in `*.test.tsx` |
-| Translated string used in logic | `if (t(` or `=== t(` |
+| Miss                                                                 | Grep / check                                                                                                                                                                            |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raw `PageForm` in a workspace UI                                     | `PageForm` import from framework in `frontend/` or `platform/`                                                                                                                          |
+| `fireEvent` in tests                                                 | `fireEvent` in `*.test.tsx`                                                                                                                                                             |
+| Translated string used in logic                                      | `if (t(` or `=== t(`                                                                                                                                                                    |
+| Alert body in `description`, or `addAlert` without `variant`         | `rg "addAlert\(\{" -A8 --glob '!*.test.*' \| rg "description:"` (any hit) — body goes in `children`; every `addAlert` sets `variant` (`title:` may push `children:` several lines down) |
+| Resource `use*Actions/Filters/Columns` hook not under a `hooks/` dir | `fd "use.*(Actions\|Filters\|Columns)\.tsx$" \| rg -v "/hooks/"` (≈95% live under `hooks/`)                                                                                             |
+| Test placed in a `__tests__/` dir instead of colocated `*.test.tsx`  | `fd -t d "__tests__"` (repo has none; unit tests colocate beside source)                                                                                                                |
+| `userEvent` used without a `userEvent.setup()` handle                | test uses `userEvent.click/type` but has no `const user = userEvent.setup()` (≈94% use `setup()`)                                                                                       |
+| Raw string path in `navigate('/...')`                                | `rg "navigate\('/" -g '*.tsx' -g '!*.test.tsx'` — use `usePageNavigate` + route enum, or `<Link>`                                                                                       |
 
 ## Review harvest
 
