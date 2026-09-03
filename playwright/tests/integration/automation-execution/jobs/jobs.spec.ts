@@ -215,19 +215,13 @@ test.describe('Jobs: Launch and Verify Output', () => {
           page
         );
 
-        // Navigate to the job output page for the sync we just triggered
-        await navigateTo(page, 'Automation Execution', 'Jobs');
-        await clickTableRow(
-          {
-            text: project.name,
-            filterLabel: 'ID',
-            filterValue: String(projectUpdate.id),
-            pageTitle: 'Jobs',
-          },
-          page
-        );
+        // Navigate directly to the job output page for the sync we just triggered.
+        // Avoid clickTableRow here — the output page has duplicate headings with the project name.
+        const baseUrl = new URL(page.url()).origin;
+        await page.goto(`${baseUrl}/execution/jobs/project/${projectUpdate.id}/output`);
 
         await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
+        await expect(page.getByTestId('page-title')).toContainText(project.name);
         await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
       } finally {
         await Project.api.delete(page, project.id);
