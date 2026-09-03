@@ -98,13 +98,24 @@ test.describe('Inventory Groups - List View', () => {
 
   test('can bulk delete multiple groups', { tag: ['@not_mock'] }, async ({ page }) => {
     const inventoryName = await Inventory.ui.create(page);
-    await InventoryGroup.ui.createGroup(page, { inventoryName });
-    await InventoryGroup.ui.createGroup(page, { inventoryName });
-    await InventoryGroup.ui.createGroup(page, { inventoryName });
+    const groupNames = [
+      await InventoryGroup.ui.createGroup(page, { inventoryName }),
+      await InventoryGroup.ui.createGroup(page, { inventoryName }),
+      await InventoryGroup.ui.createGroup(page, { inventoryName }),
+    ];
 
     await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
     await clickTableRow({ text: inventoryName }, page);
     await page.getByRole('tab', { name: 'Groups' }).click();
+
+    await clearTableFilters(page);
+    const groupRows = groupNames.map((groupName) =>
+      page.getByRole('row').filter({ hasText: groupName })
+    );
+
+    for (const groupRow of groupRows) {
+      await expect(groupRow).toBeVisible();
+    }
 
     await page.getByRole('checkbox', { name: 'Select all' }).check();
 
@@ -114,9 +125,9 @@ test.describe('Inventory Groups - List View', () => {
     await page.getByTestId('delete-groups-dialog-radio-delete').check();
     await page.getByTestId('delete-group-modal-delete-button').click();
 
-    await clearTableFilters(page);
-
-    // Check that all groups are gone - either empty state or no results
+    for (const groupRow of groupRows) {
+      await expect(groupRow).toHaveCount(0, { timeout: 15000 });
+    }
     await expect(
       page.getByText(/No groups are assigned to this inventory|No results found/i).first()
     ).toBeVisible({ timeout: 10000 });
