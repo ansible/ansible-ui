@@ -2,7 +2,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { ReactNode } from 'react';
 import { MemoryRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { AwxActiveUserProvider } from '../../../common/useAwxActiveUser';
 import { ManagementJobPage } from './ManagementJobPage';
@@ -62,23 +64,29 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('ManagementJobPage', () => {
-  test('should render page with system job template name as title', async () => {
-    render(
+function renderManagementJobPage(children?: ReactNode) {
+  render(
+    <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={['/administration/management_jobs/1/schedules']}>
         <AwxActiveUserProvider>
           <Routes>
             <Route path="/administration/management_jobs/:id" element={<ManagementJobPage />}>
               <Route
                 path="schedules"
-                element={<div data-testid="schedules-tab">Schedules Tab</div>}
+                element={children ?? <div data-testid="schedules-tab">Schedules Tab</div>}
               />
               <Route path="" element={<Navigate to="schedules" replace />} />
             </Route>
           </Routes>
         </AwxActiveUserProvider>
       </MemoryRouter>
-    );
+    </SWRConfig>
+  );
+}
+
+describe('ManagementJobPage', () => {
+  test('should render page with system job template name as title', async () => {
+    renderManagementJobPage();
 
     await waitFor(
       () => {
@@ -89,5 +97,61 @@ describe('ManagementJobPage', () => {
     );
 
     expect(screen.getByTestId('schedules-tab')).toBeInTheDocument();
+  });
+
+  test('should show notifications tab when user has notification access', async () => {
+    server.use(
+      http.get(
+        ({ request }) =>
+          request.url.includes('/organizations/') && request.url.includes('role_level'),
+        () =>
+          HttpResponse.json({
+            count: 1,
+            next: null,
+            previous: null,
+            results: [{ id: 1, name: 'Default' }],
+          })
+      )
+    );
+
+    renderManagementJobPage();
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Notifications' })).toBeInTheDocument();
+    });
+  });
+
+  test('should show system job template errors', async () => {
+    server.use(
+      http.get(
+        ({ request }) =>
+          request.url.includes('/system_job_templates/1/') && !request.url.includes('/schedules'),
+        () => HttpResponse.json({ detail: 'Failed to load system job template' }, { status: 500 })
+      )
+    );
+
+    renderManagementJobPage();
+
+    await waitFor(() => {
+      expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
+    });
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+  });
+
+  test('should show notification access errors', async () => {
+    server.use(
+      http.get(
+        ({ request }) =>
+          request.url.includes('/organizations/') && request.url.includes('role_level'),
+        () => HttpResponse.json({ detail: 'Failed to load organizations' }, { status: 500 })
+      )
+    );
+
+    renderManagementJobPage();
+
+    await waitFor(() => {
+      expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
+    });
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
   });
 });

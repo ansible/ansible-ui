@@ -16,13 +16,9 @@ import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import {
-  canViewNotificationsTab,
-  useNotificationAdminOrganizations,
-} from '../../../common/useNotificationAdminOrganizations';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useCanViewNotificationsTab } from '../../notifications/hooks/useCanViewNotificationsTab';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 
 export function WorkflowJobTemplatePage() {
@@ -31,7 +27,6 @@ export function WorkflowJobTemplatePage() {
     'job_template+workflow_job_template+workflow_job_template_node'
   );
   const params = useParams<{ id: string }>();
-  const { activeAwxUser } = useAwxActiveUser();
   const {
     error: templateError,
     data: template,
@@ -39,8 +34,12 @@ export function WorkflowJobTemplatePage() {
     refresh,
   } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates`, params.id);
 
-  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
-    useNotificationAdminOrganizations();
+  const {
+    canViewNotificationsTab,
+    error: notificationsTabError,
+    refresh: refreshNotificationsTab,
+    isLoading: isNotificationsTabLoading,
+  } = useCanViewNotificationsTab();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const itemActions = useTemplateActions({
@@ -55,16 +54,18 @@ export function WorkflowJobTemplatePage() {
       { label: t('Schedules'), page: AwxRoute.WorkflowJobTemplateSchedules },
       { label: t('Jobs'), page: AwxRoute.WorkflowJobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.WorkflowJobTemplateSurvey },
-      canViewNotificationsTab(activeAwxUser, notificationAdminOrganizations)
+      canViewNotificationsTab
         ? { label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications }
         : false,
     ],
 
-    [t, activeAwxUser, notificationAdminOrganizations]
+    [t, canViewNotificationsTab]
   );
 
   if (templateError) return <AwxError error={templateError} handleRefresh={refresh} />;
-  if (!template || isTemplateLoading || isLoadingNotificationAdminOrganizations)
+  if (notificationsTabError)
+    return <AwxError error={notificationsTabError} handleRefresh={refreshNotificationsTab} />;
+  if (!template || isTemplateLoading || isNotificationsTabLoading)
     return <LoadingPage breadcrumbs tabs />;
 
   return (
