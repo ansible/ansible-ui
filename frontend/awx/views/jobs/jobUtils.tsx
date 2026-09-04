@@ -178,10 +178,10 @@ export function useGetLaunchedByDetails() {
 }
 
 /**
- * Filter out empty string values from extra_vars while preserving large integer precision.
+ * Normalize extra_vars for Job Details while preserving large integer precision.
  *
- * Uses precision-preserving JSON utilities to prevent large integers (>16 digits)
- * from being converted to scientific notation.
+ * Empty string values are kept so Details matches the job API and playbook extra vars.
+ * Large integers (>16 digits) must not be converted to scientific notation.
  */
 export const getFilteredExtraVars = (
   extraVars: string | null | undefined
@@ -190,8 +190,7 @@ export const getFilteredExtraVars = (
 
   try {
     const parsed = parseJSONPreservingLargeInts(extraVars) as Record<string, unknown>;
-    const filtered = Object.fromEntries(Object.entries(parsed).filter(([, value]) => value !== ''));
-    return stringifyPreservingLargeInts(filtered);
+    return stringifyPreservingLargeInts(parsed);
   } catch (error) {
     return extraVars;
   }
