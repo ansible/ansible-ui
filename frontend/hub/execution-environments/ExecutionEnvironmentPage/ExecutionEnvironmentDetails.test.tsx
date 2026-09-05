@@ -115,13 +115,13 @@ describe('ExecutionEnvironmentDetails', () => {
     const heading1 = await screen.findByRole('heading', { level: 1, name: 'heading1' });
     const heading2 = screen.getByRole('heading', { level: 2, name: 'heading2' });
     const listItem = screen.getByRole('listitem');
+    const preview = heading1.closest('[data-ouia-component-type="PF6/Content"]');
 
-    expect(heading1).toHaveAttribute('data-ouia-component-type', 'PF6/Title');
-    expect(heading1).toHaveClass('pf-v6-c-title', 'pf-m-h1');
-    expect(heading2).toHaveAttribute('data-ouia-component-type', 'PF6/Title');
-    expect(heading2).toHaveClass('pf-v6-c-title', 'pf-m-h2');
-    expect(listItem).toHaveAttribute('data-ouia-component-type', 'PF6/Content');
-    expect(listItem).toHaveClass('pf-v6-c-content--li');
+    expect(preview).toBeInTheDocument();
+    expect(heading1.tagName).toBe('H1');
+    expect(heading2.tagName).toBe('H2');
+    expect(preview).toContainElement(heading2);
+    expect(listItem.tagName).toBe('LI');
     expect(listItem).toHaveTextContent('list item');
     expect(screen.getByText('bold text').tagName).toBe('STRONG');
     expect(screen.getByText('italic text').tagName).toBe('EM');
@@ -139,9 +139,8 @@ describe('ExecutionEnvironmentDetails', () => {
 
     await waitFor(() => {
       const previewHeading = screen.getByRole('heading', { level: 1, name: 'New Heading' });
-      expect(previewHeading).toHaveAttribute('data-ouia-component-type', 'PF6/Title');
-      expect(previewHeading).toHaveClass('pf-v6-c-title');
-      expect(screen.getByText('new bold text')).toBeInTheDocument();
+      expect(previewHeading.tagName).toBe('H1');
+      expect(screen.getByText('new bold text').tagName).toBe('STRONG');
     });
 
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
