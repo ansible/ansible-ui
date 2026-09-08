@@ -205,7 +205,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
       const projectUpdate = (await syncResponse.json()) as { id: number };
 
       try {
-        await waitForJobStatus(
+        const completedProjectUpdate = await waitForJobStatus<{ id: number; name: string }>(
           {
             jobType: 'project_updates',
             jobId: projectUpdate.id,
@@ -215,13 +215,19 @@ test.describe('Jobs: Launch and Verify Output', () => {
           page
         );
 
-        // Navigate directly to the job output page for the sync we just triggered.
-        // Avoid Jobs list row clicks here — unified job names may not match project.name.
-        const baseUrl = new URL(page.url()).origin;
-        await page.goto(`${baseUrl}/execution/jobs/project/${projectUpdate.id}/output`);
+        await navigateTo(page, 'Automation Execution', 'Jobs');
+        await clickTableRow(
+          {
+            pageTitle: 'Jobs',
+            filterLabel: 'ID',
+            filterValue: String(completedProjectUpdate.id),
+            text: completedProjectUpdate.name,
+            clearFilters: true,
+          },
+          page
+        );
 
         await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
-        await expect(page.getByTestId('page-title')).toContainText(project.name);
         await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
       } finally {
         await Project.api.delete(page, project.id);
