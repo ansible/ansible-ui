@@ -25,21 +25,24 @@ export function PlatformSubscription(props: Readonly<{ children: ReactNode }>) {
     if (awxConfigError) {
       return (
         <Page>
-          <AwxError error={awxConfigError} handleRefresh={refreshAwxConfig} />
+          <AwxError error={awxConfigError} handleRefresh={() => void refreshAwxConfig?.()} />
         </Page>
       );
     }
 
     if (!awxConfig) {
       return (
-        <AwxError error={new Error(t`Subscription not found`)} handleRefresh={refreshAwxConfig} />
+        <AwxError
+          error={new Error(t`Subscription not found`)}
+          handleRefresh={() => void refreshAwxConfig?.()}
+        />
       );
     }
 
     if (!awxConfig.license_info || !Object.keys(awxConfig.license_info).length) {
       return (
         <Page>
-          <SubscriptionWizard onSuccess={() => refreshAwxConfig?.()} />
+          <SubscriptionWizard onSuccess={() => void refreshAwxConfig?.()} />
         </Page>
       );
     }
