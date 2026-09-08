@@ -1,7 +1,8 @@
 import { FrameworkTranslationsProvider, PageDialogProvider } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
-import { act, fireEvent, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, renderHook, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { BrowserRouter } from 'react-router-dom';
@@ -45,7 +46,7 @@ function createToken(overrides: Partial<Token> & Pick<Token, 'id' | 'type' | 'ur
 const legacyToken = createToken({
   id: 1,
   type: 'o_auth2_access_token',
-  url: '/api/v2/tokens/1/',
+  url: '/api/controller/v2/tokens/1/',
   description: 'Legacy token',
   scope: 'write',
 });
@@ -65,11 +66,9 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
   </BrowserRouter>
 );
 
-async function confirmTokenDeletion() {
-  fireEvent.click(screen.getByRole('checkbox'));
-  await act(() => {
-    fireEvent.click(screen.getByRole('button', { name: /Delete token/i }));
-  });
+async function confirmTokenDeletion(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole('checkbox'));
+  await user.click(screen.getByRole('button', { name: /Delete token/i }));
 }
 
 describe('getTokenDeleteUrl', () => {
@@ -81,44 +80,24 @@ describe('getTokenDeleteUrl', () => {
     expect(getTokenDeleteUrl(gatewayToken)).toBe(gatewayAPI`/tokens/2/`);
   });
 
-  it('prefers the gateway URL when the token URL points at the gateway', () => {
+  it('routes legacy tokens to the controller API based on type, regardless of URL', () => {
     const token = createToken({
       id: 3,
       type: 'o_auth2_access_token',
       url: '/api/gateway/v1/tokens/3/',
     });
 
-    expect(getTokenDeleteUrl(token)).toBe(gatewayAPI`/tokens/3/`);
+    expect(getTokenDeleteUrl(token)).toBe(awxAPI`/tokens/3/`);
   });
 
-  it('prefers the controller URL when the token URL points at controller', () => {
+  it('routes regular access tokens to the gateway API based on type, regardless of URL', () => {
     const token = createToken({
       id: 4,
       type: 'Access Token',
-      url: '/api/v2/tokens/4/',
+      url: '/api/controller/v2/tokens/4/',
     });
 
-    expect(getTokenDeleteUrl(token)).toBe(awxAPI`/tokens/4/`);
-  });
-
-  it('falls back to the legacy token type when the URL is ambiguous', () => {
-    const token = createToken({
-      id: 5,
-      type: 'o_auth2_access_token',
-      url: '/tokens/5/',
-    });
-
-    expect(getTokenDeleteUrl(token)).toBe(awxAPI`/tokens/5/`);
-  });
-
-  it('defaults to the gateway API for non-legacy access tokens with ambiguous URLs', () => {
-    const token = createToken({
-      id: 6,
-      type: 'Access Token',
-      url: '/tokens/6/',
-    });
-
-    expect(getTokenDeleteUrl(token)).toBe(gatewayAPI`/tokens/6/`);
+    expect(getTokenDeleteUrl(token)).toBe(gatewayAPI`/tokens/4/`);
   });
 });
 
@@ -131,6 +110,7 @@ describe('useDeleteAAPUserTokens', () => {
   const onComplete = vi.fn();
 
   it('deletes the legacy token through the AWX controller API, not the gateway API', async () => {
+    const user = userEvent.setup();
     let awxCalled = false;
     let gatewayCalled = false;
     server.use(
@@ -149,7 +129,7 @@ describe('useDeleteAAPUserTokens', () => {
       result.current([legacyToken]);
     });
 
-    await confirmTokenDeletion();
+    await confirmTokenDeletion(user);
 
     await waitFor(() => {
       expect(awxCalled).toBe(true);
@@ -159,6 +139,7 @@ describe('useDeleteAAPUserTokens', () => {
   });
 
   it('deletes gateway tokens through the gateway API, not the AWX controller API', async () => {
+    const user = userEvent.setup();
     let awxCalled = false;
     let gatewayCalled = false;
     server.use(
@@ -177,7 +158,7 @@ describe('useDeleteAAPUserTokens', () => {
       result.current([gatewayToken]);
     });
 
-    await confirmTokenDeletion();
+    await confirmTokenDeletion(user);
 
     await waitFor(() => {
       expect(awxCalled).toBe(false);
@@ -187,6 +168,7 @@ describe('useDeleteAAPUserTokens', () => {
   });
 
   it('deletes mixed legacy and gateway tokens through their respective APIs', async () => {
+    const user = userEvent.setup();
     let awxCalled = false;
     let gatewayCalled = false;
     server.use(
@@ -205,7 +187,7 @@ describe('useDeleteAAPUserTokens', () => {
       result.current([legacyToken, gatewayToken]);
     });
 
-    await confirmTokenDeletion();
+    await confirmTokenDeletion(user);
 
     await waitFor(() => {
       expect(awxCalled).toBe(true);

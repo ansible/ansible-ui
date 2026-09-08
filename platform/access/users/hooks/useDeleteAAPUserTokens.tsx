@@ -7,13 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function getTokenDeleteUrl(token: Token) {
-  if (token.url.includes('/api/gateway/')) {
-    return gatewayAPI`/tokens/${token.id.toString()}/`;
-  }
-  if (token.url.includes('/api/v2/') || token.type === 'o_auth2_access_token') {
-    return awxAPI`/tokens/${token.id.toString()}/`;
-  }
-  return gatewayAPI`/tokens/${token.id.toString()}/`;
+  const tokenId = token.id.toString();
+  return token.type === 'o_auth2_access_token'
+    ? awxAPI`/tokens/${tokenId}/`
+    : gatewayAPI`/tokens/${tokenId}/`;
 }
 
 export function useDeleteUserTokens(onComplete: (items: Token[]) => void) {
