@@ -205,7 +205,11 @@ test.describe('Jobs: Launch and Verify Output', () => {
       const projectUpdate = (await syncResponse.json()) as { id: number };
 
       try {
-        const completedProjectUpdate = await waitForJobStatus<{ id: number; name: string }>(
+        const completedProjectUpdate = await waitForJobStatus<{
+          id: number;
+          name: string;
+          status: string;
+        }>(
           {
             jobType: 'project_updates',
             jobId: projectUpdate.id,
