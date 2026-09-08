@@ -10,7 +10,7 @@ const AwxConfigContext = createContext<{
   awxConfigError?: Error;
   serviceDown?: boolean;
   serviceDownStatusCode?: number;
-  refreshAwxConfig?: () => void;
+  refreshAwxConfig?: () => Promise<Config | undefined>;
 }>({});
 
 export function useAwxConfig() {

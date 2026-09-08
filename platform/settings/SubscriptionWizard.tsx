@@ -91,7 +91,7 @@ export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
           });
           break;
       }
-      refreshAwxConfig?.();
+      await refreshAwxConfig?.();
       props.onSuccess();
     },
     [props, refreshAwxConfig]

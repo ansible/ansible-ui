@@ -7,9 +7,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SubscriptionWizard } from './SubscriptionWizard';
 
+const mockRefreshAwxConfig = vi.hoisted(() => vi.fn());
+
 vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
   useAwxConfig: () => ({ eula: 'End User License Agreement text for testing.' }),
-  useAwxConfigState: () => ({ refreshAwxConfig: vi.fn() }),
+  useAwxConfigState: () => ({ refreshAwxConfig: mockRefreshAwxConfig }),
 }));
 
 const server = setupServer();
@@ -35,6 +37,7 @@ const renderWithRouter = (props = defaultProps) => {
 describe('SubscriptionWizard Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRefreshAwxConfig.mockResolvedValue(undefined);
   });
 
   describe('Wizard Structure', () => {
@@ -331,6 +334,14 @@ describe('SubscriptionWizard Component', () => {
 
     it('should not enable INSIGHTS_TRACKING_STATE when submitting manifest subscription', async () => {
       let patchCalled = false;
+      const events: string[] = [];
+
+      mockRefreshAwxConfig.mockImplementation(async () => {
+        events.push('refresh-start');
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        events.push('refresh-complete');
+      });
+      mockOnSuccess.mockImplementation(() => events.push('success'));
 
       server.use(
         http.post('*/config/', () => HttpResponse.json({})),
@@ -371,7 +382,7 @@ describe('SubscriptionWizard Component', () => {
       await user.click(screen.getByRole('button', { name: 'Finish' }));
 
       await waitFor(() => {
-        expect(mockOnSuccess).toHaveBeenCalled();
+        expect(events).toEqual(['refresh-start', 'refresh-complete', 'success']);
       });
 
       expect(patchCalled).toBe(false);
