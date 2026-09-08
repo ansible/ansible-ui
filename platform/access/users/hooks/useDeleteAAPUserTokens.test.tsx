@@ -67,7 +67,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 
 async function confirmTokenDeletion() {
   fireEvent.click(screen.getByRole('checkbox'));
-  await act(async () => {
+  await act(() => {
     fireEvent.click(screen.getByRole('button', { name: /Delete token/i }));
   });
 }
