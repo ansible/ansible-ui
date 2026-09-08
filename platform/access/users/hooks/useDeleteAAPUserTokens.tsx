@@ -1,9 +1,9 @@
 import { compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
 import { useUserTokensColumns } from '@ansible/awx-ui/access/users/hooks/useUserTokensColumns';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
 import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
-import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function useDeleteUserTokens(onComplete: (items: Token[]) => void) {
   const { t } = useTranslation();
@@ -28,7 +28,7 @@ export function useDeleteUserTokens(onComplete: (items: Token[]) => void) {
       actionColumns: userTokensColumns,
       onComplete,
       actionFn: (token: Token, signal) =>
-        requestDelete(gatewayAPI`/tokens/${token.id.toString()}/`, signal),
+        requestDelete(awxAPI`/tokens/${token.id.toString()}/`, signal),
     });
   };
   return deleteTokens;
