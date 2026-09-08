@@ -6,10 +6,14 @@ import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
-function getTokenDeleteUrl(token: Token) {
-  return token.type === 'o_auth2_access_token'
-    ? awxAPI`/tokens/${token.id.toString()}/`
-    : gatewayAPI`/tokens/${token.id.toString()}/`;
+export function getTokenDeleteUrl(token: Token) {
+  if (token.url.includes('/api/gateway/')) {
+    return gatewayAPI`/tokens/${token.id.toString()}/`;
+  }
+  if (token.url.includes('/api/v2/') || token.type === 'o_auth2_access_token') {
+    return awxAPI`/tokens/${token.id.toString()}/`;
+  }
+  return gatewayAPI`/tokens/${token.id.toString()}/`;
 }
 
 export function useDeleteUserTokens(onComplete: (items: Token[]) => void) {
