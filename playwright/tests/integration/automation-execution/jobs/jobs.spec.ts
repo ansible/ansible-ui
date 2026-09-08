@@ -215,19 +215,13 @@ test.describe('Jobs: Launch and Verify Output', () => {
           page
         );
 
-        // Navigate to the job output page via the Jobs list (same pattern as inventory sync below)
-        await navigateTo(page, 'Automation Execution', 'Jobs');
-        await filterTable({ filterLabel: 'ID', filterValue: String(projectUpdate.id) }, page);
-        await expect(page.locator('tbody')).toBeVisible({ timeout: 10000 });
-        await page
-          .getByRole('row', { name: project.name })
-          .getByRole('link', { name: project.name })
-          .click();
-        await expect(
-          page.getByRole('main').getByRole('heading', { name: project.name }).first()
-        ).toBeVisible({ timeout: 30000 });
+        // Navigate directly to the job output page for the sync we just triggered.
+        // Avoid Jobs list row clicks here — unified job names may not match project.name.
+        const baseUrl = new URL(page.url()).origin;
+        await page.goto(`${baseUrl}/execution/jobs/project/${projectUpdate.id}/output`);
 
         await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
+        await expect(page.getByTestId('page-title')).toContainText(project.name);
         await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
       } finally {
         await Project.api.delete(page, project.id);
