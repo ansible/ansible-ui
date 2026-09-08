@@ -74,7 +74,7 @@ test.describe('Inventory Source List', () => {
       await expect(page.getByTestId('description')).toContainText('mock description', {
         timeout: 10_000,
       });
-      await expect(page.getByTestId('inventory-file')).toContainText('hello_world.yml', {
+      await expect(page.getByTestId('inventory-path')).toContainText('hello_world.yml', {
         timeout: 10_000,
       });
       await expect(page.getByTestId('enabled-options')).toContainText('Overwrite', {
