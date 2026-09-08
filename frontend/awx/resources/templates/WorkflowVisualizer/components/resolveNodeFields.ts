@@ -8,9 +8,9 @@ export function resolveScalar<T>(
   nodeValue: T | undefined | null,
   templateValue: T,
   isTemplateChanged: boolean
-): T {
+): T | null {
   if (promptValue !== undefined && promptValue !== null) return promptValue;
-  if (!isTemplateChanged && nodeValue !== undefined && nodeValue !== null) return nodeValue;
+  if (!isTemplateChanged && nodeValue !== undefined) return nodeValue;
   return templateValue;
 }
 

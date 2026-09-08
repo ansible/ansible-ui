@@ -200,7 +200,15 @@ export function useSaveVisualizer(templateId: string) {
             }
           }
 
-          if (typeof value === 'undefined' || value === null || value === '') {
+          if (value === undefined) {
+            return;
+          }
+          if (value === null || value === '') {
+            if (!isPrompt) {
+              return;
+            }
+            // Prompt field explicitly cleared; send null to the API to remove the node override
+            createNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
             return;
           }
 
@@ -263,7 +271,7 @@ export function useSaveVisualizer(templateId: string) {
     }
 
     async function updateExistingNodes(editedNodes: GraphNode[]) {
-      await Promise.allSettled(
+      const results = await Promise.allSettled(
         editedNodes.map(async (node) => {
           const updatedNodePayload: Partial<CreateWorkflowNodePayload> = {};
           const nodeData = node.getData() as GraphNodeData;
@@ -301,7 +309,15 @@ export function useSaveVisualizer(templateId: string) {
               }
             }
 
-            if (typeof value === 'undefined' || value === null || value === '') {
+            if (value === undefined) {
+              return;
+            }
+            if (value === null || value === '') {
+              if (!isPrompt) {
+                return;
+              }
+              // Prompt field explicitly cleared; send null to the API to remove the node override
+              updatedNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
               return;
             }
 
@@ -379,6 +395,18 @@ export function useSaveVisualizer(templateId: string) {
           await processCredentials(nodeId, launch_data, 'associate');
         })
       );
+
+      // Promise.allSettled lets all nodes attempt their updates even if one fails.
+      // We must explicitly re-throw rejections so the caller (and the UI) sees the
+      // error; without this the save hook would silently resolve despite failures.
+      // Backported from upstream fix(workflow): show error when node update fails
+      // due to validation — needed here because stable-2.6 predates that commit.
+      const failures = results.filter(
+        (result): result is PromiseRejectedResult => result.status === 'rejected'
+      );
+      if (failures.length > 0) {
+        throw failures[0].reason;
+      }
     }
 
     function handleNodeDeletion(node: GraphNode) {
@@ -600,7 +628,7 @@ export function toKeyedObject(
   key: string,
   value: string | number | undefined | null
 ): { [key: string]: string | number } | object {
-  if ((typeof value === 'string' && value !== '') || typeof value === 'number') {
+  if (value !== null && value !== undefined && value !== '') {
     return { [key]: value };
   } else {
     return {};
