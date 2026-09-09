@@ -395,5 +395,44 @@ describe('SubscriptionWizard Component', () => {
 
       expect(patchCalled).toBe(false);
     }, 30000);
+
+    it('should explain when the manifest upload succeeds but refresh fails', async () => {
+      mockRefreshAwxConfig.mockRejectedValue(new Error('Refresh failed'));
+
+      server.use(http.post('*/config/', () => HttpResponse.json({})));
+
+      const user = userEvent.setup();
+      renderWithRouter();
+
+      await user.click(screen.getByRole('button', { name: 'Subscription manifest' }));
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['mock manifest content'], 'manifest.zip', {
+        type: 'application/zip',
+      });
+      await user.upload(fileInput, file);
+
+      await user.click(screen.getByRole('button', { name: 'Next' }));
+      await user.click(
+        screen.getByRole('checkbox', { name: /I agree to the terms of the license agreement/i })
+      );
+      await user.click(screen.getByRole('button', { name: 'Next' }));
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Finish' })).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            'Subscription uploaded, but the subscription status could not be refreshed. Please try again.'
+          )
+        ).toBeInTheDocument();
+      });
+
+      expect(mockOnSuccess).not.toHaveBeenCalled();
+    }, 30000);
   });
 });
