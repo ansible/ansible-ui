@@ -20,8 +20,6 @@
 /build
 /certs
 /coverage
-/cypress/.nyc_output
-/cypress/downloads
 /dist
 /framework/publish
 /storybook-static
