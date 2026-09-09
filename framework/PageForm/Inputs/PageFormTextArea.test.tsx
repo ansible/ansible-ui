@@ -3,8 +3,31 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import { describe, expect, test, vi } from 'vitest';
-import { PageFormOptionsContext } from '../PageFormOptionsContext';
+import { PageFormOptionsContext, PageFormOptionsContextValue } from '../PageFormOptionsContext';
 import { PageFormTextArea } from './PageFormTextArea';
+
+// Module-level constant: a stable reference (no re-creation per render, no useMemo needed)
+const DESCRIPTION_PATTERN_OPTIONS: PageFormOptionsContextValue = {
+  fields: {
+    description: {
+      pattern: '^[a-zA-Z ]+$',
+      pattern_description: 'Description must contain only letters and spaces',
+    },
+  },
+};
+
+function WrapperWithOptionsPattern({ defaultDescription = '' }: { defaultDescription?: string }) {
+  const methods = useForm({ defaultValues: { description: defaultDescription }, mode: 'onBlur' });
+  return (
+    <PageFormOptionsContext.Provider value={DESCRIPTION_PATTERN_OPTIONS}>
+      <FormProvider {...methods}>
+        <form>
+          <PageFormTextArea name="description" label="Description" />
+        </form>
+      </FormProvider>
+    </PageFormOptionsContext.Provider>
+  );
+}
 
 function DefaultWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
   const methods = useForm({ defaultValues: { description: '' } });
@@ -167,6 +190,33 @@ describe('PageFormTextArea', () => {
     });
   });
 
+  describe('password reveal button', () => {
+    test('should reveal and re-hide the password when the toggle button is clicked', async () => {
+      const user = userEvent.setup();
+
+      function Wrapper() {
+        const methods = useForm({ defaultValues: { description: 'secret' } });
+        return (
+          <FormProvider {...methods}>
+            <form>
+              <PageFormTextArea name="description" label="Description" type="password" />
+            </form>
+          </FormProvider>
+        );
+      }
+
+      const { container } = render(<Wrapper />);
+      const getTextarea = () => container.querySelector('textarea') as HTMLTextAreaElement;
+      expect(getTextarea()).toHaveAttribute('type', 'password');
+
+      await user.click(screen.getByRole('button'));
+      expect(getTextarea()).toHaveAttribute('type', 'text');
+
+      await user.click(screen.getByRole('button'));
+      expect(getTextarea()).toHaveAttribute('type', 'password');
+    });
+  });
+
   describe('select lookup button', () => {
     test('should render lookup button when selectTitle is provided', () => {
       function WrapperWithSelect() {
@@ -223,28 +273,7 @@ describe('PageFormTextArea', () => {
     test('should apply pattern validation when field is dirty', async () => {
       const user = userEvent.setup();
 
-      function WrapperWithOptions() {
-        const methods = useForm({ defaultValues: { description: '' }, mode: 'onBlur' });
-        const optionsContext = {
-          fields: {
-            description: {
-              pattern: '^[a-zA-Z ]+$',
-              pattern_description: 'Description must contain only letters and spaces',
-            },
-          },
-        };
-        return (
-          <PageFormOptionsContext.Provider value={optionsContext}>
-            <FormProvider {...methods}>
-              <form>
-                <PageFormTextArea name="description" label="Description" />
-              </form>
-            </FormProvider>
-          </PageFormOptionsContext.Provider>
-        );
-      }
-
-      const { container } = render(<WrapperWithOptions />);
+      const { container } = render(<WrapperWithOptionsPattern />);
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
 
       // Type an invalid value (contains number)
@@ -261,28 +290,7 @@ describe('PageFormTextArea', () => {
     test('should skip pattern validation when field is not dirty', async () => {
       const user = userEvent.setup();
 
-      function WrapperWithOptions() {
-        const methods = useForm({ defaultValues: { description: 'existing123' }, mode: 'onBlur' });
-        const optionsContext = {
-          fields: {
-            description: {
-              pattern: '^[a-zA-Z ]+$',
-              pattern_description: 'Description must contain only letters and spaces',
-            },
-          },
-        };
-        return (
-          <PageFormOptionsContext.Provider value={optionsContext}>
-            <FormProvider {...methods}>
-              <form>
-                <PageFormTextArea name="description" label="Description" />
-              </form>
-            </FormProvider>
-          </PageFormOptionsContext.Provider>
-        );
-      }
-
-      const { container } = render(<WrapperWithOptions />);
+      const { container } = render(<WrapperWithOptionsPattern defaultDescription="existing123" />);
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
 
       // Blur without changing the value
@@ -333,28 +341,7 @@ describe('PageFormTextArea', () => {
     test('should pass validation when value matches pattern', async () => {
       const user = userEvent.setup();
 
-      function WrapperWithOptions() {
-        const methods = useForm({ defaultValues: { description: '' }, mode: 'onBlur' });
-        const optionsContext = {
-          fields: {
-            description: {
-              pattern: '^[a-zA-Z ]+$',
-              pattern_description: 'Description must contain only letters and spaces',
-            },
-          },
-        };
-        return (
-          <PageFormOptionsContext.Provider value={optionsContext}>
-            <FormProvider {...methods}>
-              <form>
-                <PageFormTextArea name="description" label="Description" />
-              </form>
-            </FormProvider>
-          </PageFormOptionsContext.Provider>
-        );
-      }
-
-      const { container } = render(<WrapperWithOptions />);
+      const { container } = render(<WrapperWithOptionsPattern />);
       const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
 
       // Type a valid value
