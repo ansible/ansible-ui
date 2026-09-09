@@ -169,8 +169,9 @@ describe('JobDetails Component', () => {
       </MemoryRouter>
     );
     expect(screen.queryByText('Extra variables')).toBeInTheDocument();
-    expect(screen.queryByText('var1: answer1')).toBeInTheDocument();
-    expect(screen.queryByText('var2: ')).not.toBeInTheDocument();
+    const extraVars = screen.getAllByTestId('code-block-value')[0];
+    expect(extraVars).toHaveTextContent('var1: answer1');
+    expect(extraVars).toHaveTextContent(/var2:/);
   });
   it('conditionally renders source control branch field', () => {
     mockJob.scm_branch = 'foo';
