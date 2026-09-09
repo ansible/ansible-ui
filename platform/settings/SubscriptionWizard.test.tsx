@@ -263,6 +263,14 @@ describe('SubscriptionWizard Component', () => {
   describe('Auto-enabling Insights Tracking', () => {
     it('should enable INSIGHTS_TRACKING_STATE when submitting service account subscription', async () => {
       let patchedSettings: Record<string, unknown> | undefined;
+      const events: string[] = [];
+
+      mockRefreshAwxConfig.mockImplementation(async () => {
+        events.push('refresh-start');
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        events.push('refresh-complete');
+      });
+      mockOnSuccess.mockImplementation(() => events.push('success'));
 
       server.use(
         http.post('*/config/subscriptions/', () =>
@@ -326,7 +334,7 @@ describe('SubscriptionWizard Component', () => {
       await user.click(screen.getByRole('button', { name: 'Finish' }));
 
       await waitFor(() => {
-        expect(mockOnSuccess).toHaveBeenCalled();
+        expect(events).toEqual(['refresh-start', 'refresh-complete', 'success']);
       });
 
       expect(patchedSettings).toEqual({ INSIGHTS_TRACKING_STATE: true });

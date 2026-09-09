@@ -42,7 +42,7 @@ export function PlatformSubscription(props: Readonly<{ children: ReactNode }>) {
     if (!awxConfig.license_info || !Object.keys(awxConfig.license_info).length) {
       return (
         <Page>
-          <SubscriptionWizard onSuccess={() => void refreshAwxConfig?.()} />
+          <SubscriptionWizard onSuccess={() => undefined} />
         </Page>
       );
     }

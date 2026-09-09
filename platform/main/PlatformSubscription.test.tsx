@@ -65,7 +65,7 @@ describe('PlatformSubscription', () => {
     expect(mockRefreshAwxConfig).toHaveBeenCalledOnce();
   });
 
-  it('refreshes the config after the subscription wizard succeeds', async () => {
+  it('does not refresh the config after the subscription wizard succeeds', async () => {
     const user = userEvent.setup();
     mockUseAwxConfigState.mockReturnValue({
       awxConfig: { license_info: {} },
@@ -78,7 +78,7 @@ describe('PlatformSubscription', () => {
 
     await user.click(screen.getByRole('button', { name: 'Complete subscription' }));
 
-    expect(mockRefreshAwxConfig).toHaveBeenCalledOnce();
+    expect(mockRefreshAwxConfig).not.toHaveBeenCalled();
   });
 
   it('refreshes the config when the subscription cannot be found', async () => {
