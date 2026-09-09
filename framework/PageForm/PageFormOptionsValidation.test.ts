@@ -50,7 +50,7 @@ describe('validateOptionsPattern', () => {
 
   test('applies regex flags (e.g. unicode) when provided', () => {
     const unicodeMetadata: FieldMetadata = {
-      pattern: '^[\\p{L}\\p{N}_]+$',
+      pattern: String.raw`^[\p{L}\p{N}_]+$`,
       pattern_description: 'Unicode letters only',
       flags: 'u',
     };
