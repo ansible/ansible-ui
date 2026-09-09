@@ -220,18 +220,26 @@ test.describe('Jobs: Launch and Verify Output', () => {
         );
 
         await navigateTo(page, 'Automation Execution', 'Jobs');
-        await clickTableRow(
+        await filterTable(
           {
             pageTitle: 'Jobs',
             filterLabel: 'ID',
             filterValue: String(completedProjectUpdate.id),
-            text: completedProjectUpdate.name,
             clearFilters: true,
           },
           page
         );
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10_000 });
+        await expect(page.locator('table tbody tr')).toHaveCount(1);
+        // Use the API job name for the row click; avoid clickTableRow because the output
+        // page renders duplicate headings with the same name (page-title + output section).
+        await page
+          .getByRole('row', { name: completedProjectUpdate.name })
+          .getByRole('link', { name: completedProjectUpdate.name })
+          .click();
 
         await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
+        await expect(page.getByTestId('page-title')).toContainText(completedProjectUpdate.name);
         await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
       } finally {
         await Project.api.delete(page, project.id);
