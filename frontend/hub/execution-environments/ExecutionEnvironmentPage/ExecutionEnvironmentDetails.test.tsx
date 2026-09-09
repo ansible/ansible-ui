@@ -21,7 +21,13 @@ const mockReadmeEmpty: ReadmeType = {
 const mockReadmeWithContent: ReadmeType = {
   updated_at: '2024-01-01T00:00:00Z',
   created_at: '2024-01-01T00:00:00Z',
-  text: '# Heading 1\n**bold text**',
+  text: '# heading1\n## heading2\n**bold text**\n*italic text*\n- list item',
+};
+
+const mockReadmeWithGfmTable: ReadmeType = {
+  updated_at: '2024-01-01T00:00:00Z',
+  created_at: '2024-01-01T00:00:00Z',
+  text: '| Col A | Col B |\n| ----- | ----- |\n| cell1 | cell2 |',
 };
 
 describe('ExecutionEnvironmentDetails', () => {
@@ -103,13 +109,19 @@ describe('ExecutionEnvironmentDetails', () => {
 
     renderWithFreshCache();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText('Heading 1')).toBeInTheDocument();
-        expect(screen.getByText('bold text')).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
+    const heading1 = await screen.findByRole('heading', { level: 1, name: 'heading1' });
+    const heading2 = screen.getByRole('heading', { level: 2, name: 'heading2' });
+    const listItem = screen.getByRole('listitem');
+    const preview = heading1.closest('[data-ouia-component-type="PF6/Content"]');
+
+    expect(preview).toBeInTheDocument();
+    expect(heading1.tagName).toBe('H1');
+    expect(heading2.tagName).toBe('H2');
+    expect(preview).toContainElement(heading2);
+    expect(listItem.tagName).toBe('LI');
+    expect(listItem).toHaveTextContent('list item');
+    expect(screen.getByText('bold text').tagName).toBe('STRONG');
+    expect(screen.getByText('italic text').tagName).toBe('EM');
 
     const editButton = screen.getByRole('button', { name: /edit/i });
     await user.click(editButton);
@@ -120,16 +132,26 @@ describe('ExecutionEnvironmentDetails', () => {
     await user.clear(markdownTextarea);
     await user.type(markdownTextarea, '# New Heading\n**new bold text**');
 
-    const previewButton = screen.getByText('Preview');
-    await user.click(previewButton);
+    expect(screen.getByText('Preview')).toBeInTheDocument();
 
     await waitFor(() => {
-      const preview = screen.getByTestId('readme').querySelector('.preview');
-      expect(preview).toHaveTextContent('New Heading');
-      expect(preview).toHaveTextContent('new bold text');
+      const previewHeading = screen.getByRole('heading', { level: 1, name: 'New Heading' });
+      expect(previewHeading.tagName).toBe('H1');
+      expect(screen.getByText('new bold text').tagName).toBe('STRONG');
     });
 
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+  });
+
+  test('should render GFM tables in README', async () => {
+    readmeMockData = mockReadmeWithGfmTable;
+    renderWithFreshCache();
+
+    await waitFor(() => {
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getByText('Col A')).toBeInTheDocument();
+      expect(screen.getByText('cell1')).toBeInTheDocument();
+    });
   });
 });
