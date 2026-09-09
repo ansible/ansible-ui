@@ -20,6 +20,14 @@ If you find a problem with the project, search if an issue already exists. If a 
 
 If you have forked the project and created a branch with changes you would like to see added to the project, create a pull request and your request will be reviewed.
 
+### Signed commits
+
+All commits in a pull request must be signed before the PR can be merged. Configure
+commit signing in your local Git setup and add your signing key to your GitHub
+account. See GitHub's documentation on
+[signing commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits)
+and [commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification).
+
 ## Text and Internationalization
 
 ## Internationalization
