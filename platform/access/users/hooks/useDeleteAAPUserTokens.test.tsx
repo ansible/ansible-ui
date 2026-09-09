@@ -5,7 +5,7 @@ import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { getTokenDeleteUrl, useDeleteUserTokens } from './useDeleteAAPUserTokens';
@@ -59,11 +59,11 @@ const gatewayToken = createToken({
 });
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <BrowserRouter>
+  <MemoryRouter>
     <PageDialogProvider>
       <FrameworkTranslationsProvider>{children}</FrameworkTranslationsProvider>
     </PageDialogProvider>
-  </BrowserRouter>
+  </MemoryRouter>
 );
 
 async function confirmTokenDeletion(user: ReturnType<typeof userEvent.setup>) {
