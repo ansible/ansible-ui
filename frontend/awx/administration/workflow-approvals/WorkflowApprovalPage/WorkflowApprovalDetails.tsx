@@ -11,7 +11,7 @@ export function WorkflowApprovalDetails() {
     awxAPI`/workflow_approvals`,
     params.id
   );
-  const columns = useWorkflowApprovalsColumns();
+  const columns = useWorkflowApprovalsColumns({ includeDescription: true });
   return workflowApproval ? (
     <PageDetails>
       <PageDetailsFromColumns item={workflowApproval} columns={columns} />
