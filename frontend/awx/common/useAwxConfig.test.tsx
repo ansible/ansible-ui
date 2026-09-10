@@ -176,4 +176,35 @@ describe('useAwxConfig', () => {
       expect(result.current.serviceDownStatusCode).toBe(504);
     });
   });
+
+  test('refreshAwxConfig resolves after loading the latest config', async () => {
+    let requestCount = 0;
+    const refreshedConfig = {
+      ...mockConfig,
+      license_info: {
+        ...mockConfig.license_info,
+        time_remaining: 2000000,
+      },
+    };
+
+    server.use(
+      http.get(awxAPI`/config/`, () => {
+        requestCount += 1;
+        return HttpResponse.json(requestCount === 1 ? mockConfig : refreshedConfig);
+      })
+    );
+
+    const { result } = renderHook(() => useAwxConfigState(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.awxConfig?.license_info.time_remaining).toBe(1000000);
+    });
+
+    await result.current.refreshAwxConfig?.();
+
+    await waitFor(() => {
+      expect(result.current.awxConfig?.license_info.time_remaining).toBe(2000000);
+    });
+    expect(requestCount).toBe(2);
+  });
 });

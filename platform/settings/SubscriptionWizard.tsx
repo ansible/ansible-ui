@@ -91,10 +91,16 @@ export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
           });
           break;
       }
-      refreshAwxConfig?.();
+      try {
+        await refreshAwxConfig?.();
+      } catch {
+        throw new Error(
+          t`Subscription uploaded, but the subscription status could not be refreshed. Please try again.`
+        );
+      }
       props.onSuccess();
     },
-    [props, refreshAwxConfig]
+    [props, refreshAwxConfig, t]
   );
 
   return (
