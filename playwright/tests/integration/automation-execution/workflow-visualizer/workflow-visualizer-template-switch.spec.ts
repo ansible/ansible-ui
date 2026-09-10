@@ -59,13 +59,20 @@ async function saveAndDismissToast(page: import('@playwright/test').Page) {
   // backend the outcome regularly takes longer than the old 30s budget. Assert
   // on the success toast or the failure alert, whichever lands first: waiting
   // only on the toast reports a failed save as an opaque "element(s) not
-  // found" and hides the server error that explains it.
+  // found" and hides the server error that explains it. Keep the budget under
+  // the per-test timeout: this helper runs several times per test, so a larger
+  // value would just trade the reported error for a generic test timeout.
   const toast = page.getByText('Successfully saved workflow visualizer');
   const errorAlert = page.getByText('Failed to save workflow job template');
-  await expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 120000 });
+  await expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
 
-  if (await errorAlert.isVisible().catch(() => false)) {
-    const alertText = await page.locator('.pf-v6-c-alert.pf-m-danger').innerText();
+  if (
+    await errorAlert
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
+    const alertText = await page.getByTestId('alert-toaster').innerText();
     throw new Error(`Workflow visualizer save failed: ${alertText.trim()}`);
   }
 
