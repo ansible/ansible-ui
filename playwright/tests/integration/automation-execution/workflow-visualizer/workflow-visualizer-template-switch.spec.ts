@@ -62,8 +62,9 @@ async function saveAndDismissToast(page: import('@playwright/test').Page) {
   // found" and hides the server error that explains it. Keep the budget under
   // the per-test timeout: this helper runs several times per test, so a larger
   // value would just trade the reported error for a generic test timeout.
-  const toast = page.getByText('Successfully saved workflow visualizer');
-  const errorAlert = page.getByText('Failed to save workflow job template');
+  const toaster = page.getByTestId('alert-toaster');
+  const toast = toaster.getByText('Successfully saved workflow visualizer');
+  const errorAlert = toaster.getByText('Failed to save workflow job template');
   await expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
 
   if (
@@ -72,13 +73,13 @@ async function saveAndDismissToast(page: import('@playwright/test').Page) {
       .isVisible()
       .catch(() => false)
   ) {
-    const alertText = await page.getByTestId('alert-toaster').innerText();
+    const alertText = await toaster.innerText();
     throw new Error(`Workflow visualizer save failed: ${alertText.trim()}`);
   }
 
   // The success toast self-dismisses after 5s, so closing it is best effort —
   // requiring the close button would just move the race rather than remove it.
-  const closeBtn = page.getByRole('button', { name: /Close.*alert/ });
+  const closeBtn = toaster.getByRole('button', { name: /Close.*alert/ });
   if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await closeBtn.click();
   }
