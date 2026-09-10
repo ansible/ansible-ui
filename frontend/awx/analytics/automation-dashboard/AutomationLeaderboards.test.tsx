@@ -1,8 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { PageDashboardContext } from '@ansible/ansible-ui-framework';
-import { AutomationLeaderboards, getLeaderboardCardWidths } from './AutomationLeaderboards';
+import {
+  PageDashboardCard,
+  PageDashboardCardWidth,
+  PageDashboardContext,
+} from '@ansible/ansible-ui-framework';
+import {
+  AutomationLeaderboards,
+  CARD_WIDTH_COL_SPAN,
+  getLeaderboardCardWidths,
+} from './AutomationLeaderboards';
 import type { AutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 
@@ -46,6 +54,23 @@ function renderLeaderboards(view: Partial<AutomationLeaderboardsView>) {
   );
 }
 
+describe('CARD_WIDTH_COL_SPAN', () => {
+  test('should match the column span PageDashboardCard itself derives from each width tier', () => {
+    (Object.keys(CARD_WIDTH_COL_SPAN) as PageDashboardCardWidth[]).forEach((width) => {
+      const { container, unmount } = render(
+        <PageDashboardContext.Provider value={{ columns: 24 }}>
+          <PageDashboardCard width={width}>content</PageDashboardCard>
+        </PageDashboardContext.Provider>
+      );
+
+      const card = container.querySelector('.page-dashboard-card') as HTMLElement;
+      expect(card.style.gridColumn).toBe(`span ${CARD_WIDTH_COL_SPAN[width]}`);
+
+      unmount();
+    });
+  });
+});
+
 describe('getLeaderboardCardWidths', () => {
   test('should keep both card rows at the default widths on a narrow grid', () => {
     expect(getLeaderboardCardWidths(12)).toEqual({ topCardsWidth: 'lg', bottomCardsWidth: 'lg' });
@@ -65,6 +90,19 @@ describe('getLeaderboardCardWidths', () => {
 describe('AutomationLeaderboards', () => {
   afterEach(() => vi.clearAllMocks());
 
+  // Renders the full card tree (unlike the other tests below, which all short-circuit before
+  // it) — that's ~4-5s under load, so it needs a longer timeout than the 5s default.
+  test('should render the sync timestamp and every leaderboard section on the happy path', () => {
+    renderLeaderboards({});
+
+    expect(screen.getByText(/Updated: .+/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'At a glance' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Streak' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Activity levels' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Top 10 organizations' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '30-day achievements' })).toBeInTheDocument();
+  }, 15000);
+
   test('should show only a loading spinner while the view is loading', () => {
     renderLeaderboards({ isLoading: true });
 
@@ -72,7 +110,7 @@ describe('AutomationLeaderboards', () => {
     expect(
       screen.queryByRole('heading', { name: 'No leaderboard data yet' })
     ).not.toBeInTheDocument();
-    expect(screen.queryByText(/last sync on .+ UTC/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Updated: .+/)).not.toBeInTheDocument();
   });
 
   test('should show the empty state when the report has never been synced', () => {
@@ -94,7 +132,7 @@ describe('AutomationLeaderboards', () => {
     expect(screen.getByText('Metrics service unavailable')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-    expect(screen.queryByText(/last sync on .+ UTC/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Updated: .+/)).not.toBeInTheDocument();
   });
 
   test('should prefer the error state over the never-synced empty state', () => {

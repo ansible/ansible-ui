@@ -1,99 +1,99 @@
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDashboardCard, PageDashboardCardWidth } from '@ansible/ansible-ui-framework';
-import { Divider, Flex, FlexItem, Truncate } from '@patternfly/react-core';
-import { ClusterIcon, CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { PageDashboardCardWidth, PageDashboardContext } from '@ansible/ansible-ui-framework';
+import { Icon, Title, Truncate } from '@patternfly/react-core';
+import { ClusterIcon, CubesIcon, StarIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { AtAGlanceKpiMetric } from './AtAGlanceKpiMetric';
-import { DashboardSectionHeading } from './DashboardSectionHeading';
-import { StreakDayStrip } from './StreakDayStrip';
 import { DEFAULT_NUMBER_LOCALE } from '../../constants/common';
 import { useAutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
 import '../../AutomationDashboard.css';
+import { DashboardGridRow } from '../DashboardLayout';
 
-export function AutomationAtAGlance(props: Readonly<{ width?: PageDashboardCardWidth }>) {
+/**
+ * Width of the 3 side-by-side KPI cards, keyed off the measured dashboard grid column count.
+ *
+ * This is deliberately its own breakpoint scale, separate from `getLeaderboardCardWidths` in
+ * `../../AutomationLeaderboards.tsx`: that one sizes a single full-width card (Streak, Activity
+ * levels), this one sizes 3 cards sharing a row, so the two need not — and currently do not —
+ * change tier at the same column count. Don't "align" the numbers without checking both still
+ * look right at every breakpoint.
+ */
+export function getAtAGlanceKpiCardWidth(gridColumns: number): PageDashboardCardWidth {
+  if (gridColumns <= 17) return 'lg';
+  if (gridColumns <= 23) return 'sm';
+  return 'md';
+}
+
+export function AutomationAtAGlance() {
   const { t } = useTranslation();
-  const title = t('Automation at a glance');
-  const { atAGlance, streakCalendar } = useAutomationLeaderboardsView();
+  const title = t('At a glance');
+  const { atAGlance } = useAutomationLeaderboardsView();
+  const { columns: gridColumns } = useContext(PageDashboardContext);
+  const kpiCardWidth = getAtAGlanceKpiCardWidth(gridColumns);
 
   return (
-    <PageDashboardCard
-      id={'automation-at-glance'}
-      title={title}
-      helpTitle={title}
-      help={t('Enterprise-wide automation summary for the last 30 days.')}
-      width={props.width ?? 'xxl'}
-    >
-      <Flex
-        style={{ marginTop: '0.5rem' }}
-        alignItems={{ default: 'alignItemsStretch', xl: 'alignItemsFlexStart' }}
-        direction={{ default: 'column', xl: 'row' }}
-        gap={{ default: 'gapLg' }}
-      >
-        <FlexItem className="automation-at-a-glance-kpi-divider" style={{ flex: 1 }}>
-          <AtAGlanceKpiMetric
-            title={t('Jobs run')}
-            help={t('Total successful job runs across the platform in the last 30 days.')}
-            icon={<SyncAltIcon />}
-            iconStatus="info"
-            value={atAGlance.jobsRun.toLocaleString(DEFAULT_NUMBER_LOCALE)}
-          ></AtAGlanceKpiMetric>
-        </FlexItem>
-        <FlexItem className="automation-at-a-glance-kpi-divider" style={{ flex: 1 }}>
-          <AtAGlanceKpiMetric
-            title={t('Active organizations')}
-            help={t('Organizations with at least one successful job run in the last 30 days.')}
-            icon={<ClusterIcon />}
-            iconStatus="info"
-            value={atAGlance.activeOrganizations.toLocaleString(DEFAULT_NUMBER_LOCALE)}
-          ></AtAGlanceKpiMetric>
-        </FlexItem>
-        <FlexItem
-          style={{
-            flex: 1,
-          }}
+    <>
+      <DashboardGridRow>
+        <Title
+          data-testid="at-a-glance-card-title"
+          headingLevel="h3"
+          size="xl"
+          style={{ display: 'block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
         >
-          <AtAGlanceKpiMetric
-            title={t('Featured template')}
-            help={t(
-              'Most-used job template by run count in the last 30 days. Ties are broken alphabetically.'
-            )}
-            icon={<CubesIcon />}
-            iconStatus="info"
-            caption={
+          {title}
+        </Title>
+      </DashboardGridRow>
+      <DashboardGridRow>
+        <AtAGlanceKpiMetric
+          width={kpiCardWidth}
+          title={t('Jobs run')}
+          help={t('Total successful job runs across the platform.')}
+          dimensionIcon={<SyncAltIcon />}
+          dimensionLabel={t('Velocity')}
+          value={atAGlance.jobsRun.toLocaleString(DEFAULT_NUMBER_LOCALE)}
+        ></AtAGlanceKpiMetric>
+
+        <AtAGlanceKpiMetric
+          width={kpiCardWidth}
+          title={t('Active orgs')}
+          help={t('Organizations with at least one successful job run.')}
+          dimensionIcon={<ClusterIcon />}
+          dimensionLabel={t('Reach')}
+          value={atAGlance.activeOrganizations.toLocaleString(DEFAULT_NUMBER_LOCALE)}
+        ></AtAGlanceKpiMetric>
+
+        <AtAGlanceKpiMetric
+          width={kpiCardWidth}
+          title={t('Featured template')}
+          help={t('Most-used job template by run count. Ties are broken alphabetically.')}
+          dimensionIcon={<CubesIcon />}
+          dimensionLabel={t('Usage')}
+          caption={
+            <span
+              style={{
+                fontSize: 'var(--pf-t--global--font--size--sm)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              <Icon
+                size="sm"
+                status="custom"
+                className="automation-dashboard-featured-template-star"
+              >
+                <StarIcon />
+              </Icon>
               <Truncate
                 content={atAGlance.featuredTemplate.name}
                 maxCharsDisplayed={40}
                 style={{ fontSize: 'var(--pf-t--global--font--size--sm)', textAlign: 'center' }}
               />
-            }
-            value={`${atAGlance.featuredTemplate.runs.toLocaleString(DEFAULT_NUMBER_LOCALE)} ${t('runs')}`}
-          ></AtAGlanceKpiMetric>
-        </FlexItem>
-      </Flex>
-      <Divider style={{ margin: '1rem 0' }} />
-      <DashboardSectionHeading
-        title={t('Automation streak')}
-        help={t(
-          'Consecutive calendar days (UTC) with at least one successful job run. Enterprise streak counts platform-wide activity; your org streak counts activity in your organization only.'
-        )}
-      />
-      <div style={{ marginTop: '0.5rem' }}>
-        <StreakDayStrip
-          title={t('Enterprise')}
-          streakDays={atAGlance.enterpriseStreakDays}
-          showLegend
-          days={streakCalendar}
-          isSuccess={(day) => day.state !== 'none'}
-          getRuns={(day) => day.enterpriseRuns}
-        />
-        <Divider style={{ margin: '1rem 0' }} />
-        <StreakDayStrip
-          title={t('Your org')}
-          streakDays={atAGlance.orgStreakDays}
-          days={streakCalendar}
-          isSuccess={(day) => day.state === 'enterpriseAndOrg'}
-          getRuns={(day) => day.orgRuns}
-        />
-      </div>
-    </PageDashboardCard>
+            </span>
+          }
+          value={`${atAGlance.featuredTemplate.runs.toLocaleString(DEFAULT_NUMBER_LOCALE)} ${t('runs')}`}
+        ></AtAGlanceKpiMetric>
+      </DashboardGridRow>
+    </>
   );
 }

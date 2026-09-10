@@ -188,7 +188,7 @@ function BadgeShelf<T extends Badge>({
   badges,
 }: Readonly<{
   title: string;
-  help: string;
+  help?: string;
   earnedIds: readonly BadgeId[];
   badges: T[];
 }>) {
@@ -204,12 +204,12 @@ export function MilestoneBadgesCard(props: Readonly<{ width?: PageDashboardCardW
   const { t } = useTranslation();
   const title = t('30-day achievements');
   const help = t(
-    'Recognitions earned in the current 30-day window. Achievements reset when the window rolls — re-earn them each period. Earned achievements appear first.'
+    'Recognitions earned during the period. Achievements reset when the window rolls — re-earn them each period. Earned achievements appear first.'
   );
   const badges = useMilestoneBadgeConfig();
   const orgBadges = useOrgBadgeConfig();
   const { earnedUserAchievements, earnedOrgAchievements } = useAutomationLeaderboardsView();
-  const subTitle = t('These achievements reset every 30 days.');
+  const subTitle = t('Achievements reset when the period rolls.');
   return (
     <PageDashboardCard
       id={'milestone-badges-card'}
@@ -227,7 +227,6 @@ export function MilestoneBadgesCard(props: Readonly<{ width?: PageDashboardCardW
         <FlexItem>
           <BadgeShelf
             title={t('Your achievements')}
-            help={t('Achievements you earned in the current 30-day window.')}
             earnedIds={earnedUserAchievements}
             badges={badges}
           />
@@ -236,7 +235,7 @@ export function MilestoneBadgesCard(props: Readonly<{ width?: PageDashboardCardW
           <BadgeShelf
             title={t("Your org's achievements")}
             help={t(
-              'Achievements any of the organizations you belong to earned in the current 30-day window. Visible to all members of your org.'
+              'Achievements any of the organizations you belong to earned. Visible to all members of your organization.'
             )}
             earnedIds={earnedOrgAchievements}
             badges={orgBadges}

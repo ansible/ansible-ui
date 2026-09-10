@@ -25,7 +25,7 @@ describe('HighlightsLeaderboardPanel', () => {
   test('should tag the current org and show its standing in the header', () => {
     renderPanel();
 
-    expect(screen.getByText('Your org')).toBeInTheDocument();
+    expect(screen.getByText('Your organization')).toBeInTheDocument();
     expect(screen.getByText("Your org's rank: #1")).toBeInTheDocument();
     expect(screen.getByText('2,840 job runs')).toBeInTheDocument();
   });

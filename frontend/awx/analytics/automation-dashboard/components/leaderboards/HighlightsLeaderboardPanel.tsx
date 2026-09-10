@@ -38,9 +38,7 @@ function LeaderboardRankSummary({
 export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboardCardWidth }>) {
   const { t } = useTranslation();
   const title = t('Top 10 organizations');
-  const help = t(
-    'Top 10 organizations ranked by total successful job runs in the last 30 days. Ties are broken alphabetically.'
-  );
+  const help = t('Ranked by total successful job runs. Ties are broken alphabetically.');
   const { organizationLeaderboard: items, currentOrgStanding } = useAutomationLeaderboardsView();
 
   const rankCell = (item: LeaderboardItem) => <LeaderboardRankCell position={item.rank} />;
@@ -49,7 +47,7 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
       <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
       {item.isCurrentOrg && (
         <Label isCompact color="purple" style={{ marginLeft: 8 }}>
-          {t('Your org')}
+          {t('Your organization')}
         </Label>
       )}
     </>

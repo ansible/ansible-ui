@@ -1,4 +1,4 @@
-import { Content, Icon } from '@patternfly/react-core';
+import { Content, Flex, FlexItem, Icon } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -13,29 +13,42 @@ export function HighlightsSyncTimestamp(props: Readonly<{ lastSyncedAt: string |
     return null;
   }
 
+  // Shown in the viewer's local time zone.
   const formatted = syncedAt.toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',
-    timeZone: 'UTC',
   });
 
   return (
-    <Content
-      component="small"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        gap: 4,
-        color: 'var(--pf-t--global--text--color--subtle)',
-      }}
+    <Flex
+      justifyContent={{ default: 'justifyContentSpaceBetween' }}
+      alignItems={{ default: 'alignItemsCenter' }}
+      flexWrap={{ default: 'wrap' }}
+      gap={{ default: 'gapSm' }}
+      style={{ marginBottom: 'var(--pf-t--global--spacer--md)' }}
     >
-      <Icon size="sm">
-        <InfoCircleIcon color="var(--pf-t--global--text--color--subtle)" />
-      </Icon>
-      {t('All data is shown as from the last 30 days with the last sync on {{timestamp}} UTC', {
-        timestamp: formatted,
-      })}
-    </Content>
+      <FlexItem>
+        <Content component="small" style={{ color: 'var(--pf-t--global--text--color--subtle)' }}>
+          {t('Data shown below is based on the last 30 days of your activity.')}
+        </Content>
+      </FlexItem>
+      <FlexItem style={{ marginLeft: 'auto' }}>
+        <Content
+          component="small"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            color: 'var(--pf-t--global--text--color--subtle)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Icon size="sm">
+            <InfoCircleIcon color="var(--pf-t--global--text--color--subtle)" />
+          </Icon>
+          {t('Updated: {{timestamp}}', { timestamp: formatted })}
+        </Content>
+      </FlexItem>
+    </Flex>
   );
 }

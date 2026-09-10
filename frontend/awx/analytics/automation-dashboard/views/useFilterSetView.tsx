@@ -49,14 +49,28 @@ export function useFilterSetView() {
   // from that user's persisted value.
   useEffect(() => {
     if (userId === undefined || seededUserId === userId) return;
+    // First seed = the id just resolved after mount (it was unknown, no previous
+    // user). A selection the user made while /me/ was still loading must survive,
+    // so only apply a persisted value here and never clear existing state.
+    const isFirstSeed = seededUserId === undefined;
     setSeededUserId(userId);
+
     const persisted = readPersistedFilterSet(userId);
-    setValue(persisted ? String(persisted.id) : undefined);
-    setSelectedFilterSet(persisted);
-    setVersion((v) => v + 1);
-    // Replace (not merge) the cache: the previous user's fetched report names and
-    // filters JSON must not linger in the dropdown after a same-tab user switch.
-    setFilterSets(persisted ? [persisted] : []);
+    if (persisted) {
+      setValue(String(persisted.id));
+      setSelectedFilterSet(persisted);
+      setVersion((v) => v + 1);
+      // Replace (not merge) the cache: the previous user's fetched report names
+      // and filters JSON must not linger in the dropdown after a user switch.
+      setFilterSets([persisted]);
+    } else if (!isFirstSeed) {
+      // A different user with nothing saved — reset rather than keep the previous
+      // user's selection and fetched options.
+      setValue(undefined);
+      setSelectedFilterSet(undefined);
+      setVersion((v) => v + 1);
+      setFilterSets([]);
+    }
   }, [userId, seededUserId]);
 
   // Persist the current selection for the active user (or clear it when deselected).

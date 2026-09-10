@@ -1,9 +1,8 @@
-import { Flex, Icon } from '@patternfly/react-core';
+import { Divider, Flex, FlexItem, Icon, Title } from '@patternfly/react-core';
 import type { ReactNode } from 'react';
 import { DashboardSectionHeading } from './DashboardSectionHeading';
 import { MetricLabel, MetricValue } from './DashboardMetricsText';
-
-type KpiIconStatus = 'info' | 'success' | 'warning' | 'danger' | 'custom';
+import { PageDashboardCard, PageDashboardCardWidth } from '../../../../../../framework';
 
 export function AtAGlanceKpiMetric(
   props: Readonly<{
@@ -15,29 +14,71 @@ export function AtAGlanceKpiMetric(
     value?: string;
     /** Custom element to render instead of the default MetricValue. Use for linked text or smaller values. */
     valueElement?: ReactNode;
-    icon: ReactNode;
-    iconStatus: KpiIconStatus;
+    dimensionIcon: ReactNode;
+    dimensionLabel: string;
     /** Optional small caption rendered under the value, still centered with the rest of the tile. */
     caption?: ReactNode;
+    width?: PageDashboardCardWidth;
   }>
 ) {
-  const { title, help, description, value, valueElement, icon, iconStatus, caption } = props;
+  const {
+    title,
+    help,
+    description,
+    value,
+    valueElement,
+    dimensionIcon,
+    dimensionLabel,
+    caption,
+    width,
+  } = props;
 
   return (
-    <Flex
-      direction={{ default: 'column' }}
-      alignItems={{ default: 'alignItemsCenter' }}
-      gap={{ default: 'gapSm' }}
-    >
-      <Icon size="xl" status={iconStatus}>
-        {icon}
-      </Icon>
-      <div style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
-        <DashboardSectionHeading title={title} help={help} size="md" />
-      </div>
-      {description ? <MetricLabel>{description}</MetricLabel> : null}
-      {valueElement ?? (value ? <MetricValue>{value}</MetricValue> : null)}
-      {caption}
-    </Flex>
+    <PageDashboardCard width={width ?? 'md'}>
+      <Flex
+        className="automation-dashboard-highlights-split-kpi"
+        alignItems={{ default: 'alignItemsStretch' }}
+      >
+        <FlexItem className="automation-dashboard-highlights-split-kpi__dimension">
+          <Flex
+            justifyContent={{ default: 'justifyContentCenter' }}
+            alignItems={{ default: 'alignItemsCenter' }}
+          >
+            <Flex
+              direction={{ default: 'column' }}
+              alignItems={{ default: 'alignItemsCenter' }}
+              gap={{ default: 'gapSm' }}
+            >
+              <Icon size="xl" status="custom" className="automation-dashboard-accent-icon">
+                {dimensionIcon}
+              </Icon>
+              <Title
+                headingLevel="h4"
+                size="md"
+                style={{ fontWeight: 700, margin: 0, textAlign: 'center' }}
+              >
+                {dimensionLabel}
+              </Title>
+            </Flex>
+          </Flex>
+        </FlexItem>
+        <Divider orientation={{ default: 'vertical' }} inset={{ default: 'insetMd' }} />
+        <FlexItem className="automation-dashboard-highlights-split-kpi__metric">
+          <Flex
+            direction={{ default: 'column' }}
+            alignItems={{ default: 'alignItemsFlexStart' }}
+            gap={{ default: 'gapSm' }}
+            className="automation-dashboard-highlights-split-kpi__metric-content"
+          >
+            <div className="automation-dashboard-highlights-split-kpi__label-row">
+              <DashboardSectionHeading title={title} help={help} size="md" />
+              {description ? <MetricLabel>{description}</MetricLabel> : null}
+            </div>
+            {valueElement ?? (value ? <MetricValue>{value}</MetricValue> : null)}
+            {caption}
+          </Flex>
+        </FlexItem>
+      </Flex>
+    </PageDashboardCard>
   );
 }

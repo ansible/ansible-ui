@@ -56,30 +56,6 @@ async function mockReportDetailRoute(
         total_saving: 6918332.14,
         total_time_saving: 556.36,
         total_number_of_unique_hosts: 31,
-        top_users: [
-          {
-            id: 1,
-            name: 'Test user',
-            execution_count: 14,
-          },
-        ],
-        top_projects: [
-          {
-            id: 15,
-            name: 'Test Project 1',
-            execution_count: 20,
-          },
-          {
-            id: 9,
-            name: 'Test Project 2',
-            execution_count: 9,
-          },
-          {
-            id: 8,
-            name: 'Test Project 3',
-            execution_count: 2,
-          },
-        ],
         job_chart: {
           kind: 'month',
           items: [
