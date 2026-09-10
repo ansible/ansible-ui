@@ -165,11 +165,10 @@ Only create new components as a last resort.
 - No default exports — use named exports
 - Hardcoded API paths are ESLint errors — use tagged template helpers
 - `jsx-a11y/recommended` — accessibility enforced
-- Advisory guardrails (`.eslintrc.guardrails.json`, `npm run eslint:guardrails`):
-  do **not** introduce new warnings. Limits: 500 lines/file, 200 lines/function,
-  complexity 20, depth 4, 4 params, 4 nested callbacks, cognitive complexity 15,
-  no nested conditionals. Extract helpers instead of disabling rules. See
-  coding_standards §15.
+- Advisory guardrails: `npm run eslint:guardrails`. Rules and thresholds live
+  in `.eslintrc.guardrails.json` (source of truth — do not hardcode limits
+  here). Do **not** introduce new warnings. Extract helpers instead of
+  disabling rules. See coding_standards §15.
 
 ---
 
