@@ -60,7 +60,10 @@ Check whether the changes follow:
 - **No new `eslint:guardrails` warnings** on changed `frontend/` /
   `platform/` / `framework/` `.ts`/`.tsx` (see §7). The CI job is advisory
   (`continue-on-error`), but a warning-count increase vs the base branch is a
-  **review blocker**. Ask to split or flatten; do not `eslint-disable`.
+  **review blocker**. Ask to split or flatten.
+- **No new ESLint suppressions** (`eslint-disable`, `eslint-disable-next-line`,
+  `eslint-disable-line`, file-level `/* eslint-disable */`). Review blocker;
+  fix the rule instead of silencing it (see §7).
 
 ---
 
@@ -152,7 +155,7 @@ lines:
 
 | Pattern                                       | Review expectation               | Ask for instead                                                          |
 | --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
-| `eslint-disable` / `eslint-disable-next-line` | Blocks: suppresses a rule        | Fix the underlying issue                                                 |
+| `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` | **Review blocker** — new suppression | Fix the underlying issue; never silence guardrails or required rules |
 | `@ts-ignore` / `@ts-expect-error`             | Require narrow justification     | Correct the types where possible; document exceptional cases             |
 | `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work    | Resolve, or file a tracked issue                                         |
 | Custom deep copy / query parsing / UUID       | Avoid re-inventing platform APIs | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
@@ -244,6 +247,13 @@ if ((${#files[@]})); then
   echo "eslint:guardrails warnings  ${BASE}=${base_n}  head=${head_n:-0}"
   if (( ${head_n:-0} > base_n )); then echo 'BLOCK: new guardrail warnings added'; exit 1; fi
 fi
+
+# No new ESLint suppressions in added lines (review blocker)
+if git diff "$BASE"...HEAD | rg '^\+' | rg -q 'eslint-disable'; then
+  echo 'BLOCK: new eslint-disable suppression added'
+  git diff "$BASE"...HEAD | rg '^\+' | rg 'eslint-disable'
+  exit 1
+fi
 ```
 
 Then ask the user to confirm manually:
@@ -264,6 +274,7 @@ Output should include:
 4. Test coverage guidance
 5. A proposed `.md` explanation file for the PR
 6. `eslint:guardrails` warning count on changed files vs base (must not increase)
+7. No new `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` in the diff
 
 ---
 
@@ -279,6 +290,7 @@ posting:
 - Have you separated blocking issues from optional suggestions?
 - Did you run the validation commands (§7) rather than assuming they pass?
 - Did `eslint:guardrails` warning count on changed files stay at or below the base branch?
+- Did the diff add any `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line`? If yes, block.
 
 An independent pass from a clean context catches the assumptions the first pass
 carried in.
