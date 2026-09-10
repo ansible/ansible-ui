@@ -165,6 +165,11 @@ Only create new components as a last resort.
 - No default exports — use named exports
 - Hardcoded API paths are ESLint errors — use tagged template helpers
 - `jsx-a11y/recommended` — accessibility enforced
+- Advisory guardrails (`.eslintrc.guardrails.json`, `npm run eslint:guardrails`):
+  do **not** introduce new warnings. Limits: 500 lines/file, 200 lines/function,
+  complexity 20, depth 4, 4 params, 4 nested callbacks, cognitive complexity 15,
+  no nested conditionals. Extract helpers instead of disabling rules. See
+  coding_standards §15.
 
 ---
 
@@ -209,6 +214,7 @@ Only create new components as a last resort.
 ### Quality Gates
 - [ ] TypeScript passes: `npm run tsc`
 - [ ] ESLint passes: `npm run eslint`
+- [ ] Guardrails: `npm run eslint:guardrails` — no new warnings on files you touched
 - [ ] Prettier applied: `npm run prettier:fix`
 - [ ] Tests pass: `npm run vitest`
 
@@ -222,7 +228,7 @@ Only create new components as a last resort.
    — prefer editing existing files over creating new ones
 4. Implement incrementally — happy path first, then edge cases
 5. Write tests alongside implementation (not after)
-6. Run quality checks: `npm run tsc && npm run eslint && npm run vitest`
+6. Run quality checks: `npm run tsc && npm run eslint && npm run eslint:guardrails && npm run vitest`
 
 ---
 
