@@ -54,7 +54,6 @@
     "upgrade": "npx npm-check-updates -u --workspaces && npm npm-check-updates -u && npm i && npm test",
     "prepare": "husky",
     "i18n": "npx i18next-parser --config i18next-parser.config.cjs && npm run prettier:fix",
-    "migrate:testid": "tsx scripts/migrate-data-cy-to-testid.ts",
     "insights:ci-build": "cd frontend/hub/insights && npm ci --legacy-peer-deps && npm run build && cd /opt/app-root/src && rm -f package-lock.json"
   },
   "dependencies": {
@@ -161,7 +160,6 @@
     "nx": "22.7.7",
     "nyc": "^17.1.0",
     "prettier": "3.4.2",
-    "react-refresh": "0.18.0",
     "selfsigned": "^2.4.1",
     "tsx": "^4.19.3",
     "type-fest": "4.33.0",
