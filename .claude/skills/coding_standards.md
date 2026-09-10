@@ -589,6 +589,30 @@ Key enforced rules from `.eslintrc.json`:
 - **Hardcoded API paths forbidden** — custom ESLint rule blocks `/api/v2/`,
   `/api/eda/v1/`, `/api/gateway/v1/`, `/api/galaxy/` literals
 
+CI also runs `npm run eslint:guardrails` (`.eslintrc.guardrails.json`) as an
+**advisory** job (`continue-on-error`). It does not fail the required `eslint`
+check today, but every warning still has to be cleaned up later. **Do not add
+new warnings** in `frontend/`, `platform/`, or `framework/` `.ts`/`.tsx` (tests
+and generated files are ignored). Split files, extract helpers, flatten
+conditionals. Do not `eslint-disable` these rules.
+
+| Rule | Limit |
+| --- | --- |
+| `max-lines` | 500 |
+| `max-lines-per-function` | 200 |
+| `complexity` | 20 |
+| `max-depth` | 4 |
+| `max-params` | 4 |
+| `max-nested-callbacks` | 4 |
+| `sonarjs/cognitive-complexity` | 15 |
+| `sonarjs/no-nested-conditional` | warn (no nested ternaries / nested `if`) |
+
+Scoped check on files you touched:
+
+```bash
+npx eslint --no-eslintrc --config .eslintrc.guardrails.json --ext .ts,.tsx path/to/changed.tsx
+```
+
 ---
 
 ## 16. Internationalization

@@ -153,7 +153,7 @@ Within each category, sort groups by this priority order. Match by rule ID suffi
 4. Unused function parameters (`S1172`)
 5. Commented-out code (`S125`)
 6. Simple type safety improvements (`S4325`, `S4204`, `S1874`)
-7. Cognitive complexity (`S3776`)
+7. Cognitive complexity (`S3776`) — also warned by `npm run eslint:guardrails` (`sonarjs/cognitive-complexity` 15). Do not add new hits in changed files.
 8. Security hotspot rules
 9. Reliability / bug rules
 10. All other rules

@@ -57,6 +57,10 @@ Check whether the changes follow:
 
 - Components in correct package (platform vs framework)
 - No over-engineering (avoid premature abstractions, unnecessary error handling)
+- Changed `frontend/` / `platform/` / `framework/` `.ts`/`.tsx` must not add
+  `eslint:guardrails` warnings (size, complexity, SonarJS). The CI job is
+  advisory, but new warnings become cleanup later. Ask to split or flatten
+  instead of `eslint-disable`.
 
 ---
 
@@ -216,7 +220,8 @@ Run these project commands:
 
 ```bash
 npm run prettier                  # Formatting
-cd platform && npm run eslint # Linting
+cd platform && npm run eslint # Linting (required)
+npm run eslint:guardrails         # Advisory size/complexity; no new warnings on touched files
 cd platform && npm run tsc    # Type check
 ```
 
