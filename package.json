@@ -73,7 +73,7 @@
     "d3": "7.9.0",
     "dagre": "0.8.5",
     "debounce": "2.2.0",
-    "dompurify": "3.4.12",
+    "dompurify": "3.4.15",
     "get-value": "3.0.1",
     "i18next": "24.2.2",
     "i18next-browser-languagedetector": "8.0.2",
@@ -118,7 +118,8 @@
     "minimatch@<9.0.0": {
       "brace-expansion": "1.1.18"
     },
-    "postcss": "8.5.26"
+    "postcss": "8.5.26",
+    "dompurify": "3.4.15"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.0",
