@@ -37,7 +37,7 @@
         "max-lines-per-function": ["warn", 200],
         "complexity": ["warn", 20],
         "max-depth": ["warn", 4],
-        "max-params": ["warn", 5],
+        "max-params": ["warn", 4],
         "max-nested-callbacks": ["warn", 4],
         "sonarjs/cognitive-complexity": ["warn", 15],
         "sonarjs/no-nested-conditional": "warn"
