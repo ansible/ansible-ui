@@ -1,5 +1,6 @@
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useMemo } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { PageForm } from './PageForm';
 import { PageFormTextInput } from './Inputs/PageFormTextInput';
@@ -312,7 +313,7 @@ describe('extractPageFormOptionsFields', () => {
 
   it('includes flags when present', () => {
     const fields = extractPageFormOptionsFields({
-      actions: { POST: { name: { pattern: '^[\\p{L}]+$', flags: 'u' } } },
+      actions: { POST: { name: { pattern: String.raw`^\p{L}+$`, flags: 'u' } } },
     });
     expect(fields.name?.flags).toBe('u');
   });
@@ -357,34 +358,33 @@ describe('usePageFormOptionsFields', () => {
   });
 });
 
-describe('usePageFormOptionsContext', () => {
-  function wrapper(fields: Record<string, { pattern?: string }>) {
-    return function Wrapper({ children }: { children: React.ReactNode }) {
-      return (
-        <PageFormOptionsContext.Provider value={{ fields }}>
-          {children}
-        </PageFormOptionsContext.Provider>
-      );
-    };
-  }
+function createWrapper(fields: Record<string, { pattern?: string }>) {
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    const value = useMemo(() => ({ fields }), []);
+    return (
+      <PageFormOptionsContext.Provider value={value}>{children}</PageFormOptionsContext.Provider>
+    );
+  };
+}
 
+describe('usePageFormOptionsContext', () => {
   it('looks up a bare (non-dotted) field name directly', () => {
     const { result } = renderHook(() => usePageFormOptionsContext('name'), {
-      wrapper: wrapper({ name: { pattern: '^a$' } }),
+      wrapper: createWrapper({ name: { pattern: '^a$' } }),
     });
     expect(result.current?.pattern).toBe('^a$');
   });
 
   it('defaults to the last dot-separated segment for nested field names', () => {
     const { result } = renderHook(() => usePageFormOptionsContext('organization.name'), {
-      wrapper: wrapper({ name: { pattern: '^a$' } }),
+      wrapper: createWrapper({ name: { pattern: '^a$' } }),
     });
     expect(result.current?.pattern).toBe('^a$');
   });
 
   it('handles multiple levels of nesting by using only the last segment', () => {
     const { result } = renderHook(() => usePageFormOptionsContext('prompt.rules.0.name'), {
-      wrapper: wrapper({ name: { pattern: '^a$' } }),
+      wrapper: createWrapper({ name: { pattern: '^a$' } }),
     });
     expect(result.current?.pattern).toBe('^a$');
   });
@@ -392,14 +392,14 @@ describe('usePageFormOptionsContext', () => {
   it('uses optionsFieldName to override the default lookup', () => {
     const { result } = renderHook(
       () => usePageFormOptionsContext('organization.name', 'other_name'),
-      { wrapper: wrapper({ other_name: { pattern: '^a$' } }) }
+      { wrapper: createWrapper({ other_name: { pattern: '^a$' } }) }
     );
     expect(result.current?.pattern).toBe('^a$');
   });
 
   it('returns undefined when no metadata matches the lookup key', () => {
     const { result } = renderHook(() => usePageFormOptionsContext('unknown'), {
-      wrapper: wrapper({ name: { pattern: '^a$' } }),
+      wrapper: createWrapper({ name: { pattern: '^a$' } }),
     });
     expect(result.current).toBeUndefined();
   });
@@ -432,21 +432,21 @@ describe('PageFormFieldMetadataProvider', () => {
   });
 
   it('merges with the ambient context when merge is true', () => {
-    function useBoth() {
-      return {
+    const { result } = renderHook(
+      () => ({
         outer: usePageFormOptionsContext('outer'),
         inner: usePageFormOptionsContext('inner'),
-      };
-    }
-    const { result } = renderHook(useBoth, {
-      wrapper: ({ children }) => (
-        <PageFormOptionsContext.Provider value={{ fields: { outer: { pattern: '^outer$' } } }}>
-          <PageFormFieldMetadataProvider fields={{ inner: { pattern: '^inner$' } }} merge>
-            {children}
-          </PageFormFieldMetadataProvider>
-        </PageFormOptionsContext.Provider>
-      ),
-    });
+      }),
+      {
+        wrapper: ({ children }) => (
+          <PageFormOptionsContext.Provider value={{ fields: { outer: { pattern: '^outer$' } } }}>
+            <PageFormFieldMetadataProvider fields={{ inner: { pattern: '^inner$' } }} merge>
+              {children}
+            </PageFormFieldMetadataProvider>
+          </PageFormOptionsContext.Provider>
+        ),
+      }
+    );
     expect(result.current.outer?.pattern).toBe('^outer$');
     expect(result.current.inner?.pattern).toBe('^inner$');
   });
@@ -478,24 +478,24 @@ describe('PageFormOptionsProvider', () => {
   });
 
   it('merges with the ambient context when merge is true', () => {
-    function useBoth() {
-      return {
+    const { result } = renderHook(
+      () => ({
         outer: usePageFormOptionsContext('outer'),
         maxHosts: usePageFormOptionsContext('maxHosts'),
-      };
-    }
-    const { result } = renderHook(useBoth, {
-      wrapper: ({ children }) => (
-        <PageFormOptionsContext.Provider value={{ fields: { outer: { pattern: '^outer$' } } }}>
-          <PageFormOptionsProvider
-            optionsData={{ actions: { POST: { maxHosts: { pattern: '^[0-9]+$' } } } }}
-            merge
-          >
-            {children}
-          </PageFormOptionsProvider>
-        </PageFormOptionsContext.Provider>
-      ),
-    });
+      }),
+      {
+        wrapper: ({ children }) => (
+          <PageFormOptionsContext.Provider value={{ fields: { outer: { pattern: '^outer$' } } }}>
+            <PageFormOptionsProvider
+              optionsData={{ actions: { POST: { maxHosts: { pattern: '^[0-9]+$' } } } }}
+              merge
+            >
+              {children}
+            </PageFormOptionsProvider>
+          </PageFormOptionsContext.Provider>
+        ),
+      }
+    );
     expect(result.current.outer?.pattern).toBe('^outer$');
     expect(result.current.maxHosts?.pattern).toBe('^[0-9]+$');
   });
