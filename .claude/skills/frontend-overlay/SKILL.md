@@ -26,7 +26,7 @@ description: >
 - E2E: `playwright/` (`playwright.config.ts`, `commands/`, `tests/`, `utils/`)
 - Storybook command and port: N/A — no Storybook
 - Check command: `npm test` (eslint + tsc + prettier + vitest). There is no `npm run check`
-- Also `npm run eslint:guardrails` on touched `frontend/` / `platform/` / `framework/` `.ts`/`.tsx`. Advisory in CI; do not add new warnings (see coding_standards §15)
+- Also `npm run eslint:guardrails` on touched `frontend/` / `platform/` / `framework/` `.ts`/`.tsx`. Advisory in CI; thresholds in `.eslintrc.guardrails.json`; do not add new warnings (see coding_standards §15)
 - Test command: `npm run vitest` (unit); Playwright from `playwright/`
 - Dev server: `npm start` (from `platform/`)
 - Build all workspaces: `npm run build`
