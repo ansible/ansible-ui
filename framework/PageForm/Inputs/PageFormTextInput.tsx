@@ -189,6 +189,14 @@ type PageFormTextInputBaseProps<
   shouldUnregister?: boolean;
 
   fullWidth?: boolean;
+
+  /**
+   * Explicit backend field name to look up in the OPTIONS-driven validation
+   * context, overriding the default heuristic of using the last dot-separated
+   * segment of `name` (e.g. `organization.name` -> `name`). Only needed when
+   * that default would be wrong or ambiguous.
+   */
+  optionsFieldName?: string;
 };
 
 /**
@@ -355,7 +363,7 @@ export function PageFormTextInput<
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
   // Auto-discover field metadata from OPTIONS context
-  const fieldMetadata = usePageFormOptionsContext(name);
+  const fieldMetadata = usePageFormOptionsContext(name, props.optionsFieldName);
 
   // Smart defaults: password fields default to 'new-password', others default to 'off'
   // TypeScript provides type safety for valid autoComplete values

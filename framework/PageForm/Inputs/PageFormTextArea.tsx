@@ -70,7 +70,7 @@ export function PageFormTextArea<
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
   // Auto-discover field metadata from OPTIONS context
-  const fieldMetadata = usePageFormOptionsContext(name);
+  const fieldMetadata = usePageFormOptionsContext(name, props.optionsFieldName);
 
   return (
     <Controller<TFieldValues, TFieldName>

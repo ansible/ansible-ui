@@ -8,7 +8,7 @@ import {
   PageSection,
   PageSectionProps,
 } from '@patternfly/react-core';
-import { ReactNode, useContext, useMemo, useState } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -28,7 +28,7 @@ import { genericErrorAdapter } from './genericErrorAdapter';
 import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
 import { ErrorAdapter } from './typesErrorAdapter';
 import { useIsPageDialog } from '../PageDialogs/PageDialog';
-import { PageFormOptionsContext, PageFormOptionsContextValue } from './PageFormOptionsContext';
+import { PageFormOptionsData, PageFormOptionsProvider } from './PageFormOptionsContext';
 
 const FormContainer = styled(PageSection)`
   padding-bottom: var(--pf-t--global--spacer--xl);
@@ -66,13 +66,7 @@ export interface PageFormProps<T extends object> {
    * OPTIONS response data containing field metadata (pattern, pattern_description, etc.)
    * When provided, form inputs will automatically discover validation patterns from this data
    */
-  optionsData?: {
-    actions?: {
-      POST?: Record<string, { pattern?: string; pattern_description?: string }>;
-      PUT?: Record<string, { pattern?: string; pattern_description?: string }>;
-      PATCH?: Record<string, { pattern?: string; pattern_description?: string }>;
-    };
-  };
+  optionsData?: PageFormOptionsData;
 }
 
 export function useFormErrors<T extends object>(
@@ -126,46 +120,6 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
   const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
-  // Extract field metadata from OPTIONS responses (POST, PUT, PATCH actions)
-  const optionsContextValue = useMemo<PageFormOptionsContextValue>(() => {
-    const fields: Record<
-      string,
-      { pattern?: string; pattern_description?: string; flags?: string }
-    > = {};
-
-    if (props.optionsData?.actions) {
-      // Check POST, PUT, and PATCH actions for field metadata
-      const actions = [
-        props.optionsData.actions.POST,
-        props.optionsData.actions.PUT,
-        props.optionsData.actions.PATCH,
-      ];
-
-      actions.forEach((action) => {
-        if (action) {
-          Object.entries(action).forEach(([fieldName, fieldMetadata]) => {
-            // Only add fields that have pattern or pattern_description (support both snake_case and camelCase)
-            const pattern = fieldMetadata.pattern;
-            const patternDescription =
-              fieldMetadata.pattern_description ||
-              (fieldMetadata as { patternDescription?: string }).patternDescription;
-            const flags = (fieldMetadata as { flags?: string }).flags;
-
-            if (pattern || patternDescription) {
-              fields[fieldName] = {
-                pattern,
-                pattern_description: patternDescription,
-                flags,
-              };
-            }
-          });
-        }
-      });
-    }
-
-    return { fields };
-  }, [props.optionsData]);
-
   let children = props.children;
   if (props.disableGrid !== true) {
     children = (
@@ -186,7 +140,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     : {};
 
   return (
-    <PageFormOptionsContext.Provider value={optionsContextValue}>
+    <PageFormOptionsProvider optionsData={props.optionsData}>
       <FormProvider {...form}>
         <Form
           onKeyDown={(event) => {
@@ -251,7 +205,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
           )}
         </Form>
       </FormProvider>
-    </PageFormOptionsContext.Provider>
+    </PageFormOptionsProvider>
   );
 }
 

@@ -1,4 +1,5 @@
 import '@patternfly/patternfly/dist/components/Wizard/wizard.css';
+import { PageFormOptionsData } from '../PageForm/PageFormOptionsContext';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageWizardBody } from './PageWizardBody';
 import { PageWizardHeader } from './PageWizardHeader';
@@ -20,6 +21,14 @@ export function PageWizard<DataT extends NonNullable<object>>(props: {
   title?: string;
   isVertical?: boolean;
   singleColumn?: boolean;
+  /**
+   * OPTIONS response data forwarded into the wizard's internal PageForm, so
+   * step inputs can auto-discover validation patterns the same way a
+   * standalone PageForm's inputs do. Only useful when every step of the
+   * wizard concerns the same backend resource - see PageFormOptionsContext
+   * for composing metadata from multiple resources within a step.
+   */
+  optionsData?: PageFormOptionsData;
 }) {
   return (
     <PageWizardProvider<DataT>
@@ -57,6 +66,7 @@ export function PageWizard<DataT extends NonNullable<object>>(props: {
             disableGrid={props.disableGrid}
             isVertical={props.isVertical}
             singleColumn={props.singleColumn}
+            optionsData={props.optionsData}
           />
         </div>
       </div>

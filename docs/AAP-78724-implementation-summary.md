@@ -468,12 +468,312 @@ npm run test -- framework/PageForm/Inputs/PageFormTextArea.test.tsx --run
 
 All tests passing ✅
 
+---
+
+# Phase 2 Extension: Composable Field Metadata Provider & PageWizard Support
+
+## Overview
+
+This extension (follow-up to AAP-78724 core) adds:
+1. **PageWizard optionsData support** — single-resource wizards can now apply OPTIONS-driven validation to all steps
+2. **Composable field metadata primitives** — enabling scenarios where multiple resources' patterns coexist in a single form
+3. **Smart field-name lookup with override** — forms with nested field names (e.g., `organization.name`) work automatically without wiring changes
+
+## New Primitives
+
+### 1. `extractPageFormOptionsFields(optionsData)`
+Pure function that extracts a flat `{ fieldName: FieldMetadata }` map from a DRF-OPTIONS response.
+
+**File**: `framework/PageForm/PageFormOptionsContext.tsx`
+
+```typescript
+// Input: raw OPTIONS response
+const optionsData = {
+  actions: {
+    POST: {
+      name: { pattern: '^[a-z]+$', pattern_description: 'lowercase only' }
+    }
+  }
+};
+
+// Output: normalized field metadata map
+const fields = extractPageFormOptionsFields(optionsData);
+// { name: { pattern: '^[a-z]+$', pattern_description: 'lowercase only', flags: undefined } }
+```
+
+### 2. `usePageFormOptionsFields(optionsData)`
+Memoized hook version of the extraction — used by PageForm internally to avoid re-extracting on every render.
+
+### 3. `PageFormFieldMetadataProvider`
+**The key primitive for enabling Phase 2 work (AAP-87604).**
+
+Source-agnostic provider that accepts an already-built field metadata map from any source:
+
+```typescript
+// Can wrap any metadata source — not just DRF OPTIONS
+const fields = extractCredentialTypeFieldMetadata(credentialType);
+const fields = extractNotificationTypeMetadata(notificationType);
+const fields = extractPluginSchemaMetadata(pluginSchema);
+
+return (
+  <PageFormFieldMetadataProvider fields={fields} merge={false}>
+    <PageFormTextInput name="username" ... />
+    <PageFormTextInput name="password" ... />
+  </PageFormFieldMetadataProvider>
+);
+```
+
+**Props:**
+- `fields: Record<string, FieldMetadata>` — the metadata map (source-agnostic)
+- `merge?: boolean` — when true, layers on top of ambient context; when false (default), replaces it
+- `children: ReactNode` — wrapped content
+
+### 4. `PageFormOptionsProvider`
+Convenience wrapper for the DRF-OPTIONS case. Used by PageForm internally; also available for scenarios where you're composing multiple OPTIONS sources.
+
+```typescript
+<PageFormOptionsProvider optionsData={data} merge>
+  <PageFormFieldMetadataProvider fields={customFields} merge>
+    {/* Both contexts are available */}
+  </PageFormFieldMetadataProvider>
+</PageFormOptionsProvider>
+```
+
+**Props:**
+- `optionsData?: PageFormOptionsData` — raw OPTIONS response
+- `merge?: boolean` — layer on top of ambient context
+- `children: ReactNode`
+
+### 5. Enhanced `usePageFormOptionsContext(name, optionsFieldName?)`
+Updated to support nested field names with automatic last-segment lookup.
+
+**Smart default behavior:**
+- `organization.name` → looks up key `name`
+- `prompt.limit` → looks up key `limit`
+- `credential_passwords.ssh_password` → looks up key `ssh_password`
+
+**Escape hatch for collisions:**
+```typescript
+// If two fields in the same form both end in `.name`, use optionsFieldName override
+const metadata = usePageFormOptionsContext('organization.name', 'explicit_key');
+```
+
+## Enabling the Four Scenarios
+
+### Scenario 1: Single-Resource Wizard (`ScheduleAddWizard`)
+
+**Before:** Wizard steps couldn't access OPTIONS-driven validation.
+
+**After:**
+
+```typescript
+// In ScheduleAddWizard.tsx
+const { data: optionsData } = useOptions(awxAPI`/schedules/`);
+
+<PageWizard<ScheduleFormWizard>
+  steps={steps}
+  optionsData={optionsData}  // ← NEW: Pass OPTIONS once
+  onSubmit={handleSubmit}
+  // ... other props
+/>
+```
+
+All steps automatically discover patterns — no changes needed to step components.
+
+**Files changed:**
+- `framework/PageWizard/PageWizard.tsx` — added `optionsData` prop
+- `framework/PageWizard/PageWizardBody.tsx` — forwards to internal PageForm
+- `framework/PageWizard/types.ts` — documented on PageWizardBody interface
+
+### Scenario 2: Concurrent Multi-Resource in One Step (`PlatformOrganizationForm`)
+
+**Before:** Step had fields from two services (Gateway org + Controller org). Only one resource's patterns could be applied.
+
+**After:**
+
+```typescript
+// At wizard level: Gateway organization OPTIONS
+<PageWizard optionsData={gatewayOrgOptions} ...>
+
+// Inside the details step: ControllerOrganizationDetails
+function ControllerOrganizationDetails() {
+  const { data: controllerOptions } = useOptions(awxAPI`/organizations/`);
+  const fields = extractPageFormOptionsFields(controllerOptions);
+  
+  return (
+    <PageFormFieldMetadataProvider fields={fields} merge>
+      {/* Merges with ambient Gateway org context */}
+      <PageFormTextInput name="maxHosts" ... />
+      <PageFormTextInput name="policy" ... />
+    </PageFormFieldMetadataProvider>
+  );
+}
+```
+
+Both field sets coexist: Gateway org's `name`/`description` from the wizard level, plus Controller org's `maxHosts`/`policy` from the merged provider.
+
+### Scenario 3: Runtime-Divergent Resource in One Step (`NodeTypeStep`)
+
+**Before:** Step branched on node type (workflow_approval, job, project update, etc.), but only one branch had fields that could be validated.
+
+**After:**
+
+```typescript
+case RESOURCE_TYPE.workflow_approval:
+  return <ApprovalNameFields />;
+
+function ApprovalNameFields() {
+  const { data } = useOptions(awxAPI`/workflow_approval_templates/`);
+  const fields = extractPageFormOptionsFields(data);
+  
+  return (
+    <PageFormFieldMetadataProvider fields={fields}>
+      <PageFormTextInput name="approval_name" ... />
+      <PageFormTextInput name="approval_description" ... />
+    </PageFormFieldMetadataProvider>
+  );
+}
+```
+
+Metadata is reactive: when the user changes node type, the provider re-renders with the new resource's fields.
+
+### Scenario 4: Nested Field Names (`TemplateLaunchWizard`, `PlatformOrganizationForm`)
+
+**Before:** Forms using nested names like `prompt.limit`, `organization.name`, `credential_passwords.ssh_password` would need custom wiring to match bare OPTIONS keys.
+
+**After:** Automatic last-segment lookup in `usePageFormOptionsContext`:
+
+```typescript
+// Form field name
+<PageFormTextInput name="organization.name" ... />
+
+// usePageFormOptionsContext is called internally with name="organization.name"
+// Smart default: looks up OPTIONS key "name" automatically
+// No wiring needed!
+```
+
+## Foundation for AAP-87604 (Phase 2: JSON Sub-Keys)
+
+AAP-87604 targets five forms with JSON sub-key patterns (credentials, notifiers, etc.). The new primitives enable this without requiring changes to `PageWizard`:
+
+```typescript
+// CredentialForm example (not yet implemented, but now possible)
+function CredentialForm({ credentialType }) {
+  const fields = extractCredentialTypeFieldMetadata(credentialType);
+  // Extract from credential.type.inputs.fields — custom source
+  
+  return (
+    <PageForm>
+      <PageFormFieldMetadataProvider fields={fields}>
+        <PageFormTextInput name="username" ... />
+        <PageFormTextInput name="password" ... />
+      </PageFormFieldMetadataProvider>
+    </PageForm>
+  );
+}
+```
+
+Each form's custom extraction → `PageFormFieldMetadataProvider` → validated fields. No new context layers, no special `PageWizardStep.optionsData` API.
+
+## Test Coverage
+
+### New Tests
+
+- **`PageFormOptionsContext.test.tsx`** (22 new tests):
+  - `extractPageFormOptionsFields`: 8 tests (empty, POST/PUT/PATCH, camelCase support, flags, collisions)
+  - `usePageFormOptionsFields`: 2 tests (memoization, recomputation)
+  - `usePageFormOptionsContext`: 5 tests (bare lookup, nested segments, override, missing keys)
+  - `PageFormFieldMetadataProvider`: 5 tests (basic, replace vs. merge, collision handling)
+  - `PageFormOptionsProvider`: 3 tests (extraction, merge, undefined data)
+
+- **`PageWizardBody.test.tsx`** (2 new tests):
+  - optionsData forwarding to step form
+  - absence of optionsData doesn't break
+
+- **`PageWizard.test.tsx`** (1 new test):
+  - optionsData reaches step inputs end-to-end
+
+All 122 framework tests pass.
+
+## API Summary
+
+| Symbol | File | Purpose |
+|--------|------|---------|
+| `extractPageFormOptionsFields()` | PageFormOptionsContext.tsx | Pure extraction: OPTIONS → field metadata |
+| `usePageFormOptionsFields()` | PageFormOptionsContext.tsx | Memoized extraction hook |
+| `PageFormFieldMetadataProvider` | PageFormOptionsContext.tsx | Source-agnostic, mergeable provider |
+| `PageFormOptionsProvider` | PageFormOptionsContext.tsx | DRF-OPTIONS convenience wrapper |
+| `usePageFormOptionsContext(name, optionsFieldName?)` | PageFormOptionsContext.tsx | Smart lookup (last-segment default + override) |
+| `optionsData` prop | PageWizard | Single-resource wizard support |
+| `optionsData` prop | PageWizardBody | Internal forwarding |
+| `optionsData` prop | PageForm | Already existed; refactored to use provider |
+| `optionsFieldName` prop | PageFormTextInput | Field-name override for collisions |
+| `optionsFieldName` prop | PageFormTextArea | Field-name override for collisions |
+
+## Backward Compatibility
+
+✅ Zero breaking changes:
+- All new symbols are additions (exports, props)
+- Existing code path unchanged when props omitted
+- Refactor of `PageForm` internals is pure behavior-preservation
+- Framework tests all pass unmodified
+
+## Migration Path for Forms
+
+### Today (AAP-78724 core)
+```typescript
+// Existing forms, no changes
+<PageForm optionsData={optionsData}>
+```
+
+### Soon (this extension)
+```typescript
+// Wizards gain support
+<PageWizard optionsData={optionsData} steps={steps} ... />
+
+// Multi-resource steps gain compose support
+<PageFormFieldMetadataProvider fields={customFields} merge>
+```
+
+### Phase 2 (AAP-87604)
+```typescript
+// JSON sub-key forms can wire themselves
+<PageFormFieldMetadataProvider fields={extractCredentialFields(...)}>
+  <PageFormTextInput name="username" ... />
+</PageFormFieldMetadataProvider>
+```
+
 ## Next steps
 
 To use this feature in your forms:
-1. Pass `optionsData={data}` to your PageForm wrapper (AwxPageForm, EdaPageForm, etc.)
-2. That's it! Text inputs automatically discover their validation rules
+
+### Single-resource wizard
+```typescript
+const { data: optionsData } = useOptions(awxAPI`/path/`);
+<PageWizard optionsData={optionsData} steps={steps} ... />
+```
+
+### Multi-resource step (merge case)
+```typescript
+// Wizard level: main resource
+<PageWizard optionsData={mainOptions} ...>
+
+// Inside step: secondary resource
+const fields = extractPageFormOptionsFields(secondaryOptions);
+<PageFormFieldMetadataProvider fields={fields} merge>
+  {/* Both contexts available */}
+</PageFormFieldMetadataProvider>
+```
+
+### Custom metadata source (AAP-87604 prep)
+```typescript
+const fields = extractCustomMetadata(mySource);
+<PageFormFieldMetadataProvider fields={fields}>
+  {/* Any metadata shape, injected as-is */}
+</PageFormFieldMetadataProvider>
+```
 
 For the full platform rollout, see:
 - Parent epic: [AAP-74630](https://redhat.atlassian.net/browse/AAP-74630)
 - Feature epic: [ANSTRAT-1756](https://redhat.atlassian.net/browse/ANSTRAT-1756)
+- Phase 2 story: [AAP-87604](https://redhat.atlassian.net/browse/AAP-87604)
