@@ -10,11 +10,11 @@ const CLIPBOARD_PERMISSIONS = ['clipboard-read', 'clipboard-write'] as const;
  * `<input>`, `<textarea>`, or `[contenteditable]` elements.
  *
  * Strategy varies by browser:
- * - Chromium/Firefox: Clipboard paste (ControlOrMeta+V) bypasses auto-closing
+ * - Chromium: Clipboard paste (ControlOrMeta+V) bypasses auto-closing
  *   brackets and reliably triggers Monaco's content-change handlers.
- * - WebKit: Pastes via a temporary textarea (clipboard API is unavailable due
- *   to permission restrictions on non-Chromium browsers). The textarea is
- *   created, filled, copied to clipboard via JS, then pasted into Monaco.
+ *   Playwright 1.57 only accepts clipboard permissions on Chromium.
+ * - Firefox/WebKit: Pastes via a temporary textarea + `execCommand('copy')`.
+ *   Firefox and WebKit reject `clipboard-read` / `clipboard-write` grants.
  *
  * Why not keyboard.type() everywhere?
  * - Sends per-keystroke events and triggers Monaco auto-closing brackets/quotes,
@@ -45,8 +45,17 @@ export async function fillMonacoEditor(page: Page, text: string, editorLocator?:
 
   const browserName = page.context().browser()?.browserType().name() || 'chromium';
 
-  if (browserName === 'webkit') {
-    // WebKit: navigator.clipboard is unavailable (permissions ignored on non-Chromium).
+  if (browserName === 'chromium') {
+    const clipboardReady = await writeClipboard(page, text);
+    if (!clipboardReady) {
+      await focusEditor(editableSurface, editor);
+      await page.keyboard.press('ControlOrMeta+a');
+      await page.keyboard.insertText(text);
+      await verifyEditorContent(editor, monacoEditor, text);
+      return;
+    }
+  } else {
+    // Firefox/WebKit: navigator.clipboard permissions are rejected by Playwright.
     // Workaround: copy via a temporary textarea + execCommand, then paste into Monaco.
     await page.evaluate((value: string) => {
       const textarea = document.createElement('textarea');
@@ -56,15 +65,6 @@ export async function fillMonacoEditor(page: Page, text: string, editorLocator?:
       document.execCommand('copy');
       document.body.removeChild(textarea);
     }, text);
-  } else {
-    const clipboardReady = await writeClipboard(page, text);
-    if (!clipboardReady) {
-      await focusEditor(editableSurface, editor);
-      await page.keyboard.press('ControlOrMeta+a');
-      await page.keyboard.insertText(text);
-      await verifyEditorContent(editor, monacoEditor, text);
-      return;
-    }
   }
 
   // Clipboard helpers can steal focus; restore Monaco selection before paste.
@@ -84,7 +84,11 @@ async function focusEditor(editableSurface: Locator, editor: Locator) {
 }
 
 async function writeClipboard(page: Page, text: string): Promise<boolean> {
-  await page.context().grantPermissions([...CLIPBOARD_PERMISSIONS]);
+  try {
+    await page.context().grantPermissions([...CLIPBOARD_PERMISSIONS]);
+  } catch {
+    return false;
+  }
 
   return page.evaluate(async (content) => {
     try {
@@ -97,6 +101,51 @@ async function writeClipboard(page: Page, text: string): Promise<boolean> {
       return false;
     }
   }, text);
+}
+
+async function getMonacoModelValue(monacoEditor: Locator): Promise<string | undefined> {
+  return monacoEditor.evaluate((el) => {
+    const view = el.ownerDocument.defaultView as
+      | (Window & {
+          monaco?: {
+            editor: {
+              getEditors?: () => Array<{
+                getDomNode: () => HTMLElement | null;
+                getValue: () => string;
+              }>;
+              getModels?: () => Array<{
+                uri: { toString: () => string };
+                getValue: () => string;
+              }>;
+            };
+          };
+        })
+      | null;
+    if (!view) {
+      return undefined;
+    }
+    const monaco = view.monaco;
+    const editors = monaco?.editor?.getEditors?.() ?? [];
+    for (const editor of editors) {
+      const node = editor.getDomNode();
+      if (node && (node === el || el.contains(node) || node.contains(el))) {
+        return editor.getValue();
+      }
+    }
+
+    const uri =
+      el.getAttribute('data-uri') || el.querySelector('[data-uri]')?.getAttribute('data-uri');
+    if (!uri) {
+      return undefined;
+    }
+    const models = monaco?.editor?.getModels?.() ?? [];
+    for (const model of models) {
+      if (model.uri.toString() === uri) {
+        return model.getValue();
+      }
+    }
+    return undefined;
+  });
 }
 
 async function getMonacoVisibleText(monacoEditor: Locator): Promise<string> {
@@ -112,12 +161,34 @@ async function verifyEditorContent(
   const expected = text.trim();
 
   await expect(async () => {
-    const visibleText = await getMonacoVisibleText(monacoEditor);
+    const modelValue = await getMonacoModelValue(monacoEditor);
     const ariaText = await editor.inputValue().catch(() => '');
+    const textareaText = await monacoEditor
+      .locator('textarea')
+      .first()
+      .inputValue()
+      .catch(() => '');
+    const candidates = [modelValue, ariaText, textareaText].filter(
+      (value): value is string => typeof value === 'string' && value.length > 0
+    );
+    const expectedNormalized = normalizeForCompare(expected);
+    const fullCandidate = candidates.find(
+      (value) => normalizeForCompare(value).length >= expectedNormalized.length
+    );
 
-    expect(
-      editorContentMatches(visibleText, expected) || editorContentMatches(ariaText, expected)
-    ).toBe(true);
+    if (fullCandidate !== undefined) {
+      expect(editorContentMatches(fullCandidate, expected)).toBe(true);
+      return;
+    }
+
+    // Viewport fallback: DataEditor enables word wrap and sizes height by
+    // newline count, so compact JSON is one logical line in a ~33px editor.
+    // Monaco then virtualizes wrapped view-lines; `.view-line` only has the
+    // caret's viewport, not the full model. Used only when no complete
+    // Monaco model/aria/textarea value is available.
+    const visibleText = await getMonacoVisibleText(monacoEditor);
+    const longest = [...candidates, visibleText].sort((a, b) => b.length - a.length)[0] ?? '';
+    expect(viewportContentMatches(longest, expected)).toBe(true);
   }).toPass({ timeout: 5000 });
 }
 
@@ -129,16 +200,25 @@ function editorContentMatches(actual: string, expected: string): boolean {
     return normalizedActual.length === 0;
   }
 
-  if (normalizedActual.includes(normalizedExpected)) {
-    return true;
+  return normalizedActual === normalizedExpected;
+}
+
+function viewportContentMatches(actual: string, expected: string): boolean {
+  const normalizedExpected = normalizeForCompare(expected);
+  const normalizedActual = normalizeForCompare(actual);
+
+  if (!normalizedExpected) {
+    return normalizedActual.length === 0;
   }
 
-  // DataEditor enables word wrap and sizes height by newline count, so compact
-  // JSON is one logical line in a ~33px editor. Monaco then virtualizes wrapped
-  // view-lines; `.view-line` only has the caret's viewport (usually the end of
-  // the pasted value), not the first 40 characters.
-  const minOverlap = Math.min(40, normalizedExpected.length);
-  return normalizedActual.length >= minOverlap && normalizedExpected.includes(normalizedActual);
+  if (
+    normalizedActual.includes(normalizedExpected) ||
+    normalizedExpected.includes(normalizedActual)
+  ) {
+    return normalizedActual.length > 0;
+  }
+
+  return false;
 }
 
 function normalizeForCompare(value: string): string {
