@@ -62,7 +62,7 @@ export const PageFormOptionsContext = createContext<PageFormOptionsContextValue>
  * `pattern_description` (snake_case or camelCase) are included.
  */
 export function extractPageFormOptionsFields(
-  optionsData: PageFormOptionsData | undefined
+  optionsData?: PageFormOptionsData | undefined
 ): Record<string, FieldMetadata> {
   const fields: Record<string, FieldMetadata> = {};
 
@@ -73,10 +73,25 @@ export function extractPageFormOptionsFields(
   actions.forEach((action) => {
     if (!action) return;
     Object.entries(action).forEach(([fieldName, fieldMetadata]) => {
-      const pattern = fieldMetadata.pattern;
-      const patternDescription =
-        fieldMetadata.pattern_description || fieldMetadata.patternDescription;
-      const flags = fieldMetadata.flags;
+      // Validate types from backend data
+      const pattern = typeof fieldMetadata.pattern === 'string' ? fieldMetadata.pattern : undefined;
+      let patternDescription: string | undefined;
+      if (typeof fieldMetadata.pattern_description === 'string') {
+        patternDescription = fieldMetadata.pattern_description;
+      } else if (typeof fieldMetadata.patternDescription === 'string') {
+        patternDescription = fieldMetadata.patternDescription;
+      }
+      const flags = typeof fieldMetadata.flags === 'string' ? fieldMetadata.flags : undefined;
+
+      // Validate pattern syntax at extraction time
+      if (pattern) {
+        try {
+          new RegExp(pattern, flags || '');
+        } catch {
+          // Skip this field if pattern is invalid
+          return;
+        }
+      }
 
       if (pattern || patternDescription) {
         fields[fieldName] = { pattern, pattern_description: patternDescription, flags };
@@ -180,6 +195,14 @@ export function usePageFormOptionsContext(
   optionsFieldName?: string
 ): FieldMetadata | undefined {
   const context = useContext(PageFormOptionsContext);
-  const lookupKey = optionsFieldName ?? name.split('.').pop() ?? name;
+  let lookupKey: string;
+  if (optionsFieldName) {
+    lookupKey = optionsFieldName;
+  } else {
+    // Safely extract last segment after dot, handling edge cases
+    const segments = name.split('.');
+    const lastSegment = segments[segments.length - 1]?.trim();
+    lookupKey = lastSegment && lastSegment.length > 0 ? lastSegment : name;
+  }
   return context.fields[lookupKey];
 }

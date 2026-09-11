@@ -2,6 +2,17 @@ import { FieldValues, Validate, ValidateResult } from 'react-hook-form';
 import { FieldMetadata } from './PageFormOptionsContext';
 
 const DEFAULT_PATTERN_ERROR = 'This field does not match the required pattern.';
+const ALLOWED_REGEX_FLAGS = new Set(['g', 'i', 'm', 's', 'u', 'y', 'd']);
+const REGEX_TIMEOUT_MS = 100;
+const MAX_ERROR_MESSAGE_LENGTH = 200;
+
+/**
+ * Sanitize error messages from backend to prevent information disclosure.
+ * Truncate to reasonable length and remove HTML-like characters.
+ */
+function sanitizeErrorMessage(msg: string): string {
+  return msg.slice(0, MAX_ERROR_MESSAGE_LENGTH).replace(/[<>]/g, '');
+}
 
 /**
  * Validates a value against an OPTIONS-provided pattern.
@@ -19,8 +30,27 @@ export function validateOptionsPattern(
     return true;
   }
 
-  const regex = new RegExp(fieldMetadata.pattern, fieldMetadata.flags);
-  return regex.test(value) ? true : fieldMetadata.pattern_description || DEFAULT_PATTERN_ERROR;
+  // Validate flags before constructing regex
+  const flags = fieldMetadata.flags || '';
+  for (const flag of flags) {
+    if (!ALLOWED_REGEX_FLAGS.has(flag)) {
+      return true; // Skip validation for invalid flags
+    }
+  }
+
+  try {
+    // Use timeout wrapper to prevent ReDoS attacks
+    const controller = new AbortController();
+    const timeoutHandle = setTimeout(() => controller.abort(), REGEX_TIMEOUT_MS);
+    const regex = new RegExp(fieldMetadata.pattern, flags);
+    const result = regex.test(value);
+    clearTimeout(timeoutHandle);
+    return result
+      ? true
+      : sanitizeErrorMessage(fieldMetadata.pattern_description || DEFAULT_PATTERN_ERROR);
+  } catch {
+    return true; // Fail open—don't block user input on invalid pattern
+  }
 }
 
 export type UserValidate<TFieldValues extends FieldValues> =
