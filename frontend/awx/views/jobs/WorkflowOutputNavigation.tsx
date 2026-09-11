@@ -60,7 +60,7 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
     setIsOpen(!isOpen);
   };
 
-  const onSelect = (event: React.MouseEvent | undefined, v: string | number | undefined) => {
+  const onSelect = (_event: React.MouseEvent | undefined, v: string | number | undefined) => {
     if (typeof v === 'undefined') return;
 
     const value = v.toString();
