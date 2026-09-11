@@ -197,6 +197,10 @@ export function RulebookActivationInputs() {
     name: 'enable_persistence',
   }) as boolean;
 
+  const logLevel = useWatch<IEdaRulebookActivationInputs>({
+    name: 'log_level',
+  }) as string;
+
   useEffect(() => {
     setValue('source_mappings', jsyaml.dump(sourceMappings));
   }, [setValue, sourceMappings]);
@@ -221,6 +225,12 @@ export function RulebookActivationInputs() {
       setValue('rule_engine_credential_id', null);
     }
   }, [enablePersistence, config?.managed_cloud_install, setValue]);
+
+  useEffect(() => {
+    if (logLevel !== 'debug') {
+      setValue('store_debug_logs', false);
+    }
+  }, [logLevel, setValue]);
 
   return (
     <>
@@ -282,6 +292,26 @@ export function RulebookActivationInputs() {
         labelHelp={logLevelHelpBlock}
         labelHelpTitle={t('Log level')}
       />
+      {logLevel === 'debug' && (
+        <>
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'Debug logging generates significantly more data. By default, debug lines are sent to container stdout but not stored in the database. Enable "Store debug logs in database" below to persist them, but be aware this can increase database storage by ~225x.'
+            )}
+          />
+          <PageFormCheckbox<IEdaRulebookActivationInputs>
+            label={t`Store debug logs in database`}
+            labelHelpTitle={t('Store debug logs in database')}
+            labelHelp={t(
+              'When enabled, DEBUG-level log lines are stored in the database in addition to container stdout. When disabled (default), DEBUG lines are only available in container logs, significantly reducing database storage.'
+            )}
+            name="store_debug_logs"
+          />
+        </>
+      )}
       {config?.deployment_type === 'k8s' && (
         <PageFormTextInput<IEdaRulebookActivationInputs>
           name="k8s_service_name"

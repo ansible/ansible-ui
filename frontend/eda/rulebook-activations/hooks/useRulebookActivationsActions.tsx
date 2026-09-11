@@ -8,7 +8,13 @@ import {
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  MinusCircleIcon,
+  PlusCircleIcon,
+  RedoIcon,
+  TimesCircleIcon,
+  TrashIcon,
+} from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { edaAPI, hasCopyNamePattern } from '../../common/eda-utils';
@@ -29,6 +35,7 @@ import {
   useDeleteRulebookActivationsWithWarning,
 } from './useDeleteRulebookActivations';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
+import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -52,6 +59,29 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     view.unselectItemsAndRefresh
   );
   const getPageUrl = useGetPageUrl();
+  const { activeEdaUser } = useEdaActiveUser();
+
+  const clearAllLogs = useCallback(async () => {
+    if (!confirm(t('Are you sure you want to clear ALL activation logs? This action is irreversible.'))) {
+      return;
+    }
+    try {
+      const result = await postRequest<{ deleted: number }>(edaAPI`/logs/purge/`, {});
+      alertToaster.addAlert({
+        variant: 'success',
+        title: t('Cleared {{count}} log records.', { count: result.deleted }),
+        timeout: 5000,
+      });
+    } catch (err) {
+      const errorResults = parseError(err as Error);
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Failed to clear all logs'),
+        children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+        timeout: 5000,
+      });
+    }
+  }, [alertToaster, parseError, t]);
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
     useCallback(
       async (activation) => {
@@ -168,6 +198,18 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
       {
         type: PageActionType.Seperator,
       },
+      ...(activeEdaUser?.is_superuser
+        ? [
+            {
+              type: PageActionType.Button as const,
+              selection: PageActionSelection.None as const,
+              icon: TimesCircleIcon,
+              label: t('Clear all logs'),
+              onClick: () => clearAllLogs(),
+              isDanger: true,
+            },
+          ]
+        : []),
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -186,6 +228,8 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     disableRulebookActivations,
     restartRulebookActivations,
     deleteRulebookActivations,
+    clearAllLogs,
+    activeEdaUser?.is_superuser,
     getPageUrl,
   ]);
 }
