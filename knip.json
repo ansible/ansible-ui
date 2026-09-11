@@ -24,44 +24,20 @@
     "duplicates"
   ],
   "ignoreDependencies": [
-    "@babel/plugin-proposal-object-rest-spread",
-    "@cypress/code-coverage",
-    "@svgr/webpack",
-    "@types/debounce",
     "@types/glob",
-    "@types/html-webpack-plugin",
     "@types/json-schema",
-    "@types/set-value",
     "@types/styled-components",
-    "@types/webpack",
-    "@types/webpack-dev-server",
     "@vitejs/plugin-react",
-    "babel-loader",
-    "babel-plugin-transform-class-properties",
-    "canvas",
-    "chalk",
-    "coverage-istanbul-loader",
-    "css-loader",
-    "cypress-split",
     "eslint-plugin-import",
-    "klona",
-    "mochawesome",
-    "rollup",
     "selfsigned",
-    "sift",
-    "style-loader",
     "typescript-plugin-styled-components",
     "v8-to-istanbul",
     "vite-plugin-compression",
     "vite-plugin-monaco-editor",
     "vite-plugin-static-copy",
-    "vite-plugin-svgr",
-    "webpack-cli"
+    "vite-plugin-svgr"
   ],
   "workspaces": {
-    ".": {
-      "entry": ["webpack/**/*.{js,cjs}"]
-    },
     "framework": {
       "entry": ["**/*.{test,spec}.{ts,tsx}"]
     },
