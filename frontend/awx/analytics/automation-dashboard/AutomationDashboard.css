@@ -63,12 +63,6 @@
   padding-bottom: 2px;
 }
 
-.automation-dashboard-at-a-glance-streak {
-  border-top: 1px solid var(--pf-t--global--border--color--default);
-  margin-top: var(--pf-t--global--spacer--md);
-  padding-top: var(--pf-t--global--spacer--md);
-}
-
 .automation-dashboard-at-a-glance-streak-cells {
   width: 100%;
   margin-top: var(--pf-t--global--spacer--sm);
@@ -78,11 +72,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   width: 80px;
   height: 80px;
   cursor: default;
-  padding: 6px 4px 4px;
+  padding: 4px;
   border: 0;
   background: none;
   font: inherit;
@@ -144,7 +138,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   width: 100%;
   min-height: 22px;
   margin-top: 2px;
@@ -194,42 +188,64 @@
   color: var(--pf-t--global--color--nonstatus--orange--default);
 }
 
-/* "At a Glance" KPI columns: the Flex stacks vertically below PatternFly's xl breakpoint
-   (1200px) and switches to a row at xl+. Divide the columns with a bottom border while
-   stacked and a right border once they sit side by side. */
-.automation-at-a-glance-kpi-divider {
-  border-bottom: 1px solid var(--pf-t--global--border--color--default);
-  padding-bottom: var(--pf-t--global--spacer--md);
-}
-
-@media screen and (min-width: 1200px) {
-  .automation-at-a-glance-kpi-divider {
-    border-bottom: none;
-    padding-bottom: 0;
-    border-right: 1px solid var(--pf-t--global--border--color--default);
-    padding-right: var(--pf-t--global--spacer--md);
-  }
-}
-
-/* Automation dimensions — SimpleListItem's default padding is tight; give the row content
+/* Automation levels — SimpleListItem's default padding is tight; give the row content
    more breathing room since each item holds an icon + two-line title/value cluster. */
-.automation-dashboard-dimension-row .pf-v6-c-simple-list__item-link {
+.automation-dashboard-level-row .pf-v6-c-simple-list__item-link {
   padding-block: 10px;
 }
 
 /* A little extra breathing room between the 3 rows so they don't feel cramped, without
    force-stretching them to match the (unrelated) height of the leaderboard list beside them. */
-.automation-dashboard-dimension-list .pf-v6-c-simple-list__item + .pf-v6-c-simple-list__item {
+.automation-dashboard-level-list .pf-v6-c-simple-list__item + .pf-v6-c-simple-list__item {
   margin-top: 12px;
 }
 
-/* Tint the leaderboard bars with the same info accent as the dimension icons, and
+/* Tint the leaderboard bars with the same subtle accent as the dimension icons, and
    animate them as they grow/shrink when switching dimensions — PF's Progress indicator
    uses the brand color and has no width transition of its own. */
 .automation-dashboard-dimension-bars .pf-v6-c-progress {
-  --pf-v6-c-progress__indicator--BackgroundColor: var(--pf-t--global--color--status--info--default);
+  --pf-v6-c-progress__indicator--BackgroundColor: var(--pf-t--global--icon--color--subtle);
 }
 
 .automation-dashboard-dimension-bars .pf-v6-c-progress__indicator {
   transition: width 0.3s ease;
+}
+
+.automation-dashboard-highlights-split-kpi {
+  width: 100%;
+  min-height: 100%;
+}
+
+.automation-dashboard-highlights-split-kpi__dimension {
+  flex: 3 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 var(--pf-t--global--spacer--sm);
+}
+
+.automation-dashboard-highlights-split-kpi__metric {
+  flex: 7 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 var(--pf-t--global--spacer--sm);
+}
+
+.automation-dashboard-highlights-split-kpi__metric-content {
+  align-items: flex-start;
+}
+
+.automation-dashboard-accent-icon {
+  --pf-v6-c-icon__content--m-custom--Color: var(--pf-t--global--icon--color--subtle);
+}
+
+.automation-dashboard-featured-template-star {
+  --pf-v6-c-icon__content--m-custom--Color: var(--pf-t--global--color--nonstatus--yellow--300);
+}
+
+.pf-v6-theme-dark .automation-dashboard-featured-template-star {
+  --pf-v6-c-icon__content--m-custom--Color: var(--pf-t--global--color--nonstatus--yellow--default);
 }

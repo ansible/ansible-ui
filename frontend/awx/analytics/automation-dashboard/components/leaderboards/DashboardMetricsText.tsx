@@ -1,11 +1,22 @@
-import { Content, Title } from '@patternfly/react-core';
+import { Content } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 
+/** A `<p>`, not a heading — a data value (e.g. "1,234"), not a section title. */
 export function MetricValue({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <Title headingLevel="h2" size="2xl" style={{ lineHeight: 1.1 }}>
+    <Content
+      component="p"
+      // --pf-t--global--* tokens (defined on :root), not --pf-v6-c-title--*, which only
+      // exists under a .pf-v6-c-title ancestor this <p> doesn't have.
+      style={{
+        fontSize: 'var(--pf-t--global--font--size--2xl)',
+        fontWeight: 'var(--pf-t--global--font--weight--heading--default)',
+        lineHeight: 1.1,
+        margin: 0,
+      }}
+    >
       {children}
-    </Title>
+    </Content>
   );
 }
 

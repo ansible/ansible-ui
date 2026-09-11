@@ -56,30 +56,6 @@ async function mockReportDetailRoute(
         total_saving: 6918332.14,
         total_time_saving: 556.36,
         total_number_of_unique_hosts: 31,
-        top_users: [
-          {
-            id: 1,
-            name: 'Test user',
-            execution_count: 14,
-          },
-        ],
-        top_projects: [
-          {
-            id: 15,
-            name: 'Test Project 1',
-            execution_count: 20,
-          },
-          {
-            id: 9,
-            name: 'Test Project 2',
-            execution_count: 9,
-          },
-          {
-            id: 8,
-            name: 'Test Project 3',
-            execution_count: 2,
-          },
-        ],
         job_chart: {
           kind: 'month',
           items: [
@@ -152,6 +128,11 @@ test.describe('Automation Dashboard', () => {
     ).toBeVisible();
   });
 
+  test('should show the Dashboard and Leaderboards tabs', async ({ page }) => {
+    await expect(page.getByRole('tab', { name: 'Dashboard' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Leaderboards' })).toBeVisible();
+  });
+
   test('Should have correct link in value cards', async ({ page }) => {
     // Wait for dashboard data to load by checking for specific values from our mock
     const successfulJobsCard = page
@@ -173,5 +154,21 @@ test.describe('Automation Dashboard', () => {
 
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
+  });
+});
+
+// Leaderboards reads from a local mock (useAutomationLeaderboardsView), not the API, so no
+// extra route mocking is needed here beyond the top-level beforeEach's collection_status mock.
+test.describe('Automation Dashboard - Leaderboards tab', () => {
+  test('should show the leaderboard sections when the Leaderboards tab is selected', async ({
+    page,
+  }) => {
+    await page.getByRole('tab', { name: 'Leaderboards' }).click();
+
+    await expect(page.getByRole('heading', { name: 'At a glance' })).toBeVisible();
+    await expect(page.getByTestId('automation-streak')).toBeVisible();
+    await expect(page.getByTestId('activity-levels')).toBeVisible();
+    await expect(page.getByTestId('highlights-leaderboard-card')).toBeVisible();
+    await expect(page.getByTestId('milestone-badges-card')).toBeVisible();
   });
 });

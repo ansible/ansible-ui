@@ -101,8 +101,6 @@ const mockDetails: IDashboardDetails = {
   total_time_saving: 50,
   total_number_of_host_job_runs: 20,
   total_number_of_job_runs: 30,
-  top_projects: [{ id: 1, name: 'Project Alpha', execution_count: 10 }],
-  top_users: [{ id: 1, name: 'Alice', execution_count: 5 }],
   job_chart: { kind: 'day', items: [{ label: '2024-01-01', value: 3 }] },
   host_chart: { kind: 'day', items: [{ label: '2024-01-01', value: 2 }] },
 };
