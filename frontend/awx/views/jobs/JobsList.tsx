@@ -87,7 +87,11 @@ export function JobsList(props: {
     url: awxAPI`/unified_jobs/`,
     toolbarFilters,
     tableColumns,
-    queryParams: { ...props?.queryParams, or__labels__name: focusLabels },
+    queryParams: {
+      ...props?.queryParams,
+      or__labels__name: focusLabels,
+      exclude: 'artifacts,extra_vars',
+    },
   });
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
