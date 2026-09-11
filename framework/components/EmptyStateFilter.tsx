@@ -1,6 +1,5 @@
 import { Button } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateCustom } from './EmptyStateCustom';
 
