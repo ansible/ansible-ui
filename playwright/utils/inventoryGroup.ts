@@ -108,9 +108,7 @@ export const InventoryGroup = {
       const emptyState = page.getByText('No groups are assigned to this inventory.');
       const noResults = page.getByRole('heading', { name: 'No results found' });
       await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
-      if (await noResults.isVisible()) {
-        await clearTableFilters(page);
-      }
+      await clearTableFilters(page);
       await expect(emptyState).toBeVisible({ timeout: 15000 });
     },
   },
