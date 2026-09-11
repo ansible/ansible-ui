@@ -54,7 +54,17 @@ test.describe('Execution Environment Team Access', () => {
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
 
-      // Navigate back after wizard completes — wizard does not reliably redirect
+      // Finish opens a bulk-action dialog that overlays the sidebar, then auto-closes
+      // and redirects to the organization Teams tab. Wait for that before navigating
+      // or the Execution Environments link click hangs until the test timeout.
+      await expect(
+        page.getByRole('dialog').getByText('Success', { exact: true }).first()
+      ).toBeVisible({ timeout: 15000 });
+      await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15000 });
+      await expect(
+        page.getByRole('heading', { name: organizationName, exact: true })
+      ).toBeVisible();
+
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
       await clickTableRow({ filterLabel: 'Name', text: executionEnvName }, page);
 
@@ -97,6 +107,11 @@ test.describe('Execution Environment Team Access', () => {
       );
 
       await page.getByRole('button', { name: 'Finish' }).click();
+
+      await expect(
+        page.getByRole('dialog').getByText('Success', { exact: true }).first()
+      ).toBeVisible({ timeout: 15000 });
+      await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15000 });
 
       // Verify we're back on the execution environment page
       await expect(page.getByRole('heading', { name: executionEnvName })).toBeVisible();
