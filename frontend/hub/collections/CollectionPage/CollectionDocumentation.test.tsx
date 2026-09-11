@@ -304,6 +304,8 @@ describe('CollectionDocumentation', () => {
   });
 
   test('should show search input in navigation panel', async () => {
+    const user = userEvent.setup();
+
     render(
       <TestWrapper>
         <CollectionDocumentation />
@@ -320,7 +322,9 @@ describe('CollectionDocumentation', () => {
     });
 
     // Verify search input is present
-    expect(screen.getByPlaceholderText('Find content')).toBeInTheDocument();
+    const searchInput = screen.getByPlaceholderText('Find content');
+    expect(searchInput).toBeInTheDocument();
+    await user.type(searchInput, 'hello');
   });
 
   test('should list module and role contents in navigation', async () => {
@@ -400,6 +404,8 @@ describe('CollectionDocumentation', () => {
   });
 
   test('should display parameters table with parameter names', async () => {
+    const user = userEvent.setup();
+
     render(
       <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/module/hello_module">
         <CollectionDocumentation />
@@ -418,6 +424,8 @@ describe('CollectionDocumentation', () => {
     // Verify parameter descriptions
     expect(screen.getByText('The name to greet')).toBeInTheDocument();
     expect(screen.getByText('Custom greeting message')).toBeInTheDocument();
+
+    await user.type(screen.getByPlaceholderText('Search for parameter name'), 'name');
   });
 
   test('should display examples code block', async () => {
