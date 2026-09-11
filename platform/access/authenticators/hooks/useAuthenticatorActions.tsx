@@ -119,12 +119,12 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
   const rowActions = useMemo<IPageAction<Authenticator>[]>(() => {
     // TODO: Update based on RBAC information from Authenticators API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotDeleteAuthenticator = (authenticator: Authenticator) =>
+    const cannotDeleteAuthenticator = (_authenticator: Authenticator) =>
       // eslint-disable-next-line no-constant-condition
       true ? '' : t(`The authentication cannot be deleted due to insufficient permissions.`);
     // TODO: Update based on RBAC information from Authenticators API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotEditAuthenticator = (authenticator: Authenticator) =>
+    const cannotEditAuthenticator = (_authenticator: Authenticator) =>
       // eslint-disable-next-line no-constant-condition
       true ? '' : t(`The authentication cannot be edited due to insufficient permissions.`);
 

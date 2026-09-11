@@ -38,7 +38,7 @@ export function CollectionDocumentationTabPanel(props: {
       <DrawerHead style={{ gap: 16 }}>
         <SearchInput
           placeholder={t('Find content')}
-          onChange={(event, value) => setSearchText(value)}
+          onChange={(_event, value) => setSearchText(value)}
         />
       </DrawerHead>
       <DrawerPanelBody
