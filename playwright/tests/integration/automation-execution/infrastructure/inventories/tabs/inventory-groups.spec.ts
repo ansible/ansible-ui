@@ -54,16 +54,8 @@ test.describe('Inventory Groups - List View', () => {
       await page.getByRole('button', { name: 'toolbar actions' }).click();
       await page.getByRole('menuitem', { name: 'Delete groups' }).click();
 
-      await page.getByTestId('delete-groups-dialog-radio-delete').check();
-      await page.getByTestId('delete-group-modal-delete-button').click();
-
-      // Wait for deletion to complete and verify no groups remain
-      await clearTableFilters(page);
-
-      // Check that the group is gone - either empty state or no results
-      await expect(
-        page.getByText(/No groups are assigned to this inventory|No results found/i).first()
-      ).toBeVisible({ timeout: 10000 });
+      await InventoryGroup.ui.confirmDeleteDialog(page);
+      await InventoryGroup.ui.expectEmptyList(page);
 
       await Inventory.ui.delete(page, inventoryName);
     }
@@ -122,15 +114,12 @@ test.describe('Inventory Groups - List View', () => {
     await page.getByRole('button', { name: 'toolbar actions' }).click();
     await page.getByRole('menuitem', { name: 'Delete groups' }).click();
 
-    await page.getByTestId('delete-groups-dialog-radio-delete').check();
-    await page.getByTestId('delete-group-modal-delete-button').click();
+    await InventoryGroup.ui.confirmDeleteDialog(page);
 
     for (const groupRow of groupRows) {
       await expect(groupRow).toHaveCount(0, { timeout: 15000 });
     }
-    await expect(
-      page.getByText(/No groups are assigned to this inventory|No results found/i).first()
-    ).toBeVisible({ timeout: 10000 });
+    await InventoryGroup.ui.expectEmptyList(page);
 
     await Inventory.ui.delete(page, inventoryName);
   });

@@ -56,7 +56,17 @@ test.describe('Execution Environment User Access', () => {
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
 
-      // Navigate to execution environment and assign user with role
+      // Finish opens a bulk-action dialog that overlays the sidebar, then auto-closes
+      // and redirects to the organization Users tab. Wait for that before navigating
+      // or the Execution Environments link click hangs until the test timeout.
+      await expect(
+        page.getByRole('dialog').getByText('Success', { exact: true }).first()
+      ).toBeVisible({ timeout: 15000 });
+      await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15000 });
+      await expect(
+        page.getByRole('heading', { name: organizationName, exact: true })
+      ).toBeVisible();
+
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
       await clickTableRow({ filterLabel: 'Name', text: executionEnvName }, page);
 
@@ -99,6 +109,11 @@ test.describe('Execution Environment User Access', () => {
       );
 
       await page.getByRole('button', { name: 'Finish' }).click();
+
+      await expect(
+        page.getByRole('dialog').getByText('Success', { exact: true }).first()
+      ).toBeVisible({ timeout: 15000 });
+      await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15000 });
 
       // Verify we're back on the execution environment page
       await expect(page.getByRole('heading', { name: executionEnvName })).toBeVisible();
