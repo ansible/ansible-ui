@@ -44,7 +44,7 @@ export function PageDetailCodeEditor(props: {
   const [codeEditorValue, setCodeEditorValue] = useState<string>(value);
   const { copySuccess, writeToClipboard } = useClipboard();
 
-  const onClick = (event: React.MouseEvent<Element, MouseEvent>, text: string) => {
+  const onClick = (_event: React.MouseEvent<Element, MouseEvent>, text: string) => {
     writeToClipboard(text);
     setCopied(copySuccess);
   };

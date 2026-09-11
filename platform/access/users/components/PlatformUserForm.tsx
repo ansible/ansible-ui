@@ -66,7 +66,7 @@ export function CreatePlatformUser() {
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput,
-    setError,
+    _setError,
     setFieldError
   ) => {
     const { confirmPassword, organizations, userType, ...user } = userInput;
@@ -189,7 +189,7 @@ export function EditPlatformUser() {
   );
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
-    async (userInput: IUserInput, setError, setFieldError) => {
+    async (userInput: IUserInput, _setError, setFieldError) => {
       const { confirmPassword, organizations, userType, ...user } = userInput;
       user.is_superuser = userType === USER_TYPE_ENUM.Admin;
 

@@ -104,7 +104,7 @@ export function formatPartCodeCommon(text: string, _params: Params): React.React
 
 export function formatPartHorizontalLine(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  part: dom.HorizontalLinePart
+  _part: dom.HorizontalLinePart
 ): React.ReactNode {
   return <hr />;
 }

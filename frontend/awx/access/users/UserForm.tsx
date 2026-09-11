@@ -33,7 +33,7 @@ export function CreateUser() {
   const postRequest = usePostRequest<AwxUser, AwxUser>();
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput,
-    setError,
+    _setError,
     setFieldError
   ) => {
     const { userType, confirmPassword, ...user } = userInput;
@@ -85,7 +85,7 @@ export function EditUser() {
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput: IUserInput,
-    setError,
+    _setError,
     setFieldError
   ) => {
     const { userType, confirmPassword, ...user } = userInput;
