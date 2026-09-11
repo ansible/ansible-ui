@@ -29,18 +29,14 @@ const CLIPBOARD_PERMISSIONS = ['clipboard-read', 'clipboard-write'] as const;
  */
 export async function fillMonacoEditor(page: Page, text: string, editorLocator?: Locator) {
   const editor = editorLocator ?? page.getByRole('textbox', { name: 'Editor content' });
-  let monacoEditor = page.locator('.monaco-editor').filter({ has: editor });
-  if ((await monacoEditor.count()) === 0) {
-    monacoEditor = editor.locator('xpath=ancestor::div[contains(@class, "monaco-editor")]');
-  }
+  const monacoEditor = editor
+    .locator(
+      'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " monaco-editor ")]'
+    )
+    .first();
   const editableSurface = monacoEditor.locator('.view-lines');
 
-  if ((await editableSurface.count()) > 0) {
-    await editableSurface.first().click();
-  } else {
-    await editor.click({ force: true });
-  }
-
+  await focusEditor(editableSurface, editor);
   await page.keyboard.press('ControlOrMeta+a');
   if (text === '') {
     await page.keyboard.press('Backspace');
@@ -60,24 +56,31 @@ export async function fillMonacoEditor(page: Page, text: string, editorLocator?:
       document.execCommand('copy');
       document.body.removeChild(textarea);
     }, text);
-    // textarea.select() steals focus; restore Monaco focus and selection before paste.
-    if ((await editableSurface.count()) > 0) {
-      await editableSurface.first().click();
-    } else {
-      await editor.click({ force: true });
-    }
-    await page.keyboard.press('ControlOrMeta+a');
-    await page.keyboard.press('ControlOrMeta+v');
   } else {
     const clipboardReady = await writeClipboard(page, text);
-    if (clipboardReady) {
-      await page.keyboard.press('ControlOrMeta+v');
-    } else {
+    if (!clipboardReady) {
+      await focusEditor(editableSurface, editor);
+      await page.keyboard.press('ControlOrMeta+a');
       await page.keyboard.insertText(text);
+      await verifyEditorContent(editor, monacoEditor, text);
+      return;
     }
   }
 
+  // Clipboard helpers can steal focus; restore Monaco selection before paste.
+  await focusEditor(editableSurface, editor);
+  await page.keyboard.press('ControlOrMeta+a');
+  await page.keyboard.press('ControlOrMeta+v');
+
   await verifyEditorContent(editor, monacoEditor, text);
+}
+
+async function focusEditor(editableSurface: Locator, editor: Locator) {
+  if ((await editableSurface.count()) > 0) {
+    await editableSurface.first().click();
+  } else {
+    await editor.click({ force: true });
+  }
 }
 
 async function writeClipboard(page: Page, text: string): Promise<boolean> {
@@ -109,20 +112,35 @@ async function verifyEditorContent(
   const expected = text.trim();
 
   await expect(async () => {
-    const visibleText = (await getMonacoVisibleText(monacoEditor)).trim();
+    const visibleText = await getMonacoVisibleText(monacoEditor);
     const ariaText = await editor.inputValue().catch(() => '');
-    const actual = visibleText || ariaText.trim();
 
-    if (!expected) {
-      expect(actual).toBe('');
-      return;
-    }
-
-    const anchor = expected.slice(0, Math.min(40, expected.length));
-    expect(actual.includes(anchor) || normalizeWhitespace(actual).includes(anchor)).toBe(true);
+    expect(
+      editorContentMatches(visibleText, expected) || editorContentMatches(ariaText, expected)
+    ).toBe(true);
   }).toPass({ timeout: 5000 });
 }
 
-function normalizeWhitespace(value: string): string {
-  return value.replace(/\s+/g, '');
+function editorContentMatches(actual: string, expected: string): boolean {
+  const normalizedExpected = normalizeForCompare(expected);
+  const normalizedActual = normalizeForCompare(actual);
+
+  if (!normalizedExpected) {
+    return normalizedActual.length === 0;
+  }
+
+  if (normalizedActual.includes(normalizedExpected)) {
+    return true;
+  }
+
+  // DataEditor enables word wrap and sizes height by newline count, so compact
+  // JSON is one logical line in a ~33px editor. Monaco then virtualizes wrapped
+  // view-lines; `.view-line` only has the caret's viewport (usually the end of
+  // the pasted value), not the first 40 characters.
+  const minOverlap = Math.min(40, normalizedExpected.length);
+  return normalizedActual.length >= minOverlap && normalizedExpected.includes(normalizedActual);
+}
+
+function normalizeForCompare(value: string): string {
+  return value.replace(/[\s\u200b\u200c\u200d\ufeff]+/g, '');
 }
