@@ -75,7 +75,7 @@
       "entry": ["main/Eda.tsx", "**/*.{test,spec}.{ts,tsx}"]
     },
     "frontend/hub": {
-      "entry": ["main/Hub.tsx", "**/*.{test,spec}.{ts,tsx}"]
+      "entry": ["main/Hub.tsx", "**/*.{test,spec}.{ts,tsx}", "__mocks__/**/*.ts"]
     },
     "frontend/chatbot": {
       "entry": ["ChatbotPortal.tsx", "**/*.{test,spec}.{ts,tsx}"]
