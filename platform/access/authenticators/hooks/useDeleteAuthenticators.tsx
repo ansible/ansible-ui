@@ -21,7 +21,8 @@ export function useDeleteAuthenticators(onComplete: (authenticators: Authenticat
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Authenticators API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteAuthenticator = (authenticator: Authenticator) => {
+  /* c8 ignore next */
+  const cannotDeleteAuthenticator = (_authenticator: Authenticator) => {
     // eslint-disable-next-line no-constant-condition
     return true //authenticator?.summary_fields?.authenticator_capabilities?.delete
       ? undefined

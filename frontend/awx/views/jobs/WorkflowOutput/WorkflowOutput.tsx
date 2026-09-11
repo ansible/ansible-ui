@@ -99,7 +99,7 @@ export const WorkflowOutput = (props: {
     newVisualization.setFitToScreenOnLayout(true);
     newVisualization.registerComponentFactory(baselineComponentFactory);
     newVisualization.registerLayoutFactory(
-      (type: string, graph: Graph) =>
+      (_type: string, graph: Graph) =>
         new DagreLayout(graph, {
           edgesep: 100,
           marginx: 20,

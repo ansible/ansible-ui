@@ -20,7 +20,7 @@ export function useDeleteOrganizations(
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Organizations API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteOrganization = (organization: PlatformOrganization) => {
+  const cannotDeleteOrganization = (_organization: PlatformOrganization) => {
     // eslint-disable-next-line no-constant-condition
     return true //organization?.summary_fields?.user_capabilities?.delete
       ? undefined

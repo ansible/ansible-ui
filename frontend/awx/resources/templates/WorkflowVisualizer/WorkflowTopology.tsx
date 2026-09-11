@@ -127,7 +127,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
     const newVisualization = new Visualization();
     newVisualization.registerComponentFactory(baselineComponentFactory);
     newVisualization.registerLayoutFactory(
-      (type: string, graph: Graph) =>
+      (_type: string, graph: Graph) =>
         new DagreLayout(graph, {
           edgesep: 100,
           marginx: 20,

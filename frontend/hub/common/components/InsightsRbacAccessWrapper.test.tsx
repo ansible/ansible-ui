@@ -24,7 +24,6 @@ vi.mock('./InsightsAccessTab', () => ({
     selectRolesMessage,
     onAddUser,
     onRemoveUser,
-    _onAddUserRoles,
     onRemoveUserRole,
     onAddGroup,
     onRemoveGroup,
@@ -43,10 +42,6 @@ vi.mock('./InsightsAccessTab', () => ({
       username?: string;
       object_roles: string[];
     }) => Promise<void>;
-    _onAddUserRoles?: (
-      user: { name?: string; username?: string; object_roles: string[] },
-      roles: string[]
-    ) => Promise<void>;
     onRemoveUserRole?: (
       user: { name?: string; username?: string; object_roles: string[] },
       role: string
