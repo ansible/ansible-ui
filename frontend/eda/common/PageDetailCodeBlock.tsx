@@ -25,7 +25,7 @@ export function PageDetailCodeBlock(props: {
   const [copied, setCopied] = useState(false);
   const { copySuccess, writeToClipboard } = useClipboard();
 
-  const onClick = (event: React.MouseEvent<Element, MouseEvent>, text: string) => {
+  const onClick = (_event: React.MouseEvent<Element, MouseEvent>, text: string) => {
     writeToClipboard(text);
     setCopied(copySuccess);
   };

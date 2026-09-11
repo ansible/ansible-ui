@@ -257,7 +257,7 @@ export function CollectionDocumentationTabContent(props: {
               style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
             >
               <TextInput
-                onChange={(event, text) => setParamsFilter(text)}
+                onChange={(_event, text) => setParamsFilter(text)}
                 value={paramsFilter}
                 isExpanded={false}
                 placeholder={t('Search for parameter name')}

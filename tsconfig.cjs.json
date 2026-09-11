@@ -9,8 +9,7 @@
     "declaration": true,
     "strict": true,
     "noUnusedLocals": true,
-    // Parameters may be required by interface and callback signatures; locals are the enforced scope.
-    "noUnusedParameters": false,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "baseUrl": ".",

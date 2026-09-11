@@ -27,8 +27,8 @@ export const SWR_DEDUPING_INTERVAL_MS =
 export function createSWRErrorRetryHandler() {
   return (
     error: Error,
-    key: string,
-    config: unknown,
+    _key: string,
+    _config: unknown,
     revalidate: (opts: { retryCount: number; [key: string]: unknown }) => void,
     opts: { retryCount: number; [key: string]: unknown }
   ) => {

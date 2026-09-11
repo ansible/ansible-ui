@@ -119,7 +119,7 @@ export function EditOAuthApplication() {
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
     application: Application,
-    setError,
+    _setError,
     setFieldError
   ) => {
     if (
