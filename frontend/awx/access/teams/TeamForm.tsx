@@ -41,6 +41,7 @@ export function CreateTeam() {
         submitText={t('Create team')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
+        optionsUrl={awxAPI`/teams/`}
       >
         <TeamInputs />
       </AwxPageForm>
@@ -86,6 +87,7 @@ export function EditTeam() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={team}
+        optionsUrl={awxAPI`/teams/`}
       >
         <TeamInputs />
       </AwxPageForm>

@@ -214,6 +214,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         cancelText={t('Cancel')}
         onCancel={() => void navigate(-1)}
         defaultValue={defaultValue}
+        optionsUrl={awxAPI`/notification_templates/`}
       >
         <PageFormSection>
           <PageFormTextInput<NotificationTemplate>

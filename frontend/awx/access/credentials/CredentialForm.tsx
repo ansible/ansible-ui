@@ -194,6 +194,7 @@ export function CreateCredential() {
         submitText={t('Create credential')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
+        optionsUrl={awxAPI`/credentials/`}
         additionalActions={
           isExternalCredential ? (
             <Button
@@ -474,6 +475,7 @@ export function EditCredential() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={initialValues}
+        optionsUrl={awxAPI`/credentials/`}
         additionalActions={
           isExternalCredential ? (
             <Button

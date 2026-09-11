@@ -111,15 +111,16 @@ const restHandlers = [
   http.options(awxAPI`/credential_types/`, () => HttpResponse.json({ actions: { GET: {} } })),
   http.options(awxAPI`/credentials/`, () => HttpResponse.json({ actions: { GET: {} } })),
   http.options(awxAPI`/projects/`, () => HttpResponse.json({ actions: { GET: {} } })),
+  http.options('*', () => HttpResponse.json({ actions: { POST: {}, GET: {} } })),
   http.get(awxAPI`/inventories/2/`, () => HttpResponse.json(mockInventory)),
   http.get(awxAPI`/credential_types/`, () => HttpResponse.json(credentialTypes)),
   http.get(
     ({ request }) =>
-      request.url.includes('/api/v2/projects/123') && !request.url.includes('/inventories/'),
+      request.url.includes('/projects/123') && !request.url.includes('/inventories/'),
     () => HttpResponse.json(mockProjectWithOverride)
   ),
   http.get(
-    ({ request }) => request.url.includes('/api/v2/projects/456'),
+    ({ request }) => request.url.includes('/projects/456') && !request.url.includes('/inventories/'),
     () => HttpResponse.json(mockProjectWithoutOverride)
   ),
   http.get(

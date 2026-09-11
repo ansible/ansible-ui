@@ -16,7 +16,11 @@ vi.mock('@patternfly/react-topology', () => ({
   NodeModel: {},
   NodeStatus: { danger: 'danger', success: 'success', info: 'info', default: 'default' },
   WithSelectionProps: {},
-  useVisualizationController: vi.fn(),
+  useVisualizationController: vi.fn(() => ({
+    getState: () => ({ workflowTemplate: { id: 1 }, sourceNode: undefined }),
+    getGraph: () => ({ getNodes: () => [] }),
+    getNodeById: () => undefined,
+  })),
   action: vi.fn((fn: () => void) => fn),
   observer: (component: unknown) => component,
   TopologySideBar: () => null,
@@ -63,6 +67,10 @@ vi.mock('../../../../common/useAwxConfig', () => ({
 vi.mock('@ansible/common-ui/crud/useGet', () => ({
   useGet: vi.fn(() => ({ data: undefined })),
   useGetItem: vi.fn(() => ({ data: undefined })),
+}));
+
+vi.mock('@ansible/common-ui/crud/useOptions', () => ({
+  useOptions: vi.fn(() => ({ data: undefined })),
 }));
 
 vi.mock('@ansible/hub-ui/common/ExternalLink', () => ({
