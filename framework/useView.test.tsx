@@ -1,7 +1,20 @@
 /* eslint-disable i18next/no-literal-string */
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useView } from './useView';
+
+const mockLocation = vi.hoisted(() => {
+  const state: { location?: Location } = { location: undefined };
+  const update = vi.fn((url?: string | URL | null) => {
+    window.history.replaceState(null, '', url);
+    state.location = window.location;
+  });
+  return { state, update };
+});
+
+vi.mock('./components/useWindowLocation', () => ({
+  useWindowLocation: () => ({ location: mockLocation.state.location, update: mockLocation.update }),
+}));
 
 function setLocation(search: string) {
   window.history.replaceState(null, '', `/test${search}`);
@@ -14,6 +27,16 @@ function currentParams() {
 describe('useView', () => {
   beforeEach(() => {
     setLocation('');
+    mockLocation.state.location = window.location;
+    mockLocation.update.mockClear();
+  });
+
+  it('handles an unavailable window location', () => {
+    mockLocation.state.location = undefined;
+    const { result } = renderHook(() => useView({}));
+
+    expect(result.current.page).toEqual(1);
+    expect(mockLocation.update).toHaveBeenCalledWith('?page=1&perPage=10&sort=');
   });
 
   it('seeds page, perPage and sort into the query string', () => {
