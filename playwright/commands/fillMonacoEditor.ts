@@ -142,5 +142,5 @@ function editorContentMatches(actual: string, expected: string): boolean {
 }
 
 function normalizeForCompare(value: string): string {
-  return value.replace(/[\s\u200b\u200c\u200d\ufeff]+/g, '');
+  return value.replace(/(?:\s|\u200b|\u200c|\u200d|\ufeff)+/g, '');
 }
