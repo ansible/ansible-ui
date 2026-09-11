@@ -12,8 +12,10 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { Button, Flex, FlexItem } from '@patternfly/react-core';
+import { AddCircleOIcon, TrashIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
@@ -24,7 +26,7 @@ import {
   MultipleChoiceFieldType,
 } from '../../../common/MultipleChoiceField';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { Spec, Survey } from '../../../interfaces/Survey';
+import { Spec, Survey, SurveyCondition } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 type ResourceType = 'job_templates' | 'workflow_job_templates';
@@ -33,6 +35,20 @@ const minDefault = 0;
 const maxDefault = 1024;
 
 const isMultiSelect = (type: string) => type === 'multiselect' || type === 'multiplechoice';
+
+/** Operator options for survey question conditions. Labels are translated at render. */
+const CONDITION_OPERATOR_OPTIONS: { value: SurveyCondition['operator']; label: string }[] = [
+  { value: 'eq', label: 'Equals (eq)' },
+  { value: 'neq', label: 'Not equals (neq)' },
+  { value: 'in', label: 'In list (in)' },
+  { value: 'notin', label: 'Not in list (notin)' },
+  { value: 'gt', label: 'Greater than (gt)' },
+  { value: 'lt', label: 'Less than (lt)' },
+  { value: 'gte', label: 'Greater or equal (gte)' },
+  { value: 'lte', label: 'Less or equal (lte)' },
+  { value: 'is_set', label: 'Is set' },
+  { value: 'is_not_set', label: 'Is not set' },
+];
 
 function getFormattedChoices(question: Spec | undefined): ChoiceOption[] | undefined {
   if (!question || !isMultiSelect(question.type)) return undefined;
@@ -198,6 +214,14 @@ export function TemplateSurveyForm(props: IProps) {
     choices: question?.choices ?? [],
     formattedChoices,
     new_question: !question,
+    category: question?.category ?? '',
+    page: question?.page ?? 1,
+    conditions: (question?.conditions ?? []).map((c) => ({
+      variable: c.variable,
+      operator: c.operator,
+      value: c.value !== undefined ? String(c.value) : '',
+    })),
+    condition_logic: question?.condition_logic ?? 'and',
   };
 
   const onSubmit: PageFormSubmitHandler<FormSpec & { 'add-choice'?: string }> = async (
@@ -243,7 +267,21 @@ export function TemplateSurveyForm(props: IProps) {
       question_name: newQuestion.question_name,
       question_description: newQuestion.question_description,
       choices: newQuestion.choices,
+      category: newQuestion.category || undefined,
+      page: newQuestion.page ? Number(newQuestion.page) : undefined,
     };
+
+    const validConditions = (newQuestion.conditions ?? [])
+      .filter((c) => c.variable && c.operator)
+      .map((c) => ({
+        variable: c.variable,
+        operator: c.operator,
+        value: c.value === '' || c.value === undefined ? undefined : c.value,
+      }));
+    if (validConditions.length > 0) {
+      question.conditions = validConditions;
+      question.condition_logic = newQuestion.condition_logic ?? 'and';
+    }
 
     const isDuplicate = updatedSurvey.spec.some((q) => q.variable === newQuestion.variable);
 
@@ -308,15 +346,18 @@ export function TemplateSurveyForm(props: IProps) {
       defaultValue={initialValues}
       disableSubmitOnEnter
     >
-      <TemplateSurveyInputs />
+      <TemplateSurveyInputs surveyVariables={survey?.spec?.map((s) => s.variable) ?? []} />
     </AwxPageForm>
   );
 }
 
-function TemplateSurveyInputs() {
+function TemplateSurveyInputs({ surveyVariables }: { surveyVariables: string[] }) {
   const { t } = useTranslation();
 
   const answerType = useWatch({ name: 'type' }) as string;
+  const currentVariable = useWatch({ name: 'variable' }) as string;
+
+  const otherVariables = surveyVariables.filter((v) => v !== currentVariable);
 
   return (
     <>
@@ -381,8 +422,124 @@ function TemplateSurveyInputs() {
         />
       </PageFormGroup>
 
+      <PageFormTextInput
+        id="question-category"
+        name="category"
+        type="text"
+        label={t`Category`}
+        placeholder={t('Enter category name')}
+        labelHelp={t`Group this question under a category heading.`}
+      />
+
+      <PageFormTextInput
+        id="question-page"
+        name="page"
+        type="number"
+        min={1}
+        label={t`Page`}
+        placeholder="1"
+        labelHelp={t`Which wizard page this question appears on. Questions on different pages become separate wizard steps.`}
+      />
+
+      {otherVariables.length > 0 && <SurveyConditions otherVariables={otherVariables} />}
+
       {answerType && <SelectedAnswerType answer={answerType} />}
     </>
+  );
+}
+
+function SurveyConditions({ otherVariables }: Readonly<{ otherVariables: string[] }>) {
+  const { t } = useTranslation();
+  const { fields, append, remove } = useFieldArray({ name: 'conditions' });
+
+  return (
+    <PageFormSection title={t('Conditions')} singleColumn>
+      {fields.length > 1 && (
+        <PageFormSelect
+          name="condition_logic"
+          id="condition-logic"
+          label={t('Match conditions')}
+          options={[
+            { value: 'and', label: t('All conditions must match (AND)') },
+            { value: 'or', label: t('Any condition can match (OR)') },
+          ]}
+          labelHelp={t`Whether all or any of the conditions must be met for this question to be shown.`}
+        />
+      )}
+
+      {fields.map((field, index) => (
+        <SurveyConditionRow
+          key={field.id}
+          index={index}
+          otherVariables={otherVariables}
+          onRemove={() => remove(index)}
+        />
+      ))}
+
+      <Button
+        type="button"
+        variant="link"
+        icon={<AddCircleOIcon />}
+        onClick={() => append({ variable: '', operator: 'eq', value: '' })}
+      >
+        {t('Add condition')}
+      </Button>
+    </PageFormSection>
+  );
+}
+
+function SurveyConditionRow(
+  props: Readonly<{ index: number; otherVariables: string[]; onRemove: () => void }>
+) {
+  const { index, otherVariables, onRemove } = props;
+  const { t } = useTranslation();
+  const operator = useWatch({ name: `conditions.${index}.operator` }) as string;
+  const needsValue = operator !== 'is_set' && operator !== 'is_not_set';
+
+  return (
+    <PageFormGroup label={t('Only show when')}>
+      <Flex alignItems={{ default: 'alignItemsFlexEnd' }} spaceItems={{ default: 'spaceItemsSm' }}>
+        <FlexItem grow={{ default: 'grow' }}>
+          <PageFormSelect
+            name={`conditions.${index}.variable`}
+            id={`condition-variable-${index}`}
+            label={t('Variable')}
+            placeholderText={t('Select variable')}
+            options={otherVariables.map((v) => ({ value: v, label: v }))}
+            isRequired
+          />
+        </FlexItem>
+        <FlexItem grow={{ default: 'grow' }}>
+          <PageFormSelect
+            name={`conditions.${index}.operator`}
+            id={`condition-operator-${index}`}
+            label={t('Operator')}
+            placeholderText={t('Select operator')}
+            options={CONDITION_OPERATOR_OPTIONS.map((o) => ({ value: o.value, label: t(o.label) }))}
+            isRequired
+          />
+        </FlexItem>
+        {needsValue && (
+          <FlexItem grow={{ default: 'grow' }}>
+            <PageFormTextInput
+              id={`condition-value-${index}`}
+              name={`conditions.${index}.value`}
+              type="text"
+              label={t`Value`}
+              placeholder={t('Enter expected value')}
+            />
+          </FlexItem>
+        )}
+        <FlexItem>
+          <Button
+            icon={<TrashIcon />}
+            variant="plain"
+            aria-label={t('Remove condition')}
+            onClick={onRemove}
+          />
+        </FlexItem>
+      </Flex>
+    </PageFormGroup>
   );
 }
 
