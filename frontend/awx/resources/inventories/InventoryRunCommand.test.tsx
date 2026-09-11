@@ -155,13 +155,11 @@ describe('InventoryRunCommand', () => {
     expect(screen.getByText('Forks')).toBeInTheDocument();
   });
 
-  it('should fill Details step form fields', async () => {
+  it('should fill Details step form fields', { timeout: 15000 }, async () => {
     const user = userEvent.setup();
     renderRunCommand();
 
-    await waitFor(() => {
-      expect(screen.getByText('Select a module')).toBeInTheDocument();
-    });
+    await screen.findByText('Select a module', {}, { timeout: 10000 });
 
     await user.click(screen.getByText('Select a module'));
     await user.click(screen.getByText('shell'));

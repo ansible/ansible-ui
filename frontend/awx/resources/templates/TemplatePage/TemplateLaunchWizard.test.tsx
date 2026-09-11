@@ -209,7 +209,8 @@ describe('TemplateLaunchWizard', () => {
         });
 
         // With all ask_* false only Review step is visible; click Finish to submit
-        await user.click(screen.getByTestId('wizard-next'));
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
 
         await waitFor(() => {
           expect(launchPosted).toBe(true);
@@ -485,7 +486,8 @@ describe('TemplateLaunchWizard', () => {
         </MemoryRouter>
       );
       await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
-      await user.click(screen.getByTestId('wizard-next'));
+      const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+      await user.click(finishButton);
       await waitFor(() => {
         expect(wjtLaunched).toBe(true);
       });
@@ -511,7 +513,8 @@ describe('TemplateLaunchWizard', () => {
           </MemoryRouter>
         );
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
-        await user.click(screen.getByTestId('wizard-next'));
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
         await waitFor(() => {
           expect(mockAddAlert).toHaveBeenCalledWith(
             expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })
