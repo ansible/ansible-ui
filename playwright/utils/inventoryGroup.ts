@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
+import { clearTableFilters } from '../commands/clearTableFilters';
 import { clickTableRow } from '../commands/clickTableRow';
 import { createE2EName } from '../commands/createE2EName';
 import { fillMonacoEditor } from '../commands/fillMonacoEditor';
@@ -90,13 +91,25 @@ export const InventoryGroup = {
       await groupRow.getByRole('checkbox').check();
       await page.getByLabel('kebab dropdown toggle').click();
       await page.getByRole('menuitem', { name: 'Delete groups' }).click();
+      await InventoryGroup.ui.confirmDeleteDialog(page);
+      await InventoryGroup.ui.expectEmptyList(page);
+    },
+
+    confirmDeleteDialog: async (page: Page): Promise<void> => {
+      const dialog = page.getByRole('dialog');
+      await expect(dialog).toBeVisible();
       await page.getByTestId('delete-groups-dialog-radio-delete').check();
       await page.getByTestId('delete-group-modal-delete-button').click();
-      await expect(
-        page.getByRole('heading', {
-          name: 'There are currently no groups added to this inventory.',
-        })
-      ).toBeVisible();
+      // handleDelete awaits each group DELETE before closing the dialog
+      await expect(dialog).toBeHidden({ timeout: 30000 });
+    },
+
+    expectEmptyList: async (page: Page): Promise<void> => {
+      const emptyState = page.getByText('No groups are assigned to this inventory.');
+      const noResults = page.getByRole('heading', { name: 'No results found' });
+      await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
+      await clearTableFilters(page);
+      await expect(emptyState).toBeVisible({ timeout: 15000 });
     },
   },
 } as const;

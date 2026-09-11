@@ -1,6 +1,7 @@
 import { AwxHost } from '@ansible/awx-ui/interfaces/AwxHost';
 import { Page, expect } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
+import { clearTableFilters } from '../commands/clearTableFilters';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
@@ -158,15 +159,19 @@ export const InventoryHost = {
       await dialog.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete hosts', exact: true }).click();
 
-      // Wait for dialog to close and page to update
+      await expect(dialog.getByTestId('progress').getByText('Success')).toBeVisible({
+        timeout: 30000,
+      });
       await expect(dialog).not.toBeVisible({ timeout: 30000 });
 
-      // Wait for the empty state message to appear
-      await expect(
-        page.getByRole('heading', { name: 'No hosts are assigned to this inventory.' })
-      ).toBeVisible({
-        timeout: 15000,
-      });
+      // Navigating here via the inventories list can leave a Name filter in the
+      // query string, so the hosts tab shows "No results found" instead of the
+      // true empty state until filters are cleared.
+      const emptyState = page.getByText('No hosts are assigned to this inventory.');
+      const noResults = page.getByRole('heading', { name: 'No results found' });
+      await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
+      await clearTableFilters(page);
+      await expect(emptyState).toBeVisible({ timeout: 15000 });
     },
   },
 };
