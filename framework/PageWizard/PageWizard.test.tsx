@@ -177,6 +177,42 @@ describe('PageWizard', () => {
     });
   });
 
+  it('should forward optionsData through to step inputs for pattern validation', async () => {
+    const user = userEvent.setup();
+
+    const optionsSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        inputs: <PageFormTextInput name="name" label="Name" />,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={optionsSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn()}
+          stepDefaults={{ details: { name: '' } }}
+          optionsData={{
+            actions: {
+              POST: { name: { pattern: '^[a-z]+$', pattern_description: 'lowercase only' } },
+            },
+          }}
+        />
+      </MemoryRouter>
+    );
+
+    const input = screen.getByLabelText('Name');
+    await user.type(input, 'Invalid123');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(screen.getByText('lowercase only')).toBeInTheDocument();
+    });
+  });
+
   describe('Substeps', () => {
     const stepsWithSubsteps = [
       {

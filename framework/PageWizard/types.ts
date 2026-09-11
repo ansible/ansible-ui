@@ -1,4 +1,5 @@
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
+import { PageFormOptionsData } from '../PageForm/PageFormOptionsContext';
 
 export interface PageWizardBasicStep {
   id: string;
@@ -28,4 +29,12 @@ export interface PageWizardBody {
   disableGrid?: boolean;
   isVertical?: boolean;
   singleColumn?: boolean;
+  /**
+   * OPTIONS response data forwarded into the wizard's internal PageForm, so
+   * step inputs can auto-discover validation patterns the same way a
+   * standalone PageForm's inputs do. Only useful when every step of the
+   * wizard concerns the same backend resource - see PageFormOptionsContext
+   * for composing metadata from multiple resources within a step.
+   */
+  optionsData?: PageFormOptionsData;
 }

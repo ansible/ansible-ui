@@ -1,11 +1,4 @@
-import {
-  Button,
-  ButtonVariant,
-  InputGroup,
-  InputGroupItem,
-  TextInput,
-} from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
+import { ButtonVariant, InputGroup, InputGroupItem, TextInput } from '@patternfly/react-core';
 import getValue from 'get-value';
 import { ReactNode, useState } from 'react';
 import {
@@ -14,6 +7,7 @@ import {
   FieldPathValue,
   FieldValues,
   PathValue,
+  UseFormSetValue,
   Validate,
   ValidationRule,
   useFormContext,
@@ -24,7 +18,17 @@ import { PageActions } from '../../PageActions/PageActions';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
+import { usePageFormOptionsContext } from '../PageFormOptionsContext';
+import { createFieldValidate } from '../PageFormOptionsValidation';
 import { PageFormGroup } from './PageFormGroup';
+import {
+  createPatternBlurHandler,
+  PasswordRevealButton,
+  resolveAutoComplete,
+  resolveHelperTextInvalid,
+  resolveInputType,
+  SelectLookupButton,
+} from './PageFormTextInputHelpers';
 import { useRequiredValidationRule } from './validation-hooks';
 
 /**
@@ -185,6 +189,14 @@ type PageFormTextInputBaseProps<
   shouldUnregister?: boolean;
 
   fullWidth?: boolean;
+
+  /**
+   * Explicit backend field name to look up in the OPTIONS-driven validation
+   * context, overriding the default heuristic of using the last dot-separated
+   * segment of `name` (e.g. `organization.name` -> `name`). Only needed when
+   * that default would be wrong or ambiguous.
+   */
+  optionsFieldName?: string;
 };
 
 /**
@@ -230,6 +242,74 @@ export type PageFormTextInputProps<
       }
   );
 
+type TextInputType = PageFormTextInputBaseProps['type'];
+
+/**
+ * Converts a stored UTC datetime-local value into the local-time string the
+ * `<input type="datetime-local">` control expects.
+ */
+export function resolveParsedValue(type: TextInputType, value: string): string {
+  if (type !== 'datetime-local' || !value) return value;
+  const utcDate = new Date(value);
+  const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+  return localDate.toISOString().slice(0, 16);
+}
+
+export function handleNumberChange<
+  TFieldValues extends FieldValues,
+  TFieldName extends FieldPath<TFieldValues>,
+>(
+  value: string,
+  params: {
+    name: TFieldName;
+    max?: number | string;
+    min?: number | string;
+    setValue: UseFormSetValue<TFieldValues>;
+    onChange: (value: unknown) => void;
+  }
+) {
+  const { name, max, min, setValue, onChange } = params;
+  let numberValue = Number(value);
+  if (value === '' || isNaN(numberValue)) {
+    setValue(name, null as PathValue<TFieldValues, TFieldName>);
+    onChange(null);
+    return;
+  }
+  if (max !== undefined && numberValue > Number(max)) {
+    numberValue = Number(max);
+  }
+  if (min !== undefined && numberValue < Number(min)) {
+    numberValue = Number(min);
+  }
+  setValue(name, numberValue as unknown as PathValue<TFieldValues, TFieldName>);
+  onChange(numberValue);
+}
+
+export function createChangeHandler<
+  TFieldValues extends FieldValues,
+  TFieldName extends FieldPath<TFieldValues>,
+>(params: {
+  type: TextInputType;
+  name: TFieldName;
+  max?: number | string;
+  min?: number | string;
+  setValue: UseFormSetValue<TFieldValues>;
+  onChange: (value: unknown) => void;
+}) {
+  return (value: string) => {
+    switch (params.type) {
+      case 'datetime-local':
+        params.onChange(new Date(value).toISOString());
+        return;
+      case 'number':
+        handleNumberChange(value, params);
+        return;
+      default:
+        params.onChange(value.trimStart());
+    }
+  };
+}
+
 /**
  * TextInput component that is used to render a text input field in a PageForm.
  *
@@ -273,6 +353,7 @@ export function PageFormTextInput<
   const {
     control,
     setValue,
+    trigger,
     formState: { isSubmitting, isValidating, defaultValues },
   } = useFormContext<TFieldValues>();
 
@@ -280,6 +361,9 @@ export function PageFormTextInput<
 
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
+
+  // Auto-discover field metadata from OPTIONS context
+  const fieldMetadata = usePageFormOptionsContext(name, props.optionsFieldName);
 
   // Smart defaults: password fields default to 'new-password', others default to 'off'
   // TypeScript provides type safety for valid autoComplete values
@@ -295,53 +379,16 @@ export function PageFormTextInput<
       control={control}
       shouldUnregister={props.shouldUnregister !== false ? true : false}
       defaultValue={props.defaultValue}
-      render={({ field: { onChange, value, name }, fieldState: { error } }) => {
-        const helperTextInvalid = error?.message
-          ? validate && isValidating
-            ? translations.validating
-            : error?.message
-          : undefined;
+      render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
+        const helperTextInvalid = resolveHelperTextInvalid(
+          error?.message,
+          Boolean(validate),
+          isValidating,
+          translations.validating
+        );
 
-        let parsedValue: string = value;
-        switch (type) {
-          case 'datetime-local':
-            if (value) {
-              const utcDate = new Date(value);
-              const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
-              parsedValue = localDate.toISOString().slice(0, 16);
-            }
-            break;
-        }
-
-        function onChangeHandler(value: string) {
-          switch (props.type) {
-            case 'datetime-local': {
-              onChange(new Date(value).toISOString());
-              break;
-            }
-            case 'number': {
-              let numberValue = Number(value);
-              if (value === '' || isNaN(numberValue)) {
-                setValue(name, null as PathValue<TFieldValues, TFieldName>);
-                onChange(null);
-                return;
-              }
-
-              if (max !== undefined && numberValue > Number(max)) {
-                numberValue = Number(max);
-              }
-
-              if (min !== undefined && numberValue < Number(min)) {
-                numberValue = Number(min);
-              }
-              setValue(name, numberValue as unknown as PathValue<TFieldValues, TFieldName>);
-              onChange(numberValue);
-              break;
-            }
-            default:
-              onChange(value.trimStart());
-          }
-        }
+        const parsedValue = resolveParsedValue(type, value);
+        const onChangeHandler = createChangeHandler({ type, name, max, min, setValue, onChange });
 
         return (
           <PageFormGroup
@@ -361,45 +408,42 @@ export function PageFormTextInput<
                   id={id}
                   placeholder={placeholder}
                   onChange={(_event, value: string) => onChangeHandler(value)}
+                  onBlur={createPatternBlurHandler(
+                    Boolean(fieldMetadata?.pattern),
+                    onBlur,
+                    trigger,
+                    name
+                  )}
                   value={parsedValue ?? ''}
                   aria-describedby={id ? `${id}-form-group` : undefined}
                   validated={helperTextInvalid ? 'error' : undefined}
-                  type={type === 'password' ? (showSecret ? 'text' : 'password') : type}
+                  type={resolveInputType(type, showSecret)}
                   readOnlyVariant={isReadOnly ? 'default' : undefined}
                   isDisabled={isDisabled}
                   autoFocus={autoFocus}
-                  autoComplete={autoComplete || (type === 'password' ? 'new-password' : 'off')}
+                  autoComplete={resolveAutoComplete(autoComplete, type)}
                   data-cy={id}
                   data-testid={id}
                 />
               </InputGroupItem>
               {type === 'password' && (
-                <Button
-                  variant="control"
-                  onClick={() => setShowSecret(!showSecret)}
-                  isDisabled={isDisabled || isReadOnly}
-                >
-                  {showSecret ? <EyeIcon /> : <EyeSlashIcon />}
-                </Button>
+                <PasswordRevealButton
+                  isDisabled={isDisabled}
+                  isReadOnly={isReadOnly}
+                  showSecret={showSecret}
+                  onToggle={() => setShowSecret(!showSecret)}
+                />
               )}
               {selectTitle && (
-                <Button
-                  icon={<SearchIcon data-cy="lookup-button" data-testid="lookup-button" />}
-                  ouiaId={`lookup-${name}-button`}
-                  variant="control"
-                  onClick={() =>
-                    selectOpen?.((item: TSelection) => {
-                      if (selectValue) {
-                        const value = selectValue(item);
-                        setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>, {
-                          shouldValidate: true,
-                        });
-                      }
-                    }, selectTitle)
-                  }
-                  aria-label="Options menu"
-                  isDisabled={isDisabled || isSubmitting}
-                ></Button>
+                <SelectLookupButton
+                  selectTitle={selectTitle}
+                  selectOpen={selectOpen}
+                  selectValue={selectValue}
+                  setValue={setValue}
+                  name={name}
+                  isDisabled={isDisabled}
+                  isSubmitting={isSubmitting}
+                />
               )}
               {button}
               <PageActions
@@ -441,7 +485,9 @@ export function PageFormTextInput<
       }}
       rules={{
         required,
-        validate,
+        validate: createFieldValidate(fieldMetadata, validate, () =>
+          getValue(defaultValues as object, name)
+        ),
 
         minLength:
           typeof label === 'string' && typeof minLength === 'number'
