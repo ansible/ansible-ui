@@ -277,7 +277,7 @@ describe('PageFormOptionsContext', () => {
 
 describe('extractPageFormOptionsFields', () => {
   it('returns an empty map when optionsData is undefined', () => {
-    expect(extractPageFormOptionsFields(undefined)).toEqual({});
+    expect(extractPageFormOptionsFields()).toEqual({});
   });
 
   it('returns an empty map when optionsData has no actions', () => {
