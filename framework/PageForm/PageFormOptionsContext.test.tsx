@@ -325,6 +325,15 @@ describe('extractPageFormOptionsFields', () => {
     expect(fields).toEqual({});
   });
 
+  it('skips fields with invalid regex patterns', () => {
+    const fields = extractPageFormOptionsFields({
+      actions: {
+        POST: { name: { pattern: '[invalid', pattern_description: 'bad pattern' } },
+      },
+    });
+    expect(fields).toEqual({});
+  });
+
   it('checks PUT and PATCH actions in addition to POST', () => {
     const fields = extractPageFormOptionsFields({
       actions: {

@@ -124,6 +124,12 @@ const mockWJT = {
 } as unknown as JobTemplate;
 
 const server = setupServer(
+  http.options(awxAPI`/job_templates/1/launch/`, () =>
+    HttpResponse.json({ actions: { GET: {}, POST: {} } })
+  ),
+  http.options(awxAPI`/workflow_job_templates/1/launch/`, () =>
+    HttpResponse.json({ actions: { GET: {}, POST: {} } })
+  ),
   http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(mockTemplate)),
   http.get(awxAPI`/job_templates/1/launch/`, () => HttpResponse.json(makeConfig())),
   http.get(awxAPI`/labels/`, () => HttpResponse.json({ count: 0, results: [], next: null }))
@@ -203,7 +209,8 @@ describe('TemplateLaunchWizard', () => {
         });
 
         // With all ask_* false only Review step is visible; click Finish to submit
-        await user.click(screen.getByTestId('wizard-next'));
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
 
         await waitFor(() => {
           expect(launchPosted).toBe(true);
@@ -479,7 +486,8 @@ describe('TemplateLaunchWizard', () => {
         </MemoryRouter>
       );
       await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
-      await user.click(screen.getByTestId('wizard-next'));
+      const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+      await user.click(finishButton);
       await waitFor(() => {
         expect(wjtLaunched).toBe(true);
       });
@@ -505,7 +513,8 @@ describe('TemplateLaunchWizard', () => {
           </MemoryRouter>
         );
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
-        await user.click(screen.getByTestId('wizard-next'));
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
         await waitFor(() => {
           expect(mockAddAlert).toHaveBeenCalledWith(
             expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })

@@ -128,6 +128,7 @@ export function EditWorkflowJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id } })}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/workflow_job_templates/`}
       >
         <WorkflowJobTemplateInputs workflowJobTemplate={defaultValues} />
       </AwxPageForm>
@@ -190,6 +191,7 @@ export function CreateWorkflowJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.Templates)}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/workflow_job_templates/`}
       >
         <WorkflowJobTemplateInputs />
       </AwxPageForm>

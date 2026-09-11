@@ -126,6 +126,7 @@ export function EditJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } })}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/job_templates/`}
       >
         <JobTemplateInputs jobtemplate={defaultValues} />
       </AwxPageForm>
@@ -189,6 +190,7 @@ export function CreateJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/job_templates/`}
       >
         <JobTemplateInputs />
       </AwxPageForm>
