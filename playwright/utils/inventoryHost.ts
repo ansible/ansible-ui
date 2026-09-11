@@ -159,7 +159,7 @@ export const InventoryHost = {
       await dialog.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete hosts', exact: true }).click();
 
-      await expect(dialog.getByText('Success', { exact: true }).first()).toBeVisible({
+      await expect(dialog.getByTestId('progress').getByText('Success')).toBeVisible({
         timeout: 30000,
       });
       await expect(dialog).not.toBeVisible({ timeout: 30000 });
@@ -170,9 +170,7 @@ export const InventoryHost = {
       const emptyState = page.getByText('No hosts are assigned to this inventory.');
       const noResults = page.getByRole('heading', { name: 'No results found' });
       await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
-      if (await noResults.isVisible()) {
-        await clearTableFilters(page);
-      }
+      await clearTableFilters(page);
       await expect(emptyState).toBeVisible({ timeout: 15000 });
     },
   },
