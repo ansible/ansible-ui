@@ -435,7 +435,7 @@ describe('InventoryForm', () => {
       expect(postSpy).not.toHaveBeenCalled();
     });
 
-    it('should render create constructed inventory form with correct title', async () => {
+    it('should render create constructed inventory form with labels field', async () => {
       render(
         <MemoryRouter initialEntries={['/inventories/constructed_inventory/create']}>
           <Routes>
@@ -452,6 +452,7 @@ describe('InventoryForm', () => {
       });
 
       expect(screen.getByTestId('source_vars')).toBeInTheDocument();
+      expect(screen.getByTestId('label-select')).toBeInTheDocument();
     });
 
     it('should navigate away when cancel is clicked on constructed inventory form', async () => {
@@ -486,6 +487,7 @@ describe('InventoryForm', () => {
       async () => {
         const postInventorySpy = vi.fn();
         const postInputInventorySpy = vi.fn();
+        const labelPostSpy = vi.fn();
         server.use(
           http.post(
             ({ request }) =>
@@ -520,6 +522,13 @@ describe('InventoryForm', () => {
               postInputInventorySpy(await request.json());
               return HttpResponse.json({});
             }
+          ),
+          http.post(
+            ({ request }) => request.url.includes('/inventories/100/labels/'),
+            async ({ request }) => {
+              labelPostSpy(await request.json());
+              return HttpResponse.json({});
+            }
           )
         );
 
@@ -550,6 +559,7 @@ describe('InventoryForm', () => {
         await user.type(screen.getByTestId('source_vars'), 'plugin: constructed.dynamic');
 
         await user.click(screen.getByTestId('inventories'));
+        await user.click(screen.getByTestId('label-select'));
 
         await user.click(screen.getByRole('button', { name: /create inventory/i }));
 
@@ -560,6 +570,9 @@ describe('InventoryForm', () => {
         });
         await waitFor(() => {
           expect(postInputInventorySpy).toHaveBeenCalledWith({ id: 10 });
+        });
+        await waitFor(() => {
+          expect(labelPostSpy).toHaveBeenCalledWith({ name: 'new-label' });
         });
       }
     );
@@ -1866,7 +1879,7 @@ describe('InventoryForm', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should not render labels select or prevent_instance_group_fallback checkbox for constructed inventory', async () => {
+    it('should render labels select but not prevent_instance_group_fallback for constructed inventory', async () => {
       render(
         <MemoryRouter initialEntries={['/inventories/constructed_inventory/create']}>
           <Routes>
@@ -1882,7 +1895,7 @@ describe('InventoryForm', () => {
         expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument()
       );
 
-      expect(screen.queryByTestId('label-select')).not.toBeInTheDocument();
+      expect(screen.getByTestId('label-select')).toBeInTheDocument();
       expect(
         screen.queryByRole('checkbox', { name: /prevent instance group fallback/i })
       ).not.toBeInTheDocument();
@@ -3022,7 +3035,7 @@ describe('InventoryForm', () => {
     );
 
     it(
-      'should not call labels endpoint when editing a constructed inventory',
+      'should update labels when editing a constructed inventory',
       { timeout: 15000 },
       async () => {
         const patchSpy = vi.fn();
@@ -3075,12 +3088,13 @@ describe('InventoryForm', () => {
           expect(screen.getByDisplayValue('constructed test')).toBeInTheDocument();
         });
 
+        await user.click(screen.getByTestId('label-select'));
         await user.click(screen.getByRole('button', { name: /save inventory/i }));
 
         await waitFor(() => {
           expect(patchSpy).toHaveBeenCalled();
+          expect(labelPostSpy).toHaveBeenCalledWith({ name: 'new-label', organization: 1 });
         });
-        expect(labelPostSpy).not.toHaveBeenCalled();
       }
     );
   });
