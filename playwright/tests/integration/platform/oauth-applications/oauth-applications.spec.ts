@@ -59,6 +59,11 @@ test.describe('OAuth Applications', () => {
         // Verify skip authorization switch is present
         await expect(page.getByText('Skip Authorization')).toBeVisible();
 
+        // PKCE Required should default to checked; uncheck it for this application
+        const pkceCheckbox = page.getByRole('checkbox', { name: 'PKCE Required' });
+        await expect(pkceCheckbox).toBeChecked();
+        await pkceCheckbox.uncheck();
+
         // Submit
         await page.getByRole('button', { name: /create oauth application/i }).click();
 
@@ -78,6 +83,9 @@ test.describe('OAuth Applications', () => {
 
         // Verify post logout redirect URIs is displayed on the details page
         await expect(page.getByText('https://example.com/logout')).toBeVisible();
+
+        // Verify PKCE required was disabled
+        await expect(page.getByTestId('pkce-required')).toContainText('No');
 
         // Cleanup: delete the application via API
         const appsData = await gatewayAPI.get<{ results: Application[] }>(page, `applications/`, {
@@ -132,6 +140,7 @@ test.describe('OAuth Applications', () => {
         skip_authorization: false,
         redirect_uris: 'https://example.com/callback',
         authorization_grant_type: 'password',
+        pkce_required: false,
       });
     });
 
@@ -140,7 +149,7 @@ test.describe('OAuth Applications', () => {
     });
 
     test(
-      'should edit algorithm and skip authorization fields',
+      'should edit algorithm, skip authorization, and PKCE required fields',
       { tag: ['@not_mock'] },
       async ({ page }) => {
         await navigateTo(page, 'Access Management', 'OAuth Applications');
@@ -155,11 +164,17 @@ test.describe('OAuth Applications', () => {
         await algorithmSelect.click();
         await page.getByText('HMAC with SHA-2 256').click();
 
+        // Enable PKCE required
+        const pkceCheckbox = page.getByRole('checkbox', { name: 'PKCE Required' });
+        await expect(pkceCheckbox).not.toBeChecked();
+        await pkceCheckbox.check();
+
         // Save
         await page.getByRole('button', { name: /save oauth application/i }).click();
 
         // Verify the details page shows updated values
         await expect(page.getByText('HMAC with SHA-2 256')).toBeVisible();
+        await expect(page.getByTestId('pkce-required')).toContainText('Yes');
       }
     );
   });
