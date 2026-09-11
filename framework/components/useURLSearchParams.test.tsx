@@ -1,7 +1,20 @@
 /* eslint-disable i18next/no-literal-string */
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useURLSearchParams } from './useURLSearchParams';
+
+const mockLocation = vi.hoisted(() => {
+  const state: { location?: Location } = { location: undefined };
+  const update = vi.fn((url?: string | URL | null) => {
+    window.history.replaceState(null, '', url);
+    state.location = window.location;
+  });
+  return { state, update };
+});
+
+vi.mock('./useWindowLocation', () => ({
+  useWindowLocation: () => ({ location: mockLocation.state.location, update: mockLocation.update }),
+}));
 
 function setLocation(url: string) {
   window.history.replaceState(null, '', url);
@@ -10,6 +23,17 @@ function setLocation(url: string) {
 describe('useURLSearchParams', () => {
   beforeEach(() => {
     setLocation('/test');
+    mockLocation.state.location = window.location;
+    mockLocation.update.mockClear();
+  });
+
+  it('handles an unavailable window location', () => {
+    mockLocation.state.location = undefined;
+    const { result } = renderHook(() => useURLSearchParams());
+
+    expect(result.current[0].toString()).toEqual('%2F=');
+    act(() => result.current[1](new URLSearchParams({ page: '1' })));
+    expect(mockLocation.update).toHaveBeenCalledWith('?page=1');
   });
 
   it('reads the current query string', () => {
