@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test';
 
 export async function filterTableByText({ filterValue }: { filterValue: string }, page: Page) {
-  // PF6 TextInputGroupMain sets id on the textbox directly (no nested input).
-  await page.locator('#filter-input').fill(filterValue);
+  // PF 6.5.1 puts #filter-input on the TextInputGroupMain wrapper, not the nested <input>.
+  await page.locator('#filter-input input, input#filter-input').fill(filterValue);
   if (await page.getByLabel('apply filter').isVisible()) {
     await page.getByLabel('apply filter').click();
     // Wait for filter to be applied - the table will update
