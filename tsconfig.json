@@ -10,7 +10,7 @@
     "sourceMap": true,
     "declaration": true,
     "strict": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
