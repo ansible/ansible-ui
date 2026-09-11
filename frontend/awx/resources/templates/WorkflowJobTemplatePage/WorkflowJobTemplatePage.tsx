@@ -9,18 +9,16 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
-import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useCanViewNotificationsTab } from '../../notifications/hooks/useCanViewNotificationsTab';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 
 export function WorkflowJobTemplatePage() {
@@ -29,7 +27,6 @@ export function WorkflowJobTemplatePage() {
     'job_template+workflow_job_template+workflow_job_template_node'
   );
   const params = useParams<{ id: string }>();
-  const { activeAwxUser } = useAwxActiveUser();
   const {
     error: templateError,
     data: template,
@@ -38,19 +35,16 @@ export function WorkflowJobTemplatePage() {
   } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates`, params.id);
 
   const {
-    data: isNotifAdmin,
-    error: isNotifAdminError,
-    refresh: refreshNotifAdmin,
-    isLoading: isNotifAdminLoading,
-  } = useGet<AwxItemsResponse<Organization>>(
-    awxAPI`/organizations/?role_level=notification_admin_role&count_disabled=1`
-  );
+    canViewNotificationsTab,
+    error: notificationsTabError,
+    refresh: refreshNotificationsTab,
+    isLoading: isNotificationsTabLoading,
+  } = useCanViewNotificationsTab();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const itemActions = useTemplateActions({
     onTemplatesDeleted: () => pageNavigate(AwxRoute.Templates),
   });
-  const error = isNotifAdminError || templateError;
 
   const tabs: ({ label: string; page: string } | false)[] = useMemo(
     () => [
@@ -60,16 +54,18 @@ export function WorkflowJobTemplatePage() {
       { label: t('Schedules'), page: AwxRoute.WorkflowJobTemplateSchedules },
       { label: t('Jobs'), page: AwxRoute.WorkflowJobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.WorkflowJobTemplateSurvey },
-      activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)
+      canViewNotificationsTab
         ? { label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications }
         : false,
     ],
 
-    [t, activeAwxUser, isNotifAdmin]
+    [t, canViewNotificationsTab]
   );
 
-  if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;
-  if (!template || isTemplateLoading || isNotifAdminLoading)
+  if (templateError) return <AwxError error={templateError} handleRefresh={refresh} />;
+  if (notificationsTabError)
+    return <AwxError error={notificationsTabError} handleRefresh={refreshNotificationsTab} />;
+  if (!template || isTemplateLoading || isNotificationsTabLoading)
     return <LoadingPage breadcrumbs tabs />;
 
   return (
