@@ -2,16 +2,20 @@
   "compilerOptions": {
     "target": "ES5",
     "module": "CommonJS",
-    "lib": ["ES5", "DOM"],
+    "lib": ["ES2021", "DOM"],
     "allowSyntheticDefaultImports": true,
     "allowJs": false,
     "sourceMap": false,
     "declaration": true,
     "strict": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "monaco-editor": ["./node_modules/monaco-editor/esm/vs/index.d.ts"]
+    },
     "noImplicitAny": true,
     "outDir": "./publish/cjs",
     "removeComments": false,
@@ -23,5 +27,6 @@
     "jsx": "react-jsx",
     "downlevelIteration": true
   },
-  "include": ["framework"]
+  "include": ["framework"],
+  "exclude": ["framework/vite.config.ts", "framework/vitest.shared.ts"]
 }
