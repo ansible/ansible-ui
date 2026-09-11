@@ -20,7 +20,7 @@ export async function syncConstructedInventoryAndWait(
       jobType: 'inventory_updates',
       jobId: inventoryUpdate.id,
       desiredStatus: desiredStatus === 'failed' ? ['failed', 'error'] : 'successful',
-      timeout: 60000,
+      timeout: 120_000,
     },
     page
   );

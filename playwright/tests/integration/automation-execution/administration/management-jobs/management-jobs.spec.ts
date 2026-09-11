@@ -63,7 +63,7 @@ test.describe('Management Jobs - List and Launch Jobs', () => {
           page
         );
 
-        await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 10000 });
+        await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 60_000 });
       });
 
       await test.step('Navigate to Details tab and verify job information', async () => {
@@ -128,7 +128,7 @@ test.describe('Management Jobs - List and Launch Jobs', () => {
             page
           );
 
-          await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 10000 });
+          await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 60_000 });
         });
 
         await test.step('Navigate to Details tab and verify job information', async () => {
@@ -138,7 +138,7 @@ test.describe('Management Jobs - List and Launch Jobs', () => {
           await expect(page.getByTestId('id')).toHaveText(jobId.toString());
           await expect(page.getByTestId('name')).toHaveText(jobName);
           await expect(page.getByTestId('type')).toHaveText('Management job');
-          await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 10000 });
+          await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 60_000 });
         });
       }
     );

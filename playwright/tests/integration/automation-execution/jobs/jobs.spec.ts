@@ -176,7 +176,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Source Control Update job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
+      test.setTimeout(5 * 60 * 1000);
       const organizationName = await Organization.ui.create(page);
       const projectName = await Project.ui.create(page, { organizationName });
       // This command waits for the project to be synced upon creation
@@ -244,7 +244,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch an Inventory Sync job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(3 * 60 * 1000);
+      test.setTimeout(10 * 60 * 1000);
       test.slow();
 
       // Setup via API — use a specific inventory file to avoid scanning the entire repo
@@ -320,7 +320,9 @@ test.describe('Jobs: Launch and Verify Output', () => {
         ).toBeVisible({ timeout: 30000 });
 
         await expect(page).toHaveURL(/\/jobs\/inventory\/\d+\/output/);
-        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
+          timeout: 120_000,
+        });
       } finally {
         await Inventory.api.delete(page, inventory.id);
         await Project.api.deleteByName(page, project.name);

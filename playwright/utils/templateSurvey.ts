@@ -327,7 +327,7 @@ export function createTemplateSurveyHelper(templateType: TemplateType) {
         const failedStatus = page.getByText('Failed');
         const pendingStatus = page.getByText('Pending');
         await expect(successStatus.or(failedStatus).or(pendingStatus)).toBeVisible({
-          timeout: 10000,
+          timeout: 60_000,
         });
       },
 

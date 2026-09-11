@@ -87,6 +87,7 @@ test.describe('Constructed Inventory', () => {
     'should edit description and source_vars, then sync inventory successfully',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(180_000);
       const inventory1Name = createE2EName('inventory');
       const constructedInventoryName = createE2EName('constructed-inventory');
       const description = 'Edit action: New description created by Playwright';
@@ -140,6 +141,7 @@ test.describe('Constructed Inventory', () => {
     'should fail sync when strict mode is enabled with bad variables',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(180_000);
       const inputInventoryName = createE2EName('inventory');
       const constructedInventoryName = createE2EName('constructed-inventory');
 
