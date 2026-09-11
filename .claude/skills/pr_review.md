@@ -57,6 +57,13 @@ Check whether the changes follow:
 
 - Components in correct package (platform vs framework)
 - No over-engineering (avoid premature abstractions, unnecessary error handling)
+- **No new `eslint:guardrails` warnings** on changed `frontend/` /
+  `platform/` / `framework/` `.ts`/`.tsx` (see §7). The CI job is advisory
+  (`continue-on-error`), but a warning-count increase vs the base branch is a
+  **review blocker**. Ask to split or flatten.
+- **No new ESLint suppressions** (`eslint-disable`, `eslint-disable-next-line`,
+  `eslint-disable-line`, file-level `/* eslint-disable */`). Review blocker;
+  fix the rule instead of silencing it (see §7).
 
 ---
 
@@ -148,7 +155,7 @@ lines:
 
 | Pattern                                       | Review expectation               | Ask for instead                                                          |
 | --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
-| `eslint-disable` / `eslint-disable-next-line` | Blocks: suppresses a rule        | Fix the underlying issue                                                 |
+| `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` | **Review blocker** — new suppression | Fix the underlying issue; never silence guardrails or required rules |
 | `@ts-ignore` / `@ts-expect-error`             | Require narrow justification     | Correct the types where possible; document exceptional cases             |
 | `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work    | Resolve, or file a tracked issue                                         |
 | Custom deep copy / query parsing / UUID       | Avoid re-inventing platform APIs | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
@@ -216,8 +223,37 @@ Run these project commands:
 
 ```bash
 npm run prettier                  # Formatting
-cd platform && npm run eslint # Linting
+cd platform && npm run eslint # Linting (required)
 cd platform && npm run tsc    # Type check
+```
+
+**No new guardrail warnings (review blocker).** CI `eslint-guardrails` is
+advisory, so reviewers must compare warning counts on the PR's changed files
+against the base branch (`devel` upstream, `stable-2.7` downstream). Head must
+not be higher than base. New files must be warning-free.
+
+```bash
+BASE="${BASE:-origin/devel}"
+mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD -- frontend platform framework \
+  | rg '\.(ts|tsx)$' | rg -v '\.(test|cy|fixture)\.')
+if ((${#files[@]})); then
+  head_n=$(npx eslint --no-eslintrc --config .eslintrc.guardrails.json -f unix --no-error-on-unmatched-pattern "${files[@]}" 2>/dev/null | rg -c 'Warning/' || true)
+  base_n=0
+  for f in "${files[@]}"; do
+    git cat-file -e "$BASE:$f" 2>/dev/null || continue
+    c=$(git show "$BASE:$f" | npx eslint --no-eslintrc --config .eslintrc.guardrails.json --stdin --stdin-filename "$f" -f unix 2>/dev/null | rg -c 'Warning/' || true)
+    base_n=$((base_n + ${c:-0}))
+  done
+  echo "eslint:guardrails warnings  ${BASE}=${base_n}  head=${head_n:-0}"
+  if (( ${head_n:-0} > base_n )); then echo 'BLOCK: new guardrail warnings added'; exit 1; fi
+fi
+
+# No new ESLint suppressions in added lines (review blocker)
+if git diff "$BASE"...HEAD | rg '^\+' | rg -q 'eslint-disable'; then
+  echo 'BLOCK: new eslint-disable suppression added'
+  git diff "$BASE"...HEAD | rg '^\+' | rg 'eslint-disable'
+  exit 1
+fi
 ```
 
 Then ask the user to confirm manually:
@@ -237,6 +273,8 @@ Output should include:
 3. Recommendations for simplification
 4. Test coverage guidance
 5. A proposed `.md` explanation file for the PR
+6. `eslint:guardrails` warning count on changed files vs base (must not increase)
+7. No new `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` in the diff
 
 ---
 
@@ -251,6 +289,8 @@ posting:
 - Would the feedback still make sense to someone who did not see the diff?
 - Have you separated blocking issues from optional suggestions?
 - Did you run the validation commands (§7) rather than assuming they pass?
+- Did `eslint:guardrails` warning count on changed files stay at or below the base branch?
+- Did the diff add any `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line`? If yes, block.
 
 An independent pass from a clean context catches the assumptions the first pass
 carried in.

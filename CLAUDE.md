@@ -27,7 +27,7 @@ This repo has no Storybook. Do not use `@latest` for MCP packages.
 ### Rules
 
 - ESLint-enforced items are omitted from checklists. ESLint is the source of truth.
-- New code: zero new ESLint warnings. No `eslint-disable` in new or modified code.
+- New code: zero new ESLint warnings, including `npm run eslint:guardrails`. Thresholds: `.eslintrc.guardrails.json`. No `eslint-disable` in new or modified code.
 - Accessibility is part of every UI change.
-- `npm test` (eslint, tsc, prettier, vitest) before calling the work done.
+- `npm test` (eslint, tsc, prettier, vitest) and `npm run eslint:guardrails` on touched files before calling the work done.
 - Never remove existing features, routes, or components without explicit instruction.

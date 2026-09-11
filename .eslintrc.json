@@ -6,7 +6,14 @@
     "sourceType": "module",
     "project": ["./tsconfig.json"]
   },
-  "ignorePatterns": ["*.cjs", "**/publish/**", "**/dist/**", "**/build/**", "**/node_modules/**", "**/coverage/**"],
+  "ignorePatterns": [
+    "*.cjs",
+    "**/publish/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/node_modules/**",
+    "**/coverage/**"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:jsx-a11y/recommended",
@@ -78,7 +85,17 @@
     },
     {
       "files": ["frontend/**/*.ts", "frontend/**/*.tsx", "platform/**/*.ts", "platform/**/*.tsx"],
-      "excludedFiles": ["**/*.test.*", "**/*.cy.*", "**/*.fixture.*", "**/generated/**", "**/vite.config.*", "**/awx-utils.tsx", "**/eda-utils.tsx", "**/formatPath.tsx", "**/gateway-api-utils.tsx"],
+      "excludedFiles": [
+        "**/*.test.*",
+        "**/*.cy.*",
+        "**/*.fixture.*",
+        "**/generated/**",
+        "**/vite.config.*",
+        "**/awx-utils.tsx",
+        "**/eda-utils.tsx",
+        "**/formatPath.tsx",
+        "**/gateway-api-utils.tsx"
+      ],
       "rules": {
         "no-restricted-syntax": [
           "error",
