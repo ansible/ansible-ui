@@ -1,6 +1,6 @@
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { Page, expect } from '@playwright/test';
-import { awxAPI, gatewayAPI } from '../commands/apiClient';
+import { awxAPI, edaAPI, gatewayAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { createE2EName } from '../commands/createE2EName';
 import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
@@ -8,6 +8,45 @@ import { navigateTo } from '../commands/navigateTo';
 import { selectTableRow } from '../commands/selectTableRow';
 
 const TERMINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+
+async function waitForOrganizationPropagation(
+  page: Page,
+  organizationName: string
+): Promise<{ id: number }> {
+  const maxAttempts = 30;
+  let lastAwxOrganization: { id: number } | undefined;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const [awxOrganizations, edaOrganizations] = await Promise.all([
+      awxAPI
+        .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
+          params: { name: organizationName },
+        })
+        .catch(() => null),
+      edaAPI
+        .get<{
+          results: { id: number; name: string }[];
+        }>(page, `organizations/?name=${encodeURIComponent(organizationName)}`)
+        .catch(() => null),
+    ]);
+
+    lastAwxOrganization = awxOrganizations?.results?.[0];
+
+    // EDA is optional in some deployments. If its API is available, require
+    // the organization there too before creating dependent EDA resources.
+    const edaOrganizationIsReady =
+      edaOrganizations === null || Boolean(edaOrganizations.results[0]);
+    if (lastAwxOrganization && edaOrganizationIsReady) {
+      return lastAwxOrganization;
+    }
+
+    await page.waitForTimeout(1000);
+  }
+
+  throw new Error(
+    `Organization '${organizationName}' was not propagated to downstream services within ${maxAttempts} seconds`
+  );
+}
 
 async function cancelInventoryJobs(page: Page, inventoryId: number): Promise<void> {
   const jobs = await awxAPI
@@ -74,24 +113,9 @@ export const Organization = {
         throw new Error('Failed to create organization: API returned null');
       }
 
-      // Wait for organization to sync to AWX (gateway -> controller sync)
-      // Look up by name since Gateway and AWX IDs may differ
-      const maxAttempts = 20;
-      for (let i = 0; i < maxAttempts; i++) {
-        const awxOrgs = await awxAPI
-          .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
-            params: { name: organization.name },
-          })
-          .catch(() => null);
-        if (awxOrgs?.results?.[0]) {
-          // Return organization with AWX ID for use with AWX APIs
-          return { ...organization, id: awxOrgs.results[0].id };
-        }
-        await page.waitForTimeout(1000);
-      }
-
-      // If sync didn't complete, return original (may cause issues)
-      return organization;
+      // Look up by name since Gateway and downstream service IDs may differ.
+      const downstreamOrganization = await waitForOrganizationPropagation(page, organization.name);
+      return { ...organization, id: downstreamOrganization.id };
     },
 
     delete: async (page: Page, organizationId: number): Promise<void> => {
@@ -176,6 +200,8 @@ export const Organization = {
       await expect(
         page.getByRole('heading', { name: organizationName, exact: true })
       ).toBeVisible();
+
+      await waitForOrganizationPropagation(page, organizationName);
 
       return organizationName;
     },
