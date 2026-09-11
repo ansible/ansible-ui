@@ -129,6 +129,45 @@ describe('useApprovalOptionsEndpoint', () => {
       awxAPI`/workflow_job_template_nodes/99/create_approval_template/`
     );
   });
+
+  it('returns undefined when nodeType is not workflow_approval', () => {
+    mockUseWatch.mockReturnValue(RESOURCE_TYPE.job);
+
+    const { result } = renderHook(() => useApprovalOptionsEndpoint());
+
+    expect(result.current).toBeUndefined();
+  });
+
+  it('returns undefined when no workflow node or approval template can be resolved', () => {
+    mockUseWatch.mockReturnValue(RESOURCE_TYPE.workflow_approval);
+    mockUseGet.mockReturnValue({ data: { results: [] } });
+
+    const { result } = renderHook(() => useApprovalOptionsEndpoint());
+
+    expect(result.current).toBeUndefined();
+  });
+
+  it('ignores non-positive approval template ids on the selected node', () => {
+    mockUseSelectedNode.mockReturnValue({
+      getId: () => '15',
+      getData: () => ({
+        resource: {
+          summary_fields: {
+            unified_job_template: {
+              id: 0,
+              unified_job_type: RESOURCE_TYPE.workflow_approval,
+            },
+          },
+        },
+      }),
+    });
+
+    const { result } = renderHook(() => useApprovalOptionsEndpoint());
+
+    expect(result.current).toBe(
+      awxAPI`/workflow_job_template_nodes/15/create_approval_template/`
+    );
+  });
 });
 
 describe('approvalOptionsToPageFormData', () => {
@@ -152,5 +191,14 @@ describe('approvalOptionsToPageFormData', () => {
     expect(
       approvalOptionsToPageFormData(awxAPI`/workflow_approval_templates/7/`, options)
     ).toBe(options);
+  });
+
+  it('returns undefined when options response is undefined', () => {
+    expect(
+      approvalOptionsToPageFormData(
+        awxAPI`/workflow_job_template_nodes/15/create_approval_template/`,
+        undefined
+      )
+    ).toBeUndefined();
   });
 });
