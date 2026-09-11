@@ -1,8 +1,8 @@
-import { Divider, Flex, FlexItem, Icon, Title } from '@patternfly/react-core';
+import { Content, Divider, Flex, FlexItem, Icon } from '@patternfly/react-core';
 import type { ReactNode } from 'react';
+import { PageDashboardCard, PageDashboardCardWidth } from '@ansible/ansible-ui-framework';
 import { DashboardSectionHeading } from './DashboardSectionHeading';
 import { MetricLabel, MetricValue } from './DashboardMetricsText';
-import { PageDashboardCard, PageDashboardCardWidth } from '../../../../../../framework';
 
 export function AtAGlanceKpiMetric(
   props: Readonly<{
@@ -38,6 +38,7 @@ export function AtAGlanceKpiMetric(
       <Flex
         className="automation-dashboard-highlights-split-kpi"
         alignItems={{ default: 'alignItemsStretch' }}
+        style={{ flexFlow: width === 'xs' ? 'column' : 'row' }}
       >
         <FlexItem className="automation-dashboard-highlights-split-kpi__dimension">
           <Flex
@@ -52,17 +53,27 @@ export function AtAGlanceKpiMetric(
               <Icon size="xl" status="custom" className="automation-dashboard-accent-icon">
                 {dimensionIcon}
               </Icon>
-              <Title
-                headingLevel="h4"
-                size="md"
-                style={{ fontWeight: 700, margin: 0, textAlign: 'center' }}
+              <Content
+                component="p"
+                // --pf-t--global--* tokens (defined on :root), not --pf-v6-c-title--*, which
+                // only exists under a .pf-v6-c-title ancestor this <p> doesn't have.
+                style={{
+                  fontSize: 'var(--pf-t--global--font--size--md)',
+                  lineHeight: 'var(--pf-t--global--font--line-height--heading)',
+                  fontWeight: 700,
+                  margin: 0,
+                  textAlign: 'center',
+                }}
               >
                 {dimensionLabel}
-              </Title>
+              </Content>
             </Flex>
           </Flex>
         </FlexItem>
-        <Divider orientation={{ default: 'vertical' }} inset={{ default: 'insetMd' }} />
+        <Divider
+          orientation={{ default: width === 'xs' ? 'horizontal' : 'vertical' }}
+          inset={{ default: 'insetMd' }}
+        />
         <FlexItem className="automation-dashboard-highlights-split-kpi__metric">
           <Flex
             direction={{ default: 'column' }}
@@ -70,7 +81,7 @@ export function AtAGlanceKpiMetric(
             gap={{ default: 'gapSm' }}
             className="automation-dashboard-highlights-split-kpi__metric-content"
           >
-            <div className="automation-dashboard-highlights-split-kpi__label-row">
+            <div>
               <DashboardSectionHeading title={title} help={help} size="md" />
               {description ? <MetricLabel>{description}</MetricLabel> : null}
             </div>

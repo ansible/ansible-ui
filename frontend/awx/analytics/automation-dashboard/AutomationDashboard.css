@@ -63,12 +63,6 @@
   padding-bottom: 2px;
 }
 
-.automation-dashboard-at-a-glance-streak {
-  border-top: 1px solid var(--pf-t--global--border--color--default);
-  margin-top: var(--pf-t--global--spacer--md);
-  padding-top: var(--pf-t--global--spacer--md);
-}
-
 .automation-dashboard-at-a-glance-streak-cells {
   width: 100%;
   margin-top: var(--pf-t--global--spacer--sm);
@@ -78,11 +72,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   width: 80px;
   height: 80px;
   cursor: default;
-  padding: 6px 4px 4px;
+  padding: 4px;
   border: 0;
   background: none;
   font: inherit;
@@ -144,7 +138,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   width: 100%;
   min-height: 22px;
   margin-top: 2px;
@@ -192,23 +186,6 @@
 .pf-v6-theme-dark .pf-v6-c-label__icon .automation-dashboard-leaderboard-rank-crown--3,
 .pf-v6-theme-dark .automation-dashboard-leaderboard-rank-crown--3 {
   color: var(--pf-t--global--color--nonstatus--orange--default);
-}
-
-/* "At a Glance" KPI columns: the Flex stacks vertically below PatternFly's xl breakpoint
-   (1200px) and switches to a row at xl+. Divide the columns with a bottom border while
-   stacked and a right border once they sit side by side. */
-.automation-at-a-glance-kpi-divider {
-  border-bottom: 1px solid var(--pf-t--global--border--color--default);
-  padding-bottom: var(--pf-t--global--spacer--md);
-}
-
-@media screen and (min-width: 1200px) {
-  .automation-at-a-glance-kpi-divider {
-    border-bottom: none;
-    padding-bottom: 0;
-    border-right: 1px solid var(--pf-t--global--border--color--default);
-    padding-right: var(--pf-t--global--spacer--md);
-  }
 }
 
 /* Automation levels — SimpleListItem's default padding is tight; give the row content
@@ -259,10 +236,6 @@
 
 .automation-dashboard-highlights-split-kpi__metric-content {
   align-items: flex-start;
-}
-
-.automation-dashboard-highlights-split-kpi__label-row {
-  white-space: nowrap;
 }
 
 .automation-dashboard-accent-icon {

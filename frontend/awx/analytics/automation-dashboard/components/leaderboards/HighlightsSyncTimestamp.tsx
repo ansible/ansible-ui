@@ -13,10 +13,12 @@ export function HighlightsSyncTimestamp(props: Readonly<{ lastSyncedAt: string |
     return null;
   }
 
-  // Shown in the viewer's local time zone.
+  // UTC, not the viewer's local time zone — the streak calendar counts by UTC day (see
+  // AutomationStreak's help text), so a local timestamp here could name the wrong day.
   const formatted = syncedAt.toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: 'UTC',
   });
 
   return (
@@ -29,7 +31,7 @@ export function HighlightsSyncTimestamp(props: Readonly<{ lastSyncedAt: string |
     >
       <FlexItem>
         <Content component="small" style={{ color: 'var(--pf-t--global--text--color--subtle)' }}>
-          {t('Data shown below is based on the last 30 days of your activity.')}
+          {t('Data shown below is based on the last 30 days of activity.')}
         </Content>
       </FlexItem>
       <FlexItem style={{ marginLeft: 'auto' }}>
@@ -46,7 +48,7 @@ export function HighlightsSyncTimestamp(props: Readonly<{ lastSyncedAt: string |
           <Icon size="sm">
             <InfoCircleIcon color="var(--pf-t--global--text--color--subtle)" />
           </Icon>
-          {t('Updated: {{timestamp}}', { timestamp: formatted })}
+          {t('Updated: {{timestamp}} UTC', { timestamp: formatted })}
         </Content>
       </FlexItem>
     </Flex>

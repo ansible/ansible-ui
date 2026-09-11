@@ -9,7 +9,7 @@ export function AutomationStreak(props: Readonly<{ width?: PageDashboardCardWidt
   const { t } = useTranslation();
   const title = t('Streak');
   const help = t(
-    'Consecutive calendar days (UTC) with at least one successful job run. Enterprise streak counts platform-wide activity; your org streak counts activity in your organization only.'
+    'Consecutive calendar days (UTC) with at least one successful job run. Enterprise streak counts platform-wide activity; your organization streak counts activity in your organization only.'
   );
   const { atAGlance, streakCalendar } = useAutomationLeaderboardsView();
 
@@ -32,7 +32,7 @@ export function AutomationStreak(props: Readonly<{ width?: PageDashboardCardWidt
         />
         <Divider style={{ margin: '1rem 0' }} />
         <StreakDayStrip
-          title={t('Your org')}
+          title={t('Your organization')}
           streakDays={atAGlance.orgStreakDays}
           days={streakCalendar}
           isSuccess={(day) => day.state === 'enterpriseAndOrg'}

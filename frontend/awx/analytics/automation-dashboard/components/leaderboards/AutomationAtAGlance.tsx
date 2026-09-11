@@ -11,17 +11,18 @@ import { DashboardGridRow } from '../DashboardLayout';
 
 /**
  * Width of the 3 side-by-side KPI cards, keyed off the measured dashboard grid column count.
+ * Its own breakpoint scale, deliberately separate from `getLeaderboardCardWidths` (that one
+ * sizes a single full-width card, this one sizes 3 sharing a row).
  *
- * This is deliberately its own breakpoint scale, separate from `getLeaderboardCardWidths` in
- * `../../AutomationLeaderboards.tsx`: that one sizes a single full-width card (Streak, Activity
- * levels), this one sizes 3 cards sharing a row, so the two need not — and currently do not —
- * change tier at the same column count. Don't "align" the numbers without checking both still
- * look right at every breakpoint.
+ * Each tier's 3-card total (`'xs'`=4×3=12, `'sm'`=6×3=18, `'md'`=8×3=24) fits within every
+ * column count in that tier's range, so no card ever wraps mid-row. Below 12 columns, `'xxl'`
+ * (span 24) always exceeds the grid and gets clamped to fill it — each card stacks full-width.
  */
 export function getAtAGlanceKpiCardWidth(gridColumns: number): PageDashboardCardWidth {
-  if (gridColumns <= 17) return 'lg';
-  if (gridColumns <= 23) return 'sm';
-  return 'md';
+  if (gridColumns >= 24) return 'md';
+  if (gridColumns >= 18) return 'sm';
+  if (gridColumns >= 12) return 'xs';
+  return 'xxl';
 }
 
 export function AutomationAtAGlance() {
@@ -34,15 +35,18 @@ export function AutomationAtAGlance() {
   return (
     <>
       <DashboardGridRow>
-        <Title
-          data-testid="at-a-glance-card-title"
-          headingLevel="h3"
-          size="xl"
-          style={{ display: 'block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
-        >
-          {title}
-        </Title>
+        <div style={{ gridColumn: `span ${gridColumns}`, maxWidth: '100%' }}>
+          <Title
+            data-testid="at-a-glance-card-title"
+            headingLevel="h3"
+            size="xl"
+            style={{ display: 'block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
+          >
+            {title}
+          </Title>
+        </div>
       </DashboardGridRow>
+
       <DashboardGridRow>
         <AtAGlanceKpiMetric
           width={kpiCardWidth}
@@ -55,7 +59,7 @@ export function AutomationAtAGlance() {
 
         <AtAGlanceKpiMetric
           width={kpiCardWidth}
-          title={t('Active orgs')}
+          title={t('Active organizations')}
           help={t('Organizations with at least one successful job run.')}
           dimensionIcon={<ClusterIcon />}
           dimensionLabel={t('Reach')}

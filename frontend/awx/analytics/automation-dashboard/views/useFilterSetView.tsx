@@ -41,6 +41,11 @@ export function useFilterSetView() {
     persistedFilterSet
   );
 
+  // Read below without adding `selectedFilterSet` as a dependency (would re-run on every
+  // selection, not just a user switch) or causing stale closures in `queryOptions`.
+  const selectedFilterSetRef = useRef(selectedFilterSet);
+  selectedFilterSetRef.current = selectedFilterSet;
+
   // Which user the selection has been seeded for. Set up front when the id was
   // already known at mount.
   const [seededUserId, setSeededUserId] = useState<number | undefined>(userId);
@@ -49,21 +54,21 @@ export function useFilterSetView() {
   // from that user's persisted value.
   useEffect(() => {
     if (userId === undefined || seededUserId === userId) return;
-    // First seed = the id just resolved after mount (it was unknown, no previous
-    // user). A selection the user made while /me/ was still loading must survive,
-    // so only apply a persisted value here and never clear existing state.
+    // First seed = the id just resolved after mount. A selection made while /me/ was still
+    // loading must survive, so only apply a persisted value if nothing was selected meanwhile.
     const isFirstSeed = seededUserId === undefined;
+    const hasSelectionAlready = isFirstSeed && selectedFilterSetRef.current !== undefined;
     setSeededUserId(userId);
 
     const persisted = readPersistedFilterSet(userId);
-    if (persisted) {
+    if (persisted && !hasSelectionAlready) {
       setValue(String(persisted.id));
       setSelectedFilterSet(persisted);
       setVersion((v) => v + 1);
       // Replace (not merge) the cache: the previous user's fetched report names
       // and filters JSON must not linger in the dropdown after a user switch.
       setFilterSets([persisted]);
-    } else if (!isFirstSeed) {
+    } else if (!isFirstSeed && !persisted) {
       // A different user with nothing saved — reset rather than keep the previous
       // user's selection and fetched options.
       setValue(undefined);
@@ -82,10 +87,6 @@ export function useFilterSetView() {
   const getRequest = useGetRequest<AwxItemsResponse<IDashboardFilterSet>>();
   const getRequestRef = useRef(getRequest);
   getRequestRef.current = getRequest;
-
-  // Read inside the stable `queryOptions` callback without stale closures.
-  const selectedFilterSetRef = useRef(selectedFilterSet);
-  selectedFilterSetRef.current = selectedFilterSet;
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<string>>(async ({ next, search }) => {
     const page = next ? Number(next) : 1;

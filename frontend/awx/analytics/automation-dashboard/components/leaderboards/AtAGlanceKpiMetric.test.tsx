@@ -15,8 +15,8 @@ describe('AtAGlanceKpiMetric', () => {
     );
 
     expect(screen.getByRole('heading', { name: 'Jobs run' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Velocity' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '1,234' })).toBeInTheDocument();
+    expect(screen.getByText('Velocity')).toBeInTheDocument();
+    expect(screen.getByText('1,234')).toBeInTheDocument();
   });
 
   test('should render a visible description and a caption when provided', () => {

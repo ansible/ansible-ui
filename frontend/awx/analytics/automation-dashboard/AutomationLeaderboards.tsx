@@ -1,4 +1,3 @@
-import { PageDashboardCardWidth } from '@ansible/ansible-ui-framework';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { DashboardGridRow, DashboardLayout } from './components/DashboardLayout';
 import { AutomationAtAGlance } from './components/leaderboards/AutomationAtAGlance';
@@ -11,56 +10,11 @@ import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/Empty
 import { useTranslation } from 'react-i18next';
 import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { AutomationStreak } from './components/leaderboards/AutomationStreak';
+import { getLeaderboardCardWidths, getTopRowColSpan } from './common/leaderboardCardWidths';
 
-/** Breakpoint (in grid columns) where the top cards widen from 'lg' to 'xl'/'xxl'. */
-const WIDE_LAYOUT_MIN_COLUMNS = 16;
-/** Breakpoint range (in grid columns) where the top cards use 'xl' (and the bottom cards narrow to 'md') before both revert. */
-const NARROW_BOTTOM_CARDS_MAX_COLUMNS = 23;
-
-/**
- * Mirrors `PageDashboardCard`'s own width → column-span mapping
- * (framework/PageDashboard/PageDashboardCard.tsx) since that map isn't exported. Exported so
- * `AutomationLeaderboards.test.tsx` can assert it stays in sync with the real component instead
- * of silently drifting.
- */
-export const CARD_WIDTH_COL_SPAN: Record<PageDashboardCardWidth, number> = {
-  xxs: 3,
-  xs: 4,
-  sm: 6,
-  md: 8,
-  lg: 12,
-  xl: 16,
-  xxl: 24,
-};
-
-export interface LeaderboardCardWidths {
-  topCardsWidth: PageDashboardCardWidth;
-  bottomCardsWidth: PageDashboardCardWidth;
-}
-
-/**
- * Maps the measured dashboard grid width (in columns) to the card widths used by each
- * leaderboard row. This sizes a single full-width card row (Streak, Activity levels) — it's a
- * deliberately separate scale from `getAtAGlanceKpiCardWidth` in
- * `components/leaderboards/AutomationAtAGlance.tsx`, which sizes the 3 KPI cards sharing a row.
- * The two need not change tier at the same column count; don't "align" the numbers without
- * checking both still look right at every breakpoint.
- */
-export function getLeaderboardCardWidths(gridColumns: number): LeaderboardCardWidths {
-  let topCardsWidth: PageDashboardCardWidth;
-  if (gridColumns < WIDE_LAYOUT_MIN_COLUMNS) {
-    topCardsWidth = 'lg';
-  } else if (gridColumns <= NARROW_BOTTOM_CARDS_MAX_COLUMNS) {
-    topCardsWidth = 'xl';
-  } else {
-    topCardsWidth = 'xxl';
-  }
-  const bottomCardsWidth: PageDashboardCardWidth =
-    WIDE_LAYOUT_MIN_COLUMNS <= gridColumns && gridColumns <= NARROW_BOTTOM_CARDS_MAX_COLUMNS
-      ? 'md'
-      : 'lg';
-  return { topCardsWidth, bottomCardsWidth };
-}
+/** Re-exported so `AutomationLeaderboards.test.tsx` doesn't need to import the shared module directly. */
+export { CARD_WIDTH_COL_SPAN, getLeaderboardCardWidths } from './common/leaderboardCardWidths';
+export type { LeaderboardCardWidths } from './common/leaderboardCardWidths';
 
 /** Shown until the analytics backend has recorded at least one sync (`lastSyncedAt === null`). */
 function LeaderboardsEmptyState({ gridColumns }: Readonly<{ gridColumns: number }>) {
@@ -123,10 +77,9 @@ function renderLeaderboardsContent(
     return <LeaderboardsEmptyState gridColumns={gridColumns} />;
   }
 
-  // Match the column span PageDashboardCard itself derives from topCardsWidth (clamped to the
-  // measured grid), so the timestamp row lines up with the width of the cards below it instead
-  // of stretching across the full grid.
-  const topCardsColSpan = Math.min(CARD_WIDTH_COL_SPAN[topCardsWidth], gridColumns);
+  // Lines the timestamp row up with the Streak/Activity-levels cards below instead of
+  // stretching it across the full grid.
+  const topCardsColSpan = getTopRowColSpan(gridColumns);
 
   return (
     <>

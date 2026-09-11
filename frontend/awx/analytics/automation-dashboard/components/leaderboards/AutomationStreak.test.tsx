@@ -50,7 +50,7 @@ describe('AutomationStreak', () => {
     const { container } = render(<AutomationStreak />);
 
     expect(screen.getByRole('heading', { name: 'Enterprise' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Your org' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Your organization' })).toBeInTheDocument();
     expect(screen.getByText('16-day streak')).toBeInTheDocument();
     expect(screen.getByText('8-day streak')).toBeInTheDocument();
     // One cell per calendar day in each of the two strips.

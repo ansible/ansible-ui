@@ -43,14 +43,22 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
 
   const rankCell = (item: LeaderboardItem) => <LeaderboardRankCell position={item.rank} />;
   const nameCell = (item: LeaderboardItem) => (
-    <>
-      <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
+    <div style={{ whiteSpace: 'normal' }}>
+      <span
+        style={{
+          display: 'inline-block',
+          verticalAlign: 'middle',
+          marginRight: item.isCurrentOrg ? 8 : 0,
+        }}
+      >
+        <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
+      </span>
       {item.isCurrentOrg && (
-        <Label isCompact color="purple" style={{ marginLeft: 8 }}>
+        <Label isCompact color="purple" style={{ marginRight: 8 }}>
           {t('Your organization')}
         </Label>
       )}
-    </>
+    </div>
   );
   const tableColumns: ITableColumn<LeaderboardItem>[] = [
     {
@@ -80,7 +88,7 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
       headerControls={
         <LeaderboardRankSummary
           rank={currentOrgStanding.rank}
-          rankText={t("Your org's rank: #{{rank}}", { rank: currentOrgStanding.rank })}
+          rankText={t("Your organization's rank: #{{rank}}", { rank: currentOrgStanding.rank })}
           runsText={t('{{runs}} job runs', {
             runs: currentOrgStanding.totalRuns.toLocaleString(DEFAULT_NUMBER_LOCALE),
           })}

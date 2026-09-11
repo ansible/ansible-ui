@@ -72,18 +72,18 @@ describe('CARD_WIDTH_COL_SPAN', () => {
 });
 
 describe('getLeaderboardCardWidths', () => {
-  test('should keep both card rows at the default widths on a narrow grid', () => {
+  test('should keep both card rows at the default widths below 18 columns', () => {
     expect(getLeaderboardCardWidths(12)).toEqual({ topCardsWidth: 'lg', bottomCardsWidth: 'lg' });
-    expect(getLeaderboardCardWidths(15)).toEqual({ topCardsWidth: 'lg', bottomCardsWidth: 'lg' });
+    expect(getLeaderboardCardWidths(17)).toEqual({ topCardsWidth: 'lg', bottomCardsWidth: 'lg' });
   });
 
-  test('should widen the top row and narrow the bottom row on a medium grid', () => {
-    expect(getLeaderboardCardWidths(16)).toEqual({ topCardsWidth: 'xl', bottomCardsWidth: 'md' });
-    expect(getLeaderboardCardWidths(23)).toEqual({ topCardsWidth: 'xl', bottomCardsWidth: 'md' });
+  test('should widen the top row and narrow the bottom row from 18 to 24 columns', () => {
+    expect(getLeaderboardCardWidths(18)).toEqual({ topCardsWidth: 'xxl', bottomCardsWidth: 'md' });
+    expect(getLeaderboardCardWidths(24)).toEqual({ topCardsWidth: 'xxl', bottomCardsWidth: 'md' });
   });
 
-  test('should use the widest top cards and revert the bottom row on a wide grid', () => {
-    expect(getLeaderboardCardWidths(24)).toEqual({ topCardsWidth: 'xxl', bottomCardsWidth: 'lg' });
+  test('should keep the widest top cards and revert the bottom row past 24 columns', () => {
+    expect(getLeaderboardCardWidths(25)).toEqual({ topCardsWidth: 'xxl', bottomCardsWidth: 'lg' });
   });
 });
 

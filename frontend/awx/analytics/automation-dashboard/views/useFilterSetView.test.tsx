@@ -187,6 +187,34 @@ describe('useFilterSetView', () => {
       expect(result.current.filterSets).toContainEqual(filterSetB);
     });
 
+    test('should keep a selection made before the user id resolved even when that user has a persisted value', async () => {
+      // This user has a persisted selection from an earlier session...
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+      // ...but /me/ hasn't resolved yet at mount.
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: undefined });
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA, filterSetB]))
+        )
+      );
+
+      const { result, rerender } = renderHook(() => useFilterSetView());
+
+      // User picks Report B while /me/ is still loading.
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      act(() => result.current.setSelectedFilterSet(filterSetB));
+      expect(result.current.selectedFilterSet).toEqual(filterSetB);
+
+      // /me/ resolves to the user with Report A persisted — the fresh selection must survive,
+      // not be silently overwritten by the older persisted value.
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: USER_ID } });
+      rerender();
+
+      expect(result.current.selectedFilterSet).toEqual(filterSetB);
+    });
+
     test('should clear the cache when the new active user has nothing persisted', async () => {
       const OTHER_USER_ID = 7;
       sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));

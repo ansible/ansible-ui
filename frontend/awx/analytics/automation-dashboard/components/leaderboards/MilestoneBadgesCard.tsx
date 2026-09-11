@@ -105,7 +105,7 @@ function useOrgBadgeConfig(): OrgBadgeConfig[] {
       {
         id: 'sustained' as OrgBadgeId,
         label: t('Sustained'),
-        rule: t('14 or more consecutive org streak days in the current 30-day window.'),
+        rule: t('14 or more consecutive organization streak days in the current 30-day window.'),
         icon: <CalendarWeekIcon />,
       },
       {
@@ -117,7 +117,7 @@ function useOrgBadgeConfig(): OrgBadgeConfig[] {
       {
         id: 'topTier' as OrgBadgeId,
         label: t('Top Tier'),
-        rule: t('Org ranked #1, #2, or #3 at any sync point in the window.'),
+        rule: t('Organization ranked #1, #2, or #3 at any sync point in the window.'),
         icon: <CrownIcon />,
       },
     ],
@@ -233,7 +233,7 @@ export function MilestoneBadgesCard(props: Readonly<{ width?: PageDashboardCardW
         </FlexItem>
         <FlexItem>
           <BadgeShelf
-            title={t("Your org's achievements")}
+            title={t("Your organization's achievements")}
             help={t(
               'Achievements any of the organizations you belong to earned. Visible to all members of your organization.'
             )}
