@@ -58,7 +58,7 @@ test.describe('Execution Environment Team Access', () => {
       // and redirects to the organization Teams tab. Wait for that before navigating
       // or the Execution Environments link click hangs until the test timeout.
       await expect(
-        page.getByRole('dialog').getByText('Success', { exact: true }).first()
+        page.getByRole('dialog').getByTestId('progress').getByText('Success')
       ).toBeVisible({ timeout: 15000 });
       await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15000 });
       await expect(
@@ -109,7 +109,7 @@ test.describe('Execution Environment Team Access', () => {
       await page.getByRole('button', { name: 'Finish' }).click();
 
       await expect(
-        page.getByRole('dialog').getByText('Success', { exact: true }).first()
+        page.getByRole('dialog').getByTestId('progress').getByText('Success')
       ).toBeVisible({ timeout: 15000 });
       await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15000 });
 
