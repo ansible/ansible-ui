@@ -44,6 +44,7 @@ const mockSchedule = {
 };
 
 const server = setupServer(
+  http.options(awxAPI`/schedules/`, () => HttpResponse.json({ actions: { POST: {} } })),
   http.get(awxAPI`/schedules/zoneinfo/`, () => HttpResponse.json(zones)),
   http.get(awxAPI`/schedules/1/`, () => HttpResponse.json(mockSchedule)),
   http.get(awxAPI`/job_templates/100/`, () =>

@@ -1,9 +1,14 @@
 import { PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import {
+  PageFormFieldMetadataProvider,
+  usePageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
@@ -14,7 +19,7 @@ import {
   InputGroupText,
   TextInput,
 } from '@patternfly/react-core';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
@@ -23,6 +28,7 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import type { Credential } from '../../../../interfaces/Credential';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
 import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
@@ -30,6 +36,10 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { RESOURCE_TYPE } from '../constants';
 import { AllResources, type PromptFormValues, type WizardFormValues } from '../types';
+import {
+  approvalOptionsToPageFormData,
+  useApprovalOptionsEndpoint,
+} from '../hooks/useApprovalOptionsEndpoint';
 import { getAggregateCredentials } from './getAggregateCredentials';
 import { getResourceURL, shouldHideOtherStep } from './helpers';
 
@@ -345,22 +355,7 @@ function NodeResourceInput() {
               />
             );
           case RESOURCE_TYPE.workflow_approval:
-            return (
-              <>
-                <PageFormTextInput<WizardFormValues>
-                  label={t('Name')}
-                  name="approval_name"
-                  id="approval_name"
-                  isRequired
-                />
-                <PageFormTextInput<WizardFormValues>
-                  label={t('Description')}
-                  name="approval_description"
-                  id="approval_description"
-                />
-                <TimeoutInputs />
-              </>
-            );
+            return <ApprovalNodeFields />;
           case RESOURCE_TYPE.project_update:
             return <PageFormProjectSelect<WizardFormValues> name="resourceId" isRequired />;
           case RESOURCE_TYPE.inventory_update:
@@ -377,6 +372,51 @@ function NodeResourceInput() {
         }
       }}
     </PageFormWatch>
+  );
+}
+
+function ApprovalNodeFields() {
+  const { t } = useTranslation();
+  const approvalOptionsEndpoint = useApprovalOptionsEndpoint();
+  const { data: approvalTemplateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    approvalOptionsEndpoint
+  );
+  // When no workflow node exists yet to probe create_approval_template, fall back to
+  // job_templates patterns (same Tier 1/Tier 2 CleanText rules for name/description).
+  const { data: jobTemplateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    approvalOptionsEndpoint ? undefined : awxAPI`/job_templates/`
+  );
+  const approvalFields = usePageFormOptionsFields(
+    approvalOptionsToPageFormData(approvalOptionsEndpoint, approvalTemplateOptions)
+  );
+  const fallbackFields = usePageFormOptionsFields(jobTemplateOptions);
+  const fields = useMemo(() => {
+    if (Object.keys(approvalFields).length > 0) {
+      return approvalFields;
+    }
+    return {
+      ...(fallbackFields.name ? { name: fallbackFields.name } : {}),
+      ...(fallbackFields.description ? { description: fallbackFields.description } : {}),
+    };
+  }, [approvalFields, fallbackFields]);
+
+  return (
+    <PageFormFieldMetadataProvider fields={fields}>
+      <PageFormTextInput<WizardFormValues>
+        label={t('Name')}
+        name="approval_name"
+        optionsFieldName="name"
+        id="approval_name"
+        isRequired
+      />
+      <PageFormTextInput<WizardFormValues>
+        label={t('Description')}
+        name="approval_description"
+        optionsFieldName="description"
+        id="approval_description"
+      />
+      <TimeoutInputs />
+    </PageFormFieldMetadataProvider>
   );
 }
 
@@ -527,18 +567,25 @@ function AliasInput() {
     formState: { defaultValues },
   } = useFormContext<WizardFormValues>();
   const isAliasRequired = defaultValues?.node_alias !== '';
+  const { data: workflowNodeOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_template_nodes/`
+  );
+  const workflowNodeFields = usePageFormOptionsFields(workflowNodeOptions);
 
   return (
-    <PageFormTextInput<WizardFormValues>
-      label={t('Node alias')}
-      name="node_alias"
-      data-cy="node-alias"
-      data-testid="node-alias"
-      labelHelpTitle={t('Node alias')}
-      labelHelp={t(
-        'If specified, this field will be shown on the node instead of the resource name when viewing the workflow'
-      )}
-      isRequired={isAliasRequired}
-    />
+    <PageFormFieldMetadataProvider fields={workflowNodeFields}>
+      <PageFormTextInput<WizardFormValues>
+        label={t('Node alias')}
+        name="node_alias"
+        optionsFieldName="identifier"
+        data-cy="node-alias"
+        data-testid="node-alias"
+        labelHelpTitle={t('Node alias')}
+        labelHelp={t(
+          'If specified, this field will be shown on the node instead of the resource name when viewing the workflow'
+        )}
+        isRequired={isAliasRequired}
+      />
+    </PageFormFieldMetadataProvider>
   );
 }

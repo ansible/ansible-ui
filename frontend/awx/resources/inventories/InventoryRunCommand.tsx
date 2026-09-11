@@ -9,11 +9,13 @@ import {
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
   RunCommandCredentialPasswordsStep,
@@ -38,6 +40,9 @@ export function InventoryRunCommand() {
 
   const pageNavigate = usePageNavigate();
   const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id as string}/`);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/ad_hoc_commands/`
+  );
 
   const navigate = useNavigate();
 
@@ -135,6 +140,7 @@ export function InventoryRunCommand() {
         stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
+        optionsData={optionsData}
       />
     </PageLayout>
   );

@@ -21,6 +21,10 @@ const mockInstance = {
 };
 
 const server = setupServer(
+  http.options(
+    ({ request }) => request.url.includes('/instances/'),
+    () => HttpResponse.json({ actions: { POST: {} } })
+  ),
   http.get(
     ({ request }) =>
       request.url.includes('/instances/3/') && !request.url.includes('/instance_groups/'),

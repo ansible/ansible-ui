@@ -18,6 +18,9 @@ const mockOrganizations = {
 };
 
 const server = setupServer(
+  http.options(awxAPI`/teams/`, () => {
+    return HttpResponse.json({ actions: { POST: {} } });
+  }),
   http.options(awxAPI`/organizations/`, () => {
     return HttpResponse.json({ actions: { GET: {} } });
   }),

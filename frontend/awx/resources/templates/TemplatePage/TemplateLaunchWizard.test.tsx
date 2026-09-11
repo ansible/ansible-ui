@@ -124,6 +124,12 @@ const mockWJT = {
 } as unknown as JobTemplate;
 
 const server = setupServer(
+  http.options(awxAPI`/job_templates/1/launch/`, () =>
+    HttpResponse.json({ actions: { GET: {}, POST: {} } })
+  ),
+  http.options(awxAPI`/workflow_job_templates/1/launch/`, () =>
+    HttpResponse.json({ actions: { GET: {}, POST: {} } })
+  ),
   http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(mockTemplate)),
   http.get(awxAPI`/job_templates/1/launch/`, () => HttpResponse.json(makeConfig())),
   http.get(awxAPI`/labels/`, () => HttpResponse.json({ count: 0, results: [], next: null }))

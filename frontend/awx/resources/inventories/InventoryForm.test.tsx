@@ -270,6 +270,10 @@ const server = setupServer(
       request.url.includes('/inventories/') && !request.url.includes('/instance_groups/'),
     () => HttpResponse.json({ actions: { GET: {}, POST: {} } })
   ),
+  http.options(
+    ({ request }) => request.url.includes('/constructed_inventories/'),
+    () => HttpResponse.json({ actions: { GET: {}, POST: {} } })
+  ),
   http.get(
     ({ request }) => request.url.includes('/organizations/') && !request.url.includes('/1/'),
     () => HttpResponse.json(organizationsResponse)

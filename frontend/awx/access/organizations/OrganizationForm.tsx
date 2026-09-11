@@ -59,7 +59,12 @@ export function CreateOrganization() {
           { label: t('Create organization') },
         ]}
       />
-      <AwxPageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
+      <AwxPageForm
+        submitText={t('Create organization')}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        optionsUrl={awxAPI`/organizations/`}
+      >
         <OrganizationInputs />
       </AwxPageForm>
     </PageLayout>
@@ -142,6 +147,7 @@ export function EditOrganization() {
           submitText={t('Save organization')}
           onSubmit={onSubmit}
           onCancel={onCancel}
+          optionsUrl={awxAPI`/organizations/`}
           defaultValue={{
             ...organization,
             instanceGroups: originalInstanceGroups ?? [],

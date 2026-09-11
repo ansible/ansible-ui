@@ -62,6 +62,7 @@ export function GroupEdit() {
       cancelText={t('Cancel')}
       onCancel={onCancel}
       defaultValue={defaultValue}
+      optionsUrl={awxAPI`/groups/`}
     >
       <PageFormTextInput name="name" label={t('Name')} isRequired />
       <PageFormTextArea name="description" label={t('Description')} />

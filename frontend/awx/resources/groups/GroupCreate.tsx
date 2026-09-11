@@ -66,6 +66,7 @@ export function GroupCreate() {
       onSubmit={onSubmit}
       cancelText={t('Cancel')}
       onCancel={onCancel}
+      optionsUrl={awxAPI`/groups/`}
       defaultValue={{
         name: '',
         description: '',
