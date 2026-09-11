@@ -360,6 +360,7 @@ describe('usePageFormOptionsFields', () => {
 
 function createWrapper(fields: Record<string, { pattern?: string }>) {
   return function Wrapper({ children }: { children: React.ReactNode }) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const value = useMemo(() => ({ fields }), []);
     return (
       <PageFormOptionsContext.Provider value={value}>{children}</PageFormOptionsContext.Provider>
