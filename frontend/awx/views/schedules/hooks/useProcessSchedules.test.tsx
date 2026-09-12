@@ -314,4 +314,60 @@ describe('useProcessSchedule', () => {
     expect(response.schedule).toBeDefined();
     expect(postCalls[0].url).toContain('/job_templates/');
   });
+
+  it('should use the resource organization for label associations', async () => {
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+
+    const payload = makePayload('job_template', {
+      resource: {
+        id: 10,
+        type: 'job_template',
+        name: 'Resource',
+        summary_fields: { organization: { id: 12 } },
+      } as unknown as ScheduleFormWizard['resource'],
+      launch_config: {
+        ask_labels_on_launch: true,
+        defaults: { labels: [] },
+      } as unknown as LaunchConfiguration,
+      prompt: { labels: [{ id: 3, name: 'resource-label' }] } as unknown as PromptFormValues,
+    });
+
+    await result.current(payload);
+
+    expect(labelPostCalls[0].body).toEqual({ name: 'resource-label', organization: 12 });
+  });
+
+  it('should POST when only a schedule_id route parameter is present', async () => {
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/schedules/:schedule_id/edit', '/schedules/99/edit'),
+    });
+
+    await result.current(makePayload('job_template'));
+
+    expect(postCalls[0].method).toBe('POST');
+    expect(postCalls[0].url).toContain('/job_templates/');
+  });
+
+  it('should skip label removal when prompt labels are not provided', async () => {
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper(
+        '/templates/:id/schedules/:schedule_id/edit',
+        '/templates/10/schedules/99/edit'
+      ),
+    });
+
+    await result.current(
+      makePayload('job_template', {
+        launch_config: {
+          ask_labels_on_launch: false,
+          defaults: { labels: [] },
+        } as unknown as LaunchConfiguration,
+      })
+    );
+
+    expect(postCalls[0].method).toBe('PATCH');
+    expect(labelPostCalls).toHaveLength(0);
+  });
 });
