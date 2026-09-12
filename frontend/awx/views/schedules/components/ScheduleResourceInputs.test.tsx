@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { useMemo } from 'react';
 import { PageWizardContext } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { http, HttpResponse } from 'msw';
@@ -53,9 +54,10 @@ function TestWrapper({
       ...defaultValues,
     },
   });
+  const wizardContextValue = useMemo(() => ({ setWizardData: vi.fn() }), []);
 
   return (
-    <PageWizardContext.Provider value={{ setWizardData: vi.fn() } as never}>
+    <PageWizardContext.Provider value={wizardContextValue as never}>
       <FormProvider {...methods}>{children}</FormProvider>
     </PageWizardContext.Provider>
   );
