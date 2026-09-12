@@ -22,6 +22,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { Label as AwxLabel } from '../../../interfaces/Label';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
@@ -49,6 +50,9 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
   } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
   const { data: credentialResponse } = useGet<AwxItemsResponse<Credential>>(
     awxAPI`/schedules/${params.schedule_id || ''}/credentials/`
+  );
+  const { data: labelResponse } = useGet<AwxItemsResponse<AwxLabel>>(
+    awxAPI`/schedules/${params.schedule_id || ''}/labels/`
   );
 
   // Fetch the unified job template to get scm_branch when it's set on the template
@@ -132,6 +136,11 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
             {credentialResponse?.results?.map((credential: Credential) => (
               <CredentialLabel credential={credential} key={credential.id} />
             ))}
+          </LabelGroup>
+        </PageDetail>
+        <PageDetail label={t('Labels')} isEmpty={!labelResponse?.results?.length}>
+          <LabelGroup>
+            {labelResponse?.results?.map((label) => <Label key={label.id}>{label.name}</Label>)}
           </LabelGroup>
         </PageDetail>
         <PageDetail label={t('Inventory')}>{schedule.summary_fields.inventory?.name}</PageDetail>

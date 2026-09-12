@@ -13,6 +13,10 @@ const server = setupServer(
   http.get(awxAPI`/organizations/`, () =>
     HttpResponse.json({ count: 1, results: [{ id: 1, name: 'Default' }] })
   ),
+  http.get(awxAPI`/labels/`, () => HttpResponse.json({ count: 0, results: [] })),
+  http.get(awxAPI`/schedules/:scheduleId/labels/`, () =>
+    HttpResponse.json({ count: 0, results: [] })
+  ),
   http.post(awxAPI`/schedules/:scheduleId/labels/`, async ({ request }) => {
     const body = await request.json();
     postCalls.push({ url: request.url, body });
@@ -93,11 +97,54 @@ describe('useProcessLabels', () => {
     const disassociateCall = postCalls.find(
       (c) => (c.body as Record<string, unknown>).disassociate === true
     );
-    const associateCall = postCalls.find((c) => (c.body as Record<string, unknown>).id === 2);
+    const associateCall = postCalls.find(
+      (c) => (c.body as Record<string, unknown>).name === 'new-label'
+    );
 
     expect(disassociateCall).toBeDefined();
     expect((disassociateCall?.body as Record<string, unknown>).id).toBe(1);
     expect(associateCall).toBeDefined();
+  });
+
+  it('should disassociate multiple labels without racing requests', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: true,
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [
+          { id: 1, name: 'label-1' },
+          { id: 2, name: 'label-2' },
+          { id: 3, name: 'label-3' },
+        ],
+      },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [], config);
+
+    expect(postCalls).toHaveLength(3);
+    expect(postCalls.map((call) => (call.body as { id: number }).id)).toEqual([1, 2, 3]);
+  });
+
+  it('should only disassociate each duplicate label once', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: true,
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [
+          { id: 1, name: 'label-1' },
+          { id: 1, name: 'label-1' },
+        ],
+      },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [], config);
+
+    expect(postCalls).toHaveLength(1);
+    expect(postCalls[0].body).toEqual({ id: 1, disassociate: true });
   });
 
   it('should disassociate existing labels when ask_labels_on_launch is false', async () => {
@@ -112,6 +159,17 @@ describe('useProcessLabels', () => {
       },
     });
 
+    server.use(
+      http.get(awxAPI`/schedules/:scheduleId/labels/`, () =>
+        HttpResponse.json({
+          count: 2,
+          results: [
+            { id: 1, name: 'label-1' },
+            { id: 2, name: 'label-2' },
+          ],
+        })
+      )
+    );
     const { result } = renderHook(() => useProcessLabels());
 
     await result.current(42, undefined as unknown as Label[], config);
@@ -120,6 +178,37 @@ describe('useProcessLabels', () => {
     postCalls.forEach((call) => {
       expect((call.body as Record<string, unknown>).disassociate).toBe(true);
     });
+  });
+
+  it('should associate labels when ask_labels_on_launch is false', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: false,
+      defaults: { ...makeLaunchConfig().defaults, labels: [] },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ id: 2, name: 'schedule-label' }] as Label[], config, 5);
+
+    expect(postCalls).toHaveLength(1);
+    expect(postCalls[0].body).toEqual({ name: 'schedule-label', organization: 5 });
+  });
+
+  it('should preserve an existing label selected without its id', async () => {
+    const config = makeLaunchConfig({
+      defaults: { ...makeLaunchConfig().defaults, labels: [{ id: 2, name: 'schedule-label' }] },
+    });
+
+    server.use(
+      http.get(awxAPI`/schedules/:scheduleId/labels/`, () =>
+        HttpResponse.json({ count: 1, results: [{ id: 2, name: 'schedule-label' }] })
+      )
+    );
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ name: 'schedule-label' }] as unknown as Label[], config);
+
+    expect(postCalls).toHaveLength(0);
   });
 
   it('should fetch default organization when none is provided', async () => {
@@ -158,6 +247,48 @@ describe('useProcessLabels', () => {
     expect(postCalls).toHaveLength(0);
   });
 
+  it('should use the label organization when provided', async () => {
+    const config = makeLaunchConfig({
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [],
+      },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(
+      42,
+      [{ name: 'org-label', organization: 99 }] as unknown as Label[],
+      config
+    );
+
+    expect(postCalls[0].body).toEqual({ name: 'org-label', organization: 99 });
+  });
+
+  it('should process labels when launch configuration is null', async () => {
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ id: 2, name: 'schedule-label' }] as Label[], null, 5);
+
+    expect(postCalls[0].body).toEqual({ name: 'schedule-label', organization: 5 });
+  });
+
+  it('should fall back to organization 1 when the default organization has no id', async () => {
+    server.use(
+      http.get(awxAPI`/organizations/`, () => HttpResponse.json({ count: 1, results: [{}] }))
+    );
+    const config = makeLaunchConfig({
+      defaults: { ...makeLaunchConfig().defaults, labels: [] },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ name: 'fallback-label' }] as unknown as Label[], config);
+
+    expect(postCalls[0].body).toEqual({ name: 'fallback-label', organization: 1 });
+  });
+
   it('should use provided organization instead of fetching default', async () => {
     const config = makeLaunchConfig({
       ask_labels_on_launch: true,
@@ -176,5 +307,107 @@ describe('useProcessLabels', () => {
     );
     expect(createCall).toBeDefined();
     expect((createCall?.body as Record<string, unknown>).organization).toBe(99);
+  });
+
+  it('should resolve a new label from all available labels', async () => {
+    server.use(
+      http.get(awxAPI`/labels/`, () =>
+        HttpResponse.json({
+          count: 1,
+          results: [{ id: 7, name: 'available-label', organization: 5 }],
+        })
+      )
+    );
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: true,
+      defaults: { ...makeLaunchConfig().defaults, labels: [] },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ name: 'available-label' }] as unknown as Label[], config, 5);
+
+    expect(postCalls[0].body).toEqual({ name: 'available-label', organization: 5 });
+  });
+
+  it('should process paginated schedule labels', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/:scheduleId/labels/`, ({ request }) => {
+        if (new URL(request.url).searchParams.has('page')) {
+          return HttpResponse.json({ count: 1, results: [{ id: 2, name: 'second-label' }] });
+        }
+        return HttpResponse.json({
+          count: 1,
+          next: awxAPI`/schedules/42/labels/?page=2`,
+          results: [{ id: 1, name: 'first-label' }],
+        });
+      })
+    );
+    const config = makeLaunchConfig({ ask_labels_on_launch: false });
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [], config);
+
+    expect(postCalls.map((call) => (call.body as { id: number }).id)).toEqual([1, 2]);
+  });
+
+  it('should stop after disassociating labels in disassociate phase', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: false,
+      defaults: { ...makeLaunchConfig().defaults, labels: [] },
+    });
+    server.use(
+      http.get(awxAPI`/schedules/:scheduleId/labels/`, () =>
+        HttpResponse.json({ count: 1, results: [{ id: 1, name: 'existing-label' }] })
+      )
+    );
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(
+      42,
+      [{ id: 2, name: 'new-label' }] as unknown as Label[],
+      config,
+      5,
+      'disassociate'
+    );
+
+    expect(postCalls).toHaveLength(1);
+    expect(postCalls[0].body).toEqual({ id: 1, disassociate: true });
+  });
+
+  it('should ignore a missing label during disassociation', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: true,
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [{ id: 1, name: 'missing-label' }],
+      },
+    });
+    server.use(
+      http.post(awxAPI`/schedules/:scheduleId/labels/`, () =>
+        HttpResponse.json({ detail: 'Label matching query does not exist' }, { status: 404 })
+      )
+    );
+    const { result } = renderHook(() => useProcessLabels());
+
+    await expect(result.current(42, [], config)).resolves.toBeUndefined();
+  });
+
+  it('should rethrow unexpected disassociation errors', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: true,
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [{ id: 1, name: 'label' }],
+      },
+    });
+    server.use(
+      http.post(awxAPI`/schedules/:scheduleId/labels/`, () =>
+        HttpResponse.json({ detail: 'Unexpected failure' }, { status: 500 })
+      )
+    );
+    const { result } = renderHook(() => useProcessLabels());
+
+    await expect(result.current(42, [], config)).rejects.toThrow('Internal Server Error');
   });
 });
