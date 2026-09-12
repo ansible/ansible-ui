@@ -1,55 +1,107 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
-import { FormProvider, useForm } from 'react-hook-form';
-import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { ReactElement } from 'react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useAwxGetAllPages } from './useAwxGetAllPages';
 import { PageFormLabelSelect } from './PageFormLabelSelect';
 
-const server = setupServer(
-  http.get(
-    ({ request }) => request.url.includes('/api/v2/labels/'),
-    () =>
-      HttpResponse.json({ count: 2, results: [{ name: 'label1' }, { name: 'label2' }], next: null })
-  )
-);
+vi.mock('@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect', () => ({
+  PageFormCreatableSelect: (props: {
+    additionalControls?: ReactElement;
+    label: string;
+    labelHelp?: string;
+    labelHelpTitle?: string;
+    options: { label: string; value: string }[];
+    placeholderText?: string;
+  }) => (
+    <div>
+      <span>{props.label}</span>
+      <span>{props.placeholderText}</span>
+      <span>{props.labelHelpTitle}</span>
+      <span>{props.labelHelp}</span>
+      {props.additionalControls}
+      <ul>
+        {props.options.map((option) => (
+          <li key={option.value}>{option.label}</li>
+        ))}
+      </ul>
+    </div>
+  ),
+}));
+vi.mock('./useAwxGetAllPages', () => ({
+  useAwxGetAllPages: vi.fn(),
+}));
 
-function TestWrapper({ children }: { children: React.ReactNode }) {
-  const methods = useForm();
-  return (
-    <MemoryRouter>
-      <FormProvider {...methods}>{children}</FormProvider>
-    </MemoryRouter>
-  );
+const mockedUseAwxGetAllPages = vi.mocked(useAwxGetAllPages);
+
+function setLabels(
+  results: { name: string; organization?: number }[] | undefined,
+  isLoading = false
+) {
+  mockedUseAwxGetAllPages.mockReturnValue({
+    results,
+    error: undefined,
+    isLoading,
+    refresh: vi.fn(),
+  });
 }
 
 describe('PageFormLabelSelect', () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
-
-  it('should render Labels label', async () => {
-    render(
-      <TestWrapper>
-        <PageFormLabelSelect name="labels" />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Labels')).toBeInTheDocument();
-    });
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('should render placeholder when loaded', async () => {
+  it('shows a loading option while labels are loading', () => {
+    setLabels(undefined, true);
+
+    render(<PageFormLabelSelect name="labels" />);
+
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
+  it('shows all labels and the default placeholder after loading', () => {
+    setLabels([{ name: 'label1' }, { name: 'label2' }]);
+
+    render(<PageFormLabelSelect name="labels" />);
+
+    expect(screen.getByText('Labels')).toBeInTheDocument();
+    expect(screen.getByText('Select or create labels')).toBeInTheDocument();
+    expect(screen.getByText('label1')).toBeInTheDocument();
+    expect(screen.getByText('label2')).toBeInTheDocument();
+  });
+
+  it('filters labels by organization and forwards optional props', () => {
+    setLabels([
+      { name: 'organization label', organization: 7 },
+      { name: 'other organization label', organization: 8 },
+    ]);
+    const additionalControls = <button type="button">Create label</button>;
+
     render(
-      <TestWrapper>
-        <PageFormLabelSelect name="labels" />
-      </TestWrapper>
+      <PageFormLabelSelect
+        name="labels"
+        organizationId={7}
+        placeholderText="Choose labels"
+        labelHelpTitle="Label help"
+        labelHelp="Labels are shared with your organization."
+        additionalControls={additionalControls}
+        shouldUnregister={false}
+      />
     );
 
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText('Select or create labels')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Choose labels')).toBeInTheDocument();
+    expect(screen.getByText('Label help')).toBeInTheDocument();
+    expect(screen.getByText('Labels are shared with your organization.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Create label' })).toBeInTheDocument();
+    expect(screen.getByText('organization label')).toBeInTheDocument();
+    expect(screen.queryByText('other organization label')).not.toBeInTheDocument();
+  });
+
+  it('shows no options when the loaded response has no results', () => {
+    setLabels(undefined);
+
+    render(<PageFormLabelSelect name="labels" />);
+
+    expect(screen.queryByRole('listitem')).not.toBeInTheDocument();
   });
 });
