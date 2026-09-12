@@ -35,7 +35,7 @@ function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   }
 }
 
-export function PromptReviewDetails() {
+export function PromptReviewDetails(props: Readonly<{ labels?: { name: string; id?: number }[] }>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const {
@@ -56,7 +56,7 @@ export function PromptReviewDetails() {
     job_slice_count,
     job_tags,
     job_type,
-    labels,
+    labels: promptLabels,
     limit,
     skip_tags,
     timeout,
@@ -185,9 +185,14 @@ export function PromptReviewDetails() {
       <PageDetail label={t('Timeout')}>{timeout ?? 0}</PageDetail>
       <PageDetail label={t('Show changes')}>{diff_mode ? t`On` : t`Off`}</PageDetail>
       <PageDetail label={t('Job slicing')}>{job_slice_count}</PageDetail>
-      <PageDetail label={t('Labels')} isEmpty={isEmpty(labels)}>
+      <PageDetail
+        label={t('Labels')}
+        isEmpty={isEmpty(props.labels?.length ? props.labels : promptLabels)}
+      >
         <LabelGroup>
-          {labels?.map((label) => <Label key={label.id}>{label.name}</Label>)}
+          {(props.labels?.length ? props.labels : promptLabels)?.map((label) => (
+            <Label key={label.id ?? label.name}>{label.name}</Label>
+          ))}
         </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Job tags')} isEmpty={isEmpty(jobTags)}>

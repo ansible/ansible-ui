@@ -107,6 +107,8 @@ export function NodePromptsStep({
             `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
           )}
           name="prompt.labels"
+          organizationId={organizationId ?? undefined}
+          shouldUnregister={false}
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_forks_on_launch}>

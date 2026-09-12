@@ -19,15 +19,19 @@ export function PageFormLabelSelect<
   placeholderText?: string;
   additionalControls?: ReactElement;
   shouldUnregister?: boolean;
+  organizationId?: number;
 }) {
-  const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls } = props;
+  const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls, organizationId } =
+    props;
   const { t } = useTranslation();
 
   const { results, isLoading } = useAwxGetAllPages<Label>(awxAPI`/labels/`, { order_by: 'name' });
 
   const options = isLoading
     ? [{ label: t('Loading...'), value: '' }]
-    : (results ?? []).map((label) => ({ value: label.name, label: label.name }));
+    : (results ?? [])
+        .filter((label) => organizationId === undefined || label.organization === organizationId)
+        .map((label) => ({ value: label.name, label: label.name }));
 
   return (
     <PageFormCreatableSelect<TFieldValues, TFieldName>

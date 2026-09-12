@@ -13,7 +13,7 @@ vi.mock('../hooks/useGetTimezones', () => ({
       { label: 'UTC', value: 'UTC' },
       { label: 'America/New_York', value: 'America/New_York' },
     ],
-    links: {},
+    links: { 'US/Eastern': 'America/New_York' },
   }),
 }));
 
@@ -60,6 +60,40 @@ describe('ScheduleResourceInputs', () => {
     expect(screen.getByRole('textbox', { name: 'Description' })).toBeInTheDocument();
     expect(screen.getByTestId('startDateTime-form-group')).toBeInTheDocument();
     expect(screen.getByTestId('timezone')).toBeInTheDocument();
+  });
+
+  it('renders labels when the resource does not prompt for labels', () => {
+    render(
+      <TestWrapper defaultValues={{ launch_config: { ask_labels_on_launch: false } as never }}>
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Labels')).toBeInTheDocument();
+  });
+
+  it('does not render labels when the resource prompts for labels', () => {
+    render(
+      <TestWrapper defaultValues={{ launch_config: { ask_labels_on_launch: true } as never }}>
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.queryByText('Labels')).not.toBeInTheDocument();
+  });
+
+  it('shows a warning when the selected timezone is a link', () => {
+    render(
+      <TestWrapper defaultValues={{ timezone: 'US/Eastern' }}>
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    expect(
+      screen.getByText(
+        'Warning: US/Eastern is a link to America/New_York and will be saved as that.'
+      )
+    ).toBeInTheDocument();
   });
 
   it('does not render days_to_keep field by default', () => {

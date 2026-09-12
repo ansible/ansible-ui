@@ -23,6 +23,17 @@ import { Label } from '../../../interfaces/Label';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 
+async function getScheduleLabels(scheduleId: string): Promise<Label[]> {
+  const labels: Label[] = [];
+  let url: string | undefined = awxAPI`/schedules/${scheduleId}/labels/`;
+  while (url) {
+    const response: AwxItemsResponse<Label> = await requestGet<AwxItemsResponse<Label>>(url);
+    labels.push(...response.results);
+    url = response.next ?? undefined;
+  }
+  return labels;
+}
+
 /**
  *
  * @param {string}[resourceEndPoint] This used to fetch the resource to which the schedule belongs
@@ -113,12 +124,19 @@ export function ScheduleSelectStep(props: {
       }
       const urlId = resourceId || Number(id);
       try {
+        const scheduleLabelsRequest = schedule_id
+          ? getScheduleLabels(schedule_id).then((results) => ({ count: results.length, results }))
+          : Promise.resolve<AwxItemsResponse<Label>>({ count: 0, results: [] });
         const endPoint =
           scheduleType === 'job_template'
             ? awxAPI`/job_templates/${urlId?.toString()}/`
             : awxAPI`/workflow_job_templates/${urlId.toString()}/`;
         const resource = await requestGet<ScheduleResources>(endPoint);
-        const launchConfig = await requestGet<LaunchConfiguration>(`${endPoint}launch/`);
+        const launchConfigRequest = requestGet<LaunchConfiguration>(`${endPoint}launch/`);
+        const launchConfig = await launchConfigRequest;
+        // Render the resource fields as soon as prompt configuration is known; accessory values
+        // are loaded below and applied without replacing the launch configuration.
+        setValue('launch_config', launchConfig);
         let credentials: Credential[] = [];
         let instanceGroups: InstanceGroup[] = [];
         let scheduleLabels: Label[] = [];
@@ -137,12 +155,10 @@ export function ScheduleSelectStep(props: {
             );
             instanceGroups = igs.results;
           }
-          if (launchConfig.ask_labels_on_launch) {
-            const labels = await requestGet<AwxItemsResponse<Label>>(
-              awxAPI`/schedules/${schedule_id}/labels/`
-            );
-            scheduleLabels = labels.results;
-          }
+          const labels = await scheduleLabelsRequest;
+          scheduleLabels = labels.results;
+          // Populate the Details field before the full prompt-value request completes.
+          setValue('prompt.labels', scheduleLabels);
           if (launchConfig.survey_enabled) {
             surveySpec = await requestGet<Survey>(`${endPoint}survey_spec/`);
             // Fetch the schedule to get extra_data with survey answers
@@ -162,8 +178,16 @@ export function ScheduleSelectStep(props: {
             }
           }
         }
+        const scheduleLaunchConfig: LaunchConfiguration = {
+          ...launchConfig,
+          defaults: {
+            ...launchConfig.defaults,
+            // Schedule labels are independent of the template's launch prompts.
+            labels: schedule_id ? scheduleLabels : [],
+          },
+        };
         const promptValues: PromptFormValues = await getSchedulePromptValues(
-          launchConfig,
+          scheduleLaunchConfig,
           credentials,
           instanceGroups,
           scheduleLabels,
@@ -178,17 +202,18 @@ export function ScheduleSelectStep(props: {
               ...promptValues,
             },
             resource,
-            launch_config: launchConfig,
+            launch_config: scheduleLaunchConfig,
           },
           survey: Object.keys(surveyAnswers).length > 0 ? { survey: surveyAnswers } : prev.survey,
           details: { ...prev.details, resourceId: urlId, resource },
         }));
         setWizardData((prev) => ({
           ...prev,
-          launch_config: launchConfig,
+          launch_config: scheduleLaunchConfig,
         }));
         setValue('schedule_type', scheduleType);
-        setValue('launch_config', launchConfig);
+        setValue('launch_config', scheduleLaunchConfig);
+        setValue('prompt.labels', promptValues.labels);
       } catch (error) {
         HandleErrors(error as Error);
       }

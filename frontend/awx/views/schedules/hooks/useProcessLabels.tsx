@@ -1,5 +1,6 @@
 import { useAbortController } from '@ansible/ansible-ui-framework/hooks/useAbortController';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -14,69 +15,95 @@ async function getDefaultOrganization(): Promise<number> {
   const itemsResponse = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
   return itemsResponse.results[0].id || 1;
 }
+
+async function getScheduleLabels(scheduleId: number): Promise<Label[]> {
+  const labels: Label[] = [];
+  let url: string | undefined = awxAPI`/schedules/${scheduleId}/labels/?page_size=200`;
+  while (url) {
+    const response: AwxItemsResponse<Label> = await requestGet<AwxItemsResponse<Label>>(url);
+    labels.push(...response.results);
+    url = response.next ?? undefined;
+  }
+  return labels;
+}
 export const useProcessLabels = () => {
   const abortController = useAbortController();
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
-  const postAssociateLabel = usePostRequest<
-    { name: string; organization: number } | { id: number }
-  >();
+  const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
 
   return useCallback(
     async (
       scheduleId: number,
       labels: PromptFormValues['labels'],
       launch_config: LaunchConfiguration | null,
-      organization?: number | null
+      organization?: number | null,
+      phase: 'associate' | 'disassociate' = 'associate'
     ) => {
-      const hasLabelsPrompt = launch_config?.ask_labels_on_launch;
-      const existingLabels = launch_config?.defaults?.labels;
-
-      if (hasLabelsPrompt) {
-        const defaultOrganization = organization ?? (await getDefaultOrganization());
-
-        const { added, removed } = getAddedAndRemoved(
-          existingLabels || [],
-          labels ? labels || ([] as Label[]) : []
+      const existingLabels =
+        !launch_config?.ask_labels_on_launch && scheduleId
+          ? await getScheduleLabels(scheduleId)
+          : (launch_config?.defaults?.labels ?? []);
+      const selectedLabelsWithoutIds = (labels ?? []).filter((label) => !label.id);
+      const defaultOrganization =
+        organization ?? (selectedLabelsWithoutIds.length ? await getDefaultOrganization() : 1);
+      const allLabels = selectedLabelsWithoutIds.length
+        ? (await requestGet<AwxItemsResponse<Label>>(awxAPI`/labels/?page_size=200`)).results
+        : [];
+      const selectedLabels = (labels ?? []).map((label) => {
+        if (label.id) return label;
+        return (
+          existingLabels.find((existingLabel) => existingLabel.name === label.name) ??
+          allLabels.find(
+            (availableLabel) =>
+              availableLabel.name === label.name &&
+              availableLabel.organization === defaultOrganization
+          ) ??
+          label
         );
+      });
+      const { added, removed } = getAddedAndRemoved(existingLabels, selectedLabels);
 
-        const disassociationPromises = removed.map((label: { id: number }) =>
-          postDisassociate(
+      const labelsToDisassociate = (
+        phase === 'disassociate' && !launch_config?.ask_labels_on_launch ? existingLabels : removed
+      ).filter(
+        (label, index, labelsToRemove) =>
+          labelsToRemove.findIndex((candidate) => candidate.id === label.id) === index
+      );
+      // The schedule labels endpoint accepts one label per request. Keep removals sequential: AWX
+      // rejects schedule updates while stale non-prompted labels remain associated.
+      for (const label of labelsToDisassociate) {
+        try {
+          await postDisassociate(
             awxAPI`/schedules/${scheduleId.toString()}/labels/`,
-            {
-              id: label.id,
-              disassociate: true,
-            },
+            { id: label.id, disassociate: true },
             abortController.signal
-          )
-        );
+          );
+        } catch (error) {
+          if (
+            !(error instanceof RequestError) ||
+            !error.details?.includes('Label matching query does not exist')
+          ) {
+            throw error;
+          }
+        }
+      }
 
-        const associationPromises = added.map(
-          (label: { name: string; id?: number; organization?: number }) =>
-            postAssociateLabel(
-              awxAPI`/schedules/${scheduleId.toString()}/labels/`,
-              label.id
-                ? { id: label.id }
-                : {
-                    name: label.name,
-                    organization: label?.organization ?? defaultOrganization,
-                  },
-              abortController.signal
-            )
-        );
+      if (phase === 'disassociate') {
+        return;
+      }
 
-        await Promise.all([...disassociationPromises, ...associationPromises]);
-      } else if (existingLabels) {
-        const disassociationPromises = existingLabels.map((label: { id: number }) =>
-          postDisassociate(
-            awxAPI`/schedules/${scheduleId.toString()}/labels/`,
-            {
-              id: label.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
+      const labelsToAssociate = added;
+      // Keep associations sequential as well; concurrent requests can race AWX's label limit check.
+      for (const label of labelsToAssociate) {
+        const labelOrganization =
+          'organization' in label && typeof label.organization === 'number'
+            ? label.organization
+            : defaultOrganization;
+        await postAssociateLabel(
+          awxAPI`/schedules/${scheduleId.toString()}/labels/`,
+          { name: label.name, organization: labelOrganization },
+          abortController.signal
         );
-        await Promise.all(disassociationPromises);
       }
     },
     [postDisassociate, postAssociateLabel, abortController]

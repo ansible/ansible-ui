@@ -93,11 +93,54 @@ describe('useProcessLabels', () => {
     const disassociateCall = postCalls.find(
       (c) => (c.body as Record<string, unknown>).disassociate === true
     );
-    const associateCall = postCalls.find((c) => (c.body as Record<string, unknown>).id === 2);
+    const associateCall = postCalls.find(
+      (c) => (c.body as Record<string, unknown>).name === 'new-label'
+    );
 
     expect(disassociateCall).toBeDefined();
     expect((disassociateCall?.body as Record<string, unknown>).id).toBe(1);
     expect(associateCall).toBeDefined();
+  });
+
+  it('should disassociate multiple labels without racing requests', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: true,
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [
+          { id: 1, name: 'label-1' },
+          { id: 2, name: 'label-2' },
+          { id: 3, name: 'label-3' },
+        ],
+      },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [], config);
+
+    expect(postCalls).toHaveLength(3);
+    expect(postCalls.map((call) => (call.body as { id: number }).id)).toEqual([1, 2, 3]);
+  });
+
+  it('should only disassociate each duplicate label once', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: true,
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [
+          { id: 1, name: 'label-1' },
+          { id: 1, name: 'label-1' },
+        ],
+      },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [], config);
+
+    expect(postCalls).toHaveLength(1);
+    expect(postCalls[0].body).toEqual({ id: 1, disassociate: true });
   });
 
   it('should disassociate existing labels when ask_labels_on_launch is false', async () => {
@@ -120,6 +163,32 @@ describe('useProcessLabels', () => {
     postCalls.forEach((call) => {
       expect((call.body as Record<string, unknown>).disassociate).toBe(true);
     });
+  });
+
+  it('should associate labels when ask_labels_on_launch is false', async () => {
+    const config = makeLaunchConfig({
+      ask_labels_on_launch: false,
+      defaults: { ...makeLaunchConfig().defaults, labels: [] },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ id: 2, name: 'schedule-label' }] as Label[], config, 5);
+
+    expect(postCalls).toHaveLength(1);
+    expect(postCalls[0].body).toEqual({ name: 'schedule-label', organization: 5 });
+  });
+
+  it('should preserve an existing label selected without its id', async () => {
+    const config = makeLaunchConfig({
+      defaults: { ...makeLaunchConfig().defaults, labels: [{ id: 2, name: 'schedule-label' }] },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ name: 'schedule-label' }] as unknown as Label[], config);
+
+    expect(postCalls).toHaveLength(0);
   });
 
   it('should fetch default organization when none is provided', async () => {
@@ -156,6 +225,48 @@ describe('useProcessLabels', () => {
     await result.current(42, [] as unknown as Label[], config);
 
     expect(postCalls).toHaveLength(0);
+  });
+
+  it('should use the label organization when provided', async () => {
+    const config = makeLaunchConfig({
+      defaults: {
+        ...makeLaunchConfig().defaults,
+        labels: [],
+      },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(
+      42,
+      [{ name: 'org-label', organization: 99 }] as unknown as Label[],
+      config
+    );
+
+    expect(postCalls[0].body).toEqual({ name: 'org-label', organization: 99 });
+  });
+
+  it('should process labels when launch configuration is null', async () => {
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ id: 2, name: 'schedule-label' }] as Label[], null, 5);
+
+    expect(postCalls[0].body).toEqual({ name: 'schedule-label', organization: 5 });
+  });
+
+  it('should fall back to organization 1 when the default organization has no id', async () => {
+    server.use(
+      http.get(awxAPI`/organizations/`, () => HttpResponse.json({ count: 1, results: [{}] }))
+    );
+    const config = makeLaunchConfig({
+      defaults: { ...makeLaunchConfig().defaults, labels: [] },
+    });
+
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(42, [{ name: 'fallback-label' }] as unknown as Label[], config);
+
+    expect(postCalls[0].body).toEqual({ name: 'fallback-label', organization: 1 });
   });
 
   it('should use provided organization instead of fetching default', async () => {
