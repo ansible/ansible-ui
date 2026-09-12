@@ -39,6 +39,7 @@ const mockScheduleResponse: Schedule = {
 } as Schedule;
 
 const postCalls: { url: string; body: unknown; method: string }[] = [];
+const labelPostCalls: { url: string; body: unknown }[] = [];
 
 const server = setupServer(
   http.post(awxAPI`/job_templates/:id/schedules/`, async ({ request }) => {
@@ -77,13 +78,18 @@ const server = setupServer(
   ),
   http.post(awxAPI`/schedules/:id/credentials/`, () => HttpResponse.json({}, { status: 204 })),
   http.post(awxAPI`/schedules/:id/instance_groups/`, () => HttpResponse.json({}, { status: 204 })),
-  http.post(awxAPI`/schedules/:id/labels/`, () => HttpResponse.json({}, { status: 204 }))
+  http.get(awxAPI`/schedules/:id/labels/`, () => HttpResponse.json({ count: 0, results: [] })),
+  http.post(awxAPI`/schedules/:id/labels/`, async ({ request }) => {
+    labelPostCalls.push({ url: request.url, body: await request.json() });
+    return HttpResponse.json({}, { status: 204 });
+  })
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => {
   server.resetHandlers();
   postCalls.length = 0;
+  labelPostCalls.length = 0;
 });
 afterAll(() => server.close());
 
@@ -194,6 +200,33 @@ describe('useProcessSchedule', () => {
     expect(response.schedule).toBeDefined();
     expect(postCalls[0].method).toBe('PATCH');
     expect(postCalls[0].url).toContain('/schedules/99/');
+  });
+
+  it('should remove existing labels before updating a schedule with prompted labels disabled', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/:id/labels/`, () =>
+        HttpResponse.json({ count: 1, results: [{ id: 7, name: 'old-label' }] })
+      )
+    );
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper(
+        '/templates/:id/schedules/:schedule_id/edit',
+        '/templates/10/schedules/99/edit'
+      ),
+    });
+
+    const payload = makePayload('job_template', {
+      launch_config: {
+        ...makePayload('job_template').launch_config,
+        ask_labels_on_launch: false,
+        defaults: { labels: [] },
+      } as unknown as LaunchConfiguration,
+      prompt: { labels: [] } as unknown as PromptFormValues,
+    });
+
+    await result.current(payload);
+
+    expect(labelPostCalls[0].body).toEqual({ id: 7, disassociate: true });
   });
 
   it('should include prompt data for job_template with launch_config', async () => {
