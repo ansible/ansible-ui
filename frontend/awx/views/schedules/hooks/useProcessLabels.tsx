@@ -27,6 +27,8 @@ async function getScheduleLabels(scheduleId: number): Promise<Label[]> {
   return labels;
 }
 
+type ProcessLabel = { id: number; name: string; organization?: number };
+
 type PostDisassociate = (
   url: string,
   body: { id: number; disassociate: boolean },
@@ -39,11 +41,11 @@ type PostAssociate = (
 ) => Promise<unknown>;
 
 function resolveSelectedLabels(
-  labels: Label[],
-  existingLabels: Label[],
-  allLabels: Label[],
+  labels: ProcessLabel[],
+  existingLabels: ProcessLabel[],
+  allLabels: ProcessLabel[],
   defaultOrganization: number
-): Label[] {
+): ProcessLabel[] {
   return labels.map((label) => {
     if (label.id) return label;
     return (
@@ -58,7 +60,7 @@ function resolveSelectedLabels(
 }
 
 async function disassociateLabels(
-  labels: Label[],
+  labels: ProcessLabel[],
   scheduleId: number,
   postDisassociate: PostDisassociate,
   signal: AbortSignal
@@ -82,7 +84,7 @@ async function disassociateLabels(
 }
 
 async function associateLabels(
-  labels: Label[],
+  labels: ProcessLabel[],
   scheduleId: number,
   defaultOrganization: number,
   postAssociateLabel: PostAssociate,
