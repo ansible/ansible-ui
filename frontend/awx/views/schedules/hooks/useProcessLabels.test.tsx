@@ -13,6 +13,10 @@ const server = setupServer(
   http.get(awxAPI`/organizations/`, () =>
     HttpResponse.json({ count: 1, results: [{ id: 1, name: 'Default' }] })
   ),
+  http.get(awxAPI`/labels/`, () => HttpResponse.json({ count: 0, results: [] })),
+  http.get(awxAPI`/schedules/:scheduleId/labels/`, () =>
+    HttpResponse.json({ count: 0, results: [] })
+  ),
   http.post(awxAPI`/schedules/:scheduleId/labels/`, async ({ request }) => {
     const body = await request.json();
     postCalls.push({ url: request.url, body });
@@ -155,6 +159,17 @@ describe('useProcessLabels', () => {
       },
     });
 
+    server.use(
+      http.get(awxAPI`/schedules/:scheduleId/labels/`, () =>
+        HttpResponse.json({
+          count: 2,
+          results: [
+            { id: 1, name: 'label-1' },
+            { id: 2, name: 'label-2' },
+          ],
+        })
+      )
+    );
     const { result } = renderHook(() => useProcessLabels());
 
     await result.current(42, undefined as unknown as Label[], config);
@@ -184,6 +199,11 @@ describe('useProcessLabels', () => {
       defaults: { ...makeLaunchConfig().defaults, labels: [{ id: 2, name: 'schedule-label' }] },
     });
 
+    server.use(
+      http.get(awxAPI`/schedules/:scheduleId/labels/`, () =>
+        HttpResponse.json({ count: 1, results: [{ id: 2, name: 'schedule-label' }] })
+      )
+    );
     const { result } = renderHook(() => useProcessLabels());
 
     await result.current(42, [{ name: 'schedule-label' }] as unknown as Label[], config);
