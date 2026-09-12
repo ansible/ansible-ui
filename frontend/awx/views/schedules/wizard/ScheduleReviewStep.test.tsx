@@ -1,6 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import type { ScheduleFormWizard } from '../types';
 import { ScheduleReviewStep } from './ScheduleReviewStep';
+
+type WizardDataMock = Partial<Omit<ScheduleFormWizard, 'prompt' | 'resource'>> & {
+  prompt?: Partial<PromptFormValues>;
+  resource?: Record<string, unknown>;
+};
 
 const mocks = vi.hoisted(() => ({
   getItem: vi.fn(),
@@ -25,8 +32,13 @@ const mocks = vi.hoisted(() => ({
       prompt: { labels: [{ id: 1, name: 'wizard label' }] },
     },
     stepData: { details: { prompt: { labels: [{ id: 2, name: 'details label' }] } } },
-    visibleSteps: [],
+    visibleSteps: [] as { id: string }[],
     setWizardData: vi.fn(),
+  } as {
+    wizardData: WizardDataMock;
+    stepData: { details?: { prompt?: Partial<PromptFormValues> } };
+    visibleSteps: { id: string }[];
+    setWizardData: ReturnType<typeof vi.fn>;
   },
 }));
 
