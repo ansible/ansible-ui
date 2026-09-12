@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -105,6 +106,9 @@ describe('ScheduleDetails', () => {
     expect(screen.getByText('Time zone')).toBeInTheDocument();
     expect(screen.getByText('Labels')).toBeInTheDocument();
     expect(screen.getByText('schedule-label')).toBeInTheDocument();
+
+    const user = userEvent.setup();
+    await user.click(screen.getAllByRole('button', { name: 'admin' })[1]);
   });
 
   it('renders an empty labels detail when the schedule has no labels', async () => {
@@ -204,5 +208,109 @@ describe('ScheduleDetails', () => {
     });
 
     expect(screen.getByText('web_servers')).toBeInTheDocument();
+  });
+
+  it('renders optional schedule details and workflow template branch', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({
+          ...mockSchedule,
+          dtend: '2023-05-17T14:57:05Z',
+          next_run: null,
+          scm_branch: null,
+          diff_mode: false,
+          job_tags: [{ name: 'deploy' }],
+          skip_tags: [{ name: 'debug' }],
+          extra_data: { days: 14 },
+          summary_fields: {
+            ...mockSchedule.summary_fields,
+            unified_job_template: { id: 2, unified_job_type: 'workflow_job' },
+          },
+          rrule:
+            'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;COUNT=1 EXRULE:FREQ=WEEKLY;COUNT=1',
+        })
+      ),
+      http.get(awxAPI`/workflow_job_templates/2/`, () =>
+        HttpResponse.json({ scm_branch: 'workflow-branch' })
+      ),
+      http.get(awxAPI`/schedules/1/credentials/`, () =>
+        HttpResponse.json({
+          count: 1,
+          results: [{ id: 3, name: 'SSH credential', kind: 'ssh' }],
+        })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+        <Routes>
+          <Route
+            path="/templates/:id/schedules/:schedule_id"
+            element={<ScheduleDetails isSystemJobTemplateSchedule />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Days of data to keep')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('workflow-branch')).toBeInTheDocument();
+    expect(screen.getByText('SSH credential')).toBeInTheDocument();
+    expect(screen.getByText('deploy')).toBeInTheDocument();
+    expect(screen.getByText('debug')).toBeInTheDocument();
+    expect(screen.getByText('Last run')).toBeInTheDocument();
+    expect(screen.getByText('Exrule')).toBeInTheDocument();
+    expect(screen.getByText('Off')).toBeInTheDocument();
+    expect(screen.queryByText('Created')).not.toBeInTheDocument();
+  });
+
+  it('renders string retention data without fetching an unrelated template', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({
+          ...mockSchedule,
+          extra_data: '{"days": 7}',
+          summary_fields: {
+            ...mockSchedule.summary_fields,
+            unified_job_template: { id: 2, unified_job_type: 'project' },
+          },
+        })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+        <Routes>
+          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Days of data to keep')).toBeInTheDocument();
+    });
+  });
+
+  it('renders the loading state and API error state', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/1/`, async () => {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        return HttpResponse.json({}, { status: 500 });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+        <Routes>
+          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    });
   });
 });
