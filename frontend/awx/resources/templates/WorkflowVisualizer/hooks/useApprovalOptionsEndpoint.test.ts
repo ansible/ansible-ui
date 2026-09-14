@@ -169,10 +169,7 @@ describe('useApprovalOptionsEndpoint', () => {
       sourceNode: { getId: () => '2-unsavedNode' },
     });
     mockGetGraph.mockReturnValue({
-      getNodes: () => [
-        { getId: () => START_NODE_ID },
-        { getId: () => '1-unsavedNode' },
-      ],
+      getNodes: () => [{ getId: () => START_NODE_ID }, { getId: () => '1-unsavedNode' }],
     });
     mockUseGet.mockReturnValue({ data: { results: [] } });
 

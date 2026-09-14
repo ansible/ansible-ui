@@ -26,6 +26,8 @@ const server = setupServer(
       },
     })
   ),
+  http.options(awxAPI`/job_templates/`, () => HttpResponse.json({ actions: { POST: {} } })),
+  http.options(awxAPI`/job_templates/100/`, () => HttpResponse.json({ actions: { POST: {} } })),
   http.get(awxAPI`/job_templates/100/`, () =>
     HttpResponse.json({ id: 100, name: 'Mock Job Template', type: 'job_template' })
   ),
@@ -59,6 +61,19 @@ function renderAddWizard(props: { resourceEndPoint?: string; isTopLevelSchedule?
   );
 }
 
+function renderJobTemplateNestedAddWizard() {
+  render(
+    <MemoryRouter initialEntries={['/templates/job-template/100/schedules/create']}>
+      <Routes>
+        <Route
+          path="/templates/job-template/:id/schedules/create"
+          element={<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />}
+        />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
 describe('ScheduleAddWizard', () => {
   it('should render create schedule wizard with title and navigation', async () => {
     renderAddWizard({ isTopLevelSchedule: true });
@@ -73,22 +88,14 @@ describe('ScheduleAddWizard', () => {
 
   it('should apply schedule name pattern validation from OPTIONS metadata', async () => {
     const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={['/templates/job-template/100/schedules/create']}>
-        <Routes>
-          <Route
-            path="/templates/job-template/:id/schedules/create"
-            element={<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />}
-          />
-        </Routes>
-      </MemoryRouter>
+    renderJobTemplateNestedAddWizard();
+
+    // Nested create loads the job template before rendering details; allow extra time under CI load.
+    const nameInput = await screen.findByRole(
+      'textbox',
+      { name: 'Schedule name' },
+      { timeout: 15_000 }
     );
-
-    await waitFor(() => {
-      expect(screen.getByRole('textbox', { name: 'Schedule name' })).toBeInTheDocument();
-    });
-
-    const nameInput = screen.getByRole('textbox', { name: 'Schedule name' });
     await user.type(nameInput, 'invalid@name');
     await user.tab();
 
