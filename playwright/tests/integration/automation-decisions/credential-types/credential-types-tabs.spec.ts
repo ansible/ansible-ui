@@ -121,7 +121,7 @@ test.describe('EDA Credentials Type - Tabs', () => {
 
         const credential = (await edaAPI.post(page, '/eda-credentials/', {
           name: credentialName,
-          organization_id: organization.id,
+          organization_id: edaOrgId,
           credential_type_id: credType.id,
           description: 'This is a Credential with custom credential type',
           inputs: {
