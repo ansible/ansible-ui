@@ -3,6 +3,11 @@
 Code patterns specific to this monorepo. Read this skill before writing or
 modifying any component, form, page, hook, or utility.
 
+Before choosing a PatternFly component or prop, consult the configured
+`patternfly-mcp` and search the existing `framework/` wrappers. For UI behavior
+changes, use Playwright MCP to inspect the running flow and Chrome DevTools MCP
+when browser console, network, layout, or performance evidence is needed.
+
 ---
 
 ## 1. API Path Helpers — Never Hardcode Paths
