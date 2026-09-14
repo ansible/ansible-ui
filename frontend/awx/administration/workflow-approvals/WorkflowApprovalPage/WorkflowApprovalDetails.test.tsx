@@ -27,6 +27,9 @@ describe('WorkflowApprovalDetails', () => {
       expect(screen.getByTestId('label-name')).toHaveTextContent('Name');
       expect(screen.getByTestId('name')).toHaveTextContent('Test Workflow Approval');
 
+      expect(screen.getByTestId('label-description')).toHaveTextContent('Description');
+      expect(screen.getByTestId('description')).toHaveTextContent('Test approval description');
+
       expect(screen.getByTestId('label-status')).toHaveTextContent('Status');
       expect(screen.getByTestId('status')).toHaveTextContent('Timed out');
 
