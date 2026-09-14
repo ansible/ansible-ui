@@ -63,6 +63,23 @@ const testSurveys = {
       },
     ],
   },
+  withColonInQuestionName: {
+    name: 'Colon in question name',
+    description: '',
+    spec: [
+      {
+        question_name: 'Markets:',
+        question_description: 'Select a market',
+        required: true,
+        type: 'text',
+        variable: 'market',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+      },
+    ],
+  },
   empty: {
     name: 'Empty Survey',
     description: '',
@@ -150,6 +167,14 @@ describe('SurveyStep', () => {
       expect(screen.getByText('option1')).toBeInTheDocument();
       expect(screen.getByText('option2')).toBeInTheDocument();
       expect(screen.getByText('option3')).toBeInTheDocument();
+    });
+  });
+
+  test('renders a survey question name containing a colon', async () => {
+    renderSurveyStep(server, '999', testSurveys.withColonInQuestionName);
+
+    await waitFor(() => {
+      expect(screen.getByText('Markets:')).toBeInTheDocument();
     });
   });
 
