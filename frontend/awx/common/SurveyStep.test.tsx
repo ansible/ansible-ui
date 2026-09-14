@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import type { SetupServer } from 'msw/node';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { Survey } from '../interfaces/Survey';
 import { SurveyStep } from './SurveyStep';
@@ -172,11 +173,14 @@ describe('SurveyStep', () => {
   });
 
   test('renders a survey question name containing a colon', async () => {
+    const { t } = useTranslation();
+    vi.mocked(t).mockClear();
     renderSurveyStep(server, '999', testSurveys.withColonInQuestionName);
 
     await waitFor(() => {
-      expect(screen.getByText('Markets:')).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: 'Markets:' })).toBeInTheDocument();
     });
+    expect(t).not.toHaveBeenCalledWith('Markets:');
   });
 
   test('handles empty survey gracefully', async () => {
