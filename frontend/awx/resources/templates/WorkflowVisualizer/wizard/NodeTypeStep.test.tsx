@@ -1,4 +1,5 @@
 import { act, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
@@ -544,6 +545,8 @@ describe('NodeTypeStep sub-components', () => {
     mockSetWizardData.mockClear();
     mockSetStepData.mockClear();
     mockRequestGet.mockClear();
+    mockUseOptions.mockReturnValue({ data: undefined });
+    mockUseApprovalOptionsEndpoint.mockReturnValue(undefined);
   });
 
   it('should render NodeStatusType when hasSourceNode is true', () => {
@@ -601,7 +604,8 @@ describe('NodeTypeStep sub-components', () => {
     expect(getByTestId('node-status-type')).toBeInTheDocument();
   });
 
-  it('should use workflow node OPTIONS metadata for alias validation', () => {
+  it('should use workflow node OPTIONS metadata for alias validation', async () => {
+    const user = userEvent.setup();
     mockUseOptions.mockImplementation((url?: string) => {
       if (url?.includes('/workflow_job_template_nodes/')) {
         return {
@@ -620,14 +624,23 @@ describe('NodeTypeStep sub-components', () => {
       return { data: undefined };
     });
 
-    const { getByTestId } = render(
-      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} />
+    const { getByTestId, getByText } = render(
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, node_alias: 'x' }} />
     );
     expect(getByTestId('node-alias')).toBeInTheDocument();
-    expect(mockUseOptions).toHaveBeenCalled();
+
+    const aliasInput = getByTestId('node-alias');
+    await user.clear(aliasInput);
+    await user.type(aliasInput, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(getByText('Alias pattern')).toBeInTheDocument();
+    });
   });
 
-  it('should use approval OPTIONS metadata when creating an approval node', () => {
+  it('should use approval OPTIONS metadata when creating an approval node', async () => {
+    const user = userEvent.setup();
     mockUseApprovalOptionsEndpoint.mockReturnValue(
       '/api/controller/v2/workflow_job_template_nodes/15/create_approval_template/'
     );
@@ -649,19 +662,27 @@ describe('NodeTypeStep sub-components', () => {
       return { data: undefined };
     });
 
-    const { getByTestId } = render(
+    const { getByLabelText, getByText } = render(
       <TestWrapper
         defaultValues={{
           node_type: RESOURCE_TYPE.workflow_approval,
           approval_timeout: 90,
+          approval_name: '',
         }}
       />
     );
-    expect(getByTestId('approval_timeout_minutes')).toBeInTheDocument();
-    expect(mockUseOptions).toHaveBeenCalled();
+
+    const nameInput = getByLabelText(/^Name/);
+    await user.type(nameInput, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(getByText('Approval name pattern')).toBeInTheDocument();
+    });
   });
 
-  it('should fall back to job template OPTIONS for approval fields when no endpoint is resolved', () => {
+  it('should fall back to job template OPTIONS for approval fields when no endpoint is resolved', async () => {
+    const user = userEvent.setup();
     mockUseOptions.mockImplementation((url?: string) => {
       if (url?.includes('/job_templates/')) {
         return {
@@ -684,15 +705,23 @@ describe('NodeTypeStep sub-components', () => {
       return { data: undefined };
     });
 
-    const { getByTestId } = render(
+    const { getByLabelText, getByText } = render(
       <TestWrapper
         defaultValues={{
           node_type: RESOURCE_TYPE.workflow_approval,
           approval_timeout: 0,
+          approval_name: '',
         }}
       />
     );
-    expect(getByTestId('approval_timeout_minutes')).toBeInTheDocument();
     expect(mockUseOptions).toHaveBeenCalledWith(expect.stringContaining('/job_templates/'));
+
+    const nameInput = getByLabelText(/^Name/);
+    await user.type(nameInput, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(getByText('Fallback name pattern')).toBeInTheDocument();
+    });
   });
 });

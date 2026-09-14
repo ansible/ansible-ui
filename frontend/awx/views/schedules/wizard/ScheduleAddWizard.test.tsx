@@ -1,5 +1,6 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -23,6 +24,16 @@ const server = setupServer(
           },
         },
       },
+    })
+  ),
+  http.get(awxAPI`/job_templates/100/`, () =>
+    HttpResponse.json({ id: 100, name: 'Mock Job Template', type: 'job_template' })
+  ),
+  http.get(awxAPI`/job_templates/100/launch/`, () =>
+    HttpResponse.json({
+      ask_credential_on_launch: false,
+      survey_enabled: false,
+      defaults: { credentials: [], job_tags: '', skip_tags: '' },
     })
   ),
   http.get(awxAPI`/schedules/zoneinfo/`, () => HttpResponse.json(zones)),
@@ -58,6 +69,32 @@ describe('ScheduleAddWizard', () => {
     expect(screen.getByTestId('wizard-nav')).toBeInTheDocument();
     expect(screen.getByTestId('wizard-nav-item-details')).toBeInTheDocument();
     expect(screen.getByTestId('wizard-nav-item-rules')).toBeInTheDocument();
+  });
+
+  it('should apply schedule name pattern validation from OPTIONS metadata', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/templates/job-template/100/schedules/create']}>
+        <Routes>
+          <Route
+            path="/templates/job-template/:id/schedules/create"
+            element={<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: 'Schedule name' })).toBeInTheDocument();
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Schedule name' });
+    await user.type(nameInput, 'invalid@name');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(screen.getByText('Valid schedule name')).toBeInTheDocument();
+    });
   });
 
   it('should render wizard when resourceEndPoint targets job templates', async () => {
