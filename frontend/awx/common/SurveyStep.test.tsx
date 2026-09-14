@@ -80,6 +80,18 @@ const testSurveys = {
         new_question: false,
         choices: [],
       },
+      {
+        question_name: 'Markets: US',
+        question_description: 'Select a US market',
+        required: false,
+        type: 'text',
+        variable: 'us_market',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
     ],
   },
   empty: {
@@ -179,8 +191,10 @@ describe('SurveyStep', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: 'Markets:' })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: 'Markets: US' })).toBeInTheDocument();
     });
     expect(t).not.toHaveBeenCalledWith('Markets:');
+    expect(t).not.toHaveBeenCalledWith('Markets: US');
   });
 
   test('handles empty survey gracefully', async () => {
