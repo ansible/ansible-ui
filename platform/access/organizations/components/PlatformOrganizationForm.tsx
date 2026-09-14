@@ -5,13 +5,16 @@ import {
   PageWizardStep,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { Credential as ControllerCredential } from '@ansible/awx-ui/interfaces/Credential';
 import { InstanceGroup as ControllerInstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useTranslation } from 'react-i18next';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { OrganizationDetailsStep } from './steps/OrganizationDetailsStep';
 import { OrganizationGalaxyCredentialsOrderStep } from './steps/OrganizationGalaxyCredentialsOrderStep';
 import { OrganizationInstanceGroupsOrderStep } from './steps/OrganizationInstanceGroupsOrderStep';
@@ -39,6 +42,8 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const awxService = useHasAwxService();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse>(gatewayAPI`/organizations/`);
 
   const steps: PageWizardStep[] = [
     {
@@ -134,6 +139,8 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
         steps={steps}
         stepDefaults={defaultValues}
         onSubmit={props.handleSubmit}
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        optionsData={optionsData}
         disableGrid
       />
     </PageLayout>

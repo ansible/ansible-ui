@@ -1,10 +1,17 @@
-import { PageFormTextInput } from '@ansible/ansible-ui-framework';
+import {
+  PageFormFieldMetadataProvider,
+  PageFormTextInput,
+  extractPageFormOptionsFields,
+} from '@ansible/ansible-ui-framework';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '@ansible/awx-ui/access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '@ansible/awx-ui/administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '@ansible/awx-ui/administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useHasAwxService } from '../../../../main/GatewayServices';
@@ -49,63 +56,71 @@ function ControllerOrganizationDetails(
   const { t } = useTranslation();
   const controllerOrganization = props.controllerOrganization;
   const config = useAwxConfig();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+  const { data: controllerOrgOptions } = useOptions<OptionsResponse>(awxAPI`/organizations/`);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const controllerFields = extractPageFormOptionsFields(controllerOrgOptions);
 
   return (
-    <>
-      <PageFormSelectExecutionEnvironment
-        organizationId={controllerOrganization ? controllerOrganization.id : undefined}
-        name="executionEnvironment"
-        label={t('Execution environment')}
-        labelHelp={t`The execution environment that will be used for jobs
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    <PageFormFieldMetadataProvider fields={controllerFields} merge>
+      <>
+        <PageFormSelectExecutionEnvironment
+          organizationId={controllerOrganization ? controllerOrganization.id : undefined}
+          name="executionEnvironment"
+          label={t('Execution environment')}
+          labelHelp={t`The execution environment that will be used for jobs
           inside of this organization. This will be used as a fallback when
           an execution environment has not been explicitly assigned at the
           project, job template or workflow level.`}
-      />
-      <PageFormInstanceGroupSelect
-        name="instanceGroups"
-        labelHelp={t(`Select the instance groups for this organization to run on.`)}
-      />
-      <PageFormCredentialSelect
-        name="galaxyCredentials"
-        label={t('Galaxy credentials')}
-        placeholder={t('Select galaxy credentials')}
-        queryParams={{
-          credential_type__kind: 'galaxy',
-        }}
-        isMultiple
-        allowDuplicateCredentialTypes
-      />
-      {config && config?.license_info.license_type !== 'open' && (
-        <PageFormTextInput
-          name="maxHosts"
-          label={t('Max hosts')}
-          labelHelpTitle={t('Max hosts')}
-          type="number"
-          min={0}
-          validate={(val) => {
-            const maxHosts = Number.parseFloat(val);
-            if (Number.isInteger(maxHosts) && maxHosts >= 0 && maxHosts <= 2147483647) {
-              return undefined;
-            }
-            return t('This field must be an integer and have a value between 0 and 2147483647.');
-          }}
         />
-      )}
-      <PageFormTextInput
-        label={t('Policy enforcement')}
-        name="policy"
-        placeholder={t('Enter policy enforcement')}
-        labelHelp={
-          <Trans>
-            <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
-            <br />
-            <p>
-              If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
-            </p>
-          </Trans>
-        }
-        labelHelpTitle={t('Policy enforcement')}
-      />
-    </>
+        <PageFormInstanceGroupSelect
+          name="instanceGroups"
+          labelHelp={t(`Select the instance groups for this organization to run on.`)}
+        />
+        <PageFormCredentialSelect
+          name="galaxyCredentials"
+          label={t('Galaxy credentials')}
+          placeholder={t('Select galaxy credentials')}
+          queryParams={{
+            credential_type__kind: 'galaxy',
+          }}
+          isMultiple
+          allowDuplicateCredentialTypes
+        />
+        {config && config?.license_info.license_type !== 'open' && (
+          <PageFormTextInput
+            name="maxHosts"
+            label={t('Max hosts')}
+            labelHelpTitle={t('Max hosts')}
+            type="number"
+            min={0}
+            validate={(val) => {
+              const maxHosts = Number.parseFloat(val);
+              if (Number.isInteger(maxHosts) && maxHosts >= 0 && maxHosts <= 2147483647) {
+                return undefined;
+              }
+              return t('This field must be an integer and have a value between 0 and 2147483647.');
+            }}
+          />
+        )}
+        <PageFormTextInput
+          label={t('Policy enforcement')}
+          name="policy"
+          placeholder={t('Enter policy enforcement')}
+          labelHelp={
+            <Trans>
+              <p>The query path for the policy enforcement to evaluate prior to job execution.</p>
+              <br />
+              <p>
+                If using OPA, the query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}
+                .
+              </p>
+            </Trans>
+          }
+          labelHelpTitle={t('Policy enforcement')}
+        />
+      </>
+    </PageFormFieldMetadataProvider>
   );
 }
