@@ -1,13 +1,22 @@
 import { InstanceGroup, Inventory, InventoryHost, Organization } from '@ansible/playwright/utils';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { clickPageAction } from '../../../../../../commands/clickPageAction';
 import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../../../commands/createE2EName';
-import { fillMonacoEditor } from '../../../../../../commands/fillMonacoEditor';
 import { filterTableByText } from '../../../../../../commands/filterTableByText';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
 import { syncConstructedInventoryAndWait } from '../../../../../../commands/syncConstructedInventoryAndWait';
+
+/** Upload source variables directly; Monaco select-all/type can concatenate YAML in live Chromium. */
+async function setSourceVarsYaml(page: Page, yaml: string) {
+  await page.locator('#code-editor-dropzone-input').setInputFiles({
+    name: 'source_vars.yml',
+    mimeType: 'text/yaml',
+    buffer: Buffer.from(yaml),
+  });
+  await expect(page.getByText('File uploaded')).toBeVisible();
+}
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -114,7 +123,7 @@ test.describe('Constructed Inventory', () => {
         // Edit description and source vars
         await page.getByPlaceholder('Enter description').clear();
         await page.getByPlaceholder('Enter description').fill(description);
-        await fillMonacoEditor(page, 'plugin: constructed');
+        await setSourceVarsYaml(page, 'plugin: constructed');
         await page.getByRole('button', { name: 'Save inventory' }).click();
 
         // Verify changes were saved
@@ -169,7 +178,7 @@ test.describe('Constructed Inventory', () => {
         await clickPageAction('Edit inventory', page);
         await expect(page.getByRole('heading', { name: 'Edit' })).toBeVisible();
 
-        await fillMonacoEditor(
+        await setSourceVarsYaml(
           page,
           [
             'plugin: constructed',
