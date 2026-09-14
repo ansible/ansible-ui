@@ -11,6 +11,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { PlatformRoute } from '@ansible/platform-ui/main/PlatformRoutes';
 import { HelperText, HelperTextItem } from '@patternfly/react-core';
@@ -24,6 +25,11 @@ import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormRolePermissionsSelect } from './components/PageFormPermissionsSelect';
 import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
 import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
+import {
+  PageFormFieldMetadataProvider,
+  extractPageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPage?: string }>) {
   const { t } = useTranslation();
@@ -32,6 +38,11 @@ export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousP
 
   useInvalidateCacheOnUnmount();
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/role_definitions/`
+  );
+  const roleFields = extractPageFormOptionsFields(optionsData);
   const postRequest = usePostRequest<Partial<PlatformRole>, PlatformRole>();
 
   const onSubmit: PageFormSubmitHandler<PlatformRole> = async (role) => {
@@ -57,14 +68,16 @@ export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousP
           { label: t('Create role') },
         ]}
       />
-      <PageForm<PlatformRole>
-        submitText={t('Create role')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-      >
-        <PlatformRoleInputs isEditMode={false} />
-      </PageForm>
+      <PageFormFieldMetadataProvider fields={roleFields}>
+        <PageForm<PlatformRole>
+          submitText={t('Create role')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+        >
+          <PlatformRoleInputs isEditMode={false} />
+        </PageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }
@@ -80,6 +93,11 @@ export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPag
 
   useInvalidateCacheOnUnmount();
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/role_definitions/`
+  );
+  const roleFields = extractPageFormOptionsFields(optionsData);
   const patchRequest = usePatchRequest<Partial<PlatformRole>, PlatformRole>();
 
   const onSubmit: PageFormSubmitHandler<PlatformRole> = async (data) => {
@@ -118,19 +136,21 @@ export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPag
               { label: role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles') },
             ]}
           />
-          <PageForm<PlatformRole>
-            submitText={t('Save role')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            defaultValue={{
-              ...role,
-              content_type:
-                role?.content_type === null ? ContentTypeEnum.System : role?.content_type,
-            }}
-            onCancel={onCancel}
-          >
-            <PlatformRoleInputs isEditMode={true} />
-          </PageForm>
+          <PageFormFieldMetadataProvider fields={roleFields}>
+            <PageForm<PlatformRole>
+              submitText={t('Save role')}
+              onSubmit={onSubmit}
+              cancelText={t('Cancel')}
+              defaultValue={{
+                ...role,
+                content_type:
+                  role?.content_type === null ? ContentTypeEnum.System : role?.content_type,
+              }}
+              onCancel={onCancel}
+            >
+              <PlatformRoleInputs isEditMode={true} />
+            </PageForm>
+          </PageFormFieldMetadataProvider>
         </PageLayout>
       );
     }

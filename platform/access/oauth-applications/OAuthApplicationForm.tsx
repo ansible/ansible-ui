@@ -29,6 +29,11 @@ import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationSelect } from '../organizations/components/PageFormPlatformOrganizationSelect';
 import { OAuthApplicationSecretModal } from './OAuthApplicationSecretModal';
+import {
+  PageFormFieldMetadataProvider,
+  extractPageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 interface FieldChoice {
   value: string;
@@ -57,6 +62,11 @@ export function CreateOAuthApplication() {
   const postRequest = usePostRequest<Application>();
   const { clearCacheByKey } = useClearCache();
   const { pushDialog, popDialog } = usePageDialogs();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/applications/`
+  );
+  const appFields = extractPageFormOptionsFields(optionsData);
 
   const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
     const newApplication = await postRequest(gatewayAPI`/applications/`, application);
@@ -86,21 +96,23 @@ export function CreateOAuthApplication() {
           { label: t('Create OAuth application') },
         ]}
       />
-      <AwxPageForm<Application>
-        submitText={t('Create OAuth application')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        defaultValue={{
-          authorization_grant_type: 'authorization-code',
-          client_type: 'confidential',
-          algorithm: '',
-          skip_authorization: false,
-          pkce_required: true,
-        }}
-      >
-        <OAuthApplicationInputs mode="create" />
-      </AwxPageForm>
+      <PageFormFieldMetadataProvider fields={appFields}>
+        <AwxPageForm<Application>
+          submitText={t('Create OAuth application')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={{
+            authorization_grant_type: 'authorization-code',
+            client_type: 'confidential',
+            algorithm: '',
+            skip_authorization: false,
+            pkce_required: true,
+          }}
+        >
+          <OAuthApplicationInputs mode="create" />
+        </AwxPageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }
@@ -116,6 +128,11 @@ export function EditOAuthApplication() {
     gatewayAPI`/applications/${id.toString()}/`,
     requestGet
   );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/applications/`
+  );
+  const appFields = extractPageFormOptionsFields(optionsData);
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
     application: Application,
@@ -175,15 +192,17 @@ export function EditOAuthApplication() {
           },
         ]}
       />
-      <AwxPageForm<Application>
-        submitText={t('Save OAuth application')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        defaultValue={application}
-      >
-        <OAuthApplicationInputs mode="edit" />
-      </AwxPageForm>
+      <PageFormFieldMetadataProvider fields={appFields}>
+        <AwxPageForm<Application>
+          submitText={t('Save OAuth application')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={application}
+        >
+          <OAuthApplicationInputs mode="edit" />
+        </AwxPageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }

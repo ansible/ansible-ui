@@ -13,6 +13,7 @@ import {
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { UserTokenSecretsModal } from '@ansible/awx-ui/access/users/UserPage/UserTokenSecretsModal';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { usePutRequest } from '@ansible/common-ui/crud/usePutRequest';
 import { useCallback, useMemo } from 'react';
@@ -23,6 +24,11 @@ import { Token } from '../../interfaces/Token';
 import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { OAuthApplicationSelect } from '../oauth-applications/components/OAuthApplicationSelect';
+import {
+  PageFormFieldMetadataProvider,
+  extractPageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export function ApiTokenForm() {
   const { id: userId, tokenid } = useParams<{ id?: string; tokenid?: string }>();
@@ -30,6 +36,9 @@ export function ApiTokenForm() {
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
   const onCancel = () => void navigate(-1);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/tokens/`);
+  const tokenFields = extractPageFormOptionsFields(optionsData);
   const { data: user } = useGet<PlatformUser>(userId ? gatewayAPI`/users/${userId}/` : undefined);
   const { data: token } = useGet<Token>(tokenid ? gatewayAPI`/tokens/${tokenid}/` : undefined);
 
@@ -154,33 +163,39 @@ export function ApiTokenForm() {
   return (
     <PageLayout>
       <PageHeader title={title} breadcrumbs={breadcrumbs} />
-      <PageForm<Token>
-        submitText={submitText}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        defaultValue={token}
-      >
-        <PageFormTextArea<Token>
-          name="description"
-          label={t('Description')}
-          placeholder={t('Enter token description')}
-          isRequired={false}
-          autoFocus
-        />
-        <OAuthApplicationSelect<Token> name="application" isRequired={false} isDisabled={tokenid} />
-        <PageFormSelect<Token>
-          name="scope"
-          label={t('Scope')}
-          placeholderText={t('Select scope')}
-          options={[
-            { label: t('Read'), value: 'read' },
-            { label: t('Write'), value: 'write' },
-          ]}
-          isRequired
-          defaultValue="write"
-        />
-      </PageForm>
+      <PageFormFieldMetadataProvider fields={tokenFields}>
+        <PageForm<Token>
+          submitText={submitText}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={token}
+        >
+          <PageFormTextArea<Token>
+            name="description"
+            label={t('Description')}
+            placeholder={t('Enter token description')}
+            isRequired={false}
+            autoFocus
+          />
+          <OAuthApplicationSelect<Token>
+            name="application"
+            isRequired={false}
+            isDisabled={tokenid}
+          />
+          <PageFormSelect<Token>
+            name="scope"
+            label={t('Scope')}
+            placeholderText={t('Select scope')}
+            options={[
+              { label: t('Read'), value: 'read' },
+              { label: t('Write'), value: 'write' },
+            ]}
+            isRequired
+            defaultValue="write"
+          />
+        </PageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }

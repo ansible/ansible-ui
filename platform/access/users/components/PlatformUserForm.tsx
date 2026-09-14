@@ -19,6 +19,7 @@ import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
 import { useGet, useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useCallback, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +33,11 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
 import { useGetOrganizationsForUser } from '../hooks/useGetOrganizationsForUser';
 import { useGetPlatformUsers } from '../hooks/useGetPlatformUsers';
+import {
+  PageFormFieldMetadataProvider,
+  extractPageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 enum USER_TYPE_ENUM {
   Normal = 'normal',
@@ -51,6 +57,9 @@ export function CreatePlatformUser() {
   const navigate = useNavigate();
   const alertToaster = usePageAlertToaster();
   const postUserRequest = usePostRequest<PlatformUser>();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/users/`);
+  const userFields = extractPageFormOptionsFields(optionsData);
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
   >(gatewayAPI`/role_definitions/`, {
@@ -129,15 +138,17 @@ export function CreatePlatformUser() {
           { label: t('Create user') },
         ]}
       />
-      <PageForm<IUserInput>
-        submitText={t('Create user')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={() => void navigate(-1)}
-        defaultValue={defaultValue}
-      >
-        <PlatformUserInputs isCreate />
-      </PageForm>
+      <PageFormFieldMetadataProvider fields={userFields}>
+        <PageForm<IUserInput>
+          submitText={t('Create user')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={() => void navigate(-1)}
+          defaultValue={defaultValue}
+        >
+          <PlatformUserInputs isCreate />
+        </PageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }
@@ -152,6 +163,9 @@ export function EditPlatformUser() {
 
   const { platformUser, isLoading } = useGetPlatformUsers(userId);
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/users/`);
+  const userFields = extractPageFormOptionsFields(optionsData);
   const { orgIds, getAddedAndRemovedOrganizationIds } = useGetOrganizationsForUser(userId);
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
@@ -350,14 +364,16 @@ export function EditPlatformUser() {
           },
         ]}
       />
-      <PageForm<IUserInput>
-        submitText={t('Save user')}
-        onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
-        defaultValue={defaultValue}
-      >
-        <PlatformUserInputs />
-      </PageForm>
+      <PageFormFieldMetadataProvider fields={userFields}>
+        <PageForm<IUserInput>
+          submitText={t('Save user')}
+          onSubmit={onSubmit}
+          onCancel={() => void navigate(-1)}
+          defaultValue={defaultValue}
+        >
+          <PlatformUserInputs />
+        </PageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }

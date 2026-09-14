@@ -6,6 +6,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { t } from 'i18next';
 import { useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +32,11 @@ import { AuthenticatorSubForm } from './steps/AuthenticatorSubForm';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 import { useWatch, useFormContext } from 'react-hook-form';
 import { PlatformPageForm } from '../../../common/PlatformPageForm';
+import {
+  PageFormFieldMetadataProvider,
+  extractPageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export interface Configuration {
   [key: string]: boolean | string | string[] | { [k: string]: string | boolean | object };
@@ -89,6 +95,11 @@ export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
   const { plugins, authenticator } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/authenticators/`
+  );
+  const authFields = extractPageFormOptionsFields(optionsData);
 
   let initialValues = {
     type: AuthenticatorTypeEnum.Local,
@@ -164,21 +175,23 @@ export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
           },
         ]}
       />
-      <PlatformPageForm
-        submitText={
-          !authenticator ? t('Create Authentication Method') : t('Save Authentication Method')
-        }
-        onSubmit={props.handleSubmit}
-        onCancel={() => void navigate(-1)}
-        defaultValue={initialValues}
-        errorAdapter={(error: unknown) => authenticatorErrorAdapter(error, configurationFields)}
-      >
-        <AuthenticatorFormInputs
-          plugins={plugins}
-          authenticator={authenticator}
-          onTypeChange={updateConfigurationFields}
-        />
-      </PlatformPageForm>
+      <PageFormFieldMetadataProvider fields={authFields}>
+        <PlatformPageForm
+          submitText={
+            !authenticator ? t('Create Authentication Method') : t('Save Authentication Method')
+          }
+          onSubmit={props.handleSubmit}
+          onCancel={() => void navigate(-1)}
+          defaultValue={initialValues}
+          errorAdapter={(error: unknown) => authenticatorErrorAdapter(error, configurationFields)}
+        >
+          <AuthenticatorFormInputs
+            plugins={plugins}
+            authenticator={authenticator}
+            onTypeChange={updateConfigurationFields}
+          />
+        </PlatformPageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }

@@ -23,13 +23,19 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import {
+  PageFormFieldMetadataProvider,
+  extractPageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 
 export function CreatePlatformTeam() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformTeam>();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams/`);
+  const teamFields = extractPageFormOptionsFields(optionsData);
 
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
     const createdTeam = await postRequest(gatewayAPI`/teams/`, team);
@@ -45,15 +51,16 @@ export function CreatePlatformTeam() {
           { label: t('Create team') },
         ]}
       />
-      <PageForm
-        submitText={t('Create team')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={() => void navigate(-1)}
-        optionsData={optionsData}
-      >
-        <PlatformTeamInputs />
-      </PageForm>
+      <PageFormFieldMetadataProvider fields={teamFields}>
+        <PageForm
+          submitText={t('Create team')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={() => void navigate(-1)}
+        >
+          <PlatformTeamInputs />
+        </PageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }
@@ -68,7 +75,9 @@ export function EditPlatformTeam() {
     isLoading,
     error,
   } = useGet<PlatformTeam>(gatewayAPI`/teams/${id.toString()}/`);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams/`);
+  const teamFields = extractPageFormOptionsFields(optionsData);
   const patchRequest = usePatchRequest<PlatformTeam, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
     await patchRequest(gatewayAPI`/teams/${id.toString()}/`, team);
@@ -87,15 +96,16 @@ export function EditPlatformTeam() {
           { label: team?.name ? t('Edit {{teamName}}', { teamName: team?.name }) : t('Teams') },
         ]}
       />
-      <PageForm
-        submitText={t('Save team')}
-        onSubmit={onSubmit}
-        onCancel={() => void navigate(-1)}
-        defaultValue={team}
-        optionsData={optionsData}
-      >
-        <PlatformTeamInputs isEditMode />
-      </PageForm>
+      <PageFormFieldMetadataProvider fields={teamFields}>
+        <PageForm
+          submitText={t('Save team')}
+          onSubmit={onSubmit}
+          onCancel={() => void navigate(-1)}
+          defaultValue={team}
+        >
+          <PlatformTeamInputs isEditMode />
+        </PageForm>
+      </PageFormFieldMetadataProvider>
     </PageLayout>
   );
 }
