@@ -43,6 +43,7 @@ export * from './PageForm/Inputs/PageFormTextArea';
 export * from './PageForm/Inputs/PageFormTextInput';
 export * from './PageForm/PageForm';
 export * from './PageForm/PageFormButtons';
+export * from './PageForm/PageFormOptionsContext';
 export * from './PageFramework';
 export * from './PageHeader';
 export * from './PageInputs/PageSelectOption';

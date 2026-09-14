@@ -28,7 +28,7 @@ import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType
 import {
   PageFormFieldMetadataProvider,
   extractPageFormOptionsFields,
-} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+} from '@ansible/ansible-ui-framework';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPage?: string }>) {
@@ -42,6 +42,7 @@ export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousP
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/role_definitions/`
   );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
   const roleFields = extractPageFormOptionsFields(optionsData);
   const postRequest = usePostRequest<Partial<PlatformRole>, PlatformRole>();
 
@@ -68,6 +69,7 @@ export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousP
           { label: t('Create role') },
         ]}
       />
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={roleFields}>
         <PageForm<PlatformRole>
           submitText={t('Create role')}
@@ -97,6 +99,7 @@ export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPag
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/role_definitions/`
   );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
   const roleFields = extractPageFormOptionsFields(optionsData);
   const patchRequest = usePatchRequest<Partial<PlatformRole>, PlatformRole>();
 
@@ -136,6 +139,7 @@ export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPag
               { label: role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles') },
             ]}
           />
+          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
           <PageFormFieldMetadataProvider fields={roleFields}>
             <PageForm<PlatformRole>
               submitText={t('Save role')}

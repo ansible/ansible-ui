@@ -35,7 +35,7 @@ import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import {
   PageFormFieldMetadataProvider,
   extractPageFormOptionsFields,
-} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+} from '@ansible/ansible-ui-framework';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export interface Configuration {
@@ -99,6 +99,7 @@ export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/authenticators/`
   );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const authFields = extractPageFormOptionsFields(optionsData);
 
   let initialValues = {
@@ -175,6 +176,7 @@ export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
           },
         ]}
       />
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={authFields}>
         <PlatformPageForm
           submitText={

@@ -36,7 +36,7 @@ import { useGetPlatformUsers } from '../hooks/useGetPlatformUsers';
 import {
   PageFormFieldMetadataProvider,
   extractPageFormOptionsFields,
-} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+} from '@ansible/ansible-ui-framework';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 enum USER_TYPE_ENUM {
@@ -59,6 +59,7 @@ export function CreatePlatformUser() {
   const postUserRequest = usePostRequest<PlatformUser>();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/users/`);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
   const userFields = extractPageFormOptionsFields(optionsData);
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
@@ -138,6 +139,7 @@ export function CreatePlatformUser() {
           { label: t('Create user') },
         ]}
       />
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={userFields}>
         <PageForm<IUserInput>
           submitText={t('Create user')}
@@ -165,6 +167,7 @@ export function EditPlatformUser() {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/users/`);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
   const userFields = extractPageFormOptionsFields(optionsData);
   const { orgIds, getAddedAndRemovedOrganizationIds } = useGetOrganizationsForUser(userId);
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
@@ -364,6 +367,7 @@ export function EditPlatformUser() {
           },
         ]}
       />
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={userFields}>
         <PageForm<IUserInput>
           submitText={t('Save user')}

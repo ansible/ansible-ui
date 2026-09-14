@@ -32,7 +32,7 @@ import { OAuthApplicationSecretModal } from './OAuthApplicationSecretModal';
 import {
   PageFormFieldMetadataProvider,
   extractPageFormOptionsFields,
-} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+} from '@ansible/ansible-ui-framework';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 interface FieldChoice {
@@ -66,6 +66,7 @@ export function CreateOAuthApplication() {
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/applications/`
   );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
   const appFields = extractPageFormOptionsFields(optionsData);
 
   const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
@@ -96,6 +97,7 @@ export function CreateOAuthApplication() {
           { label: t('Create OAuth application') },
         ]}
       />
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={appFields}>
         <AwxPageForm<Application>
           submitText={t('Create OAuth application')}
@@ -132,6 +134,7 @@ export function EditOAuthApplication() {
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/applications/`
   );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
   const appFields = extractPageFormOptionsFields(optionsData);
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
@@ -192,6 +195,7 @@ export function EditOAuthApplication() {
           },
         ]}
       />
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={appFields}>
         <AwxPageForm<Application>
           submitText={t('Save OAuth application')}

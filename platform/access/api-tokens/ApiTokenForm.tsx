@@ -27,7 +27,7 @@ import { OAuthApplicationSelect } from '../oauth-applications/components/OAuthAp
 import {
   PageFormFieldMetadataProvider,
   extractPageFormOptionsFields,
-} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+} from '@ansible/ansible-ui-framework';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export function ApiTokenForm() {
@@ -38,6 +38,7 @@ export function ApiTokenForm() {
   const onCancel = () => void navigate(-1);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/tokens/`);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
   const tokenFields = extractPageFormOptionsFields(optionsData);
   const { data: user } = useGet<PlatformUser>(userId ? gatewayAPI`/users/${userId}/` : undefined);
   const { data: token } = useGet<Token>(tokenid ? gatewayAPI`/tokens/${tokenid}/` : undefined);
@@ -163,6 +164,7 @@ export function ApiTokenForm() {
   return (
     <PageLayout>
       <PageHeader title={title} breadcrumbs={breadcrumbs} />
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={tokenFields}>
         <PageForm<Token>
           submitText={submitText}
