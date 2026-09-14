@@ -16,6 +16,8 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
 // Use verbose configuration by default for better debugging
 const isCI = !!process.env.CI;
 const jobTimeoutMinutes = Number(process.env.TIMEOUT_MINUTES) || 120;
+// Playwright 1.57 accepts clipboard permissions on Chromium only.
+const chromiumClipboardPermissions = ['clipboard-read', 'clipboard-write'];
 const config: PlaywrightTestConfig = {
   testDir: '.',
   fullyParallel: false,
@@ -63,9 +65,6 @@ const config: PlaywrightTestConfig = {
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    // fillMonacoEditor only needs clipboard-write. Chromium honors this grant;
-    // other browsers ignore unknown permission entries.
-    permissions: ['clipboard-write'],
   },
 
   /* Configure projects for major browsers */
@@ -75,7 +74,7 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome'],
         // Hub copy-CLI specs call navigator.clipboard.readText().
-        permissions: ['clipboard-read', 'clipboard-write'],
+        permissions: chromiumClipboardPermissions,
       },
       dependencies: ['coverage setup'],
 
@@ -130,7 +129,10 @@ const config: PlaywrightTestConfig = {
     },
     {
       name: 'live upgrade',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        permissions: chromiumClipboardPermissions,
+      },
       fullyParallel: false,
       grep: [
         /@upgrade/, // We should only wan tot run upgrade tests
