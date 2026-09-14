@@ -116,7 +116,8 @@
     "minimatch@<9.0.0": {
       "brace-expansion": "1.1.18"
     },
-    "postcss": "8.5.26"
+    "postcss": "8.5.26",
+    "fflate": "0.8.3"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.1",
