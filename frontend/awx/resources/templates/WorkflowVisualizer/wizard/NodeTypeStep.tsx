@@ -333,7 +333,6 @@ function NodeTypeInput() {
 }
 
 function NodeResourceInput() {
-  const { t } = useTranslation();
   return (
     <PageFormWatch watch="node_type">
       {(nodeType) => {
@@ -378,9 +377,8 @@ function NodeResourceInput() {
 function ApprovalNodeFields() {
   const { t } = useTranslation();
   const approvalOptionsEndpoint = useApprovalOptionsEndpoint();
-  const { data: approvalTemplateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    approvalOptionsEndpoint
-  );
+  const { data: approvalTemplateOptions } =
+    useOptions<OptionsResponse<ActionsResponse>>(approvalOptionsEndpoint);
   // When no workflow node exists yet to probe create_approval_template, fall back to
   // job_templates patterns (same Tier 1/Tier 2 CleanText rules for name/description).
   const { data: jobTemplateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
