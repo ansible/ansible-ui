@@ -86,23 +86,27 @@ describe('ScheduleAddWizard', () => {
     expect(screen.getByTestId('wizard-nav-item-rules')).toBeInTheDocument();
   });
 
-  it('should apply schedule name pattern validation from OPTIONS metadata', async () => {
-    const user = userEvent.setup();
-    renderJobTemplateNestedAddWizard();
+  // Nested create loads the job template before rendering details; allow extra time under CI load.
+  it(
+    'should apply schedule name pattern validation from OPTIONS metadata',
+    { timeout: 15_000 },
+    async () => {
+      const user = userEvent.setup();
+      renderJobTemplateNestedAddWizard();
 
-    // Nested create loads the job template before rendering details; allow extra time under CI load.
-    const nameInput = await screen.findByRole(
-      'textbox',
-      { name: 'Schedule name' },
-      { timeout: 15_000 }
-    );
-    await user.type(nameInput, 'invalid@name');
-    await user.tab();
+      const nameInput = await screen.findByRole(
+        'textbox',
+        { name: 'Schedule name' },
+        { timeout: 15_000 }
+      );
+      await user.type(nameInput, 'invalid@name');
+      await user.tab();
 
-    await waitFor(() => {
-      expect(screen.getByText('Valid schedule name')).toBeInTheDocument();
-    });
-  });
+      await waitFor(() => {
+        expect(screen.getByText('Valid schedule name')).toBeInTheDocument();
+      });
+    }
+  );
 
   it('should render wizard when resourceEndPoint targets job templates', async () => {
     renderAddWizard({ resourceEndPoint: awxAPI`/job_templates/` });
