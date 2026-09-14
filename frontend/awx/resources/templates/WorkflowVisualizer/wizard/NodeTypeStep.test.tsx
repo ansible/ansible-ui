@@ -539,20 +539,6 @@ describe('NodeTypeStep', () => {
   });
 });
 
-function TestWrapperWithSourceNode({
-  defaultValues,
-  hasSourceNode = false,
-}: Readonly<{ defaultValues: Partial<WizardFormValues>; hasSourceNode?: boolean }>) {
-  const methods = useForm<WizardFormValues>({ defaultValues });
-  return (
-    <MemoryRouter>
-      <FormProvider {...methods}>
-        <NodeTypeStep hasSourceNode={hasSourceNode} />
-      </FormProvider>
-    </MemoryRouter>
-  );
-}
-
 describe('NodeTypeStep sub-components', () => {
   beforeEach(() => {
     mockSetWizardData.mockClear();
@@ -562,17 +548,14 @@ describe('NodeTypeStep sub-components', () => {
 
   it('should render NodeStatusType when hasSourceNode is true', () => {
     const { getByTestId } = render(
-      <TestWrapperWithSourceNode defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode />
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode />
     );
     expect(getByTestId('node-status-type')).toBeInTheDocument();
   });
 
   it('should not render NodeStatusType when hasSourceNode is false', () => {
     const { queryByTestId } = render(
-      <TestWrapperWithSourceNode
-        defaultValues={{ node_type: RESOURCE_TYPE.job }}
-        hasSourceNode={false}
-      />
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode={false} />
     );
     expect(queryByTestId('node-status-type')).not.toBeInTheDocument();
   });
