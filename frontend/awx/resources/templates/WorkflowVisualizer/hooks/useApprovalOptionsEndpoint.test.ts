@@ -139,6 +139,42 @@ describe('useApprovalOptionsEndpoint', () => {
 
   it('returns undefined when nodeType is not workflow_approval', () => {
     mockUseWatch.mockReturnValue(RESOURCE_TYPE.job);
+    mockGetGraph.mockReturnValue({
+      getNodes: () => [{ getId: () => START_NODE_ID }, { getId: () => '22' }],
+    });
+
+    const { result } = renderHook(() => useApprovalOptionsEndpoint());
+
+    expect(result.current).toBeUndefined();
+  });
+
+  it('ignores unsaved graph node ids and falls back to workflow template nodes', () => {
+    mockGetState.mockReturnValue({
+      workflowTemplate: { id: 42 },
+      sourceNode: { getId: () => '2-unsavedNode' },
+    });
+    mockUseGet.mockReturnValue({ data: { results: [{ id: 99 }] } });
+
+    const { result } = renderHook(() => useApprovalOptionsEndpoint());
+
+    expect(mockUseGet).toHaveBeenCalledWith(
+      awxAPI`/workflow_job_templates/42/workflow_nodes/?page_size=1`
+    );
+    expect(result.current).toBe(awxAPI`/workflow_job_template_nodes/99/create_approval_template/`);
+  });
+
+  it('returns undefined when only unsaved graph node ids are present', () => {
+    mockGetState.mockReturnValue({
+      workflowTemplate: { id: 42 },
+      sourceNode: { getId: () => '2-unsavedNode' },
+    });
+    mockGetGraph.mockReturnValue({
+      getNodes: () => [
+        { getId: () => START_NODE_ID },
+        { getId: () => '1-unsavedNode' },
+      ],
+    });
+    mockUseGet.mockReturnValue({ data: { results: [] } });
 
     const { result } = renderHook(() => useApprovalOptionsEndpoint());
 

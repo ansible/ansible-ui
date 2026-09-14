@@ -10,6 +10,14 @@ import { RESOURCE_TYPE, START_NODE_ID } from '../constants';
 import type { ControllerState, WizardFormValues } from '../types';
 import { useSelectedNode } from './useSelectedNode';
 
+/** Controller workflow node PKs are numeric; unsaved visualizer nodes use synthetic graph ids. */
+function isSavedWorkflowNodeGraphId(id: string): boolean {
+  if (id === START_NODE_ID || id.includes('unsavedNode')) {
+    return false;
+  }
+  return /^\d+$/.test(id);
+}
+
 /**
  * Resolves the OPTIONS endpoint for approval node name/description validation.
  *
@@ -42,24 +50,35 @@ export function useApprovalOptionsEndpoint(): string | undefined {
   }, [nodeType, selectedNode]);
 
   const workflowNodeIdFromGraph = useMemo(() => {
+    if (nodeType !== RESOURCE_TYPE.workflow_approval) {
+      return undefined;
+    }
+
+    const candidateIds: string[] = [];
     const sourceNodeId = state.sourceNode?.getId();
     if (sourceNodeId && sourceNodeId !== START_NODE_ID) {
-      return sourceNodeId;
+      candidateIds.push(sourceNodeId);
     }
 
     if (selectedNode) {
       const id = selectedNode.getId();
       if (id !== START_NODE_ID) {
-        return id;
+        candidateIds.push(id);
       }
     }
 
-    return controller
+    controller
       .getGraph()
       .getNodes()
-      .map((node) => node.getId())
-      .find((id) => id !== START_NODE_ID);
-  }, [controller, selectedNode, state.sourceNode]);
+      .forEach((node) => {
+        const id = node.getId();
+        if (id !== START_NODE_ID) {
+          candidateIds.push(id);
+        }
+      });
+
+    return candidateIds.find(isSavedWorkflowNodeGraphId);
+  }, [controller, nodeType, selectedNode, state.sourceNode]);
 
   const shouldFetchWorkflowNode = !existingApprovalTemplateId && !workflowNodeIdFromGraph;
 
@@ -72,6 +91,9 @@ export function useApprovalOptionsEndpoint(): string | undefined {
   const workflowNodeId = workflowNodeIdFromGraph ?? workflowNodes?.results?.[0]?.id?.toString();
 
   return useMemo(() => {
+    if (nodeType !== RESOURCE_TYPE.workflow_approval) {
+      return undefined;
+    }
     if (existingApprovalTemplateId) {
       return awxAPI`/workflow_approval_templates/${existingApprovalTemplateId}/`;
     }
@@ -79,7 +101,7 @@ export function useApprovalOptionsEndpoint(): string | undefined {
       return awxAPI`/workflow_job_template_nodes/${workflowNodeId}/create_approval_template/`;
     }
     return undefined;
-  }, [existingApprovalTemplateId, workflowNodeId]);
+  }, [existingApprovalTemplateId, nodeType, workflowNodeId]);
 }
 
 /**

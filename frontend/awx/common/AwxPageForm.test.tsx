@@ -7,23 +7,26 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { awxAPI } from '../common/api/awx-utils';
 import { AwxPageForm } from './AwxPageForm';
 
-const server = setupServer(
-  http.options(awxAPI`/inventories/`, () =>
-    HttpResponse.json({
-      actions: {
-        POST: {
-          name: {
-            pattern: '^[a-zA-Z0-9_-]+$',
-            pattern_description: 'Letters, numbers, underscores, and hyphens only',
-          },
+const inventoriesOptionsHandler = vi.fn(() =>
+  HttpResponse.json({
+    actions: {
+      POST: {
+        name: {
+          pattern: '^[a-zA-Z0-9_-]+$',
+          pattern_description: 'Letters, numbers, underscores, and hyphens only',
         },
       },
-    })
-  )
+    },
+  })
 );
 
+const server = setupServer(http.options(awxAPI`/inventories/`, inventoriesOptionsHandler));
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  inventoriesOptionsHandler.mockClear();
+});
 afterAll(() => server.close());
 
 describe('AwxPageForm', () => {
@@ -99,7 +102,8 @@ describe('AwxPageForm', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('should prefer explicit optionsData over optionsUrl', () => {
+  it('should prefer explicit optionsData over optionsUrl', async () => {
+    const user = userEvent.setup();
     const onSubmit = vi.fn();
 
     render(
@@ -107,7 +111,7 @@ describe('AwxPageForm', () => {
         submitText="Save"
         onSubmit={onSubmit}
         onCancel={() => {}}
-        defaultValue={{ name: 'valid-name' }}
+        defaultValue={{ name: '' }}
         optionsUrl={awxAPI`/inventories/`}
         optionsData={{
           actions: {
@@ -124,6 +128,15 @@ describe('AwxPageForm', () => {
       </AwxPageForm>
     );
 
-    expect(screen.getByLabelText('Name')).toHaveValue('valid-name');
+    expect(inventoriesOptionsHandler).not.toHaveBeenCalled();
+
+    const input = screen.getByLabelText('Name');
+    await user.type(input, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(screen.getByText('Lowercase letters only')).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 });
