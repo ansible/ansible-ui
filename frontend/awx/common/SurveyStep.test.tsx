@@ -77,6 +77,7 @@ const testSurveys = {
         max: 0,
         default: '',
         new_question: false,
+        choices: [],
       },
     ],
   },
