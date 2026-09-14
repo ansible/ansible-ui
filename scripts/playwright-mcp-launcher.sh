@@ -5,5 +5,5 @@
 # If Chrome is not available or fails, it falls back to Chromium.
 
 # Try Chrome first, fallback to Chromium if it fails
-npx @playwright/mcp@latest --browser chrome 2>/dev/null || \
-npx @playwright/mcp@latest --browser chromium
+npx -y @playwright/mcp@0.0.80 --browser chrome 2>/dev/null || \
+npx -y @playwright/mcp@0.0.80 --browser chromium
