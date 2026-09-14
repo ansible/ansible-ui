@@ -49,8 +49,12 @@ const mockSetStepData = vi.hoisted(() =>
     }
   })
 );
-const mockUseOptions = vi.hoisted(() => vi.fn(() => ({ data: undefined })));
-const mockUseApprovalOptionsEndpoint = vi.hoisted(() => vi.fn(() => undefined));
+const mockUseOptions = vi.hoisted(() =>
+  vi.fn<(url?: string) => { data: unknown }>(() => ({ data: undefined }))
+);
+const mockUseApprovalOptionsEndpoint = vi.hoisted(() =>
+  vi.fn<() => string | undefined>(() => undefined)
+);
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
   usePageWizard: () => ({
@@ -72,8 +76,7 @@ vi.mock('@ansible/common-ui/crud/useGet', () => ({
 }));
 
 vi.mock('../hooks/useApprovalOptionsEndpoint', async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import('../hooks/useApprovalOptionsEndpoint')>();
+  const actual = await importOriginal<typeof import('../hooks/useApprovalOptionsEndpoint')>();
   return {
     ...actual,
     useApprovalOptionsEndpoint: mockUseApprovalOptionsEndpoint,

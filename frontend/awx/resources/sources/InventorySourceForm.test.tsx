@@ -120,7 +120,8 @@ const restHandlers = [
     () => HttpResponse.json(mockProjectWithOverride)
   ),
   http.get(
-    ({ request }) => request.url.includes('/projects/456') && !request.url.includes('/inventories/'),
+    ({ request }) =>
+      request.url.includes('/projects/456') && !request.url.includes('/inventories/'),
     () => HttpResponse.json(mockProjectWithoutOverride)
   ),
   http.get(

@@ -1,20 +1,35 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import { RESOURCE_TYPE, START_NODE_ID } from '../constants';
-import { approvalOptionsToPageFormData, useApprovalOptionsEndpoint } from './useApprovalOptionsEndpoint';
+import {
+  approvalOptionsToPageFormData,
+  useApprovalOptionsEndpoint,
+} from './useApprovalOptionsEndpoint';
 
-const mockUseWatch = vi.hoisted(() => vi.fn(() => RESOURCE_TYPE.workflow_approval));
-const mockUseSelectedNode = vi.hoisted(() => vi.fn(() => undefined));
-const mockUseGet = vi.hoisted(() => vi.fn(() => ({ data: undefined })));
+type TopologyNode = { getId: () => string; getData?: () => unknown };
+
+const mockUseWatch = vi.hoisted(() => vi.fn<() => string>(() => RESOURCE_TYPE.workflow_approval));
+const mockUseSelectedNode = vi.hoisted(() =>
+  vi.fn<() => TopologyNode | undefined>(() => undefined)
+);
+const mockUseGet = vi.hoisted(() =>
+  vi.fn<() => { data: { results: { id: number }[] } | undefined }>(() => ({ data: undefined }))
+);
 const mockGetState = vi.hoisted(() =>
-  vi.fn(() => ({
+  vi.fn<
+    () => {
+      workflowTemplate: { id: number };
+      sourceNode?: TopologyNode;
+    }
+  >(() => ({
     workflowTemplate: { id: 42 },
     sourceNode: undefined,
   }))
 );
 const mockGetGraph = vi.hoisted(() =>
-  vi.fn(() => ({
+  vi.fn<() => { getNodes: () => TopologyNode[] }>(() => ({
     getNodes: () => [],
   }))
 );
@@ -87,9 +102,7 @@ describe('useApprovalOptionsEndpoint', () => {
 
     const { result } = renderHook(() => useApprovalOptionsEndpoint());
 
-    expect(result.current).toBe(
-      awxAPI`/workflow_job_template_nodes/15/create_approval_template/`
-    );
+    expect(result.current).toBe(awxAPI`/workflow_job_template_nodes/15/create_approval_template/`);
   });
 
   it('should use sourceNode when adding a linked step', () => {
@@ -100,9 +113,7 @@ describe('useApprovalOptionsEndpoint', () => {
 
     const { result } = renderHook(() => useApprovalOptionsEndpoint());
 
-    expect(result.current).toBe(
-      awxAPI`/workflow_job_template_nodes/33/create_approval_template/`
-    );
+    expect(result.current).toBe(awxAPI`/workflow_job_template_nodes/33/create_approval_template/`);
   });
 
   it('should fall back to an existing graph node when no approval template id is set', () => {
@@ -112,9 +123,7 @@ describe('useApprovalOptionsEndpoint', () => {
 
     const { result } = renderHook(() => useApprovalOptionsEndpoint());
 
-    expect(result.current).toBe(
-      awxAPI`/workflow_job_template_nodes/22/create_approval_template/`
-    );
+    expect(result.current).toBe(awxAPI`/workflow_job_template_nodes/22/create_approval_template/`);
   });
 
   it('should fall back to workflow template nodes when the graph has no saved nodes', () => {
@@ -125,9 +134,7 @@ describe('useApprovalOptionsEndpoint', () => {
     expect(mockUseGet).toHaveBeenCalledWith(
       awxAPI`/workflow_job_templates/42/workflow_nodes/?page_size=1`
     );
-    expect(result.current).toBe(
-      awxAPI`/workflow_job_template_nodes/99/create_approval_template/`
-    );
+    expect(result.current).toBe(awxAPI`/workflow_job_template_nodes/99/create_approval_template/`);
   });
 
   it('returns undefined when nodeType is not workflow_approval', () => {
@@ -164,16 +171,28 @@ describe('useApprovalOptionsEndpoint', () => {
 
     const { result } = renderHook(() => useApprovalOptionsEndpoint());
 
-    expect(result.current).toBe(
-      awxAPI`/workflow_job_template_nodes/15/create_approval_template/`
-    );
+    expect(result.current).toBe(awxAPI`/workflow_job_template_nodes/15/create_approval_template/`);
   });
 });
 
 describe('approvalOptionsToPageFormData', () => {
-  const getActions = {
-    GET: { name: { pattern: '^get$', pattern_description: 'from GET' } },
-    PUT: { name: { pattern: '^put$', pattern_description: 'from PUT' } },
+  const nameField: ActionsResponse = {
+    type: 'string',
+    required: true,
+    label: 'Name',
+    filterable: true,
+    pattern: '^get$',
+    pattern_description: 'from GET',
+  };
+  const getActions: OptionsResponse<ActionsResponse>['actions'] = {
+    GET: { name: nameField },
+    PUT: {
+      name: {
+        ...nameField,
+        pattern: '^put$',
+        pattern_description: 'from PUT',
+      },
+    },
   };
 
   it('maps GET onto POST only for create_approval_template', () => {
@@ -187,10 +206,14 @@ describe('approvalOptionsToPageFormData', () => {
   });
 
   it('passes through OPTIONS for workflow_approval_templates detail', () => {
-    const options = { name: 'approval template', description: '', actions: getActions };
-    expect(
-      approvalOptionsToPageFormData(awxAPI`/workflow_approval_templates/7/`, options)
-    ).toBe(options);
+    const options: OptionsResponse<ActionsResponse> = {
+      name: 'approval template',
+      description: '',
+      actions: getActions,
+    };
+    expect(approvalOptionsToPageFormData(awxAPI`/workflow_approval_templates/7/`, options)).toBe(
+      options
+    );
   });
 
   it('returns undefined when options response is undefined', () => {
