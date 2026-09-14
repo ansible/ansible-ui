@@ -1,37 +1,63 @@
+import { SwrTestWrapper } from '@ansible/ansible-ui-framework/test-utils/swrTestWrapper';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleAddWizard } from './ScheduleAddWizard';
+
+const mockRequestGet = vi.hoisted(() =>
+  vi.fn((url: string) => {
+    if (url.includes('/launch/')) {
+      return Promise.resolve({
+        ask_credential_on_launch: false,
+        survey_enabled: false,
+        defaults: { credentials: [], job_tags: '', skip_tags: '' },
+      });
+    }
+    if (url.includes('/job_templates/')) {
+      return Promise.resolve({ id: 100, name: 'Mock Job Template', type: 'job_template' });
+    }
+    return Promise.reject(new Error(`Unexpected requestGet: ${url}`));
+  })
+);
+
+vi.mock('@ansible/common-ui/crud/Data', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/common-ui/crud/Data')>();
+  return {
+    ...actual,
+    requestGet: (url: string, signal?: AbortSignal) => mockRequestGet(url, signal),
+  };
+});
 
 const zones = {
   zones: ['America/New_York', 'UTC'],
   links: {},
 };
 
-const server = setupServer(
-  http.options(awxAPI`/schedules/`, () =>
-    HttpResponse.json({
-      actions: {
-        POST: {
-          name: {
-            pattern: '^[a-zA-Z0-9_-]+$',
-            pattern_description: 'Valid schedule name',
-          },
+const schedulesOptionsHandler = vi.fn(() =>
+  HttpResponse.json({
+    actions: {
+      POST: {
+        name: {
+          pattern: '^[a-zA-Z0-9_-]+$',
+          pattern_description: 'Valid schedule name',
         },
       },
-    })
-  ),
+    },
+  })
+);
+
+const server = setupServer(
+  http.options(awxAPI`/schedules/`, schedulesOptionsHandler),
   http.options(awxAPI`/job_templates/`, () => HttpResponse.json({ actions: { POST: {} } })),
-  http.options(awxAPI`/job_templates/100/`, () => HttpResponse.json({ actions: { POST: {} } })),
-  http.get(awxAPI`/job_templates/100/`, () =>
+  http.options(awxAPI`/job_templates/:id/`, () => HttpResponse.json({ actions: { POST: {} } })),
+  http.get(awxAPI`/job_templates/:id/`, () =>
     HttpResponse.json({ id: 100, name: 'Mock Job Template', type: 'job_template' })
   ),
-  http.get(awxAPI`/job_templates/100/launch/`, () =>
+  http.get(awxAPI`/job_templates/:id/launch/`, () =>
     HttpResponse.json({
       ask_credential_on_launch: false,
       survey_enabled: false,
@@ -48,29 +74,37 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  schedulesOptionsHandler.mockClear();
+  mockRequestGet.mockClear();
+});
 afterAll(() => server.close());
 
 function renderAddWizard(props: { resourceEndPoint?: string; isTopLevelSchedule?: boolean } = {}) {
   render(
-    <MemoryRouter initialEntries={['/schedules/create']}>
-      <Routes>
-        <Route path="/schedules/create" element={<ScheduleAddWizard {...props} />} />
-      </Routes>
-    </MemoryRouter>
+    <SwrTestWrapper>
+      <MemoryRouter initialEntries={['/schedules/create']}>
+        <Routes>
+          <Route path="/schedules/create" element={<ScheduleAddWizard {...props} />} />
+        </Routes>
+      </MemoryRouter>
+    </SwrTestWrapper>
   );
 }
 
 function renderJobTemplateNestedAddWizard() {
   render(
-    <MemoryRouter initialEntries={['/templates/job-template/100/schedules/create']}>
-      <Routes>
-        <Route
-          path="/templates/job-template/:id/schedules/create"
-          element={<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />}
-        />
-      </Routes>
-    </MemoryRouter>
+    <SwrTestWrapper>
+      <MemoryRouter initialEntries={['/templates/job-template/100/schedules/create']}>
+        <Routes>
+          <Route
+            path="/templates/job-template/:id/schedules/create"
+            element={<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />}
+          />
+        </Routes>
+      </MemoryRouter>
+    </SwrTestWrapper>
   );
 }
 
@@ -86,27 +120,23 @@ describe('ScheduleAddWizard', () => {
     expect(screen.getByTestId('wizard-nav-item-rules')).toBeInTheDocument();
   });
 
-  // Nested create loads the job template before rendering details; allow extra time under CI load.
-  it(
-    'should apply schedule name pattern validation from OPTIONS metadata',
-    { timeout: 15_000 },
-    async () => {
-      const user = userEvent.setup();
-      renderJobTemplateNestedAddWizard();
+  it('should apply schedule name pattern validation from OPTIONS metadata', async () => {
+    renderJobTemplateNestedAddWizard();
 
-      const nameInput = await screen.findByRole(
-        'textbox',
-        { name: 'Schedule name' },
-        { timeout: 15_000 }
-      );
-      await user.type(nameInput, 'invalid@name');
-      await user.tab();
+    await waitFor(() => {
+      expect(schedulesOptionsHandler).toHaveBeenCalled();
+    });
+    await waitFor(() => {
+      expect(mockRequestGet).toHaveBeenCalled();
+    });
 
-      await waitFor(() => {
-        expect(screen.getByText('Valid schedule name')).toBeInTheDocument();
-      });
-    }
-  );
+    await waitFor(() => {
+      const nameInput = screen.getByRole('textbox', { name: 'Schedule name' });
+      fireEvent.change(nameInput, { target: { value: 'invalid@name' } });
+      fireEvent.blur(nameInput);
+      expect(screen.getByText('Valid schedule name')).toBeInTheDocument();
+    });
+  });
 
   it('should render wizard when resourceEndPoint targets job templates', async () => {
     renderAddWizard({ resourceEndPoint: awxAPI`/job_templates/` });
