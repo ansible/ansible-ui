@@ -1,3 +1,4 @@
+import { randomUUID } from '@ansible/ansible-ui-framework/utils/randomUUID';
 import { ChartData, ChartDataSerie } from '@ansible/react-json-chart-builder';
 import { ApiReturnType, ApiType, GroupedApi } from './types';
 
@@ -11,7 +12,7 @@ export const convertGroupedByData = (data: GroupedApi): ChartDataSerie[] => {
         items[idx] = {
           serie: [],
           hidden: false,
-          name: crypto.randomUUID(),
+          name: randomUUID(),
         };
       }
       items[idx].serie.push({
@@ -44,7 +45,7 @@ export const convertApiToData = (result: ApiReturnType): ChartData => {
         {
           serie: result.items || result.meta?.legend || [],
           hidden: false,
-          name: crypto.randomUUID(),
+          name: randomUUID(),
         },
       ];
       break;
