@@ -176,7 +176,6 @@ export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
           },
         ]}
       />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={authFields}>
         <PlatformPageForm
           submitText={

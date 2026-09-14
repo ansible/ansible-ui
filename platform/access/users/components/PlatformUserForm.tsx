@@ -139,7 +139,6 @@ export function CreatePlatformUser() {
           { label: t('Create user') },
         ]}
       />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={userFields}>
         <PageForm<IUserInput>
           submitText={t('Create user')}
@@ -367,7 +366,6 @@ export function EditPlatformUser() {
           },
         ]}
       />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={userFields}>
         <PageForm<IUserInput>
           submitText={t('Save user')}

@@ -97,7 +97,6 @@ export function CreateOAuthApplication() {
           { label: t('Create OAuth application') },
         ]}
       />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={appFields}>
         <AwxPageForm<Application>
           submitText={t('Create OAuth application')}
@@ -195,7 +194,6 @@ export function EditOAuthApplication() {
           },
         ]}
       />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={appFields}>
         <AwxPageForm<Application>
           submitText={t('Save OAuth application')}

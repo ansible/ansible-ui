@@ -164,7 +164,6 @@ export function ApiTokenForm() {
   return (
     <PageLayout>
       <PageHeader title={title} breadcrumbs={breadcrumbs} />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={tokenFields}>
         <PageForm<Token>
           submitText={submitText}

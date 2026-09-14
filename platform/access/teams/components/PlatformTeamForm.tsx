@@ -50,7 +50,6 @@ export function CreatePlatformTeam() {
           { label: t('Create team') },
         ]}
       />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={teamFields}>
         <PageForm
           submitText={t('Create team')}
@@ -97,7 +96,6 @@ export function EditPlatformTeam() {
           { label: team?.name ? t('Edit {{teamName}}', { teamName: team?.name }) : t('Teams') },
         ]}
       />
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       <PageFormFieldMetadataProvider fields={teamFields}>
         <PageForm
           submitText={t('Save team')}
