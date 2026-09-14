@@ -19,15 +19,9 @@ export function useDeleteAuthenticators(onComplete: (authenticators: Authenticat
     [t]
   );
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  // TODO: Update based on RBAC information from Authenticators API
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  /* v8 ignore next */
-  const cannotDeleteAuthenticator = (_authenticator: Authenticator) => {
-    // eslint-disable-next-line no-constant-condition
-    return true //authenticator?.summary_fields?.authenticator_capabilities?.delete
-      ? undefined
-      : t('The authentication cannot be deleted due to insufficient permissions.');
-  };
+  // TODO: Update based on RBAC information from Authenticators API.
+  // Placeholder always allows delete until capabilities are wired up.
+  const cannotDeleteAuthenticator = (_authenticator: Authenticator) => undefined;
   const bulkAction = useBulkConfirmation<Authenticator>();
   const deleteAuthenticators = (authenticators: Authenticator[]) => {
     const undeletableAuthenticators = authenticators.filter(cannotDeleteAuthenticator);
