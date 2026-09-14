@@ -99,7 +99,7 @@ describe('AwxPageForm', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('should prefer explicit optionsData over optionsUrl', async () => {
+  it('should prefer explicit optionsData over optionsUrl', () => {
     const onSubmit = vi.fn();
 
     render(
