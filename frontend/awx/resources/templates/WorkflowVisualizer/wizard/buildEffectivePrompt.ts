@@ -33,6 +33,7 @@ export function buildEffectivePrompt({
   isTemplateChange: boolean;
   effectivePrompt: Partial<PromptFormValues>;
 } {
+  const isNewNode = originalTemplateId === undefined;
   const isTemplateChange =
     originalTemplateId !== undefined && Number(newResourceId) !== originalTemplateId;
 
@@ -42,7 +43,11 @@ export function buildEffectivePrompt({
     effectivePrompt.organization = resourceOrganization;
   }
 
-  if (isTemplateChange) {
+  // New nodes and template switches must not send related resources unless the
+  // current template prompts for them. AWX rejects those associations with
+  // "Field is not configured to prompt on launch", which aborts save after the
+  // node already exists and leaves it as an unlinked root/parallel node.
+  if (isTemplateChange || isNewNode) {
     clearUnpromptedFields(effectivePrompt, launchConfig);
   }
 

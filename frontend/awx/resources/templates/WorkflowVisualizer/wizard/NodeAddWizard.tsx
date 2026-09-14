@@ -10,6 +10,7 @@ import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOu
 import { NODE_DIAMETER, RESOURCE_TYPE, START_NODE_ID } from '../constants';
 import { useCloseSidebar, useCreateEdge, useNodeTypeStepDefaults } from '../hooks';
 import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } from '../types';
+import { buildEffectivePrompt } from './buildEffectivePrompt';
 import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
@@ -130,18 +131,16 @@ export function NodeAddWizard() {
       prompt,
       survey,
     } = formValues;
-    const promptValues = prompt;
 
-    if (promptValues) {
-      if (resource && 'organization' in resource) {
-        promptValues.organization = resource.organization ?? null;
-      }
-      if (launch_config) {
-        promptValues.original = {
-          launch_config,
-        };
-      }
-    }
+    const { effectivePrompt } = buildEffectivePrompt({
+      originalTemplateId: undefined,
+      newResourceId: resourceId ?? (resource?.id ? Number(resource.id) : undefined),
+      prompt,
+      launchConfig: launch_config,
+      nodeOriginalResources: undefined,
+      resourceOrganization:
+        resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
+    });
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;
@@ -176,7 +175,7 @@ export function NodeAddWizard() {
             },
           },
         },
-        launch_data: promptValues,
+        launch_data: effectivePrompt,
         survey_data: survey,
       },
     };
@@ -188,7 +187,8 @@ export function NodeAddWizard() {
       model.edges?.push(rootEdge);
     }
 
-    if (state.sourceNode) {
+    const sourceNodeId = state.sourceNode?.getId();
+    if (state.sourceNode && sourceNodeId) {
       const status =
         node_status_type === EdgeStatus.info
           ? EdgeStatus.info
@@ -196,7 +196,7 @@ export function NodeAddWizard() {
             ? EdgeStatus.success
             : EdgeStatus.danger;
 
-      const newEdge = createEdge(state.sourceNode.getId(), nodeToCreate.id, status);
+      const newEdge = createEdge(sourceNodeId, nodeToCreate.id, status);
       state.sourceNode.setState({ modified: true });
       model.edges?.push(newEdge);
     }
@@ -213,6 +213,11 @@ export function NodeAddWizard() {
     model.nodes?.push(nodeToCreate);
     controller.fromModel(model, true);
     controller.getNodeById(nodeToCreate.id)?.setState({ modified: true });
+    // fromModel may replace element instances; re-mark the source so save
+    // associates the new sequential edge instead of leaving a root sibling.
+    if (sourceNodeId) {
+      controller.getNodeById(sourceNodeId)?.setState({ modified: true });
+    }
     controller.setState({ ...state, modified: true });
     closeSidebar();
     controller.getGraph().layout();

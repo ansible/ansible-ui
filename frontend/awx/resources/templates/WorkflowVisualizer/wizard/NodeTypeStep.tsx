@@ -243,8 +243,6 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       } else if (isTemplateChange) {
         // The user switched to a template that has no promptable fields. Clear the entire
         // previous prompt step state so stale values from the old template are not submitted.
-        // processCredentials, processLabels, and processInstanceGroups all check for non-empty
-        // arrays independently of ask_*_on_launch flags, so any leftover values would be sent.
         // On initial load (isTemplateChange=false) there is nothing stale to clear.
         setStepData((prev) => {
           if (!prev?.nodePromptsStep) return prev;
