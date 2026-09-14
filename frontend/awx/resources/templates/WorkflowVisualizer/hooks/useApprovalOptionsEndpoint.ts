@@ -69,8 +69,7 @@ export function useApprovalOptionsEndpoint(): string | undefined {
       : undefined
   );
 
-  const workflowNodeId =
-    workflowNodeIdFromGraph ?? workflowNodes?.results?.[0]?.id?.toString();
+  const workflowNodeId = workflowNodeIdFromGraph ?? workflowNodes?.results?.[0]?.id?.toString();
 
   return useMemo(() => {
     if (existingApprovalTemplateId) {
