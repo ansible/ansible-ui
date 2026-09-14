@@ -33,6 +33,15 @@ description: >
 - Fix lint + formatting: `npm run fix` (`npm run prettier:fix` for formatting only)
 - Instruction files: `CLAUDE.md` (symlink `AGENTS.md`)
 
+## MCP-assisted implementation
+
+Before implementing UI, consult `patternfly-mcp` for the official PF6 API and
+accessibility guidance, then search `framework/` and the relevant workspace for
+an existing wrapper. For workflow or browser changes, use `playwright` to
+inspect the running UI; use `chrome-devtools` for console, network, layout, and
+performance diagnosis. Do not invent component props when an MCP or official
+documentation lookup can answer the question.
+
 ## Wrappers (use these, not raw PatternFly)
 
 Global/shared components live in the `framework/` package — search there first

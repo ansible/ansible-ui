@@ -2,10 +2,20 @@
   "mcpServers": {
     "playwright": {
       "type": "stdio",
-      "command": "bash",
-      "args": [
-        "scripts/playwright-mcp-launcher.sh"
-      ],
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@0.0.80"],
+      "env": {}
+    },
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@1.9.0"],
+      "env": {}
+    },
+    "patternfly-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@patternfly/patternfly-mcp@2.3.0"],
       "env": {}
     }
   }

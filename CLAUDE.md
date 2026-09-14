@@ -15,12 +15,30 @@ Skills are advisory markdown. Do not load every skill at once.
 
 To add or change file-based skill triggers, edit `.claude/skill-triggers.json`. Keep this table in sync. This repository does not ship executable agent hooks; see [`AI_AGENT_POLICY.md`](AI_AGENT_POLICY.md).
 
-### MCP (when available)
+### MCP consultation workflow
 
-Never invent component props. Use source docs or MCP first.
+MCPs are part of the implementation workflow, not optional background tooling.
+Before implementing or changing frontend code, consult the relevant MCPs and use
+their results together with the repository wrappers and existing patterns.
 
-1. PatternFly docs / MCP — official PF6 props (when pinned in `.mcp.json`).
-2. Playwright MCP — browser. Do not start a second UI if port 4100 is already bound.
+1. **PatternFly MCP** — Before using a PatternFly component, variant, prop,
+   token, or accessibility pattern, search the official PF6 documentation. Do
+   not invent props or rely on memory. Prefer an existing wrapper in
+   `framework/` or the relevant product package when one exists.
+2. **Playwright MCP** — For UI behavior, workflows, or E2E changes, inspect the
+   running UI and validate the changed flow with accessible locators. Do not
+   start a second UI if port 4100 is already bound.
+3. **Chrome DevTools MCP** — For browser debugging, inspect console errors,
+   failed network requests, layout issues, and performance regressions in the
+   running UI. Use it alongside Playwright when the failure is browser-specific.
+
+Record which MCP documentation or browser evidence informed the implementation
+in the final handoff. If an MCP is unavailable, use the official documentation
+listed in `.claude/skills/library_references.md` and state that fallback.
+
+The MCP versions are pinned in `.mcp.json` for reproducible agent behavior.
+PatternFly MCP 2.x requires Node.js 22+; use a Node 22+ local runtime for MCP
+startup even though some CI jobs currently use Node 20.
 
 This repo has no Storybook. Do not use `@latest` for MCP packages.
 

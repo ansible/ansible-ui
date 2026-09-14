@@ -21,6 +21,24 @@ Before writing any code, read these skills in order:
 4. **`.claude/skills/library_references.md`** — Fetch llms.txt for any library
    you are about to use (React, Vitest, Vite, Zustand)
 
+## Step 1.5: Consult MCPs Before Implementation
+
+For any UI implementation, consult the MCPs configured in `.mcp.json` before
+choosing a component or validating behavior:
+
+- **PatternFly MCP**: search the official PF6 component, prop, variant, token,
+  and accessibility documentation. Never invent PatternFly props.
+- **Playwright MCP**: inspect the running UI when changing a user workflow,
+  selector, or E2E behavior. Prefer accessible locators and existing test
+  utilities.
+- **Chrome DevTools MCP**: inspect console errors, network failures, layout, or
+  performance when the browser behavior is unclear or regression-prone.
+
+Use the repository wrappers and existing components together with MCP results;
+MCP documentation does not replace searching `framework/` and the relevant
+workspace. If an MCP is unavailable, use the official fallback URLs in
+`library_references.md` and mention the fallback in the handoff.
+
 ---
 
 ## Step 2: Identify the Workspace
