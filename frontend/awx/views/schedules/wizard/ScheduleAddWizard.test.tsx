@@ -8,30 +8,6 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleAddWizard } from './ScheduleAddWizard';
 
-const mockRequestGet = vi.hoisted(() =>
-  vi.fn((url: string) => {
-    if (url.includes('/launch/')) {
-      return Promise.resolve({
-        ask_credential_on_launch: false,
-        survey_enabled: false,
-        defaults: { credentials: [], job_tags: '', skip_tags: '' },
-      });
-    }
-    if (url.includes('/job_templates/')) {
-      return Promise.resolve({ id: 100, name: 'Mock Job Template', type: 'job_template' });
-    }
-    return Promise.reject(new Error(`Unexpected requestGet: ${url}`));
-  })
-);
-
-vi.mock('@ansible/common-ui/crud/Data', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@ansible/common-ui/crud/Data')>();
-  return {
-    ...actual,
-    requestGet: (url: string, signal?: AbortSignal) => mockRequestGet(url, signal),
-  };
-});
-
 const zones = {
   zones: ['America/New_York', 'UTC'],
   links: {},
@@ -77,7 +53,6 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => {
   server.resetHandlers();
   schedulesOptionsHandler.mockClear();
-  mockRequestGet.mockClear();
 });
 afterAll(() => server.close());
 
@@ -126,14 +101,12 @@ describe('ScheduleAddWizard', () => {
     await waitFor(() => {
       expect(schedulesOptionsHandler).toHaveBeenCalled();
     });
-    await waitFor(() => {
-      expect(mockRequestGet).toHaveBeenCalled();
-    });
+
+    const nameInput = await screen.findByRole('textbox', { name: 'Schedule name' });
+    fireEvent.change(nameInput, { target: { value: 'invalid@name' } });
+    fireEvent.blur(nameInput);
 
     await waitFor(() => {
-      const nameInput = screen.getByRole('textbox', { name: 'Schedule name' });
-      fireEvent.change(nameInput, { target: { value: 'invalid@name' } });
-      fireEvent.blur(nameInput);
       expect(screen.getByText('Valid schedule name')).toBeInTheDocument();
     });
   });
