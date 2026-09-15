@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
+import { pruneSurveyByConditions } from '../../../../common/useSurveyConditions';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
@@ -48,14 +49,18 @@ function processSurvey(
   surveyConfig: Survey | null
 ): string {
   const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
-  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+
+  // Drop answers for fields whose conditions are not met, so conditionally-hidden
+  // fields (which still carry their seeded default) don't appear in the review.
+  const visibleSurvey = pruneSurveyByConditions(survey, surveyConfig?.spec, extraVarsObj);
+  const updatedSurvey: { [key: string]: string | string[] } = { ...visibleSurvey };
 
   if (surveyConfig?.spec) {
     const passwordFields = surveyConfig.spec
       .filter((q) => q.type === 'password')
       .map((q) => q.variable);
 
-    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
+    const maskedSurveyPasswords = maskPasswords(visibleSurvey, passwordFields);
     Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
       updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
     });
