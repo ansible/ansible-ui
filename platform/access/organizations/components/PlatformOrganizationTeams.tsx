@@ -1,39 +1,30 @@
 import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { Alert, ButtonVariant, PageSection } from '@patternfly/react-core';
 import { CubesIcon, PanelCloseIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { gatewayAPI } from '../../../utils/gateway-api-utils';
-
-import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
-import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
-import {
-  Alert,
-  AlertGroup,
-  ButtonVariant,
-  Content,
-  ContentVariants,
-  PageSection,
-} from '@patternfly/react-core';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useOrganizationTeamColumns } from '../../teams/hooks/useOrganizationTeamColumns';
 import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
 import {
   useOrganizationTeamsRowActions,
   useOrganizationTeamsToolbarActions,
 } from '../hooks/useOrganizationTeamsActions';
+import { useOrganizationTeamsWithRoles } from '../hooks/useOrganizationTeamsWithRoles';
 
 export function PlatformOrganizationTeams() {
   const { t } = useTranslation();
   const toolbarFilters = useTeamFilters();
-  const tableColumns = useTeamColumns();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const {
@@ -42,11 +33,8 @@ export function PlatformOrganizationTeams() {
     error,
   } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations`, params.id);
 
-  const view = usePlatformView<PlatformTeam>({
-    url: gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/teams/`,
-    toolbarFilters,
-    tableColumns,
-  });
+  const { view, rolesByTeamId } = useOrganizationTeamsWithRoles(organization?.id, toolbarFilters);
+  const tableColumns = useOrganizationTeamColumns(rolesByTeamId);
 
   const { data: createTeamOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
@@ -63,27 +51,19 @@ export function PlatformOrganizationTeams() {
   return (
     <>
       <PageSection>
-        {view.pageItems && view.pageItems.length > 0 && (
-          <AlertGroup>
-            <Alert
-              isInline
-              variant="info"
-              title={t(
-                `Below displays a list of teams within this organization whether or not they have been assigned organization roles.`
-              )}
-            >
-              <Content
-                component={ContentVariants.p}
-              >{t`To view and manage a team's organization roles click on the team's \"view and manage organization roles\" action.`}</Content>
-            </Alert>
-          </AlertGroup>
-        )}
+        <Alert
+          isInline
+          variant="info"
+          title={t(
+            'Below displays a list of teams with an assigned role within this organization.'
+          )}
+        />
       </PageSection>
       <PageTable<PlatformTeam>
         id="platform-organization-teams-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
-        tableColumns={tableColumns.slice(0, 1)}
+        tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
         emptyState={
