@@ -10,6 +10,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -28,6 +29,7 @@ import { MiscAdvancedRemoteInputs } from './components/MiscAdvancedRemoteInputs'
 import { ProxyAdvancedRemoteInputs } from './components/ProxyAdvancedRemoteInputs';
 import { RemoteInputs } from './components/RemoteInputs';
 import { RequirementsFile } from './components/RequirementsFile';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export type HiddenFieldsType = {
   name: 'client_key' | 'password' | 'proxy_password' | 'proxy_username' | 'token' | 'username';
@@ -50,6 +52,10 @@ export function CreateRemote() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubRemote>();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    pulpAPI`/remotes/ansible/collection/`
+  );
 
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
     const url: string = remote.url && appendTrailingSlash(remote.url);
@@ -94,6 +100,7 @@ export function CreateRemote() {
           sync_dependencies: false,
           sync_highest_versions: null,
         }}
+        optionsData={optionsData}
       >
         <HelperWrapper isNew />
       </HubPageForm>
@@ -173,6 +180,10 @@ export function EditRemote() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const { clearCacheByKey } = useClearCache();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    pulpAPI`/remotes/ansible/collection/`
+  );
 
   const name = params.id;
   const { data, error, refresh, isLoading } = useGet<PulpItemsResponse<HubRemote>>(
@@ -252,6 +263,7 @@ export function EditRemote() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={remoteDefaultValues}
+        optionsData={optionsData}
       >
         <HelperWrapper />
       </HubPageForm>
