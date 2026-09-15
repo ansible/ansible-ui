@@ -8,6 +8,7 @@ import { createE2EName } from '../commands/createE2EName';
 import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { getTableRow } from '../commands/getTableRow';
 import { navigateTo } from '../commands/navigateTo';
+import { waitForBulkActionDialog } from '../commands/waitForBulkActionDialog';
 
 export interface CreateHostInInventoryOptions {
   name?: string;
@@ -158,19 +159,20 @@ export const InventoryHost = {
       await expect(dialog.getByText('Permanently delete hosts')).toBeVisible();
       await dialog.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete hosts', exact: true }).click();
+      await waitForBulkActionDialog(page);
 
-      await expect(dialog.getByTestId('progress').getByText('Success')).toBeVisible({
-        timeout: 30000,
-      });
-      await expect(dialog).not.toBeVisible({ timeout: 30000 });
-
-      // Navigating here via the inventories list can leave a Name filter in the
-      // query string, so the hosts tab shows "No results found" instead of the
-      // true empty state until filters are cleared.
+      // Inventories list Name filters persist onto this tab. PF6 empty-filter
+      // title is not always a heading, so match visible text then clear filters.
+      await clearTableFilters(page);
       const emptyState = page.getByText('No hosts are assigned to this inventory.');
-      const noResults = page.getByRole('heading', { name: 'No results found' });
+      const noResults = page.getByText('No results found', { exact: true });
       await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
       await clearTableFilters(page);
+      if (!(await emptyState.isVisible().catch(() => false))) {
+        await page.getByRole('tab', { name: 'Details' }).click();
+        await page.getByRole('tab', { name: 'Hosts' }).click();
+        await clearTableFilters(page);
+      }
       await expect(emptyState).toBeVisible({ timeout: 15000 });
     },
   },
