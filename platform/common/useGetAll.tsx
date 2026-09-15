@@ -9,20 +9,27 @@ export interface IGetItemResponse<T> {
   results: T[];
 }
 
-export function useGetAll<T extends object>(url: string, page_size = 100) {
+export function useGetAll<T extends object>(
+  url: string | undefined,
+  page_size = 100,
+  order_by: string | null = 'name'
+) {
   const getRequest = useGetRequest<IGetItemResponse<T>>();
   const getKey = useCallback(
     (pageIndex: number, previousPageData: IGetItemResponse<T>) => {
+      if (!url) return null;
       if (previousPageData && !previousPageData.next) return null;
-      return `${url}?order_by=name&page=${pageIndex + 1}&page_size=${page_size}`;
+      const separator = url.includes('?') ? '&' : '?';
+      const orderBy = order_by ? `order_by=${order_by}&` : '';
+      return `${url}${separator}${orderBy}page=${pageIndex + 1}&page_size=${page_size}`;
     },
-    [page_size, url]
+    [order_by, page_size, url]
   );
 
   const { data, error, isLoading, mutate } = useSWRInfinite<IGetItemResponse<T>, Error>(
-    getKey,
+    url ? getKey : () => null,
     getRequest,
-    { initialSize: page_size }
+    { initialSize: url ? page_size : 0 }
   );
 
   const items = useMemo(() => {
