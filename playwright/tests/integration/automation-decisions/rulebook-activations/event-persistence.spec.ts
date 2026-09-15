@@ -124,9 +124,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('option', { name: decisionEnvironmentName }).click();
 
       // Disable the activation so create does not immediately provision workers/persistence
-      await page
-        .getByRole('switch', { name: /Rulebook activation enabled/i })
-        .click({ force: true });
+      const activationEnabledSwitch = page.getByRole('switch', {
+        name: /Rulebook activation enabled/i,
+      });
+      await expect(activationEnabledSwitch).toBeVisible();
+      await activationEnabledSwitch.click();
 
       // Enable event persistence
       const persistenceCheckbox = page.getByRole('checkbox', {
@@ -467,9 +469,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('option', { name: decisionEnvironmentName }).click();
 
       // Disable the activation before creating it so we can edit it later
-      await page
-        .getByRole('switch', { name: /Rulebook activation enabled/i })
-        .click({ force: true });
+      const activationEnabledSwitch = page.getByRole('switch', {
+        name: /Rulebook activation enabled/i,
+      });
+      await expect(activationEnabledSwitch).toBeVisible();
+      await activationEnabledSwitch.click();
 
       // Enable persistence and select a credential
       const persistenceCheckbox = page.getByRole('checkbox', {
