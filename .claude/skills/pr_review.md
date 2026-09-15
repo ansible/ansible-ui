@@ -58,6 +58,13 @@ Check whether the changes follow:
 - Components in correct package (platform vs framework)
 - No over-engineering (avoid premature abstractions, unnecessary error handling)
 
+### Internationalization Safety Check
+
+- Translate static UI copy, but render dynamic or user-provided strings directly.
+- Do not pass API values such as names, labels, descriptions, or survey question text to `t()`; punctuation such as `:` can be interpreted as an i18next namespace separator.
+- Do not use translated strings for logic or comparisons; use raw API values, IDs, enums, or routes.
+- When removing translation from a dynamic value, keep nearby static UI text translated and add a regression test for punctuation-sensitive input.
+
 ---
 
 ## 3. Detect Re-invented Patterns
