@@ -21,30 +21,15 @@ export function useDeleteAuthenticators(onComplete: (authenticators: Authenticat
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Authenticators API.
   // Placeholder always allows delete until capabilities are wired up.
-  const cannotDeleteAuthenticator = (_authenticator: Authenticator) => undefined;
   const bulkAction = useBulkConfirmation<Authenticator>();
   const deleteAuthenticators = (authenticators: Authenticator[]) => {
-    const undeletableAuthenticators = authenticators.filter(cannotDeleteAuthenticator);
-
     bulkAction({
       title: t('Permanently delete authentications', { count: authenticators.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} authentications.', {
-        count: authenticators.length - undeletableAuthenticators.length,
+        count: authenticators.length,
       }),
       actionButtonText: t('Delete authentications', { count: authenticators.length }),
       items: authenticators.sort((l, r) => compareStrings(l.name, r.name)),
-      alertPrompts:
-        undeletableAuthenticators.length > 0
-          ? [
-              t(
-                '{{count}} of the selected authentications cannot be deleted due to insufficient permissions.',
-                {
-                  count: undeletableAuthenticators.length,
-                }
-              ),
-            ]
-          : undefined,
-      isItemNonActionable: cannotDeleteAuthenticator,
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,
