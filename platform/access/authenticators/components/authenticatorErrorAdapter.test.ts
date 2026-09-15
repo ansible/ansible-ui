@@ -119,6 +119,39 @@ describe('authenticatorErrorAdapter', () => {
     });
   });
 
+  test('should handle configuration errors nested under a top-level "configuration" key', () => {
+    const mockError = new RequestError(
+      'Bad Request',
+      undefined,
+      400,
+      {
+        name: ['Enter a valid name.'],
+        configuration: {
+          KEY: ["This field can't include shell or template syntax."],
+        },
+      },
+      {
+        name: ['Enter a valid name.'],
+        configuration: {
+          KEY: ["This field can't include shell or template syntax."],
+        },
+      }
+    );
+
+    const result = authenticatorErrorAdapter(mockError, [...mockConfigurationFields, 'KEY']);
+
+    expect(result).toEqual({
+      genericErrors: [],
+      fieldErrors: [
+        { name: 'name', message: 'Enter a valid name.' },
+        {
+          name: 'configuration.KEY',
+          message: "This field can't include shell or template syntax.",
+        },
+      ],
+    });
+  });
+
   test('should handle RequestError with object-style non-configuration errors', () => {
     const mockError = new RequestError(
       'Bad Request',
