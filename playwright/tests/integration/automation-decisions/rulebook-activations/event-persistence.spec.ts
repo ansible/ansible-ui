@@ -38,7 +38,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
 
     const credential = await EdaCredential.api.create(page, {
       name: createE2EName('credential'),
-      organizationName,
+      organizationId: edaOrganization.id,
       credentialTypeName: 'Red Hat Ansible Automation Platform',
       inputs: {
         host: 'https://1.1.1.1/',
@@ -55,7 +55,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
 
     const ruleEngineCredential = await EdaCredential.api.create(page, {
       name: createE2EName('rule-engine-credential'),
-      organizationName,
+      organizationId: edaOrganization.id,
       credentialTypeName: 'Event-Driven Ansible Rule Engine',
       inputs: {
         postgres_db_host: 'localhost',
@@ -123,6 +123,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await decisionEnvSearch.fill(decisionEnvironmentName);
       await page.getByRole('option', { name: decisionEnvironmentName }).click();
 
+      // Disable the activation so create does not immediately provision workers/persistence
+      await page
+        .getByRole('switch', { name: /Rulebook activation enabled/i })
+        .click({ force: true });
+
       // Enable event persistence
       const persistenceCheckbox = page.getByRole('checkbox', {
         name: /Enable event persistence/i,
@@ -143,7 +148,13 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('option', { name: ruleEngineCredentialName }).click();
 
       // Create the activation
+      const createResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/activations/') && response.request().method() === 'POST'
+      );
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
+      const createResponse = await createResponsePromise;
+      expect(createResponse.ok()).toBeTruthy();
 
       // Verify details page shows persistence enabled
       await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({

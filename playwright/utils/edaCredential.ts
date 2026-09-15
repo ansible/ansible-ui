@@ -17,6 +17,7 @@ export interface CreateEdaCredentialOptions {
 export interface CreateEdaCredentialAPIOptions {
   name: string;
   organizationName?: string;
+  organizationId?: number;
   credentialTypeName: string;
   description?: string;
   inputs?: Record<string, unknown>;
@@ -28,15 +29,18 @@ export const EdaCredential = {
       page: Page,
       options: CreateEdaCredentialAPIOptions
     ): Promise<EdaCredentialInterface> => {
-      const organizationName = options.organizationName ?? 'Default';
-      const organizations = await edaAPI.get<{ results: { id: number; name: string }[] }>(
-        page,
-        `organizations/?name=${encodeURIComponent(organizationName)}`
-      );
-      if (!organizations?.results || organizations.results.length === 0) {
-        throw new Error(`Organization '${organizationName}' not found`);
+      let organizationId = options.organizationId;
+      if (!organizationId) {
+        const organizationName = options.organizationName ?? 'Default';
+        const organizations = await edaAPI.get<{ results: { id: number; name: string }[] }>(
+          page,
+          `organizations/?name=${encodeURIComponent(organizationName)}`
+        );
+        if (!organizations?.results || organizations.results.length === 0) {
+          throw new Error(`Organization '${organizationName}' not found`);
+        }
+        organizationId = organizations.results[0].id;
       }
-      const organizationId = organizations.results[0].id;
 
       const credentialTypes = await edaAPI.get<{ results: { id: number; name: string }[] }>(
         page,
