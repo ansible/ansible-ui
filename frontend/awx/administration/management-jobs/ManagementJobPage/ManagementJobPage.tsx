@@ -2,16 +2,14 @@
 import { PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
-import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { Organization } from '../../../interfaces/Organization';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useCanViewNotificationsTab } from '../../../resources/notifications/hooks/useCanViewNotificationsTab';
 
 export function ManagementJobPage() {
   const { t } = useTranslation();
@@ -23,25 +21,22 @@ export function ManagementJobPage() {
   } = useGetItem<SystemJobTemplate>(awxAPI`/system_job_templates`, params.id);
 
   const getPageUrl = useGetPageUrl();
-  const { activeAwxUser } = useAwxActiveUser();
-
   const {
-    data: isNotifAdmin,
-    error: isNotifAdminError,
-    refresh: refreshNotifAdmin,
-  } = useGet<AwxItemsResponse<Organization>>(
-    awxAPI`/organizations/?role_level=notification_admin_role&count_disabled=1`
-  );
+    canViewNotificationsTab,
+    error: notificationsTabError,
+    refresh: refreshNotificationsTab,
+    isLoading: isNotificationsTabLoading,
+  } = useCanViewNotificationsTab();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (isNotifAdminError)
-    return <AwxError error={isNotifAdminError} handleRefresh={refreshNotifAdmin} />;
+  if (notificationsTabError)
+    return <AwxError error={notificationsTabError} handleRefresh={refreshNotificationsTab} />;
 
-  if (!(systemJobTemplate && isNotifAdmin)) return <LoadingPage breadcrumbs tabs />;
+  if (!systemJobTemplate || isNotificationsTabLoading) return <LoadingPage breadcrumbs tabs />;
 
   const tabs = [{ label: t('Schedules'), page: AwxRoute.ManagementJobSchedules }];
 
-  if (activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+  if (canViewNotificationsTab) {
     tabs.push({ label: t('Notifications'), page: AwxRoute.ManagementJobNotifications });
   }
 
