@@ -4,10 +4,19 @@ import {
   PageActionType,
   useGetPageUrl,
   usePageAlertToaster,
+  usePageDialog,
 } from '@ansible/ansible-ui-framework';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import {
+  AlertProps,
+  Button,
+  ButtonVariant,
+  Modal,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import {
   MinusCircleIcon,
   PlusCircleIcon,
@@ -37,6 +46,40 @@ import {
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 
+interface ClearAllLogsConfirmationDialogProps {
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+function ClearAllLogsConfirmationDialog(props: Readonly<ClearAllLogsConfirmationDialogProps>) {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      aria-label={t('Clear all logs')}
+      isOpen
+      onClose={props.onClose}
+      variant={ModalVariant.small}
+    >
+      <ModalHeader
+        title={t('Clear all logs')}
+        titleIconVariant="warning"
+        description={t(
+          'Are you sure you want to clear ALL activation logs? This action is irreversible.'
+        )}
+      />
+      <ModalFooter>
+        <Button variant="danger" onClick={props.onConfirm}>
+          {t('Clear all logs')}
+        </Button>
+        <Button variant="link" onClick={props.onClose}>
+          {t('Cancel')}
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+}
+
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const deleteActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
@@ -60,11 +103,9 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   );
   const getPageUrl = useGetPageUrl();
   const { activeEdaUser } = useEdaActiveUser();
+  const [_, setDialog] = usePageDialog();
 
   const clearAllLogs = useCallback(async () => {
-    if (!confirm(t('Are you sure you want to clear ALL activation logs? This action is irreversible.'))) {
-      return;
-    }
     try {
       const result = await postRequest<{ deleted: number }>(edaAPI`/logs/purge/`, {});
       alertToaster.addAlert({
@@ -82,6 +123,20 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
       });
     }
   }, [alertToaster, parseError, t]);
+
+  const confirmClearAllLogs = useCallback(() => {
+    const closeDialog = () => setDialog(undefined);
+    setDialog(
+      <ClearAllLogsConfirmationDialog
+        onClose={closeDialog}
+        onConfirm={() => {
+          closeDialog();
+          void clearAllLogs();
+        }}
+      />
+    );
+  }, [clearAllLogs, setDialog]);
+
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
     useCallback(
       async (activation) => {
@@ -205,7 +260,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
               selection: PageActionSelection.None as const,
               icon: TimesCircleIcon,
               label: t('Clear all logs'),
-              onClick: () => clearAllLogs(),
+              onClick: confirmClearAllLogs,
               isDanger: true,
             },
           ]
@@ -228,7 +283,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     disableRulebookActivations,
     restartRulebookActivations,
     deleteRulebookActivations,
-    clearAllLogs,
+    confirmClearAllLogs,
     activeEdaUser?.is_superuser,
     getPageUrl,
   ]);

@@ -1,15 +1,18 @@
 import {
+  IPageActionButton,
   IPageActionButtonMultiple,
   IPageActionLink,
   PageActionType,
 } from '@ansible/ansible-ui-framework';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { BrowserRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
 import { FrameworkTranslationsProvider } from '../../../../framework/useFrameworkTranslations';
+import { EdaActiveUserContext } from '../../common/useEdaActiveUser';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
@@ -24,6 +27,24 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     usePageAlertToaster: () => ({
       addAlert: mockAddAlert,
     }),
+  };
+});
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({
+      children,
+      'aria-label': ariaLabel,
+    }: {
+      children: React.ReactNode;
+      'aria-label': string;
+    }) => (
+      <div role="dialog" aria-label={ariaLabel}>
+        {children}
+      </div>
+    ),
   };
 });
 
@@ -56,6 +77,15 @@ const mockDisableActivationsWithWarning = vi.fn();
 const mockDeleteRulebookActivations = vi.fn();
 const mockDeleteActivationsWithWarning = vi.fn();
 
+const mockActiveUser = {
+  id: 1,
+  username: 'admin',
+  is_superuser: true,
+  resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+  created_at: '2024-01-01T00:00:00Z',
+  modified_at: '2024-01-01T00:00:00Z',
+};
+
 vi.mock('./useControlRulebookActivations', () => ({
   useEnableRulebookActivationsWithWarning: () => mockEnableActivationsWithWarning,
   useRestartRulebookActivations: () => mockRestartActivations,
@@ -79,7 +109,11 @@ describe('useRulebookActivationsActions', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <BrowserRouter>
       <PageDialogProvider>
-        <FrameworkTranslationsProvider>{children}</FrameworkTranslationsProvider>
+        <FrameworkTranslationsProvider>
+          <EdaActiveUserContext.Provider value={{ activeEdaUser: mockActiveUser }}>
+            {children}
+          </EdaActiveUserContext.Provider>
+        </FrameworkTranslationsProvider>
       </PageDialogProvider>
     </BrowserRouter>
   );
@@ -129,6 +163,41 @@ describe('useRulebookActivationsActions', () => {
       deleteAction.onClick(activations);
     });
     expect(mockDeleteRulebookActivations).toHaveBeenCalledWith(activations);
+  });
+
+  it('should confirm before clearing all logs', async () => {
+    const user = userEvent.setup();
+    const purgeLogs = vi.fn(() => HttpResponse.json({ deleted: 2 }));
+    server.use(http.post('*/logs/purge/', purgeLogs));
+
+    const { result } = renderHook(() => useRulebookActivationsActions(mockView), { wrapper });
+    const clearAllLogsAction = result.current.find(
+      (action) => action.type === PageActionType.Button && action.label === 'Clear all logs'
+    ) as IPageActionButton;
+
+    act(() => {
+      clearAllLogsAction.onClick();
+    });
+
+    const dialog = await screen.findByRole('dialog', { name: 'Clear all logs' });
+    expect(
+      within(dialog).getByText(
+        'Are you sure you want to clear ALL activation logs? This action is irreversible.'
+      )
+    ).toBeInTheDocument();
+    expect(purgeLogs).not.toHaveBeenCalled();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Clear all logs' }));
+
+    await waitFor(() => {
+      expect(purgeLogs).toHaveBeenCalledOnce();
+      expect(mockAddAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'success',
+          title: 'Cleared 2 log records.',
+        })
+      );
+    });
   });
 
   it('should handle enable rulebook activations without warning', async () => {

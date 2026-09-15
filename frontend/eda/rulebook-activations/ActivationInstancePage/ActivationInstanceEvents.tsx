@@ -39,12 +39,15 @@ interface IActivationInstanceEventsProps {
   isRunning: boolean;
 }
 
-export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) {
+export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEventsProps>) {
   const [logs, setLogs] = useState<EdaActivationInstanceLog[]>([]);
   const [hasOlderLogs, setHasOlderLogs] = useState(false);
+  const [isLoadingOlder, setIsLoadingOlder] = useState(false);
   const latestTimestampRef = useRef<number>(0);
+  const oldestTimestampRef = useRef<number>(0);
 
   const params = useParams<{ instanceId: string }>();
+  const instanceId = params.instanceId ?? '';
   const { toolbarFilters, filterState, isFollowModeEnabled, setIsFollowModeEnabled, isRunning } =
     props;
 
@@ -53,40 +56,115 @@ export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) 
   }, [toolbarFilters, filterState]);
 
   useEffect(() => {
+    let isCurrent = true;
+
     async function initialLoad() {
-      const filterString = buildFilterString();
-      const qsParts = [`page_size=${INITIAL_PAGE_SIZE}`, 'ordering=-id'];
-      if (filterString) {
-        qsParts.push(filterString);
-      }
-      const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-        edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
-          `?${qsParts.join('&')}`
-        )
-      );
+      latestTimestampRef.current = 0;
+      oldestTimestampRef.current = 0;
 
-      const results = [...(response.results ?? [])].reverse();
-      setLogs(results);
-      setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
+      try {
+        const filterString = buildFilterString();
+        const countQsParts = ['page_size=1'];
+        if (filterString) {
+          countQsParts.push(filterString);
+        }
+        const countResponse = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${countQsParts.join('&')}`)
+        );
+        const count = countResponse.count ?? 0;
 
-      if (results.length > 0) {
-        const lastLog = results[results.length - 1];
-        latestTimestampRef.current = lastLog.log_timestamp ?? 0;
+        if (!isCurrent) return;
+
+        if (count === 0) {
+          setLogs([]);
+          setHasOlderLogs(false);
+          return;
+        }
+
+        const lastPage = Math.ceil(count / INITIAL_PAGE_SIZE);
+        const pageQsParts = [`page=${lastPage}`, `page_size=${INITIAL_PAGE_SIZE}`];
+        if (filterString) {
+          pageQsParts.push(filterString);
+        }
+        const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${pageQsParts.join('&')}`)
+        );
+
+        if (!isCurrent) return;
+
+        const results = response.results ?? [];
+        setLogs(results);
+        setHasOlderLogs(count > INITIAL_PAGE_SIZE);
+
+        if (results.length > 0) {
+          latestTimestampRef.current = results[results.length - 1].log_timestamp ?? 0;
+          oldestTimestampRef.current = results[0].log_timestamp ?? 0;
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to load logs:', error);
       }
     }
 
     void initialLoad();
-  }, [params.instanceId, buildFilterString]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [instanceId, buildFilterString]);
 
   useEffect(() => {
     if (!isRunning && !isFollowModeEnabled) return;
 
-    const interval = setInterval(async () => {
+    async function pollLogs() {
       if (latestTimestampRef.current === 0) return;
 
+      try {
+        const filterString = buildFilterString();
+        const qsParts = [
+          `log_timestamp__gt=${latestTimestampRef.current}`,
+          `page_size=${INITIAL_PAGE_SIZE}`,
+        ];
+        if (filterString) {
+          qsParts.push(filterString);
+        }
+
+        const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${qsParts.join('&')}`)
+        );
+
+        const newLogs = response.results ?? [];
+        if (newLogs.length > 0) {
+          setLogs((previousLogs) => {
+            const seen = new Set(previousLogs.map((log) => log.id));
+            const dedupedLogs = newLogs.filter((log) => !seen.has(log.id));
+            return [...previousLogs, ...dedupedLogs];
+          });
+          latestTimestampRef.current =
+            newLogs[newLogs.length - 1].log_timestamp ?? latestTimestampRef.current;
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to poll logs:', error);
+      }
+    }
+
+    const interval = setInterval(() => {
+      void pollLogs();
+    }, POLL_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [instanceId, isRunning, isFollowModeEnabled, buildFilterString]);
+
+  const loadOlderLogs = useCallback(async () => {
+    if (!hasOlderLogs || isLoadingOlder) return;
+    if (oldestTimestampRef.current === 0) return;
+
+    setIsLoadingOlder(true);
+    try {
       const filterString = buildFilterString();
       const qsParts = [
-        `log_timestamp__gt=${latestTimestampRef.current}`,
+        `log_timestamp__lt=${oldestTimestampRef.current}`,
         `page_size=${INITIAL_PAGE_SIZE}`,
       ];
       if (filterString) {
@@ -94,64 +172,48 @@ export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) 
       }
 
       const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-        edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
-          `?${qsParts.join('&')}`
-        )
+        edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${qsParts.join('&')}`)
       );
 
-      const newLogs = response.results ?? [];
-      if (newLogs.length > 0) {
-        setLogs((prev) => [...prev, ...newLogs]);
-        const lastLog = newLogs[newLogs.length - 1];
-        latestTimestampRef.current = lastLog.log_timestamp ?? latestTimestampRef.current;
+      const olderLogs = response.results ?? [];
+      if (olderLogs.length > 0) {
+        setLogs((previousLogs) => {
+          const seen = new Set(previousLogs.map((log) => log.id));
+          const dedupedLogs = olderLogs.filter((log) => !seen.has(log.id));
+          return [...dedupedLogs, ...previousLogs];
+        });
+        oldestTimestampRef.current = olderLogs[0].log_timestamp ?? oldestTimestampRef.current;
       }
-    }, POLL_INTERVAL_MS);
-
-    return () => clearInterval(interval);
-  }, [params.instanceId, isRunning, isFollowModeEnabled, buildFilterString]);
-
-  const loadOlderLogs = useCallback(async () => {
-    if (logs.length === 0 || !hasOlderLogs) return;
-
-    const oldestTimestamp = logs[0].log_timestamp ?? 0;
-    const filterString = buildFilterString();
-    const qsParts = [
-      `log_timestamp__lt=${oldestTimestamp}`,
-      `page_size=${INITIAL_PAGE_SIZE}`,
-      'ordering=-id',
-    ];
-    if (filterString) {
-      qsParts.push(filterString);
+      setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load older logs:', error);
+    } finally {
+      setIsLoadingOlder(false);
     }
-
-    const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-      edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
-        `?${qsParts.join('&')}`
-      )
-    );
-
-    const olderLogs = [...(response.results ?? [])].reverse();
-    if (olderLogs.length > 0) {
-      setLogs((prev) => [...olderLogs, ...prev]);
-    }
-    setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
-  }, [logs, hasOlderLogs, params.instanceId, buildFilterString]);
+  }, [instanceId, hasOlderLogs, isLoadingOlder, buildFilterString]);
 
   const estimatedMaxLines = (logs.length ?? 0) * 10;
   const outputLineChars = String(estimatedMaxLines).length;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { handleScroll, scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } =
-    useScrollControls(containerRef, isFollowModeEnabled, setIsFollowModeEnabled, logs.length, isRunning);
+    useScrollControls(
+      containerRef,
+      isFollowModeEnabled,
+      setIsFollowModeEnabled,
+      logs.length,
+      isRunning
+    );
 
   const onScroll = useCallback(
     (el: HTMLElement) => {
       handleScroll(el);
-      if (el.scrollTop === 0 && hasOlderLogs) {
+      if (el.scrollTop === 0 && hasOlderLogs && !isLoadingOlder) {
         void loadOlderLogs();
       }
     },
-    [handleScroll, hasOlderLogs, loadOlderLogs]
+    [handleScroll, hasOlderLogs, isLoadingOlder, loadOlderLogs]
   );
 
   const { beforeRowsHeight, visibleItems, afterRowsHeight, setRowHeight } =
@@ -177,7 +239,7 @@ export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) 
             {visibleItems?.map((row) => (
               <ActivationInstanceOutputRow
                 key={row.id}
-                index={logs.findIndex((r) => r.id === row.id)}
+                index={logs.findIndex((log) => log.id === row.id)}
                 row={row}
                 setHeight={setRowHeight}
               />
