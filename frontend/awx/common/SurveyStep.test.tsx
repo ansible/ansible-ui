@@ -92,6 +92,78 @@ const testSurveys = {
         new_question: false,
         choices: [],
       },
+      {
+        question_name: 'Minimum: quantity',
+        question_description: '',
+        required: false,
+        type: 'integer',
+        variable: 'minimum_quantity',
+        min: 0,
+        max: 10,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Rate: percentage',
+        question_description: '',
+        required: false,
+        type: 'float',
+        variable: 'rate_percentage',
+        min: 0,
+        max: 100,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Password: token',
+        question_description: '',
+        required: false,
+        type: 'password',
+        variable: 'password_token',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Notes: details',
+        question_description: '',
+        required: false,
+        type: 'textarea',
+        variable: 'notes_details',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Environment: type',
+        question_description: '',
+        required: false,
+        type: 'multiplechoice',
+        variable: 'environment_type',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: ['development'],
+      },
+      {
+        question_name: 'Markets: selected',
+        question_description: '',
+        required: false,
+        type: 'multiselect',
+        variable: 'markets_selected',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: ['North America'],
+      },
     ],
   },
   empty: {
@@ -184,7 +256,7 @@ describe('SurveyStep', () => {
     });
   });
 
-  test('renders a survey question name containing a colon', async () => {
+  test('renders survey question names containing colons for every field type', async () => {
     const { t } = vi.mocked(useTranslation)();
     const mockedT = t as unknown as Mock;
     const translationCallCount = mockedT.mock.calls.length;
@@ -193,6 +265,12 @@ describe('SurveyStep', () => {
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: 'Markets:' })).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: 'Markets: US' })).toBeInTheDocument();
+      expect(screen.getByRole('spinbutton', { name: 'Minimum: quantity' })).toBeInTheDocument();
+      expect(screen.getByRole('spinbutton', { name: 'Rate: percentage' })).toBeInTheDocument();
+      expect(screen.getByText('Password: token')).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: 'Notes: details' })).toBeInTheDocument();
+      expect(screen.getByText('Environment: type')).toBeInTheDocument();
+      expect(screen.getByText('Markets: selected')).toBeInTheDocument();
     });
     const newTranslationCalls = mockedT.mock.calls.slice(translationCallCount);
     expect(newTranslationCalls).not.toContainEqual(['Markets:']);
