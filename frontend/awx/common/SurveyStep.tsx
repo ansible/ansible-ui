@@ -1,15 +1,22 @@
 import { PageFormSelect, PageFormTextArea, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormFieldMetadataProvider } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useEffect } from 'react';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { Spec, Survey } from '../interfaces/Survey';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
 import { awxAPI } from './api/awx-utils';
+import {
+  SURVEY_LAUNCH_TEXT_OPTIONS_FIELD,
+  extractSurveySpecOptionsFields,
+} from './surveySpecOptions';
 
 function getJobType(resource: WizardFormValues['resource']) {
   if (!resource) return;
@@ -52,8 +59,13 @@ export function SurveyStep({
 
   jobType = jobType ?? getJobType(resource);
 
-  const { data: survey_spec } = useGet<Survey>(
-    awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`
+  const surveySpecUrl = awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`;
+
+  const { data: survey_spec } = useGet<Survey>(surveySpecUrl);
+  const { data: surveySpecOptions } = useOptions<OptionsResponse<ActionsResponse>>(surveySpecUrl);
+  const surveyFieldMetadata = useMemo(
+    () => extractSurveySpecOptionsFields(surveySpecOptions),
+    [surveySpecOptions]
   );
 
   useEffect(() => {
@@ -108,20 +120,22 @@ export function SurveyStep({
   };
 
   return (
-    <PageFormSection singleColumn={singleColumn}>
-      {survey_spec?.spec.map((element, index) =>
-        element.type === 'text' ? (
-          <PageFormTextInput
-            key={index}
-            name={`survey.${element.variable}`}
-            label={element.question_name}
-            labelHelp={element.question_description}
-            labelHelpTitle=""
-            isRequired={element.required}
-            type="text"
-            maxLength={element.max}
-            minLength={element.min}
-          />
+    <PageFormFieldMetadataProvider fields={surveyFieldMetadata}>
+      <PageFormSection singleColumn={singleColumn}>
+        {survey_spec?.spec.map((element, index) =>
+          element.type === 'text' ? (
+            <PageFormTextInput
+              key={index}
+              name={`survey.${element.variable}`}
+              optionsFieldName={SURVEY_LAUNCH_TEXT_OPTIONS_FIELD}
+              label={element.question_name}
+              labelHelp={element.question_description}
+              labelHelpTitle=""
+              isRequired={element.required}
+              type="text"
+              maxLength={element.max}
+              minLength={element.min}
+            />
         ) : element.type === 'integer' ? (
           <PageFormTextInput
             key={index}
@@ -158,17 +172,18 @@ export function SurveyStep({
             maxLength={element.max}
             minLength={element.min}
           />
-        ) : element.type === 'textarea' ? (
-          <PageFormTextArea
-            key={index}
-            name={`survey.${element.variable}`}
-            label={element.question_name}
-            labelHelp={element.question_description}
-            labelHelpTitle=""
-            isRequired={element.required}
-            maxLength={element.max}
-            minLength={element.min}
-          ></PageFormTextArea>
+          ) : element.type === 'textarea' ? (
+            <PageFormTextArea
+              key={index}
+              name={`survey.${element.variable}`}
+              optionsFieldName={SURVEY_LAUNCH_TEXT_OPTIONS_FIELD}
+              label={element.question_name}
+              labelHelp={element.question_description}
+              labelHelpTitle=""
+              isRequired={element.required}
+              maxLength={element.max}
+              minLength={element.min}
+            ></PageFormTextArea>
         ) : element.type === 'multiplechoice' ? (
           <PageFormSelect
             key={index}
@@ -191,8 +206,9 @@ export function SurveyStep({
             options={getChoices(element.question_name)}
             isRequired={element.required}
           />
-        ) : undefined
-      )}
-    </PageFormSection>
+          ) : undefined
+        )}
+      </PageFormSection>
+    </PageFormFieldMetadataProvider>
   );
 }
