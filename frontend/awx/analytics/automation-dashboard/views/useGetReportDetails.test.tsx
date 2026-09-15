@@ -21,8 +21,6 @@ const dashboardDetailsFixture: IDashboardDetails = {
   total_time_saving: 20,
   total_number_of_host_job_runs: 15,
   total_number_of_job_runs: 12,
-  top_projects: [{ id: 1, name: 'Project 1', execution_count: 5 }],
-  top_users: [{ id: 1, name: 'User 1', execution_count: 3 }],
   job_chart: { kind: 'day', items: [{ label: 'Mon', value: 3 }] },
   host_chart: { kind: 'day', items: [{ label: 'Mon', value: 2 }] },
 };
