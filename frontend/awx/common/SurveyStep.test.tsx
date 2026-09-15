@@ -6,7 +6,7 @@ import type { SetupServer } from 'msw/node';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi, type Mock } from 'vitest';
 import { Survey } from '../interfaces/Survey';
 import { SurveyStep } from './SurveyStep';
 import { awxAPI } from './api/awx-utils';
@@ -186,14 +186,15 @@ describe('SurveyStep', () => {
 
   test('renders a survey question name containing a colon', async () => {
     const { t } = vi.mocked(useTranslation)();
-    const translationCallCount = t.mock.calls.length;
+    const mockedT = t as unknown as Mock;
+    const translationCallCount = mockedT.mock.calls.length;
     renderSurveyStep(server, '999', testSurveys.withColonInQuestionName);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: 'Markets:' })).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: 'Markets: US' })).toBeInTheDocument();
     });
-    const newTranslationCalls = t.mock.calls.slice(translationCallCount);
+    const newTranslationCalls = mockedT.mock.calls.slice(translationCallCount);
     expect(newTranslationCalls).not.toContainEqual(['Markets:']);
     expect(newTranslationCalls).not.toContainEqual(['Markets: US']);
   });
