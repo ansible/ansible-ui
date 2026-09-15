@@ -1,4 +1,6 @@
+import { useContext, useMemo } from 'react';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { PageDashboardContext } from '@ansible/ansible-ui-framework';
 import { DashboardGridRow, DashboardLayout } from './components/DashboardLayout';
 import { AutomationAtAGlance } from './components/leaderboards/AutomationAtAGlance';
 import { AutomationDimensions } from './components/leaderboards/AutomationDimensions';
@@ -10,11 +12,29 @@ import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/Empty
 import { useTranslation } from 'react-i18next';
 import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { AutomationStreak } from './components/leaderboards/AutomationStreak';
-import { getLeaderboardCardWidths, getTopRowColSpan } from './common/leaderboardCardWidths';
+import {
+  getTopRowColSpan,
+  NARROW_GRID_MAX_COLUMNS,
+  widthOrFullRow,
+} from './common/leaderboardCardWidths';
 
 /** Re-exported so `AutomationLeaderboards.test.tsx` doesn't need to import the shared module directly. */
-export { CARD_WIDTH_COL_SPAN, getLeaderboardCardWidths } from './common/leaderboardCardWidths';
-export type { LeaderboardCardWidths } from './common/leaderboardCardWidths';
+export { CARD_WIDTH_COL_SPAN } from './common/leaderboardCardWidths';
+
+/** Hardcoded for now, not derived from the measured grid — see PR discussion. */
+const BOTTOM_CARDS_WIDTH = 'lg';
+
+/**
+ * HACK: snap the measured grid width up to the full 24 columns whenever it's already
+ * reasonably wide (above `NARROW_GRID_MAX_COLUMNS`, below 24). The hardcoded card widths on this
+ * page (md×3, lg×2, xxl) are each sized to sum to 24 per row, so this makes them actually fill
+ * the row instead of getting clamped at whatever gridColumns measured. Leaderboards-only —
+ * applied via this component's own `PageDashboardContext.Provider` below, so the Dashboard tab
+ * is unaffected.
+ */
+function snapGridColumns(gridColumns: number): number {
+  return gridColumns > NARROW_GRID_MAX_COLUMNS && gridColumns < 24 ? 24 : gridColumns;
+}
 
 /** Shown until the analytics backend has recorded at least one sync (`lastSyncedAt === null`). */
 function LeaderboardsEmptyState({ gridColumns }: Readonly<{ gridColumns: number }>) {
@@ -57,8 +77,6 @@ function renderLeaderboardsContent(
   isLoading: boolean,
   error: Error | undefined
 ) {
-  const { topCardsWidth, bottomCardsWidth } = getLeaderboardCardWidths(gridColumns);
-
   if (isLoading) {
     return (
       <DashboardGridRow>
@@ -92,14 +110,14 @@ function renderLeaderboardsContent(
       <AutomationAtAGlance />
 
       <DashboardGridRow>
-        <AutomationStreak width={topCardsWidth} />
+        <AutomationStreak width="xxl" />
       </DashboardGridRow>
       <DashboardGridRow>
-        <AutomationDimensions width={topCardsWidth} />
+        <AutomationDimensions width="xxl" />
       </DashboardGridRow>
       <DashboardGridRow>
-        <HighlightsLeaderboardPanel width={bottomCardsWidth} />
-        <MilestoneBadgesCard width={bottomCardsWidth} />
+        <HighlightsLeaderboardPanel width={widthOrFullRow(gridColumns, BOTTOM_CARDS_WIDTH)} />
+        <MilestoneBadgesCard width={widthOrFullRow(gridColumns, BOTTOM_CARDS_WIDTH)} />
       </DashboardGridRow>
     </>
   );
@@ -107,9 +125,13 @@ function renderLeaderboardsContent(
 
 export function AutomationLeaderboards() {
   const { lastSyncedAt, isLoading, error } = useAutomationLeaderboardsView();
+  const { columns } = useContext(PageDashboardContext);
+  const snappedContextValue = useMemo(() => ({ columns: snapGridColumns(columns) }), [columns]);
   return (
-    <DashboardLayout>
-      {(gridColumns) => renderLeaderboardsContent(gridColumns, lastSyncedAt, isLoading, error)}
-    </DashboardLayout>
+    <PageDashboardContext.Provider value={snappedContextValue}>
+      <DashboardLayout>
+        {(gridColumns) => renderLeaderboardsContent(gridColumns, lastSyncedAt, isLoading, error)}
+      </DashboardLayout>
+    </PageDashboardContext.Provider>
   );
 }

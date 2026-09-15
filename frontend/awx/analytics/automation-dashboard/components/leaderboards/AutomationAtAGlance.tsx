@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDashboardCardWidth, PageDashboardContext } from '@ansible/ansible-ui-framework';
+import { PageDashboardContext } from '@ansible/ansible-ui-framework';
 import { Icon, Title, Truncate } from '@patternfly/react-core';
 import { ClusterIcon, CubesIcon, StarIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { AtAGlanceKpiMetric } from './AtAGlanceKpiMetric';
@@ -8,29 +8,18 @@ import { DEFAULT_NUMBER_LOCALE } from '../../constants/common';
 import { useAutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
 import '../../AutomationDashboard.css';
 import { DashboardGridRow } from '../DashboardLayout';
+import { widthOrFullRow } from '../../common/leaderboardCardWidths';
 
-/**
- * Width of the 3 side-by-side KPI cards, keyed off the measured dashboard grid column count.
- * Its own breakpoint scale, deliberately separate from `getLeaderboardCardWidths` (that one
- * sizes a single full-width card, this one sizes 3 sharing a row).
- *
- * Each tier's 3-card total (`'xs'`=4×3=12, `'sm'`=6×3=18, `'md'`=8×3=24) fits within every
- * column count in that tier's range, so no card ever wraps mid-row. Below 12 columns, `'xxl'`
- * (span 24) always exceeds the grid and gets clamped to fill it — each card stacks full-width.
- */
-export function getAtAGlanceKpiCardWidth(gridColumns: number): PageDashboardCardWidth {
-  if (gridColumns >= 24) return 'md';
-  if (gridColumns >= 18) return 'sm';
-  if (gridColumns >= 12) return 'xs';
-  return 'xxl';
-}
+/** Hardcoded for now — see AutomationLeaderboards.tsx for the same treatment of the other rows.
+ *  Exported so `AutomationAtAGlance.test.tsx` can assert against the real value. */
+export const KPI_CARD_WIDTH = 'md';
 
 export function AutomationAtAGlance() {
   const { t } = useTranslation();
   const title = t('At a glance');
   const { atAGlance } = useAutomationLeaderboardsView();
   const { columns: gridColumns } = useContext(PageDashboardContext);
-  const kpiCardWidth = getAtAGlanceKpiCardWidth(gridColumns);
+  const kpiCardWidth = widthOrFullRow(gridColumns, KPI_CARD_WIDTH);
 
   return (
     <>

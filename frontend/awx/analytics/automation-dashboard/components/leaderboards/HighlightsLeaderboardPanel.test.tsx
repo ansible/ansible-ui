@@ -29,4 +29,15 @@ describe('HighlightsLeaderboardPanel', () => {
     expect(screen.getByText("Your organization's rank: #1")).toBeInTheDocument();
     expect(screen.getByText('2,840 job runs')).toBeInTheDocument();
   });
+
+  test('should keep the "Your organization" label on one line instead of wrapping under the name', () => {
+    renderPanel();
+
+    const label = screen.getByText('Your organization');
+    // The label never wraps onto its own line — it's a non-shrinking flex item next to the
+    // (independently truncating) org name, laid out via PatternFly's `Flex` (which applies
+    // `display: flex` through its own `pf-v6-l-flex` stylesheet class, not an inline style).
+    expect(label.closest('.pf-v6-l-flex')).toBeInTheDocument();
+    expect(label.closest('[style*="flex-shrink"]')).toHaveStyle({ flexShrink: '0' });
+  });
 });

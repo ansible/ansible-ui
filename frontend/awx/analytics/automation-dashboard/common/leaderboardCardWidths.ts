@@ -3,43 +3,28 @@ import {
   PAGE_DASHBOARD_CARD_WIDTH_COL_SPAN,
 } from '@ansible/ansible-ui-framework';
 
-/** Breakpoint (in grid columns) where the top-row cards jump from 'lg' to 'xxl'. */
-export const WIDE_LAYOUT_MIN_COLUMNS = 18;
-/** Breakpoint range (in grid columns) where the bottom-row cards narrow to 'md' before reverting to 'lg'. */
-export const NARROW_BOTTOM_CARDS_MAX_COLUMNS = 24;
-
 /** `PageDashboardCard`'s own width → column-span mapping, re-exported so it can't drift out of sync. */
 export const CARD_WIDTH_COL_SPAN = PAGE_DASHBOARD_CARD_WIDTH_COL_SPAN;
 
-export interface LeaderboardCardWidths {
-  topCardsWidth: PageDashboardCardWidth;
-  bottomCardsWidth: PageDashboardCardWidth;
-}
+/** Below this many grid columns, the hardcoded row widths no longer fit — see `widthOrFullRow`. */
+export const NARROW_GRID_MAX_COLUMNS = 14;
 
 /**
- * Maps the measured dashboard grid width (in columns) to the card widths used by each
- * leaderboard row: `topCardsWidth` sizes the sync timestamp, Streak and Activity-levels cards;
- * `bottomCardsWidth` sizes the bottom row (Top 10 organizations, Achievements).
- */
-export function getLeaderboardCardWidths(gridColumns: number): LeaderboardCardWidths {
-  let topCardsWidth: PageDashboardCardWidth;
-  if (gridColumns < WIDE_LAYOUT_MIN_COLUMNS) {
-    topCardsWidth = 'lg';
-  } else {
-    topCardsWidth = 'xxl';
-  }
-  const bottomCardsWidth: PageDashboardCardWidth =
-    WIDE_LAYOUT_MIN_COLUMNS <= gridColumns && gridColumns <= NARROW_BOTTOM_CARDS_MAX_COLUMNS
-      ? 'md'
-      : 'lg';
-  return { topCardsWidth, bottomCardsWidth };
-}
-
-/**
- * `topCardsWidth`'s column span, clamped to the grid — lets the sync-timestamp row (a plain
- * `<div>`, not a `PageDashboardCard`) line up with the Streak/Activity-levels cards below it.
+ * Column span for the sync-timestamp row (a plain `<div>`, not a `PageDashboardCard`), clamped
+ * to the grid so it lines up with the `'xxl'` Streak/Activity-levels cards below it.
  */
 export function getTopRowColSpan(gridColumns: number): number {
-  const { topCardsWidth } = getLeaderboardCardWidths(gridColumns);
-  return Math.min(CARD_WIDTH_COL_SPAN[topCardsWidth], gridColumns);
+  return Math.min(CARD_WIDTH_COL_SPAN.xxl, gridColumns);
+}
+
+/**
+ * `width` is hardcoded per row elsewhere on this page (see `AutomationLeaderboards.tsx` and
+ * `AutomationAtAGlance.tsx`), sized for a roomy grid. Below `NARROW_GRID_MAX_COLUMNS` there isn't
+ * room for it, so every card falls back to `'xxl'` (full row width, one card per row) instead.
+ */
+export function widthOrFullRow(
+  gridColumns: number,
+  width: PageDashboardCardWidth
+): PageDashboardCardWidth {
+  return gridColumns <= NARROW_GRID_MAX_COLUMNS ? 'xxl' : width;
 }

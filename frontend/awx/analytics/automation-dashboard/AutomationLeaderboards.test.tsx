@@ -6,11 +6,7 @@ import {
   PageDashboardCardWidth,
   PageDashboardContext,
 } from '@ansible/ansible-ui-framework';
-import {
-  AutomationLeaderboards,
-  CARD_WIDTH_COL_SPAN,
-  getLeaderboardCardWidths,
-} from './AutomationLeaderboards';
+import { AutomationLeaderboards, CARD_WIDTH_COL_SPAN } from './AutomationLeaderboards';
 import type { AutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 
@@ -71,22 +67,6 @@ describe('CARD_WIDTH_COL_SPAN', () => {
   });
 });
 
-describe('getLeaderboardCardWidths', () => {
-  test('should keep both card rows at the default widths below 18 columns', () => {
-    expect(getLeaderboardCardWidths(12)).toEqual({ topCardsWidth: 'lg', bottomCardsWidth: 'lg' });
-    expect(getLeaderboardCardWidths(17)).toEqual({ topCardsWidth: 'lg', bottomCardsWidth: 'lg' });
-  });
-
-  test('should widen the top row and narrow the bottom row from 18 to 24 columns', () => {
-    expect(getLeaderboardCardWidths(18)).toEqual({ topCardsWidth: 'xxl', bottomCardsWidth: 'md' });
-    expect(getLeaderboardCardWidths(24)).toEqual({ topCardsWidth: 'xxl', bottomCardsWidth: 'md' });
-  });
-
-  test('should keep the widest top cards and revert the bottom row past 24 columns', () => {
-    expect(getLeaderboardCardWidths(25)).toEqual({ topCardsWidth: 'xxl', bottomCardsWidth: 'lg' });
-  });
-});
-
 describe('AutomationLeaderboards', () => {
   afterEach(() => vi.clearAllMocks());
 
@@ -101,6 +81,12 @@ describe('AutomationLeaderboards', () => {
     expect(screen.getByRole('heading', { name: 'Activity levels' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Top 10 organizations' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '30-day achievements' })).toBeInTheDocument();
+
+    // Streak and Activity levels always render at their own 'xxl' default width, regardless of
+    // the measured grid — each is the sole card in its row, so 'xxl' fills the full grid (24
+    // columns in this render).
+    expect(screen.getByTestId('automation-streak')).toHaveStyle({ gridColumn: 'span 24' });
+    expect(screen.getByTestId('activity-levels')).toHaveStyle({ gridColumn: 'span 24' });
   }, 15000);
 
   test('should show only a loading spinner while the view is loading', () => {

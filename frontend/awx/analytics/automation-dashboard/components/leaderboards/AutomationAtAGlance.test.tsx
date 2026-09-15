@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { PageDashboardContext } from '@ansible/ansible-ui-framework';
-import { AutomationAtAGlance, getAtAGlanceKpiCardWidth } from './AutomationAtAGlance';
-import { CARD_WIDTH_COL_SPAN } from '../../common/leaderboardCardWidths';
+import { AutomationAtAGlance, KPI_CARD_WIDTH } from './AutomationAtAGlance';
+import { CARD_WIDTH_COL_SPAN, widthOrFullRow } from '../../common/leaderboardCardWidths';
 import type {
   AutomationLeaderboardsView,
   StreakDay,
@@ -74,29 +74,9 @@ describe('AutomationAtAGlance', () => {
   });
 });
 
-describe('getAtAGlanceKpiCardWidth', () => {
-  test('should use xxl (clamps to fill the row) up to 11 columns', () => {
-    expect(getAtAGlanceKpiCardWidth(1)).toBe('xxl');
-    expect(getAtAGlanceKpiCardWidth(11)).toBe('xxl');
-  });
-
-  test('should use xs from 12 to 17 columns', () => {
-    expect(getAtAGlanceKpiCardWidth(12)).toBe('xs');
-    expect(getAtAGlanceKpiCardWidth(17)).toBe('xs');
-  });
-
-  test('should use sm from 18 to 23 columns', () => {
-    expect(getAtAGlanceKpiCardWidth(18)).toBe('sm');
-    expect(getAtAGlanceKpiCardWidth(23)).toBe('sm');
-  });
-
-  test('should use md from 24 columns up', () => {
-    expect(getAtAGlanceKpiCardWidth(24)).toBe('md');
-    expect(getAtAGlanceKpiCardWidth(32)).toBe('md');
-  });
-
-  test.each([1, 11, 12, 17, 18, 23, 24, 32])(
-    'should render the 3 KPI cards without an uneven wrap at %i grid columns',
+describe('KPI card width', () => {
+  test.each([1, 8, 14, 15, 16, 17, 24, 32, 48])(
+    'should render the 3 KPI cards at the width widthOrFullRow(gridColumns, KPI_CARD_WIDTH) picks, at %i grid columns',
     (gridColumns) => {
       const { container } = render(
         <PageDashboardContext.Provider value={{ columns: gridColumns }}>
@@ -110,16 +90,10 @@ describe('getAtAGlanceKpiCardWidth', () => {
       // Mirrors PageDashboardCard's own clamp (framework/PageDashboard/PageDashboardCard.tsx):
       // it only shrinks a card's span down to the available column count when the span exceeds
       // it, so every rendered card must carry this exact value.
-      const rawSpan = CARD_WIDTH_COL_SPAN[getAtAGlanceKpiCardWidth(gridColumns)];
+      const expectedWidth = widthOrFullRow(gridColumns, KPI_CARD_WIDTH);
+      const rawSpan = CARD_WIDTH_COL_SPAN[expectedWidth];
       const clampedSpan = Math.min(rawSpan, gridColumns);
       cards.forEach((card) => expect(card.style.gridColumn).toBe(`span ${clampedSpan}`));
-
-      // Either the 3 cards truly sit side by side in one row (their unclamped spans sum to no
-      // more than the grid), or each one is individually clamped to the full row width and so
-      // deliberately stacks into its own row — anything in between is the "uneven wrap" bug.
-      const fitsThreeAcross = rawSpan * 3 <= gridColumns;
-      const stacksFullWidth = clampedSpan === gridColumns;
-      expect(fitsThreeAcross || stacksFullWidth).toBe(true);
     }
   );
 });

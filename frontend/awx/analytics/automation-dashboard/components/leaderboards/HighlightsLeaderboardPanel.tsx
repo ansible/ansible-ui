@@ -7,7 +7,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { CrownIcon } from '@patternfly/react-icons';
 import { LEADERBOARD_RANK_CROWN_CLASS, LeaderboardRankCell } from './LeaderboardRankCell';
-import { Label, Truncate } from '@patternfly/react-core';
+import { Flex, Label, Truncate } from '@patternfly/react-core';
 import { DEFAULT_NUMBER_LOCALE } from '../../constants/common';
 import {
   LeaderboardItem,
@@ -43,22 +43,14 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
 
   const rankCell = (item: LeaderboardItem) => <LeaderboardRankCell position={item.rank} />;
   const nameCell = (item: LeaderboardItem) => (
-    <div style={{ whiteSpace: 'normal' }}>
-      <span
-        style={{
-          display: 'inline-block',
-          verticalAlign: 'middle',
-          marginRight: item.isCurrentOrg ? 8 : 0,
-        }}
-      >
-        <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
-      </span>
+    <Flex alignItems={{ default: 'alignItemsCenter' }} gap={{ default: 'gapSm' }}>
+      <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
       {item.isCurrentOrg && (
-        <Label isCompact color="purple" style={{ marginRight: 8 }}>
+        <Label isCompact color="purple" style={{ flexShrink: 0 }}>
           {t('Your organization')}
         </Label>
       )}
-    </div>
+    </Flex>
   );
   const tableColumns: ITableColumn<LeaderboardItem>[] = [
     {
