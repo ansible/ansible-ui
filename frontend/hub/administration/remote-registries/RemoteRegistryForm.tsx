@@ -14,6 +14,7 @@ import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/Pa
 import { PageFormExpandableSection } from '@ansible/ansible-ui-framework/PageForm/PageFormExpandableSection';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 import { useState } from 'react';
@@ -28,6 +29,7 @@ import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { type HiddenFieldsType } from '../remotes/RemoteForm';
 import { type RemoteRegistry } from './RemoteRegistry';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 interface SecretInput {
   onClear?: (name: string) => void;
@@ -53,6 +55,10 @@ export function CreateRemoteRegistry() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<RemoteRegistryProps>();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v1/execution-environments/registries/`
+  );
 
   const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
@@ -94,6 +100,7 @@ export function CreateRemoteRegistry() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={{ name: '', url: '' }}
+        optionsData={optionsData}
       >
         <FormWrapper isNew />
       </HubPageForm>
@@ -148,6 +155,10 @@ export function EditRemoteRegistry() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const { clearCacheByKey } = useClearCache();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v1/execution-environments/registries/`
+  );
 
   const name = params.id;
   const { data, error, refresh } = useGet<HubItemsResponse<RemoteRegistryProps>>(
@@ -225,6 +236,7 @@ export function EditRemoteRegistry() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={remoteRegistryDefaultValues}
+        optionsData={optionsData}
       >
         <FormWrapper />
       </HubPageForm>
