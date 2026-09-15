@@ -87,7 +87,7 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
     }
 
     // Update new inventory with selected labels
-    if (newInventory.kind === '' && data.labels.length > 0)
+    if (newInventory.kind !== 'smart' && data.labels.length > 0)
       promises.push(submitLabels(newInventory, data.labels));
 
     await Promise.all(promises);
@@ -125,6 +125,7 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
             update_cache_timeout: 0,
             limit: '',
             source_vars: '',
+            labels: [],
           }
         : {
             kind: inventoryKind,
@@ -207,7 +208,10 @@ export function EditInventory() {
       submitInstanceGroups(updatedInventory, instanceGroups ?? [], originalInstanceGroups ?? [])
     );
 
-    if (params.inventory_type === 'inventory') {
+    if (
+      params.inventory_type === 'inventory' ||
+      params.inventory_type === 'constructed_inventory'
+    ) {
       promises.push(submitLabels(inventory as Inventory, labels || []));
     }
 
@@ -262,6 +266,7 @@ export function EditInventory() {
             ...inventory,
             instanceGroups: originalInstanceGroups,
             inventories: (inputInventoriesResults ?? []) as Inventory[],
+            labels: inventory.summary_fields?.labels?.results ?? [],
           }
         : {
             ...inventory,
@@ -427,7 +432,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
           />
         </>
       )}
-      {inventoryKind === '' && (
+      {inventoryKind !== 'smart' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
           labelHelp={inventoryFormDetailLabels.labels}
