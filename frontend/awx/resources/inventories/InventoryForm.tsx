@@ -151,6 +151,11 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
         disableSubmitOnEnter={true}
         onCancel={() => pageNavigate(AwxRoute.Inventories)}
         defaultValue={defaultValue}
+        optionsUrl={
+          inventoryKind === 'constructed'
+            ? awxAPI`/constructed_inventories/`
+            : awxAPI`/inventories/`
+        }
       >
         <InventoryInputs inventoryKind={inventoryKind} />
       </AwxPageForm>
@@ -296,6 +301,11 @@ export function EditInventory() {
           })
         }
         defaultValue={defaultValue}
+        optionsUrl={
+          inventory.kind === 'constructed'
+            ? awxAPI`/constructed_inventories/`
+            : awxAPI`/inventories/`
+        }
       >
         <InventoryInputs inventoryKind={inventory.kind} />
       </AwxPageForm>

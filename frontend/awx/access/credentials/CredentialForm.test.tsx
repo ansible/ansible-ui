@@ -218,6 +218,10 @@ const mockInputSources = {
 };
 
 const server = setupServer(
+  http.options(
+    ({ request }) => request.url.includes('/credentials/'),
+    () => HttpResponse.json({ actions: { POST: {} } })
+  ),
   http.get(
     ({ request }) => request.url.includes('/credential_types/'),
     () => HttpResponse.json(mockCredentialTypes)

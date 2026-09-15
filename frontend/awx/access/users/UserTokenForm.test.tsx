@@ -14,6 +14,10 @@ const mockActiveUser = {
 };
 
 const server = setupServer(
+  http.options(
+    ({ request }) => request.url.includes('/tokens/'),
+    () => HttpResponse.json({ actions: { POST: {} } })
+  ),
   http.get(
     ({ request }) => request.url.includes('/me/'),
     () => {

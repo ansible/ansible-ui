@@ -63,6 +63,7 @@ const mockHost = {
 };
 
 const server = setupServer(
+  http.options(awxAPI`/hosts/`, () => HttpResponse.json({ actions: { POST: {} } })),
   http.get(
     ({ request }) =>
       request.url.includes('/inventories/') &&
