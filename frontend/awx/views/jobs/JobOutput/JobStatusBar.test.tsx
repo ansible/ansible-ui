@@ -1,11 +1,23 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { SWRConfiguration } from 'swr';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Job } from '../../../interfaces/Job';
 import { JobEvent } from '../../../interfaces/JobEvent';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { JobStatusBar } from './JobStatusBar';
+
+const mockPageNavigate = vi.hoisted(() => vi.fn());
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    usePageNavigate: () => mockPageNavigate,
+  };
+});
 
 const mockUseGet = vi.fn(
   (
@@ -52,7 +64,13 @@ const baseJob = {
 
 describe('JobStatusBar polling', () => {
   beforeEach(() => {
+    mockPageNavigate.mockClear();
     mockUseGet.mockClear();
+    vi.useRealTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('should pass undefined URL when job is finished', () => {
@@ -144,6 +162,116 @@ describe('JobStatusBar polling', () => {
 
     renderJobStatusBar(runningJob);
 
-    expect(screen.getByTestId('waiting-label')).toBeInTheDocument();
+    expect(
+      screen.getByText('Running initial setup. Waiting to execute playbook')
+    ).toBeInTheDocument();
+  });
+
+  it('should show the host total without status-specific host counts', () => {
+    const finishedJob = {
+      ...baseJob,
+      status: 'successful',
+      started: '2023-06-06T18:22:42Z',
+      finished: '2023-06-06T18:23:02Z',
+      host_status_counts: {
+        ok: 999,
+        dark: 1,
+        failures: 2,
+      },
+    } as unknown as Job;
+
+    renderJobStatusBar(finishedJob);
+
+    expect(screen.getByText('Hosts')).toBeInTheDocument();
+    expect(screen.getByText('1002')).toBeInTheDocument();
+    expect(screen.queryByText('Unreachable')).not.toBeInTheDocument();
+    expect(screen.queryByText('Failed')).not.toBeInTheDocument();
+  });
+
+  it('should count undefined host status values as zero', () => {
+    const finishedJob = {
+      ...baseJob,
+      status: 'successful',
+      started: '2023-06-06T18:22:42Z',
+      finished: '2023-06-06T18:23:02Z',
+      playbook_counts: { play_count: 1, task_count: 9 },
+      host_status_counts: {
+        ok: undefined,
+        failures: 2,
+      },
+    } as unknown as Job;
+
+    renderJobStatusBar(finishedJob);
+
+    expect(screen.getByText('Hosts')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+  });
+
+  it('should not show a host count when host status counts are unavailable', () => {
+    const finishedJob = {
+      ...baseJob,
+      status: 'successful',
+      started: '2023-06-06T18:22:42Z',
+      finished: '2023-06-06T18:23:02Z',
+      host_status_counts: undefined,
+    } as unknown as Job;
+
+    renderJobStatusBar(finishedJob);
+
+    expect(screen.queryByText('Hosts')).not.toBeInTheDocument();
+  });
+
+  it('should update elapsed time every second for running jobs', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-06-06T18:22:47Z'));
+    const runningJob = {
+      ...baseJob,
+      status: 'running',
+      started: '2023-06-06T18:22:42Z',
+    } as unknown as Job;
+
+    renderJobStatusBar(runningJob);
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(screen.getByText('00:00:06')).toBeInTheDocument();
+  });
+
+  it('should clear elapsed time for running jobs without a start time', () => {
+    vi.useFakeTimers();
+    const runningJob = {
+      ...baseJob,
+      status: 'running',
+      started: undefined,
+    } as unknown as Job;
+
+    renderJobStatusBar(runningJob);
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(screen.queryByText('00:00:00')).not.toBeInTheDocument();
+  });
+
+  it('should navigate to the workflow visualizer from workflow jobs', async () => {
+    const user = userEvent.setup();
+    const workflowJob = {
+      ...baseJob,
+      type: 'workflow_job',
+      status: 'successful',
+      finished: '2023-06-06T18:23:02Z',
+      unified_job_template: 42,
+    } as unknown as Job;
+
+    renderJobStatusBar(workflowJob);
+
+    await user.click(screen.getByRole('button', { name: 'View workflow visualizer' }));
+
+    expect(mockPageNavigate).toHaveBeenCalledWith(AwxRoute.WorkflowVisualizer, {
+      params: { id: 42 },
+    });
   });
 });
