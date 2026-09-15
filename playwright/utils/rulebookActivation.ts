@@ -224,6 +224,11 @@ export const RulebookActivation = {
         .locator('#organization_id-search')
         .getByRole('textbox', { name: 'Search input' })
         .fill(options.organizationName ?? 'Default');
+      const organizationOption = page.getByRole('option', {
+        name: options.organizationName ?? 'Default',
+      });
+      await expect(organizationOption).toBeVisible({ timeout: 10000 });
+      await organizationOption.click();
       await page.getByRole('button', { name: 'Project' }).click();
       await expect(
         page.locator('#project_id-search').getByRole('textbox', { name: 'Search input' })
@@ -266,7 +271,13 @@ export const RulebookActivation = {
           .getByRole('switch', { name: 'Rulebook activation enabled?' })
           .click({ force: true });
       }
+      const createResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/activations/') && response.request().method() === 'POST'
+      );
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
+      const createResponse = await createResponsePromise;
+      expect(createResponse.ok()).toBeTruthy();
 
       await expect(
         page.getByRole('heading', { name: rulebookActivationName, exact: true })

@@ -1,8 +1,10 @@
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
   DecisionEnvironment,
   EdaCredential,
+  EdaOrganization,
   EdaProject,
   Organization,
   RulebookActivation,
@@ -13,6 +15,8 @@ test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
 
 test.describe('Rulebook Activations - Event Persistence', () => {
+  test.describe.configure({ timeout: 180000 });
+
   let organizationName: string;
   let projectName: string;
   let credentialName: string;
@@ -20,24 +24,63 @@ test.describe('Rulebook Activations - Event Persistence', () => {
   let decisionEnvironmentName: string;
 
   test.beforeEach(async ({ page }) => {
-    organizationName = await Organization.ui.create(page);
-    projectName = await EdaProject.ui.create(page, { organizationName });
-    credentialName = await EdaCredential.ui.create(page, { organizationName });
-    decisionEnvironmentName = await DecisionEnvironment.ui.create(page, { organizationName });
+    const organization = await Organization.api.create(page);
+    organizationName = organization.name;
+    const ansibleId = organization.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error('Platform organization missing ansible_id');
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
 
-    // Create a rule engine credential for event persistence
-    ruleEngineCredentialName = await EdaCredential.ui.create(page, {
-      organizationName,
-      credentialTypeName: 'Event-Driven Ansible Rule Engine',
+    const project = await EdaProject.api.create(page, { organization: edaOrganization.id });
+    await EdaProject.api.waitForSync(page, project.id);
+    projectName = project.name;
+
+    const credential = await EdaCredential.api.create(page, {
+      name: createE2EName('credential'),
+      organizationId: edaOrganization.id,
+      credentialTypeName: 'Red Hat Ansible Automation Platform',
+      inputs: {
+        host: 'https://1.1.1.1/',
+        username: 'test',
+        password: 'test',
+      },
     });
+    credentialName = credential.name;
+
+    const decisionEnvironment = await DecisionEnvironment.api.create(page, {
+      organizationId: edaOrganization.id,
+    });
+    decisionEnvironmentName = decisionEnvironment.name;
+
+    const ruleEngineCredential = await EdaCredential.api.create(page, {
+      name: createE2EName('rule-engine-credential'),
+      organizationId: edaOrganization.id,
+      credentialTypeName: 'Event-Driven Ansible Rule Engine',
+      inputs: {
+        postgres_db_host: 'localhost',
+        postgres_db_name: 'test_db',
+      },
+    });
+    ruleEngineCredentialName = ruleEngineCredential.name;
   });
 
   test.afterEach(async ({ page }) => {
-    await DecisionEnvironment.api.deleteByName(page, decisionEnvironmentName);
-    await EdaCredential.api.deleteByName(page, ruleEngineCredentialName);
-    await EdaCredential.api.deleteByName(page, credentialName);
-    await EdaProject.api.deleteByName(page, projectName);
-    await Organization.api.deleteByName(page, organizationName);
+    if (decisionEnvironmentName) {
+      await DecisionEnvironment.api.deleteByName(page, decisionEnvironmentName);
+    }
+    if (ruleEngineCredentialName) {
+      await EdaCredential.api.deleteByName(page, ruleEngineCredentialName);
+    }
+    if (credentialName) {
+      await EdaCredential.api.deleteByName(page, credentialName);
+    }
+    if (projectName) {
+      await EdaProject.api.deleteByName(page, projectName);
+    }
+    if (organizationName) {
+      await Organization.api.deleteByName(page, organizationName);
+    }
   });
 
   test(
@@ -80,6 +123,13 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await decisionEnvSearch.fill(decisionEnvironmentName);
       await page.getByRole('option', { name: decisionEnvironmentName }).click();
 
+      // Disable the activation so create does not immediately provision workers/persistence
+      const activationEnabledSwitch = page.getByRole('switch', {
+        name: /Rulebook activation enabled/i,
+      });
+      await expect(activationEnabledSwitch).toBeVisible();
+      await activationEnabledSwitch.click();
+
       // Enable event persistence
       const persistenceCheckbox = page.getByRole('checkbox', {
         name: /Enable event persistence/i,
@@ -100,7 +150,13 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('option', { name: ruleEngineCredentialName }).click();
 
       // Create the activation
+      const createResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/activations/') && response.request().method() === 'POST'
+      );
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
+      const createResponse = await createResponsePromise;
+      expect(createResponse.ok()).toBeTruthy();
 
       // Verify details page shows persistence enabled
       await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
@@ -413,9 +469,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('option', { name: decisionEnvironmentName }).click();
 
       // Disable the activation before creating it so we can edit it later
-      await page
-        .getByRole('switch', { name: /Rulebook activation enabled/i })
-        .click({ force: true });
+      const activationEnabledSwitch = page.getByRole('switch', {
+        name: /Rulebook activation enabled/i,
+      });
+      await expect(activationEnabledSwitch).toBeVisible();
+      await activationEnabledSwitch.click();
 
       // Enable persistence and select a credential
       const persistenceCheckbox = page.getByRole('checkbox', {
