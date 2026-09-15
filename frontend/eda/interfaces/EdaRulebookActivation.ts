@@ -12,5 +12,6 @@ export type EdaRulebookActivation = Omit<ActivationRead, 'project'> & {
 export type EdaRulebookActivationCreate = ActivationCreate & {
   enable_persistence?: boolean;
   rule_engine_credential_id?: number | null;
+  store_debug_logs?: boolean;
 };
 export type EdaRulebookActivationStatus = StatusEnum;
