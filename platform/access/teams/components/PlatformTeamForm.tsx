@@ -1,6 +1,5 @@
 import {
   LoadingPage,
-  PageForm,
   PageFormSubmitHandler,
   PageFormTextArea,
   PageFormTextInput,
@@ -20,6 +19,7 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
@@ -45,7 +45,7 @@ export function CreatePlatformTeam() {
           { label: t('Create team') },
         ]}
       />
-      <PageForm
+      <PlatformPageForm
         submitText={t('Create team')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -53,7 +53,7 @@ export function CreatePlatformTeam() {
         optionsData={optionsData}
       >
         <PlatformTeamInputs />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }
@@ -87,7 +87,7 @@ export function EditPlatformTeam() {
           { label: team?.name ? t('Edit {{teamName}}', { teamName: team?.name }) : t('Teams') },
         ]}
       />
-      <PageForm
+      <PlatformPageForm
         submitText={t('Save team')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
@@ -95,7 +95,7 @@ export function EditPlatformTeam() {
         optionsData={optionsData}
       >
         <PlatformTeamInputs isEditMode />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

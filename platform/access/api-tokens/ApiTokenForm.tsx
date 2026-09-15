@@ -1,6 +1,5 @@
 import {
   ICatalogBreadcrumb,
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextArea,
@@ -22,6 +21,7 @@ import { PlatformUser } from '../../interfaces/PlatformUser';
 import { Token } from '../../interfaces/Token';
 import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
+import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { OAuthApplicationSelect } from '../oauth-applications/components/OAuthApplicationSelect';
 
 export function ApiTokenForm() {
@@ -154,7 +154,7 @@ export function ApiTokenForm() {
   return (
     <PageLayout>
       <PageHeader title={title} breadcrumbs={breadcrumbs} />
-      <PageForm<Token>
+      <PlatformPageForm<Token>
         submitText={submitText}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -180,7 +180,7 @@ export function ApiTokenForm() {
           isRequired
           defaultValue="write"
         />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

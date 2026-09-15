@@ -1,6 +1,5 @@
 import {
   LoadingPage,
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -29,6 +28,7 @@ import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
 import { useGetOrganizationsForUser } from '../hooks/useGetOrganizationsForUser';
 import { useGetPlatformUsers } from '../hooks/useGetPlatformUsers';
@@ -129,7 +129,7 @@ export function CreatePlatformUser() {
           { label: t('Create user') },
         ]}
       />
-      <PageForm<IUserInput>
+      <PlatformPageForm<IUserInput>
         submitText={t('Create user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -137,7 +137,7 @@ export function CreatePlatformUser() {
         defaultValue={defaultValue}
       >
         <PlatformUserInputs isCreate />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }
@@ -350,14 +350,14 @@ export function EditPlatformUser() {
           },
         ]}
       />
-      <PageForm<IUserInput>
+      <PlatformPageForm<IUserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={defaultValue}
       >
         <PlatformUserInputs />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

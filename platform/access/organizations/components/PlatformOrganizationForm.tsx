@@ -5,6 +5,7 @@ import {
   PageWizardStep,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
+import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter';
 import { Credential as ControllerCredential } from '@ansible/awx-ui/interfaces/Credential';
 import { InstanceGroup as ControllerInstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
@@ -134,6 +135,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
         steps={steps}
         stepDefaults={defaultValues}
         onSubmit={props.handleSubmit}
+        errorAdapter={awxErrorAdapter}
         disableGrid
       />
     </PageLayout>
