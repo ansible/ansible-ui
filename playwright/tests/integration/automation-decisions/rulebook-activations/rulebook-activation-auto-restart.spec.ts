@@ -141,7 +141,9 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
 
       await test.step('Save changes', async () => {
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
-        await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: rulebookActivationName, exact: true })
+        ).toBeVisible();
       });
 
       // Cleanup
@@ -200,7 +202,9 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
         });
         await autoRestartCheckbox.check();
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
-        await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: rulebookActivationName, exact: true })
+        ).toBeVisible();
       });
 
       await test.step('Verify auto-restart is still enabled on second edit', async () => {
@@ -236,7 +240,9 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
       });
 
       await test.step('Navigate back to details page', async () => {
-        await expect(page.getByRole('heading', { name: rulebookActivationName })).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: rulebookActivationName, exact: true })
+        ).toBeVisible();
       });
 
       // Cleanup

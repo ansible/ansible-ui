@@ -5,7 +5,8 @@ import { http, HttpResponse } from 'msw';
 import type { SetupServer } from 'msw/node';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { useTranslation } from 'react-i18next';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi, type Mock } from 'vitest';
 import { Survey } from '../interfaces/Survey';
 import { SurveyStep } from './SurveyStep';
 import { awxAPI } from './api/awx-utils';
@@ -60,6 +61,108 @@ const testSurveys = {
         default: '',
         new_question: false,
         choices: ['option1', 'option2', 'option3'],
+      },
+    ],
+  },
+  withColonInQuestionName: {
+    name: 'Colon in question name',
+    description: '',
+    spec: [
+      {
+        question_name: 'Markets:',
+        question_description: 'Select a market',
+        required: true,
+        type: 'text',
+        variable: 'market',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Markets: US',
+        question_description: 'Select a US market',
+        required: false,
+        type: 'text',
+        variable: 'us_market',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Minimum: quantity',
+        question_description: '',
+        required: false,
+        type: 'integer',
+        variable: 'minimum_quantity',
+        min: 0,
+        max: 10,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Rate: percentage',
+        question_description: '',
+        required: false,
+        type: 'float',
+        variable: 'rate_percentage',
+        min: 0,
+        max: 100,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Password: token',
+        question_description: '',
+        required: false,
+        type: 'password',
+        variable: 'password_token',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Notes: details',
+        question_description: '',
+        required: false,
+        type: 'textarea',
+        variable: 'notes_details',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: [],
+      },
+      {
+        question_name: 'Environment: type',
+        question_description: '',
+        required: false,
+        type: 'multiplechoice',
+        variable: 'environment_type',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: ['development'],
+      },
+      {
+        question_name: 'Markets: selected',
+        question_description: '',
+        required: false,
+        type: 'multiselect',
+        variable: 'markets_selected',
+        min: 0,
+        max: 0,
+        default: '',
+        new_question: false,
+        choices: ['North America'],
       },
     ],
   },
@@ -151,6 +254,27 @@ describe('SurveyStep', () => {
       expect(screen.getByText('option2')).toBeInTheDocument();
       expect(screen.getByText('option3')).toBeInTheDocument();
     });
+  });
+
+  test('renders survey question names containing colons for every field type', async () => {
+    const { t } = vi.mocked(useTranslation)();
+    const mockedT = t as unknown as Mock;
+    const translationCallCount = mockedT.mock.calls.length;
+    renderSurveyStep(server, '999', testSurveys.withColonInQuestionName);
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: 'Markets:' })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: 'Markets: US' })).toBeInTheDocument();
+      expect(screen.getByRole('spinbutton', { name: 'Minimum: quantity' })).toBeInTheDocument();
+      expect(screen.getByRole('spinbutton', { name: 'Rate: percentage' })).toBeInTheDocument();
+      expect(screen.getByText('Password: token')).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: 'Notes: details' })).toBeInTheDocument();
+      expect(screen.getByText('Environment: type')).toBeInTheDocument();
+      expect(screen.getByText('Markets: selected')).toBeInTheDocument();
+    });
+    const newTranslationCalls = mockedT.mock.calls.slice(translationCallCount);
+    expect(newTranslationCalls).not.toContainEqual(['Markets:']);
+    expect(newTranslationCalls).not.toContainEqual(['Markets: US']);
   });
 
   test('handles empty survey gracefully', async () => {
