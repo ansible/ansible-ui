@@ -1,12 +1,14 @@
 import { AwxHost } from '@ansible/awx-ui/interfaces/AwxHost';
 import { Page, expect } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
+import { clearTableFilters } from '../commands/clearTableFilters';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { getTableRow } from '../commands/getTableRow';
 import { navigateTo } from '../commands/navigateTo';
+import { waitForBulkActionDialog } from '../commands/waitForBulkActionDialog';
 
 export interface CreateHostInInventoryOptions {
   name?: string;
@@ -157,16 +159,21 @@ export const InventoryHost = {
       await expect(dialog.getByText('Permanently delete hosts')).toBeVisible();
       await dialog.locator('#confirm').click();
       await page.getByRole('button', { name: 'Delete hosts', exact: true }).click();
+      await waitForBulkActionDialog(page);
 
-      // Wait for dialog to close and page to update
-      await expect(dialog).not.toBeVisible({ timeout: 30000 });
-
-      // Wait for the empty state message to appear
-      await expect(
-        page.getByRole('heading', { name: 'No hosts are assigned to this inventory.' })
-      ).toBeVisible({
-        timeout: 15000,
-      });
+      // Inventories list Name filters persist onto this tab. PF6 empty-filter
+      // title is not always a heading, so match visible text then clear filters.
+      await clearTableFilters(page);
+      const emptyState = page.getByText('No hosts are assigned to this inventory.');
+      const noResults = page.getByText('No results found', { exact: true });
+      await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
+      await clearTableFilters(page);
+      if (!(await emptyState.isVisible().catch(() => false))) {
+        await page.getByRole('tab', { name: 'Details' }).click();
+        await page.getByRole('tab', { name: 'Hosts' }).click();
+        await clearTableFilters(page);
+      }
+      await expect(emptyState).toBeVisible({ timeout: 15000 });
     },
   },
 };
