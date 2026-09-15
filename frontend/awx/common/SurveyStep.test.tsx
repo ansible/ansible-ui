@@ -185,16 +185,17 @@ describe('SurveyStep', () => {
   });
 
   test('renders a survey question name containing a colon', async () => {
-    const { t } = useTranslation();
-    vi.mocked(t).mockClear();
+    const { t } = vi.mocked(useTranslation)();
+    const translationCallCount = t.mock.calls.length;
     renderSurveyStep(server, '999', testSurveys.withColonInQuestionName);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: 'Markets:' })).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: 'Markets: US' })).toBeInTheDocument();
     });
-    expect(t).not.toHaveBeenCalledWith('Markets:');
-    expect(t).not.toHaveBeenCalledWith('Markets: US');
+    const newTranslationCalls = t.mock.calls.slice(translationCallCount);
+    expect(newTranslationCalls).not.toContainEqual(['Markets:']);
+    expect(newTranslationCalls).not.toContainEqual(['Markets: US']);
   });
 
   test('handles empty survey gracefully', async () => {
