@@ -105,8 +105,9 @@ export const InventoryGroup = {
     },
 
     expectEmptyList: async (page: Page): Promise<void> => {
+      await clearTableFilters(page);
       const emptyState = page.getByText('No groups are assigned to this inventory.');
-      const noResults = page.getByRole('heading', { name: 'No results found' });
+      const noResults = page.getByText('No results found', { exact: true });
       await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
       await clearTableFilters(page);
       await expect(emptyState).toBeVisible({ timeout: 15000 });

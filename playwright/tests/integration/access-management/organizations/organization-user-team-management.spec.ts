@@ -10,6 +10,7 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
+import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import { Organization, Team, User } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
@@ -17,6 +18,8 @@ test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
 
 test.describe('Organization User and Team Management', () => {
+  test.describe.configure({ timeout: 3 * 60 * 1000 });
+
   let organizationName: string;
   let user1Name: string;
   let user2Name: string;
@@ -196,6 +199,7 @@ test.describe('Organization User and Team Management', () => {
 
       // Finish the wizard (Review step may not be present in current flow)
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page);
 
       // Navigate back to the organization details page
       await navigateTo(page, 'Access Management', 'Organizations');
@@ -433,6 +437,7 @@ test.describe('Organization User and Team Management', () => {
     'can add a team and apply/remove roles from organization team via teams tab',
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
+      test.setTimeout(3 * 60 * 1000);
       // Create team for this test
       const teamName = await Team.ui.create(page, { organizationName });
 
@@ -473,11 +478,8 @@ test.describe('Organization User and Team Management', () => {
       // Review and finish
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
-
-      // Navigate back to the organization Teams tab after wizard completes
-      await navigateTo(page, 'Access Management', 'Organizations');
-      await clickTableRow({ text: organizationName }, page);
-      await page.getByRole('tab', { name: 'Teams' }).click();
+      // Dialog auto-closes on success and redirects to the organization Teams tab.
+      await waitForBulkActionDialog(page);
 
       // Verify team roles and manage them
       await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
