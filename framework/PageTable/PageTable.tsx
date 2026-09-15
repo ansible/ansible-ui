@@ -485,6 +485,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           isStickyHeader
           style={{
             borderCollapse: 'separate',
+            minHeight: 0,
           }}
         >
           <TableHead
