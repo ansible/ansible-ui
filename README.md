@@ -159,3 +159,5 @@ export HUB_SERVER=http://localhost:5001
 export HUB_USERNAME='dev'
 export HUB_PASSWORD='nomeetingsfriday'
 ```
+
+<!-- devel baseline test run: 2026-09-11 14:09 UTC-4 -->
