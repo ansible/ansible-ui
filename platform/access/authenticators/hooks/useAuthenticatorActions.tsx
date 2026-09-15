@@ -119,8 +119,6 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
   const rowActions = useMemo<IPageAction<Authenticator>[]>(() => {
     // TODO: Update based on RBAC information from Authenticators API.
     // Placeholder always allows the action until capabilities are wired up.
-    const cannotDeleteAuthenticator = (_authenticator: Authenticator) => '';
-    const cannotEditAuthenticator = (_authenticator: Authenticator) => '';
 
     return [
       {
@@ -143,7 +141,6 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit authentication'),
-        isDisabled: (authenticator: Authenticator) => cannotEditAuthenticator(authenticator),
         onClick: (authenticator) =>
           pageNavigate(PlatformRoute.EditAuthenticator, { params: { id: authenticator.id } }),
       },
@@ -153,7 +150,6 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete authentication'),
-        isDisabled: (authenticator: Authenticator) => cannotDeleteAuthenticator(authenticator),
         onClick: (authenticator) => deleteAuthenticator([authenticator]),
         isDanger: true,
       },
