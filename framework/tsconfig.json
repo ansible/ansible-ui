@@ -1,5 +1,5 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*", "../cypress/support/**/*", "../frontend/hub/**/*", "../types/*.d.ts"],
+  "include": ["**/*", "../frontend/hub/**/*", "../types/*.d.ts"],
   "exclude": ["../frontend/hub/insights/**", "../frontend/hub/dist-insights/**"]
 }

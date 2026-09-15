@@ -10,14 +10,7 @@ export function useURLSearchParams(): [
   const location = useWindowLocation();
   const [pathname] = useState(location.location?.pathname || '/');
   const searchParams = useMemo<URLSearchParams>(() => {
-    /** Cypress component tests add a specPath param that must be ignored */
-    let search = location.location?.search;
-    if (search && search.includes('?specPath=')) {
-      search = search.substring(0, search.indexOf('?specPath='));
-    } else if (search && search.includes('&specPath=')) {
-      search = search.substring(0, search.indexOf('&specPath='));
-    }
-    return new URLSearchParams(search ?? '/');
+    return new URLSearchParams(location.location?.search ?? '/');
   }, [location.location?.search]);
 
   const setSearchParams = useCallback(
