@@ -439,6 +439,123 @@ describe('useAutomationDashboardBaseView', () => {
     expect(result.current.clearAllFilters).toBeTypeOf('function');
   });
 
+  // --- System job exclusion params ---
+
+  test('should include systemJobExclusionTemplateIds when no user template filter is active', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const systemJobExclusionTemplateIds: [string, string][] = [
+      ['template', '1'],
+      ['template', '2'],
+      ['template', '3'],
+    ];
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds,
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    expect(url.searchParams.getAll('template')).toEqual(['1', '2', '3']);
+  });
+
+  test('should not include systemJobExclusionTemplateIds when user has active template filter', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const systemJobExclusionTemplateIds: [string, string][] = [
+      ['template', '1'],
+      ['template', '2'],
+      ['template', '3'],
+    ];
+
+    const templateFilter: IToolbarSingleSelectFilter = {
+      type: ToolbarFilterType.SingleSelect,
+      key: 'template',
+      label: 'Template',
+      query: 'template',
+      options: [
+        { label: 'Template 5', value: '5' },
+        { label: 'Template 1', value: '1' },
+      ],
+      placeholder: 'Filter by template',
+    };
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds,
+        toolbarFilters: [templateFilter] as IToolbarSingleSelectFilter[],
+        defaultFilters: { template: ['5'] }, // User selected template filter
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    // Should only have the user's template filter, not the system exclusion list
+    expect(url.searchParams.getAll('template')).toEqual(['5']);
+  });
+
+  test('should not include systemJobExclusionTemplateIds when list is empty', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds: [],
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    expect(url.searchParams.getAll('template')).toEqual([]);
+  });
+
+  test('should not include systemJobExclusionTemplateIds when undefined', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds: undefined,
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    expect(url.searchParams.getAll('template')).toEqual([]);
+  });
+
   // --- Item count persistence ---
 
   test('should persist item count after data is undefined', async () => {

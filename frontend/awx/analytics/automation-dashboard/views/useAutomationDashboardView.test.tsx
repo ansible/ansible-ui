@@ -71,6 +71,14 @@ vi.mock('./useExportCsv', () => ({
   useExportCsv: vi.fn(() => mockExportCsvBase),
 }));
 
+vi.mock('../common/useJobTemplateIds', () => ({
+  useJobTemplateIds: vi.fn(() => [
+    ['template', '1'],
+    ['template', '2'],
+    ['template', '3'],
+  ]),
+}));
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('useAutomationDashboardView', () => {

@@ -25,8 +25,12 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
   /** Extra querystring params passed to the backed API.  */
   queryParams?: QueryParams;
   defaultFilters?: { [key: string]: string[] };
+
+  /** Template IDs to inject when no user template filter is active (excludes system jobs). */
+  systemJobExclusionTemplateIds?: [string, string][];
 }): IAutomationDashboardBaseView<T> {
-  const { url, toolbarFilters, queryParams, defaultFilters } = options;
+  const { url, toolbarFilters, queryParams, defaultFilters, systemJobExclusionTemplateIds } =
+    options;
 
   const view = useView({
     defaultValues: {
@@ -45,7 +49,17 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
     return hasValidRequiredFilters(toolbarFilters, view.filterState);
   }, [toolbarFilters, view.filterState]);
 
-  const queryString = getQueryString(view, toolbarFilters || [], queryParams || {});
+  const hasUserTemplateFilter = view.filterState?.template && view.filterState.template.length > 0;
+  const extraSearchParams =
+    !hasUserTemplateFilter && systemJobExclusionTemplateIds?.length
+      ? systemJobExclusionTemplateIds
+      : undefined;
+  const queryString = getQueryString(
+    view,
+    toolbarFilters || [],
+    queryParams || {},
+    extraSearchParams
+  );
 
   // Only add queryString if all required filters are valid
   // If not valid, set url to null to prevent SWR from fetching
