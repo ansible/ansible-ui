@@ -11,8 +11,9 @@ import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/Pag
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -24,6 +25,8 @@ import {
   MultipleChoiceFieldType,
 } from '../../../common/MultipleChoiceField';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { surveySpecOptionsToPageFormData } from '../../../common/surveySpecOptions';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Spec, Survey } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -156,12 +159,20 @@ export function TemplateSurveyForm(props: IProps) {
 
   if (!questionVariable && mode !== 'add') pageNavigateSurveyRoute();
 
+  const surveySpecUrl = awxAPI`/${resourceType}/${id ?? ''}/survey_spec/`;
+
   const {
     error,
     data: survey,
     isLoading,
     refresh,
-  } = useGet<Survey>(awxAPI`/${resourceType}/${id ?? ''}/survey_spec/`);
+  } = useGet<Survey>(surveySpecUrl);
+
+  const { data: surveySpecOptions } = useOptions<OptionsResponse<ActionsResponse>>(surveySpecUrl);
+  const surveyOptionsData = useMemo(
+    () => surveySpecOptionsToPageFormData(surveySpecOptions),
+    [surveySpecOptions]
+  );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
 
@@ -307,6 +318,7 @@ export function TemplateSurveyForm(props: IProps) {
       submitText={mode === 'add' ? t('Create survey question') : t('Save survey question')}
       defaultValue={initialValues}
       disableSubmitOnEnter
+      optionsData={surveyOptionsData}
     >
       <TemplateSurveyInputs />
     </AwxPageForm>
