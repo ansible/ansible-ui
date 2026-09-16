@@ -68,7 +68,7 @@
     "@patternfly/react-styles": "6.5.1",
     "@patternfly/react-table": "6.5.1",
     "@patternfly/react-templates": "6.5.1",
-    "@patternfly/react-topology": "6.5.0",
+    "@patternfly/react-topology": "6.6.0",
     "@react-hook/resize-observer": "2.0.2",
     "anser": "2.3.5",
     "antsibull-docs": "1.1.4",
