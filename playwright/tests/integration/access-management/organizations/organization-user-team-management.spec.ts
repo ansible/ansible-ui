@@ -473,19 +473,7 @@ test.describe('Organization User and Team Management', () => {
 
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
-      try {
-        await waitForBulkActionDialog(page);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        if (message.includes('Assigning organization member permission to teams is not allowed')) {
-          await Team.ui.delete(page, teamName).catch(() => {});
-          test.skip(
-            true,
-            'Gateway currently rejects organization-scoped roles on teams; overlay was closed'
-          );
-        }
-        throw error;
-      }
+      await waitForBulkActionDialog(page);
 
       await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
       await expect(page.locator('tbody')).toContainText(teamName);
