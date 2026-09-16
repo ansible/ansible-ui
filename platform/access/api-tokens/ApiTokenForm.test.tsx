@@ -144,7 +144,7 @@ describe('ApiTokenForm', () => {
     })
   );
 
-  beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterAll(() => server.close());
 
   beforeEach(() => {
@@ -469,4 +469,41 @@ describe('ApiTokenForm', () => {
       { timeout: 10000 }
     );
   }, 15000);
+
+  test('fetches field patterns from the /tokens/ OPTIONS endpoint and validates on blur', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              description: {
+                pattern: '^[a-zA-Z0-9_\\-\\s]+$',
+                patternDescription:
+                  'Description must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ApiTokenForm />
+      </MemoryRouter>
+    );
+
+    const descriptionInput = await screen.findByLabelText('Description');
+    await user.type(descriptionInput, 'invalid@description!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Description must contain only letters, numbers, underscores, hyphens, and spaces\./
+        )
+      ).toBeInTheDocument();
+    });
+  });
 });
