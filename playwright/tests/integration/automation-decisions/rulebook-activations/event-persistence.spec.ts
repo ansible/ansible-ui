@@ -189,6 +189,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should create rulebook activation with event persistence and rule engine credential',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      // Skip: fixture Event-Driven Ansible Rule Engine credentials make activation create/save return 500.
       test.skip(
         !managedRuleEngineCredentialName,
         'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
@@ -225,6 +226,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should edit rulebook activation to enable event persistence',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      // Skip: fixture Event-Driven Ansible Rule Engine credentials make activation create/save return 500.
       test.skip(
         !managedRuleEngineCredentialName,
         'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
@@ -386,6 +388,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should nullify credential when editing to disable persistence after credential was selected',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      // Skip: fixture Event-Driven Ansible Rule Engine credentials make activation create/save return 500.
       test.skip(
         !managedRuleEngineCredentialName,
         'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
