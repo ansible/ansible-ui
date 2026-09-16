@@ -1,4 +1,5 @@
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { edaAPI } from '@ansible/playwright/commands/apiClient';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
@@ -63,19 +64,29 @@ async function fillCreateActivationBasics(
   await dismissOpenSelectMenus(page);
 }
 
-async function enableEventPersistence(page: Page) {
+async function enableEventPersistence(page: Page, credentialName: string | undefined) {
+  if (!credentialName) {
+    throw new Error('Managed Event-Driven Ansible Rule Engine credential is required');
+  }
   const persistenceCheckbox = page.getByRole('checkbox', {
     name: /Enable event persistence/i,
   });
   await expect(persistenceCheckbox).toBeVisible();
   await persistenceCheckbox.check();
-  await expect(page.getByRole('button', { name: /Event persistence credential/i })).toBeVisible();
-  // Keep the auto-selected managed credential. A fixture with localhost
-  // postgres inputs makes create/update return 500.
-  await expect(page.getByTestId('rule-engine-credential-select')).not.toContainText(
-    'Select an event persistence credential',
-    { timeout: 15000 }
-  );
+
+  const credentialToggle = page.getByTestId('rule-engine-credential-select');
+  await expect(credentialToggle).toBeVisible();
+
+  if (!(await credentialToggle.innerText()).includes(credentialName)) {
+    await page.getByRole('button', { name: /Event persistence credential/i }).click();
+    const credentialSearch = page.locator('#rule-engine-credential-select-search input');
+    await expect(credentialSearch).toBeVisible();
+    await credentialSearch.fill(credentialName);
+    await page.getByRole('option', { name: credentialName }).click();
+    await dismissOpenSelectMenus(page);
+  }
+
+  await expect(credentialToggle).toContainText(credentialName);
 }
 
 async function submitActivation(
@@ -112,6 +123,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
   let credentialName: string;
   let ruleEngineCredentialName: string;
   let decisionEnvironmentName: string;
+  let managedRuleEngineCredentialName: string | undefined;
 
   test.beforeEach(async ({ page }) => {
     test.setTimeout(300000);
@@ -146,6 +158,13 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       credentialTypeName: 'Event-Driven Ansible Rule Engine',
     });
     ruleEngineCredentialName = ruleEngineCredential.name;
+
+    const droolsCreds = await edaAPI.get<{
+      results?: Array<{ name: string; managed?: boolean }>;
+    }>(page, 'eda-credentials/?credential_type__namespace__in=drools&page_size=200');
+    managedRuleEngineCredentialName = droolsCreds?.results?.find(
+      (credential) => credential.managed
+    )?.name;
   });
 
   test.afterEach(async ({ page }) => {
@@ -170,6 +189,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should create rulebook activation with event persistence and rule engine credential',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.skip(
+        !managedRuleEngineCredentialName,
+        'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
+      );
+
       await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
       await page.getByText('Create rulebook activation').click();
 
@@ -182,7 +206,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       });
 
       await setRulebookActivationEnabledSwitch(page, false);
-      await enableEventPersistence(page);
+      await enableEventPersistence(page, managedRuleEngineCredentialName);
 
       await submitActivation(page, {
         buttonName: 'Create rulebook activation',
@@ -201,6 +225,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should edit rulebook activation to enable event persistence',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.skip(
+        !managedRuleEngineCredentialName,
+        'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
+      );
+
       const activationName = await RulebookActivation.ui.create(page, {
         projectName,
         credentialName,
@@ -212,7 +241,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
 
       await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
-      await enableEventPersistence(page);
+      await enableEventPersistence(page, managedRuleEngineCredentialName);
 
       await submitActivation(page, {
         buttonName: 'Save rulebook activation',
@@ -258,20 +287,24 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('option', { name: ruleEngineCredentialName }).click();
       await dismissOpenSelectMenus(page);
 
-      await expect(page.getByText(ruleEngineCredentialName)).toBeVisible();
+      await expect(page.getByTestId('rule-engine-credential-select')).toContainText(
+        ruleEngineCredentialName
+      );
 
       await persistenceCheckbox.uncheck();
 
       await expect(
         page.getByRole('button', { name: /Event persistence credential/i })
       ).not.toBeVisible();
-      await expect(page.getByText(ruleEngineCredentialName)).not.toBeVisible();
+      await expect(page.getByTestId('rule-engine-credential-select')).not.toBeVisible();
 
       await persistenceCheckbox.check();
       await expect(
         page.getByRole('button', { name: /Event persistence credential/i })
       ).toBeVisible();
-      await expect(page.getByText(ruleEngineCredentialName)).not.toBeVisible();
+      await expect(page.getByTestId('rule-engine-credential-select')).not.toContainText(
+        ruleEngineCredentialName
+      );
     }
   );
 
@@ -353,6 +386,11 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should nullify credential when editing to disable persistence after credential was selected',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.skip(
+        !managedRuleEngineCredentialName,
+        'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
+      );
+
       await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
       await page.getByText('Create rulebook activation').click();
 
@@ -365,7 +403,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       });
 
       await setRulebookActivationEnabledSwitch(page, false);
-      await enableEventPersistence(page);
+      await enableEventPersistence(page, managedRuleEngineCredentialName);
 
       await submitActivation(page, {
         buttonName: 'Create rulebook activation',

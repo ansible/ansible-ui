@@ -30,8 +30,15 @@ export interface CreateRulebookActivationAPIOptions {
 }
 
 export async function dismissOpenSelectMenus(page: Page): Promise<void> {
+  const expandedToggle = page.locator('.pf-v6-c-menu-toggle[aria-expanded="true"]');
+  if ((await expandedToggle.count()) === 0) {
+    return;
+  }
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('listbox')).toBeHidden();
+  if ((await expandedToggle.count()) > 0) {
+    await expandedToggle.first().click();
+  }
+  await expect(expandedToggle).toHaveCount(0);
 }
 
 export async function setRulebookActivationEnabledSwitch(
@@ -39,13 +46,18 @@ export async function setRulebookActivationEnabledSwitch(
   enabled: boolean
 ): Promise<void> {
   await dismissOpenSelectMenus(page);
-  const toggle = page.getByTestId('rulebook-activation-toggle');
   const activationSwitch = page.getByRole('switch', {
     name: /Rulebook activation enabled/i,
   });
-  await expect(toggle).toBeVisible();
+  // PatternFly puts data-testid on the hidden checkbox; the toggle span intercepts
+  // pointer events, so click the visible control instead of the input.
+  const switchToggle = page
+    .locator('label.pf-v6-c-switch')
+    .filter({ has: activationSwitch })
+    .locator('.pf-v6-c-switch__toggle');
+  await expect(activationSwitch).toBeVisible();
   if ((await activationSwitch.isChecked()) !== enabled) {
-    await toggle.click();
+    await switchToggle.click();
   }
   await expect(activationSwitch).toBeChecked({ checked: enabled });
 }
