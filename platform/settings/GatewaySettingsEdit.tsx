@@ -147,6 +147,24 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
                       enableReset
                     />
                   );
+                case 'float':
+                  return (
+                    <PageFormTextInput
+                      type="number"
+                      step="any"
+                      min={option.min_value}
+                      max={option.max_value}
+                      key={key}
+                      name={key}
+                      label={option.label}
+                      labelHelp={option.help_text}
+                      isRequired={option.required}
+                      isReadOnly={option.read_only}
+                      defaultValue={option.default}
+                      enableUndo
+                      enableReset
+                    />
+                  );
                 case 'boolean':
                   return (
                     <PageFormSelect
