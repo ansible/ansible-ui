@@ -21,7 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { PageFormSingleSelectHubResource } from '../../common/PageFormSingleSelectHubResource';
-import { pulpAPI } from '../../common/api/formatPath';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import {
   parsePulpIDFromURL,
   useRepositoryBasePath,
@@ -60,9 +60,8 @@ export function RepositoryForm() {
 
   const columns = useRepositoriesColumns({ disableLinks: true });
   const filters = useRepositoryFilters();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
-    pulpAPI`/repositories/ansible/ansible/`
+    hubAPI`/_ui/v1/repositories/`
   );
   const onSubmit = (data: RepositoryFormProps) => {
     // format inputs to correct payload
