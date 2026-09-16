@@ -1,9 +1,15 @@
+import type { PageFormOptionsData } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { describe, expect, it } from 'vitest';
 import {
   SURVEY_LAUNCH_TEXT_OPTIONS_FIELD,
   extractSurveySpecOptionsFields,
   surveySpecOptionsToPageFormData,
 } from './surveySpecOptions';
+
+/** Raw ``/survey_spec/`` OPTIONS (nested ``POST.spec``) before normalization for PageForm. */
+function surveySpecOptionsResponse(data: unknown): PageFormOptionsData {
+  return data as PageFormOptionsData;
+}
 
 const tier2Pattern = '^[^<]*$';
 const tier2Description = 'No HTML allowed';
@@ -25,22 +31,24 @@ describe('extractSurveySpecOptionsFields', () => {
   });
 
   it('extracts nested question editor fields from actions.POST.spec', () => {
-    const fields = extractSurveySpecOptionsFields({
-      actions: {
-        POST: {
-          spec: {
-            type: 'json',
-            question_name: {
-              pattern: tier2Pattern,
-              pattern_description: tier2Description,
-              flags: 'i',
+    const fields = extractSurveySpecOptionsFields(
+      surveySpecOptionsResponse({
+        actions: {
+          POST: {
+            spec: {
+              type: 'json',
+              question_name: {
+                pattern: tier2Pattern,
+                pattern_description: tier2Description,
+                flags: 'i',
+              },
+              question_description: { pattern: tier2Pattern, pattern_description: tier2Description },
+              variable: { pattern: tier2Pattern, pattern_description: tier2Description },
             },
-            question_description: { pattern: tier2Pattern, pattern_description: tier2Description },
-            variable: { pattern: tier2Pattern, pattern_description: tier2Description },
           },
         },
-      },
-    });
+      })
+    );
     expect(fields.question_name).toEqual({
       pattern: tier2Pattern,
       pattern_description: tier2Description,
@@ -51,16 +59,18 @@ describe('extractSurveySpecOptionsFields', () => {
   });
 
   it('does not add launch text metadata when question_name has no pattern', () => {
-    const fields = extractSurveySpecOptionsFields({
-      actions: {
-        POST: {
-          spec: {
-            type: 'json',
-            question_name: { type: 'string', required: true },
+    const fields = extractSurveySpecOptionsFields(
+      surveySpecOptionsResponse({
+        actions: {
+          POST: {
+            spec: {
+              type: 'json',
+              question_name: { type: 'string', required: true },
+            },
           },
         },
-      },
-    });
+      })
+    );
     expect(fields[SURVEY_LAUNCH_TEXT_OPTIONS_FIELD]).toBeUndefined();
   });
 });
@@ -71,15 +81,17 @@ describe('surveySpecOptionsToPageFormData', () => {
   });
 
   it('returns POST actions suitable for PageForm optionsData', () => {
-    const data = surveySpecOptionsToPageFormData({
-      actions: {
-        POST: {
-          spec: {
-            question_name: { pattern: '^x$', pattern_description: 'x' },
+    const data = surveySpecOptionsToPageFormData(
+      surveySpecOptionsResponse({
+        actions: {
+          POST: {
+            spec: {
+              question_name: { pattern: '^x$', pattern_description: 'x' },
+            },
           },
         },
-      },
-    });
+      })
+    );
     expect(data?.actions?.POST?.question_name?.pattern).toBe('^x$');
   });
 });
