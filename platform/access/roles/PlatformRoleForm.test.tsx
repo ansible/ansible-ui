@@ -425,7 +425,7 @@ describe('PlatformRoleForm', () => {
             actions: {
               POST: {
                 name: {
-                  pattern: '^[a-zA-Z0-9_\\-]+$',
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
                   patternDescription:
                     'Name must contain only letters, numbers, underscores, and hyphens.',
                 },
@@ -452,6 +452,41 @@ describe('PlatformRoleForm', () => {
         expect(
           screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
         ).toBeInTheDocument();
+      });
+    });
+
+    test('accepts valid name matching pattern on blur', async () => {
+      server.use(
+        http.options(gatewayAPI`/role_definitions/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+      await user.type(nameInput, 'Valid_Role-Name');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
       });
     });
   });
