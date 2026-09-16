@@ -83,6 +83,10 @@ describe('ActivationInstanceEvents', () => {
       expect(screen.getByText('newest filtered log')).toBeInTheDocument();
     });
 
+    const logOutput = screen.getByText('newest filtered log').closest('pre')?.parentElement;
+    expect(logOutput?.parentElement?.tagName).toBe('SECTION');
+    expect(logOutput?.parentElement).not.toHaveClass('pf-v6-c-page__main-body');
+
     expect(requestedQueryParams).toHaveLength(2);
     expect(requestedQueryParams[0].get('page_size')).toBe('1');
     expect(requestedQueryParams[0].get('log')).toBe('filtered');
