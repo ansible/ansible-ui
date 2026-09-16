@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
-import { pulpAPI } from '../../common/api/formatPath';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { useHubContext } from '../../common/useHubContext';
 import { PulpItemsResponse } from '../../common/useHubView';
@@ -52,9 +52,8 @@ export function CreateRemote() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubRemote>();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
-    pulpAPI`/remotes/ansible/collection/`
+    hubAPI`/_ui/v1/remotes/`
   );
 
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
@@ -180,9 +179,8 @@ export function EditRemote() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const { clearCacheByKey } = useClearCache();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
-    pulpAPI`/remotes/ansible/collection/`
+    hubAPI`/_ui/v1/remotes/`
   );
 
   const name = params.id;
