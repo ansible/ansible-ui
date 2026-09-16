@@ -30,7 +30,11 @@ describe('extractSurveySpecOptionsFields', () => {
         POST: {
           spec: {
             type: 'json',
-            question_name: { pattern: tier2Pattern, pattern_description: tier2Description, flags: 'i' },
+            question_name: {
+              pattern: tier2Pattern,
+              pattern_description: tier2Description,
+              flags: 'i',
+            },
             question_description: { pattern: tier2Pattern, pattern_description: tier2Description },
             variable: { pattern: tier2Pattern, pattern_description: tier2Description },
           },

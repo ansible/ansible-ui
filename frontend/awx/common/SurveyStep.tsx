@@ -136,42 +136,42 @@ export function SurveyStep({
               maxLength={element.max}
               minLength={element.min}
             />
-        ) : element.type === 'integer' ? (
-          <PageFormTextInput
-            key={index}
-            name={`survey.${element.variable}`}
-            label={element.question_name}
-            labelHelp={element.question_description}
-            labelHelpTitle=""
-            isRequired={element.required}
-            type="number"
-            max={element.max}
-            min={element.min}
-          />
-        ) : element.type === 'float' ? (
-          <PageFormTextInput
-            key={index}
-            name={`survey.${element.variable}`}
-            label={element.question_name}
-            labelHelp={element.question_description}
-            labelHelpTitle=""
-            isRequired={element.required}
-            type="number"
-            max={element.max}
-            min={element.min}
-          />
-        ) : element.type === 'password' ? (
-          <PageFormTextInput
-            key={index}
-            name={`survey.${element.variable}`}
-            label={element.question_name}
-            labelHelp={element.question_description}
-            labelHelpTitle=""
-            isRequired={element.required}
-            type="password"
-            maxLength={element.max}
-            minLength={element.min}
-          />
+          ) : element.type === 'integer' ? (
+            <PageFormTextInput
+              key={index}
+              name={`survey.${element.variable}`}
+              label={element.question_name}
+              labelHelp={element.question_description}
+              labelHelpTitle=""
+              isRequired={element.required}
+              type="number"
+              max={element.max}
+              min={element.min}
+            />
+          ) : element.type === 'float' ? (
+            <PageFormTextInput
+              key={index}
+              name={`survey.${element.variable}`}
+              label={element.question_name}
+              labelHelp={element.question_description}
+              labelHelpTitle=""
+              isRequired={element.required}
+              type="number"
+              max={element.max}
+              min={element.min}
+            />
+          ) : element.type === 'password' ? (
+            <PageFormTextInput
+              key={index}
+              name={`survey.${element.variable}`}
+              label={element.question_name}
+              labelHelp={element.question_description}
+              labelHelpTitle=""
+              isRequired={element.required}
+              type="password"
+              maxLength={element.max}
+              minLength={element.min}
+            />
           ) : element.type === 'textarea' ? (
             <PageFormTextArea
               key={index}
@@ -184,28 +184,28 @@ export function SurveyStep({
               maxLength={element.max}
               minLength={element.min}
             ></PageFormTextArea>
-        ) : element.type === 'multiplechoice' ? (
-          <PageFormSelect
-            key={index}
-            name={`survey.${element.variable}`}
-            placeholderText={t('Select option')}
-            label={element.question_name}
-            labelHelp={element.question_description}
-            labelHelpTitle=""
-            options={getChoices(element.question_name)}
-            isRequired={element.required}
-          ></PageFormSelect>
-        ) : element.type === 'multiselect' ? (
-          <PageFormMultiSelect
-            key={index}
-            name={`survey.${element.variable}`}
-            placeholder={t('Select option(s)')}
-            label={element.question_name}
-            labelHelp={element.question_description}
-            labelHelpTitle=""
-            options={getChoices(element.question_name)}
-            isRequired={element.required}
-          />
+          ) : element.type === 'multiplechoice' ? (
+            <PageFormSelect
+              key={index}
+              name={`survey.${element.variable}`}
+              placeholderText={t('Select option')}
+              label={element.question_name}
+              labelHelp={element.question_description}
+              labelHelpTitle=""
+              options={getChoices(element.question_name)}
+              isRequired={element.required}
+            ></PageFormSelect>
+          ) : element.type === 'multiselect' ? (
+            <PageFormMultiSelect
+              key={index}
+              name={`survey.${element.variable}`}
+              placeholder={t('Select option(s)')}
+              label={element.question_name}
+              labelHelp={element.question_description}
+              labelHelpTitle=""
+              options={getChoices(element.question_name)}
+              isRequired={element.required}
+            />
           ) : undefined
         )}
       </PageFormSection>

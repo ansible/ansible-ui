@@ -171,7 +171,10 @@ test.describe('Inventory OPTIONS-driven validation', () => {
     async ({ page }, testInfo) => {
       const nameField = await requireOptionsFieldPattern(page, '/inventories/', 'name', testInfo);
       const invalidValue = findValueFailingPattern(nameField.pattern!, nameField.flags);
-      testInfo.skip(!invalidValue, 'Could not derive a sample value that fails the OPTIONS pattern');
+      testInfo.skip(
+        !invalidValue,
+        'Could not derive a sample value that fails the OPTIONS pattern'
+      );
 
       await openInventoryCreateForm(page);
 

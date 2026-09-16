@@ -161,12 +161,7 @@ export function TemplateSurveyForm(props: IProps) {
 
   const surveySpecUrl = awxAPI`/${resourceType}/${id ?? ''}/survey_spec/`;
 
-  const {
-    error,
-    data: survey,
-    isLoading,
-    refresh,
-  } = useGet<Survey>(surveySpecUrl);
+  const { error, data: survey, isLoading, refresh } = useGet<Survey>(surveySpecUrl);
 
   const { data: surveySpecOptions } = useOptions<OptionsResponse<ActionsResponse>>(surveySpecUrl);
   const surveyOptionsData = useMemo(
