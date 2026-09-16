@@ -29,26 +29,7 @@ import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationSelect } from '../organizations/components/PageFormPlatformOrganizationSelect';
 import { OAuthApplicationSecretModal } from './OAuthApplicationSecretModal';
-
-interface FieldChoice {
-  value: string;
-  display_name: string;
-}
-
-interface ApplicationFieldMeta {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text?: string;
-  choices?: FieldChoice[];
-}
-
-interface ApplicationOptionsResponse {
-  actions?: {
-    POST?: Record<string, ApplicationFieldMeta>;
-  };
-}
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export function CreateOAuthApplication() {
   const { t } = useTranslation();
@@ -57,7 +38,9 @@ export function CreateOAuthApplication() {
   const postRequest = usePostRequest<Application>();
   const { clearCacheByKey } = useClearCache();
   const { pushDialog, popDialog } = usePageDialogs();
-  const { data: optionsData } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/applications/`
+  );
 
   const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
     const newApplication = await postRequest(gatewayAPI`/applications/`, application);
@@ -118,7 +101,9 @@ export function EditOAuthApplication() {
     gatewayAPI`/applications/${id.toString()}/`,
     requestGet
   );
-  const { data: optionsData } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/applications/`
+  );
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
     application: Application,
@@ -192,10 +177,10 @@ export function EditOAuthApplication() {
   );
 }
 
-function choicesToOptions(choices?: FieldChoice[]) {
-  return (choices ?? []).map((choice) => ({
-    label: choice.display_name,
-    value: choice.value,
+function choicesToOptions(choices?: [string, string][]) {
+  return (choices ?? []).map(([value, label]) => ({
+    label,
+    value,
   }));
 }
 
@@ -209,7 +194,9 @@ function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
     gatewayAPI`/settings/all/`,
     requestGet
   );
-  const { data: options } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
+  const { data: options } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/applications/`
+  );
   const fields = options?.actions?.POST;
 
   return (
