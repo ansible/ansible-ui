@@ -838,7 +838,7 @@ describe('OAuthApplicationForm', () => {
     });
 
     test('fetches field patterns from the /applications/ OPTIONS endpoint and validates on blur', async () => {
-      const server = setupServer(
+      server.use(
         http.options(gatewayAPI`/applications/`, () =>
           HttpResponse.json({
             actions: {
@@ -853,8 +853,6 @@ describe('OAuthApplicationForm', () => {
           })
         )
       );
-
-      server.listen({ onUnhandledRequest: 'bypass' });
 
       const user = userEvent.setup();
       render(
@@ -874,12 +872,10 @@ describe('OAuthApplicationForm', () => {
           screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
         ).toBeInTheDocument();
       });
-
-      server.close();
     });
 
     test('accepts valid name matching pattern on blur', async () => {
-      const server = setupServer(
+      server.use(
         http.options(gatewayAPI`/applications/`, () =>
           HttpResponse.json({
             actions: {
@@ -894,8 +890,6 @@ describe('OAuthApplicationForm', () => {
           })
         )
       );
-
-      server.listen({ onUnhandledRequest: 'bypass' });
 
       const user = userEvent.setup();
       render(
@@ -913,8 +907,6 @@ describe('OAuthApplicationForm', () => {
       await waitFor(() => {
         expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
       });
-
-      server.close();
     });
   });
 });
