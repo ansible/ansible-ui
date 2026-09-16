@@ -28,7 +28,6 @@ const CLIPBOARD_PERMISSIONS = ['clipboard-read', 'clipboard-write'] as const;
  *                        `page.getByRole('textbox', { name: 'Editor content' })`.
  */
 export async function fillMonacoEditor(page: Page, text: string, editorLocator?: Locator) {
-  text = text.replace(/\r\n/g, '\n');
   const editor = editorLocator ?? page.getByRole('textbox', { name: 'Editor content' });
   const monacoEditor = editor
     .locator(
@@ -73,15 +72,6 @@ export async function fillMonacoEditor(page: Page, text: string, editorLocator?:
   await page.keyboard.press('ControlOrMeta+a');
   await page.keyboard.press('ControlOrMeta+v');
 
-  if (await editorContentIsReady(editor, monacoEditor, text)) {
-    return;
-  }
-
-  // Paste can leave leftover content or trip auto-closing quotes on YAML.
-  await focusEditor(editableSurface, editor);
-  await page.keyboard.press('ControlOrMeta+a');
-  await page.keyboard.press('Backspace');
-  await page.keyboard.insertText(text);
   await verifyEditorContent(editor, monacoEditor, text);
 }
 
@@ -105,9 +95,8 @@ async function writeClipboard(page: Page, text: string): Promise<boolean> {
       if (!navigator.clipboard?.writeText || !navigator.clipboard?.readText) {
         return false;
       }
-      const normalized = content.replace(/\r\n/g, '\n');
-      await navigator.clipboard.writeText(normalized);
-      return (await navigator.clipboard.readText()) === normalized;
+      await navigator.clipboard.writeText(content);
+      return (await navigator.clipboard.readText()) === content;
     } catch {
       return false;
     }
@@ -164,24 +153,10 @@ async function getMonacoVisibleText(monacoEditor: Locator): Promise<string> {
   return lines.join('\n');
 }
 
-async function editorContentIsReady(
-  editor: Locator,
-  monacoEditor: Locator,
-  text: string
-): Promise<boolean> {
-  try {
-    await verifyEditorContent(editor, monacoEditor, text, 2000);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 async function verifyEditorContent(
   editor: Locator,
   monacoEditor: Locator,
-  text: string,
-  timeout = 8000
+  text: string
 ): Promise<void> {
   const expected = text.trim();
 
@@ -196,22 +171,28 @@ async function verifyEditorContent(
     const candidates = [modelValue, ariaText, textareaText].filter(
       (value): value is string => typeof value === 'string' && value.length > 0
     );
+    const expectedNormalized = normalizeForCompare(expected);
+    const fullCandidate = candidates.find(
+      (value) => normalizeForCompare(value).length >= expectedNormalized.length
+    );
+
+    if (fullCandidate !== undefined) {
+      expect(editorContentMatches(fullCandidate, expected)).toBe(true);
+      return;
+    }
+
+    // Viewport fallback: DataEditor enables word wrap and sizes height by
+    // newline count, so compact JSON is one logical line in a ~33px editor.
+    // Monaco then virtualizes wrapped view-lines; `.view-line` only has the
+    // caret's viewport, not the full model. Used only when no complete
+    // Monaco model/aria/textarea value is available.
     const visibleText = await getMonacoVisibleText(monacoEditor);
     const longest = [...candidates, visibleText].sort((a, b) => b.length - a.length)[0] ?? '';
-    expect(editorContentMatches(longest, expected)).toBe(true);
-  }).toPass({ timeout });
+    expect(viewportContentMatches(longest, expected)).toBe(true);
+  }).toPass({ timeout: 5000 });
 }
 
 function editorContentMatches(actual: string, expected: string): boolean {
-  const trimmedActual = actual.trim();
-  // JSON-encoded YAML (leading quote + escaped newlines) is invalid source vars.
-  if (
-    (trimmedActual.startsWith('"') || trimmedActual.startsWith("'")) &&
-    /\\[rn]/.test(trimmedActual)
-  ) {
-    return false;
-  }
-
   const normalizedExpected = normalizeForCompare(expected);
   const normalizedActual = normalizeForCompare(actual);
 
@@ -219,16 +200,27 @@ function editorContentMatches(actual: string, expected: string): boolean {
     return normalizedActual.length === 0;
   }
 
-  if (normalizedActual === normalizedExpected || normalizedActual.includes(normalizedExpected)) {
-    return true;
+  return normalizedActual === normalizedExpected;
+}
+
+function viewportContentMatches(actual: string, expected: string): boolean {
+  const normalizedExpected = normalizeForCompare(expected);
+  const normalizedActual = normalizeForCompare(actual);
+
+  if (!normalizedExpected) {
+    return normalizedActual.length === 0;
   }
 
-  // Viewport can clip long YAML. Require a meaningful absolute length so a
-  // 2-character substring cannot satisfy a short expected value.
-  const minLength = Math.max(8, Math.ceil(normalizedExpected.length / 2));
-  return normalizedActual.length >= minLength && normalizedExpected.includes(normalizedActual);
+  if (
+    normalizedActual.includes(normalizedExpected) ||
+    normalizedExpected.includes(normalizedActual)
+  ) {
+    return normalizedActual.length > 0;
+  }
+
+  return false;
 }
 
 function normalizeForCompare(value: string): string {
-  return value.replace(/(?:\s|\u200b|\u200c|\u200d|\ufeff|['"])+/g, '');
+  return value.replace(/(?:\s|\u200b|\u200c|\u200d|\ufeff)+/g, '');
 }

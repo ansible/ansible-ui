@@ -9,6 +9,7 @@ import { getTableRow } from '../../../../../../commands/getTableRow';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../../commands/runAdHocCommandWizard';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
+import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import {
   Organization,
   Credential,
@@ -233,12 +234,13 @@ test.describe('Inventory Groups - Related Groups', () => {
 
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disassociate groups' }).click();
+      await waitForBulkActionDialog(page);
       await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
       await clearTableFilters(page);
       await expect(
         page.getByRole('heading', { name: 'There are currently no groups related to this group.' })
       ).toBeVisible();
-      await Inventory.ui.delete(page, inventoryName);
+      await Inventory.api.deleteByName(page, inventoryName);
     }
   );
 
@@ -293,13 +295,14 @@ test.describe('Inventory Groups - Related Groups', () => {
 
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disassociate groups' }).click();
+      await waitForBulkActionDialog(page);
       await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
       await clearTableFilters(page);
       await expect(
         page.getByRole('heading', { name: 'There are currently no groups related to this group.' })
       ).toBeVisible();
 
-      await Inventory.ui.delete(page, inventoryName);
+      await Inventory.api.deleteByName(page, inventoryName);
     }
   );
 
