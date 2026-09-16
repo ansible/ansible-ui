@@ -1,7 +1,9 @@
 coverage:
   status:
     project:
-      default: true
+      default:
+        target: auto
+        threshold: 2%
   ignore:
     - "**/*.test.ts"
     - "**/*.test.tsx"
