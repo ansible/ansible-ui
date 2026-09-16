@@ -23,6 +23,30 @@ export interface CreateEdaCredentialAPIOptions {
   inputs?: Record<string, unknown>;
 }
 
+function getDefaultCredentialInputs(credentialTypeName: string): Record<string, unknown> {
+  switch (credentialTypeName) {
+    case 'Red Hat Ansible Automation':
+    case 'Red Hat Ansible Automation Platform':
+      return {
+        host: 'https://1.1.1.1/',
+        username: 'test',
+        password: 'test',
+      };
+    case 'Event-Driven Ansible Rule Engine':
+      return {
+        postgres_db_host: 'localhost',
+        postgres_db_name: 'test_db',
+      };
+    case 'Basic Event Stream':
+      return {
+        username: 'test',
+        password: 'test',
+      };
+    default:
+      return {};
+  }
+}
+
 export const EdaCredential = {
   api: {
     create: async (
@@ -56,7 +80,10 @@ export const EdaCredential = {
         organization_id: organizationId,
         credential_type_id: credentialTypeId,
         description: options.description,
-        inputs: options.inputs || {},
+        inputs: {
+          ...getDefaultCredentialInputs(options.credentialTypeName),
+          ...options.inputs,
+        },
       })) as EdaCredentialInterface;
 
       return credential;

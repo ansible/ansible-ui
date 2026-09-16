@@ -29,6 +29,27 @@ export interface CreateRulebookActivationAPIOptions {
   restartOnProjectUpdate?: boolean;
 }
 
+export async function dismissOpenSelectMenus(page: Page): Promise<void> {
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('listbox')).toBeHidden();
+}
+
+export async function setRulebookActivationEnabledSwitch(
+  page: Page,
+  enabled: boolean
+): Promise<void> {
+  await dismissOpenSelectMenus(page);
+  const toggle = page.getByTestId('rulebook-activation-toggle');
+  const activationSwitch = page.getByRole('switch', {
+    name: /Rulebook activation enabled/i,
+  });
+  await expect(toggle).toBeVisible();
+  if ((await activationSwitch.isChecked()) !== enabled) {
+    await toggle.click();
+  }
+  await expect(activationSwitch).toBeChecked({ checked: enabled });
+}
+
 export const RulebookActivation = {
   api: {
     create: async (
@@ -251,6 +272,7 @@ export const RulebookActivation = {
         const credentialOption = page.getByRole('menuitem', { name: options.credentialName });
         await expect(credentialOption).toBeVisible({ timeout: 10000 });
         await credentialOption.click();
+        await dismissOpenSelectMenus(page);
       }
 
       await page.getByRole('button', { name: 'Decision Environment' }).click();
@@ -262,22 +284,29 @@ export const RulebookActivation = {
       });
       await expect(decisionEnvOption).toBeVisible({ timeout: 10000 });
       await decisionEnvOption.click();
+      await dismissOpenSelectMenus(page);
       if (options?.restartPolicy) {
         await page.getByRole('button', { name: 'On failure' }).click();
         await page.getByRole('option', { name: options.restartPolicy }).click();
+        await dismissOpenSelectMenus(page);
       }
       if (options?.disabled) {
-        await page
-          .getByRole('switch', { name: 'Rulebook activation enabled?' })
-          .click({ force: true });
+        await setRulebookActivationEnabledSwitch(page, false);
       }
       const createResponsePromise = page.waitForResponse(
         (response) =>
-          response.url().includes('/activations/') && response.request().method() === 'POST'
+          response.url().includes('/activations/') &&
+          response.request().method() === 'POST' &&
+          !response.url().includes('/disable/') &&
+          !response.url().includes('/enable/')
       );
       await page.getByRole('button', { name: 'Create rulebook activation' }).click();
       const createResponse = await createResponsePromise;
-      expect(createResponse.ok()).toBeTruthy();
+      if (!createResponse.ok()) {
+        throw new Error(
+          `POST activations failed with ${createResponse.status()}: ${await createResponse.text()}`
+        );
+      }
 
       await expect(
         page.getByRole('heading', { name: rulebookActivationName, exact: true })
