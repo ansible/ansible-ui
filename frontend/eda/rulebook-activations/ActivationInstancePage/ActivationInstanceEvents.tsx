@@ -17,6 +17,8 @@ const INITIAL_PAGE_SIZE = 5000;
 const POLL_INTERVAL_MS = 5000;
 
 const ScrollContainer = styled.div`
+  flex: 1;
+  min-height: 0;
   overflow: auto;
   background-color: var(--pf-t--global--background--color--primary--default);
   font-size: var(--pf-t--global--font--size--body--sm);
@@ -220,7 +222,7 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
     useVirtualizedList<EdaActivationInstanceLog>(containerRef, logs, onScroll);
 
   return (
-    <Section>
+    <Section hasBodyWrapper={false}>
       <PageControls
         onScrollFirst={scrollToTop}
         onScrollLast={scrollToBottom}
