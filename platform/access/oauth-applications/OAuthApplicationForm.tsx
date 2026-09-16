@@ -177,11 +177,25 @@ export function EditOAuthApplication() {
   );
 }
 
-function choicesToOptions(choices?: [string, string][]) {
-  return (choices ?? []).map(([value, label]) => ({
-    label,
-    value,
-  }));
+function choicesToOptions(
+  choices?: [string, string][] | { value: string; display_name: string }[]
+) {
+  if (!choices) return [];
+  if (Array.isArray(choices) && choices.length > 0) {
+    const first = choices[0];
+    if (Array.isArray(first)) {
+      return (choices as [string, string][]).map(([value, label]) => ({
+        label,
+        value,
+      }));
+    } else if (typeof first === 'object' && 'display_name' in first) {
+      return (choices as { value: string; display_name: string }[]).map((choice) => ({
+        label: choice.display_name,
+        value: choice.value,
+      }));
+    }
+  }
+  return [];
 }
 
 function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
