@@ -417,6 +417,45 @@ describe('PlatformRoleForm', () => {
     }, 15000);
   });
 
+  describe('OPTIONS-driven validation', () => {
+    test('fetches field patterns from the /role_definitions/ OPTIONS endpoint and validates on blur', async () => {
+      server.use(
+        http.options(gatewayAPI`/role_definitions/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: '^[a-zA-Z0-9_\\-]+$',
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+      await user.type(nameInput, 'invalid@name!');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
   describe('Cancel Navigation', () => {
     test('should navigate away from create form when cancel is clicked', async () => {
       const user = userEvent.setup();

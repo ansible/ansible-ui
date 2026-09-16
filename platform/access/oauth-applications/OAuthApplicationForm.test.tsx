@@ -836,5 +836,46 @@ describe('OAuthApplicationForm', () => {
       // Check if the field has a maxLength property
       expect(nameField).toBeInTheDocument();
     });
+
+    test('fetches field patterns from the /applications/ OPTIONS endpoint and validates on blur', async () => {
+      const server = setupServer(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: '^[a-zA-Z0-9_\\-]+$',
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      server.listen({ onUnhandledRequest: 'bypass' });
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'invalid@name!');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+
+      server.close();
+    });
   });
 });
