@@ -57,6 +57,7 @@ export function CreateOAuthApplication() {
   const postRequest = usePostRequest<Application>();
   const { clearCacheByKey } = useClearCache();
   const { pushDialog, popDialog } = usePageDialogs();
+  const { data: optionsData } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
 
   const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
     const newApplication = await postRequest(gatewayAPI`/applications/`, application);
@@ -98,6 +99,7 @@ export function CreateOAuthApplication() {
           skip_authorization: false,
           pkce_required: true,
         }}
+        optionsData={optionsData}
       >
         <OAuthApplicationInputs mode="create" />
       </PlatformPageForm>
@@ -116,6 +118,7 @@ export function EditOAuthApplication() {
     gatewayAPI`/applications/${id.toString()}/`,
     requestGet
   );
+  const { data: optionsData } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
     application: Application,
@@ -181,6 +184,7 @@ export function EditOAuthApplication() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={application}
+        optionsData={optionsData}
       >
         <OAuthApplicationInputs mode="edit" />
       </PlatformPageForm>
