@@ -33,7 +33,7 @@ const surveySpecOptionsWithPatterns = {
           pattern_description: 'No angle brackets in description',
         },
         variable: {
-          pattern: '^\\S+$',
+          pattern: String.raw`^\S+$`,
           pattern_description: 'No whitespace in variable name',
         },
       },
