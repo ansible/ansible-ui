@@ -908,5 +908,87 @@ describe('OAuthApplicationForm', () => {
         expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
       });
     });
+
+    test('clears validation error when name becomes valid', async () => {
+      server.use(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'bad@name');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+
+      await user.clear(nameInput);
+      await user.type(nameInput, 'GoodName_123');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+      });
+    });
+
+    test('error persists when name contains multiple invalid characters', async () => {
+      server.use(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'bad@app#name$');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+    });
   });
 });
