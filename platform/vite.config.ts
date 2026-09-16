@@ -34,6 +34,9 @@ const distDir = path.join(platformDir, 'dist');
 const distIndex = path.join(distDir, 'index.html');
 const isE2eSidecar =
   process.env.E2E_SIDECAR === '1' || (!process.stdout.isTTY && fs.existsSync(distIndex));
+// Konflux sets CI=true on the Playwright step only, not on the platform-ui sidecar.
+// Bind all interfaces in sidecar mode so 127.0.0.1 (Playwright) reaches Vite on Node 22.
+const bindAllInterfaces = isE2eSidecar || Boolean(process.env.CI);
 
 const environment: Record<string, string> = {
   PLATFORM_SERVER,
@@ -81,9 +84,9 @@ const config: VitestUserConfig = {
   // https://vite.dev/guide/migration#consistent-commonjs-interop
   legacy: { inconsistentCjsInterop: true },
   server: {
-    host: process.env.CI ? '0.0.0.0' : 'localhost',
+    host: bindAllInterfaces ? '0.0.0.0' : 'localhost',
     strictPort: true,
-    allowedHosts: process.env.CI ? true : undefined,
+    allowedHosts: bindAllInterfaces ? true : undefined,
     cors: false,
     proxy: {
       '/api': {
@@ -157,6 +160,8 @@ if (isE2eSidecar) {
   config.optimizeDeps = { noDiscovery: true, include: [] };
   config.server = {
     ...config.server,
+    host: '0.0.0.0',
+    allowedHosts: true,
     hmr: false,
     watch: null,
     preTransformRequests: false,
