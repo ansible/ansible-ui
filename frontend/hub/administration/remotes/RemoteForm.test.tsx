@@ -1,8 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { hubAPI } from '../../common/api/formatPath';
 import { HubContext } from '../../common/useHubContext';
 import { CreateRemote } from './RemoteForm';
 
@@ -103,6 +105,36 @@ describe('CreateRemote', () => {
     await waitFor(() => {
       const warning = container.querySelector('[data-testid="signed-only-warning"]');
       expect(warning).not.toBeInTheDocument();
+    });
+  });
+
+  test('fetches field patterns from the _ui/v1/remotes/ endpoint and validates on blur', async () => {
+    server.use(
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: '^[a-zA-Z0-9_-]+$',
+                patternDescription: 'Name must contain only letters, numbers, - and _.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup({ delay: null });
+    renderCreateRemote();
+
+    const nameInput = await screen.findByRole('textbox', { name: 'Name' });
+    await user.type(nameInput, 'invalid name!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Name must contain only letters, numbers, - and _.')
+      ).toBeInTheDocument();
     });
   });
 });

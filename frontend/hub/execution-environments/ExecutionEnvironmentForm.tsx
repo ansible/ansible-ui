@@ -52,9 +52,8 @@ function ExecutionEnvironmentForm(props: Readonly<{ mode: 'add' | 'edit' }>) {
     disableLinks: true,
   });
   const filters = useExecutionEnvironmentFilters();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
-    pulpAPI`/repositories/container/container/`
+    hubAPI`/_ui/v1/execution-environments/remotes/`
   );
 
   const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);

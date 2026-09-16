@@ -1,10 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { pulpAPI } from '../../common/api/formatPath';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { RepositoryForm } from './RepositoryForm';
 
 const mockRepository = {
@@ -155,5 +156,41 @@ describe('RepositoryForm - Edit mode', () => {
     await screen.findByRole('textbox', { name: 'Name' });
     expect(screen.getByText('pipeline: staging')).toBeInTheDocument();
     expect(screen.getByText('hide_from_search')).toBeInTheDocument();
+  });
+});
+
+describe('RepositoryForm - OPTIONS-driven validation wiring', () => {
+  it('fetches field patterns from the _ui/v1/repositories/ endpoint and validates on blur', async () => {
+    server.use(
+      http.options(hubAPI`/_ui/v1/repositories/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: '^[a-zA-Z0-9_-]+$',
+                patternDescription: 'Name must contain only letters, numbers, - and _.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <RepositoryForm />
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByRole('textbox', { name: 'Name' });
+    await user.type(nameInput, 'invalid name!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Name must contain only letters, numbers, - and _.')
+      ).toBeInTheDocument();
+    });
   });
 });

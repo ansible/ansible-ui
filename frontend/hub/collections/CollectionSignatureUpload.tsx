@@ -7,7 +7,6 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { useGet, useGetRequest } from '@ansible/common-ui/crud/useGet';
-import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Repository } from '../administration/repositories/Repository';
@@ -18,7 +17,6 @@ import { hubPostRequestFile } from '../common/api/request';
 import { HubItemsResponse, PulpItemsResponse } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
 import { CollectionVersionSearch } from './Collection';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 interface UploadData {
   file: unknown;
@@ -72,10 +70,6 @@ export function UploadSignatureByFile(props: { collection: CollectionVersionSear
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
-    pulpAPI`/content/ansible/collection_signatures/`
-  );
   const onCancel = () => void navigate(-1);
 
   const { collection } = props;
@@ -108,7 +102,6 @@ export function UploadSignatureByFile(props: { collection: CollectionVersionSear
           return submitData(data);
         }}
         singleColumn={true}
-        optionsData={optionsData}
       >
         <PageFormFileUpload label={t('Signature file')} name="file" isRequired />
       </HubPageForm>
