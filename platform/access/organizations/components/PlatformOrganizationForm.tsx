@@ -19,6 +19,7 @@ import { OrganizationGalaxyCredentialsOrderStep } from './steps/OrganizationGala
 import { OrganizationInstanceGroupsOrderStep } from './steps/OrganizationInstanceGroupsOrderStep';
 import { OrganizationReviewStep } from './steps/OrganizationReviewStep';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export interface OrganizationWizardFormValues {
@@ -46,6 +47,23 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/organizations/`
   );
+  const { data: awxOrganizationOptionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/organizations/`
+  );
+
+  const mergedOptionsData =
+    optionsData || awxOrganizationOptionsData
+      ? {
+          ...optionsData,
+          actions: {
+            ...optionsData?.actions,
+            POST: {
+              ...optionsData?.actions?.POST,
+              ...awxOrganizationOptionsData?.actions?.POST,
+            },
+          },
+        }
+      : undefined;
 
   const steps: PageWizardStep[] = [
     {
@@ -142,7 +160,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
         stepDefaults={defaultValues}
         onSubmit={props.handleSubmit}
         errorAdapter={awxErrorAdapter}
-        optionsData={optionsData}
+        optionsData={mergedOptionsData}
         disableGrid
       />
     </PageLayout>
