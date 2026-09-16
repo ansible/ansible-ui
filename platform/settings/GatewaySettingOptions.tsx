@@ -58,3 +58,13 @@ interface FieldOption {
   label: string;
   help_text: string;
 }
+interface FloatOption {
+  type: 'float';
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text: string;
+  default: number;
+  min_value?: number;
+  max_value?: number;
+}

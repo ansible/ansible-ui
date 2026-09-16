@@ -163,7 +163,11 @@ type PageFormTextInputBaseProps<
    * Note: The max and min attributes works with the following input types: number, range, date, datetime-local, month, time and week.
    */
   max?: number | string;
-
+  /**
+   * The step attribute specifies the legal number intervals for an <input> element.
+   * Use "any" to allow decimal values. If omitted, type="number" defaults to 1.
+   */
+  step?: number | string;
   /**
    * The regex pattern for the input.
    *
@@ -338,6 +342,7 @@ export function PageFormTextInput<
     maxLength,
     min,
     max,
+    step,
     pattern,
     selectTitle,
     selectOpen,
@@ -418,6 +423,7 @@ export function PageFormTextInput<
                   aria-describedby={id ? `${id}-form-group` : undefined}
                   validated={helperTextInvalid ? 'error' : undefined}
                   type={resolveInputType(type, showSecret)}
+                  step={step}
                   readOnlyVariant={isReadOnly ? 'default' : undefined}
                   isDisabled={isDisabled}
                   autoFocus={autoFocus}

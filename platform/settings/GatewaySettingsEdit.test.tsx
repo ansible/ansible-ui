@@ -278,6 +278,95 @@ describe('GatewaySettingsEdit Component', () => {
       expect(submittedData).not.toHaveProperty('CONFIRM_LOGIN_REDIRECT_OVERRIDE');
     });
   });
+  describe('float settings type', () => {
+  beforeEach(() => {
+    mockUseGatewaySettingsCategories.mockReturnValue([
+      {
+        id: 'platform',
+        title: 'Platform gateway settings',
+        description: 'Edit platform gateway settings',
+        sections: [
+          {
+            title: 'Platform gateway',
+            options: {
+              resource_client_request_timeout: {
+                type: 'float',
+                label: 'Resource Client Request Timeout',
+                help_text:
+                  'The timeout (in seconds) before the resource client will drop requests after forming connections.',
+                default: 10,
+                min_value: 0,
+                required: false,
+                read_only: false,
+              },
+            },
+          },
+        ],
+      },
+    ]);
+  });
+
+  const floatContext = {
+    options: {
+      GET: {
+        resource_client_request_timeout: {
+          type: 'float',
+          label: 'Resource Client Request Timeout',
+          help_text:
+            'The timeout (in seconds) before the resource client will drop requests after forming connections.',
+          default: 10,
+          min_value: 0,
+          required: false,
+          read_only: false,
+        },
+      },
+      PUT: {
+        resource_client_request_timeout: {
+          type: 'float',
+          label: 'Resource Client Request Timeout',
+          help_text:
+            'The timeout (in seconds) before the resource client will drop requests after forming connections.',
+          default: 10,
+          min_value: 0,
+          required: false,
+          read_only: false,
+        },
+      },
+    },
+    settings: {
+      resource_client_request_timeout: 10,
+    },
+    refresh: vi.fn(),
+  };
+
+  it('should render a number input for float settings', () => {
+    renderWithContext(floatContext);
+
+    expect(screen.getByLabelText('Resource Client Request Timeout')).toBeInTheDocument();
+    expect(screen.queryByText('Unsupported settings type')).not.toBeInTheDocument();
+  });
+
+  it('should submit a decimal float value', async () => {
+    const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
+    mockRequestPut.mockResolvedValue({});
+
+    renderWithContext(floatContext);
+
+    const input = screen.getByLabelText('Resource Client Request Timeout');
+    fireEvent.change(input, { target: { value: '18.5' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
+
+    await waitFor(() => {
+      expect(mockRequestPut).toHaveBeenCalledWith(
+        '/settings/all/',
+        expect.objectContaining({
+          resource_client_request_timeout: 18.5,
+        })
+      );
+    });
+  });
+});
 
   describe('Edge Cases', () => {
     it('should handle form submission errors gracefully', async () => {
