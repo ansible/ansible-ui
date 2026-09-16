@@ -43,7 +43,12 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
 
   const rankCell = (item: LeaderboardItem) => <LeaderboardRankCell position={item.rank} />;
   const nameCell = (item: LeaderboardItem) => (
-    <Flex alignItems={{ default: 'alignItemsCenter' }} gap={{ default: 'gapSm' }}>
+    <Flex
+      component="span"
+      alignItems={{ default: 'alignItemsCenter' }}
+      flexWrap={{ default: 'nowrap' }}
+      style={{ gap: 8, whiteSpace: 'nowrap' }}
+    >
       <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
       {item.isCurrentOrg && (
         <Label isCompact color="purple" style={{ flexShrink: 0 }}>
