@@ -844,7 +844,7 @@ describe('OAuthApplicationForm', () => {
             actions: {
               POST: {
                 name: {
-                  pattern: '^[a-zA-Z0-9_\\-]+$',
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
                   patternDescription:
                     'Name must contain only letters, numbers, underscores, and hyphens.',
                 },
@@ -873,6 +873,45 @@ describe('OAuthApplicationForm', () => {
         expect(
           screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
         ).toBeInTheDocument();
+      });
+
+      server.close();
+    });
+
+    test('accepts valid name matching pattern on blur', async () => {
+      const server = setupServer(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      server.listen({ onUnhandledRequest: 'bypass' });
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'Valid_App-Name');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
       });
 
       server.close();
