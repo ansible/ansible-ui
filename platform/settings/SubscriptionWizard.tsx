@@ -12,6 +12,7 @@ import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
 import { ExternalLink } from '@ansible/hub-ui//common/ExternalLink';
 import {
@@ -25,6 +26,8 @@ import {
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { gatewayAPI } from '../utils/gateway-api-utils';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'service_account' | 'username' | 'satellite';
@@ -42,6 +45,7 @@ interface SubscriptionWizardData {
 export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
   const { t } = useTranslation();
   const { refreshAwxConfig } = useAwxConfigState();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/config/`);
 
   const steps = useMemo(() => {
     const steps: PageWizardStep[] = [
@@ -108,6 +112,7 @@ export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
       steps={steps}
       onSubmit={onSubmit}
       errorAdapter={awxErrorAdapter}
+      optionsData={optionsData}
       singleColumn
     />
   );
