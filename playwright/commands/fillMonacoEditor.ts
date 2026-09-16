@@ -28,6 +28,7 @@ const CLIPBOARD_PERMISSIONS = ['clipboard-read', 'clipboard-write'] as const;
  *                        `page.getByRole('textbox', { name: 'Editor content' })`.
  */
 export async function fillMonacoEditor(page: Page, text: string, editorLocator?: Locator) {
+  text = text.replace(/\r\n/g, '\n');
   const editor = editorLocator ?? page.getByRole('textbox', { name: 'Editor content' });
   const monacoEditor = editor
     .locator(
@@ -104,8 +105,9 @@ async function writeClipboard(page: Page, text: string): Promise<boolean> {
       if (!navigator.clipboard?.writeText || !navigator.clipboard?.readText) {
         return false;
       }
-      await navigator.clipboard.writeText(content);
-      return (await navigator.clipboard.readText()) === content;
+      const normalized = content.replace(/\r\n/g, '\n');
+      await navigator.clipboard.writeText(normalized);
+      return (await navigator.clipboard.readText()) === normalized;
     } catch {
       return false;
     }
@@ -201,6 +203,15 @@ async function verifyEditorContent(
 }
 
 function editorContentMatches(actual: string, expected: string): boolean {
+  const trimmedActual = actual.trim();
+  // JSON-encoded YAML (leading quote + escaped newlines) is invalid source vars.
+  if (
+    (trimmedActual.startsWith('"') || trimmedActual.startsWith("'")) &&
+    /\\[rn]/.test(trimmedActual)
+  ) {
+    return false;
+  }
+
   const normalizedExpected = normalizeForCompare(expected);
   const normalizedActual = normalizeForCompare(actual);
 
@@ -212,12 +223,10 @@ function editorContentMatches(actual: string, expected: string): boolean {
     return true;
   }
 
-  // Viewport can clip long YAML; require at least half the expected content so
-  // leftover short text (e.g. previous `plugin: constructed`) does not pass.
-  return (
-    normalizedActual.length >= Math.ceil(normalizedExpected.length / 2) &&
-    normalizedExpected.includes(normalizedActual)
-  );
+  // Viewport can clip long YAML. Require a meaningful absolute length so a
+  // 2-character substring cannot satisfy a short expected value.
+  const minLength = Math.max(8, Math.ceil(normalizedExpected.length / 2));
+  return normalizedActual.length >= minLength && normalizedExpected.includes(normalizedActual);
 }
 
 function normalizeForCompare(value: string): string {
