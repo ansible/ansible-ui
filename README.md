@@ -108,54 +108,26 @@ For more information about communication, see the [Ansible communication guide](
 
 #### NPM Scripts for Standalone Builds
 
-| NPM Script                  | Description                             |
-| --------------------------- | --------------------------------------- |
-| `npm run awx`               | Run AWX on <http://localhost:4101>      |
-| `npm run e2e:awx`           | Run AWX E2E tests from Cypress UI       |
-| `npm run e2e:run:awx`       | Run AWX E2E tests from CLI              |
-| `npm run component:awx`     | Run AWX component tests from Cypress UI |
-| `npm run component:run:awx` | Run AWX component tests from CLI        |
-|                             |                                         |
-| `npm run hub`               | Run HUB on <http://localhost:4102>      |
-| `npm run e2e:hub`           | Run HUB E2E tests from Cypress UI       |
-| `npm run e2e:run:hub`       | Run HUB E2E tests from CLI              |
-| `npm run component:hub`     | Run HUB component tests from Cypress UI |
-| `npm run component:run:hub` | Run HUB component tests from CLI        |
-|                             |                                         |
-| `npm run eda`               | Run EDA on <http://localhost:4103>      |
-| `npm run e2e:eda`           | Run EDA E2E tests from Cypress UI       |
-| `npm run e2e:run:eda`       | Run EDA E2E tests from CLI              |
-| `npm run component:eda`     | Run EDA component tests from Cypress UI |
-| `npm run component:run:eda` | Run EDA component tests from CLI        |
+| NPM Script                          | Description                        |
+| ----------------------------------- | ---------------------------------- |
+| `npm --prefix frontend/awx start`   | Run AWX on <http://localhost:4101> |
+| `npm --prefix frontend/hub start`   | Run HUB on <http://localhost:4102> |
+| `npm --prefix frontend/eda start`   | Run EDA on <http://localhost:4103> |
+
+End-to-end tests run with Playwright. See `playwright/Playwright.md`.
 
 #### Environment Variables for Standalone Builds
 
 |    Environment Variable | Description                                         |
 | ----------------------: | --------------------------------------------------- |
 |            `AWX_SERVER` | The AWX server (protocol://host:port).              |
-|          `AWX_USERNAME` | The AWX server username. (only used by Cypress)     |
-|          `AWX_PASSWORD` | The AWX server password. (only used by Cypress)     |
-|                         |                                                     |
 |            `EDA_SERVER` | The EDA server (protocol://host:port).              |
-|          `EDA_USERNAME` | The EDA server username. (only used by Cypress)     |
-|          `EDA_PASSWORD` | The EDA server password. (only used by Cypress)     |
-|                         |                                                     |
 |            `HUB_SERVER` | The HUB server (protocol://host:port).              |
-|          `HUB_USERNAME` | The HUB server username. (only used by Cypress)     |
-|          `HUB_PASSWORD` | The HUB server password. (only used by Cypress)     |
 |        `HUB_API_PREFIX` | The HUB server API prefix. (`/api/galaxy`)          |
 | `HUB_GALAXYKIT_COMMAND` | The galaxykit command. (`galaxykit --ignore-certs`) |
 
 ```zsh
 export AWX_SERVER=https://localhost:8043
-export AWX_USERNAME='dev'
-export AWX_PASSWORD='nomeetingsfriday'
-
 export EDA_SERVER=http://localhost:8000
-export EDA_USERNAME='dev'
-export EDA_PASSWORD='nomeetingsfriday'
-
 export HUB_SERVER=http://localhost:5001
-export HUB_USERNAME='dev'
-export HUB_PASSWORD='nomeetingsfriday'
 ```
