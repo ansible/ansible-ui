@@ -454,4 +454,34 @@ debug_mode: true         # Enable debugging`;
       ).toBeInTheDocument();
     });
   });
+
+  test('should block form submission when editor holds invalid YAML (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    // Enter invalid YAML so the parseFormat validate rule is armed.
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: '  ---\n  a: b' },
+    });
+
+    // Confirm the error helper text is visible.
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+
+    // Click the submit button — the form must NOT call onSubmit because the
+    // parseFormat validate rule should block submission.
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    // onSubmit must not have been called.
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });
