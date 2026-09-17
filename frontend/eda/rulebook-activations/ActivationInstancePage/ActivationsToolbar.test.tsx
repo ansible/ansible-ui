@@ -12,6 +12,8 @@ describe('RulebookActivationToolbar', () => {
     isFollowModeEnabled: false,
     setIsFollowModeEnabled: vi.fn(),
     isRunning: false,
+    isClearLogsDisabled: false,
+    onClearLogs: vi.fn(),
   };
 
   it('should render toolbar without follow button when not running', () => {
@@ -30,6 +32,41 @@ describe('RulebookActivationToolbar', () => {
       <RulebookActivationToolbar {...defaultProps} isRunning={true} isFollowModeEnabled={true} />
     );
     expect(screen.getByRole('button', { name: /Unfollow/i })).toBeInTheDocument();
+  });
+
+  it('should render the dangerous Clear logs action when allowed', () => {
+    render(<RulebookActivationToolbar {...defaultProps} />);
+
+    const clearLogs = screen.getByRole('button', { name: 'Clear logs' });
+    expect(clearLogs).toBeEnabled();
+    expect(clearLogs).toHaveClass('pf-m-secondary');
+  });
+
+  it('should keep Clear logs aria-disabled when clearing is not allowed', async () => {
+    const user = userEvent.setup();
+    const onClearLogs = vi.fn();
+    render(
+      <RulebookActivationToolbar
+        {...defaultProps}
+        isClearLogsDisabled={true}
+        onClearLogs={onClearLogs}
+      />
+    );
+
+    const clearLogs = screen.getByRole('button', { name: 'Clear logs' });
+    expect(clearLogs).toHaveAttribute('aria-disabled', 'true');
+    await user.click(clearLogs);
+    expect(onClearLogs).not.toHaveBeenCalled();
+  });
+
+  it('should call onClearLogs when the allowed Clear logs action is clicked', async () => {
+    const user = userEvent.setup();
+    const onClearLogs = vi.fn();
+    render(<RulebookActivationToolbar {...defaultProps} onClearLogs={onClearLogs} />);
+
+    await user.click(screen.getByRole('button', { name: 'Clear logs' }));
+
+    expect(onClearLogs).toHaveBeenCalledOnce();
   });
 
   it('should call setIsFollowModeEnabled(true) when Follow is clicked', async () => {

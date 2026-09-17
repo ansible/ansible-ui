@@ -7,11 +7,31 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
 import { edaAPI } from '../../common/eda-utils';
+import { EdaActiveUserContext } from '../../common/useEdaActiveUser';
 import { ActivationInstanceDetails } from './ActivationInstanceDetails';
 import activationInstanceResp from './mocks/ActivationInstance.json';
 import activationInstanceLogs from './mocks/ActivationInstanceLogs.json';
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({
+      children,
+      'aria-label': ariaLabel,
+    }: {
+      children: React.ReactNode;
+      'aria-label': string;
+    }) => (
+      <div role="dialog" aria-label={ariaLabel}>
+        {children}
+      </div>
+    ),
+  };
+});
 
 function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -111,5 +131,104 @@ describe('ActivationInstanceDetails', () => {
         ).toBeInTheDocument();
       }
     });
+  });
+
+  test('should clear only this instance logs and reload the displayed logs after success', async () => {
+    const user = userEvent.setup();
+    let logsCleared = false;
+    let clearLogsRequestCount = 0;
+    let activationClearLogsRequestCount = 0;
+    let globalPurgeRequestCount = 0;
+    const requestedBeforeDates: string[] = [];
+    let logRequestCount = 0;
+
+    server.use(
+      http.get(edaAPI`/activation-instances/1/logs/`, () => {
+        logRequestCount += 1;
+        return logsCleared
+          ? HttpResponse.json({ count: 0, results: [] })
+          : HttpResponse.json(activationInstanceLogs);
+      }),
+      http.post(edaAPI`/activation-instances/1/clear-logs/`, async ({ request }) => {
+        const body = (await request.json()) as { before_date: string };
+        requestedBeforeDates.push(body.before_date);
+        clearLogsRequestCount += 1;
+        logsCleared = true;
+        return HttpResponse.json({ deleted: 10 });
+      }),
+      http.post(edaAPI`/activations/1/clear-logs/`, () => {
+        activationClearLogsRequestCount += 1;
+        return HttpResponse.json({ deleted: 10 });
+      }),
+      http.post(edaAPI`/logs/purge/`, () => {
+        globalPurgeRequestCount += 1;
+        return HttpResponse.json({ deleted: 10 });
+      })
+    );
+
+    const { container, getByRole, getByText, queryByRole } = render(
+      <PageDialogProvider>
+        <EdaActiveUserContext.Provider
+          value={{
+            activeEdaUser: {
+              id: 1,
+              username: 'admin',
+              is_superuser: true,
+              resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+              created_at: '2024-01-01T00:00:00Z',
+              modified_at: '2024-01-01T00:00:00Z',
+            },
+          }}
+        >
+          <MemoryRouter initialEntries={['/rulebook-activations/1/history/1/details']}>
+            <Routes>
+              <Route
+                path={`/rulebook-activations/:id/history/:instanceId/details`}
+                element={<ActivationInstanceDetails />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </EdaActiveUserContext.Provider>
+      </PageDialogProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('Pulling image quay.io/ansible/ansible-rulebook:main')).toBeInTheDocument();
+    });
+
+    await user.click(getByRole('button', { name: 'Clear logs' }));
+
+    const confirmationDialog = getByRole('dialog', { name: 'Clear logs?' });
+    expect(
+      within(confirmationDialog).getByText(
+        'Removes stored logs for the selected instance (1 - prat-rba). Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
+      )
+    ).toBeInTheDocument();
+    await user.click(
+      within(confirmationDialog).getByRole('checkbox', {
+        name: 'I understand that clearing logs cannot be undone.',
+      })
+    );
+    await user.click(within(confirmationDialog).getByRole('button', { name: 'Clear logs' }));
+
+    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Clearing logs' }));
+    expect(within(progressDialog).getByText('1 - prat-rba')).toBeInTheDocument();
+
+    await waitFor(() => expect(clearLogsRequestCount).toBe(1), { timeout: 2000 });
+
+    await waitFor(
+      () => {
+        expect(queryByRole('dialog', { name: 'Clear logs?' })).not.toBeInTheDocument();
+        expect(container.querySelector('.output-grid-row')).not.toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    expect(clearLogsRequestCount).toBe(1);
+    expect(requestedBeforeDates).toHaveLength(1);
+    expect(requestedBeforeDates[0]).toMatch(/Z$/);
+    expect(activationClearLogsRequestCount).toBe(0);
+    expect(globalPurgeRequestCount).toBe(0);
+    expect(logRequestCount).toBeGreaterThanOrEqual(3);
   });
 });

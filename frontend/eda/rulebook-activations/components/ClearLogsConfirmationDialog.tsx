@@ -16,13 +16,16 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export interface ClearLogsActivation {
+export interface ClearLogsTarget {
   id: number;
   name: string;
 }
 
+export type ClearLogsTargetType = 'activation' | 'instance';
+
 interface ClearLogsConfirmationDialogProps {
-  activations: ReadonlyArray<ClearLogsActivation>;
+  targets: ReadonlyArray<ClearLogsTarget>;
+  targetType?: ClearLogsTargetType;
   onClose: () => void;
   onConfirm: (beforeDate: string) => void;
 }
@@ -31,7 +34,8 @@ type ClearLogsRange = 'older-than' | 'keep-last';
 
 export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmationDialogProps>) {
   const { t } = useTranslation();
-  const activations = props.activations;
+  const targets = props.targets;
+  const targetType = props.targetType ?? 'activation';
   const [range, setRange] = useState<ClearLogsRange>('keep-last');
   const [olderThanDate, setOlderThanDate] = useState('');
   const [isOlderThanDateValid, setIsOlderThanDateValid] = useState(false);
@@ -62,10 +66,17 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
       <ModalHeader
         title={t('Clear logs?')}
         titleIconVariant="warning"
-        description={t(
-          'Removes stored logs for {{names}}. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.',
-          { names: activations.map((activation) => activation.name).join(', ') }
-        )}
+        description={
+          targetType === 'instance'
+            ? t(
+                'Removes stored logs for the selected instance ({{names}}). Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.',
+                { names: targets.map((target) => target.name).join(', ') }
+              )
+            : t(
+                'Removes stored logs for {{names}}. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.',
+                { names: targets.map((target) => target.name).join(', ') }
+              )
+        }
       />
       <ModalBody>
         <Stack hasGutter>

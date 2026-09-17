@@ -72,6 +72,7 @@ describe('ActivationInstanceEvents', () => {
                 isFollowModeEnabled={false}
                 setIsFollowModeEnabled={vi.fn()}
                 isRunning={false}
+                refreshToken={0}
               />
             }
           />
@@ -146,6 +147,7 @@ describe('ActivationInstanceEvents', () => {
                   isFollowModeEnabled={false}
                   setIsFollowModeEnabled={vi.fn()}
                   isRunning={true}
+                  refreshToken={0}
                 />
               }
             />

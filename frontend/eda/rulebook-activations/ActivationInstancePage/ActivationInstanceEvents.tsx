@@ -39,6 +39,7 @@ interface IActivationInstanceEventsProps {
   isFollowModeEnabled: boolean;
   setIsFollowModeEnabled: (isFollowModeEnabled: boolean) => void;
   isRunning: boolean;
+  refreshToken?: number;
 }
 
 export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEventsProps>) {
@@ -50,8 +51,14 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
 
   const params = useParams<{ instanceId: string }>();
   const instanceId = params.instanceId ?? '';
-  const { toolbarFilters, filterState, isFollowModeEnabled, setIsFollowModeEnabled, isRunning } =
-    props;
+  const {
+    toolbarFilters,
+    filterState,
+    isFollowModeEnabled,
+    setIsFollowModeEnabled,
+    isRunning,
+    refreshToken = 0,
+  } = props;
 
   const buildFilterString = useCallback(() => {
     return getFiltersQueryString(toolbarFilters, filterState);
@@ -60,10 +67,12 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
   useEffect(() => {
     let isCurrent = true;
 
-    async function initialLoad() {
-      latestTimestampRef.current = 0;
-      oldestTimestampRef.current = 0;
+    setLogs([]);
+    setHasOlderLogs(false);
+    latestTimestampRef.current = 0;
+    oldestTimestampRef.current = 0;
 
+    async function initialLoad() {
       try {
         const filterString = buildFilterString();
         const countQsParts = ['page_size=1'];
@@ -113,7 +122,7 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
     return () => {
       isCurrent = false;
     };
-  }, [instanceId, buildFilterString]);
+  }, [instanceId, buildFilterString, refreshToken]);
 
   useEffect(() => {
     if (!isRunning && !isFollowModeEnabled) return;
