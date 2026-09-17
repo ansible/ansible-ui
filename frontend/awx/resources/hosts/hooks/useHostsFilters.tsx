@@ -14,11 +14,7 @@ export function useHostsFilters() {
     optionsPath: 'hosts',
     preSortedKeys: ['search', 'name', 'description', 'created-by', 'modified-by'],
     preFilledValueKeys: { name: { apiPath: 'hosts' }, id: { apiPath: 'hosts' } },
-    additionalFilters: [
-      searchFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
+    additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
     removeFilters: ['last_job_host_summary'],
   });
   return toolbarFilters;
