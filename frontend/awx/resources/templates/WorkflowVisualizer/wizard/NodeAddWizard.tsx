@@ -189,10 +189,11 @@ export function NodeAddWizard() {
 
     const sourceNodeId = state.sourceNode?.getId();
     if (state.sourceNode && sourceNodeId) {
+      const linkStatus = node_status_type ?? EdgeStatus.info;
       const status =
-        node_status_type === EdgeStatus.info
+        linkStatus === EdgeStatus.info
           ? EdgeStatus.info
-          : node_status_type === EdgeStatus.success
+          : linkStatus === EdgeStatus.success
             ? EdgeStatus.success
             : EdgeStatus.danger;
 

@@ -885,6 +885,58 @@ describe('useSaveVisualizer', () => {
     expect(mockRefresh).toHaveBeenCalled();
   });
 
+  test('should disassociate existing instance groups when instance group prompt is disabled', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [{ id: 60, name: 'existing-ig' }],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const disassociateCalls = mockPostFn.mock.calls.filter(
+      (c: unknown[]) =>
+        (c[1] as { disassociate?: boolean })?.disassociate === true &&
+        typeof c[0] === 'string' &&
+        c[0].includes('/instance_groups/')
+    );
+    expect(disassociateCalls).toHaveLength(1);
+    expect(disassociateCalls[0]?.[1]).toEqual({ id: 60, disassociate: true });
+  });
+
   test('should disassociate existing credentials when credential prompt is disabled', async () => {
     const editedNode = makeGraphNode({
       id: '42',
