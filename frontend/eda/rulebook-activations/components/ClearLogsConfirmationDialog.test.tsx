@@ -16,9 +16,9 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
       children: React.ReactNode;
       'aria-label': string;
     }) => (
-      <div role="dialog" aria-label={ariaLabel}>
+      <dialog open aria-label={ariaLabel}>
         {children}
-      </div>
+      </dialog>
     ),
   };
 });

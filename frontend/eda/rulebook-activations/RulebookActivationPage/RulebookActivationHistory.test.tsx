@@ -23,9 +23,9 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
       'aria-label': string;
       elementToFocus?: string;
     }) => (
-      <div role="dialog" aria-label={ariaLabel} data-element-to-focus={elementToFocus}>
+      <dialog open aria-label={ariaLabel} data-element-to-focus={elementToFocus}>
         {children}
-      </div>
+      </dialog>
     ),
   };
 });
