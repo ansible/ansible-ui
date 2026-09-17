@@ -7,7 +7,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { CrownIcon } from '@patternfly/react-icons';
 import { LEADERBOARD_RANK_CROWN_CLASS, LeaderboardRankCell } from './LeaderboardRankCell';
-import { Label, Truncate } from '@patternfly/react-core';
+import { Flex, Label, Truncate } from '@patternfly/react-core';
 import { DEFAULT_NUMBER_LOCALE } from '../../constants/common';
 import {
   LeaderboardItem,
@@ -38,21 +38,24 @@ function LeaderboardRankSummary({
 export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboardCardWidth }>) {
   const { t } = useTranslation();
   const title = t('Top 10 organizations');
-  const help = t(
-    'Top 10 organizations ranked by total successful job runs in the last 30 days. Ties are broken alphabetically.'
-  );
+  const help = t('Ranked by total successful job runs. Ties are broken alphabetically.');
   const { organizationLeaderboard: items, currentOrgStanding } = useAutomationLeaderboardsView();
 
   const rankCell = (item: LeaderboardItem) => <LeaderboardRankCell position={item.rank} />;
   const nameCell = (item: LeaderboardItem) => (
-    <>
+    <Flex
+      component="span"
+      alignItems={{ default: 'alignItemsCenter' }}
+      flexWrap={{ default: 'nowrap' }}
+      style={{ gap: 8, whiteSpace: 'nowrap' }}
+    >
       <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
       {item.isCurrentOrg && (
-        <Label isCompact color="purple" style={{ marginLeft: 8 }}>
-          {t('Your org')}
+        <Label isCompact color="purple" style={{ flexShrink: 0 }}>
+          {t('Your organization')}
         </Label>
       )}
-    </>
+    </Flex>
   );
   const tableColumns: ITableColumn<LeaderboardItem>[] = [
     {
@@ -82,7 +85,7 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
       headerControls={
         <LeaderboardRankSummary
           rank={currentOrgStanding.rank}
-          rankText={t("Your org's rank: #{{rank}}", { rank: currentOrgStanding.rank })}
+          rankText={t("Your organization's rank: #{{rank}}", { rank: currentOrgStanding.rank })}
           runsText={t('{{runs}} job runs', {
             runs: currentOrgStanding.totalRuns.toLocaleString(DEFAULT_NUMBER_LOCALE),
           })}

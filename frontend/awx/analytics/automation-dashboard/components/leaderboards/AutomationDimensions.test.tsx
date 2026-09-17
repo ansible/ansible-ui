@@ -7,7 +7,7 @@ describe('AutomationDimensions', () => {
   test('should render the three dimensions with the current user standing', () => {
     render(<AutomationDimensions />);
 
-    expect(screen.getByRole('heading', { name: 'Automation dimensions' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Activity levels' })).toBeInTheDocument();
     ['Volume', 'Breadth', 'Consistency'].forEach((name) => {
       expect(screen.getByText(name)).toBeInTheDocument();
     });
