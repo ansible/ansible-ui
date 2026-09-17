@@ -29,6 +29,8 @@ const mockSourceSetState = vi.fn();
 const mockNewNodeSetState = vi.fn();
 const mockSourceNodeSetStateAfterFromModel = vi.fn();
 
+const EXISTING_GRAPH_NODE_ID = '1-unsavedNode';
+
 let mockSourceNode:
   | {
       getId: () => string;
@@ -38,6 +40,40 @@ let mockSourceNode:
 
 let mockModel: { nodes: unknown[]; edges: unknown[] };
 
+function getExistingGraphNodeId(): string {
+  return EXISTING_GRAPH_NODE_ID;
+}
+
+function getMockGraphNodes() {
+  return [{ getId: getExistingGraphNodeId }];
+}
+
+function getMockGraph() {
+  return {
+    getNodes: getMockGraphNodes,
+    layout: mockLayout,
+  };
+}
+
+function getMockControllerState() {
+  return { sourceNode: mockSourceNode, modified: false };
+}
+
+function createMockVisualizationController() {
+  return {
+    getState: getMockControllerState,
+    setState: mockSetState,
+    getGraph: getMockGraph,
+    toModel: () => mockModel,
+    fromModel: mockFromModel,
+    getNodeById: mockGetNodeById,
+  };
+}
+
+function identityObserver(component: unknown) {
+  return component;
+}
+
 const mockGetNodeById = vi.fn((id: string) => {
   if (id === '42') {
     return { setState: mockSourceNodeSetStateAfterFromModel };
@@ -46,32 +82,18 @@ const mockGetNodeById = vi.fn((id: string) => {
 });
 
 vi.mock('@patternfly/react-topology', () => ({
-  useVisualizationController: vi.fn(() => ({
-    getState: () => ({ sourceNode: mockSourceNode, modified: false }),
-    setState: mockSetState,
-    getGraph: () => ({
-      getNodes: () => [{ getId: () => '1-unsavedNode' }],
-      layout: mockLayout,
-    }),
-    toModel: () => mockModel,
-    fromModel: mockFromModel,
-    getNodeById: mockGetNodeById,
-  })),
+  useVisualizationController: vi.fn(createMockVisualizationController),
   NodeModel: {},
   NodeShape: { circle: 'circle' },
   EdgeTerminalType: { directional: 'directional' },
   NodeStatus: { danger: 'danger', success: 'success', info: 'info' },
-  observer: (component: unknown) => component,
+  observer: identityObserver,
   TopologySideBar: () => null,
   TopologyView: () => null,
 }));
 
-vi.mock('../hooks', () => ({
-  useCloseSidebar: () => mockCloseSidebar,
-  useCreateEdge: () => mockCreateEdge,
-  useGetNodeTypeDetail: () => 'Approval',
-  useGetTimeoutString: () => '5 min 0 sec',
-  useNodeTypeStepDefaults: () => () => ({
+function createNodeTypeStepDefaults() {
+  return {
     approval_description: 'Approval description',
     approval_name: 'Approval step',
     approval_timeout: 300,
@@ -82,8 +104,24 @@ vi.mock('../hooks', () => ({
     resourceId: undefined,
     node_type: RESOURCE_TYPE.workflow_approval,
     node_status_type: EdgeStatus.info,
-  }),
+  };
+}
+
+function useNodeTypeStepDefaultsMock() {
+  return createNodeTypeStepDefaults;
+}
+
+vi.mock('../hooks', () => ({
+  useCloseSidebar: () => mockCloseSidebar,
+  useCreateEdge: () => mockCreateEdge,
+  useGetNodeTypeDetail: () => 'Approval',
+  useGetTimeoutString: () => '5 min 0 sec',
+  useNodeTypeStepDefaults: useNodeTypeStepDefaultsMock,
 }));
+
+function expectFromModelCalled() {
+  expect(mockFromModel).toHaveBeenCalled();
+}
 
 describe('NodeAddWizard integration', () => {
   beforeEach(() => {
@@ -118,12 +156,7 @@ describe('NodeAddWizard integration', () => {
     const finishButton = await screen.findByRole('button', { name: 'Finish' }, { timeout: 5000 });
     await user.click(finishButton);
 
-    await waitFor(
-      () => {
-        expect(mockFromModel).toHaveBeenCalled();
-      },
-      { timeout: 5000 }
-    );
+    await waitFor(expectFromModelCalled, { timeout: 5000 });
 
     expect(mockCreateEdge).toHaveBeenCalledWith('42', '2-unsavedNode', EdgeStatus.info);
     expect(mockCreateEdge).not.toHaveBeenCalledWith(
