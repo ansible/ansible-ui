@@ -11,7 +11,12 @@ import { NODE_DIAMETER, RESOURCE_TYPE, START_NODE_ID } from '../constants';
 import { useCloseSidebar, useCreateEdge, useNodeTypeStepDefaults } from '../hooks';
 import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } from '../types';
 import { buildEffectivePrompt } from './buildEffectivePrompt';
-import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
+import {
+  getLinkEdgeStatus,
+  getValueBasedOnJobType,
+  hasDaysToKeep,
+  shouldHideOtherStep,
+} from './helpers';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
@@ -191,14 +196,7 @@ export function NodeAddWizard() {
 
     const sourceNodeId = state.sourceNode?.getId();
     if (state.sourceNode && sourceNodeId) {
-      const linkStatus = node_status_type ?? EdgeStatus.info;
-      const status =
-        linkStatus === EdgeStatus.info
-          ? EdgeStatus.info
-          : linkStatus === EdgeStatus.success
-            ? EdgeStatus.success
-            : EdgeStatus.danger;
-
+      const status = getLinkEdgeStatus(node_status_type);
       const newEdge = createEdge(sourceNodeId, nodeToCreate.id, status);
       state.sourceNode.setState({ modified: true });
       model.edges?.push(newEdge);

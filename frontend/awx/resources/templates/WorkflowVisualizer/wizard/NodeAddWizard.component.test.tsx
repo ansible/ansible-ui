@@ -119,7 +119,11 @@ vi.mock('../hooks', () => ({
 }));
 
 const mockBuildEffectivePrompt = vi.fn(
-  ({ prompt, launchConfig, resourceOrganization }: BuildEffectivePromptParams) => ({
+  ({
+    prompt,
+    launchConfig,
+    resourceOrganization,
+  }: BuildEffectivePromptParams) => ({
     effectivePrompt: {
       ...(prompt as object),
       organization: resourceOrganization,

@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RESOURCE_TYPE } from '../constants';
 import type { WizardFormValues } from '../types';
+import { awaitLaunchConfigLoad } from './launchConfigLoad';
 import { NodeTypeStep } from './NodeTypeStep';
 
 vi.mock('@patternfly/react-topology', () => ({
@@ -537,6 +538,27 @@ describe('NodeTypeStep', () => {
     await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
 
     expect(capturedPrompt).toMatchObject({ scm_branch: 'release' });
+  });
+
+  it('registers launch config loads that can be awaited during wizard validation', async () => {
+    render(
+      <TestWrapper
+        defaultValues={{
+          node_type: RESOURCE_TYPE.job,
+          resourceId: 1,
+        }}
+      />
+    );
+
+    await waitFor(async () => {
+      const loadResult = await awaitLaunchConfigLoad(RESOURCE_TYPE.job, 1);
+      expect(loadResult).toEqual(
+        expect.objectContaining({
+          resourceId: 1,
+          resource: expect.objectContaining({ id: 1 }),
+        })
+      );
+    });
   });
 });
 

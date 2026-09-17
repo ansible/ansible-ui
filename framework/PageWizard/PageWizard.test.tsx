@@ -220,7 +220,7 @@ describe('PageWizard', () => {
         id: 'details',
         label: 'Details',
         element: <h1>Details</h1>,
-        validate: async () => ({ showPrompts: true }),
+        validate: () => ({ showPrompts: true }),
       },
       {
         id: 'prompts',
@@ -250,6 +250,40 @@ describe('PageWizard', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('wizard-section-prompts')).toHaveTextContent('Prompts');
+    });
+  });
+
+  it('continues when validate resolves without supplemental data', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: async () => undefined,
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-review')).toHaveTextContent('Review');
     });
   });
 

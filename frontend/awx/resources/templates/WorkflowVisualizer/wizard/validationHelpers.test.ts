@@ -1,7 +1,19 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { describe, expect, it } from 'vitest';
-import { validateRequiredCredentialTypes } from './validationHelpers';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
+import {
+  registerLaunchConfigLoad,
+  type LaunchConfigLoadResult,
+} from './launchConfigLoad';
+import {
+  awaitNodeLaunchConfigForWizard,
+  validateJobTemplateRequirements,
+  validateRequiredCredentialTypes,
+} from './validationHelpers';
 
 type WizardData = Partial<WizardFormValues>;
 
@@ -135,6 +147,107 @@ describe('validationHelpers', () => {
         expect(errorMessage).not.toContain('5'); // Should not contain raw IDs
         expect(errorMessage).not.toContain('6');
       }
+    });
+  });
+
+  describe('awaitNodeLaunchConfigForWizard', () => {
+    it('should return undefined when resourceId is missing', async () => {
+      await expect(
+        awaitNodeLaunchConfigForWizard({ node_type: RESOURCE_TYPE.job })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should return undefined for node types that do not load launch config', async () => {
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.workflow_approval,
+          resourceId: 1,
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should return undefined when no launch config load is registered', async () => {
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.job,
+          resourceId: 999,
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should return launch config data when a registered load completes', async () => {
+      const loadResult: LaunchConfigLoadResult = {
+        launch_config: { survey_enabled: true } as LaunchConfiguration,
+        resource: { id: 5, name: 'Deploy', type: 'job_template' } as JobTemplate,
+        resourceId: 5,
+      };
+
+      registerLaunchConfigLoad(RESOURCE_TYPE.job, 5, Promise.resolve(loadResult));
+
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.job,
+          resourceId: 5,
+        })
+      ).resolves.toEqual({
+        launch_config: loadResult.launch_config,
+        resource: loadResult.resource,
+        resourceId: 5,
+      });
+    });
+
+    it('should return launch config data for workflow job templates', async () => {
+      const loadResult: LaunchConfigLoadResult = {
+        launch_config: { survey_enabled: false } as LaunchConfiguration,
+        resource: { id: 8, name: 'Workflow', type: 'workflow_job_template' } as WorkflowJobTemplate,
+        resourceId: 8,
+      };
+
+      registerLaunchConfigLoad(RESOURCE_TYPE.workflow_job, 8, Promise.resolve(loadResult));
+
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.workflow_job,
+          resourceId: 8,
+        })
+      ).resolves.toEqual({
+        launch_config: loadResult.launch_config,
+        resource: loadResult.resource,
+        resourceId: 8,
+      });
+    });
+  });
+
+  describe('validateJobTemplateRequirements', () => {
+    const mockSimpleT = (key: string) => key;
+
+    it('should not throw when resource is not a job template', () => {
+      expect(() =>
+        validateJobTemplateRequirements(mockSimpleT, {
+          resource: { type: 'workflow_job_template' } as WizardFormValues['resource'],
+        })
+      ).not.toThrow();
+    });
+
+    it('should not throw when job template resource lacks project and inventory fields', () => {
+      expect(() =>
+        validateJobTemplateRequirements(mockSimpleT, {
+          resource: { type: 'job_template', name: 'Partial template' } as WizardFormValues['resource'],
+        })
+      ).not.toThrow();
+    });
+
+    it('should throw when job template is missing project', () => {
+      expect(() =>
+        validateJobTemplateRequirements(mockSimpleT, {
+          resource: {
+            type: 'job_template',
+            project: null,
+            inventory: 1,
+            ask_inventory_on_launch: false,
+          } as unknown as WizardFormValues['resource'],
+        })
+      ).toThrow(RequestError);
     });
   });
 });
