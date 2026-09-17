@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -422,5 +422,36 @@ debug_mode: true         # Enable debugging`;
     );
 
     expect(screen.getByTestId('data-editor')).toBeInTheDocument();
+  });
+
+  // Regression test for AAP-93178.
+  //
+  // The DataEditor mock renders a controlled textarea (value={props.value}).
+  // When handleChange() throws on an invalid YAML string, the form value does
+  // not update, so the textarea resets to its previous value after every
+  // re-render.  This prevents userEvent.type from accumulating multi-character
+  // text, making fireEvent.change the only reliable way to fire the onChange
+  // callback with the full invalid string in one shot.
+  test('should display an inline parse error when invalid YAML is entered (AAP-93178)', async () => {
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    // Simulate entering leading-space YAML — a common copy-paste artifact.
+    // With the fix, valueToObject() throws so handleChange() calls setError()
+    // instead of normalising the raw string through jsyaml.dump(), which
+    // previously caused a growing block-scalar loop that crashed the browser.
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: '  ---\n  a: b' },
+    });
+
+    // The js-yaml parse error must appear in the field's helper text.
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
   });
 });
