@@ -40,9 +40,9 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
       children: React.ReactNode;
       'aria-label': string;
     }) => (
-      <div role="dialog" aria-label={ariaLabel}>
+      <dialog open aria-label={ariaLabel}>
         {children}
-      </div>
+      </dialog>
     ),
   };
 });
@@ -106,17 +106,20 @@ describe('useRulebookActivationsActions', () => {
   } as unknown as IEdaView<EdaRulebookActivation>;
 
   const createWrapper = (activeEdaUser = mockActiveUser) => {
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <BrowserRouter>
-        <PageDialogProvider>
-          <FrameworkTranslationsProvider>
-            <EdaActiveUserContext.Provider value={{ activeEdaUser }}>
-              {children}
-            </EdaActiveUserContext.Provider>
-          </FrameworkTranslationsProvider>
-        </PageDialogProvider>
-      </BrowserRouter>
-    );
+    const contextValue = { activeEdaUser };
+    const Wrapper = ({ children }: { children: React.ReactNode }) => {
+      return (
+        <BrowserRouter>
+          <PageDialogProvider>
+            <FrameworkTranslationsProvider>
+              <EdaActiveUserContext.Provider value={contextValue}>
+                {children}
+              </EdaActiveUserContext.Provider>
+            </FrameworkTranslationsProvider>
+          </PageDialogProvider>
+        </BrowserRouter>
+      );
+    };
     Wrapper.displayName = 'RulebookActivationsActionsTestWrapper';
     return Wrapper;
   };

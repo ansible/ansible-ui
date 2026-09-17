@@ -28,14 +28,19 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
       children: React.ReactNode;
       'aria-label': string;
     }) => (
-      <div role="dialog" aria-label={ariaLabel}>
+      <dialog open aria-label={ariaLabel}>
         {children}
-      </div>
+      </dialog>
     ),
   };
 });
 
-function TestHarness(props: Readonly<{ onComplete: (targets: ClearLogsTarget[]) => void }>) {
+function TestHarness(
+  props: Readonly<{
+    onComplete: (targets: ClearLogsTarget[]) => void;
+    targets?: ReadonlyArray<ClearLogsTarget>;
+  }>
+) {
   const openClearLogsDialog = useClearLogsDialog({
     endpointBuilder: (target) => edaAPI`/activation-instances/${target.id.toString()}/clear-logs/`,
     onComplete: props.onComplete,
@@ -43,7 +48,9 @@ function TestHarness(props: Readonly<{ onComplete: (targets: ClearLogsTarget[]) 
   });
 
   return (
-    <button onClick={() => openClearLogsDialog([{ id: 201, name: '201 - Instance 1' }])}>
+    <button
+      onClick={() => openClearLogsDialog(props.targets ?? [{ id: 201, name: '201 - Instance 1' }])}
+    >
       Open clear logs
     </button>
   );
@@ -79,5 +86,23 @@ describe('useClearLogsDialog', () => {
     progressProps.onClose?.('success', [target], [], []);
     expect(onComplete).toHaveBeenCalledOnce();
     expect(onComplete).toHaveBeenCalledWith([target]);
+  });
+
+  it('should not open a dialog when no targets are provided', async () => {
+    const user = userEvent.setup();
+    const onComplete = vi.fn();
+    openProgressDialog.mockClear();
+
+    render(
+      <PageDialogProvider>
+        <TestHarness onComplete={onComplete} targets={[]} />
+      </PageDialogProvider>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open clear logs' }));
+
+    expect(screen.queryByRole('dialog', { name: 'Clear logs?' })).not.toBeInTheDocument();
+    expect(openProgressDialog).not.toHaveBeenCalled();
+    expect(onComplete).not.toHaveBeenCalled();
   });
 });

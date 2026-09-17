@@ -16,9 +16,9 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
       children: React.ReactNode;
       'aria-label': string;
     }) => (
-      <div role="dialog" aria-label={ariaLabel}>
+      <dialog open aria-label={ariaLabel}>
         {children}
-      </div>
+      </dialog>
     ),
   };
 });
@@ -64,6 +64,61 @@ describe('ClearLogsConfirmationDialog', () => {
 
     expect(screen.getByRole('spinbutton', { name: 'Days to keep' })).toBeDisabled();
     expect(screen.getByRole('textbox', { name: 'Clear logs older than' })).toBeEnabled();
+  });
+
+  it('should submit the selected older-than date after validating it', async () => {
+    const user = userEvent.setup();
+    const onConfirm = vi.fn();
+
+    render(
+      <ClearLogsConfirmationDialog targets={[activation]} onClose={vi.fn()} onConfirm={onConfirm} />
+    );
+
+    await user.click(screen.getByRole('radio', { name: 'Older than' }));
+    const dateInput = screen.getByRole('textbox', { name: 'Clear logs older than' });
+    const clearButton = screen.getByRole('button', { name: 'Clear logs' });
+
+    await user.type(dateInput, 'not-a-date');
+    expect(clearButton).toBeDisabled();
+
+    await user.clear(dateInput);
+    await user.type(dateInput, '2025-01-02');
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: 'I understand that clearing logs cannot be undone.',
+      })
+    );
+    await user.click(clearButton);
+
+    expect(onConfirm).toHaveBeenCalledWith('2025-01-02T00:00:00.000Z');
+  });
+
+  it('should submit the adjusted keep-last range', async () => {
+    const user = userEvent.setup();
+    const onConfirm = vi.fn();
+
+    render(
+      <ClearLogsConfirmationDialog targets={[activation]} onClose={vi.fn()} onConfirm={onConfirm} />
+    );
+
+    const daysInput = screen.getByRole('spinbutton', { name: 'Days to keep' });
+    await user.click(screen.getByRole('radio', { name: 'Older than' }));
+    await user.click(screen.getByRole('radio', { name: 'Keep last' }));
+    await user.click(screen.getByRole('button', { name: 'Increase days to keep' }));
+    expect(daysInput).toHaveValue(8);
+    await user.click(screen.getByRole('button', { name: 'Decrease days to keep' }));
+    expect(daysInput).toHaveValue(7);
+    await user.clear(daysInput);
+    expect(daysInput).toHaveValue(1);
+
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: 'I understand that clearing logs cannot be undone.',
+      })
+    );
+    await user.click(screen.getByRole('button', { name: 'Clear logs' }));
+
+    expect(onConfirm).toHaveBeenCalledWith(expect.any(String));
   });
 
   it('should keep selected activation names in the description without rendering a table', () => {

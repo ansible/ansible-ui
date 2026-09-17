@@ -16,6 +16,30 @@ import { ActivationInstanceOutputRow } from './ActivationInstanceOutputRow';
 const INITIAL_PAGE_SIZE = 5000;
 const POLL_INTERVAL_MS = 5000;
 
+function getUniqueLogs(
+  existingLogs: EdaActivationInstanceLog[],
+  incomingLogs: EdaActivationInstanceLog[]
+) {
+  const existingLogIds = new Set(existingLogs.map((log) => log.id));
+  return incomingLogs.filter((log) => {
+    if (existingLogIds.has(log.id)) return false;
+    existingLogIds.add(log.id);
+    return true;
+  });
+}
+
+function mergeUniqueLogs(
+  existingLogs: EdaActivationInstanceLog[],
+  incomingLogs: EdaActivationInstanceLog[],
+  position: 'prepend' | 'append'
+) {
+  const uniqueIncomingLogs = getUniqueLogs(existingLogs, incomingLogs);
+
+  return position === 'prepend'
+    ? [...uniqueIncomingLogs, ...existingLogs]
+    : [...existingLogs, ...uniqueIncomingLogs];
+}
+
 const ScrollContainer = styled.div`
   flex: 1;
   min-height: 0;
@@ -46,8 +70,12 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
   const [logs, setLogs] = useState<EdaActivationInstanceLog[]>([]);
   const [hasOlderLogs, setHasOlderLogs] = useState(false);
   const [isLoadingOlder, setIsLoadingOlder] = useState(false);
-  const latestTimestampRef = useRef<number>(0);
-  const oldestTimestampRef = useRef<number>(0);
+  const [lineNumberOffset, setLineNumberOffset] = useState(0);
+  const logsRef = useRef<EdaActivationInstanceLog[]>([]);
+  const newestLoadedIdRef = useRef<number | null>(null);
+  const oldestLoadedIdRef = useRef<number | null>(null);
+  const requestGenerationRef = useRef(0);
+  const isPollingRef = useRef(false);
 
   const params = useParams<{ instanceId: string }>();
   const instanceId = params.instanceId ?? '';
@@ -65,51 +93,42 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
   }, [toolbarFilters, filterState]);
 
   useEffect(() => {
+    const requestGeneration = requestGenerationRef.current + 1;
+    requestGenerationRef.current = requestGeneration;
     let isCurrent = true;
 
+    logsRef.current = [];
     setLogs([]);
     setHasOlderLogs(false);
-    latestTimestampRef.current = 0;
-    oldestTimestampRef.current = 0;
+    setIsLoadingOlder(false);
+    setLineNumberOffset(0);
+    newestLoadedIdRef.current = null;
+    oldestLoadedIdRef.current = null;
+    isPollingRef.current = false;
 
     async function initialLoad() {
       try {
         const filterString = buildFilterString();
-        const countQsParts = ['page_size=1'];
+        const qsParts = ['ordering=-id', `page_size=${INITIAL_PAGE_SIZE}`];
         if (filterString) {
-          countQsParts.push(filterString);
-        }
-        const countResponse = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${countQsParts.join('&')}`)
-        );
-        const count = countResponse.count ?? 0;
-
-        if (!isCurrent) return;
-
-        if (count === 0) {
-          setLogs([]);
-          setHasOlderLogs(false);
-          return;
-        }
-
-        const lastPage = Math.ceil(count / INITIAL_PAGE_SIZE);
-        const pageQsParts = [`page=${lastPage}`, `page_size=${INITIAL_PAGE_SIZE}`];
-        if (filterString) {
-          pageQsParts.push(filterString);
+          qsParts.push(filterString);
         }
         const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${pageQsParts.join('&')}`)
+          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${qsParts.join('&')}`)
         );
 
-        if (!isCurrent) return;
+        if (!isCurrent || requestGenerationRef.current !== requestGeneration) return;
 
-        const results = response.results ?? [];
+        const results = [...(response.results ?? [])].reverse();
+        const count = response.count ?? 0;
+        logsRef.current = results;
         setLogs(results);
-        setHasOlderLogs(count > INITIAL_PAGE_SIZE);
+        setLineNumberOffset(count - results.length);
+        setHasOlderLogs(count > results.length);
 
         if (results.length > 0) {
-          latestTimestampRef.current = results[results.length - 1].log_timestamp ?? 0;
-          oldestTimestampRef.current = results[0].log_timestamp ?? 0;
+          oldestLoadedIdRef.current = results[0].id;
+          newestLoadedIdRef.current = results[results.length - 1].id;
         }
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -126,14 +145,18 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
 
   useEffect(() => {
     if (!isRunning && !isFollowModeEnabled) return;
+    const requestGeneration = requestGenerationRef.current;
 
     async function pollLogs() {
-      if (latestTimestampRef.current === 0) return;
+      const newestLoadedId = newestLoadedIdRef.current;
+      if (isPollingRef.current || newestLoadedId === null) return;
 
+      isPollingRef.current = true;
       try {
         const filterString = buildFilterString();
         const qsParts = [
-          `log_timestamp__gt=${latestTimestampRef.current}`,
+          `id__gt=${newestLoadedId}`,
+          'ordering=id',
           `page_size=${INITIAL_PAGE_SIZE}`,
         ];
         if (filterString) {
@@ -144,19 +167,23 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
           edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${qsParts.join('&')}`)
         );
 
-        const newLogs = response.results ?? [];
-        if (newLogs.length > 0) {
-          setLogs((previousLogs) => {
-            const seen = new Set(previousLogs.map((log) => log.id));
-            const dedupedLogs = newLogs.filter((log) => !seen.has(log.id));
-            return [...previousLogs, ...dedupedLogs];
-          });
-          latestTimestampRef.current =
-            newLogs[newLogs.length - 1].log_timestamp ?? latestTimestampRef.current;
+        if (requestGenerationRef.current !== requestGeneration) return;
+
+        const newLogs = [...(response.results ?? [])].sort((left, right) => left.id - right.id);
+        const uniqueNewLogs = getUniqueLogs(logsRef.current, newLogs);
+        if (uniqueNewLogs.length > 0) {
+          logsRef.current = mergeUniqueLogs(logsRef.current, uniqueNewLogs, 'append');
+          setLogs(logsRef.current);
+          newestLoadedIdRef.current = Math.max(
+            ...uniqueNewLogs.map((log) => log.id),
+            newestLoadedId
+          );
         }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Failed to poll logs:', error);
+      } finally {
+        isPollingRef.current = false;
       }
     }
 
@@ -169,13 +196,16 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
 
   const loadOlderLogs = useCallback(async () => {
     if (!hasOlderLogs || isLoadingOlder) return;
-    if (oldestTimestampRef.current === 0) return;
+    const oldestLoadedId = oldestLoadedIdRef.current;
+    if (oldestLoadedId === null) return;
 
+    const requestGeneration = requestGenerationRef.current;
     setIsLoadingOlder(true);
     try {
       const filterString = buildFilterString();
       const qsParts = [
-        `log_timestamp__lt=${oldestTimestampRef.current}`,
+        `id__lt=${oldestLoadedId}`,
+        'ordering=-id',
         `page_size=${INITIAL_PAGE_SIZE}`,
       ];
       if (filterString) {
@@ -186,25 +216,30 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
         edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${qsParts.join('&')}`)
       );
 
-      const olderLogs = response.results ?? [];
-      if (olderLogs.length > 0) {
-        setLogs((previousLogs) => {
-          const seen = new Set(previousLogs.map((log) => log.id));
-          const dedupedLogs = olderLogs.filter((log) => !seen.has(log.id));
-          return [...dedupedLogs, ...previousLogs];
-        });
-        oldestTimestampRef.current = olderLogs[0].log_timestamp ?? oldestTimestampRef.current;
+      if (requestGenerationRef.current !== requestGeneration) return;
+
+      const olderLogs = [...(response.results ?? [])].reverse();
+      const uniqueOlderLogs = getUniqueLogs(logsRef.current, olderLogs);
+      if (uniqueOlderLogs.length > 0) {
+        logsRef.current = mergeUniqueLogs(logsRef.current, uniqueOlderLogs, 'prepend');
+        setLogs(logsRef.current);
+        setLineNumberOffset((offset) => offset - uniqueOlderLogs.length);
       }
-      setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
+      if (olderLogs.length > 0) {
+        oldestLoadedIdRef.current = Math.min(...olderLogs.map((log) => log.id), oldestLoadedId);
+      }
+      setHasOlderLogs((response.count ?? 0) > olderLogs.length);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Failed to load older logs:', error);
     } finally {
-      setIsLoadingOlder(false);
+      if (requestGenerationRef.current === requestGeneration) {
+        setIsLoadingOlder(false);
+      }
     }
   }, [instanceId, hasOlderLogs, isLoadingOlder, buildFilterString]);
 
-  const estimatedMaxLines = (logs.length ?? 0) * 10;
+  const estimatedMaxLines = Math.max(lineNumberOffset + logs.length, logs.length) * 10;
   const outputLineChars = String(estimatedMaxLines).length;
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -247,14 +282,18 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
             style={{ '--output-line-chars': outputLineChars } as { [key: string]: string | number }}
           >
             <div style={{ height: beforeRowsHeight }} />
-            {visibleItems?.map((row) => (
-              <ActivationInstanceOutputRow
-                key={row.id}
-                index={logs.findIndex((log) => log.id === row.id)}
-                row={row}
-                setHeight={setRowHeight}
-              />
-            ))}
+            {visibleItems?.map((row) => {
+              const index = logs.findIndex((log) => log.id === row.id);
+              return (
+                <ActivationInstanceOutputRow
+                  key={row.id}
+                  index={index}
+                  lineNumber={lineNumberOffset + index + 1}
+                  row={row}
+                  setHeight={setRowHeight}
+                />
+              );
+            })}
             <div style={{ height: afterRowsHeight }} />
           </div>
         </pre>

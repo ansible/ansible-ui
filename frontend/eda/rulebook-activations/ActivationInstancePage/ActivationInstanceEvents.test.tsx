@@ -18,13 +18,19 @@ const server = setupServer(
     const queryParams = new URL(request.url).searchParams;
     requestedQueryParams.push(queryParams);
 
-    if (queryParams.get('page') === '2') {
+    if (queryParams.get('ordering') === '-id') {
       return HttpResponse.json({
-        count: 5001,
+        count: 5002,
         results: [
           {
-            id: 5001,
+            id: 10002,
             log: 'newest filtered log',
+            log_timestamp: 5001,
+            activation_instance: 1,
+          },
+          {
+            id: 10001,
+            log: 'older filtered log',
             log_timestamp: 5001,
             activation_instance: 1,
           },
@@ -59,7 +65,7 @@ describe('ActivationInstanceEvents', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it('should fetch the filtered last page of logs in chronological order', async () => {
+  it('should fetch one bounded filtered tail in chronological order', async () => {
     render(
       <MemoryRouter initialEntries={['/activations/instances/1']}>
         <Routes>
@@ -80,52 +86,102 @@ describe('ActivationInstanceEvents', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('newest filtered log')).toBeInTheDocument();
-    });
+    await waitFor(() => expect(screen.getByText('newest filtered log')).toBeInTheDocument());
 
     const logOutput = screen.getByText('newest filtered log').closest('pre')?.parentElement;
     expect(logOutput?.parentElement?.tagName).toBe('SECTION');
     expect(logOutput?.parentElement).not.toHaveClass('pf-v6-c-page__main-body');
 
-    expect(requestedQueryParams).toHaveLength(2);
-    expect(requestedQueryParams[0].get('page_size')).toBe('1');
+    expect(requestedQueryParams).toHaveLength(1);
+    expect(requestedQueryParams[0].get('ordering')).toBe('-id');
+    expect(requestedQueryParams[0].get('page_size')).toBe('5000');
+    expect(requestedQueryParams[0].get('page')).toBeNull();
     expect(requestedQueryParams[0].get('log')).toBe('filtered');
-    expect(requestedQueryParams[1].get('page')).toBe('2');
-    expect(requestedQueryParams[1].get('page_size')).toBe('5000');
-    expect(requestedQueryParams[1].get('log')).toBe('filtered');
+
+    const olderLogRow = screen.getByText('older filtered log').closest('.output-grid-row');
+    const newestLogRow = screen.getByText('newest filtered log').closest('.output-grid-row');
+    expect(
+      Array.from(document.querySelectorAll('.output-grid-row')).map(
+        (row) => row.children[1]?.textContent
+      )
+    ).toEqual(['older filtered log', 'newest filtered log']);
+    expect(olderLogRow?.firstElementChild?.textContent).toBe('5001');
+    expect(newestLogRow?.firstElementChild?.textContent).toBe('5002');
 
     expect(screen.getByRole('button', { name: 'Scroll first' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Scroll last' })).toBeInTheDocument();
   });
 
-  it('should poll from the newest timestamp and skip duplicate logs', async () => {
+  it('should render no logs when the initial count is zero', async () => {
     server.use(
       http.get('*/activation-instances/1/logs/', ({ request }) => {
         const queryParams = new URL(request.url).searchParams;
+        requestedQueryParams.push(queryParams);
+        return HttpResponse.json({ count: 0, results: [] });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/activations/instances/1']}>
+        <Routes>
+          <Route
+            path="/activations/instances/:instanceId"
+            element={
+              <ActivationInstanceEvents
+                toolbarFilters={[]}
+                filterState={{}}
+                isFollowModeEnabled={false}
+                setIsFollowModeEnabled={vi.fn()}
+                isRunning={false}
+                refreshToken={0}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(requestedQueryParams).toHaveLength(1);
+    });
+    expect(requestedQueryParams[0].get('ordering')).toBe('-id');
+    expect(requestedQueryParams[0].get('page_size')).toBe('5000');
+    expect(screen.queryByText('newest filtered log')).not.toBeInTheDocument();
+  });
+
+  it('should poll from the newest ID and skip duplicate logs with tied timestamps', async () => {
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        requestedQueryParams.push(queryParams);
         const initialLog = {
           id: 1,
           log: 'initial log',
-          log_timestamp: 1,
+          log_timestamp: 100,
           activation_instance: 1,
         };
 
-        if (queryParams.get('log_timestamp__gt') === '1') {
+        if (queryParams.get('id__gt') === '1') {
           return HttpResponse.json({
             count: 2,
             results: [
-              initialLog,
               {
                 id: 2,
-                log: 'new log',
-                log_timestamp: 2,
+                log: 'new log one',
+                log_timestamp: 100,
+                activation_instance: 1,
+              },
+              {
+                id: 1,
+                log: 'initial log',
+                log_timestamp: 100,
                 activation_instance: 1,
               },
             ],
           });
         }
 
-        if (queryParams.get('page') === '1') {
+        if (queryParams.get('ordering') === '-id') {
           return HttpResponse.json({ count: 1, results: [initialLog] });
         }
 
@@ -161,13 +217,452 @@ describe('ActivationInstanceEvents', () => {
 
       await vi.advanceTimersByTimeAsync(5000);
 
-      await vi.waitFor(() => {
-        expect(screen.getByText('new log')).toBeInTheDocument();
-      });
+      await vi.waitFor(() => expect(screen.getByText('new log one')).toBeInTheDocument());
 
       expect(screen.getAllByText('initial log')).toHaveLength(1);
+      const pollQuery = requestedQueryParams.find((queryParams) => queryParams.get('id__gt'));
+      expect(pollQuery?.get('id__gt')).toBe('1');
+      expect(pollQuery?.get('ordering')).toBe('id');
+      expect(pollQuery?.get('page_size')).toBe('5000');
     } finally {
       vi.useRealTimers();
+    }
+  });
+
+  it('should continue polling after a full response batch', async () => {
+    const firstPollLogs = Array.from({ length: 5000 }, (_, index) => ({
+      id: index + 2,
+      log: `polled log ${index + 2}`,
+      log_timestamp: 100,
+      activation_instance: 1,
+    }));
+    let pollCount = 0;
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        requestedQueryParams.push(queryParams);
+
+        if (queryParams.get('id__gt') === '5001') {
+          return HttpResponse.json({
+            count: 1,
+            results: [
+              { id: 5002, log: 'remainder log', log_timestamp: 100, activation_instance: 1 },
+            ],
+          });
+        }
+        if (queryParams.get('id__gt') === '1') {
+          pollCount += 1;
+          return HttpResponse.json({ count: 5001, results: firstPollLogs });
+        }
+        return HttpResponse.json({
+          count: 1,
+          results: [{ id: 1, log: 'initial log', log_timestamp: 100, activation_instance: 1 }],
+        });
+      })
+    );
+    vi.useFakeTimers();
+
+    try {
+      render(
+        <MemoryRouter initialEntries={['/activations/instances/1']}>
+          <Routes>
+            <Route
+              path="/activations/instances/:instanceId"
+              element={
+                <ActivationInstanceEvents
+                  toolbarFilters={[]}
+                  filterState={{}}
+                  isFollowModeEnabled={false}
+                  setIsFollowModeEnabled={vi.fn()}
+                  isRunning={true}
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await vi.waitFor(() => expect(screen.getByText('initial log')).toBeInTheDocument());
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => expect(pollCount).toBe(1));
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => {
+        expect(
+          requestedQueryParams.some((queryParams) => queryParams.get('id__gt') === '5001')
+        ).toBe(true);
+      });
+      const pollQueries = requestedQueryParams.filter(
+        (queryParams) => queryParams.get('ordering') === 'id'
+      );
+      expect(pollQueries.map((queryParams) => queryParams.get('id__gt'))).toEqual(['1', '5001']);
+      expect(requestedQueryParams.some((queryParams) => queryParams.get('log_timestamp__gt'))).toBe(
+        false
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should walk backward through multiple bounded batches without gaps or duplicates', async () => {
+    const returnedIds: number[] = [];
+    const makeLogs = (firstId: number, lastId: number) =>
+      Array.from({ length: firstId - lastId + 1 }, (_, index) => {
+        const id = firstId - index;
+        return {
+          id,
+          log: `history log ${id}`,
+          log_timestamp: 100,
+          activation_instance: 1,
+        };
+      });
+
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        requestedQueryParams.push(queryParams);
+
+        const oldestId = queryParams.get('id__lt');
+        const response =
+          oldestId === null
+            ? { count: 17000, results: makeLogs(17000, 12001) }
+            : oldestId === '12001'
+              ? { count: 12000, results: makeLogs(12000, 7001) }
+              : oldestId === '7001'
+                ? { count: 7000, results: makeLogs(7000, 2001) }
+                : { count: 2000, results: makeLogs(2000, 1) };
+
+        returnedIds.push(...response.results.map((log) => log.id));
+        return HttpResponse.json(response);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/activations/instances/1']}>
+        <Routes>
+          <Route
+            path="/activations/instances/:instanceId"
+            element={
+              <ActivationInstanceEvents
+                toolbarFilters={[]}
+                filterState={{}}
+                isFollowModeEnabled={false}
+                setIsFollowModeEnabled={vi.fn()}
+                isRunning={false}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText('history log 12001')).toBeInTheDocument());
+    const scrollContainer = screen.getByText('history log 12001').closest('pre')?.parentElement;
+    expect(scrollContainer).toBeTruthy();
+
+    const loadOlderBatch = async (expectedOldestId: number) => {
+      scrollContainer?.dispatchEvent(new Event('scroll'));
+      await waitFor(() => {
+        expect(
+          requestedQueryParams.some(
+            (queryParams) => queryParams.get('id__lt') === String(expectedOldestId)
+          )
+        ).toBe(true);
+      });
+    };
+
+    await loadOlderBatch(12001);
+    await loadOlderBatch(7001);
+    await loadOlderBatch(2001);
+
+    const olderQueries = requestedQueryParams.filter((queryParams) => queryParams.get('id__lt'));
+    expect(olderQueries.map((queryParams) => queryParams.get('id__lt'))).toEqual([
+      '12001',
+      '7001',
+      '2001',
+    ]);
+    olderQueries.forEach((queryParams) => {
+      expect(queryParams.get('ordering')).toBe('-id');
+      expect(queryParams.get('page_size')).toBe('5000');
+    });
+    expect(returnedIds).toHaveLength(17000);
+    expect(new Set(returnedIds).size).toBe(17000);
+    expect([...returnedIds].sort((left, right) => left - right)).toEqual(
+      Array.from({ length: 17000 }, (_, index) => index + 1)
+    );
+
+    scrollContainer?.dispatchEvent(new Event('scroll'));
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    expect(requestedQueryParams.filter((queryParams) => queryParams.get('id__lt'))).toHaveLength(3);
+  });
+
+  it('should load older logs when scrolling to the top', async () => {
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        requestedQueryParams.push(queryParams);
+
+        if (queryParams.get('id__lt') === '5001') {
+          return HttpResponse.json({
+            count: 3,
+            results: [
+              {
+                id: 5001,
+                log: 'oldest loaded log',
+                log_timestamp: 100,
+                activation_instance: 1,
+              },
+              {
+                id: 5000,
+                log: 'older log',
+                log_timestamp: 100,
+                activation_instance: 1,
+              },
+              {
+                id: 4999,
+                log: 'oldest log',
+                log_timestamp: 100,
+                activation_instance: 1,
+              },
+            ],
+          });
+        }
+        return HttpResponse.json({
+          count: 5003,
+          results: [
+            {
+              id: 5003,
+              log: 'newest log',
+              log_timestamp: 100,
+              activation_instance: 1,
+            },
+            {
+              id: 5002,
+              log: 'middle log',
+              log_timestamp: 100,
+              activation_instance: 1,
+            },
+            {
+              id: 5001,
+              log: 'oldest loaded log',
+              log_timestamp: 100,
+              activation_instance: 1,
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/activations/instances/1']}>
+        <Routes>
+          <Route
+            path="/activations/instances/:instanceId"
+            element={
+              <ActivationInstanceEvents
+                toolbarFilters={toolbarFilters}
+                filterState={{ log: ['filtered'] }}
+                isFollowModeEnabled={false}
+                setIsFollowModeEnabled={vi.fn()}
+                isRunning={false}
+                refreshToken={0}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText('newest log')).toBeInTheDocument());
+
+    const initiallyLoadedRow = screen.getByText('oldest loaded log').closest('.output-grid-row');
+    expect(initiallyLoadedRow?.firstElementChild?.textContent).toBe('5001');
+
+    const scrollContainer = screen.getByText('newest log').closest('pre')?.parentElement;
+    expect(scrollContainer).toBeTruthy();
+    scrollContainer?.dispatchEvent(new Event('scroll'));
+
+    await waitFor(() => expect(screen.getByText('older log')).toBeInTheDocument());
+    expect(screen.getAllByText('newest log')).toHaveLength(1);
+    const olderQuery = requestedQueryParams.find((queryParams) => queryParams.get('id__lt'));
+    expect(olderQuery?.get('id__lt')).toBe('5001');
+    expect(olderQuery?.get('ordering')).toBe('-id');
+    expect(olderQuery?.get('page_size')).toBe('5000');
+    expect(requestedQueryParams.some((queryParams) => queryParams.get('log') === 'filtered')).toBe(
+      true
+    );
+    expect(screen.getAllByText('oldest loaded log')).toHaveLength(1);
+    expect(
+      screen.getByText('oldest loaded log').closest('.output-grid-row')?.firstElementChild
+        ?.textContent
+    ).toBe('5001');
+    expect(
+      screen.getByText('older log').closest('.output-grid-row')?.firstElementChild?.textContent
+    ).toBe('5000');
+    expect(
+      screen.getByText('oldest log').closest('.output-grid-row')?.firstElementChild?.textContent
+    ).toBe('4999');
+    expect(
+      Array.from(document.querySelectorAll('.output-grid-row')).map(
+        (row) => row.children[1]?.textContent
+      )
+    ).toEqual(['oldest log', 'older log', 'oldest loaded log', 'middle log', 'newest log']);
+  });
+
+  it('should handle an older-log request failure', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        if (queryParams.get('id__lt')) {
+          return HttpResponse.json({ detail: 'Unable to load older logs' }, { status: 500 });
+        }
+        return HttpResponse.json({
+          count: 5001,
+          results: [
+            {
+              id: 2,
+              log: 'newest log before older-log failure',
+              log_timestamp: 2,
+              activation_instance: 1,
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/activations/instances/1']}>
+        <Routes>
+          <Route
+            path="/activations/instances/:instanceId"
+            element={
+              <ActivationInstanceEvents
+                toolbarFilters={[]}
+                filterState={{}}
+                isFollowModeEnabled={false}
+                setIsFollowModeEnabled={vi.fn()}
+                isRunning={false}
+                refreshToken={0}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    try {
+      await waitFor(() => {
+        expect(screen.getByText('newest log before older-log failure')).toBeInTheDocument();
+      });
+      const scrollContainer = screen
+        .getByText('newest log before older-log failure')
+        .closest('pre')?.parentElement;
+      expect(scrollContainer).toBeTruthy();
+      scrollContainer?.dispatchEvent(new Event('scroll'));
+
+      await waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith('Failed to load older logs:', expect.anything());
+      });
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it('should handle an initial log request failure', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    server.use(
+      http.get('*/activation-instances/1/logs/', () =>
+        HttpResponse.json({ detail: 'Unable to load logs' }, { status: 500 })
+      )
+    );
+
+    try {
+      render(
+        <MemoryRouter initialEntries={['/activations/instances/1']}>
+          <Routes>
+            <Route
+              path="/activations/instances/:instanceId"
+              element={
+                <ActivationInstanceEvents
+                  toolbarFilters={[]}
+                  filterState={{}}
+                  isFollowModeEnabled={false}
+                  setIsFollowModeEnabled={vi.fn()}
+                  isRunning={false}
+                  refreshToken={0}
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith('Failed to load logs:', expect.anything());
+      });
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it('should handle a polling request failure', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        if (queryParams.get('id__gt')) {
+          return HttpResponse.json({ detail: 'Unable to poll logs' }, { status: 500 });
+        }
+        if (queryParams.get('ordering') === '-id') {
+          return HttpResponse.json({
+            count: 1,
+            results: [
+              {
+                id: 1,
+                log: 'initial log for polling failure',
+                log_timestamp: 1,
+                activation_instance: 1,
+              },
+            ],
+          });
+        }
+        return HttpResponse.json({ count: 1, results: [] });
+      })
+    );
+    vi.useFakeTimers();
+
+    try {
+      render(
+        <MemoryRouter initialEntries={['/activations/instances/1']}>
+          <Routes>
+            <Route
+              path="/activations/instances/:instanceId"
+              element={
+                <ActivationInstanceEvents
+                  toolbarFilters={toolbarFilters}
+                  filterState={{ log: ['filtered'] }}
+                  isFollowModeEnabled={false}
+                  setIsFollowModeEnabled={vi.fn()}
+                  isRunning={true}
+                  refreshToken={0}
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await vi.waitFor(() => {
+        expect(screen.getByText('initial log for polling failure')).toBeInTheDocument();
+      });
+      await vi.advanceTimersByTimeAsync(5000);
+
+      await vi.waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith('Failed to poll logs:', expect.anything());
+      });
+    } finally {
+      vi.useRealTimers();
+      consoleError.mockRestore();
     }
   });
 });
