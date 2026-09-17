@@ -9,6 +9,7 @@ import { getTableRow } from '../../../../../../commands/getTableRow';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { runAdHocCommandWizard } from '../../../../../../commands/runAdHocCommandWizard';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
+import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import {
   Organization,
   Credential,
@@ -54,16 +55,8 @@ test.describe('Inventory Groups - List View', () => {
       await page.getByRole('button', { name: 'toolbar actions' }).click();
       await page.getByRole('menuitem', { name: 'Delete groups' }).click();
 
-      await page.getByTestId('delete-groups-dialog-radio-delete').check();
-      await page.getByTestId('delete-group-modal-delete-button').click();
-
-      // Wait for deletion to complete and verify no groups remain
-      await clearTableFilters(page);
-
-      // Check that the group is gone - either empty state or no results
-      await expect(
-        page.getByText(/No groups are assigned to this inventory|No results found/i).first()
-      ).toBeVisible({ timeout: 10000 });
+      await InventoryGroup.ui.confirmDeleteDialog(page);
+      await InventoryGroup.ui.expectEmptyList(page);
 
       await Inventory.ui.delete(page, inventoryName);
     }
@@ -122,15 +115,12 @@ test.describe('Inventory Groups - List View', () => {
     await page.getByRole('button', { name: 'toolbar actions' }).click();
     await page.getByRole('menuitem', { name: 'Delete groups' }).click();
 
-    await page.getByTestId('delete-groups-dialog-radio-delete').check();
-    await page.getByTestId('delete-group-modal-delete-button').click();
+    await InventoryGroup.ui.confirmDeleteDialog(page);
 
     for (const groupRow of groupRows) {
       await expect(groupRow).toHaveCount(0, { timeout: 15000 });
     }
-    await expect(
-      page.getByText(/No groups are assigned to this inventory|No results found/i).first()
-    ).toBeVisible({ timeout: 10000 });
+    await InventoryGroup.ui.expectEmptyList(page);
 
     await Inventory.ui.delete(page, inventoryName);
   });
@@ -244,12 +234,14 @@ test.describe('Inventory Groups - Related Groups', () => {
 
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disassociate groups' }).click();
+      // Assertion path: a failed disassociate must fail the test. Teardown is API delete.
+      await waitForBulkActionDialog(page);
       await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
       await clearTableFilters(page);
       await expect(
         page.getByRole('heading', { name: 'There are currently no groups related to this group.' })
       ).toBeVisible();
-      await Inventory.ui.delete(page, inventoryName);
+      await Inventory.api.deleteByName(page, inventoryName);
     }
   );
 
@@ -304,13 +296,15 @@ test.describe('Inventory Groups - Related Groups', () => {
 
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disassociate groups' }).click();
+      // Assertion path: a failed disassociate must fail the test. Teardown is API delete.
+      await waitForBulkActionDialog(page);
       await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
       await clearTableFilters(page);
       await expect(
         page.getByRole('heading', { name: 'There are currently no groups related to this group.' })
       ).toBeVisible();
 
-      await Inventory.ui.delete(page, inventoryName);
+      await Inventory.api.deleteByName(page, inventoryName);
     }
   );
 

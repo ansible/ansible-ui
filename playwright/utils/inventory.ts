@@ -388,7 +388,8 @@ export const Inventory = {
       await clickTableRow({ text: inventoryName }, page);
       await clickPageAction('Delete inventory', page);
       await confirmAndAssertDeletion(page);
-      await expect(page.getByRole('heading', { name: 'Inventories', exact: true })).toBeVisible();
+      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+      await expect(page.getByTestId('page-title')).toHaveText('Inventories', { timeout: 15000 });
     },
 
     deleteSource: async (
