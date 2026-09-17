@@ -1,9 +1,11 @@
 import { PageFormTextArea, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormFieldMetadataProvider } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { NoAutofillDiv } from '@ansible/common-ui/components/NoAutofill';
-import { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from 'react';
 import { FieldPath, FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { buildFieldMetadataMap } from '@ansible/common-ui/validation/buildFieldMetadataMap';
 import { EdaCredentialCreate } from '../../interfaces/EdaCredential';
 import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
 import { edaAPI } from '../../common/eda-utils';
@@ -202,16 +204,42 @@ export function CredentialInputs(props: {
         }
       />
       {credentialType !== undefined && (
-        <PageFormSection title={t('Type Details')}>
-          <NoAutofillDiv />
-          <CredentialFormInputs
-            credentialType={credentialType}
-            setCredentialPluginValues={props.setCredentialPluginValues}
-            accumulatedPluginValues={props.accumulatedPluginValues}
-            removeCredentialPluginValue={props.removeCredentialPluginValue}
-          />
-        </PageFormSection>
+        <EdaCredentialTypeDetailsSection
+          credentialType={credentialType}
+          setCredentialPluginValues={props.setCredentialPluginValues}
+          accumulatedPluginValues={props.accumulatedPluginValues}
+          removeCredentialPluginValue={props.removeCredentialPluginValue}
+        />
       )}
     </>
+  );
+}
+
+function EdaCredentialTypeDetailsSection(
+  props: Readonly<{
+    credentialType: EdaCredentialType;
+    setCredentialPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+    accumulatedPluginValues?: CredentialPluginsInputSource[];
+    removeCredentialPluginValue?: (fieldName: string) => void;
+  }>
+) {
+  const { t } = useTranslation();
+  const fieldMetadataMap = useMemo(
+    () => buildFieldMetadataMap(props.credentialType.inputs?.fields),
+    [props.credentialType.inputs?.fields]
+  );
+
+  return (
+    <PageFormFieldMetadataProvider fields={fieldMetadataMap} merge>
+      <PageFormSection title={t('Type Details')}>
+        <NoAutofillDiv />
+        <CredentialFormInputs
+          credentialType={props.credentialType}
+          setCredentialPluginValues={props.setCredentialPluginValues}
+          accumulatedPluginValues={props.accumulatedPluginValues}
+          removeCredentialPluginValue={props.removeCredentialPluginValue}
+        />
+      </PageFormSection>
+    </PageFormFieldMetadataProvider>
   );
 }

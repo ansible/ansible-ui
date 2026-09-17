@@ -8,6 +8,8 @@ export interface PluginConfiguration {
   type: string;
   ui_field_label?: string;
   choices?: { [name: string]: string };
+  pattern?: string;
+  pattern_description?: string;
 }
 
 export interface AuthenticatorPlugin {
