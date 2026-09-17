@@ -73,14 +73,12 @@ async function enableEventPersistence(page: Page, credentialName: string) {
   const credentialToggle = page.getByTestId('rule-engine-credential-select');
   await expect(credentialToggle).toBeVisible();
 
-  if (!(await credentialToggle.innerText()).includes(credentialName)) {
-    await page.getByRole('button', { name: /Event persistence credential/i }).click();
-    const credentialSearch = page.locator('#rule-engine-credential-select-search input');
-    await expect(credentialSearch).toBeVisible();
-    await credentialSearch.fill(credentialName);
-    await page.getByRole('option', { name: credentialName }).click();
-    await dismissOpenSelectMenus(page);
-  }
+  await page.getByRole('button', { name: /Event persistence credential/i }).click();
+  const credentialSearch = page.locator('#rule-engine-credential-select-search input');
+  await expect(credentialSearch).toBeVisible();
+  await credentialSearch.fill(credentialName);
+  await page.getByRole('option', { name: credentialName, exact: true }).click();
+  await dismissOpenSelectMenus(page);
 
   await expect(credentialToggle).toContainText(credentialName);
 }
@@ -198,7 +196,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
 
       await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
       await expect(page.getByTestId('enable-persistence')).toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential')).toBeVisible();
+      await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
 
       await RulebookActivation.ui.delete(page, activationName);
     }
@@ -228,7 +226,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
 
       await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
       await expect(page.getByTestId('enable-persistence')).toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential')).toBeVisible();
+      await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
 
       await RulebookActivation.ui.delete(page, activationName);
     }
@@ -262,7 +260,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       const credentialSearch = page.locator('#rule-engine-credential-select-search input');
       await expect(credentialSearch).toBeVisible();
       await credentialSearch.fill(ruleEngineCredentialName);
-      await page.getByRole('option', { name: ruleEngineCredentialName }).click();
+      await page.getByRole('option', { name: ruleEngineCredentialName, exact: true }).click();
       await dismissOpenSelectMenus(page);
 
       await expect(page.getByTestId('rule-engine-credential-select')).toContainText(
@@ -283,6 +281,43 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await expect(page.getByTestId('rule-engine-credential-select')).not.toContainText(
         ruleEngineCredentialName
       );
+    }
+  );
+
+  // Skipped: AAP installs a hidden default rule engine credential (_DEFAULT_EDA_RULE_ENGINE_CREDS)
+  // that is filtered from API responses (eda-server eda_credential.py). Because this credential
+  // always exists at install time, enabling persistence without selecting a credential never
+  // produces an error — the backend silently uses the default. The test's expected error cannot
+  // be triggered unless the instance is built without a managed DB. Behavior is in flux (UXD
+  // discussions tracked under AAP-77521). Re-evaluate when default credential visibility changes.
+  test.skip(
+    'should show error when persistence enabled without credential and no default exists',
+    { tag: ['@not_mock'] },
+    async ({ page }) => {
+      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+      await page.getByText('Create rulebook activation').click();
+
+      const activationName = createE2EName('no-default-credential');
+      await fillCreateActivationBasics(page, {
+        activationName,
+        organizationName,
+        projectName,
+        decisionEnvironmentName,
+      });
+
+      const persistenceCheckbox = page.getByRole('checkbox', {
+        name: /Enable event persistence/i,
+      });
+      await persistenceCheckbox.check();
+
+      await expect(
+        page.getByRole('button', { name: /Event persistence credential/i })
+      ).toBeVisible();
+
+      await page.getByRole('button', { name: 'Create rulebook activation' }).click();
+
+      await expect(page.getByText(/no default EDA Rule Engine credential found/i)).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Create rulebook activation' })).toBeVisible();
     }
   );
 
@@ -348,7 +383,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
 
       await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
       await expect(page.getByTestId('enable-persistence')).toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential')).toBeVisible();
+      await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
 
       await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
 

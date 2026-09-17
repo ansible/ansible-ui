@@ -36,7 +36,8 @@ export async function dismissOpenSelectMenus(page: Page): Promise<void> {
   }
   await page.keyboard.press('Escape');
   if ((await expandedToggle.count()) > 0) {
-    await expandedToggle.first().click();
+    // Avoid clicking an open select toggle; that can clear the selected value.
+    await page.locator('main').click({ position: { x: 0, y: 0 } });
   }
   await expect(expandedToggle).toHaveCount(0);
 }
