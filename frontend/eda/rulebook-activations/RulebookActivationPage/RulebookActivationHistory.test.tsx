@@ -63,17 +63,18 @@ const mockActiveUser = {
   modified_at: '2024-01-01T00:00:00Z',
 };
 
-function renderHistory(activeEdaUser = mockActiveUser) {
+function renderHistory(
+  activeEdaUser = mockActiveUser,
+  initialEntry = '/rulebook-activations/5/history',
+  routePath = '/rulebook-activations/:id/history'
+) {
   render(
     <SWRConfig value={{ provider: () => new Map() }}>
       <PageDialogProvider>
         <EdaActiveUserContext.Provider value={{ activeEdaUser }}>
-          <MemoryRouter initialEntries={['/rulebook-activations/5/history']}>
+          <MemoryRouter initialEntries={[initialEntry]}>
             <Routes>
-              <Route
-                path="/rulebook-activations/:id/history"
-                element={<RulebookActivationHistory />}
-              />
+              <Route path={routePath} element={<RulebookActivationHistory />} />
             </Routes>
           </MemoryRouter>
         </EdaActiveUserContext.Provider>
@@ -164,6 +165,33 @@ describe('RulebookActivationHistory', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Clear logs' }));
 
     await waitFor(() => expect(clearLogs).toHaveBeenCalledOnce());
+  });
+
+  it('should use the fallback activation label when the activation has no name', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/activations/5/', () => HttpResponse.json({ id: 5 })),
+      http.get('*/activations/5/instances/*', () => HttpResponse.json(mockInstances))
+    );
+    renderHistory();
+
+    await user.click(await screen.findByRole('button', { name: 'Clear logs' }));
+
+    expect(
+      within(screen.getByRole('dialog', { name: 'Clear logs?' })).getByText(
+        'Removes stored logs for Rulebook activation. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('should not open the clear logs dialog when the activation id is missing', async () => {
+    const user = userEvent.setup();
+    server.use(http.get('*/activations//instances/*', () => HttpResponse.json(mockInstances)));
+    renderHistory(mockActiveUser, '/rulebook-activations', '/rulebook-activations');
+
+    await user.click(await screen.findByRole('button', { name: 'Clear logs' }));
+
+    expect(screen.queryByRole('dialog', { name: 'Clear logs?' })).not.toBeInTheDocument();
   });
 
   it('should show disabled clear logs with a permission tooltip for a non-admin user', async () => {

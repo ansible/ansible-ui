@@ -64,11 +64,7 @@ export function RulebookActivationToolbar(props: Readonly<RulebookActivationTool
             variant="secondary"
             isDanger={true}
             isAriaDisabled={isClearLogsDisabled}
-            onClick={() => {
-              if (!isClearLogsDisabled) {
-                onClearLogs();
-              }
-            }}
+            onClick={onClearLogs}
           >
             {t('Clear logs')}
           </Button>

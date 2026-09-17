@@ -39,11 +39,7 @@ function ActivationInstanceDetailsInner(
   const openClearLogsDialog = useClearLogsDialog({
     endpointBuilder: (target) => edaAPI`/activation-instances/${target.id.toString()}/clear-logs/`,
     targetType: 'instance',
-    onComplete: (successfulTargets) => {
-      if (successfulTargets.some((target) => target.id === activationInstance.id)) {
-        setLogsRefreshToken((token) => token + 1);
-      }
-    },
+    onComplete: () => setLogsRefreshToken((token) => token + 1),
   });
   const onClearLogs = useCallback(() => {
     openClearLogsDialog([

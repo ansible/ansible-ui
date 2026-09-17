@@ -231,4 +231,37 @@ describe('ActivationInstanceDetails', () => {
     expect(globalPurgeRequestCount).toBe(0);
     expect(logRequestCount).toBeGreaterThanOrEqual(3);
   });
+
+  test('should disable instance clear logs for a non-admin user', async () => {
+    const { findByRole } = render(
+      <PageDialogProvider>
+        <EdaActiveUserContext.Provider
+          value={{
+            activeEdaUser: {
+              id: 1,
+              username: 'user',
+              is_superuser: false,
+              resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+              created_at: '2024-01-01T00:00:00Z',
+              modified_at: '2024-01-01T00:00:00Z',
+            },
+          }}
+        >
+          <MemoryRouter initialEntries={['/rulebook-activations/1/history/1/details']}>
+            <Routes>
+              <Route
+                path={`/rulebook-activations/:id/history/:instanceId/details`}
+                element={<ActivationInstanceDetails />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </EdaActiveUserContext.Provider>
+      </PageDialogProvider>
+    );
+
+    expect(await findByRole('button', { name: 'Clear logs' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+  });
 });
