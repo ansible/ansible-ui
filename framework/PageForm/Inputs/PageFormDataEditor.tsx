@@ -515,17 +515,6 @@ export function valueToObject(
     return emptyArrayOrObject;
   }
 
-  const catchError = () => {
-    try {
-      value = safeLoad(value as string) as object;
-    } catch (err) {
-      if (err instanceof Error || err instanceof YAMLException) {
-        return new Error(err.message);
-      }
-      return {};
-    }
-  };
-
   if (typeof value === 'string') {
     if (hasYamlComments(value)) {
       try {
@@ -538,7 +527,20 @@ export function valueToObject(
     try {
       value = parseJSONPreservingLargeInts(value) as object;
     } catch {
-      catchError();
+      // JSON parsing failed — try YAML
+      try {
+        value = safeLoad(value as string) as object;
+      } catch (err) {
+        // Both JSON and YAML parsing failed. Throw so the caller (handleChange)
+        // treats this as a validation error rather than silently returning the
+        // raw string. Returning the raw string would cause jsyaml.dump() to
+        // serialise it as a YAML block scalar that grows unboundedly on each
+        // parse-dump round-trip, crashing the browser tab (AAP-93178).
+        if (err instanceof Error || err instanceof YAMLException) {
+          throw err;
+        }
+        throw new Error('Failed to parse value as JSON or YAML');
+      }
     }
   }
 
