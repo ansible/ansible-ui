@@ -9,59 +9,14 @@ import {
   Organization,
   RulebookActivation,
   dismissOpenSelectMenus,
+  fillRulebookActivationCreateForm,
   setRulebookActivationEnabledSwitch,
+  submitRulebookActivationForm,
 } from '@ansible/playwright/utils';
 import { expect, test, type Page } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
-
-async function fillCreateActivationBasics(
-  page: Page,
-  {
-    activationName,
-    organizationName,
-    projectName,
-    decisionEnvironmentName,
-  }: {
-    activationName: string;
-    organizationName: string;
-    projectName: string;
-    decisionEnvironmentName: string;
-  }
-) {
-  await page.getByRole('textbox', { name: 'Name', exact: true }).fill(activationName);
-
-  await page.getByRole('button', { name: 'Organization' }).click();
-  await page
-    .locator('#organization_id-search')
-    .getByRole('textbox', { name: 'Search input' })
-    .fill(organizationName);
-  const organizationOption = page.getByRole('option', { name: organizationName });
-  await expect(organizationOption).toBeVisible();
-  await organizationOption.click();
-
-  await page.getByRole('button', { name: 'Project' }).click();
-  await page
-    .locator('#project_id-search')
-    .getByRole('textbox', { name: 'Search input' })
-    .fill(projectName);
-  const projectOption = page.getByRole('option', { name: projectName });
-  await expect(projectOption).toBeVisible();
-  await projectOption.click();
-
-  await page.getByRole('button', { name: 'Rulebook', exact: true }).click();
-  await page.getByRole('option', { name: 'hello_echo.yml' }).click();
-
-  await page.getByRole('button', { name: 'Decision Environment' }).click();
-  const decisionEnvSearch = page.locator('#decision_environment_id-search input');
-  await expect(decisionEnvSearch).toBeVisible();
-  await decisionEnvSearch.fill(decisionEnvironmentName);
-  const decisionEnvOption = page.getByRole('option', { name: decisionEnvironmentName });
-  await expect(decisionEnvOption).toBeVisible();
-  await decisionEnvOption.click();
-  await dismissOpenSelectMenus(page);
-}
 
 async function enableEventPersistence(page: Page, credentialName: string) {
   const persistenceCheckbox = page.getByRole('checkbox', {
@@ -81,32 +36,6 @@ async function enableEventPersistence(page: Page, credentialName: string) {
   await dismissOpenSelectMenus(page);
 
   await expect(credentialToggle).toContainText(credentialName);
-}
-
-async function submitActivation(
-  page: Page,
-  {
-    buttonName,
-    method,
-  }: {
-    buttonName: 'Create rulebook activation' | 'Save rulebook activation';
-    method: 'POST' | 'PATCH';
-  }
-) {
-  const responsePromise = page.waitForResponse(
-    (response) =>
-      response.url().includes('/activations/') &&
-      response.request().method() === method &&
-      !response.url().includes('/disable/') &&
-      !response.url().includes('/enable/')
-  );
-  await page.getByRole('button', { name: buttonName }).click();
-  const response = await responsePromise;
-  if (!response.ok()) {
-    throw new Error(
-      `${method} activations failed with ${response.status()}: ${await response.text()}`
-    );
-  }
 }
 
 test.describe('Rulebook Activations - Event Persistence', () => {
@@ -179,8 +108,8 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByText('Create rulebook activation').click();
 
       const activationName = createE2EName('event-persistence');
-      await fillCreateActivationBasics(page, {
-        activationName,
+      await fillRulebookActivationCreateForm(page, {
+        name: activationName,
         organizationName,
         projectName,
         decisionEnvironmentName,
@@ -189,7 +118,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await setRulebookActivationEnabledSwitch(page, false);
       await enableEventPersistence(page, ruleEngineCredentialName);
 
-      await submitActivation(page, {
+      await submitRulebookActivationForm(page, {
         buttonName: 'Create rulebook activation',
         method: 'POST',
       });
@@ -219,7 +148,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
       await enableEventPersistence(page, ruleEngineCredentialName);
 
-      await submitActivation(page, {
+      await submitRulebookActivationForm(page, {
         buttonName: 'Save rulebook activation',
         method: 'PATCH',
       });
@@ -240,8 +169,8 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByText('Create rulebook activation').click();
 
       const activationName = createE2EName('disable-persistence');
-      await fillCreateActivationBasics(page, {
-        activationName,
+      await fillRulebookActivationCreateForm(page, {
+        name: activationName,
         organizationName,
         projectName,
         decisionEnvironmentName,
@@ -298,8 +227,8 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByText('Create rulebook activation').click();
 
       const activationName = createE2EName('no-default-credential');
-      await fillCreateActivationBasics(page, {
-        activationName,
+      await fillRulebookActivationCreateForm(page, {
+        name: activationName,
         organizationName,
         projectName,
         decisionEnvironmentName,
@@ -329,8 +258,8 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByText('Create rulebook activation').click();
 
       const activationName = createE2EName('no-persistence');
-      await fillCreateActivationBasics(page, {
-        activationName,
+      await fillRulebookActivationCreateForm(page, {
+        name: activationName,
         organizationName,
         projectName,
         decisionEnvironmentName,
@@ -346,7 +275,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
         page.getByRole('button', { name: /Event persistence credential/i })
       ).not.toBeVisible();
 
-      await submitActivation(page, {
+      await submitRulebookActivationForm(page, {
         buttonName: 'Create rulebook activation',
         method: 'POST',
       });
@@ -366,8 +295,8 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await page.getByText('Create rulebook activation').click();
 
       const activationName = createE2EName('edit-disable-persistence');
-      await fillCreateActivationBasics(page, {
-        activationName,
+      await fillRulebookActivationCreateForm(page, {
+        name: activationName,
         organizationName,
         projectName,
         decisionEnvironmentName,
@@ -376,7 +305,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await setRulebookActivationEnabledSwitch(page, false);
       await enableEventPersistence(page, ruleEngineCredentialName);
 
-      await submitActivation(page, {
+      await submitRulebookActivationForm(page, {
         buttonName: 'Create rulebook activation',
         method: 'POST',
       });
@@ -397,7 +326,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
         page.getByRole('button', { name: /Event persistence credential/i })
       ).not.toBeVisible();
 
-      await submitActivation(page, {
+      await submitRulebookActivationForm(page, {
         buttonName: 'Save rulebook activation',
         method: 'PATCH',
       });

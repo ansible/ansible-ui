@@ -23,9 +23,10 @@ export interface CreateEdaCredentialAPIOptions {
   inputs?: Record<string, unknown>;
 }
 
-// Default inputs for EdaCredential.api.create. Keep rule-engine fields aligned with
-// the credential create form POST body; missing fields make activation save with
-// event persistence return 500.
+// Default inputs for EdaCredential.api.create. Rule-engine keys must match the
+// POST /eda-credentials/ payload sent by the credential create form (compare with
+// EdaCredential.ui.create and a browser network trace when this type changes).
+// Missing fields cause activation saves with event persistence to return 500.
 function getDefaultCredentialInputs(credentialTypeName: string): Record<string, unknown> {
   switch (credentialTypeName) {
     case 'Red Hat Ansible Automation':

@@ -57,7 +57,9 @@ export { EventStream } from './eventStream';
 export {
   RulebookActivation,
   dismissOpenSelectMenus,
+  fillRulebookActivationCreateForm,
   setRulebookActivationEnabledSwitch,
+  submitRulebookActivationForm,
 } from './rulebookActivation';
 
 // Resource modules - Automation Content (Hub)
