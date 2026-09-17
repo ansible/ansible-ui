@@ -1,5 +1,4 @@
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
-import { edaAPI } from '@ansible/playwright/commands/apiClient';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import {
@@ -64,10 +63,7 @@ async function fillCreateActivationBasics(
   await dismissOpenSelectMenus(page);
 }
 
-async function enableEventPersistence(page: Page, credentialName: string | undefined) {
-  if (!credentialName) {
-    throw new Error('Managed Event-Driven Ansible Rule Engine credential is required');
-  }
+async function enableEventPersistence(page: Page, credentialName: string) {
   const persistenceCheckbox = page.getByRole('checkbox', {
     name: /Enable event persistence/i,
   });
@@ -123,7 +119,6 @@ test.describe('Rulebook Activations - Event Persistence', () => {
   let credentialName: string;
   let ruleEngineCredentialName: string;
   let decisionEnvironmentName: string;
-  let managedRuleEngineCredentialName: string | undefined;
 
   test.beforeEach(async ({ page }) => {
     test.setTimeout(300000);
@@ -158,13 +153,6 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       credentialTypeName: 'Event-Driven Ansible Rule Engine',
     });
     ruleEngineCredentialName = ruleEngineCredential.name;
-
-    const droolsCreds = await edaAPI.get<{
-      results?: Array<{ name: string; managed?: boolean }>;
-    }>(page, 'eda-credentials/?credential_type__namespace__in=drools&page_size=200');
-    managedRuleEngineCredentialName = droolsCreds?.results?.find(
-      (credential) => credential.managed
-    )?.name;
   });
 
   test.afterEach(async ({ page }) => {
@@ -189,12 +177,6 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should create rulebook activation with event persistence and rule engine credential',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      // Skip: fixture Event-Driven Ansible Rule Engine credentials make activation create/save return 500.
-      test.skip(
-        !managedRuleEngineCredentialName,
-        'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
-      );
-
       await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
       await page.getByText('Create rulebook activation').click();
 
@@ -207,7 +189,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       });
 
       await setRulebookActivationEnabledSwitch(page, false);
-      await enableEventPersistence(page, managedRuleEngineCredentialName);
+      await enableEventPersistence(page, ruleEngineCredentialName);
 
       await submitActivation(page, {
         buttonName: 'Create rulebook activation',
@@ -226,12 +208,6 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should edit rulebook activation to enable event persistence',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      // Skip: fixture Event-Driven Ansible Rule Engine credentials make activation create/save return 500.
-      test.skip(
-        !managedRuleEngineCredentialName,
-        'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
-      );
-
       const activationName = await RulebookActivation.ui.create(page, {
         projectName,
         credentialName,
@@ -243,7 +219,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
 
       await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
-      await enableEventPersistence(page, managedRuleEngineCredentialName);
+      await enableEventPersistence(page, ruleEngineCredentialName);
 
       await submitActivation(page, {
         buttonName: 'Save rulebook activation',
@@ -310,43 +286,6 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     }
   );
 
-  // Skipped: AAP installs a hidden default rule engine credential (_DEFAULT_EDA_RULE_ENGINE_CREDS)
-  // that is filtered from API responses (eda-server eda_credential.py). Because this credential
-  // always exists at install time, enabling persistence without selecting a credential never
-  // produces an error — the backend silently uses the default. The test's expected error cannot
-  // be triggered unless the instance is built without a managed DB. Behavior is in flux (UXD
-  // discussions tracked under AAP-77521). Re-evaluate when default credential visibility changes.
-  test.skip(
-    'should show error when persistence enabled without credential and no default exists',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-      await page.getByText('Create rulebook activation').click();
-
-      const activationName = createE2EName('no-default-credential');
-      await fillCreateActivationBasics(page, {
-        activationName,
-        organizationName,
-        projectName,
-        decisionEnvironmentName,
-      });
-
-      const persistenceCheckbox = page.getByRole('checkbox', {
-        name: /Enable event persistence/i,
-      });
-      await persistenceCheckbox.check();
-
-      await expect(
-        page.getByRole('button', { name: /Event persistence credential/i })
-      ).toBeVisible();
-
-      await page.getByRole('button', { name: 'Create rulebook activation' }).click();
-
-      await expect(page.getByText(/no default EDA Rule Engine credential found/i)).toBeVisible();
-      await expect(page.getByRole('heading', { name: 'Create rulebook activation' })).toBeVisible();
-    }
-  );
-
   test(
     'should allow submission when persistence is disabled without credential',
     { tag: ['@not_mock'] },
@@ -388,12 +327,6 @@ test.describe('Rulebook Activations - Event Persistence', () => {
     'should nullify credential when editing to disable persistence after credential was selected',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      // Skip: fixture Event-Driven Ansible Rule Engine credentials make activation create/save return 500.
-      test.skip(
-        !managedRuleEngineCredentialName,
-        'Requires a managed Event-Driven Ansible Rule Engine credential; fixture credentials cause 500'
-      );
-
       await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
       await page.getByText('Create rulebook activation').click();
 
@@ -406,7 +339,7 @@ test.describe('Rulebook Activations - Event Persistence', () => {
       });
 
       await setRulebookActivationEnabledSwitch(page, false);
-      await enableEventPersistence(page, managedRuleEngineCredentialName);
+      await enableEventPersistence(page, ruleEngineCredentialName);
 
       await submitActivation(page, {
         buttonName: 'Create rulebook activation',
