@@ -22,17 +22,14 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Ready'),
                   count: data.hosts.total - data.hosts.failed,
                   color: successfulColor,
-                  link: getPageUrl(AwxRoute.Hosts, {
-                    query: { ready_status: ['True'] },
-                  }),
+                  // Host list API no longer supports last_job_host_summary__failed filters.
+                  link: getPageUrl(AwxRoute.Hosts),
                 },
                 {
                   label: t('Failed'),
                   count: data.hosts.failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Hosts, {
-                    query: { failed_status: ['True'] },
-                  }),
+                  link: getPageUrl(AwxRoute.Hosts),
                 },
               ]
             : undefined,
