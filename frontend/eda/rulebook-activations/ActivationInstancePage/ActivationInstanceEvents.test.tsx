@@ -99,6 +99,42 @@ describe('ActivationInstanceEvents', () => {
     expect(screen.getByRole('button', { name: 'Scroll last' })).toBeInTheDocument();
   });
 
+  it('should render no logs when the initial count is zero', async () => {
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        requestedQueryParams.push(queryParams);
+        return HttpResponse.json({ count: 0, results: [] });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/activations/instances/1']}>
+        <Routes>
+          <Route
+            path="/activations/instances/:instanceId"
+            element={
+              <ActivationInstanceEvents
+                toolbarFilters={[]}
+                filterState={{}}
+                isFollowModeEnabled={false}
+                setIsFollowModeEnabled={vi.fn()}
+                isRunning={false}
+                refreshToken={0}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(requestedQueryParams).toHaveLength(1);
+    });
+    expect(requestedQueryParams[0].get('page_size')).toBe('1');
+    expect(screen.queryByText('newest filtered log')).not.toBeInTheDocument();
+  });
+
   it('should poll from the newest timestamp and skip duplicate logs', async () => {
     server.use(
       http.get('*/activation-instances/1/logs/', ({ request }) => {
@@ -168,6 +204,242 @@ describe('ActivationInstanceEvents', () => {
       expect(screen.getAllByText('initial log')).toHaveLength(1);
     } finally {
       vi.useRealTimers();
+    }
+  });
+
+  it('should load older logs when scrolling to the top', async () => {
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        requestedQueryParams.push(queryParams);
+
+        if (queryParams.get('page_size') === '1') {
+          return HttpResponse.json({ count: 5001, results: [] });
+        }
+        if (queryParams.get('page') === '2') {
+          return HttpResponse.json({
+            count: 5001,
+            results: [
+              {
+                id: 2,
+                log: 'newest log',
+                log_timestamp: 2,
+                activation_instance: 1,
+              },
+            ],
+          });
+        }
+        return HttpResponse.json({
+          count: 5001,
+          results: [
+            {
+              id: 1,
+              log: 'older log',
+              log_timestamp: 1,
+              activation_instance: 1,
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/activations/instances/1']}>
+        <Routes>
+          <Route
+            path="/activations/instances/:instanceId"
+            element={
+              <ActivationInstanceEvents
+                toolbarFilters={toolbarFilters}
+                filterState={{ log: ['filtered'] }}
+                isFollowModeEnabled={false}
+                setIsFollowModeEnabled={vi.fn()}
+                isRunning={false}
+                refreshToken={0}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('newest log')).toBeInTheDocument();
+    });
+
+    const scrollContainer = screen.getByText('newest log').closest('pre')?.parentElement;
+    expect(scrollContainer).toBeTruthy();
+    scrollContainer?.dispatchEvent(new Event('scroll'));
+
+    await waitFor(() => {
+      expect(screen.getByText('older log')).toBeInTheDocument();
+    });
+    expect(
+      requestedQueryParams.some((queryParams) => queryParams.get('log_timestamp__lt') === '2')
+    ).toBe(true);
+    expect(requestedQueryParams.some((queryParams) => queryParams.get('log') === 'filtered')).toBe(
+      true
+    );
+  });
+
+  it('should handle an older-log request failure', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        if (queryParams.get('log_timestamp__lt')) {
+          return HttpResponse.json({ detail: 'Unable to load older logs' }, { status: 500 });
+        }
+        if (queryParams.get('page_size') === '1') {
+          return HttpResponse.json({ count: 5001, results: [] });
+        }
+        return HttpResponse.json({
+          count: 5001,
+          results: [
+            {
+              id: 2,
+              log: 'newest log before older-log failure',
+              log_timestamp: 2,
+              activation_instance: 1,
+            },
+          ],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/activations/instances/1']}>
+        <Routes>
+          <Route
+            path="/activations/instances/:instanceId"
+            element={
+              <ActivationInstanceEvents
+                toolbarFilters={[]}
+                filterState={{}}
+                isFollowModeEnabled={false}
+                setIsFollowModeEnabled={vi.fn()}
+                isRunning={false}
+                refreshToken={0}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    try {
+      await waitFor(() => {
+        expect(screen.getByText('newest log before older-log failure')).toBeInTheDocument();
+      });
+      const scrollContainer = screen
+        .getByText('newest log before older-log failure')
+        .closest('pre')?.parentElement;
+      expect(scrollContainer).toBeTruthy();
+      scrollContainer?.dispatchEvent(new Event('scroll'));
+
+      await waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith('Failed to load older logs:', expect.anything());
+      });
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it('should handle an initial log request failure', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    server.use(
+      http.get('*/activation-instances/1/logs/', () =>
+        HttpResponse.json({ detail: 'Unable to load logs' }, { status: 500 })
+      )
+    );
+
+    try {
+      render(
+        <MemoryRouter initialEntries={['/activations/instances/1']}>
+          <Routes>
+            <Route
+              path="/activations/instances/:instanceId"
+              element={
+                <ActivationInstanceEvents
+                  toolbarFilters={[]}
+                  filterState={{}}
+                  isFollowModeEnabled={false}
+                  setIsFollowModeEnabled={vi.fn()}
+                  isRunning={false}
+                  refreshToken={0}
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith('Failed to load logs:', expect.anything());
+      });
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it('should handle a polling request failure', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    server.use(
+      http.get('*/activation-instances/1/logs/', ({ request }) => {
+        const queryParams = new URL(request.url).searchParams;
+        if (queryParams.get('log_timestamp__gt')) {
+          return HttpResponse.json({ detail: 'Unable to poll logs' }, { status: 500 });
+        }
+        if (queryParams.get('page') === '1') {
+          return HttpResponse.json({
+            count: 1,
+            results: [
+              {
+                id: 1,
+                log: 'initial log for polling failure',
+                log_timestamp: 1,
+                activation_instance: 1,
+              },
+            ],
+          });
+        }
+        return HttpResponse.json({ count: 1, results: [] });
+      })
+    );
+    vi.useFakeTimers();
+
+    try {
+      render(
+        <MemoryRouter initialEntries={['/activations/instances/1']}>
+          <Routes>
+            <Route
+              path="/activations/instances/:instanceId"
+              element={
+                <ActivationInstanceEvents
+                  toolbarFilters={toolbarFilters}
+                  filterState={{ log: ['filtered'] }}
+                  isFollowModeEnabled={false}
+                  setIsFollowModeEnabled={vi.fn()}
+                  isRunning={true}
+                  refreshToken={0}
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await vi.waitFor(() => {
+        expect(screen.getByText('initial log for polling failure')).toBeInTheDocument();
+      });
+      await vi.advanceTimersByTimeAsync(5000);
+
+      await vi.waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith('Failed to poll logs:', expect.anything());
+      });
+    } finally {
+      vi.useRealTimers();
+      consoleError.mockRestore();
     }
   });
 });
