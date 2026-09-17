@@ -234,6 +234,7 @@ test.describe('Inventory Groups - Related Groups', () => {
 
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disassociate groups' }).click();
+      // Assertion path: a failed disassociate must fail the test. Teardown is API delete.
       await waitForBulkActionDialog(page);
       await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
       await clearTableFilters(page);
@@ -295,6 +296,7 @@ test.describe('Inventory Groups - Related Groups', () => {
 
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Disassociate groups' }).click();
+      // Assertion path: a failed disassociate must fail the test. Teardown is API delete.
       await waitForBulkActionDialog(page);
       await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
       await clearTableFilters(page);

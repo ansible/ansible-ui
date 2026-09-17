@@ -1,6 +1,12 @@
 import { expect, Page } from '@playwright/test';
 
 export interface WaitForBulkActionDialogOptions {
+  /**
+   * How long to wait for a terminal dialog state. Defaults to 30s.
+   * `test.setTimeout()` / `test.describe.configure({ timeout })` do not change
+   * this value — pass a larger timeout here when the bulk action itself can
+   * exceed 30s (for example in 3-minute wizard suites).
+   */
   timeout?: number;
   /**
    * When true, a failed bulk action does not throw after the dialog is closed.
@@ -20,6 +26,10 @@ export interface WaitForBulkActionDialogOptions {
  * Terminal states are polled independently rather than combined with locator.or():
  * Error and Retry are often visible together, which is a Playwright strict-mode
  * violation when used with toBeVisible().
+ *
+ * @param page Playwright page that owns the dialog
+ * @param options.timeout Defaults to 30s; override when the action can run longer
+ * @param options.allowFailure Skip throwing after Close in teardown/cleanup only
  */
 export async function waitForBulkActionDialog(
   page: Page,
