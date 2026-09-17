@@ -23,6 +23,7 @@ import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
 import {
+  awaitNodeLaunchConfigForWizard,
   validateJobTemplateRequirements,
   validateRequiredCredentialTypes,
 } from './validationHelpers';
@@ -75,8 +76,9 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep />,
-      validate: (wizardData: Partial<WizardFormValues>) => {
+      validate: async (wizardData: Partial<WizardFormValues>) => {
         validateJobTemplateRequirements(t, wizardData);
+        return await awaitNodeLaunchConfigForWizard(wizardData);
       },
     },
     {

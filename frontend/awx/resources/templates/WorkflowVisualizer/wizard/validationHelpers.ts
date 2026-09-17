@@ -1,5 +1,7 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
+import { awaitLaunchConfigLoad } from './launchConfigLoad';
 
 interface CredentialType {
   id: number;
@@ -50,6 +52,29 @@ export function validateRequiredCredentialTypes(
     };
     throw new RequestError('', '', 400, '', errors);
   }
+}
+
+export async function awaitNodeLaunchConfigForWizard(
+  wizardData: Partial<WizardFormValues>
+): Promise<Partial<WizardFormValues> | undefined> {
+  const { node_type, resourceId } = wizardData;
+  if (
+    !resourceId ||
+    (node_type !== RESOURCE_TYPE.job && node_type !== RESOURCE_TYPE.workflow_job)
+  ) {
+    return undefined;
+  }
+
+  const loadResult = await awaitLaunchConfigLoad(node_type, resourceId);
+  if (!loadResult) {
+    return undefined;
+  }
+
+  return {
+    launch_config: loadResult.launch_config,
+    resource: loadResult.resource,
+    resourceId: loadResult.resourceId,
+  };
 }
 
 export function validateJobTemplateRequirements(

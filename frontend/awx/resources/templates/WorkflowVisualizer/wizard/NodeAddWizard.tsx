@@ -16,6 +16,7 @@ import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
 import {
+  awaitNodeLaunchConfigForWizard,
   validateJobTemplateRequirements,
   validateRequiredCredentialTypes,
 } from './validationHelpers';
@@ -65,8 +66,9 @@ export function NodeAddWizard() {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep hasSourceNode={Boolean(state.sourceNode)} />,
-      validate: (wizardData: Partial<WizardFormValues>) => {
+      validate: async (wizardData: Partial<WizardFormValues>) => {
         validateJobTemplateRequirements(t, wizardData);
+        return await awaitNodeLaunchConfigForWizard(wizardData);
       },
     },
     {

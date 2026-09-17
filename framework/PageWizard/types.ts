@@ -13,7 +13,10 @@ export interface PageWizardBasicStep {
     error, the wizard will stay on the current step and pass the error to
     the wizard's errorAdapter for handling.
   */
-  validate?: (formData: object, wizardData: object) => Promise<void> | void;
+  validate?: (
+    formData: object,
+    wizardData: object
+  ) => Promise<void | object> | void | object;
 }
 
 /** Type used to define parent steps. */

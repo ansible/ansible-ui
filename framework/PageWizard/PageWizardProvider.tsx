@@ -78,18 +78,20 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
 
   const onNext = useCallback(
     async (formData: object = {}) => {
-      const visibleStepsFlattened = getVisibleStepsFlattened(steps, {
-        ...wizardData,
-        ...formData,
-      });
-
       if (activeStep === null) {
         return Promise.resolve();
       }
 
+      let supplementalWizardData: object = {};
       if (!isPageWizardParentStep(activeStep) && activeStep.validate) {
-        await activeStep.validate(formData, wizardData);
+        const validateResult = await activeStep.validate(formData, wizardData);
+        if (validateResult && typeof validateResult === 'object') {
+          supplementalWizardData = validateResult;
+        }
       }
+
+      const mergedWizardData = { ...wizardData, ...formData, ...supplementalWizardData };
+      const visibleStepsFlattened = getVisibleStepsFlattened(steps, mergedWizardData);
 
       const isLastStep =
         activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1]?.id;
@@ -113,7 +115,7 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
 
       // Clear search params
       setSearchParams(new URLSearchParams(''));
-      setWizardData((prev) => ({ ...prev, ...formData }));
+      setWizardData((prev) => ({ ...prev, ...formData, ...supplementalWizardData }));
       setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
       setActiveStep(nextStep);
       return Promise.resolve();
