@@ -1,7 +1,5 @@
 import {
   useCreatedByToolbarFilter,
-  useHostFailedStatusFilter,
-  useHostReadyStatusFilter,
   useModifiedByToolbarFilter,
   useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
@@ -11,8 +9,6 @@ export function useHostsFilters() {
   const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const failedHostStatusToolbarFilter = useHostFailedStatusFilter();
-  const readyHostStatusToolbarFilter = useHostReadyStatusFilter();
 
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'hosts',
@@ -20,8 +16,6 @@ export function useHostsFilters() {
     preFilledValueKeys: { name: { apiPath: 'hosts' }, id: { apiPath: 'hosts' } },
     additionalFilters: [
       searchFilter,
-      failedHostStatusToolbarFilter,
-      readyHostStatusToolbarFilter,
       createdByToolbarFilter,
       modifiedByToolbarFilter,
     ],
