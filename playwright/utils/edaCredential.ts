@@ -33,9 +33,24 @@ function getDefaultCredentialInputs(credentialTypeName: string): Record<string, 
         password: 'test',
       };
     case 'Event-Driven Ansible Rule Engine':
+      // Match the UI credential form payload so activations with event persistence succeed.
       return {
         postgres_db_host: 'localhost',
+        postgres_db_port: '5432',
         postgres_db_name: 'test_db',
+        postgres_db_user: '',
+        postgres_db_password: '',
+        postgres_sslmode: 'prefer',
+        postgres_sslcert: '',
+        postgres_sslkey: '',
+        postgres_sslpassword: '',
+        postgres_sslrootcert: '',
+        primary_encryption_secret: '',
+        secondary_encryption_secret: '',
+        expired_window_grace_period: '',
+        deduplication_window_size: '5',
+        overwrite_if_rulebook_changes: true,
+        aes_salt: '',
       };
     case 'Basic Event Stream':
       return {
