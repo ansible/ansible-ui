@@ -12,6 +12,8 @@ export interface EdaCredentialTypeField {
   multiline?: boolean;
   format?: string;
   secret?: boolean;
+  pattern?: string;
+  pattern_description?: string;
 }
 
 export interface EdaCredentialTypeInputs {
