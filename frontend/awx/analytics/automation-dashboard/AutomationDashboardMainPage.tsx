@@ -15,7 +15,7 @@ export function AutomationDashboardMainPage() {
   const { ref: gridProbeRef, gridColumns } = useDashboardGridColumns();
   const dashboardContextValue = useMemo(() => ({ columns: gridColumns }), [gridColumns]);
   const description = t(
-    'Discover the significant cost and time savings achieved by automating Ansible jobs with the Ansible Automation Platform. Explore how automation reduces manual effort, enhances efficiency, and optimizes IT operations across your organization.'
+    'View automation performance, goals, and cost savings for your organization.'
   );
   const tabs = [
     {
