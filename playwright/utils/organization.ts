@@ -8,6 +8,7 @@ import { navigateTo } from '../commands/navigateTo';
 import { selectTableRow } from '../commands/selectTableRow';
 
 const TERMINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+const ORGANIZATION_PROPAGATION_MAX_ATTEMPTS = 30;
 
 type EdaOrganizationLookup = {
   available: boolean;
@@ -56,10 +57,9 @@ async function waitForOrganizationPropagation(
   page: Page,
   organizationName: string
 ): Promise<{ id: number }> {
-  const maxAttempts = 30;
   let lastAwxOrganization: { id: number } | undefined;
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  for (let attempt = 0; attempt < ORGANIZATION_PROPAGATION_MAX_ATTEMPTS; attempt++) {
     const [awxOrganizations, edaOrganization] = await Promise.all([
       awxAPI
         .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
@@ -77,11 +77,12 @@ async function waitForOrganizationPropagation(
       return lastAwxOrganization;
     }
 
+    // This polls server-side propagation; there is no UI response to await.
     await page.waitForTimeout(1000);
   }
 
   throw new Error(
-    `Organization '${organizationName}' was not propagated to downstream services within ${maxAttempts} seconds`
+    `Organization '${organizationName}' was not propagated to downstream services within ${ORGANIZATION_PROPAGATION_MAX_ATTEMPTS} seconds`
   );
 }
 
