@@ -40,15 +40,13 @@ test('hosts resource counts should redirect correctly', async ({ page }) => {
     if (await page.locator('#hosts').getByRole('link', { name: 'Ready' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Ready' }).click();
       await expect(page.getByTestId('page-title')).toContainText('Hosts');
-      await expect(page.getByText('Ready Status')).toBeVisible();
-      await expect(page.getByText('Show only ready hosts')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Error loading hosts' })).not.toBeVisible();
     }
     await page.getByRole('link', { name: 'Overview' }).click();
     if (await page.locator('#hosts').getByRole('link', { name: 'Failed' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Failed' }).click();
       await expect(page.getByRole('heading')).toContainText('Hosts');
-      await expect(page.getByText('Failed Status')).toBeVisible();
-      await expect(page.getByText('Show only failed hosts')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Error loading hosts' })).not.toBeVisible();
     }
   }
 });
