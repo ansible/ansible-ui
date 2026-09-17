@@ -31,15 +31,24 @@ export interface CreateRulebookActivationAPIOptions {
 
 export async function dismissOpenSelectMenus(page: Page): Promise<void> {
   const expandedToggle = page.locator('.pf-v6-c-menu-toggle[aria-expanded="true"]');
-  if ((await expandedToggle.count()) === 0) {
-    return;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if ((await expandedToggle.count()) === 0) {
+      return;
+    }
+    await page.keyboard.press('Escape');
+    if ((await expandedToggle.count()) === 0) {
+      return;
+    }
   }
-  await page.keyboard.press('Escape');
+
   if ((await expandedToggle.count()) > 0) {
     // Avoid clicking an open select toggle; that can clear the selected value.
-    await page.locator('main').click({ position: { x: 0, y: 0 } });
+    // locator('main').click() can hang for minutes when a menu overlay blocks the page.
+    await page.mouse.click(1, 1);
   }
-  await expect(expandedToggle).toHaveCount(0);
+
+  await expect(expandedToggle).toHaveCount(0, { timeout: 5000 });
 }
 
 export async function setRulebookActivationEnabledSwitch(
