@@ -18,7 +18,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { Alert } from '@patternfly/react-core';
+import { Alert, GridItem } from '@patternfly/react-core';
 import jsyaml from 'js-yaml';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -283,35 +283,6 @@ export function RulebookActivationInputs() {
         labelHelp={restartPolicyHelpBlock}
         labelHelpTitle={t('Restart policy')}
       />
-      <PageFormSelect<IEdaRulebookActivationInputs>
-        name="log_level"
-        label={t('Log level')}
-        placeholderText={t('Select log level')}
-        isRequired
-        options={LOG_LEVEL_OPTIONS}
-        labelHelp={logLevelHelpBlock}
-        labelHelpTitle={t('Log level')}
-      />
-      {logLevel === 'debug' && (
-        <>
-          <Alert
-            variant="warning"
-            isInline
-            isPlain
-            title={t(
-              'Debug logging generates significantly more data. By default, debug lines are sent to container stdout but not stored in the database. Enable "Store debug logs in database" below to persist them, but be aware this can increase database storage by ~225x.'
-            )}
-          />
-          <PageFormCheckbox<IEdaRulebookActivationInputs>
-            label={t`Store debug logs in database`}
-            labelHelpTitle={t('Store debug logs in database')}
-            labelHelp={t(
-              'When enabled, DEBUG-level log lines are stored in the database in addition to container stdout. When disabled (default), DEBUG lines are only available in container logs, significantly reducing database storage.'
-            )}
-            name="store_debug_logs"
-          />
-        </>
-      )}
       {config?.deployment_type === 'k8s' && (
         <PageFormTextInput<IEdaRulebookActivationInputs>
           name="k8s_service_name"
@@ -329,6 +300,38 @@ export function RulebookActivationInputs() {
         labelHelp={t('Automatically enable this rulebook activation to run.')}
         labelHelpTitle={t('Rulebook activation enabled')}
       />
+      <PageFormSelect<IEdaRulebookActivationInputs>
+        name="log_level"
+        label={t('Log level')}
+        placeholderText={t('Select log level')}
+        isRequired
+        options={LOG_LEVEL_OPTIONS}
+        labelHelp={logLevelHelpBlock}
+        labelHelpTitle={t('Log level')}
+      />
+      {logLevel === 'debug' && (
+        <>
+          <GridItem span={12}>
+            <Alert
+              variant="warning"
+              isInline
+              title={t('Debug logging generates significantly more data.')}
+            >
+              {t(
+                'By default, debug logs are sent to container logs (stdout) but are not stored in the database. Enable the option below to persist them, but be aware this can significantly increase database storage.'
+              )}
+            </Alert>
+          </GridItem>
+          <PageFormSwitch<IEdaRulebookActivationInputs>
+            label={t('Store debug logs in database')}
+            labelHelpTitle={t('Store debug logs in database')}
+            labelHelp={t(
+              'When enabled, debug logs are retained in the activation history and can significantly increase database storage.'
+            )}
+            name="store_debug_logs"
+          />
+        </>
+      )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaRulebookActivationInputs>
           name="extra_var"

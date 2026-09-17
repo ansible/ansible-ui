@@ -5,7 +5,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import userEvent from '@testing-library/user-event';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
 import { EdaActiveUserContext } from '../../common/useEdaActiveUser';
 import { RulebookActivationHistory } from './RulebookActivationHistory';
@@ -17,11 +17,13 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
     Modal: ({
       children,
       'aria-label': ariaLabel,
+      elementToFocus,
     }: {
       children: React.ReactNode;
       'aria-label': string;
+      elementToFocus?: string;
     }) => (
-      <div role="dialog" aria-label={ariaLabel}>
+      <div role="dialog" aria-label={ariaLabel} data-element-to-focus={elementToFocus}>
         {children}
       </div>
     ),
@@ -82,6 +84,11 @@ function renderHistory(activeEdaUser = mockActiveUser) {
 
 describe('RulebookActivationHistory', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  beforeEach(() => {
+    server.use(
+      http.get('*/activations/5/', () => HttpResponse.json({ id: 5, name: 'Activation 5' }))
+    );
+  });
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
@@ -128,27 +135,35 @@ describe('RulebookActivationHistory', () => {
     const user = userEvent.setup();
     const clearLogs = vi.fn();
     server.use(
+      http.get('*/activations/5/', () => HttpResponse.json({ id: 5, name: 'Activation 5' })),
       http.get('*/activations/5/instances/*', () => HttpResponse.json(mockInstances)),
-      http.post('*/activations/5/clear-logs/', () => {
+      http.post('*/activations/5/clear-logs/', async ({ request }) => {
+        expect(await request.text()).toMatch(/"before_date":"[^"]+"/);
         clearLogs();
         return HttpResponse.json({ deleted: 2 });
       })
     );
     renderHistory();
 
-    await user.click(await screen.findByRole('button', { name: 'toolbar actions' }));
-    await user.click(screen.getByRole('menuitem', { name: 'Clear logs' }));
+    await user.click(await screen.findByRole('button', { name: 'Clear logs' }));
 
-    const dialog = screen.getByRole('dialog', { name: 'Clear logs' });
+    const dialog = screen.getByRole('dialog', { name: 'Clear logs?' });
     expect(
       within(dialog).getByText(
-        'Are you sure you want to clear all logs for this activation? This action is irreversible.'
+        'Removes stored logs for Activation 5. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
       )
     ).toBeInTheDocument();
+    expect(dialog).toHaveAttribute('data-element-to-focus', '#clear-logs-cancel');
+    expect(within(dialog).getByRole('button', { name: 'Clear logs' })).toBeDisabled();
 
+    await user.click(
+      within(dialog).getByRole('checkbox', {
+        name: 'I understand that clearing logs cannot be undone.',
+      })
+    );
     await user.click(within(dialog).getByRole('button', { name: 'Clear logs' }));
 
-    expect(clearLogs).toHaveBeenCalledOnce();
+    await waitFor(() => expect(clearLogs).toHaveBeenCalledOnce());
   });
 
   it('should show disabled clear logs with a permission tooltip for a non-admin user', async () => {
@@ -157,8 +172,7 @@ describe('RulebookActivationHistory', () => {
 
     renderHistory({ ...mockActiveUser, is_superuser: false });
 
-    await user.click(await screen.findByRole('button', { name: 'toolbar actions' }));
-    const clearLogs = await screen.findByRole('menuitem', { name: 'Clear logs' });
+    const clearLogs = await screen.findByRole('button', { name: 'Clear logs' });
     expect(clearLogs).toHaveAttribute('aria-disabled', 'true');
 
     await user.hover(clearLogs);

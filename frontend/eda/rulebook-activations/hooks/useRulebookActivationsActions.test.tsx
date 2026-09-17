@@ -1,5 +1,4 @@
 import {
-  IPageActionButton,
   IPageActionButtonMultiple,
   IPageActionLink,
   PageActionType,
@@ -106,17 +105,23 @@ describe('useRulebookActivationsActions', () => {
     unselectItemsAndRefresh: vi.fn(),
   } as unknown as IEdaView<EdaRulebookActivation>;
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <BrowserRouter>
-      <PageDialogProvider>
-        <FrameworkTranslationsProvider>
-          <EdaActiveUserContext.Provider value={{ activeEdaUser: mockActiveUser }}>
-            {children}
-          </EdaActiveUserContext.Provider>
-        </FrameworkTranslationsProvider>
-      </PageDialogProvider>
-    </BrowserRouter>
-  );
+  const createWrapper = (activeEdaUser = mockActiveUser) => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <BrowserRouter>
+        <PageDialogProvider>
+          <FrameworkTranslationsProvider>
+            <EdaActiveUserContext.Provider value={{ activeEdaUser }}>
+              {children}
+            </EdaActiveUserContext.Provider>
+          </FrameworkTranslationsProvider>
+        </PageDialogProvider>
+      </BrowserRouter>
+    );
+    Wrapper.displayName = 'RulebookActivationsActionsTestWrapper';
+    return Wrapper;
+  };
+
+  const wrapper = createWrapper();
 
   beforeAll(() => server.listen());
   afterEach(() => {
@@ -165,39 +170,56 @@ describe('useRulebookActivationsActions', () => {
     expect(mockDeleteRulebookActivations).toHaveBeenCalledWith(activations);
   });
 
-  it('should confirm before clearing all logs', async () => {
+  it('should clear logs for selected activations', async () => {
     const user = userEvent.setup();
-    const purgeLogs = vi.fn(() => HttpResponse.json({ deleted: 2 }));
-    server.use(http.post('*/logs/purge/', purgeLogs));
+    const clearLogs = vi.fn(() => HttpResponse.json({ deleted: 2 }));
+    server.use(http.post('*/activations/:id/clear-logs/', clearLogs));
 
     const { result } = renderHook(() => useRulebookActivationsActions(mockView), { wrapper });
-    const clearAllLogsAction = result.current.find(
-      (action) => action.type === PageActionType.Button && action.label === 'Clear all logs'
-    ) as IPageActionButton;
+    const clearLogsAction = result.current.find(
+      (action) => action.type === PageActionType.Button && action.label === 'Clear logs'
+    ) as IPageActionButtonMultiple<EdaRulebookActivation>;
+    const activations = [
+      { id: 1, name: 'Activation 2' },
+      { id: 2, name: 'Activation 1' },
+    ] as EdaRulebookActivation[];
 
     act(() => {
-      clearAllLogsAction.onClick();
+      clearLogsAction.onClick(activations);
     });
 
-    const dialog = await screen.findByRole('dialog', { name: 'Clear all logs' });
+    const dialog = await screen.findByRole('dialog', { name: 'Clear logs?' });
     expect(
       within(dialog).getByText(
-        'Are you sure you want to clear ALL activation logs? This action is irreversible.'
+        'Removes stored logs for Activation 1, Activation 2. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
       )
     ).toBeInTheDocument();
-    expect(purgeLogs).not.toHaveBeenCalled();
+    expect(within(dialog).queryByRole('table')).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Clear logs' })).toBeDisabled();
 
-    await user.click(within(dialog).getByRole('button', { name: 'Clear all logs' }));
+    await user.click(
+      within(dialog).getByRole('checkbox', {
+        name: 'I understand that clearing logs cannot be undone.',
+      })
+    );
+    await user.click(within(dialog).getByRole('button', { name: 'Clear logs' }));
 
     await waitFor(() => {
-      expect(purgeLogs).toHaveBeenCalledOnce();
-      expect(mockAddAlert).toHaveBeenCalledWith(
-        expect.objectContaining({
-          variant: 'success',
-          title: 'Cleared 2 log records.',
-        })
-      );
+      expect(clearLogs).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it('should keep clear logs visible but disabled for non-admin users', () => {
+    const { result } = renderHook(() => useRulebookActivationsActions(mockView), {
+      wrapper: createWrapper({ ...mockActiveUser, is_superuser: false }),
+    });
+    const clearLogsAction = result.current.find(
+      (action) => action.type === PageActionType.Button && action.label === 'Clear logs'
+    ) as IPageActionButtonMultiple<EdaRulebookActivation>;
+
+    expect(clearLogsAction.isDisabled).toBe(
+      'You do not have permission to clear logs. Please contact your system administrator if there is an issue with your access.'
+    );
   });
 
   it('should handle enable rulebook activations without warning', async () => {
