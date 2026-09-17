@@ -5,10 +5,7 @@ import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
-import {
-  registerLaunchConfigLoad,
-  type LaunchConfigLoadResult,
-} from './launchConfigLoad';
+import { registerLaunchConfigLoad, type LaunchConfigLoadResult } from './launchConfigLoad';
 import {
   awaitNodeLaunchConfigForWizard,
   validateJobTemplateRequirements,
@@ -232,7 +229,10 @@ describe('validationHelpers', () => {
     it('should not throw when job template resource lacks project and inventory fields', () => {
       expect(() =>
         validateJobTemplateRequirements(mockSimpleT, {
-          resource: { type: 'job_template', name: 'Partial template' } as WizardFormValues['resource'],
+          resource: {
+            type: 'job_template',
+            name: 'Partial template',
+          } as WizardFormValues['resource'],
         })
       ).not.toThrow();
     });

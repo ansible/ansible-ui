@@ -260,7 +260,7 @@ describe('PageWizard', () => {
         id: 'details',
         label: 'Details',
         element: <h1>Details</h1>,
-        validate: async () => undefined,
+        validate: () => undefined,
       },
       {
         id: 'review',

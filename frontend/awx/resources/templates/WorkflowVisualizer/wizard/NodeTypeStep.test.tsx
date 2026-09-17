@@ -552,12 +552,9 @@ describe('NodeTypeStep', () => {
 
     await waitFor(async () => {
       const loadResult = await awaitLaunchConfigLoad(RESOURCE_TYPE.job, 1);
-      expect(loadResult).toEqual(
-        expect.objectContaining({
-          resourceId: 1,
-          resource: expect.objectContaining({ id: 1 }),
-        })
-      );
+      expect(loadResult).toBeDefined();
+      expect(loadResult?.resourceId).toBe(1);
+      expect(loadResult?.resource).toMatchObject({ id: 1 });
     });
   });
 });
