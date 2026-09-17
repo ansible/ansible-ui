@@ -201,6 +201,14 @@ export function PageFormDataEditor<
 
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
+  // Tracks the most recent client-side parse error so the Controller's
+  // validate rule can block form submission when the editor shows invalid
+  // content.  setError() alone does not prevent handleSubmit() — it clears
+  // manual errors before re-running registered rules, so without this ref
+  // the form would silently submit with the previous valid value while the
+  // editor still shows (and the user believes they saved) invalid content.
+  const parseErrorRef = useRef<string | undefined>(undefined);
+
   const undoValue = getValue(defaultValues as object, props.name) as PathValue<
     TFieldValues,
     TFieldName
@@ -252,8 +260,10 @@ export function PageFormDataEditor<
             }
 
             clearErrors(name);
+            parseErrorRef.current = undefined;
           } catch (err) {
             if (err instanceof Error) {
+              parseErrorRef.current = err.message;
               setError(name, { message: err.message });
             }
           }
@@ -362,7 +372,27 @@ export function PageFormDataEditor<
           </PageFormGroup>
         );
       }}
-      rules={{ required, validate: props.validate }}
+      rules={{
+        required,
+        validate: (() => {
+          // parseFormat blocks handleSubmit() when the editor holds content that
+          // could not be parsed.  Without this rule, handleSubmit() clears the
+          // manual setError() call before re-validating and would submit with the
+          // previous (stale) form value while the user sees an error in the editor.
+          const parseFormat: Validate<PathValue<TFieldValues, TFieldName>, TFieldValues> = () =>
+            parseErrorRef.current ?? true;
+
+          type ValidateRecord = Record<
+            string,
+            Validate<PathValue<TFieldValues, TFieldName>, TFieldValues>
+          >;
+
+          if (!props.validate) return { parseFormat } as ValidateRecord;
+          if (typeof props.validate === 'function')
+            return { parseFormat, custom: props.validate } as ValidateRecord;
+          return { parseFormat, ...props.validate } as ValidateRecord;
+        })(),
+      }}
     />
   );
 }
