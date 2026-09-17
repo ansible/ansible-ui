@@ -65,6 +65,35 @@ variable2: value2`;
       expect(valueToObject(undefined)).toEqual({});
       expect(valueToObject('')).toBeUndefined();
     });
+
+    // Regression tests for AAP-93178: YAML/JSON parsing broken with unusual inputs.
+    // When both JSON and YAML parsing fail, valueToObject must throw rather than
+    // returning the raw string. Returning the raw string causes jsyaml.dump() to
+    // serialise it as a YAML block scalar that grows unboundedly on every
+    // parse→dump round-trip, eating memory until the browser tab crashes.
+    describe('invalid input does not cause growing content loop (AAP-93178)', () => {
+      test('throws for indented YAML document separator (leading spaces before ---)', () => {
+        // "  ---\n  a: b" — a common pattern when copy-pasting from code blocks.
+        // jsyaml rejects this because `---` is only a document separator at column 0.
+        expect(() => valueToObject('  ---\n  a: b')).toThrow();
+        expect(() => valueToObject(' ---\n a: b')).toThrow();
+      });
+
+      test('throws for unclosed single-quoted scalar in JSON mode', () => {
+        // " '\n" — a single quote with a leading space is invalid in both JSON and YAML.
+        expect(() => valueToObject(" '\n")).toThrow();
+      });
+
+      test('round-trip of invalid input does not grow unboundedly', () => {
+        // Verify that the transform loop that caused the crash no longer runs.
+        // Previously: valueToObject returned the raw string → objectToString called
+        // jsyaml.dump(string) → block scalar serialisation → each load+dump cycle
+        // added 2 more spaces → unbounded growth → browser crash.
+        const invalidInput = '  ---\n  a: b';
+        // valueToObject must throw for this input, preventing the loop entirely.
+        expect(() => valueToObject(invalidInput)).toThrow();
+      });
+    });
   });
 
   describe('objectToString', () => {
