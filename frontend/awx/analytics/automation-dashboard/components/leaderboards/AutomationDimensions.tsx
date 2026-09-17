@@ -25,7 +25,7 @@ import {
 import { DEFAULT_NUMBER_LOCALE } from '../../constants/common';
 import '../../AutomationDashboard.css';
 
-const DIMENSION_ACCENT_COLOR = 'var(--pf-t--global--color--status--info--default)';
+const DIMENSION_ACCENT_COLOR = 'var(--pf-t--global--icon--color--subtle)';
 const DIMENSION_BAR_MAX_WIDTH = 180;
 
 type DimensionMeta = {
@@ -54,7 +54,7 @@ function DimensionRow({
 
   return (
     <SimpleListItem
-      className="automation-dashboard-dimension-row"
+      className="automation-dashboard-level-row"
       isActive={isSelected}
       onClick={onSelect}
     >
@@ -145,11 +145,11 @@ function DimensionBarList({ rows }: Readonly<{ rows: HighlightsDimensionLeaderbo
 
 export function AutomationDimensions(props: Readonly<{ width?: PageDashboardCardWidth }>) {
   const { t } = useTranslation();
-  const title = t('Automation dimensions');
+  const title = t('Activity levels');
   const help = t(
-    'Three scores that capture different aspects of your automation activity in the 30-day window. Rank is among all users on this platform. Ties are broken alphabetically.'
+    'Three scores that capture different aspects of your automation activity. Rank is among all users on this platform. Ties are broken alphabetically.'
   );
-  const subtitle = t('Click a dimension to update the leaderboard.');
+  const subtitle = t('Click a level to update the leaderboard.');
   const { dimensions: dimensionStandings, dimensionLeaderboards } = useAutomationLeaderboardsView();
   const [selectedDimension, setSelectedDimension] = useState<DimensionKey>('volume');
 
@@ -157,21 +157,21 @@ export function AutomationDimensions(props: Readonly<{ width?: PageDashboardCard
     {
       key: 'volume',
       title: t('Volume'),
-      description: t('Total number of successful job runs you triggered in the last 30 days'),
+      description: t('Total number of successful job runs you triggered'),
       icon: <ChartBarIcon style={{ color: DIMENSION_ACCENT_COLOR }} />,
       valueLabel: t('job runs'),
     },
     {
       key: 'breadth',
       title: t('Breadth'),
-      description: t('Number of distinct job templates you executed in the last 30 days'),
+      description: t('Number of distinct job templates you executed'),
       icon: <CubesIcon style={{ color: DIMENSION_ACCENT_COLOR }} />,
       valueLabel: t('distinct templates'),
     },
     {
       key: 'consistency',
       title: t('Consistency'),
-      description: t('Number of days with at least one successful job run in the last 30 days'),
+      description: t('Number of days with at least one successful job run'),
       icon: <CalendarAltIcon style={{ color: DIMENSION_ACCENT_COLOR }} />,
       valueLabel: t('active days'),
     },
@@ -179,7 +179,7 @@ export function AutomationDimensions(props: Readonly<{ width?: PageDashboardCard
   const selectedMeta = dimensions.find((dimension) => dimension.key === selectedDimension);
   return (
     <PageDashboardCard
-      id={'automation-dimensions'}
+      id={'activity-levels'}
       title={title}
       subtitle={subtitle}
       helpTitle={title}
@@ -193,8 +193,8 @@ export function AutomationDimensions(props: Readonly<{ width?: PageDashboardCard
         <FlexItem flex={{ default: 'flex_1' }}>
           <SimpleList
             isControlled={false}
-            aria-label={t('Automation dimensions')}
-            className="automation-dashboard-dimension-list"
+            aria-label={t('Activity levels')}
+            className="automation-dashboard-level-list"
           >
             {dimensions.map((dimension) => (
               <DimensionRow
@@ -216,7 +216,7 @@ export function AutomationDimensions(props: Readonly<{ width?: PageDashboardCard
             <DashboardSectionHeading
               title={t('Top 10 — {{dimension}}', { dimension: selectedMeta?.title })}
               help={t(
-                'Top 10 users ranked by {{label}} in the last 30 days. You are shown in the list if you are in the top 10. Ties are broken alphabetically.',
+                'Top 10 users ranked by {{label}}. You are shown in the list if you are in the top 10. Ties are broken alphabetically.',
                 { label: selectedMeta?.valueLabel }
               )}
             />

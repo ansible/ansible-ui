@@ -8,7 +8,9 @@ describe('MilestoneBadgesCard', () => {
 
     expect(screen.getByRole('heading', { name: '30-day achievements' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Your achievements' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: "Your org's achievements" })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: "Your organization's achievements" })
+    ).toBeInTheDocument();
   });
 
   test('should render every milestone and org badge', () => {
