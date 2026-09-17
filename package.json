@@ -119,6 +119,7 @@
       "brace-expansion": "1.1.18"
     },
     "postcss": "8.5.26",
+    "fflate": "0.8.3",
     "dompurify": "3.4.15"
   },
   "devDependencies": {
