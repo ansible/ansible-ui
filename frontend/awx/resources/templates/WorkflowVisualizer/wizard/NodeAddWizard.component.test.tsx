@@ -24,6 +24,22 @@ const mockSourceSetState = vi.fn();
 let mockSourceNode: { getId: () => string; setState: typeof mockSourceSetState } | undefined;
 let mockNodeTypeDefaults: () => Record<string, unknown>;
 
+const mockGraphStartNode = { getId: () => 'startNode' };
+
+function createMockVisualizationController() {
+  return {
+    getState: () => ({ sourceNode: mockSourceNode }),
+    setState: mockSetState,
+    getGraph: () => ({
+      getNodes: () => [mockGraphStartNode],
+      layout: mockLayout,
+    }),
+    toModel: () => ({ nodes: [], edges: [] }),
+    fromModel: mockFromModel,
+    getNodeById: () => ({ setState: mockNodeSetState }),
+  };
+}
+
 vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   greyBadgeLabel: {
     badge: 'ALL',
@@ -33,17 +49,7 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
 }));
 
 vi.mock('@patternfly/react-topology', () => ({
-  useVisualizationController: vi.fn(() => ({
-    getState: () => ({ sourceNode: mockSourceNode }),
-    setState: mockSetState,
-    getGraph: () => ({
-      getNodes: () => [{ getId: () => 'startNode' }],
-      layout: mockLayout,
-    }),
-    toModel: () => ({ nodes: [], edges: [] }),
-    fromModel: mockFromModel,
-    getNodeById: () => ({ setState: mockNodeSetState }),
-  })),
+  useVisualizationController: vi.fn(createMockVisualizationController),
   NodeModel: {},
   NodeShape: { circle: 'circle' },
   EdgeTerminalType: { directional: 'directional' },
