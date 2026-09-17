@@ -4,12 +4,6 @@ import { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBa
 
 // ─── Dashboard Data Models (API shapes) ──────────────────────────────────────
 
-export interface IDashboardTableItem {
-  id: number;
-  name: string;
-  execution_count: number;
-}
-
 export interface IDashboardChartItem {
   label: string;
   value: number;
@@ -54,8 +48,6 @@ export interface IDashboardDetails {
   total_time_saving: number | null;
   total_number_of_host_job_runs: number | null;
   total_number_of_job_runs: number | null;
-  top_projects: IDashboardTableItem[];
-  top_users: IDashboardTableItem[];
   job_chart: IDashboardChart;
   host_chart: IDashboardChart;
 }
