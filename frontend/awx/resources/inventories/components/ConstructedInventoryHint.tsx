@@ -135,12 +135,12 @@ export function ConstructedInventoryHint() {
 function LimitToIntersectionExample() {
   const { t } = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event: unknown, text: string) => {
+  const clipboardCopyFunc = (_event: unknown, text: string) => {
     clipboardCopy(text);
   };
 
-  const onClick = (event: unknown, text: string) => {
-    clipboardCopyFunc(event, text);
+  const onClick = (_event: unknown, text: string) => {
+    clipboardCopyFunc(_event, text);
     setCopied(true);
   };
 
@@ -200,12 +200,12 @@ groups:
 function FilterOnNestedGroupExample() {
   const { t } = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event: unknown, text: string) => {
+  const clipboardCopyFunc = (_event: unknown, text: string) => {
     clipboardCopy(text);
   };
 
-  const onClick = (event: unknown, text: string) => {
-    clipboardCopyFunc(event, text);
+  const onClick = (_event: unknown, text: string) => {
+    clipboardCopyFunc(_event, text);
     setCopied(true);
   };
 
@@ -287,12 +287,12 @@ function clipboardCopy(text: string) {
 function HostsByProcessorTypeExample() {
   const { t } = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event: unknown, text: string) => {
+  const clipboardCopyFunc = (_event: unknown, text: string) => {
     clipboardCopy(text);
   };
 
-  const onClick = (event: unknown, text: string) => {
-    clipboardCopyFunc(event, text);
+  const onClick = (_event: unknown, text: string) => {
+    clipboardCopyFunc(_event, text);
     setCopied(true);
   };
 

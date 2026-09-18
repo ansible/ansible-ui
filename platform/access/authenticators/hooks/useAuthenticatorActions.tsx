@@ -117,16 +117,8 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
     [view, alertToaster, t]
   );
   const rowActions = useMemo<IPageAction<Authenticator>[]>(() => {
-    // TODO: Update based on RBAC information from Authenticators API
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotDeleteAuthenticator = (authenticator: Authenticator) =>
-      // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The authentication cannot be deleted due to insufficient permissions.`);
-    // TODO: Update based on RBAC information from Authenticators API
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotEditAuthenticator = (authenticator: Authenticator) =>
-      // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The authentication cannot be edited due to insufficient permissions.`);
+    // TODO: Update based on RBAC information from Authenticators API.
+    // Placeholder always allows the action until capabilities are wired up.
 
     return [
       {
@@ -149,7 +141,6 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit authentication'),
-        isDisabled: (authenticator: Authenticator) => cannotEditAuthenticator(authenticator),
         onClick: (authenticator) =>
           pageNavigate(PlatformRoute.EditAuthenticator, { params: { id: authenticator.id } }),
       },
@@ -159,7 +150,6 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete authentication'),
-        isDisabled: (authenticator: Authenticator) => cannotDeleteAuthenticator(authenticator),
         onClick: (authenticator) => deleteAuthenticator([authenticator]),
         isDanger: true,
       },

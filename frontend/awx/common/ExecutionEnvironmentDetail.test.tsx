@@ -7,7 +7,7 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
   return {
     ...actual,
-    useGetPageUrl: () => (route: string, options?: { params?: { id?: number } }) =>
+    useGetPageUrl: () => (_route: string, options?: { params?: { id?: number } }) =>
       `/execution-environments/${String(options?.params?.id ?? '')}`,
   };
 });

@@ -18,7 +18,7 @@ export function useDeleteTeams(onComplete: (teams: PlatformTeam[]) => void) {
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Teams API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteTeam = (team: PlatformTeam) => {
+  const cannotDeleteTeam = (_team: PlatformTeam) => {
     // eslint-disable-next-line no-constant-condition
     return true //team?.summary_fields?.user_capabilities?.delete
       ? undefined

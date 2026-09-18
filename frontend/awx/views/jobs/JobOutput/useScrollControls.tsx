@@ -10,7 +10,7 @@ export function useScrollControls(
   containerRef: RefObject<HTMLElement>,
   isFollowModeEnabled: boolean,
   setIsFollowModeEnabled: (value: boolean) => void,
-  numRows: number,
+  _numRows: number,
   isJobRunning: boolean
 ) {
   const [numTicksAtBottom, setNumTicksAtBottom] = useState(0);
