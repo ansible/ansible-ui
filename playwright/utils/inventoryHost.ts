@@ -69,7 +69,7 @@ export const InventoryHost = {
             },
             {
               message: `Host ${host.id} still in use by running job`,
-              timeout: 120000,
+              timeout: 90000,
               intervals: [2000, 3000, 5000],
             }
           )

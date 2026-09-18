@@ -35,7 +35,8 @@ export async function login(
   // Click the login button
   await page.click('button[type="submit"]');
 
-  // Verify we are logged in
+  // Live CI can be slow to render the shell after auth; allow extra time without
+  // changing the default Playwright action timeout for the rest of the test.
   await expect(
     page
       .getByTestId('toolbar')

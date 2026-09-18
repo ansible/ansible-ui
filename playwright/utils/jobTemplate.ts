@@ -6,6 +6,7 @@ import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { filterTable } from '../commands/filterTable';
 import { navigateTo } from '../commands/navigateTo';
+import { expectJobOutputSuccess } from '../commands/jobOutputStatus';
 import { waitForJobStatus } from '../commands/waitForJobStatus';
 
 export interface CreateJobTemplateOptions {
@@ -336,7 +337,7 @@ export const JobTemplate = {
       }
       await expect(page.getByRole('main')).toContainText('Output');
       if (!options?.doNotWait) {
-        await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 120000 });
+        await expectJobOutputSuccess(page);
       }
       await page.getByRole('tab', { name: 'Details' }).click();
       await expect(page.locator('#name')).toContainText(jobTemplateName);

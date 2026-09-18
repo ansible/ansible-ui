@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { clickRetryUntilGone } from './clickRetryUntilGone';
+import { expectJobOutputStatusVisible, jobOutputTerminalStatusLocator } from './jobOutputStatus';
 
 export interface AdHocCommandOptions {
   module: string;
@@ -128,9 +129,7 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
 
   const runningStatus = page.getByTestId('running-status');
-  const successStatus = page.getByTestId('success-status');
-  const failedStatus = page.getByTestId('failed-status');
-  await expect(runningStatus.or(successStatus).or(failedStatus)).toBeVisible({ timeout: 15000 });
+  await expectJobOutputStatusVisible(page);
 
   if (await runningStatus.isVisible().catch(() => false)) {
     // Job is running, cancel it so inventory cleanup can proceed.
@@ -151,6 +150,9 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
     } catch {
       // Intentionally empty - no retry button found, exit normally
     }
+
+    await expect(runningStatus).not.toBeVisible({ timeout: 60_000 });
+    await expect(jobOutputTerminalStatusLocator(page)).toBeVisible({ timeout: 60_000 });
   } else {
     const cancelDialog = page.getByRole('dialog', { name: 'Cancel job' });
     if (await cancelDialog.isVisible({ timeout: 1000 }).catch(() => false)) {
