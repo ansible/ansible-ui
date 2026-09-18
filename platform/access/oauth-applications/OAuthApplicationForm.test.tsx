@@ -1008,4 +1008,34 @@ describe('OAuthApplicationForm', () => {
       expect(objectFormat[0]).toHaveProperty('display_name');
     });
   });
+
+  describe('Form submission with OPTIONS data', () => {
+    test('should accept user input for application creation', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('Enter OAuth application name')).toBeInTheDocument();
+      });
+
+      const nameInput = screen.getByPlaceholderText('Enter OAuth application name');
+      const urlInput = screen.getByPlaceholderText('Enter OAuth application URL');
+      const redirectInput = screen.getByPlaceholderText('Enter redirect URIs');
+
+      await user.type(nameInput, 'Test App');
+      await user.type(urlInput, 'https://example.com');
+      await user.type(redirectInput, 'https://example.com/callback');
+
+      expect(nameInput).toHaveValue('Test App');
+      expect(urlInput).toHaveValue('https://example.com');
+      expect(redirectInput).toHaveValue('https://example.com/callback');
+    }, 15000);
+  });
 });
