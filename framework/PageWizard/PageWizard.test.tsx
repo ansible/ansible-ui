@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PageFormTextInput } from '../PageForm/Inputs/PageFormTextInput';
 import { PageWizard } from './PageWizard';
+import { PageWizardBasicStep } from './types';
 
 describe('PageWizard', () => {
   const Review = () => {
@@ -294,7 +295,7 @@ describe('PageWizard', () => {
         id: 'details',
         label: 'Details',
         element: <h1>Details</h1>,
-        validate: () => ['ignored'],
+        validate: (() => ['ignored']) as unknown as NonNullable<PageWizardBasicStep['validate']>,
       },
       {
         id: 'review',
