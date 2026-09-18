@@ -24,7 +24,9 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "paths": {
-      "monaco-editor": ["./node_modules/monaco-editor/esm/vs/index.d.ts"]
+      "monaco-editor": ["./node_modules/monaco-editor/esm/vs/index.d.ts"],
+      "vite": ["./node_modules/vite/dist/node/index.d.ts"],
+      "@vitejs/plugin-react": ["./node_modules/@vitejs/plugin-react/dist/index.d.ts"]
     }
     // "isolatedModules": true
     // "strictNullChecks": true

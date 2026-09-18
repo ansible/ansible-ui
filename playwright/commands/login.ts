@@ -10,6 +10,7 @@ if (!platformUI) {
 }
 // Remove trailing slash to prevent double slashes when constructing URLs like `${platformUI}/path`
 platformUI = platformUI.replace(/\/+$/, '');
+platformUI = platformUI.replace(/:\/\/localhost(?=:\d+(?:[/?#]|$))/, '://127.0.0.1');
 export const platformURL = new URL(platformUI);
 
 /**
