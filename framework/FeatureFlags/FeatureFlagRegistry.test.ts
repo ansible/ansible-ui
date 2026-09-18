@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createFeatureFlagRegistry } from './FeatureFlagRegistry';
-import type { FeatureFlagDefinitions } from './FeatureFlagRegistry';
+import { createFeatureFlagRegistry, createLocalFeatureFlagProvider } from './FeatureFlagRegistry';
+import type { FeatureFlagDefinitions, FeatureFlagProvider } from './FeatureFlagRegistry';
 import { useFeatureFlag } from './useFeatureFlag';
 
 class MemoryStorage implements Storage {
@@ -36,15 +36,19 @@ const definitions = {
   experimentalView: {
     defaultValue: false,
     description: 'Example experimental view.',
+    kind: 'release',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
+    scope: 'client-only',
     status: 'proposed',
   },
   defaultOnView: {
     defaultValue: true,
     description: 'Example default-on view.',
+    kind: 'operational',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
+    scope: 'client-only',
     status: 'production',
   },
 } satisfies FeatureFlagDefinitions;
@@ -56,63 +60,102 @@ describe('createFeatureFlagRegistry', () => {
     storage = new MemoryStorage();
   });
 
-  it('uses definition defaults and fails closed for malformed persisted data', () => {
-    storage.setItem('test-flags', '{not-json');
-    const registry = createFeatureFlagRegistry(definitions, {
+  it('uses the definition default when no provider is configured', () => {
+    const registry = createFeatureFlagRegistry(definitions);
+
+    expect(registry.evaluate('experimentalView')).toEqual({
+      flagKey: 'experimentalView',
+      reason: 'DEFAULT',
+      value: false,
+    });
+  });
+
+  it('uses local overrides only through the explicit local provider', () => {
+    const provider = createLocalFeatureFlagProvider({
       storage,
       storageKey: 'test-flags',
     });
+    const registry = createFeatureFlagRegistry(definitions, {
+      context: { environment: 'development' },
+      provider,
+    });
+
+    expect(registry.isEnabled('experimentalView')).toBe(false);
+    provider.setOverride('experimentalView', true);
+    expect(registry.evaluate('experimentalView')).toEqual({
+      flagKey: 'experimentalView',
+      reason: 'LOCAL_OVERRIDE',
+      value: true,
+    });
+
+    const restoredProvider = createLocalFeatureFlagProvider({
+      storage,
+      storageKey: 'test-flags',
+    });
+    const restoredRegistry = createFeatureFlagRegistry(definitions, {
+      provider: restoredProvider,
+    });
+    expect(restoredRegistry.isEnabled('experimentalView')).toBe(true);
+  });
+
+  it('fails closed to the definition default when local storage is malformed', () => {
+    storage.setItem('test-flags', '{not-json');
+    const provider = createLocalFeatureFlagProvider({
+      storage,
+      storageKey: 'test-flags',
+    });
+    const registry = createFeatureFlagRegistry(definitions, { provider });
 
     expect(registry.isEnabled('experimentalView')).toBe(false);
     expect(registry.isEnabled('defaultOnView')).toBe(true);
   });
 
-  it('persists known overrides and ignores unknown flags', () => {
-    const registry = createFeatureFlagRegistry(definitions, {
-      storage,
-      storageKey: 'test-flags',
-    });
+  it('returns a safe fallback and error reason when a provider fails', () => {
+    const provider: FeatureFlagProvider = {
+      name: 'failing-provider',
+      evaluateBoolean: () => {
+        throw new Error('provider unavailable');
+      },
+    };
+    const registry = createFeatureFlagRegistry(definitions, { provider });
 
-    registry.setEnabled('experimentalView', true);
-    storage.setItem('test-flags', '{"experimentalView":true,"unknown":true}');
-    const restoredRegistry = createFeatureFlagRegistry(definitions, {
-      storage,
-      storageKey: 'test-flags',
+    expect(registry.evaluate('experimentalView')).toEqual({
+      error: 'PROVIDER_ERROR',
+      flagKey: 'experimentalView',
+      reason: 'ERROR',
+      value: false,
     });
-
-    expect(restoredRegistry.isEnabled('experimentalView')).toBe(true);
-    expect(restoredRegistry.isEnabled('defaultOnView')).toBe(true);
   });
 
-  it('resets an override to the definition default and notifies subscribers', () => {
-    const registry = createFeatureFlagRegistry(definitions, { storage });
+  it('notifies subscribers when a local override changes', () => {
+    const provider = createLocalFeatureFlagProvider({ storage });
+    const registry = createFeatureFlagRegistry(definitions, { provider });
     const listener = vi.fn();
     const unsubscribe = registry.subscribe(listener);
 
-    registry.setEnabled('defaultOnView', false);
-    expect(registry.isEnabled('defaultOnView')).toBe(false);
+    provider.setOverride('defaultOnView', false);
     expect(listener).toHaveBeenCalledOnce();
 
-    registry.reset('defaultOnView');
-    expect(registry.isEnabled('defaultOnView')).toBe(true);
+    provider.resetOverride('defaultOnView');
     expect(listener).toHaveBeenCalledTimes(2);
 
     unsubscribe();
-    registry.setEnabled('defaultOnView', false);
+    provider.setOverride('defaultOnView', false);
     expect(listener).toHaveBeenCalledTimes(2);
   });
 });
 
 describe('useFeatureFlag', () => {
-  it('updates when the registry changes', () => {
-    const registry = createFeatureFlagRegistry(definitions, {
+  it('updates when the configured provider changes', () => {
+    const provider = createLocalFeatureFlagProvider({
       storage: new MemoryStorage(),
     });
+    const registry = createFeatureFlagRegistry(definitions, { provider });
     const { result } = renderHook(() => useFeatureFlag(registry, 'experimentalView'));
 
     expect(result.current).toBe(false);
 
-    act(() => registry.setEnabled('experimentalView', true));
+    act(() => provider.setOverride('experimentalView', true));
 
     expect(result.current).toBe(true);
   });

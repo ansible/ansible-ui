@@ -6,6 +6,7 @@
       "status": "proposed",
       "defaultValue": false,
       "scope": "client-only",
+      "kind": "release",
       "description": "Example of an unfinished client-only view.",
       "owner": "UI platform team",
       "removalDate": "2026-12-31"

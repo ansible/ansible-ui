@@ -1,10 +1,16 @@
 export type FeatureFlagStatus = 'proposed' | 'alpha' | 'beta' | 'production' | 'deprecated';
 
+export type FeatureFlagKind = 'release' | 'experiment' | 'operational' | 'kill-switch';
+
+export type FeatureFlagScope = 'client-only';
+
 export interface FeatureFlagDefinition {
   readonly defaultValue: boolean;
   readonly description: string;
+  readonly kind: FeatureFlagKind;
   readonly owner: string;
   readonly removalDate: string;
+  readonly scope: FeatureFlagScope;
   readonly status: FeatureFlagStatus;
 }
 
@@ -12,15 +18,49 @@ export type FeatureFlagDefinitions = Readonly<Record<string, FeatureFlagDefiniti
 
 export type FeatureFlagKey<Definitions extends FeatureFlagDefinitions> = keyof Definitions & string;
 
+export interface FeatureFlagEvaluationContext {
+  readonly environment?: string;
+  readonly targetingKey?: string;
+}
+
+export type FeatureFlagEvaluationReason = 'DEFAULT' | 'ERROR' | 'LOCAL_OVERRIDE' | 'PROVIDER';
+
+export interface FeatureFlagEvaluation {
+  readonly error?: string;
+  readonly flagKey: string;
+  readonly reason: FeatureFlagEvaluationReason;
+  readonly value: boolean;
+}
+
+export interface FeatureFlagProvider {
+  readonly name: string;
+  evaluateBoolean(
+    flagKey: string,
+    defaultValue: boolean,
+    context?: FeatureFlagEvaluationContext
+  ): FeatureFlagEvaluation;
+  subscribe?(listener: () => void): () => void;
+}
+
+export interface LocalFeatureFlagProvider extends FeatureFlagProvider {
+  resetOverride(flagKey: string): void;
+  setOverride(flagKey: string, enabled: boolean): void;
+}
+
 export interface FeatureFlagRegistry<Definitions extends FeatureFlagDefinitions> {
   readonly definitions: Definitions;
+  dispose(): void;
+  evaluate(flag: FeatureFlagKey<Definitions>): FeatureFlagEvaluation;
   isEnabled(flag: FeatureFlagKey<Definitions>): boolean;
-  setEnabled(flag: FeatureFlagKey<Definitions>, enabled: boolean): void;
-  reset(flag: FeatureFlagKey<Definitions>): void;
   subscribe(listener: () => void): () => void;
 }
 
 export interface FeatureFlagRegistryOptions {
+  readonly context?: FeatureFlagEvaluationContext;
+  readonly provider?: FeatureFlagProvider;
+}
+
+export interface LocalFeatureFlagProviderOptions {
   readonly storage?: Storage;
   readonly storageKey?: string;
 }
@@ -53,11 +93,7 @@ function isStoredOverrides(value: unknown): value is StoredOverrides {
   return Object.values(value).every((item) => typeof item === 'boolean');
 }
 
-function readOverrides(
-  storage: Storage | undefined,
-  storageKey: string,
-  definitions: FeatureFlagDefinitions
-): StoredOverrides {
+function readOverrides(storage: Storage | undefined, storageKey: string): StoredOverrides {
   if (!storage) {
     return {};
   }
@@ -69,29 +105,29 @@ function readOverrides(
     }
 
     const parsedValue: unknown = JSON.parse(storedValue);
-    if (!isStoredOverrides(parsedValue)) {
-      return {};
-    }
-
-    const knownOverrides: StoredOverrides = {};
-    for (const [flag, enabled] of Object.entries(parsedValue)) {
-      if (hasOwnProperty(definitions, flag)) {
-        knownOverrides[flag] = enabled;
-      }
-    }
-    return knownOverrides;
+    return isStoredOverrides(parsedValue) ? parsedValue : {};
   } catch {
     return {};
   }
 }
 
-export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinitions>(
-  definitions: Definitions,
-  options: FeatureFlagRegistryOptions = {}
-): FeatureFlagRegistry<Definitions> {
+function createDefaultFeatureFlagProvider(): FeatureFlagProvider {
+  return {
+    name: 'default',
+    evaluateBoolean: (flagKey, defaultValue) => ({
+      flagKey,
+      reason: 'DEFAULT',
+      value: defaultValue,
+    }),
+  };
+}
+
+export function createLocalFeatureFlagProvider(
+  options: LocalFeatureFlagProviderOptions = {}
+): LocalFeatureFlagProvider {
   const storage = options.storage ?? getDefaultStorage();
   const storageKey = options.storageKey ?? defaultStorageKey;
-  const overrides = readOverrides(storage, storageKey, definitions);
+  const overrides = readOverrides(storage, storageKey);
   const listeners = new Set<() => void>();
 
   const persist = () => {
@@ -113,30 +149,80 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
   };
 
   return {
+    name: 'local-development',
+    evaluateBoolean: (flagKey, defaultValue, context) => {
+      void context;
+      if (!hasOwnProperty(overrides, flagKey)) {
+        return { flagKey, reason: 'DEFAULT', value: defaultValue };
+      }
+      return { flagKey, reason: 'LOCAL_OVERRIDE', value: overrides[flagKey] };
+    },
+    resetOverride: (flagKey) => {
+      if (!hasOwnProperty(overrides, flagKey)) {
+        return;
+      }
+      delete overrides[flagKey];
+      persist();
+      notify();
+    },
+    setOverride: (flagKey, enabled) => {
+      if (overrides[flagKey] === enabled) {
+        return;
+      }
+      overrides[flagKey] = enabled;
+      persist();
+      notify();
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}
+
+export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinitions>(
+  definitions: Definitions,
+  options: FeatureFlagRegistryOptions = {}
+): FeatureFlagRegistry<Definitions> {
+  const provider = options.provider ?? createDefaultFeatureFlagProvider();
+  const listeners = new Set<() => void>();
+  const unsubscribeProvider = provider.subscribe?.(() => {
+    for (const listener of listeners) {
+      listener();
+    }
+  });
+
+  const evaluate = (flag: FeatureFlagKey<Definitions>): FeatureFlagEvaluation => {
+    const definition = definitions[flag];
+    if (!definition) {
+      return {
+        error: 'UNKNOWN_FLAG',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: false,
+      };
+    }
+
+    try {
+      return provider.evaluateBoolean(flag, definition.defaultValue, options.context);
+    } catch {
+      return {
+        error: 'PROVIDER_ERROR',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: definition.defaultValue,
+      };
+    }
+  };
+
+  return {
     definitions,
-    isEnabled: (flag) => {
-      const definition = definitions[flag];
-      if (!definition) {
-        return false;
-      }
-      return overrides[flag] ?? definition.defaultValue;
+    dispose: () => {
+      unsubscribeProvider?.();
+      listeners.clear();
     },
-    setEnabled: (flag, enabled) => {
-      if (!hasOwnProperty(definitions, flag) || overrides[flag] === enabled) {
-        return;
-      }
-      overrides[flag] = enabled;
-      persist();
-      notify();
-    },
-    reset: (flag) => {
-      if (!hasOwnProperty(overrides, flag)) {
-        return;
-      }
-      delete overrides[flag];
-      persist();
-      notify();
-    },
+    evaluate,
+    isEnabled: (flag) => evaluate(flag).value,
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
