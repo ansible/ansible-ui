@@ -83,13 +83,15 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
       width={props.width ?? 'lg'}
       disableBodyPadding
       headerControls={
-        <LeaderboardRankSummary
-          rank={currentOrgStanding.rank}
-          rankText={t("Your organization's rank: #{{rank}}", { rank: currentOrgStanding.rank })}
-          runsText={t('{{runs}} job runs', {
-            runs: currentOrgStanding.totalRuns.toLocaleString(DEFAULT_NUMBER_LOCALE),
-          })}
-        />
+        currentOrgStanding.rank ? (
+          <LeaderboardRankSummary
+            rank={currentOrgStanding.rank}
+            rankText={t("Your organization's rank: #{{rank}}", { rank: currentOrgStanding.rank })}
+            runsText={t('{{runs}} job runs', {
+              runs: currentOrgStanding.totalRuns.toLocaleString(DEFAULT_NUMBER_LOCALE),
+            })}
+          />
+        ) : undefined
       }
     >
       <PageTable

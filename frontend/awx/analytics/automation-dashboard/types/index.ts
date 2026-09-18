@@ -63,6 +63,7 @@ export interface IAutomationDashboardCollectionStatus {
   enabled: boolean | null;
   next_run: Date | null;
   initial_collection_status: string | null;
+  min_collection_timestamp?: Date | null;
 }
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────

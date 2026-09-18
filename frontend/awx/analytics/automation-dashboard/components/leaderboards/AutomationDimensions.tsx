@@ -73,7 +73,7 @@ function DimensionRow({
         </FlexItem>
         <FlexItem style={{ textAlign: 'right' }}>
           <MetricValue>
-            {rank <= 3 ? (
+            {rank && rank <= 3 ? (
               <CrownIcon
                 className={LEADERBOARD_RANK_CROWN_CLASS[rank as 1 | 2 | 3]}
                 style={{ marginRight: 6, verticalAlign: '-0.05em' }}
@@ -81,7 +81,11 @@ function DimensionRow({
             ) : null}
             {score.toLocaleString(DEFAULT_NUMBER_LOCALE)}
           </MetricValue>
-          <MetricLabel>{t('Rank {{rank}} of {{total}}', { rank, total: totalRanked })}</MetricLabel>
+          {rank ? (
+            <MetricLabel>
+              {t('Rank {{rank}} of {{total}}', { rank, total: totalRanked })}
+            </MetricLabel>
+          ) : null}
         </FlexItem>
       </Flex>
     </SimpleListItem>
