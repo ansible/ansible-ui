@@ -140,7 +140,7 @@ function LimitToIntersectionExample() {
   };
 
   const onClick = (_event: unknown, text: string) => {
-    clipboardCopyFunc(event, text);
+    clipboardCopyFunc(_event, text);
     setCopied(true);
   };
 
@@ -205,7 +205,7 @@ function FilterOnNestedGroupExample() {
   };
 
   const onClick = (_event: unknown, text: string) => {
-    clipboardCopyFunc(event, text);
+    clipboardCopyFunc(_event, text);
     setCopied(true);
   };
 
@@ -292,7 +292,7 @@ function HostsByProcessorTypeExample() {
   };
 
   const onClick = (_event: unknown, text: string) => {
-    clipboardCopyFunc(event, text);
+    clipboardCopyFunc(_event, text);
     setCopied(true);
   };
 
