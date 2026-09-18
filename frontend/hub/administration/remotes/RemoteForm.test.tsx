@@ -171,7 +171,7 @@ describe('CreateRemote', () => {
 
     server.use(
       http.post(/.*\/remotes\/ansible\/collection\/.*/, async ({ request }) => {
-        postPayload = await request.json();
+        postPayload = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ pulp_href: '/pulp/api/v3/remotes/1/', name: 'test-remote' });
       })
     );
