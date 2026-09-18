@@ -3,6 +3,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
+import * as yamlSchema from '../../utils/yamlSchema';
 import { PageFormDataEditor, valueToObject, objectToString } from './PageFormDataEditor';
 
 beforeEach(() => {
@@ -92,6 +93,16 @@ variable2: value2`;
         const invalidInput = '  ---\n  a: b';
         // valueToObject must throw for this input, preventing the loop entirely.
         expect(() => valueToObject(invalidInput)).toThrow();
+      });
+
+      test('throws a generic message when YAML loader throws a non-Error value', () => {
+        vi.spyOn(yamlSchema, 'safeLoad').mockImplementation(() => {
+          throw 'not-an-error';
+        });
+
+        expect(() => valueToObject('not-json')).toThrow('Failed to parse value as JSON or YAML');
+
+        vi.restoreAllMocks();
       });
     });
   });
