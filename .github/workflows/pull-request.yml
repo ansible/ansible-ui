@@ -117,6 +117,33 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+  # Advisory size/complexity rules. Separate from the required eslint job so
+  # existing-file warnings do not bury blocking failures. continue-on-error.
+  eslint-guardrails:
+    name: ESLint guardrails (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: packages
+    continue-on-error: true
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+      - run: npm version 0.0.0 --no-git-tag-version
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        id: cache
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+        if: steps.cache.outputs.cache-hit != 'true'
+      - run: npm run eslint:guardrails
+
   vitest-awx:
     name: Vitest (awx)
     needs: packages
