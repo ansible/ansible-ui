@@ -27,15 +27,16 @@ export function useProjectStatusColumn(options?: {
   }> = useMemo(
     () => ({
       header: t('Status'),
-      cell: (item) =>
-        item.summary_fields?.current_job || item.summary_fields?.last_job ? (
+      cell: (item) => {
+        const jobId = item.summary_fields?.current_job?.id ?? item.summary_fields?.last_job?.id;
+        return (item.summary_fields?.current_job || item.summary_fields?.last_job) && jobId ? (
           <Tooltip content={options?.tooltip ?? ''} position="top">
             <StatusCell
               status={item.status}
               to={getPageUrl(AwxRoute.JobOutput, {
                 params: {
                   job_type: item.type,
-                  id: item.summary_fields?.current_job?.id ?? item.summary_fields?.last_job?.id,
+                  id: jobId,
                 },
               })}
               disableLinks={options?.disableLinks}
@@ -45,7 +46,8 @@ export function useProjectStatusColumn(options?: {
           <Tooltip content={options?.tooltipAlt ?? ''} position="top">
             <StatusCell status={item.status} />
           </Tooltip>
-        ),
+        );
+      },
       sort: options?.disableSort ? undefined : 'status',
     }),
     [
