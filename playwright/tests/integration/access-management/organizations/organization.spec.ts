@@ -34,7 +34,7 @@ test(
     ).toBeVisible();
     await page.getByRole('button', { name: 'Finish' }).click();
 
-    await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
+    await expect(page.getByTestId('page-title')).toContainText(organizationName);
     await expect(page.locator('dl')).toContainText('Policy enforcement');
     await expect(page.getByTestId('policy-enforcement')).toContainText(opaPolicyPath);
 
@@ -63,11 +63,12 @@ test(
     await page.getByRole('button', { name: 'Finish' }).click();
     await Promise.all([gatewayPatchPromise, controllerPatchPromise]);
 
-    await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible({
-      timeout: 10_000,
+    // Edit submits controller association changes after PATCH; wait for details reload.
+    await expect(page.getByTestId('page-title')).toContainText(editedName, {
+      timeout: 30_000,
     });
     await expect(page.getByTestId('policy-enforcement')).toContainText(editedPolicy, {
-      timeout: 10_000,
+      timeout: 30_000,
     });
     await Organization.ui.delete(page, editedName);
   }

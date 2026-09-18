@@ -1,5 +1,24 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+
+// Requires controller list filters last_job_host_summary__failed on the E2E backend (2.7 today).
+async function expectHostsPageWithStatusFilter(page: Page, status: 'ready' | 'failed') {
+  await expect(page.getByTestId('page-title')).toContainText('Hosts');
+  await expect(page.getByRole('heading', { name: 'Error loading hosts' })).not.toBeVisible();
+  await expect(page.getByTestId('page-toolbar')).toBeVisible();
+
+  if (status === 'ready') {
+    await expect(page).toHaveURL(/ready_status=True/);
+    await expect(page.getByRole('list', { name: 'Ready Status' })).toContainText(
+      'Show only ready hosts'
+    );
+  } else {
+    await expect(page).toHaveURL(/failed_status=True/);
+    await expect(page.getByRole('list', { name: 'Failed Status' })).toContainText(
+      'Show only failed hosts'
+    );
+  }
+}
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
@@ -39,16 +58,12 @@ test('hosts resource counts should redirect correctly', async ({ page }) => {
     await expect(page.locator('#resource-counts')).toContainText('Resource Counts');
     if (await page.locator('#hosts').getByRole('link', { name: 'Ready' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Ready' }).click();
-      await expect(page.getByTestId('page-title')).toContainText('Hosts');
-      await expect(page.getByText('Ready Status')).toBeVisible();
-      await expect(page.getByText('Show only ready hosts')).toBeVisible();
+      await expectHostsPageWithStatusFilter(page, 'ready');
     }
     await page.getByRole('link', { name: 'Overview' }).click();
     if (await page.locator('#hosts').getByRole('link', { name: 'Failed' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Failed' }).click();
-      await expect(page.getByRole('heading')).toContainText('Hosts');
-      await expect(page.getByText('Failed Status')).toBeVisible();
-      await expect(page.getByText('Show only failed hosts')).toBeVisible();
+      await expectHostsPageWithStatusFilter(page, 'failed');
     }
   }
 });
