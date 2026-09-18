@@ -29,6 +29,8 @@ import {
   useDeleteRulebookActivationsWithWarning,
 } from './useDeleteRulebookActivations';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
+import { useEdaActiveUser } from '../../common/useEdaActiveUser';
+import { useClearLogsDialog } from './useClearLogsDialog';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -52,6 +54,10 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     view.unselectItemsAndRefresh
   );
   const getPageUrl = useGetPageUrl();
+  const { activeEdaUser } = useEdaActiveUser();
+
+  const openClearLogsDialog = useClearLogsDialog();
+
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
     useCallback(
       async (activation) => {
@@ -172,6 +178,19 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
+        label: t('Clear logs'),
+        onClick: (activations: EdaRulebookActivation[]) => openClearLogsDialog(activations),
+        isDisabled: activeEdaUser?.is_superuser
+          ? undefined
+          : t(
+              'You do not have permission to clear logs. Please contact your system administrator if there is an issue with your access.'
+            ),
+        isDanger: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
         label: t('Delete rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           deleteRulebookActivations(rulebookActivations),
@@ -186,6 +205,8 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     disableRulebookActivations,
     restartRulebookActivations,
     deleteRulebookActivations,
+    openClearLogsDialog,
+    activeEdaUser?.is_superuser,
     getPageUrl,
   ]);
 }

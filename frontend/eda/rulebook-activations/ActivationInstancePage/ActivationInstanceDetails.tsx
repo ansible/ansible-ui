@@ -1,14 +1,16 @@
 import { IFilterState, LoadingPage, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { StatusCell } from '../../../common/Status';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { useActivationHistoryLogsFilters } from '../hooks/useActivationHistoryLogsFilters';
+import { useClearLogsDialog } from '../hooks/useClearLogsDialog';
 import { ActivationInstanceEvents } from './ActivationInstanceEvents';
 import { RulebookActivationToolbar } from './ActivationsToolbar';
 
@@ -25,11 +27,28 @@ export function ActivationInstanceDetails() {
   return <ActivationInstanceDetailsInner activationInstance={activationInstance} />;
 }
 
-function ActivationInstanceDetailsInner(props: { activationInstance: EdaActivationInstance }) {
+function ActivationInstanceDetailsInner(
+  props: Readonly<{ activationInstance: EdaActivationInstance }>
+) {
   const { t } = useTranslation();
+  const { activeEdaUser } = useEdaActiveUser();
   const toolbarFilters = useActivationHistoryLogsFilters();
   const [filterState, setFilterState] = useState<IFilterState>({});
+  const [logsRefreshToken, setLogsRefreshToken] = useState(0);
   const activationInstance = props.activationInstance;
+  const openClearLogsDialog = useClearLogsDialog({
+    endpointBuilder: (target) => edaAPI`/activation-instances/${target.id.toString()}/clear-logs/`,
+    targetType: 'instance',
+    onComplete: () => setLogsRefreshToken((token) => token + 1),
+  });
+  const onClearLogs = useCallback(() => {
+    openClearLogsDialog([
+      {
+        id: activationInstance.id,
+        name: `${activationInstance.id} - ${activationInstance.name}`,
+      },
+    ]);
+  }, [activationInstance.id, activationInstance.name, openClearLogsDialog]);
   const isRunning = useMemo(
     () =>
       activationInstance?.status
@@ -68,13 +87,16 @@ function ActivationInstanceDetailsInner(props: { activationInstance: EdaActivati
         isFollowModeEnabled={isFollowModeEnabled}
         setIsFollowModeEnabled={setIsFollowModeEnabled}
         isRunning={isRunning}
-      ></RulebookActivationToolbar>
+        isClearLogsDisabled={activeEdaUser?.is_superuser !== true}
+        onClearLogs={onClearLogs}
+      />
       <ActivationInstanceEvents
         toolbarFilters={toolbarFilters}
         filterState={filterState}
         isFollowModeEnabled={isFollowModeEnabled}
         setIsFollowModeEnabled={setIsFollowModeEnabled}
         isRunning={isRunning}
+        refreshToken={logsRefreshToken}
       />
     </>
   );

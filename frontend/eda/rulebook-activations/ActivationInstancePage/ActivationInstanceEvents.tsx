@@ -2,9 +2,8 @@ import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { useScrollControls } from '@ansible/awx-ui/views/jobs/JobOutput/useScrollControls';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { useGet } from '@ansible/common-ui/crud/useGet';
 import { PageSection } from '@patternfly/react-core';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useVirtualizedList } from '../../..//common/utils/useVirtualized';
@@ -14,7 +13,25 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
 import { ActivationInstanceOutputRow } from './ActivationInstanceOutputRow';
 
+const INITIAL_PAGE_SIZE = 5000;
+const POLL_INTERVAL_MS = 5000;
+
+function mergeUniqueLogs(
+  existingLogs: EdaActivationInstanceLog[],
+  incomingLogs: EdaActivationInstanceLog[],
+  position: 'prepend' | 'append'
+) {
+  const existingLogIds = new Set(existingLogs.map((log) => log.id));
+  const uniqueIncomingLogs = incomingLogs.filter((log) => !existingLogIds.has(log.id));
+
+  return position === 'prepend'
+    ? [...uniqueIncomingLogs, ...existingLogs]
+    : [...existingLogs, ...uniqueIncomingLogs];
+}
+
 const ScrollContainer = styled.div`
+  flex: 1;
+  min-height: 0;
   overflow: auto;
   background-color: var(--pf-t--global--background--color--primary--default);
   font-size: var(--pf-t--global--font--size--body--sm);
@@ -35,42 +52,164 @@ interface IActivationInstanceEventsProps {
   isFollowModeEnabled: boolean;
   setIsFollowModeEnabled: (isFollowModeEnabled: boolean) => void;
   isRunning: boolean;
+  refreshToken?: number;
 }
 
-export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) {
-  const [activationInstanceLog, setActivationInstanceLog] =
-    useState<AwxItemsResponse<EdaActivationInstanceLog>>();
+export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEventsProps>) {
+  const [logs, setLogs] = useState<EdaActivationInstanceLog[]>([]);
+  const [hasOlderLogs, setHasOlderLogs] = useState(false);
+  const [isLoadingOlder, setIsLoadingOlder] = useState(false);
+  const latestTimestampRef = useRef<number>(0);
+  const oldestTimestampRef = useRef<number>(0);
 
   const params = useParams<{ instanceId: string }>();
-  const { toolbarFilters, filterState, isFollowModeEnabled, setIsFollowModeEnabled, isRunning } =
-    props;
+  const instanceId = params.instanceId ?? '';
+  const {
+    toolbarFilters,
+    filterState,
+    isFollowModeEnabled,
+    setIsFollowModeEnabled,
+    isRunning,
+    refreshToken = 0,
+  } = props;
 
-  const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`
-  );
+  const buildFilterString = useCallback(() => {
+    return getFiltersQueryString(toolbarFilters, filterState);
+  }, [toolbarFilters, filterState]);
 
   useEffect(() => {
-    async function fetchData() {
-      const filterString = getFiltersQueryString(toolbarFilters, filterState);
-      const qsParts = [`page_size=${activationInstanceLogInfo?.count.toString() ?? '10'}`];
+    let isCurrent = true;
+
+    setLogs([]);
+    setHasOlderLogs(false);
+    latestTimestampRef.current = 0;
+    oldestTimestampRef.current = 0;
+
+    async function initialLoad() {
+      try {
+        const filterString = buildFilterString();
+        const countQsParts = ['page_size=1'];
+        if (filterString) {
+          countQsParts.push(filterString);
+        }
+        const countResponse = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${countQsParts.join('&')}`)
+        );
+        const count = countResponse.count ?? 0;
+
+        if (!isCurrent) return;
+
+        if (count === 0) {
+          setLogs([]);
+          setHasOlderLogs(false);
+          return;
+        }
+
+        const lastPage = Math.ceil(count / INITIAL_PAGE_SIZE);
+        const pageQsParts = [`page=${lastPage}`, `page_size=${INITIAL_PAGE_SIZE}`];
+        if (filterString) {
+          pageQsParts.push(filterString);
+        }
+        const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${pageQsParts.join('&')}`)
+        );
+
+        if (!isCurrent) return;
+
+        const results = response.results ?? [];
+        setLogs(results);
+        setHasOlderLogs(count > INITIAL_PAGE_SIZE);
+
+        if (results.length > 0) {
+          latestTimestampRef.current = results[results.length - 1].log_timestamp ?? 0;
+          oldestTimestampRef.current = results[0].log_timestamp ?? 0;
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to load logs:', error);
+      }
+    }
+
+    void initialLoad();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [instanceId, buildFilterString, refreshToken]);
+
+  useEffect(() => {
+    if (!isRunning && !isFollowModeEnabled) return;
+
+    async function pollLogs() {
+      if (latestTimestampRef.current === 0) return;
+
+      try {
+        const filterString = buildFilterString();
+        const qsParts = [
+          `log_timestamp__gt=${latestTimestampRef.current}`,
+          `page_size=${INITIAL_PAGE_SIZE}`,
+        ];
+        if (filterString) {
+          qsParts.push(filterString);
+        }
+
+        const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+          edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${qsParts.join('&')}`)
+        );
+
+        const newLogs = response.results ?? [];
+        if (newLogs.length > 0) {
+          setLogs((previousLogs) => mergeUniqueLogs(previousLogs, newLogs, 'append'));
+          latestTimestampRef.current =
+            newLogs[newLogs.length - 1].log_timestamp ?? latestTimestampRef.current;
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to poll logs:', error);
+      }
+    }
+
+    const interval = setInterval(() => {
+      void pollLogs();
+    }, POLL_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [instanceId, isRunning, isFollowModeEnabled, buildFilterString]);
+
+  const loadOlderLogs = useCallback(async () => {
+    if (!hasOlderLogs || isLoadingOlder) return;
+    if (oldestTimestampRef.current === 0) return;
+
+    setIsLoadingOlder(true);
+    try {
+      const filterString = buildFilterString();
+      const qsParts = [
+        `log_timestamp__lt=${oldestTimestampRef.current}`,
+        `page_size=${INITIAL_PAGE_SIZE}`,
+      ];
       if (filterString) {
         qsParts.push(filterString);
       }
-      const activationInstanceLogOutput = await requestGet<
-        AwxItemsResponse<EdaActivationInstanceLog>
-      >(
-        edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/`.concat(
-          `?${qsParts.join('&')}`
-        )
+
+      const response = await requestGet<AwxItemsResponse<EdaActivationInstanceLog>>(
+        edaAPI`/activation-instances/${instanceId}/logs/`.concat(`?${qsParts.join('&')}`)
       );
 
-      setActivationInstanceLog(activationInstanceLogOutput);
+      const olderLogs = response.results ?? [];
+      if (olderLogs.length > 0) {
+        setLogs((previousLogs) => mergeUniqueLogs(previousLogs, olderLogs, 'prepend'));
+        oldestTimestampRef.current = olderLogs[0].log_timestamp ?? oldestTimestampRef.current;
+      }
+      setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load older logs:', error);
+    } finally {
+      setIsLoadingOlder(false);
     }
+  }, [instanceId, hasOlderLogs, isLoadingOlder, buildFilterString]);
 
-    void fetchData();
-  }, [params.instanceId, activationInstanceLogInfo?.count, toolbarFilters, filterState]);
-
-  const estimatedMaxLines = (activationInstanceLog?.results.length ?? 0) * 10;
+  const estimatedMaxLines = (logs.length ?? 0) * 10;
   const outputLineChars = String(estimatedMaxLines).length;
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -79,19 +218,25 @@ export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) 
       containerRef,
       isFollowModeEnabled,
       setIsFollowModeEnabled,
-      activationInstanceLog?.results.length ?? 0,
+      logs.length,
       isRunning
     );
 
+  const onScroll = useCallback(
+    (el: HTMLElement) => {
+      handleScroll(el);
+      if (el.scrollTop === 0 && hasOlderLogs && !isLoadingOlder) {
+        void loadOlderLogs();
+      }
+    },
+    [handleScroll, hasOlderLogs, isLoadingOlder, loadOlderLogs]
+  );
+
   const { beforeRowsHeight, visibleItems, afterRowsHeight, setRowHeight } =
-    useVirtualizedList<EdaActivationInstanceLog>(
-      containerRef,
-      activationInstanceLog?.results ?? [],
-      handleScroll
-    );
+    useVirtualizedList<EdaActivationInstanceLog>(containerRef, logs, onScroll);
 
   return (
-    <Section>
+    <Section hasBodyWrapper={false}>
       <PageControls
         onScrollFirst={scrollToTop}
         onScrollLast={scrollToBottom}
@@ -110,7 +255,7 @@ export function ActivationInstanceEvents(props: IActivationInstanceEventsProps) 
             {visibleItems?.map((row) => (
               <ActivationInstanceOutputRow
                 key={row.id}
-                index={activationInstanceLog?.results.findIndex((r) => r.id === row.id) ?? 0}
+                index={logs.findIndex((log) => log.id === row.id)}
                 row={row}
                 setHeight={setRowHeight}
               />

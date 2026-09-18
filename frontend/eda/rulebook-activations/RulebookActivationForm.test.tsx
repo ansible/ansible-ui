@@ -1,6 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -211,6 +212,50 @@ describe('CreateRulebookActivation', () => {
       });
       expect(persistenceCheckbox).not.toBeChecked();
     });
+  });
+
+  it('should show the debug logging warning and storage switch when debug is selected', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <CreateRulebookActivation />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: /Create rulebook activation/ })
+      ).toBeInTheDocument();
+    });
+
+    const logLevelButton = await waitFor(() => {
+      const button = screen
+        .getAllByRole('button')
+        .find((candidate) => candidate.id.includes('log'));
+      expect(button).toBeTruthy();
+      return button as HTMLElement;
+    });
+    await user.click(logLevelButton);
+    await user.click(await screen.findByRole('option', { name: 'Debug' }));
+
+    expect(
+      await screen.findByText(/Debug logging generates significantly more data\./)
+    ).toHaveTextContent('Debug logging generates significantly more data.');
+    expect(
+      await screen.findByText(
+        /By default, debug logs are sent to container logs \(stdout\) but are not stored in the database\. Enable the option below to persist them, but be aware this can significantly increase database storage\./
+      )
+    ).toHaveTextContent(
+      'By default, debug logs are sent to container logs (stdout) but are not stored in the database. Enable the option below to persist them, but be aware this can significantly increase database storage.'
+    );
+    expect(
+      screen
+        .getByText('Debug logging generates significantly more data.')
+        .closest('.pf-v6-l-grid__item')
+    ).toHaveClass('pf-v6-l-grid__item', 'pf-m-12-col');
+    expect(
+      screen.getByRole('switch', { name: /Store debug logs in database/ })
+    ).toBeInTheDocument();
   });
 });
 
