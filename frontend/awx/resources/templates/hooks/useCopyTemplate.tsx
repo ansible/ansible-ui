@@ -1,5 +1,6 @@
 import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { getCopyResourceName } from '@ansible/common-ui/utils/copyResourceName';
 import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -19,7 +20,7 @@ export function useCopyTemplate(onComplete: () => void) {
     };
     if (template.type === 'job_template') {
       postRequest(awxAPI`/job_templates/${template.id.toString()}/copy/`, {
-        name: `${template.name} @ ${new Date().toTimeString().substring(0, 8)}`,
+        name: getCopyResourceName(template.name),
       })
         .then(() => {
           alertToaster.addAlert(alert);
@@ -34,7 +35,7 @@ export function useCopyTemplate(onComplete: () => void) {
         .finally(onComplete);
     } else if (template.type === 'workflow_job_template') {
       postRequest(awxAPI`/workflow_job_templates/${template.id.toString()}/copy/`, {
-        name: `${template.name} @ ${new Date().toTimeString().substring(0, 8)}`,
+        name: getCopyResourceName(template.name),
       })
         .then(() => {
           alertToaster.addAlert(alert);
