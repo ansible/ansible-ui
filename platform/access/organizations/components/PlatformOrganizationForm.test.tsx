@@ -5,6 +5,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationForm } from './PlatformOrganizationForm';
@@ -57,12 +58,18 @@ const mockPlatformOrganization: PlatformOrganization = {
   },
 };
 
-const mockControllerOrganization = {
+const mockControllerOrganization: ControllerOrganization = {
   id: 100,
   name: 'Test Organization',
   ansible_id: 'ansible-123',
   max_hosts: 100,
   opa_query_path: '/path/to/policy',
+  url: '/api/v2/organizations/100/',
+  type: 'organization',
+  created: '2024-01-01T00:00:00Z',
+  modified: '2024-01-01T00:00:00Z',
+  related: {},
+  summary_fields: {},
 };
 
 const server = setupServer(
@@ -134,7 +141,7 @@ describe('PlatformOrganizationForm', () => {
     render(
       <MemoryRouter>
         <PlatformOrganizationForm
-          platformOrganization={mockPlatformOrganization}
+          organization={mockPlatformOrganization}
           controllerOrganization={mockControllerOrganization}
           handleSubmit={handleSubmit}
         />
@@ -152,7 +159,7 @@ describe('PlatformOrganizationForm', () => {
     render(
       <MemoryRouter>
         <PlatformOrganizationForm
-          platformOrganization={mockPlatformOrganization}
+          organization={mockPlatformOrganization}
           controllerOrganization={mockControllerOrganization}
           handleSubmit={handleSubmit}
         />
@@ -176,7 +183,7 @@ describe('PlatformOrganizationForm', () => {
     render(
       <MemoryRouter>
         <PlatformOrganizationForm
-          platformOrganization={mockPlatformOrganization}
+          organization={mockPlatformOrganization}
           controllerOrganization={mockControllerOrganization}
           handleSubmit={handleSubmit}
         />
