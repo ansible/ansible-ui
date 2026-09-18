@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
@@ -61,7 +62,6 @@ const mockPlatformOrganization: PlatformOrganization = {
 const mockControllerOrganization: ControllerOrganization = {
   id: 100,
   name: 'Test Organization',
-  ansible_id: 'ansible-123',
   max_hosts: 100,
   opa_query_path: '/path/to/policy',
   url: '/api/v2/organizations/100/',
@@ -69,7 +69,55 @@ const mockControllerOrganization: ControllerOrganization = {
   created: '2024-01-01T00:00:00Z',
   modified: '2024-01-01T00:00:00Z',
   related: {},
-  summary_fields: {},
+  summary_fields: {
+    resource: {
+      ansible_id: 'ansible-123',
+      resource_type: 'shared.organization',
+    },
+    created_by: {
+      id: 1,
+      username: 'admin',
+      first_name: 'Admin',
+      last_name: 'User',
+    },
+    modified_by: {
+      id: 1,
+      username: 'admin',
+      first_name: 'Admin',
+      last_name: 'User',
+    },
+    object_roles: {
+      admin_role: { id: 1, name: 'Admin', description: '' },
+      execute_role: { id: 2, name: 'Execute', description: '' },
+      project_admin_role: { id: 3, name: 'Project Admin', description: '' },
+      inventory_admin_role: { id: 4, name: 'Inventory Admin', description: '' },
+      credential_admin_role: { id: 5, name: 'Credential Admin', description: '' },
+      workflow_admin_role: { id: 6, name: 'Workflow Admin', description: '' },
+      notification_admin_role: { id: 7, name: 'Notification Admin', description: '' },
+      job_template_admin_role: { id: 8, name: 'Job Template Admin', description: '' },
+      execution_environment_admin_role: {
+        id: 9,
+        name: 'Execution Environment Admin',
+        description: '',
+      },
+      auditor_role: { id: 10, name: 'Auditor', description: '' },
+      member_role: { id: 11, name: 'Member', description: '' },
+      read_role: { id: 12, name: 'Read', description: '' },
+      approval_role: { id: 13, name: 'Approval', description: '' },
+    },
+    user_capabilities: {
+      edit: true,
+      delete: true,
+    },
+    related_field_counts: {
+      inventories: 0,
+      teams: 0,
+      users: 0,
+      job_templates: 0,
+      admins: 0,
+      projects: 0,
+    },
+  },
 };
 
 const server = setupServer(
@@ -115,6 +163,8 @@ const server = setupServer(
             required: false,
             read_only: false,
             label: 'OPA Query Path',
+            pattern: '^[a-z0-9_./]*$',
+            pattern_description: 'Policy enforcement path must be lowercase alphanumeric.',
           },
         },
       },
@@ -135,63 +185,74 @@ describe('PlatformOrganizationForm', () => {
     expect(typeof PlatformOrganizationForm).toBe('function');
   });
 
-  it('should fetch and merge OPTIONS from both gateway and awx endpoints', async () => {
-    const handleSubmit = vi.fn();
+  it('should pre-fill the Policy enforcement field from the controller organization', async () => {
+    render(
+      <MemoryRouter>
+        <PlatformOrganizationForm
+          organization={mockPlatformOrganization}
+          controllerOrganization={mockControllerOrganization}
+          handleSubmit={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /Policy enforcement/i })).toHaveValue(
+        '/path/to/policy'
+      );
+    });
+  });
+
+  it('should apply the pattern validation merged in from the awx OPTIONS response', async () => {
+    const user = userEvent.setup();
 
     render(
       <MemoryRouter>
         <PlatformOrganizationForm
           organization={mockPlatformOrganization}
           controllerOrganization={mockControllerOrganization}
-          handleSubmit={handleSubmit}
+          handleSubmit={vi.fn()}
         />
       </MemoryRouter>
     );
 
+    const input = await screen.findByRole('textbox', { name: /Policy enforcement/i });
+    await user.clear(input);
+    await user.type(input, 'INVALID PATH');
+    await user.tab();
+
     await waitFor(() => {
-      expect(handleSubmit).toBeDefined();
+      expect(
+        screen.getByText('Policy enforcement path must be lowercase alphanumeric.')
+      ).toBeInTheDocument();
     });
   });
 
-  it('should include opa_query_path in merged OPTIONS data', async () => {
-    const handleSubmit = vi.fn();
-
-    render(
-      <MemoryRouter>
-        <PlatformOrganizationForm
-          organization={mockPlatformOrganization}
-          controllerOrganization={mockControllerOrganization}
-          handleSubmit={handleSubmit}
-        />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(handleSubmit).toBeDefined();
-    });
-  });
-
-  it('should handle missing awx OPTIONS response gracefully', async () => {
+  it('should render the form without the opa_query_path pattern when the awx OPTIONS response is unavailable', async () => {
     server.use(
       http.options(awxAPI`/organizations/`, () =>
         HttpResponse.json({ actions: {} }, { status: 404 })
       )
     );
-
-    const handleSubmit = vi.fn();
+    const user = userEvent.setup();
 
     render(
       <MemoryRouter>
         <PlatformOrganizationForm
           organization={mockPlatformOrganization}
           controllerOrganization={mockControllerOrganization}
-          handleSubmit={handleSubmit}
+          handleSubmit={vi.fn()}
         />
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(handleSubmit).toBeDefined();
-    });
+    const input = await screen.findByRole('textbox', { name: /Policy enforcement/i });
+    await user.clear(input);
+    await user.type(input, 'INVALID PATH');
+    await user.tab();
+
+    expect(
+      screen.queryByText('Policy enforcement path must be lowercase alphanumeric.')
+    ).not.toBeInTheDocument();
   });
 });
