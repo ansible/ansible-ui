@@ -12,8 +12,16 @@
     "framework/vitest.preview.ts",
     "**/playwright.config.ts",
     "i18next-parser.config.cjs",
-    "currents.config.ts"
+    "currents.config.ts",
+    "framework/vitest.shared.ts",
+    "framework/test-utils/testing-library.tsx",
+    "framework/test-utils/wrapWithSwrTestWrapper.tsx",
+    "frontend/hub/insights/**",
+    "frontend/hub/interfaces/generated/**",
+    "frontend/hub/interfaces/expanded/**",
+    "frontend/hub/interfaces/transform.cjs"
   ],
+  "ignoreBinaries": ["podman"],
   "exclude": [
     "unlisted",
     "types",
@@ -54,7 +62,7 @@
       "entry": ["main/Hub.tsx", "**/*.{test,spec}.{ts,tsx}"]
     },
     "frontend/chatbot": {
-      "entry": ["ChatbotPortal.tsx", "**/*.{test,spec}.{ts,tsx}"]
+      "entry": ["ChatbotPortal.tsx", "index.ts", "**/*.{test,spec}.{ts,tsx}"]
     },
     "platform": {
       "entry": ["main/Platform.tsx", "**/*.{test,spec}.{ts,tsx}"]
