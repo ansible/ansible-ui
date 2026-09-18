@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -213,9 +214,13 @@ describe('EditPlatformOrganization', () => {
   });
 
   it('should handle opa_query_path field in controller organization', async () => {
-    vi.fn(() => HttpResponse.json(mockControllerOrganization));
+    const user = userEvent.setup({ delay: null });
+    let patchPayload: Record<string, unknown> | undefined;
     server.use(
-      http.patch(awxAPI`/organizations/100/`, () => HttpResponse.json(mockControllerOrganization))
+      http.patch(awxAPI`/organizations/100/`, async ({ request }) => {
+        patchPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(mockControllerOrganization);
+      })
     );
 
     render(
@@ -228,6 +233,22 @@ describe('EditPlatformOrganization', () => {
 
     await waitFor(() => {
       expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+    });
+
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    await user.click(nextButton);
+
+    await waitFor(() => {
+      const finishButton = screen.getByRole('button', { name: /finish/i });
+      expect(finishButton).toBeInTheDocument();
+    });
+
+    const finishButton = screen.getByRole('button', { name: /finish/i });
+    await user.click(finishButton);
+
+    await waitFor(() => {
+      expect(patchPayload).toBeDefined();
+      expect(patchPayload).toHaveProperty('opa_query_path');
     });
   });
 });
