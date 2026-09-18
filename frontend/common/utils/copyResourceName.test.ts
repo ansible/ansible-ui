@@ -38,7 +38,7 @@ describe('hasCopyNamePattern', () => {
   it('returns false for original names and missing values', () => {
     expect(hasCopyNamePattern('Activation 1')).toBe(false);
     expect(hasCopyNamePattern('Activation 1 @')).toBe(false);
-    expect(hasCopyNamePattern(undefined)).toBe(false);
+    expect(hasCopyNamePattern()).toBe(false);
     expect(hasCopyNamePattern('')).toBe(false);
   });
 });
