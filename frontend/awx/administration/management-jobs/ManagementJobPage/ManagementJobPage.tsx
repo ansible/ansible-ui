@@ -27,10 +27,8 @@ export function ManagementJobPage() {
   const getPageUrl = useGetPageUrl();
   const { activeAwxUser } = useAwxActiveUser();
 
-  const {
-    notificationAdminOrganizations,
-    isLoadingNotificationAdminOrganizations,
-  } = useNotificationAdminOrganizations();
+  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
+    useNotificationAdminOrganizations();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
 

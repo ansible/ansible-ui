@@ -39,10 +39,8 @@ export function WorkflowJobTemplatePage() {
     refresh,
   } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates`, params.id);
 
-  const {
-    notificationAdminOrganizations,
-    isLoadingNotificationAdminOrganizations,
-  } = useNotificationAdminOrganizations();
+  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
+    useNotificationAdminOrganizations();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const itemActions = useTemplateActions({

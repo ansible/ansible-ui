@@ -38,10 +38,8 @@ export function ProjectPage() {
   const pageNavigate = usePageNavigate();
   const itemActions = useProjectActions(() => pageNavigate(AwxRoute.Projects));
   const { activeAwxUser } = useAwxActiveUser();
-  const {
-    notificationAdminOrganizations,
-    isLoadingNotificationAdminOrganizations,
-  } = useNotificationAdminOrganizations();
+  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
+    useNotificationAdminOrganizations();
   const getPageUrl = useGetPageUrl();
   const tabs: { label: string; page: string }[] = useMemo(() => {
     const tabs = [

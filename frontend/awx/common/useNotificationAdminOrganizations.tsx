@@ -28,7 +28,6 @@ export function canViewNotificationsTab(
   notificationAdminOrganizations?: AwxItemsResponse<Organization>
 ) {
   return (
-    !!activeAwxUser?.is_system_auditor ||
-    (notificationAdminOrganizations?.results.length ?? 0) > 0
+    !!activeAwxUser?.is_system_auditor || (notificationAdminOrganizations?.results.length ?? 0) > 0
   );
 }

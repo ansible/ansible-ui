@@ -41,8 +41,9 @@ describe('WorkflowJobTemplatePage', () => {
 
   it('should render when notification admin organization lookup fails', async () => {
     server.use(
-      http.get(({ request }) => request.url.includes('organizations'), () =>
-        HttpResponse.json({}, { status: 500 })
+      http.get(
+        ({ request }) => request.url.includes('organizations'),
+        () => HttpResponse.json({}, { status: 500 })
       )
     );
 
