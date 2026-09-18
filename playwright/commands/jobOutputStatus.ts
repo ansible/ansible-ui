@@ -22,12 +22,25 @@ export function jobOutputTerminalStatusLocator(page: Page): Locator {
     .or(page.getByTestId('canceled-status'));
 }
 
+export function jobOutputRunningOrTerminalStatusLocator(page: Page): Locator {
+  return page.getByTestId('running-status').or(jobOutputTerminalStatusLocator(page));
+}
+
 export async function expectJobOutputStatusVisible(
   page: Page,
   options?: { timeout?: number }
 ): Promise<void> {
   await expect(jobOutputStatusLocator(page)).toBeVisible({
     timeout: options?.timeout ?? 15_000,
+  });
+}
+
+export async function expectJobOutputRunningOrTerminal(
+  page: Page,
+  options?: { timeout?: number }
+): Promise<void> {
+  await expect(jobOutputRunningOrTerminalStatusLocator(page)).toBeVisible({
+    timeout: options?.timeout ?? 60_000,
   });
 }
 
