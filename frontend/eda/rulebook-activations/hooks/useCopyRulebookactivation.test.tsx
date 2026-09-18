@@ -41,7 +41,7 @@ describe('useCopyRulebookActivation', () => {
   it('should post copy request and show success alert', async () => {
     server.use(
       http.post(edaAPI`/activations/1/copy/`, () => {
-        return HttpResponse.json({ id: 2, name: 'Test Activation @ 12:00:00' });
+        return HttpResponse.json({ id: 2, name: 'Test Activation @ 12-00-00' });
       })
     );
 
@@ -59,6 +59,28 @@ describe('useCopyRulebookActivation', () => {
         })
       );
     });
+  });
+
+  it('should post a copy name with @ and a colon-free timestamp', async () => {
+    let postedName = '';
+    server.use(
+      http.post(edaAPI`/activations/1/copy/`, async ({ request }) => {
+        const body = (await request.json()) as { name: string };
+        postedName = body.name;
+        return HttpResponse.json({ id: 2, name: body.name });
+      })
+    );
+
+    const { result } = renderHook(() => useCopyRulebookActivation());
+
+    act(() => {
+      result.current(mockActivation);
+    });
+
+    await waitFor(() => {
+      expect(postedName).toMatch(/^Test Activation @ \d{2}-\d{2}-\d{2}$/);
+    });
+    expect(postedName).not.toContain(':');
   });
 
   it('should show danger alert on failure', async () => {
