@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubContext } from '../../common/useHubContext';
-import { CreateRemote } from './RemoteForm';
+import { CreateRemote, EditRemote } from './RemoteForm';
 
 describe('CreateRemote', () => {
   const server = setupServer();
@@ -189,5 +189,83 @@ describe('CreateRemote', () => {
     await user.type(urlInput, 'https://galaxy.ansible.com');
 
     expect(postPayload).not.toBeDefined();
+  });
+});
+
+describe('EditRemote', () => {
+  const server = setupServer();
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterAll(() => server.close());
+  beforeEach(() => {
+    vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
+      const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
+        <textarea
+          id={props.id as string}
+          name={props.id as string}
+          value={props.value as string}
+          onChange={props.onChange as () => void}
+          className={props.className as string}
+          onFocus={props.onFocus as () => void}
+          onBlur={props.onBlur as () => void}
+        />
+      ));
+      return { DataEditor: FakeDataEditor };
+    });
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    server.resetHandlers();
+  });
+
+  function renderEditRemote() {
+    return render(
+      <HubContext.Provider
+        value={{
+          featureFlags: { collection_signing: false },
+          settings: {},
+          hasPermission: () => true,
+        }}
+      >
+        <MemoryRouter initialEntries={['/remotes/test-remote/edit']}>
+          <Routes>
+            <Route path="/remotes/:id/edit" element={<EditRemote />} />
+          </Routes>
+        </MemoryRouter>
+      </HubContext.Provider>
+    );
+  }
+
+  test('should load OPTIONS data for edit form', async () => {
+    server.use(
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: { type: 'string', required: true },
+              url: { type: 'string', required: true },
+            },
+          },
+        })
+      ),
+      http.get(/.*\/remotes\/ansible\/collection\/.*/, () =>
+        HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              name: 'test-remote',
+              url: 'https://galaxy.ansible.com/api/',
+              pulp_href: '/pulp/api/v3/remotes/ansible/collection/1/',
+              hidden_fields: [],
+            },
+          ],
+        })
+      )
+    );
+
+    renderEditRemote();
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Edit test-remote/i })).toBeInTheDocument();
+    });
   });
 });
