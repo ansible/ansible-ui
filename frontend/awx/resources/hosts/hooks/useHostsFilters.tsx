@@ -15,6 +15,7 @@ export function useHostsFilters() {
     preSortedKeys: ['search', 'name', 'description', 'created-by', 'modified-by'],
     preFilledValueKeys: { name: { apiPath: 'hosts' }, id: { apiPath: 'hosts' } },
     additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
+    // OPTIONS still lists last_job_host_summary as filterable; hide it because list queries fail.
     removeFilters: ['last_job_host_summary'],
   });
   return toolbarFilters;
