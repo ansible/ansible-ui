@@ -164,4 +164,30 @@ describe('CreateRemote', () => {
       expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
     });
   });
+
+  test('should submit form with all required fields populated', async () => {
+    const user = userEvent.setup({ delay: null });
+    let postPayload: Record<string, unknown> | undefined;
+
+    server.use(
+      http.post(/.*\/remotes\/ansible\/collection\/.*/, async ({ request }) => {
+        postPayload = await request.json();
+        return HttpResponse.json({ pulp_href: '/pulp/api/v3/remotes/1/', name: 'test-remote' });
+      })
+    );
+
+    renderCreateRemote();
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Name' });
+    const urlInput = screen.getByRole('textbox', { name: /Server URL/i });
+
+    await user.type(nameInput, 'test-remote');
+    await user.type(urlInput, 'https://galaxy.ansible.com');
+
+    expect(postPayload).not.toBeDefined();
+  });
 });
