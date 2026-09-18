@@ -20,6 +20,7 @@ const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
   enabled: null,
   next_run: null,
   initial_collection_status: null,
+  min_collection_timestamp: null,
 };
 
 function setupActiveUser({
@@ -160,6 +161,23 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       expect(result.current.collectionStatus).toEqual(apiData);
       expect(result.current.isLoading).toBe(false);
+    });
+
+    test('should pass through min_collection_timestamp from the API response', () => {
+      const apiData: IAutomationDashboardCollectionStatus = {
+        enabled: true,
+        next_run: null,
+        initial_collection_status: 'completed',
+        min_collection_timestamp: new Date('2026-09-01T14:00:00Z'),
+      };
+      setupActiveUser({ is_superuser: true });
+      setupSWR(apiData);
+
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.collectionStatus.min_collection_timestamp).toEqual(
+        new Date('2026-09-01T14:00:00Z')
+      );
     });
 
     test('should return default status on error', () => {

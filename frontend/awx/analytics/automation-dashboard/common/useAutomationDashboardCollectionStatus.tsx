@@ -9,6 +9,7 @@ const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
   enabled: null,
   next_run: null,
   initial_collection_status: null,
+  min_collection_timestamp: null,
 };
 
 export function useAutomationDashboardCollectionStatus(): {
