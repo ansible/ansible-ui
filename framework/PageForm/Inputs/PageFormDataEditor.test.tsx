@@ -97,7 +97,8 @@ variable2: value2`;
 
       test('throws a generic message when YAML loader throws a non-Error value', () => {
         vi.spyOn(yamlSchema, 'safeLoad').mockImplementation(() => {
-          throw 'not-an-error';
+          // Plain object — not instanceof Error; exercises the generic fallback in valueToObject.
+          throw { reason: 'mock-yaml-load-failure' };
         });
 
         expect(() => valueToObject('not-json')).toThrow('Failed to parse value as JSON or YAML');
