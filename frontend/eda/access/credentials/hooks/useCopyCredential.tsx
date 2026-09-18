@@ -1,5 +1,6 @@
 import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { getCopyResourceName } from '@ansible/common-ui/utils/copyResourceName';
 import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../common/eda-utils';
@@ -19,7 +20,7 @@ export function useCopyCredential(onComplete?: () => void) {
       timeout: 2000,
     };
     postRequest(edaAPI`/eda-credentials/${credential.id.toString()}/copy/`, {
-      name: `${credential.name} @ ${new Date().toTimeString().substring(0, 8)}`,
+      name: getCopyResourceName(credential.name),
     })
       .then(() => {
         alertToaster.addAlert(alert);

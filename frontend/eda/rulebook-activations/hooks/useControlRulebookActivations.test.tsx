@@ -340,6 +340,20 @@ describe('useControlRulebookActivations hooks', () => {
     expect(screen.getByText('Activation 1')).toBeInTheDocument();
   });
 
+  it('useEnableRulebookActivationsWithWarning should show duplicate source for the current copy suffix', () => {
+    const activationWithCopyPattern = [
+      { id: 1, name: 'Activation 1 @ 12-00-00', is_enabled: true } as EdaRulebookActivation,
+    ];
+    const { result } = renderHook(() => useEnableRulebookActivationsWithWarning(onComplete), {
+      wrapper,
+    });
+    act(() => {
+      result.current(activationWithCopyPattern);
+    });
+
+    expect(screen.getByText('Activation 1')).toBeInTheDocument();
+  });
+
   it('useEnableRulebookActivationsWithWarning should handle missing name column', () => {
     (useRulebookActivationColumns as Mock).mockReturnValue([]);
     const { result } = renderHook(() => useEnableRulebookActivationsWithWarning(onComplete), {

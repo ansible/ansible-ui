@@ -3,7 +3,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { AlertProps } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { edaAPI, hasCopyNamePattern } from '../../common/eda-utils';
+import { edaAPI, getCopySourceName, hasCopyNamePattern } from '../../common/eda-utils';
 import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
@@ -12,8 +12,6 @@ import { TFunction } from 'i18next';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { EdaItemsResponse } from '../../common/EdaItemsResponse';
-
-const COPY_MARKER_LENGTH = ' @ hh:mm:ss'.length;
 
 export function useEnableRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
@@ -240,9 +238,7 @@ export function useEnableRulebookActivationsWithWarning(
         header: t('Duplicate source'),
         type: 'text',
         value: (activation) =>
-          hasCopyNamePattern(activation.name)
-            ? activation.name.substring(0, activation.name.length - COPY_MARKER_LENGTH)
-            : '',
+          hasCopyNamePattern(activation.name) ? getCopySourceName(activation.name) : '',
       },
     ];
   }, [baseColumns, t]);
