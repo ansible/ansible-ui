@@ -137,4 +137,31 @@ describe('CreateRemote', () => {
       ).toBeInTheDocument();
     });
   });
+
+  test('should load OPTIONS data from hub API endpoint', async () => {
+    server.use(
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                type: 'string',
+                required: true,
+              },
+              url: {
+                type: 'string',
+                required: true,
+              },
+            },
+          },
+        })
+      )
+    );
+
+    renderCreateRemote();
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
+    });
+  });
 });
