@@ -26,7 +26,8 @@ interface IGetReportDetailsResult {
 export function useGetReportDetails(
   toolbarFilters: IToolbarFilter[],
   filterState: IFilterState,
-  queryParams: QueryParams = EMPTY_PARAMS
+  queryParams: QueryParams = EMPTY_PARAMS,
+  extraSearchParams?: [string, string][]
 ): IGetReportDetailsResult {
   // Check if all required filters are valid
   const filtersValid = useMemo(
@@ -39,9 +40,10 @@ export function useGetReportDetails(
     const params = new URLSearchParams([
       ...paramsToSearchObj(queryParams),
       ...filtersToSearchObj(toolbarFilters, filterState),
+      ...(extraSearchParams ?? []),
     ]);
     return params.toString();
-  }, [toolbarFilters, filterState, queryParams]);
+  }, [toolbarFilters, filterState, queryParams, extraSearchParams]);
 
   // Only construct URL if all required filters are valid, otherwise null to prevent fetch
   const url = filtersValid ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;

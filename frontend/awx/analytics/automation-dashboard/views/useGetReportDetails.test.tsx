@@ -209,6 +209,52 @@ describe('useGetReportDetails', () => {
       expect(url.searchParams.get('tz')).toBe('UTC');
       expect(url.searchParams.get('template_name')).toBe('automation-job');
     });
+
+    test('should include extraSearchParams in the URL', async () => {
+      let capturedUrl = '';
+
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
+          capturedUrl = request.url;
+          return HttpResponse.json(dashboardDetailsFixture);
+        })
+      );
+
+      const extraSearchParams: [string, string][] = [
+        ['template', '1'],
+        ['template', '2'],
+        ['template', '3'],
+      ];
+
+      const { result } = renderHook(() =>
+        useGetReportDetails([], {}, { tz: 'UTC' }, extraSearchParams)
+      );
+
+      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
+
+      const url = new URL(capturedUrl);
+      expect(url.searchParams.get('tz')).toBe('UTC');
+      expect(url.searchParams.getAll('template')).toEqual(['1', '2', '3']);
+    });
+
+    test('should not include extraSearchParams when undefined', async () => {
+      let capturedUrl = '';
+
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
+          capturedUrl = request.url;
+          return HttpResponse.json(dashboardDetailsFixture);
+        })
+      );
+
+      const { result } = renderHook(() => useGetReportDetails([], {}, { tz: 'UTC' }));
+
+      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
+
+      const url = new URL(capturedUrl);
+      expect(url.searchParams.get('tz')).toBe('UTC');
+      expect(url.searchParams.getAll('template')).toEqual([]);
+    });
   });
 
   describe('Required filters validation', () => {

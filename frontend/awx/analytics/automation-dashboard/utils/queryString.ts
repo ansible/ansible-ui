@@ -16,13 +16,15 @@ function isIsoDateString(value: string): boolean {
 export function getQueryString(
   view: IView,
   toolbarFilters: IToolbarFilter[],
-  queryParams: QueryParams
+  queryParams: QueryParams,
+  extraSearchParams?: [string, string][]
 ): string {
   const { page, perPage, sort, sortDirection, filterState } = view;
 
   const query = new URLSearchParams([
     ...paramsToSearchObj(queryParams),
     ...filtersToSearchObj(toolbarFilters, filterState),
+    ...(extraSearchParams ?? []),
   ]);
   if (sort && query.get('order_by') === null) {
     query.append('order_by', sortDirection === 'desc' ? `-${sort}` : sort);
@@ -140,6 +142,20 @@ export function getPeriodFilterParam(filterState: IFilterState, filter: IToolbar
   } else {
     return [[filter.query, values[0]]];
   }
+}
+
+/**
+ * Returns system-job-exclusion search params when no user template filter
+ * is active. Returns `undefined` when the user has an explicit template
+ * filter or when template IDs are not yet available.
+ */
+export function getSystemJobExclusionParams(
+  filterState: IFilterState | undefined,
+  templateIds: [string, string][] | undefined
+): [string, string][] | undefined {
+  const hasUserTemplateFilter = filterState?.template && filterState.template.length > 0;
+  if (hasUserTemplateFilter || !templateIds?.length) return undefined;
+  return templateIds;
 }
 
 function getFilterParam(
