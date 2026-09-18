@@ -153,8 +153,7 @@ export function getSystemJobExclusionParams(
   filterState: IFilterState | undefined,
   templateIds: [string, string][] | undefined
 ): [string, string][] | undefined {
-  const hasUserTemplateFilter =
-    filterState?.template && filterState.template.length > 0;
+  const hasUserTemplateFilter = filterState?.template && filterState.template.length > 0;
   if (hasUserTemplateFilter || !templateIds?.length) return undefined;
   return templateIds;
 }
