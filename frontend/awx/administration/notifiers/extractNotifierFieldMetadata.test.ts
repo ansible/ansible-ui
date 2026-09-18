@@ -18,7 +18,7 @@ describe('extractNotifierFieldMetadata', () => {
               label: 'Port',
               type: 'int',
               default: 25,
-              pattern: '^\\d+$',
+              pattern: String.raw`^\d+$`,
               pattern_description: 'Port must be numeric',
             },
             username: { label: 'Username', type: 'string', default: '' },
@@ -50,7 +50,7 @@ describe('extractNotifierFieldMetadata', () => {
     const result = extractNotifierFieldMetadata(mockOptions, 'email');
     expect(result).toEqual({
       host: { pattern: '^[a-zA-Z0-9.-]+$', pattern_description: 'Host must be a valid hostname' },
-      port: { pattern: '^\\d+$', pattern_description: 'Port must be numeric' },
+      port: { pattern: String.raw`^\d+$`, pattern_description: 'Port must be numeric' },
     });
   });
 

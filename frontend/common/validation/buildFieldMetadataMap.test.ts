@@ -21,12 +21,12 @@ describe('buildFieldMetadataMap', () => {
   it('extracts pattern and pattern_description from fields keyed by id', () => {
     const fields: SchemaFieldWithPattern[] = [
       { id: 'host', pattern: '^[a-z]+$', pattern_description: 'Lowercase only' },
-      { id: 'port', pattern: '^\\d+$' },
+      { id: 'port', pattern: String.raw`^\d+$` },
     ];
     const result = buildFieldMetadataMap(fields);
     expect(result).toEqual({
       host: { pattern: '^[a-z]+$', pattern_description: 'Lowercase only' },
-      port: { pattern: '^\\d+$', pattern_description: undefined },
+      port: { pattern: String.raw`^\d+$`, pattern_description: undefined },
     });
   });
 
