@@ -95,6 +95,12 @@ variable2: value2`;
         expect(() => valueToObject(invalidInput)).toThrow();
       });
 
+      test('throws for whitespace-only strings that YAML loads as undefined', () => {
+        // Typing a lone space in JSON mode must not be treated as "empty" and wipe saved vars.
+        expect(() => valueToObject(' ')).toThrow();
+        expect(() => valueToObject('  ')).toThrow();
+      });
+
       test('throws a generic message when YAML loader throws a non-Error value', () => {
         vi.spyOn(yamlSchema, 'safeLoad').mockImplementation(() => {
           // Plain object — not instanceof Error; exercises the generic fallback in valueToObject.
@@ -465,6 +471,26 @@ debug_mode: true         # Enable debugging`;
         screen.getByText(/end of the stream or a document separator is expected/i)
       ).toBeInTheDocument();
     });
+  });
+
+  test('should not clear saved extra vars when user enters whitespace then invalid JSON (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'foo: bar' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /json/i }));
+
+    fireEvent.change(screen.getByTestId('data-editor'), { target: { value: ' ' } });
+    fireEvent.change(screen.getByTestId('data-editor'), { target: { value: " '" } });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   test('should block form submission when editor holds invalid YAML (AAP-93178)', async () => {
