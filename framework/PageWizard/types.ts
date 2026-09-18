@@ -1,6 +1,13 @@
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageFormOptionsData } from '../PageForm/PageFormOptionsContext';
 
+/** Plain-object data a step validate hook may return to merge into wizard state. */
+export type WizardSupplementalData = Record<string, unknown>;
+
+export function isWizardSupplementalData(value: unknown): value is WizardSupplementalData {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
 export interface PageWizardBasicStep {
   id: string;
   idOfparentStep?: string /*This is used to index PageWizard Stepdata, or wizardData, set data on a nested step field.   */;
@@ -13,7 +20,10 @@ export interface PageWizardBasicStep {
     error, the wizard will stay on the current step and pass the error to
     the wizard's errorAdapter for handling.
   */
-  validate?: (formData: object, wizardData: object) => Promise<void> | void;
+  validate?: (
+    formData: object,
+    wizardData: object
+  ) => Promise<void | WizardSupplementalData> | void | WizardSupplementalData;
 }
 
 /** Type used to define parent steps. */

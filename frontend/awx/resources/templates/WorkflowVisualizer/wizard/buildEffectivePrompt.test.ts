@@ -108,6 +108,39 @@ describe('buildEffectivePrompt', () => {
       });
       expect(effectivePrompt.credentials).toHaveLength(1);
     });
+
+    test('should clear unprompted related fields when adding a new node', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: undefined,
+        newResourceId: 2,
+        prompt: {
+          labels: [{ id: 9, name: 'jt-label' }],
+          credentials: [{ id: 1, name: 'cred', credential_type: 1, passwords_needed: [] }],
+        },
+        launchConfig: {
+          ...baseLaunchConfig,
+          ask_variables_on_launch: true,
+        },
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+      });
+      expect(effectivePrompt.labels).toEqual([]);
+      expect(effectivePrompt.instance_groups).toEqual([]);
+      expect(effectivePrompt.credentials).toEqual([]);
+    });
+
+    test('should preserve prompted related fields when adding a new node', () => {
+      const labels = [{ id: 9, name: 'jt-label' }];
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: undefined,
+        newResourceId: 2,
+        prompt: { labels },
+        launchConfig: { ...baseLaunchConfig, ask_labels_on_launch: true },
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+      });
+      expect(effectivePrompt.labels).toEqual(labels);
+    });
   });
 
   describe('original object construction', () => {

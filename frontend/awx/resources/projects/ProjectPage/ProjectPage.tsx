@@ -15,10 +15,12 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
+import {
+  canViewNotificationsTab,
+  useNotificationAdminOrganizations,
+} from '../../../common/useNotificationAdminOrganizations';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { Organization } from '../../../interfaces/Organization';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useProjectActions } from '../hooks/useProjectActions';
@@ -36,16 +38,8 @@ export function ProjectPage() {
   const pageNavigate = usePageNavigate();
   const itemActions = useProjectActions(() => pageNavigate(AwxRoute.Projects));
   const { activeAwxUser } = useAwxActiveUser();
-  const {
-    data: isNotifAdmin,
-    error: isNotifAdminError,
-    refresh: refreshNotifAdmin,
-    isLoading: isNotifAdminLoading,
-  } = useGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`, {
-    role_level: 'add_notificationtemplate',
-    count_disabled: 1,
-  });
-  const error = isNotifAdminError || projectError;
+  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
+    useNotificationAdminOrganizations();
   const getPageUrl = useGetPageUrl();
   const tabs: { label: string; page: string }[] = useMemo(() => {
     const tabs = [
@@ -55,13 +49,14 @@ export function ProjectPage() {
       { label: t('User Access'), page: AwxRoute.ProjectUsers },
       { label: t('Team Access'), page: AwxRoute.ProjectTeams },
     ];
-    if (activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+    if (canViewNotificationsTab(activeAwxUser, notificationAdminOrganizations)) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.ProjectNotifications });
     }
     return tabs;
-  }, [t, activeAwxUser, isNotifAdmin]);
-  if (error) return <AwxError error={error} handleRefresh={projectRefresh || refreshNotifAdmin} />;
-  if (!project || isProjectLoading || isNotifAdminLoading) return <LoadingPage breadcrumbs tabs />;
+  }, [t, activeAwxUser, notificationAdminOrganizations]);
+  if (projectError) return <AwxError error={projectError} handleRefresh={projectRefresh} />;
+  if (!project || isProjectLoading || isLoadingNotificationAdminOrganizations)
+    return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
