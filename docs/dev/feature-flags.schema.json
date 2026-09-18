@@ -22,6 +22,7 @@
         "status",
         "defaultValue",
         "scope",
+        "kind",
         "description",
         "owner",
         "removalDate"
@@ -40,6 +41,10 @@
         },
         "scope": {
           "const": "client-only"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["release", "experiment", "operational", "kill-switch"]
         },
         "description": {
           "type": "string",
