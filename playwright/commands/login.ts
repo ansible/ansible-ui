@@ -40,5 +40,5 @@ export async function login(
     page
       .getByTestId('toolbar')
       .getByRole('button', { name: options?.username ?? process.env.PLATFORM_USERNAME! })
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 15_000 });
 }

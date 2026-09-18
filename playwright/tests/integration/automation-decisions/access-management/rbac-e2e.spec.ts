@@ -447,7 +447,11 @@ test.describe('EDA - RBAC - User and Team Permissions', () => {
         await navigateTo(page, 'Automation Decisions', 'Projects');
         await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 
-        await expect(page.locator('.pf-v6-c-empty-state')).toBeVisible();
+        await expect(
+          page
+            .getByRole('main')
+            .getByText('There are currently no projects created for your organization.')
+        ).toBeVisible();
       });
 
       await test.step('Logout user2 and login back as admin', async () => {
