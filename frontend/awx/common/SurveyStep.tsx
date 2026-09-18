@@ -114,7 +114,7 @@ export function SurveyStep({
           <PageFormTextInput
             key={index}
             name={`survey.${element.variable}`}
-            label={t(element.question_name)}
+            label={element.question_name}
             labelHelp={element.question_description}
             labelHelpTitle=""
             isRequired={element.required}
@@ -126,7 +126,7 @@ export function SurveyStep({
           <PageFormTextInput
             key={index}
             name={`survey.${element.variable}`}
-            label={t(element.question_name)}
+            label={element.question_name}
             labelHelp={element.question_description}
             labelHelpTitle=""
             isRequired={element.required}
@@ -138,7 +138,7 @@ export function SurveyStep({
           <PageFormTextInput
             key={index}
             name={`survey.${element.variable}`}
-            label={t(element.question_name)}
+            label={element.question_name}
             labelHelp={element.question_description}
             labelHelpTitle=""
             isRequired={element.required}
@@ -150,7 +150,7 @@ export function SurveyStep({
           <PageFormTextInput
             key={index}
             name={`survey.${element.variable}`}
-            label={t(element.question_name)}
+            label={element.question_name}
             labelHelp={element.question_description}
             labelHelpTitle=""
             isRequired={element.required}
@@ -162,7 +162,7 @@ export function SurveyStep({
           <PageFormTextArea
             key={index}
             name={`survey.${element.variable}`}
-            label={t(element.question_name)}
+            label={element.question_name}
             labelHelp={element.question_description}
             labelHelpTitle=""
             isRequired={element.required}
@@ -174,7 +174,7 @@ export function SurveyStep({
             key={index}
             name={`survey.${element.variable}`}
             placeholderText={t('Select option')}
-            label={t(element.question_name)}
+            label={element.question_name}
             labelHelp={element.question_description}
             labelHelpTitle=""
             options={getChoices(element.question_name)}
@@ -185,7 +185,7 @@ export function SurveyStep({
             key={index}
             name={`survey.${element.variable}`}
             placeholder={t('Select option(s)')}
-            label={t(element.question_name)}
+            label={element.question_name}
             labelHelp={element.question_description}
             labelHelpTitle=""
             options={getChoices(element.question_name)}
