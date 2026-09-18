@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
+// Requires controller list filters last_job_host_summary__failed on the E2E backend (2.7 today).
 async function expectHostsPageWithStatusFilter(page: Page, status: 'ready' | 'failed') {
   await expect(page.getByTestId('page-title')).toContainText('Hosts');
   await expect(page.getByRole('heading', { name: 'Error loading hosts' })).not.toBeVisible();

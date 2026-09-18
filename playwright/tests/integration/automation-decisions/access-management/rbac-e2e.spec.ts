@@ -447,11 +447,9 @@ test.describe('EDA - RBAC - User and Team Permissions', () => {
         await navigateTo(page, 'Automation Decisions', 'Projects');
         await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 
-        await expect(
-          page
-            .getByRole('main')
-            .getByText('There are currently no projects created for your organization.')
-        ).toBeVisible();
+        const projectsTable = page.locator('#eda-projects-table');
+        await expect(projectsTable).toBeVisible({ timeout: 15_000 });
+        await expect(projectsTable.getByRole('link', { name: edaProject.name })).not.toBeVisible();
       });
 
       await test.step('Logout user2 and login back as admin', async () => {

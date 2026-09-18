@@ -5,6 +5,7 @@ import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { expectJobOutputSuccess } from '@ansible/playwright/commands/jobOutputStatus';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -493,7 +494,7 @@ test.describe('Instance Groups: Jobs Tab', () => {
       await row.getByLabel('Launch template').click();
 
       await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 30000 });
-      await expect(page.getByTestId('success-status')).toBeVisible({ timeout: 120000 });
+      await expectJobOutputSuccess(page);
 
       try {
         // Navigate to instance group jobs tab
