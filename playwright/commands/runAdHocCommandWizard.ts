@@ -1,6 +1,9 @@
 import { Page, expect } from '@playwright/test';
 import { clickRetryUntilGone } from './clickRetryUntilGone';
-import { expectJobOutputStatusVisible, jobOutputTerminalStatusLocator } from './jobOutputStatus';
+import {
+  expectJobOutputRunningOrTerminal,
+  jobOutputTerminalStatusLocator,
+} from './jobOutputStatus';
 
 export interface AdHocCommandOptions {
   module: string;
@@ -129,7 +132,8 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
 
   const runningStatus = page.getByTestId('running-status');
-  await expectJobOutputStatusVisible(page);
+  // Wait past pending/waiting until the job is running or has reached a terminal state.
+  await expectJobOutputRunningOrTerminal(page);
 
   if (await runningStatus.isVisible().catch(() => false)) {
     // Job is running, cancel it so inventory cleanup can proceed.
