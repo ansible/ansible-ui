@@ -24,6 +24,9 @@ export default compat.config({
     '**/build/**',
     '**/node_modules/**',
     '**/coverage/**',
+    '**/eslint.config.mjs',
+    '**/insights/fec.config.js',
+    '**/insights/monaco-languages.js',
   ],
   extends: [
     'eslint:recommended',
