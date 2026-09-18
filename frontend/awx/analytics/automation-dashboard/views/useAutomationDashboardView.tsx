@@ -11,6 +11,7 @@ import {
   useAutomationDashboardBaseView,
 } from '../common/useAutomationDashboardBaseView';
 import { useJobTemplateIds } from '../common/useJobTemplateIds';
+import { getSystemJobExclusionParams } from '../utils/queryString';
 
 // Resolved once at module load — the user's time zone does not change during a session.
 export const QUERY_PARAMS = { tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
@@ -44,27 +45,22 @@ export function useAutomationDashboardView(options: {
 }): IAutomationDashboardView {
   const { toolbarFilters } = options;
 
-  const allTemplateIds = useJobTemplateIds();
+  const { templateIds: allTemplateIds, isLoading: isLoadingTemplateIds } = useJobTemplateIds();
 
   const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
     url: metricsAPI`/dashboard_reports/report/`,
     defaultFilters: DEFAULT_FILTERS,
     toolbarFilters,
     systemJobExclusionTemplateIds: allTemplateIds,
+    isLoadingSystemJobExclusionIds: isLoadingTemplateIds,
   });
 
   const { filterState, setFilterState } = mainTableViewBase;
 
-  // When the user has no template filter active, inject all known job template
-  // IDs so system_job records (Cleanup Activity Stream, etc.) are excluded from
-  // both the table and summary cards. When a template filter IS active, the
-  // user selected from the clean dropdown (which already excludes system_job
-  // templates), so no injection is needed.
-  const systemJobExclusionParams = useMemo(() => {
-    const hasTemplateFilter = filterState?.template && filterState.template.length > 0;
-    if (hasTemplateFilter || allTemplateIds.length === 0) return undefined;
-    return allTemplateIds;
-  }, [filterState, allTemplateIds]);
+  const systemJobExclusionParams = useMemo(
+    () => getSystemJobExclusionParams(filterState, allTemplateIds),
+    [filterState, allTemplateIds]
+  );
 
   // Ref for callback from toolbar (to reset dropdown when filters cleared)
   const onClearFiltersCallback = useRef<(() => void) | undefined>();
@@ -106,7 +102,12 @@ export function useAutomationDashboardView(options: {
     }
   }, [mainTableView, detailsResponse]);
 
-  const exportCsvBase = useExportCsv(toolbarFilters, filterState, QUERY_PARAMS);
+  const exportCsvBase = useExportCsv(
+    toolbarFilters,
+    filterState,
+    QUERY_PARAMS,
+    systemJobExclusionParams
+  );
 
   const exportCsv = useCallback(
     async (reportType: ReportType) => {
