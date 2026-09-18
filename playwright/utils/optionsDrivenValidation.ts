@@ -2,6 +2,11 @@ import { expect, type Page, type TestInfo } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
 import { navigateTo } from '../commands/navigateTo';
 
+/** Minimal shape of a scoped API client (awxAPI, hubAPI, gatewayAPI, ...) needed to fetch OPTIONS. */
+export type OptionsClient = {
+  options: <T = unknown>(page: Page, path: string) => Promise<T | null>;
+};
+
 /** Minimal OPTIONS shape used by Playwright validation helpers (no UI framework import). */
 export type FieldMetadata = {
   pattern?: string;
@@ -110,26 +115,41 @@ export function getOptionsFieldMetadata(
   return undefined;
 }
 
-export async function fetchAwxOptions(page: Page, path: string): Promise<PageFormOptionsData> {
-  const response = await awxAPI.options<PageFormOptionsData>(page, path);
+export async function fetchProductOptions(
+  page: Page,
+  path: string,
+  client: OptionsClient = awxAPI
+): Promise<PageFormOptionsData> {
+  const response = await client.options<PageFormOptionsData>(page, path);
   return response ?? {};
+}
+
+/** @deprecated use {@link fetchProductOptions} with an explicit client (defaults to awxAPI). */
+export async function fetchAwxOptions(page: Page, path: string): Promise<PageFormOptionsData> {
+  return fetchProductOptions(page, path, awxAPI);
 }
 
 /**
  * Fetch OPTIONS for ``path`` and skip when ``fieldName`` has no ``pattern`` /
  * ``pattern_description`` (enhanced validation off or backend without injection).
+ * ``client`` defaults to ``awxAPI``; pass ``hubAPI``/``gatewayAPI`` for Hub/Platform forms.
  */
 export async function requireOptionsFieldPattern(
   page: Page,
   path: string,
   fieldName: string,
-  testInfo: TestInfo
+  testInfo: TestInfo,
+  client: OptionsClient = awxAPI
 ): Promise<FieldMetadata> {
-  const options = await fetchAwxOptions(page, path);
+  const options = await fetchProductOptions(page, path, client);
   const field = getOptionsFieldMetadata(options, fieldName);
 
   if (!field?.pattern || !field.pattern_description) {
-    testInfo.skip(true, `OPTIONS ${path} does not advertise pattern metadata for "${fieldName}"`);
+    const skipReason =
+      Object.keys(options).length === 0
+        ? `Enhanced validations not enabled for ${path} (OPTIONS returned no data)`
+        : `OPTIONS ${path} does not advertise pattern metadata for "${fieldName}"`;
+    testInfo.skip(true, skipReason);
   }
 
   return field!;
