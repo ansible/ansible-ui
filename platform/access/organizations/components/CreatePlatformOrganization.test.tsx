@@ -113,7 +113,15 @@ describe('CreatePlatformOrganization', () => {
     expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('should handle creation with opa_query_path field', () => {
+  it('should call createOrganizationRequest with form values', () => {
+    const postSpy = vi.fn();
+    server.use(
+      http.post(gatewayAPI`/organizations/`, async ({ request }) => {
+        postSpy(await request.json());
+        return HttpResponse.json(mockOrganization);
+      })
+    );
+
     render(
       <MemoryRouter>
         <CreatePlatformOrganization />
@@ -123,7 +131,7 @@ describe('CreatePlatformOrganization', () => {
     expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
   });
 
-  it('should support optional opa_query_path in submission payload', () => {
+  it('should patch controller organization with opa_query_path when provided', () => {
     const patchSpy = vi.fn();
     server.use(
       http.patch(awxAPI`/organizations/1/`, async ({ request }) => {
