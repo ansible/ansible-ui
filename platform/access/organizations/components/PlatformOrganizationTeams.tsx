@@ -6,7 +6,6 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubesIcon, PanelCloseIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
@@ -29,6 +28,7 @@ import {
   useOrganizationTeamsRowActions,
   useOrganizationTeamsToolbarActions,
 } from '../hooks/useOrganizationTeamsActions';
+import { useOrganizationTeamsWithRoles } from '../hooks/useOrganizationTeamsWithRoles';
 
 export function PlatformOrganizationTeams() {
   const { t } = useTranslation();
@@ -42,11 +42,7 @@ export function PlatformOrganizationTeams() {
     error,
   } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations`, params.id);
 
-  const view = usePlatformView<PlatformTeam>({
-    url: gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/teams/`,
-    toolbarFilters,
-    tableColumns,
-  });
+  const view = useOrganizationTeamsWithRoles(organization?.id, toolbarFilters, tableColumns);
 
   const { data: createTeamOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
