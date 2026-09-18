@@ -15,6 +15,15 @@ Default to Vitest for unit/component work (see
 and live testing. For ports, env file, and stack commands, read
 `.claude/skills/frontend-overlay/SKILL.md`.
 
+## MCP workflow
+
+Use the configured Playwright MCP to manually inspect the relevant UI workflow
+before writing or changing an E2E test. Use accessible snapshots and locators,
+and reuse the existing commands and utilities afterward. When a browser failure
+is not explained by the Playwright trace, use Chrome DevTools MCP to inspect
+console messages, network requests, layout, or performance. Record the MCP
+validation performed in the handoff; never print credentials or secret values.
+
 ---
 
 ## Writing tests
