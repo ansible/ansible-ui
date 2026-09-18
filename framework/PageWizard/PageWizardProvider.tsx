@@ -10,7 +10,12 @@ import {
 } from 'react';
 import { useURLSearchParams } from '../components/useURLSearchParams';
 import type { PageWizardState } from './PageWizardState';
-import type { PageWizardParentStep, PageWizardStep } from './types';
+import {
+  isWizardSupplementalData,
+  type PageWizardParentStep,
+  type PageWizardStep,
+  type WizardSupplementalData,
+} from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
 
@@ -82,10 +87,10 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
         return Promise.resolve();
       }
 
-      let supplementalWizardData: object = {};
+      let supplementalWizardData: WizardSupplementalData = {};
       if (!isPageWizardParentStep(activeStep) && activeStep.validate) {
         const validateResult = await activeStep.validate(formData, wizardData);
-        if (validateResult && typeof validateResult === 'object') {
+        if (isWizardSupplementalData(validateResult)) {
           supplementalWizardData = validateResult;
         }
       }

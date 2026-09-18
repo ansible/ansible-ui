@@ -287,6 +287,40 @@ describe('PageWizard', () => {
     });
   });
 
+  it('ignores non-object validate results when choosing the next step', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: () => ['ignored'],
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-review')).toHaveTextContent('Review');
+    });
+  });
+
   describe('Substeps', () => {
     const stepsWithSubsteps = [
       {
