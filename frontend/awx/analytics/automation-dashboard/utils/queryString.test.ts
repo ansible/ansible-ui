@@ -584,9 +584,7 @@ describe('queryString', () => {
     });
 
     test('should return undefined when user has an active template filter', () => {
-      expect(
-        getSystemJobExclusionParams({ template: ['5'] }, templateIds)
-      ).toBeUndefined();
+      expect(getSystemJobExclusionParams({ template: ['5'] }, templateIds)).toBeUndefined();
     });
 
     test('should return undefined when templateIds is undefined (still loading)', () => {

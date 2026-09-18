@@ -4,7 +4,11 @@ import { useFetcher } from '@ansible/common-ui/crud/Data';
 import useSWR from 'swr';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { RequestError } from '../../../../common/crud/RequestError';
-import { getQueryString, getSystemJobExclusionParams, hasValidRequiredFilters } from '../utils/queryString';
+import {
+  getQueryString,
+  getSystemJobExclusionParams,
+  hasValidRequiredFilters,
+} from '../utils/queryString';
 
 export type IAutomationDashboardBaseView<T extends { id: number }> = IView & {
   itemCount: number | undefined;
@@ -32,8 +36,14 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
   /** When true, delays fetching until system job exclusion template IDs finish loading. */
   isLoadingSystemJobExclusionIds?: boolean;
 }): IAutomationDashboardBaseView<T> {
-  const { url, toolbarFilters, queryParams, defaultFilters, systemJobExclusionTemplateIds, isLoadingSystemJobExclusionIds } =
-    options;
+  const {
+    url,
+    toolbarFilters,
+    queryParams,
+    defaultFilters,
+    systemJobExclusionTemplateIds,
+    isLoadingSystemJobExclusionIds,
+  } = options;
 
   const view = useView({
     defaultValues: {
@@ -52,7 +62,10 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
     return hasValidRequiredFilters(toolbarFilters, view.filterState);
   }, [toolbarFilters, view.filterState]);
 
-  const extraSearchParams = getSystemJobExclusionParams(view.filterState, systemJobExclusionTemplateIds);
+  const extraSearchParams = getSystemJobExclusionParams(
+    view.filterState,
+    systemJobExclusionTemplateIds
+  );
   const queryString = getQueryString(
     view,
     toolbarFilters || [],
