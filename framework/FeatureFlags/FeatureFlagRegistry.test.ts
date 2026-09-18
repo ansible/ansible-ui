@@ -38,12 +38,14 @@ const definitions = {
     description: 'Example experimental view.',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
+    status: 'proposed',
   },
   defaultOnView: {
     defaultValue: true,
     description: 'Example default-on view.',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
+    status: 'production',
   },
 } satisfies FeatureFlagDefinitions;
 
