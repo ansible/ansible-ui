@@ -1,8 +1,11 @@
+export type FeatureFlagStatus = 'proposed' | 'alpha' | 'beta' | 'production' | 'deprecated';
+
 export interface FeatureFlagDefinition {
   readonly defaultValue: boolean;
   readonly description: string;
   readonly owner: string;
   readonly removalDate: string;
+  readonly status: FeatureFlagStatus;
 }
 
 export type FeatureFlagDefinitions = Readonly<Record<string, FeatureFlagDefinition>>;
