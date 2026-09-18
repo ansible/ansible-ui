@@ -24,5 +24,6 @@ export interface ActivityStream
     id: number;
     object1_pk: number;
     name: string;
+    role_definition?: string;
   };
 }
