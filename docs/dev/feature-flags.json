@@ -1,0 +1,14 @@
+{
+  "$schema": "./feature-flags.schema.json",
+  "flags": [
+    {
+      "name": "example-view",
+      "status": "proposed",
+      "defaultValue": false,
+      "scope": "client-only",
+      "description": "Example of an unfinished client-only view.",
+      "owner": "UI platform team",
+      "removalDate": "2026-12-31"
+    }
+  ]
+}
