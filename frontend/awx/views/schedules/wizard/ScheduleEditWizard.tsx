@@ -7,9 +7,11 @@ import { RRule, RRuleSet, rrulestr } from 'rrule';
 
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -35,6 +37,7 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
   const params = useParams<{ id?: string; schedule_id?: string }>();
 
   const { data: schedule } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
 
   const [startDate, time]: string[] = dateToInputDateTime(
     schedule?.dtstart as string,
@@ -115,6 +118,7 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
         stepDefaults={currentValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
+        optionsData={optionsData}
       />
     </PageLayout>
   );

@@ -110,6 +110,7 @@ export function CreateInventorySource() {
         submitText={t('Create source')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
+        optionsUrl={awxAPI`/inventory_sources/`}
         defaultValue={{
           name: '',
           description: '',
@@ -219,6 +220,7 @@ export function EditInventorySource() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={defaultValue}
+        optionsUrl={awxAPI`/inventory_sources/`}
       >
         <InventorySourceInputs />
       </AwxPageForm>

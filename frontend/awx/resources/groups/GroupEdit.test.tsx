@@ -35,6 +35,10 @@ const mockGroup = {
 };
 
 const server = setupServer(
+  http.options(
+    ({ request }) => request.url.includes('/groups/'),
+    () => HttpResponse.json({ actions: { POST: {} } })
+  ),
   http.get(
     ({ request }) => request.url.includes('/groups/') && request.url.includes('/1/'),
     () => HttpResponse.json(mockGroup)

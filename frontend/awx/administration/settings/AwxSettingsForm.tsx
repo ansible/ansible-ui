@@ -6,6 +6,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { PageFormOptionsData } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { Button, FormGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
@@ -198,6 +199,7 @@ export function AwxSettingsForm(props: {
       submitText={t('Save')}
       onCancel={() => void navigate('..')}
       onSubmit={onSubmit}
+      optionsData={{ actions: { PUT: props.options } } as PageFormOptionsData}
       additionalActions={
         <Button
           variant="secondary"

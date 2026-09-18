@@ -183,10 +183,34 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
   return <FormProvider {...form}>{children}</FormProvider>;
 }
 
-function renderSurveyStep(server: SetupServer, templateId: string, survey: Survey) {
+const surveySpecOptionsWithPatterns = {
+  actions: {
+    POST: {
+      spec: {
+        type: 'json',
+        question_name: {
+          pattern: '^[^<]+$',
+          pattern_description: 'No angle brackets in survey answer',
+        },
+      },
+    },
+  },
+};
+
+function renderSurveyStep(
+  server: SetupServer,
+  templateId: string,
+  survey: Survey,
+  options?: { surveySpecOptions?: object }
+) {
   const apiPath = awxAPI`/job_templates/${templateId}/survey_spec/`;
 
-  server.use(http.get(apiPath, () => HttpResponse.json(survey)));
+  server.use(
+    http.get(apiPath, () => HttpResponse.json(survey)),
+    http.options(apiPath, () =>
+      HttpResponse.json(options?.surveySpecOptions ?? { actions: { POST: {} } })
+    )
+  );
 
   vi.mocked(usePageWizard).mockReturnValue({
     wizardData: {
@@ -282,6 +306,43 @@ describe('SurveyStep', () => {
 
     await waitFor(() => {
       expect(document.querySelector('.pf-v6-c-form')).toBeInTheDocument();
+    });
+  });
+
+  test('applies survey_spec OPTIONS pattern validation to text survey answers', async () => {
+    const user = userEvent.setup();
+    const textSurvey: Survey = {
+      name: 'Text Survey',
+      description: '',
+      spec: [
+        {
+          question_name: 'Notes',
+          question_description: 'Enter notes',
+          required: false,
+          type: 'text',
+          variable: 'notes',
+          min: 0,
+          max: 1024,
+          default: '',
+          new_question: false,
+          choices: '',
+        },
+      ],
+    };
+
+    renderSurveyStep(server, '321', textSurvey, {
+      surveySpecOptions: surveySpecOptionsWithPatterns,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Notes')).toBeInTheDocument();
+    });
+
+    await user.type(screen.getByLabelText('Notes'), 'bad<script>');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(screen.getByText('No angle brackets in survey answer')).toBeInTheDocument();
     });
   });
 

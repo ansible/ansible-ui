@@ -1,8 +1,11 @@
 import { PageWizard, PageWizardStep } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { NodeModel, NodeShape, useVisualizationController } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { SurveyStep } from '../../../../common/SurveyStep';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 import { NODE_DIAMETER, RESOURCE_TYPE, START_NODE_ID } from '../constants';
 import { useCloseSidebar, useCreateEdge, useNodeTypeStepDefaults } from '../hooks';
@@ -48,6 +51,9 @@ export function NodeAddWizard() {
   const controller = useVisualizationController();
   const state = controller.getState<ControllerState>();
   const nodeTypeStepDefaults = useNodeTypeStepDefaults();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_template_nodes/`
+  );
 
   const initialValues: { [stepId: string]: Partial<WizardFormValues> } = {
     nodeTypeStep: nodeTypeStepDefaults(),
@@ -224,6 +230,7 @@ export function NodeAddWizard() {
       stepDefaults={initialValues}
       errorAdapter={awxErrorAdapter}
       title={t('Add step')}
+      optionsData={optionsData}
     />
   );
 }
