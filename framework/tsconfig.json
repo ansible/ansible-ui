@@ -1,5 +1,8 @@
 {
   "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noImplicitOverride": true
+  },
   "include": ["**/*", "../frontend/hub/**/*", "../types/*.d.ts"],
   "exclude": ["../frontend/hub/insights/**", "../frontend/hub/dist-insights/**"]
 }
