@@ -9,6 +9,7 @@ import { registerLaunchConfigLoad, type LaunchConfigLoadResult } from './launchC
 import {
   awaitNodeLaunchConfigForWizard,
   validateJobTemplateRequirements,
+  validateNodeTypeStep,
   validateRequiredCredentialTypes,
 } from './validationHelpers';
 
@@ -211,6 +212,75 @@ describe('validationHelpers', () => {
         launch_config: loadResult.launch_config,
         resource: loadResult.resource,
         resourceId: 8,
+      });
+    });
+
+    it('should clear stale launch_config when the selected template has no registered load', async () => {
+      await expect(
+        awaitNodeLaunchConfigForWizard(
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 2,
+          },
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+            launch_config: { survey_enabled: true } as LaunchConfiguration,
+          }
+        )
+      ).resolves.toEqual({
+        launch_config: null,
+        resourceId: 2,
+      });
+    });
+  });
+
+  describe('validateNodeTypeStep', () => {
+    const mockSimpleT = (key: string) => key;
+
+    it('should validate the loaded resource rather than form-only values', async () => {
+      registerLaunchConfigLoad(
+        RESOURCE_TYPE.job,
+        5,
+        Promise.resolve({
+          launch_config: null,
+          resource: {
+            type: 'job_template',
+            project: null,
+            inventory: 1,
+            ask_inventory_on_launch: false,
+          } as unknown as JobTemplate,
+          resourceId: 5,
+        })
+      );
+
+      await expect(
+        validateNodeTypeStep(
+          mockSimpleT,
+          { node_type: RESOURCE_TYPE.job, resourceId: 5 },
+          { launch_config: { survey_enabled: true } as LaunchConfiguration, resourceId: 1 }
+        )
+      ).rejects.toBeInstanceOf(RequestError);
+    });
+
+    it('should merge form resourceId over stale wizard launch_config when a load completes', async () => {
+      const loadResult: LaunchConfigLoadResult = {
+        launch_config: { survey_enabled: false } as LaunchConfiguration,
+        resource: { id: 5, name: 'Deploy', type: 'job_template' } as JobTemplate,
+        resourceId: 5,
+      };
+      registerLaunchConfigLoad(RESOURCE_TYPE.job, 5, Promise.resolve(loadResult));
+
+      await expect(
+        validateNodeTypeStep(
+          mockSimpleT,
+          { node_type: RESOURCE_TYPE.job, resourceId: 5 },
+          { launch_config: { survey_enabled: true } as LaunchConfiguration, resourceId: 1 }
+        )
+      ).resolves.toEqual({
+        launch_config: loadResult.launch_config,
+        resource: loadResult.resource,
+        resourceId: 5,
       });
     });
   });

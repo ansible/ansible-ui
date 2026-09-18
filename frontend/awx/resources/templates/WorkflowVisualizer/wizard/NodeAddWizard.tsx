@@ -20,11 +20,7 @@ import {
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import {
-  awaitNodeLaunchConfigForWizard,
-  validateJobTemplateRequirements,
-  validateRequiredCredentialTypes,
-} from './validationHelpers';
+import { validateNodeTypeStep, validateRequiredCredentialTypes } from './validationHelpers';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -71,10 +67,12 @@ export function NodeAddWizard() {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep hasSourceNode={Boolean(state.sourceNode)} />,
-      validate: async (wizardData: Partial<WizardFormValues>) => {
-        validateJobTemplateRequirements(t, wizardData);
-        return await awaitNodeLaunchConfigForWizard(wizardData);
-      },
+      validate: async (formData: object, wizardData: object) =>
+        validateNodeTypeStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>
+        ),
     },
     {
       id: 'nodePromptsStep',

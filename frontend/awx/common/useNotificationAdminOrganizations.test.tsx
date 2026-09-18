@@ -3,7 +3,12 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from './api/awx-utils';
-import { useNotificationAdminOrganizations } from './useNotificationAdminOrganizations';
+import { AwxItemsResponse } from './AwxItemsResponse';
+import { Organization } from '../interfaces/Organization';
+import {
+  canViewNotificationsTab,
+  useNotificationAdminOrganizations,
+} from './useNotificationAdminOrganizations';
 
 const server = setupServer(
   http.get(awxAPI`/organizations/`, () =>
@@ -41,5 +46,34 @@ describe('useNotificationAdminOrganizations', () => {
     });
 
     expect(result.current.notificationAdminOrganizations).toBeUndefined();
+  });
+});
+
+describe('canViewNotificationsTab', () => {
+  it('returns true for a system auditor', () => {
+    expect(canViewNotificationsTab({ is_system_auditor: true })).toBe(true);
+  });
+
+  it('returns true when the user can add notification templates in an organization', () => {
+    const organizations = {
+      count: 1,
+      results: [{ id: 1, name: 'Default' }],
+      next: null,
+      previous: null,
+    } as AwxItemsResponse<Organization>;
+
+    expect(canViewNotificationsTab({ is_system_auditor: false }, organizations)).toBe(true);
+  });
+
+  it('returns false when the lookup is empty or missing', () => {
+    expect(canViewNotificationsTab({ is_system_auditor: false })).toBe(false);
+    expect(
+      canViewNotificationsTab(undefined, {
+        count: 0,
+        results: [],
+        next: null,
+        previous: null,
+      })
+    ).toBe(false);
   });
 });

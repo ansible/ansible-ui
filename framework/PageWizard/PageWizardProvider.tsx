@@ -103,7 +103,7 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
       if (isLastStep) {
         setIsSubmitting(true);
         try {
-          await onSubmit(wizardData);
+          await onSubmit(mergedWizardData as DataT);
         } catch (e) {
           setSubmitError(e instanceof Error ? e : new Error(t('An error occurred.')));
         } finally {

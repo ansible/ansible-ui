@@ -322,6 +322,36 @@ describe('PageWizard', () => {
     });
   });
 
+  it('submits merged form and supplemental data from the last step', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const lastStepSteps = [
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+        validate: () => ({ confirmed: true }),
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={lastStepSteps}
+          onCancel={vi.fn()}
+          onSubmit={onSubmit}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ confirmed: true });
+    });
+  });
+
   describe('Substeps', () => {
     const stepsWithSubsteps = [
       {

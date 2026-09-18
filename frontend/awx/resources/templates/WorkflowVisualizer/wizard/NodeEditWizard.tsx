@@ -22,11 +22,7 @@ import { buildEffectivePrompt } from './buildEffectivePrompt';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import {
-  awaitNodeLaunchConfigForWizard,
-  validateJobTemplateRequirements,
-  validateRequiredCredentialTypes,
-} from './validationHelpers';
+import { validateNodeTypeStep, validateRequiredCredentialTypes } from './validationHelpers';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -76,10 +72,12 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep />,
-      validate: async (wizardData: Partial<WizardFormValues>) => {
-        validateJobTemplateRequirements(t, wizardData);
-        return await awaitNodeLaunchConfigForWizard(wizardData);
-      },
+      validate: async (formData: object, wizardData: object) =>
+        validateNodeTypeStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>
+        ),
     },
     {
       id: 'nodePromptsStep',

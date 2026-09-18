@@ -55,7 +55,8 @@ export function validateRequiredCredentialTypes(
 }
 
 export async function awaitNodeLaunchConfigForWizard(
-  wizardData: Partial<WizardFormValues>
+  wizardData: Partial<WizardFormValues>,
+  previousWizardData: Partial<WizardFormValues> = {}
 ): Promise<Partial<WizardFormValues> | undefined> {
   const { node_type, resourceId } = wizardData;
   if (
@@ -66,15 +67,32 @@ export async function awaitNodeLaunchConfigForWizard(
   }
 
   const loadResult = await awaitLaunchConfigLoad(node_type, resourceId);
-  if (!loadResult) {
-    return undefined;
+  if (loadResult) {
+    return {
+      launch_config: loadResult.launch_config,
+      resource: loadResult.resource,
+      resourceId: loadResult.resourceId,
+    };
   }
 
-  return {
-    launch_config: loadResult.launch_config,
-    resource: loadResult.resource,
-    resourceId: loadResult.resourceId,
-  };
+  // Drop stale prompt flags from a previously selected template when the new
+  // template's launch config is not available yet.
+  if (previousWizardData.launch_config && previousWizardData.resourceId !== resourceId) {
+    return { launch_config: null, resourceId };
+  }
+
+  return undefined;
+}
+
+export async function validateNodeTypeStep(
+  t: (key: string) => string,
+  formData: Partial<WizardFormValues>,
+  wizardData: Partial<WizardFormValues> = {}
+): Promise<Partial<WizardFormValues> | undefined> {
+  const merged = { ...wizardData, ...formData };
+  const supplemental = await awaitNodeLaunchConfigForWizard(merged, wizardData);
+  validateJobTemplateRequirements(t, { ...merged, ...supplemental });
+  return supplemental;
 }
 
 export function validateJobTemplateRequirements(
