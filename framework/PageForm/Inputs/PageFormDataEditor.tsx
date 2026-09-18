@@ -307,9 +307,13 @@ export function PageFormDataEditor<
                     language={language}
                     value={dataEditorValue}
                     onChange={handleChange}
-                    setError={(error) => {
-                      if (!error) clearErrors(name);
-                      else setError(name, { message: error });
+                    setError={(editorError) => {
+                      if (editorError) {
+                        parseErrorRef.current = editorError;
+                        setError(name, { message: editorError });
+                      } else if (!parseErrorRef.current) {
+                        clearErrors(name);
+                      }
                     }}
                     isReadOnly={props.isReadOnly || isSubmitting}
                     className={
@@ -554,12 +558,19 @@ export function valueToObject(
         // If invalid YAML, fall through to normal processing
       }
     }
+    const rawString = value;
     try {
       value = parseJSONPreservingLargeInts(value) as object;
     } catch {
       // JSON parsing failed — try YAML
       try {
-        value = safeLoad(value as string) as object;
+        const parsed = safeLoad(rawString);
+        // Whitespace-only strings (e.g. a lone space while typing in JSON mode) load as
+        // `undefined` but must not commit as empty extra_vars and wipe saved content.
+        if (parsed === undefined && rawString !== '') {
+          throw new YAMLException('invalid or incomplete YAML/JSON content');
+        }
+        value = parsed as object;
       } catch (err) {
         // Both JSON and YAML parsing failed. Throw so the caller (handleChange)
         // treats this as a validation error rather than silently returning the
