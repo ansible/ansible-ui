@@ -238,6 +238,12 @@ describe('ActivationInstanceEvents', () => {
               log_timestamp: 1,
               activation_instance: 1,
             },
+            {
+              id: 2,
+              log: 'newest log',
+              log_timestamp: 2,
+              activation_instance: 1,
+            },
           ],
         });
       })
@@ -274,6 +280,7 @@ describe('ActivationInstanceEvents', () => {
     await waitFor(() => {
       expect(screen.getByText('older log')).toBeInTheDocument();
     });
+    expect(screen.getAllByText('newest log')).toHaveLength(1);
     expect(
       requestedQueryParams.some((queryParams) => queryParams.get('log_timestamp__lt') === '2')
     ).toBe(true);

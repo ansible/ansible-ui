@@ -16,6 +16,19 @@ import { ActivationInstanceOutputRow } from './ActivationInstanceOutputRow';
 const INITIAL_PAGE_SIZE = 5000;
 const POLL_INTERVAL_MS = 5000;
 
+function mergeUniqueLogs(
+  existingLogs: EdaActivationInstanceLog[],
+  incomingLogs: EdaActivationInstanceLog[],
+  position: 'prepend' | 'append'
+) {
+  const existingLogIds = new Set(existingLogs.map((log) => log.id));
+  const uniqueIncomingLogs = incomingLogs.filter((log) => !existingLogIds.has(log.id));
+
+  return position === 'prepend'
+    ? [...uniqueIncomingLogs, ...existingLogs]
+    : [...existingLogs, ...uniqueIncomingLogs];
+}
+
 const ScrollContainer = styled.div`
   flex: 1;
   min-height: 0;
@@ -146,11 +159,7 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
 
         const newLogs = response.results ?? [];
         if (newLogs.length > 0) {
-          setLogs((previousLogs) => {
-            const seen = new Set(previousLogs.map((log) => log.id));
-            const dedupedLogs = newLogs.filter((log) => !seen.has(log.id));
-            return [...previousLogs, ...dedupedLogs];
-          });
+          setLogs((previousLogs) => mergeUniqueLogs(previousLogs, newLogs, 'append'));
           latestTimestampRef.current =
             newLogs[newLogs.length - 1].log_timestamp ?? latestTimestampRef.current;
         }
@@ -188,11 +197,7 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
 
       const olderLogs = response.results ?? [];
       if (olderLogs.length > 0) {
-        setLogs((previousLogs) => {
-          const seen = new Set(previousLogs.map((log) => log.id));
-          const dedupedLogs = olderLogs.filter((log) => !seen.has(log.id));
-          return [...dedupedLogs, ...previousLogs];
-        });
+        setLogs((previousLogs) => mergeUniqueLogs(previousLogs, olderLogs, 'prepend'));
         oldestTimestampRef.current = olderLogs[0].log_timestamp ?? oldestTimestampRef.current;
       }
       setHasOlderLogs((response.count ?? 0) > INITIAL_PAGE_SIZE);
