@@ -192,4 +192,38 @@ describe('EditPlatformOrganization', () => {
 
     expect(screen.getByText('Review')).toBeInTheDocument();
   });
+
+  it('should support opa_query_path field in organization updates', async () => {
+    const patchSpy = vi.fn(() => HttpResponse.json(mockControllerOrganization));
+    server.use(http.patch(awxAPI`/organizations/100/`, patchSpy));
+
+    render(
+      <MemoryRouter initialEntries={['/organizations/1/edit']}>
+        <Routes>
+          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle controller organization patch with opa_query_path as null', async () => {
+    const patchSpy = vi.fn(() => HttpResponse.json(mockControllerOrganization));
+    server.use(http.patch(awxAPI`/organizations/100/`, patchSpy));
+
+    render(
+      <MemoryRouter initialEntries={['/organizations/1/edit']}>
+        <Routes>
+          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+    });
+  });
 });
