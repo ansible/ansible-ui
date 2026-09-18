@@ -484,4 +484,91 @@ debug_mode: true         # Enable debugging`;
     // onSubmit must not have been called.
     expect(onSubmit).not.toHaveBeenCalled();
   });
+
+  test('should allow submit after invalid YAML is corrected to valid YAML (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: '  ---\n  a: b' },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'abc: 123' },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/end of the stream or a document separator is expected/i)
+      ).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ vars: 'abc: 123' }, expect.any(Object));
+    });
+  });
+
+  test('should apply custom validate function together with parseFormat rule', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const customValidate = vi.fn(() => 'Custom validation failed');
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          validate={customValidate}
+        />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(customValidate).toHaveBeenCalled();
+      expect(screen.getByText('Custom validation failed')).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  test('should apply custom validate rules object together with parseFormat rule', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          validate={{
+            rejectValue: () => 'Object rule validation failed',
+          }}
+        />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Object rule validation failed')).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });
