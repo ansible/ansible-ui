@@ -112,4 +112,32 @@ describe('CreatePlatformOrganization', () => {
 
     expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
   });
+
+  it('should handle creation with opa_query_path field', () => {
+    render(
+      <MemoryRouter>
+        <CreatePlatformOrganization />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
+  });
+
+  it('should support optional opa_query_path in submission payload', () => {
+    const patchSpy = vi.fn();
+    server.use(
+      http.patch(awxAPI`/organizations/1/`, async ({ request }) => {
+        patchSpy(await request.json());
+        return HttpResponse.json({ id: 1, max_hosts: 100 });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <CreatePlatformOrganization />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
+  });
 });

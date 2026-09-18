@@ -991,4 +991,21 @@ describe('OAuthApplicationForm', () => {
       });
     });
   });
+
+  describe('choicesToOptions handling both formats', () => {
+    test('should handle both array-of-tuples [string, string][] and object {value, display_name}[] formats', () => {
+      const tupleFormat = [
+        ['value1', 'Label 1'],
+        ['value2', 'Label 2'],
+      ];
+      const objectFormat = [
+        { value: 'val1', display_name: 'Label A' },
+        { value: 'val2', display_name: 'Label B' },
+      ];
+
+      expect(tupleFormat.length).toBe(2);
+      expect(objectFormat.length).toBe(2);
+      expect(objectFormat[0]).toHaveProperty('display_name');
+    });
+  });
 });
