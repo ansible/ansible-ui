@@ -485,6 +485,8 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           isStickyHeader
           style={{
             borderCollapse: 'separate',
+            minHeight: 0,
+            transform: 'translateZ(0)',
           }}
         >
           <TableHead
@@ -496,7 +498,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             expandColumnWidth={expandColumnWidth}
             setExpandColumnWidth={setExpandColumnWidth}
           />
-          <Tbody>
+          <Tbody style={{ transform: 'translateZ(0)' }}>
             {pageItems.map((item, rowIndex) => (
               <TableRow<T>
                 key={keyFn ? keyFn(item) : rowIndex}
