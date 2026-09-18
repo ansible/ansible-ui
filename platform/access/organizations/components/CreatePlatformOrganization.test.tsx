@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
@@ -131,12 +132,13 @@ describe('CreatePlatformOrganization', () => {
     expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
   });
 
-  it('should patch controller organization with opa_query_path when provided', () => {
+  it('should patch controller organization with opa_query_path when provided', async () => {
+    const user = userEvent.setup({ delay: null });
     const patchSpy = vi.fn();
     server.use(
       http.patch(awxAPI`/organizations/1/`, async ({ request }) => {
         patchSpy(await request.json());
-        return HttpResponse.json({ id: 1, max_hosts: 100 });
+        return HttpResponse.json({ id: 1, max_hosts: 100, opa_query_path: '/path/to/policy' });
       })
     );
 
@@ -146,6 +148,26 @@ describe('CreatePlatformOrganization', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
+    });
+
+    const nameInput = screen.getByLabelText(/Name/i);
+    await user.type(nameInput, 'Test Org');
+
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    await user.click(nextButton);
+
+    await waitFor(() => {
+      const finishButton = screen.getByRole('button', { name: /finish/i });
+      expect(finishButton).toBeInTheDocument();
+    });
+
+    const finishButton = screen.getByRole('button', { name: /finish/i });
+    await user.click(finishButton);
+
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalled();
+    });
   });
 });
