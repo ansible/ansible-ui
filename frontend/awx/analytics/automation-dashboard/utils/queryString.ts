@@ -144,6 +144,21 @@ export function getPeriodFilterParam(filterState: IFilterState, filter: IToolbar
   }
 }
 
+/**
+ * Returns system-job-exclusion search params when no user template filter
+ * is active. Returns `undefined` when the user has an explicit template
+ * filter or when template IDs are not yet available.
+ */
+export function getSystemJobExclusionParams(
+  filterState: IFilterState | undefined,
+  templateIds: [string, string][] | undefined
+): [string, string][] | undefined {
+  const hasUserTemplateFilter =
+    filterState?.template && filterState.template.length > 0;
+  if (hasUserTemplateFilter || !templateIds?.length) return undefined;
+  return templateIds;
+}
+
 function getFilterParam(
   filterState: IFilterState,
   filter?: IToolbarFilter

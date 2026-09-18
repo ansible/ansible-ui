@@ -534,6 +534,28 @@ describe('useAutomationDashboardBaseView', () => {
     expect(url.searchParams.getAll('template')).toEqual([]);
   });
 
+  test('should not fetch when isLoadingSystemJobExclusionIds is true', async () => {
+    let fetchCalled = false;
+    server.use(
+      http.get(metricsAPI`/test/`, () => {
+        fetchCalled = true;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        isLoadingSystemJobExclusionIds: true,
+      })
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(fetchCalled).toBe(false);
+    expect(result.current.pageItems).toBeUndefined();
+  });
+
   test('should not include systemJobExclusionTemplateIds when undefined', async () => {
     let capturedUrl = '';
     server.use(

@@ -5,6 +5,7 @@ import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { QUERY_PARAMS, useAutomationDashboardView } from './useAutomationDashboardView';
 import { useAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 import type { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
+import { useExportCsv } from './useExportCsv';
 
 // ─── Hoisted mocks (run before vi.mock factories) ─────────────────────────────
 
@@ -72,11 +73,15 @@ vi.mock('./useExportCsv', () => ({
 }));
 
 vi.mock('../common/useJobTemplateIds', () => ({
-  useJobTemplateIds: vi.fn(() => [
-    ['template', '1'],
-    ['template', '2'],
-    ['template', '3'],
-  ]),
+  useJobTemplateIds: vi.fn(() => ({
+    templateIds: [
+      ['template', '1'],
+      ['template', '2'],
+      ['template', '3'],
+    ],
+    isLoading: false,
+    error: undefined,
+  })),
 }));
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -234,5 +239,26 @@ describe('useAutomationDashboardView', () => {
     });
 
     expect(result.current.loading).toBe(false);
+  });
+
+  // --- System job exclusion wiring ---
+
+  test('should pass systemJobExclusionParams to useExportCsv', () => {
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useExportCsv)).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.arrayContaining([['template', '1']])
+    );
+  });
+
+  test('should pass isLoadingSystemJobExclusionIds to base view', () => {
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: false })
+    );
   });
 });

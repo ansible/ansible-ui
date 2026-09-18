@@ -22,6 +22,7 @@ const mockTemplates: TemplateRecord[] = [
 
 const mockResponse: AwxItemsResponse<TemplateRecord> = {
   count: 3,
+  next: null,
   results: mockTemplates,
 };
 
@@ -38,54 +39,45 @@ afterAll(() => server.close());
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('useJobTemplateIds', () => {
-  test('should return empty array initially', () => {
+  test('should return undefined templateIds and isLoading true initially', () => {
     const { result } = renderHook(() => useJobTemplateIds());
-    expect(result.current).toEqual([]);
+    expect(result.current.templateIds).toBeUndefined();
+    expect(result.current.isLoading).toBe(true);
   });
 
   test('should fetch and return template IDs as URLSearchParams format', async () => {
     const { result } = renderHook(() => useJobTemplateIds());
 
     await waitFor(() => {
-      expect(result.current.length).toBeGreaterThan(0);
+      expect(result.current.templateIds).toBeDefined();
     });
 
-    expect(result.current).toEqual([
+    expect(result.current.templateIds).toEqual([
       ['template', '1'],
       ['template', '2'],
       ['template', '3'],
     ]);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.error).toBeUndefined();
   });
 
   test('should return empty array when API returns no results', async () => {
     server.use(
       http.get(metricsAPI`/dashboard_reports/templates/`, () =>
-        HttpResponse.json({ count: 0, results: [] })
+        HttpResponse.json({ count: 0, next: null, results: [] })
       )
     );
 
     const { result } = renderHook(() => useJobTemplateIds());
 
     await waitFor(() => {
-      expect(result.current).toEqual([]);
+      expect(result.current.isLoading).toBe(false);
     });
+
+    expect(result.current.templateIds).toEqual([]);
   });
 
-  test('should return empty array when API returns undefined results', async () => {
-    server.use(
-      http.get(metricsAPI`/dashboard_reports/templates/`, () =>
-        HttpResponse.json({ count: 0, results: undefined })
-      )
-    );
-
-    const { result } = renderHook(() => useJobTemplateIds());
-
-    await waitFor(() => {
-      expect(result.current).toEqual([]);
-    });
-  });
-
-  test('should handle API errors gracefully', () => {
+  test('should expose error when API fails', async () => {
     server.use(
       http.get(metricsAPI`/dashboard_reports/templates/`, () =>
         HttpResponse.json({}, { status: 500 })
@@ -94,8 +86,11 @@ describe('useJobTemplateIds', () => {
 
     const { result } = renderHook(() => useJobTemplateIds());
 
-    // Should return empty array on error
-    expect(result.current).toEqual([]);
+    await waitFor(() => {
+      expect(result.current.error).toBeDefined();
+    });
+
+    expect(result.current.templateIds).toBeUndefined();
   });
 
   test('should convert template IDs to strings', async () => {
@@ -103,6 +98,7 @@ describe('useJobTemplateIds', () => {
       http.get(metricsAPI`/dashboard_reports/templates/`, () =>
         HttpResponse.json({
           count: 2,
+          next: null,
           results: [
             { id: 123, name: 'Large ID Template' },
             { id: 456, name: 'Another Large ID' },
@@ -114,40 +110,48 @@ describe('useJobTemplateIds', () => {
     const { result } = renderHook(() => useJobTemplateIds());
 
     await waitFor(() => {
-      expect(result.current.length).toBe(2);
+      expect(result.current.templateIds).toBeDefined();
     });
 
-    expect(result.current).toEqual([
+    expect(result.current.templateIds).toEqual([
       ['template', '123'],
       ['template', '456'],
     ]);
 
-    // Verify they are strings, not numbers
-    expect(typeof result.current[0][1]).toBe('string');
+    expect(typeof result.current.templateIds![0][1]).toBe('string');
   });
 
-  test('should handle large number of templates', async () => {
-    const largeTemplateList = Array.from({ length: 1000 }, (_, i) => ({
+  test('should paginate through multiple pages of templates', async () => {
+    const page1Results = Array.from({ length: 200 }, (_, i) => ({
       id: i + 1,
       name: `Template ${i + 1}`,
     }));
+    const page2Results = Array.from({ length: 50 }, (_, i) => ({
+      id: i + 201,
+      name: `Template ${i + 201}`,
+    }));
 
     server.use(
-      http.get(metricsAPI`/dashboard_reports/templates/`, () =>
-        HttpResponse.json({
-          count: 1000,
-          results: largeTemplateList,
-        })
-      )
+      http.get(metricsAPI`/dashboard_reports/templates/`, ({ request }) => {
+        const page = new URL(request.url).searchParams.get('page');
+        if (page === '2') {
+          return HttpResponse.json({ count: 250, next: null, results: page2Results });
+        }
+        return HttpResponse.json({
+          count: 250,
+          next: 'http://localhost/dashboard_reports/templates/?page=2',
+          results: page1Results,
+        });
+      })
     );
 
     const { result } = renderHook(() => useJobTemplateIds());
 
     await waitFor(() => {
-      expect(result.current.length).toBe(1000);
+      expect(result.current.templateIds?.length).toBe(250);
     });
 
-    expect(result.current[0]).toEqual(['template', '1']);
-    expect(result.current[999]).toEqual(['template', '1000']);
+    expect(result.current.templateIds![0]).toEqual(['template', '1']);
+    expect(result.current.templateIds![249]).toEqual(['template', '250']);
   });
 });
