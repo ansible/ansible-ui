@@ -17,9 +17,52 @@ export interface CreateEdaCredentialOptions {
 export interface CreateEdaCredentialAPIOptions {
   name: string;
   organizationName?: string;
+  organizationId?: number;
   credentialTypeName: string;
   description?: string;
   inputs?: Record<string, unknown>;
+}
+
+// Default inputs for EdaCredential.api.create. Rule-engine keys must match the
+// POST /eda-credentials/ payload sent by the credential create form (compare with
+// EdaCredential.ui.create and a browser network trace when this type changes).
+// Missing fields cause activation saves with event persistence to return 500.
+function getDefaultCredentialInputs(credentialTypeName: string): Record<string, unknown> {
+  switch (credentialTypeName) {
+    case 'Red Hat Ansible Automation':
+    case 'Red Hat Ansible Automation Platform':
+      return {
+        host: 'https://1.1.1.1/',
+        username: 'test',
+        password: 'test',
+      };
+    case 'Event-Driven Ansible Rule Engine':
+      return {
+        postgres_db_host: 'localhost',
+        postgres_db_port: '5432',
+        postgres_db_name: 'test_db',
+        postgres_db_user: '',
+        postgres_db_password: '',
+        postgres_sslmode: 'prefer',
+        postgres_sslcert: '',
+        postgres_sslkey: '',
+        postgres_sslpassword: '',
+        postgres_sslrootcert: '',
+        primary_encryption_secret: '',
+        secondary_encryption_secret: '',
+        expired_window_grace_period: '',
+        deduplication_window_size: '5',
+        overwrite_if_rulebook_changes: true,
+        aes_salt: '',
+      };
+    case 'Basic Event Stream':
+      return {
+        username: 'test',
+        password: 'test',
+      };
+    default:
+      return {};
+  }
 }
 
 export const EdaCredential = {
@@ -28,15 +71,18 @@ export const EdaCredential = {
       page: Page,
       options: CreateEdaCredentialAPIOptions
     ): Promise<EdaCredentialInterface> => {
-      const organizationName = options.organizationName ?? 'Default';
-      const organizations = await edaAPI.get<{ results: { id: number; name: string }[] }>(
-        page,
-        `organizations/?name=${encodeURIComponent(organizationName)}`
-      );
-      if (!organizations?.results || organizations.results.length === 0) {
-        throw new Error(`Organization '${organizationName}' not found`);
+      let organizationId = options.organizationId;
+      if (!organizationId) {
+        const organizationName = options.organizationName ?? 'Default';
+        const organizations = await edaAPI.get<{ results: { id: number; name: string }[] }>(
+          page,
+          `organizations/?name=${encodeURIComponent(organizationName)}`
+        );
+        if (!organizations?.results || organizations.results.length === 0) {
+          throw new Error(`Organization '${organizationName}' not found`);
+        }
+        organizationId = organizations.results[0].id;
       }
-      const organizationId = organizations.results[0].id;
 
       const credentialTypes = await edaAPI.get<{ results: { id: number; name: string }[] }>(
         page,
@@ -52,7 +98,10 @@ export const EdaCredential = {
         organization_id: organizationId,
         credential_type_id: credentialTypeId,
         description: options.description,
-        inputs: options.inputs || {},
+        inputs: {
+          ...getDefaultCredentialInputs(options.credentialTypeName),
+          ...options.inputs,
+        },
       })) as EdaCredentialInterface;
 
       return credential;
