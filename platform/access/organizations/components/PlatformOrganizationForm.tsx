@@ -6,6 +6,7 @@ import {
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { Credential as ControllerCredential } from '@ansible/awx-ui/interfaces/Credential';
 import { InstanceGroup as ControllerInstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
@@ -17,6 +18,9 @@ import { OrganizationDetailsStep } from './steps/OrganizationDetailsStep';
 import { OrganizationGalaxyCredentialsOrderStep } from './steps/OrganizationGalaxyCredentialsOrderStep';
 import { OrganizationInstanceGroupsOrderStep } from './steps/OrganizationInstanceGroupsOrderStep';
 import { OrganizationReviewStep } from './steps/OrganizationReviewStep';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 
 export interface OrganizationWizardFormValues {
   organization: PlatformOrganization;
@@ -24,7 +28,7 @@ export interface OrganizationWizardFormValues {
   galaxyCredentials?: ControllerCredential[];
   executionEnvironment?: number;
   maxHosts?: number;
-  policy?: string;
+  opa_query_path?: string;
 }
 
 interface OrganizationFormProps {
@@ -40,6 +44,26 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const awxService = useHasAwxService();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/organizations/`
+  );
+  const { data: awxOrganizationOptionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/organizations/`
+  );
+
+  const mergedOptionsData =
+    optionsData || awxOrganizationOptionsData
+      ? {
+          ...optionsData,
+          actions: {
+            ...optionsData?.actions,
+            POST: {
+              ...optionsData?.actions?.POST,
+              ...awxOrganizationOptionsData?.actions?.POST,
+            },
+          },
+        }
+      : undefined;
 
   const steps: PageWizardStep[] = [
     {
@@ -110,7 +134,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
       instanceGroups: instanceGroups || [],
       executionEnvironment: controllerOrganization?.summary_fields?.default_environment?.id,
       maxHosts: controllerOrganization?.max_hosts || 0,
-      policy: controllerOrganization?.opa_query_path,
+      opa_query_path: controllerOrganization?.opa_query_path,
     },
   };
 
@@ -136,6 +160,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
         stepDefaults={defaultValues}
         onSubmit={props.handleSubmit}
         errorAdapter={awxErrorAdapter}
+        optionsData={mergedOptionsData}
         disableGrid
       />
     </PageLayout>

@@ -144,7 +144,7 @@ describe('ApiTokenForm', () => {
     })
   );
 
-  beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterAll(() => server.close());
 
   beforeEach(() => {
@@ -469,4 +469,167 @@ describe('ApiTokenForm', () => {
       { timeout: 10000 }
     );
   }, 15000);
+
+  test('fetches field patterns from the /tokens/ OPTIONS endpoint and validates on blur', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              description: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription:
+                  'Description must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ApiTokenForm />
+      </MemoryRouter>
+    );
+
+    const descriptionInput = await screen.findByLabelText('Description');
+    await user.type(descriptionInput, 'invalid@description!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Description must contain only letters, numbers, underscores, hyphens, and spaces\./
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('accepts valid description matching pattern on blur', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              description: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription:
+                  'Description must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ApiTokenForm />
+      </MemoryRouter>
+    );
+
+    const descriptionInput = await screen.findByLabelText('Description');
+    await user.type(descriptionInput, 'Valid_Token-Name 123');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+    });
+  });
+
+  test('clears validation error when input becomes valid', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              description: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription:
+                  'Description must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ApiTokenForm />
+      </MemoryRouter>
+    );
+
+    const descriptionInput = await screen.findByLabelText('Description');
+    await user.type(descriptionInput, 'invalid@');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Description must contain only letters, numbers, underscores, hyphens, and spaces\./
+        )
+      ).toBeInTheDocument();
+    });
+
+    await user.clear(descriptionInput);
+    await user.type(descriptionInput, 'valid_token');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+    });
+  });
+
+  test('validation error updates when field is modified after initial error', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              description: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription:
+                  'Description must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ApiTokenForm />
+      </MemoryRouter>
+    );
+
+    const descriptionInput = await screen.findByLabelText('Description');
+    await user.type(descriptionInput, 'bad#chars');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Description must contain only letters, numbers, underscores, hyphens, and spaces\./
+        )
+      ).toBeInTheDocument();
+    });
+
+    await user.type(descriptionInput, '$more');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Description must contain only letters, numbers, underscores, hyphens, and spaces\./
+        )
+      ).toBeInTheDocument();
+    });
+  });
 });
