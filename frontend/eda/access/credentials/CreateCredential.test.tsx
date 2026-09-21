@@ -57,6 +57,8 @@ const mockCredentialTypesResponse = {
             label: 'Authentication URL',
             default: 'quay.io',
             help_text: 'Authentication endpoint for the container registry.',
+            pattern: '^https?://',
+            pattern_description: 'Must start with http:// or https://',
           },
           {
             id: 'username',
