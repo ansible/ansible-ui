@@ -9,35 +9,14 @@ import {
 import { AutomationLeaderboards, CARD_WIDTH_COL_SPAN } from './AutomationLeaderboards';
 import type { AutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
+import { createLeaderboardsView } from './views/useAutomationLeaderboardsView.testUtils';
 
 vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
 vi.mock('./views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: vi.fn(),
 }));
 
-const baseView: AutomationLeaderboardsView = {
-  isLoading: false,
-  error: undefined,
-  lastSyncedAt: '2026-09-01T14:00:00.000Z',
-  atAGlance: {
-    jobsRun: 0,
-    activeOrganizations: 0,
-    featuredTemplate: { name: '', runs: 0 },
-    enterpriseStreakDays: 0,
-    orgStreakDays: 0,
-  },
-  streakCalendar: [],
-  dimensions: {
-    volume: { score: 0, rank: 0, totalRanked: 0 },
-    breadth: { score: 0, rank: 0, totalRanked: 0 },
-    consistency: { score: 0, rank: 0, totalRanked: 0 },
-  },
-  dimensionLeaderboards: { volume: [], breadth: [], consistency: [] },
-  organizationLeaderboard: [],
-  currentOrgStanding: { rank: 0, totalRuns: 0 },
-  earnedUserAchievements: [],
-  earnedOrgAchievements: [],
-};
+const baseView = createLeaderboardsView();
 
 function renderLeaderboards(view: Partial<AutomationLeaderboardsView>) {
   vi.mocked(useAutomationLeaderboardsView).mockReturnValue({ ...baseView, ...view });
@@ -99,6 +78,15 @@ describe('AutomationLeaderboards', () => {
     expect(screen.queryByText(/Updated: .+/)).not.toBeInTheDocument();
   });
 
+  test('should not flash the never-synced empty state while lastSyncedAt is still loading', () => {
+    renderLeaderboards({ isLoading: true, lastSyncedAt: null });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'No leaderboard data yet' })
+    ).not.toBeInTheDocument();
+  });
+
   test('should show the empty state when the report has never been synced', () => {
     renderLeaderboards({ isLoading: false, lastSyncedAt: null });
 
@@ -119,6 +107,39 @@ describe('AutomationLeaderboards', () => {
     expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     expect(screen.queryByText(/Updated: .+/)).not.toBeInTheDocument();
+  });
+
+  test('should show a distinct sync-status error state when only collection_status failed', () => {
+    renderLeaderboards({
+      isLoading: false,
+      lastSyncedAt: null,
+      collectionStatusError: new Error('Status service unavailable'),
+    });
+
+    expect(screen.getByRole('heading', { name: 'Unable to load sync status' })).toBeInTheDocument();
+    expect(screen.getByText('Status service unavailable')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Unable to load leaderboards' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'No leaderboard data yet' })
+    ).not.toBeInTheDocument();
+  });
+
+  test('should prefer the leaderboard error over the sync-status error', () => {
+    renderLeaderboards({
+      isLoading: false,
+      lastSyncedAt: null,
+      error: new Error('boom'),
+      collectionStatusError: new Error('status boom'),
+    });
+
+    expect(
+      screen.getByRole('heading', { name: 'Unable to load leaderboards' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Unable to load sync status' })
+    ).not.toBeInTheDocument();
   });
 
   test('should prefer the error state over the never-synced empty state', () => {
