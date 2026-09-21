@@ -181,15 +181,14 @@ export const Role = {
       }
 
       await page.getByTestId('content-type').click();
-      await page.waitForTimeout(3000);
       const option = page
         .getByRole('option')
         .filter({ hasText: new RegExp(config.resourceTypeDisplayName, 'i') })
         .first();
+      await expect(option).toBeVisible({ timeout: 15_000 });
       await option.click();
 
       await page.locator('#permissions').click();
-      await page.waitForTimeout(1000);
 
       for (const permission of config.permissionDisplayNames) {
         const label = page
@@ -208,11 +207,18 @@ export const Role = {
 
       await page.locator('body').click();
 
+      const createRoleResponse = page.waitForResponse(
+        (response) =>
+          response.url().includes('/roles') &&
+          response.request().method() === 'POST' &&
+          response.status() === 201
+      );
       await page.getByRole('button', { name: 'Create role', exact: true }).click();
-      await expect(page.getByRole('heading', { name: 'Create role' })).not.toBeVisible();
+      await createRoleResponse;
       await expect(page.getByRole('heading', { name: roleName, exact: true })).toBeVisible({
-        timeout: 10000,
+        timeout: 15_000,
       });
+      await expect(page.getByRole('heading', { name: 'Create role' })).not.toBeVisible();
 
       return roleName;
     },

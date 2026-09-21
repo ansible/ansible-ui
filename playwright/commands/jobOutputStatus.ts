@@ -22,8 +22,34 @@ export function jobOutputTerminalStatusLocator(page: Page): Locator {
     .or(page.getByTestId('canceled-status'));
 }
 
+/** Job-level status in JobStatusBar (avoids host rows in the output table). */
+export function jobOutputHeaderStatusLocator(page: Page): Locator {
+  return page
+    .getByRole('heading', { level: 1 })
+    .first()
+    .locator('xpath=../*[contains(@data-testid, "-status")]');
+}
+
+export function jobOutputHeaderTerminalStatusLocator(page: Page): Locator {
+  return page
+    .getByRole('heading', { level: 1 })
+    .first()
+    .locator(
+      'xpath=../*[@data-testid="success-status" or @data-testid="failed-status" or @data-testid="error-status" or @data-testid="canceled-status"]'
+    );
+}
+
 export function jobOutputRunningOrTerminalStatusLocator(page: Page): Locator {
   return page.getByTestId('running-status').or(jobOutputTerminalStatusLocator(page));
+}
+
+export function jobOutputHeaderRunningOrTerminalStatusLocator(page: Page): Locator {
+  return page
+    .getByRole('heading', { level: 1 })
+    .first()
+    .locator(
+      'xpath=../*[@data-testid="running-status" or @data-testid="success-status" or @data-testid="failed-status" or @data-testid="error-status" or @data-testid="canceled-status"]'
+    );
 }
 
 export async function expectJobOutputStatusVisible(
@@ -39,7 +65,16 @@ export async function expectJobOutputRunningOrTerminal(
   page: Page,
   options?: { timeout?: number }
 ): Promise<void> {
-  await expect(jobOutputRunningOrTerminalStatusLocator(page)).toBeVisible({
+  await expect(jobOutputHeaderRunningOrTerminalStatusLocator(page)).toBeVisible({
+    timeout: options?.timeout ?? 60_000,
+  });
+}
+
+export async function expectJobOutputHeaderTerminal(
+  page: Page,
+  options?: { timeout?: number }
+): Promise<void> {
+  await expect(jobOutputHeaderTerminalStatusLocator(page)).toBeVisible({
     timeout: options?.timeout ?? 60_000,
   });
 }

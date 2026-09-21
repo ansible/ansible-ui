@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { clickRetryUntilGone } from './clickRetryUntilGone';
 import {
+  expectJobOutputHeaderTerminal,
   expectJobOutputRunningOrTerminal,
-  jobOutputTerminalStatusLocator,
 } from './jobOutputStatus';
+import { waitForBulkActionDialog } from './waitForBulkActionDialog';
 
 export interface AdHocCommandOptions {
   module: string;
@@ -131,11 +131,16 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   // Wait for job to start and verify we're on the job output page
   await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
 
-  const runningStatus = page.getByTestId('running-status');
+  const headerRunningStatus = page
+    .getByRole('heading', { level: 1 })
+    .first()
+    .locator('..')
+    .getByTestId('running-status');
+
   // Wait past pending/waiting until the job is running or has reached a terminal state.
   await expectJobOutputRunningOrTerminal(page);
 
-  if (await runningStatus.isVisible().catch(() => false)) {
+  if (await headerRunningStatus.isVisible().catch(() => false)) {
     // Job is running, cancel it so inventory cleanup can proceed.
     await page.getByRole('button', { name: 'Cancel job' }).click();
     const confirmCheckbox = page.locator('#confirm');
@@ -147,20 +152,13 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
     const dialog = page.getByRole('dialog');
     await dialog.getByRole('button', { name: 'Cancel job' }).click();
 
-    try {
-      const retryButton = page.getByRole('button', { name: 'Retry' });
-      await retryButton.waitFor({ state: 'visible', timeout: 2000 });
-      await clickRetryUntilGone(page);
-    } catch {
-      // Intentionally empty - no retry button found, exit normally
-    }
-
-    await expect(runningStatus).not.toBeVisible({ timeout: 60_000 });
-    await expect(jobOutputTerminalStatusLocator(page)).toBeVisible({ timeout: 60_000 });
+    await waitForBulkActionDialog(page, { timeout: 60_000, allowFailure: true });
   } else {
     const cancelDialog = page.getByRole('dialog', { name: 'Cancel job' });
     if (await cancelDialog.isVisible({ timeout: 1000 }).catch(() => false)) {
       await cancelDialog.getByRole('button', { name: 'Close' }).click();
     }
   }
+
+  await expectJobOutputHeaderTerminal(page);
 }

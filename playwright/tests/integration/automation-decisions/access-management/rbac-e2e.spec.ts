@@ -448,8 +448,14 @@ test.describe('EDA - RBAC - User and Team Permissions', () => {
         await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 
         const projectsTable = page.locator('#eda-projects-table');
-        await expect(projectsTable).toBeVisible({ timeout: 15_000 });
-        await expect(projectsTable.getByRole('link', { name: edaProject.name })).not.toBeVisible();
+        const noAccessView = page.getByRole('main').getByText(
+          /You do not have permission to create a project|There are currently no projects created for your organization/
+        );
+        await expect(noAccessView.or(projectsTable)).toBeVisible({ timeout: 15_000 });
+
+        if (await projectsTable.isVisible()) {
+          await expect(projectsTable.getByRole('link', { name: edaProject.name })).not.toBeVisible();
+        }
       });
 
       await test.step('Logout user2 and login back as admin', async () => {

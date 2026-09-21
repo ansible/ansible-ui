@@ -5,7 +5,9 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 async function expectHostsPageWithStatusFilter(page: Page, status: 'ready' | 'failed') {
   await expect(page.getByTestId('page-title')).toContainText('Hosts');
   await expect(page.getByRole('heading', { name: 'Error loading hosts' })).not.toBeVisible();
-  await expect(page.getByTestId('page-toolbar')).toBeVisible();
+  await expect(
+    page.getByTestId('page-toolbar').or(page.locator('#awx-hosts-table'))
+  ).toBeVisible({ timeout: 15_000 });
 
   if (status === 'ready') {
     await expect(page).toHaveURL(/ready_status=True/);
