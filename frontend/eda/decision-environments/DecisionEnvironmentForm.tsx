@@ -15,7 +15,7 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert } from '@patternfly/react-core';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -196,9 +196,7 @@ export function EditDecisionEnvironment() {
   const { data: optionsData, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
   >(edaAPI`/decision-environments/${params.id ?? ''}/`);
-  const canPatchDE = optionsData
-    ? Boolean(optionsData.actions && optionsData.actions['PATCH'])
-    : true;
+  const canPatchDE = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${id.toString()}/`
@@ -223,53 +221,60 @@ export function EditDecisionEnvironment() {
         />
       </PageLayout>
     );
-  } else {
-    return (
-      <PageLayout>
-        <PageHeader
-          title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
-          breadcrumbs={[
-            { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
-            { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
-          ]}
+  }
+
+  let editPageBody: ReactNode;
+  if (!canPatchDE) {
+    editPageBody = (
+      <>
+        <Alert
+          variant={'warning'}
+          isInline
+          style={{
+            marginLeft: '24px',
+            marginRight: '24px',
+            marginTop: '24px',
+            paddingLeft: '24px',
+            paddingTop: '16px',
+          }}
+          title={t(
+            'You do not have permissions to edit this decision environment. Please contact your organization administrator if there is an issue with your access.'
+          )}
         />
-        {!canPatchDE ? (
-          <>
-            <Alert
-              variant={'warning'}
-              isInline
-              style={{
-                marginLeft: '24px',
-                marginRight: '24px',
-                marginTop: '24px',
-                paddingLeft: '24px',
-                paddingTop: '16px',
-              }}
-              title={t(
-                'You do not have permissions to edit this decision environment. Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-            <DecisionEnvironmentDetails />
-          </>
-        ) : isLoadingOptions || !optionsData ? (
-          <LoadingPage />
-        ) : (
-          <EdaPageForm
-            submitText={t('Save decision environment')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            defaultValue={{
-              ...decisionEnvironment,
-              eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
-              organization_id: decisionEnvironment?.organization?.id || undefined,
-            }}
-            optionsData={optionsData}
-          >
-            <DecisionEnvironmentInputs optionsData={optionsData} />
-          </EdaPageForm>
-        )}
-      </PageLayout>
+        <DecisionEnvironmentDetails />
+      </>
+    );
+  } else if (isLoadingOptions || !optionsData) {
+    editPageBody = <LoadingPage />;
+  } else {
+    editPageBody = (
+      <EdaPageForm
+        submitText={t('Save decision environment')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={{
+          ...decisionEnvironment,
+          eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
+          organization_id: decisionEnvironment?.organization?.id || undefined,
+        }}
+        optionsData={optionsData}
+      >
+        <DecisionEnvironmentInputs optionsData={optionsData} />
+      </EdaPageForm>
     );
   }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
+        breadcrumbs={[
+          { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
+          { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
+        ]}
+      />
+      {editPageBody}
+    </PageLayout>
+  );
 }

@@ -233,9 +233,7 @@ export function EditEventStream() {
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/event-streams/${params.id ?? ''}/`
   );
-  const canEditEventStream = optionsData
-    ? Boolean(optionsData.actions && optionsData.actions['PATCH'])
-    : true;
+  const canEditEventStream = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
   const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
 
   const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();

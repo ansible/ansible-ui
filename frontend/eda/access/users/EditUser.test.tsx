@@ -26,7 +26,17 @@ const mockSuperUser = {
   is_superuser: true,
 };
 
+const userOptions = {
+  actions: {
+    POST: { username: { type: 'string' } },
+    PATCH: { username: { type: 'string' } },
+  },
+};
+
 const server = setupServer(
+  http.options(edaAPI`/users/`, () => HttpResponse.json(userOptions)),
+  http.options(edaAPI`/users/42/`, () => HttpResponse.json(userOptions)),
+  http.options(edaAPI`/users/me/`, () => HttpResponse.json(userOptions)),
   http.get(edaAPI`/users/42/`, () => HttpResponse.json(mockUser)),
   http.get(edaAPI`/users/me/`, () => HttpResponse.json(mockUser)),
   http.post(edaAPI`/users/`, async ({ request }) => {
