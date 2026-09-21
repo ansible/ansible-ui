@@ -47,7 +47,8 @@ export function useGetReportDetails(
   }, [toolbarFilters, filterState, queryParams, extraSearchParams]);
 
   // Defer fetch until required filters are valid and exclusion IDs have loaded
-  const url = filtersValid && !isLoadingExclusionIds ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
+  const url =
+    filtersValid && !isLoadingExclusionIds ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
   const fetcher = useFetcher();
   const response = useSWR<IDashboardDetails>(url, fetcher, { keepPreviousData: true });
   const { data, mutate, isLoading } = response;

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 import { useFetcher } from '@ansible/common-ui/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -46,11 +46,17 @@ export function useJobTemplateIds(): UseJobTemplateIdsResult {
     [baseUrl]
   );
 
-  const { data, error, isLoading } = useSWRInfinite<AwxItemsResponse<TemplateRecord>>(
-    getKey,
-    fetcher,
-    { revalidateOnFocus: false, dedupingInterval: 60_000 }
-  );
+  const { data, error, isLoading, size, setSize } =
+    useSWRInfinite<AwxItemsResponse<TemplateRecord>>(getKey, fetcher, {
+      revalidateOnFocus: false,
+      dedupingInterval: 60_000,
+    });
+
+  useEffect(() => {
+    if (data && data.length === size && data[data.length - 1]?.next) {
+      void setSize(size + 1);
+    }
+  }, [data, size, setSize]);
 
   const templateIds = useMemo(() => {
     if (isLoading || data === undefined) return undefined;
