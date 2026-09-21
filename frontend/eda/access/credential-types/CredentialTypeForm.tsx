@@ -76,9 +76,7 @@ export function EditCredentialType() {
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/credential-types/${params.id ?? ''}/`
   );
-  const canPatchCredentialType = optionsData
-    ? Boolean(optionsData.actions && optionsData.actions['PATCH'])
-    : true;
+  const canPatchCredentialType = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
 
   const { data: credentialType } = useGet<EdaCredentialType>(
     edaAPI`/credential-types/` + `${params?.id}/`

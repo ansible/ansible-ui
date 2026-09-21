@@ -384,9 +384,7 @@ export function EditProject() {
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/projects/${params.id ?? ''}/`
   );
-  const canEditProject = optionsData
-    ? Boolean(optionsData.actions && optionsData.actions['PATCH'])
-    : true;
+  const canEditProject = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
 
   const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
 

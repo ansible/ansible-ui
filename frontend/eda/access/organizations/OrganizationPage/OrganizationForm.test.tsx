@@ -28,7 +28,9 @@ const server = setupServer(
     })
   ),
   http.options(edaAPI`/organizations/3/`, () =>
-    HttpResponse.json({ actions: { PATCH: { name: { type: 'string' } } } })
+    HttpResponse.json({
+      actions: { PATCH: { name: { type: 'string' }, description: { type: 'string' } } },
+    })
   ),
   http.get(edaAPI`/organizations/3/`, () => HttpResponse.json(mockOrganization)),
   http.post(edaAPI`/organizations/`, async ({ request }) => {
