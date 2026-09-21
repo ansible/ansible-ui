@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { ReactNode } from 'react';
 import { SWRConfig } from 'swr';
@@ -166,10 +166,23 @@ describe('mapLeaderboardReport', () => {
       expect(data.dimensions.breadth).toEqual({ score: 12, rank: 1, totalRanked: 84 });
     });
 
-    test('should fall back to a 0 score when the current user is outside the returned top 10, keeping their real rank', () => {
+    test('should report a null score, not 0, when the current user is ranked but outside the returned top 10', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
 
-      expect(data.dimensions.consistency).toEqual({ score: 0, rank: 14, totalRanked: 84 });
+      expect(data.dimensions.consistency).toEqual({ score: null, rank: 14, totalRanked: 84 });
+    });
+
+    test('should report a 0 score for an unranked dimension (rank 0, no activity)', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        activity_levels: [{ id: 'volume', current_user_rank: 0, total_users: 84, leaderboard: [] }],
+      };
+
+      expect(mapLeaderboardReport(report).dimensions.volume).toEqual({
+        score: 0,
+        rank: 0,
+        totalRanked: 84,
+      });
     });
 
     test('should map each dimension leaderboard row, including the isCurrentUser flag', () => {
@@ -216,6 +229,51 @@ describe('mapLeaderboardReport', () => {
     });
   });
 
+  describe('missing or null API fields', () => {
+    test('should map a report with null lists and no featured template or organization without throwing', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        featured_template: null,
+        enterprise_streak: { streak: 0, daily: null },
+        org_streak: { streak: 0, daily: null, organization: null },
+        organization_leaderboard: {
+          user_organization_rank: 0,
+          total_organizations: 0,
+          leaderboard: null,
+        },
+        activity_levels: null,
+        org_achievements: null,
+        user_achievements: null,
+      };
+
+      const data = mapLeaderboardReport(report);
+
+      expect(data.atAGlance.featuredTemplate).toEqual({ name: '', runs: 0 });
+      expect(data.streakCalendar).toEqual([]);
+      expect(data.organizationLeaderboard).toEqual([]);
+      expect(data.currentOrgStanding).toEqual({ rank: 0, totalRuns: 0 });
+      expect(data.dimensions.volume).toEqual({ score: 0, rank: 0, totalRanked: 0 });
+      expect(data.dimensionLeaderboards).toEqual({ volume: [], breadth: [], consistency: [] });
+      expect(data.earnedUserAchievements).toEqual([]);
+      expect(data.earnedOrgAchievements).toEqual([]);
+      assertLeaderboardsContract(data);
+    });
+
+    test('should tolerate an activity level whose leaderboard is null', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        activity_levels: [
+          { id: 'breadth', current_user_rank: 5, total_users: 10, leaderboard: null },
+        ],
+      };
+
+      const data = mapLeaderboardReport(report);
+
+      expect(data.dimensions.breadth).toEqual({ score: null, rank: 5, totalRanked: 10 });
+      expect(data.dimensionLeaderboards.breadth).toEqual([]);
+    });
+  });
+
   describe('achievements', () => {
     test('should map known snake_case badge ids to their camelCase ids', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
@@ -243,7 +301,7 @@ describe('useAutomationLeaderboardsView', () => {
     enabled: true,
     next_run: null,
     initial_collection_status: 'completed',
-    min_collection_timestamp: new Date('2026-09-01T14:00:00.000Z'),
+    min_collection_timestamp: '2026-09-01T14:00:00.000Z',
   };
 
   const server = setupServer();
@@ -296,6 +354,36 @@ describe('useAutomationLeaderboardsView', () => {
     expect(result.current.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
   });
 
+  test('should normalize a non-UTC-offset timestamp string to a UTC ISO string', async () => {
+    mockEndpoints({
+      collectionStatus: HttpResponse.json({
+        ...collectionStatusFixture,
+        min_collection_timestamp: '2026-09-01T16:00:00+02:00',
+      }),
+    });
+
+    const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
+
+    await waitFor(() => expect(result.current.lastSyncedAt).not.toBeNull());
+
+    expect(result.current.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
+  });
+
+  test('should surface a null lastSyncedAt when the timestamp is unparseable', async () => {
+    mockEndpoints({
+      collectionStatus: HttpResponse.json({
+        ...collectionStatusFixture,
+        min_collection_timestamp: 'not-a-date',
+      }),
+    });
+
+    const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.lastSyncedAt).toBeNull();
+  });
+
   test('should surface a null lastSyncedAt when the report has never been synced', async () => {
     mockEndpoints({
       collectionStatus: HttpResponse.json({
@@ -311,6 +399,27 @@ describe('useAutomationLeaderboardsView', () => {
     expect(result.current.lastSyncedAt).toBeNull();
   });
 
+  test('should stay loading while collection_status is in flight after the leaderboard resolves', async () => {
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () =>
+        HttpResponse.json(MOCK_LEADERBOARD_REPORT)
+      ),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, async () => {
+        await delay(100);
+        return HttpResponse.json(collectionStatusFixture);
+      })
+    );
+
+    const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
+
+    await waitFor(() => expect(result.current.atAGlance.jobsRun).toBe(1234));
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.lastSyncedAt).toBeNull();
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
+  });
+
   test('should return empty-window defaults and the error when the leaderboard request fails', async () => {
     mockEndpoints({ leaderboard: HttpResponse.json({}, { status: 500 }) });
 
@@ -319,7 +428,21 @@ describe('useAutomationLeaderboardsView', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.error).toBeDefined();
+    expect(result.current.collectionStatusError).toBeUndefined();
     expect(result.current.organizationLeaderboard).toEqual([]);
+  });
+
+  test('should expose collectionStatusError separately from error when only collection_status fails', async () => {
+    mockEndpoints({ collectionStatus: HttpResponse.json({}, { status: 500 }) });
+
+    const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.collectionStatusError).toBeDefined();
+    expect(result.current.error).toBeUndefined();
+    expect(result.current.lastSyncedAt).toBeNull();
+    expect(result.current.atAGlance.jobsRun).toBe(1234);
   });
 
   test('should still resolve lastSyncedAt from collection_status even when the leaderboard request fails', async () => {

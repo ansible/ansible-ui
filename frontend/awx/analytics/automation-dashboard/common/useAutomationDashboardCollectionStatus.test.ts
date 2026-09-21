@@ -151,7 +151,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should return data from API when available', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        next_run: new Date('2026-05-01T00:00:00Z'),
+        next_run: '2026-05-01T00:00:00Z',
         initial_collection_status: 'completed',
       };
       setupActiveUser({ is_superuser: true });
@@ -168,15 +168,15 @@ describe('useAutomationDashboardCollectionStatus', () => {
         enabled: true,
         next_run: null,
         initial_collection_status: 'completed',
-        min_collection_timestamp: new Date('2026-09-01T14:00:00Z'),
+        min_collection_timestamp: '2026-09-01T14:00:00.000Z',
       };
       setupActiveUser({ is_superuser: true });
       setupSWR(apiData);
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
-      expect(result.current.collectionStatus.min_collection_timestamp).toEqual(
-        new Date('2026-09-01T14:00:00Z')
+      expect(result.current.collectionStatus.min_collection_timestamp).toBe(
+        '2026-09-01T14:00:00.000Z'
       );
     });
 
@@ -193,7 +193,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should return default status when both data and error exist (revalidation failure)', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        next_run: new Date('2026-05-01T00:00:00Z'),
+        next_run: '2026-05-01T00:00:00Z',
         initial_collection_status: 'completed',
       };
       setupActiveUser({ is_superuser: true });

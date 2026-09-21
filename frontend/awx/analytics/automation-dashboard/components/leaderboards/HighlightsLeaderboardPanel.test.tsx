@@ -3,34 +3,15 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { HighlightsLeaderboardPanel } from './HighlightsLeaderboardPanel';
 import { useAutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
-import type { AutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
+import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
 
-const baseView: AutomationLeaderboardsView = {
-  isLoading: false,
-  error: undefined,
-  lastSyncedAt: null,
-  atAGlance: {
-    jobsRun: 0,
-    activeOrganizations: 0,
-    featuredTemplate: { name: '', runs: 0 },
-    enterpriseStreakDays: 0,
-    orgStreakDays: 0,
-  },
-  streakCalendar: [],
-  dimensions: {
-    volume: { score: 0, rank: 0, totalRanked: 0 },
-    breadth: { score: 0, rank: 0, totalRanked: 0 },
-    consistency: { score: 0, rank: 0, totalRanked: 0 },
-  },
-  dimensionLeaderboards: { volume: [], breadth: [], consistency: [] },
+const baseView = createLeaderboardsView({
   organizationLeaderboard: [
     { id: '1', name: 'Platform Engineering', runs: 2840, rank: 1, isCurrentOrg: true },
     { id: '10', name: 'IT Operations', runs: 187, rank: 10 },
   ],
   currentOrgStanding: { rank: 1, totalRuns: 2840 },
-  earnedUserAchievements: [],
-  earnedOrgAchievements: [],
-};
+});
 
 vi.mock('../../views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: vi.fn(),

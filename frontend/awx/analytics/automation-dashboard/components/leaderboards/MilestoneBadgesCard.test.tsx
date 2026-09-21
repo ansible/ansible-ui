@@ -1,31 +1,12 @@
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { MilestoneBadgesCard } from './MilestoneBadgesCard';
-import type { AutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
+import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
 
-const view: AutomationLeaderboardsView = {
-  isLoading: false,
-  error: undefined,
-  lastSyncedAt: null,
-  atAGlance: {
-    jobsRun: 0,
-    activeOrganizations: 0,
-    featuredTemplate: { name: '', runs: 0 },
-    enterpriseStreakDays: 0,
-    orgStreakDays: 0,
-  },
-  streakCalendar: [],
-  dimensions: {
-    volume: { score: 0, rank: 0, totalRanked: 0 },
-    breadth: { score: 0, rank: 0, totalRanked: 0 },
-    consistency: { score: 0, rank: 0, totalRanked: 0 },
-  },
-  dimensionLeaderboards: { volume: [], breadth: [], consistency: [] },
-  organizationLeaderboard: [],
-  currentOrgStanding: { rank: 0, totalRuns: 0 },
+const view = createLeaderboardsView({
   earnedUserAchievements: ['ignition', 'weekWarrior', 'explorer', 'centurion'],
   earnedOrgAchievements: ['sustained', 'rising'],
-};
+});
 
 vi.mock('../../views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: () => view,

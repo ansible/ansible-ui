@@ -30,8 +30,11 @@ export interface StreakDay {
 
 /** The active user's standing in one automation dimension. */
 export interface DimensionStanding {
-  /** The user's score for this dimension in the 30-day window. */
-  score: number;
+  /**
+   * The user's score for this dimension in the 30-day window, or `null` when they are ranked but
+   * outside the returned top 10, so the API doesn't expose their raw score.
+   */
+  score: number | null;
   /** The user's rank among all ranked users (1-based). */
   rank: number;
   /** How many users are ranked in this dimension. */
@@ -99,7 +102,10 @@ export interface AutomationLeaderboardsData {
 
 export interface AutomationLeaderboardsView extends AutomationLeaderboardsData {
   isLoading: boolean;
+  /** Error from the leaderboard report request. */
   error: Error | undefined;
+  /** Error from the collection_status request that supplies `lastSyncedAt`. */
+  collectionStatusError: Error | undefined;
 }
 
 // ─── API response shape (`/dashboard_reports/leaderboard/`) ──────────────────
@@ -113,11 +119,12 @@ interface ILeaderboardStreakDay {
 interface ILeaderboardStreak {
   streak: number;
   /** Oldest-to-newest. */
-  daily: ILeaderboardStreakDay[];
+  daily?: ILeaderboardStreakDay[] | null;
 }
 
 interface ILeaderboardOrgStreak extends ILeaderboardStreak {
-  organization: { id: number; name: string; run_count: number };
+  /** `null` when the user doesn't belong to an organization. */
+  organization: { id: number; name: string; run_count: number } | null;
 }
 
 interface ILeaderboardOrganizationRow {
@@ -138,26 +145,27 @@ interface ILeaderboardActivityLevel {
   current_user_rank: number;
   total_users: number;
   /** Top 10, rank ascending. Only includes the current user's row if they're in the top 10. */
-  leaderboard: ILeaderboardActivityRow[];
+  leaderboard?: ILeaderboardActivityRow[] | null;
 }
 
 export interface ILeaderboardReport {
   job_runs: number;
   active_organizations: number;
-  featured_template: { id: number; name: string; run_count: number };
+  /** `null` when no template ran in the window. */
+  featured_template: { id: number; name: string; run_count: number } | null;
   enterprise_streak: ILeaderboardStreak;
   org_streak: ILeaderboardOrgStreak;
   organization_leaderboard: {
     user_organization_rank: number;
     total_organizations: number;
     /** Top 10, rank ascending. */
-    leaderboard: ILeaderboardOrganizationRow[];
+    leaderboard?: ILeaderboardOrganizationRow[] | null;
   };
   /** Snake_case badge ids, e.g. "top_tier" — see ORG_BADGE_ID_MAP. */
-  org_achievements: string[];
-  activity_levels: ILeaderboardActivityLevel[];
+  org_achievements?: string[] | null;
+  activity_levels?: ILeaderboardActivityLevel[] | null;
   /** Snake_case badge ids, e.g. "week_warrior" — see MILESTONE_BADGE_ID_MAP. */
-  user_achievements: string[];
+  user_achievements?: string[] | null;
 }
 
 // ─── Mapping ──────────────────────────────────────────────────────────────────
@@ -178,6 +186,11 @@ const ORG_BADGE_ID_MAP: Record<string, OrgBadgeId> = {
   top_tier: 'topTier',
 };
 
+/** The API can send a list as `null` or omit it; treat both as empty. */
+function orEmpty<T>(list: T[] | null | undefined): T[] {
+  return list ?? [];
+}
+
 /** Formats "YYYY-MM-DD" as a short UTC display date, e.g. "Aug 21". */
 function formatStreakDate(isoDate: string): string {
   return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString('en-US', {
@@ -196,12 +209,12 @@ function resolveStreakState(enterpriseRuns: number, orgRuns: number): StreakDay[
 
 /** Zips the enterprise/org daily streak arrays (matched by date) into the combined strip shape. */
 function mapStreakCalendar(
-  enterpriseDaily: ILeaderboardStreakDay[],
-  orgDaily: ILeaderboardStreakDay[]
+  enterpriseDaily: ILeaderboardStreakDay[] | null | undefined,
+  orgDaily: ILeaderboardStreakDay[] | null | undefined
 ): StreakDay[] {
-  const orgRunsByDate = new Map(orgDaily.map((day) => [day.date, day.successful_runs]));
+  const orgRunsByDate = new Map(orEmpty(orgDaily).map((day) => [day.date, day.successful_runs]));
 
-  return enterpriseDaily.map((day) => {
+  return orEmpty(enterpriseDaily).map((day) => {
     const enterpriseRuns = day.successful_runs;
     const orgRuns = orgRunsByDate.get(day.date) ?? 0;
     const state = resolveStreakState(enterpriseRuns, orgRuns);
@@ -211,7 +224,7 @@ function mapStreakCalendar(
 }
 
 function mapDimensions(
-  activityLevels: ILeaderboardActivityLevel[]
+  activityLevels: ILeaderboardActivityLevel[] | null | undefined
 ): Record<DimensionKey, DimensionStanding> {
   const empty: DimensionStanding = { score: 0, rank: 0, totalRanked: 0 };
   const dimensions: Record<DimensionKey, DimensionStanding> = {
@@ -220,12 +233,12 @@ function mapDimensions(
     consistency: empty,
   };
 
-  for (const level of activityLevels) {
-    // The current user's raw score is only available when they're in the returned top 10 —
-    // falls back to 0 (their rank/totalRanked are still accurate either way).
-    const ownRow = level.leaderboard.find((row) => row.is_current_user);
+  for (const level of orEmpty(activityLevels)) {
+    // The current user's raw score is only available when they're in the returned top 10. Ranked
+    // but outside it → `null` (unknown, not 0). Unranked (rank 0) means no activity → 0.
+    const ownRow = orEmpty(level.leaderboard).find((row) => row.is_current_user);
     dimensions[level.id] = {
-      score: ownRow?.runs ?? 0,
+      score: ownRow?.runs ?? (level.current_user_rank > 0 ? null : 0),
       rank: level.current_user_rank,
       totalRanked: level.total_users,
     };
@@ -235,7 +248,7 @@ function mapDimensions(
 }
 
 function mapDimensionLeaderboards(
-  activityLevels: ILeaderboardActivityLevel[]
+  activityLevels: ILeaderboardActivityLevel[] | null | undefined
 ): Record<DimensionKey, HighlightsDimensionLeaderboardRow[]> {
   const dimensionLeaderboards: Record<DimensionKey, HighlightsDimensionLeaderboardRow[]> = {
     volume: [],
@@ -243,8 +256,8 @@ function mapDimensionLeaderboards(
     consistency: [],
   };
 
-  for (const level of activityLevels) {
-    dimensionLeaderboards[level.id] = level.leaderboard.map((row) => ({
+  for (const level of orEmpty(activityLevels)) {
+    dimensionLeaderboards[level.id] = orEmpty(level.leaderboard).map((row) => ({
       id: String(row.rank),
       name: row.username,
       value: row.runs,
@@ -255,15 +268,19 @@ function mapDimensionLeaderboards(
   return dimensionLeaderboards;
 }
 
-function mapAchievements<T extends string>(rawIds: string[], idMap: Record<string, T>): T[] {
-  return rawIds.flatMap((rawId) => {
+function mapAchievements<T extends string>(
+  rawIds: string[] | null | undefined,
+  idMap: Record<string, T>
+): T[] {
+  return orEmpty(rawIds).flatMap((rawId) => {
     const id = idMap[rawId];
     return id ? [id] : [];
   });
 }
 
 export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLeaderboardsData {
-  const currentOrgRow = report.organization_leaderboard.leaderboard.find(
+  const orgRows = orEmpty(report.organization_leaderboard.leaderboard);
+  const currentOrgRow = orgRows.find(
     (row) => row.rank === report.organization_leaderboard.user_organization_rank
   );
 
@@ -274,8 +291,8 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
       jobsRun: report.job_runs,
       activeOrganizations: report.active_organizations,
       featuredTemplate: {
-        name: report.featured_template.name,
-        runs: report.featured_template.run_count,
+        name: report.featured_template?.name ?? '',
+        runs: report.featured_template?.run_count ?? 0,
       },
       enterpriseStreakDays: report.enterprise_streak.streak,
       orgStreakDays: report.org_streak.streak,
@@ -283,7 +300,7 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
     streakCalendar: mapStreakCalendar(report.enterprise_streak.daily, report.org_streak.daily),
     dimensions: mapDimensions(report.activity_levels),
     dimensionLeaderboards: mapDimensionLeaderboards(report.activity_levels),
-    organizationLeaderboard: report.organization_leaderboard.leaderboard.map((row) => ({
+    organizationLeaderboard: orgRows.map((row) => ({
       id: String(row.rank),
       name: row.name,
       runs: row.runs,
@@ -292,7 +309,7 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
     })),
     currentOrgStanding: {
       rank: report.organization_leaderboard.user_organization_rank,
-      totalRuns: currentOrgRow?.runs ?? report.org_streak.organization.run_count,
+      totalRuns: currentOrgRow?.runs ?? report.org_streak.organization?.run_count ?? 0,
     },
     earnedUserAchievements: mapAchievements(report.user_achievements, MILESTONE_BADGE_ID_MAP),
     earnedOrgAchievements: mapAchievements(report.org_achievements, ORG_BADGE_ID_MAP),
@@ -321,10 +338,10 @@ const EMPTY_LEADERBOARDS_DATA: AutomationLeaderboardsData = {
   earnedOrgAchievements: [],
 };
 
-/** `min_collection_timestamp` is typed `Date` but arrives over JSON as an ISO string (or null). */
-function toIsoString(value: Date | null | undefined): string | null {
+/** Normalizes the API's `min_collection_timestamp` to a canonical ISO string; null if absent or unparseable. */
+function toIsoString(value: string | null | undefined): string | null {
   if (!value) return null;
-  const date = value instanceof Date ? value : new Date(value);
+  const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
@@ -334,16 +351,28 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
   const fetcher = useFetcher();
 
   const leaderboardUrl = metricsAPI`/dashboard_reports/leaderboard/`;
-  const { data, error, isLoading } = useSWR<ILeaderboardReport, Error>(leaderboardUrl, fetcher);
+  const {
+    data,
+    error,
+    isLoading: isLeaderboardLoading,
+  } = useSWR<ILeaderboardReport, Error>(leaderboardUrl, fetcher);
 
   // Unlike useAutomationDashboardCollectionStatus (gated to superuser/auditor, drives nav-item
   // visibility), every viewer needs their own "Updated: …" timestamp here, so this fetch isn't
-  // gated. Same URL as that hook, so SWR shares one cache entry/request when both are active.
+  // gated. Same URL as that hook, so both read one SWR cache entry (that hook still polls with
+  // dedupingInterval 0, so requests are not guaranteed to be shared).
   const collectionStatusUrl = metricsAPI`/dashboard_reports/collection_status/`;
-  const { data: collectionStatus } = useSWR<IAutomationDashboardCollectionStatus, Error>(
-    collectionStatusUrl,
-    fetcher
-  );
+  const {
+    data: collectionStatus,
+    error: collectionStatusError,
+    isLoading: isCollectionStatusLoading,
+  } = useSWR<IAutomationDashboardCollectionStatus, Error>(collectionStatusUrl, fetcher);
+
+  // A null lastSyncedAt means "never synced" to the consumer, so it must not be reported until
+  // collection_status has settled, otherwise the empty state flashes while it is in flight.
+  // A failed collection_status is exposed as `collectionStatusError`, separate from `error`, so
+  // "couldn't fetch the sync timestamp" isn't conflated with "no data yet" or a leaderboard failure.
+  const isLoading = isLeaderboardLoading || isCollectionStatusLoading;
 
   // Temporary workaround: collection_status doesn't expose a dedicated "last sync" timestamp
   // yet, so min_collection_timestamp is used as a stand-in. Once the backend adds a proper
@@ -351,8 +380,8 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
   const lastSyncedAt = toIsoString(collectionStatus?.min_collection_timestamp);
 
   if (!data) {
-    return { ...EMPTY_LEADERBOARDS_DATA, lastSyncedAt, isLoading, error };
+    return { ...EMPTY_LEADERBOARDS_DATA, lastSyncedAt, isLoading, error, collectionStatusError };
   }
 
-  return { ...mapLeaderboardReport(data), lastSyncedAt, isLoading, error };
+  return { ...mapLeaderboardReport(data), lastSyncedAt, isLoading, error, collectionStatusError };
 }

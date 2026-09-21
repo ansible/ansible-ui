@@ -3,20 +3,9 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { AutomationDimensions } from './AutomationDimensions';
 import { useAutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
-import type { AutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
+import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
 
-const baseView: AutomationLeaderboardsView = {
-  isLoading: false,
-  error: undefined,
-  lastSyncedAt: null,
-  atAGlance: {
-    jobsRun: 0,
-    activeOrganizations: 0,
-    featuredTemplate: { name: '', runs: 0 },
-    enterpriseStreakDays: 0,
-    orgStreakDays: 0,
-  },
-  streakCalendar: [],
+const baseView = createLeaderboardsView({
   dimensions: {
     volume: { score: 487, rank: 3, totalRanked: 84 },
     breadth: { score: 12, rank: 1, totalRanked: 84 },
@@ -30,11 +19,7 @@ const baseView: AutomationLeaderboardsView = {
     breadth: [{ id: 'current-user', name: 'Jamie Ortiz', value: 12, isCurrentUser: true }],
     consistency: [{ id: 'u-3', name: 'MC', value: 29 }],
   },
-  organizationLeaderboard: [],
-  currentOrgStanding: { rank: 0, totalRuns: 0 },
-  earnedUserAchievements: [],
-  earnedOrgAchievements: [],
-};
+});
 
 vi.mock('../../views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: vi.fn(),
@@ -91,5 +76,22 @@ describe('AutomationDimensions', () => {
     expect(
       volumeRow?.querySelector('.automation-dashboard-leaderboard-rank-crown--1')
     ).not.toBeInTheDocument();
+  });
+
+  test('should show a placeholder instead of 0 when the score is unknown but the user is ranked', () => {
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
+      ...baseView,
+      dimensions: {
+        ...baseView.dimensions,
+        consistency: { score: null, rank: 14, totalRanked: 84 },
+      },
+    });
+
+    render(<AutomationDimensions />);
+
+    const row = screen.getByText('Consistency').closest('li');
+    expect(row).toHaveTextContent('—');
+    expect(row).toHaveTextContent('Rank 14 of 84');
+    expect(row).not.toHaveTextContent(/(^|\D)0(\D|$)/);
   });
 });

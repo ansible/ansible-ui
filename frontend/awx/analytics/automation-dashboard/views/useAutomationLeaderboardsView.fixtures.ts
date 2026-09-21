@@ -55,7 +55,7 @@ export const MOCK_LEADERBOARD_REPORT: ILeaderboardReport = {
     },
     {
       // The current user is ranked 14th — outside the returned top-10 leaderboard, so no row
-      // here carries `is_current_user`. Exercises the "own score falls back to 0" mapping case.
+      // here carries `is_current_user`. Exercises the "own score is unknown (null)" mapping case.
       id: 'consistency',
       current_user_rank: 14,
       total_users: 84,
