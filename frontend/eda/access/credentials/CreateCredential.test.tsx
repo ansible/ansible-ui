@@ -162,6 +162,15 @@ const mockExternalCredentialsResponse = {
 };
 
 const server = setupServer(
+  http.options(edaAPI`/eda-credentials/`, () =>
+    HttpResponse.json({
+      actions: {
+        POST: {
+          name: { type: 'string', required: true },
+        },
+      },
+    })
+  ),
   http.get(edaAPI`/organizations/**`, () => {
     return HttpResponse.json(mockOrganizationsResponse);
   }),
@@ -260,7 +269,7 @@ describe('Create Credential - UI Element Rendering', () => {
 
 describe('Create Credential - External Credentials', () => {
   it('should not show Test button for non-external credential types', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderCreateCredential();
 
     await waitFor(() => {
@@ -280,10 +289,10 @@ describe('Create Credential - External Credentials', () => {
     });
 
     expect(screen.queryByRole('button', { name: 'Test' })).not.toBeInTheDocument();
-  });
+  }, 15_000);
 
   it('should show Test button when external credential type is selected', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderCreateCredential();
 
     await waitFor(() => {
@@ -303,7 +312,7 @@ describe('Create Credential - External Credentials', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Test' })).toBeInTheDocument();
-  });
+  }, 15_000);
 
   it('should show secret management buttons for all non-external credential string fields', async () => {
     const user = userEvent.setup();

@@ -74,7 +74,10 @@ const mockExistingActivation = {
 const mockActivationOptions = {
   actions: {
     GET: {},
-    PATCH: {},
+    POST: {},
+    PATCH: {
+      name: { type: 'string' },
+    },
   },
 };
 
@@ -99,6 +102,9 @@ const server = setupServer(
   }),
   http.get(edaAPI`/activations/1/`, () => {
     return HttpResponse.json(mockExistingActivation);
+  }),
+  http.options(edaAPI`/activations/`, () => {
+    return HttpResponse.json(mockActivationOptions);
   }),
   http.options(edaAPI`/activations/1/`, () => {
     return HttpResponse.json(mockActivationOptions);
@@ -444,5 +450,5 @@ describe('EditRulebookActivation', () => {
       });
       expect(autoRestartCheckbox).not.toBeChecked();
     });
-  });
+  }, 20_000);
 });

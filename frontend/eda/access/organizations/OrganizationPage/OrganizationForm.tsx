@@ -8,6 +8,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,7 @@ import useSWR from 'swr';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaPageForm } from '../../../common/EdaPageForm';
 import { EdaOrganization, EdaOrganizationCreate } from '../../../interfaces/EdaOrganization';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function CreateOrganization() {
@@ -26,6 +28,9 @@ export function CreateOrganization() {
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<EdaOrganizationCreate, EdaOrganization>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/organizations/`
+  );
 
   const onSubmit: PageFormSubmitHandler<EdaOrganizationCreate> = async (organization) => {
     const newOrganization = await postRequest(edaAPI`/organizations/`, organization);
@@ -42,7 +47,12 @@ export function CreateOrganization() {
           { label: t('Create organization') },
         ]}
       />
-      <EdaPageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
+      <EdaPageForm
+        submitText={t('Create organization')}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        optionsData={optionsData}
+      >
         <OrganizationInputs />
       </EdaPageForm>
     </PageLayout>
@@ -63,6 +73,10 @@ export function EditOrganization() {
   );
 
   useInvalidateCacheOnUnmount();
+
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/organizations/${id.toString()}/`
+  );
 
   const onSubmit: PageFormSubmitHandler<EdaOrganization> = async (organization) => {
     const newOrganization = await requestPatch<EdaOrganization>(
@@ -88,6 +102,7 @@ export function EditOrganization() {
           onSubmit={onSubmit}
           onCancel={onCancel}
           defaultValue={organization}
+          optionsData={optionsData}
         >
           <OrganizationInputs />
         </EdaPageForm>

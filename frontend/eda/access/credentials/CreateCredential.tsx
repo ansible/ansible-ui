@@ -7,6 +7,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Button } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
@@ -19,6 +20,7 @@ import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredenti
 import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
 import { EdaOrganization } from '../../interfaces/EdaOrganization';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { CredentialInputs, EdaCredentialTypes } from './CredentialInputs';
 import { CredentialPluginsInputSource } from './hooks/useCredentialSecretModal';
@@ -84,6 +86,9 @@ export function CreateCredential() {
 
   const postRequest = usePostRequest<EdaCredentialCreate, EdaCredential>();
   const postInputSourceRequest = usePostRequest();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/eda-credentials/`
+  );
 
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
     const modifiedCredential = { ...credential };
@@ -123,6 +128,7 @@ export function CreateCredential() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={{ organization_id: defaultOrganization?.id }}
+        optionsData={optionsData}
         additionalActions={
           isExternalCredential ? (
             <Button
