@@ -25,6 +25,14 @@ vi.mock('../../../main/GatewayServices', () => ({
   useHasAwxService: () => true,
 }));
 
+vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
+  useAwxConfig: () => ({
+    license_info: {
+      license_type: 'enterprise',
+    },
+  }),
+}));
+
 const mockPlatformOrganization: Partial<PlatformOrganization> = {
   id: 1,
   name: 'Test Organization',
@@ -56,15 +64,9 @@ const mockControllerOrganization = {
   max_hosts: 100,
 };
 
-const mockInstanceGroups = [
-  { id: 1, name: 'Instance Group 1' },
-  { id: 2, name: 'Instance Group 2' },
-];
+const mockInstanceGroups = [{ id: 1, name: 'Instance Group 1' }];
 
-const mockGalaxyCredentials = [
-  { id: 10, name: 'Galaxy Cred 1' },
-  { id: 20, name: 'Galaxy Cred 2' },
-];
+const mockGalaxyCredentials = [{ id: 10, name: 'Galaxy Cred 1' }];
 
 const server = setupServer(
   http.get(gatewayAPI`/organizations/1/`, () => HttpResponse.json(mockPlatformOrganization)),
@@ -89,7 +91,43 @@ const server = setupServer(
   http.patch(gatewayAPI`/organizations/1/`, () => HttpResponse.json(mockPlatformOrganization)),
   http.patch(awxAPI`/organizations/100/`, () => HttpResponse.json(mockControllerOrganization)),
   http.post(awxAPI`/organizations/100/instance_groups/`, () => HttpResponse.json({ id: 1 })),
-  http.post(awxAPI`/organizations/100/galaxy_credentials/`, () => HttpResponse.json({ id: 10 }))
+  http.post(awxAPI`/organizations/100/galaxy_credentials/`, () => HttpResponse.json({ id: 10 })),
+  http.options(gatewayAPI`/organizations/`, () =>
+    HttpResponse.json({
+      actions: {
+        POST: {
+          name: {
+            type: 'string',
+            required: true,
+            read_only: false,
+            label: 'Name',
+          },
+        },
+      },
+    })
+  ),
+  http.options(awxAPI`/organizations/`, () =>
+    HttpResponse.json({
+      actions: {
+        POST: {
+          max_hosts: {
+            type: 'integer',
+            required: false,
+            read_only: false,
+            label: 'Max Hosts',
+          },
+          opa_query_path: {
+            type: 'string',
+            required: false,
+            read_only: false,
+            label: 'OPA Query Path',
+            pattern: '^[a-z0-9_./]*$',
+            pattern_description: 'Policy enforcement path must be lowercase alphanumeric.',
+          },
+        },
+      },
+    })
+  )
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -235,15 +273,10 @@ describe('EditPlatformOrganization', () => {
       expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
     });
 
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = await screen.findByRole('button', { name: /next/i });
     await user.click(nextButton);
 
-    await waitFor(() => {
-      const finishButton = screen.getByRole('button', { name: /finish/i });
-      expect(finishButton).toBeInTheDocument();
-    });
-
-    const finishButton = screen.getByRole('button', { name: /finish/i });
+    const finishButton = await screen.findByRole('button', { name: /finish/i });
     await user.click(finishButton);
 
     await waitFor(() => {
