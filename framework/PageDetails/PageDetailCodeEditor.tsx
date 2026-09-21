@@ -15,6 +15,19 @@ import { DataEditorLanguages } from '../components/DataEditor';
 import { useClipboard } from '../hooks/useClipboard';
 import { PageDetail } from './PageDetail';
 
+/** Read-only display: keep original text when value is not structured YAML/JSON (e.g. job stdout). */
+export function formatDetailCodeEditorValue(
+  value: string,
+  language: DataEditorLanguages,
+  isArray: boolean
+): string {
+  try {
+    return objectToString(valueToObject(value, isArray), language);
+  } catch {
+    return value;
+  }
+}
+
 export function PageDetailCodeEditor(props: {
   label?: string;
   value: string;
@@ -51,8 +64,7 @@ export function PageDetailCodeEditor(props: {
 
   useLayoutEffect(() => {
     if (toggleLanguage) {
-      const translatedVal = objectToString(valueToObject(value, isArray), language);
-      setCodeEditorValue(translatedVal);
+      setCodeEditorValue(formatDetailCodeEditorValue(value, language, isArray));
     }
   }, [language, toggleLanguage, value, isArray]);
 
