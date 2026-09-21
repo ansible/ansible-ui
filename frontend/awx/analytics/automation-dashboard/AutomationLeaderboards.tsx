@@ -71,11 +71,28 @@ function LeaderboardsErrorState({
   );
 }
 
+/** Shown when the report loaded but the sync-status request needed to date it failed. */
+function CollectionStatusErrorState({
+  error,
+  gridColumns,
+}: Readonly<{ error: Error; gridColumns: number }>) {
+  const { t } = useTranslation();
+
+  return (
+    <DashboardGridRow>
+      <div style={{ gridColumn: `span ${gridColumns}`, maxWidth: '100%' }}>
+        <EmptyStateError titleProp={t('Unable to load sync status')} message={error.message} />
+      </div>
+    </DashboardGridRow>
+  );
+}
+
 function renderLeaderboardsContent(
   gridColumns: number,
   lastSyncedAt: string | null,
   isLoading: boolean,
-  error: Error | undefined
+  error: Error | undefined,
+  collectionStatusError: Error | undefined
 ) {
   if (isLoading) {
     return (
@@ -89,6 +106,10 @@ function renderLeaderboardsContent(
 
   if (error) {
     return <LeaderboardsErrorState error={error} gridColumns={gridColumns} />;
+  }
+
+  if (collectionStatusError) {
+    return <CollectionStatusErrorState error={collectionStatusError} gridColumns={gridColumns} />;
   }
 
   if (!lastSyncedAt) {
@@ -124,13 +145,21 @@ function renderLeaderboardsContent(
 }
 
 export function AutomationLeaderboards() {
-  const { lastSyncedAt, isLoading, error } = useAutomationLeaderboardsView();
+  const { lastSyncedAt, isLoading, error, collectionStatusError } = useAutomationLeaderboardsView();
   const { columns } = useContext(PageDashboardContext);
   const snappedContextValue = useMemo(() => ({ columns: snapGridColumns(columns) }), [columns]);
   return (
     <PageDashboardContext.Provider value={snappedContextValue}>
       <DashboardLayout>
-        {(gridColumns) => renderLeaderboardsContent(gridColumns, lastSyncedAt, isLoading, error)}
+        {(gridColumns) =>
+          renderLeaderboardsContent(
+            gridColumns,
+            lastSyncedAt,
+            isLoading,
+            error,
+            collectionStatusError
+          )
+        }
       </DashboardLayout>
     </PageDashboardContext.Provider>
   );

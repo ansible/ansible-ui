@@ -3,10 +3,8 @@ import { describe, expect, test, vi } from 'vitest';
 import { PageDashboardContext } from '@ansible/ansible-ui-framework';
 import { AutomationAtAGlance, KPI_CARD_WIDTH } from './AutomationAtAGlance';
 import { CARD_WIDTH_COL_SPAN, widthOrFullRow } from '../../common/leaderboardCardWidths';
-import type {
-  AutomationLeaderboardsView,
-  StreakDay,
-} from '../../views/useAutomationLeaderboardsView';
+import type { StreakDay } from '../../views/useAutomationLeaderboardsView';
+import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
 
 vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
 
@@ -18,10 +16,7 @@ const streakCalendar: StreakDay[] = [
   { dateStr: 'Aug 3', state: 'none', enterpriseRuns: 0, orgRuns: 0 },
 ];
 
-const view: AutomationLeaderboardsView = {
-  isLoading: false,
-  error: undefined,
-  lastSyncedAt: '2026-09-01T14:00:00.000Z',
+const view = createLeaderboardsView({
   atAGlance: {
     jobsRun: 1234,
     activeOrganizations: 56,
@@ -30,17 +25,7 @@ const view: AutomationLeaderboardsView = {
     orgStreakDays: 8,
   },
   streakCalendar,
-  dimensions: {
-    volume: { score: 0, rank: 0, totalRanked: 0 },
-    breadth: { score: 0, rank: 0, totalRanked: 0 },
-    consistency: { score: 0, rank: 0, totalRanked: 0 },
-  },
-  dimensionLeaderboards: { volume: [], breadth: [], consistency: [] },
-  organizationLeaderboard: [],
-  currentOrgStanding: { rank: 0, totalRuns: 0 },
-  earnedUserAchievements: [],
-  earnedOrgAchievements: [],
-};
+});
 
 vi.mock('../../views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: () => view,
