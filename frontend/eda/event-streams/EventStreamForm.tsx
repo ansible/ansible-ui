@@ -180,6 +180,9 @@ export function CreateEventStream() {
   const pageNavigate = usePageNavigate();
 
   const postRequest = usePostRequest<EdaEventStreamCreate, EdaEventStream>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/event-streams/`
+  );
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
     requestGet
@@ -214,6 +217,7 @@ export function CreateEventStream() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={{ organization_id: defaultOrganization?.id, test_mode: false, enabled: true }}
+        optionsData={optionsData}
       >
         <EventStreamInputs />
       </EdaPageForm>
@@ -226,10 +230,12 @@ export function EditEventStream() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/event-streams/${params.id ?? ''}/`
   );
-  const canEditEventStream = data ? Boolean(data.actions && data.actions['PATCH']) : true;
+  const canEditEventStream = optionsData
+    ? Boolean(optionsData.actions && optionsData.actions['PATCH'])
+    : true;
   const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
 
   const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();
@@ -295,6 +301,7 @@ export function EditEventStream() {
               organization_id: eventStream.organization?.id,
               eda_credential_id: eventStream?.eda_credential?.id,
             }}
+            optionsData={optionsData}
           >
             <EventStreamEditInputs />
           </EdaPageForm>

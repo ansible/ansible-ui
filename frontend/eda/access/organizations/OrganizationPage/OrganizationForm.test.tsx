@@ -17,6 +17,19 @@ const mockOrganization = {
 };
 
 const server = setupServer(
+  http.options(edaAPI`/organizations/`, () =>
+    HttpResponse.json({
+      actions: {
+        POST: {
+          name: { type: 'string', required: true },
+          description: { type: 'string', required: false },
+        },
+      },
+    })
+  ),
+  http.options(edaAPI`/organizations/3/`, () =>
+    HttpResponse.json({ actions: { PATCH: { name: { type: 'string' } } } })
+  ),
   http.get(edaAPI`/organizations/3/`, () => HttpResponse.json(mockOrganization)),
   http.post(edaAPI`/organizations/`, async ({ request }) => {
     const body = await request.json();
@@ -58,6 +71,43 @@ describe('OrganizationForm', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Organizations')).toBeInTheDocument();
+      });
+    });
+
+    it('should apply name pattern validation from OPTIONS metadata', async () => {
+      server.use(
+        http.options(edaAPI`/organizations/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: '^[a-zA-Z0-9_-]+$',
+                  pattern_description: 'Letters, numbers, underscores, and hyphens only',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <CreateOrganization />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /name/i }), 'bad@name');
+      await user.tab();
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Letters, numbers, underscores, and hyphens only')
+        ).toBeInTheDocument();
       });
     });
 

@@ -11,6 +11,7 @@ import {
 import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
@@ -20,6 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaContentType } from './hooks/EdaContentType';
 import { useEdaRoleMetadata } from './hooks/useEdaRoleMetadata';
@@ -32,6 +34,9 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<EdaRbacRole>, EdaRbacRole>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/role_definitions/`
+  );
 
   const onSubmit: PageFormSubmitHandler<EdaRbacRole> = async (Role) => {
     const newRole = await postRequest(edaAPI`/role_definitions/`, Role);
@@ -57,6 +62,7 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsData={optionsData}
       >
         <EdaRoleInputs />
       </EdaPageForm>
@@ -76,6 +82,9 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
 
   const postRequest = usePostRequest<Partial<EdaRbacRole>, EdaRbacRole>();
   const patchRequest = usePatchRequest<Partial<EdaRbacRole>, EdaRbacRole>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/role_definitions/${id.toString()}/`
+  );
 
   const onSubmit: PageFormSubmitHandler<EdaRbacRole> = async (Role) => {
     if (Number.isInteger(id)) {
@@ -120,6 +129,7 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
             cancelText={t('Cancel')}
             onCancel={onCancel}
             defaultValue={Role}
+            optionsData={optionsData}
           >
             <EdaRoleInputs disableContentType />
           </EdaPageForm>

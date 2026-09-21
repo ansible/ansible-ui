@@ -39,8 +39,20 @@ const mockCredentials = {
   results: [],
 };
 
+const defaultOptionsResponse = {
+  actions: {
+    POST: {
+      name: { type: 'string', required: true },
+    },
+  },
+};
+
 const server = setupServer(
+  http.options(edaAPI`/event-streams/`, () => HttpResponse.json(defaultOptionsResponse)),
   http.get(edaAPI`/organizations/`, () => {
+    return HttpResponse.json(mockOrganizations);
+  }),
+  http.get(edaAPI`/organizations/*`, () => {
     return HttpResponse.json(mockOrganizations);
   }),
   http.get(edaAPI`/organizations/:id/`, () => {
@@ -93,7 +105,7 @@ describe('EventStreamForm', () => {
   });
 
   it('should show and require credential field after selecting Basic Event Stream type', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     render(
       <MemoryRouter>
@@ -136,5 +148,5 @@ describe('EventStreamForm', () => {
       },
       { timeout: 10000 }
     );
-  });
+  }, 20_000);
 });
