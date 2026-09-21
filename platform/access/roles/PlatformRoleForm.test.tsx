@@ -643,7 +643,7 @@ describe('PlatformRoleForm', () => {
 
   test('validates role name pattern from OPTIONS endpoint', async () => {
     server.use(
-      http.options(gatewayAPI`/roles/`, () =>
+      http.options(gatewayAPI`/role_definitions/`, () =>
         HttpResponse.json({
           actions: {
             POST: {
@@ -667,7 +667,7 @@ describe('PlatformRoleForm', () => {
       </MemoryRouter>
     );
 
-    const nameInput = await screen.findByLabelText('Name');
+    const nameInput = await screen.findByRole('textbox', { name: /Name/i });
     await user.type(nameInput, 'invalid@role!');
     await user.click(document.body);
 
@@ -682,7 +682,7 @@ describe('PlatformRoleForm', () => {
 
   test('accepts valid role name matching OPTIONS pattern', async () => {
     server.use(
-      http.options(gatewayAPI`/roles/`, () =>
+      http.options(gatewayAPI`/role_definitions/`, () =>
         HttpResponse.json({
           actions: {
             POST: {
@@ -706,7 +706,7 @@ describe('PlatformRoleForm', () => {
       </MemoryRouter>
     );
 
-    const nameInput = await screen.findByLabelText('Name');
+    const nameInput = await screen.findByRole('textbox', { name: /Name/i });
     await user.type(nameInput, 'valid_role-1.0');
     await user.click(document.body);
 
