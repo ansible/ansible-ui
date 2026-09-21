@@ -1,6 +1,16 @@
 import { render, screen, within } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { MilestoneBadgesCard } from './MilestoneBadgesCard';
+import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
+
+const view = createLeaderboardsView({
+  earnedUserAchievements: ['ignition', 'weekWarrior', 'explorer', 'centurion'],
+  earnedOrgAchievements: ['sustained', 'rising'],
+});
+
+vi.mock('../../views/useAutomationLeaderboardsView', () => ({
+  useAutomationLeaderboardsView: () => view,
+}));
 
 describe('MilestoneBadgesCard', () => {
   test('should render both achievement shelves', () => {

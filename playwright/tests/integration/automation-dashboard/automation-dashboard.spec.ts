@@ -103,14 +103,77 @@ async function mockReportDetailRoute(
   });
 }
 
+async function mockLeaderboardRoute(
+  page: import('playwright').Page,
+  status: number = 200
+): Promise<void> {
+  await page.route(`**/api/metrics/v1/dashboard_reports/leaderboard/`, async (route) => {
+    await route.fulfill({
+      status: status,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        job_runs: 1234,
+        active_organizations: 56,
+        featured_template: { id: 9, name: 'Infrastructure provisioning', run_count: 3558 },
+        enterprise_streak: {
+          streak: 16,
+          daily: [{ date: '2026-08-21', successful_runs: 167 }],
+        },
+        org_streak: {
+          streak: 8,
+          organization: { id: 1, name: 'Platform Engineering', run_count: 2840 },
+          daily: [{ date: '2026-08-21', successful_runs: 96 }],
+        },
+        organization_leaderboard: {
+          user_organization_rank: 1,
+          total_organizations: 42,
+          leaderboard: [
+            { rank: 1, name: 'Platform Engineering', runs: 2840 },
+            { rank: 2, name: 'Security Operations', runs: 1923 },
+          ],
+        },
+        org_achievements: ['sustained', 'rising'],
+        activity_levels: [
+          {
+            id: 'volume',
+            current_user_rank: 3,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'SL', runs: 612 }],
+          },
+          {
+            id: 'breadth',
+            current_user_rank: 1,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'Jamie Ortiz', runs: 12, is_current_user: true }],
+          },
+          {
+            id: 'consistency',
+            current_user_rank: 14,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'MC', runs: 29 }],
+          },
+        ],
+        user_achievements: ['ignition', 'week_warrior', 'explorer', 'centurion'],
+      }),
+    });
+  });
+}
+
 test.beforeEach(async ({ page }) => {
   // Register all route mocks BEFORE login/navigation so they intercept initial API calls.
   // The collection_status response controls whether the Automation Dashboard nav item appears.
+  // min_collection_timestamp must be set (not null) — the Leaderboards tab treats a null
+  // timestamp as "never synced" and renders its empty state instead of the leaderboard data.
   await page.route(`**/api/metrics/v1/dashboard_reports/collection_status/`, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ enabled: true, next_run: null, initial_collection_status: null }),
+      body: JSON.stringify({
+        enabled: true,
+        next_run: null,
+        initial_collection_status: null,
+        min_collection_timestamp: '2026-09-01T14:00:00.000Z',
+      }),
     });
   });
   await page.route(`**/api/metrics/v1/dashboard_reports/templates/*`, async (route) => {
@@ -169,9 +232,11 @@ test.describe('Automation Dashboard', () => {
   });
 });
 
-// Leaderboards reads from a local mock (useAutomationLeaderboardsView), not the API, so no
-// extra route mocking is needed here beyond the top-level beforeEach's collection_status mock.
 test.describe('Automation Dashboard - Leaderboards tab', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockLeaderboardRoute(page);
+  });
+
   test('should show the leaderboard sections when the Leaderboards tab is selected', async ({
     page,
   }) => {
