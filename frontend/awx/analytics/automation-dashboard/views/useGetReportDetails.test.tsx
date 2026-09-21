@@ -348,9 +348,7 @@ describe('useGetReportDetails', () => {
         })
       );
 
-      const { result } = renderHook(() =>
-        useGetReportDetails([], {}, undefined, undefined, true)
-      );
+      const { result } = renderHook(() => useGetReportDetails([], {}, undefined, undefined, true));
 
       await new Promise((resolve) => setTimeout(resolve, 50));
 
