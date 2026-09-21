@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
-import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { useCallback, useMemo } from 'react';
+import useSWRInfinite from 'swr/infinite';
+import { useFetcher } from '@ansible/common-ui/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 
 interface TemplateRecord {
@@ -12,6 +14,8 @@ export interface UseJobTemplateIdsResult {
   isLoading: boolean;
   error: Error | undefined;
 }
+
+const PAGE_SIZE = 200;
 
 /**
  * Fetches all job template IDs from the /dashboard_reports/templates/ endpoint,
@@ -31,14 +35,29 @@ export interface UseJobTemplateIdsResult {
  * backend-side fix (e.g. an `exclude_system_jobs` query parameter).
  */
 export function useJobTemplateIds(): UseJobTemplateIdsResult {
-  const url = metricsAPI`/dashboard_reports/templates/`;
-  const { results, isLoading, error } = useAwxGetAllPages<TemplateRecord>(url);
+  const baseUrl = metricsAPI`/dashboard_reports/templates/`;
+  const fetcher = useFetcher();
+
+  const getKey = useCallback(
+    (pageIndex: number, previousPageData: AwxItemsResponse<TemplateRecord> | null) => {
+      if (previousPageData && !previousPageData.next) return null;
+      return `${baseUrl}?page=${pageIndex + 1}&page_size=${PAGE_SIZE}`;
+    },
+    [baseUrl]
+  );
+
+  const { data, error, isLoading } = useSWRInfinite<AwxItemsResponse<TemplateRecord>>(
+    getKey,
+    fetcher,
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  );
 
   const templateIds = useMemo(() => {
-    if (isLoading || results === undefined) return undefined;
-    if (!results.length) return [];
-    return results.map((t): [string, string] => ['template', t.id.toString()]);
-  }, [results, isLoading]);
+    if (isLoading || data === undefined) return undefined;
+    const allResults = data.flatMap((page) => page.results ?? []);
+    if (!allResults.length) return [];
+    return allResults.map((t): [string, string] => ['template', t.id.toString()]);
+  }, [data, isLoading]);
 
   return { templateIds, isLoading, error };
 }

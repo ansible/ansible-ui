@@ -27,7 +27,8 @@ export function useGetReportDetails(
   toolbarFilters: IToolbarFilter[],
   filterState: IFilterState,
   queryParams: QueryParams = EMPTY_PARAMS,
-  extraSearchParams?: [string, string][]
+  extraSearchParams?: [string, string][],
+  isLoadingExclusionIds?: boolean
 ): IGetReportDetailsResult {
   // Check if all required filters are valid
   const filtersValid = useMemo(
@@ -45,8 +46,8 @@ export function useGetReportDetails(
     return params.toString();
   }, [toolbarFilters, filterState, queryParams, extraSearchParams]);
 
-  // Only construct URL if all required filters are valid, otherwise null to prevent fetch
-  const url = filtersValid ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
+  // Defer fetch until required filters are valid and exclusion IDs have loaded
+  const url = filtersValid && !isLoadingExclusionIds ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
   const fetcher = useFetcher();
   const response = useSWR<IDashboardDetails>(url, fetcher, { keepPreviousData: true });
   const { data, mutate, isLoading } = response;

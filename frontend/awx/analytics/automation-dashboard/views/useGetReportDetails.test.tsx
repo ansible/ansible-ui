@@ -337,4 +337,48 @@ describe('useGetReportDetails', () => {
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
     });
   });
+
+  describe('Exclusion IDs loading gate', () => {
+    test('should not fetch while isLoadingExclusionIds is true', async () => {
+      let requestReceived = false;
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, () => {
+          requestReceived = true;
+          return HttpResponse.json(dashboardDetailsFixture);
+        })
+      );
+
+      const { result } = renderHook(() =>
+        useGetReportDetails([], {}, undefined, undefined, true)
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      expect(requestReceived).toBe(false);
+      expect(result.current.reportDetails).toBeUndefined();
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    test('should fetch once isLoadingExclusionIds becomes false', async () => {
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+          HttpResponse.json(dashboardDetailsFixture)
+        )
+      );
+
+      const { result, rerender } = renderHook(
+        ({ loading }: { loading: boolean }) =>
+          useGetReportDetails([], {}, undefined, undefined, loading),
+        { initialProps: { loading: true } }
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(result.current.reportDetails).toBeUndefined();
+
+      rerender({ loading: false });
+
+      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
+      expect(result.current.reportDetails).toEqual(dashboardDetailsFixture);
+    });
+  });
 });

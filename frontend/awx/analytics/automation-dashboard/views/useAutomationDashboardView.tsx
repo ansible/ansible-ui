@@ -45,7 +45,11 @@ export function useAutomationDashboardView(options: {
 }): IAutomationDashboardView {
   const { toolbarFilters } = options;
 
-  const { templateIds: allTemplateIds, isLoading: isLoadingTemplateIds } = useJobTemplateIds();
+  const {
+    templateIds: allTemplateIds,
+    isLoading: isLoadingTemplateIds,
+    error: templateIdsError,
+  } = useJobTemplateIds();
 
   const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
     url: metricsAPI`/dashboard_reports/report/`,
@@ -87,7 +91,8 @@ export function useAutomationDashboardView(options: {
     toolbarFilters,
     filterState,
     QUERY_PARAMS,
-    systemJobExclusionParams
+    systemJobExclusionParams,
+    isLoadingTemplateIds
   );
   const { costState, setCostState } = useSubscriptionCostState();
 
@@ -130,6 +135,7 @@ export function useAutomationDashboardView(options: {
       details: detailsResponse.reportDetails,
       detailsError: detailsResponse.error,
       detailsLoading: detailsResponse.isLoading,
+      templateIdsError,
       costState,
       setCostState,
       loading,
@@ -143,6 +149,7 @@ export function useAutomationDashboardView(options: {
       detailsResponse.reportDetails,
       detailsResponse.error,
       detailsResponse.isLoading,
+      templateIdsError,
       costState,
       setCostState,
       loading,

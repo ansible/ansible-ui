@@ -122,6 +122,15 @@ vi.mock('@ansible/ansible-ui-framework/components/LoadingState', () => ({
   LoadingState: () => <div data-testid="loading-state">Loading...</div>,
 }));
 
+vi.mock('@ansible/ansible-ui-framework/components/EmptyStateError', () => ({
+  EmptyStateError: ({ titleProp, message }: { titleProp?: string; message?: string }) => (
+    <div data-testid="empty-state-error">
+      {titleProp && <span>{titleProp}</span>}
+      {message && <span>{message}</span>}
+    </div>
+  ),
+}));
+
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const mockJobTemplate: IJobTemplate = {
@@ -195,6 +204,7 @@ const mockView: IAutomationDashboardView = {
   details: mockDetails,
   detailsError: undefined,
   detailsLoading: false,
+  templateIdsError: undefined,
   costState: {
     id: 1,
     monthly_subscription_cost: 100,
@@ -486,5 +496,27 @@ describe('AutomationDashboard', () => {
 
     expect(screen.getByTestId('Top 5 projects-filter-state')).toHaveTextContent('none');
     expect(screen.getByTestId('Top 5 users-filter-state')).toHaveTextContent('none');
+  });
+
+  // ─── Template IDs error state ─────────────────────────────────────────────
+
+  test('should show error state when template IDs fail to load', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      templateIdsError: new Error('Failed to fetch templates'),
+    });
+    render(testWrapper());
+
+    expect(screen.getByTestId('empty-state-error')).toBeInTheDocument();
+    expect(screen.getByText('Unable to load dashboard data')).toBeInTheDocument();
+    expect(screen.getByText('Failed to fetch templates')).toBeInTheDocument();
+    expect(screen.queryByText('Successful jobs')).not.toBeInTheDocument();
+  });
+
+  test('should show dashboard content when template IDs load successfully', () => {
+    render(testWrapper());
+
+    expect(screen.queryByTestId('empty-state-error')).not.toBeInTheDocument();
+    expect(screen.getByText('Successful jobs')).toBeInTheDocument();
   });
 });

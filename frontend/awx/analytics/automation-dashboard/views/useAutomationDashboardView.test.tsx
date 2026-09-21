@@ -6,6 +6,7 @@ import { QUERY_PARAMS, useAutomationDashboardView } from './useAutomationDashboa
 import { useAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 import type { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 import { useExportCsv } from './useExportCsv';
+import { useJobTemplateIds } from '../common/useJobTemplateIds';
 
 // ─── Hoisted mocks (run before vi.mock factories) ─────────────────────────────
 
@@ -260,5 +261,22 @@ describe('useAutomationDashboardView', () => {
     expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
       expect.objectContaining({ isLoadingSystemJobExclusionIds: false })
     );
+  });
+
+  test('should expose templateIdsError as undefined when template IDs load successfully', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.templateIdsError).toBeUndefined();
+  });
+
+  test('should expose templateIdsError when template IDs fail to load', () => {
+    const templateError = new Error('Failed to fetch templates');
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: false,
+      error: templateError,
+    });
+
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.templateIdsError).toBe(templateError);
   });
 });

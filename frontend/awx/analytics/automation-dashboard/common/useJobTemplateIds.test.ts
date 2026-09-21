@@ -5,31 +5,21 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useJobTemplateIds } from './useJobTemplateIds';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
-interface TemplateRecord {
-  id: number;
-  name: string;
-}
-
-const mockTemplates: TemplateRecord[] = [
+const mockTemplates = [
   { id: 1, name: 'Template 1' },
   { id: 2, name: 'Template 2' },
   { id: 3, name: 'Template 3' },
 ];
 
-const mockResponse: AwxItemsResponse<TemplateRecord> = {
-  count: 3,
-  next: null,
-  results: mockTemplates,
-};
-
 // ─── MSW Server ───────────────────────────────────────────────────────────────
 
 const server = setupServer(
-  http.get(metricsAPI`/dashboard_reports/templates/`, () => HttpResponse.json(mockResponse))
+  http.get(metricsAPI`/dashboard_reports/templates/`, () =>
+    HttpResponse.json({ count: 3, next: null, results: mockTemplates })
+  )
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -153,5 +143,23 @@ describe('useJobTemplateIds', () => {
 
     expect(result.current.templateIds![0]).toEqual(['template', '1']);
     expect(result.current.templateIds![249]).toEqual(['template', '250']);
+  });
+
+  test('should stop paginating when next is null', async () => {
+    let requestCount = 0;
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/templates/`, () => {
+        requestCount++;
+        return HttpResponse.json({ count: 3, next: null, results: mockTemplates });
+      })
+    );
+
+    const { result } = renderHook(() => useJobTemplateIds());
+
+    await waitFor(() => {
+      expect(result.current.templateIds).toBeDefined();
+    });
+
+    expect(requestCount).toBe(1);
   });
 });
