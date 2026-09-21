@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -29,7 +30,20 @@ const mockNotificationTemplateOptions = {
         email: {
           username: { label: 'Username', type: 'string', default: '' },
           password: { label: 'Password', type: 'password', default: '' },
-          host: { label: 'Host', type: 'string', default: '' },
+          host: {
+            label: 'Host',
+            type: 'string',
+            default: '',
+            pattern: '^[a-zA-Z0-9.-]+$',
+            pattern_description: 'Host must be a valid hostname',
+          },
+          port: {
+            label: 'Port',
+            type: 'int',
+            default: 25,
+            pattern: String.raw`^\d+$`,
+            pattern_description: 'Port must be numeric',
+          },
         },
       },
     },
@@ -90,6 +104,35 @@ describe('NotifierForm', () => {
       await waitFor(() => {
         expect(screen.getByTestId('name-form-group')).toBeInTheDocument();
       });
+    });
+
+    it('should render the type details section when a notification type is selected', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter initialEntries={['/notifiers/create']}>
+          <Routes>
+            <Route path="/notifiers/create" element={<AddNotifier />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Create notifier');
+      });
+
+      // Select Email notification type
+      await user.click(screen.getByRole('button', { name: /Notification type/i }));
+      await user.click(screen.getByRole('option', { name: 'Email' }));
+
+      // Verify the Type Details section renders with email-specific fields
+      await waitFor(
+        () => {
+          expect(screen.getByText('Type Details')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+      expect(screen.getByText('Host')).toBeInTheDocument();
     });
   });
 });
