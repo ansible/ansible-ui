@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, test, vi } from 'vitest';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
@@ -23,6 +23,14 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
 
 vi.mock('../../../main/GatewayServices', () => ({
   useHasAwxService: () => true,
+}));
+
+vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
+  useAwxConfig: () => ({
+    license_info: {
+      license_type: 'enterprise',
+    },
+  }),
 }));
 
 const mockPlatformOrganization: PlatformOrganization = {
@@ -276,14 +284,12 @@ describe('PlatformOrganizationForm', () => {
 
     const user = userEvent.setup();
     render(
-      <MemoryRouter initialEntries={['/access/organizations/create']}>
-        <Routes>
-          <Route path="/access/organizations/create" element={<CreatePlatformOrganization />} />
-        </Routes>
+      <MemoryRouter>
+        <CreatePlatformOrganization />
       </MemoryRouter>
     );
 
-    const nameInput = await screen.findByLabelText('Name');
+    const nameInput = await screen.findByLabelText(/Name/i);
     await user.type(nameInput, 'invalid@org!');
     await user.click(document.body);
 
@@ -315,14 +321,12 @@ describe('PlatformOrganizationForm', () => {
 
     const user = userEvent.setup();
     render(
-      <MemoryRouter initialEntries={['/access/organizations/create']}>
-        <Routes>
-          <Route path="/access/organizations/create" element={<CreatePlatformOrganization />} />
-        </Routes>
+      <MemoryRouter>
+        <CreatePlatformOrganization />
       </MemoryRouter>
     );
 
-    const nameInput = await screen.findByLabelText('Name');
+    const nameInput = await screen.findByLabelText(/Name/i);
     await user.type(nameInput, 'Valid_Organization-Name 123');
     await user.click(document.body);
 
