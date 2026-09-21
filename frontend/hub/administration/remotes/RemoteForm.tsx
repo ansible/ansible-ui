@@ -29,7 +29,7 @@ import { MiscAdvancedRemoteInputs } from './components/MiscAdvancedRemoteInputs'
 import { ProxyAdvancedRemoteInputs } from './components/ProxyAdvancedRemoteInputs';
 import { RemoteInputs } from './components/RemoteInputs';
 import { RequirementsFile } from './components/RequirementsFile';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export type HiddenFieldsType = {
   name: 'client_key' | 'password' | 'proxy_password' | 'proxy_username' | 'token' | 'username';

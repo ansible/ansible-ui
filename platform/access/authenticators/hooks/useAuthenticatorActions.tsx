@@ -7,7 +7,7 @@ import {
   usePageDialog,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 import { requestPatch } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';

@@ -29,7 +29,7 @@ import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { type HiddenFieldsType } from '../remotes/RemoteForm';
 import { type RemoteRegistry } from './RemoteRegistry';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 interface SecretInput {
   onClear?: (name: string) => void;

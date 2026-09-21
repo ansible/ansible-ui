@@ -34,7 +34,7 @@ import { HubRemote } from './../remotes/Remotes';
 import { Repository } from './Repository';
 import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 interface RepositoryFormProps {
   remote: HubRemote | string | null;

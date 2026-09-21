@@ -9,7 +9,7 @@ import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/Pag
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
