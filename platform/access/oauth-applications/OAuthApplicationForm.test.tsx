@@ -1038,4 +1038,74 @@ describe('OAuthApplicationForm', () => {
       expect(redirectInput).toHaveValue('https://example.com/callback');
     }, 15000);
   });
+
+  test('applies OPTIONS pattern validation to OAuth application name field', async () => {
+    server.use(
+      http.options(gatewayAPI`/applications/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/applications/create']}>
+        <Routes>
+          <Route path="/access/applications/create" element={<CreateOAuthApplication />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByPlaceholderText('Enter application name');
+    await user.type(nameInput, 'invalid@app!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Name must contain only letters, numbers, underscores, hyphens, and dots\./)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('accepts valid OAuth application name matching OPTIONS pattern', async () => {
+    server.use(
+      http.options(gatewayAPI`/applications/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/applications/create']}>
+        <Routes>
+          <Route path="/access/applications/create" element={<CreateOAuthApplication />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByPlaceholderText('Enter application name');
+    await user.type(nameInput, 'valid_app-1.0');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+    });
+  });
 });

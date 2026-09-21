@@ -255,4 +255,74 @@ describe('PlatformOrganizationForm', () => {
       screen.queryByText('Policy enforcement path must be lowercase alphanumeric.')
     ).not.toBeInTheDocument();
   });
+
+  test('validates organization name from OPTIONS endpoint', async () => {
+    server.use(
+      http.options(gatewayAPI`/organizations/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/create']}>
+        <Routes>
+          <Route path="/access/organizations/create" element={<CreatePlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByLabelText('Name');
+    await user.type(nameInput, 'invalid@org!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Name must contain only letters, numbers, underscores, hyphens, and spaces\./)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('accepts valid organization name matching OPTIONS pattern', async () => {
+    server.use(
+      http.options(gatewayAPI`/organizations/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/create']}>
+        <Routes>
+          <Route path="/access/organizations/create" element={<CreatePlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByLabelText('Name');
+    await user.type(nameInput, 'Valid_Organization-Name 123');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+    });
+  });
 });
