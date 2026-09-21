@@ -524,6 +524,50 @@ describe('TemplateLaunchWizard', () => {
     );
 
     it(
+      'should show the API validation error when a credential type mismatch is rejected',
+      { timeout: 15000 },
+      async () => {
+        mockAddAlert.mockClear();
+        server.use(
+          http.post(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(
+              {
+                credentials: [
+                  'Cannot assign a Credential of kind `token`',
+                  'Removing Machine credential at launch time without replacement is not supported. Provided list lacked credential(s): Demo Credential-1.',
+                ],
+              },
+              { status: 400 }
+            )
+          )
+        );
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
+        await waitFor(() => {
+          expect(mockAddAlert).toHaveBeenCalledWith(
+            expect.objectContaining({
+              title: 'Failure to launch',
+              variant: 'danger',
+              children: 'Cannot assign a Credential of kind `token`',
+            })
+          );
+        });
+      }
+    );
+
+    it(
       'should include labels in the launch payload when labelPayload is non-empty',
       { timeout: 15000 },
       async () => {
