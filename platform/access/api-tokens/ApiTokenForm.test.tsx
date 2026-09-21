@@ -632,4 +632,79 @@ describe('ApiTokenForm', () => {
       ).toBeInTheDocument();
     });
   });
+
+  test('handles multiple fields with OPTIONS patterns simultaneously', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              description: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription: 'Description must contain only alphanumeric, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ApiTokenForm />
+      </MemoryRouter>
+    );
+
+    const descriptionInput = await screen.findByLabelText('Description');
+    await user.type(descriptionInput, 'valid_description');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+    });
+  });
+
+  test('validates multiple invalid patterns in sequence', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              description: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription: 'Description must contain only alphanumeric, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ApiTokenForm />
+      </MemoryRouter>
+    );
+
+    const descriptionInput = await screen.findByLabelText('Description');
+
+    // First invalid input
+    await user.type(descriptionInput, 'invalid@');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.getByText(/must contain only/)).toBeInTheDocument();
+    });
+
+    // Clear and try different invalid input
+    await user.clear(descriptionInput);
+    await user.type(descriptionInput, 'invalid!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.getByText(/must contain only/)).toBeInTheDocument();
+    });
+  });
 });

@@ -615,4 +615,74 @@ describe('PlatformRoleForm', () => {
       });
     });
   });
+
+  test('validates role name pattern from OPTIONS endpoint', async () => {
+    server.use(
+      http.options(gatewayAPI`/roles/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/roles/create']}>
+        <Routes>
+          <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByLabelText('Name');
+    await user.type(nameInput, 'invalid@role!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Name must contain only letters, numbers, underscores, hyphens, and dots\./)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('accepts valid role name matching OPTIONS pattern', async () => {
+    server.use(
+      http.options(gatewayAPI`/roles/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/roles/create']}>
+        <Routes>
+          <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByLabelText('Name');
+    await user.type(nameInput, 'valid_role-1.0');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+    });
+  });
 });
