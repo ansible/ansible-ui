@@ -1058,14 +1058,14 @@ describe('OAuthApplicationForm', () => {
 
     const user = userEvent.setup();
     render(
-      <MemoryRouter initialEntries={['/access/applications/create']}>
+      <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
         <Routes>
-          <Route path="/access/applications/create" element={<CreateOAuthApplication />} />
+          <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
         </Routes>
       </MemoryRouter>
     );
 
-    const nameInput = await screen.findByPlaceholderText('Enter application name');
+    const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
     await user.type(nameInput, 'invalid@app!');
     await user.click(document.body);
 
@@ -1097,14 +1097,14 @@ describe('OAuthApplicationForm', () => {
 
     const user = userEvent.setup();
     render(
-      <MemoryRouter initialEntries={['/access/applications/create']}>
+      <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
         <Routes>
-          <Route path="/access/applications/create" element={<CreateOAuthApplication />} />
+          <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
         </Routes>
       </MemoryRouter>
     );
 
-    const nameInput = await screen.findByPlaceholderText('Enter application name');
+    const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
     await user.type(nameInput, 'valid_app-1.0');
     await user.click(document.body);
 
