@@ -22,21 +22,22 @@ export function jobOutputTerminalStatusLocator(page: Page): Locator {
     .or(page.getByTestId('canceled-status'));
 }
 
-/** Job-level status in JobStatusBar (avoids host rows in the output table). */
+/** Job-level status in JobStatusBar (avoids page-title h1 and host rows). */
+export function jobOutputJobStatusBarLocator(page: Page): Locator {
+  return page.getByTestId('job-status-bar');
+}
+
 export function jobOutputHeaderStatusLocator(page: Page): Locator {
-  return page
-    .getByRole('heading', { level: 1 })
-    .first()
-    .locator('xpath=../*[contains(@data-testid, "-status")]');
+  return jobOutputJobStatusBarLocator(page).locator('[data-testid$="-status"]');
 }
 
 export function jobOutputHeaderTerminalStatusLocator(page: Page): Locator {
-  return page
-    .getByRole('heading', { level: 1 })
-    .first()
-    .locator(
-      'xpath=../*[@data-testid="success-status" or @data-testid="failed-status" or @data-testid="error-status" or @data-testid="canceled-status"]'
-    );
+  const bar = jobOutputJobStatusBarLocator(page);
+  return bar
+    .getByTestId('success-status')
+    .or(bar.getByTestId('failed-status'))
+    .or(bar.getByTestId('error-status'))
+    .or(bar.getByTestId('canceled-status'));
 }
 
 export function jobOutputRunningOrTerminalStatusLocator(page: Page): Locator {
@@ -44,12 +45,13 @@ export function jobOutputRunningOrTerminalStatusLocator(page: Page): Locator {
 }
 
 export function jobOutputHeaderRunningOrTerminalStatusLocator(page: Page): Locator {
-  return page
-    .getByRole('heading', { level: 1 })
-    .first()
-    .locator(
-      'xpath=../*[@data-testid="running-status" or @data-testid="success-status" or @data-testid="failed-status" or @data-testid="error-status" or @data-testid="canceled-status"]'
-    );
+  const bar = jobOutputJobStatusBarLocator(page);
+  return bar
+    .getByTestId('running-status')
+    .or(bar.getByTestId('success-status'))
+    .or(bar.getByTestId('failed-status'))
+    .or(bar.getByTestId('error-status'))
+    .or(bar.getByTestId('canceled-status'));
 }
 
 export async function expectJobOutputStatusVisible(

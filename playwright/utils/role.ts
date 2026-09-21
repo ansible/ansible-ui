@@ -209,7 +209,7 @@ export const Role = {
 
       const createRoleResponse = page.waitForResponse(
         (response) =>
-          response.url().includes('/roles') &&
+          response.url().includes('/role_definitions/') &&
           response.request().method() === 'POST' &&
           response.status() === 201
       );

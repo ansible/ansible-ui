@@ -128,11 +128,7 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   // Wait for job to start and verify we're on the job output page
   await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
 
-  const headerRunningStatus = page
-    .getByRole('heading', { level: 1 })
-    .first()
-    .locator('..')
-    .getByTestId('running-status');
+  const headerRunningStatus = page.getByTestId('job-status-bar').getByTestId('running-status');
 
   // Wait past pending/waiting until the job is running or has reached a terminal state.
   await expectJobOutputRunningOrTerminal(page);
