@@ -641,7 +641,8 @@ describe('ApiTokenForm', () => {
             POST: {
               description: {
                 pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
-                patternDescription: 'Description must contain only alphanumeric, underscores, hyphens, and spaces.',
+                patternDescription:
+                  'Description must contain only alphanumeric, underscores, hyphens, and spaces.',
               },
             },
           },
@@ -673,7 +674,8 @@ describe('ApiTokenForm', () => {
             POST: {
               description: {
                 pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
-                patternDescription: 'Description must contain only alphanumeric, underscores, hyphens, and spaces.',
+                patternDescription:
+                  'Description must contain only alphanumeric, underscores, hyphens, and spaces.',
               },
             },
           },

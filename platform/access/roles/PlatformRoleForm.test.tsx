@@ -624,7 +624,8 @@ describe('PlatformRoleForm', () => {
             POST: {
               name: {
                 pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
-                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and dots.',
               },
             },
           },
@@ -647,7 +648,9 @@ describe('PlatformRoleForm', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Name must contain only letters, numbers, underscores, hyphens, and dots\./)
+        screen.getByText(
+          /Name must contain only letters, numbers, underscores, hyphens, and dots\./
+        )
       ).toBeInTheDocument();
     });
   });
@@ -660,7 +663,8 @@ describe('PlatformRoleForm', () => {
             POST: {
               name: {
                 pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
-                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and dots.',
               },
             },
           },
