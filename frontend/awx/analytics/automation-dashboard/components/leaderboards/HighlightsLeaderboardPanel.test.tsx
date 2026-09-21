@@ -1,7 +1,21 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { HighlightsLeaderboardPanel } from './HighlightsLeaderboardPanel';
+import { useAutomationLeaderboardsView } from '../../views/useAutomationLeaderboardsView';
+import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
+
+const baseView = createLeaderboardsView({
+  organizationLeaderboard: [
+    { id: '1', name: 'Platform Engineering', runs: 2840, rank: 1, isCurrentOrg: true },
+    { id: '10', name: 'IT Operations', runs: 187, rank: 10 },
+  ],
+  currentOrgStanding: { rank: 1, totalRuns: 2840 },
+});
+
+vi.mock('../../views/useAutomationLeaderboardsView', () => ({
+  useAutomationLeaderboardsView: vi.fn(),
+}));
 
 function renderPanel() {
   return render(
@@ -12,6 +26,10 @@ function renderPanel() {
 }
 
 describe('HighlightsLeaderboardPanel', () => {
+  beforeEach(() => {
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue(baseView);
+  });
+
   test('should render the ranked organizations from the view', () => {
     renderPanel();
 
@@ -39,5 +57,17 @@ describe('HighlightsLeaderboardPanel', () => {
     // `display: flex` through its own `pf-v6-l-flex` stylesheet class, not an inline style).
     expect(label.closest('.pf-v6-l-flex')).toBeInTheDocument();
     expect(label.closest('[style*="flex-shrink"]')).toHaveStyle({ flexShrink: '0' });
+  });
+
+  test('should omit the rank summary header entirely when the org has no rank yet', () => {
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
+      ...baseView,
+      currentOrgStanding: { rank: 0, totalRuns: 0 },
+    });
+
+    renderPanel();
+
+    expect(screen.queryByText(/Your organization's rank/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^[\d,]+ job runs$/)).not.toBeInTheDocument();
   });
 });
