@@ -170,7 +170,7 @@ describe('CreateRemote', () => {
     let postPayload: Record<string, unknown> | undefined;
 
     server.use(
-      http.post(/remotes\/ansible\/collection/, async ({ request }) => {
+      http.post('*/remotes/ansible/collection/*', async ({ request }) => {
         postPayload = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ pulp_href: '/pulp/api/v3/remotes/1/', name: 'test-remote' });
       })
@@ -247,7 +247,7 @@ describe('EditRemote', () => {
           },
         })
       ),
-      http.get(/remotes\/ansible\/collection/, () =>
+      http.get('*/remotes/ansible/collection/*', () =>
         HttpResponse.json({
           count: 1,
           results: [

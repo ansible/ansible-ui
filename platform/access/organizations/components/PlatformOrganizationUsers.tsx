@@ -3,7 +3,7 @@ import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/Pag
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
 import { UserRoleAccess } from '@ansible/common-ui/access/interfaces/UserRoleAccess';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';

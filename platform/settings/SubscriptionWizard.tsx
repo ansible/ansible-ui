@@ -27,7 +27,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { gatewayAPI } from '../utils/gateway-api-utils';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
 
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'service_account' | 'username' | 'satellite';
