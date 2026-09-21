@@ -33,7 +33,7 @@ import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
 import { useGetOrganizationsForUser } from '../hooks/useGetOrganizationsForUser';
 import { useGetPlatformUsers } from '../hooks/useGetPlatformUsers';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
 
 enum USER_TYPE_ENUM {
   Normal = 'normal',

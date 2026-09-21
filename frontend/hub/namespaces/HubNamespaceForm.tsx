@@ -25,7 +25,7 @@ import { HubNamespace } from './HubNamespace';
 import { isInsightsMode } from '../common/isInsights';
 import { UsefulLinksFields } from './UsefulLinksFields';
 import { HubNamespaceErrorAdapter } from './components/HubNamespaceErrorAdapter';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();

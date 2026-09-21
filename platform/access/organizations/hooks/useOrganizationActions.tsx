@@ -5,7 +5,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
