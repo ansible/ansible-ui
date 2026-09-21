@@ -3,26 +3,38 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
+import jsyaml from 'js-yaml';
 import * as yamlSchema from '../../utils/yamlSchema';
 import { PageFormDataEditor, valueToObject, objectToString } from './PageFormDataEditor';
 
 beforeEach(() => {
   vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
-    const FakeDataEditor = vi.fn((props: Record<string, string | ((value: string) => void)>) => (
-      <textarea
-        id={props.id as string}
-        name={props.id as string}
-        value={props.value as string}
-        onChange={(e) => {
-          const onChange = props.onChange as (value: string) => void;
-          onChange(e.target.value);
-        }}
-        className={props.className as string}
-        onFocus={props.onFocus as () => void}
-        onBlur={props.onBlur as () => void}
-        data-testid="data-editor"
-      />
-    ));
+    const FakeDataEditor = vi.fn(
+      (props: Record<string, string | ((value: string) => void) | undefined>) => (
+        <textarea
+          id={props.id as string}
+          name={props.id as string}
+          value={props.value as string}
+          onChange={(e) => {
+            const onChange = props.onChange as (value: string) => void;
+            const setError = props.setError as ((error?: string) => void) | undefined;
+            const nextValue = e.target.value;
+            onChange(nextValue);
+            if (setError) {
+              if (nextValue.includes('monaco-syntax-error')) {
+                setError('Monaco syntax error');
+              } else {
+                setError(undefined);
+              }
+            }
+          }}
+          className={props.className as string}
+          onFocus={props.onFocus as () => void}
+          onBlur={props.onBlur as () => void}
+          data-testid="data-editor"
+        />
+      )
+    );
     return { DataEditor: FakeDataEditor };
   });
 });
@@ -101,13 +113,12 @@ variable2: value2`;
         expect(() => valueToObject('  ')).toThrow();
       });
 
-      test('throws a generic message when YAML loader throws a non-Error value', () => {
+      test('rethrows YAMLException from safeLoad when JSON parsing fails', () => {
         vi.spyOn(yamlSchema, 'safeLoad').mockImplementation(() => {
-          // Plain object — not instanceof Error; exercises the generic fallback in valueToObject.
-          throw { reason: 'mock-yaml-load-failure' };
+          throw new jsyaml.YAMLException('mock-yaml-load-failure');
         });
 
-        expect(() => valueToObject('not-json')).toThrow('Failed to parse value as JSON or YAML');
+        expect(() => valueToObject('not-json')).toThrow('mock-yaml-load-failure');
 
         vi.restoreAllMocks();
       });
@@ -582,6 +593,28 @@ debug_mode: true         # Enable debugging`;
       expect(customValidate).toHaveBeenCalled();
       expect(screen.getByText('Custom validation failed')).toBeInTheDocument();
     });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  test('should block submit when Monaco reports a syntax error (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'monaco-syntax-error' },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Monaco syntax error')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
