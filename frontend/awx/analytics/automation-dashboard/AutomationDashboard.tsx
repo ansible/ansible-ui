@@ -234,16 +234,14 @@ export function AutomationDashboard() {
               gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
             }}
           >
-            {isLoading ? (
-              <LoadingState />
-            ) : templateIdsError ? (
+            {isLoading && <LoadingState />}
+            {!isLoading && templateIdsError && (
               <EmptyStateError
                 titleProp={t('Unable to load dashboard data')}
                 message={templateIdsError.message}
               />
-            ) : (
-              dashboardContent
             )}
+            {!isLoading && !templateIdsError && dashboardContent}
           </div>
         </Scrollable>
       </PageDashboardContext.Provider>
