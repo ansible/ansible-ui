@@ -854,4 +854,146 @@ describe('useGetInitialValues', () => {
     expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
     expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
   });
+
+  it('should prefill null node prompts from the job template launch defaults', async () => {
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_credential_on_launch: true,
+      ask_timeout_on_launch: true,
+      ask_limit_on_launch: true,
+      ask_forks_on_launch: true,
+      ask_verbosity_on_launch: true,
+      ask_job_slice_count_on_launch: true,
+      ask_job_type_on_launch: true,
+      ask_diff_mode_on_launch: true,
+      ask_scm_branch_on_launch: true,
+      survey_enabled: false,
+      defaults: {
+        timeout: 3000,
+        limit: 'webservers',
+        forks: 5,
+        verbosity: 2,
+        job_slice_count: 3,
+        job_type: 'check',
+        diff_mode: true,
+        scm_branch: 'release',
+      },
+    });
+
+    const node = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: undefined,
+        resource: {
+          identifier: 'existing-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          timeout: null,
+          limit: null,
+          forks: null,
+          verbosity: null,
+          job_slice_count: null,
+          job_type: null,
+          diff_mode: null,
+          scm_branch: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(node);
+    const prompt = initialValues.nodePromptsStep?.prompt;
+
+    expect(prompt?.timeout).toBe(3000);
+    expect(prompt?.limit).toBe('webservers');
+    expect(prompt?.forks).toBe(5);
+    expect(prompt?.verbosity).toBe(2);
+    expect(prompt?.job_slice_count).toBe(3);
+    expect(prompt?.job_type).toBe('check');
+    expect(prompt?.diff_mode).toBe(true);
+    expect(prompt?.scm_branch).toBe('release');
+  });
+
+  it('should keep an explicit node prompt override instead of the job template default', async () => {
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_timeout_on_launch: true,
+      ask_limit_on_launch: true,
+      ask_forks_on_launch: true,
+      survey_enabled: false,
+      defaults: {
+        timeout: 3000,
+        limit: 'webservers',
+        forks: 5,
+      },
+    });
+
+    const node = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: undefined,
+        resource: {
+          identifier: 'existing-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          timeout: 0,
+          limit: 'db-only',
+          forks: 1,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(node);
+    const prompt = initialValues.nodePromptsStep?.prompt;
+
+    expect(prompt?.timeout).toBe(0);
+    expect(prompt?.limit).toBe('db-only');
+    expect(prompt?.forks).toBe(1);
+  });
+
+  it('should keep an in-session prompt edit ahead of the job template default', async () => {
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_timeout_on_launch: true,
+      survey_enabled: false,
+      defaults: { timeout: 3000 },
+    });
+
+    const node = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: { timeout: 15 },
+        resource: {
+          identifier: 'existing-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          timeout: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(node);
+
+    expect(initialValues.nodePromptsStep?.prompt?.timeout).toBe(15);
+  });
 });
