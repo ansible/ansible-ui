@@ -17,6 +17,7 @@ import {
   FieldMetadata,
   PageFormFieldMetadataProvider,
 } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+import { buildFieldMetadataMap } from '@ansible/common-ui/validation/buildFieldMetadataMap';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
 import { useGet } from '@ansible/common-ui/crud/useGet';
@@ -320,32 +321,26 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
  * Extracts `FieldMetadata` from the notification type's OPTIONS fields so that
  * `PageFormFieldMetadataProvider` can drive pattern validation for the dynamic
  * sub-form rendered by `InnerForm`.
+ *
+ * Internally converts the OPTIONS record into schema fields and delegates to
+ * {@link buildFieldMetadataMap} with key `'name'`.
  */
 export function extractNotifierFieldMetadata(
   optionsData: NotificationTemplateOptions | undefined,
   notificationType: string
 ): Record<string, FieldMetadata> {
-  const fields: Record<string, FieldMetadata> = {};
-
-  if (!optionsData?.actions?.GET?.notification_configuration) return fields;
+  if (!optionsData?.actions?.GET?.notification_configuration) return {};
 
   const typeFields = optionsData.actions.GET.notification_configuration[notificationType];
-  if (!typeFields) return fields;
+  if (!typeFields) return {};
 
-  for (const [fieldName, fieldMeta] of Object.entries(typeFields)) {
-    const pattern = typeof fieldMeta.pattern === 'string' ? fieldMeta.pattern : undefined;
-    if (!pattern) continue;
-    try {
-      new RegExp(pattern);
-    } catch {
-      continue;
-    }
-    const patternDescription =
-      typeof fieldMeta.pattern_description === 'string' ? fieldMeta.pattern_description : undefined;
-    fields[fieldName] = { pattern, pattern_description: patternDescription };
-  }
+  const schemaFields = Object.entries(typeFields).map(([fieldName, fieldMeta]) => ({
+    name: fieldName,
+    pattern: fieldMeta.pattern,
+    pattern_description: fieldMeta.pattern_description,
+  }));
 
-  return fields;
+  return buildFieldMetadataMap(schemaFields, 'name');
 }
 
 function NotifierTypeDetailsSection(
