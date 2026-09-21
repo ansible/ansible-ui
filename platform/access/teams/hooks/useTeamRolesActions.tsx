@@ -4,7 +4,7 @@ import {
   PageActionType,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
 import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignment';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';

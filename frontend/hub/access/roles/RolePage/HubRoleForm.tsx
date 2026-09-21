@@ -25,7 +25,7 @@ import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { HubRoute } from '../../../main/HubRoutes';
 import { useHubRoleMetadata } from '../hooks/useHubRoleMetadata';
 import { useIsValidRoleName } from '../hooks/useIsValidRoleName';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
 
 export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
