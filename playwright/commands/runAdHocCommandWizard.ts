@@ -1,8 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import {
-  expectJobOutputHeaderTerminal,
-  expectJobOutputRunningOrTerminal,
-} from './jobOutputStatus';
+import { expectJobOutputHeaderTerminal, expectJobOutputRunningOrTerminal } from './jobOutputStatus';
 import { waitForBulkActionDialog } from './waitForBulkActionDialog';
 
 export interface AdHocCommandOptions {
