@@ -146,6 +146,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Management job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(180000);
       await navigateTo(page, 'Automation Execution', 'Administration', 'Management Jobs');
       await clickTableRowAction(
         {

@@ -37,6 +37,12 @@ async function lookupEdaOrganization(
     return { available: false, ready: false };
   }
 
+  // EDA can briefly return 5xx while services restart or during propagation.
+  // Treat as "not ready yet" so waitForOrganizationPropagation keeps polling.
+  if (response.status() >= 500) {
+    return { available: true, ready: false };
+  }
+
   if (!response.ok()) {
     throw new Error(
       `EDA organization lookup failed for '${organizationName}': HTTP ${response.status()}`

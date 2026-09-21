@@ -9,6 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,6 +19,7 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -224,6 +226,11 @@ export function LaunchWizard({
 }>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const launchUrl =
+    template.type === 'workflow_job_template'
+      ? awxAPI`/workflow_job_templates/${template.id}/launch/`
+      : awxAPI`/job_templates/${template.id}/launch/`;
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(launchUrl);
   const { defaults } = config;
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
@@ -336,6 +343,7 @@ export function LaunchWizard({
         stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
+        optionsData={optionsData}
       />
     </PageLayout>
   );

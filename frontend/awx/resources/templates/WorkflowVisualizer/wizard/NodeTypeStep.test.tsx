@@ -1,4 +1,5 @@
 import { act, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
@@ -16,7 +17,11 @@ vi.mock('@patternfly/react-topology', () => ({
   NodeModel: {},
   NodeStatus: { danger: 'danger', success: 'success', info: 'info', default: 'default' },
   WithSelectionProps: {},
-  useVisualizationController: vi.fn(),
+  useVisualizationController: vi.fn(() => ({
+    getState: () => ({ workflowTemplate: { id: 1 }, sourceNode: undefined }),
+    getGraph: () => ({ getNodes: () => [] }),
+    getNodeById: () => undefined,
+  })),
   action: vi.fn((fn: () => void) => fn),
   observer: (component: unknown) => component,
   TopologySideBar: () => null,
@@ -45,6 +50,12 @@ const mockSetStepData = vi.hoisted(() =>
     }
   })
 );
+const mockUseOptions = vi.hoisted(() =>
+  vi.fn<(url?: string) => { data: unknown }>(() => ({ data: undefined }))
+);
+const mockUseApprovalOptionsEndpoint = vi.hoisted(() =>
+  vi.fn<() => string | undefined>(() => undefined)
+);
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
   usePageWizard: () => ({
@@ -63,6 +74,18 @@ vi.mock('../../../../common/useAwxConfig', () => ({
 vi.mock('@ansible/common-ui/crud/useGet', () => ({
   useGet: vi.fn(() => ({ data: undefined })),
   useGetItem: vi.fn(() => ({ data: undefined })),
+}));
+
+vi.mock('../hooks/useApprovalOptionsEndpoint', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../hooks/useApprovalOptionsEndpoint')>();
+  return {
+    ...actual,
+    useApprovalOptionsEndpoint: mockUseApprovalOptionsEndpoint,
+  };
+});
+
+vi.mock('@ansible/common-ui/crud/useOptions', () => ({
+  useOptions: mockUseOptions,
 }));
 
 vi.mock('@ansible/hub-ui/common/ExternalLink', () => ({
@@ -105,12 +128,15 @@ vi.mock('@ansible/common-ui/crud/Data', () => ({
   requestGet: mockRequestGet,
 }));
 
-function TestWrapper({ defaultValues }: Readonly<{ defaultValues: Partial<WizardFormValues> }>) {
+function TestWrapper({
+  defaultValues,
+  hasSourceNode,
+}: Readonly<{ defaultValues: Partial<WizardFormValues>; hasSourceNode?: boolean }>) {
   const methods = useForm<WizardFormValues>({ defaultValues });
   return (
     <MemoryRouter>
       <FormProvider {...methods}>
-        <NodeTypeStep />
+        <NodeTypeStep hasSourceNode={hasSourceNode} />
       </FormProvider>
     </MemoryRouter>
   );
@@ -121,6 +147,8 @@ describe('NodeTypeStep', () => {
     mockSetWizardData.mockClear();
     mockSetStepData.mockClear();
     mockRequestGet.mockClear();
+    mockUseOptions.mockReturnValue({ data: undefined });
+    mockUseApprovalOptionsEndpoint.mockReturnValue(undefined);
   });
 
   it('should call setWizardData with launch_config when a job template resourceId is set', async () => {
@@ -512,40 +540,25 @@ describe('NodeTypeStep', () => {
   });
 });
 
-function TestWrapperWithSourceNode({
-  defaultValues,
-  hasSourceNode = false,
-}: Readonly<{ defaultValues: Partial<WizardFormValues>; hasSourceNode?: boolean }>) {
-  const methods = useForm<WizardFormValues>({ defaultValues });
-  return (
-    <MemoryRouter>
-      <FormProvider {...methods}>
-        <NodeTypeStep hasSourceNode={hasSourceNode} />
-      </FormProvider>
-    </MemoryRouter>
-  );
-}
-
 describe('NodeTypeStep sub-components', () => {
   beforeEach(() => {
     mockSetWizardData.mockClear();
     mockSetStepData.mockClear();
     mockRequestGet.mockClear();
+    mockUseOptions.mockReturnValue({ data: undefined });
+    mockUseApprovalOptionsEndpoint.mockReturnValue(undefined);
   });
 
   it('should render NodeStatusType when hasSourceNode is true', () => {
     const { getByTestId } = render(
-      <TestWrapperWithSourceNode defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode />
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode />
     );
     expect(getByTestId('node-status-type')).toBeInTheDocument();
   });
 
   it('should not render NodeStatusType when hasSourceNode is false', () => {
     const { queryByTestId } = render(
-      <TestWrapperWithSourceNode
-        defaultValues={{ node_type: RESOURCE_TYPE.job }}
-        hasSourceNode={false}
-      />
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode={false} />
     );
     expect(queryByTestId('node-status-type')).not.toBeInTheDocument();
   });
@@ -582,5 +595,133 @@ describe('NodeTypeStep sub-components', () => {
       <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} />
     );
     expect(getByTestId('node-type')).toBeInTheDocument();
+  });
+
+  it('should render node status type when hasSourceNode is true', () => {
+    const { getByTestId } = render(
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job }} hasSourceNode />
+    );
+    expect(getByTestId('node-status-type')).toBeInTheDocument();
+  });
+
+  it('should use workflow node OPTIONS metadata for alias validation', async () => {
+    const user = userEvent.setup();
+    mockUseOptions.mockImplementation((url?: string) => {
+      if (url?.includes('/workflow_job_template_nodes/')) {
+        return {
+          data: {
+            actions: {
+              POST: {
+                identifier: {
+                  pattern: '^[a-z0-9-]+$',
+                  pattern_description: 'Alias pattern',
+                },
+              },
+            },
+          },
+        };
+      }
+      return { data: undefined };
+    });
+
+    const { getByTestId, getByText } = render(
+      <TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, node_alias: 'x' }} />
+    );
+    expect(getByTestId('node-alias')).toBeInTheDocument();
+
+    const aliasInput = getByTestId('node-alias');
+    await user.clear(aliasInput);
+    await user.type(aliasInput, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(getByText('Alias pattern')).toBeInTheDocument();
+    });
+  });
+
+  it('should use approval OPTIONS metadata when creating an approval node', async () => {
+    const user = userEvent.setup();
+    mockUseApprovalOptionsEndpoint.mockReturnValue(
+      '/api/controller/v2/workflow_job_template_nodes/15/create_approval_template/'
+    );
+    mockUseOptions.mockImplementation((url?: string) => {
+      if (url?.includes('/create_approval_template/')) {
+        return {
+          data: {
+            actions: {
+              GET: {
+                name: {
+                  pattern: '^[a-z]+$',
+                  pattern_description: 'Approval name pattern',
+                },
+              },
+            },
+          },
+        };
+      }
+      return { data: undefined };
+    });
+
+    const { getByLabelText, getByText } = render(
+      <TestWrapper
+        defaultValues={{
+          node_type: RESOURCE_TYPE.workflow_approval,
+          approval_timeout: 90,
+          approval_name: '',
+        }}
+      />
+    );
+
+    const nameInput = getByLabelText(/^Name/);
+    await user.type(nameInput, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(getByText('Approval name pattern')).toBeInTheDocument();
+    });
+  });
+
+  it('should fall back to job template OPTIONS for approval fields when no endpoint is resolved', async () => {
+    const user = userEvent.setup();
+    mockUseOptions.mockImplementation((url?: string) => {
+      if (url?.includes('/job_templates/')) {
+        return {
+          data: {
+            actions: {
+              POST: {
+                name: {
+                  pattern: '^[a-z]+$',
+                  pattern_description: 'Fallback name pattern',
+                },
+                description: {
+                  pattern: '^[a-z ]+$',
+                  pattern_description: 'Fallback description pattern',
+                },
+              },
+            },
+          },
+        };
+      }
+      return { data: undefined };
+    });
+
+    const { getByLabelText, getByText } = render(
+      <TestWrapper
+        defaultValues={{
+          node_type: RESOURCE_TYPE.workflow_approval,
+          approval_timeout: 0,
+          approval_name: '',
+        }}
+      />
+    );
+    expect(mockUseOptions).toHaveBeenCalledWith(expect.stringContaining('/job_templates/'));
+
+    const nameInput = getByLabelText(/^Name/);
+    await user.type(nameInput, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(getByText('Fallback name pattern')).toBeInTheDocument();
+    });
   });
 });

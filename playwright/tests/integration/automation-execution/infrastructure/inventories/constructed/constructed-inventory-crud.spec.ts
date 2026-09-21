@@ -184,10 +184,11 @@ test.describe('Constructed Inventory', () => {
             'plugin: constructed',
             'strict: true',
             'groups:',
-            `  is_shutdown: "state | default('running') == 'shutdown'"`,
-            `  product_dev: "account_alias == 'product_dev'"`,
+            '  is_shutdown: not_a_valid_jinja',
           ].join('\n')
         );
+
+        await expect(page.getByText('The plugin parameter is required.')).toBeHidden();
 
         // Save and wait for navigation
         await page.getByRole('button', { name: 'Save inventory' }).click();
