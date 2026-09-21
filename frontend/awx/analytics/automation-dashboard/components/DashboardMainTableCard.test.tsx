@@ -124,6 +124,7 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     details: mockDetails,
     detailsError: undefined,
     detailsLoading: false,
+    templateIdsError: undefined,
     costState: {
       id: 1,
       monthly_subscription_cost: 100,

@@ -46,11 +46,13 @@ export function useJobTemplateIds(): UseJobTemplateIdsResult {
     [baseUrl]
   );
 
-  const { data, error, isLoading, size, setSize } =
-    useSWRInfinite<AwxItemsResponse<TemplateRecord>>(getKey, fetcher, {
-      revalidateOnFocus: false,
-      dedupingInterval: 60_000,
-    });
+  const response = useSWRInfinite<AwxItemsResponse<TemplateRecord>>(getKey, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60_000,
+  });
+  const { data, isLoading, size, setSize } = response;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const error: Error | undefined = response.error;
 
   useEffect(() => {
     if (data && data.length === size && data[data.length - 1]?.next) {
