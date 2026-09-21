@@ -51,12 +51,14 @@ export function useAutomationDashboardView(options: {
     error: templateIdsError,
   } = useJobTemplateIds();
 
+  const isTemplateIdsUnavailable = isLoadingTemplateIds || !!templateIdsError;
+
   const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
     url: metricsAPI`/dashboard_reports/report/`,
     defaultFilters: DEFAULT_FILTERS,
     toolbarFilters,
     systemJobExclusionTemplateIds: allTemplateIds,
-    isLoadingSystemJobExclusionIds: isLoadingTemplateIds,
+    isLoadingSystemJobExclusionIds: isTemplateIdsUnavailable,
   });
 
   const { filterState, setFilterState } = mainTableViewBase;
@@ -92,7 +94,7 @@ export function useAutomationDashboardView(options: {
     filterState,
     QUERY_PARAMS,
     systemJobExclusionParams,
-    isLoadingTemplateIds
+    isTemplateIdsUnavailable
   );
   const { costState, setCostState } = useSubscriptionCostState();
 

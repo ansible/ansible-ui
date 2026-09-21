@@ -255,11 +255,39 @@ describe('useAutomationDashboardView', () => {
     );
   });
 
-  test('should pass isLoadingSystemJobExclusionIds to base view', () => {
+  test('should pass isLoadingSystemJobExclusionIds as false when templates loaded successfully', () => {
     renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
 
     expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
       expect.objectContaining({ isLoadingSystemJobExclusionIds: false })
+    );
+  });
+
+  test('should pass isLoadingSystemJobExclusionIds as true when template IDs are loading', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: true,
+      error: undefined,
+    });
+
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: true })
+    );
+  });
+
+  test('should pass isLoadingSystemJobExclusionIds as true when template IDs have an error', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: false,
+      error: new Error('Failed to fetch templates'),
+    });
+
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: true })
     );
   });
 

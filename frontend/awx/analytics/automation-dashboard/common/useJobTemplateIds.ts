@@ -60,12 +60,14 @@ export function useJobTemplateIds(): UseJobTemplateIdsResult {
     }
   }, [data, size, setSize]);
 
+  const isStillPaginating = !!data?.at(-1)?.next;
+
   const templateIds = useMemo(() => {
-    if (isLoading || data === undefined) return undefined;
+    if (isLoading || error || data === undefined || isStillPaginating) return undefined;
     const allResults = data.flatMap((page) => page.results ?? []);
     if (!allResults.length) return [];
     return allResults.map((t): [string, string] => ['template', t.id.toString()]);
-  }, [data, isLoading]);
+  }, [data, isLoading, error, isStillPaginating]);
 
-  return { templateIds, isLoading, error };
+  return { templateIds, isLoading: isLoading || isStillPaginating, error };
 }

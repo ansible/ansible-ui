@@ -145,6 +145,67 @@ describe('useJobTemplateIds', () => {
     expect(result.current.templateIds![249]).toEqual(['template', '250']);
   });
 
+  test('should not expose partial templateIds while pagination is in progress', async () => {
+    const page1Results = Array.from({ length: 200 }, (_, i) => ({
+      id: i + 1,
+      name: `Template ${i + 1}`,
+    }));
+    const page2Results = Array.from({ length: 50 }, (_, i) => ({
+      id: i + 201,
+      name: `Template ${i + 201}`,
+    }));
+
+    let resolveSecondPage: (() => void) | undefined;
+    const secondPagePromise = new Promise<void>((resolve) => {
+      resolveSecondPage = resolve;
+    });
+
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/templates/`, async ({ request }) => {
+        const page = new URL(request.url).searchParams.get('page');
+        if (page === '2') {
+          await secondPagePromise;
+          return HttpResponse.json({ count: 250, next: null, results: page2Results });
+        }
+        return HttpResponse.json({
+          count: 250,
+          next: 'http://localhost/dashboard_reports/templates/?page=2',
+          results: page1Results,
+        });
+      })
+    );
+
+    const { result } = renderHook(() => useJobTemplateIds());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(true);
+    });
+    expect(result.current.templateIds).toBeUndefined();
+
+    resolveSecondPage!();
+
+    await waitFor(() => {
+      expect(result.current.templateIds?.length).toBe(250);
+    });
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  test('should return undefined templateIds when API fails', async () => {
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/templates/`, () =>
+        HttpResponse.json({}, { status: 500 })
+      )
+    );
+
+    const { result } = renderHook(() => useJobTemplateIds());
+
+    await waitFor(() => {
+      expect(result.current.error).toBeDefined();
+    });
+
+    expect(result.current.templateIds).toBeUndefined();
+  });
+
   test('should stop paginating when next is null', async () => {
     let requestCount = 0;
     server.use(
