@@ -25,7 +25,7 @@ import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { PageFormRolePermissionsSelect } from './components/PageFormPermissionsSelect';
 import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
 import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPage?: string }>) {
   const { t } = useTranslation();

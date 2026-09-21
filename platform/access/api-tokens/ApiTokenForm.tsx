@@ -24,7 +24,7 @@ import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { OAuthApplicationSelect } from '../oauth-applications/components/OAuthApplicationSelect';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export function ApiTokenForm() {
   const { id: userId, tokenid } = useParams<{ id?: string; tokenid?: string }>();

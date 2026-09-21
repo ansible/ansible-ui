@@ -1,1 +1,1 @@
-export { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+export { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';

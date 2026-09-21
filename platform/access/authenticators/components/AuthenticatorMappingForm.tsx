@@ -28,7 +28,7 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { MappingFields } from './MappingFields';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 interface MapBase {
   map_type: AuthenticatorMapType;

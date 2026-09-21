@@ -20,7 +20,7 @@ import { OrganizationInstanceGroupsOrderStep } from './steps/OrganizationInstanc
 import { OrganizationReviewStep } from './steps/OrganizationReviewStep';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export interface OrganizationWizardFormValues {
   organization: PlatformOrganization;

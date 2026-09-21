@@ -29,7 +29,7 @@ import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
-import { ActionsResponse, OptionsResponse } from '@ansible/common/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
