@@ -212,7 +212,7 @@ describe('useRulebookActivationsActions', () => {
     });
   });
 
-  it('should keep clear logs visible but disabled for non-admin users', () => {
+  it('should allow non-admin users to open clear logs for backend authorization', () => {
     const { result } = renderHook(() => useRulebookActivationsActions(mockView), {
       wrapper: createWrapper({ ...mockActiveUser, is_superuser: false }),
     });
@@ -220,9 +220,7 @@ describe('useRulebookActivationsActions', () => {
       (action) => action.type === PageActionType.Button && action.label === 'Clear logs'
     ) as IPageActionButtonMultiple<EdaRulebookActivation>;
 
-    expect(clearLogsAction.isDisabled).toBe(
-      'You do not have permission to clear logs. Please contact your system administrator if there is an issue with your access.'
-    );
+    expect(clearLogsAction.isDisabled).toBeUndefined();
   });
 
   it('should handle enable rulebook activations without warning', async () => {

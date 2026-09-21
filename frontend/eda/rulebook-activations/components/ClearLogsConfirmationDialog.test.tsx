@@ -78,11 +78,15 @@ describe('ClearLogsConfirmationDialog', () => {
     const dateInput = screen.getByRole('textbox', { name: 'Clear logs older than' });
     const clearButton = screen.getByRole('button', { name: 'Clear logs' });
 
-    await user.type(dateInput, 'not-a-date');
+    await user.type(dateInput, '2025-02-31');
     expect(clearButton).toBeDisabled();
 
     await user.clear(dateInput);
-    await user.type(dateInput, '2025-01-02');
+    await user.type(dateInput, '2025-02-29');
+    expect(clearButton).toBeDisabled();
+
+    await user.clear(dateInput);
+    await user.type(dateInput, '2024-02-29');
     await user.click(
       screen.getByRole('checkbox', {
         name: 'I understand that clearing logs cannot be undone.',
@@ -90,10 +94,15 @@ describe('ClearLogsConfirmationDialog', () => {
     );
     await user.click(clearButton);
 
+    expect(onConfirm).toHaveBeenCalledWith('2024-02-29T00:00:00.000Z');
+
+    await user.clear(dateInput);
+    await user.type(dateInput, '2025-01-02');
+    await user.click(clearButton);
     expect(onConfirm).toHaveBeenCalledWith('2025-01-02T00:00:00.000Z');
   });
 
-  it('should submit the adjusted keep-last range', async () => {
+  it('should validate keep-last days and submit the supported boundaries', async () => {
     const user = userEvent.setup();
     const onConfirm = vi.fn();
 
@@ -109,14 +118,33 @@ describe('ClearLogsConfirmationDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Decrease days to keep' }));
     expect(daysInput).toHaveValue(7);
     await user.clear(daysInput);
-    expect(daysInput).toHaveValue(1);
+    expect(daysInput).toHaveValue(null);
+    expect(screen.getByText('Enter a whole number from 1 to 36500.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Clear logs' })).toBeDisabled();
+
+    await user.type(daysInput, '0');
+    expect(screen.getByRole('button', { name: 'Clear logs' })).toBeDisabled();
+    await user.clear(daysInput);
+    await user.type(daysInput, '1.5');
+    expect(screen.getByRole('button', { name: 'Clear logs' })).toBeDisabled();
+    await user.clear(daysInput);
+    await user.type(daysInput, '36501');
+    expect(screen.getByRole('button', { name: 'Clear logs' })).toBeDisabled();
+
+    await user.clear(daysInput);
+    await user.type(daysInput, '1');
 
     await user.click(
       screen.getByRole('checkbox', {
         name: 'I understand that clearing logs cannot be undone.',
       })
     );
-    await user.click(screen.getByRole('button', { name: 'Clear logs' }));
+    const clearButton = screen.getByRole('button', { name: 'Clear logs' });
+    expect(clearButton).toBeEnabled();
+    await user.clear(daysInput);
+    await user.type(daysInput, '36500');
+    expect(clearButton).toBeEnabled();
+    await user.click(clearButton);
 
     expect(onConfirm).toHaveBeenCalledWith(expect.any(String));
   });

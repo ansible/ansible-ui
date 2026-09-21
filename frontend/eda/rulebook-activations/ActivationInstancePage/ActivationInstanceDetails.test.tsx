@@ -232,8 +232,9 @@ describe('ActivationInstanceDetails', () => {
     expect(logRequestCount).toBe(2);
   });
 
-  test('should disable instance clear logs for a non-admin user', async () => {
-    const { findByRole } = render(
+  test('should allow non-admin users to open instance clear logs for backend authorization', async () => {
+    const user = userEvent.setup();
+    const { findByRole, getByRole } = render(
       <PageDialogProvider>
         <EdaActiveUserContext.Provider
           value={{
@@ -259,9 +260,66 @@ describe('ActivationInstanceDetails', () => {
       </PageDialogProvider>
     );
 
-    expect(await findByRole('button', { name: 'Clear logs' })).toHaveAttribute(
-      'aria-disabled',
-      'true'
+    await user.click(await findByRole('button', { name: 'Clear logs' }));
+    expect(getByRole('dialog', { name: 'Clear logs?' })).toBeInTheDocument();
+  });
+
+  test('should show the parsed permission error when instance clear logs is forbidden', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.post(edaAPI`/activation-instances/1/clear-logs/`, () =>
+        HttpResponse.json(
+          { detail: 'You do not have permission to clear logs for this instance.' },
+          { status: 403 }
+        )
+      )
     );
+
+    const { getByRole, getByText } = render(
+      <PageDialogProvider>
+        <EdaActiveUserContext.Provider
+          value={{
+            activeEdaUser: {
+              id: 1,
+              username: 'user',
+              is_superuser: false,
+              resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+              created_at: '2024-01-01T00:00:00Z',
+              modified_at: '2024-01-01T00:00:00Z',
+            },
+          }}
+        >
+          <MemoryRouter initialEntries={['/rulebook-activations/1/history/1/details']}>
+            <Routes>
+              <Route
+                path={`/rulebook-activations/:id/history/:instanceId/details`}
+                element={<ActivationInstanceDetails />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </EdaActiveUserContext.Provider>
+      </PageDialogProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('Pulling image quay.io/ansible/ansible-rulebook:main')).toBeInTheDocument();
+    });
+    await user.click(getByRole('button', { name: 'Clear logs' }));
+    const confirmationDialog = getByRole('dialog', { name: 'Clear logs?' });
+    await user.click(
+      within(confirmationDialog).getByRole('checkbox', {
+        name: 'I understand that clearing logs cannot be undone.',
+      })
+    );
+    await user.click(within(confirmationDialog).getByRole('button', { name: 'Clear logs' }));
+
+    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Clearing logs' }));
+    expect(
+      await within(progressDialog).findByText(
+        'You do not have permission to clear logs for this instance.'
+      )
+    ).toBeInTheDocument();
+    expect(within(progressDialog).getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    expect(within(progressDialog).getByRole('button', { name: 'Close' })).toBeInTheDocument();
   });
 });

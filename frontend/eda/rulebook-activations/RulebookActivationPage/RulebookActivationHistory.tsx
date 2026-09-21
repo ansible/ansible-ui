@@ -11,7 +11,6 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
-import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
@@ -22,7 +21,6 @@ import { useClearLogsDialog } from '../hooks/useClearLogsDialog';
 export function RulebookActivationHistory() {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const { activeEdaUser } = useEdaActiveUser();
   const { data: activation } = useGetItem<EdaRulebookActivation>(edaAPI`/activations/`, params?.id);
   const openClearLogsDialog = useClearLogsDialog();
 
@@ -50,15 +48,10 @@ export function RulebookActivationHistory() {
         label: t('Clear logs'),
         isPinned: true,
         onClick: confirmClearLogs,
-        isDisabled: activeEdaUser?.is_superuser
-          ? undefined
-          : t(
-              'You do not have permission to clear logs. Please contact your system administrator if there is an issue with your access.'
-            ),
         isDanger: true,
       },
     ],
-    [activeEdaUser?.is_superuser, confirmClearLogs, t]
+    [confirmClearLogs, t]
   );
 
   return (

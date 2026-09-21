@@ -29,7 +29,6 @@ import {
   useDeleteRulebookActivationsWithWarning,
 } from './useDeleteRulebookActivations';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
-import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { useClearLogsDialog } from './useClearLogsDialog';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
@@ -54,7 +53,6 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     view.unselectItemsAndRefresh
   );
   const getPageUrl = useGetPageUrl();
-  const { activeEdaUser } = useEdaActiveUser();
 
   const openClearLogsDialog = useClearLogsDialog();
 
@@ -180,11 +178,6 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         icon: TrashIcon,
         label: t('Clear logs'),
         onClick: (activations: EdaRulebookActivation[]) => openClearLogsDialog(activations),
-        isDisabled: activeEdaUser?.is_superuser
-          ? undefined
-          : t(
-              'You do not have permission to clear logs. Please contact your system administrator if there is an issue with your access.'
-            ),
         isDanger: true,
       },
       {
@@ -206,7 +199,6 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     restartRulebookActivations,
     deleteRulebookActivations,
     openClearLogsDialog,
-    activeEdaUser?.is_superuser,
     getPageUrl,
   ]);
 }

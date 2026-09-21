@@ -194,18 +194,14 @@ describe('RulebookActivationHistory', () => {
     expect(screen.queryByRole('dialog', { name: 'Clear logs?' })).not.toBeInTheDocument();
   });
 
-  it('should show disabled clear logs with a permission tooltip for a non-admin user', async () => {
+  it('should allow non-admin users to open clear logs for backend authorization', async () => {
     const user = userEvent.setup();
     server.use(http.get('*/activations/5/instances/*', () => HttpResponse.json(mockInstances)));
 
     renderHistory({ ...mockActiveUser, is_superuser: false });
 
     const clearLogs = await screen.findByRole('button', { name: 'Clear logs' });
-    expect(clearLogs).toHaveAttribute('aria-disabled', 'true');
-
-    await user.hover(clearLogs);
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'You do not have permission to clear logs. Please contact your system administrator if there is an issue with your access.'
-    );
+    await user.click(clearLogs);
+    expect(screen.getByRole('dialog', { name: 'Clear logs?' })).toBeInTheDocument();
   });
 });

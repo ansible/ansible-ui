@@ -4,6 +4,9 @@ import {
   DatePicker,
   Flex,
   FlexItem,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   Modal,
   ModalBody,
   ModalFooter,
@@ -12,6 +15,9 @@ import {
   NumberInput,
   Radio,
   Stack,
+  ValidatedOptions,
+  isValidDate,
+  yyyyMMddFormat,
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,19 +45,34 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
   const [range, setRange] = useState<ClearLogsRange>('keep-last');
   const [olderThanDate, setOlderThanDate] = useState('');
   const [isOlderThanDateValid, setIsOlderThanDateValid] = useState(false);
-  const [keepLastDays, setKeepLastDays] = useState(7);
+  const [keepLastDays, setKeepLastDays] = useState<number | ''>(7);
   const [isAcknowledged, setIsAcknowledged] = useState(false);
+  const keepLastDaysErrorId = 'clear-logs-days-error';
+  const isKeepLastDaysValid =
+    range !== 'keep-last' ||
+    (typeof keepLastDays === 'number' &&
+      Number.isInteger(keepLastDays) &&
+      keepLastDays >= 1 &&
+      keepLastDays <= 36500);
 
   const canSubmit =
-    isAcknowledged && (range === 'keep-last' || (olderThanDate.length > 0 && isOlderThanDateValid));
+    isAcknowledged &&
+    isKeepLastDaysValid &&
+    (range === 'keep-last' || (olderThanDate.length > 0 && isOlderThanDateValid));
 
   const onConfirm = () => {
     if (!canSubmit) return;
 
-    const beforeDate =
-      range === 'older-than'
-        ? `${olderThanDate}T00:00:00.000Z`
-        : new Date(Date.now() - keepLastDays * 24 * 60 * 60 * 1000).toISOString();
+    let beforeDate: string;
+    if (range === 'older-than') {
+      beforeDate = `${olderThanDate}T00:00:00.000Z`;
+    } else {
+      let days = 0;
+      if (typeof keepLastDays === 'number') {
+        days = keepLastDays;
+      }
+      beforeDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    }
     props.onConfirm(beforeDate);
   };
 
@@ -99,7 +120,9 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
                   invalidFormatText={t('Enter a valid date in YYYY-MM-DD format')}
                   onChange={(_, value, date) => {
                     setOlderThanDate(value);
-                    setIsOlderThanDateValid(Boolean(date));
+                    setIsOlderThanDateValid(
+                      Boolean(date && isValidDate(date) && value === yyyyMMddFormat(date))
+                    );
                   }}
                   placeholder={t('YYYY-MM-DD')}
                   value={olderThanDate}
@@ -124,19 +147,47 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
                   max={36500}
                   min={1}
                   minusBtnAriaLabel={t('Decrease days to keep')}
-                  onChange={(event) => {
-                    const value = Number(event.currentTarget.value);
-                    setKeepLastDays(Number.isFinite(value) && value > 0 ? value : 1);
+                  inputProps={{
+                    'aria-describedby': keepLastDaysErrorId,
+                    max: 36500,
+                    min: 1,
+                    step: 1,
                   }}
-                  onMinus={() => setKeepLastDays((days) => Math.max(1, days - 1))}
-                  onPlus={() => setKeepLastDays((days) => Math.min(36500, days + 1))}
+                  onChange={(event) => {
+                    const value = event.currentTarget.value;
+                    setKeepLastDays(value === '' ? '' : Number(value));
+                  }}
+                  onMinus={() =>
+                    setKeepLastDays((days) =>
+                      typeof days === 'number' ? Math.max(1, days - 1) : 1
+                    )
+                  }
+                  onPlus={() =>
+                    setKeepLastDays((days) =>
+                      typeof days === 'number' ? Math.min(36500, days + 1) : 1
+                    )
+                  }
                   plusBtnAriaLabel={t('Increase days to keep')}
                   value={keepLastDays}
+                  validated={
+                    range === 'keep-last' && !isKeepLastDaysValid
+                      ? ValidatedOptions.error
+                      : undefined
+                  }
                   widthChars={3}
                 />
               </FlexItem>
               <FlexItem>{t('days')}</FlexItem>
             </Flex>
+            {range === 'keep-last' && !isKeepLastDaysValid ? (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem id={keepLastDaysErrorId} variant="error">
+                    {t('Enter a whole number from 1 to 36500.')}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            ) : null}
           </Stack>
           <Checkbox
             id="clear-logs-acknowledgement"

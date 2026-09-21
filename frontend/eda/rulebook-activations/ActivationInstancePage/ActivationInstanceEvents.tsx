@@ -1,4 +1,4 @@
-import { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { IFilterState, IToolbarFilter, usePageAlertToaster } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { useScrollControls } from '@ansible/awx-ui/views/jobs/JobOutput/useScrollControls';
 import { requestGet } from '@ansible/common-ui/crud/Data';
@@ -6,10 +6,12 @@ import { PageSection } from '@patternfly/react-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { useVirtualizedList } from '../../..//common/utils/useVirtualized';
 import { getFiltersQueryString } from '../../../awx/views/jobs/JobOutput/useJobOutput';
 import { PageControls } from '../../../common/PageControls';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
 import { ActivationInstanceOutputRow } from './ActivationInstanceOutputRow';
 
@@ -72,10 +74,16 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
   const [isLoadingOlder, setIsLoadingOlder] = useState(false);
   const [lineNumberOffset, setLineNumberOffset] = useState(0);
   const logsRef = useRef<EdaActivationInstanceLog[]>([]);
-  const newestLoadedIdRef = useRef<number | null>(null);
+  const newestLoadedIdRef = useRef(0);
   const oldestLoadedIdRef = useRef<number | null>(null);
   const requestGenerationRef = useRef(0);
   const isPollingRef = useRef(false);
+  const pollFailureAlertShownRef = useRef(false);
+  const alertToaster = usePageAlertToaster();
+  const parseError = useEdaErrorMessageParser();
+  const parseErrorRef = useRef(parseError);
+  parseErrorRef.current = parseError;
+  const { t } = useTranslation();
 
   const params = useParams<{ instanceId: string }>();
   const instanceId = params.instanceId ?? '';
@@ -102,9 +110,10 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
     setHasOlderLogs(false);
     setIsLoadingOlder(false);
     setLineNumberOffset(0);
-    newestLoadedIdRef.current = null;
+    newestLoadedIdRef.current = 0;
     oldestLoadedIdRef.current = null;
     isPollingRef.current = false;
+    pollFailureAlertShownRef.current = false;
 
     async function initialLoad() {
       try {
@@ -131,8 +140,12 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
           newestLoadedIdRef.current = results[results.length - 1].id;
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to load logs:', error);
+        const errorResults = parseErrorRef.current(error as Error);
+        alertToaster.addAlert({
+          variant: 'danger',
+          title: t('Failed to load logs'),
+          children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+        });
       }
     }
 
@@ -141,7 +154,7 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
     return () => {
       isCurrent = false;
     };
-  }, [instanceId, buildFilterString, refreshToken]);
+  }, [alertToaster, buildFilterString, instanceId, refreshToken, t]);
 
   useEffect(() => {
     if (!isRunning && !isFollowModeEnabled) return;
@@ -149,7 +162,7 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
 
     async function pollLogs() {
       const newestLoadedId = newestLoadedIdRef.current;
-      if (isPollingRef.current || newestLoadedId === null) return;
+      if (isPollingRef.current) return;
 
       isPollingRef.current = true;
       try {
@@ -169,6 +182,8 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
 
         if (requestGenerationRef.current !== requestGeneration) return;
 
+        pollFailureAlertShownRef.current = false;
+
         const newLogs = [...(response.results ?? [])].sort((left, right) => left.id - right.id);
         const uniqueNewLogs = getUniqueLogs(logsRef.current, newLogs);
         if (uniqueNewLogs.length > 0) {
@@ -180,8 +195,15 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
           );
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to poll logs:', error);
+        if (!pollFailureAlertShownRef.current) {
+          pollFailureAlertShownRef.current = true;
+          const errorResults = parseErrorRef.current(error as Error);
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t('Live log updates are temporarily unavailable'),
+            children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+          });
+        }
       } finally {
         isPollingRef.current = false;
       }
@@ -192,7 +214,15 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
     }, POLL_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [instanceId, isRunning, isFollowModeEnabled, buildFilterString]);
+  }, [
+    alertToaster,
+    buildFilterString,
+    instanceId,
+    isFollowModeEnabled,
+    isRunning,
+    refreshToken,
+    t,
+  ]);
 
   const loadOlderLogs = useCallback(async () => {
     if (!hasOlderLogs || isLoadingOlder) return;
@@ -230,14 +260,18 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
       }
       setHasOlderLogs((response.count ?? 0) > olderLogs.length);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to load older logs:', error);
+      const errorResults = parseErrorRef.current(error as Error);
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Failed to load older logs'),
+        children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+      });
     } finally {
       if (requestGenerationRef.current === requestGeneration) {
         setIsLoadingOlder(false);
       }
     }
-  }, [instanceId, hasOlderLogs, isLoadingOlder, buildFilterString]);
+  }, [alertToaster, buildFilterString, hasOlderLogs, instanceId, isLoadingOlder, t]);
 
   const estimatedMaxLines = Math.max(lineNumberOffset + logs.length, logs.length) * 10;
   const outputLineChars = String(estimatedMaxLines).length;
@@ -262,7 +296,7 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
     [handleScroll, hasOlderLogs, isLoadingOlder, loadOlderLogs]
   );
 
-  const { beforeRowsHeight, visibleItems, afterRowsHeight, setRowHeight } =
+  const { beforeRowsCount, beforeRowsHeight, visibleItems, afterRowsHeight, setRowHeight } =
     useVirtualizedList<EdaActivationInstanceLog>(containerRef, logs, onScroll);
 
   return (
@@ -282,8 +316,8 @@ export function ActivationInstanceEvents(props: Readonly<IActivationInstanceEven
             style={{ '--output-line-chars': outputLineChars } as { [key: string]: string | number }}
           >
             <div style={{ height: beforeRowsHeight }} />
-            {visibleItems?.map((row) => {
-              const index = logs.findIndex((log) => log.id === row.id);
+            {visibleItems?.map((row, visibleIndex) => {
+              const index = beforeRowsCount + visibleIndex;
               return (
                 <ActivationInstanceOutputRow
                   key={row.id}

@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { StatusCell } from '../../../common/Status';
 import { edaAPI } from '../../common/eda-utils';
-import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { useActivationHistoryLogsFilters } from '../hooks/useActivationHistoryLogsFilters';
@@ -31,7 +30,6 @@ function ActivationInstanceDetailsInner(
   props: Readonly<{ activationInstance: EdaActivationInstance }>
 ) {
   const { t } = useTranslation();
-  const { activeEdaUser } = useEdaActiveUser();
   const toolbarFilters = useActivationHistoryLogsFilters();
   const [filterState, setFilterState] = useState<IFilterState>({});
   const [logsRefreshToken, setLogsRefreshToken] = useState(0);
@@ -87,7 +85,6 @@ function ActivationInstanceDetailsInner(
         isFollowModeEnabled={isFollowModeEnabled}
         setIsFollowModeEnabled={setIsFollowModeEnabled}
         isRunning={isRunning}
-        isClearLogsDisabled={activeEdaUser?.is_superuser !== true}
         onClearLogs={onClearLogs}
       />
       <ActivationInstanceEvents
