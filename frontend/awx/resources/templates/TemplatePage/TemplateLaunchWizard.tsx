@@ -15,7 +15,10 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import {
+  awxErrorAdapter,
+  useAwxErrorMessageParser,
+} from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -84,6 +87,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
   const postRequest = usePostRequest<Partial<LaunchPayload>, UnifiedJob>();
   const createLabelPayload = useLabelPayload();
+  const parseErrorMessage = useAwxErrorMessageParser();
 
   const alertToaster = usePageAlertToaster();
 
@@ -195,10 +199,12 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           void navigate(getJobOutputUrl(job));
         }
       } catch (err) {
+        const failureTitle = t('Failure to launch');
         alertToaster.addAlert({
           variant: 'danger',
-          title: t('Failure to launch'),
-          children: err instanceof Error && err.message,
+          title: failureTitle,
+          children:
+            err instanceof Error ? parseErrorMessage(err, failureTitle).message : failureTitle,
         });
       }
     }
