@@ -3,12 +3,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, it, test, vi } from 'vitest';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { CreatePlatformOrganization } from './CreatePlatformOrganization';
 import { PlatformOrganizationForm } from './PlatformOrganizationForm';
 
 const mockNavigate = vi.fn();
@@ -264,7 +265,8 @@ describe('PlatformOrganizationForm', () => {
             POST: {
               name: {
                 pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
-                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and spaces.',
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and spaces.',
               },
             },
           },
@@ -287,7 +289,9 @@ describe('PlatformOrganizationForm', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Name must contain only letters, numbers, underscores, hyphens, and spaces\./)
+        screen.getByText(
+          /Name must contain only letters, numbers, underscores, hyphens, and spaces\./
+        )
       ).toBeInTheDocument();
     });
   });
@@ -300,7 +304,8 @@ describe('PlatformOrganizationForm', () => {
             POST: {
               name: {
                 pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
-                patternDescription: 'Name must contain only letters, numbers, underscores, hyphens, and spaces.',
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and spaces.',
               },
             },
           },
