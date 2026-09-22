@@ -564,6 +564,12 @@ export function DataEditorActions(props: {
   );
 }
 
+/** AWX often stores empty extra_vars as `---` / `---\n` (YAML document start only). */
+function isEmptyYamlDocumentMarker(rawString: string): boolean {
+  const trimmed = rawString.trim();
+  return trimmed === '---' || /^---\s*$/.test(trimmed);
+}
+
 function hasYamlComments(yamlString: string): boolean {
   const lines = yamlString.split('\n');
   return lines.some((line) => {
@@ -660,9 +666,14 @@ export function valueToObject(
         // Whitespace-only strings (e.g. a lone space while typing in JSON mode) load as
         // `undefined` but must not commit as empty extra_vars and wipe saved content.
         if ((parsed === undefined || parsed === null) && rawString.length > 0) {
-          throw new YAMLException('invalid or incomplete YAML/JSON content');
+          if (isEmptyYamlDocumentMarker(rawString)) {
+            value = emptyArrayOrObject;
+          } else {
+            throw new YAMLException('invalid or incomplete YAML/JSON content');
+          }
+        } else {
+          value = parsed as object;
         }
-        value = parsed as object;
       } catch (err) {
         // Both JSON and YAML parsing failed. Throw so the caller (handleChange)
         // treats this as a validation error rather than silently returning the
