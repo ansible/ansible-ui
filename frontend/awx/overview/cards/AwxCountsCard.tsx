@@ -22,17 +22,19 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Ready'),
                   count: data.hosts.total - data.hosts.failed,
                   color: successfulColor,
-                  link: getPageUrl(AwxRoute.Hosts, {
-                    query: { ready_status: ['True'] },
-                  }),
+                  // Do not pass ready_status/failed_status. Those map to
+                  // last_job_host_summary list filters: 2.7 OPTIONS still
+                  // marks the dead FK filterable (stale results; Ready's
+                  // not__ lookup can 400). AWX devel OPTIONS is correct
+                  // (filterable:false after the FK was dropped) and the same
+                  // query 400s. summary_fields still exist on both backends.
+                  link: getPageUrl(AwxRoute.Hosts),
                 },
                 {
                   label: t('Failed'),
                   count: data.hosts.failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Hosts, {
-                    query: { failed_status: ['True'] },
-                  }),
+                  link: getPageUrl(AwxRoute.Hosts),
                 },
               ]
             : undefined,

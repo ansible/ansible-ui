@@ -1,5 +1,16 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+
+// Ready/Failed counts must not send last_job_host_summary list filters:
+// 2.7 OPTIONS advertises the dead FK (stale/400); devel OPTIONS is
+// filterable:false and the same query 400s. Wait for the real toolbar
+// (not the OPTIONS loading table) on either backend.
+async function expectHostsListLoadedWithoutStatusFilter(page: Page) {
+  await expect(page.getByTestId('page-title')).toContainText('Hosts');
+  await expect(page.getByTestId('page-toolbar')).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole('heading', { name: 'Error loading hosts' })).not.toBeVisible();
+  await expect(page).not.toHaveURL(/ready_status|failed_status|last_job_host_summary/);
+}
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
@@ -39,16 +50,12 @@ test('hosts resource counts should redirect correctly', async ({ page }) => {
     await expect(page.locator('#resource-counts')).toContainText('Resource Counts');
     if (await page.locator('#hosts').getByRole('link', { name: 'Ready' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Ready' }).click();
-      await expect(page.getByTestId('page-title')).toContainText('Hosts');
-      await expect(page.getByText('Ready Status')).toBeVisible();
-      await expect(page.getByText('Show only ready hosts')).toBeVisible();
+      await expectHostsListLoadedWithoutStatusFilter(page);
     }
     await page.getByRole('link', { name: 'Overview' }).click();
     if (await page.locator('#hosts').getByRole('link', { name: 'Failed' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Failed' }).click();
-      await expect(page.getByRole('heading')).toContainText('Hosts');
-      await expect(page.getByText('Failed Status')).toBeVisible();
-      await expect(page.getByText('Show only failed hosts')).toBeVisible();
+      await expectHostsListLoadedWithoutStatusFilter(page);
     }
   }
 });
