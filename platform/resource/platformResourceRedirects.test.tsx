@@ -1,0 +1,118 @@
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+import { PlatformAwxOrganization } from './PlatformAwxOrganization';
+import { PlatformAwxTeam } from './PlatformAwxTeam';
+import { PlatformAwxUser } from './PlatformAwxUser';
+import { PlatformEdaOrganization } from './PlatformEdaOrganization';
+import { PlatformEdaUser } from './PlatformEdaUser';
+import { PlatformHubTeam } from './PlatformHubTeam';
+import { PlatformHubUser } from './PlatformHubUser';
+import { registerPlatformResourceRedirectTests } from './platformResourceRedirectTestUtils';
+
+vi.mock('@ansible/ansible-ui-framework', async () => {
+  const actual = await vi.importActual('@ansible/ansible-ui-framework');
+  return {
+    ...actual,
+    useGetPageUrl: () => vi.fn(() => '/mock-resource-route'),
+  };
+});
+
+vi.mock('../main/PlatformActiveUserProvider', () => ({
+  usePlatformActiveUser: () => ({ activePlatformUser: { id: 1 } }),
+}));
+
+const server = setupServer();
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+registerPlatformResourceRedirectTests(server, {
+  description: 'PlatformAwxUser',
+  Component: PlatformAwxUser,
+  apiPathIncludes: 'users/1',
+  routePath: 'users/:id',
+  notFoundResponse: { id: 1, summary_fields: { resource: {} } },
+  successResponse: {
+    id: 1,
+    summary_fields: {
+      resource: { resource_type: 'shared.user', ansible_id: 'abc-123' },
+    },
+  },
+});
+
+registerPlatformResourceRedirectTests(server, {
+  description: 'PlatformAwxOrganization',
+  Component: PlatformAwxOrganization,
+  apiPathIncludes: 'organizations/1',
+  routePath: 'organizations/:id',
+  notFoundResponse: { id: 1, summary_fields: { resource: {} } },
+  successResponse: {
+    id: 1,
+    summary_fields: {
+      resource: { resource_type: 'shared.organization', ansible_id: 'org-123' },
+    },
+  },
+});
+
+registerPlatformResourceRedirectTests(server, {
+  description: 'PlatformAwxTeam',
+  Component: PlatformAwxTeam,
+  apiPathIncludes: 'teams/1',
+  routePath: 'teams/:id',
+  notFoundResponse: { id: 1, summary_fields: { resource: {} } },
+  successResponse: {
+    id: 1,
+    summary_fields: {
+      resource: { resource_type: 'shared.team', ansible_id: 'team-123' },
+    },
+  },
+});
+
+registerPlatformResourceRedirectTests(server, {
+  description: 'PlatformEdaUser',
+  Component: PlatformEdaUser,
+  apiPathIncludes: 'users/1',
+  routePath: 'users/:id',
+  notFoundResponse: { id: 1, resource: {} },
+  successResponse: {
+    id: 1,
+    resource: { resource_type: 'shared.user', ansible_id: 'eda-user-123' },
+  },
+});
+
+registerPlatformResourceRedirectTests(server, {
+  description: 'PlatformEdaOrganization',
+  Component: PlatformEdaOrganization,
+  apiPathIncludes: 'organizations/1',
+  routePath: 'organizations/:id',
+  notFoundResponse: { id: 1, resource: {} },
+  successResponse: {
+    id: 1,
+    resource: { resource_type: 'shared.organization', ansible_id: 'eda-org-123' },
+  },
+});
+
+registerPlatformResourceRedirectTests(server, {
+  description: 'PlatformHubUser',
+  Component: PlatformHubUser,
+  apiPathIncludes: '_ui/v2/users/1',
+  routePath: 'users/:id',
+  notFoundResponse: { id: 1, resource: {} },
+  successResponse: {
+    id: 1,
+    resource: { resource_type: 'shared.user', ansible_id: 'hub-user-123' },
+  },
+});
+
+registerPlatformResourceRedirectTests(server, {
+  description: 'PlatformHubTeam',
+  Component: PlatformHubTeam,
+  apiPathIncludes: '_ui/v2/teams/1',
+  routePath: 'teams/:id',
+  notFoundResponse: { id: 1, resource: {} },
+  successResponse: {
+    id: 1,
+    resource: { resource_type: 'shared.team', ansible_id: 'hub-team-123' },
+  },
+});
