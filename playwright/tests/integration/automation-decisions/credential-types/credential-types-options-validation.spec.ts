@@ -9,9 +9,9 @@ import {
 } from '@ansible/playwright/utils/optionsDrivenValidation';
 import { test } from '@playwright/test';
 
-test.beforeAll(() => {
+test.beforeEach((_fixtures, testInfo) => {
   if (isSaaS()) {
-    test.skip(true, 'EDA credential types not available on SaaS deployments');
+    testInfo.skip(true, 'EDA credential types not available on SaaS deployments');
   }
 });
 
