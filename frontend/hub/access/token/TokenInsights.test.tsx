@@ -207,7 +207,7 @@ describe('TokenInsights Component', () => {
     expect(tokenManagementLink).toBeInTheDocument();
   });
 
-  it('should not call insights APIs when window.insights is not available', () => {
+  it('should not call insights APIs when window.insights is not available', async () => {
     // Remove window.insights
     delete (globalThis as typeof globalThis & { insights?: unknown }).insights;
 

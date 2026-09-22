@@ -186,7 +186,6 @@ describe('useSyncProject hook', () => {
     const submitButton = screen.getByRole('button', { name: 'Sync projects' });
     await user.click(submitButton);
 
-
     await waitFor(
       () => {
         expect(mockView.unselectItemsAndRefresh).toHaveBeenCalled();
