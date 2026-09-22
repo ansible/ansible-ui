@@ -745,7 +745,7 @@ debug_mode: true         # Enable debugging`;
     await user.click(screen.getByRole('button', { name: /json/i }));
 
     await waitFor(() => {
-      const editor = screen.getByTestId('data-editor');
+      const editor = screen.getByTestId<HTMLTextAreaElement>('data-editor');
       expect(editor.value).toContain('foo');
       expect(editor.value).not.toContain('# heading');
     });
