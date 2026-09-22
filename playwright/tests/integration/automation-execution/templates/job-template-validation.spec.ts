@@ -148,6 +148,10 @@ test.describe('Job Template Form - Validation', () => {
 
       await expect(page.getByRole('heading', { name: 'Create Job Template' })).toBeVisible();
 
+      await page
+        .getByPlaceholder('Enter job template name')
+        .fill('aap-93178-extra-vars-regression');
+
       // Paste invalid indented YAML into the Extra Variables Monaco editor.
       // Leading spaces before `---` are a common artifact of copy-pasting from
       // code blocks and are rejected by js-yaml.
@@ -166,6 +170,15 @@ test.describe('Job Template Form - Validation', () => {
       // After the fix the editor reverts to its default (empty) value on blur.
       const editorLines = page.getByTestId('extra-vars').locator('.view-lines');
       await expect(editorLines).not.toContainText('|2-', { timeout: 3000 });
+
+      const extraVarsField = page.getByTestId('extra-vars');
+      await expect(extraVarsField.getByText(/document separator|end of the stream/i)).toBeVisible({
+        timeout: 10000,
+      });
+
+      await page.getByRole('button', { name: 'Create job template' }).click();
+      await expect(page.getByRole('heading', { name: 'Create Job Template' })).toBeVisible();
+      await expect(extraVarsField.getByText(/document separator|end of the stream/i)).toBeVisible();
 
       // Page must still be functional — not crashed or frozen.
       await expect(page.getByRole('heading', { name: 'Create Job Template' })).toBeVisible();
