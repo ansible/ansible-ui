@@ -8,5 +8,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
+  "extends": "../tsconfig.json",
   "include": ["*.ts"]
 }
