@@ -119,8 +119,12 @@ variable2: value2`;
         expect(() => valueToObject('  ')).toThrow();
       });
 
-      test('throws when YAML loads non-empty input as null (e.g. --- or tab)', () => {
-        expect(() => valueToObject('---')).toThrow();
+      test('treats AWX empty extra_vars marker --- as empty object', () => {
+        expect(valueToObject('---\n')).toEqual({});
+        expect(valueToObject('---')).toEqual({});
+      });
+
+      test('throws when YAML loads whitespace-only input as null', () => {
         expect(() => valueToObject('\t')).toThrow();
       });
 
@@ -146,6 +150,11 @@ variable2: value2`;
           /document separator|end of the stream/i
         );
         expect(getValueToObjectParseError('abc: 1', false)).toBeUndefined();
+        expect(getValueToObjectParseError('---\n', false)).toBeUndefined();
+      });
+
+      test('formats in-memory object values for display', () => {
+        expect(formatEditorDisplayValue({ count: 2 }, 'json', false)).toContain('count');
       });
     });
   });
@@ -486,6 +495,20 @@ debug_mode: true         # Enable debugging`;
   // re-render.  This prevents userEvent.type from accumulating multi-character
   // text, making fireEvent.change the only reliable way to fire the onChange
   // callback with the full invalid string in one shot.
+  test('should allow submit when mounted with AWX empty extra_vars marker', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '---\n' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+    expect(onSubmit).toHaveBeenCalled();
+  });
+
   test('should show parse error when mounted with invalid preloaded extra vars (AAP-93178)', async () => {
     render(
       <TestWrapper defaultValue={{ vars: '  ---\n  a: b' }} onSubmit={vi.fn()}>
