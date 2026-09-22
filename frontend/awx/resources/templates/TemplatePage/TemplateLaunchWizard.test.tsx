@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import type { AlertProps } from '@patternfly/react-core';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -12,7 +13,7 @@ import {
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchTemplate, LaunchWizard } from './TemplateLaunchWizard';
 
-const mockAddAlert = vi.fn();
+const mockAddAlert = vi.fn<(alert: AlertProps) => void>();
 
 vi.mock('@ansible/ansible-ui-framework', async () => ({
   ...(await vi.importActual('@ansible/ansible-ui-framework')),
@@ -532,10 +533,7 @@ describe('TemplateLaunchWizard', () => {
           http.post(awxAPI`/job_templates/1/launch/`, () =>
             HttpResponse.json(
               {
-                credentials: [
-                  'Cannot assign a Credential of kind `token`',
-                  'Removing Machine credential at launch time without replacement is not supported. Provided list lacked credential(s): Demo Credential-1.',
-                ],
+                credentials: ['Cannot assign a Credential of kind `token`'],
               },
               { status: 400 }
             )
@@ -557,13 +555,63 @@ describe('TemplateLaunchWizard', () => {
         await user.click(finishButton);
         await waitFor(() => {
           expect(mockAddAlert).toHaveBeenCalledWith(
-            expect.objectContaining({
-              title: 'Failure to launch',
-              variant: 'danger',
-              children: 'Cannot assign a Credential of kind `token`',
-            })
+            expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })
           );
         });
+
+        const alertCall = mockAddAlert.mock.calls.find(
+          ([alert]) => alert.title === 'Failure to launch'
+        );
+        render(<>{alertCall?.[0].children}</>);
+        expect(screen.getByText('Cannot assign a Credential of kind `token`')).toBeInTheDocument();
+      }
+    );
+
+    it(
+      'should show every validation message when the API rejects multiple fields',
+      { timeout: 15000 },
+      async () => {
+        mockAddAlert.mockClear();
+        server.use(
+          http.post(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(
+              {
+                credentials: ['Cannot assign a Credential of kind `token`'],
+                inventory: ['This field is required.'],
+              },
+              { status: 400 }
+            )
+          )
+        );
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
+        await waitFor(() => {
+          expect(mockAddAlert).toHaveBeenCalledWith(
+            expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })
+          );
+        });
+
+        // Regression: with two rejected fields, useAwxErrorMessageParser's
+        // `.message` collapses to the fallback title, dropping both
+        // validation strings. The toast must render every parsed message.
+        const alertCall = mockAddAlert.mock.calls.find(
+          ([alert]) => alert.title === 'Failure to launch'
+        );
+        render(<>{alertCall?.[0].children}</>);
+        expect(screen.getByText('Cannot assign a Credential of kind `token`')).toBeInTheDocument();
+        expect(screen.getByText('This field is required.')).toBeInTheDocument();
       }
     );
 

@@ -11,6 +11,7 @@ import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils'
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
@@ -200,11 +201,24 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         }
       } catch (err) {
         const failureTitle = t('Failure to launch');
+        let children: ReactNode = failureTitle;
+        if (err instanceof Error) {
+          const { parsedErrors } = parseErrorMessage(err, failureTitle);
+          children =
+            parsedErrors.length > 0 ? (
+              <>
+                {parsedErrors.map((parsedError, index) => (
+                  <div key={index}>{parsedError.message}</div>
+                ))}
+              </>
+            ) : (
+              err.message
+            );
+        }
         alertToaster.addAlert({
           variant: 'danger',
           title: failureTitle,
-          children:
-            err instanceof Error ? parseErrorMessage(err, failureTitle).message : failureTitle,
+          children,
         });
       }
     }
