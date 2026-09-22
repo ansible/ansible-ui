@@ -1,5 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { expectJobOutputHeaderAnyStatus, jobOutputJobStatusBarLocator } from './jobOutputStatus';
+import {
+  expectJobOutputHeaderAnyStatus,
+  expectJobOutputRunningOrTerminal,
+  jobOutputJobStatusBarLocator,
+} from './jobOutputStatus';
 import { waitForBulkActionDialog } from './waitForBulkActionDialog';
 
 export interface AdHocCommandOptions {
@@ -132,12 +136,10 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   const headerRunningStatus = bar.getByTestId('running-status');
   const cancelJob = page.getByRole('button', { name: 'Cancel job' });
 
-  // Confirm the job page rendered. Pending/waiting jobs cannot be canceled, so
-  // do not spend 60s waiting for Running — host delete already retries.
+  // Confirm the job page rendered, then wait for running or a terminal status
+  // (pending/waiting cannot be canceled). Bound the wait so cleanup can retry.
   await expectJobOutputHeaderAnyStatus(page);
-  await expect(headerRunningStatus)
-    .toBeVisible({ timeout: 30_000 })
-    .catch(() => undefined);
+  await expectJobOutputRunningOrTerminal(page, { timeout: 30_000 }).catch(() => undefined);
 
   if (
     (await headerRunningStatus.isVisible().catch(() => false)) &&

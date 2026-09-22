@@ -3,22 +3,19 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
 // Requires controller list filters last_job_host_summary__failed on the E2E backend (2.7 today).
 async function expectHostsPageWithStatusFilter(page: Page, status: 'ready' | 'failed') {
-  await expect(page.getByTestId('page-title')).toContainText('Hosts');
-  await expect(page.getByRole('heading', { name: 'Error loading hosts' })).not.toBeVisible();
+  const isReady = status === 'ready';
+  const chipLabel = isReady ? 'Show only ready hosts' : 'Show only failed hosts';
+  const urlPattern = isReady ? /ready_status=True/ : /failed_status=True/;
+  const errorHeading = page.getByRole('heading', { name: 'Error loading hosts' });
+  const toolbar = page.getByTestId('page-toolbar');
 
-  if (status === 'ready') {
-    await expect(page).toHaveURL(/ready_status=True/);
-    await expect(page.getByRole('list', { name: 'Ready Status' })).toContainText(
-      'Show only ready hosts',
-      { timeout: 15_000 }
-    );
-  } else {
-    await expect(page).toHaveURL(/failed_status=True/);
-    await expect(page.getByRole('list', { name: 'Failed Status' })).toContainText(
-      'Show only failed hosts',
-      { timeout: 15_000 }
-    );
-  }
+  await expect(page.getByTestId('page-title')).toContainText('Hosts');
+  // Hosts OPTIONS and the filtered list must finish before the real toolbar
+  // (and chips) exist. The loading table and skeleton toolbar have neither.
+  await expect(toolbar.or(errorHeading)).toBeVisible({ timeout: 60_000 });
+  await expect(errorHeading).not.toBeVisible();
+  await expect(page).toHaveURL(urlPattern);
+  await expect(toolbar.getByText(chipLabel, { exact: true })).toBeVisible();
 }
 
 test.beforeEach(setupBefore({ path: '/overview' }));
