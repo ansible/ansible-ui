@@ -52,8 +52,7 @@ export function useJobTemplateIds(): UseJobTemplateIdsResult {
     dedupingInterval: 60_000,
   });
   const { data, isLoading, size, setSize } = response;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const error: Error | undefined = response.error;
+  const error: Error | undefined = response.error instanceof Error ? response.error : undefined;
 
   useEffect(() => {
     if (data && data.length === size && data[data.length - 1]?.next) {
