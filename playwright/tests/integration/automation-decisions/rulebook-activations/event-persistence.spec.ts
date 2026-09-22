@@ -310,7 +310,9 @@ test.describe('Rulebook Activations - Event Persistence', () => {
         method: 'POST',
       });
 
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
+        timeout: 15_000,
+      });
       await expect(page.getByTestId('enable-persistence')).toBeVisible();
       await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
 

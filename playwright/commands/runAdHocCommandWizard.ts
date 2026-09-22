@@ -1,5 +1,10 @@
 import { Page, expect } from '@playwright/test';
-import { clickRetryUntilGone } from './clickRetryUntilGone';
+import {
+  expectJobOutputHeaderAnyStatus,
+  expectJobOutputRunningOrTerminal,
+  jobOutputJobStatusBarLocator,
+} from './jobOutputStatus';
+import { waitForBulkActionDialog } from './waitForBulkActionDialog';
 
 export interface AdHocCommandOptions {
   module: string;
@@ -127,36 +132,43 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   // Wait for job to start and verify we're on the job output page
   await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
 
-  // Wait for job to reach a terminal state or be running
-  try {
-    await page.waitForSelector('[data-testid="running-status"]', { timeout: 5000 });
+  const bar = jobOutputJobStatusBarLocator(page);
+  const headerRunningStatus = bar.getByTestId('running-status');
+  const cancelJob = page.getByRole('button', { name: 'Cancel job' });
 
-    // Job is running, try to cancel it
-    await page.getByRole('button', { name: 'Cancel job' }).click();
+  // Confirm the job page rendered, then wait for running or a terminal status
+  // (pending/waiting cannot be canceled). Bound the wait so cleanup can retry.
+  await expectJobOutputHeaderAnyStatus(page);
+  await expectJobOutputRunningOrTerminal(page, { timeout: 30_000 }).catch(() => undefined);
+
+  if (
+    (await headerRunningStatus.isVisible().catch(() => false)) &&
+    (await cancelJob.isEnabled().catch(() => false))
+  ) {
+    await cancelJob.click();
     const confirmCheckbox = page.locator('#confirm');
     await expect(confirmCheckbox).toBeVisible();
     await expect(confirmCheckbox).toBeEnabled();
 
-    // Click the confirmation checkbox
     await confirmCheckbox.click();
 
     const dialog = page.getByRole('dialog');
-    await dialog.getByRole('button', { name: 'Cancel job' }).click();
+    await dialog.getByRole('button', { name: /Cancel job/ }).click();
 
-    // Check if Retry button exists and click it until it's gone
-    try {
-      const retryButton = page.getByRole('button', { name: 'Retry' });
-      await retryButton.waitFor({ state: 'visible', timeout: 2000 });
-      await clickRetryUntilGone(page);
-    } catch {
-      // Intentionally empty - no retry button found, exit normally
+    if (await dialog.isVisible().catch(() => false)) {
+      await waitForBulkActionDialog(page, { timeout: 15_000, allowFailure: true });
     }
-  } catch {
-    // Job didn't reach running status (likely failed immediately)
-    // Check if there's a cancel dialog open and close it
-    const dialog = page.getByRole('dialog', { name: 'Cancel job' });
-    if (await dialog.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await dialog.getByRole('button', { name: 'Close' }).click();
+
+    await expect(headerRunningStatus)
+      .toBeHidden({ timeout: 15_000 })
+      .catch(() => undefined);
+  }
+
+  const leftoverDialog = page.getByRole('dialog');
+  if (await leftoverDialog.isVisible().catch(() => false)) {
+    const closeBtn = leftoverDialog.getByRole('button', { name: 'Close' });
+    if (await closeBtn.isVisible().catch(() => false)) {
+      await closeBtn.click();
     }
   }
 }

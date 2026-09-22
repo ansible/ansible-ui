@@ -122,7 +122,7 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
     <Split hasGutter>
       <SplitItem isFilled>
         <Flex>
-          <HeaderTitle>
+          <HeaderTitle data-testid="job-status-bar">
             <h1>{job.name}</h1>
             <StatusCell status={job.status} />
           </HeaderTitle>

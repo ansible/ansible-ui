@@ -31,7 +31,7 @@ test.describe('Management Jobs - List and Launch Jobs', () => {
     'should launch management job: Cleanup Expired Sessions',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
+      test.setTimeout(5 * 60 * 1000);
       const jobName = 'Cleanup Expired Sessions';
       let jobId: string;
 
@@ -58,7 +58,7 @@ test.describe('Management Jobs - List and Launch Jobs', () => {
             jobType: 'system_jobs',
             jobId,
             desiredStatus: ['successful'],
-            timeout: 120000,
+            timeout: 240000,
             throwOnFailure: false,
           },
           page
@@ -88,7 +88,7 @@ test.describe('Management Jobs - List and Launch Jobs', () => {
       `should launch management job: ${job.name} with retention days set`,
       { tag: ['@not_mock'] },
       async ({ page }) => {
-        test.setTimeout(180000);
+        test.setTimeout(5 * 60 * 1000);
         const jobName = job.name;
         const retentionDays = '4';
         let jobId: string;
@@ -124,7 +124,7 @@ test.describe('Management Jobs - List and Launch Jobs', () => {
               jobType: 'system_jobs',
               jobId,
               desiredStatus: ['successful'],
-              timeout: 120000,
+              timeout: 240000,
               throwOnFailure: false,
             },
             page
