@@ -92,11 +92,9 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
 
   const playCount = job.playbook_counts?.play_count;
   const taskCount = job.playbook_counts?.task_count;
-  const darkCount = job.host_status_counts?.dark;
-  const failureCount = job.host_status_counts?.failures;
-  const totalHostCount = job.host_status_counts
-    ? Object.keys(job.host_status_counts || {}).reduce(
-        (sum, key) => sum + (job.host_status_counts[key as 'ok' | 'failures' | 'dark'] as number),
+  const totalHostCount: number = job.host_status_counts
+    ? (Object.values(job.host_status_counts) as (number | undefined)[]).reduce<number>(
+        (sum, count) => sum + (count ?? 0),
         0
       )
     : 0;
@@ -154,8 +152,6 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
           <Count label={t('Plays')} count={playCount} />
           <Count label={t('Tasks')} count={taskCount} />
           <Count label={t('Hosts')} count={totalHostCount} />
-          <Count label={t('Unreachable')} count={darkCount} />
-          <Count label={t('Failed')} count={failureCount} />
           <FlexItem>
             {t('Elapsed')} <Badge isRead>{elapsed}</Badge>
           </FlexItem>
