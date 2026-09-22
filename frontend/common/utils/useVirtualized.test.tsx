@@ -261,13 +261,15 @@ describe('useVirtualizedList', () => {
     const containerRef = { current: el } as RefObject<HTMLElement>;
     const items = [{ id: 1 }];
 
-    renderHook(() => useVirtualizedList(containerRef, items));
+    const { result } = renderHook(() => useVirtualizedList(containerRef, items));
 
     dispatchScroll();
 
     act(() => {
       flushRaf();
     });
+
+    expect(result.current.visibleItems.length).toBeGreaterThan(0);
   });
 
   it('should not cancel rAF on cleanup when none is pending', () => {

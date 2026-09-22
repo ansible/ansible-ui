@@ -16,7 +16,17 @@
       ],
       "rules": {
         "i18next/no-literal-string": "off",
-        "@vitest/expect-expect": "warn",
+        "@vitest/expect-expect": [
+          "warn",
+          {
+            "assertFunctionNames": [
+              "expect",
+              "expectResults",
+              "expectBreadcrumbs",
+              "expectAboutDialogAbsent"
+            ]
+          }
+        ],
         "@vitest/no-identical-title": "warn",
         "testing-library/no-debugging-utils": "warn",
         "testing-library/prefer-user-event": "warn",

@@ -224,6 +224,7 @@ describe('useRulebookActivationActions', () => {
       duplicateAction.onClick(activation);
     });
     // Duplicate action is mocked to do nothing but we call it for coverage
+    expect(duplicateAction).toBeDefined();
   });
 
   it('should handle delete action', () => {

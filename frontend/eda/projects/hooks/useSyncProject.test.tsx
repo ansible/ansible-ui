@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { renderHook, act, screen, fireEvent, waitFor } from '@testing-library/react';
+import { renderHook, act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { useSyncProject } from './useSyncProject';
 import { EdaProject } from '../../interfaces/EdaProject';
@@ -178,15 +179,13 @@ describe('useSyncProject hook', () => {
       await result.current(projects);
     });
 
+    const user = userEvent.setup();
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
-    });
+    await user.click(checkbox);
 
     const submitButton = screen.getByRole('button', { name: 'Sync projects' });
-    act(() => {
-      fireEvent.click(submitButton);
-    });
+    await user.click(submitButton);
+
 
     await waitFor(
       () => {
