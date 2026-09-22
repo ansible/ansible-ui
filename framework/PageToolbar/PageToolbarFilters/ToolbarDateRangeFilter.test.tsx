@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import {render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
