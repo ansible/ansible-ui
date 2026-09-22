@@ -37,18 +37,37 @@ describe('ConstructedInventoryHint', () => {
     expect(screen.getByText(/Description/)).toBeInTheDocument();
   });
 
-  test('copies the first example to the clipboard', async () => {
+  test('copies constructed inventory examples to the clipboard', async () => {
     const user = (await import('@testing-library/user-event')).default.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
     vi.spyOn(navigator.clipboard, 'writeText').mockImplementation(writeText);
     render(<ConstructedInventoryHint />);
 
     await user.click(screen.getByRole('button', { name: /Info alert details/i }));
-    await user.click(
-      screen.getByRole('button', { name: /Construct 2 groups, limit to intersection/i })
-    );
-    await user.click(screen.getAllByRole('button', { name: /Copy to clipboard/i })[0]);
 
-    expect(writeText).toHaveBeenCalledWith(expect.stringContaining('plugin: constructed'));
+    const examples = [
+      {
+        title: /Construct 2 groups, limit to intersection/i,
+        copyButtonId: 'intersection-example-source-vars',
+        expected: 'plugin: constructed',
+      },
+      {
+        title: /Filter on nested group name/i,
+        copyButtonId: 'nested-groups-example-source-vars',
+        expected: 'plugin: constructed',
+      },
+      {
+        title: /Hosts by processor type/i,
+        copyButtonId: 'processor-example-source-vars',
+        expected: 'GenuineIntel',
+      },
+    ] as const;
+
+    for (const { title, copyButtonId, expected } of examples) {
+      writeText.mockClear();
+      await user.click(screen.getByRole('button', { name: title }));
+      await user.click(document.getElementById(copyButtonId)!);
+      expect(writeText).toHaveBeenCalledWith(expect.stringContaining(expected));
+    }
   });
 });
