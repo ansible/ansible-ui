@@ -110,6 +110,20 @@ describe('createFeatureFlagRegistry', () => {
     expect(registry.isEnabled('defaultOnView')).toBe(true);
   });
 
+  it('ignores stored overrides with an invalid shape', () => {
+    storage.setItem('test-flags', JSON.stringify({ experimentalView: 'enabled' }));
+    const provider = createLocalFeatureFlagProvider({
+      storage,
+      storageKey: 'test-flags',
+    });
+
+    expect(provider.evaluateBoolean('experimentalView', false)).toEqual({
+      flagKey: 'experimentalView',
+      reason: 'DEFAULT',
+      value: false,
+    });
+  });
+
   it('returns a safe fallback and error reason when a provider fails', () => {
     const provider: FeatureFlagProvider = {
       name: 'failing-provider',
@@ -142,6 +156,43 @@ describe('createFeatureFlagRegistry', () => {
     unsubscribe();
     provider.setOverride('defaultOnView', false);
     expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  it('returns an error evaluation for an unknown flag', () => {
+    const registry = createFeatureFlagRegistry(definitions);
+
+    expect(registry.evaluate('missing' as keyof typeof definitions)).toEqual({
+      error: 'UNKNOWN_FLAG',
+      flagKey: 'missing',
+      reason: 'ERROR',
+      value: false,
+    });
+  });
+
+  it('unsubscribes from a provider when disposed', () => {
+    const providerListener = vi.fn();
+    const unsubscribe = vi.fn();
+    const provider: FeatureFlagProvider = {
+      name: 'subscribable-provider',
+      evaluateBoolean: (flagKey, defaultValue) => ({
+        flagKey,
+        reason: 'PROVIDER',
+        value: defaultValue,
+      }),
+      subscribe: (listener) => {
+        providerListener.mockImplementation(listener);
+        return unsubscribe;
+      },
+    };
+    const registry = createFeatureFlagRegistry(definitions, { provider });
+    const listener = vi.fn();
+    registry.subscribe(listener);
+
+    providerListener();
+    expect(listener).toHaveBeenCalledOnce();
+
+    registry.dispose();
+    expect(unsubscribe).toHaveBeenCalledOnce();
   });
 });
 
